@@ -54,12 +54,23 @@ jobs:
           git fetch heretoecode v6.4
           git checkout --detach heretoecode/v6.4
 
+      - name: Check out NOVA jcifs-ng source
+        uses: actions/checkout@v4
+        with:
+          repository: nova-video-player/jcifs-ng
+          ref: v2.1.10-multicredit3
+          path: nova/external/jcifs-ng
+
       - name: Set up Java 17
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
           cache: gradle
+
+      - name: Build the jcifs-ng dependency
+        working-directory: nova
+        run: make jcifs-ng
 
       - name: Build debug APK
         working-directory: nova/Video
