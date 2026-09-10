@@ -71,7 +71,12 @@ jobs:
 
       - name: Build the jcifs-ng dependency
         working-directory: nova
-        run: make jcifs-ng
+        run: |
+          cd external/jcifs-ng
+          mvn -B -DskipTests package
+          jar=$(find target -maxdepth 1 -type f -name 'jcifs-ng-*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' -print -quit)
+          test -n "$jar"
+          install -Dm644 "$jar" ../../FileCoreLibrary/libs/jcifs-ng.jar
 
       - name: Set up Java 17 for Android Gradle
         uses: actions/setup-java@v5
