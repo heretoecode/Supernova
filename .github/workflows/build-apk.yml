@@ -61,16 +61,24 @@ jobs:
           ref: v2.1.10-multicredit3
           path: nova/external/jcifs-ng
 
-      - name: Set up Java 17
+      # jcifs-ng imports JDK-internal Kerberos classes that are available to
+      # its legacy Java 8 build but are encapsulated by newer JDKs.
+      - name: Set up Java 8 for jcifs-ng
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Build the jcifs-ng dependency
+        working-directory: nova
+        run: make jcifs-ng
+
+      - name: Set up Java 17 for Android Gradle
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
           cache: gradle
-
-      - name: Build the jcifs-ng dependency
-        working-directory: nova
-        run: make jcifs-ng
 
       - name: Build debug APK
         working-directory: nova/Video
