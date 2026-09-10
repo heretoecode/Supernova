@@ -113,6 +113,8 @@
     <string name="movies_by_year">Movies by year</string>
     <string name="all_tv_shows">TV shows</string>
     <string name="all_tvshows">All TV shows</string>
+    <string name="documentaries">Documentaries</string>
+    <string name="documentaries_format">Documentaries (%1$d)</string>
     <string name="all_animes">All animation movies</string>
     <string name="all_animes_row">All animations</string>
     <string name="all_animeshows">All animation TV shows</string>

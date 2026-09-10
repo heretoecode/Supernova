@@ -177,6 +177,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     public static final String KEY_MAKE_TIME_NEGATIVE = "make_time_negative";
     public static final String KEY_HIDE_TRAILER_ROW = "hide_trailer_row";
     public static final String KEY_SHOW_BY_RATING = "show_by_rating";
+    public static final String KEY_SHOW_DOCUMENTARIES = "show_documentaries";
 
     public static final String KEY_VIDEO_OS = "preferences_video_os";
     public static final String KEY_TMDB = "preferences_video_tmdb";
@@ -227,6 +228,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     public static final boolean MAKE_TIME_NEGATIVE_DEFAULT = false;
     public static final boolean HIDE_TRAILER_ROW_DEFAULT = false;
     public static final boolean SHOW_BY_RATING_DEFAULT = false;
+    public static final boolean SHOW_DOCUMENTARIES_DEFAULT = true;
 
     public static final boolean TRAKT_SYNC_COLLECTION_DEFAULT = false;
     public static final boolean TRAKT_LIVE_SCROBBLING_DEFAULT = true;

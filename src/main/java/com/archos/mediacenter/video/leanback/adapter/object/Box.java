@@ -37,6 +37,7 @@ public class Box {
         INDEXED_FOLDERS_REFRESH,
         NON_SCRAPED_VIDEOS,
         ALL_TVSHOWS,
+        DOCUMENTARIES,
         TVSHOWS_BY_ALPHA,
         TVSHOWS_BY_RATING,
         TVSHOWS_BY_GENRE,

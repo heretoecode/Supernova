@@ -64,6 +64,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.loader.AllTvshowsLoader;
 import com.archos.mediacenter.video.browser.loader.AllTvshowsNoAnimeLoader;
+import com.archos.mediacenter.video.browser.loader.DocumentaryTvshowsLoader;
 import com.archos.mediacenter.video.browser.loader.AnimesLoader;
 import com.archos.mediacenter.video.browser.loader.AnimesNShowsLoader;
 import com.archos.mediacenter.video.browser.loader.FilmsLoader;
@@ -107,6 +108,7 @@ import com.archos.mediacenter.video.leanback.tvshow.AllAnimeShowsGridActivity;
 import com.archos.mediacenter.video.leanback.tvshow.AllAnimeShowsIconBuilder;
 import com.archos.mediacenter.video.leanback.tvshow.AllTvshowNoAmimeIconBuilder;
 import com.archos.mediacenter.video.leanback.tvshow.AllTvshowsGridActivity;
+import com.archos.mediacenter.video.leanback.tvshow.DocumentaryTvshowsGridActivity;
 import com.archos.mediacenter.video.leanback.tvshow.AllTvshowsIconBuilder;
 import com.archos.mediacenter.video.leanback.tvshow.EpisodesByDateActivity;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowsByAlphaActivity;
@@ -165,6 +167,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
     final static int LOADER_ID_ALL_MOVIES = 46;
     final static int LOADER_ID_WATCHING_UP_NEXT = 47;
     final static int LOADER_ID_ALL_ANIMES = 48;
+    final static int LOADER_ID_DOCUMENTARIES = 49;
 
     final static int ROW_ID_LAST_ADDED = 1000;
     final static int ROW_ID_LAST_PLAYED = 1001;
@@ -212,6 +215,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
     private Box mAllMoviesBox;
     private Box mAllAnimesBox;
     private Box mAllTvshowsBox;
+    private Box mDocumentariesBox;
     private Box mAllCollectionsBox;
     private Box mAllAnimeCollectionsBox;
     private Box mAllAnimeShowsBox;
@@ -225,6 +229,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
     private boolean mShowMoviesRow;
     private String mMovieSortOrder;
     private boolean mShowTvshowsRow;
+    private boolean mShowDocumentaries;
     private boolean mShowAnimesRow;
     private boolean mEnableSponsor = false;
     private String mAnimesSortOrder;
@@ -312,6 +317,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
         mShowMoviesRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_MOVIES_ROW, VideoPreferencesCommon.SHOW_ALL_MOVIES_ROW_DEFAULT);
         mMovieSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_MOVIE_SORT_ORDER, MoviesLoader.DEFAULT_SORT);
         mShowTvshowsRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_TV_SHOWS_ROW, VideoPreferencesCommon.SHOW_ALL_TV_SHOWS_ROW_DEFAULT);
+        mShowDocumentaries = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_DOCUMENTARIES, VideoPreferencesCommon.SHOW_DOCUMENTARIES_DEFAULT);
         mShowAnimesRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_ANIMES_ROW, VideoPreferencesCommon.SHOW_ALL_ANIMES_ROW_DEFAULT);
         mAnimesSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_ANIMES_SORT_ORDER, AnimesLoader.DEFAULT_SORT);
         mTvShowSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_TV_SHOW_SORT_ORDER, TvshowSortOrderEntries.DEFAULT_SORT);
@@ -383,6 +389,9 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
             tvshowArgs.putString("sort", mTvShowSortOrder);
             if (log.isDebugEnabled()) log.debug("onViewCreated: allTvshows initLoader");
             LoaderManager.getInstance(this).initLoader(LOADER_ID_ALL_TV_SHOWS, tvshowArgs, this);
+        }
+        if (mShowDocumentaries) {
+            LoaderManager.getInstance(this).initLoader(LOADER_ID_DOCUMENTARIES, null, this);
         }
         if (log.isDebugEnabled()) log.debug("onViewCreated: nonScrapedVideosCount initLoader");
         LoaderManager.getInstance(this).initLoader(LOADER_ID_NON_SCRAPED_VIDEOS_COUNT, null, this);
@@ -632,6 +641,17 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
             LoaderManager.getInstance(this).restartLoader(LOADER_ID_ALL_ANIMES, args, this);
         }
 
+        boolean newShowDocumentaries = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_DOCUMENTARIES,
+                VideoPreferencesCommon.SHOW_DOCUMENTARIES_DEFAULT);
+        if (newShowDocumentaries != mShowDocumentaries) {
+            mShowDocumentaries = newShowDocumentaries;
+            if (mShowDocumentaries) {
+                LoaderManager.getInstance(this).restartLoader(LOADER_ID_DOCUMENTARIES, null, this);
+            } else {
+                updateDocumentariesVisibility(false);
+            }
+        }
+
         firstTimeLoad = false;
 
         findAndUpdatePrivateModeIcon();
@@ -784,6 +804,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
         mTvshowRowAdapter = new ArrayObjectAdapter(new BoxItemPresenter());
         buildAllTvshowsBox(wasInPause);
         mTvshowRowAdapter.add(mAllTvshowsBox);
+        mDocumentariesBox = new Box(Box.ID.DOCUMENTARIES, getString(R.string.documentaries), R.drawable.genres_banner);
         //tvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_ALPHA, getString(R.string.tvshows_by_alpha), R.drawable.alpha_banner));
         mTvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_GENRE, getString(R.string.tvshows_by_genre), R.drawable.genres_banner));
         if (showByRating)
@@ -1493,6 +1514,11 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
                         return new AnimesLoader(mActivity, args.getString("sort"), true, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                 }
             }
+            case LOADER_ID_DOCUMENTARIES -> {
+                if (log.isDebugEnabled()) log.debug("onCreateLoader DOCUMENTARIES");
+                return new DocumentaryTvshowsLoader(mActivity, TvshowSortOrderEntries.DEFAULT_SORT, true,
+                        VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+            }
             case LOADER_ID_NON_SCRAPED_VIDEOS_COUNT -> {
                 if (log.isDebugEnabled()) log.debug("onCreateLoader NON_SCRAPED");
                 return new NonScrapedVideosCountLoader(mActivity);
@@ -1629,6 +1655,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
                     }
                     mNonScrapedVideosInitialLoadComplete = true;
                 }
+                case LOADER_ID_DOCUMENTARIES -> updateDocumentariesVisibility(cursor.getCount() > 0);
             }
             checkInitFocus();
         } else {
@@ -1657,6 +1684,19 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
             case LOADER_ID_ALL_ANIMES -> {
                 if (mAnimesAdapter != null) mAnimesAdapter.changeCursor(null);
             }
+            case LOADER_ID_DOCUMENTARIES -> updateDocumentariesVisibility(false);
+        }
+    }
+
+    /** Keeps the entry out of the TV navigation until metadata yields at least one documentary. */
+    private void updateDocumentariesVisibility(boolean hasDocumentaries) {
+        if (mTvshowRowAdapter == null || mDocumentariesBox == null) return;
+        int index = mTvshowRowAdapter.indexOf(mDocumentariesBox);
+        if (mShowDocumentaries && hasDocumentaries && index == -1) {
+            // Place it beside the other native TV categories, before genre browsing.
+            mTvshowRowAdapter.add(1, mDocumentariesBox);
+        } else if ((!mShowDocumentaries || !hasDocumentaries) && index != -1) {
+            mTvshowRowAdapter.removeItems(index, 1);
         }
     }
 
@@ -1858,6 +1898,8 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
                             vActivity.startActivity(new Intent(vActivity, NonScrapedVideosActivity.class));
                     case ALL_TVSHOWS ->
                             vActivity.startActivity(new Intent(vActivity, AllTvshowsGridActivity.class));
+                    case DOCUMENTARIES ->
+                            vActivity.startActivity(new Intent(vActivity, DocumentaryTvshowsGridActivity.class));
                     case TVSHOWS_BY_ALPHA ->
                             vActivity.startActivity(new Intent(vActivity, TvshowsByAlphaActivity.class));
                     case TVSHOWS_BY_GENRE ->

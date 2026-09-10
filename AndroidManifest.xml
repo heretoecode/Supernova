@@ -1567,6 +1567,10 @@
             android:theme="@style/MyLeanbackTheme" />
 
         <activity
+            android:name="com.archos.mediacenter.video.leanback.tvshow.DocumentaryTvshowsGridActivity"
+            android:theme="@style/MyLeanbackTheme" />
+
+        <activity
             android:name="com.archos.mediacenter.video.leanback.collections.AllCollectionsGridActivity"
             android:theme="@style/MyLeanbackTheme" />
 

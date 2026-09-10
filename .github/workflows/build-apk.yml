@@ -1,0 +1,57 @@
+name: Build NOVA APK
+
+on:
+  push:
+    branches: [v6.4]
+  pull_request:
+    branches: [v6.4]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-debug-apk:
+    name: Build debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Video
+        uses: actions/checkout@v4
+        with:
+          path: aos-Video
+
+      # aos-Video/settings.gradle intentionally expects these two sibling projects.
+      - name: Check out the MediaLib fork
+        uses: actions/checkout@v4
+        with:
+          repository: heretoecode/aos-MediaLib
+          ref: v6.4
+          path: MediaLib
+
+      - name: Check out FileCoreLibrary
+        uses: actions/checkout@v4
+        with:
+          repository: nova-video-player/aos-FileCoreLibrary
+          ref: v6.4
+          path: FileCoreLibrary
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Build debug APK
+        working-directory: aos-Video
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: nova-debug-apk
+          path: aos-Video/build/outputs/apk/**/debug/*.apk
+          if-no-files-found: error

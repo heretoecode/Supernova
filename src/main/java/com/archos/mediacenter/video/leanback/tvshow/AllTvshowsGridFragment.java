@@ -116,7 +116,7 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
 
         updateBackground();
 
-        setTitle(getString(R.string.all_tvshows));
+        setTitle(getScreenTitle());
         setEmptyTextMessage(getString(R.string.you_have_no_tv_shows));
         setOnItemViewClickedListener(new VideoViewClickedListener(getActivity()));
         setOnItemViewSelectedListener(new ItemViewSelectedListener());
@@ -237,7 +237,7 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
                 mPrefs.edit().putInt(PREF_ALL_TVSHOWS_DISPLAY_MODE, mDisplayMode.ordinal()).apply();
                 // Reload a brand new fragment
                 getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new AllTvshowsGridFragment())
+                        .replace(R.id.fragment_container, createReplacementFragment())
                         .commit();
             }
         });
@@ -331,18 +331,33 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
         mOverlay.pause();
     }
 
+    protected String getScreenTitle() {
+        return getString(R.string.all_tvshows);
+    }
+
+    protected String getScreenTitle(int count, boolean showWatched) {
+        return getString(showWatched ? R.string.all_tvshows_format : R.string.not_watched_tvshows_format, count);
+    }
+
+    protected AllTvshowsGridFragment createReplacementFragment() {
+        return new AllTvshowsGridFragment();
+    }
+
+    protected Loader<Cursor> createTvshowsLoader(Bundle args) {
+        if (args == null) {
+            if (mSeparateAnimeFromShowMovie)
+                return new AllTvshowsNoAnimeLoader(getActivity(), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+            else return new AllTvshowsLoader(getActivity(), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+        }
+        if (mSeparateAnimeFromShowMovie)
+            return new AllTvshowsNoAnimeLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+        else return new AllTvshowsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == 0) {
-            if (args == null) {
-                if (mSeparateAnimeFromShowMovie)
-                    return new AllTvshowsNoAnimeLoader(getActivity(), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-                else return new AllTvshowsLoader(getActivity(), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-            } else {
-                if (mSeparateAnimeFromShowMovie)
-                    return new AllTvshowsNoAnimeLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-                else return new AllTvshowsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-            }
+            return createTvshowsLoader(args);
         }
         else return null;
     }
@@ -355,9 +370,9 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
             setEmptyViewVisiblity(cursor.getCount()<1);
 
             if (mShowWatched)
-                setTitle(getString(R.string.all_tvshows_format, cursor.getCount()));
+                setTitle(getScreenTitle(cursor.getCount(), true));
             else
-                setTitle(getString(R.string.not_watched_tvshows_format, cursor.getCount()));
+                setTitle(getScreenTitle(cursor.getCount(), false));
         }
     }
 
