@@ -358,6 +358,8 @@ androidComponents {
 dependencies {
     implementation project(':FileCoreLibrary')
     implementation project(':MediaLib')
+    // CustomApplication imports the provider directly; library implementation dependencies are not exposed.
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.85'
     implementation 'androidx.lifecycle:lifecycle-process:2.11.0'
     // needed for old Android versions when using java 17
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
