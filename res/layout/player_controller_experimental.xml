@@ -16,17 +16,18 @@
 
     
 
-    <LinearLayout android:id="@+id/control_bar" android:layout_width="fill_parent" android:layout_height="128dp" android:layout_alignParentBottom="true" android:background="@drawable/mark_hud_background" android:descendantFocusability="blocksDescendants" android:orientation="vertical" android:visibility="gone" android:padding="16dp">
+    <LinearLayout android:id="@+id/control_bar" android:layout_width="fill_parent" android:layout_height="190dp" android:layout_alignParentBottom="true" android:background="@drawable/mark_hud_background" android:descendantFocusability="blocksDescendants" android:orientation="vertical" android:visibility="gone" android:padding="24dp">
 
+        <TextView android:id="@+id/preview_playback_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:maxLines="1" android:ellipsize="end" android:textColor="#FFFFFF" android:fontFamily="sans-serif-medium" android:textSize="22sp" android:layout_marginBottom="16dp" />
         <RelativeLayout android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:paddingLeft="0dip" android:paddingRight="0dip">
 
             <com.archos.mediacenter.utils.seekbar.ArchosProgressSlider android:id="@+id/seek_progress" style="@style/TallerPlayerSliderHorizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_marginLeft="10dip" android:layout_marginTop="2dip" android:layout_marginRight="10dip" android:layout_gravity="center" android:layout_toLeftOf="@id/time" android:layout_toRightOf="@id/time_current" />
 
-            <TextView android:id="@+id/time_current" android:layout_width="60dip" android:layout_height="wrap_content" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="30dip" android:layout_gravity="center" android:gravity="right" android:textSize="@dimen/player_time_text_size" android:textColor="#ffffff" android:textStyle="bold" />
+            <TextView android:id="@+id/time_current" android:layout_width="60dip" android:layout_height="wrap_content" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="0dp" android:layout_gravity="center" android:gravity="right" android:textSize="@dimen/player_time_text_size" android:textColor="#ffffff" android:textStyle="bold" />
 
             <ProgressBar android:id="@+id/seek_state" style="?android:attr/progressBarStyleSmallTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginTop="2dip" android:layout_marginRight="10dip" android:layout_gravity="center" android:visibility="gone" />
 
-            <TextView android:id="@+id/time" android:layout_width="60dip" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginRight="30dip" android:layout_gravity="center" android:textSize="@dimen/player_time_text_size" android:textColor="#ffffff" android:textStyle="bold" />
+            <TextView android:id="@+id/time" android:layout_width="60dip" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginRight="0dp" android:layout_gravity="center" android:textSize="@dimen/player_time_text_size" android:textColor="#ffffff" android:textStyle="bold" />
         </RelativeLayout>
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="56dp" android:gravity="center" android:orientation="horizontal"><ImageButton android:id="@+id/backward" style="@style/PlayerControlButton" android:paddingLeft="0dip" android:paddingRight="@dimen/player_button_padding_half" android:scaleType="fitCenter" android:adjustViewBounds="true" ads:srcCompat="@drawable/video_backward_selector" android:layout_width="64dp" android:layout_height="56dp" android:padding="12dp" android:background="@drawable/mark_hud_focus" android:contentDescription="Rewind 10 seconds" />
@@ -39,6 +40,7 @@
 
     <ImageButton android:id="@+id/fullscreen_cutouts" style="@style/PlayerControlButton" android:paddingLeft="@dimen/player_button_padding_small" android:paddingRight="@dimen/player_button_padding_full" android:scaleType="fitCenter" android:adjustViewBounds="true" android:visibility="gone" ads:srcCompat="@drawable/video_fullscreen_cutout_off" android:layout_width="64dp" android:layout_height="56dp" android:padding="12dp" android:background="@drawable/mark_hud_focus" android:contentDescription="Fullscreen" />
 
+        <ImageButton android:id="@+id/preview_more" android:layout_width="56dp" android:layout_height="56dp" android:padding="16dp" android:src="@drawable/preview_more" android:background="@drawable/mark_hud_focus" android:contentDescription="@string/preview_playback_options" />
         </LinearLayout></LinearLayout>
 
     <TextView android:id="@+id/osd_left" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:layout_marginBottom="84dp" android:drawableStart="@drawable/ic_volume" android:text="15" android:textColor="@color/white" android:textSize="20sp" android:lineSpacingMultiplier="1.1" android:background="@drawable/rounded_rectangle" android:visibility="invisible" android:layout_marginTop="60dp" android:layout_alignParentStart="true" android:layout_marginStart="46dp" android:paddingLeft="12dp" android:paddingRight="12dp" android:paddingTop="6sp" android:paddingBottom="6sp" />

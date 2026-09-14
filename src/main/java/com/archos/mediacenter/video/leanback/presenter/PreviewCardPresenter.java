@@ -1,0 +1,127 @@
+package com.archos.mediacenter.video.leanback.presenter;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.content.res.ColorStateList;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+import androidx.leanback.widget.BaseCardView;
+import androidx.leanback.widget.Presenter;
+import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import com.squareup.picasso.Picasso;
+
+/** Lightweight experimental cards: existing library objects and click actions are preserved. */
+public final class PreviewCardPresenter extends Presenter {
+    public enum Style { POSTER, CONTINUE, CATEGORY }
+    private final Style style;
+    public PreviewCardPresenter(Style style) { this.style = style; }
+    public static int progress(long resume, long duration) {
+        return resume <= 0 || duration <= 0 ? 0 : (int)Math.min(100, 100d * resume / duration);
+    }
+    public static final class Card extends BaseCardView {
+        public final ImageView image;
+        final TextView title, subtitle;
+        final LinearLayout caption;
+        final ProgressBar progress;
+        final Style style;
+        boolean hasArtwork;
+        final int width, height;
+        public Card(Context c, Style style) {
+            super(c); this.style = style;
+            // Android TV's logical viewport is normally 960 x 540 dp.
+            width = dp(style == Style.CONTINUE ? 218 : style == Style.CATEGORY ? 174 : 140);
+            height = dp(style == Style.CONTINUE ? 123 : style == Style.CATEGORY ? 86 : 210);
+            setFocusable(true); setFocusableInTouchMode(true);
+            setCardType(CARD_TYPE_MAIN_ONLY);
+            FrameLayout body = new FrameLayout(c);
+            GradientDrawable outline = new GradientDrawable();
+            outline.setColor(0xff182c3e); outline.setCornerRadius(dp(4));
+            body.setBackground(outline); body.setClipToOutline(true);
+            BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
+            bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
+            addView(body, bp);
+            image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            body.addView(image, new FrameLayout.LayoutParams(-1, -1));
+            caption = new LinearLayout(c); caption.setOrientation(LinearLayout.VERTICAL);
+            caption.setPadding(dp(8), dp(16), dp(8), dp(style == Style.CONTINUE ? 10 : 7));
+            caption.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{0x00101e2c, 0xee101e2c}));
+            title = new TextView(c); title.setTextColor(Color.WHITE); title.setTextSize(13);
+            title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+            title.setMaxLines(2); title.setEllipsize(TextUtils.TruncateAt.END);
+            caption.addView(title, new LinearLayout.LayoutParams(-1, -2));
+            subtitle = new TextView(c); subtitle.setTextSize(11); subtitle.setTextColor(0xffd5e1ee);
+            subtitle.setSingleLine(true); subtitle.setEllipsize(TextUtils.TruncateAt.END);
+            caption.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
+            body.addView(caption, new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM));
+            progress = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
+            progress.setMax(100); progress.setProgressTintList(ColorStateList.valueOf(0xff62bbf3));
+            progress.setProgressBackgroundTintList(ColorStateList.valueOf(0xff627386));
+            FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(-1, dp(3), Gravity.BOTTOM);
+            pp.setMargins(dp(8), 0, dp(8), dp(5)); body.addView(progress, pp);
+            progress.setVisibility(View.GONE);
+            setOnFocusChangeListener((v, focus) -> updateFocus());
+            updateFocus();
+        }
+        private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
+        void updateFocus() {
+            GradientDrawable border = new GradientDrawable(); border.setColor(Color.TRANSPARENT);
+            border.setCornerRadius(dp(4)); border.setStroke(dp(isFocused() ? 2 : 1), isFocused() ? 0xff62bbf3 : 0x303d5870);
+            setForeground(border);
+            // Poster names remain accessible without permanently covering the artwork.
+            caption.setVisibility(style != Style.POSTER || !hasArtwork || isFocused() ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+    @Override public ViewHolder onCreateViewHolder(ViewGroup parent) { return new ViewHolder(new Card(parent.getContext(), style)); }
+    @Override public void onBindViewHolder(ViewHolder holder, Object item) {
+        Card c = (Card)holder.view;
+        Picasso.get().cancelRequest(c.image); c.image.setImageDrawable(null);
+        c.hasArtwork = false; c.subtitle.setText(""); c.subtitle.setVisibility(View.GONE);
+        c.progress.setProgress(0); c.progress.setVisibility(View.GONE);
+        Uri uri = null;
+        if (item instanceof Box) {
+            Box box = (Box)item; c.title.setText(box.getName());
+            if (box.getBoxId() == Box.ID.DOCUMENTARIES) c.image.setImageResource(R.drawable.preview_documentaries);
+            else if (box.getBitmap() != null) c.image.setImageBitmap(box.getBitmap());
+            else if (box.getIconResId() > 0) c.image.setImageResource(box.getIconResId());
+            c.hasArtwork = true;
+        } else if (item instanceof Base) {
+            Base b = (Base)item; c.title.setText(b.getName()); uri = b.getPosterUri();
+            if (item instanceof Video) {
+                Video v = (Video)item;
+                if (TextUtils.isEmpty(b.getName())) c.title.setText(v.getFilenameNonCryptic());
+                if (v instanceof Episode) {
+                    Episode e = (Episode)v; c.title.setText(e.getShowName());
+                    c.subtitle.setText(c.getResources().getString(R.string.preview_episode, e.getSeasonNumber(), e.getEpisodeNumber()));
+                    c.subtitle.setVisibility(View.VISIBLE);
+                    if (style == Style.CONTINUE && e.getPictureUri() != null) uri = e.getPictureUri();
+                }
+                if (style == Style.CONTINUE) {
+                    c.progress.setVisibility(View.VISIBLE);
+                    c.progress.setProgress(progress(v.getResumeMs(), v.getDurationMs()));
+                }
+            }
+        }
+        c.setContentDescription(c.title.getText() + (c.subtitle.length() == 0 ? "" : ", " + c.subtitle.getText()));
+        c.hasArtwork |= uri != null;
+        c.updateFocus();
+        if (uri != null) Picasso.get().load(uri).resize(c.width, c.height).centerCrop().noFade()
+            .into(c.image, new com.squareup.picasso.Callback() {
+                @Override public void onSuccess() { }
+                @Override public void onError(Exception error) { c.hasArtwork = false; c.updateFocus(); }
+            });
+    }
+    @Override public void onUnbindViewHolder(ViewHolder holder) {
+        Card c = (Card)holder.view; Picasso.get().cancelRequest(c.image);
+        c.image.setImageDrawable(null); c.setContentDescription(null);
+        c.title.setText(""); c.subtitle.setText(""); c.progress.setProgress(0);
+    }
+}

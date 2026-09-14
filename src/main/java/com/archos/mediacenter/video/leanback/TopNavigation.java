@@ -28,9 +28,10 @@ public final class TopNavigation extends LinearLayout {
         setOrientation(VERTICAL);
         setBackgroundColor(ThemeManager.getInstance(c).getLeanbackBackgroundColor());
         bar = new LinearLayout(c); bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(dp(24), dp(8), dp(24), dp(8));
+        bar.setPadding(dp(26), 0, dp(16), 0);
+        bar.setBackgroundColor(0xff10283d);
         TextView brand = new TextView(c);
-        brand.setText("NOVA"); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);
+        brand.setText("NOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", 0)); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);
         brand.setPadding(0, 0, dp(20), 0); bar.addView(brand);
         String[] labels = {"Home", "Movies", "TV shows", "Network & files", "Settings", "Search"};
         for (int i = 0; i < labels.length; i++) {
@@ -40,14 +41,18 @@ public final class TopNavigation extends LinearLayout {
             tab.setTextColor(Color.WHITE); tab.setTextSize(15); tab.setGravity(Gravity.CENTER);
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
             tab.setSingleLine(true); tab.setFocusable(true); tab.setClickable(true);
-            tab.setPadding(dp(10), dp(12), dp(10), dp(12));
+            tab.setPadding(dp(12), dp(10), dp(12), dp(10));
+            tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, Color.WHITE, 0xffb4cbe0}));
             StateListDrawable bg = new StateListDrawable();
             GradientDrawable focus = new GradientDrawable();
             focus.setColor(0xff345571); focus.setCornerRadius(dp(4)); focus.setStroke(dp(2), 0xff8fceff);
             bg.addState(new int[]{android.R.attr.state_focused}, focus);
             GradientDrawable active = new GradientDrawable();
-            active.setColor(0xff223b50); active.setCornerRadius(dp(4));
-            bg.addState(new int[]{android.R.attr.state_selected}, active);
+            active.setColor(0xff62bbf3); active.setCornerRadius(dp(2));
+            android.graphics.drawable.LayerDrawable underline = new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{active});
+            underline.setLayerHeight(0, dp(3)); underline.setLayerGravity(0, Gravity.BOTTOM);
+            underline.setLayerInset(0, dp(10), 0, dp(10), dp(3));
+            bg.addState(new int[]{android.R.attr.state_selected}, underline);
             bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
             tab.setBackground(bg);
             tab.setOnClickListener(v -> {
@@ -64,10 +69,16 @@ public final class TopNavigation extends LinearLayout {
                 }
                 return false;
             });
-            bar.addView(tab, new LayoutParams(0, -2, i == 3 ? 1.5f : 1));
+            if (i == 5) {
+                bar.addView(new View(c), new LayoutParams(0, 1, 1));
+                tab.setText("");
+                android.graphics.drawable.Drawable search = c.getDrawable(com.archos.mediacenter.video.R.drawable.preview_search);
+                search.setBounds(0, 0, dp(22), dp(22)); tab.setCompoundDrawables(search, null, null, null);
+            }
+            bar.addView(tab, new LayoutParams(-2, dp(46)));
         }
         status = new android.widget.FrameLayout(c);
-        bar.addView(status, new LayoutParams(dp(68), dp(52)));
+        bar.addView(status, new LayoutParams(dp(68), dp(46)));
         selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, -2));
         addView(content, new LayoutParams(-1, 0, 1));

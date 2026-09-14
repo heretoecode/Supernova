@@ -1,3 +1,21 @@
+# Edition 3.2 — experimental UI implementation
+
+Version: 6.4.63-mark.3.2-preview (6040067). Package and signing identity remain NOVA Preview.
+
+- Compact slate navigation, underlined active section and search icon.
+- Landscape Continue watching/recently played cards with episode stills where available, episode numbers and clamped resume progress.
+- Illustrated category tiles, including a dedicated documentary landscape; existing library collage artwork is retained.
+- Clean portrait cards: captions appear on focus, or remain visible if artwork is missing. Accessible titles remain available throughout.
+- Home prioritises Continue watching, TV categories and recently added. Row preferences and native item actions are preserved.
+- Playback title inside the slate HUD, compact functional options menu and brighter unfocused controls. More opens the existing player menu.
+- Classic UI remains available through Try new UI. No placeholder chapter, statistics, thumbnail or Up Next buttons were added.
+
+Validation: automated card recycling/progress, navigation, classic fallback and native control inflation tests; a native-rendered home layout fixture is included with build diagnostics. Shield playback and remote testing still required.
+
+Remaining functional work: chapter picker/markers, stats, seek previews, temporary subtitles, Up Next and scan counters. Streaming links remain paused. Home uses the actual library rows: Recently added can include episodes as well as films; the mock-up's fictional artwork and rows are not bundled as content.
+
+---
+
 # Edition 3.1 Preview — home-screen repair
 Version 6.4.63-mark.3.1-preview (6040066). Updates the separate NOVA Preview app.
 

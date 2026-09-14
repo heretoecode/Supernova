@@ -113,6 +113,9 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         } else if (itemViewHolder instanceof ListPresenter.ListViewHolder){
             sourceView = ((ListPresenter.ListViewHolder)itemViewHolder).getImageView();
         }
+        if (itemViewHolder.view instanceof com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) {
+            sourceView = ((com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card)itemViewHolder.view).image;
+        }
         if (sourceView instanceof ImageView) {
             Drawable drawable = ((ImageView) sourceView).getDrawable();
             VideoDetailsTransitionPosterCache.put(launchUptimeMs, drawable);

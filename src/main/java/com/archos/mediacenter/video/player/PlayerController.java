@@ -737,6 +737,16 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if (log.isDebugEnabled()) log.debug("CONFIG attachWindow, mPlayerView.addView");
 
         initMenuAdapter(mControllerViewLeft);
+        if (experimentalUi()) {
+            TextView title = mControllerViewLeft.findViewById(R.id.preview_playback_title);
+            if (title != null && mVideoTitle != null) title.setText(mVideoTitle.getText());
+            View more = mControllerViewLeft.findViewById(R.id.preview_more);
+            if (more != null) more.setOnClickListener(v -> {
+                if (!mTVMenuAdapter.isCreated() && mContext instanceof PlayerActivity)
+                    ((PlayerActivity)mContext).createPlayerTVMenu();
+                showTVMenu(true);
+            });
+        }
         switchMode(TVUtils.isTV(mContext));
         setUIMode(UIMode);
 
@@ -1463,6 +1473,10 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
             mVideoTitle.setText(title);
+            if (mControllerViewLeft != null) {
+                TextView hudTitle = mControllerViewLeft.findViewById(R.id.preview_playback_title);
+                if (hudTitle != null) hudTitle.setText(title);
+            }
         }
     }
 

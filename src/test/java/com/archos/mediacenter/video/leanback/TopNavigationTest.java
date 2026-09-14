@@ -76,4 +76,55 @@ public class TopNavigationTest {
         } finally {host.pause().stop().destroy();}
     }
 
+    @Test public void previewCardsResetRecycledStateAndClampProgress() {
+        org.robolectric.android.controller.ActivityController<Host> host=Robolectric.buildActivity(Host.class).setup();
+        try {
+            com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter p = new com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter(com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.CONTINUE);
+            Presenter.ViewHolder vh = p.onCreateViewHolder(new FrameLayout(host.get()));
+            p.onBindViewHolder(vh, new com.archos.mediacenter.video.browser.adapters.object.Base("First programme", null));
+            assertEquals("First programme", vh.view.getContentDescription());
+            p.onUnbindViewHolder(vh);
+            assertNull(vh.view.getContentDescription());
+            p.onBindViewHolder(vh, new com.archos.mediacenter.video.browser.adapters.object.Base("Second programme", null));
+            assertEquals("Second programme", vh.view.getContentDescription());
+            assertEquals(0, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(-1, 100));
+            assertEquals(0, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(50, 0));
+            assertEquals(50, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(50, 100));
+            assertEquals(100, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(200, 100));
+        } finally {host.pause().stop().destroy();}
+    }
+
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers="w960dp-h540dp-land-mdpi")
+    public void renderPreviewHomeAndCheckRemoteTabSelection() throws Exception {
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui", true).commit();
+        org.robolectric.android.controller.ActivityController<Host> host=Robolectric.buildActivity(Host.class).setup();
+        try {
+            Browse browse = new Browse();
+            host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content, browse).commitNow();
+            ArrayObjectAdapter rows = (ArrayObjectAdapter)browse.getAdapter();
+            for (int row=0; row<3; row++) {
+                com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style style = row == 0 ? com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.CONTINUE : row == 1 ? com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.CATEGORY : com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.POSTER;
+                ArrayObjectAdapter cards = new ArrayObjectAdapter(new com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter(style));
+                for (int i=0; i<6; i++) cards.add(new com.archos.mediacenter.video.leanback.adapter.object.Box(com.archos.mediacenter.video.leanback.adapter.object.Box.ID.DOCUMENTARIES, row == 1 ? (i == 0 ? "All TV shows" : i == 1 ? "Documentaries" : "Genres") : "Preview title " + (i+1), R.drawable.preview_documentaries));
+                rows.add(new ListRow(new HeaderItem(new String[]{"Continue watching", "TV shows", "Recently added"}[row]), cards));
+            }
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            View root = browse.getView();
+            root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
+            root.layout(0, 0, 960, 540);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY)); root.layout(0, 0, 960, 540);
+            android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(960, 540, android.graphics.Bitmap.Config.ARGB_8888);
+            root.draw(new android.graphics.Canvas(bitmap));
+            java.io.File out = new java.io.File("build/reports/preview-ui/home.png"); out.getParentFile().mkdirs();
+            try (java.io.FileOutputStream stream = new java.io.FileOutputStream(out)) { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream); }
+            LinearLayout bar = (LinearLayout)((TopNavigation)root).getChildAt(0);
+            TextView movies = (TextView)bar.getChildAt(2); movies.performClick();
+            assertTrue(movies.isSelected());
+            assertFalse(bar.getChildAt(1).isSelected());
+            assertEquals("Search", bar.getChildAt(7).getContentDescription());
+        } finally {host.pause().stop().destroy();}
+    }
+
 }

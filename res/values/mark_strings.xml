@@ -1,9 +1,13 @@
 <resources>
+    <string name="preview_playback_options">Playback options</string>
+    <string name="preview_continue_watching">Continue watching</string>
+    <string name="preview_episode">S%1$d · E%2$d</string>
+
     <string name="theme_slate">Slate blue</string>
     <string name="documentary_tv_shows">Documentary TV shows</string>
-    <string name="mark_build_identity">Mark’s personal NOVA build · Edition 3\n6.4.63-mark.3.1-preview · heretoecode/aos-Video</string>
+    <string name="mark_build_identity">Mark’s personal NOVA build · Edition 3.2\n6.4.63-mark.3.2-preview · heretoecode/aos-Video</string>
     <string name="mark_release_notes_title">Build details and release notes</string>
-    <string name="mark_release_notes">Edition 3.1 UI repair\n\n• Removed duplicate home branding and search; compact row spacing.\n• Top tabs display separate sections. Experimental UI consistently uses slate colours with two-line card titles.\n\n• Try new UI: optional top navigation and slate playback controls. Classic UI remains the default.\n• Documentaries is back in the TV shows row, with a main settings toggle. Brighter text.\n• Streaming links paused as requested. Saved country/provider choices are retained.\n• TV metadata lookup by TMDb or IMDb ID/link; matches without artwork remain visible.\n• Subtitle work runs in the background; cancelled search cleanup and poster retries.\n• Safer backups include settings, archive validation and recovery copies.\n• Internal components restricted and sensitive logging removed.\n• Separate NOVA Preview installation: existing NOVA and its data stay intact.\n\nTest candidate: the full playback mock-up, chapters, preview generation, scan counters and Up Next panel remain outstanding.\nFull notes: docs/MARK-EDITION-3.md in our repository.</string>
+    <string name="mark_release_notes">Edition 3.2 · UI update\n\n• Compact slate navigation with active underline and search icon.\n• Wide Continue watching cards with episode artwork and progress.\n• Illustrated categories, documentary tile and clean poster rows.\n• Playback title in the HUD, brighter compact options menu and More action.\n• Classic UI remains available through Try new UI.\n• Updates NOVA Preview alongside official NOVA.\n\nChapter picker, stats, seek previews, temporary subtitles, Up Next and scan counters remain outstanding. Streaming links remain paused.\nFull notes: docs/MARK-EDITION-3.md</string>
     <string name="streaming_title">Streaming services</string>
     <string name="streaming_enabled_title">Show streaming options</string>
     <string name="streaming_enabled_summary">Find subscription and free streaming options for titles in your library</string>

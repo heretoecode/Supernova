@@ -101,6 +101,7 @@ import com.archos.mediacenter.video.leanback.network.NetworkRootActivity;
 import com.archos.mediacenter.video.leanback.nonscraped.NonScrapedVideosActivity;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
 import com.archos.mediacenter.video.leanback.presenter.BoxItemPresenter;
+import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import com.archos.mediacenter.video.leanback.presenter.IconItemPresenter;
 import com.archos.mediacenter.video.leanback.presenter.PosterImageCardPresenter;
 import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
@@ -295,6 +296,20 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     private boolean mTopNavigation;
     private TopNavigation mNavigation;
     private int mActiveTab;
+    private Presenter homeVideoPresenter(boolean wide) {
+        return mTopNavigation ? new PreviewCardPresenter(wide ? PreviewCardPresenter.Style.CONTINUE : PreviewCardPresenter.Style.POSTER)
+            : new PosterImageCardPresenter(mActivity);
+    }
+    private Presenter homeCategoryPresenter() {
+        return mTopNavigation ? new PreviewCardPresenter(PreviewCardPresenter.Style.CATEGORY) : new BoxItemPresenter();
+    }
+    private static int homeOrder(long id) {
+        if (id == ROW_ID_WATCHING_UP_NEXT) return 0;
+        if (id == ROW_ID_TVSHOW) return 1;
+        if (id == ROW_ID_LAST_ADDED) return 2;
+        if (id == ROW_ID_MOVIES) return 3;
+        return 4;
+    }
     private ArrayObjectAdapter mVisibleRows;
 
     static boolean belongsToTab(long row, int tab) {
@@ -316,6 +331,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             Object row = mRowsAdapter.get(i);
             if (row instanceof ListRow && belongsToTab(((ListRow)row).getId(), mActiveTab)) rows.add(row);
         }
+        if (mActiveTab == 0) rows.sort((a, b) -> Integer.compare(homeOrder(((Row)a).getId()), homeOrder(((Row)b).getId())));
         boolean unchanged = rows.size() == mVisibleRows.size();
         for (int i = 0; unchanged && i < rows.size(); i++) unchanged = rows.get(i) == mVisibleRows.get(i);
         if (unchanged) return; // Hidden-section updates must not reset the current row's focus.
@@ -836,7 +852,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         if (updateActivity("loadRows") == null) return;
 
         // Two different row presenters, one standard for regular cards, one special for the icon items
-        ListRowPresenter listRowPresenter = new ListRowPresenter();
+        ListRowPresenter listRowPresenter = new ListRowPresenter(mTopNavigation ? androidx.leanback.widget.FocusHighlight.ZOOM_FACTOR_NONE : androidx.leanback.widget.FocusHighlight.ZOOM_FACTOR_MEDIUM);
+        if (mTopNavigation) { listRowPresenter.setShadowEnabled(false); listRowPresenter.setSelectEffectEnabled(false); }
         IconItemRowPresenter iconItemRowPresenter = new IconItemRowPresenter();
 
         // Only way I found to use two different presenter is using a ClassPresenterSelector, hence i needed
@@ -851,23 +868,23 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
         mRowsAdapter = new ArrayObjectAdapter(rowsPresenterSelector);
 
-        mWatchingUpNextAdapter = new CursorObjectAdapter(new PosterImageCardPresenter(mActivity));
+        mWatchingUpNextAdapter = new CursorObjectAdapter(homeVideoPresenter(true));
         mWatchingUpNextAdapter.setMapper(new CompatibleCursorMapperConverter(new VideoCursorMapper()));
-        mWatchingUpNextRow = new ListRow(ROW_ID_WATCHING_UP_NEXT, new HeaderItem(getString(R.string.watching_up_next)), mWatchingUpNextAdapter);
+        mWatchingUpNextRow = new ListRow(ROW_ID_WATCHING_UP_NEXT, new HeaderItem(getString(mTopNavigation ? R.string.preview_continue_watching : R.string.watching_up_next)), mWatchingUpNextAdapter);
 
-        mLastAddedAdapter = new CursorObjectAdapter(new PosterImageCardPresenter(mActivity));
+        mLastAddedAdapter = new CursorObjectAdapter(homeVideoPresenter(false));
         mLastAddedAdapter.setMapper(new CompatibleCursorMapperConverter(new VideoCursorMapper()));
         String lastAddedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.new_and_unwatched) : getString(R.string.recently_added);
         mLastAddedRow = new ListRow(ROW_ID_LAST_ADDED, new HeaderItem(lastAddedTitle), mLastAddedAdapter);
 
-        mLastPlayedAdapter = new CursorObjectAdapter(new PosterImageCardPresenter(mActivity));
+        mLastPlayedAdapter = new CursorObjectAdapter(homeVideoPresenter(true));
         mLastPlayedAdapter.setMapper(new CompatibleCursorMapperConverter(new VideoCursorMapper()));
         String lastPlayedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.keep_watching) : getString(R.string.recently_played);
         mLastPlayedRow = new ListRow(ROW_ID_LAST_PLAYED, new HeaderItem(lastPlayedTitle), mLastPlayedAdapter);
 
         boolean showByRating = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_BY_RATING, VideoPreferencesCommon.SHOW_BY_RATING_DEFAULT);
 
-        mMoviesRowsAdapter = new ArrayObjectAdapter(new BoxItemPresenter());
+        mMoviesRowsAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
         buildAllMoviesBox(wasInPause);
         mMoviesRowsAdapter.add(mAllMoviesBox);
         //mMoviesRowsAdapter.add(new Box(Box.ID.MOVIES_BY_ALPHA, getString(R.string.movies_by_alpha), R.drawable.alpha_banner));
@@ -879,7 +896,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         buildAllCollectionsBox(wasInPause);
         mMoviesRowsAdapter.add(mAllCollectionsBox);
 
-        mTvshowRowAdapter = new ArrayObjectAdapter(new BoxItemPresenter());
+        mTvshowRowAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
         buildAllTvshowsBox(wasInPause);
         mTvshowRowAdapter.add(mAllTvshowsBox);
         mDocumentariesBox = new Box(Box.ID.DOCUMENTARIES, getString(R.string.documentary_tv_shows), R.drawable.genres_banner);
@@ -891,7 +908,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mTvshowRowAdapter.add(new Box(Box.ID.EPISODES_BY_DATE, getString(R.string.episodes_by_date), R.drawable.years_banner_2026));
         mTvshowRow = new ListRow(ROW_ID_TVSHOW, new HeaderItem(getString(R.string.all_tv_shows)), mTvshowRowAdapter);
 
-        mAnimeRowAdapter = new ArrayObjectAdapter(new BoxItemPresenter());
+        mAnimeRowAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
         mAnimeRow = new ListRow(ROW_ID_ANIMES, new HeaderItem(getString(R.string.animes)), mAnimeRowAdapter);
         buildAllAnimesBox(wasInPause);
         mAnimeRowAdapter.add(mAllAnimesBox);
@@ -909,21 +926,21 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         // initialize adapters even the ones not used but do not launch the loaders yet for performance considerations
 
         // this is for the all movies row not the movie row
-        mMoviesAdapter = new CursorObjectAdapter(new PosterImageCardPresenter(mActivity));
+        mMoviesAdapter = new CursorObjectAdapter(homeVideoPresenter(false));
         mMoviesAdapter.setMapper(new CompatibleCursorMapperConverter(new VideoCursorMapper()));
         mMoviesRow = new ListRow(ROW_ID_ALL_MOVIES, new HeaderItem(getString(R.string.all_movies)), mMoviesAdapter);
 
         // this is for the all tv shows row not the tv show row
-        mTvshowsAdapter = new CursorObjectAdapter(new PosterImageCardPresenter(mActivity));
+        mTvshowsAdapter = new CursorObjectAdapter(homeVideoPresenter(false));
         mTvshowsAdapter.setMapper(new CompatibleCursorMapperConverter(new TvshowCursorMapper()));
         mTvshowsRow = new ListRow(ROW_ID_ALL_TVSHOWS, new HeaderItem(getString(R.string.all_tvshows)), mTvshowsAdapter);
 
         // this is for the all animes row not the animation row
-        mAnimesAdapter = new CursorObjectAdapter(new PosterImageCardPresenter(mActivity));
+        mAnimesAdapter = new CursorObjectAdapter(homeVideoPresenter(false));
         mAnimesAdapter.setMapper(new CompatibleCursorMapperConverter(new AnimesNShowsMapper()));
         mAnimesRow = new ListRow(ROW_ID_ALL_ANIMES, new HeaderItem(getString(R.string.all_animes_row)), mAnimesAdapter);
 
-        mFileBrowsingRowAdapter = new ArrayObjectAdapter(new BoxItemPresenter());
+        mFileBrowsingRowAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
         mFileBrowsingRowAdapter.add(new Box(Box.ID.NETWORK, getString(R.string.network_storage), R.drawable.filetype_new_server));
         mFileBrowsingRowAdapter.add(new Box(Box.ID.FOLDERS, getString(R.string.internal_storage), R.drawable.filetype_new_folder));
         mFileBrowsingRowAdapter.add(new Box(Box.ID.VIDEOS_BY_LISTS, getString(R.string.video_lists), R.drawable.filetype_new_playlist));
