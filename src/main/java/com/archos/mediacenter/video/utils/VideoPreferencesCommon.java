@@ -872,12 +872,17 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         }
         mAboutPreferences = (PreferenceCategory) findPreference(KEY_ABOUT_PREFERENCES);
         Preference novaVersion = (Preference) findPreference("preferences_version");
-        novaVersion.setTitle(getString(R.string.APP_INFO));
+        novaVersion.setTitle("Build");
         novaVersion.setSummary(R.string.mark_build_identity);
-        findPreference("mark_release_notes").setOnPreferenceClickListener(preference -> {
+        novaVersion.setOnPreferenceClickListener(preference -> {
             new androidx.appcompat.app.AlertDialog.Builder(getActivity())
                     .setTitle(R.string.mark_release_notes_title)
-                    .setMessage(R.string.mark_release_notes)
+                    .setMessage("Version: " + com.archos.mediacenter.video.BuildConfig.VERSION_NAME
+                        + "\nEdition: Mark’s Edition 3 · 14 September 2026"
+                        + "\nPackage: " + getActivity().getPackageName()
+                        + "\nBase NOVA: 6.4.63"
+                        + "\nSource: https://github.com/heretoecode/aos-Video\n\n"
+                        + getString(R.string.mark_release_notes))
                     .setPositiveButton(android.R.string.ok, null).show();
             return true;
         });

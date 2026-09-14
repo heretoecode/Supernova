@@ -24,6 +24,8 @@ public final class StreamingPreferences {
     private List<StreamingRepository.Provider> catalogue = Collections.emptyList();
     private Future<?> task;
     private int generation;
+    private String query = "";
+    private boolean showAll;
     private final Handler main = new Handler(Looper.getMainLooper());
 
     public StreamingPreferences(PreferenceFragmentCompat fragment) {
@@ -38,7 +40,9 @@ public final class StreamingPreferences {
         enabled.setKey(StreamingRepository.ENABLED);
         enabled.setTitle(R.string.streaming_enabled_title);
         enabled.setSummary(R.string.streaming_enabled_summary);
-        enabled.setDefaultValue(true);
+        enabled.setDefaultValue(false);
+        enabled.setEnabled(StreamingRepository.LINKS_AVAILABLE);
+        enabled.setSummary("Streaming links are paused in this test build. Provider selections are kept.");
         add(enabled);
         country = new ListPreference(context);
         country.setKey(StreamingRepository.COUNTRY);
@@ -51,6 +55,19 @@ public final class StreamingPreferences {
         for (int i = 0; i < names.length; i++) names[i] = new Locale("", codes.get(i)).getDisplayCountry();
         country.setEntries(names); country.setEntryValues(codes.toArray(new CharSequence[0]));
         add(country);
+        EditTextPreference search = new EditTextPreference(context);
+        search.setTitle("Search providers"); search.setPersistent(false);
+        search.setOnPreferenceChangeListener((p, value) -> {
+            query = value.toString().trim().toLowerCase(Locale.ROOT);
+            search.setSummary(query.isEmpty() ? "All popular providers" : value.toString());
+            populate(context); return true;
+        });
+        add(search);
+        SwitchPreferenceCompat all = new SwitchPreferenceCompat(context);
+        all.setTitle("Show all providers"); all.setPersistent(false); all.setChecked(false);
+        all.setSummary("Selected providers always remain visible");
+        all.setOnPreferenceChangeListener((p, value) -> { showAll = (Boolean)value; populate(context); return true; });
+        add(all);
         providers = new MultiSelectListPreference(context);
         providers.setTitle(R.string.streaming_providers);
         providers.setDialogTitle(R.string.streaming_providers);
@@ -127,12 +144,25 @@ public final class StreamingPreferences {
         return result;
     }
     private void populate(Context context) {
-        CharSequence[] names = new CharSequence[catalogue.size()], ids = new CharSequence[catalogue.size()];
+        Set<String> selected = StreamingRepository.selected(context);
+        List<StreamingRepository.Provider> visible = new ArrayList<>();
         for (int i = 0; i < catalogue.size(); i++) {
-            names[i] = catalogue.get(i).name; ids[i] = Integer.toString(catalogue.get(i).id);
+            StreamingRepository.Provider p = catalogue.get(i);
+            if (selected.contains(Integer.toString(p.id)) ||
+                ((!query.isEmpty() || showAll || i < 15) && p.name.toLowerCase(Locale.ROOT).contains(query))) visible.add(p);
+        }
+        Set<String> known = new HashSet<>();
+        for (StreamingRepository.Provider p : catalogue) known.add(Integer.toString(p.id));
+        for (String id : selected) if (!known.contains(id)) {
+            try { visible.add(new StreamingRepository.Provider(Integer.parseInt(id), "Saved provider " + id)); }
+            catch (NumberFormatException ignored) { }
+        }
+        CharSequence[] names = new CharSequence[visible.size()], ids = new CharSequence[visible.size()];
+        for (int i = 0; i < visible.size(); i++) {
+            names[i] = visible.get(i).name; ids[i] = Integer.toString(visible.get(i).id);
         }
         providers.setEntries(names); providers.setEntryValues(ids);
-        providers.setEnabled(!catalogue.isEmpty());
+        providers.setEnabled(!visible.isEmpty());
         Set<String> chosen = StreamingRepository.selected(context);
         providers.setValues(chosen);
         updatePreferred(chosen); updateSummary(chosen);

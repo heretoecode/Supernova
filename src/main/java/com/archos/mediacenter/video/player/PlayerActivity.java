@@ -4303,7 +4303,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 // when no name use track number instead of R.string.unknown_track_name th
                 if (trackName.isEmpty())
                     name = getText(R.string.player_track) + " " + (i + 1);
-                CharSequence summary = audio.format;
+                CharSequence summary = audio.format + (audio.channels == null || audio.channels.isEmpty() ? "" : " · " + audio.channels);
+                if (mPreferences.getBoolean("try_new_ui", false) && audio.channels != null && !audio.channels.isEmpty()) name = name + " · " + audio.channels;
                 mAudioInfoController.addTrack(name, summary, false);
             }
             mAudioInfoController.setTrack(mVideoInfo.audioTrack);

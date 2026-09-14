@@ -8,16 +8,23 @@ Based on NOVA 6.4.63. Version 6.4.63-mark.3 (6040065).
 - Documentaries is back inside the TV shows category row, with a main-settings visibility switch.
 - Brighter main and secondary text.
 
-## Streaming
-- Provider logos with accessible names and a readable fallback if artwork cannot load.
-- Compact alternatives button; local playback retains its ordinary visible label.
-- JustWatch/TMDb attribution is separate from playback controls.
-- Episode details query availability for that episode’s season. Exact episode coverage is not verified; this is explicitly labelled.
-- Show details retain explicitly labelled show-level coverage.
-- Availability appears before title-link enrichment. Links resolve when selected.
-- Strict provider-name matching avoids mixing TMDb and JustWatch numeric identifiers.
-- Repeated launch clicks are guarded. Refresh in streaming settings invalidates availability.
-- No rent/buy offers. Country-specific saved provider choices remain.
+## Provider settings
+- Streaming launch links are paused for this test edition, following the latest handoff.
+- Country-specific choices remain saved. Provider lists use regional display priority.
+- Search and “Show all providers” controls; selected providers remain visible when filtered.
+
+## Experimental playback presentation
+- “Try new UI” also enables a translucent slate playback bar with the timeline above centred controls.
+- Slate focus treatment for the existing audio, subtitle and playback option cards.
+- Experimental remote seeks begin at 10 seconds; existing hold acceleration remains.
+- Audio channel information accompanies track names when supplied by the file.
+- Existing playback engine, intro/recap/credits behaviour and classic controls remain.
+
+## Latest handoff: still outstanding
+The complete mock-up HUD, chapter picker/markers, new playback stats panel, scan-result counters,
+seek-preview generation, temporary subtitles after rewind and Up Next panel are not included yet.
+Preview generation remains absent, so it cannot compete with playback.
+These notes distinguish this test candidate from completion of the entire handoff.
 
 ## Identification and responsiveness
 - TV-show identification accepts TMDb numeric IDs, TMDb TV URLs, IMDb IDs and IMDb title URLs.

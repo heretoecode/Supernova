@@ -155,7 +155,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
 
         if (tags == null) {
             // 2015: I didn't test this case...
-            buildNewShowTags(result.getTitle());
+            tags = buildNewShowTags(result.getTitle());
         }
 
         if (log.isDebugEnabled()) log.debug("put in mTagsToSearchResultMap: {}", tags);

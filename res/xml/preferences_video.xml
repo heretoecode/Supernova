@@ -5,15 +5,8 @@
         android:key="preferences_about"
         android:title="@string/preferences_about"
         app:iconSpaceReserved="false">
-        <Preference
-            android:title="@string/APP_INFO"
-            android:selectable="false"
-            android:key="preferences_version"
-            app:iconSpaceReserved="false"/>
-
-        <Preference android:key="mark_release_notes"
-            android:title="@string/mark_release_notes_title"
-            android:summary="@string/mark_build_identity" app:iconSpaceReserved="false"/>
+        <Preference android:key="preferences_version" android:title="Build"
+            android:selectable="true" app:iconSpaceReserved="false"/>
         <ListPreference
             android:dialogTitle="@string/ui_language_title"
             android:entries="@array/entries_list_preference"

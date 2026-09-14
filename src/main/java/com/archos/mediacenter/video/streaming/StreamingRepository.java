@@ -22,6 +22,8 @@ import okhttp3.Response;
 
 /** Country-specific availability. No rental/purchase offers are exposed to the UI. */
 public final class StreamingRepository {
+    /** Streaming launch integration is paused for this testing edition. */
+    public static final boolean LINKS_AVAILABLE = false;
     public static final String ENABLED = "streaming_enabled";
     public static final String COUNTRY = "streaming_country";
     public static final String PROVIDERS = "streaming_providers_";
@@ -94,16 +96,21 @@ public final class StreamingRepository {
     }
     public static List<Provider> providers(Context context, String country) throws Exception {
         Map<Integer, Provider> result = new HashMap<>();
+        Map<Integer, Integer> ranks = new HashMap<>();
         for (String kind : new String[]{"movie", "tv"}) {
             JSONArray entries = api(context, "watch/providers/" + kind, country).getJSONArray("results");
             for (int i = 0; i < entries.length(); i++) {
                 JSONObject p = entries.getJSONObject(i);
                 int id = p.getInt("provider_id");
+                JSONObject priorities = p.optJSONObject("display_priorities");
+                int rank = priorities == null ? p.optInt("display_priority", 10000) : priorities.optInt(country, 10000);
+                ranks.merge(id, rank, Math::min);
                 result.put(id, new Provider(id, p.getString("provider_name"), p.optString("logo_path")));
             }
         }
         List<Provider> sorted = new ArrayList<>(result.values());
-        sorted.sort(Comparator.comparing(p -> p.name.toLowerCase(Locale.ROOT)));
+        sorted.sort(Comparator.comparingInt((Provider p) -> ranks.getOrDefault(p.id, 10000))
+                .thenComparing(p -> p.name.toLowerCase(Locale.ROOT)));
         return sorted;
     }
     public static Availability load(Context context, String kind, long id, String country) throws Exception {
@@ -159,6 +166,9 @@ public final class StreamingRepository {
                 JSONObject p = entries.optJSONObject(i);
                 if (p == null || p.optInt("provider_id") <= 0 || p.optString("provider_name").isEmpty()) continue;
                 int id = p.getInt("provider_id");
+                JSONObject priorities = p.optJSONObject("display_priorities");
+                int rank = priorities == null ? p.optInt("display_priority", 10000) : priorities.optInt(country, 10000);
+                ranks.merge(id, rank, Math::min);
                 if (!offers.containsKey(id)) offers.put(id, new Offer(new Provider(id, p.getString("provider_name")), type));
             }
         }

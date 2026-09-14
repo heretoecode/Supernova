@@ -51,7 +51,7 @@ public final class StreamingActions {
         this.app = activity.getApplicationContext(); this.key = key;
     }
     public static void bind(SparseArrayObjectAdapter adapter, Context context, Base item, boolean inPlayer, int key) {
-        if (!(context instanceof Activity)) return;
+        if (!StreamingRepository.LINKS_AVAILABLE || !(context instanceof Activity)) return;
         StreamingActions controller = BOUND.get(adapter);
         if (controller == null) {
             controller = new StreamingActions(adapter, (Activity) context, key);

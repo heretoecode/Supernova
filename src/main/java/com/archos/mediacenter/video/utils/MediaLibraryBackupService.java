@@ -105,7 +105,8 @@ public class MediaLibraryBackupService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (log.isDebugEnabled()) log.debug("onStartCommand: intent={}", intent);
 
-        //startForeground(NOTIFICATION_ID, nb.build());
+        androidx.core.app.ServiceCompat.startForeground(this, NOTIFICATION_ID, nb.build(),
+                android.os.Build.VERSION.SDK_INT >= 29 ? android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC : 0);
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_EXPORT.equals(action)) {
