@@ -316,6 +316,9 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             Object row = mRowsAdapter.get(i);
             if (row instanceof ListRow && belongsToTab(((ListRow)row).getId(), mActiveTab)) rows.add(row);
         }
+        boolean unchanged = rows.size() == mVisibleRows.size();
+        for (int i = 0; unchanged && i < rows.size(); i++) unchanged = rows.get(i) == mVisibleRows.get(i);
+        if (unchanged) return; // Hidden-section updates must not reset the current row's focus.
         mVisibleRows.setItems(rows, null);
         if (!rows.isEmpty()) super.setSelectedPosition(Math.max(0, rows.indexOf(selected)), false);
     }
