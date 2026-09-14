@@ -31,7 +31,7 @@ public final class TopNavigation extends LinearLayout {
         bar.setPadding(dp(26), 0, dp(16), 0);
         bar.setBackgroundColor(0xff10283d);
         TextView brand = new TextView(c);
-        brand.setText("NOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", 0)); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);
+        brand.setText("NOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);
         brand.setPadding(0, 0, dp(20), 0); bar.addView(brand);
         String[] labels = {"Home", "Movies", "TV shows", "Network & files", "Settings", "Search"};
         for (int i = 0; i < labels.length; i++) {
