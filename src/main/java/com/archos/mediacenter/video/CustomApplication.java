@@ -756,7 +756,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         //        getResources().getDimensionPixelSize(R.dimen.details_poster_width),
         //        getResources().getDimensionPixelSize(R.dimen.details_poster_height));
 
-        BASEDIR = Environment.getExternalStorageDirectory().getPath()+"Android/data/"+getPackageName();
+        BASEDIR = new File(getCacheDir(), "legacy-images").getAbsolutePath();
 
         // handles NetworkState changes
         networkState = NetworkState.instance(mContext);

@@ -1205,7 +1205,8 @@
 
         <receiver
             android:name="com.archos.mediacenter.LibAvosReceiver"
-            android:exported="true">
+            android:exported="false"
+            android:enabled="false">
             <intent-filter>
                 <action android:name="com.archos.mediacenter.NEW_PLUGINS" />
             </intent-filter>
@@ -1249,7 +1250,7 @@
         <provider
             android:name="com.archos.mediaprovider.video.VideoProvider"
             android:authorities="com.archos.media.videocommunity;com.archos.media.scrapercommunity"
-            android:exported="true" />
+            android:exported="false" />
         <!-- BroadcastReceiver to trigger database import -->
         <receiver
             android:name="com.archos.mediaprovider.video.VideoStoreImportReceiver"

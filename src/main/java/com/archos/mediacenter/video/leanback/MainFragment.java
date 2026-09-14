@@ -292,6 +292,36 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
         currentLocale = CustomApplication.getUiLocale(getContext());
     }
 
+    private boolean mTopNavigation;
+    private TopNavigation mNavigation;
+
+    @Override
+    public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
+        mTopNavigation = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
+        View content = super.onCreateView(inflater, container, state);
+        if (!mTopNavigation) return content;
+        mNavigation = new TopNavigation(requireContext(), content, this::navigateTop, () -> getSelectedPosition() == 0);
+        return mNavigation;
+    }
+
+    private void navigateTop(int tab) {
+        if (tab == 4) {
+            startActivity(new Intent(requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+        } else if (tab == 5) {
+            Intent search = new Intent(requireContext(), VideoSearchActivity.class);
+            search.putExtra(VideoSearchActivity.EXTRA_SEARCH_MODE, VideoSearchActivity.SEARCH_MODE_ALL);
+            startActivity(search);
+        } else {
+            long row = tab == 1 ? ROW_ID_MOVIES : tab == 2 ? ROW_ID_TVSHOW : ROW_ID_FILES;
+            int position = tab == 0 ? 0 : getRowPosition(row);
+            if (position >= 0) setSelectedPosition(position, true);
+        }
+    }
+
+    public boolean focusTopNavigation() {
+        return mNavigation != null && mNavigation.focusNavigation();
+    }
+
     private Activity updateActivity(String callingMethod) {
         mActivity = getActivity();
         if (mActivity == null) log.warn("updateActivity: {} -> activity is null!", callingMethod);
@@ -333,7 +363,8 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
 
         Resources r = getResources();
         setBadgeDrawable(ContextCompat.getDrawable(mActivity, R.drawable.leanback_title));
-        setHeadersState(HEADERS_ENABLED);
+        setHeadersState(mTopNavigation ? HEADERS_DISABLED : HEADERS_ENABLED);
+        if (mTopNavigation) showTitle(false);
         setHeadersTransitionOnBackEnabled(true);
 
         // Apply theme-aware colors
@@ -393,7 +424,6 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
             LoaderManager.getInstance(this).initLoader(LOADER_ID_ALL_TV_SHOWS, tvshowArgs, this);
         }
         if (mShowDocumentaries) {
-            LoaderManager.getInstance(this).initLoader(LOADER_ID_DOCUMENTARIES, null, this);
         }
         if (log.isDebugEnabled()) log.debug("onViewCreated: nonScrapedVideosCount initLoader");
         LoaderManager.getInstance(this).initLoader(LOADER_ID_NON_SCRAPED_VIDEOS_COUNT, null, this);
@@ -439,6 +469,10 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
     public void onResume() {
         if (log.isDebugEnabled()) log.debug("onResume");
         super.onResume();
+        if (mTopNavigation != PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)) {
+            requireActivity().recreate();
+            return;
+        }
         CustomApplication.loadLocale(getResources());
         if (hasLocaleChanged()) {
             // Recreate the fragment or activity to apply the new locale
@@ -647,11 +681,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
                 VideoPreferencesCommon.SHOW_DOCUMENTARIES_DEFAULT);
         if (newShowDocumentaries != mShowDocumentaries) {
             mShowDocumentaries = newShowDocumentaries;
-            if (mShowDocumentaries) {
-                LoaderManager.getInstance(this).restartLoader(LOADER_ID_DOCUMENTARIES, null, this);
-            } else {
-                updateDocumentariesVisibility(false);
-            }
+            updateDocumentariesVisibility(true);
         }
 
         firstTimeLoad = false;
@@ -807,9 +837,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
         buildAllTvshowsBox(wasInPause);
         mTvshowRowAdapter.add(mAllTvshowsBox);
         mDocumentariesBox = new Box(Box.ID.DOCUMENTARIES, getString(R.string.documentary_tv_shows), R.drawable.genres_banner);
-        ArrayObjectAdapter documentaryAdapter = new ArrayObjectAdapter(new BoxItemPresenter());
-        documentaryAdapter.add(mDocumentariesBox);
-        mDocumentariesRow = new ListRow(ROW_ID_DOCUMENTARIES, new HeaderItem(getString(R.string.documentaries)), documentaryAdapter);
+        if (mShowDocumentaries) mTvshowRowAdapter.add(mDocumentariesBox);
         //tvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_ALPHA, getString(R.string.tvshows_by_alpha), R.drawable.alpha_banner));
         mTvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_GENRE, getString(R.string.tvshows_by_genre), R.drawable.genres_banner));
         if (showByRating)
@@ -1696,15 +1724,11 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
 
     /** A real browse row also creates a native entry in the left navigation.
      * Keep it discoverable even before the first documentary has been scraped. */
-    private void updateDocumentariesVisibility(boolean hasDocumentaries) {
-        if (mRowsAdapter == null || mDocumentariesRow == null) return;
-        int position = getRowPosition(ROW_ID_DOCUMENTARIES);
-        if (!mShowDocumentaries) {
-            if (position >= 0) mRowsAdapter.removeItems(position, 1);
-        } else if (position < 0) {
-            int before = getRowPosition(ROW_ID_PREFERENCES);
-            mRowsAdapter.add(before >= 0 ? before : mRowsAdapter.size(), mDocumentariesRow);
-        }
+    private void updateDocumentariesVisibility(boolean unused) {
+        if (mTvshowRowAdapter == null || mDocumentariesBox == null) return;
+        int index = mTvshowRowAdapter.indexOf(mDocumentariesBox);
+        if (mShowDocumentaries && index < 0) mTvshowRowAdapter.add(Math.min(1, mTvshowRowAdapter.size()), mDocumentariesBox);
+        else if (!mShowDocumentaries && index >= 0) mTvshowRowAdapter.remove(mDocumentariesBox);
     }
 
     private enum InitFocus {
