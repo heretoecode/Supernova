@@ -115,6 +115,7 @@ public class TopNavigationTest {
                 for (int i=0; i<6; i++) cards.add(new com.archos.mediacenter.video.leanback.adapter.object.Box(com.archos.mediacenter.video.leanback.adapter.object.Box.ID.DOCUMENTARIES, row == 1 ? (i == 0 ? "All TV shows" : i == 1 ? "Documentaries" : "Genres") : "Preview title " + (i+1), R.drawable.preview_documentaries));
                 rows.add(new ListRow(new HeaderItem(new String[]{"Continue watching", "TV shows", "Recently added"}[row]), cards));
             }
+            browse.setSelectedPosition(0, false); // MainFragment selects the first row after asynchronous loading.
             View root = browse.getView();
             for (int frame=0; frame<8; frame++) {
                 browse.getChildFragmentManager().executePendingTransactions();
