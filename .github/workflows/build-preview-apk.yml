@@ -87,7 +87,8 @@ jobs:
           fi
           test -s ~/.android/debug.keystore || { echo "Existing signing key unavailable; refusing to generate a different identity."; exit 1; }
           keytool -exportcert -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -file /tmp/nova-signing-certificate.der
-          echo "90ffa69e47935aefda234d803e0ff5a99c41fa88c7c9f8366985d481de41c0b8  /tmp/nova-signing-certificate.der" | sha256sum --check
+          # First Preview release: capture this branch's retained certificate before building.
+          sha256sum /tmp/nova-signing-certificate.der | cut -d " " -f 1 | tee nova/preview-certificate-sha256.txt
 
       - name: Test personal build changes
         working-directory: nova/Video
@@ -110,7 +111,7 @@ jobs:
           [[ "${apks[0]}" == *org.courville.nova.markpreview-* ]]
           build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
           "$build_tools/apksigner" verify --verbose --print-certs "${apks[0]}" | tee nova/apk-verification.log
-          grep -qi '90ffa69e47935aefda234d803e0ff5a99c41fa88c7c9f8366985d481de41c0b8' nova/apk-verification.log
+          grep -qi "$(cat nova/preview-certificate-sha256.txt)" nova/apk-verification.log
           unzip -l "${apks[0]}" 'lib/*' | tee -a nova/apk-verification.log
           sha256sum "${apks[0]}" | tee nova/apk-sha256.txt
 
@@ -126,6 +127,7 @@ jobs:
             nova/Video/docs/MARK-EDITION-3.md
             nova/source-manifest.xml
             nova/apk-verification.log
+            nova/preview-certificate-sha256.txt
             nova/apk-sha256.txt
             nova/Video/build/reports/lint-results-*
           if-no-files-found: warn
