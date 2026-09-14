@@ -15,6 +15,12 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class TopNavigationTest {
+    @Before public void initialiseImageLoader() {
+        try { com.squareup.picasso.Picasso.get(); }
+        catch (IllegalStateException missingTestProvider) {
+            com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+        }
+    }
     public static class Host extends FragmentActivity {
         @Override public void onCreate(Bundle state) {
             setTheme(R.style.MyLeanbackTheme); super.onCreate(state);
@@ -109,12 +115,17 @@ public class TopNavigationTest {
                 for (int i=0; i<6; i++) cards.add(new com.archos.mediacenter.video.leanback.adapter.object.Box(com.archos.mediacenter.video.leanback.adapter.object.Box.ID.DOCUMENTARIES, row == 1 ? (i == 0 ? "All TV shows" : i == 1 ? "Documentaries" : "Genres") : "Preview title " + (i+1), R.drawable.preview_documentaries));
                 rows.add(new ListRow(new HeaderItem(new String[]{"Continue watching", "TV shows", "Recently added"}[row]), cards));
             }
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             View root = browse.getView();
-            root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
-            root.layout(0, 0, 960, 540);
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
-            root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY)); root.layout(0, 0, 960, 540);
+            for (int frame=0; frame<8; frame++) {
+                browse.getChildFragmentManager().executePendingTransactions();
+                host.get().getSupportFragmentManager().executePendingTransactions();
+                root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
+                root.layout(0, 0, 960, 540);
+                root.getViewTreeObserver().dispatchOnPreDraw();
+                org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(100));
+            }
+            assertNotNull(browse.getRowsSupportFragment());
+            assertTrue("Render must include populated library rows", browse.getRowsSupportFragment().getVerticalGridView().getChildCount() > 0);
             android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(960, 540, android.graphics.Bitmap.Config.ARGB_8888);
             root.draw(new android.graphics.Canvas(bitmap));
             java.io.File out = new java.io.File("build/reports/preview-ui/home.png"); out.getParentFile().mkdirs();
