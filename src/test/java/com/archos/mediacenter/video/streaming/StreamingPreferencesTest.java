@@ -54,7 +54,7 @@ public class StreamingPreferencesTest {
         while(System.currentTimeMillis()<deadline) {
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             PreferenceCategory category=fragment.findPreference("streaming_category");
-            if(host.get().getString(text).contentEquals(category.getPreference(4).getSummary()))return;
+            if(host.get().getString(text).contentEquals(fragment.findPreference("streaming_provider_status").getSummary()))return;
             Thread.sleep(10);
         }
         fail("Provider state did not settle");
@@ -93,4 +93,21 @@ public class StreamingPreferencesTest {
         MultiSelectListPreference providers=fragment.findPreference("streaming_providers_IE");
         assertTrue(providers.isEnabled());assertEquals("Netflix",providers.getEntries()[0]);
     }
+    @Test public void filteringKeepsSelectionsVisibleAndDoesNotChangeThem() throws Exception {
+        StreamingRepository.prefs(host.get()).edit().putStringSet("streaming_providers_IE", Collections.singleton("99")).commit();
+        binding=new StreamingPreferences(fragment,(c,r)-> {
+            List<StreamingRepository.Provider> list=new ArrayList<>();
+            for(int i=1;i<=20;i++)list.add(new StreamingRepository.Provider(i,"Provider "+i));
+            return list;
+        });
+        awaitSummary(R.string.streaming_ready);
+        MultiSelectListPreference providers=fragment.findPreference("streaming_providers_IE");
+        assertEquals(16,providers.getEntries().length);
+        fragment.findPreference("streaming_provider_search").callChangeListener("Provider 20");
+        assertEquals(2,providers.getEntries().length);
+        assertTrue(Arrays.asList(providers.getEntryValues()).contains("99"));
+        assertTrue(Arrays.asList(providers.getEntryValues()).contains("20"));
+        assertEquals(Collections.singleton("99"),StreamingRepository.selected(host.get()));
+    }
+
 }

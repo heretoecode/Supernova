@@ -56,7 +56,7 @@ public final class StreamingPreferences {
         country.setEntries(names); country.setEntryValues(codes.toArray(new CharSequence[0]));
         add(country);
         EditTextPreference search = new EditTextPreference(context);
-        search.setTitle("Search providers"); search.setPersistent(false);
+        search.setKey("streaming_provider_search"); search.setTitle("Search providers"); search.setPersistent(false);
         search.setOnPreferenceChangeListener((p, value) -> {
             query = value.toString().trim().toLowerCase(Locale.ROOT);
             search.setSummary(query.isEmpty() ? "All popular providers" : value.toString());
@@ -64,7 +64,7 @@ public final class StreamingPreferences {
         });
         add(search);
         SwitchPreferenceCompat all = new SwitchPreferenceCompat(context);
-        all.setTitle("Show all providers"); all.setPersistent(false); all.setChecked(false);
+        all.setKey("streaming_show_all"); all.setTitle("Show all providers"); all.setPersistent(false); all.setChecked(false);
         all.setSummary("Selected providers always remain visible");
         all.setOnPreferenceChangeListener((p, value) -> { showAll = (Boolean)value; populate(context); return true; });
         add(all);
@@ -78,6 +78,7 @@ public final class StreamingPreferences {
         preferred.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
         add(preferred);
         status = new Preference(context);
+        status.setKey("streaming_provider_status");
         status.setTitle(R.string.streaming_refresh);
         status.setOnPreferenceClickListener(p -> { StreamingRepository.invalidate(); load(); return true; });
         add(status);
