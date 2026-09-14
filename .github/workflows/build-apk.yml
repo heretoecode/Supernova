@@ -40,7 +40,7 @@ jobs:
           cd nova
           repo init -u https://github.com/nova-video-player/aos-AVP -b 9c5842b74ab180c99441ed23fdd5d508448388a7 -m v6_4.xml
           cp ../source/.github/build/nova-ci.xml .repo/manifests/v6_4.xml
-          repo sync --no-manifest-update -d -j 4
+          repo sync --no-manifest-update -c -d -j 4
 
       - name: Overlay the triggering Video revision
         working-directory: nova/Video

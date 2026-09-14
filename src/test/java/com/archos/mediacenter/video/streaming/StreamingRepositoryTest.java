@@ -64,6 +64,17 @@ public class StreamingRepositoryTest {
         assertFalse(StreamingRepository.isTmdbWatchUrl("https://www.themoviedb.org/movie/5500/watch","movie",550));
         assertFalse(StreamingRepository.isTmdbWatchUrl("https://evil.example/movie/550/watch","movie",550));
     }
+    @Test public void reconcilesDifferentTmdbAndJustWatchProviderIds() throws Exception {
+        String html = link(2706, "flatrate", "ie", "https://www.disneyplus.com/movies/test/abc");
+        // Add the provider name to the same explicit clickout context as live TMDb pages.
+        Uri u = Uri.parse(html.substring(html.indexOf("https://"), html.indexOf("\">" )).replace("&amp;", "&"));
+        JSONObject cx = new JSONObject(new String(Base64.decode(u.getQueryParameter("cx"), Base64.URL_SAFE), StandardCharsets.UTF_8));
+        cx.getJSONArray("data").getJSONObject(0).getJSONObject("data").put("provider", "Disney Plus");
+        String named = u.buildUpon().clearQuery().appendQueryParameter("cx", Base64.encodeToString(cx.toString().getBytes(StandardCharsets.UTF_8), Base64.URL_SAFE | Base64.NO_WRAP))
+                .appendQueryParameter("r", "https://www.disneyplus.com/movies/test/abc").appendQueryParameter("uct_country", "ie").build().toString();
+        Map<Integer,String> result = StreamingRepository.parseWatchLinks(named, "IE", Collections.singletonMap("Disney Plus",337));
+        assertTrue(result.containsKey(337)); assertFalse(result.containsKey(2706));
+    }
     @Test public void rejectsUnsafeTargets() {
         for (String url:Arrays.asList("file:///data/data/test", "intent://app", "http://example.com", "https://user:pass@example.com", "https://192.168.1.1"))
             assertFalse(url,StreamingRepository.safeWebUrl(url));

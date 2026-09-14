@@ -120,7 +120,9 @@ public final class StreamingRepository {
                 // This enrichment is optional: a changed page must never break local playback.
                 String url = Uri.parse(availability.watchUrl).buildUpon().clearQuery()
                         .appendQueryParameter("locale", country).build().toString();
-                Map<Integer, String> links = parseWatchLinks(get(url, 2 * 1024 * 1024), country);
+                Map<String, Integer> providerIds = new HashMap<>();
+                for (Offer offer : availability.offers) providerIds.put(offer.provider.name, offer.provider.id);
+                Map<Integer, String> links = parseWatchLinks(get(url, 2 * 1024 * 1024), country, providerIds);
                 for (Offer offer : availability.offers) offer.url = links.getOrDefault(offer.provider.id, "");
             } catch (Exception ignored) { /* use the explicitly labelled watch-page fallback */ }
         }
@@ -162,6 +164,9 @@ public final class StreamingRepository {
     private static final Pattern WATCH_LINK = Pattern.compile("https://click\\.justwatch\\.com/[^\\s\"'<>]+");
     /** Extract only country-matched, non-transactional links with explicit provider IDs. */
     public static Map<Integer, String> parseWatchLinks(String html, String country) {
+        return parseWatchLinks(html, country, Collections.emptyMap());
+    }
+    static Map<Integer, String> parseWatchLinks(String html, String country, Map<String, Integer> providerIds) {
         Map<Integer, String> links = new HashMap<>();
         Matcher matcher = WATCH_LINK.matcher(html);
         while (matcher.find()) {
@@ -178,12 +183,34 @@ public final class StreamingRepository {
                     JSONObject item = data.getJSONObject(i);
                     if (!item.optString("schema").contains("/clickout_context/")) continue;
                     JSONObject offer = item.getJSONObject("data");
-                    if (allowedType(offer.optString("monetizationType")) && offer.optInt("providerId") > 0)
-                        links.putIfAbsent(offer.getInt("providerId"), target);
+                    if (allowedType(offer.optString("monetizationType")) && offer.optInt("providerId") > 0) {
+                        // TMDb and JustWatch can assign different IDs to the same named provider.
+                        int providerId = providerIds.getOrDefault(offer.optString("provider"), offer.getInt("providerId"));
+                        links.putIfAbsent(providerId, target);
+                    }
                 }
             } catch (Exception ignored) { /* malformed individual offer: ignore it */ }
         }
         return links;
+    }
+    /** Resolve an affiliate redirect only when the viewer selects the offer. */
+    public static String resolveTitleUrl(String url) {
+        if (!safeWebUrl(url)) return "";
+        String host = Uri.parse(url).getHost();
+        // Only known link redirectors need expansion; normal provider links are left intact.
+        if (host == null || !(host.endsWith(".bn5x.net") || host.endsWith(".pxf.io") || host.equals("click.justwatch.com"))) return url;
+        OkHttpClient redirects = HTTP.newBuilder().followRedirects(false).followSslRedirects(false).build();
+        String current = url;
+        for (int i = 0; i < 5; i++) {
+            try (Response response = redirects.newCall(new Request.Builder().url(current).head().build()).execute()) {
+                String location = response.header("Location");
+                if (response.code() < 300 || response.code() >= 400 || location == null) return current;
+                okhttp3.HttpUrl next = response.request().url().resolve(location);
+                if (next == null || !safeWebUrl(next.toString())) return url;
+                current = next.toString();
+            } catch (Exception e) { return url; }
+        }
+        return current;
     }
     public static boolean safeWebUrl(String url) {
         if (url == null || url.length() > 12000) return false;

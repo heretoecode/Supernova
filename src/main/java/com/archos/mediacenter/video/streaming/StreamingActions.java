@@ -155,10 +155,23 @@ public final class StreamingActions {
     private void openOffer(StreamingRepository.Offer offer, String watchUrl, String title) {
         Activity a = active(); if (a == null) return;
         if (StreamingRepository.safeWebUrl(offer.url)) {
+            Toast.makeText(a, app.getString(R.string.streaming_open_provider, offer.provider.name), Toast.LENGTH_SHORT).show();
+            final int request = generation;
+            task = StreamingRepository.IO.submit(() -> {
+                String resolved = StreamingRepository.resolveTitleUrl(offer.url);
+                main.post(() -> {
+                    if (request == generation && active() != null) launchOffer(offer, resolved, watchUrl, title);
+                });
+            });
+        } else launchOffer(offer, "", watchUrl, title);
+    }
+    private void launchOffer(StreamingRepository.Offer offer, String url, String watchUrl, String title) {
+        Activity a = active(); if (a == null) return;
+        if (StreamingRepository.safeWebUrl(url)) {
             for (String pkg : packages(offer.provider.name)) {
-                if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(offer.url)).setPackage(pkg))) return;
+                if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(pkg))) return;
             }
-            if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(offer.url)))) return;
+            if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)))) return;
         }
         new AlertDialog.Builder(a).setTitle(offer.provider.name)
                 .setMessage(app.getString(R.string.streaming_open_fallback, title))
