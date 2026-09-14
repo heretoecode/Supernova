@@ -148,7 +148,7 @@ public final class StreamingActions {
         Activity a = active(); if (a == null) return;
         CharSequence[] labels = new CharSequence[offers.size()];
         for (int i = 0; i < offers.size(); i++) labels[i] = offers.get(i).provider.name;
-        new AlertDialog.Builder(a).setTitle(app.getString(R.string.streaming_more) + " · " + region + " · JustWatch")
+        new AlertDialog.Builder(a, com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme() ? R.style.Theme_AlertDialog_Slate : 0).setTitle(app.getString(R.string.streaming_more) + " · " + region + " · JustWatch")
                 .setItems(labels, (dialog, which) -> openOffer(offers.get(which), watchUrl, title))
                 .setNegativeButton(android.R.string.cancel, null).show();
     }
@@ -173,7 +173,7 @@ public final class StreamingActions {
             }
             if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)))) return;
         }
-        new AlertDialog.Builder(a).setTitle(offer.provider.name)
+        new AlertDialog.Builder(a, com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme() ? R.style.Theme_AlertDialog_Slate : 0).setTitle(offer.provider.name)
                 .setMessage(app.getString(R.string.streaming_open_fallback, title))
                 .setPositiveButton(R.string.streaming_open_app, (d, w) -> {
                     for (String pkg : packages(offer.provider.name)) {

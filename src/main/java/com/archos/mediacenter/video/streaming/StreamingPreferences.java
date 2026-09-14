@@ -13,6 +13,8 @@ import java.util.concurrent.Future;
 
 /** Native NOVA preference rows: no replacement settings screen. */
 public final class StreamingPreferences {
+    interface CatalogueLoader { List<StreamingRepository.Provider> load(Context context, String country) throws Exception; }
+    private final CatalogueLoader loader;
     private final PreferenceFragmentCompat fragment;
     private final PreferenceCategory category;
     private final ListPreference country;
@@ -25,6 +27,10 @@ public final class StreamingPreferences {
     private final Handler main = new Handler(Looper.getMainLooper());
 
     public StreamingPreferences(PreferenceFragmentCompat fragment) {
+        this(fragment, StreamingRepository::providers);
+    }
+    StreamingPreferences(PreferenceFragmentCompat fragment, CatalogueLoader loader) {
+        this.loader = loader;
         this.fragment = fragment;
         Context context = fragment.requireContext();
         category = fragment.findPreference("streaming_category");
@@ -93,7 +99,7 @@ public final class StreamingPreferences {
         status.setSummary(R.string.streaming_loading);
         task = StreamingRepository.IO.submit(() -> {
             try {
-                List<StreamingRepository.Provider> loaded = StreamingRepository.providers(context, region);
+                List<StreamingRepository.Provider> loaded = loader.load(context, region);
                 JSONArray json = new JSONArray();
                 for (StreamingRepository.Provider p : loaded) json.put(new JSONObject().put("id", p.id).put("name", p.name));
                 StreamingRepository.prefs(context).edit().putString("streaming_catalogue_" + region, json.toString()).apply();
