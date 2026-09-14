@@ -63,6 +63,19 @@ jobs:
             source/**/*.gradle*
             source/gradle/wrapper/gradle-wrapper.properties
 
+      - name: Retain personal development signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: nova-mark-debug-signing-v1
+
+      - name: Test streaming filters and provider links
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' -Puniversal --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+
       - name: Build universal non-Amazon debug APK
         working-directory: nova/Video
         run: |
@@ -86,6 +99,9 @@ jobs:
           name: gradle-build-log
           path: |
             nova/gradle-build.log
+            nova/gradle-tests.log
+            nova/Video/build/reports/tests/
+            nova/Video/docs/MARK-EDITION-2.md
             nova/source-manifest.xml
             nova/apk-verification.log
             nova/apk-sha256.txt

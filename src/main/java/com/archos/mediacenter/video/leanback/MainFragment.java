@@ -171,6 +171,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
 
     final static int ROW_ID_LAST_ADDED = 1000;
     final static int ROW_ID_LAST_PLAYED = 1001;
+    final static int ROW_ID_DOCUMENTARIES = 1011;
     final static int ROW_ID_MOVIES = 1002;
     final static int ROW_ID_TVSHOW = 1003;
     final static int ROW_ID_ALL_TVSHOWS = 1004;
@@ -216,6 +217,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
     private Box mAllAnimesBox;
     private Box mAllTvshowsBox;
     private Box mDocumentariesBox;
+    private ListRow mDocumentariesRow;
     private Box mAllCollectionsBox;
     private Box mAllAnimeCollectionsBox;
     private Box mAllAnimeShowsBox;
@@ -804,7 +806,10 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
         mTvshowRowAdapter = new ArrayObjectAdapter(new BoxItemPresenter());
         buildAllTvshowsBox(wasInPause);
         mTvshowRowAdapter.add(mAllTvshowsBox);
-        mDocumentariesBox = new Box(Box.ID.DOCUMENTARIES, getString(R.string.documentaries), R.drawable.genres_banner);
+        mDocumentariesBox = new Box(Box.ID.DOCUMENTARIES, getString(R.string.documentary_tv_shows), R.drawable.genres_banner);
+        ArrayObjectAdapter documentaryAdapter = new ArrayObjectAdapter(new BoxItemPresenter());
+        documentaryAdapter.add(mDocumentariesBox);
+        mDocumentariesRow = new ListRow(ROW_ID_DOCUMENTARIES, new HeaderItem(getString(R.string.documentaries)), documentaryAdapter);
         //tvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_ALPHA, getString(R.string.tvshows_by_alpha), R.drawable.alpha_banner));
         mTvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_GENRE, getString(R.string.tvshows_by_genre), R.drawable.genres_banner));
         if (showByRating)
@@ -874,6 +879,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
                 new HeaderItem(getString(R.string.preferences)),
                 mPreferencesRowAdapter));
 
+        updateDocumentariesVisibility(true);
         setAdapter(mRowsAdapter);
         // A cold start creates banner placeholders.  Schedule their composite-icon replacement
         // when no import is underway.  An active import will send the scanner-finished broadcast;
@@ -1688,15 +1694,16 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
         }
     }
 
-    /** Keeps the entry out of the TV navigation until metadata yields at least one documentary. */
+    /** A real browse row also creates a native entry in the left navigation.
+     * Keep it discoverable even before the first documentary has been scraped. */
     private void updateDocumentariesVisibility(boolean hasDocumentaries) {
-        if (mTvshowRowAdapter == null || mDocumentariesBox == null) return;
-        int index = mTvshowRowAdapter.indexOf(mDocumentariesBox);
-        if (mShowDocumentaries && hasDocumentaries && index == -1) {
-            // Place it beside the other native TV categories, before genre browsing.
-            mTvshowRowAdapter.add(1, mDocumentariesBox);
-        } else if ((!mShowDocumentaries || !hasDocumentaries) && index != -1) {
-            mTvshowRowAdapter.removeItems(index, 1);
+        if (mRowsAdapter == null || mDocumentariesRow == null) return;
+        int position = getRowPosition(ROW_ID_DOCUMENTARIES);
+        if (!mShowDocumentaries) {
+            if (position >= 0) mRowsAdapter.removeItems(position, 1);
+        } else if (position < 0) {
+            int before = getRowPosition(ROW_ID_PREFERENCES);
+            mRowsAdapter.add(before >= 0 ? before : mRowsAdapter.size(), mDocumentariesRow);
         }
     }
 

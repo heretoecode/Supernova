@@ -22,6 +22,7 @@ import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
+import com.archos.mediacenter.video.streaming.StreamingActions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -625,6 +626,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
     @Override
     public void onDestroyView() {
+        if (mDetailsOverviewRow != null) StreamingActions.cancel(mDetailsOverviewRow.getActionsAdapter());
         mOverlay.destroy();
         delete = null;
         super.onDestroyView();
@@ -653,6 +655,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     @Override
     public void onResume() {
         super.onResume();
+        if (mDetailsOverviewRow != null) StreamingActions.refresh(mDetailsOverviewRow.getActionsAdapter());
         traceDetails("fragment-onResume");
         if (log.isDebugEnabled()) log.debug("onResume");
         mShouldUpdateRemoteResume = true;
@@ -765,6 +768,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     final OnActionClickedListener mOnActionClickedListener = new OnActionClickedListener() {
         @Override
         public void onActionClicked(Action action) {
+                if (StreamingActions.onClick(action)) return;
             VideoMetadata mMetadata = mVideo.getMetadata();
             isFilePlayable = true;
             // test from FileDetailsRowPresenter to check if file is playable
@@ -1637,9 +1641,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     if(finalResult!=null) {
                         Palette palette = Palette.from(finalResult).generate();
                         if (palette.getDarkVibrantSwatch() != null)
-                            mColor = palette.getDarkVibrantSwatch().getRgb();
+                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme() ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor() : palette.getDarkVibrantSwatch().getRgb();
                         else if (palette.getDarkMutedSwatch() != null)
-                            mColor = palette.getDarkMutedSwatch().getRgb();
+                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme() ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor() : palette.getDarkMutedSwatch().getRgb();
                         else
                             mColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
                         dominantColor = mColor;
@@ -2113,7 +2117,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                             color = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
 
                         if (color != mColor) {
-                            mColor = color;
+                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme() ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor() : color;
 
                             mVideoBadgePresenter.setSelectedBackgroundColor(color);
                             mOverviewRowPresenter.updateBackgroundColor(color);

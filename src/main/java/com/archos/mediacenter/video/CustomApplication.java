@@ -645,6 +645,11 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                 //.penaltyDeath()
                 .build());
         */
+        // Apply the agreed theme once when upgrading the previous personal build.
+        SharedPreferences markPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!markPrefs.getBoolean("mark_slate_applied", false)) {
+            markPrefs.edit().putString("app_theme", "slate").putBoolean("mark_slate_applied", true).apply();
+        }
         AndroidThreeTen.init(this);
 
         if (BuildConfig.DEBUG) {

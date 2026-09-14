@@ -11,6 +11,9 @@
             android:key="preferences_version"
             app:iconSpaceReserved="false"/>
 
+        <Preference android:key="mark_release_notes"
+            android:title="@string/mark_release_notes_title"
+            android:summary="@string/mark_build_identity" app:iconSpaceReserved="false"/>
         <ListPreference
             android:dialogTitle="@string/ui_language_title"
             android:entries="@array/entries_list_preference"
@@ -21,6 +24,7 @@
             android:title="@string/UiLang_title"
             app:iconSpaceReserved="false"/>
     </PreferenceCategory>
+    <PreferenceCategory android:key="streaming_category" android:title="@string/streaming_title" app:iconSpaceReserved="false"/>
     <PreferenceCategory
         android:key="preferences_category_video"
         android:title="@string/preferences_category_video"
@@ -296,7 +300,7 @@
             app:iconSpaceReserved="false"/>
 
         <ListPreference
-            android:defaultValue="blue"
+            android:defaultValue="slate"
             android:dialogTitle="@string/theme_selection_title"
             android:entries="@array/theme_selection_entries"
             android:entryValues="@array/theme_selection_entryvalues"

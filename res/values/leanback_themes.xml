@@ -102,4 +102,18 @@
         <!-- required for preferenceFragment title background not to be gray -->
         <item name="android:colorPrimary">@color/theme_primary_black</item>
     </style>
+    <style name="MyLeanbackTheme.Preferences.Slate" parent="MyLeanbackTheme.Preferences">
+        <item name="preferenceTheme">@style/MyLeanbackPreferenceTheme.Slate</item>
+        <item name="alertDialogTheme">@style/Theme.AlertDialog.Slate</item>
+    </style>
+    <style name="MyLeanbackPreferenceTheme.Slate" parent="PreferenceThemeOverlayLeanback">
+        <item name="android:windowBackground">@color/theme_background_slate</item>
+        <item name="colorPrimary">@color/theme_header_slate</item>
+        <item name="android:colorPrimary">@color/theme_header_slate</item>
+        <item name="colorAccent">@color/theme_accent_slate</item>
+    </style>
+    <style name="Theme.AlertDialog.Slate" parent="Theme.AlertDialog">
+        <item name="android:windowBackground">@color/theme_details_primary_slate</item>
+        <item name="colorAccent">@color/theme_accent_slate</item>
+    </style>
 </resources>

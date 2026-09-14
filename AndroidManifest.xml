@@ -86,6 +86,16 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <queries>
+        <package android:name="com.netflix.ninja"/>
+        <package android:name="com.netflix.mediaclient"/>
+        <package android:name="com.amazon.amazonvideo.livingroom"/>
+        <package android:name="com.amazon.avod.thirdpartyclient"/>
+        <package android:name="com.disney.disneyplus"/>
+        <package android:name="com.apple.atve.androidtv.appletv"/>
+        <package android:name="com.cbs.ca"/>
+        <package android:name="com.cbs.ott"/>
+        <package android:name="com.bskyb.nowtv.beta"/>
+
         <intent>
             <action
                 android:name="android.speech.RecognitionService" />

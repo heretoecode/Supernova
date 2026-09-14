@@ -312,6 +312,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     private Preference mExportManualPreference;
     private Preference mDbExportManualPreference = null;
 
+    private com.archos.mediacenter.video.streaming.StreamingPreferences mStreamingPreferences;
     private PreferenceFragmentCompat mPreferencesFragment;
 
     List<String> OpensubtitlesLanguageListEntries = new ArrayList<>();
@@ -665,6 +666,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         resetPassthroughPref(mSharedPreferences);
 
         addPreferencesFromResource(R.xml.preferences_video);
+        mStreamingPreferences = new com.archos.mediacenter.video.streaming.StreamingPreferences(mPreferencesFragment);
 
         TorrentPathDialogPreference torrentPref =
                 (TorrentPathDialogPreference) findPreference(KEY_TORRENT_PATH);
@@ -849,7 +851,15 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         }
         mAboutPreferences = (PreferenceCategory) findPreference(KEY_ABOUT_PREFERENCES);
         Preference novaVersion = (Preference) findPreference("preferences_version");
-        novaVersion.setTitle(mSharedPreferences.getString("nova_version", "@string/APP_INFO"));
+        novaVersion.setTitle(getString(R.string.APP_INFO));
+        novaVersion.setSummary(R.string.mark_build_identity);
+        findPreference("mark_release_notes").setOnPreferenceClickListener(preference -> {
+            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.mark_release_notes_title)
+                    .setMessage(R.string.mark_release_notes)
+                    .setPositiveButton(android.R.string.ok, null).show();
+            return true;
+        });
 
         mSmb2 = (CheckBoxPreference) findPreference(KEY_SMB2);
         mSmbResolver = (CheckBoxPreference) findPreference(KEY_SMB_RESOLV);
@@ -1630,6 +1640,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     }
 
     public void onDestroy() {
+        if (mStreamingPreferences != null) mStreamingPreferences.close();
         if (mSharedPreferences != null)
             mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         if (mOsPreferences != null && mOsPrefsListener != null)
