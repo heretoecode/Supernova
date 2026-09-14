@@ -1,3 +1,14 @@
+# Edition 3.1 Preview — home-screen repair
+Version 6.4.63-mark.3.1-preview (6040066). Updates the separate NOVA Preview app.
+
+- Removes the legacy title/search view structurally so it cannot reappear on row selection.
+- Compact top navigation and 40dp row alignment replace the empty header area.
+- Home, Movies, TV shows and Network & files each display their corresponding rows.
+- Experimental UI always uses slate colours without changing the saved classic theme.
+- Poster titles have two lines, brighter text and a slate information panel.
+- Classic navigation remains available when Try new UI is switched off.
+- This is a home-screen repair; outstanding playback features listed below remain outstanding.
+
 # Mark’s NOVA — Edition 3
 Based on NOVA 6.4.63. Test package: 6.4.63-mark.3-preview (6040065).
 

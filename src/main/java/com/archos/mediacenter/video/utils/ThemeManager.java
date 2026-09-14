@@ -87,7 +87,7 @@ public class ThemeManager {
      * Get the current theme setting
      */
     public String getCurrentTheme() {
-        return mPrefs.getString(KEY_APP_THEME, THEME_SLATE);
+        return mPrefs.getBoolean("try_new_ui", false) ? THEME_SLATE : mPrefs.getString(KEY_APP_THEME, THEME_SLATE);
     }
     
     /**

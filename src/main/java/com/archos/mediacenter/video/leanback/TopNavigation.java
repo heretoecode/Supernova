@@ -29,14 +29,15 @@ public final class TopNavigation extends LinearLayout {
         bar = new LinearLayout(c); bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(24), dp(8), dp(24), dp(8));
         TextView brand = new TextView(c);
-        brand.setText("NOVA"); brand.setTextSize(24); brand.setTextColor(0xffb7d7f5);
+        brand.setText("NOVA"); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);
         brand.setPadding(0, 0, dp(20), 0); bar.addView(brand);
         String[] labels = {"Home", "Movies", "TV shows", "Network & files", "Settings", "Search"};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
             TextView tab = new TextView(c); tabs[i] = tab;
             tab.setText(labels[i]); tab.setContentDescription(labels[i]);
-            tab.setTextColor(Color.WHITE); tab.setTextSize(16); tab.setGravity(Gravity.CENTER);
+            tab.setTextColor(Color.WHITE); tab.setTextSize(15); tab.setGravity(Gravity.CENTER);
+            tab.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
             tab.setSingleLine(true); tab.setFocusable(true); tab.setClickable(true);
             tab.setPadding(dp(10), dp(12), dp(10), dp(12));
             StateListDrawable bg = new StateListDrawable();

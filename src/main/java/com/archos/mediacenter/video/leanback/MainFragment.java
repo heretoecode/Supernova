@@ -132,7 +132,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MainFragment extends BrowseSupportFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainFragment extends ExperimentalBrowseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final Logger log = LoggerFactory.getLogger(MainFragment.class);
 
@@ -294,9 +294,52 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
 
     private boolean mTopNavigation;
     private TopNavigation mNavigation;
+    private int mActiveTab;
+    private ArrayObjectAdapter mVisibleRows;
+
+    static boolean belongsToTab(long row, int tab) {
+        switch (tab) {
+            case 1: return row == ROW_ID_MOVIES || row == ROW_ID_ALL_MOVIES;
+            case 2: return row == ROW_ID_TVSHOW || row == ROW_ID_ALL_TVSHOWS || row == ROW_ID_ANIMES || row == ROW_ID_ALL_ANIMES;
+            case 3: return row == ROW_ID_FILES;
+            default: return row == ROW_ID_WATCHING_UP_NEXT || row == ROW_ID_LAST_ADDED || row == ROW_ID_LAST_PLAYED
+                || row == ROW_ID_MOVIES || row == ROW_ID_TVSHOW;
+        }
+    }
+
+    private void refreshVisibleRows() {
+        if (!mTopNavigation || mVisibleRows == null) return;
+        int oldPosition = getSelectedPosition();
+        Object selected = oldPosition >= 0 && oldPosition < mVisibleRows.size() ? mVisibleRows.get(oldPosition) : null;
+        java.util.List<Object> rows = new java.util.ArrayList<>();
+        for (int i = 0; i < mRowsAdapter.size(); i++) {
+            Object row = mRowsAdapter.get(i);
+            if (row instanceof ListRow && belongsToTab(((ListRow)row).getId(), mActiveTab)) rows.add(row);
+        }
+        mVisibleRows.setItems(rows, null);
+        if (!rows.isEmpty()) super.setSelectedPosition(Math.max(0, rows.indexOf(selected)), false);
+    }
+
+    private int selectedSourcePosition() {
+        int selected = getSelectedPosition();
+        return mTopNavigation && mVisibleRows != null && selected >= 0 && selected < mVisibleRows.size()
+            ? mRowsAdapter.indexOf(mVisibleRows.get(selected)) : selected;
+    }
+
+    private void selectSourcePosition(int position, boolean smooth, Presenter.ViewHolderTask task) {
+        if (mTopNavigation) {
+            if (mVisibleRows == null || position < 0 || position >= mRowsAdapter.size()) return;
+            position = mVisibleRows.indexOf(mRowsAdapter.get(position));
+            if (position < 0) return;
+        }
+        if (task == null) super.setSelectedPosition(position, smooth);
+        else super.setSelectedPosition(position, smooth, task);
+    }
+
 
     @Override
     public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
+        mNavigation = null;
         mTopNavigation = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
         View content = super.onCreateView(inflater, container, state);
         if (!mTopNavigation) return content;
@@ -312,9 +355,9 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
             search.putExtra(VideoSearchActivity.EXTRA_SEARCH_MODE, VideoSearchActivity.SEARCH_MODE_ALL);
             startActivity(search);
         } else {
-            int row = tab == 1 ? ROW_ID_MOVIES : tab == 2 ? ROW_ID_TVSHOW : ROW_ID_FILES;
-            int position = tab == 0 ? 0 : getRowPosition(row);
-            if (position >= 0) setSelectedPosition(position, true);
+            mActiveTab = tab;
+            refreshVisibleRows();
+            if (mVisibleRows != null && mVisibleRows.size() > 0) super.setSelectedPosition(0, false);
         }
     }
 
@@ -908,7 +951,17 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
                 mPreferencesRowAdapter));
 
         updateDocumentariesVisibility(true);
-        setAdapter(mRowsAdapter);
+        if (mTopNavigation) {
+            mVisibleRows = new ArrayObjectAdapter(rowsPresenterSelector);
+            mRowsAdapter.registerObserver(new androidx.leanback.widget.ObjectAdapter.DataObserver() {
+                @Override public void onChanged() { refreshVisibleRows(); }
+                @Override public void onItemRangeChanged(int start, int count) { refreshVisibleRows(); }
+                @Override public void onItemRangeInserted(int start, int count) { refreshVisibleRows(); }
+                @Override public void onItemRangeRemoved(int start, int count) { refreshVisibleRows(); }
+            });
+            setAdapter(mVisibleRows);
+            refreshVisibleRows();
+        } else setAdapter(mRowsAdapter);
         // A cold start creates banner placeholders.  Schedule their composite-icon replacement
         // when no import is underway.  An active import will send the scanner-finished broadcast;
         // using that authoritative signal avoids building the same icons once before and once
@@ -1449,7 +1502,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
 
         if (mRowPendingSelection == null && mRowsAdapter.size() > 0) {
             int selectedPosition = Math.max(0,
-                    Math.min(getSelectedPosition(), mRowsAdapter.size() - 1));
+                    Math.min(selectedSourcePosition(), mRowsAdapter.size() - 1));
             mRowPendingSelection = mRowsAdapter.get(selectedPosition);
         }
         mRowsAdapter.removeItems(position, count);
@@ -1469,7 +1522,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
         }
 
         // A user-request selection supersedes any stale queued internal or user selection.
-        setSelectedPosition(selectedPosition, false);
+        selectSourcePosition(selectedPosition, false, null);
         mRowsSelectionHandler.removeCallbacks(mClearRowPendingSelection);
         mRowsSelectionHandler.post(mClearRowPendingSelection);
     }
@@ -1635,10 +1688,10 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
                             // This ensures that when returning from video playback, the focus goes to position 0
                             // where the just-played video now is, but stays at the current position if no video was played
                             int lastPlayedRowPosition = getRowPosition(ROW_ID_LAST_PLAYED);
-                            if (videoPosition0Changed && lastPlayedRowPosition != -1 && lastPlayedRowPosition == getSelectedPosition()) {
+                            if (videoPosition0Changed && lastPlayedRowPosition != -1 && lastPlayedRowPosition == selectedSourcePosition()) {
                                 if (log.isDebugEnabled()) log.debug("onLoadFinished: LastPlayed row is currently selected and video at position 0 changed, resetting item position to 0");
                                 // Use setSelectedPosition with SelectItemViewHolderTask to reset horizontal position
-                                setSelectedPosition(lastPlayedRowPosition, false, new ListRowPresenter.SelectItemViewHolderTask(0));
+                                selectSourcePosition(lastPlayedRowPosition, false, new ListRowPresenter.SelectItemViewHolderTask(0));
                             }
                         }
                     } else {
@@ -1767,7 +1820,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
             return; /// if nobody needs focus then exit
         }
         if (log.isDebugEnabled()) log.debug("checkInitFocus: sets focus on row 0 with animation if above rows were not visible it happens on network first");
-        if ((FEATURE_WATCH_UP_NEXT && mShowWatchingUpNextRow) || mShowLastAddedRow || mShowLastPlayedRow) this.setSelectedPosition(0, true);
+        if ((FEATURE_WATCH_UP_NEXT && mShowWatchingUpNextRow) || mShowLastAddedRow || mShowLastPlayedRow) selectSourcePosition(0, true, null);
     }
 
     /**
