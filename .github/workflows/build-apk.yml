@@ -40,7 +40,13 @@ jobs:
           cd nova
           repo init -u https://github.com/nova-video-player/aos-AVP -b 9c5842b74ab180c99441ed23fdd5d508448388a7 -m v6_4.xml
           cp ../source/.github/build/nova-ci.xml .repo/manifests/v6_4.xml
-          repo sync --no-manifest-update -c -d -j 4
+          if ! repo sync --no-manifest-update -c -d -j 4; then
+            # Some prebuilt histories are not reachable through the default branch.
+            # Seed the exact pinned objects, then let repo finish normal checkout.
+            git --git-dir=.repo/projects/native/prebuilt/ffmpeg.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-ffmpeg.git 6ba0e9340cf725bede2e2f29d30c290a2ab8130e
+            git --git-dir=.repo/projects/native/prebuilt/opus.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-opus.git 27544063be93ee55c6ba58a2ebb32c106eb2e37b
+            repo sync --no-manifest-update -c -d -j 4
+          fi
 
       - name: Overlay the triggering Video revision
         working-directory: nova/Video
