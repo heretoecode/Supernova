@@ -45,7 +45,7 @@ public class TopNavigationTest {
         org.robolectric.android.controller.ActivityController<Host> host=Robolectric.buildActivity(Host.class).setup();
         try {
             View hud=LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental,null);
-            assertTrue(hud.findViewById(R.id.seek_progress) instanceof SeekBar);
+            assertTrue(hud.findViewById(R.id.seek_progress) instanceof android.widget.SeekBar);
             assertTrue(hud.findViewById(R.id.pause) instanceof ImageButton);
             assertNotNull(hud.findViewById(R.id.my_recycler_view));
             assertNotNull(hud.findViewById(R.id.time_current));

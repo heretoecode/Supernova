@@ -86,6 +86,8 @@ jobs:
             chmod 600 ~/.android/debug.keystore
           fi
           test -s ~/.android/debug.keystore || { echo "Existing signing key unavailable; refusing to generate a different identity."; exit 1; }
+          keytool -exportcert -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -file /tmp/nova-signing-certificate.der
+          echo "90ffa69e47935aefda234d803e0ff5a99c41fa88c7c9f8366985d481de41c0b8  /tmp/nova-signing-certificate.der" | sha256sum --check
 
       - name: Test personal build changes
         working-directory: nova/Video
