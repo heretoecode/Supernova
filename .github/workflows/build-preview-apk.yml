@@ -87,8 +87,8 @@ jobs:
           fi
           test -s ~/.android/debug.keystore || { echo "Existing signing key unavailable; refusing to generate a different identity."; exit 1; }
           keytool -exportcert -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -file /tmp/nova-signing-certificate.der
-          # First Preview release: capture this branch's retained certificate before building.
-          sha256sum /tmp/nova-signing-certificate.der | cut -d " " -f 1 | tee nova/preview-certificate-sha256.txt
+          echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a  /tmp/nova-signing-certificate.der" | sha256sum --check
+          echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a" > nova/preview-certificate-sha256.txt
 
       - name: Test personal build changes
         working-directory: nova/Video
