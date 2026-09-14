@@ -75,26 +75,38 @@ jobs:
           path: ~/.android/debug.keystore
           key: nova-mark-debug-signing-v1
 
-      - name: Test streaming filters and provider links
-        working-directory: nova/Video
+      - name: Require the existing personal signing identity
+        env:
+          NOVA_SIGNING_KEY_BASE64: ${{ secrets.NOVA_SIGNING_KEY_BASE64 }}
         run: |
-          set -o pipefail
-          chmod +x gradlew
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' -Puniversal --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+          if [ -n "$NOVA_SIGNING_KEY_BASE64" ]; then
+            mkdir -p ~/.android
+            printf '%s' "$NOVA_SIGNING_KEY_BASE64" | base64 --decode > ~/.android/debug.keystore
+            chmod 600 ~/.android/debug.keystore
+          fi
+          test -s ~/.android/debug.keystore || { echo "Existing signing key unavailable; refusing to generate a different identity."; exit 1; }
 
-      - name: Build universal non-Amazon debug APK
+      - name: Test personal build changes
         working-directory: nova/Video
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew assembleNoamazonDebug -Puniversal --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' -Puniversal --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+
+      - name: Build optimised personal APK
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
 
       - name: Verify APK signature and list native libraries
         run: |
-          mapfile -t apks < <(find nova/Video/build/outputs/apk/noamazon/debug -name '*.apk' -type f)
+          mapfile -t apks < <(find nova/Video/build/outputs/apk/noamazon/release -name '*.apk' -type f)
           test "${#apks[@]}" -eq 1
           build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
           "$build_tools/apksigner" verify --verbose --print-certs "${apks[0]}" | tee nova/apk-verification.log
+          grep -qi 'f950a2b660da24419315b35cd8cf598cd03587faf239b1d160c544e6c060177f' nova/apk-verification.log
           unzip -l "${apks[0]}" 'lib/*' | tee -a nova/apk-verification.log
           sha256sum "${apks[0]}" | tee nova/apk-sha256.txt
 
@@ -107,7 +119,7 @@ jobs:
             nova/gradle-build.log
             nova/gradle-tests.log
             nova/Video/build/reports/tests/
-            nova/Video/docs/MARK-EDITION-2.md
+            nova/Video/docs/MARK-EDITION-3.md
             nova/source-manifest.xml
             nova/apk-verification.log
             nova/apk-sha256.txt
@@ -117,6 +129,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: nova-debug-apk
-          path: nova/Video/build/outputs/apk/noamazon/debug/*.apk
+          name: nova-mark-edition-3-apk
+          path: nova/Video/build/outputs/apk/noamazon/release/*.apk
           if-no-files-found: error

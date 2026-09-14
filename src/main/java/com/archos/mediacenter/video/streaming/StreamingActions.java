@@ -35,7 +35,12 @@ public final class StreamingActions {
     private Base item;
     private String signature = "";
     private boolean inPlayer;
-    private static final class StreamingAction extends Action {
+    private boolean opening;
+    private String lookupKind;
+    private long lookupId;
+    private String lookupCountry;
+    private StreamingRepository.Availability lookupAvailability;
+    static class StreamingAction extends Action {
         final Runnable click;
         StreamingAction(long id, String label, String detail, Runnable click) {
             super(id, label, detail); this.click = click;
@@ -52,6 +57,8 @@ public final class StreamingActions {
             controller = new StreamingActions(adapter, (Activity) context, key);
             BOUND.put(adapter, controller);
         }
+        if (!(adapter.getPresenterSelector() instanceof StreamingActionPresenter.Selector))
+            adapter.setPresenterSelector(new StreamingActionPresenter.Selector());
         String signature = StreamingRepository.country(context) + StreamingRepository.selected(context).toString()
                 + StreamingRepository.preferred(context) + StreamingRepository.prefs(context).getBoolean(StreamingRepository.ENABLED, true)
                 + inPlayer + PrivateMode.isActive();
@@ -93,6 +100,7 @@ public final class StreamingActions {
     }
     private void load() {
         final int request = ++generation;
+        opening = false;
         if (task != null) task.cancel(true);
         clear();
         if (item == null || inPlayer || PrivateMode.isActive()
@@ -120,20 +128,22 @@ public final class StreamingActions {
                     });
                     return;
                 }
-                StreamingRepository.Availability result = StreamingRepository.load(app, kind, id, region);
+                StreamingRepository.Availability result = StreamingRepository.load(app, kind, id, region, target instanceof Episode ? ((Episode) target).getSeasonNumber() : -1);
                 main.post(() -> {
                     if (request != generation || active() == null || !region.equals(StreamingRepository.country(app))) return;
                     clear();
+                    lookupKind = kind; lookupId = id; lookupCountry = region; lookupAvailability = result;
                     List<StreamingRepository.Offer> offers = StreamingRepository.filter(result, StreamingRepository.selected(app), StreamingRepository.preferred(app));
                     if (offers.isEmpty()) {
                         action(0, app.getString(R.string.streaming_title), app.getString(R.string.streaming_no_offers, region), this::setup);
                         return;
                     }
                     StreamingRepository.Offer first = offers.get(0);
-                    action(0, app.getString(first.url.isEmpty() ? R.string.streaming_open_provider : R.string.streaming_play_provider, first.provider.name),
-                            "JustWatch · " + region, () -> openOffer(first, result.watchUrl, target.getName()));
-                    if (offers.size() > 1) action(1, app.getString(R.string.streaming_more),
-                            app.getString(R.string.streaming_alternatives, offers.size() - 1), () -> more(offers.subList(1, offers.size()), result.watchUrl, target.getName(), region));
+                    SparseArrayObjectAdapter current = adapter.get();
+                    if (current != null) current.set(key, new StreamingActionPresenter.LogoAction(first.provider,
+                            () -> openOffer(first, result.watchUrl, target.getName())));
+                    if (offers.size() > 1) action(1, "•••", "", () -> more(offers.subList(1, offers.size()), result.watchUrl, target.getName(), region));
+
                 });
             } catch (Exception e) {
                 main.post(() -> {
@@ -153,17 +163,22 @@ public final class StreamingActions {
                 .setNegativeButton(android.R.string.cancel, null).show();
     }
     private void openOffer(StreamingRepository.Offer offer, String watchUrl, String title) {
-        Activity a = active(); if (a == null) return;
-        if (StreamingRepository.safeWebUrl(offer.url)) {
-            Toast.makeText(a, app.getString(R.string.streaming_open_provider, offer.provider.name), Toast.LENGTH_SHORT).show();
-            final int request = generation;
-            task = StreamingRepository.IO.submit(() -> {
-                String resolved = StreamingRepository.resolveTitleUrl(offer.url);
-                main.post(() -> {
-                    if (request == generation && active() != null) launchOffer(offer, resolved, watchUrl, title);
-                });
+        Activity a = active(); if (a == null || opening) return;
+        opening = true;
+        final int request = generation;
+        final String kind = lookupKind, country = lookupCountry;
+        final long id = lookupId;
+        final StreamingRepository.Availability availability = lookupAvailability;
+        Toast.makeText(a, app.getString(R.string.streaming_open_provider, offer.provider.name), Toast.LENGTH_SHORT).show();
+        task = StreamingRepository.IO.submit(() -> {
+            String link = availability == null ? "" : StreamingRepository.titleLink(app, kind, id, country, availability, offer.provider.id);
+            String resolved = StreamingRepository.resolveTitleUrl(link);
+            main.post(() -> {
+                if (request != generation || active() == null) return;
+                opening = false;
+                launchOffer(offer, resolved, watchUrl, title);
             });
-        } else launchOffer(offer, "", watchUrl, title);
+        });
     }
     private void launchOffer(StreamingRepository.Offer offer, String url, String watchUrl, String title) {
         Activity a = active(); if (a == null) return;

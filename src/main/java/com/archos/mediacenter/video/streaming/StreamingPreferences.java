@@ -62,7 +62,7 @@ public final class StreamingPreferences {
         add(preferred);
         status = new Preference(context);
         status.setTitle(R.string.streaming_refresh);
-        status.setOnPreferenceClickListener(p -> { load(); return true; });
+        status.setOnPreferenceClickListener(p -> { StreamingRepository.invalidate(); load(); return true; });
         add(status);
         Preference attribution = new Preference(context);
         attribution.setTitle("JustWatch");

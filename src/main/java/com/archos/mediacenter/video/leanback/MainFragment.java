@@ -312,7 +312,7 @@ public class MainFragment extends BrowseSupportFragment implements LoaderManager
             search.putExtra(VideoSearchActivity.EXTRA_SEARCH_MODE, VideoSearchActivity.SEARCH_MODE_ALL);
             startActivity(search);
         } else {
-            long row = tab == 1 ? ROW_ID_MOVIES : tab == 2 ? ROW_ID_TVSHOW : ROW_ID_FILES;
+            int row = tab == 1 ? ROW_ID_MOVIES : tab == 2 ? ROW_ID_TVSHOW : ROW_ID_FILES;
             int position = tab == 0 ? 0 : getRowPosition(row);
             if (position >= 0) setSelectedPosition(position, true);
         }

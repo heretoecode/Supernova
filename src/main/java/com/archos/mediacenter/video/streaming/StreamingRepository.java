@@ -39,8 +39,9 @@ public final class StreamingRepository {
         Cached(Availability value) { this.value = value; }
     }
     public static final class Provider {
-        public final int id; public final String name;
-        public Provider(int id, String name) { this.id = id; this.name = name; }
+        public final int id; public final String name; public final String logo;
+        public Provider(int id, String name) { this(id, name, ""); }
+        public Provider(int id, String name, String logo) { this.id = id; this.name = name; this.logo = logo; }
     }
     public static final class Offer {
         public final Provider provider; public final String type;
@@ -98,7 +99,7 @@ public final class StreamingRepository {
             for (int i = 0; i < entries.length(); i++) {
                 JSONObject p = entries.getJSONObject(i);
                 int id = p.getInt("provider_id");
-                result.put(id, new Provider(id, p.getString("provider_name")));
+                result.put(id, new Provider(id, p.getString("provider_name"), p.optString("logo_path")));
             }
         }
         List<Provider> sorted = new ArrayList<>(result.values());
@@ -106,14 +107,22 @@ public final class StreamingRepository {
         return sorted;
     }
     public static Availability load(Context context, String kind, long id, String country) throws Exception {
+        return load(context, kind, id, country, -1);
+    }
+    public static Availability load(Context context, String kind, long id, String country, int season) throws Exception {
         if (!("movie".equals(kind) || "tv".equals(kind)) || id <= 0) throw new IOException("Missing title ID");
-        String key = kind + ":" + id + ":" + country;
+        String key = kind + ":" + id + ":" + country + ":" + season;
         synchronized (CACHE) {
             Cached c = CACHE.get(key);
             if (c != null && System.currentTimeMillis() - c.at < TTL) return c.value;
         }
-        JSONObject response = api(context, kind + "/" + id + "/watch/providers", null);
+        JSONObject response = api(context, kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", null);
         Availability availability = parseAvailability(response, country);
+        synchronized (CACHE) { CACHE.put(key, new Cached(availability)); }
+        return availability;
+    }
+    /** Title-link enrichment happens on selection; availability is displayed immediately. */
+    public static String titleLink(Context context, String kind, long id, String country, Availability availability, int providerId) {
         if (!availability.offers.isEmpty() && isTmdbWatchUrl(availability.watchUrl, kind, id)) {
             try {
                 // The documented TMDb watch page contains the actual JustWatch title links.
@@ -123,12 +132,13 @@ public final class StreamingRepository {
                 Map<String, Integer> providerIds = new HashMap<>();
                 for (Offer offer : availability.offers) providerIds.put(offer.provider.name, offer.provider.id);
                 Map<Integer, String> links = parseWatchLinks(get(url, 2 * 1024 * 1024), country, providerIds);
-                for (Offer offer : availability.offers) offer.url = links.getOrDefault(offer.provider.id, "");
+                return links.getOrDefault(providerId, "");
             } catch (Exception ignored) { /* use the explicitly labelled watch-page fallback */ }
         }
-        synchronized (CACHE) { CACHE.put(key, new Cached(availability)); }
-        return availability;
+
+        return "";
     }
+    public static void invalidate() { synchronized (CACHE) { CACHE.clear(); } }
     static boolean isTmdbWatchUrl(String url, String kind, long id) {
         Uri u = Uri.parse(url);
         if (!"https".equals(u.getScheme()) || !"www.themoviedb.org".equals(u.getHost())) return false;
@@ -185,7 +195,9 @@ public final class StreamingRepository {
                     JSONObject offer = item.getJSONObject("data");
                     if (allowedType(offer.optString("monetizationType")) && offer.optInt("providerId") > 0) {
                         // TMDb and JustWatch can assign different IDs to the same named provider.
-                        int providerId = providerIds.getOrDefault(offer.optString("provider"), offer.getInt("providerId"));
+                        String providerName = offer.optString("provider");
+                        if (!providerIds.isEmpty() && !providerIds.containsKey(providerName)) continue;
+                        int providerId = providerIds.getOrDefault(providerName, offer.getInt("providerId"));
                         links.putIfAbsent(providerId, target);
                     }
                 }
