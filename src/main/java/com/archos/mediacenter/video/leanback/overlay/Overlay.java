@@ -74,7 +74,9 @@ public class Overlay {
             throw new IllegalStateException("Overlay is not compatible with this fragment: "+fragment);
         }
 
-        ViewGroup parentView = (ViewGroup)fragmentView.findViewById(parentViewId);
+        ViewGroup parentView = fragmentView instanceof com.archos.mediacenter.video.leanback.TopNavigation
+            ? ((com.archos.mediacenter.video.leanback.TopNavigation)fragmentView).getStatusContainer()
+            : (ViewGroup)fragmentView.findViewById(parentViewId);
         if (parentView==null) {
             throw new IllegalStateException("parentView not found! Maybe IDs in the leanback library have been changed?");
         }

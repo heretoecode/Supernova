@@ -17,6 +17,7 @@ import java.util.function.BooleanSupplier;
 public final class TopNavigation extends LinearLayout {
     private final LinearLayout bar;
     private final View content;
+    private final android.widget.FrameLayout status;
     private final BooleanSupplier firstRow;
     private TextView selected;
     private final TextView[] tabs = new TextView[6];
@@ -65,10 +66,13 @@ public final class TopNavigation extends LinearLayout {
             });
             bar.addView(tab, new LayoutParams(0, -2, i == 3 ? 1.5f : 1));
         }
+        status = new android.widget.FrameLayout(c);
+        bar.addView(status, new LayoutParams(dp(68), dp(52)));
         selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, -2));
         addView(content, new LayoutParams(-1, 0, 1));
     }
+    public android.widget.FrameLayout getStatusContainer() { return status; }
     private int dp(int n) { return (int)(n * getResources().getDisplayMetrics().density + .5f); }
     public boolean focusNavigation() {
         if (bar.hasFocus()) return false;
