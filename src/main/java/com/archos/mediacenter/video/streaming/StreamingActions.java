@@ -58,7 +58,7 @@ public final class StreamingActions {
             BOUND.put(adapter, controller);
         }
         if (!(adapter.getPresenterSelector() instanceof StreamingActionPresenter.Selector))
-            adapter.setPresenterSelector(new StreamingActionPresenter.Selector());
+            adapter.setPresenterSelector(new StreamingActionPresenter.Selector(adapter.getPresenterSelector()));
         String signature = StreamingRepository.country(context) + StreamingRepository.selected(context).toString()
                 + StreamingRepository.preferred(context) + StreamingRepository.prefs(context).getBoolean(StreamingRepository.ENABLED, true)
                 + inPlayer + PrivateMode.isActive();

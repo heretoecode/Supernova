@@ -14,7 +14,8 @@ public final class StreamingActionPresenter extends Presenter {
         }
     }
     public static final class Selector extends PresenterSelector {
-        private final ActionPresenterSelector normal = new ActionPresenterSelector();
+        private final PresenterSelector normal;
+        public Selector(PresenterSelector normal) { this.normal = normal; }
         private final Presenter logo = new StreamingActionPresenter();
         @Override public Presenter getPresenter(Object item) { return item instanceof LogoAction ? logo : normal.getPresenter(item); }
         @Override public Presenter[] getPresenters() {
