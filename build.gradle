@@ -151,7 +151,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId = "org.courville.nova"
+        applicationId = project.hasProperty("markPreview") ? "org.courville.nova.markpreview" : "org.courville.nova"
         generatedDensities = []
         minSdkVersion 23
         targetSdkVersion 36
@@ -160,7 +160,7 @@ android {
         // this is overridden when using split apk and normal split apk generation or oneapk amazon generation
         // amazon apk is generated with ./gradlew -Poneapk
         versionCode = 6040065
-        versionName = '6.4.63-mark.3'
+        versionName = project.hasProperty("markPreview") ? '6.4.63-mark.3-preview' : '6.4.63-mark.3'
         def novaVersionName = versionName
         if (! project.hasProperty("universal")) {
             // override versionName and versionCode to get it dependent on the date

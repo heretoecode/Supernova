@@ -166,9 +166,6 @@ public final class StreamingRepository {
                 JSONObject p = entries.optJSONObject(i);
                 if (p == null || p.optInt("provider_id") <= 0 || p.optString("provider_name").isEmpty()) continue;
                 int id = p.getInt("provider_id");
-                JSONObject priorities = p.optJSONObject("display_priorities");
-                int rank = priorities == null ? p.optInt("display_priority", 10000) : priorities.optInt(country, 10000);
-                ranks.merge(id, rank, Math::min);
                 if (!offers.containsKey(id)) offers.put(id, new Offer(new Provider(id, p.getString("provider_name")), type));
             }
         }

@@ -1,5 +1,7 @@
 # Mark’s NOVA — Edition 3
-Based on NOVA 6.4.63. Version 6.4.63-mark.3 (6040065).
+Based on NOVA 6.4.63. Test package: 6.4.63-mark.3-preview (6040065).
+
+NOVA Preview installs separately as org.courville.nova.markpreview. It does not update or remove your existing NOVA. The earlier update-signing key was not retained: a parallel build won the cache reservation with a different key. The normal update workflow still rejects this different identity. Preview uses isolated content-provider authorities and its own app data.
 
 ## Navigation and appearance
 - Optional “Try new UI” in main settings: top navigation with Home, Movies, TV shows, Network & files, Settings and Search.
@@ -43,7 +45,7 @@ These notes distinguish this test candidate from completion of the entire handof
 - System document picker for export/import, with a fallback when a TV has no document picker installed.
 - Full archive validation, path/size/duplicate checks and database integrity/version checks before replacement.
 - Prepared files replace live data with rollback on an operation failure. A dated recovery archive is kept.
-- Optimised release APK, signed with the existing personal build identity. CI refuses a different certificate.
+- Optimised Preview APK with a pinned certificate for the isolated Preview package. The original update certificate check remains intact.
 
 ## Limits and testing
 - No exact episode-offer data subscription has been arranged; season coverage must not be interpreted as exact episode coverage.
