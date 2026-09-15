@@ -38,7 +38,7 @@ public final class PreviewCardPresenter extends Presenter {
             super(c); this.style = style;
             // Android TV's logical viewport is normally 960 x 540 dp.
             width = dp(style == Style.CONTINUE ? 280 : style == Style.CATEGORY ? 174 : 140);
-            height = dp(style == Style.CONTINUE ? 140 : style == Style.CATEGORY ? 86 : 180);
+            height = dp(style == Style.CONTINUE ? 140 : style == Style.CATEGORY ? 86 : 170);
             setFocusable(true); setFocusableInTouchMode(true);
             setCardType(CARD_TYPE_MAIN_ONLY);
             FrameLayout body = new FrameLayout(c);
@@ -47,13 +47,13 @@ public final class PreviewCardPresenter extends Presenter {
             body.setBackground(outline); body.setClipToOutline(true);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
-            if (style == Style.POSTER) bp.height += dp(50);
+            if (style == Style.POSTER) bp.height += dp(60);
             bp.width = width;
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             body.addView(image, new FrameLayout.LayoutParams(-1, style == Style.POSTER ? height : -1));
             caption = new LinearLayout(c); caption.setOrientation(LinearLayout.VERTICAL);
-            caption.setPadding(dp(8), dp(16), dp(8), dp(style == Style.CONTINUE ? 10 : 7));
+            caption.setPadding(dp(8), dp(style == Style.POSTER ? 2 : 16), dp(8), dp(style == Style.POSTER ? 3 : style == Style.CONTINUE ? 10 : 7));
             caption.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
                 new int[]{0x00101e2c, 0xee101e2c}));
             title = new TextView(c); title.setTextColor(Color.WHITE); title.setTextSize(13);

@@ -12,7 +12,7 @@ Artwork and titles use real library metadata. 4K badges use measured dimensions,
 
 Library snapshots and next-episode selection run on a loader worker with throttled change notifications. RecyclerView limits artwork loading to visible cards. No schema changes or data migrations.
 
-Validation: pending new workflow and native layout checks. Physical Shield test required.
+Validation: the Preview workflow runs regression tests, native layout rendering, release compilation and pinned-signature verification. Physical Shield testing remains necessary.
 
 # Edition 3.2 — experimental UI implementation
 
@@ -97,3 +97,4 @@ These notes distinguish this test candidate from completion of the entire handof
 - Shield remote navigation, rendering and playback still require physical-device acceptance testing.
 - The signing workflow supports a NOVA_SIGNING_KEY_BASE64 repository secret. Until that is provisioned, the existing Actions cache is required; the build refuses to generate a replacement key.
 - Moving to an internal-only provider may affect third-party apps that relied on direct access to NOVA’s private database.
+
