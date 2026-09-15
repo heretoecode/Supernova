@@ -37,8 +37,8 @@ public final class PreviewCardPresenter extends Presenter {
         public Card(Context c, Style style) {
             super(c); this.style = style;
             // Android TV's logical viewport is normally 960 x 540 dp.
-            width = dp(style == Style.LIST ? 860 : style == Style.CONTINUE ? 280 : style == Style.CATEGORY ? 174 : 140);
-            height = dp(style == Style.LIST ? 92 : style == Style.CONTINUE ? 140 : style == Style.CATEGORY ? 86 : 170);
+            width = dp(style == Style.LIST ? 860 : style == Style.CONTINUE ? 172 : style == Style.CATEGORY ? 174 : 140);
+            height = dp(style == Style.LIST ? 92 : style == Style.CONTINUE ? 105 : style == Style.CATEGORY ? 86 : 144);
             setFocusable(true); setFocusableInTouchMode(true);
             setCardType(CARD_TYPE_MAIN_ONLY);
             FrameLayout body = new FrameLayout(c);
@@ -47,7 +47,7 @@ public final class PreviewCardPresenter extends Presenter {
             body.setBackground(outline); body.setClipToOutline(true);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
-            if (style == Style.POSTER) bp.height += dp(60);
+            if (style == Style.POSTER) bp.height += dp(42);
             bp.width = width;
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -58,7 +58,7 @@ public final class PreviewCardPresenter extends Presenter {
                 new int[]{0x00101e2c, 0xee101e2c}));
             title = new TextView(c); title.setTextColor(Color.WHITE); title.setTextSize(13);
             title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-            title.setMaxLines(2); title.setEllipsize(TextUtils.TruncateAt.END);
+            title.setMaxLines(style == Style.POSTER || style == Style.CONTINUE ? 1 : 2); title.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(title, new LinearLayout.LayoutParams(-1, -2));
             subtitle = new TextView(c); subtitle.setTextSize(11); subtitle.setTextColor(0xffd5e1ee);
             subtitle.setSingleLine(true); subtitle.setEllipsize(TextUtils.TruncateAt.END);

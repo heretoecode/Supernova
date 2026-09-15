@@ -50,10 +50,19 @@ public class PreviewPagesTest {
             for(int tab=0;tab<4;tab++){
                 ((LinearLayout)((LinearLayout)nav.getChildAt(0)).getChildAt(1)).getChildAt(tab).performClick();
                 for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
+                addTestArtwork(nav);
                 android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));
                 java.io.File file=new java.io.File("build/reports/preview-ui/page-"+tab+".png");file.getParentFile().mkdirs();try(java.io.FileOutputStream out=new java.io.FileOutputStream(file)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out);}
             }
             nav.focusNavigation();assertTrue(nav.hasFocus());
         }finally{host.pause().stop().destroy();}
     }
+    static void addTestArtwork(TopNavigation nav){
+        android.graphics.Bitmap art=android.graphics.Bitmap.createBitmap(1600,900,android.graphics.Bitmap.Config.ARGB_8888);
+        android.graphics.Canvas canvas=new android.graphics.Canvas(art);android.graphics.Paint paint=new android.graphics.Paint();
+        paint.setShader(new android.graphics.LinearGradient(0,0,1600,900,new int[]{0xff39586e,0xffaf8b66,0xff203c4e},null,android.graphics.Shader.TileMode.CLAMP));canvas.drawPaint(paint);paint.setShader(null);
+        paint.setColor(0xff203d4c);android.graphics.Path mountain=new android.graphics.Path();mountain.moveTo(650,900);mountain.lineTo(1180,180);mountain.lineTo(1600,770);mountain.lineTo(1600,900);mountain.close();canvas.drawPath(mountain,paint);
+        ((PreviewBackdrop)nav.getBackground()).onBitmapLoaded(art,com.squareup.picasso.Picasso.LoadedFrom.MEMORY);
+    }
+
 }
