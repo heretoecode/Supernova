@@ -115,7 +115,9 @@ jobs:
           timeout 180 adb wait-for-device
           timeout 180 bash -c 'until adb shell getprop sys.boot_completed | tr -d "\r" | grep -q 1; do sleep 2; done'
           adb shell wm size 1920x1080
-          adb shell wm density 240
+          adb shell wm density 320
+          adb shell settings put system accelerometer_rotation 0
+          adb shell settings put system user_rotation 0
           adb shell input keyevent 82
 
       - name: Check full app startup with Preview enabled

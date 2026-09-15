@@ -67,10 +67,11 @@ public final class PreviewDiscovery {
     }
     public static List<Entry> similar(Entry selected,Snapshot snapshot){
         List<Entry> result=new ArrayList<>();if(selected==null||selected.genres.isEmpty())return result;
-        Set<String> genres=new HashSet<>(Arrays.asList(selected.genres.split("[|,;/]")));
+        Set<String> genres=new HashSet<>();
+        for(String genre:selected.genres.split("[|,;/]")){String normal=genre.trim().toLowerCase(Locale.ROOT);if(!normal.isEmpty())genres.add(normal);}
         for(List<Entry> entries:Arrays.asList(snapshot.movies,snapshot.shows))for(Entry e:entries){
             if(e.key().equals(selected.key()))continue;
-            if(Arrays.stream(e.genres.split("[|,;/]")).anyMatch(genres::contains))result.add(e);
+            if(Arrays.stream(e.genres.split("[|,;/]")).map(g->g.trim().toLowerCase(Locale.ROOT)).anyMatch(genres::contains))result.add(e);
         }
         result.sort(Comparator.comparingLong((Entry e)->e.added).reversed());return result;
     }

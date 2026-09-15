@@ -1520,9 +1520,24 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(video, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
         }
 
+        if(mPreviewMovie!=null && !(video instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)){
+            mPreviewMovie.setVisibility(View.GONE);mNativeDetails.setVisibility(View.VISIBLE);
+        }
         if(mPreviewMovie!=null && video instanceof com.archos.mediacenter.video.browser.adapters.object.Movie){
             mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)video);
-            if(!mPreviewAutoPlayed&&requireActivity().getIntent().getBooleanExtra("preview_play",false)){mPreviewAutoPlayed=true;mPreviewMovie.post(()->{if(mPreviewMovie!=null)mPreviewMovie.play();});}
+        }
+        if(!mPreviewAutoPlayed&&requireActivity().getIntent().getBooleanExtra("preview_play",false)){
+            mPreviewAutoPlayed=true;requireActivity().getIntent().removeExtra("preview_play");
+            getView().post(()->{
+                if(!isAdded()||mDetailsOverviewRow==null)return;
+                androidx.leanback.widget.ObjectAdapter actions=mDetailsOverviewRow.getActionsAdapter();
+                for(int id:new int[]{VideoActionAdapter.ACTION_RESUME,VideoActionAdapter.ACTION_LOCAL_RESUME,VideoActionAdapter.ACTION_PLAY,VideoActionAdapter.ACTION_PLAY_FROM_BEGIN,VideoActionAdapter.ACTION_REMOTE_RESUME}){
+                    for(int i=0;i<actions.size();i++){
+                        Object value=actions.get(i);
+                        if(value instanceof Action&&((Action)value).getId()==id){mOnActionClickedListener.onActionClicked((Action)value);return;}
+                    }
+                }
+            });
         }
         // Plot, Cast, Posters, Backdrops, Links rows will be added after, once we get the Scraper Tags
 

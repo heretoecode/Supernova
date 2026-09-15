@@ -74,6 +74,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             }
         }
         s.recent.sort(Comparator.comparingLong((Entry e)->e.added).reversed());
+        s.movies.sort(Comparator.comparingLong((Entry e)->e.added).reversed());s.shows.sort(Comparator.comparingLong((Entry e)->e.added).reversed());
         s.played.sort(Comparator.comparingLong((Entry e)->((Video)e.media).getLastPlayed()).reversed());
         s.watched.sort(Comparator.comparingLong((Entry e)->((Video)e.media).getLastPlayed()).reversed());
         Set<String> watchedSeen=new HashSet<>();s.watched.removeIf(e->!watchedSeen.add(e.key()));

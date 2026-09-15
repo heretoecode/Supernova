@@ -36,24 +36,24 @@ public final class PreviewPages extends FrameLayout {
     private final boolean[] listMode={false,false,false};
     private int featuredIndex;
     public void setArtworkListener(java.util.function.Consumer<android.net.Uri> listener){artwork=listener;updateArtwork();}
-    public void setDiscovery(PreviewDiscovery value){discovery=value;render();}
+    public void setDiscovery(PreviewDiscovery value){requestedDiscovery=true;discovery=value;render();}
     private boolean requestedDiscovery;
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();requestDiscovery();}
     private void requestDiscovery(){if(requestedDiscovery||!isAttachedToWindow()||snapshot.movies.isEmpty()&&snapshot.shows.isEmpty())return;requestedDiscovery=true;
-        worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});});}
+        worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{try{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});}finally{worker.shutdown();}});}
     @Override protected void onDetachedFromWindow(){if(worker!=null)worker.shutdownNow();super.onDetachedFromWindow();}
     private Entry featured(){List<Entry> entries=tab==1?snapshot.movies:tab==2?snapshot.shows:snapshot.recent;return entries.isEmpty()?null:entries.get(featuredIndex%Math.min(entries.size(),5));}
     private void updateArtwork(){Entry entry=featured();artwork.accept(tab==3||entry==null?null:entry.backdrop);}
     public static String displayName(Entry e){return e.media instanceof Episode?((Episode)e.media).getShowName():e.media.getName();}
     private void open(Entry e,View v){click.open(new Presenter.ViewHolder(v),e.media);}
     private void play(Entry e,View v){
-        if(e.media instanceof Movie && getContext() instanceof android.app.Activity){
+        if(e.media instanceof Video && getContext() instanceof android.app.Activity){
             android.content.Intent intent=new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.details.VideoDetailsActivity.class);
             intent.putExtra(com.archos.mediacenter.video.leanback.details.VideoDetailsFragment.EXTRA_VIDEO,(Video)e.media);
             intent.putExtra("preview_play",true);getContext().startActivity(intent);
         }else open(e,v);
     }
-    private static final int HEADER=0, POSTER=1, RAIL=2, STORAGE=3, HERO=4, NOTICE=5;
+    private static final int HEADER=0, POSTER=1, RAIL=2, STORAGE=3, HERO=4, NOTICE=5, LIST=6;
     static class Cell {
         int type; String title; Object value;
         Cell(int type,String title,Object value) {this.type=type;this.title=title;this.value=value;}
@@ -89,7 +89,7 @@ public final class PreviewPages extends FrameLayout {
             rail("Recently Watched",snapshot.watched);
             Entry recent=snapshot.played.isEmpty()?null:snapshot.played.get(0);
             if(recent!=null)rail("Because You Watched "+displayName(recent),PreviewDiscovery.similar(recent,snapshot));
-            if(loaded&&cells.isEmpty()) header("Your library is empty — add media through Network & files",false);
+            if(loaded&&snapshot.movies.isEmpty()&&snapshot.shows.isEmpty()&&snapshot.recent.isEmpty()) header("Your library is empty — add media through Network & files",false);
         } else if(tab==1||tab==2) {
             if(featured()!=null)cells.add(new Cell(HERO,tab==1?"Movies":"TV Shows",featured()));
             rail("Continue Watching",tab==1?snapshot.continuingMovies:snapshot.continuingShows);
@@ -153,9 +153,9 @@ public final class PreviewPages extends FrameLayout {
     class PageAdapter extends RecyclerView.Adapter<Holder> {
         @Override public long getItemId(int p){Cell c=cells.get(p);String key=c.type==POSTER?((Entry)c.value).key():c.type==STORAGE?((Box)c.value).getBoxId()+":"+((Box)c.value).getPath():c.title;return ((long)c.type<<32) | (key.hashCode() & 0xffffffffL);}
         @Override public int getItemCount(){return cells.size();}
-        @Override public int getItemViewType(int p){return cells.get(p).type;}
+        @Override public int getItemViewType(int p){return cells.get(p).type==POSTER&&tab<3&&listMode[tab]?LIST:cells.get(p).type;}
         @Override public Holder onCreateViewHolder(ViewGroup parent,int type){
-            if(type==POSTER){PreviewCardPresenter pr=new PreviewCardPresenter(tab<3&&listMode[tab]?PreviewCardPresenter.Style.CONTINUE:PreviewCardPresenter.Style.POSTER); Presenter.ViewHolder card=pr.onCreateViewHolder(parent);Holder h=new Holder(card.view);h.presenter=pr;h.card=card;RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,-2);lp.setMargins(0,0,dp(10),dp(15));h.itemView.setLayoutParams(lp);return h;}
+            if(type==POSTER||type==LIST){PreviewCardPresenter pr=new PreviewCardPresenter(type==LIST?PreviewCardPresenter.Style.LIST:PreviewCardPresenter.Style.POSTER); Presenter.ViewHolder card=pr.onCreateViewHolder(parent);Holder h=new Holder(card.view);h.presenter=pr;h.card=card;RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,-2);lp.setMargins(0,0,dp(10),dp(15));h.itemView.setLayoutParams(lp);return h;}
             LinearLayout v=new LinearLayout(getContext());v.setGravity(Gravity.CENTER_VERTICAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));return new Holder(v);
         }
         @Override public void onBindViewHolder(Holder h,int p){Cell c=cells.get(p);

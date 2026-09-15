@@ -20,7 +20,7 @@ import com.squareup.picasso.Picasso;
 
 /** Lightweight experimental cards: existing library objects and click actions are preserved. */
 public final class PreviewCardPresenter extends Presenter {
-    public enum Style { POSTER, CONTINUE, CATEGORY }
+    public enum Style { POSTER, CONTINUE, CATEGORY, LIST }
     private final Style style;
     public PreviewCardPresenter(Style style) { this.style = style; }
     public static int progress(long resume, long duration) {
@@ -37,8 +37,8 @@ public final class PreviewCardPresenter extends Presenter {
         public Card(Context c, Style style) {
             super(c); this.style = style;
             // Android TV's logical viewport is normally 960 x 540 dp.
-            width = dp(style == Style.CONTINUE ? 280 : style == Style.CATEGORY ? 174 : 140);
-            height = dp(style == Style.CONTINUE ? 140 : style == Style.CATEGORY ? 86 : 170);
+            width = dp(style == Style.LIST ? 860 : style == Style.CONTINUE ? 280 : style == Style.CATEGORY ? 174 : 140);
+            height = dp(style == Style.LIST ? 92 : style == Style.CONTINUE ? 140 : style == Style.CATEGORY ? 86 : 170);
             setFocusable(true); setFocusableInTouchMode(true);
             setCardType(CARD_TYPE_MAIN_ONLY);
             FrameLayout body = new FrameLayout(c);
@@ -51,7 +51,7 @@ public final class PreviewCardPresenter extends Presenter {
             bp.width = width;
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            body.addView(image, new FrameLayout.LayoutParams(-1, style == Style.POSTER ? height : -1));
+            body.addView(image, new FrameLayout.LayoutParams(style == Style.LIST ? dp(160) : -1, style == Style.POSTER ? height : -1));
             caption = new LinearLayout(c); caption.setOrientation(LinearLayout.VERTICAL);
             caption.setPadding(dp(8), dp(style == Style.POSTER ? 2 : 16), dp(8), dp(style == Style.POSTER ? 3 : style == Style.CONTINUE ? 10 : 7));
             caption.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
@@ -63,7 +63,9 @@ public final class PreviewCardPresenter extends Presenter {
             subtitle = new TextView(c); subtitle.setTextSize(11); subtitle.setTextColor(0xffd5e1ee);
             subtitle.setSingleLine(true); subtitle.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
-            body.addView(caption, new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM));
+            FrameLayout.LayoutParams captionParams=new FrameLayout.LayoutParams(-1,-2,style==Style.LIST?Gravity.CENTER_VERTICAL:Gravity.BOTTOM);
+            if(style==Style.LIST){captionParams.leftMargin=dp(172);caption.setBackground(null);}
+            body.addView(caption,captionParams);
             progress = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
             progress.setMax(100); progress.setProgressTintList(ColorStateList.valueOf(0xff62bbf3));
             progress.setProgressBackgroundTintList(ColorStateList.valueOf(0xff627386));
@@ -104,22 +106,22 @@ public final class PreviewCardPresenter extends Presenter {
             Base b = (Base)item; c.title.setText(b.getName()); uri = b.getPosterUri();
             if (item instanceof Video) {
                 Video v = (Video)item;
-                if (style == Style.CONTINUE && v.getPreviewBackdrop() != null) uri = v.getPreviewBackdrop();
+                if ((style == Style.CONTINUE || style == Style.LIST) && v.getPreviewBackdrop() != null) uri = v.getPreviewBackdrop();
                 if (TextUtils.isEmpty(b.getName())) c.title.setText(v.getFilenameNonCryptic());
                 if (v instanceof Episode) {
                     Episode e = (Episode)v; c.title.setText(e.getShowName());
                     c.subtitle.setText(c.getResources().getString(R.string.preview_episode, e.getSeasonNumber(), e.getEpisodeNumber()));
                     c.subtitle.setVisibility(View.VISIBLE);
-                    if (style == Style.CONTINUE && e.getPictureUri() != null) uri = e.getPictureUri();
+                    if ((style == Style.CONTINUE || style == Style.LIST) && e.getPictureUri() != null) uri = e.getPictureUri();
                 }
-                if (style == Style.CONTINUE) {
+                if (style == Style.CONTINUE || style == Style.LIST) {
                     c.progress.setVisibility(View.VISIBLE);
                     c.progress.setProgress(progress(v.getResumeMs(), v.getDurationMs()));
                 }
             }
         }
         c.setContentDescription(c.title.getText() + (c.subtitle.length() == 0 ? "" : ", " + c.subtitle.getText()));
-        if (style == Style.POSTER && item instanceof Base) {
+        if ((style == Style.POSTER || style == Style.LIST) && item instanceof Base) {
             int year = item instanceof Movie ? ((Movie)item).getYear() : item instanceof Tvshow ? ((Tvshow)item).getYear() : 0;
             String detail = year > 0 ? String.valueOf(year) : "";
             if (item instanceof Video) {

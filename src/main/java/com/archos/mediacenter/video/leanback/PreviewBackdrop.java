@@ -23,7 +23,11 @@ public final class PreviewBackdrop extends Drawable implements Target {
         Rect b=getBounds(); float h=Math.min(b.height(),420*density);
         canvas.drawColor(0xff0b1b2a);
         paint.setShader(null);
-        if(bitmap!=null&&!bitmap.isRecycled()) canvas.drawBitmap(bitmap,null,new RectF(0,0,b.width(),h),paint);
+        if(bitmap!=null&&!bitmap.isRecycled()) {
+            float scale=Math.max(b.width()/(float)bitmap.getWidth(),h/bitmap.getHeight());
+            float width=bitmap.getWidth()*scale,height=bitmap.getHeight()*scale;
+            canvas.save();canvas.clipRect(0,0,b.width(),h);canvas.drawBitmap(bitmap,null,new RectF(b.width()-width,0,b.width(),height),paint);canvas.restore();
+        }
         paint.setShader(new LinearGradient(0,0,b.width(),0,new int[]{0xf00b1b2a,0x700b1b2a,0x250b1b2a},null,Shader.TileMode.CLAMP));
         canvas.drawRect(0,0,b.width(),h,paint);
         paint.setShader(new LinearGradient(0,0,0,h,new int[]{0x800b1b2a,0x100b1b2a,0xff0b1b2a},new float[]{0,.40f,1},Shader.TileMode.CLAMP));

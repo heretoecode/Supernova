@@ -12,7 +12,7 @@ adb install -r -g "$apk"
 set_preferences() {
   adb shell am force-stop "$package"
   adb shell run-as "$package" mkdir -p shared_prefs
-  printf '%s\n' "<?xml version=\"1.0\" encoding=\"utf-8\"?><map><boolean name=\"try_new_ui\" value=\"$1\"/><boolean name=\"user_defined_density_confirmed\" value=\"true\"/><string name=\"uimode_leanback\">tv</string><string name=\"uimode\">2</string></map>" | adb shell "run-as $package sh -c 'cat > shared_prefs/${package}_preferences.xml'"
+  printf '%s\n' "<?xml version=\"1.0\" encoding=\"utf-8\"?><map><boolean name=\"try_new_ui\" value=\"$1\"/><int name=\"user_defined_density\" value=\"320\"/><boolean name=\"user_defined_density_confirmed\" value=\"true\"/><string name=\"uimode_leanback\">tv</string><string name=\"uimode\">2</string></map>" | adb shell "run-as $package sh -c 'cat > shared_prefs/${package}_preferences.xml'"
 }
 check_start() {
   label=$1

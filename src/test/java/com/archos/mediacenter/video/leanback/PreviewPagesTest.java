@@ -39,7 +39,7 @@ public class PreviewPagesTest {
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             PreviewPages pages=new PreviewPages(host.get(),(holder,item)->{});
-            TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);host.get().setContentView(nav);
+            TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);host.get().setContentView(nav);pages.setArtworkListener(nav::setArtwork);pages.setDiscovery(new PreviewDiscovery());
             Snapshot s=new Snapshot();for(int i=1;i<=18;i++){
                 Movie movie=new Movie(i,"/movie"+i,"Film "+i,i,"",2024,7,"",null,100000,i==1?10000:0,0,0,false,false,false,false,i,i,3840,2160,"Atmos",null,null,null,0,1,1000,0);
                 Entry entry=new Entry(movie,i,0,"Drama");s.movies.add(entry);s.recent.add(entry);if(i==1){s.continuingMovies.add(entry);s.played.add(entry);}
