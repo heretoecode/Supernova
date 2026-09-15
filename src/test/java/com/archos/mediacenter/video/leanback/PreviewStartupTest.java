@@ -31,6 +31,7 @@ public class PreviewStartupTest {
     private MockedStatic<ExtStorageManager> storage;
     @Before public void setUp() throws Exception {
         Context context=RuntimeEnvironment.getApplication();
+        org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"log",org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
         org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"mContext",context);
         org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"systemLocale",Locale.UK);
         storage=mockStatic(ExtStorageManager.class);
@@ -72,7 +73,11 @@ public class PreviewStartupTest {
             host.recreate();
             MainFragment restored=(MainFragment)host.get().getSupportFragmentManager().findFragmentById(android.R.id.content);
             assertNotNull(restored);draw(restored);assertTrue(restored.getView() instanceof TopNavigation);
-        } finally {host.pause().stop().destroy();}
+        } catch (Throwable failure) {
+            try {host.pause().stop().destroy();} catch (Throwable cleanup) {failure.addSuppressed(cleanup);}
+            throw failure;
+        }
+        host.pause().stop().destroy();
     }
     private void draw(MainFragment fragment){
         for(int i=0;i<4;i++){
