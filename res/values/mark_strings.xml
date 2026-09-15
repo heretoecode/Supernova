@@ -5,9 +5,9 @@
 
     <string name="theme_slate">Slate blue</string>
     <string name="documentary_tv_shows">Documentary TV shows</string>
-    <string name="mark_build_identity">Mark’s personal NOVA build · Edition 3.2\n6.4.63-mark.3.2-preview · heretoecode/aos-Video</string>
+    <string name="mark_build_identity">Mark’s personal NOVA build · Edition 3.3\n6.4.63-mark.3.3-preview · heretoecode/aos-Video</string>
     <string name="mark_release_notes_title">Build details and release notes</string>
-    <string name="mark_release_notes">Edition 3.2 · UI update\n\n• Compact slate navigation with active underline and search icon.\n• Wide Continue watching cards with episode artwork and progress.\n• Illustrated categories, documentary tile and clean poster rows.\n• Playback title in the HUD, brighter compact options menu and More action.\n• Classic UI remains available through Try new UI.\n• Updates NOVA Preview alongside official NOVA.\n\nChapter picker, stats, seek previews, temporary subtitles, Up Next and scan counters remain outstanding. Streaming links remain paused.\nFull notes: docs/MARK-EDITION-3.md</string>
+    <string name="mark_release_notes">Edition 3.3 · Library pages\n\n• Centred navigation with Search beside Settings.\n• Clock aligned in header; indexing moved to footer.\n• Larger Recently played cards first on Home.\n• Recently added groups existing and new episodes by show, choosing resume or next unwatched.\n• Matching Movies and TV show pages with Continue watching, poster grids, sorting and genre/year filters.\n• Compact grouped Network and files cards.\n• Settings and classic UI preserved.\n\nStreaming remains paused. HDR badges require verified media information and are not inferred.\nFull notes: docs/MARK-EDITION-3.md</string>
     <string name="streaming_title">Streaming services</string>
     <string name="streaming_enabled_title">Show streaming options</string>
     <string name="streaming_enabled_summary">Find subscription and free streaming options for titles in your library</string>

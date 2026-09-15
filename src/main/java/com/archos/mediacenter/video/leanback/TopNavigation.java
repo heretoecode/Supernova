@@ -17,6 +17,7 @@ import java.util.function.BooleanSupplier;
 public final class TopNavigation extends LinearLayout {
     private final LinearLayout bar;
     private final View content;
+    private final android.widget.FrameLayout scanStatus;
     private final android.widget.FrameLayout status;
     private final BooleanSupplier firstRow;
     private TextView selected;
@@ -25,14 +26,17 @@ public final class TopNavigation extends LinearLayout {
     public TopNavigation(Context c, View content, IntConsumer navigate, BooleanSupplier firstRow) {
         super(c);
         this.content = content; this.firstRow = firstRow;
+        scanStatus = new android.widget.FrameLayout(c); scanStatus.setPadding(dp(28), 0, dp(28), 0);
         setOrientation(VERTICAL);
-        setBackgroundColor(ThemeManager.getInstance(c).getLeanbackBackgroundColor());
+        setBackgroundColor(0xff101f2e);
         bar = new LinearLayout(c); bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(26), 0, dp(16), 0);
         bar.setBackgroundColor(0xff10283d);
         TextView brand = new TextView(c);
         brand.setText("NOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);
-        brand.setPadding(0, 0, dp(20), 0); bar.addView(brand);
+        brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(85), -1));
+        LinearLayout group = new LinearLayout(c); group.setGravity(Gravity.CENTER);
+        bar.addView(group, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV shows", "Network & files", "Settings", "Search"};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
@@ -70,19 +74,20 @@ public final class TopNavigation extends LinearLayout {
                 return false;
             });
             if (i == 5) {
-                bar.addView(new View(c), new LayoutParams(0, 1, 1));
                 tab.setText("");
                 android.graphics.drawable.Drawable search = c.getDrawable(com.archos.mediacenter.video.R.drawable.preview_search);
                 search.setBounds(0, 0, dp(22), dp(22)); tab.setCompoundDrawables(search, null, null, null);
             }
-            bar.addView(tab, new LayoutParams(-2, dp(46)));
+            group.addView(tab, new LayoutParams(-2, dp(46)));
         }
         status = new android.widget.FrameLayout(c);
-        bar.addView(status, new LayoutParams(dp(68), dp(46)));
+        bar.addView(status, new LayoutParams(dp(85), dp(46)));
         selected = tabs[0]; selected.setSelected(true);
-        addView(bar, new LayoutParams(-1, -2));
+        addView(bar, new LayoutParams(-1, dp(52)));
         addView(content, new LayoutParams(-1, 0, 1));
+        addView(scanStatus, new LayoutParams(-1, dp(22)));
     }
+    public android.widget.FrameLayout getScanContainer() { return scanStatus; }
     public android.widget.FrameLayout getStatusContainer() { return status; }
     private int dp(int n) { return (int)(n * getResources().getDisplayMetrics().density + .5f); }
     public boolean focusNavigation() {

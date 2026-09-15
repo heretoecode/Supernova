@@ -295,6 +295,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     private boolean mTopNavigation;
     private TopNavigation mNavigation;
+    private PreviewPages mPreviewPages;
     private int mActiveTab;
     private Presenter homeVideoPresenter(boolean wide) {
         return mTopNavigation ? new PreviewCardPresenter(wide ? PreviewCardPresenter.Style.CONTINUE : PreviewCardPresenter.Style.POSTER)
@@ -323,6 +324,11 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void refreshVisibleRows() {
+        if (mPreviewPages != null && mFileBrowsingRowAdapter != null) {
+            java.util.List<Box> files = new java.util.ArrayList<>();
+            for (int i=0;i<mFileBrowsingRowAdapter.size();i++) files.add((Box)mFileBrowsingRowAdapter.get(i));
+            mPreviewPages.setFiles(files);
+        }
         if (!mTopNavigation || mVisibleRows == null) return;
         int oldPosition = getSelectedPosition();
         Object selected = oldPosition >= 0 && oldPosition < mVisibleRows.size() ? mVisibleRows.get(oldPosition) : null;
@@ -362,7 +368,11 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mTopNavigation = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
         View content = super.onCreateView(inflater, container, state);
         if (!mTopNavigation) return content;
-        mNavigation = new TopNavigation(requireContext(), content, this::navigateTop, () -> getSelectedPosition() == 0);
+        android.widget.FrameLayout pages = new android.widget.FrameLayout(requireContext());
+        pages.addView(content); content.setVisibility(View.GONE);
+        mPreviewPages = new PreviewPages(requireContext(), (holder,item) -> new MainViewClickedListener(requireActivity()).onItemClicked(holder,item,null,null));
+        pages.addView(mPreviewPages, new android.widget.FrameLayout.LayoutParams(-1,-1));
+        mNavigation = new TopNavigation(requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
         return mNavigation;
     }
 
@@ -375,6 +385,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             startActivity(search);
         } else {
             mActiveTab = tab;
+            if (mPreviewPages != null) mPreviewPages.setTab(tab);
             refreshVisibleRows();
             if (mVisibleRows != null && mVisibleRows.size() > 0) super.setSelectedPosition(0, false);
         }
@@ -499,6 +510,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     @Override
     public void onDestroyView() {
+        mPreviewPages = null;
         if (log.isDebugEnabled()) log.debug("onDestroyView");
         mRowsSelectionHandler.removeCallbacks(mClearRowPendingSelection);
         mScannerBoxRefreshHandler.removeCallbacks(mRefreshBoxesAfterScannerQuietPeriod);
@@ -531,6 +543,11 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     public void onResume() {
         if (log.isDebugEnabled()) log.debug("onResume");
         super.onResume();
+        if (mPreviewPages != null) {
+            androidx.loader.content.Loader<Cursor> preview = LoaderManager.getInstance(this).getLoader(PreviewLibraryLoader.ID);
+            if (preview == null) LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
+            else preview.forceLoad();
+        }
         if (mTopNavigation != PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)) {
             requireActivity().recreate();
             return;
@@ -941,6 +958,11 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mAnimesRow = new ListRow(ROW_ID_ALL_ANIMES, new HeaderItem(getString(R.string.all_animes_row)), mAnimesAdapter);
 
         mFileBrowsingRowAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
+        if (mTopNavigation) mFileBrowsingRowAdapter.registerObserver(new androidx.leanback.widget.ObjectAdapter.DataObserver() {
+            @Override public void onChanged() { refreshVisibleRows(); }
+            @Override public void onItemRangeInserted(int start,int count) { refreshVisibleRows(); }
+            @Override public void onItemRangeRemoved(int start,int count) { refreshVisibleRows(); }
+        });
         mFileBrowsingRowAdapter.add(new Box(Box.ID.NETWORK, getString(R.string.network_storage), R.drawable.filetype_new_server));
         mFileBrowsingRowAdapter.add(new Box(Box.ID.FOLDERS, getString(R.string.internal_storage), R.drawable.filetype_new_folder));
         mFileBrowsingRowAdapter.add(new Box(Box.ID.VIDEOS_BY_LISTS, getString(R.string.video_lists), R.drawable.filetype_new_playlist));
@@ -1568,6 +1590,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mActivity = getActivity();
         if (mActivity == null) log.warn("onCreateLoader: mActivity is null!");
         switch (id) {
+            case PreviewLibraryLoader.ID -> { return new PreviewLibraryLoader(requireContext()); }
             case LOADER_ID_WATCHING_UP_NEXT -> {
                 if (log.isDebugEnabled()) log.debug("onCreateLoader WATCHING_UP_NEXT");
                 return new WatchingUpNextLoader(mActivity);
@@ -1639,6 +1662,10 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         if (updateActivity("onLoadFinished") == null) return;
+        if (cursorLoader.getId() == PreviewLibraryLoader.ID) {
+            if (mPreviewPages != null) mPreviewPages.setSnapshot(((PreviewLibraryLoader)cursorLoader).snapshot);
+            return;
+        }
         boolean scanningOnGoing = NetworkScannerReceiver.isScannerWorking() || LoaderUtils.getScrapeInProgress() || isVideoImportRunning();
         if (log.isDebugEnabled()) log.debug("onLoadFinished: cursor id={}, scanningOnGoing={}", cursorLoader.getId(), scanningOnGoing);
 

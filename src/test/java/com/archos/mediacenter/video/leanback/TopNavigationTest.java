@@ -132,10 +132,11 @@ public class TopNavigationTest {
             java.io.File out = new java.io.File("build/reports/preview-ui/home.png"); out.getParentFile().mkdirs();
             try (java.io.FileOutputStream stream = new java.io.FileOutputStream(out)) { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream); }
             LinearLayout bar = (LinearLayout)((TopNavigation)root).getChildAt(0);
-            TextView movies = (TextView)bar.getChildAt(2); movies.performClick();
+            LinearLayout group = (LinearLayout)bar.getChildAt(1);
+            TextView movies = (TextView)group.getChildAt(1); movies.performClick();
             assertTrue(movies.isSelected());
-            assertFalse(bar.getChildAt(1).isSelected());
-            assertEquals("Search", bar.getChildAt(7).getContentDescription());
+            assertFalse(group.getChildAt(0).isSelected());
+            assertEquals("Search", group.getChildAt(5).getContentDescription());
         } finally {host.pause().stop().destroy();}
     }
 

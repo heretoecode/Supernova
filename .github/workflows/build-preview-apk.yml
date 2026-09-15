@@ -95,7 +95,7 @@ jobs:
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
 
       - name: Build optimised personal APK
         working-directory: nova/Video

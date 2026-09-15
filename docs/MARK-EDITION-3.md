@@ -1,3 +1,19 @@
+# Preview 3.3 — library page redesign
+
+Version 6.4.63-mark.3.3-preview, code 6040068. Same isolated package and pinned signing identity as Preview 3.2.
+
+- Centre navigation, Search next to Settings, vertically align clock and relocate indexing to footer.
+- Home begins with larger Recently played cards. Recently added groups episodes by show and selects an unfinished episode or the first unwatched available episode in season order. Applies retrospectively, without modifying files or watched data. Fully watched shows are omitted from this discovery row.
+- Movies and TV shows open matching full library grids with Continue watching, sorting and genre/year filtering. Existing collection data is retained; collection/category tiles are removed from these pages.
+- Compact Network and files cards grouped by Local storage, Network and Playlists, preserving original browse actions and hot-plug detection.
+- Settings and classic interface remain unchanged. Streaming remains paused.
+
+Artwork and titles use real library metadata. 4K badges use measured dimensions, Atmos uses the analysed audio format. Unknown badges are omitted; HDR is not guessed from file names. TV show posters do not claim every episode shares one technical format.
+
+Library snapshots and next-episode selection run on a loader worker with throttled change notifications. RecyclerView limits artwork loading to visible cards. No schema changes or data migrations.
+
+Validation: pending new workflow and native layout checks. Physical Shield test required.
+
 # Edition 3.2 — experimental UI implementation
 
 Version: 6.4.63-mark.3.2-preview (6040067). Package and signing identity remain NOVA Preview.

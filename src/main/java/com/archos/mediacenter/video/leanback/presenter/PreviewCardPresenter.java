@@ -37,8 +37,8 @@ public final class PreviewCardPresenter extends Presenter {
         public Card(Context c, Style style) {
             super(c); this.style = style;
             // Android TV's logical viewport is normally 960 x 540 dp.
-            width = dp(style == Style.CONTINUE ? 218 : style == Style.CATEGORY ? 174 : 140);
-            height = dp(style == Style.CONTINUE ? 123 : style == Style.CATEGORY ? 86 : 210);
+            width = dp(style == Style.CONTINUE ? 280 : style == Style.CATEGORY ? 174 : 140);
+            height = dp(style == Style.CONTINUE ? 158 : style == Style.CATEGORY ? 86 : 210);
             setFocusable(true); setFocusableInTouchMode(true);
             setCardType(CARD_TYPE_MAIN_ONLY);
             FrameLayout body = new FrameLayout(c);
@@ -47,9 +47,11 @@ public final class PreviewCardPresenter extends Presenter {
             body.setBackground(outline); body.setClipToOutline(true);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
+            if (style == Style.POSTER) bp.height += dp(60);
+            bp.width = -1;
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            body.addView(image, new FrameLayout.LayoutParams(-1, -1));
+            body.addView(image, new FrameLayout.LayoutParams(-1, style == Style.POSTER ? height : -1));
             caption = new LinearLayout(c); caption.setOrientation(LinearLayout.VERTICAL);
             caption.setPadding(dp(8), dp(16), dp(8), dp(style == Style.CONTINUE ? 10 : 7));
             caption.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
@@ -77,7 +79,7 @@ public final class PreviewCardPresenter extends Presenter {
             border.setCornerRadius(dp(4)); border.setStroke(dp(isFocused() ? 2 : 1), isFocused() ? 0xff62bbf3 : 0x303d5870);
             setForeground(border);
             // Poster names remain accessible without permanently covering the artwork.
-            caption.setVisibility(style != Style.POSTER || !hasArtwork || isFocused() ? View.VISIBLE : View.INVISIBLE);
+            caption.setVisibility(View.VISIBLE);
         }
     }
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent) { return new ViewHolder(new Card(parent.getContext(), style)); }
@@ -111,6 +113,18 @@ public final class PreviewCardPresenter extends Presenter {
             }
         }
         c.setContentDescription(c.title.getText() + (c.subtitle.length() == 0 ? "" : ", " + c.subtitle.getText()));
+        if (style == Style.POSTER && item instanceof Base) {
+            int year = item instanceof Movie ? ((Movie)item).getYear() : item instanceof Tvshow ? ((Tvshow)item).getYear() : 0;
+            String detail = year > 0 ? String.valueOf(year) : "";
+            if (item instanceof Video) {
+                Video v = (Video)item;
+                // Only use measured resolution, never infer a capability from a filename.
+                if (v.hasMeasured4K()) detail += "  •  4K";
+                String audio = v.getCalculatedBestAudioFormat();
+                if (audio != null && audio.toLowerCase(java.util.Locale.ROOT).contains("atmos")) detail += "  •  Atmos";
+            }
+            c.subtitle.setText(detail); c.subtitle.setVisibility(detail.isEmpty() ? View.GONE : View.VISIBLE);
+        }
         c.hasArtwork |= uri != null;
         c.updateFocus();
         if (uri != null) Picasso.get().load(uri).resize(c.width, c.height).centerCrop().noFade()

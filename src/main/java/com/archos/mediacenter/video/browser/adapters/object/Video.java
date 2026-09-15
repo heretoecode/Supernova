@@ -184,6 +184,8 @@ public class Video extends Base implements Serializable {
      * @return
      */
 
+    public boolean hasMeasured4K() { return mCalculatedWidth >= 3840 || mCalculatedHeight >= 2160; }
+
     public int getNormalizedDefinition(){
         int w = mCalculatedWidth;
         int h = mCalculatedHeight;
