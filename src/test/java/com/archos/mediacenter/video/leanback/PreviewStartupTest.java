@@ -31,6 +31,7 @@ public class PreviewStartupTest {
     private MockedStatic<ExtStorageManager> storage;
     @Before public void setUp() throws Exception {
         Context context=RuntimeEnvironment.getApplication();
+        Shadows.shadowOf((Application)context).grantPermissions(context.getPackageName()+".DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
         org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"log",org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
         org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"mContext",context);
         org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"systemLocale",Locale.UK);
