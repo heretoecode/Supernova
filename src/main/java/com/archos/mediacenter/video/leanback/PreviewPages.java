@@ -37,6 +37,7 @@ public final class PreviewPages extends FrameLayout {
         super(c); this.click=click; setBackgroundColor(0xff101f2e);
         list=new RecyclerView(c); list.setClipToPadding(false); list.setPadding(dp(28),dp(10),dp(28),dp(12));
         layout=new GridLayoutManager(c,6); layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?1:cells.get(p).type==STORAGE?2:6;}});
+        adapter.setHasStableIds(true);
         list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
         addView(list,new FrameLayout.LayoutParams(-1,-1)); render();
     }
@@ -46,7 +47,11 @@ public final class PreviewPages extends FrameLayout {
     }
     public void setTab(int tab) { this.tab=tab; render(); list.scrollToPosition(0); }
     public void setSnapshot(Snapshot s) { if(s==null)return; snapshot=s; loaded=true; render(); }
-    public void setFiles(List<Box> f) {files=f;if(tab==3)render();}
+    public void setFiles(List<Box> f) {
+        boolean same=f.size()==files.size();
+        for(int i=0;same && i<f.size();i++)same=f.get(i).getBoxId()==files.get(i).getBoxId() && Objects.equals(f.get(i).getName(),files.get(i).getName()) && Objects.equals(f.get(i).getPath(),files.get(i).getPath());
+        if(same)return;files=f;if(tab==3)render();
+    }
     private void header(String title,boolean controls) {cells.add(new Cell(HEADER,title,controls));}
     private void rail(String title,List<Entry> items) {if(items.isEmpty())return; header(title,false);cells.add(new Cell(RAIL,title,new ArrayList<>(items.subList(0,Math.min(30,items.size())))));}
     private void render() {
@@ -91,6 +96,7 @@ public final class PreviewPages extends FrameLayout {
         Holder(View v){super(v);}
     }
     class PageAdapter extends RecyclerView.Adapter<Holder> {
+        @Override public long getItemId(int p){Cell c=cells.get(p);String key=c.type==POSTER?((Entry)c.value).key():c.type==STORAGE?((Box)c.value).getBoxId()+":"+((Box)c.value).getPath():c.title;return ((long)c.type<<32) | (key.hashCode() & 0xffffffffL);}
         @Override public int getItemCount(){return cells.size();}
         @Override public int getItemViewType(int p){return cells.get(p).type;}
         @Override public Holder onCreateViewHolder(ViewGroup parent,int type){
@@ -113,7 +119,8 @@ public final class PreviewPages extends FrameLayout {
     }
     class RailAdapter extends RecyclerView.Adapter<Holder>{
         final List<Entry> entries;final PreviewCardPresenter pr=new PreviewCardPresenter(PreviewCardPresenter.Style.CONTINUE);
-        RailAdapter(List<Entry> e){entries=e;}public int getItemCount(){return entries.size();}
+        RailAdapter(List<Entry> e){entries=e;setHasStableIds(true);}
+        public long getItemId(int p){return entries.get(p).key().hashCode();}public int getItemCount(){return entries.size();}
         public Holder onCreateViewHolder(ViewGroup p,int type){Presenter.ViewHolder card=pr.onCreateViewHolder(p);Holder h=new Holder(card.view);h.card=card;h.presenter=pr;RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(dp(280),dp(158));lp.rightMargin=dp(12);h.itemView.setLayoutParams(lp);return h;}
         public void onBindViewHolder(Holder h,int p){Entry e=entries.get(p);pr.onBindViewHolder(h.card,e.media);h.itemView.setOnClickListener(v->click.open(h.card,e.media));}
         public void onViewRecycled(Holder h){pr.onUnbindViewHolder(h.card);}

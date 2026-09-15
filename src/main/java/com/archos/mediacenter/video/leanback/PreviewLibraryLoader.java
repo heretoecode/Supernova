@@ -17,6 +17,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         return concatTwoStringArrays(mProjection, new String[]{
             android.provider.MediaStore.Video.VideoColumns.WIDTH, android.provider.MediaStore.Video.VideoColumns.HEIGHT,
             VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_BEST_AUDIOTRACK_FORMAT, VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_VIDEO_FORMAT,
+            VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_FILE, VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL,
             VideoStore.Video.VideoColumns.DATE_ADDED, VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID,
             VideoStore.Video.VideoColumns.SCRAPER_M_GENRES, VideoStore.Video.VideoColumns.SCRAPER_S_GENRES});
     }
@@ -74,7 +75,11 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             int added=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATE_ADDED);
             int show=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID);
             int mg=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_M_GENRES), sg=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_GENRES);
-            while(c.moveToNext()) { Video v=(Video)mapper.bind(c); videos.add(new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg))); }
+            while(c.moveToNext()) { Video v=(Video)mapper.bind(c);
+                String backdrop=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_FILE));
+                if(backdrop!=null && !backdrop.isEmpty()) v.setPreviewBackdrop(android.net.Uri.fromFile(new java.io.File(backdrop)).toString());
+                else { String remote=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL)); if(remote!=null && (remote.startsWith("https://") || remote.startsWith("http://")))v.setPreviewBackdrop(remote); }
+                videos.add(new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg))); }
             AllTvshowsLoader loader=new AllTvshowsLoader(getContext());
             try(Cursor sc=getContext().getContentResolver().query(loader.getUri(),loader.getProjection(),loader.getSelection(),loader.getSelectionArgs(),loader.getSortOrder())) {
                 if(sc!=null) { TvshowCursorMapper sm=new TvshowCursorMapper(); sm.bindColumns(sc);

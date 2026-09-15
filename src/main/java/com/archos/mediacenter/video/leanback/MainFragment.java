@@ -466,6 +466,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         setupEventListeners();
 
         loadRows();
+        if (mPreviewPages != null) return; // Preview uses one worker snapshot, not the hidden classic row queries.
         // init the loaders after the rows are loaded to populate
         if (mShowWatchingUpNextRow) {
             if (log.isDebugEnabled()) log.debug("onViewCreated: watchingUpNext initLoader");
@@ -578,6 +579,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         // VideoStoreImportService sends null scheme thus do not filter for specific scheme
         //for (String scheme : UriUtils.sIndexableSchemes) mUpdateFilter.addDataScheme(scheme);
         ContextCompat.registerReceiver(mActivity, mUpdateReceiver, mUpdateFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
+
+        if (mPreviewPages != null) { firstTimeLoad = false; findAndUpdatePrivateModeIcon(); return; }
 
         // check if resuming we have a change of parameters and update everything accordingly
         restartWatchingUpNextLoader = false;
@@ -1022,6 +1025,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void refreshAllBoxes() {
+        if (mPreviewPages != null) return;
         if (log.isDebugEnabled()) log.debug("refreshAllBoxes");
         if (updateActivity("refreshAllBoxes") == null) return;
         refreshAllMoviesBox();
@@ -1033,6 +1037,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void scheduleBoxRefreshAfterScannerQuietPeriod(String reason) {
+        if (mPreviewPages != null) return;
         if (log.isDebugEnabled()) log.debug("scanner box refresh: {} - waiting {}ms", reason, SCANNER_BOX_REFRESH_DEBOUNCE_MS);
         mScannerBoxRefreshHandler.removeCallbacks(mRefreshBoxesAfterScannerQuietPeriod);
         mScannerBoxRefreshHandler.postDelayed(mRefreshBoxesAfterScannerQuietPeriod, SCANNER_BOX_REFRESH_DEBOUNCE_MS);

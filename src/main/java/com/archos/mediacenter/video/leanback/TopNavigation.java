@@ -30,7 +30,7 @@ public final class TopNavigation extends LinearLayout {
         setOrientation(VERTICAL);
         setBackgroundColor(0xff101f2e);
         bar = new LinearLayout(c); bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(dp(26), 0, dp(16), 0);
+        bar.setPadding(dp(26), 0, dp(26), 0);
         bar.setBackgroundColor(0xff10283d);
         TextView brand = new TextView(c);
         brand.setText("NOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);

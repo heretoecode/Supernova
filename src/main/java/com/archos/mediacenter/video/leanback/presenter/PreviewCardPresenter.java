@@ -99,6 +99,7 @@ public final class PreviewCardPresenter extends Presenter {
             Base b = (Base)item; c.title.setText(b.getName()); uri = b.getPosterUri();
             if (item instanceof Video) {
                 Video v = (Video)item;
+                if (style == Style.CONTINUE && v.getPreviewBackdrop() != null) uri = v.getPreviewBackdrop();
                 if (TextUtils.isEmpty(b.getName())) c.title.setText(v.getFilenameNonCryptic());
                 if (v instanceof Episode) {
                     Episode e = (Episode)v; c.title.setText(e.getShowName());
