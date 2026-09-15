@@ -12,7 +12,16 @@ import java.util.*;
 public final class PreviewLibraryLoader extends AllVideosLoader {
     public static final int ID = 12001;
     public volatile Snapshot snapshot;
-    public PreviewLibraryLoader(Context context) { super(context); }
+    private final AllTvshowsLoader showsQuery;
+    public PreviewLibraryLoader(Context context) {
+        super(context);
+        // CursorLoader creates a Handler: construct on the same main thread as this loader.
+        showsQuery = new AllTvshowsLoader(context) {
+            @Override public String getSelection() {
+                return super.getSelection().replace(com.archos.mediaprovider.video.LoaderUtils.HIDE_WATCHED_FILTER, "1");
+            }
+        };
+    }
     @Override public String[] getProjection() {
         return concatTwoStringArrays(mProjection, new String[]{
             android.provider.MediaStore.Video.VideoColumns.WIDTH, android.provider.MediaStore.Video.VideoColumns.HEIGHT,
@@ -80,7 +89,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 if(backdrop!=null && !backdrop.isEmpty()) v.setPreviewBackdrop(android.net.Uri.fromFile(new java.io.File(backdrop)).toString());
                 else { String remote=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL)); if(remote!=null && (remote.startsWith("https://") || remote.startsWith("http://")))v.setPreviewBackdrop(remote); }
                 videos.add(new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg))); }
-            AllTvshowsLoader loader=new AllTvshowsLoader(getContext()) { @Override public String getSelection() { return super.getSelection().replace(com.archos.mediaprovider.video.LoaderUtils.HIDE_WATCHED_FILTER, "1"); } };
+            AllTvshowsLoader loader=showsQuery;
             try(Cursor sc=getContext().getContentResolver().query(loader.getUri(),loader.getProjection(),loader.getSelection(),loader.getSelectionArgs(),loader.getSortOrder())) {
                 if(sc!=null) { TvshowCursorMapper sm=new TvshowCursorMapper(); sm.bindColumns(sc);
                     Map<Long,Entry> byShow=new HashMap<>(); for(Entry e:videos) if(e.show>0) { Entry old=byShow.get(e.show); if(old==null||old.added<e.added) byShow.put(e.show,e); }

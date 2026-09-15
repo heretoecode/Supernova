@@ -1,3 +1,11 @@
+# Preview 3.4 — startup repair candidate
+
+Version 6.4.63-mark.3.4-preview, code 6040069. Same isolated package and pinned signing identity as Preview 3.3.
+
+Moves construction of the TV query loader out of the background query thread, preventing a Handler/Looper startup exception with Preview enabled. Guards clock receiver cleanup when a UI switch recreates the activity before resume completes.
+
+Regression tests exercise the database query on a worker with no Looper, full home fragment recreation, and clock cleanup during UI switching. CI also attempts installed debug startup and signed release upgrade with Preview enabled. Passing CI must be checked before calling this candidate ready; physical Shield acceptance testing remains necessary.
+
 # Preview 3.3 — library page redesign
 
 Version 6.4.63-mark.3.3-preview, code 6040068. Same isolated package and pinned signing identity as Preview 3.2.

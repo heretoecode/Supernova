@@ -60,6 +60,18 @@ public class PreviewStartupTest {
         PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
         try(Cursor c=loader.loadInBackground()) {assertNotNull(c);assertNotNull(loader.snapshot);assertTrue(loader.snapshot.recent.isEmpty());}
     }
+    @Test public void previewQueriesRunOnWorkerWithoutLooper() throws Exception {
+        PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
+        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
+        try {
+            worker.submit(() -> {
+                assertNull(Looper.myLooper());
+                try(Cursor c=loader.loadInBackground()) {
+                    assertNotNull(c);assertNotNull(loader.snapshot);
+                }
+            }).get(15,java.util.concurrent.TimeUnit.SECONDS);
+        } finally { worker.shutdownNow(); }
+    }
     @Test public void savedPreviewPreferenceSurvivesStartupAndRecreation(){
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).commit();
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
