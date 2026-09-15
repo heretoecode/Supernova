@@ -80,6 +80,31 @@ public class PreviewStartupTest {
         }
         host.pause().stop().destroy();
     }
+    @Test public void clockCleanupHandlesUiSwitchBeforeResume() {
+        Context context=RuntimeEnvironment.getApplication();
+        android.widget.FrameLayout root=new android.widget.FrameLayout(context);
+        android.widget.TextView text=new android.widget.TextView(context);
+        text.setId(com.archos.mediacenter.video.R.id.clock);root.addView(text);
+        com.archos.mediacenter.video.leanback.overlay.Clock clock=new com.archos.mediacenter.video.leanback.overlay.Clock(context,root);
+        // An early activity recreation can skip resume, yet still invoke pause.
+        clock.pause();clock.resume();clock.pause();clock.pause();clock.destroy();
+    }
+    @Test public void switchingFromClassicToPreviewCanPauseForRecreation() {
+        android.content.SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
+        prefs.edit().putBoolean("try_new_ui",false).commit();
+        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        try {
+            MainFragment fragment=new MainFragment();
+            host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
+            host.pause();
+            prefs.edit().putBoolean("try_new_ui",true).commit();
+            host.resume();
+        } catch (Throwable failure) {
+            try {host.pause().stop().destroy();} catch (Throwable cleanup) {failure.addSuppressed(cleanup);}
+            throw failure;
+        }
+        host.pause().stop().destroy();
+    }
     private void draw(MainFragment fragment){
         for(int i=0;i<4;i++){
             fragment.getChildFragmentManager().executePendingTransactions();
