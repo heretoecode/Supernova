@@ -36,5 +36,14 @@ if [[ "$phase" == debug ]]; then
   check_start classic-clean
   set_preferences true
 fi
+if [[ "$phase" == preview ]]; then
+  set_preferences true
+fi
 check_start "$phase"
+if [[ "$phase" == preview ]]; then
+  # Reuse this APK to check reinstall and saved-Preview startup without a second build.
+  adb shell am force-stop "$package"
+  adb install -r -g "$apk"
+  adb shell run-as "$package" cat "shared_prefs/${package}_preferences.xml" | grep -q 'name="try_new_ui" value="true"'
+fi
 check_start "$phase-restart"

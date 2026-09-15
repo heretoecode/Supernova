@@ -3,7 +3,19 @@ name: Build NOVA Preview APK
 on:
   push:
     branches: ['codex/apk-build-*']
+    paths-ignore: ['docs/**', '**/*.md']
   workflow_dispatch:
+    inputs:
+      validation:
+        description: 'Preview for quick Shield testing; full for milestone validation'
+        required: true
+        default: preview
+        type: choice
+        options: [preview, full]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -13,6 +25,9 @@ jobs:
     name: Build isolated Preview APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      VALIDATION_MODE: ${{ inputs.validation || 'preview' }}
+      APK_VARIANT: ${{ inputs.validation == 'full' && 'release' || 'debug' }}
 
     steps:
       - name: Check out the triggering Video revision
@@ -91,15 +106,22 @@ jobs:
           echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a" > nova/preview-certificate-sha256.txt
 
       - name: Test personal build changes
+        if: ${{ inputs.validation == 'full' }}
         working-directory: nova/Video
         run: |
           set -o pipefail
           chmod +x gradlew
           ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest' --tests 'com.archos.mediacenter.video.leanback.PreviewDiscoveryTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
 
-      - name: Build startup diagnostic APK
+      - name: Build signed development APK
         working-directory: nova/Video
-        run: ./gradlew assembleNoamazonDebug -Puniversal -PmarkPreview --no-daemon
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          extra_args=()
+          # Preview delivery defers lint and optimisation to the full milestone run.
+          if [[ "$VALIDATION_MODE" == preview ]]; then extra_args+=(-x lintNoamazonDebug); fi
+          ./gradlew assembleNoamazonDebug -Puniversal -PmarkPreview "${extra_args[@]}" --build-cache --no-daemon 2>&1 | tee ../gradle-debug-build.log
 
       - name: Start Android emulator for full process startup checks
         run: |
@@ -133,9 +155,12 @@ jobs:
         working-directory: nova/Video
         run: |
           apk=$(find build/outputs/apk/noamazon/debug -name '*.apk' -type f | head -1)
-          bash .github/build/check-preview-startup.sh "$apk" debug
+          phase=debug
+          if [[ "$VALIDATION_MODE" == preview ]]; then phase=preview; fi
+          bash .github/build/check-preview-startup.sh "$apk" "$phase"
 
       - name: Build optimised personal APK
+        if: ${{ inputs.validation == 'full' }}
         working-directory: nova/Video
         run: |
           set -o pipefail
@@ -143,6 +168,7 @@ jobs:
           ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
 
       - name: Check signed release upgrade with Preview still enabled
+        if: ${{ inputs.validation == 'full' }}
         working-directory: nova/Video
         run: |
           apk=$(find build/outputs/apk/noamazon/release -name '*.apk' -type f | head -1)
@@ -150,7 +176,7 @@ jobs:
 
       - name: Verify APK signature and list native libraries
         run: |
-          mapfile -t apks < <(find nova/Video/build/outputs/apk/noamazon/release -name '*.apk' -type f)
+          mapfile -t apks < <(find "nova/Video/build/outputs/apk/noamazon/$APK_VARIANT" -name '*.apk' -type f)
           test "${#apks[@]}" -eq 1
           [[ "${apks[0]}" == *org.courville.nova.markpreview-* ]]
           build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
@@ -159,6 +185,21 @@ jobs:
           unzip -l "${apks[0]}" 'lib/*' | tee -a nova/apk-verification.log
           sha256sum "${apks[0]}" | tee nova/apk-sha256.txt
 
+      - name: Record validation mode
+        run: |
+          {
+            echo "Source: $GITHUB_SHA"
+            echo "Mode: $VALIDATION_MODE"
+            echo "APK variant: $APK_VARIANT"
+            if [[ "$VALIDATION_MODE" == preview ]]; then
+              echo "Passed: compile/package, pinned signature, Preview launch and same-APK reinstall/restart."
+              echo "Deferred: unit suite, lint, populated UI review, release optimisation and cross-variant upgrade."
+              echo "This development APK is for Mark's Shield testing, not performance acceptance."
+            else
+              echo "Passed: selected unit suite, lint, classic/Preview startup and signed diagnostic-to-release upgrade/restart."
+            fi
+          } > nova/build-validation.txt
+
       - name: Upload build diagnostics
         if: always()
         uses: actions/upload-artifact@v4
@@ -166,6 +207,8 @@ jobs:
           name: gradle-build-log
           path: |
             nova/gradle-build.log
+            nova/gradle-debug-build.log
+            nova/build-validation.txt
             nova/gradle-tests.log
             nova/startup-diagnostics/
             nova/Video/build/reports/tests/
@@ -181,6 +224,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: nova-mark-edition-3-preview-apk
-          path: nova/Video/build/outputs/apk/noamazon/release/*.apk
+          name: nova-preview-${{ env.VALIDATION_MODE }}-apk
+          path: nova/Video/build/outputs/apk/noamazon/${{ env.APK_VARIANT }}/*.apk
           if-no-files-found: error
