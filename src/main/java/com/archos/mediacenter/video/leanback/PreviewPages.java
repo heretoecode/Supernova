@@ -101,13 +101,13 @@ public final class PreviewPages extends FrameLayout {
         @Override public int getItemViewType(int p){return cells.get(p).type;}
         @Override public Holder onCreateViewHolder(ViewGroup parent,int type){
             if(type==POSTER){PreviewCardPresenter pr=new PreviewCardPresenter(PreviewCardPresenter.Style.POSTER); Presenter.ViewHolder card=pr.onCreateViewHolder(parent);Holder h=new Holder(card.view);h.presenter=pr;h.card=card;RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,-2);lp.setMargins(0,0,dp(10),dp(15));h.itemView.setLayoutParams(lp);return h;}
-            LinearLayout v=new LinearLayout(getContext());v.setGravity(Gravity.CENTER_VERTICAL);v.setPadding(0,dp(9),0,dp(10));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));return new Holder(v);
+            LinearLayout v=new LinearLayout(getContext());v.setGravity(Gravity.CENTER_VERTICAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));return new Holder(v);
         }
         @Override public void onBindViewHolder(Holder h,int p){Cell c=cells.get(p);
             if(c.type==POSTER){Entry e=(Entry)c.value;h.presenter.onBindViewHolder(h.card,e.media);h.itemView.setOnClickListener(v->click.open(h.card,e.media));return;}
             LinearLayout v=(LinearLayout)h.itemView;v.removeAllViews();v.setFocusable(false);v.setOnClickListener(null);v.setBackground(null);
             if(c.type==HEADER){v.addView(text(c.title,20),new LinearLayout.LayoutParams(0,-2,1));if(Boolean.TRUE.equals(c.value)){TextView sort=button("Sort: "+new String[]{"Recently added","Title A–Z","Year"}[sorts[tab]],()->sort());v.addView(sort);TextView filter=button(genres[tab].isEmpty()&&years[tab]==0?"Filter":"Filter •",()->filter());LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);v.addView(filter,lp);}}
-            else if(c.type==RAIL){RecyclerView rail=new RecyclerView(getContext());rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value));v.addView(rail,new LinearLayout.LayoutParams(-1,dp(164)));}
+            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new RecyclerView(getContext());rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value));v.addView(rail,new LinearLayout.LayoutParams(-1,dp(140)));}
             else if(c.type==STORAGE){Box b=(Box)c.value;v.setPadding(dp(12),dp(12),dp(12),dp(12));RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,dp(88));lp.setMargins(0,0,dp(12),dp(12));v.setLayoutParams(lp);v.setBackground(background(false));v.setFocusable(true);v.setClickable(true);v.setOnFocusChangeListener((view,f)->view.setBackground(background(f)));
                 ImageView icon=new ImageView(getContext());icon.setImageDrawable(new StorageIcon(b.getBoxId()));v.addView(icon,new LinearLayout.LayoutParams(dp(35),dp(35)));
                 LinearLayout labels=new LinearLayout(getContext());labels.setOrientation(LinearLayout.VERTICAL);labels.setPadding(dp(12),0,0,0);
@@ -121,7 +121,7 @@ public final class PreviewPages extends FrameLayout {
         final List<Entry> entries;final PreviewCardPresenter pr=new PreviewCardPresenter(PreviewCardPresenter.Style.CONTINUE);
         RailAdapter(List<Entry> e){entries=e;setHasStableIds(true);}
         public long getItemId(int p){return entries.get(p).key().hashCode();}public int getItemCount(){return entries.size();}
-        public Holder onCreateViewHolder(ViewGroup p,int type){Presenter.ViewHolder card=pr.onCreateViewHolder(p);Holder h=new Holder(card.view);h.card=card;h.presenter=pr;RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(dp(280),dp(158));lp.rightMargin=dp(12);h.itemView.setLayoutParams(lp);return h;}
+        public Holder onCreateViewHolder(ViewGroup p,int type){Presenter.ViewHolder card=pr.onCreateViewHolder(p);Holder h=new Holder(card.view);h.card=card;h.presenter=pr;RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(dp(280),dp(140));lp.rightMargin=dp(12);h.itemView.setLayoutParams(lp);return h;}
         public void onBindViewHolder(Holder h,int p){Entry e=entries.get(p);pr.onBindViewHolder(h.card,e.media);h.itemView.setOnClickListener(v->click.open(h.card,e.media));}
         public void onViewRecycled(Holder h){pr.onUnbindViewHolder(h.card);}
     }

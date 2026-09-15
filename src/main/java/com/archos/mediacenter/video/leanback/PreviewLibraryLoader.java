@@ -80,7 +80,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 if(backdrop!=null && !backdrop.isEmpty()) v.setPreviewBackdrop(android.net.Uri.fromFile(new java.io.File(backdrop)).toString());
                 else { String remote=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL)); if(remote!=null && (remote.startsWith("https://") || remote.startsWith("http://")))v.setPreviewBackdrop(remote); }
                 videos.add(new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg))); }
-            AllTvshowsLoader loader=new AllTvshowsLoader(getContext());
+            AllTvshowsLoader loader=new AllTvshowsLoader(getContext()) { @Override public String getSelection() { return super.getSelection().replace(com.archos.mediaprovider.video.LoaderUtils.HIDE_WATCHED_FILTER, "1"); } };
             try(Cursor sc=getContext().getContentResolver().query(loader.getUri(),loader.getProjection(),loader.getSelection(),loader.getSelectionArgs(),loader.getSortOrder())) {
                 if(sc!=null) { TvshowCursorMapper sm=new TvshowCursorMapper(); sm.bindColumns(sc);
                     Map<Long,Entry> byShow=new HashMap<>(); for(Entry e:videos) if(e.show>0) { Entry old=byShow.get(e.show); if(old==null||old.added<e.added) byShow.put(e.show,e); }

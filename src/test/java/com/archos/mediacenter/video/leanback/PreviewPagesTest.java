@@ -44,9 +44,11 @@ public class PreviewPagesTest {
                 Movie movie=new Movie(i,"/movie"+i,"Film "+i,i,"",2024,7,"",null,100000,i==1?10000:0,0,0,false,false,false,false,i,i,3840,2160,"Atmos",null,null,null,0,1,1000,0);
                 Entry entry=new Entry(movie,i,0,"Drama");s.movies.add(entry);s.recent.add(entry);if(i==1){s.continuingMovies.add(entry);s.played.add(entry);}
             }
+            for(int i=1;i<=12;i++)s.shows.add(new Entry(new Tvshow(i,"Show "+i,null,2,10,2,"/show"+i),i,i,"Drama"));
+            s.continuingShows.add(episode(2,5000,false,200,20));
             pages.setSnapshot(s);pages.setFiles(Arrays.asList(new Box(Box.ID.FOLDERS,"Internal storage",0),new Box(Box.ID.USB,"External drive: Backup #1 (SanDisk USB drive)",0,"/test"),new Box(Box.ID.NETWORK,"Network",0),new Box(Box.ID.VIDEOS_BY_LISTS,"Playlists",0)));
             for(int tab=0;tab<4;tab++){
-                pages.setTab(tab);
+                ((LinearLayout)((LinearLayout)nav.getChildAt(0)).getChildAt(1)).getChildAt(tab).performClick();
                 for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
                 android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));
                 java.io.File file=new java.io.File("build/reports/preview-ui/page-"+tab+".png");file.getParentFile().mkdirs();try(java.io.FileOutputStream out=new java.io.FileOutputStream(file)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out);}

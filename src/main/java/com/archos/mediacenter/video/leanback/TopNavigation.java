@@ -44,7 +44,7 @@ public final class TopNavigation extends LinearLayout {
             tab.setText(labels[i]); tab.setContentDescription(labels[i]);
             tab.setTextColor(Color.WHITE); tab.setTextSize(15); tab.setGravity(Gravity.CENTER);
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
-            tab.setSingleLine(true); tab.setFocusable(true); tab.setClickable(true);
+            tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
             tab.setPadding(dp(12), dp(10), dp(12), dp(10));
             tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, Color.WHITE, 0xffb4cbe0}));
             StateListDrawable bg = new StateListDrawable();

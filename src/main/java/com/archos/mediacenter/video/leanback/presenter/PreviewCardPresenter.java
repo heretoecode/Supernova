@@ -38,7 +38,7 @@ public final class PreviewCardPresenter extends Presenter {
             super(c); this.style = style;
             // Android TV's logical viewport is normally 960 x 540 dp.
             width = dp(style == Style.CONTINUE ? 280 : style == Style.CATEGORY ? 174 : 140);
-            height = dp(style == Style.CONTINUE ? 158 : style == Style.CATEGORY ? 86 : 210);
+            height = dp(style == Style.CONTINUE ? 140 : style == Style.CATEGORY ? 86 : 180);
             setFocusable(true); setFocusableInTouchMode(true);
             setCardType(CARD_TYPE_MAIN_ONLY);
             FrameLayout body = new FrameLayout(c);
@@ -47,8 +47,8 @@ public final class PreviewCardPresenter extends Presenter {
             body.setBackground(outline); body.setClipToOutline(true);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
-            if (style == Style.POSTER) bp.height += dp(60);
-            bp.width = -1;
+            if (style == Style.POSTER) bp.height += dp(50);
+            bp.width = width;
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             body.addView(image, new FrameLayout.LayoutParams(-1, style == Style.POSTER ? height : -1));
@@ -72,6 +72,11 @@ public final class PreviewCardPresenter extends Presenter {
             progress.setVisibility(View.GONE);
             setOnFocusChangeListener((v, focus) -> updateFocus());
             updateFocus();
+        }
+        @Override protected void onMeasure(int widthSpec, int heightSpec) {
+            if (View.MeasureSpec.getMode(widthSpec) == View.MeasureSpec.EXACTLY && View.MeasureSpec.getSize(widthSpec)>0)
+                getChildAt(0).getLayoutParams().width = View.MeasureSpec.getSize(widthSpec);
+            super.onMeasure(widthSpec,heightSpec);
         }
         private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
         void updateFocus() {

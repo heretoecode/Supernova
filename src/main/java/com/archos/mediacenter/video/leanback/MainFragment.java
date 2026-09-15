@@ -466,7 +466,10 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         setupEventListeners();
 
         loadRows();
-        if (mPreviewPages != null) return; // Preview uses one worker snapshot, not the hidden classic row queries.
+        if (mPreviewPages != null) {
+            LoaderManager.getInstance(this).initLoader(LOADER_ID_NON_SCRAPED_VIDEOS_COUNT, null, this);
+            return; // Preview uses one worker snapshot and the unmatched count, not hidden classic row queries.
+        }
         // init the loaders after the rows are loaded to populate
         if (mShowWatchingUpNextRow) {
             if (log.isDebugEnabled()) log.debug("onViewCreated: watchingUpNext initLoader");
