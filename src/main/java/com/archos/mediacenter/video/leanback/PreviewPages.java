@@ -162,7 +162,8 @@ public final class PreviewPages extends FrameLayout {
             if(c.type==POSTER){Entry e=(Entry)c.value;h.presenter.onBindViewHolder(h.card,e.media);h.itemView.setOnClickListener(v->click.open(h.card,e.media));return;}
             LinearLayout v=(LinearLayout)h.itemView;v.removeAllViews();v.setFocusable(false);v.setOnClickListener(null);v.setBackground(null);v.setOrientation(LinearLayout.HORIZONTAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));
             if(c.type==HERO){Entry e=(Entry)c.value;v.setOrientation(LinearLayout.VERTICAL);v.setGravity(Gravity.CENTER_VERTICAL);v.setPadding(0,dp(6),0,dp(12));
-                v.setLayoutParams(new RecyclerView.LayoutParams(-1,dp(tab==0?235:64)));
+                v.setMinimumHeight(dp(tab==0?235:76));
+                v.setLayoutParams(new RecyclerView.LayoutParams(-1,tab==0?dp(235):android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
                 if(tab==0){TextView featured=text("F E A T U R E D",11);featured.setTextColor(0xff9ed4f7);v.addView(featured);
                     TextView title=text(displayName(e),32);title.setMaxLines(2);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title,new LinearLayout.LayoutParams(dp(470),-2));
                     String meta=e.year()>0?String.valueOf(e.year()):"";

@@ -111,6 +111,15 @@ jobs:
           sudo chmod 666 /dev/kvm
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'system-images;android-28;google_apis;x86_64' 'emulator' > nova/startup-diagnostics/sdk-startup.log
           echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd --force --name nova-startup --package 'system-images;android-28;google_apis;x86_64'
+          # Configure the physical panel; wm size alone leaves a portrait skin.
+          sed -i -E '/^(hw.lcd.(width|height|density)|skin.name|skin.path)=/d' "$ANDROID_AVD_HOME/nova-startup.avd/config.ini"
+          cat >> "$ANDROID_AVD_HOME/nova-startup.avd/config.ini" <<'AVD'
+          hw.lcd.width=1920
+          hw.lcd.height=1080
+          hw.lcd.density=320
+          skin.name=1920x1080
+          skin.path=_no_skin
+          AVD
           "$ANDROID_HOME/emulator/emulator" -avd nova-startup -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -memory 2048 > nova/startup-diagnostics/emulator-startup.log 2>&1 &
           timeout 180 adb wait-for-device
           timeout 180 bash -c 'until adb shell getprop sys.boot_completed | tr -d "\r" | grep -q 1; do sleep 2; done'

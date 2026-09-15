@@ -23,6 +23,7 @@ check_start() {
   adb logcat -d > "../startup-diagnostics/$label-logcat.txt"
   adb shell dumpsys activity activities > "../startup-diagnostics/$label-activities.txt"
   adb exec-out screencap -p > "../startup-diagnostics/$label.png"
+  python3 -c 'import struct,sys; w,h=struct.unpack(">II",open(sys.argv[1],"rb").read(24)[16:24]); print("Captured panel:",w,h); assert w>=1280 and w>h, "Expected a landscape TV panel"' "../startup-diagnostics/$label.png"
   if grep -q 'FATAL EXCEPTION' "../startup-diagnostics/$label-logcat.txt"; then
     cat "../startup-diagnostics/$label-logcat.txt"
     exit 1
