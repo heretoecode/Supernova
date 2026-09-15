@@ -66,6 +66,14 @@ public class VideoDetailsActivity extends LeanbackActivity {
         }
 
         setContentView(R.layout.androidtv_details_activity);
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
+                if(fragment instanceof VideoDetailsFragment&&((VideoDetailsFragment)fragment).closePreviewNativeDetails())return;
+                setEnabled(false);
+                try{getOnBackPressedDispatcher().onBackPressed();}finally{setEnabled(true);}
+            }
+        });
 
         android.widget.ImageView backdropView = findViewById(R.id.details_backdrop);
         if (backdropView != null) {
@@ -105,7 +113,6 @@ public class VideoDetailsActivity extends LeanbackActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK){Fragment f=getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);if(f instanceof VideoDetailsFragment&&((VideoDetailsFragment)f).closePreviewNativeDetails())return true;}
         switch (keyCode) {
             case KeyEvent.KEYCODE_MENU:
             case KeyEvent.KEYCODE_MEDIA_PLAY:
