@@ -105,6 +105,7 @@ public class VideoDetailsActivity extends LeanbackActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK){Fragment f=getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);if(f instanceof VideoDetailsFragment&&((VideoDetailsFragment)f).closePreviewNativeDetails())return true;}
         switch (keyCode) {
             case KeyEvent.KEYCODE_MENU:
             case KeyEvent.KEYCODE_MEDIA_PLAY:

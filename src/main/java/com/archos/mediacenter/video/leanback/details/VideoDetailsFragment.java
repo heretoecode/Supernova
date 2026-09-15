@@ -197,6 +197,27 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     private static final int DIALOG_LAUNCH_DELAY_MS = 2000;
 
     /** The video for which we are displaying the details. This object is updated each time we have a DB update */
+    private PreviewMoviePage mPreviewMovie;
+    private com.archos.mediacenter.video.leanback.TopNavigation mPreviewNavigation;
+    private View mNativeDetails;
+    private java.util.concurrent.ExecutorService mPreviewWorker;
+    private boolean mPreviewAutoPlayed;
+    @Override public View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
+        View nativeView=super.onCreateView(inflater,parent,state);
+        if(!(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)||mLaunchedFromPlayer||!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
+        mNativeDetails=nativeView;android.widget.FrameLayout container=new android.widget.FrameLayout(requireContext());container.addView(nativeView);nativeView.setVisibility(View.GONE);
+        mPreviewMovie=new PreviewMoviePage(requireActivity(),()->mDetailsOverviewRow==null?null:mDetailsOverviewRow.getActionsAdapter(),a->{mOnActionClickedListener.onActionClicked(a);if(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)mVideo);},()->{mPreviewMovie.setVisibility(View.GONE);mNativeDetails.setVisibility(View.VISIBLE);mNativeDetails.requestFocus();},uri->{if(mPreviewNavigation!=null)mPreviewNavigation.setArtwork(uri);});
+        container.addView(mPreviewMovie,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        mPreviewNavigation=new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(),container,tab->{
+            if(tab==4)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+            else if(tab==5)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+            else{Intent home=new Intent(requireContext(),com.archos.mediacenter.video.leanback.MainActivityLeanback.class);home.putExtra("preview_tab",tab);home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(home);requireActivity().finish();}
+        },()->mPreviewMovie!=null&&mPreviewMovie.atTop());
+        mPreviewNavigation.selectTab(1);mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)mVideo);
+        return mPreviewNavigation;
+    }
+    public boolean closePreviewNativeDetails(){if(mPreviewMovie!=null&&mPreviewMovie.getVisibility()!=View.VISIBLE){mNativeDetails.setVisibility(View.GONE);mPreviewMovie.setVisibility(View.VISIBLE);mPreviewMovie.requestFocus();return true;}return false;}
+
     private Video mVideo;
     private static boolean mIsVideoWatched = false; // TOFIX: adding internal state since trakt sync can occur much later
 
@@ -612,6 +633,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mOverlay = new Overlay(this);
+        if(mPreviewMovie!=null){
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader loader=new com.archos.mediacenter.video.leanback.PreviewLibraryLoader(requireContext().getApplicationContext());
+            final PreviewMoviePage page=mPreviewMovie;
+            mPreviewWorker=java.util.concurrent.Executors.newSingleThreadExecutor();mPreviewWorker.execute(()->{
+                try(android.database.Cursor cursor=loader.loadInBackground()){if(cursor!=null)page.post(()->{if(mPreviewMovie==page&&page.isAttachedToWindow())page.setSnapshot(loader.snapshot);});}
+                catch(RuntimeException ignored){}finally{page.post(loader::reset);}
+            });
+        }
 
         // The clicked card already provides a Video.  Build a provisional overview immediately
         // so the shared-element helper has a destination hero view before the DB reload and
@@ -626,6 +655,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
     @Override
     public void onDestroyView() {
+        if(mPreviewWorker!=null)mPreviewWorker.shutdownNow();
+        mPreviewMovie=null;mPreviewNavigation=null;mNativeDetails=null;
         if (mDetailsOverviewRow != null) StreamingActions.cancel(mDetailsOverviewRow.getActionsAdapter());
         mOverlay.destroy();
         delete = null;
@@ -1489,6 +1520,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(video, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
         }
 
+        if(mPreviewMovie!=null && video instanceof com.archos.mediacenter.video.browser.adapters.object.Movie){
+            mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)video);
+            if(!mPreviewAutoPlayed&&requireActivity().getIntent().getBooleanExtra("preview_play",false)){mPreviewAutoPlayed=true;mPreviewMovie.post(()->{if(mPreviewMovie!=null)mPreviewMovie.play();});}
+        }
         // Plot, Cast, Posters, Backdrops, Links rows will be added after, once we get the Scraper Tags
 
         // Start the scraper related task (backdrop, poster list, backdrop list, web links)
@@ -1730,6 +1765,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         if(mVideo.getMetadata()!=null) {
             // Tell presenter to update the badges according to the metadata
             mDescriptionPresenter.displayActualVideoBadges(mVideo);
+            if(mPreviewMovie!=null&&mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)mVideo);
 
             // update the details row and replace it in the adapter
             mFileDetailsRow = new FileDetailsRow(getActivity(), mVideo, mPlayerType);
@@ -1804,6 +1840,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     if (log.isDebugEnabled()) log.debug("onPostExecute");
                     if(getActivity().isDestroyed())
                         return;
+                    if(mPreviewMovie!=null)mPreviewMovie.setTags(finalTags,finalTrailers,finalBackdrops);
                     // Update the action adapter if there is a next episode
                     ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter()).setNextEpisodeStatus(mNextEpisode != null);
                     ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter()).setListEpisodesStatus(mIsTvEpisode);

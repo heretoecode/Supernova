@@ -373,6 +373,10 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mPreviewPages = new PreviewPages(requireContext(), (holder,item) -> new MainViewClickedListener(requireActivity()).onItemClicked(holder,item,null,null));
         pages.addView(mPreviewPages, new android.widget.FrameLayout.LayoutParams(-1,-1));
         mNavigation = new TopNavigation(requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
+        mPreviewPages.setArtworkListener(mNavigation::setArtwork);
+        int requestedTab=requireActivity().getIntent().getIntExtra("preview_tab",mActiveTab);
+        if(requestedTab>=0&&requestedTab<4){mActiveTab=requestedTab;mPreviewPages.setTab(requestedTab);mNavigation.selectTab(requestedTab);}
+        requireActivity().getIntent().removeExtra("preview_tab");
         return mNavigation;
     }
 

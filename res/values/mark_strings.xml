@@ -5,9 +5,9 @@
 
     <string name="theme_slate">Slate blue</string>
     <string name="documentary_tv_shows">Documentary TV shows</string>
-    <string name="mark_build_identity">Mark’s personal NOVA build · Edition 3.4\n6.4.63-mark.3.4-preview · heretoecode/aos-Video</string>
+    <string name="mark_build_identity">Mark’s personal NOVA build · Edition 3.5\n6.4.63-mark.3.5-preview · heretoecode/aos-Video</string>
     <string name="mark_release_notes_title">Build details and release notes</string>
-    <string name="mark_release_notes">Edition 3.4 · Startup repair\n\n• Fixed clock cleanup when switching UI modes.\n• Added startup, recreation and installed-APK checks.\n\nIncluded library-page features:\n• Centred navigation with Search beside Settings.\n• Clock aligned in header; indexing moved to footer.\n• Larger Recently played cards first on Home.\n• Recently added groups existing and new episodes by show, choosing resume or next unwatched.\n• Matching Movies and TV show pages with Continue watching, poster grids, sorting and genre/year filters.\n• Compact grouped Network and files cards.\n• Settings and classic UI preserved.\n\nStreaming remains paused. HDR badges require verified media information and are not inferred.\nFull notes: docs/MARK-EDITION-3.md</string>
+    <string name="mark_release_notes">Edition 3.5 · Startup repair\n\n• Fixed clock cleanup when switching UI modes.\n• Added startup, recreation and installed-APK checks.\n\nIncluded library-page features:\n• Centred navigation with Search beside Settings.\n• Clock aligned in header; indexing moved to footer.\n• Larger Recently played cards first on Home.\n• Recently added groups existing and new episodes by show, choosing resume or next unwatched.\n• Matching Movies and TV show pages with Continue watching, poster grids, sorting and genre/year filters.\n• Compact grouped Network and files cards.\n• Settings and classic UI preserved.\n\nStreaming remains paused. HDR badges require verified media information and are not inferred.\nFull notes: docs/MARK-EDITION-3.md</string>
     <string name="streaming_title">Streaming services</string>
     <string name="streaming_enabled_title">Show streaming options</string>
     <string name="streaming_enabled_summary">Find subscription and free streaming options for titles in your library</string>

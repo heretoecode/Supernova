@@ -16,6 +16,7 @@ import java.util.function.BooleanSupplier;
 /** Optional navigation shell; the same native BrowseSupportFragment owns all library rows. */
 public final class TopNavigation extends LinearLayout {
     private final LinearLayout bar;
+    private final PreviewBackdrop artwork;
     private final View content;
     private final android.widget.FrameLayout scanStatus;
     private final android.widget.FrameLayout status;
@@ -28,13 +29,13 @@ public final class TopNavigation extends LinearLayout {
         this.content = content; this.firstRow = firstRow;
         scanStatus = new android.widget.FrameLayout(c); scanStatus.setPadding(dp(28), 0, dp(28), 0);
         setOrientation(VERTICAL);
-        setBackgroundColor(0xff101f2e);
+        artwork = new PreviewBackdrop(c); setBackground(artwork);
         bar = new LinearLayout(c); bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(26), 0, dp(26), 0);
-        bar.setBackgroundColor(0xff10283d);
+        bar.setBackgroundColor(Color.TRANSPARENT);
         TextView brand = new TextView(c);
         brand.setText("NOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);
-        brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(85), -1));
+        brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(85), -1));
         LinearLayout group = new LinearLayout(c); group.setGravity(Gravity.CENTER);
         bar.addView(group, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV shows", "Network & files", "Settings", "Search"};
@@ -87,6 +88,9 @@ public final class TopNavigation extends LinearLayout {
         addView(content, new LayoutParams(-1, 0, 1));
         addView(scanStatus, new LayoutParams(-1, dp(22)));
     }
+    public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
+    public void selectTab(int index) { if(index<0||index>=4)return; for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true); }
+    @Override protected void onDetachedFromWindow() { artwork.release();super.onDetachedFromWindow(); }
     public android.widget.FrameLayout getScanContainer() { return scanStatus; }
     public android.widget.FrameLayout getStatusContainer() { return status; }
     private int dp(int n) { return (int)(n * getResources().getDisplayMetrics().density + .5f); }
