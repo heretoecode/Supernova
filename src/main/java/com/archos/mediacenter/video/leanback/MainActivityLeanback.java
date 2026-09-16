@@ -119,6 +119,7 @@ public class MainActivityLeanback extends LeanbackActivity {
         ((CustomApplication) getApplication()).loadLocale();
 
         super.onCreate(savedInstanceState);
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0xff0b1b2a));
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             private long mBackStartedAt;

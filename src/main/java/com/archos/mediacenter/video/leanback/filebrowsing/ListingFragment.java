@@ -312,6 +312,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                     dialog.dismiss();
                 })
                 .create().show());
+        if(mPrefs.getBoolean("try_new_ui",false))getTitleView().setOnOrb4ClickedListener(v->{String[] labels=new String[mSortOrderEntries.length];for(int i=0;i<labels.length;i++)labels[i]=mSortOrderEntries[i].toString();com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),getString(R.string.sort_mode),labels,mSortOrderItem,which->{if(mSortOrderItem!=which){mSortOrderItem=which;mSortOrder=itemid2sortorder(which);mPrefs.edit().putString(SORT_PARAM_KEY,mSortOrder).apply();initGridOrList();startListing(mUri);}});});
     }
 
     @Override

@@ -38,6 +38,7 @@ public final class PreviewPages extends FrameLayout {
     private final class FocusRecycler extends PreviewFocusRecycler {
         final boolean horizontal;
         FocusRecycler(Context c,boolean horizontal){super(c);this.horizontal=horizontal;}
+        @Override protected boolean focusablePosition(int p){if(horizontal)return true;if(p<0||p>=cells.size())return false;Cell c=cells.get(p);return c.type!=NOTICE&&(c.type!=HEADER||Boolean.TRUE.equals(c.value));}
         @Override public View focusSearch(View focused,int direction){
             View next=super.focusSearch(focused,direction);
             // At loaded-content boundaries retain the last valid card; do not let

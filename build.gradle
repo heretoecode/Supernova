@@ -366,6 +366,8 @@ androidComponents {
 dependencies {
     implementation project(':FileCoreLibrary')
     implementation project(':MediaLib')
+    // Reuse MediaLib's existing TMDb client for progressive person portraits.
+    implementation 'com.uwetrottmann.tmdb2:tmdb-java:2.13.0'
     // CustomApplication imports the provider directly; library implementation dependencies are not exposed.
     implementation 'org.bouncycastle:bcprov-jdk18on:1.85'
     implementation 'androidx.lifecycle:lifecycle-process:2.11.0'
