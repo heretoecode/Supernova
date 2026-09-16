@@ -776,6 +776,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setBackgroundDrawable(null);
+        if(mPreferences.getBoolean("try_new_ui",false))actionBar.hide();
 
         mPaused = false;
         mPlayerControllerPlaceholder = findViewById(R.id.player_controller_placeholder);
@@ -2944,7 +2945,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }).setNegativeButton(android.R.string.cancel, null).show();
     }
 
+    public String previewTitle(){return mVideoInfo!=null&&mVideoInfo.isScraped&&mVideoInfo.scraperTitle!=null?mVideoInfo.scraperTitle:mTitle==null?"":mTitle;}
+    public String previewEpisode(){return mVideoInfo!=null&&mVideoInfo.isShow?String.format(java.util.Locale.getDefault(),"S%02d E%02d",mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr)+(mVideoInfo.scraperEpisodeName==null?"":" · "+mVideoInfo.scraperEpisodeName):"";}
     private void showVideoInfos() {
+        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){PreviewPlaybackInfo.show(this,previewTitle(),previewEpisode(),getIntent().getSerializableExtra(PlayerService.VIDEO),()->{if(mPlayer!=null)mPlayer.seekTo(0);},this::showNativeVideoInfos);return;}
+        showNativeVideoInfos();
+    }
+    private void showNativeVideoInfos() {
         mPlayerController.hide();
 
         Class infoActivity = null;

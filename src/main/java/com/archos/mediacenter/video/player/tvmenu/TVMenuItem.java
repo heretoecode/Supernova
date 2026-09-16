@@ -131,6 +131,7 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
             slaveView.setText(text);
     }
     public String getText() { return text;}
+    public void previewClick(){if(!isDisabled&&ocl!=null)ocl.onClick(this);}
 
     // send key events to TVMenu in order to skip disabled items and separators in menu navigation
     @Override

@@ -21,9 +21,13 @@ public final class PreviewSettings {
   // The postponed integration must never appear to be ready for use.
   for(String name:new String[]{"Streaming","Integrations"}){PreferenceCategory c=categories.get(name);c.setEnabled(false);if(c.getPreferenceCount()==0){Preference p=new Preference(fragment.requireContext());p.setTitle("Coming soon");p.setEnabled(false);c.addPreference(p);}}
   if(root.findPreference("preview_updates")==null){Preference p=new Preference(fragment.requireContext());p.setKey("preview_updates");p.setTitle("Updates — Coming soon");p.setEnabled(false);categories.get("About").addPreference(p);}
-  for(String key:new String[]{"smart_recently_rows","separate_anime_movie_show","show_last_added_row","show_last_played_row","show_watching_up_next_row","show_all_movies_row","show_all_tv_shows_row","show_all_animes_row","show_documentaries","hide_trailer_row","show_by_rating"}){Preference pref=root.findPreference(key);if(pref!=null){pref.setEnabled(false);pref.setSelectable(false);pref.setSummary("Legacy interface only — saved value preserved");}}
+  auditPresentation(root);
   style(root);
 
+ }
+ public static void auditPresentation(PreferenceGroup root){
+  for(String key:new String[]{"smart_recently_rows","separate_anime_movie_show","show_last_added_row","show_last_played_row","show_watching_up_next_row","show_all_movies_row","show_all_tv_shows_row","show_all_animes_row","show_documentaries","hide_trailer_row","show_by_rating"}){Preference pref=root.findPreference(key);if(pref!=null){pref.setEnabled(false);pref.setSelectable(false);pref.setSummary("Legacy interface only — saved value preserved");}}
+  style(root);
  }
  private static void style(PreferenceGroup group){for(int i=0;i<group.getPreferenceCount();i++){Preference p=group.getPreference(i);p.setIconSpaceReserved(false);p.setLayoutResource(p instanceof PreferenceCategory?R.layout.preview_preference_category:R.layout.preview_preference);if(p instanceof CheckBoxPreference)p.setWidgetLayoutResource(R.layout.preview_preference_checkbox);if(p instanceof PreferenceGroup)style((PreferenceGroup)p);}}
  public static androidx.recyclerview.widget.RecyclerView.Adapter<?> adapter(PreferenceScreen root){return new PreferenceGroupAdapter(root){@Override public void onBindViewHolder(PreferenceViewHolder holder,int position){super.onBindViewHolder(holder,position);Preference p=getItem(position);boolean category=p instanceof PreferenceCategory;holder.itemView.setBackground(category?null:PreviewDialog.focus(holder.itemView.getContext()));holder.itemView.setFocusable(!category&&p.isEnabled()&&p.isSelectable());holder.itemView.setAlpha(category||p.isEnabled()?1f:.38f);holder.setDividerAllowedAbove(false);holder.setDividerAllowedBelow(false);}};}
@@ -35,6 +39,7 @@ public final class PreviewSettings {
    TextView button=new TextView(fragment.requireContext());button.setText(name);button.setTextSize(13);button.setTextColor(0xffb4cbe0);button.setGravity(Gravity.CENTER_VERTICAL);button.setPadding(dp(fragment,10),0,dp(fragment,10),0);PreviewIcon.apply(button,name,17);button.setFocusable(true);button.setBackground(PreviewDialog.focus(fragment.requireContext()));button.setOnClickListener(v->{if(selected[0]!=null){selected[0].setTextColor(0xffb4cbe0);selected[0].setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(0xffb4cbe0));}selected[0]=button;button.setTextColor(0xff59d8ff);button.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(0xff59d8ff));for(int k=0;k<root.getPreferenceCount();k++){Preference pref=root.getPreference(k);if(pref instanceof PreferenceCategory)pref.setVisible(pref==category);}list.scrollToPosition(0);list.post(()->list.requestFocus());});links.addView(button,new LinearLayout.LayoutParams(-1,dp(fragment,33)));if(selected[0]==null){selected[0]=button;button.setTextColor(0xff59d8ff);}
   }
   for(int k=0;k<root.getPreferenceCount();k++){Preference pref=root.getPreference(k);if(pref instanceof PreferenceCategory)pref.setVisible("General".contentEquals(pref.getTitle()));}
+  if(selected[0]!=null)selected[0].post(()->selected[0].requestFocus());
  }
  private static int dp(PreferenceFragmentCompat f,int v){return Math.round(v*f.getResources().getDisplayMetrics().density);}
 }

@@ -208,6 +208,9 @@ public class TVCardView extends FrameLayout implements Checkable, FocusableTVCar
 
     }
 
+    public String previewTitle(){return getTag() instanceof String?(String)getTag():text;}
+    public TVMenu previewMenu(){for(View v:others)if(v instanceof TVMenu&&((TVMenu)v).getChildCount()>0)return (TVMenu)v;return null;}
+    public void previewClick(){if(ocl!=null)ocl.onClick(this);}
     public void setOnSwitchClickListener(OnClickListener ocl) {
         if (findViewById(R.id.imageView) != null)
             findViewById(R.id.imageView).setOnClickListener(ocl);

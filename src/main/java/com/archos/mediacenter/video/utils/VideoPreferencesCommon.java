@@ -463,7 +463,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         if (mSharedPreferences.getBoolean(KEY_ADVANCED_VIDEO_ENABLED, false)) {
             // advanced preferences
             Editor editor = mSharedPreferences.edit();
-            editor.remove(KEY_FORCE_SW);
+            if(!mSharedPreferences.getBoolean("try_new_ui",false))editor.remove(KEY_FORCE_SW);
             editor.apply();
             // no need of the enable sponsor link if not installed from ggplay
             if (! ArchosUtils.isInstalledfromPlayStore(getContext())) {

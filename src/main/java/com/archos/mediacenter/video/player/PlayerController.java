@@ -740,6 +740,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if (experimentalUi()) {
             TextView title = mControllerViewLeft.findViewById(R.id.preview_playback_title);
             if (title != null && mVideoTitle != null) title.setText(mVideoTitle.getText());
+            refreshPreviewContext();
+            for(int id:new int[]{R.id.preview_audio,R.id.preview_subtitles}){View control=mControllerViewLeft.findViewById(id);if(control instanceof android.widget.ImageButton)((android.widget.ImageButton)control).setImageDrawable(new com.archos.mediacenter.video.leanback.PreviewIcon(id==R.id.preview_audio?"audio":"subtitles"));if(control!=null)control.setOnClickListener(v->{if(mContext instanceof PlayerActivity){PlayerActivity a=(PlayerActivity)mContext;if(!mTVMenuAdapter.isCreated())a.createPlayerTVMenu();PreviewPlaybackMenus.show(a,mTVMenuAdapter,mContext.getString(id==R.id.preview_audio?R.string.menu_audio:R.string.menu_subtitles));}});}
             View more = mControllerViewLeft.findViewById(R.id.preview_more);
             if (more != null) more.setOnClickListener(v -> {
                 if (!mTVMenuAdapter.isCreated() && mContext instanceof PlayerActivity)
@@ -910,7 +912,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             mControlBarShowing = show;
             adjustView();
             setVisibility(mControlBar, show, true);
-            if(experimentalUi()&&mControllerViewLeft!=null){View title=mControllerViewLeft.findViewById(R.id.preview_playback_title);if(title!=null)title.setVisibility(show?View.VISIBLE:View.GONE);if(show){((ViewGroup)mControlBar).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);mPauseButton.setVisibility(View.VISIBLE);mPauseButton.requestFocus();}}
+            if(experimentalUi()&&mControllerViewLeft!=null){View title=mControllerViewLeft.findViewById(R.id.preview_playback_title);if(title!=null)title.setVisibility(show?View.VISIBLE:View.GONE);refreshPreviewContext();if(show){((ViewGroup)mControlBar).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);mPauseButton.setVisibility(View.VISIBLE);mPauseButton.requestFocus();}}
             if(mPlayPauseTouchZone!=null){
                 setVisibility(mPlayPauseTouchZone, show, false);
             }
@@ -1472,12 +1474,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
     }
 
+    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null)title.setText(a.previewTitle());if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
             mVideoTitle.setText(title);
             if (mControllerViewLeft != null) {
                 TextView hudTitle = mControllerViewLeft.findViewById(R.id.preview_playback_title);
-                if (hudTitle != null) hudTitle.setText(title);
+                if (hudTitle != null) hudTitle.setText(title);refreshPreviewContext();
             }
         }
     }
@@ -1491,6 +1494,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void stop() {
+        if(experimentalUi())PreviewPlaybackMenus.close();
         if (log.isDebugEnabled()) log.debug("stop");
 
         if (mIsStopped)
@@ -2263,6 +2267,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             return true;
         }
         switchMode(true);
+        if(experimentalUi()&&mControlBarShowing&&mControlBar.hasFocus()&&(keyCode==KeyEvent.KEYCODE_DPAD_UP||keyCode==KeyEvent.KEYCODE_DPAD_DOWN)){if(event.getAction()==KeyEvent.ACTION_DOWN){if(keyCode==KeyEvent.KEYCODE_DPAD_UP){mProgress.setFocusable(true);mProgress.requestFocus();}else mPauseButton.requestFocus();}return true;}
         if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&mControlBar.hasFocus()&&(keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_DPAD_RIGHT||keyCode==KeyEvent.KEYCODE_DPAD_CENTER||keyCode==KeyEvent.KEYCODE_ENTER)){return false;}
         
         if (isTVMenuDisplayed) {
@@ -2549,7 +2554,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             if( mControllerViewLeft.findViewById(R.id.forward)!=null)
                 mControllerViewLeft.findViewById(R.id.forward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
             if( mControllerViewLeft.findViewById(R.id.format)!=null)
-                mControllerViewLeft.findViewById(R.id.format).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
+                mControllerViewLeft.findViewById(R.id.format).setVisibility(experimentalUi()?View.GONE:tv?View.INVISIBLE:View.VISIBLE);
             if(mControllerViewRight!=null){
                 if( mControllerViewRight.findViewById(R.id.pause)!=null)
                     mControllerViewRight.findViewById(R.id.pause).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
@@ -2558,7 +2563,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 if( mControllerViewRight.findViewById(R.id.forward)!=null)
                     mControllerViewRight.findViewById(R.id.forward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
                 if( mControllerViewRight.findViewById(R.id.format)!=null)
-                    mControllerViewRight.findViewById(R.id.format).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
+                    mControllerViewRight.findViewById(R.id.format).setVisibility(experimentalUi()?View.GONE:tv?View.INVISIBLE:View.VISIBLE);
             }
             
         }
@@ -2757,6 +2762,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void showTVMenu(boolean show){
+        if(experimentalUi()&&!splitView){if(show&&mContext instanceof PlayerActivity){PlayerActivity a=(PlayerActivity)mContext;if(!mTVMenuAdapter.isCreated())a.createPlayerTVMenu();a.refreshPlayModeIntroSummary();PreviewPlaybackMenus.show(a,mTVMenuAdapter,null);return;}if(!show)PreviewPlaybackMenus.close();}
+
         if (show && mContext instanceof PlayerActivity) {
             ((PlayerActivity) mContext).refreshPlayModeIntroSummary();
         }

@@ -77,3 +77,19 @@ PYUI
   if grep -q 'FATAL EXCEPTION' ../startup-diagnostics/preview-settings-logcat.txt; then exit 1; fi
   adb shell pidof "$package" | grep -q '[0-9]'
 fi
+
+if [[ "$phase" == preview ]]; then
+  python3 - <<'PYSET'
+import re,subprocess,xml.etree.ElementTree as ET
+root=ET.parse('../startup-diagnostics/preview-settings.xml')
+node=next(n for n in root.iter('node') if n.get('text')=='Home & Discovery')
+x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds')))
+subprocess.run(['adb','shell','input','tap',str((x1+x2)//2),str((y1+y2)//2)],check=True)
+PYSET
+  sleep 1
+  adb exec-out screencap -p > ../startup-diagnostics/preview-settings-home-category.png
+  adb shell uiautomator dump /sdcard/nova-settings-home.xml
+  adb pull /sdcard/nova-settings-home.xml ../startup-diagnostics/preview-settings-home-category.xml
+  adb logcat -d > ../startup-diagnostics/preview-settings-category-logcat.txt
+  if grep -q 'FATAL EXCEPTION' ../startup-diagnostics/preview-settings-category-logcat.txt; then exit 1; fi
+fi

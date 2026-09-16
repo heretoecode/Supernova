@@ -49,13 +49,13 @@ final class PreviewPlaybackLoading extends FrameLayout {
             if(!isAttachedToWindow()||getVisibility()!=VISIBLE){waitingForFrame=false;return;}
             if(Player.sPlayer!=null&&Player.sPlayer.hasRenderedPreviewFrame()){reveal();return;}
             if(android.os.Build.VERSION.SDK_INT>=26&&surface!=null&&surface.isShown()&&surface.getHolder().getSurface().isValid()){
-                android.graphics.Bitmap probe=android.graphics.Bitmap.createBitmap(1,1,android.graphics.Bitmap.Config.ARGB_8888);
-                try{android.view.PixelCopy.request(surface,probe,result->{probe.recycle();if(result==android.view.PixelCopy.SUCCESS)reveal();else retry(this,started);},new android.os.Handler(android.os.Looper.getMainLooper()));return;}catch(IllegalArgumentException invalid){probe.recycle();}
+                android.graphics.Bitmap probe=android.graphics.Bitmap.createBitmap(32,18,android.graphics.Bitmap.Config.ARGB_8888);
+                try{android.view.PixelCopy.request(surface,probe,result->{boolean frame=false;if(result==android.view.PixelCopy.SUCCESS){int min=255,max=0;for(int y=0;y<18;y++)for(int x=0;x<32;x++){int pixel=probe.getPixel(x,y),l=(android.graphics.Color.red(pixel)+android.graphics.Color.green(pixel)+android.graphics.Color.blue(pixel))/3;min=Math.min(min,l);max=Math.max(max,l);}frame=max>8&&max-min>3;}probe.recycle();if(frame)reveal();else retry(this,started);},new android.os.Handler(android.os.Looper.getMainLooper()));return;}catch(IllegalArgumentException invalid){probe.recycle();}
             }
             retry(this,started);
         }});
     }
-    private void retry(Runnable check,long started){if(android.os.SystemClock.uptimeMillis()-started>8000){android.util.Log.w("NovaPreview","No first-frame signal; releasing loading overlay to preserve playback controls");reveal();}else postDelayed(check,80);}
+    private void retry(Runnable check,long started){if(android.os.SystemClock.uptimeMillis()-started>600&&Player.sPlayer!=null&&Player.sPlayer.isPlaying()&&Player.sPlayer.getCurrentPosition()>250){reveal();return;}if(android.os.SystemClock.uptimeMillis()-started>8000){android.util.Log.w("NovaPreview","No first-frame signal; releasing loading overlay to preserve playback controls");reveal();}else postDelayed(check,80);}
     private void reveal(){waitingForFrame=false;animate().alpha(0f).setDuration(120).withEndAction(()->{setVisibility(GONE);setAlpha(1f);}).start();}
     void bind(VideoDbInfo info,String fallback){
         if(info==null){if(fallback!=null)title.setText(fallback);return;}
@@ -71,6 +71,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
             requestedArtwork=true;Picasso.get().load(cachedArtwork).resize(1280,720).centerCrop().noFade().into(artwork);
         }else if(visibility!=VISIBLE){Picasso.get().cancelRequest(artwork);requestedArtwork=false;}
     }
+    @Override protected void onAttachedToWindow(){super.onAttachedToWindow();onVisibilityChanged(this,getVisibility());}
     @Override protected void onDetachedFromWindow(){Picasso.get().cancelRequest(artwork);super.onDetachedFromWindow();}
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextSize(size);t.setTextColor(Color.WHITE);return t;}

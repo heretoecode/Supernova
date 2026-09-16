@@ -10,6 +10,12 @@ public final class PreviewIcon extends Drawable {
  public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);
   if(kind.contains("check")){line(c,5,12,10,17,20,6);}
   else if(kind.contains("clear")||kind.contains("close")||kind.contains("remove")||kind.contains("delete")){line(c,6,6,18,18);line(c,18,6,6,18);}
+  else if(kind.contains("home")||kind.contains("discovery")){line(c,2,11,12,3,22,11);line(c,5,10,5,21,10,21,10,15,14,15,14,21,19,21,19,10);}
+  else if(kind.equals("general")||kind.contains("settings")||kind.contains("advanced")){for(int y=5;y<=19;y+=7)line(c,3,y,21,y);c.drawCircle(8,5,2,p);c.drawCircle(16,12,2,p);c.drawCircle(10,19,2,p);}
+  else if(kind.contains("appearance")){c.drawCircle(12,12,9,p);c.drawCircle(8,8,1,p);c.drawCircle(15,7,1,p);c.drawCircle(18,13,1,p);line(c,6,16,10,16,12,20);}
+  else if(kind.contains("trakt")){c.drawCircle(12,12,9,p);line(c,5,12,9,16,17,8);}
+  else if(kind.contains("streaming")||kind.contains("integrations")){c.drawArc(2,3,22,23,205,100,false,p);c.drawArc(6,9,18,23,210,90,false,p);c.drawCircle(12,19,1,p);}
+  else if(kind.contains("library")){c.drawRect(3,4,8,21,p);c.drawRect(11,4,16,21,p);line(c,19,4,22,20);}
   else if(kind.contains("play")||kind.contains("resume")||kind.contains("trailer")){line(c,8,4,20,12,8,20,8,4);}
   else if(kind.contains("year")||kind.contains("date")||kind.contains("added")){c.drawRoundRect(3,5,21,21,2,2,p);line(c,3,10,21,10);line(c,8,3,8,7);line(c,16,3,16,7);}
   else if(kind.contains("order")||kind.contains("ascending")||kind.contains("descending")||kind.contains("newest")||kind.contains("oldest")){line(c,7,3,7,21);line(c,3,7,7,3,11,7);line(c,17,3,17,21);line(c,13,17,17,21,21,17);}
