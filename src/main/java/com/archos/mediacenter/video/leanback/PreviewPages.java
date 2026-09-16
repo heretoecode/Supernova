@@ -205,10 +205,8 @@ public final class PreviewPages extends FrameLayout {
             if(loaded&&entries.isEmpty())header("No matching titles",false);
         } else {
             header("Network & files",false);
-            for(String section:new String[]{"Local storage","Network","Playlists"}) {
-                List<Box> group=new ArrayList<>();for(Box box:files){String s=box.getBoxId()==Box.ID.NETWORK?"Network":box.getBoxId()==Box.ID.VIDEOS_BY_LISTS?"Playlists":"Local storage";if(section.equals(s))group.add(box);}
-                if(!group.isEmpty()){header(section,false);for(Box box:group)cells.add(new Cell(STORAGE,"",box));}
-            }
+            for(Box box:files)cells.add(new Cell(STORAGE,"",box));
+
         }
         if(!loaded&&tab!=3)header("Loading library…",false);
         updateArtwork();adapter.notifyDataSetChanged(); if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();
