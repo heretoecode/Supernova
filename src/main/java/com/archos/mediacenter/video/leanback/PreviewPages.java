@@ -104,6 +104,7 @@ public final class PreviewPages extends FrameLayout {
     private final boolean[] ascending={false,false,false};
     private final boolean[] listMode={false,false,false};
     private int featuredIndex;
+    public boolean hasLoadedSnapshot(){return loaded;}
     public void setArtworkListener(java.util.function.Consumer<android.net.Uri> listener){artwork=listener;updateArtwork();}
     public void setDiscovery(PreviewDiscovery value){requestedDiscovery=true;discovery=value;render();}
     private boolean requestedDiscovery;
@@ -117,9 +118,7 @@ public final class PreviewPages extends FrameLayout {
     private void open(Entry e,View v){click.open(new Presenter.ViewHolder(v),e.media);}
     private void play(Entry e,View v){
         if(e.media instanceof Video && getContext() instanceof android.app.Activity){
-            android.content.Intent intent=new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.details.VideoDetailsActivity.class);
-            intent.putExtra(com.archos.mediacenter.video.leanback.details.VideoDetailsFragment.EXTRA_VIDEO,(Video)e.media);
-            intent.putExtra("preview_play",true);getContext().startActivity(intent);
+            com.archos.mediacenter.video.utils.PlayUtils.startVideo((android.app.Activity)getContext(),(Video)e.media,com.archos.mediacenter.video.player.PlayerActivity.RESUME_FROM_LAST_POS,false,-1,null,-1);
         }else open(e,v);
     }
     private static final int HEADER=0, POSTER=1, RAIL=2, STORAGE=3, HERO=4, NOTICE=5, LIST=6;
@@ -151,7 +150,7 @@ public final class PreviewPages extends FrameLayout {
         Cell cell=cells.get(p);
         if(tab==0)return cell.type==HERO && item.getTop()>=list.getPaddingTop();
         if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value);
-        return cell.type==STORAGE&&p<5;
+        return cell.type==STORAGE&&!list.canScrollVertically(-1);
     }
     public void setTab(int tab) {
         if(this.tab==tab)return;
@@ -209,7 +208,7 @@ public final class PreviewPages extends FrameLayout {
             if(loaded&&entries.isEmpty())header("No matching titles",false);
         } else {
             header("Network & files",false);
-            for(Box box:files)cells.add(new Cell(STORAGE,"",box));
+            for(int group=0;group<3;group++){boolean heading=false;for(Box box:files){int g=box.getBoxId()==Box.ID.NETWORK?1:box.getBoxId()==Box.ID.VIDEOS_BY_LISTS?2:0;if(g!=group)continue;if(!heading){header(group==0?"Local storage":group==1?"Network":"Playlists",false);heading=true;}cells.add(new Cell(STORAGE,"",box));}}
 
         }
         if(!loaded&&tab!=3)header(tab==0?"Home":tab==1?"Movies":"TV Shows",false);
@@ -280,9 +279,9 @@ public final class PreviewPages extends FrameLayout {
                     v.addView(text(meta,13));String plot=e.media instanceof Tvshow?((Tvshow)e.media).getPlot():e.media instanceof Video?((Video)e.media).getDescriptionBody():"";
                     TextView description=text(plot==null?"":plot,13);description.setIncludeFontPadding(false);description.setMaxLines(3);description.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(description,new LinearLayout.LayoutParams(dp(450),-2));
                     LinearLayout actions=new LinearLayout(getContext());actions.setPadding(0,dp(6),0,0);
-                    TextView play=button("▶  "+(e.media instanceof Tvshow?"View Show":"Play"),()->play(e,v));play.setTag("hero:play");actions.addView(play);
-                    TextView info=button("ⓘ  More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);info.setTag("hero:info");actions.addView(info,lp);
-                    TextView next=button("Next featured  ›",()->{featuredIndex++;render();});lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);next.setTag("hero:next");actions.addView(next,lp);View spacer=new View(getContext());v.addView(spacer,new LinearLayout.LayoutParams(1,0,1));v.addView(actions,new LinearLayout.LayoutParams(-2,dp(40)));
+                    TextView play=button((e.media instanceof Tvshow?"View Show":"Play"),()->play(e,v));play.setTag("hero:play");actions.addView(play);
+                    TextView info=button("More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);info.setTag("hero:info");actions.addView(info,lp);
+                    TextView next=button("Next featured",()->{featuredIndex++;render();});lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);next.setTag("hero:next");actions.addView(next,lp);View spacer=new View(getContext());v.addView(spacer,new LinearLayout.LayoutParams(1,0,1));v.addView(actions,new LinearLayout.LayoutParams(-2,dp(40)));
                 }else{TextView title=text(c.title,30);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title);v.addView(text(source().size()+ (tab==1?" movies":" shows"),13));}
             }
             else if(c.type==NOTICE){v.setOrientation(LinearLayout.VERTICAL);TextView title=text(c.title,18);title.setTextColor(0xff8298aa);v.addView(title);TextView status=text((String)c.value,12);status.setTextColor(0xff8298aa);v.addView(status);v.setPadding(0,dp(12),0,dp(12));}
@@ -296,11 +295,11 @@ public final class PreviewPages extends FrameLayout {
                 }else{TextView title=text(c.title,19);title.setTextColor(0xff9ed4f7);v.addView(title);}
             }
             else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));v.addView(rail,new LinearLayout.LayoutParams(-1,dp(105)));}
-            else if(c.type==STORAGE){Box b=(Box)c.value;v.setPadding(dp(12),dp(12),dp(12),dp(12));RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,dp(88));lp.setMargins(0,0,dp(12),dp(12));v.setLayoutParams(lp);v.setBackground(background(false));v.setFocusable(true);v.setClickable(true);v.setOnFocusChangeListener((view,f)->view.setBackground(background(f)));
+            else if(c.type==STORAGE){Box b=(Box)c.value;v.setPadding(dp(12),dp(12),dp(12),dp(12));RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,dp(76));lp.setMargins(0,0,dp(12),dp(12));v.setLayoutParams(lp);v.setBackground(PreviewDialog.surface(getContext(),false));v.setForeground(PreviewDialog.focus(getContext()));v.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);v.setFocusable(true);v.setClickable(true);
                 ImageView icon=new ImageView(getContext());icon.setImageDrawable(new StorageIcon(b.getBoxId()));v.addView(icon,new LinearLayout.LayoutParams(dp(35),dp(35)));
                 LinearLayout labels=new LinearLayout(getContext());labels.setOrientation(LinearLayout.VERTICAL);labels.setPadding(dp(12),0,0,0);
                 String name=b.getName(),sub="";if(b.getBoxId()==Box.ID.NETWORK){name="Browse network";sub="Find shared folders";}else if(b.getBoxId()==Box.ID.FOLDERS){name="Internal storage";}else if(b.getBoxId()==Box.ID.VIDEOS_BY_LISTS){name="Playlists";sub="Browse saved playlists";}else{int at=name.indexOf('(');if(at>0){sub=name.substring(at+1).replace(")","").trim();name=name.substring(0,at).trim();}name=name.replaceFirst("^[^:]+:\\s*","");}
-                TextView title=text(name,15);title.setMaxLines(2);labels.addView(title);if(!sub.isEmpty()){TextView detail=text(sub,12);detail.setTextColor(0xffb4cbe0);detail.setMaxLines(2);labels.addView(detail);}v.addView(labels,new LinearLayout.LayoutParams(0,-2,1));v.setContentDescription(name+" "+sub);v.setOnClickListener(view->click.open(new Presenter.ViewHolder(view),b));
+                TextView title=text(name,13);title.setMaxLines(1);title.setEllipsize(android.text.TextUtils.TruncateAt.END);labels.addView(title);if(!sub.isEmpty()){TextView detail=text(sub,10);detail.setTextColor(0xffb4cbe0);detail.setMaxLines(2);labels.addView(detail);}v.addView(labels,new LinearLayout.LayoutParams(0,-2,1));v.setContentDescription(name+" "+sub);v.setOnClickListener(view->click.open(new Presenter.ViewHolder(view),b));
             }
         }
         @Override public void onViewRecycled(Holder h){if(h.presenter!=null)h.presenter.onUnbindViewHolder(h.card);else if(h.itemView instanceof ViewGroup){ViewGroup group=(ViewGroup)h.itemView;for(int i=0;i<group.getChildCount();i++)if(group.getChildAt(i) instanceof RecyclerView)((RecyclerView)group.getChildAt(i)).setAdapter(null);}}

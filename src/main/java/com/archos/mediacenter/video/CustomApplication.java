@@ -680,6 +680,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
 
         // init application context to make it available to all static methods
         mContext = getApplicationContext();
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))com.archos.mediacenter.video.leanback.PreviewLibraryLoader.warmCache(this);
         // must be done after context is available
         log = LoggerFactory.getLogger(CustomApplication.class);
         configureFullLoggingAsync();
@@ -770,7 +771,6 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             };
 
         ArchosUtils.setGlobalContext(this.getApplicationContext());
-        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))com.archos.mediacenter.video.leanback.PreviewLibraryLoader.warmCache(this);
         // only launch BootupRecommandation if on AndroidTV and before Android O otherwise target TV channels
         if(ArchosFeatures.isAndroidTV(this) && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             BootupRecommandationService.init(this);
@@ -1194,9 +1194,21 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     private long previewRefreshAt;
+    private boolean previewScanOnReturn;
     private final android.os.Handler previewRefreshHandler=new android.os.Handler(android.os.Looper.getMainLooper());
-    private final Runnable previewRefresh=()->{if(networkState.hasLocalConnection()&&NetworkAutoRefresh.autoRescanAtStart(this)&&!com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()){previewRefreshAt=android.os.SystemClock.elapsedRealtime();NetworkAutoRefresh.forceRescan(this);}};
-    private void requestPreviewNetworkRefresh(){if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)||!NetworkAutoRefresh.autoRescanAtStart(this)||android.os.SystemClock.elapsedRealtime()-previewRefreshAt<60000)return;previewRefreshHandler.removeCallbacks(previewRefresh);previewRefreshHandler.postDelayed(previewRefresh,1500);}
+    private final Runnable previewRefresh=new Runnable(){public void run(){
+        SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(CustomApplication.this);
+        if(!isForeground||!prefs.getBoolean("try_new_ui",false))return;
+        long now=System.currentTimeMillis(),period=NetworkAutoRefresh.getRescanPeriod(CustomApplication.this);
+        boolean due=previewScanOnReturn&&NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)||period>0&&now-prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)>=period;
+        if(due&&networkState.hasLocalConnection()&&!com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()&&com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()==0&&(previewRefreshAt==0||android.os.SystemClock.elapsedRealtime()-previewRefreshAt>=60000)){
+            previewRefreshAt=android.os.SystemClock.elapsedRealtime();previewScanOnReturn=false;NetworkAutoRefresh.forceRescan(CustomApplication.this);
+        }
+        // Retry after an offline/busy launch and honour the existing periodic schedule while open.
+        if(previewScanOnReturn||period>0)previewRefreshHandler.postDelayed(this,30000);
+    }};
+    private void requestPreviewNetworkRefresh(){if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))return;previewScanOnReturn=NetworkAutoRefresh.autoRescanAtStart(this);previewRefreshHandler.removeCallbacks(previewRefresh);previewRefreshHandler.postDelayed(previewRefresh,1500);}
+
     private void addNetworkListener() {
         if (networkState == null) networkState = NetworkState.instance(mContext);
         if (!isNetworkStateListenerAdded && propertyChangeListener != null) {

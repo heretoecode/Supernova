@@ -61,8 +61,8 @@ public class PreviewPagesTest {
                 android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));
                 java.io.File file=new java.io.File("build/reports/preview-ui/page-"+tab+".png");file.getParentFile().mkdirs();try(java.io.FileOutputStream out=new java.io.FileOutputStream(file)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out);}
             }
-            pages.setTab(1);layout(nav);android.view.View listButton=findText(nav,"List view");if(listButton!=null)listButton.performClick();layout(nav);decorateCards(nav);capture(nav,"library-list");
-            android.app.Dialog dialog=PreviewDialog.choose(host.get(),"Sort",new String[]{"Date Added","Title","Release Date","Trakt Trending — unavailable"},1,n->{});layout(dialog.getWindow().getDecorView());capture(dialog.getWindow().getDecorView(),"sort-panel");dialog.dismiss();
+            pages.setTab(1);nav.selectTab(1);layout(nav);android.view.View listButton=findText(nav,"List view");if(listButton!=null)listButton.performClick();layout(nav);decorateCards(nav);capture(nav,"library-list");
+            android.app.Dialog dialog=PreviewDialog.choose(host.get(),"Sort",new String[]{"Date Added","Title","Release Date","Trakt Trending — unavailable"},1,n->{});View menu=dialog.getWindow().getDecorView();int mw=dialog.getWindow().getAttributes().width,mh=dialog.getWindow().getAttributes().height;menu.measure(View.MeasureSpec.makeMeasureSpec(mw,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(mh,View.MeasureSpec.EXACTLY));menu.layout(0,0,mw,mh);capture(dialog.getWindow().getDecorView(),"sort-panel");dialog.dismiss();
             nav.focusNavigation();assertTrue(nav.hasFocus());
         }finally{host.pause().stop().destroy();}
     }

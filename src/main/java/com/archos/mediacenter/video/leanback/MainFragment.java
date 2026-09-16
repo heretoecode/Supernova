@@ -372,6 +372,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         pages.addView(content); content.setVisibility(View.GONE);
         mPreviewPages = new PreviewPages(requireContext(), (holder,item) -> new MainViewClickedListener(requireActivity()).onItemClicked(holder,item,null,null));
         if(PreviewLibraryLoader.memoryCache()!=null)mPreviewPages.setSnapshot(PreviewLibraryLoader.memoryCache());
+        else {final PreviewPages target=mPreviewPages;final android.content.Context app=requireContext().getApplicationContext();java.util.concurrent.ExecutorService cache=java.util.concurrent.Executors.newSingleThreadExecutor();cache.execute(()->{try{PreviewLibraryLoader.Snapshot saved=PreviewLibraryLoader.readCache(app);if(saved!=null)target.post(()->{if(mPreviewPages==target&&!target.hasLoadedSnapshot())target.setSnapshot(saved);});}finally{cache.shutdown();}});}
         pages.addView(mPreviewPages, new android.widget.FrameLayout.LayoutParams(-1,-1));
         mNavigation = new TopNavigation(requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
         mPreviewPages.setArtworkListener(mNavigation::setArtwork);mPreviewPages.setScrollListener(mNavigation::setScrolled);

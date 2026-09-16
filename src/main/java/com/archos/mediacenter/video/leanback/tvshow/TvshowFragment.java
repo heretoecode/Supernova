@@ -574,7 +574,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                         preview.bindShow(finalResult,TvshowFragment.this::playEpisode);
                         // Tags are already local; trailer/artwork database reads stay on the worker.
                         com.archos.mediascraper.ShowTags showTags=finalResult.getShowTags();
-                        ExecutorService metadata=Executors.newSingleThreadExecutor();metadata.execute(()->{try{java.util.List<com.archos.mediascraper.ScraperTrailer> trailers=showTags.getAllTrailersInDb(requireContext());java.util.List<com.archos.mediascraper.ScraperImage> backdrops=showTags.getAllBackdropsInDb(requireContext());handler.post(()->{if(preview!=null&&isAdded())preview.setTags(showTags,trailers,backdrops);});}finally{metadata.shutdown();}});
+                        android.content.Context app=requireContext().getApplicationContext();ExecutorService metadata=Executors.newSingleThreadExecutor();metadata.execute(()->{try{java.util.List<com.archos.mediascraper.ScraperTrailer> trailers=showTags.getAllTrailersInDb(app);java.util.List<com.archos.mediascraper.ScraperImage> backdrops=showTags.getAllBackdropsInDb(app);handler.post(()->{if(preview!=null&&isAdded())preview.setTags(showTags,trailers,backdrops);});if(trailers.isEmpty()){java.util.List<com.archos.mediascraper.ScraperTrailer> tvTrailers=com.archos.mediacenter.video.leanback.details.PreviewTvTrailers.load(app,showTags);if(!tvTrailers.isEmpty())handler.post(()->{if(preview!=null&&isAdded())preview.setTags(showTags,tvTrailers,backdrops);});}}finally{metadata.shutdown();}});
                     }
                     // Load the details view
                     if (mDetailRowBuilderTask != null) {
