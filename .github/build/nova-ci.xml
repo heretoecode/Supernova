@@ -11,7 +11,7 @@
   </project>
 
   <project path="Video" name="aos-Video" revision="0651a3e0b60ada996a9774ab527d7c1ef34b7503" />
-  <project path="MediaLib" name="aos-MediaLib" revision="1c30e66e4a910bdda5cf61652c1c5fad673be8ec" remote="heretoecode" />
+  <project path="MediaLib" name="aos-MediaLib" revision="9823ec2eb689a5225dd0e1d7127856041d5bd395" remote="heretoecode" />
   <project path="FileCoreLibrary" name="aos-FileCoreLibrary" revision="c4b760c55102c72d45f68b0d16999fc1f4f013a7" />
 
   <project path="native/avos" name="aos-avos" revision="2cf21c486c7bf244c49b78d2220197a6d75396dd" />

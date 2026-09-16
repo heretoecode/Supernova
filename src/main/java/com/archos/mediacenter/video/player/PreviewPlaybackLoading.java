@@ -20,7 +20,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
     private Uri cachedArtwork, source, fileSource;
     private boolean requestedArtwork;
     PreviewPlaybackLoading(Context context, Intent intent) {
-        super(context);setId(R.id.progress_indicator);setVisibility(GONE);
+        super(context);setId(R.id.progress_indicator);setVisibility(VISIBLE);
         setBackgroundColor(0xff091725);setFocusable(false);setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         artwork=new ImageView(context);artwork.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(artwork,new LayoutParams(-1,-1));
         View shade=new View(context);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0xee071522,0x99071522,0x66071522}));addView(shade,new LayoutParams(-1,-1));
@@ -29,7 +29,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         title=text("",32);title.setTypeface(null,android.graphics.Typeface.BOLD);title.setMaxLines(2);title.setEllipsize(android.text.TextUtils.TruncateAt.END);labels.addView(title);
         episode=text("",16);episode.setPadding(0,dp(10),0,dp(20));labels.addView(episode);
         LinearLayout status=new LinearLayout(context);status.setGravity(Gravity.CENTER_VERTICAL);status.setPadding(0,dp(18),0,0);labels.addView(status);
-        ProgressBar spinner=new ProgressBar(context,null,android.R.attr.progressBarStyleSmall);spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(0xff62bbf3));status.addView(spinner,new LinearLayout.LayoutParams(dp(28),dp(28)));
+        ProgressBar spinner=new ProgressBar(context,null,android.R.attr.progressBarStyleSmall);spinner.setIndeterminateDrawable(new com.archos.mediacenter.video.leanback.ThinSpinner());spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(0xff62bbf3));status.addView(spinner,new LinearLayout.LayoutParams(dp(28),dp(28)));
         TextView starting=text("Starting playback…",16);starting.setPadding(dp(14),0,dp(8),0);status.addView(starting);
         TextView buffer=text("",13);buffer.setId(R.id.buffer_percentage);status.addView(buffer);
         TextView torrent=text("",13);torrent.setId(R.id.torrent_status);torrent.setVisibility(GONE);labels.addView(torrent);

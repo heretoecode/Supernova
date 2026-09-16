@@ -805,7 +805,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mBufferView = (TextView) mRootView.findViewById(R.id.buffer_percentage);
 
         mPlayerController = new PlayerController(mContext, getWindow(), (ViewGroup)mRootView, mSurfaceController, this, actionBar);
-        mPlayerController.setVideoTitleEnabled(true);
+        mPlayerController.setVideoTitleEnabled(!(mProgressView instanceof PreviewPlaybackLoading));
 
         mAudioInfoController = new TrackInfoController(mContext, getLayoutInflater(), menuAnchor, actionBar);
         mAudioInfoController.setListener(this);

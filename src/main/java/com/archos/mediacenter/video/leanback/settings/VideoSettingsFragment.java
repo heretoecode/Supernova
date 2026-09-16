@@ -89,6 +89,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             mPreferencesCommon.onCreatePreferences(savedInstanceState, rootKey);
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.organise(this);
         }
 
         @Override
@@ -103,6 +104,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
                 scrollToPreference("streaming_category");
                 requireActivity().getIntent().removeExtra("show_streaming_settings");
             }
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.sidebar(this);
             // Note: Header color is now handled by the theme (MyLeanbackTheme.Preferences.Black)
         }
 

@@ -94,6 +94,7 @@ public class ScannerAndScraperProgress {
         mProgressGroup.setBackground(background);mProgressGroup.setPadding(pad,pad/2,pad,pad/2);
         mBadge.setTypeface(null,android.graphics.Typeface.NORMAL);mBadge.setTextSize(12);
         mBadge.setMaxWidth(pad*36);mBadge.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        mProgressWheel.setIndeterminateDrawable(new com.archos.mediacenter.video.leanback.ThinSpinner());
         android.view.ViewGroup.LayoutParams wheel=mProgressWheel.getLayoutParams();wheel.width=wheel.height=pad*2;mProgressWheel.setLayoutParams(wheel);
         mProgressWheel.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(0xff85c9f5));
     }

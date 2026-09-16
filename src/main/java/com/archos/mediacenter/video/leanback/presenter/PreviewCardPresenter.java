@@ -38,7 +38,7 @@ public final class PreviewCardPresenter extends Presenter {
             super(c); this.style = style;
             // Android TV's logical viewport is normally 960 x 540 dp.
             width = dp(style == Style.LIST ? 860 : style == Style.CONTINUE ? 172 : style == Style.CATEGORY ? 174 : 140);
-            height = dp(style == Style.LIST ? 92 : style == Style.CONTINUE ? 105 : style == Style.CATEGORY ? 86 : 144);
+            height = dp(style == Style.LIST ? 64 : style == Style.CONTINUE ? 105 : style == Style.CATEGORY ? 86 : 144);
             setFocusable(true); setFocusableInTouchMode(true);
             setCardType(CARD_TYPE_MAIN_ONLY);
             FrameLayout body = new FrameLayout(c);
@@ -47,11 +47,11 @@ public final class PreviewCardPresenter extends Presenter {
             body.setBackground(outline); body.setClipToOutline(true);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
-            if (style == Style.POSTER) bp.height += dp(46);
+            if (style == Style.POSTER) bp.height += dp(36);
             bp.width = width;
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            body.addView(image, new FrameLayout.LayoutParams(style == Style.LIST ? dp(160) : -1, style == Style.POSTER ? height : -1));
+            body.addView(image, new FrameLayout.LayoutParams(style == Style.LIST ? dp(112) : -1, style == Style.POSTER ? height : -1));
             caption = new LinearLayout(c); caption.setOrientation(LinearLayout.VERTICAL);
             caption.setPadding(dp(8), dp(style == Style.POSTER ? 2 : 16), dp(8), dp(style == Style.POSTER ? 3 : style == Style.CONTINUE ? 10 : 7));
             caption.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
@@ -59,14 +59,14 @@ public final class PreviewCardPresenter extends Presenter {
             title = new TextView(c); title.setTextColor(Color.WHITE); title.setTextSize(13);
             title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
             title.setMaxLines(style == Style.CONTINUE ? 1 : 2);
-            if(style == Style.POSTER){title.setLines(2);title.setTextSize(12);title.setIncludeFontPadding(false);caption.setPadding(dp(6),dp(4),dp(6),dp(3));caption.setBackgroundColor(0xff102333);} title.setEllipsize(TextUtils.TruncateAt.END);
+            if(style == Style.POSTER){title.setLines(1);title.setTextSize(12);title.setIncludeFontPadding(false);caption.setPadding(dp(6),dp(4),dp(6),dp(3));caption.setBackgroundColor(0xff102333);} title.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(title, new LinearLayout.LayoutParams(-1, -2));
             subtitle = new TextView(c); subtitle.setTextSize(style == Style.POSTER ? 10 : 11); subtitle.setTextColor(0xffa4b6c7);subtitle.setIncludeFontPadding(false);
-            subtitle.setSingleLine(true); subtitle.setEllipsize(TextUtils.TruncateAt.END);
+            subtitle.setSingleLine(style!=Style.POSTER);if(style==Style.POSTER)subtitle.setMaxLines(2); subtitle.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
             FrameLayout.LayoutParams captionParams=new FrameLayout.LayoutParams(-1,-2,style==Style.LIST?Gravity.CENTER_VERTICAL:Gravity.BOTTOM);
-            if(style==Style.POSTER)captionParams.height=dp(46);
-            if(style==Style.LIST){captionParams.leftMargin=dp(172);caption.setBackground(null);}
+            if(style==Style.POSTER)captionParams.height=dp(36);
+            if(style==Style.LIST){captionParams.leftMargin=dp(120);caption.setBackground(null);}
             body.addView(caption,captionParams);
             progress = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
             progress.setMax(100); progress.setProgressTintList(ColorStateList.valueOf(0xff62bbf3));
@@ -97,7 +97,8 @@ public final class PreviewCardPresenter extends Presenter {
         Picasso.get().cancelRequest(c.image); c.image.setImageDrawable(null);
         c.hasArtwork = false; c.subtitle.setText(""); c.subtitle.setVisibility(View.GONE);
         c.progress.setProgress(0); c.progress.setVisibility(View.GONE);
-        Uri uri = null;
+        Uri uri = null;boolean landscape=false;
+        c.subtitle.setTextColor(0xffa4b6c7);
         if (item instanceof Box) {
             Box box = (Box)item; c.title.setText(box.getName());
             if (box.getBoxId() == Box.ID.DOCUMENTARIES) c.image.setImageResource(R.drawable.preview_documentaries);
@@ -108,16 +109,16 @@ public final class PreviewCardPresenter extends Presenter {
             Base b = (Base)item; c.title.setText(b.getName()); uri = b.getPosterUri();
             if (item instanceof Video) {
                 Video v = (Video)item;
-                if ((style == Style.CONTINUE || style == Style.LIST) && v.getPreviewBackdrop() != null) uri = v.getPreviewBackdrop();
+                if ((style == Style.CONTINUE || style == Style.LIST) && v.getPreviewBackdrop() != null) {uri = v.getPreviewBackdrop();landscape=true;}
                 if (TextUtils.isEmpty(b.getName())) c.title.setText(v.getFilenameNonCryptic());
                 if (v instanceof Episode) {
                     Episode e = (Episode)v; c.title.setText(e.getShowName());
-                    c.subtitle.setText(c.getResources().getString(R.string.preview_episode, e.getSeasonNumber(), e.getEpisodeNumber()));
+                    c.subtitle.setText((v.getResumeMs()>0?"Resume · ":"Up Next · ")+"S"+e.getSeasonNumber()+" E"+e.getEpisodeNumber());
                     c.subtitle.setVisibility(View.VISIBLE);
-                    if ((style == Style.CONTINUE || style == Style.LIST) && e.getPictureUri() != null) uri = e.getPictureUri();
+                    if ((style == Style.CONTINUE || style == Style.LIST) && e.getPictureUri() != null) {uri = e.getPictureUri();landscape=true;}
                 }
                 if (style == Style.CONTINUE || style == Style.LIST) {
-                    c.progress.setVisibility(View.VISIBLE);
+                    c.progress.setVisibility(v.getResumeMs()>0?View.VISIBLE:View.GONE);
                     c.progress.setProgress(progress(v.getResumeMs(), v.getDurationMs()));
                 }
             }
@@ -127,16 +128,25 @@ public final class PreviewCardPresenter extends Presenter {
             int year = item instanceof Movie ? ((Movie)item).getYear() : item instanceof Tvshow ? ((Tvshow)item).getYear() : 0;
             String detail = year >= 1800 && year <= java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)+5 ? String.valueOf(year) : "";
             // An end year / ongoing marker needs reliable series-status metadata.
+            if(item instanceof Tvshow){Tvshow t=(Tvshow)item;if(t.getSeasonCount()>0)detail+=(detail.isEmpty()?"":" · ")+t.getSeasonCount()+(t.getSeasonCount()==1?" season":" seasons");if(t.getEpisodeCount()>0)detail+=(detail.isEmpty()?"":" · ")+t.getEpisodeCount()+(t.getEpisodeCount()==1?" episode":" episodes");}
             c.subtitle.setText(detail); c.subtitle.setVisibility(detail.isEmpty() ? View.INVISIBLE : View.VISIBLE);
         }
         c.setContentDescription(c.title.getText() + (c.subtitle.length() == 0 ? "" : ", " + c.subtitle.getText()));
         c.hasArtwork |= uri != null;
         c.updateFocus();
-        if (uri != null) Picasso.get().load(uri).resize(c.width, c.height).centerCrop().noFade()
-            .into(c.image, new com.squareup.picasso.Callback() {
+        boolean letterbox=(style==Style.CONTINUE||style==Style.LIST)&&!landscape;
+        c.image.setScaleType(letterbox?ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_CROP);
+        if(uri!=null){com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(style==Style.LIST?Math.round(112*c.getResources().getDisplayMetrics().density):c.width,c.height);
+        if(letterbox)request.centerInside();else request.centerCrop();request.noFade().into(c.image, new com.squareup.picasso.Callback() {
                 @Override public void onSuccess() { }
                 @Override public void onError(Exception error) { c.hasArtwork = false; c.updateFocus(); }
-            });
+            });}
+    }
+    public static void bindSecondary(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){
+        Card c=(Card)holder.view;if(entry.secondary!=null&&!entry.secondary.isEmpty()){
+            c.subtitle.setText(entry.secondary);c.subtitle.setVisibility(View.VISIBLE);c.subtitle.setTextColor(entry.active?0xff59d8ff:0xffa4b6c7);
+            c.setContentDescription(c.title.getText()+", "+entry.secondary);
+        }
     }
     @Override public void onUnbindViewHolder(ViewHolder holder) {
         Card c = (Card)holder.view; Picasso.get().cancelRequest(c.image);

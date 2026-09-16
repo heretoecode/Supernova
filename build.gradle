@@ -158,6 +158,7 @@ android {
     }
     defaultConfig {
         applicationId = project.hasProperty("markPreview") ? "org.courville.nova.markpreview" : "org.courville.nova"
+        manifestPlaceholders = [novaIcon: project.hasProperty("markPreview") ? "@drawable/preview_custom_icon" : "@mipmap/ic_launcher", novaBanner: project.hasProperty("markPreview") ? "@drawable/preview_custom_banner" : "@drawable/nova_banner"]
         generatedDensities = []
         minSdkVersion 23
         targetSdkVersion 36
@@ -165,8 +166,8 @@ android {
         // below version tracks the one from F-Droid or universal package when generated with ./gradlew -Puniversal
         // this is overridden when using split apk and normal split apk generation or oneapk amazon generation
         // amazon apk is generated with ./gradlew -Poneapk
-        versionCode = 6040071
-        versionName = project.hasProperty("markPreview") ? '6.4.63-mark.3.6-preview' : '6.4.63-mark.3'
+        versionCode = 6040072
+        versionName = project.hasProperty("markPreview") ? '6.4.63-mark.3.7-preview' : '6.4.63-mark.3'
         def novaVersionName = versionName
         if (! project.hasProperty("universal")) {
             // override versionName and versionCode to get it dependent on the date

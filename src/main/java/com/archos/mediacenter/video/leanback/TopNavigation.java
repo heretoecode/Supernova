@@ -47,7 +47,7 @@ public final class TopNavigation extends LinearLayout {
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
             tab.setPadding(dp(12), dp(6), dp(12), dp(6));
-            tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, Color.WHITE, 0xffb4cbe0}));
+            tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, 0xff59d8ff, 0xffb4cbe0}));
             StateListDrawable bg = new StateListDrawable();
             GradientDrawable focus = new GradientDrawable();
             focus.setColor(0x403d6888); focus.setCornerRadius(dp(7)); focus.setStroke(dp(1), 0x9962bbf3);
@@ -60,14 +60,16 @@ public final class TopNavigation extends LinearLayout {
             bg.addState(new int[]{android.R.attr.state_selected}, underline);
             bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
             tab.setBackground(bg);
-            tab.setOnFocusChangeListener((v, focused)->v.animate().scaleX(focused?1.025f:1f).scaleY(focused?1.025f:1f).setDuration(160).start());
+            tab.setOnFocusChangeListener((v, focused)->{
+                for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon!=null)icon.setTint(focused?0xff59d8ff:0xffb4cbe0);
+                v.animate().scaleX(focused?1.025f:1f).scaleY(focused?1.025f:1f).setDuration(160).start();});
             tab.setOnClickListener(v -> {
                 if (index < 4) {
                     for (TextView t : tabs) t.setSelected(false);
                     selected = tab; tab.setSelected(true);
                 }
                 navigate.accept(index);
-                if (index < 4) content.requestFocus();
+
             });
             tab.setOnKeyListener((v, key, event) -> {
                 if (key == KeyEvent.KEYCODE_DPAD_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -93,7 +95,7 @@ public final class TopNavigation extends LinearLayout {
         addView(stage,new LayoutParams(-1,0,1));
     }
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
-    public void selectTab(int index) { if(index<0||index>=4)return; for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true); }
+    public void selectTab(int index) { if(index<0||index>=6)return; for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true); }
     @Override protected void onDetachedFromWindow() { artwork.release();super.onDetachedFromWindow(); }
     public android.widget.FrameLayout getScanContainer() { return scanStatus; }
     public android.widget.FrameLayout getStatusContainer() { return status; }

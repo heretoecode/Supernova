@@ -204,19 +204,31 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     private boolean mPreviewAutoPlayed;
     @Override public View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
         View nativeView=super.onCreateView(inflater,parent,state);
-        if(!(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)||mLaunchedFromPlayer||!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
+        if(mVideo==null||mLaunchedFromPlayer||!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
         mNativeDetails=nativeView;android.widget.FrameLayout container=new android.widget.FrameLayout(requireContext());container.addView(nativeView);nativeView.setVisibility(View.GONE);
-        mPreviewMovie=new PreviewMoviePage(requireActivity(),()->mDetailsOverviewRow==null?null:mDetailsOverviewRow.getActionsAdapter(),a->{mOnActionClickedListener.onActionClicked(a);if(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)mVideo);},()->{mPreviewMovie.setVisibility(View.GONE);mNativeDetails.setVisibility(View.VISIBLE);mNativeDetails.requestFocus();},uri->{if(mPreviewNavigation!=null)mPreviewNavigation.setArtwork(uri);});
+        mPreviewMovie=new PreviewMoviePage(requireActivity(),()->mDetailsOverviewRow==null?null:mDetailsOverviewRow.getActionsAdapter(),a->{mOnActionClickedListener.onActionClicked(a);if(mVideo!=null)mPreviewMovie.bind(mVideo);},this::showPreviewTools,uri->{if(mPreviewNavigation!=null)mPreviewNavigation.setArtwork(uri);});
         container.addView(mPreviewMovie,new android.widget.FrameLayout.LayoutParams(-1,-1));
         mPreviewNavigation=new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(),container,tab->{
             if(tab==4)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
             else if(tab==5)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
             else{Intent home=new Intent(requireContext(),com.archos.mediacenter.video.leanback.MainActivityLeanback.class);home.putExtra("preview_tab",tab);home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(home);requireActivity().finish();}
         },()->mPreviewMovie!=null&&mPreviewMovie.atTop());
-        mPreviewNavigation.selectTab(1);mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)mVideo);
+        mPreviewNavigation.selectTab(mVideo instanceof Episode?2:1);mPreviewMovie.bind(mVideo);mPreviewMovie.post(mPreviewMovie::focusPrimary);
         return mPreviewNavigation;
     }
-    public boolean closePreviewNativeDetails(){if(mPreviewMovie!=null&&mPreviewMovie.getVisibility()!=View.VISIBLE){mNativeDetails.setVisibility(View.GONE);mPreviewMovie.setVisibility(View.VISIBLE);mPreviewMovie.requestFocus();return true;}return false;}
+    public boolean closePreviewNativeDetails(){return false;}
+    private void showPreviewTools(){
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File, subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops","File information"},-1,n->{
+            if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else if(n==4)new android.app.AlertDialog.Builder(requireContext()).setTitle(mVideo.getFilenameNonCryptic()).setMessage(mVideo.getFileUri()==null?"":mVideo.getFileUri().getPath()).setPositiveButton("Close",null).show();else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
+        });
+    }
+    private void showPreviewArtwork(Row sourceRow){
+        ListRow row=sourceRow instanceof ListRow?(ListRow)sourceRow:null;
+        if(row==null||row.getAdapter().size()==0){Toast.makeText(requireContext(),"No artwork available",Toast.LENGTH_SHORT).show();return;}
+        android.widget.HorizontalScrollView scroll=new android.widget.HorizontalScrollView(requireContext());android.widget.LinearLayout cards=new android.widget.LinearLayout(requireContext());scroll.addView(cards);
+        android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(requireContext()).setTitle(row.getHeaderItem().getName()).setView(scroll).setNegativeButton("Close",null).create();
+        for(int i=0;i<row.getAdapter().size();i++){Object item=row.getAdapter().get(i);Presenter presenter=row.getAdapter().getPresenter(item);Presenter.ViewHolder h=presenter.onCreateViewHolder(cards);presenter.onBindViewHolder(h,item);cards.addView(h.view);h.view.setOnClickListener(v->{dialog.dismiss();getOnItemViewClickedListener().onItemClicked(h,item,null,row);});}dialog.show();
+    }
 
     private Video mVideo;
     private static boolean mIsVideoWatched = false; // TOFIX: adding internal state since trakt sync can occur much later
@@ -396,7 +408,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         // available; no need for androidx.leanback's restricted TransitionHelper/
         // TransitionListener wrappers.
         Intent launchIntent = getActivity().getIntent();
-        boolean cinematic = launchIntent.getSerializableExtra(EXTRA_VIDEO) instanceof Movie
+        boolean cinematic = launchIntent.getSerializableExtra(EXTRA_VIDEO) instanceof Video
                 && !launchIntent.getBooleanExtra(EXTRA_LAUNCHED_FROM_PLAYER, false)
                 && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
         if (cinematic) {
@@ -1534,12 +1546,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(video, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
         }
 
-        if(mPreviewMovie!=null && !(video instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)){
-            mPreviewMovie.setVisibility(View.GONE);mNativeDetails.setVisibility(View.VISIBLE);
-        }
-        if(mPreviewMovie!=null && video instanceof com.archos.mediacenter.video.browser.adapters.object.Movie){
-            mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)video);
-        }
+        if(mPreviewMovie!=null)mPreviewMovie.bind(video);
         if(!mPreviewAutoPlayed&&requireActivity().getIntent().getBooleanExtra("preview_play",false)){
             mPreviewAutoPlayed=true;requireActivity().getIntent().removeExtra("preview_play");
             getView().post(()->{

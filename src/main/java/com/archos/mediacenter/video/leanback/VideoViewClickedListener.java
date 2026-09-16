@@ -137,8 +137,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         }
         // Cinematic Preview has no native poster transition target. Never start an
         // unmatched shared-element transition (including the return transition).
-        boolean cinematic = video instanceof com.archos.mediacenter.video.browser.adapters.object.Movie
-                && androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false);
+        boolean cinematic = androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false);
         if (animate && sourceView != null && !cinematic) {
             traceVideoDetailsLaunch(launchUptimeMs, "source-transition-options-start");
             ActivityOptionsCompat opts = ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -168,7 +167,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         intent.putExtra(TvshowFragment.EXTRA_TVSHOW, tvshow);
         View sourceView = null;
         Bundle bundle = null;
-        if (itemViewHolder.view instanceof ImageCardView) {
+        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false) && itemViewHolder.view instanceof ImageCardView) {
             sourceView = ((ImageCardView) itemViewHolder.view).getMainImageView();
             bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity,
@@ -176,7 +175,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
                     TvshowFragment.SHARED_ELEMENT_NAME).toBundle();
             activity.startActivity(intent, bundle);
         }
-        else if (itemViewHolder.view instanceof BaseCardView) {
+        else {
             activity.startActivity(intent);
         }
     }
@@ -186,7 +185,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         intent.putExtra(CollectionFragment.EXTRA_COLLECTION, collection);
         View sourceView = null;
         Bundle bundle = null;
-        if (itemViewHolder.view instanceof ImageCardView) {
+        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false) && itemViewHolder.view instanceof ImageCardView) {
             sourceView = ((ImageCardView) itemViewHolder.view).getMainImageView();
             bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity,
@@ -194,7 +193,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
                     CollectionFragment.SHARED_ELEMENT_NAME).toBundle();
             activity.startActivity(intent, bundle);
         }
-        else if (itemViewHolder.view instanceof BaseCardView) {
+        else {
             activity.startActivity(intent);
         }
     }

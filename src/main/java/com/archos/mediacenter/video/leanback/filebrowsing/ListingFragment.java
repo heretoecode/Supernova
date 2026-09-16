@@ -258,6 +258,11 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
             updateGridOrList();
         }
 
+        if(mPrefs.getBoolean("try_new_ui",false)){
+            v.setBackgroundColor(0xff132638);
+            if(mUri!=null){String path=mUri.getPath();setTitle((mUri.getHost()==null?"Files":mUri.getHost())+(path==null?"":"  ›  "+path.replace("/","  ›  ")));}
+            if(mErrorMessage!=null)mErrorMessage.setTextColor(0xffb4cbe0);if(mErrorDetails!=null)mErrorDetails.setTextColor(0xff9db1c4);
+        }
         return v;
     }
 
