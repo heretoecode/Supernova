@@ -87,9 +87,13 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         s.continuingShows.sort(Comparator.comparingLong((Entry e)->groups.get(e.show).stream().mapToLong(x->((Video)x.media).getLastPlayed()).max().orElse(0)).reversed());
         return s;
     }
+    private static final Object CACHE_LOCK=new Object();
     public static volatile Snapshot cached;
-    public static Snapshot readCache(Context c){if(cached!=null)return cached;try(java.io.ObjectInputStream in=new java.io.ObjectInputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(new java.io.File(c.getCacheDir(),"preview-library-v37"))))){Snapshot s=(Snapshot)in.readObject();for(List<Entry> list:java.util.Arrays.asList(s.movies,s.shows,s.recent,s.played,s.watched,s.continuingMovies,s.continuingShows,s.episodes))for(Entry e:list)if(e.media instanceof Video)e.backdrop=((Video)e.media).getPreviewBackdrop();return s;}catch(Exception unavailable){return null;}}
-    private void writeCache(Snapshot value){android.util.AtomicFile file=new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(),"preview-library-v37"));java.io.FileOutputStream stream=null;try{stream=file.startWrite();java.io.ObjectOutputStream out=new java.io.ObjectOutputStream(stream);out.writeObject(value);out.flush();file.finishWrite(stream);}catch(Exception failure){if(stream!=null)file.failWrite(stream);android.util.Log.d("NovaPreview","Snapshot cache unavailable",failure);}}
+    private static boolean cachePrivate;
+    public static Snapshot memoryCache(){return cachePrivate==com.archos.mediacenter.video.player.PrivateMode.isActive()?cached:null;}
+    public static Snapshot readCache(Context c){if(memoryCache()!=null)return memoryCache();if(com.archos.mediacenter.video.player.PrivateMode.isActive())return null;try(java.io.ObjectInputStream in=new java.io.ObjectInputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(new java.io.File(c.getCacheDir(),"preview-library-v37"))))){Snapshot s=(Snapshot)in.readObject();for(List<Entry> list:java.util.Arrays.asList(s.movies,s.shows,s.recent,s.played,s.watched,s.continuingMovies,s.continuingShows,s.episodes))for(Entry e:list)if(e.media instanceof Video)e.backdrop=((Video)e.media).getPreviewBackdrop();return s;}catch(Exception unavailable){return null;}}
+    private void writeCache(Snapshot value){if(com.archos.mediacenter.video.player.PrivateMode.isActive())return;synchronized(CACHE_LOCK){writeCacheLocked(value);}}
+    private void writeCacheLocked(Snapshot value){android.util.AtomicFile file=new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(),"preview-library-v37"));java.io.FileOutputStream stream=null;try{stream=file.startWrite();java.io.ObjectOutputStream out=new java.io.ObjectOutputStream(stream);out.writeObject(value);out.flush();file.finishWrite(stream);}catch(Exception failure){if(stream!=null)file.failWrite(stream);android.util.Log.d("NovaPreview","Snapshot cache unavailable",failure);}}
 
     public static void recordCheckpoint(Context context,com.archos.mediacenter.utils.videodb.VideoDbInfo info,boolean completed){
         if(!info.isShow||info.scraperShowId==null||info.scraperShowId.isEmpty()||info.scraperSeasonNr<0||info.scraperEpisodeNr<1)return;
@@ -155,7 +159,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                     while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId()); Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;}shows.add(se); }
                 }
             }
-            snapshot=build(videos,shows);applyJourneys(snapshot,videos);cached=snapshot;writeCache(snapshot); android.util.Log.d("NovaPreview","Library snapshot: "+(android.os.SystemClock.elapsedRealtime()-started)+" ms, "+videos.size()+" files (local database)");c.moveToPosition(-1); return c;
+            snapshot=build(videos,shows);applyJourneys(snapshot,videos);cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=snapshot;writeCache(snapshot); android.util.Log.d("NovaPreview","Library snapshot: "+(android.os.SystemClock.elapsedRealtime()-started)+" ms, "+videos.size()+" files (local database)");c.moveToPosition(-1); return c;
         } catch(RuntimeException e) { c.close(); throw e; }
     }
 }

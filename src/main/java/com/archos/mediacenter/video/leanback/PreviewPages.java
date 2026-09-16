@@ -138,7 +138,7 @@ public final class PreviewPages extends FrameLayout {
             String k="preview_library_"+i+"_";sorts[i]=Math.max(0,Math.min(4,preferences.getInt(k+"sort",0)));genres[i]=preferences.getString(k+"genre","");years[i]=preferences.getInt(k+"year",0);ascending[i]=preferences.getBoolean(k+"ascending",false);listMode[i]=preferences.getBoolean(k+"list",false);
         }
         render();
-        if(PreviewLibraryLoader.cached==null){java.util.concurrent.ExecutorService cacheWorker=java.util.concurrent.Executors.newSingleThreadExecutor();cacheWorker.execute(()->{try{Snapshot previous=PreviewLibraryLoader.readCache(c.getApplicationContext());post(()->{if(!loaded&&previous!=null)setSnapshot(previous);});}finally{cacheWorker.shutdown();}});}
+        if(PreviewLibraryLoader.memoryCache()==null){java.util.concurrent.ExecutorService cacheWorker=java.util.concurrent.Executors.newSingleThreadExecutor();cacheWorker.execute(()->{try{Snapshot previous=PreviewLibraryLoader.readCache(c.getApplicationContext());post(()->{if(!loaded&&previous!=null)setSnapshot(previous);});}finally{cacheWorker.shutdown();}});}
     }
     public boolean atTop() {
         View focused=list.findFocus(); if(focused==null)return isFocused()&&!restoringFocus;

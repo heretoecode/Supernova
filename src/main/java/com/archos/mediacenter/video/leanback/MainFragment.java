@@ -371,7 +371,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         android.widget.FrameLayout pages = new android.widget.FrameLayout(requireContext());
         pages.addView(content); content.setVisibility(View.GONE);
         mPreviewPages = new PreviewPages(requireContext(), (holder,item) -> new MainViewClickedListener(requireActivity()).onItemClicked(holder,item,null,null));
-        if(PreviewLibraryLoader.cached!=null)mPreviewPages.setSnapshot(PreviewLibraryLoader.cached);
+        if(PreviewLibraryLoader.memoryCache()!=null)mPreviewPages.setSnapshot(PreviewLibraryLoader.memoryCache());
         pages.addView(mPreviewPages, new android.widget.FrameLayout.LayoutParams(-1,-1));
         mNavigation = new TopNavigation(requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
         mPreviewPages.setArtworkListener(mNavigation::setArtwork);
