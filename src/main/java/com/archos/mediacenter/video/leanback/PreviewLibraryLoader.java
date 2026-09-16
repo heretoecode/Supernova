@@ -35,10 +35,10 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public final Base media;
         public final long added, show;
         public final String genres;
-        public String secondary="";public boolean active;
+        public String secondary="";public boolean active;public long playedAt;
         public String releaseDate=""; public long onlineId; public transient android.net.Uri backdrop;
         public Entry(Base media, long added, long show, String genres) {
-            this.media=media; this.added=added; this.show=show; this.genres=genres == null ? "" : genres;
+            this.media=media;this.playedAt=media instanceof Video?((Video)media).getLastPlayed():0; this.added=added; this.show=show; this.genres=genres == null ? "" : genres;
             if(media instanceof Movie) onlineId=((Movie)media).getOnlineId();
             if(media instanceof Video) backdrop=((Video)media).getPreviewBackdrop();
         }
@@ -74,7 +74,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             Entry n=next(group); long newest=group.stream().mapToLong(e->e.added).max().orElse(0);
             if(n!=null) {
                 Entry grouped=new Entry(n.media,newest,n.show,n.genres);grouped.onlineId=n.onlineId;grouped.releaseDate=n.releaseDate;s.recent.add(grouped);
-                if(group.stream().anyMatch(e->((Video)e.media).getLastPlayed()>0 || watched((Video)e.media))) s.continuingShows.add(n);
+                if(group.stream().anyMatch(e->((Video)e.media).getLastPlayed()>0 || watched((Video)e.media))){n.playedAt=group.stream().mapToLong(e->e.playedAt).max().orElse(0);s.continuingShows.add(n);}
             }
         }
         s.recent.sort(Comparator.comparingLong((Entry e)->e.added).reversed());
@@ -129,7 +129,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             }
             if(candidate==null&&started)for(Entry e:episodes){Episode ep=(Episode)e.media;if(ep.getSeasonNumber()==season&&ep.getEpisodeNumber()==number&&!watched(ep)){candidate=e;break;}}
             if(started){save.putInt(key+"s",season).putInt(key+"e",number);}
-            if(candidate!=null&&started){Episode ep=(Episode)candidate.media;candidate.active=true;candidate.secondary=(ep.getResumeMs()>0?"Resume · ":"Up Next · ")+"S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();s.continuingShows.add(candidate);
+            if(candidate!=null&&started){Episode ep=(Episode)candidate.media;candidate.playedAt=Math.max(checkpointTime,Math.max(prefs.getLong(key+"played",0),episodes.stream().mapToLong(e->((Video)e.media).getLastPlayed()).max().orElse(0)));candidate.active=true;candidate.secondary=(ep.getResumeMs()>0?"Resume · ":"Up Next · ")+"S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();s.continuingShows.add(candidate);
                 save.putInt(key+"s",ep.getSeasonNumber()).putInt(key+"e",ep.getEpisodeNumber());
                 for(Entry show:s.shows)if(show.show==group.getKey()){show.secondary=candidate.secondary;show.active=true;break;}
             }

@@ -57,13 +57,19 @@ public class PreviewPagesTest {
             for(int tab=0;tab<4;tab++){
                 ((LinearLayout)((LinearLayout)nav.getChildAt(0)).getChildAt(1)).getChildAt(tab).performClick();
                 for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
-                addTestArtwork(nav);
+                decorateCards(nav);addTestArtwork(nav);
                 android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));
                 java.io.File file=new java.io.File("build/reports/preview-ui/page-"+tab+".png");file.getParentFile().mkdirs();try(java.io.FileOutputStream out=new java.io.FileOutputStream(file)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out);}
             }
+            pages.setTab(1);layout(nav);android.view.View listButton=findText(nav,"List view");if(listButton!=null)listButton.performClick();layout(nav);decorateCards(nav);capture(nav,"library-list");
+            android.app.Dialog dialog=PreviewDialog.choose(host.get(),"Sort",new String[]{"Date Added","Title","Release Date","Trakt Trending — unavailable"},1,n->{});layout(dialog.getWindow().getDecorView());capture(dialog.getWindow().getDecorView(),"sort-panel");dialog.dismiss();
             nav.focusNavigation();assertTrue(nav.hasFocus());
         }finally{host.pause().stop().destroy();}
     }
+    static void layout(View v){for(int i=0;i<3;i++){v.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));v.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(60));}}
+    static View findText(View v,String text){if(v instanceof TextView&&((TextView)v).getText().toString().contains(text))return v;if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++){View match=findText(((ViewGroup)v).getChildAt(i),text);if(match!=null)return match;}return null;}
+    static void capture(View v,String name)throws Exception{android.graphics.Bitmap b=android.graphics.Bitmap.createBitmap(v.getWidth(),v.getHeight(),android.graphics.Bitmap.Config.ARGB_8888);v.draw(new android.graphics.Canvas(b));java.io.File f=new java.io.File("build/reports/preview-ui/"+name+".png");f.getParentFile().mkdirs();try(java.io.FileOutputStream o=new java.io.FileOutputStream(f)){b.compress(android.graphics.Bitmap.CompressFormat.PNG,100,o);}}
+    static void decorateCards(View v){if(v instanceof com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card){android.graphics.Bitmap b=android.graphics.Bitmap.createBitmap(200,300,android.graphics.Bitmap.Config.ARGB_8888);android.graphics.Canvas c=new android.graphics.Canvas(b);c.drawColor(0xff233b52);android.graphics.Paint p=new android.graphics.Paint();p.setColor(0xff62cfea);p.setStyle(android.graphics.Paint.Style.STROKE);p.setStrokeWidth(5);c.drawRect(3,3,197,297,p);p.setStyle(android.graphics.Paint.Style.FILL);p.setTextSize(20);c.drawText("POSTER TOP",20,25,p);c.drawText("FULL FRAME",20,280,p);((com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card)v).image.setImageBitmap(b);}else if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)decorateCards(((ViewGroup)v).getChildAt(i));}
     static void addTestArtwork(TopNavigation nav){
         android.graphics.Bitmap art=android.graphics.Bitmap.createBitmap(1600,900,android.graphics.Bitmap.Config.ARGB_8888);
         android.graphics.Canvas canvas=new android.graphics.Canvas(art);android.graphics.Paint paint=new android.graphics.Paint();

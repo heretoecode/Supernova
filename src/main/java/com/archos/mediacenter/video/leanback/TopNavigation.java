@@ -94,6 +94,8 @@ public final class TopNavigation extends LinearLayout {
         scanParams.setMargins(dp(20),dp(12),dp(20),dp(16));stage.addView(scanStatus,scanParams);
         addView(stage,new LayoutParams(-1,0,1));
     }
+    private boolean scrolled;private android.animation.ValueAnimator scrimAnimation;private int scrimAlpha;
+    public void setScrolled(boolean value){if(value==scrolled)return;scrolled=value;if(scrimAnimation!=null)scrimAnimation.cancel();scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?247:0);scrimAnimation.setDuration(180);scrimAnimation.addUpdateListener(a->{scrimAlpha=(Integer)a.getAnimatedValue();bar.setBackgroundColor(android.graphics.Color.argb(scrimAlpha,9,23,35));});scrimAnimation.start();}
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public void selectTab(int index) { if(index<0||index>=6)return; for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true); }
     @Override protected void onDetachedFromWindow() { artwork.release();super.onDetachedFromWindow(); }
