@@ -139,7 +139,7 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:taskAffinity="archos.task.video"
-            android:theme="@style/ArchosThemeLauncher" />
+            android:theme="${novaEntryTheme}" />
 
         <activity
             android:name=".browser.MainActivity"
@@ -1555,7 +1555,7 @@
             android:launchMode="singleTask"
             android:label="@string/nova"
             android:taskAffinity="archos.task.video"
-            android:theme="@style/MyLeanbackTheme.Launcher">
+            android:theme="${novaLaunchTheme}">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />

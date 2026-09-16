@@ -1,6 +1,7 @@
 <com.archos.mediacenter.video.player.PlayerControlsRelativeLayout xmlns:ads="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/playerControllers" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_weight="1">
 
     <include layout="@layout/clock" />
+        <TextView android:id="@+id/preview_playback_title" android:layout_width="600dp" android:layout_height="wrap_content" android:maxLines="1" android:ellipsize="end" android:textColor="#FFFFFF" android:fontFamily="sans-serif-medium" android:textSize="22sp" android:layout_alignParentTop="true" android:layout_alignParentStart="true" android:layout_marginStart="32dp" android:layout_marginTop="24dp" android:visibility="gone" android:shadowColor="#FF000000" android:shadowRadius="3" />
 
     <FrameLayout android:id="@+id/tv_menu_container" android:layout_width="match_parent" android:layout_height="match_parent">
 
@@ -16,9 +17,9 @@
 
     
 
-    <LinearLayout android:id="@+id/control_bar" android:layout_width="fill_parent" android:layout_height="190dp" android:layout_alignParentBottom="true" android:background="@drawable/mark_hud_background" android:descendantFocusability="blocksDescendants" android:orientation="vertical" android:visibility="gone" android:padding="24dp">
+    <LinearLayout android:id="@+id/control_bar" android:layout_width="fill_parent" android:layout_height="138dp" android:layout_alignParentBottom="true" android:background="@drawable/mark_hud_background" android:descendantFocusability="afterDescendants" android:orientation="vertical" android:visibility="gone" android:paddingLeft="32dp" android:paddingRight="32dp" android:paddingTop="22dp" android:paddingBottom="8dp">
 
-        <TextView android:id="@+id/preview_playback_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:maxLines="1" android:ellipsize="end" android:textColor="#FFFFFF" android:fontFamily="sans-serif-medium" android:textSize="22sp" android:layout_marginBottom="16dp" />
+
         <RelativeLayout android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:paddingLeft="0dip" android:paddingRight="0dip">
 
             <com.archos.mediacenter.utils.seekbar.ArchosProgressSlider android:id="@+id/seek_progress" style="@style/TallerPlayerSliderHorizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_marginLeft="10dip" android:layout_marginTop="2dip" android:layout_marginRight="10dip" android:layout_gravity="center" android:layout_toLeftOf="@id/time" android:layout_toRightOf="@id/time_current" />

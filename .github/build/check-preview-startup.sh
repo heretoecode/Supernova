@@ -47,3 +47,19 @@ if [[ "$phase" == preview ]]; then
   adb shell run-as "$package" cat "shared_prefs/${package}_preferences.xml" | grep -q 'name="try_new_ui" value="true"'
 fi
 check_start "$phase-restart"
+
+if [[ "$phase" == preview ]]; then
+  # Real warm relaunch, distinct from force-stop/cold restart above.
+  adb shell input keyevent 3
+  adb shell am start -W -n "$package/$activity"
+  sleep 2
+  adb shell pidof "$package" | grep -q '[0-9]'
+  adb shell am start -W -n "$package/com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity"
+  sleep 3
+  adb exec-out screencap -p > ../startup-diagnostics/preview-settings.png
+  adb shell uiautomator dump /sdcard/nova-settings.xml
+  adb pull /sdcard/nova-settings.xml ../startup-diagnostics/preview-settings.xml
+  adb logcat -d > ../startup-diagnostics/preview-settings-logcat.txt
+  if grep -q 'FATAL EXCEPTION' ../startup-diagnostics/preview-settings-logcat.txt; then exit 1; fi
+  adb shell pidof "$package" | grep -q '[0-9]'
+fi

@@ -871,6 +871,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     private void showActionBar(boolean show) {
+        if(experimentalUi())show=false;
         if (isTVMode || TVUtils.isTV(mContext)) {
             if (!mControlBarShowing || Player.sPlayer == null) show = false;
         }
@@ -909,6 +910,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             mControlBarShowing = show;
             adjustView();
             setVisibility(mControlBar, show, true);
+            if(experimentalUi()&&mControllerViewLeft!=null){View title=mControllerViewLeft.findViewById(R.id.preview_playback_title);if(title!=null)title.setVisibility(show?View.VISIBLE:View.GONE);if(show){((ViewGroup)mControlBar).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);mPauseButton.setVisibility(View.VISIBLE);mPauseButton.requestFocus();}}
             if(mPlayPauseTouchZone!=null){
                 setVisibility(mPlayPauseTouchZone, show, false);
             }
@@ -1461,7 +1463,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
 
     public void setVideoTitleEnabled(boolean enable) {
         if (mVideoTitle != null) {
-            if (enable) {
+            if (enable && !experimentalUi()) {
                 mVideoTitle.setVisibility(View.VISIBLE);
 
             } else {
@@ -2261,6 +2263,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             return true;
         }
         switchMode(true);
+        if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&mControlBar.hasFocus()&&(keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_DPAD_RIGHT||keyCode==KeyEvent.KEYCODE_DPAD_CENTER||keyCode==KeyEvent.KEYCODE_ENTER)){return false;}
         
         if (isTVMenuDisplayed) {
             if (event.getAction() == KeyEvent.ACTION_DOWN && mTVMenuAdapter != null) {
@@ -2540,22 +2543,22 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             //hide action menu
             //hide button (pause, etc)
             if( mControllerViewLeft.findViewById(R.id.pause)!=null)
-                mControllerViewLeft.findViewById(R.id.pause).setVisibility(tv?View.INVISIBLE:View.VISIBLE);
+                mControllerViewLeft.findViewById(R.id.pause).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
             if( mControllerViewLeft.findViewById(R.id.backward)!=null)
-                mControllerViewLeft.findViewById(R.id.backward).setVisibility(tv?View.GONE:View.VISIBLE);
+                mControllerViewLeft.findViewById(R.id.backward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
             if( mControllerViewLeft.findViewById(R.id.forward)!=null)
-                mControllerViewLeft.findViewById(R.id.forward).setVisibility(tv?View.GONE:View.VISIBLE);
+                mControllerViewLeft.findViewById(R.id.forward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
             if( mControllerViewLeft.findViewById(R.id.format)!=null)
-                mControllerViewLeft.findViewById(R.id.format).setVisibility(tv?View.INVISIBLE:View.VISIBLE);
+                mControllerViewLeft.findViewById(R.id.format).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
             if(mControllerViewRight!=null){
                 if( mControllerViewRight.findViewById(R.id.pause)!=null)
-                    mControllerViewRight.findViewById(R.id.pause).setVisibility(tv?View.INVISIBLE:View.VISIBLE);
+                    mControllerViewRight.findViewById(R.id.pause).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
                 if( mControllerViewRight.findViewById(R.id.backward)!=null)
-                    mControllerViewRight.findViewById(R.id.backward).setVisibility(tv?View.GONE:View.VISIBLE);
+                    mControllerViewRight.findViewById(R.id.backward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
                 if( mControllerViewRight.findViewById(R.id.forward)!=null)
-                    mControllerViewRight.findViewById(R.id.forward).setVisibility(tv?View.GONE:View.VISIBLE);
+                    mControllerViewRight.findViewById(R.id.forward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
                 if( mControllerViewRight.findViewById(R.id.format)!=null)
-                    mControllerViewRight.findViewById(R.id.format).setVisibility(tv?View.INVISIBLE:View.VISIBLE);
+                    mControllerViewRight.findViewById(R.id.format).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
             }
             
         }
@@ -2844,7 +2847,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 if (duration > 0 && duration > position) {
                     long remainingMs = (long) ((duration - position) / speed);
                     String endClockText = getDateFormat().format(new Date(now + remainingMs));
-                    mClock.setText(Clock.formatTimeWithArrow(currentClockText, endClockText));
+                    mClock.setText(experimentalUi()?currentClockText+" · Ends "+endClockText:Clock.formatTimeWithArrow(currentClockText, endClockText));
                     return;
                 }
             }

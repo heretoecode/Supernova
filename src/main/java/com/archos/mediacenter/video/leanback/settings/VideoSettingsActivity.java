@@ -37,7 +37,10 @@ public class VideoSettingsActivity extends LeanbackActivity {
             setTheme(R.style.MyLeanbackTheme_Preferences_Black);
         }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_settings);
+        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
+            android.widget.FrameLayout full=new android.widget.FrameLayout(this);full.setId(R.id.settingsFragment);full.setBackgroundColor(0xff132638);setContentView(full);
+            if(savedInstanceState==null)getSupportFragmentManager().beginTransaction().replace(R.id.settingsFragment,new VideoSettingsFragment.PrefsFragment()).commit();
+        }else setContentView(R.layout.activity_video_settings);
         if (Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.slide_in_from_right, 0);
         } else {

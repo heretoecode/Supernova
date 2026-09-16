@@ -47,7 +47,7 @@ public final class PreviewCardPresenter extends Presenter {
             body.setBackground(outline); body.setClipToOutline(true);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
-            if (style == Style.POSTER) bp.height += dp(36);
+            if (style == Style.POSTER) bp.height += dp(40);
             bp.width = width;
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -62,11 +62,11 @@ public final class PreviewCardPresenter extends Presenter {
             if(style == Style.POSTER){title.setLines(1);title.setTextSize(12);title.setIncludeFontPadding(false);caption.setPadding(dp(6),dp(4),dp(6),dp(3));caption.setBackgroundColor(0xff102333);} title.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(title, new LinearLayout.LayoutParams(-1, -2));
             subtitle = new TextView(c); subtitle.setTextSize(style == Style.POSTER ? 10 : 11); subtitle.setTextColor(0xffa4b6c7);subtitle.setIncludeFontPadding(false);
-            subtitle.setSingleLine(style!=Style.POSTER);if(style==Style.POSTER)subtitle.setMaxLines(2); subtitle.setEllipsize(TextUtils.TruncateAt.END);
+            subtitle.setSingleLine(true); subtitle.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
             FrameLayout.LayoutParams captionParams=new FrameLayout.LayoutParams(-1,-2,style==Style.LIST?Gravity.CENTER_VERTICAL:Gravity.BOTTOM);
-            if(style==Style.POSTER)captionParams.height=dp(36);
-            if(style==Style.LIST){captionParams.leftMargin=dp(120);caption.setBackground(null);}
+            if(style==Style.POSTER)captionParams.height=dp(40);
+            if(style==Style.LIST){captionParams.leftMargin=dp(120);captionParams.rightMargin=dp(30);caption.setBackground(null);TextView arrow=new TextView(c);arrow.setText("›");arrow.setTextColor(0xffa4b6c7);arrow.setTextSize(24);arrow.setGravity(Gravity.CENTER);body.addView(arrow,new FrameLayout.LayoutParams(dp(28),-1,Gravity.RIGHT));}
             body.addView(caption,captionParams);
             progress = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
             progress.setMax(100); progress.setProgressTintList(ColorStateList.valueOf(0xff62bbf3));
@@ -74,9 +74,10 @@ public final class PreviewCardPresenter extends Presenter {
             FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(-1, dp(3), Gravity.BOTTOM);
             pp.setMargins(dp(8), 0, dp(8), dp(5)); body.addView(progress, pp);
             progress.setVisibility(View.GONE);
-            setOnFocusChangeListener((v, focus) -> updateFocus());
+            setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
             updateFocus();
         }
+        @Override protected void drawableStateChanged(){super.drawableStateChanged();if(caption!=null)updateFocus();}
         @Override protected void onMeasure(int widthSpec, int heightSpec) {
             if (View.MeasureSpec.getMode(widthSpec) == View.MeasureSpec.EXACTLY && View.MeasureSpec.getSize(widthSpec)>0)
                 getChildAt(0).getLayoutParams().width = View.MeasureSpec.getSize(widthSpec);
@@ -143,7 +144,9 @@ public final class PreviewCardPresenter extends Presenter {
             });}
     }
     public static void bindSecondary(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){
-        Card c=(Card)holder.view;if(entry.secondary!=null&&!entry.secondary.isEmpty()){
+        Card c=(Card)holder.view;
+        if((c.style==Style.CONTINUE||c.style==Style.LIST)&&entry.backdrop!=null){c.image.setScaleType(ImageView.ScaleType.CENTER_CROP);Picasso.get().load(entry.backdrop).resize(c.width,c.height).centerCrop().noFade().into(c.image);}
+        if(entry.secondary!=null&&!entry.secondary.isEmpty()){
             c.subtitle.setText(entry.secondary);c.subtitle.setVisibility(View.VISIBLE);c.subtitle.setTextColor(entry.active?0xff59d8ff:0xffa4b6c7);
             c.setContentDescription(c.title.getText()+", "+entry.secondary);
         }

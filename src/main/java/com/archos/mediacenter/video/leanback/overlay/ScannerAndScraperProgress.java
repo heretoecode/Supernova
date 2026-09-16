@@ -192,7 +192,7 @@ public class ScannerAndScraperProgress {
         }
 
         if(floating&&!badge.isEmpty()) {
-            if(NetworkScannerReceiver.isScannerWorking())badge=NetworkScannerServiceVideo.isDeleting()?"Updating network library…":"Scanning "+com.archos.mediacenter.video.utils.PreviewScanReceiver.currentSource()+"…";
+            if(NetworkScannerReceiver.isScannerWorking())badge=NetworkScannerServiceVideo.isDeleting()?"Updating network library…":"Scanning network library…";
             else if(ImportState.VIDEO.isInitialImport()||ImportState.VIDEO.isRegularImport())badge=ImportState.VIDEO.isDeleting()?"Updating local library…":"Scanning local library…";
             else if(AutoScrapeService.isNfoExportInProgress())badge="Exporting metadata…";
             else badge="Identifying library titles…";

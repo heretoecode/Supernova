@@ -78,7 +78,7 @@ public abstract class ListPresenter extends Presenter {
                 View content=mBaseCardView.findViewById(R.id.myroot);content.getLayoutParams().width=(int)(760*density);content.getLayoutParams().height=(int)(64*density);
                 mImageView.getLayoutParams().width=(int)(108*density);mImageView.getLayoutParams().height=(int)(64*density);mImageView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
                 mTitleTv.setTextSize(14);mTitleTv.setSingleLine(true);mTitleTv.setTypeface(android.graphics.Typeface.create("sans-serif-medium",0));mContentTv.setTextSize(11);mContentTv.setTextColor(0xffa4b6c7);mBaseCardView.setBackgroundColor(0xbb192f45);
-                mBaseCardView.setOnFocusChangeListener((v,focus)->{android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();bg.setColor(focus?0xdd25445c:0xbb192f45);bg.setCornerRadius(5*density);bg.setStroke((int)(density*2),focus?0xff59d8ff:0x303d5870);v.setBackground(bg);});
+                mBaseCardView.setBackgroundResource(R.drawable.preview_surface_focus);mBaseCardView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             }
             mImageViewTarget = new PicassoImageViewTarget(mImageView);
         }

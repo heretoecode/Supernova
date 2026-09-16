@@ -40,6 +40,23 @@ final class PreviewPlaybackLoading extends FrameLayout {
         }
         episode.setVisibility(episode.length()==0?GONE:VISIBLE);
     }
+    private boolean waitingForFrame;
+    void waitForFrame(View root){
+        if(waitingForFrame||getVisibility()!=VISIBLE)return;waitingForFrame=true;
+        final long started=android.os.SystemClock.uptimeMillis();
+        final SurfaceView surface=root.findViewById(R.id.surface_view);
+        post(new Runnable(){public void run(){
+            if(!isAttachedToWindow()||getVisibility()!=VISIBLE){waitingForFrame=false;return;}
+            if(Player.sPlayer!=null&&Player.sPlayer.hasRenderedPreviewFrame()){reveal();return;}
+            if(android.os.Build.VERSION.SDK_INT>=26&&surface!=null&&surface.isShown()&&surface.getHolder().getSurface().isValid()){
+                android.graphics.Bitmap probe=android.graphics.Bitmap.createBitmap(1,1,android.graphics.Bitmap.Config.ARGB_8888);
+                try{android.view.PixelCopy.request(surface,probe,result->{probe.recycle();if(result==android.view.PixelCopy.SUCCESS)reveal();else retry(this,started);},new android.os.Handler(android.os.Looper.getMainLooper()));return;}catch(IllegalArgumentException invalid){probe.recycle();}
+            }
+            retry(this,started);
+        }});
+    }
+    private void retry(Runnable check,long started){if(android.os.SystemClock.uptimeMillis()-started>8000){android.util.Log.w("NovaPreview","No first-frame signal; releasing loading overlay to preserve playback controls");reveal();}else postDelayed(check,80);}
+    private void reveal(){waitingForFrame=false;animate().alpha(0f).setDuration(120).withEndAction(()->{setVisibility(GONE);setAlpha(1f);}).start();}
     void bind(VideoDbInfo info,String fallback){
         if(info==null){if(fallback!=null)title.setText(fallback);return;}
         title.setText(info.isScraped&&info.scraperTitle!=null?info.scraperTitle:fallback);

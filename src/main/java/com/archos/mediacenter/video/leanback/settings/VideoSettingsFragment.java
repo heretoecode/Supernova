@@ -83,6 +83,12 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
     }
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
+        @Override public android.view.View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup container,Bundle state){
+            android.view.View nativeView=super.onCreateView(inflater,container,state);
+            if(!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
+            androidx.recyclerview.widget.RecyclerView list=getListView();if(list.getParent() instanceof android.view.ViewGroup)((android.view.ViewGroup)list.getParent()).removeView(list);
+            android.widget.FrameLayout full=new android.widget.FrameLayout(requireContext());full.setPadding(28,24,28,24);full.addView(list,new android.widget.FrameLayout.LayoutParams(-1,-1));return full;
+        }
 
         private VideoPreferencesCommon mPreferencesCommon = new VideoPreferencesCommon(this);
 

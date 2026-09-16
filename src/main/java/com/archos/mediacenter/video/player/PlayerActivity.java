@@ -3293,7 +3293,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
             mThumbnailDone = 0;
             mHandler.removeMessages(MSG_PROGRESS_VISIBLE);
-            mProgressView.setVisibility(View.GONE);
+            if(mProgressView instanceof PreviewPlaybackLoading)((PreviewPlaybackLoading)mProgressView).waitForFrame(mRootView);else mProgressView.setVisibility(View.GONE);
             mPlayerController.setVideoTitleEnabled(true);
             PlayerService.sPlayerService.setAudioFilt();
             mPlayerController.start();

@@ -88,6 +88,8 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         return s;
     }
     private static final Object CACHE_LOCK=new Object();
+    private static final java.util.concurrent.ExecutorService cacheWriter=java.util.concurrent.Executors.newSingleThreadExecutor();
+    public static void warmCache(Context context){cacheWriter.execute(()->{Snapshot value=readCache(context);if(value!=null&&cached==null&&!com.archos.mediacenter.video.player.PrivateMode.isActive()){cachePrivate=false;cached=value;}});}
     public static volatile Snapshot cached;
     private static boolean cachePrivate;
     public static Snapshot memoryCache(){return cachePrivate==com.archos.mediacenter.video.player.PrivateMode.isActive()?cached:null;}
@@ -159,7 +161,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                     while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId()); Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;}shows.add(se); }
                 }
             }
-            snapshot=build(videos,shows);applyJourneys(snapshot,videos);cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=snapshot;writeCache(snapshot); android.util.Log.d("NovaPreview","Library snapshot: "+(android.os.SystemClock.elapsedRealtime()-started)+" ms, "+videos.size()+" files (local database)");c.moveToPosition(-1); return c;
+            snapshot=build(videos,shows);applyJourneys(snapshot,videos);cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=snapshot;final Snapshot diskSnapshot=snapshot;if(!cachePrivate)cacheWriter.execute(()->writeCache(diskSnapshot)); android.util.Log.d("NovaPreview","Library snapshot: "+(android.os.SystemClock.elapsedRealtime()-started)+" ms, "+videos.size()+" files (local database)");c.moveToPosition(-1); return c;
         } catch(RuntimeException e) { c.close(); throw e; }
     }
 }
