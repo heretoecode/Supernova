@@ -489,8 +489,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             // normal preferences
             //Editor editor = mDecChoicePreferences.getEditor();
             Editor editor = mSharedPreferences.edit();
-            editor.remove(KEY_DEC_CHOICE);
-            editor.remove(KEY_AUDIO_INTERFACE_CHOICE);
+            if(!mSharedPreferences.getBoolean("try_new_ui",false)){editor.remove(KEY_DEC_CHOICE);editor.remove(KEY_AUDIO_INTERFACE_CHOICE);}
             editor.apply();
             aboutCategory.removePreference(mEnableSponsor);
             prefCategory.removePreference(mDecChoicePreferences);

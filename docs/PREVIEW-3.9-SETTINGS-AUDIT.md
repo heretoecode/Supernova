@@ -1,6 +1,6 @@
 # Preview 3.9 Settings compatibility audit
 
-Source audit of every leaf preference in the existing main/advanced Settings XML, plus dynamic controls below. **Active** means the real handler remains available subject to its pre-existing device/account/capability gate; it does not claim every option was exercised on hardware. No preference key, default or saved value was deleted/reset by this presentation pass. Existing platform-dependent hiding/validation remains.
+Source audit of every leaf preference in the existing main/advanced Settings XML, plus dynamic controls below. **Active** means the real handler remains available subject to its pre-existing device/account/capability gate; it does not claim every option was exercised on hardware. No preference key, default or saved value was deleted/reset by this presentation pass. Existing platform-dependent hiding/validation remains. Opening Preview Settings no longer clears saved decoder/audio-interface selections or the saved software-decoding choice; their existing playback handlers remain unchanged.
 
 | Preference | Underlying behaviour found | Active/Disabled | Reason |
 |---|---|---|---|

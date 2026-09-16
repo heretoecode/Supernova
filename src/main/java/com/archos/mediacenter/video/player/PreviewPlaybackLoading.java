@@ -40,17 +40,19 @@ final class PreviewPlaybackLoading extends FrameLayout {
         }
         episode.setVisibility(episode.length()==0?GONE:VISIBLE);
     }
-    private boolean waitingForFrame;
+    private boolean waitingForFrame;private int generation;
+    void begin(){generation++;waitingForFrame=false;animate().cancel();setAlpha(1f);setVisibility(VISIBLE);}
     void waitForFrame(View root){
         if(waitingForFrame||getVisibility()!=VISIBLE)return;waitingForFrame=true;
-        final long started=android.os.SystemClock.uptimeMillis();
+        final long started=android.os.SystemClock.uptimeMillis();final int expected=generation;
         final SurfaceView surface=root.findViewById(R.id.surface_view);
         post(new Runnable(){public void run(){
+            if(expected!=generation)return;
             if(!isAttachedToWindow()||getVisibility()!=VISIBLE){waitingForFrame=false;return;}
             if(Player.sPlayer!=null&&Player.sPlayer.hasRenderedPreviewFrame()){reveal();return;}
             if(android.os.Build.VERSION.SDK_INT>=26&&surface!=null&&surface.isShown()&&surface.getHolder().getSurface().isValid()){
                 android.graphics.Bitmap probe=android.graphics.Bitmap.createBitmap(32,18,android.graphics.Bitmap.Config.ARGB_8888);
-                try{android.view.PixelCopy.request(surface,probe,result->{boolean frame=false;if(result==android.view.PixelCopy.SUCCESS){int min=255,max=0;for(int y=0;y<18;y++)for(int x=0;x<32;x++){int pixel=probe.getPixel(x,y),l=(android.graphics.Color.red(pixel)+android.graphics.Color.green(pixel)+android.graphics.Color.blue(pixel))/3;min=Math.min(min,l);max=Math.max(max,l);}frame=max>8&&max-min>3;}probe.recycle();if(frame)reveal();else retry(this,started);},new android.os.Handler(android.os.Looper.getMainLooper()));return;}catch(IllegalArgumentException invalid){probe.recycle();}
+                try{android.view.PixelCopy.request(surface,probe,result->{if(expected!=generation){probe.recycle();return;}boolean frame=false;if(result==android.view.PixelCopy.SUCCESS){int min=255,max=0;for(int y=0;y<18;y++)for(int x=0;x<32;x++){int pixel=probe.getPixel(x,y),l=(android.graphics.Color.red(pixel)+android.graphics.Color.green(pixel)+android.graphics.Color.blue(pixel))/3;min=Math.min(min,l);max=Math.max(max,l);}frame=max>8&&max-min>3;}probe.recycle();if(frame)reveal();else retry(this,started);},new android.os.Handler(android.os.Looper.getMainLooper()));return;}catch(IllegalArgumentException invalid){probe.recycle();}
             }
             retry(this,started);
         }});
@@ -72,7 +74,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         }else if(visibility!=VISIBLE){Picasso.get().cancelRequest(artwork);requestedArtwork=false;}
     }
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();onVisibilityChanged(this,getVisibility());}
-    @Override protected void onDetachedFromWindow(){Picasso.get().cancelRequest(artwork);super.onDetachedFromWindow();}
+    @Override protected void onDetachedFromWindow(){generation++;Picasso.get().cancelRequest(artwork);super.onDetachedFromWindow();}
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextSize(size);t.setTextColor(Color.WHITE);return t;}
 }

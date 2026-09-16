@@ -2945,10 +2945,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }).setNegativeButton(android.R.string.cancel, null).show();
     }
 
+    public boolean previewHasAudio(){return mAudioInfoController!=null&&mAudioInfoController.getTrackCount()>0;}
     public String previewTitle(){return mVideoInfo!=null&&mVideoInfo.isScraped&&mVideoInfo.scraperTitle!=null?mVideoInfo.scraperTitle:mTitle==null?"":mTitle;}
     public String previewEpisode(){return mVideoInfo!=null&&mVideoInfo.isShow?String.format(java.util.Locale.getDefault(),"S%02d E%02d",mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr)+(mVideoInfo.scraperEpisodeName==null?"":" · "+mVideoInfo.scraperEpisodeName):"";}
     private void showVideoInfos() {
-        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){PreviewPlaybackInfo.show(this,previewTitle(),previewEpisode(),getIntent().getSerializableExtra(PlayerService.VIDEO),()->{if(mPlayer!=null)mPlayer.seekTo(0);},this::showNativeVideoInfos);return;}
+        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){Object media=getIntent().getSerializableExtra(PlayerService.VIDEO);if(media instanceof com.archos.mediacenter.video.browser.adapters.object.Video&&((com.archos.mediacenter.video.browser.adapters.object.Video)media).getId()!=mVideoId)media=null;PreviewPlaybackInfo.show(this,previewTitle(),previewEpisode(),media,()->{if(mPlayer!=null)mPlayer.seekTo(0);},this::showNativeVideoInfos);return;}
         showNativeVideoInfos();
     }
     private void showNativeVideoInfos() {
@@ -3351,8 +3352,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (mBufferView != null)
             mBufferView.setText("");
         mHandler.removeMessages(MSG_PROGRESS_VISIBLE);
-        if(!Player.sPlayer.isPlaying())
-            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PROGRESS_VISIBLE), PROGRESS_VISIBLE_DELAY);
+        if(!Player.sPlayer.isPlaying()){
+            if(mProgressView instanceof PreviewPlaybackLoading){((PreviewPlaybackLoading)mProgressView).begin();mHandler.sendEmptyMessage(MSG_PROGRESS_VISIBLE);}
+            else mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PROGRESS_VISIBLE), PROGRESS_VISIBLE_DELAY);
+        }
 
         if (mUri == null) {
             myShowDialog(DIALOG_ERROR);

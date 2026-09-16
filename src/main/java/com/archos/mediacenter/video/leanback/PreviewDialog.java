@@ -10,6 +10,9 @@ import java.util.function.IntConsumer;
 /** Content-sized Nova menus. The caller still owns every real action and selection. */
 public final class PreviewDialog {
  public static Dialog choose(Context c,String title,String[] labels,int selected,IntConsumer action){
+  return choose(c,title,labels,selected,selected<0?java.util.Collections.emptySet():java.util.Collections.singleton(selected),action);
+ }
+ public static Dialog choose(Context c,String title,String[] labels,int selected,java.util.Set<Integer> checked,IntConsumer action){
   Dialog d=new Dialog(c);d.requestWindowFeature(Window.FEATURE_NO_TITLE);
   LinearLayout panel=new LinearLayout(c);panel.setOrientation(1);int pad=dp(c,12);panel.setPadding(pad,pad,pad,pad);panel.setBackground(surface(c,false));
   TextView heading=new TextView(c);heading.setText(title);heading.setTextSize(17);heading.setTextColor(Color.WHITE);heading.setPadding(dp(c,6),dp(c,2),0,dp(c,12));panel.addView(heading);
@@ -19,8 +22,8 @@ public final class PreviewDialog {
    LinearLayout row=new LinearLayout(c);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(dp(c,10),0,dp(c,10),0);row.setBackground(focus(c));row.setFocusable(enabled);row.setFocusableInTouchMode(enabled);row.setEnabled(enabled);row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);row.setAlpha(enabled?1f:group?1f:.4f);
    if(!group){ImageView icon=new ImageView(c);icon.setImageDrawable(new PreviewIcon(labels[i]));row.addView(icon,new LinearLayout.LayoutParams(dp(c,18),dp(c,18)));}
    TextView label=new TextView(c);label.setText(group?labels[i].substring(2):labels[i]);label.setTextSize(group?11:14);label.setTextColor(group?0xff8aaec5:Color.WHITE);label.setSingleLine(true);label.setEllipsize(android.text.TextUtils.TruncateAt.END);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);lp.leftMargin=group?0:dp(c,10);row.addView(label,lp);
-   if(i==selected){ImageView check=new ImageView(c);check.setImageDrawable(new PreviewIcon("check"));row.addView(check,new LinearLayout.LayoutParams(dp(c,18),dp(c,18)));}
-   row.setContentDescription(labels[i]+(i==selected?", selected":""));row.setOnClickListener(v->{d.dismiss();action.accept(index);});int rh=group?25:37;height+=rh;rows.addView(row,new LinearLayout.LayoutParams(-1,dp(c,rh)));if(enabled&&(initial==null||i==selected))initial=row;
+   if(checked.contains(i)){ImageView check=new ImageView(c);check.setImageDrawable(new PreviewIcon("check"));row.addView(check,new LinearLayout.LayoutParams(dp(c,18),dp(c,18)));}
+   row.setContentDescription(labels[i]+(checked.contains(i)?", selected":""));row.setOnClickListener(v->{d.dismiss();action.accept(index);});int rh=group?25:37;height+=rh;rows.addView(row,new LinearLayout.LayoutParams(-1,dp(c,rh)));if(enabled&&(initial==null||i==selected))initial=row;
   }
   d.setContentView(panel);d.show();Window w=d.getWindow();w.setBackgroundDrawableResource(android.R.color.transparent);w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);w.setDimAmount(.32f);w.setLayout(Math.min(dp(c,title.equals("More")?330:280),c.getResources().getDisplayMetrics().widthPixels-dp(c,64)),Math.min(dp(c,height),c.getResources().getDisplayMetrics().heightPixels-dp(c,64)));if(initial!=null)initial.requestFocus();return d;
  }
