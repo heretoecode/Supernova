@@ -5,6 +5,7 @@ import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.*;
 import androidx.recyclerview.widget.*;
+import androidx.recyclerview.widget.GridLayoutManager;
 import java.util.*;
 /** Source grid over Nova's existing discovery adapters and click handlers. */
 public final class PreviewSources extends FrameLayout {

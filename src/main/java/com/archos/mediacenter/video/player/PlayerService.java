@@ -1181,6 +1181,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     // saving seconds since the Unix epoch (January 1, 1970, 00:00:00 UTC) and this value is in UTC
                     // traktResume is set to -resume unless synced
                     mVideoInfo.lastTimePlayed = utcSeconds;
+                    com.archos.mediacenter.video.leanback.PreviewLibraryLoader.recordCheckpoint(this,mVideoInfo,mPlaybackSession.completed);
                     log.info("saveVideoStateIfReady: save bookmark at {} for videoId {}", mVideoInfo.lastTimePlayed, mVideoInfo.id);
                     mIndexHelper.writeVideoInfo(mVideoInfo, mNetworkBookmarksEnabled);
                     // disable periodic trakt save this should be done with pauseTrakt() anyway
