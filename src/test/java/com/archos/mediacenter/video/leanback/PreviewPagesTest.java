@@ -17,6 +17,13 @@ public class PreviewPagesTest {
     Entry episode(int number,int resume,boolean watched,long played,long added) {
         return new Entry(new Episode(number,number,1,number,"Episode "+number,0,0,"","","Example show","/test/"+number,null,null,100000,resume,0,0,watched,false,false,false,1,played,1920,1080,null,null,null,null,0,1,1000),added,7,"Drama");
     }
+    @Test public void tvPremiereUses64BitDateInsteadOfTruncatedTimestamp() {
+        java.util.Calendar c=java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));c.clear();c.set(2022,0,17);
+        assertEquals(2022,com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper.premiereYear(c.getTimeInMillis()));
+        c.clear();c.set(1959,8,12);
+        assertEquals(1959,com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper.premiereYear(c.getTimeInMillis()));
+        assertEquals(0,com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper.premiereYear(0));
+    }
     @Test public void batchAdditionPicksFirstUnwatchedNotNewestFile() {
         Snapshot s=PreviewLibraryLoader.build(Arrays.asList(episode(4,0,false,0,40),episode(1,0,false,0,10),episode(2,0,false,0,20)),Collections.emptyList());
         assertEquals(1,s.recent.size()); assertEquals(1,((Episode)s.recent.get(0).media).getEpisodeNumber()); assertEquals(40,s.recent.get(0).added);
@@ -34,6 +41,28 @@ public class PreviewPagesTest {
         Snapshot s=PreviewLibraryLoader.build(Arrays.asList(episode(1,0,true,100,10),episode(2,0,true,200,20)),Collections.emptyList());
         assertTrue(s.recent.isEmpty());assertTrue(s.continuingShows.isEmpty());
     }
+    @Test public void contentUpdatesKeepLogicalRemoteFocus() {
+        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException e){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
+        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        try {
+            PreviewPages pages=new PreviewPages(host.get(),(holder,item)->{});pages.setDiscovery(new PreviewDiscovery());
+            TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);host.get().setContentView(nav);
+            Snapshot snapshot=new Snapshot();
+            for(int i=1;i<=2;i++){Movie movie=new Movie(i,"/movie"+i,"Film "+i,i,"",2024,7,"",null,100000,0,0,0,false,false,false,false,i,i,1920,1080,null,null,null,null,0,1,1000,0);Entry entry=new Entry(movie,i,0,"Drama");snapshot.movies.add(entry);snapshot.recent.add(entry);snapshot.continuingMovies.add(entry);}
+            pages.setSnapshot(snapshot);settle(nav);
+            View next=nav.findViewWithTag("hero:next");assertNotNull(next);assertTrue(next.requestFocus());next.performClick();settle(nav);
+            assertEquals("hero:next",nav.findFocus().getTag());
+            pages.setSnapshot(snapshot);settle(nav);assertEquals("hero:next",nav.findFocus().getTag());
+            nav.focusNavigation();pages.setTab(1);pages.requestFocus();settle(nav);
+            View order=nav.findViewWithTag("control:2");assertTrue(order.requestFocus());order.performClick();settle(nav);
+            assertEquals("control:2",nav.findFocus().getTag());
+            assertNull(findText(pages,"Continue Watching"));
+            View last=nav.findViewWithTag(snapshot.movies.get(0).key());assertNotNull(last);last.requestFocus();
+            assertFalse(last.focusSearch(View.FOCUS_DOWN) instanceof android.widget.TextView);
+        }finally{host.pause().stop().destroy();}
+    }
+    private static void settle(View root){for(int frame=0;frame<6;frame++){root.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));root.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(40));}}
+    private static View findText(View view,String text){if(view instanceof TextView&&text.contentEquals(((TextView)view).getText()))return view;if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View found=findText(group.getChildAt(i),text);if(found!=null)return found;}}return null;}
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void renderActualPagesAndCheckTabFocus() throws Exception {
         try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException e){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();

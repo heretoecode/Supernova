@@ -27,7 +27,7 @@ public final class TopNavigation extends LinearLayout {
     public TopNavigation(Context c, View content, IntConsumer navigate, BooleanSupplier firstRow) {
         super(c);
         this.content = content; this.firstRow = firstRow;
-        scanStatus = new android.widget.FrameLayout(c); scanStatus.setPadding(dp(28), 0, dp(28), 0);
+        scanStatus = new android.widget.FrameLayout(c);scanStatus.setFocusable(false);scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
         artwork = new PreviewBackdrop(c); setBackground(artwork);
         bar = new LinearLayout(c); bar.setGravity(Gravity.CENTER_VERTICAL);
@@ -46,11 +46,11 @@ public final class TopNavigation extends LinearLayout {
             tab.setTextColor(Color.WHITE); tab.setTextSize(15); tab.setGravity(Gravity.CENTER);
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
-            tab.setPadding(dp(12), dp(10), dp(12), dp(10));
+            tab.setPadding(dp(12), dp(6), dp(12), dp(6));
             tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, Color.WHITE, 0xffb4cbe0}));
             StateListDrawable bg = new StateListDrawable();
             GradientDrawable focus = new GradientDrawable();
-            focus.setColor(0xff345571); focus.setCornerRadius(dp(4)); focus.setStroke(dp(2), 0xff8fceff);
+            focus.setColor(0x403d6888); focus.setCornerRadius(dp(7)); focus.setStroke(dp(1), 0x9962bbf3);
             bg.addState(new int[]{android.R.attr.state_focused}, focus);
             GradientDrawable active = new GradientDrawable();
             active.setColor(0xff62bbf3); active.setCornerRadius(dp(2));
@@ -60,6 +60,7 @@ public final class TopNavigation extends LinearLayout {
             bg.addState(new int[]{android.R.attr.state_selected}, underline);
             bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
             tab.setBackground(bg);
+            tab.setOnFocusChangeListener((v, focused)->v.animate().scaleX(focused?1.025f:1f).scaleY(focused?1.025f:1f).setDuration(160).start());
             tab.setOnClickListener(v -> {
                 if (index < 4) {
                     for (TextView t : tabs) t.setSelected(false);
@@ -79,14 +80,17 @@ public final class TopNavigation extends LinearLayout {
                 android.graphics.drawable.Drawable search = c.getDrawable(com.archos.mediacenter.video.R.drawable.preview_search);
                 search.setBounds(0, 0, dp(22), dp(22)); tab.setCompoundDrawables(search, null, null, null);
             }
-            group.addView(tab, new LayoutParams(-2, dp(46)));
+            group.addView(tab, new LayoutParams(-2, dp(36)));
         }
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(85), dp(46)));
         selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
-        addView(content, new LayoutParams(-1, 0, 1));
-        addView(scanStatus, new LayoutParams(-1, dp(22)));
+        android.widget.FrameLayout stage=new android.widget.FrameLayout(c);
+        stage.addView(content,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        android.widget.FrameLayout.LayoutParams scanParams=new android.widget.FrameLayout.LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.END);
+        scanParams.setMargins(dp(20),dp(12),dp(20),dp(16));stage.addView(scanStatus,scanParams);
+        addView(stage,new LayoutParams(-1,0,1));
     }
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public void selectTab(int index) { if(index<0||index>=4)return; for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true); }

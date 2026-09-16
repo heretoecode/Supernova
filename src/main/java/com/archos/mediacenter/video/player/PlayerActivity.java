@@ -310,8 +310,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_PROGRESS_VISIBLE:
-                    if (mProgressView != null)
+                    if (mProgressView != null) {
+                        if(mProgressView instanceof PreviewPlaybackLoading){((PreviewPlaybackLoading)mProgressView).bind(mVideoInfo,mTitle);mPlayerController.setVideoTitleEnabled(false);}
                         mProgressView.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case MSG_TORRENT_STARTED:
                     start();
@@ -795,6 +797,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         View menuAnchor = mRootView.findViewById(R.id.menu_anchor);
         mProgressView = mRootView.findViewById(R.id.progress_indicator);
+        if(mPreferences.getBoolean("try_new_ui",false)){
+            ViewGroup parent=(ViewGroup)mProgressView.getParent();int index=parent.indexOfChild(mProgressView);
+            ViewGroup.LayoutParams params=mProgressView.getLayoutParams();params.width=ViewGroup.LayoutParams.MATCH_PARENT;params.height=ViewGroup.LayoutParams.MATCH_PARENT;
+            parent.removeView(mProgressView);mProgressView=new PreviewPlaybackLoading(this,getIntent());parent.addView(mProgressView,index,params);
+        }
         mBufferView = (TextView) mRootView.findViewById(R.id.buffer_percentage);
 
         mPlayerController = new PlayerController(mContext, getWindow(), (ViewGroup)mRootView, mSurfaceController, this, actionBar);
@@ -3268,6 +3275,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
 
         mPlayerController.setVideoTitle(mTitle);
+        if(mProgressView instanceof PreviewPlaybackLoading)((PreviewPlaybackLoading)mProgressView).bind(mVideoInfo,mTitle);
         if (log.isDebugEnabled()) log.debug("setVideoInfo: mTitle {}, call postVideoInfoAndPrepared", mTitle);
         postVideoInfoAndPrepared();
     }
@@ -3286,6 +3294,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mThumbnailDone = 0;
             mHandler.removeMessages(MSG_PROGRESS_VISIBLE);
             mProgressView.setVisibility(View.GONE);
+            mPlayerController.setVideoTitleEnabled(true);
             PlayerService.sPlayerService.setAudioFilt();
             mPlayerController.start();
             // Now that the video is loaded, Video info should be avalaible

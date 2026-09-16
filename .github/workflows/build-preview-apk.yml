@@ -123,6 +123,12 @@ jobs:
           if [[ "$VALIDATION_MODE" == preview ]]; then extra_args+=(-x lintNoamazonDebug); fi
           ./gradlew assembleNoamazonDebug -Puniversal -PmarkPreview "${extra_args[@]}" --build-cache --no-daemon 2>&1 | tee ../gradle-debug-build.log
 
+      - name: Quick targeted library metadata checks
+        if: ${{ inputs.validation != 'full' }}
+        working-directory: nova/Video
+        run: |
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.contentUpdatesKeepLogicalRemoteFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' -Puniversal -PmarkPreview --build-cache --no-daemon
+
       - name: Start Android emulator for full process startup checks
         run: |
           export PATH="$ANDROID_HOME/platform-tools:$PATH"

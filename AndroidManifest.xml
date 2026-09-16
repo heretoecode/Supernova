@@ -1481,7 +1481,7 @@
 
         <!-- keeps track of network scanning state -->
         <receiver
-            android:name="com.archos.mediaprovider.video.NetworkScannerReceiver"
+            android:name="com.archos.mediacenter.video.utils.PreviewScanReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="archos.media.intent.action.VIDEO_SCANNER_SCAN_STARTED" />

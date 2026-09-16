@@ -40,7 +40,7 @@ public final class PreviewMoviePage extends ScrollView {
         plot=text("",14);plot.setMaxLines(4);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(plot,new LinearLayout.LayoutParams(dp(480),-2));
         LinearLayout buttons=new LinearLayout(c);buttons.setPadding(0,dp(16),0,0);hero.addView(buttons);
         play=button("▶  Play",this::play);buttons.addView(play);
-        trailer=button("Trailer",this::chooseTrailer);trailer.setEnabled(false);trailer.setAlpha(.45f);margin(buttons,trailer);
+        trailer=button("Trailer",this::chooseTrailer);trailer.setVisibility(View.GONE);margin(buttons,trailer);
         margin(buttons,button("More  ▾",this::more));
         cast=section("Cast & Crew");details=section("Details");related=section("More Like This — In Your Library");trailers=section("Trailers & Extras");
     }
@@ -60,12 +60,12 @@ public final class PreviewMoviePage extends ScrollView {
         if(movie.getPreviewBackdrop()!=null)artwork.accept(movie.getPreviewBackdrop());renderDetails();
     }
     public void setTags(BaseTags value,List<ScraperTrailer> videos,List<ScraperImage> backdrops){tags=value;trailerList=videos==null?Collections.emptyList():videos;
-        if(backdrops!=null&&!backdrops.isEmpty()){ScraperImage image=backdrops.get(0);java.io.File file=image.getLargeFileF();if(file!=null&&file.exists())artwork.accept(Uri.fromFile(file));else if(image.getLargeUrl()!=null)artwork.accept(Uri.parse(image.getLargeUrl()));}
+        if(backdrops!=null&&!backdrops.isEmpty()){ScraperImage image=backdrops.get(0);java.io.File file=image.getLargeFileF();if(file!=null&&file.exists()){artwork.accept(Uri.fromFile(file));if(movie!=null)movie.setPreviewBackdrop(Uri.fromFile(file).toString());}else if(image.getLargeUrl()!=null)artwork.accept(Uri.parse(image.getLargeUrl()));}
         cast.removeAllViews();HorizontalScrollView scroll=new HorizontalScrollView(getContext());LinearLayout people=new LinearLayout(getContext());scroll.addView(people);cast.addView(scroll);
         if(tags!=null){for(Map.Entry<String,String> person:tags.getActors().entrySet()){LinearLayout card=new LinearLayout(getContext());card.setOrientation(LinearLayout.VERTICAL);card.setPadding(dp(10),dp(15),dp(10),dp(15));card.setBackground(bg(false));card.addView(text(person.getKey(),14));TextView role=text(safe(person.getValue()),12);role.setTextColor(0xffa8cce7);card.addView(role);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(150),dp(85));lp.rightMargin=dp(10);people.addView(card,lp);}
             if(tags.getDirectorsFormatted()!=null)cast.addView(text("Director: "+tags.getDirectorsFormatted(),13));}
         if(people.getChildCount()==0)cast.addView(text("Cast information unavailable",13));
-        trailer.setEnabled(!trailerList.isEmpty());trailer.setAlpha(trailerList.isEmpty()?.45f:1f);
+        trailer.setVisibility(trailerList.isEmpty()?View.GONE:View.VISIBLE);
         trailers.removeAllViews();if(trailerList.isEmpty())trailers.addView(text("No trailers available for this title",13));
         else for(ScraperTrailer video:trailerList)trailers.addView(button(video.mName,()->PreviewTrailer.show((Activity)getContext(),video)));
         renderDetails();renderRelated();

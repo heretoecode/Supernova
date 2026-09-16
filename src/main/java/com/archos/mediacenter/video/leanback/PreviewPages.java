@@ -25,6 +25,72 @@ public final class PreviewPages extends FrameLayout {
     private List<Box> files=new ArrayList<>();
     private final List<Cell> cells=new ArrayList<>();
     private int tab;
+    private final FocusAnchor[] anchors=new FocusAnchor[4];
+    private final android.os.Parcelable[] scrollStates=new android.os.Parcelable[4];
+    private boolean restoringFocus;
+    private int focusGeneration;
+    private static final class FocusAnchor {
+        String cell, child; int position, inner;
+    }
+    private String cellKey(Cell c){return c.type+":"+(c.type==POSTER?((Entry)c.value).key():c.type==STORAGE?((Box)c.value).getBoxId()+":"+((Box)c.value).getPath():c.title);}
+    private boolean inside(View view,View ancestor){while(view!=null){if(view==ancestor)return true;android.view.ViewParent p=view.getParent();view=p instanceof View?(View)p:null;}return false;}
+    private final class FocusRecycler extends RecyclerView {
+        final boolean horizontal;
+        FocusRecycler(Context c,boolean horizontal){super(c);this.horizontal=horizontal;setPreserveFocusAfterLayout(false);}
+        @Override public View focusSearch(View focused,int direction){
+            View next=super.focusSearch(focused,direction);
+            // At loaded-content boundaries retain the last valid card; do not let
+            // RecyclerView's ancestor search fall through to global navigation.
+            if(horizontal&&(direction==FOCUS_LEFT||direction==FOCUS_RIGHT)&&!inside(next,this))return focused;
+            if(!horizontal&&!inside(next,PreviewPages.this)&&!(direction==FOCUS_UP&&atTop()))return focused;
+            return next;
+        }
+    }
+    private void rememberFocus(){
+        if(restoringFocus)return;
+        View focused=list.findFocus();if(focused==null)return;
+        View item=list.findContainingItemView(focused);if(item==null)return;
+        int pos=list.getChildAdapterPosition(item);if(pos<0||pos>=cells.size())return;
+        FocusAnchor a=new FocusAnchor();a.cell=cellKey(cells.get(pos));a.position=pos;
+        a.child=focused.getTag() instanceof String?(String)focused.getTag():null;
+        if(cells.get(pos).type==RAIL){List<Entry> entries=(List<Entry>)cells.get(pos).value;for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(a.child)){a.inner=i;break;}}
+        anchors[tab]=a;
+    }
+    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null)rememberFocus();}
+    @Override protected boolean onRequestFocusInDescendants(int direction,android.graphics.Rect rect){
+        if(restoringFocus)return false;
+        if(anchors[tab]!=null){holdFocus();restoreFocus();return true;}
+        return super.onRequestFocusInDescendants(direction,rect);
+    }
+    private void holdFocus(){restoringFocus=true;setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);requestFocus();setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);}
+    private View tagged(View root,String tag){if(tag!=null&&tag.equals(root.getTag())&&root.isFocusable())return root;if(root instanceof ViewGroup){ViewGroup g=(ViewGroup)root;for(int i=0;i<g.getChildCount();i++){View found=tagged(g.getChildAt(i),tag);if(found!=null)return found;}}return null;}
+    private void restoreFocus(){
+        final int generation=++focusGeneration;final FocusAnchor anchor=anchors[tab];
+        int position=anchor==null?0:Math.min(anchor.position,Math.max(0,cells.size()-1));
+        if(anchor!=null)for(int i=0;i<cells.size();i++)if(cellKey(cells.get(i)).equals(anchor.cell)){position=i;break;}
+        final int target=position;
+        if(layout.findViewByPosition(target)==null)list.scrollToPosition(target);
+        list.postOnAnimation(new Runnable(){int attempts;
+            public void run(){
+                if(generation!=focusGeneration)return;
+                if(!hasFocus()){restoringFocus=false;return;}
+                View item=layout.findViewByPosition(target);
+                if(item==null||list.hasPendingAdapterUpdates()){if(attempts++<8){list.postOnAnimation(this);return;}}
+                if(item!=null&&anchor!=null&&target<cells.size()&&cells.get(target).type==RAIL){
+                    RecyclerView rail=(RecyclerView)((ViewGroup)item).getChildAt(0);
+                    List<Entry> entries=(List<Entry>)cells.get(target).value;
+                    int inner=Math.min(anchor.inner,Math.max(0,entries.size()-1));
+                    for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(anchor.child)){inner=i;break;}
+                    if(rail.findViewHolderForAdapterPosition(inner)==null&&attempts++<8){rail.scrollToPosition(inner);list.postOnAnimation(this);return;}
+                    RecyclerView.ViewHolder holder=rail.findViewHolderForAdapterPosition(inner);if(holder!=null)item=holder.itemView;
+                }
+                View exact=item==null||anchor==null?null:tagged(item,anchor.child);
+                restoringFocus=false;
+                if(exact!=null)exact.requestFocus();else if(item!=null&&item.requestFocus()){}else list.requestFocus();
+                rememberFocus();
+            }
+        });
+    }
     private final int[] sorts={0,0,0};
     private final String[] genres={"","",""};
     private final int[] years={0,0,0};
@@ -59,19 +125,29 @@ public final class PreviewPages extends FrameLayout {
         Cell(int type,String title,Object value) {this.type=type;this.title=title;this.value=value;}
     }
     public PreviewPages(Context c,Click click) {
-        super(c); this.click=click; setBackgroundColor(Color.TRANSPARENT);
-        list=new RecyclerView(c); list.setClipToPadding(false); list.setPadding(dp(28),dp(10),dp(28),dp(12));
+        super(c); this.click=click; setBackgroundColor(Color.TRANSPARENT);setFocusable(true);setFocusableInTouchMode(true);setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+        list=new FocusRecycler(c,false); list.setClipToPadding(false); list.setPadding(dp(28),dp(10),dp(28),dp(12));
         layout=new GridLayoutManager(c,24); layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?(tab<3&&listMode[tab]?24:3):cells.get(p).type==STORAGE?8:24;}});
         adapter.setHasStableIds(true);
         list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
         addView(list,new FrameLayout.LayoutParams(-1,-1)); render();
     }
     public boolean atTop() {
-        View focused=list.findFocus(); if(focused==null)return true;
-        View item=list.findContainingItemView(focused); return item!=null && list.getChildAdapterPosition(item)<=1;
+        View focused=list.findFocus(); if(focused==null)return isFocused()&&!restoringFocus;
+        View item=list.findContainingItemView(focused);if(item==null)return false;
+        int p=list.getChildAdapterPosition(item);if(p<0||p>=cells.size())return false;
+        Cell cell=cells.get(p);
+        if(tab==0)return cell.type==HERO;
+        if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value);
+        return cell.type==STORAGE&&p<5;
     }
-    public void setTab(int tab) { this.tab=tab; featuredIndex=0; render(); list.scrollToPosition(0); }
-    public void setSnapshot(Snapshot s) { if(s==null)return; snapshot=s; loaded=true; render();requestDiscovery(); }
+    public void setTab(int tab) {
+        if(this.tab==tab)return;
+        rememberFocus();scrollStates[this.tab]=layout.onSaveInstanceState();
+        this.tab=tab;featuredIndex=0;render();
+        if(scrollStates[tab]!=null)layout.onRestoreInstanceState(scrollStates[tab]);else list.scrollToPosition(0);
+    }
+    public void setSnapshot(Snapshot s) { if(s==null)return; snapshot=s; loaded=true; render();postDelayed(this::requestDiscovery,750); }
     public void setFiles(List<Box> f) {
         boolean same=f.size()==files.size();
         for(int i=0;same && i<f.size();i++)same=f.get(i).getBoxId()==files.get(i).getBoxId() && Objects.equals(f.get(i).getName(),files.get(i).getName()) && Objects.equals(f.get(i).getPath(),files.get(i).getPath());
@@ -80,6 +156,8 @@ public final class PreviewPages extends FrameLayout {
     private void header(String title,boolean controls) {cells.add(new Cell(HEADER,title,controls));}
     private void rail(String title,List<Entry> items) {if(items.isEmpty())return; header(title,false);cells.add(new Cell(RAIL,title,new ArrayList<>(items.subList(0,Math.min(30,items.size())))));}
     private void render() {
+        rememberFocus();boolean preserve=hasFocus();
+        if(preserve)holdFocus();
         Object state=layout.onSaveInstanceState(); cells.clear();
         if(tab==0) {
             if(featured()!=null)cells.add(new Cell(HERO,"Featured",featured()));
@@ -92,7 +170,7 @@ public final class PreviewPages extends FrameLayout {
             if(loaded&&snapshot.movies.isEmpty()&&snapshot.shows.isEmpty()&&snapshot.recent.isEmpty()) header("Your library is empty — add media through Network & files",false);
         } else if(tab==1||tab==2) {
             if(featured()!=null)cells.add(new Cell(HERO,tab==1?"Movies":"TV Shows",featured()));
-            rail("Continue Watching",tab==1?snapshot.continuingMovies:snapshot.continuingShows);
+
             header(tab==1?"Movie library":"TV show library",true);
             List<Entry> entries=filtered(); for(Entry e:entries)cells.add(new Cell(POSTER,"",e));
             if(loaded&&entries.isEmpty())header("No matching titles",false);
@@ -104,7 +182,7 @@ public final class PreviewPages extends FrameLayout {
             }
         }
         if(!loaded&&tab!=3)header("Loading library…",false);
-        updateArtwork();adapter.notifyDataSetChanged(); if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);
+        updateArtwork();adapter.notifyDataSetChanged(); if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();
     }
     private List<Entry> source(){return tab==1?snapshot.movies:snapshot.shows;}
     private void chart(String name,boolean trend){
@@ -159,21 +237,21 @@ public final class PreviewPages extends FrameLayout {
             LinearLayout v=new LinearLayout(getContext());v.setGravity(Gravity.CENTER_VERTICAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));return new Holder(v);
         }
         @Override public void onBindViewHolder(Holder h,int p){Cell c=cells.get(p);
-            if(c.type==POSTER){Entry e=(Entry)c.value;h.presenter.onBindViewHolder(h.card,e.media);h.itemView.setOnClickListener(v->click.open(h.card,e.media));return;}
+            if(c.type==POSTER){Entry e=(Entry)c.value;h.presenter.onBindViewHolder(h.card,e.media);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->click.open(h.card,e.media));return;}
             LinearLayout v=(LinearLayout)h.itemView;v.removeAllViews();v.setFocusable(false);v.setOnClickListener(null);v.setBackground(null);v.setOrientation(LinearLayout.HORIZONTAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));
             if(c.type==HERO){Entry e=(Entry)c.value;v.setOrientation(LinearLayout.VERTICAL);v.setGravity(Gravity.CENTER_VERTICAL);v.setPadding(0,dp(6),0,dp(12));
                 v.setMinimumHeight(dp(tab==0?235:76));
                 v.setLayoutParams(new RecyclerView.LayoutParams(-1,tab==0?dp(235):android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
                 if(tab==0){TextView featured=text("F E A T U R E D",11);featured.setTextColor(0xff9ed4f7);v.addView(featured);
-                    TextView title=text(displayName(e),32);title.setMaxLines(2);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title,new LinearLayout.LayoutParams(dp(470),-2));
+                    TextView title=text(displayName(e),32);title.setLines(2);title.setEllipsize(android.text.TextUtils.TruncateAt.END);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title,new LinearLayout.LayoutParams(dp(470),-2));
                     String meta=e.year()>0?String.valueOf(e.year()):"";
                     if(e.media instanceof Video){Video video=(Video)e.media;if(video.getDurationMs()>0)meta+="   "+video.getDurationMs()/60000+" min";if(video.hasMeasured4K())meta+="   4K";}
                     v.addView(text(meta,13));String plot=e.media instanceof Tvshow?((Tvshow)e.media).getPlot():e.media instanceof Video?((Video)e.media).getDescriptionBody():"";
-                    TextView description=text(plot==null?"":plot,13);description.setMaxLines(3);description.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(description,new LinearLayout.LayoutParams(dp(450),-2));
+                    TextView description=text(plot==null?"":plot,13);description.setLines(3);description.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(description,new LinearLayout.LayoutParams(dp(450),-2));
                     LinearLayout actions=new LinearLayout(getContext());actions.setPadding(0,dp(12),0,0);
-                    TextView play=button("▶  "+(e.media instanceof Tvshow?"View Show":"Play"),()->play(e,v));actions.addView(play);
-                    TextView info=button("ⓘ  More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);actions.addView(info,lp);
-                    TextView next=button("Next featured  ›",()->{featuredIndex++;render();});lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);actions.addView(next,lp);v.addView(actions);
+                    TextView play=button("▶  "+(e.media instanceof Tvshow?"View Show":"Play"),()->play(e,v));play.setTag("hero:play");actions.addView(play);
+                    TextView info=button("ⓘ  More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);info.setTag("hero:info");actions.addView(info,lp);
+                    TextView next=button("Next featured  ›",()->{featuredIndex++;render();});lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);next.setTag("hero:next");actions.addView(next,lp);v.addView(actions);
                 }else{TextView title=text(c.title,30);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title);v.addView(text(source().size()+ (tab==1?" movies":" shows"),13));}
             }
             else if(c.type==NOTICE){v.setOrientation(LinearLayout.VERTICAL);TextView title=text(c.title,18);title.setTextColor(0xff8298aa);v.addView(title);TextView status=text((String)c.value,12);status.setTextColor(0xff8298aa);v.addView(status);v.setPadding(0,dp(12),0,dp(12));}
@@ -182,11 +260,11 @@ public final class PreviewPages extends FrameLayout {
                     v.setOrientation(LinearLayout.VERTICAL);LinearLayout controls=new LinearLayout(getContext());
                     controls.addView(button("Genre: "+(genres[tab].isEmpty()?"All Genres":genres[tab])+"  ▾",()->filter()));
                     String order=sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
-                    for(TextView control:new TextView[]{button("Sort: "+sortLabels()[sorts[tab]]+"  ▾",()->sort()),button(order+"  ▾",()->{ascending[tab]=!ascending[tab];render();}),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];list.setAdapter(null);list.setAdapter(adapter);render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
-                    v.addView(controls);TextView title=text(c.title,18);title.setPadding(0,dp(12),0,0);v.addView(title);
+                    for(TextView control:new TextView[]{button("Sort: "+sortLabels()[sorts[tab]]+"  ▾",()->sort()),button(order+"  ▾",()->{ascending[tab]=!ascending[tab];render();}),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
+                    for(int i=0;i<controls.getChildCount();i++)controls.getChildAt(i).setTag("control:"+i);v.addView(controls);TextView title=text(c.title,18);title.setPadding(0,dp(12),0,0);v.addView(title);
                 }else{TextView title=text(c.title,19);title.setTextColor(0xff9ed4f7);v.addView(title);}
             }
-            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new RecyclerView(getContext());rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value));v.addView(rail,new LinearLayout.LayoutParams(-1,dp(105)));}
+            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value));v.addView(rail,new LinearLayout.LayoutParams(-1,dp(105)));}
             else if(c.type==STORAGE){Box b=(Box)c.value;v.setPadding(dp(12),dp(12),dp(12),dp(12));RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,dp(88));lp.setMargins(0,0,dp(12),dp(12));v.setLayoutParams(lp);v.setBackground(background(false));v.setFocusable(true);v.setClickable(true);v.setOnFocusChangeListener((view,f)->view.setBackground(background(f)));
                 ImageView icon=new ImageView(getContext());icon.setImageDrawable(new StorageIcon(b.getBoxId()));v.addView(icon,new LinearLayout.LayoutParams(dp(35),dp(35)));
                 LinearLayout labels=new LinearLayout(getContext());labels.setOrientation(LinearLayout.VERTICAL);labels.setPadding(dp(12),0,0,0);
@@ -201,7 +279,7 @@ public final class PreviewPages extends FrameLayout {
         RailAdapter(List<Entry> e){entries=e;setHasStableIds(true);}
         public long getItemId(int p){return entries.get(p).key().hashCode();}public int getItemCount(){return entries.size();}
         public Holder onCreateViewHolder(ViewGroup p,int type){Presenter.ViewHolder card=pr.onCreateViewHolder(p);Holder h=new Holder(card.view);h.card=card;h.presenter=pr;RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(dp(172),dp(105));lp.rightMargin=dp(12);h.itemView.setLayoutParams(lp);return h;}
-        public void onBindViewHolder(Holder h,int p){Entry e=entries.get(p);pr.onBindViewHolder(h.card,e.media);h.itemView.setOnClickListener(v->click.open(h.card,e.media));}
+        public void onBindViewHolder(Holder h,int p){Entry e=entries.get(p);pr.onBindViewHolder(h.card,e.media);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->click.open(h.card,e.media));}
         public void onViewRecycled(Holder h){pr.onUnbindViewHolder(h.card);}
     }
     static final class StorageIcon extends android.graphics.drawable.Drawable {

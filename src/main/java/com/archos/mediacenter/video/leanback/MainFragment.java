@@ -472,6 +472,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         loadRows();
         if (mPreviewPages != null) {
             LoaderManager.getInstance(this).initLoader(LOADER_ID_NON_SCRAPED_VIDEOS_COUNT, null, this);
+            LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
+            mPreviewHasResumed = false;
             return; // Preview uses one worker snapshot and the unmatched count, not hidden classic row queries.
         }
         // init the loaders after the rows are loaded to populate
@@ -542,6 +544,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         super.onDestroyView();
     }
 
+    private boolean mPreviewHasResumed;
+
     private boolean hasLocaleChanged() {
         String newLocale = CustomApplication.getUiLocale(getContext());
         return !currentLocale.equals(newLocale);
@@ -554,7 +558,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         if (mPreviewPages != null) {
             androidx.loader.content.Loader<Cursor> preview = LoaderManager.getInstance(this).getLoader(PreviewLibraryLoader.ID);
             if (preview == null) LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
-            else preview.forceLoad();
+            else if (mPreviewHasResumed) preview.forceLoad();
+            mPreviewHasResumed = true;
         }
         if (mTopNavigation != PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)) {
             requireActivity().recreate();

@@ -47,7 +47,7 @@ public final class PreviewCardPresenter extends Presenter {
             body.setBackground(outline); body.setClipToOutline(true);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
-            if (style == Style.POSTER) bp.height += dp(42);
+            if (style == Style.POSTER) bp.height += dp(46);
             bp.width = width;
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -58,12 +58,14 @@ public final class PreviewCardPresenter extends Presenter {
                 new int[]{0x00101e2c, 0xee101e2c}));
             title = new TextView(c); title.setTextColor(Color.WHITE); title.setTextSize(13);
             title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-            title.setMaxLines(style == Style.POSTER || style == Style.CONTINUE ? 1 : 2); title.setEllipsize(TextUtils.TruncateAt.END);
+            title.setMaxLines(style == Style.CONTINUE ? 1 : 2);
+            if(style == Style.POSTER){title.setLines(2);title.setTextSize(12);title.setIncludeFontPadding(false);caption.setPadding(dp(6),dp(4),dp(6),dp(3));caption.setBackgroundColor(0xff102333);} title.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(title, new LinearLayout.LayoutParams(-1, -2));
-            subtitle = new TextView(c); subtitle.setTextSize(11); subtitle.setTextColor(0xffd5e1ee);
+            subtitle = new TextView(c); subtitle.setTextSize(style == Style.POSTER ? 10 : 11); subtitle.setTextColor(0xffa4b6c7);subtitle.setIncludeFontPadding(false);
             subtitle.setSingleLine(true); subtitle.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
             FrameLayout.LayoutParams captionParams=new FrameLayout.LayoutParams(-1,-2,style==Style.LIST?Gravity.CENTER_VERTICAL:Gravity.BOTTOM);
+            if(style==Style.POSTER)captionParams.height=dp(46);
             if(style==Style.LIST){captionParams.leftMargin=dp(172);caption.setBackground(null);}
             body.addView(caption,captionParams);
             progress = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
@@ -123,16 +125,11 @@ public final class PreviewCardPresenter extends Presenter {
         c.setContentDescription(c.title.getText() + (c.subtitle.length() == 0 ? "" : ", " + c.subtitle.getText()));
         if ((style == Style.POSTER || style == Style.LIST) && item instanceof Base) {
             int year = item instanceof Movie ? ((Movie)item).getYear() : item instanceof Tvshow ? ((Tvshow)item).getYear() : 0;
-            String detail = year > 0 ? String.valueOf(year) : "";
-            if (item instanceof Video) {
-                Video v = (Video)item;
-                // Only use measured resolution, never infer a capability from a filename.
-                if (v.hasMeasured4K()) detail += "  •  4K";
-                String audio = v.getCalculatedBestAudioFormat();
-                if (audio != null && audio.toLowerCase(java.util.Locale.ROOT).contains("atmos")) detail += "  •  Atmos";
-            }
-            c.subtitle.setText(detail); c.subtitle.setVisibility(detail.isEmpty() ? View.GONE : View.VISIBLE);
+            String detail = year >= 1800 && year <= java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)+5 ? String.valueOf(year) : "";
+            // An end year / ongoing marker needs reliable series-status metadata.
+            c.subtitle.setText(detail); c.subtitle.setVisibility(detail.isEmpty() ? View.INVISIBLE : View.VISIBLE);
         }
+        c.setContentDescription(c.title.getText() + (c.subtitle.length() == 0 ? "" : ", " + c.subtitle.getText()));
         c.hasArtwork |= uri != null;
         c.updateFocus();
         if (uri != null) Picasso.get().load(uri).resize(c.width, c.height).centerCrop().noFade()

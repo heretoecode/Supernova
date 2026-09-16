@@ -92,9 +92,10 @@ public class Overlay {
             clock.setPadding(0, 0, 0, 0);
             ((android.widget.TextView)clock).setGravity(android.view.Gravity.CENTER);
             nav.getStatusContainer().addView(clock, new android.widget.FrameLayout.LayoutParams(-1, -1));
+            mScanProgress.useFloatingStyle();
             View progress = mOverlayRoot.findViewById(R.id.progress_group);
             ((ViewGroup)progress.getParent()).removeView(progress);
-            nav.getScanContainer().addView(progress, new android.widget.FrameLayout.LayoutParams(-2, -1, android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL));
+            nav.getScanContainer().addView(progress, new android.widget.FrameLayout.LayoutParams(-2, -2, android.view.Gravity.END | android.view.Gravity.BOTTOM));
         }
     }
 

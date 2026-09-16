@@ -395,7 +395,15 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         // Transition.addListener() - both public android.transition APIs - are always
         // available; no need for androidx.leanback's restricted TransitionHelper/
         // TransitionListener wrappers.
-        Transition transition = getActivity().getWindow().getSharedElementEnterTransition();
+        Intent launchIntent = getActivity().getIntent();
+        boolean cinematic = launchIntent.getSerializableExtra(EXTRA_VIDEO) instanceof Movie
+                && !launchIntent.getBooleanExtra(EXTRA_LAUNCHED_FROM_PLAYER, false)
+                && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
+        if (cinematic) {
+            getActivity().getWindow().setSharedElementEnterTransition(null);
+            getActivity().getWindow().setSharedElementReturnTransition(null);
+        }
+        Transition transition = cinematic ? null : getActivity().getWindow().getSharedElementEnterTransition();
         if(transition!=null) {
             mAnimationIsRunning = false;
             transition.addListener(new Transition.TransitionListener() {
@@ -444,8 +452,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         FullWidthDetailsOverviewSharedElementHelper helper = new FullWidthDetailsOverviewSharedElementHelper();
         // The overview row is now created from the intent before the DB reload, so a short
         // layout grace period is sufficient; the former 1s timeout visibly held every open.
-        helper.setSharedElementEnterTransition(getActivity(), VideoDetailsActivity.SHARED_ELEMENT_NAME, 200);
-        mOverviewRowPresenter.setListener(helper);
+        if (!cinematic) {
+            helper.setSharedElementEnterTransition(getActivity(), VideoDetailsActivity.SHARED_ELEMENT_NAME, 200);
+            mOverviewRowPresenter.setListener(helper);
+        }
         mOverviewRowPresenter.setBackgroundColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor());
         mOverviewRowPresenter.setActionsBackgroundColor(getDarkerColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()));
         mOverviewRowPresenter.setOnActionClickedListener(mOnActionClickedListener);
@@ -799,6 +809,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     final OnActionClickedListener mOnActionClickedListener = new OnActionClickedListener() {
         @Override
         public void onActionClicked(Action action) {
+            if(mVideo!=null&&mBackdropController!=null){
+                java.io.File cached=mBackdropController.getCurrentlyDisplayedFile();
+                if(cached!=null)mVideo.setPreviewBackdrop(Uri.fromFile(cached).toString());
+            }
                 if (StreamingActions.onClick(action)) return;
             VideoMetadata mMetadata = mVideo.getMetadata();
             isFilePlayable = true;
