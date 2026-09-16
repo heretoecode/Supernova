@@ -64,13 +64,16 @@ node=next(n for n in root.iter('node') if n.get('text')=='Settings' or n.get('co
 x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds')))
 subprocess.run(['adb','shell','input','tap',str((x1+x2)//2),str((y1+y2)//2)],check=True)
 PYUI
+  # Focusable-in-touch-mode TV controls take focus on the first tap; activate
+  # that focused control with the remote's centre key.
+  adb shell input keyevent 23
   sleep 3
   adb shell dumpsys activity activities > ../startup-diagnostics/preview-settings-activities.txt
-  grep -q "mResumedActivity.*VideoSettingsActivity" ../startup-diagnostics/preview-settings-activities.txt
   adb exec-out screencap -p > ../startup-diagnostics/preview-settings.png
   adb shell uiautomator dump /sdcard/nova-settings.xml
   adb pull /sdcard/nova-settings.xml ../startup-diagnostics/preview-settings.xml
   adb logcat -d > ../startup-diagnostics/preview-settings-logcat.txt
+  grep -q "mResumedActivity.*VideoSettingsActivity" ../startup-diagnostics/preview-settings-activities.txt
   if grep -q 'FATAL EXCEPTION' ../startup-diagnostics/preview-settings-logcat.txt; then exit 1; fi
   adb shell pidof "$package" | grep -q '[0-9]'
 fi
