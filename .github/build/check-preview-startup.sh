@@ -54,8 +54,19 @@ if [[ "$phase" == preview ]]; then
   adb shell am start -W -n "$package/$activity"
   sleep 2
   adb shell pidof "$package" | grep -q '[0-9]'
-  adb shell am start -W -n "$package/com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity"
+  # Open non-exported Settings through its real navigation control.
+  adb shell uiautomator dump /sdcard/nova-home.xml
+  adb pull /sdcard/nova-home.xml ../startup-diagnostics/preview-home.xml
+  python3 - <<'PYUI'
+import re,subprocess,xml.etree.ElementTree as ET
+root=ET.parse('../startup-diagnostics/preview-home.xml')
+node=next(n for n in root.iter('node') if n.get('text')=='Settings' or n.get('content-desc')=='Settings')
+x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds')))
+subprocess.run(['adb','shell','input','tap',str((x1+x2)//2),str((y1+y2)//2)],check=True)
+PYUI
   sleep 3
+  adb shell dumpsys activity activities > ../startup-diagnostics/preview-settings-activities.txt
+  grep -q "mResumedActivity.*VideoSettingsActivity" ../startup-diagnostics/preview-settings-activities.txt
   adb exec-out screencap -p > ../startup-diagnostics/preview-settings.png
   adb shell uiautomator dump /sdcard/nova-settings.xml
   adb pull /sdcard/nova-settings.xml ../startup-diagnostics/preview-settings.xml
