@@ -78,6 +78,7 @@ public final class StreamingActions {
             controller.main.removeCallbacksAndMessages(null);
         }
     }
+    public static boolean isAvailableOffer(Action action) { return action instanceof StreamingActionPresenter.LogoAction; }
     public static boolean onClick(Action action) {
         if (!(action instanceof StreamingAction)) return false;
         ((StreamingAction) action).click.run(); return true;
@@ -111,7 +112,7 @@ public final class StreamingActions {
         }
         final String region = StreamingRepository.country(app);
         final Base target = item;
-        action(0, app.getString(R.string.streaming_title), app.getString(R.string.streaming_loading), () -> { });
+        // Conditional availability stays absent until a real offer or retry action exists.
         task = StreamingRepository.IO.submit(() -> {
             try {
                 String kind = target instanceof Movie ? "movie" : "tv";
@@ -158,6 +159,10 @@ public final class StreamingActions {
         Activity a = active(); if (a == null) return;
         CharSequence[] labels = new CharSequence[offers.size()];
         for (int i = 0; i < offers.size(); i++) labels[i] = offers.get(i).provider.name;
+        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
+            String[] names=new String[labels.length];for(int i=0;i<labels.length;i++)names[i]=labels[i].toString();
+            com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, app.getString(R.string.streaming_more)+" · "+region+" · JustWatch",names,-1,i->openOffer(offers.get(i),watchUrl,title));return;
+        }
         new AlertDialog.Builder(a, com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme() ? R.style.Theme_AlertDialog_Slate : 0).setTitle(app.getString(R.string.streaming_more) + " · " + region + " · JustWatch")
                 .setItems(labels, (dialog, which) -> openOffer(offers.get(which), watchUrl, title))
                 .setNegativeButton(android.R.string.cancel, null).show();
@@ -187,6 +192,10 @@ public final class StreamingActions {
                 if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(pkg))) return;
             }
             if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)))) return;
+        }
+        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
+            String[] names=new String[labels.length];for(int i=0;i<labels.length;i++)names[i]=labels[i].toString();
+            com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, app.getString(R.string.streaming_more)+" · "+region+" · JustWatch",names,-1,i->openOffer(offers.get(i),watchUrl,title));return;
         }
         new AlertDialog.Builder(a, com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme() ? R.style.Theme_AlertDialog_Slate : 0).setTitle(offer.provider.name)
                 .setMessage(app.getString(R.string.streaming_open_fallback, title))

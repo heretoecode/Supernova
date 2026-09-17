@@ -49,9 +49,10 @@ public final class PreviewLibraryColumns {
  public List<Entry> sort(List<Entry> source){if(sortColumn==null)return source;List<Entry> copy=new ArrayList<>(source);Column column=sortColumn;
   copy.sort((a,b)->{boolean ak=known(a,column),bk=known(b,column);if(ak!=bk)return ak?-1:1;int compare=isNumeric(column)?Long.compare(number(a,column),number(b,column)):value(a,column).compareToIgnoreCase(value(b,column));if(!ascending)compare=-compare;return compare!=0?compare:PreviewPages.displayName(a).compareToIgnoreCase(PreviewPages.displayName(b));});return copy;
  }
- private static boolean isNumeric(Column c){return Arrays.asList(Column.YEAR,Column.SEASONS,Column.EPISODES,Column.DURATION,Column.SIZE,Column.AVERAGE,Column.ADDED,Column.MODIFIED,Column.BITRATE).contains(c);}
- private static long number(Entry e,Column c){switch(c){case YEAR:return e.year();case SEASONS:return e.seasons;case EPISODES:return e.episodes;case DURATION:return e.runtime;case SIZE:return e.bytes;case AVERAGE:return e.episodes>0?e.bytes/e.episodes:0;case ADDED:return e.added;case MODIFIED:return e.modified;case BITRATE:return e.bitrate;default:return 0;}}
- private boolean known(Entry e,Column c){return isNumeric(c)?number(e,c)>0:!value(e,c).isEmpty();}
+ private static boolean isNumeric(Column c){return Arrays.asList(Column.YEAR,Column.SEASONS,Column.EPISODES,Column.DURATION,Column.SIZE,Column.AVERAGE,Column.ADDED,Column.MODIFIED,Column.BITRATE,Column.RESOLUTION).contains(c);}
+ private static long number(Entry e,Column c){switch(c){case RESOLUTION:return resolutionRank(e.resolution);case YEAR:return e.year();case SEASONS:return e.seasons;case EPISODES:return e.episodes;case DURATION:return e.runtime;case SIZE:return e.bytes;case AVERAGE:return e.episodes>0?e.bytes/e.episodes:0;case ADDED:return e.added;case MODIFIED:return e.modified;case BITRATE:return e.bitrate;default:return 0;}}
+ private static long resolutionRank(String value){if(value==null)return 0;if(value.equals("SD"))return 480;if(value.equals("8K"))return 4320;if(value.equals("4K"))return 2160;try{return Long.parseLong(value.replace("p","").replace("i",""));}catch(NumberFormatException ignored){return 0;}}
+ private boolean known(Entry e,Column c){if(c==Column.AVERAGE&&e.knownSizes!=e.files)return false;return isNumeric(c)?number(e,c)>0:!value(e,c).isEmpty();}
  public String value(Entry e,Column c){switch(c){
   case TITLE:return PreviewPages.displayName(e);case YEAR:return e.year()>0?String.valueOf(e.year()):"";
   case SEASONS:return e.seasons>0?String.valueOf(e.seasons):"";case EPISODES:return e.episodes>0?String.valueOf(e.episodes):"";

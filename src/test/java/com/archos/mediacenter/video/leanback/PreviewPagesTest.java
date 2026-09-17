@@ -41,6 +41,18 @@ public class PreviewPagesTest {
         Snapshot s=PreviewLibraryLoader.build(Arrays.asList(episode(1,0,true,100,10),episode(2,0,true,200,20)),Collections.emptyList());
         assertTrue(s.recent.isEmpty());assertTrue(s.continuingShows.isEmpty());
     }
+    @Test public void tvStorageAggregatesLibraryFilesAndSortsUnknownLast() {
+        Entry one=episode(1,0,false,0,10),two=episode(2,0,false,0,20);one.bytes=2000;two.bytes=4000;
+        Entry show=new Entry(new Tvshow(7,"Example show",null,1,2,0,"/show"),20,7,"Drama");
+        Snapshot snapshot=PreviewLibraryLoader.build(Arrays.asList(one,two),Arrays.asList(show));
+        assertEquals(2,show.episodes);assertEquals(6000,show.bytes);assertEquals(2,show.knownSizes);
+        PreviewLibraryColumns columns=new PreviewLibraryColumns(RuntimeEnvironment.getApplication(),true);
+        assertEquals(android.text.format.Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(),3000),columns.value(show,PreviewLibraryColumns.Column.AVERAGE));
+        Entry incomplete=new Entry(new Tvshow(8,"Unknown size",null,1,2,0,"/unknown"),21,8,"");incomplete.bytes=99999;incomplete.episodes=2;incomplete.files=2;incomplete.knownSizes=1;
+        columns.sortColumn=PreviewLibraryColumns.Column.AVERAGE;columns.ascending=false;
+        assertSame(show,columns.sort(Arrays.asList(incomplete,show)).get(0));assertEquals("",columns.value(incomplete,PreviewLibraryColumns.Column.AVERAGE));
+        PreviewLibraryLoader.build(Arrays.asList(one,two),Arrays.asList(show));assertEquals(6000,show.bytes);
+    }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void renderActualPagesAndCheckTabFocus() throws Exception {
         try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException e){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();

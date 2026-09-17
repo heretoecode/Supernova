@@ -86,7 +86,8 @@ public class Delete {
     private MetaFile2 currentVideoFileToDelete;
     private long currentVideoFileToDeleteSize;
 
-    private Integer counter = 0; // only for video files not for associated files
+    private int counter = 0;
+    private Uri firstFailure; // only for video files not for associated files
 
     public long getCurrentVideoFileToDeleteSize() {
         return currentVideoFileToDeleteSize;
@@ -108,69 +109,19 @@ public class Delete {
         if (deletedFileSize > 0) {
             this.currentVideoFileToDeleteSize = deletedFileSize;
         }
-        if (!isSuccess) {
-            if (mListener != null) {
-                mHandler.post(() -> {
-                    mListener.onDeleteVideoFailed(uris.get(0));
-                });
-            }
-            return;
-        }
-
+        // The system callback is a permission result, not proof that every file vanished.
         new Thread(() -> {
-            for (Uri uri : uris) if (isLocal(uri)) cleanupDeletedLocal(uri);
-        }, "Nova-delete-cleanup").start();
-
-        if (operationKind == OP_FOLDER) {
-            deleteFolderOK(uris.get(0));
-            return;
-        }
-
-        if (operationKind == OP_MULTIPLE_FILES || uris.size() > 1) {
-            if (mListener != null) {
-                mHandler.post(() -> {
-                    if (log.isDebugEnabled()) log.debug("completeSystemDelete: multiple files deleted successfully");
-                    mListener.onDeleteSuccess();
-                });
+            for (Uri uri : uris) {
+                boolean removed = isSuccess && (!isLocal(uri) || !new File(uri.getPath()).exists());
+                if (operationKind == OP_FOLDER) {
+                    if (removed) deleteFolderOK(uri);
+                    else mHandler.post(() -> { if (mListener != null) mListener.onDeleteVideoFailed(uri); });
+                } else if (removed) {
+                    if (isLocal(uri)) cleanupDeletedLocal(uri);
+                    deleteOK(uri);
+                } else deleteNOK(uri);
             }
-            return;
-        }
-
-        final Uri fileUri = uris.get(0);
-        if (mListener != null) {
-            new Thread(() -> {
-                if (isLocal(fileUri)) {
-                    if (log.isDebugEnabled()) log.debug("completeSystemDelete: local file/folder trying to delete if directory");
-                    LocalStorageFileEditor editor = new LocalStorageFileEditor(fileUri, mContext);
-                    editor.deleteDir(fileUri);
-                }
-
-                if (isLocal(fileUri) &&
-                        !LocalStorageFileEditor.checkIfShouldNotTouchFolder(FileUtils.getParentUrl(fileUri))) {
-                    long shouldIDelete = getFolderSizeAndStopOnMax(FileUtils.getParentUrl(fileUri), MAX_FOLDER_SIZE, 0, 0);
-                    if ((currentVideoFileToDeleteSize > MIN_FILE_SIZE || shouldIDelete == 0) && MAX_FOLDER_SIZE > shouldIDelete && shouldIDelete >= 0) {
-                        mHandler.post(() -> {
-                            if (log.isDebugEnabled()) log.debug("completeSystemDelete onVideoFileRemoved ask for folder removal {}", fileUri);
-                            mListener.onVideoFileRemoved(fileUri, true, FileUtils.getParentUrl(fileUri));
-                        });
-                    } else {
-                        mHandler.post(() -> {
-                            if (log.isDebugEnabled()) log.debug("completeSystemDelete onVideoFileRemoved {}", fileUri);
-                            mListener.onVideoFileRemoved(fileUri, false, null);
-                        });
-                    }
-                } else {
-                    mHandler.post(() -> {
-                        if (log.isDebugEnabled()) log.debug("completeSystemDelete onVideoFileRemoved {}", fileUri);
-                        mListener.onVideoFileRemoved(fileUri, false, null);
-                    });
-                }
-                mHandler.post(() -> {
-                    if (log.isDebugEnabled()) log.debug("completeSystemDelete onDeleteSuccess {}", fileUri);
-                    mListener.onDeleteSuccess();
-                });
-            }).start();
-        }
+        }, "Nova-delete-cleanup").start();
     }
 
     public void deleteOK(List<Uri> fileUris) { // flush backlog
@@ -179,10 +130,11 @@ public class Delete {
             deleteOK(uri);
     }
 
-    public void deleteOK(Uri fileUri) {
+    public synchronized void deleteOK(Uri fileUri) {
         counter--;
         if (log.isDebugEnabled()) log.debug("deleteOK: {} counter {}", fileUri, counter);
-        if (counter <= 0) {
+        if (counter == 0) {
+            if (firstFailure != null) { Uri failed=firstFailure; mHandler.post(() -> { if(mListener!=null)mListener.onDeleteVideoFailed(failed); }); return; }
             // sometimes we will want to delete parent folder, when empty or only filled with little files like subtitles or nfo
             // then, ask the user
             if (mListener != null) {
@@ -227,7 +179,8 @@ public class Delete {
             deleteNOK(uri);
     }
 
-    public void deleteNOK(Uri fileUri) {
+    public synchronized void deleteNOK(Uri fileUri) {
+        if (firstFailure == null) firstFailure = fileUri;
         counter--;
         if (log.isDebugEnabled()) log.debug("deleteNOK: {} counter {}", fileUri, counter);
         if (counter == 0) {
@@ -256,7 +209,7 @@ public class Delete {
         new Thread(){
             public void run() {
                 if (toDelete != null) {
-                    counter += toDelete.size(); // this is not the number of files but block of files to process
+                    synchronized(Delete.this) { counter = toDelete.size(); firstFailure = null; }
                     if (log.isDebugEnabled()) log.debug("startMultipleDeleteProcess: counter {}", counter);
                     Boolean allUrisLocal = true;
                     List<Uri> toDeleteLocal = new ArrayList<>();
@@ -267,11 +220,6 @@ public class Delete {
                             // delete file
                             deleteFileAndAssociatedFiles(mContext, fileUri);
                         } else {
-                            // sending intent to unindex the file
-                            @SuppressWarnings("deprecation") // ACTION_MEDIA_SCANNER_SCAN_FILE as internal IPC (setPackage targets Nova's own receiver only)
-                            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(VideoUtils.getMediaLibCompatibleFilepathFromUri(fileUri)));
-                            intent.setPackage(ArchosUtils.getGlobalContext().getPackageName());
-                            mContext.sendBroadcast(intent);
                             toDeleteLocal.add(fileUri);
                         }
                     }
@@ -325,7 +273,7 @@ public class Delete {
 
     public void startDeleteProcess(final Uri fileUri){
         if (log.isDebugEnabled()) log.debug("startDeleteProcess: {}", fileUri);
-        counter = 1; // one fileUri
+        synchronized(this) { counter = 1; firstFailure = null; } // one fileUri
         new Thread(){
             public void run(){
                 currentVideoFileToDeleteSize = 0;

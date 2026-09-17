@@ -86,6 +86,7 @@ public final class TopNavigation extends LinearLayout {
         }
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(85), dp(46)));
+        android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTextSize(19);clock.setTextColor(0xffd6e5f3);clock.setGravity(Gravity.CENTER);status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
         selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
         android.widget.FrameLayout stage=new android.widget.FrameLayout(c);

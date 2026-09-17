@@ -32,7 +32,8 @@ public final class StreamingActionPresenter extends Presenter {
         android.content.Context c = parent.getContext();
         float d = c.getResources().getDisplayMetrics().density;
         FrameLayout frame = new FrameLayout(c);
-        frame.setLayoutParams(new ViewGroup.LayoutParams((int)(112*d), (int)(56*d)));
+        boolean preview=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui",false);
+        frame.setLayoutParams(new ViewGroup.LayoutParams((int)((preview?64:112)*d), (int)((preview?38:56)*d)));
         frame.setFocusable(true); frame.setClickable(true);
         android.graphics.drawable.StateListDrawable bg = new android.graphics.drawable.StateListDrawable();
         android.graphics.drawable.GradientDrawable focused = new android.graphics.drawable.GradientDrawable();

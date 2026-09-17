@@ -58,11 +58,14 @@ final class PreviewPlaybackMenus {
   card.setAlpha(1f);card.setPadding(dp(activity,12),dp(activity,10),dp(activity,12),dp(activity,10));card.setBackground(PreviewDialog.surface(activity,false));compact(card,activity);
   card.setPreviewDismiss(()->{dismissCurrent();if(parent!=null)parent.run();else close();});
   dialog.setContentView(card);current=dialog;dialog.setOnCancelListener(d->card.handleBackPressed());dialog.show();
-  Window window=dialog.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);window.setLayout(dp(activity,330),-2);position(activity,dialog,false);
+  Window window=dialog.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);int width=dp(activity,330),maximum=activity.getResources().getDisplayMetrics().heightPixels-dp(activity,100);
+  card.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(maximum,View.MeasureSpec.AT_MOST));
+  window.setLayout(width,Math.min(maximum,card.getMeasuredHeight()));position(activity,dialog,false);
  }
  private static int dp(PlayerActivity a,int n){return PreviewDialog.dp(a,n);}
  private static void compact(View view,PlayerActivity a){
   if(view instanceof TextView){TextView text=(TextView)view;text.setTextSize(view.getId()==R.id.info_text&&view.getParent() instanceof LinearLayout&&!(view.getParent() instanceof TVMenuItem)?15:13);text.setMaxLines(2);text.setEllipsize(android.text.TextUtils.TruncateAt.END);text.setTextColor(0xffe7eff5);text.setMinHeight(0);}
+  if(view instanceof ScrollView){ViewGroup.LayoutParams scroll=view.getLayoutParams();if(scroll!=null){scroll.height=ViewGroup.LayoutParams.WRAP_CONTENT;view.setLayoutParams(scroll);}}
   if(view instanceof TVMenuItem){ViewGroup.LayoutParams lp=view.getLayoutParams();if(lp!=null){lp.height=dp(a,38);view.setLayoutParams(lp);}view.setBackground(PreviewDialog.focus(a));}
   if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)compact(((ViewGroup)view).getChildAt(i),a);
  }

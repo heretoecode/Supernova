@@ -1030,6 +1030,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         });
 
         findPreference(KEY_RESCAN_STORAGE).setOnPreferenceClickListener(preference -> {
+            com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext());
             if (LoaderUtils.getScrapeInProgress()) {
                 //Stop the scrape.
                 LoaderUtils.setScrapeInProgress(false);

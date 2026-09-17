@@ -2052,8 +2052,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 ? getSubLanguageFromSubPathAndVideoPath(mContext, track.path, mUri.toString()) : track.language;
         if (language == null) return true;
         String preferred = mPreferences.getString("favSubLang", Locale.getDefault().getISO3Language());
-        return ISO639codes.isFavoriteLanguageMatch(preferred, language)
-                || ISO639codes.isFavoriteLanguageMatch("eng", language);
+        return previewSubtitleLanguageMatches(preferred, language)
+                || previewSubtitleLanguageMatches("eng", language);
+    }
+
+    static boolean previewSubtitleLanguageMatches(String code, String language) {
+        if (language == null) return false;
+        if (language.length() <= 3 && ISO639codes.isFavoriteLanguageMatch(code, language)) return true;
+        // External subtitle names have already been localised and may carry the HI suffix.
+        String name = language.replaceFirst("(?i)\\s*\\(HI\\)$", "").trim();
+        return name.equalsIgnoreCase(ISO639codes.getLanguageNameForLetterCode(code))
+                || name.equalsIgnoreCase(ISO639codes.getEnglishLanguageNameForLetterCode(code));
     }
 
     private void refreshSubtitleTVMenu() {

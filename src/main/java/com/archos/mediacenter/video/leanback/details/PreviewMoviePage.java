@@ -22,6 +22,11 @@ public final class PreviewMoviePage extends ScrollView {
     private final TextView title,meta,plot,play,trailer,context;
     private final LinearLayout pills;
     private final ImageView poster;
+    private final LinearLayout providerActions;
+    private ObjectAdapter observedActions;
+    private final com.archos.mediacenter.video.streaming.StreamingActionPresenter providerPresenter=new com.archos.mediacenter.video.streaming.StreamingActionPresenter();
+    private final List<Presenter.ViewHolder> providerHolders=new ArrayList<>();
+    private final ObjectAdapter.DataObserver actionObserver=new ObjectAdapter.DataObserver(){public void onChanged(){renderProviders();}public void onItemRangeChanged(int start,int count){renderProviders();}public void onItemRangeInserted(int start,int count){renderProviders();}public void onItemRangeRemoved(int start,int count){renderProviders();}};
     private final Supplier<ObjectAdapter> actions;
     private final Consumer<Action> action;
     private final Runnable nativeDetails;
@@ -49,7 +54,7 @@ public final class PreviewMoviePage extends ScrollView {
         context=text("",12);context.setTextColor(0xffb3c8d7);context.setMaxLines(2);context.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(context,new LinearLayout.LayoutParams(-1,-2));
         pills=new LinearLayout(c);pills.setPadding(0,dp(5),0,dp(5));hero.addView(pills);
         LinearLayout buttons=new LinearLayout(c);buttons.setPadding(0,dp(9),0,dp(10));hero.addView(buttons);
-        play=button("Play",this::play);buttons.addView(play);
+        play=button("Play",this::play);buttons.addView(play);providerActions=new LinearLayout(c);buttons.addView(providerActions);
         trailer=button("Trailer",this::chooseTrailer);trailer.setVisibility(View.GONE);margin(buttons,trailer);
         margin(buttons,button("More",this::more));TextView add=button("Add to List · Coming soon",()->{});add.setEnabled(false);add.setFocusable(false);add.setAlpha(.45f);margin(buttons,add);
         plot=text("",13);plot.setMaxLines(3);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(plot,new LinearLayout.LayoutParams(-1,-2));
@@ -89,7 +94,7 @@ public final class PreviewMoviePage extends ScrollView {
         PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderDetails();renderRelated();
     }
     public void setSnapshot(Snapshot value){snapshot=value;renderRelated();}
-    private void renderDetails(){if(movie==null&&show==null)return;details.removeAllViews();
+    private void renderDetails(){observeActions();if(movie==null&&show==null)return;details.removeAllViews();
         LinearLayout row=new LinearLayout(getContext());row.setOrientation(LinearLayout.VERTICAL);details.addView(row);
         String genre=tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():"";
         if(safe(genre).isEmpty()&&tags instanceof EpisodeTags){ShowTags parent=((EpisodeTags)tags).getShowTags();if(parent!=null)genre=parent.getGenresFormatted();}
@@ -100,6 +105,13 @@ public final class PreviewMoviePage extends ScrollView {
         pills.removeAllViews();if(movie!=null){if(movie.hasMeasured4K())pill("4K");pill(PreviewMediaInfo.format(movie.getCalculatedVideoFormat()));pill(PreviewMediaInfo.format(movie.getCalculatedBestAudioFormat()));
         }
         ((View)details.getParent()).setVisibility(row.getChildCount()==0?GONE:VISIBLE);
+    }
+    private void observeActions(){ObjectAdapter next=actions.get();if(next!=observedActions){if(observedActions!=null)observedActions.unregisterObserver(actionObserver);observedActions=next;if(next!=null)next.registerObserver(actionObserver);}renderProviders();}
+    private void renderProviders(){
+        View focused=providerActions.findFocus();Object focusKey=focused==null?null:focused.getTag();
+        for(Presenter.ViewHolder holder:providerHolders)providerPresenter.onUnbindViewHolder(holder);providerHolders.clear();providerActions.removeAllViews();if(observedActions==null){if(focused!=null)play.requestFocus();return;}
+        for(int i=0;i<observedActions.size();i++){Object item=observedActions.get(i);if(!(item instanceof Action)||!com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))continue;Action offer=(Action)item;Presenter.ViewHolder holder=providerPresenter.onCreateViewHolder(providerActions);providerPresenter.onBindViewHolder(holder,offer);holder.view.setTag(offer.getId());holder.view.setOnClickListener(v->action.accept(offer));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(64),dp(38));lp.leftMargin=dp(10);providerActions.addView(holder.view,lp);providerHolders.add(holder);}
+        if(focused!=null){View replacement=focusKey==null?null:providerActions.findViewWithTag(focusKey);if(replacement!=null)replacement.requestFocus();else if(providerActions.getChildCount()>0)providerActions.getChildAt(0).requestFocus();else play.requestFocus();}
     }
     private void pill(String value){if(value==null||value.isEmpty())return;TextView label=text(value,10);label.setSingleLine(true);label.setPadding(dp(6),dp(3),dp(6),dp(3));GradientDrawable badge=new GradientDrawable();badge.setColor(0x50142634);badge.setCornerRadius(dp(3));badge.setStroke(dp(1),0xff648196);label.setBackground(badge);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.rightMargin=dp(6);pills.addView(label,lp);}
 
@@ -149,12 +161,13 @@ public final class PreviewMoviePage extends ScrollView {
     private void more(){ObjectAdapter adapter=actions.get();if(adapter==null)return;List<Action> items=new ArrayList<>();List<String> labels=new ArrayList<>();
         List<Action> source=new ArrayList<>();for(int i=0;i<adapter.size();i++){Object value=adapter.get(i);if(value instanceof Action){Action a=(Action)value;if(show!=null&&a.getId()==com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter.ACTION_MORE_DETAILS)continue;source.add(a);}}
         for(int group=0;group<3;group++){boolean heading=false;for(Action a:source){String label=String.valueOf(a.getLabel1())+(a.getLabel2()==null?"":" — "+a.getLabel2());String lower=label.toLowerCase(Locale.ROOT);int category=lower.contains("delete")||lower.contains("remove")?2:lower.contains("play")||lower.contains("resume")||lower.contains("episode")?0:1;if(category!=group)continue;if(!heading){items.add(null);labels.add(group==0?"— Playback & navigation":group==1?"— Library":"— Remove / delete");heading=true;}items.add(a);labels.add(label);}}
+        final int synopsisIndex=items.size();items.add(null);labels.add("Full synopsis");
         if(show==null){items.add(null);labels.add("— File & media");labels.add("File, subtitles and artwork");}
-        PreviewDialog.choose(getContext(),"More",labels.toArray(new String[0]),-1,n->{if(n==items.size())nativeDetails.run();else if(items.get(n)!=null)action.accept(items.get(n));});
+        PreviewDialog.choose(getContext(),"More",labels.toArray(new String[0]),-1,n->{if(n==synopsisIndex)PreviewDialog.read(getContext(),title.getText().toString(),show!=null?safe(show.getPlot()):movie==null?"":safe(movie.getDescriptionBody()));else if(n==items.size())nativeDetails.run();else if(items.get(n)!=null)action.accept(items.get(n));});
     }
     private ScraperTrailer primaryTrailer(){
         ScraperTrailer best=null;int score=0;for(ScraperTrailer t:trailerList){if(!"YouTube".equals(t.mSite)||t.mVideoKey==null||!t.mVideoKey.matches("[A-Za-z0-9_-]{11}"))continue;String name=t.mName==null?"":t.mName.toLowerCase(Locale.ROOT);if(!name.contains("trailer")||name.contains("fan")||name.contains("reaction"))continue;int rank=(name.contains("official")?4:1)+(name.contains("main")?2:0)+(name.contains("teaser")?-1:0);if(rank>score){score=rank;best=t;}}return best;
     }
     private void chooseTrailer(){ScraperTrailer t=primaryTrailer();if(t!=null)PreviewTrailer.show((Activity)getContext(),t);}
-    @Override protected void onDetachedFromWindow(){for(Presenter.ViewHolder h:cards)presenter.onUnbindViewHolder(h);cards.clear();super.onDetachedFromWindow();}
+    @Override protected void onDetachedFromWindow(){if(observedActions!=null){observedActions.unregisterObserver(actionObserver);observedActions=null;}for(Presenter.ViewHolder h:providerHolders)providerPresenter.onUnbindViewHolder(h);providerHolders.clear();for(Presenter.ViewHolder h:cards)presenter.onUnbindViewHolder(h);cards.clear();super.onDetachedFromWindow();}
 }
