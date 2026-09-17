@@ -149,8 +149,11 @@ public final class PreviewPages extends FrameLayout {
         int p=list.getChildAdapterPosition(item);if(p<0||p>=cells.size())return false;
         Cell cell=cells.get(p);
         if(tab==0)return cell.type==HERO && item.getTop()>=list.getPaddingTop();
-        if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value);
-        return cell.type==STORAGE&&!list.canScrollVertically(-1);
+        if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value)&&!list.canScrollVertically(-1)
+                ||cell.type==HERO&&item.getTop()>=list.getPaddingTop();
+        if(cell.type!=STORAGE)return false;
+        int first=0;while(first<cells.size()&&cells.get(first).type!=STORAGE)first++;
+        return first<cells.size()&&layout.getSpanSizeLookup().getSpanGroupIndex(p,24)==layout.getSpanSizeLookup().getSpanGroupIndex(first,24)&&!list.canScrollVertically(-1);
     }
     public void setTab(int tab) {
         if(this.tab==tab)return;
@@ -176,6 +179,17 @@ public final class PreviewPages extends FrameLayout {
         String k="preview_library_"+tab+"_";preferences.edit().putInt(k+"sort",sorts[tab]).putString(k+"genre",genres[tab]).putInt(k+"year",years[tab]).putBoolean(k+"ascending",ascending[tab]).putBoolean(k+"list",listMode[tab]).apply();
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){
+        if((tab==1||tab==2)&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_UP){
+            View focused=list.findFocus(),item=focused==null?null:list.findContainingItemView(focused);
+            int p=item==null?-1:list.getChildAdapterPosition(item);
+            if(p>=0&&p<cells.size()){
+                Cell c=cells.get(p);int header=-1,first=-1;
+                for(int i=0;i<cells.size();i++){if(cells.get(i).type==HEADER&&Boolean.TRUE.equals(cells.get(i).value))header=i;if(cells.get(i).type==POSTER){first=i;break;}}
+                boolean firstRow=first>=0&&c.type==POSTER&&layout.getSpanSizeLookup().getSpanGroupIndex(p,24)==layout.getSpanSizeLookup().getSpanGroupIndex(first,24);
+                if(firstRow&&header>=0){FocusAnchor a=new FocusAnchor();a.cell=cellKey(cells.get(header));a.position=header;a.child="filter";anchors[tab]=a;holdFocus();layout.scrollToPositionWithOffset(0,0);restoreFocus();return true;}
+                if((c.type==HEADER||c.type==HERO)&&list.canScrollVertically(-1)){layout.scrollToPositionWithOffset(0,0);return true;}
+            }
+        }
         if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_UP){
             View focused=list.findFocus(),item=focused==null?null:list.findContainingItemView(focused);
             if(item!=null){int p=list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()){

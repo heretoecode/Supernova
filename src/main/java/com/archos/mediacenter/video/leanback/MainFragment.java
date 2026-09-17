@@ -382,6 +382,13 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         return mNavigation;
     }
 
+    public void consumePreviewNavigation() {
+        if (mPreviewPages == null || !requireActivity().getIntent().hasExtra("preview_tab")) return;
+        int tab = requireActivity().getIntent().getIntExtra("preview_tab", mActiveTab);
+        requireActivity().getIntent().removeExtra("preview_tab");
+        if (tab >= 0 && tab < 4) navigateTop(tab);
+    }
+
     private void navigateTop(int tab) {
         if (tab == 4) {
             startActivity(new Intent(requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
@@ -391,6 +398,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             startActivity(search);
         } else {
             mActiveTab = tab;
+            if (mNavigation != null) mNavigation.selectTab(tab);
             if (mPreviewPages != null) mPreviewPages.setTab(tab);
             refreshVisibleRows();
             if (mVisibleRows != null && mVisibleRows.size() > 0) super.setSelectedPosition(0, false);
@@ -557,6 +565,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     public void onResume() {
         if (log.isDebugEnabled()) log.debug("onResume");
         super.onResume();
+        consumePreviewNavigation();
         if (mPreviewPages != null) {
             androidx.loader.content.Loader<Cursor> preview = LoaderManager.getInstance(this).getLoader(PreviewLibraryLoader.ID);
             if (preview == null) LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);

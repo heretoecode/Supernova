@@ -800,6 +800,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
 
         // NetworkAutoRefresh.init requires main thread (LifecycleRegistry.addObserver)
         NetworkAutoRefresh.init(this);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(previewScanPreferences);
 
         // Defer heavy initialization to a background thread to speed up cold start
         final Context appContext = mContext;
@@ -1193,16 +1194,18 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         supportedRefreshRates = refreshRates;
     }
 
-    private long previewRefreshAt;
+    private long previewRefreshAt, previewRefreshRequestedWallTime;
+    private final SharedPreferences.OnSharedPreferenceChangeListener previewScanPreferences=(prefs,key)->{if("auto_rescan_on_app_restart".equals(key)||NetworkAutoRefresh.AUTO_RESCAN_PERIOD.equals(key))requestPreviewNetworkRefresh();};
     private boolean previewScanOnReturn;
     private final android.os.Handler previewRefreshHandler=new android.os.Handler(android.os.Looper.getMainLooper());
     private final Runnable previewRefresh=new Runnable(){public void run(){
         SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(CustomApplication.this);
         if(!isForeground||!prefs.getBoolean("try_new_ui",false))return;
         long now=System.currentTimeMillis(),period=NetworkAutoRefresh.getRescanPeriod(CustomApplication.this);
+        if(previewScanOnReturn&&previewRefreshRequestedWallTime>0&&prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)>=previewRefreshRequestedWallTime)previewScanOnReturn=false;
         boolean due=previewScanOnReturn&&NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)||period>0&&now-prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)>=period;
-        if(due&&networkState.hasLocalConnection()&&!com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()&&com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()==0&&(previewRefreshAt==0||android.os.SystemClock.elapsedRealtime()-previewRefreshAt>=60000)){
-            previewRefreshAt=android.os.SystemClock.elapsedRealtime();previewScanOnReturn=false;NetworkAutoRefresh.forceRescan(CustomApplication.this);
+        if(due&&(NetworkState.isLocalNetworkConnectedOrVpnMobileEnabled(CustomApplication.this)||NetworkState.isNetworkConnected(CustomApplication.this))&&!com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()&&com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()==0&&(previewRefreshAt==0||android.os.SystemClock.elapsedRealtime()-previewRefreshAt>=60000)){
+            previewRefreshAt=android.os.SystemClock.elapsedRealtime();previewRefreshRequestedWallTime=now;NetworkAutoRefresh.forceRescan(CustomApplication.this);
         }
         // Retry after an offline/busy launch and honour the existing periodic schedule while open.
         if(previewScanOnReturn||period>0)previewRefreshHandler.postDelayed(this,30000);

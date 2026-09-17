@@ -107,6 +107,16 @@ public class MainActivityLeanback extends LeanbackActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // singleTask reuses this activity when a secondary screen selects a section.
+        setIntent(intent);
+        MainFragment browse = (MainFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.main_browse_fragment);
+        if (browse != null) browse.consumePreviewNavigation();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         log.warn("onCreate: MainActivityLeanback instance created: {}", this.hashCode());
         

@@ -385,6 +385,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void addToMenuContainer(View v){
+        if (experimentalUi() && !splitView && mContext instanceof PlayerActivity) {
+            View card = v.findViewById(R.id.card_view);
+            if (card instanceof TVCardDialog) {
+                PreviewPlaybackMenus.showNested((PlayerActivity)mContext, (TVCardDialog)card);
+                return;
+            }
+        }
         View container1 = mControllerViewLeft.findViewById(R.id.tv_menu_container);
         if(container1!=null && container1 instanceof FrameLayout){
             ((FrameLayout)container1).addView(v);

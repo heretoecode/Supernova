@@ -70,6 +70,10 @@ jobs:
           cd ..
           repo manifest -r -o source-manifest.xml
 
+      - name: Apply bounded Preview 4.0 scan scheduling correction
+        working-directory: nova/MediaLib
+        run: git apply ../Video/.github/build/medialib-preview40.patch
+
       - name: Isolate Preview package and content providers
         run: python3 source/.github/build/prepare-preview.py nova
 

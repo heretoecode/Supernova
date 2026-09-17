@@ -2044,6 +2044,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             return "A";
     }
 
+    private boolean previewPreferredSubtitle(int position) {
+        if (position == 0 || mPlayer == null || mPlayer.getVideoMetadata() == null) return true;
+        SubtitleTrack track = mPlayer.getVideoMetadata().getSubtitleTrack(positionToSubtitleTrack(position, mVideoInfo.nbSubtitles));
+        if (track == null) return true;
+        String language = track.isExternal
+                ? getSubLanguageFromSubPathAndVideoPath(mContext, track.path, mUri.toString()) : track.language;
+        if (language == null) return true;
+        String preferred = mPreferences.getString("favSubLang", Locale.getDefault().getISO3Language());
+        return ISO639codes.isFavoriteLanguageMatch(preferred, language)
+                || ISO639codes.isFavoriteLanguageMatch("eng", language);
+    }
+
     private void refreshSubtitleTVMenu() {
         if (mSubtitleTVMenu != null) {
             mSubtitleTVMenu.clean();
@@ -2054,7 +2066,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
             if(mSubtitleInfoController.getTrackCount()>0) {
                 for (int i = 0; i < mSubtitleInfoController.getTrackCount(); i++) {
-                    mSubtitleTVMenu.createAndAddTVMenuItem(mSubtitleInfoController.getTrackNameAt(i).toString(), true, mSubtitleInfoController.getTrack() == i);
+                    TVMenuItem item = mSubtitleTVMenu.createAndAddTVMenuItem(mSubtitleInfoController.getTrackNameAt(i).toString(), true, mSubtitleInfoController.getTrack() == i);
+                    item.setTag(previewPreferredSubtitle(i));
                 }
                 mSubtitleTVMenu.createAndAddSeparator();
                 mSubtitleDelayMenuItem = mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.player_pref_subtitle_delay_title).toString(), false, false);
@@ -2153,7 +2166,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
                 mAudioTracksTVMenu.createAndAddSeparator();
 
-                final TVMenuItem tvmi3 = mAudioTracksTVMenu.createAndAddTVMenuItem(getText(R.string.player_pref_subtitle_delay_title).toString(), false, false);
+                final TVMenuItem tvmi3 = mAudioTracksTVMenu.createAndAddTVMenuItem(getText(R.string.player_pref_audio_delay_title).toString(), false, false);
                 tvmi3.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -2949,7 +2962,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     public String previewTitle(){return mVideoInfo!=null&&mVideoInfo.isScraped&&mVideoInfo.scraperTitle!=null?mVideoInfo.scraperTitle:mTitle==null?"":mTitle;}
     public String previewEpisode(){return mVideoInfo!=null&&mVideoInfo.isShow?String.format(java.util.Locale.getDefault(),"S%02d E%02d",mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr)+(mVideoInfo.scraperEpisodeName==null?"":" · "+mVideoInfo.scraperEpisodeName):"";}
     private void showVideoInfos() {
-        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){Object media=getIntent().getSerializableExtra(PlayerService.VIDEO);if(media instanceof com.archos.mediacenter.video.browser.adapters.object.Video&&((com.archos.mediacenter.video.browser.adapters.object.Video)media).getId()!=mVideoId)media=null;PreviewPlaybackInfo.show(this,previewTitle(),previewEpisode(),media,()->{if(mPlayer!=null)mPlayer.seekTo(0);},this::showNativeVideoInfos);return;}
+        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){Object media=getIntent().getSerializableExtra(PlayerService.VIDEO);if(media instanceof com.archos.mediacenter.video.browser.adapters.object.Video&&((com.archos.mediacenter.video.browser.adapters.object.Video)media).getId()!=mVideoId)media=null;PreviewPlaybackInfo.show(this,previewTitle(),previewEpisode(),media,()->{if(mPlayer!=null){mPlayer.seekTo(0);mPlayer.start(PlayerController.STATE_NORMAL);}},this::showNativeVideoInfos);return;}
         showNativeVideoInfos();
     }
     private void showNativeVideoInfos() {

@@ -917,6 +917,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 DbUtils.markAsHiddenByUser(getActivity(), mVideo);
             }
             else if (action.getId() == VideoActionAdapter.ACTION_DELETE) {
+                if (mPreviewMovie != null) {
+                    com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
+                            getString(R.string.confirm_delete), new String[]{getString(android.R.string.cancel), getString(R.string.delete)},
+                            0, choice -> {
+                                if (choice == 1 && isAdded()) deleteFile_async(mVideo);
+                            });
+                    return;
+                }
                 mShouldDisplayConfirmDelete = true;
                 
                 ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(mVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
@@ -2383,8 +2391,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         if (log.isDebugEnabled()) log.debug("onDeleteVideoFailed: {}", videoFile);
         if (getActivity() != null) Toast.makeText(getActivity(),R.string.delete_error, Toast.LENGTH_SHORT).show();
 
-        // close the fragment anyway because the un-indexing may work even if the actual delete fails
-        slightlyDelayedFinish();
+        // Failed or cancelled deletion leaves the file and its Details available for retry.
     }
 
     @Override
