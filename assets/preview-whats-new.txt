@@ -1,10 +1,18 @@
 NOVA Preview 4.0
 
-Section routing and remote focus fixes.
-Visible deletion confirmation and safer failure handling.
-Compact playback menus with parent-menu focus restoration.
-Play from beginning resumes playback.
-Movie/TV list columns and library storage information.
-Episode-specific Details metadata and compact circular cast portraits.
+Section routing, remote focus and recoverable library headers.
+Visible deletion confirmation; preserve the library entry when physical deletion fails.
+Compact playback menus, nested-menu return and Play from beginning resumes.
+English/preferred subtitle choices first; other languages remain accessible.
+Movie/TV list columns, sorting and library-backed storage aggregates.
+Episode-specific Details metadata; compact circular cast portraits.
+Settings category cards, restored Streaming preferences and Subtitles placement.
+Build information and these bundled release notes under About.
+Compact local-library Search; no Recent Searches or remote discovery results.
+Scan Library entry using existing local and indexed-network scanners.
+Automatic scan retry/scheduling corrections; existing scan settings remain in control.
+Home Featured idle rotation pauses when you interact with the hero.
+
+Limits: unknown size/HDR metadata is omitted; some credential, scanner and legacy utility surfaces retain native controls. Add to List remains a disabled placeholder. Streaming uses existing availability/handoff only; no account authentication or playback engine added.
 
 Physical Android TV/Shield validation: NOT TESTED — USER QA REQUIRED.

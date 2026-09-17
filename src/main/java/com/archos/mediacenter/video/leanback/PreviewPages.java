@@ -227,7 +227,7 @@ public final class PreviewPages extends FrameLayout {
             if(recent!=null)rail("Because You Watched "+displayName(recent),PreviewDiscovery.similar(recent,snapshot));
             if(loaded&&snapshot.movies.isEmpty()&&snapshot.shows.isEmpty()&&snapshot.recent.isEmpty()) header("Your library is empty — add media through Network & files",false);
         } else if(tab==1||tab==2) {
-            if(featured()!=null)cells.add(new Cell(HERO,tab==1?"Movies":"TV Shows",featured()));
+            if(featured()!=null)cells.add(new Cell(HERO,tab==1?"Movies":"TV Shows",featured()));else header(tab==1?"Movies":"TV Shows",false);
 
             header(tab==1?"Movie library":"TV show library",true);
             List<Entry> entries=filtered(); for(Entry e:entries)cells.add(new Cell(POSTER,"",e));

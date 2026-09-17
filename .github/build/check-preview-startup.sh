@@ -93,3 +93,44 @@ PYSET
   adb logcat -d > ../startup-diagnostics/preview-settings-category-logcat.txt
   if grep -q 'FATAL EXCEPTION' ../startup-diagnostics/preview-settings-category-logcat.txt; then exit 1; fi
 fi
+
+if [[ "$phase" == preview ]]; then
+  # Bounded checks of changed routes, not an exhaustive remote-navigation matrix.
+  python3 - <<'PYMORE'
+import re, subprocess, time, xml.etree.ElementTree as ET
+from pathlib import Path
+out=Path('../startup-diagnostics')
+def adb(*args):
+ return subprocess.run(['adb',*args],check=True,stdout=subprocess.PIPE).stdout
+def capture(name):
+ adb('shell','uiautomator','dump','/sdcard/nova-check.xml')
+ data=adb('shell','cat','/sdcard/nova-check.xml');(out/(name+'.xml')).write_bytes(data)
+ (out/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'))
+ return ET.fromstring(data)
+def target(root,label,activate=False):
+ n=next(n for n in root.iter('node') if n.get('text')==label or n.get('content-desc')==label)
+ x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))
+ adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+ if activate: adb('shell','input','keyevent','23')
+ time.sleep(.6)
+root=capture('settings-check')
+for category in ['Subtitles','Video & Audio','Streaming','About']:
+ target(root,category)
+ root=capture('settings-'+category.lower().replace(' & ','-'))
+ if category=='Subtitles':
+  assert any('OpenSubtitles' in n.get('text','') for n in root.iter('node')), 'Subtitles category lost credentials'
+# Return to each library via the actual top navigation, then exercise the new local query.
+target(root,'Movies',True);root=capture('navigation-movies')
+assert sum(n.get('text')=='Movies' for n in root.iter('node'))>=2, 'Movies route/header desynchronised'
+target(root,'TV shows',True);root=capture('navigation-tv')
+assert any(n.get('text')=='TV Shows' for n in root.iter('node')), 'TV library failed to open'
+target(root,'Search',True);root=capture('search-empty')
+query=next(n for n in root.iter('node') if n.get('class')=='android.widget.EditText')
+x1,y1,x2,y2=map(int,re.findall(r'\d+',query.get('bounds')))
+adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','text','nova40-smoke-no-match');time.sleep(1)
+root=capture('search-query')
+assert any(n.get('text')=='No matching library titles' for n in root.iter('node')), 'Local query failed'
+logs=adb('logcat','-d');(out/'targeted-routes-logcat.txt').write_bytes(logs)
+assert b'FATAL EXCEPTION' not in logs, 'Crash during changed-route smoke check'
+PYMORE
+fi

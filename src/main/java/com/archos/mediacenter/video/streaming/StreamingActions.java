@@ -194,8 +194,11 @@ public final class StreamingActions {
             if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)))) return;
         }
         if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
-            String[] names=new String[labels.length];for(int i=0;i<labels.length;i++)names[i]=labels[i].toString();
-            com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, app.getString(R.string.streaming_more)+" · "+region+" · JustWatch",names,-1,i->openOffer(offers.get(i),watchUrl,title));return;
+            com.archos.mediacenter.video.leanback.PreviewDialog.choose(a,offer.provider.name,new String[]{app.getString(R.string.streaming_open_app),app.getString(R.string.streaming_watch_page),app.getString(android.R.string.cancel)},2,choice->{
+                if(choice==1){openWeb(a,watchUrl);return;}if(choice!=0)return;
+                for(String pkg:packages(offer.provider.name)){Intent launch=a.getPackageManager().getLeanbackLaunchIntentForPackage(pkg);if(launch==null)launch=a.getPackageManager().getLaunchIntentForPackage(pkg);if(launch!=null&&start(a,launch))return;}
+                Toast.makeText(a,R.string.streaming_app_missing,Toast.LENGTH_LONG).show();
+            });return;
         }
         new AlertDialog.Builder(a, com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme() ? R.style.Theme_AlertDialog_Slate : 0).setTitle(offer.provider.name)
                 .setMessage(app.getString(R.string.streaming_open_fallback, title))

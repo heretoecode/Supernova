@@ -219,7 +219,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     public boolean closePreviewNativeDetails(){return false;}
     private void showPreviewTools(){
         com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File, subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops","File information"},-1,n->{
-            if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else if(n==4)new android.app.AlertDialog.Builder(requireContext()).setTitle(mVideo.getFilenameNonCryptic()).setMessage(mVideo.getFileUri()==null?"":mVideo.getFileUri().getPath()).setPositiveButton("Close",null).show();else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
+            if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else if(n==4)com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),mVideo.getFilenameNonCryptic(),mVideo.getFileUri()==null?"":mVideo.getFileUri().getPath());else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
         });
     }
     private void showPreviewArtwork(Row sourceRow){
@@ -227,7 +227,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         if(row==null||row.getAdapter().size()==0){Toast.makeText(requireContext(),"No artwork available",Toast.LENGTH_SHORT).show();return;}
         android.widget.HorizontalScrollView scroll=new android.widget.HorizontalScrollView(requireContext());android.widget.LinearLayout cards=new android.widget.LinearLayout(requireContext());scroll.addView(cards);
         android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(requireContext()).setTitle(row.getHeaderItem().getName()).setView(scroll).setNegativeButton("Close",null).create();
-        for(int i=0;i<row.getAdapter().size();i++){Object item=row.getAdapter().get(i);Presenter presenter=row.getAdapter().getPresenter(item);Presenter.ViewHolder h=presenter.onCreateViewHolder(cards);presenter.onBindViewHolder(h,item);cards.addView(h.view);h.view.setOnClickListener(v->{dialog.dismiss();getOnItemViewClickedListener().onItemClicked(h,item,null,row);});}dialog.show();
+        for(int i=0;i<row.getAdapter().size();i++){Object item=row.getAdapter().get(i);Presenter presenter=row.getAdapter().getPresenter(item);Presenter.ViewHolder h=presenter.onCreateViewHolder(cards);presenter.onBindViewHolder(h,item);cards.addView(h.view);h.view.setOnClickListener(v->{dialog.dismiss();getOnItemViewClickedListener().onItemClicked(h,item,null,row);});}dialog.show();com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(dialog);
     }
 
     private Video mVideo;
