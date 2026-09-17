@@ -1,0 +1,10 @@
+NOVA Preview 4.0
+
+Section routing and remote focus fixes.
+Visible deletion confirmation and safer failure handling.
+Compact playback menus with parent-menu focus restoration.
+Play from beginning resumes playback.
+Movie/TV list columns and library storage information.
+Episode-specific Details metadata and compact circular cast portraits.
+
+Physical Android TV/Shield validation: NOT TESTED — USER QA REQUIRED.

@@ -42,7 +42,7 @@ public final class StreamingPreferences {
         enabled.setSummary(R.string.streaming_enabled_summary);
         enabled.setDefaultValue(false);
         enabled.setEnabled(StreamingRepository.LINKS_AVAILABLE);
-        enabled.setSummary("Streaming links are paused in this test build. Provider selections are kept.");
+        enabled.setSummary(R.string.streaming_enabled_summary);
         add(enabled);
         country = new ListPreference(context);
         country.setKey(StreamingRepository.COUNTRY);

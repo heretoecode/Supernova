@@ -21,6 +21,7 @@ public final class PreviewMoviePage extends ScrollView {
     private final LinearLayout body,cast,details,related,trailers;
     private final TextView title,meta,plot,play,trailer,context;
     private final LinearLayout pills;
+    private final ImageView poster;
     private final Supplier<ObjectAdapter> actions;
     private final Consumer<Action> action;
     private final Runnable nativeDetails;
@@ -39,15 +40,19 @@ public final class PreviewMoviePage extends ScrollView {
     public PreviewMoviePage(Context c,Supplier<ObjectAdapter> actions,Consumer<Action> action,Runnable nativeDetails,Consumer<Uri> artwork){
         super(c);this.actions=actions;this.action=action;this.nativeDetails=nativeDetails;this.artwork=artwork;
         setFillViewport(true);setSmoothScrollingEnabled(false);setClipToPadding(false);body=new LinearLayout(c);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(dp(28),dp(20),dp(28),dp(24));addView(body);
-        LinearLayout hero=new LinearLayout(c);hero.setOrientation(LinearLayout.VERTICAL);hero.setGravity(Gravity.TOP);
-        body.addView(hero,new LinearLayout.LayoutParams(-1,dp(250)));
-        title=text("",32);title.setTypeface(null,android.graphics.Typeface.BOLD);title.setMaxLines(2);hero.addView(title,new LinearLayout.LayoutParams(dp(530),-2));
-        meta=text("",13);meta.setPadding(0,dp(5),0,dp(5));hero.addView(meta);context=text("",12);context.setTextColor(0xffb3c8d7);context.setMaxLines(2);context.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(context,new LinearLayout.LayoutParams(dp(530),-2));pills=new LinearLayout(c);pills.setPadding(0,dp(7),0,dp(8));hero.addView(pills);
-        plot=text("",14);plot.setMaxLines(3);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(plot,new LinearLayout.LayoutParams(dp(480),-2));
-        LinearLayout buttons=new LinearLayout(c);buttons.setPadding(0,dp(16),0,0);hero.addView(buttons);
+        LinearLayout composition=new LinearLayout(c);composition.setGravity(Gravity.TOP);body.addView(composition,new LinearLayout.LayoutParams(-1,-2));
+        poster=new ImageView(c);poster.setScaleType(ImageView.ScaleType.FIT_CENTER);poster.setBackgroundColor(0x40071622);
+        LinearLayout.LayoutParams posterParams=new LinearLayout.LayoutParams(dp(142),dp(213));posterParams.rightMargin=dp(20);composition.addView(poster,posterParams);
+        LinearLayout hero=new LinearLayout(c);hero.setOrientation(LinearLayout.VERTICAL);hero.setGravity(Gravity.TOP);composition.addView(hero,new LinearLayout.LayoutParams(0,-2,1));
+        title=text("",27);title.setTypeface(null,android.graphics.Typeface.BOLD);title.setMaxLines(2);title.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(title,new LinearLayout.LayoutParams(-1,-2));
+        meta=text("",12);meta.setPadding(0,dp(5),0,dp(4));hero.addView(meta);
+        context=text("",12);context.setTextColor(0xffb3c8d7);context.setMaxLines(2);context.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(context,new LinearLayout.LayoutParams(-1,-2));
+        pills=new LinearLayout(c);pills.setPadding(0,dp(5),0,dp(5));hero.addView(pills);
+        LinearLayout buttons=new LinearLayout(c);buttons.setPadding(0,dp(9),0,dp(10));hero.addView(buttons);
         play=button("Play",this::play);buttons.addView(play);
         trailer=button("Trailer",this::chooseTrailer);trailer.setVisibility(View.GONE);margin(buttons,trailer);
         margin(buttons,button("More",this::more));TextView add=button("Add to List · Coming soon",()->{});add.setEnabled(false);add.setFocusable(false);add.setAlpha(.45f);margin(buttons,add);
+        plot=text("",13);plot.setMaxLines(3);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(plot,new LinearLayout.LayoutParams(-1,-2));
         episodes=section("Seasons & Episodes");episodes.getParent();((View)episodes.getParent()).setVisibility(GONE);cast=section("Cast & Crew");details=section("Details");related=section("More Like This — In Your Library");trailers=section("Trailers & Extras");((View)trailers.getParent()).setVisibility(GONE);
         ((View)cast.getParent()).setVisibility(GONE);((View)related.getParent()).setVisibility(GONE);
     }
@@ -61,10 +66,16 @@ public final class PreviewMoviePage extends ScrollView {
     private void margin(LinearLayout row,View view){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(12);row.addView(view,lp);}
     private LinearLayout section(String name){LinearLayout section=new LinearLayout(getContext());section.setOrientation(LinearLayout.VERTICAL);section.setPadding(0,dp(14),0,dp(8));TextView label=text(name,19);label.setTextColor(0xff9ed4f7);section.addView(label);LinearLayout content=new LinearLayout(getContext());content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(10),0,0);section.addView(content);body.addView(section);return content;}
     public void bind(Video value){movie=value;title.setText(movie.getName());plot.setText(movie.getDescriptionBody());
-        String m=(movie instanceof Movie&&((Movie)movie).getYear()>0?((Movie)movie).getYear()+"   ":"")+(movie.getDurationMs()>0?movie.getDurationMs()/60000+" min   ":"")+(movie instanceof Movie?safe(((Movie)movie).getContentRating()):"");
-
-
-        meta.setText(m);
+        bindPoster(movie);
+        List<String> metadata=new ArrayList<>();
+        if(movie instanceof Episode){Episode episode=(Episode)movie;title.setText(safe(episode.getShowName())+" — "+safe(episode.getEpisodeName()));
+            if(episode.getSeasonNumber()>=0&&episode.getEpisodeNumber()>0)metadata.add("S"+episode.getSeasonNumber()+" E"+episode.getEpisodeNumber());
+            if(episode.getEpisodeDate()>0)metadata.add(episode.getEpisodeDateFormatted());
+        }else if(movie instanceof Movie&&((Movie)movie).getYear()>0)metadata.add(String.valueOf(((Movie)movie).getYear()));
+        if(movie.getDurationMs()>0)metadata.add(movie.getDurationMs()/60000+" min");
+        String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;
+        if(certificate!=null&&!certificate.isEmpty())metadata.add(certificate);
+        meta.setText(android.text.TextUtils.join("  ·  ",metadata));meta.setVisibility(metadata.isEmpty()?GONE:VISIBLE);
         play.setText(movie.getResumeMs()>0?"Resume":"Play");
         if(movie.getPreviewBackdrop()!=null)artwork.accept(movie.getPreviewBackdrop());renderDetails();
     }
@@ -81,24 +92,30 @@ public final class PreviewMoviePage extends ScrollView {
     private void renderDetails(){if(movie==null&&show==null)return;details.removeAllViews();
         LinearLayout row=new LinearLayout(getContext());row.setOrientation(LinearLayout.VERTICAL);details.addView(row);
         String genre=tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():"";
-        String release=tags instanceof MovieTags?((MovieTags)tags).getReleaseDate():"";
+        if(safe(genre).isEmpty()&&tags instanceof EpisodeTags){ShowTags parent=((EpisodeTags)tags).getShowTags();if(parent!=null)genre=parent.getGenresFormatted();}
         String studio=tags instanceof VideoTags?((VideoTags)tags).getStudiosFormatted():"";
-        float rating=movie instanceof Movie?((Movie)movie).getRating():show==null?0:show.getRating();
-        List<String> contextParts=new ArrayList<>();if(!safe(genre).isEmpty())contextParts.add(genre);if(!safe(studio).isEmpty())contextParts.add(studio);if(rating>0)contextParts.add(String.format(Locale.UK,"TMDb %.1f / 10",rating));context.setText(android.text.TextUtils.join("  ·  ",contextParts));context.setVisibility(contextParts.isEmpty()?GONE:VISIBLE);
+        float rating=movie instanceof Episode?((Episode)movie).getEpisodeRating():movie instanceof Movie?((Movie)movie).getRating():show==null?0:show.getRating();
+        if(movie instanceof Episode&&rating<=0&&tags instanceof EpisodeTags)rating=tags.getRating();
+        List<String> contextParts=new ArrayList<>();if(!safe(genre).isEmpty())contextParts.add(genre);if(rating>0)contextParts.add(String.format(Locale.UK,"TMDb %.1f / 10",rating));context.setText(android.text.TextUtils.join("  ·  ",contextParts));context.setVisibility(contextParts.isEmpty()?GONE:VISIBLE);
         pills.removeAllViews();if(movie!=null){if(movie.hasMeasured4K())pill("4K");pill(PreviewMediaInfo.format(movie.getCalculatedVideoFormat()));pill(PreviewMediaInfo.format(movie.getCalculatedBestAudioFormat()));
-          info(row,"","Source  ·  "+source(movie.getFileUri())+"     File  ·  "+shortFile(movie.getFilenameNonCryptic()));
-          List<String> formats=new ArrayList<>();String video=PreviewMediaInfo.format(movie.getCalculatedVideoFormat()),audio=PreviewMediaInfo.format(movie.getCalculatedBestAudioFormat());if(video!=null)formats.add("Video  ·  "+video);if(audio!=null)formats.add("Audio  ·  "+audio);if(!formats.isEmpty())info(row,"",android.text.TextUtils.join("     ",formats));}
+        }
         ((View)details.getParent()).setVisibility(row.getChildCount()==0?GONE:VISIBLE);
     }
     private void pill(String value){if(value==null||value.isEmpty())return;TextView label=text(value,10);label.setSingleLine(true);label.setPadding(dp(6),dp(3),dp(6),dp(3));GradientDrawable badge=new GradientDrawable();badge.setColor(0x50142634);badge.setCornerRadius(dp(3));badge.setStroke(dp(1),0xff648196);label.setBackground(badge);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.rightMargin=dp(6);pills.addView(label,lp);}
 
     private void person(LinearLayout people,String name,String role){
-        LinearLayout card=new LinearLayout(getContext());card.setOrientation(1);card.setBackgroundResource(com.archos.mediacenter.video.R.drawable.preview_surface_focus);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(dp(6),dp(6),dp(6),dp(8));
+        LinearLayout card=new LinearLayout(getContext());card.setOrientation(0);card.setGravity(Gravity.CENTER_VERTICAL);card.setBackgroundResource(com.archos.mediacenter.video.R.drawable.preview_surface_focus);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(dp(6),dp(6),dp(6),dp(8));
         // The existing scraper stores names/roles but no portrait URLs. Use the real Nova asset.
-        ImageView portrait=new ImageView(getContext());portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);portraits.put(name,portrait);portrait.setScaleType(ImageView.ScaleType.FIT_CENTER);card.addView(portrait,new LinearLayout.LayoutParams(-1,dp(90)));
-        TextView label=text(name,12);label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);card.addView(label);TextView detail=text(role==null?"":role,10);detail.setMaxLines(1);detail.setTextColor(0xffa4b6c7);card.addView(detail);card.setContentDescription(name+" "+safe(role));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(105),dp(143));lp.rightMargin=dp(10);people.addView(card,lp);
+        ImageView portrait=new ImageView(getContext());portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);portraits.put(name,portrait);portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);portrait.setClipToOutline(true);portrait.setOutlineProvider(new ViewOutlineProvider(){@Override public void getOutline(View view,android.graphics.Outline outline){outline.setOval(0,0,view.getWidth(),view.getHeight());}});card.addView(portrait,new LinearLayout.LayoutParams(dp(42),dp(42)));
+        LinearLayout words=new LinearLayout(getContext());words.setOrientation(1);words.setPadding(dp(8),0,0,0);card.addView(words,new LinearLayout.LayoutParams(0,-2,1));
+        TextView label=text(name,12);label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);words.addView(label);TextView detail=text(role==null?"":role,10);detail.setMaxLines(1);detail.setTextColor(0xffa4b6c7);words.addView(detail);card.setContentDescription(name+" "+safe(role));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(165),dp(62));lp.rightMargin=dp(10);people.addView(card,lp);
     }
-    public void bindShow(Tvshow value,Runnable playAction){show=value;showPlay=playAction;title.setText(value.getName());plot.setText(value.getPlot());meta.setText((value.getYear()>0?value.getYear()+" · ":"")+value.getSeasonCount()+(value.getSeasonCount()==1?" season":" seasons")+" · "+value.getEpisodeCount()+(value.getEpisodeCount()==1?" episode":" episodes"));renderDetails();}
+    private void bindPoster(Base value){
+        com.squareup.picasso.Picasso.get().cancelRequest(poster);poster.setImageDrawable(null);
+        if(value.getPosterUri()!=null)com.squareup.picasso.Picasso.get().load(value.getPosterUri()).resize(dp(142),dp(213)).centerInside().noFade().into(poster);
+        poster.setContentDescription(value.getName());
+    }
+    public void bindShow(Tvshow value,Runnable playAction){show=value;showPlay=playAction;bindPoster(value);title.setText(value.getName());plot.setText(value.getPlot());meta.setText((value.getYear()>0?value.getYear()+" · ":"")+value.getSeasonCount()+(value.getSeasonCount()==1?" season":" seasons")+" · "+value.getEpisodeCount()+(value.getEpisodeCount()==1?" episode":" episodes"));renderDetails();}
     public void setSeason(int number,List<Episode> values){
         View focused=findFocus();Object old=focused==null?null:focused.getTag();int y=getScrollY();seasons.put(number,values);episodes.removeAllViews();((View)episodes.getParent()).setVisibility(VISIBLE);
         for(Map.Entry<Integer,List<Episode>> season:seasons.entrySet()){

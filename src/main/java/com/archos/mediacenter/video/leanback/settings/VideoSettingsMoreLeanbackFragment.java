@@ -80,6 +80,14 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
     }
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
+        @Override public void onDisplayPreferenceDialog(androidx.preference.Preference pref){
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&PreviewPreferenceDialogs.show(this,pref))return;
+            super.onDisplayPreferenceDialog(pref);
+        }
+        @Override public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
+            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.grid(requireContext()):super.onCreateRecyclerView(inflater,parent,state);
+        }
+
         @Override protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen){return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.adapter(screen):super.onCreateAdapter(screen);}
 
 

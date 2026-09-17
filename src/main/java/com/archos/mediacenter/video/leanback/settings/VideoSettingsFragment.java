@@ -83,6 +83,14 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
     }
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
+        @Override public void onDisplayPreferenceDialog(androidx.preference.Preference pref){
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&PreviewPreferenceDialogs.show(this,pref))return;
+            super.onDisplayPreferenceDialog(pref);
+        }
+
+        @Override public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
+            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.grid(requireContext()):super.onCreateRecyclerView(inflater,parent,state);
+        }
         @Override public android.view.View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup container,Bundle state){
             android.view.View nativeView=super.onCreateView(inflater,container,state);
             if(!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
@@ -107,7 +115,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
             if (getListView() != null) {
                 getListView().setBackgroundColor(ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
             }
-            if (requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false)) {
+            if (!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false)) {
                 scrollToPreference("streaming_category");
                 requireActivity().getIntent().removeExtra("show_streaming_settings");
             }

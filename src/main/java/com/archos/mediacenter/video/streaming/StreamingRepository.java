@@ -23,7 +23,7 @@ import okhttp3.Response;
 /** Country-specific availability. No rental/purchase offers are exposed to the UI. */
 public final class StreamingRepository {
     /** Streaming launch integration is paused for this testing edition. */
-    public static final boolean LINKS_AVAILABLE = false;
+    public static final boolean LINKS_AVAILABLE = true;
     public static final String ENABLED = "streaming_enabled";
     public static final String COUNTRY = "streaming_country";
     public static final String PROVIDERS = "streaming_providers_";

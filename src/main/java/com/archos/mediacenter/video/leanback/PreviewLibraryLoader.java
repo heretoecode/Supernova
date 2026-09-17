@@ -28,6 +28,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_BEST_AUDIOTRACK_FORMAT, VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_VIDEO_FORMAT,
             VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_FILE, VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL,
             VideoStore.Video.VideoColumns.DATE_ADDED, VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID,
+            VideoStore.Video.VideoColumns.DATE_MODIFIED, VideoStore.Video.VideoColumns.ARCHOS_VIDEO_BITRATE,
             VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE, VideoStore.Video.VideoColumns.SCRAPER_S_PREMIERED, VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID,
             VideoStore.Video.VideoColumns.SCRAPER_M_GENRES, VideoStore.Video.VideoColumns.SCRAPER_S_GENRES});
     }
@@ -37,10 +38,18 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public final String genres;
         public String secondary="";public boolean active;public long playedAt;
         public String releaseDate=""; public long onlineId; public transient android.net.Uri backdrop;
+        public long bytes, runtime, modified, bitrate;
+        public int episodes, seasons, knownSizes, files;
+        public String resolution="", hdr="", audio="", codec="", path="", container="";
         public Entry(Base media, long added, long show, String genres) {
             this.media=media;this.playedAt=media instanceof Video?((Video)media).getLastPlayed():0; this.added=added; this.show=show; this.genres=genres == null ? "" : genres;
             if(media instanceof Movie) onlineId=((Movie)media).getOnlineId();
             if(media instanceof Video) backdrop=((Video)media).getPreviewBackdrop();
+            if(media instanceof Video){Video v=(Video)media;files=1;bytes=Math.max(0,v.getSize());knownSizes=v.getSize()>0?1:0;runtime=Math.max(0,v.getDurationMs());path=v.getFilePath();
+                int w=v.getMeasuredWidth(),h=v.getMeasuredHeight();resolution=w>=3840||h>=2160?"4K":w>=1728||h>=1040?"1080p":w>=1200||h>=720?"720p":w>0&&h>0?"SD":"";
+                codec=com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(v.getCalculatedVideoFormat());audio=com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(v.getCalculatedBestAudioFormat());
+                String name=v.getFilenameNonCryptic();int dot=name==null?-1:name.lastIndexOf('.');if(dot>=0&&name.length()-dot<=6)container=name.substring(dot+1).toUpperCase(Locale.ROOT);
+            }
         }
         public String key() { return media instanceof Episode ? "s"+show : media instanceof Tvshow ? "s"+((Tvshow)media).getTvshowId() : "v"+((Video)media).getId(); }
         private void writeObject(java.io.ObjectOutputStream out)throws java.io.IOException{out.defaultWriteObject();out.writeObject(backdrop==null?null:backdrop.toString());}
@@ -77,6 +86,13 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 if(group.stream().anyMatch(e->((Video)e.media).getLastPlayed()>0 || watched((Video)e.media))){n.playedAt=group.stream().mapToLong(e->e.playedAt).max().orElse(0);s.continuingShows.add(n);}
             }
         }
+        for(Entry show:s.shows){show.files=0;show.bytes=0;show.runtime=0;show.knownSizes=0;show.modified=0;List<Entry> group=groups.get(show.show);if(group==null)continue;
+            Set<String> episodeKeys=new HashSet<>();Set<Integer> seasonKeys=new HashSet<>();Set<String> resolutions=new TreeSet<>(),audios=new TreeSet<>(),codecs=new TreeSet<>();
+            for(Entry e:group){Episode ep=(Episode)e.media;episodeKeys.add(ep.getSeasonNumber()+":"+ep.getEpisodeNumber());seasonKeys.add(ep.getSeasonNumber());show.files++;show.bytes+=e.bytes;show.knownSizes+=e.knownSizes;show.runtime+=e.runtime;show.modified=Math.max(show.modified,e.modified);
+                if(!e.resolution.isEmpty())resolutions.add(e.resolution);if(!e.audio.isEmpty())audios.add(e.audio);if(!e.codec.isEmpty())codecs.add(e.codec);
+            }
+            show.episodes=group.size();show.seasons=seasonKeys.size();show.resolution=resolutions.size()==1?resolutions.iterator().next():resolutions.isEmpty()?"":"Mixed";show.audio=audios.size()==1?audios.iterator().next():audios.isEmpty()?"":"Mixed";show.codec=codecs.size()==1?codecs.iterator().next():codecs.isEmpty()?"":"Mixed";
+        }
         s.recent.sort(Comparator.comparingLong((Entry e)->e.added).reversed());
         s.movies.sort(Comparator.comparingLong((Entry e)->e.added).reversed());s.shows.sort(Comparator.comparingLong((Entry e)->e.added).reversed());
         s.played.sort(Comparator.comparingLong((Entry e)->((Video)e.media).getLastPlayed()).reversed());
@@ -93,9 +109,9 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     public static volatile Snapshot cached;
     private static boolean cachePrivate;
     public static Snapshot memoryCache(){return cachePrivate==com.archos.mediacenter.video.player.PrivateMode.isActive()?cached:null;}
-    public static Snapshot readCache(Context c){if(memoryCache()!=null)return memoryCache();if(com.archos.mediacenter.video.player.PrivateMode.isActive())return null;try(java.io.ObjectInputStream in=new java.io.ObjectInputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(new java.io.File(c.getCacheDir(),"preview-library-v37"))))){Snapshot s=(Snapshot)in.readObject();for(List<Entry> list:java.util.Arrays.asList(s.movies,s.shows,s.recent,s.played,s.watched,s.continuingMovies,s.continuingShows,s.episodes))for(Entry e:list)if(e.media instanceof Video)e.backdrop=((Video)e.media).getPreviewBackdrop();return s;}catch(Exception unavailable){return null;}}
+    public static Snapshot readCache(Context c){if(memoryCache()!=null)return memoryCache();if(com.archos.mediacenter.video.player.PrivateMode.isActive())return null;try(java.io.ObjectInputStream in=new java.io.ObjectInputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(new java.io.File(c.getCacheDir(),"preview-library-v40"))))){Snapshot s=(Snapshot)in.readObject();for(List<Entry> list:java.util.Arrays.asList(s.movies,s.shows,s.recent,s.played,s.watched,s.continuingMovies,s.continuingShows,s.episodes))for(Entry e:list)if(e.media instanceof Video)e.backdrop=((Video)e.media).getPreviewBackdrop();return s;}catch(Exception unavailable){return null;}}
     private void writeCache(Snapshot value){if(com.archos.mediacenter.video.player.PrivateMode.isActive())return;synchronized(CACHE_LOCK){writeCacheLocked(value);}}
-    private void writeCacheLocked(Snapshot value){android.util.AtomicFile file=new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(),"preview-library-v37"));java.io.FileOutputStream stream=null;try{stream=file.startWrite();java.io.ObjectOutputStream out=new java.io.ObjectOutputStream(stream);out.writeObject(value);out.flush();file.finishWrite(stream);}catch(Exception failure){if(stream!=null)file.failWrite(stream);android.util.Log.d("NovaPreview","Snapshot cache unavailable",failure);}}
+    private void writeCacheLocked(Snapshot value){android.util.AtomicFile file=new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(),"preview-library-v40"));java.io.FileOutputStream stream=null;try{stream=file.startWrite();java.io.ObjectOutputStream out=new java.io.ObjectOutputStream(stream);out.writeObject(value);out.flush();file.finishWrite(stream);}catch(Exception failure){if(stream!=null)file.failWrite(stream);android.util.Log.d("NovaPreview","Snapshot cache unavailable",failure);}}
 
     public static void recordCheckpoint(Context context,com.archos.mediacenter.utils.videodb.VideoDbInfo info,boolean completed){
         if(!info.isShow||info.scraperShowId==null||info.scraperShowId.isEmpty()||info.scraperSeasonNr<0||info.scraperEpisodeNr<1)return;
@@ -151,6 +167,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 if(backdrop!=null && !backdrop.isEmpty()) v.setPreviewBackdrop(android.net.Uri.fromFile(new java.io.File(backdrop)).toString());
                 else { String remote=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL)); if(remote!=null && (remote.startsWith("https://") || remote.startsWith("http://")))v.setPreviewBackdrop(remote); }
                 Entry entry=new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg));
+                entry.modified=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATE_MODIFIED));entry.bitrate=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.ARCHOS_VIDEO_BITRATE));
                 entry.releaseDate=c.getString(c.getColumnIndexOrThrow(v instanceof Episode?VideoStore.Video.VideoColumns.SCRAPER_S_PREMIERED:VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE));
                 if(v instanceof Episode)entry.onlineId=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID));
                 videos.add(entry); }
