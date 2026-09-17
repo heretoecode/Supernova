@@ -128,6 +128,7 @@ target(root,'Search',True);root=capture('search-empty')
 query=next(n for n in root.iter('node') if n.get('class')=='android.widget.EditText')
 x1,y1,x2,y2=map(int,re.findall(r'\d+',query.get('bounds')))
 adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','text','nova40-smoke-no-match');time.sleep(1)
+adb('shell','input','keyevent','66');time.sleep(.4)
 root=capture('search-query')
 assert any(n.get('text')=='No matching library titles' for n in root.iter('node')), 'Local query failed'
 logs=adb('logcat','-d');(out/'targeted-routes-logcat.txt').write_bytes(logs)

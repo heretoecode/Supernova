@@ -31,7 +31,7 @@ public final class PreviewSources extends FrameLayout {
    java.util.List<String> labels=new ArrayList<>();readLabels(nativeView,labels);
    LinearLayout tile=new LinearLayout(getContext());tile.setGravity(Gravity.CENTER_VERTICAL);tile.setPadding(dp(12),dp(8),dp(12),dp(8));
    ImageView icon=new ImageView(getContext());ImageView original=nativeView.findViewById(com.archos.mediacenter.video.R.id.image);icon.setImageDrawable(original!=null&&original.getDrawable()!=null?original.getDrawable():new PreviewIcon("network"));icon.setScaleType(ImageView.ScaleType.FIT_CENTER);tile.addView(icon,new LinearLayout.LayoutParams(dp(30),dp(30)));
-   LinearLayout text=new LinearLayout(getContext());text.setOrientation(1);text.setPadding(dp(12),0,0,0);tile.addView(text,new LinearLayout.LayoutParams(0,-2,1));
+   LinearLayout text=new LinearLayout(getContext());text.setOrientation(android.widget.LinearLayout.VERTICAL);text.setPadding(dp(12),0,0,0);tile.addView(text,new LinearLayout.LayoutParams(0,-2,1));
    for(int i=0;i<Math.min(2,labels.size());i++){TextView label=new TextView(getContext());label.setText(labels.get(i));label.setTextSize(i==0?13:10);label.setTextColor(i==0?0xffffffff:0xffa7bfd0);label.setSingleLine(true);label.setEllipsize(android.text.TextUtils.TruncateAt.END);text.addView(label);}
    card.addView(tile,new FrameLayout.LayoutParams(-1,dp(76)));card.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);card.setFocusable(true);card.setBackground(PreviewDialog.surface(getContext(),false));card.setForeground(PreviewDialog.focus(getContext()));card.setOnClickListener(v->click.onItemClicked(h.nativeHolder,item.value,null,item.row));}
 

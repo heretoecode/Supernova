@@ -92,7 +92,7 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
             android.view.View original=super.onCreateView(inflater,container,state);
             if(!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return original;
             androidx.recyclerview.widget.RecyclerView list=getListView();if(list.getParent() instanceof android.view.ViewGroup)((android.view.ViewGroup)list.getParent()).removeView(list);
-            android.widget.LinearLayout panel=new android.widget.LinearLayout(requireContext());panel.setOrientation(1);int pad=com.archos.mediacenter.video.leanback.PreviewDialog.dp(requireContext(),28);panel.setPadding(pad,pad/2,pad,pad);panel.setBackgroundColor(0xff0b1b29);
+            android.widget.LinearLayout panel=new android.widget.LinearLayout(requireContext());panel.setOrientation(android.widget.LinearLayout.VERTICAL);int pad=com.archos.mediacenter.video.leanback.PreviewDialog.dp(requireContext(),28);panel.setPadding(pad,pad/2,pad,pad);panel.setBackgroundColor(0xff0b1b29);
             android.widget.TextView title=new android.widget.TextView(requireContext());title.setText("Home & Discovery · More options");title.setTextColor(0xffc8e2f3);title.setTextSize(20);title.setPadding(0,0,0,pad/2);panel.addView(title);panel.addView(list,new android.widget.LinearLayout.LayoutParams(-1,0,1));return panel;
         }
 

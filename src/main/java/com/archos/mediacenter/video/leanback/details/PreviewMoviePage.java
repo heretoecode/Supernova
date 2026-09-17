@@ -72,17 +72,22 @@ public final class PreviewMoviePage extends ScrollView {
     private LinearLayout section(String name){LinearLayout section=new LinearLayout(getContext());section.setOrientation(LinearLayout.VERTICAL);section.setPadding(0,dp(14),0,dp(8));TextView label=text(name,19);label.setTextColor(0xff9ed4f7);section.addView(label);LinearLayout content=new LinearLayout(getContext());content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(10),0,0);section.addView(content);body.addView(section);return content;}
     public void bind(Video value){movie=value;title.setText(movie.getName());plot.setText(movie.getDescriptionBody());
         bindPoster(movie);
+        play.setText(movie.getResumeMs()>0?"Resume":"Play");
+        if(movie.getPreviewBackdrop()!=null)artwork.accept(movie.getPreviewBackdrop());renderDetails();
+    }
+    private void renderHumanMetadata(){if(movie==null)return;
         List<String> metadata=new ArrayList<>();
         if(movie instanceof Episode){Episode episode=(Episode)movie;title.setText(safe(episode.getShowName())+" — "+safe(episode.getEpisodeName()));
             if(episode.getSeasonNumber()>=0&&episode.getEpisodeNumber()>0)metadata.add("S"+episode.getSeasonNumber()+" E"+episode.getEpisodeNumber());
             if(episode.getEpisodeDate()>0)metadata.add(episode.getEpisodeDateFormatted());
+            else if(tags instanceof EpisodeTags){Date aired=((EpisodeTags)tags).getAired();if(aired!=null&&aired.getTime()>0)metadata.add(java.text.DateFormat.getDateInstance().format(aired));}
         }else if(movie instanceof Movie&&((Movie)movie).getYear()>0)metadata.add(String.valueOf(((Movie)movie).getYear()));
-        if(movie.getDurationMs()>0)metadata.add(movie.getDurationMs()/60000+" min");
+        long minutes=movie.getDurationMs()/60000;
+        if(minutes<=0&&movie instanceof Episode&&tags instanceof EpisodeTags)minutes=tags.getRuntime(java.util.concurrent.TimeUnit.MINUTES);
+        if(minutes>0)metadata.add(minutes+" min");
         String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;
         if(certificate!=null&&!certificate.isEmpty())metadata.add(certificate);
         meta.setText(android.text.TextUtils.join("  ·  ",metadata));meta.setVisibility(metadata.isEmpty()?GONE:VISIBLE);
-        play.setText(movie.getResumeMs()>0?"Resume":"Play");
-        if(movie.getPreviewBackdrop()!=null)artwork.accept(movie.getPreviewBackdrop());renderDetails();
     }
     public void setTags(BaseTags value,List<ScraperTrailer> videos,List<ScraperImage> backdrops){tags=value;trailerList=videos==null?Collections.emptyList():videos;
         if(backdrops!=null&&!backdrops.isEmpty()){ScraperImage image=backdrops.get(0);java.io.File file=image.getLargeFileF();if(file!=null&&file.exists()){artwork.accept(Uri.fromFile(file));if(movie!=null)movie.setPreviewBackdrop(Uri.fromFile(file).toString());}else if(image.getLargeUrl()!=null)artwork.accept(Uri.parse(image.getLargeUrl()));}
@@ -94,7 +99,7 @@ public final class PreviewMoviePage extends ScrollView {
         PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderDetails();renderRelated();
     }
     public void setSnapshot(Snapshot value){snapshot=value;renderRelated();}
-    private void renderDetails(){observeActions();if(movie==null&&show==null)return;details.removeAllViews();
+    private void renderDetails(){observeActions();if(movie==null&&show==null)return;renderHumanMetadata();details.removeAllViews();
         LinearLayout row=new LinearLayout(getContext());row.setOrientation(LinearLayout.VERTICAL);details.addView(row);
         String genre=tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():"";
         if(safe(genre).isEmpty()&&tags instanceof EpisodeTags){ShowTags parent=((EpisodeTags)tags).getShowTags();if(parent!=null)genre=parent.getGenresFormatted();}
@@ -116,10 +121,10 @@ public final class PreviewMoviePage extends ScrollView {
     private void pill(String value){if(value==null||value.isEmpty())return;TextView label=text(value,10);label.setSingleLine(true);label.setPadding(dp(6),dp(3),dp(6),dp(3));GradientDrawable badge=new GradientDrawable();badge.setColor(0x50142634);badge.setCornerRadius(dp(3));badge.setStroke(dp(1),0xff648196);label.setBackground(badge);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.rightMargin=dp(6);pills.addView(label,lp);}
 
     private void person(LinearLayout people,String name,String role){
-        LinearLayout card=new LinearLayout(getContext());card.setOrientation(0);card.setGravity(Gravity.CENTER_VERTICAL);card.setBackgroundResource(com.archos.mediacenter.video.R.drawable.preview_surface_focus);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(dp(6),dp(6),dp(6),dp(8));
+        LinearLayout card=new LinearLayout(getContext());card.setOrientation(android.widget.LinearLayout.HORIZONTAL);card.setGravity(Gravity.CENTER_VERTICAL);card.setBackgroundResource(com.archos.mediacenter.video.R.drawable.preview_surface_focus);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(dp(6),dp(6),dp(6),dp(8));
         // The existing scraper stores names/roles but no portrait URLs. Use the real Nova asset.
         ImageView portrait=new ImageView(getContext());portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);portraits.put(name,portrait);portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);portrait.setClipToOutline(true);portrait.setOutlineProvider(new ViewOutlineProvider(){@Override public void getOutline(View view,android.graphics.Outline outline){outline.setOval(0,0,view.getWidth(),view.getHeight());}});card.addView(portrait,new LinearLayout.LayoutParams(dp(42),dp(42)));
-        LinearLayout words=new LinearLayout(getContext());words.setOrientation(1);words.setPadding(dp(8),0,0,0);card.addView(words,new LinearLayout.LayoutParams(0,-2,1));
+        LinearLayout words=new LinearLayout(getContext());words.setOrientation(android.widget.LinearLayout.VERTICAL);words.setPadding(dp(8),0,0,0);card.addView(words,new LinearLayout.LayoutParams(0,-2,1));
         TextView label=text(name,12);label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);words.addView(label);TextView detail=text(role==null?"":role,10);detail.setMaxLines(1);detail.setTextColor(0xffa4b6c7);words.addView(detail);card.setContentDescription(name+" "+safe(role));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(165),dp(62));lp.rightMargin=dp(10);people.addView(card,lp);
     }
     private void bindPoster(Base value){

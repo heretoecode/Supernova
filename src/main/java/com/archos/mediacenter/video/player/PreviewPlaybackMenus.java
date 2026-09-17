@@ -38,7 +38,7 @@ final class PreviewPlaybackMenus {
   for(int i=0;i<menu.getChildCount();i++){
    View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
    boolean other=subtitles&&Boolean.FALSE.equals(item.getTag());if(other)hasOther=true;if(otherLanguages?!other:other)continue;
-   actions.add(item);labels.add(android.text.Html.fromHtml(item.getText(),0).toString()+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
+   actions.add(item);labels.add(androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString()+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
   }
   if(hasOther&&!otherLanguages){actions.add(null);labels.add("Other languages");}
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
