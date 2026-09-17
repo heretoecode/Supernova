@@ -6,6 +6,7 @@ import com.archos.mediacenter.video.leanback.PreviewDialog;
 
 final class PreviewBuildInfo {
  static void install(PreferenceFragmentCompat fragment,PreferenceCategory about){
+  Preference build=about.findPreference("preferences_version");if(build!=null){build.setSummary(BuildConfig.VERSION_NAME);build.setOnPreferenceClickListener(p->{PreviewDialog.read(fragment.requireContext(),"NOVA Preview · Build information",describe());return true;});}
   if(about.findPreference("preview_build_info")!=null)return;
   Preference identity=new Preference(fragment.requireContext());identity.setKey("preview_build_info");identity.setTitle("Build information");identity.setSummary(BuildConfig.VERSION_NAME+" · "+BuildConfig.BUILD_TYPE);
   identity.setOnPreferenceClickListener(p->{PreviewDialog.read(fragment.requireContext(),"NOVA Preview · Build information",describe());return true;});about.addPreference(identity);
