@@ -337,6 +337,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         mPreferencesFragment = preferencesFragment;
         backupDestination = preferencesFragment.registerForActivityResult(new ActivityResultContracts.CreateDocument("application/zip"), uri -> {
             if (uri == null) return;
+            try{getContext().getContentResolver().takePersistableUriPermission(uri,Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_READ_URI_PERMISSION);}catch(SecurityException transientGrant){android.util.Log.d("NovaPreview","Backup provider offers a temporary grant");}
             Intent intent = new Intent(MediaLibraryBackupService.ACTION_EXPORT, null, getActivity(), MediaLibraryBackupService.class);
             intent.putExtra(MediaLibraryBackupService.EXTRA_EXPORT_URI, uri.toString());
             getContext().startService(intent);

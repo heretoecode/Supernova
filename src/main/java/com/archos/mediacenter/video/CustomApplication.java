@@ -1203,14 +1203,15 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         if(!isForeground||!prefs.getBoolean("try_new_ui",false))return;
         long now=System.currentTimeMillis(),period=NetworkAutoRefresh.getRescanPeriod(CustomApplication.this);
         if(previewScanOnReturn&&previewRefreshRequestedWallTime>0&&prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)>=previewRefreshRequestedWallTime)previewScanOnReturn=false;
+        android.util.Log.d("SupernovaScan","foreground due-check: startup="+previewScanOnReturn+" periodMs="+period+" lastScan="+prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)+" busy="+com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive());
         boolean due=previewScanOnReturn&&NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)||period>0&&now-prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)>=period;
         if(due&&(NetworkState.isLocalNetworkConnectedOrVpnMobileEnabled(CustomApplication.this)||NetworkState.isNetworkConnected(CustomApplication.this))&&!com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()&&com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()==0&&(previewRefreshAt==0||android.os.SystemClock.elapsedRealtime()-previewRefreshAt>=60000)){
-            previewRefreshAt=android.os.SystemClock.elapsedRealtime();previewRefreshRequestedWallTime=now;NetworkAutoRefresh.forceRescan(CustomApplication.this);
+            previewRefreshAt=android.os.SystemClock.elapsedRealtime();previewRefreshRequestedWallTime=now;android.util.Log.i("SupernovaScan","Requesting configured automatic indexed-source scan");NetworkAutoRefresh.forceRescan(CustomApplication.this);
         }
         // Retry after an offline/busy launch and honour the existing periodic schedule while open.
         if(previewScanOnReturn||period>0)previewRefreshHandler.postDelayed(this,30000);
     }};
-    private void requestPreviewNetworkRefresh(){if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))return;previewScanOnReturn=NetworkAutoRefresh.autoRescanAtStart(this);previewRefreshHandler.removeCallbacks(previewRefresh);previewRefreshHandler.postDelayed(previewRefresh,1500);}
+    private void requestPreviewNetworkRefresh(){if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))return;previewScanOnReturn=NetworkAutoRefresh.autoRescanAtStart(this);previewRefreshRequestedWallTime=0;previewRefreshHandler.removeCallbacks(previewRefresh);previewRefreshHandler.postDelayed(previewRefresh,1500);}
 
     private void addNetworkListener() {
         if (networkState == null) networkState = NetworkState.instance(mContext);

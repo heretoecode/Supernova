@@ -327,9 +327,10 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         });
     }
 
+    private java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> journeyEntries(java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries){if(mTvshow.getShowTags()!=null)for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry:entries)entry.onlineId=mTvshow.getShowTags().getOnlineId();return entries;}
     private void playEpisode() {
         if(preview!=null&&mSeasonAdapters!=null){java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries=new java.util.ArrayList<>();for(int i=0;i<mSeasonAdapters.size();i++){CursorObjectAdapter a=mSeasonAdapters.valueAt(i);for(int j=0;j<a.size();j++)entries.add(new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry((Video)a.get(j),0,mTvshow.getTvshowId(),""));}
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry next=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.next(entries);if(next==null&&!entries.isEmpty())next=entries.get(0);if(next!=null&&mTvshow.getShowTags()!=null&&mTvshow.getShowTags().getDefaultBackdrop()!=null){java.io.File backdrop=mTvshow.getShowTags().getDefaultBackdrop().getLargeFileF();if(backdrop!=null&&backdrop.exists())((Video)next.media).setPreviewBackdrop(android.net.Uri.fromFile(backdrop).toString());}if(next!=null)PlayUtils.startVideo(getActivity(),(Video)next.media,PlayerActivity.RESUME_FROM_LAST_POS,false,-1,null,-1);return;
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry next=com.archos.mediacenter.video.leanback.PreviewSeriesJourney.select(getActivity(),journeyEntries(entries)).episode;if(next==null&&!entries.isEmpty())next=entries.get(0);if(next!=null&&mTvshow.getShowTags()!=null&&mTvshow.getShowTags().getDefaultBackdrop()!=null){java.io.File backdrop=mTvshow.getShowTags().getDefaultBackdrop().getLargeFileF();if(backdrop!=null&&backdrop.exists())((Video)next.media).setPreviewBackdrop(android.net.Uri.fromFile(backdrop).toString());}if(next!=null)PlayUtils.startVideo(getActivity(),(Video)next.media,PlayerActivity.RESUME_FROM_LAST_POS,false,-1,null,-1);return;
         }
         if (mSeasonAdapters != null) {
             Episode resumeEpisode = null;

@@ -969,7 +969,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 Integer.parseInt(mPreferences.getString(KEY_PLAYER_AUTO_FORMAT, "-1")));
         
         //Set up projector mode if we need it, otherwise dont even call.
-        if (mPreferences.getBoolean(KEY_PLAYER_PROJECTOR_MODE, false)) mSurfaceController.setProjectorMode(true);
+        mSurfaceController.setProjectorMode(mPreferences.getBoolean(KEY_PLAYER_PROJECTOR_MODE, false));
         
         if (log.isDebugEnabled()) log.debug("onStart: Setting audio transformer");
         if (LibAvos.isAvailable()) {

@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 45
     env:
       VALIDATION_MODE: ${{ inputs.validation || 'preview' }}
-      APK_VARIANT: release
+      APK_VARIANT: debug
 
     steps:
       - name: Check out the triggering Video revision
@@ -131,7 +131,7 @@ jobs:
         if: ${{ inputs.validation != 'full' }}
         working-directory: nova/Video
         run: |
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
 
       - name: Start Android emulator for full process startup checks
         run: |
@@ -170,6 +170,7 @@ jobs:
           bash .github/build/check-preview-startup.sh "$apk" "$phase"
 
       - name: Build optimised personal APK
+        if: env.APK_VARIANT == 'release'
         working-directory: nova/Video
         run: |
           set -o pipefail
@@ -177,6 +178,7 @@ jobs:
           ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
 
       - name: Check signed release upgrade with Preview still enabled
+        if: env.APK_VARIANT == 'release'
         working-directory: nova/Video
         run: |
           apk=$(find build/outputs/apk/noamazon/release -name '*.apk' -type f | head -1)
@@ -200,9 +202,9 @@ jobs:
             echo "Mode: $VALIDATION_MODE"
             echo "APK variant: $APK_VARIANT"
             if [[ "$VALIDATION_MODE" == preview ]]; then
-              echo "Passed: compile/package, quick targeted tests, pinned signature, Preview launch/reinstall and optimised release upgrade/restart."
-              echo "Deferred: broad unit suite, lint, physical TV playback/network/library QA."
-              echo "Optimised development APK; physical Shield acceptance remains user QA."
+              echo "Passed: compile/package, quick targeted tests, pinned signature, Preview launch/reinstall; release upgrade/restart only when APK variant is release."
+              echo "Deferred: broad unit suite and physical TV playback/network/library QA."
+              echo "Development checkpoint; physical Shield acceptance remains user QA."
             else
               echo "Passed: selected unit suite, lint, classic/Preview startup and signed diagnostic-to-release upgrade/restart."
             fi

@@ -140,9 +140,9 @@ public class MediaLibraryBackupService extends Service {
                 String exportPath = exportMediaLibrary();
                 if (exportUri != null) {
                     try (java.io.InputStream in = new FileInputStream(exportPath);
-                         java.io.OutputStream out = getContentResolver().openOutputStream(android.net.Uri.parse(exportUri), "wt")) {
+                         java.io.OutputStream out = getContentResolver().openOutputStream(android.net.Uri.parse(exportUri), "w")) {
                         if (out == null) throw new IOException("Destination unavailable");
-                        byte[] data = new byte[8192]; int n; while ((n=in.read(data))!=-1) out.write(data,0,n);
+                        byte[] data = new byte[8192]; int n; long written=0;while ((n=in.read(data))!=-1){out.write(data,0,n);written+=n;}out.flush();if(written==0||written!=new File(exportPath).length())throw new IOException("Backup destination copy was incomplete");
                     }
                     exportPath = "selected location";
                 }
@@ -151,7 +151,7 @@ public class MediaLibraryBackupService extends Service {
                 nm.cancel(NOTIFICATION_ID);
             } catch (Exception e) {
                 log.error("startExport: error exporting media library", e);
-                showToast(getString(R.string.media_library_export_error));
+                showToast(getString(R.string.media_library_export_error)+" · "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
             } finally {
                 ServiceCompat.stopForeground(MediaLibraryBackupService.this, ServiceCompat.STOP_FOREGROUND_REMOVE);
                 stopSelf();
@@ -194,6 +194,7 @@ public class MediaLibraryBackupService extends Service {
 
     private String exportMediaLibrary() throws IOException {
         DbHolder holder = VideoDb.getHolder(this);
+        holder.get(); // Ensure even an empty library has its schema before snapshotting.
         holder.lockExclusive();
         try {
             holder.close();
@@ -207,7 +208,7 @@ public class MediaLibraryBackupService extends Service {
         // Get export directory
         File exportDir = getExternalFilesDir(null);
         if (exportDir == null) {
-            throw new IOException("External storage not available");
+            exportDir = new File(getFilesDir(),"backups");
         }
 
         // Flush database WAL to ensure consistency
@@ -227,7 +228,7 @@ public class MediaLibraryBackupService extends Service {
 
         if (log.isDebugEnabled()) log.debug("exportMediaLibrary: creating new backup file: {}", zipFile.getAbsolutePath());
 
-        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+        VerifiedBackup.write(zipFile, zos -> {
             try {
                 byte[] settings = SettingsBackup.encode(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this))
                     .getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -244,7 +245,7 @@ public class MediaLibraryBackupService extends Service {
                 if (log.isDebugEnabled()) log.debug("exportMediaLibrary: exporting media database");
                 addFileToZip(zos, dbFile, DATABASE_NAME);
             } else {
-                log.warn("exportMediaLibrary: media database file not found: {}", dbFile.getAbsolutePath());
+                throw new IOException("Media database is unavailable; backup was not created");
             }
 
             // Export credentials database (SMB/FTP/SFTP/WebDAV credentials)
@@ -291,7 +292,7 @@ public class MediaLibraryBackupService extends Service {
             if (pictureDir.exists()) {
                 addDirectoryToZip(zos, pictureDir, "scraper_pictures");
             }
-        }
+        });
 
         if (log.isDebugEnabled()) log.debug("exportMediaLibrary: export completed to {}", zipFile.getAbsolutePath());
         return zipFile.getAbsolutePath();
@@ -316,14 +317,14 @@ public class MediaLibraryBackupService extends Service {
             File dbFile = getDatabasePath(DATABASE_NAME);
             if (dbFile.exists()) {
                 if (log.isDebugEnabled()) log.debug("flushDatabaseWAL: opening database for WAL checkpoint");
-                SQLiteDatabase db = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null,
-                        SQLiteDatabase.OPEN_READWRITE);
+                try(SQLiteDatabase db = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null,
+                        SQLiteDatabase.OPEN_READWRITE)){
                 // Checkpoint WAL to main database file
                 if (log.isDebugEnabled()) log.debug("flushDatabaseWAL: executing PRAGMA wal_checkpoint(FULL)");
                 try (android.database.Cursor checkpoint = db.rawQuery("PRAGMA wal_checkpoint(FULL)", null)) {
                     if (!checkpoint.moveToFirst() || checkpoint.getInt(0) != 0) throw new IllegalStateException("Database is busy");
                 }
-                db.close();
+                }
                 if (log.isDebugEnabled()) log.debug("flushDatabaseWAL: database WAL flushed successfully");
             }
         } catch (Exception e) {
