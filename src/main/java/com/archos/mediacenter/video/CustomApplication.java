@@ -799,6 +799,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                 new FileSystemPersistence(BASEDIR));
 
         // NetworkAutoRefresh.init requires main thread (LifecycleRegistry.addObserver)
+        com.archos.mediacenter.video.leanback.PreviewAutoScanPolicy.initialise(this);
         NetworkAutoRefresh.init(this);
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(previewScanPreferences);
 

@@ -1484,7 +1484,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
     }
 
-    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null)audio.setVisibility(a.previewHasAudio()?View.VISIBLE:View.GONE);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.previewAdjacentEpisode(id==R.id.preview_previous?-1:1)!=null?View.VISIBLE:View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?a.previewAudioLabel():a.previewSubtitleLabel());}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null)title.setText(a.previewTitle());if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
+    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null)audio.setVisibility(a.previewHasAudio()?View.VISIBLE:View.GONE);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.previewAdjacentEpisode(id==R.id.preview_previous?-1:1)!=null?View.VISIBLE:View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?a.previewAudioLabel():a.previewSubtitleLabel());}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null){title.setText(a.previewTitle());a.bindPreviewTitleArtwork(title);}if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
             mVideoTitle.setText(title);
@@ -2866,7 +2866,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 if (duration > 0 && duration > position) {
                     long remainingMs = (long) ((duration - position) / speed);
                     String endClockText = getDateFormat().format(new Date(now + remainingMs));
-                    mClock.setText(experimentalUi()?currentClockText+" · Ends "+endClockText:Clock.formatTimeWithArrow(currentClockText, endClockText));
+                    mClock.setText(experimentalUi()?currentClockText+(mContext instanceof PlayerActivity&&!((PlayerActivity)mContext).previewEpisode().isEmpty()?" · Episode ends ":" · Ends ")+endClockText:Clock.formatTimeWithArrow(currentClockText, endClockText));
                     return;
                 }
             }

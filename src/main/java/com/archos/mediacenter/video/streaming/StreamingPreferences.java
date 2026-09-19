@@ -69,11 +69,13 @@ public final class StreamingPreferences {
         all.setOnPreferenceChangeListener((p, value) -> { showAll = (Boolean)value; populate(context); return true; });
         add(all);
         providers = new MultiSelectListPreference(context);
+        providers.setKey(StreamingRepository.PROVIDERS + StreamingRepository.country(context));
         providers.setTitle(R.string.streaming_providers);
         providers.setDialogTitle(R.string.streaming_providers);
         providers.setEntries(new CharSequence[0]); providers.setEntryValues(new CharSequence[0]);
         add(providers);
         preferred = new ListPreference(context);
+        preferred.setKey(StreamingRepository.PREFERRED + StreamingRepository.country(context));
         preferred.setTitle(R.string.streaming_preferred);
         preferred.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
         add(preferred);

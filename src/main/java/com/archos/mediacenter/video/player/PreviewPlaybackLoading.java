@@ -35,6 +35,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         TextView torrent=text("",13);torrent.setId(R.id.torrent_status);torrent.setVisibility(GONE);labels.addView(torrent);
         Object value=intent.getSerializableExtra(PlayerService.VIDEO);
         if(value instanceof Video){Video video=(Video)value;source=video.getUri();fileSource=video.getFileUri();cachedArtwork=video.getPreviewBackdrop();
+            com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title,video,true);
             title.setText(video instanceof Episode?((Episode)video).getShowName():video.getName());
             if(video instanceof Episode){Episode e=(Episode)video;episode.setText(String.format(Locale.getDefault(),"Season %d • Episode %d",e.getSeasonNumber(),e.getEpisodeNumber())+(video.getName()==null?"":" · "+video.getName()));}
         }
@@ -61,6 +62,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
     private void reveal(){waitingForFrame=false;animate().alpha(0f).setDuration(120).withEndAction(()->{setVisibility(GONE);setAlpha(1f);}).start();}
     void bind(VideoDbInfo info,String fallback){
         if(info==null){if(fallback!=null)title.setText(fallback);return;}
+        com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title,info);
         title.setText(info.isScraped&&info.scraperTitle!=null?info.scraperTitle:fallback);
         boolean show=info.isShow&&info.scraperSeasonNr>=0&&info.scraperEpisodeNr>=0;
         episode.setText(show?String.format(Locale.getDefault(),"Season %d • Episode %d",info.scraperSeasonNr,info.scraperEpisodeNr)+(info.scraperEpisodeName==null?"":" · "+info.scraperEpisodeName):"");episode.setVisibility(show?VISIBLE:GONE);

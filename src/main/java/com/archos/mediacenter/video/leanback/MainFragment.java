@@ -379,7 +379,10 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         int requestedTab=requireActivity().getIntent().getIntExtra("preview_tab",mActiveTab);
         if(requestedTab>=0&&requestedTab<4){mActiveTab=requestedTab;mPreviewPages.setTab(requestedTab);mNavigation.selectTab(requestedTab);}
         requireActivity().getIntent().removeExtra("preview_tab");
-        return mNavigation;
+        android.widget.FrameLayout composed=new android.widget.FrameLayout(requireContext());composed.addView(mNavigation,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        View launch=new View(requireContext());launch.setBackground(new PreviewStartupSurface(requireContext()));launch.setClickable(true);composed.addView(launch,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        mPreviewPages.setReadyListener(()->{if(launch.getParent()==null)return;composed.getViewTreeObserver().addOnPreDrawListener(new android.view.ViewTreeObserver.OnPreDrawListener(){public boolean onPreDraw(){composed.getViewTreeObserver().removeOnPreDrawListener(this);launch.animate().alpha(0f).setDuration(160).withEndAction(()->composed.removeView(launch)).start();return true;}});composed.invalidate();});
+        return composed;
     }
 
     public void consumePreviewNavigation() {
