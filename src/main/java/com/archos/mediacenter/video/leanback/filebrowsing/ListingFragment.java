@@ -259,7 +259,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         }
 
         if(mPrefs.getBoolean("try_new_ui",false)){
-            v.setBackgroundColor(0xff132638);
+            v.setBackground(com.archos.mediacenter.video.leanback.PreviewAccent.utility(requireContext()));
             if(mUri!=null){String path=mUri.getPath();setTitle((mUri.getHost()==null?"Files":mUri.getHost())+(path==null?"":"  ›  "+path.replace("/","  ›  ")));}
             if(mErrorMessage!=null)mErrorMessage.setTextColor(0xffb4cbe0);if(mErrorDetails!=null)mErrorDetails.setTextColor(0xff9db1c4);
         }
@@ -472,6 +472,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     }
 
     private static DisplayMode readDisplayModePref(SharedPreferences prefs) {
+        if(prefs.getBoolean("try_new_ui",false))return DisplayMode.LIST;
         int displayModeIndex = prefs.getInt(PREF_LISTING_DISPLAY_MODE, -1);
         if (displayModeIndex<0) {
             return DisplayMode.GRID; // default

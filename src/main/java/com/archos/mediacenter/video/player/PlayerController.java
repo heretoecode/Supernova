@@ -749,6 +749,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             if (title != null && mVideoTitle != null) title.setText(mVideoTitle.getText());
             refreshPreviewContext();
             for(int id:new int[]{R.id.preview_audio,R.id.preview_subtitles}){View control=mControllerViewLeft.findViewById(id);if(control instanceof android.widget.ImageButton)((android.widget.ImageButton)control).setImageDrawable(new com.archos.mediacenter.video.leanback.PreviewIcon(id==R.id.preview_audio?"audio":"subtitles"));if(control!=null)control.setOnClickListener(v->{if(mContext instanceof PlayerActivity){PlayerActivity a=(PlayerActivity)mContext;if(!mTVMenuAdapter.isCreated())a.createPlayerTVMenu();PreviewPlaybackMenus.show(a,mTVMenuAdapter,mContext.getString(id==R.id.preview_audio?R.string.menu_audio:R.string.menu_subtitles));}});}
+            for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);step.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));step.setOnClickListener(v->{if(PlayerService.sPlayerService!=null)PlayerService.sPlayerService.previewNavigateEpisode(id==R.id.preview_previous?-1:1);});}
+            for(int id:new int[]{R.id.preview_speed,R.id.preview_info}){View control=mControllerViewLeft.findViewById(id);control.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));control.setOnClickListener(v->{if(!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;if(id==R.id.preview_info)a.showVideoInfos();else{if(!mTVMenuAdapter.isCreated())a.createPlayerTVMenu();PreviewPlaybackMenus.show(a,mTVMenuAdapter,mContext.getString(R.string.player_pref_audio_speed_title));}});}
+            mProgress.setProgressTintList(android.content.res.ColorStateList.valueOf(com.archos.mediacenter.video.leanback.PreviewAccent.color(mContext)));
             View more = mControllerViewLeft.findViewById(R.id.preview_more);
             if (more != null) more.setOnClickListener(v -> {
                 if (!mTVMenuAdapter.isCreated() && mContext instanceof PlayerActivity)
@@ -1481,7 +1484,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
     }
 
-    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null)audio.setVisibility(a.previewHasAudio()?View.VISIBLE:View.GONE);TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null)title.setText(a.previewTitle());if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
+    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null)audio.setVisibility(a.previewHasAudio()?View.VISIBLE:View.GONE);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.previewAdjacentEpisode(id==R.id.preview_previous?-1:1)!=null?View.VISIBLE:View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?a.previewAudioLabel():a.previewSubtitleLabel());}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null)title.setText(a.previewTitle());if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
             mVideoTitle.setText(title);
@@ -2274,6 +2277,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             return true;
         }
         switchMode(true);
+        if(experimentalUi()&&event.getAction()==KeyEvent.ACTION_DOWN&&mControlBarShowing)sendFadeOut(SHOW_TIMEOUT);
         if(experimentalUi()&&mControlBarShowing&&mControlBar.hasFocus()&&(keyCode==KeyEvent.KEYCODE_DPAD_UP||keyCode==KeyEvent.KEYCODE_DPAD_DOWN)){if(event.getAction()==KeyEvent.ACTION_DOWN){if(keyCode==KeyEvent.KEYCODE_DPAD_UP){mProgress.setFocusable(true);mProgress.requestFocus();}else mPauseButton.requestFocus();}return true;}
         if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&mControlBar.hasFocus()&&(keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_DPAD_RIGHT||keyCode==KeyEvent.KEYCODE_DPAD_CENTER||keyCode==KeyEvent.KEYCODE_ENTER)){return false;}
         
@@ -2816,6 +2820,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public boolean handleBackPressed() {
+        if(experimentalUi()){if(PreviewPlaybackMenus.back())return true;if(mControlBarShowing){hide();return true;}}
         log.info("Back navigation: TV menu displayed={}, card dialog active={}",
                 isTVMenuDisplayed,
                 tvCardDialog != null && tvCardDialog.getVisibility() == View.VISIBLE);

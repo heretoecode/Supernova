@@ -13,12 +13,14 @@ import com.archos.mediacenter.video.player.tvmenu.*;
 final class PreviewPlaybackMenus {
  private static Dialog current;
  private static Runnable restoreParent;
- private static View origin;
+ private static View origin;private static int rootFocus=-1;
+ static boolean back(){if(current==null||!current.isShowing())return false;current.cancel();return true;}
  private static void dismissCurrent(){if(current!=null){current.setOnCancelListener(null);current.dismiss();current=null;}}
  static void close(){dismissCurrent();restoreParent=null;if(origin!=null&&origin.isAttachedToWindow())origin.requestFocus();origin=null;}
  static void show(PlayerActivity activity,TVMenuAdapter adapter,String target){
-  close();origin=activity.getCurrentFocus();
+  close();rootFocus=-1;origin=activity.getCurrentFocus();
   if(target!=null)for(TVCardView card:adapter.previewCards())if(target.equals(card.previewTitle())){select(activity,card,()->root(activity,adapter),-1,false);return;}
+  if(target!=null)for(TVCardView card:adapter.previewCards()){TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View view=menu.getChildAt(i);if(view instanceof TVMenuItem&&target.equals(((TVMenuItem)view).getText())&&view.isEnabled()){restoreParent=()->root(activity,adapter);((TVMenuItem)view).previewClick();return;}}}
   root(activity,adapter);
  }
  private static void root(PlayerActivity activity,TVMenuAdapter adapter){
@@ -28,7 +30,7 @@ final class PreviewPlaybackMenus {
   List<String> labels=new ArrayList<>();List<Runnable> actions=new ArrayList<>();TVMenuItem speedItem=null;
   for(TVCardView card:cards){labels.add(card.previewTitle());actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View v=menu.getChildAt(i);if(v instanceof TVMenuItem&&speed.equals(((TVMenuItem)v).getText())&&v.isEnabled())speedItem=(TVMenuItem)v;}}
   if(speedItem!=null){final TVMenuItem item=speedItem;int at=Math.min(2,labels.size());labels.add(at,speed);actions.add(at,()->{restoreParent=()->root(activity,adapter);item.previewClick();});}
-  current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),-1,Collections.emptySet(),false,n->actions.get(n).run());
+  current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),rootFocus,Collections.emptySet(),false,n->{rootFocus=n;actions.get(n).run();});
   current.setOnCancelListener(d->close());position(activity,current,true);
  }
  private static void select(PlayerActivity activity,TVCardView card,Runnable parent,int focus,boolean otherLanguages){
@@ -43,7 +45,7 @@ final class PreviewPlaybackMenus {
   if(hasOther&&!otherLanguages){actions.add(null);labels.add("Other languages");}
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
   dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);
-  current=PreviewDialog.choose(activity,otherLanguages?"Other subtitle languages":card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{
+  current=PreviewDialog.choose(activity,otherLanguages?"‹ Subtitles · Other languages":"‹ More · "+card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{
    TVMenuItem item=actions.get(n);
    if(item==null){select(activity,card,()->select(activity,card,parent,n,false),-1,true);return;}
    Dialog before=current;restoreParent=()->select(activity,card,parent,n,otherLanguages);item.previewClick();
@@ -69,5 +71,5 @@ final class PreviewPlaybackMenus {
   if(view instanceof TVMenuItem){ViewGroup.LayoutParams lp=view.getLayoutParams();if(lp!=null){lp.height=dp(a,38);view.setLayoutParams(lp);}view.setBackground(PreviewDialog.focus(a));}
   if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)compact(((ViewGroup)view).getChildAt(i),a);
  }
- private static void position(PlayerActivity a,Dialog d,boolean right){Window w=d.getWindow();w.setDimAmount(.12f);w.setGravity(Gravity.TOP|(right?Gravity.END:Gravity.START));WindowManager.LayoutParams p=w.getAttributes();p.x=dp(a,32);p.y=dp(a,74);w.setAttributes(p);}
+ private static void position(PlayerActivity a,Dialog d,boolean right){Window w=d.getWindow();w.setDimAmount(.12f);w.setGravity(Gravity.TOP|Gravity.END);w.setLayout(dp(a,350),Math.min(dp(a,310),a.getResources().getDisplayMetrics().heightPixels-dp(a,160)));WindowManager.LayoutParams p=w.getAttributes();p.x=dp(a,32);p.y=dp(a,74);w.setAttributes(p);}
 }

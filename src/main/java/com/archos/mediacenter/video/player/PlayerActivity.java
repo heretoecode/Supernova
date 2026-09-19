@@ -947,9 +947,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
     }
 
+    private PreviewUpNext previewUpNext;
     @Override
     protected void onStart() {
         super.onStart();
+        if(isTVMode&&androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)&&previewUpNext==null)previewUpNext=new PreviewUpNext(this);
         if (log.isDebugEnabled()) log.debug("onStart()");
         mStopped = false;
         removeNetworkListener();
@@ -1228,6 +1230,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     protected void onStop() {
+        if(previewUpNext!=null){previewUpNext.stop();previewUpNext=null;}
         super.onStop();
         if (log.isDebugEnabled()) log.debug("onStop");
 
@@ -2967,10 +2970,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }).setNegativeButton(android.R.string.cancel, null).show();
     }
 
+    public String previewAudioLabel(){if(mAudioInfoController==null||mAudioInfoController.getTrackCount()==0)return "Audio";int i=mAudioInfoController.getTrack();return i>=0&&i<mAudioInfoController.getTrackCount()?String.valueOf(mAudioInfoController.getTrackNameAt(i)):"Audio";}
+    public String previewSubtitleLabel(){if(mSubtitleInfoController==null||mSubtitleInfoController.getTrackCount()==0)return "Subtitles off";int i=mSubtitleInfoController.getTrack();return i>=0&&i<mSubtitleInfoController.getTrackCount()?String.valueOf(mSubtitleInfoController.getTrackNameAt(i)):"Subtitles";}
     public boolean previewHasAudio(){return mAudioInfoController!=null&&mAudioInfoController.getTrackCount()>0;}
     public String previewTitle(){return mVideoInfo!=null&&mVideoInfo.isScraped&&mVideoInfo.scraperTitle!=null?mVideoInfo.scraperTitle:mTitle==null?"":mTitle;}
     public String previewEpisode(){return mVideoInfo!=null&&mVideoInfo.isShow?String.format(java.util.Locale.getDefault(),"S%02d E%02d",mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr)+(mVideoInfo.scraperEpisodeName==null?"":" · "+mVideoInfo.scraperEpisodeName):"";}
-    private void showVideoInfos() {
+    void showVideoInfos() {
         if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){Object media=getIntent().getSerializableExtra(PlayerService.VIDEO);if(media instanceof com.archos.mediacenter.video.browser.adapters.object.Video&&((com.archos.mediacenter.video.browser.adapters.object.Video)media).getId()!=mVideoId)media=null;PreviewPlaybackInfo.show(this,previewTitle(),previewEpisode(),media,()->{if(mPlayer!=null){mPlayer.seekTo(0);mPlayer.start(PlayerController.STATE_NORMAL);}},this::showNativeVideoInfos);return;}
         showNativeVideoInfos();
     }
@@ -4176,6 +4181,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             sendExternalPlayerResult();
         }
         super.finish();
+        if(mPreferences!=null&&mPreferences.getBoolean("try_new_ui",false))overridePendingTransition(0,0);
     }
 
     /*

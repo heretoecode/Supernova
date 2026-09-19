@@ -78,7 +78,7 @@ public abstract class ListPresenter extends Presenter {
                 View content=mBaseCardView.findViewById(R.id.myroot);content.getLayoutParams().width=(int)(760*density);content.getLayoutParams().height=(int)(64*density);
                 mImageView.getLayoutParams().width=(int)(108*density);mImageView.getLayoutParams().height=(int)(64*density);mImageView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
                 mTitleTv.setTextSize(14);mTitleTv.setSingleLine(true);mTitleTv.setTypeface(android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.NORMAL));mContentTv.setTextSize(11);mContentTv.setTextColor(0xffa4b6c7);mBaseCardView.setBackgroundColor(0xbb192f45);
-                mBaseCardView.setBackgroundResource(R.drawable.preview_surface_focus);mBaseCardView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                mBaseCardView.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(context));mBaseCardView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             }
             mImageViewTarget = new PicassoImageViewTarget(mImageView);
         }

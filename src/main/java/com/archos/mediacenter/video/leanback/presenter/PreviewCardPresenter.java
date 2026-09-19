@@ -69,7 +69,7 @@ public final class PreviewCardPresenter extends Presenter {
             if(style==Style.LIST){caption.setPadding(0,0,0,0);title.setSingleLine(true);title.setTextSize(15);captionParams.leftMargin=dp(120);captionParams.rightMargin=dp(30);caption.setBackground(null);TextView arrow=new TextView(c);arrow.setText("›");arrow.setTextColor(0xffa4b6c7);arrow.setTextSize(24);arrow.setGravity(Gravity.CENTER);body.addView(arrow,new FrameLayout.LayoutParams(dp(28),-1,Gravity.RIGHT));}
             body.addView(caption,captionParams);
             progress = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
-            progress.setMax(100); progress.setProgressTintList(ColorStateList.valueOf(0xff62bbf3));
+            progress.setMax(100); progress.setProgressTintList(ColorStateList.valueOf(com.archos.mediacenter.video.leanback.PreviewAccent.color(c)));
             progress.setProgressBackgroundTintList(ColorStateList.valueOf(0xff627386));
             FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(-1, dp(3), Gravity.BOTTOM);
             pp.setMargins(dp(8), 0, dp(8), dp(5)); body.addView(progress, pp);
@@ -87,7 +87,7 @@ public final class PreviewCardPresenter extends Presenter {
         private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
         void updateFocus() {
             GradientDrawable border = new GradientDrawable(); border.setColor(Color.TRANSPARENT);
-            border.setCornerRadius(dp(4)); border.setStroke(dp(isFocused() ? 2 : 1), isFocused() ? 0xff62bbf3 : 0x303d5870);
+            border.setCornerRadius(dp(4)); border.setStroke(dp(isFocused() ? 2 : 1), isFocused() ? com.archos.mediacenter.video.leanback.PreviewAccent.color(getContext()) : 0x303d5870);
             setForeground(border);
             // Poster names remain accessible without permanently covering the artwork.
             caption.setVisibility(View.VISIBLE);

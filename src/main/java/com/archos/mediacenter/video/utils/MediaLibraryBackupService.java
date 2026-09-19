@@ -110,8 +110,7 @@ public class MediaLibraryBackupService extends Service {
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_EXPORT.equals(action)) {
-                exportUri = intent.getStringExtra(EXTRA_EXPORT_URI);
-                startExport();
+                startExport(intent.getStringExtra(EXTRA_EXPORT_URI));
             } else if (ACTION_IMPORT.equals(action)) {
                 String importFile = intent.getStringExtra(EXTRA_IMPORT_FILE);
                 startImport(importFile);
@@ -126,7 +125,7 @@ public class MediaLibraryBackupService extends Service {
         return null;
     }
 
-    private void startExport() {
+    private void startExport(final String destination) {
         if (mThread != null && mThread.isAlive()) {
             log.warn("startExport: export already in progress");
             return;
@@ -138,12 +137,16 @@ public class MediaLibraryBackupService extends Service {
                 nm.notify(NOTIFICATION_ID, nb.build());
 
                 String exportPath = exportMediaLibrary();
-                if (exportUri != null) {
+                if (destination != null) {
                     try (java.io.InputStream in = new FileInputStream(exportPath);
-                         java.io.OutputStream out = getContentResolver().openOutputStream(android.net.Uri.parse(exportUri), "w")) {
+                         java.io.OutputStream out = getContentResolver().openOutputStream(android.net.Uri.parse(destination), "w")) {
                         if (out == null) throw new IOException("Destination unavailable");
                         byte[] data = new byte[8192]; int n; long written=0;while ((n=in.read(data))!=-1){out.write(data,0,n);written+=n;}out.flush();if(written==0||written!=new File(exportPath).length())throw new IOException("Backup destination copy was incomplete");
                     }
+                    java.security.MessageDigest expected=java.security.MessageDigest.getInstance("SHA-256"),actual=java.security.MessageDigest.getInstance("SHA-256");
+                    byte[] verification=new byte[8192];try(java.io.InputStream local=new FileInputStream(exportPath)){int n;while((n=local.read(verification))!=-1)expected.update(verification,0,n);}
+                    try(java.io.InputStream saved=getContentResolver().openInputStream(android.net.Uri.parse(destination))){if(saved==null)throw new IOException("Cannot verify the selected backup location");int n;while((n=saved.read(verification))!=-1)actual.update(verification,0,n);}
+                    if(!java.util.Arrays.equals(expected.digest(),actual.digest()))throw new IOException("The selected backup location did not retain a complete copy");
                     exportPath = "selected location";
                 }
 
@@ -151,6 +154,9 @@ public class MediaLibraryBackupService extends Service {
                 nm.cancel(NOTIFICATION_ID);
             } catch (Exception e) {
                 log.error("startExport: error exporting media library", e);
+                // The document picker creates the destination before generation. Remove that
+                // newly-created incomplete document instead of leaving a misleading 0 KB ZIP.
+                if(destination!=null)try{android.provider.DocumentsContract.deleteDocument(getContentResolver(),android.net.Uri.parse(destination));}catch(Exception cleanup){log.warn("Could not remove incomplete backup document",cleanup);}
                 showToast(getString(R.string.media_library_export_error)+" · "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
             } finally {
                 ServiceCompat.stopForeground(MediaLibraryBackupService.this, ServiceCompat.STOP_FOREGROUND_REMOVE);

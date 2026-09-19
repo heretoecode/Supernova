@@ -542,6 +542,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mAutoSkipTask = new Runnable() {
             @Override
             public void run() {
+                sampleJourneyTime();
                 autoSkipIfNeeded();
                 mHandler.postDelayed(mAutoSkipTask, AUTO_SKIP_INTERVAL);
             }
@@ -1753,7 +1754,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     /** Fused intro/outro segments for the current video, or null if not available yet. */
     public IntroSegments getIntroSegments() {
-        return mIntroSegments;
+        return java.util.Objects.equals(mUri,mIntroDbFetchedUri)?mIntroSegments:null;
     }
 
     /**
@@ -1792,6 +1793,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         int duration = Player.sPlayer.getDuration();
         IntroSegments.Skip skip = segments.findSkip(position, duration, introEnabled, recapEnabled);
         if (skip == null) return;
+        // Up Next owns the decision to leave the credits; Cancel must keep the current file.
+        if(mPreferences.getBoolean("try_new_ui",false)&&mPlayMode==PLAYMODE_BINGE&&(skip.type==IntroSegments.Type.OUTRO||skip.type==IntroSegments.Type.CREDITS)&&previewAdjacentEpisode(1)!=null)return;
         long targetMs = Math.max(0, skip.endMs - AUTO_SKIP_BUFFER_MS);
         if (targetMs <= position) return;
         // don't re-skip the same segment if the user deliberately seeks back into it
@@ -1870,14 +1873,15 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
      * save video state and look for the next video to play
      */
     @Override
-    public void onCompletion() {
+    public void onCompletion() { advancePlayback(true); }
+    private void advancePlayback(boolean completed) {
         if (log.isDebugEnabled()) log.debug("onCompletion");
         mPlayerState = PlayerState.STOPPED;
 
         if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
             updateNowPlayingState();
         }
-        mPlaybackSession.completed = true;
+        mPlaybackSession.completed = completed;
         if (mNextUri != null) {
             if (log.isDebugEnabled()) log.debug("onCompletion: we have a new video {}", mNextUri);
             stopAndSaveVideoState();
@@ -1894,6 +1898,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             // delayed checkpoint from the completed item cannot reattach to the new session.
             mIntent.putExtra(LAUNCH_GENERATION, UUID.randomUUID().toString());
             mVideoId = mNextVideoId;
+            // onStart reads the intent ID, so rotate both identity and metadata with the URI.
+            mIntent.putExtra("id",(int)mVideoId);mIntent.removeExtra(VIDEO);
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();if(library!=null)for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e:library.episodes)if(((Video)e.media).getId()==mVideoId){mIntent.putExtra(VIDEO,e.media);break;}
             mNextUri = null;
             mNextVideoId = -1;
             // Repeat-single legitimately starts the same URI, but it is still a new playback.
@@ -1910,6 +1917,18 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
+    public com.archos.mediacenter.video.browser.adapters.object.Episode previewAdjacentEpisode(int direction){
+        if(mVideoInfo==null||!mVideoInfo.isShow)return null;
+        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();if(snapshot==null)return null;
+        java.util.List<com.archos.mediacenter.video.browser.adapters.object.Episode> episodes=new java.util.ArrayList<>();long show=0;
+        for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e:snapshot.episodes)if(((Video)e.media).getId()==mVideoInfo.id){show=e.show;break;}if(show==0)return null;
+        for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e:snapshot.episodes)if(e.show==show)episodes.add((com.archos.mediacenter.video.browser.adapters.object.Episode)e.media);
+        episodes.sort(java.util.Comparator.comparingInt(com.archos.mediacenter.video.browser.adapters.object.Episode::getSeasonNumber).thenComparingInt(com.archos.mediacenter.video.browser.adapters.object.Episode::getEpisodeNumber));
+        for(int i=0;i<episodes.size();i++)if(episodes.get(i).getId()==mVideoInfo.id){int next=i+direction;return next>=0&&next<episodes.size()?episodes.get(next):null;}return null;
+    }
+    public void previewNavigateEpisode(int direction){com.archos.mediacenter.video.browser.adapters.object.Episode next=previewAdjacentEpisode(direction);if(next==null)return;mNextUri=next.getUri();mNextVideoId=next.getId();advancePlayback(false);}
+    public boolean previewAutoNextEnabled(){return mPlayMode==PLAYMODE_BINGE&&mNextUri!=null;}
+    public void previewCancelAutoNext(){mNextUri=null;mNextVideoId=-1;}
     @Override
     public boolean onError(int errorCode, int errorQualCode, String msg) {
         log.warn("Playback failure code={} qualifier={} source={} lastPosition={} duration={} state={}",errorCode,errorQualCode,mPlaybackSession.selectedSource,mPlaybackSession.lastKnownPositionMs,mVideoInfo==null?0:mVideoInfo.duration,mPlayerState);

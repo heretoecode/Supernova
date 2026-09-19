@@ -340,12 +340,12 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             try{getContext().getContentResolver().takePersistableUriPermission(uri,Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_READ_URI_PERMISSION);}catch(SecurityException transientGrant){android.util.Log.d("NovaPreview","Backup provider offers a temporary grant");}
             Intent intent = new Intent(MediaLibraryBackupService.ACTION_EXPORT, null, getActivity(), MediaLibraryBackupService.class);
             intent.putExtra(MediaLibraryBackupService.EXTRA_EXPORT_URI, uri.toString());
-            getContext().startService(intent);
+            androidx.core.content.ContextCompat.startForegroundService(getContext(),intent);
         });
         backupSource = preferencesFragment.registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
             if (uri == null) return;
             new androidx.appcompat.app.AlertDialog.Builder(getActivity())
-                .setTitle("Restore NOVA backup")
+                .setTitle("Restore SUPERNOVA backup")
                 .setMessage("Replace the library and restore saved settings? A recovery backup will be kept first.")
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton("Restore", (dialog, which) -> {
@@ -876,7 +876,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         novaVersion.setSummary(com.archos.mediacenter.video.BuildConfig.VERSION_NAME);
         novaVersion.setOnPreferenceClickListener(preference -> {
             new androidx.appcompat.app.AlertDialog.Builder(getActivity())
-                    .setTitle("NOVA Preview · Build")
+                    .setTitle("SUPERNOVA Preview · Build")
                     .setMessage("Version: " + com.archos.mediacenter.video.BuildConfig.VERSION_NAME
                         + "\nVersion code: " + com.archos.mediacenter.video.BuildConfig.VERSION_CODE
                         + "\nCustom Git SHA: " + com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA
@@ -1018,7 +1018,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         exportLibraryPreference.setOnPreferenceClickListener(preference -> {
             try { backupDestination.launch("nova-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT).format(new java.util.Date()) + ".zip"); }
             catch (android.content.ActivityNotFoundException missing) {
-                new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setMessage("Install a document picker to choose a backup location. You can still export to NOVA's folder.")
+                new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setMessage("Install a document picker to choose a backup location. You can still export to SUPERNOVA's folder.")
                     .setPositiveButton("Export here", (d,w) -> getContext().startService(new Intent(MediaLibraryBackupService.ACTION_EXPORT, null, getActivity(), MediaLibraryBackupService.class)))
                     .setNegativeButton(android.R.string.cancel,null).show();
             }
