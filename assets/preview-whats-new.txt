@@ -1,11 +1,13 @@
-SUPERNOVA Preview 4.1
+SUPERNOVA Preview 4.1.1
 
-Home: local-library Featured carousel, source toggles, Watch Next, custom rows, hide/reorder and non-destructive Continue Watching dismissal.
-Progress: one committed series journey separated from per-file bookmarks; meaningful-view threshold; unfinished final-episode and series Resume corrections. Periodic local resume checkpoints use the existing writer.
-Details: constrained synopsis, informational full-screen More Info, working Add to Row, technical information moved into More Info.
-Playback: HUD track selections and episode transport; compact menus with a shared anchor and Back hierarchy; Up Next in existing series/binge playback, using available credits/outro timings or a short fallback. Preparing playback screen preserved without artificial delay.
-Settings: three-panel layout, Rows, Featured source switches, Accent & Colour, preserved/deprecated controls in Legacy. Existing Streaming provider availability and global switch remain available for local-library titles.
-Storage: list presentation, compact folder actions, explicit deletion warning, embedded scan status, automatic scan request correction, verified backup generation and destination readback.
+Corrective pass over Preview 4.1. Existing library, playback progress, Home rows and preview update identity are preserved.
 
-Physical Nvidia Shield playback, remote navigation, automatic WebDAV scans, backup-provider behaviour and device-specific audio/video output: NOT TESTED — USER QA REQUIRED.
-No fabricated media logos/seek thumbnails, no new decoder or streaming provider engine, and no deferred 4.2 work.
+Home: composed SUPERNOVA startup surface, stable Featured action sizing, restrained transitions and genuine official title logos where available. Playback uses cached logos only.
+Rows and Details: compact Customise Home, confirmed Clear Watch Next, clearer Information/Actions, secondary Add to Row and improved information layout.
+Library and sources: restrained list separators, compact Scan Library, dark file-browser rows and transparent Network/Search navigation. Automatic scan controls are exposed; absent settings initialise to startup enabled/15 minutes, explicit Off is preserved. WebDAV automatic eligibility is corrected without rewriting the importer.
+Search and Streaming: accent-insensitive indexed search, including Shogun/Shōgun; provider selections persist immediately and update in place. Genuine provider artwork/availability uses the existing backend only.
+Playback: concise track labels, centred transport controls, compact anchored option panels and restrained focus. TV clock says Episode ends. Up Next visuals are refined while its working timing and episode progression are retained.
+Backup: verified in-progress publication, portable saved configuration/accounts and recovery of downloadable artwork. Export contains private credentials; Android storage grants must be renewed on another device.
+
+NOT TESTED — USER QA REQUIRED: physical Shield upgrade, populated startup/logo transitions, automatic WebDAV, actual Ireland offers/handoff, playback/remote behaviour and real backup/new-device restore.
+No invented service availability, playback functionality or deferred 4.2 features.
