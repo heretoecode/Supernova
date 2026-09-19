@@ -5,6 +5,7 @@ import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.widget.TextView;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediascraper.*;
 import java.io.*;

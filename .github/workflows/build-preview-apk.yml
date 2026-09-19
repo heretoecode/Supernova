@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 45
     env:
       VALIDATION_MODE: ${{ inputs.validation || 'preview' }}
-      APK_VARIANT: debug
+      APK_VARIANT: release
 
     steps:
       - name: Check out the triggering Video revision

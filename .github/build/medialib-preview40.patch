@@ -27,7 +27,8 @@ index 02000ef..7c5387d 100644
 +                boolean webdav = "webdav".equalsIgnoreCase(protocol) || "webdavs".equalsIgnoreCase(protocol)
 +                        || "dav".equalsIgnoreCase(protocol) || "davs".equalsIgnoreCase(protocol);
 +                if (!NetworkState.isLocalNetworkConnectedOrVpnMobileEnabled(context) && !webdav) continue;
-                 if (!ACTION_FORCE_RESCAN_INDEXED_FOLDERS.equals(intent.getAction()) && shouldSkipScanForInactiveServer(context, uri)) {
+-                if (!ACTION_FORCE_RESCAN_INDEXED_FOLDERS.equals(intent.getAction()) && shouldSkipScanForInactiveServer(context, uri)) {
++                if (!webdav && !ACTION_FORCE_RESCAN_INDEXED_FOLDERS.equals(intent.getAction()) && shouldSkipScanForInactiveServer(context, uri)) {
                      if (log.isDebugEnabled()) log.debug("onReceive: skip scan for inactive server {}", uri);
                      continue;
 @@ -212,6 +215,8 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife

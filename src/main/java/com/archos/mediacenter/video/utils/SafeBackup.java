@@ -25,7 +25,7 @@ public final class SafeBackup {
     }
     static boolean allowed(String name) {
         return name.equals("media.db") || name.equals("credentials_db") || name.equals("shortcuts_db")
-            || name.equals("shortcuts2_db") || name.equals("db_version.txt") || name.equals("settings.json")
+            || name.equals("shortcuts2_db") || name.equals("db_version.txt") || name.equals("settings.json") || name.equals("named_preferences.json")
             || name.startsWith("scraper_posters/") || name.startsWith("scraper_backdrops/") || name.startsWith("scraper_pictures/");
     }
     public static File stage(Context c, InputStream input) throws Exception {
@@ -46,7 +46,7 @@ public final class SafeBackup {
                         int n; long size = 0;
                         while ((n = zip.read(buffer)) != -1) {
                             total += n; size += n;
-                            if (total > MAX_BYTES || (name.equals("settings.json") && size > 4194304)
+                            if (total > MAX_BYTES || ((name.equals("settings.json")||name.equals("named_preferences.json")) && size > 4194304)
                                     || (name.equals("db_version.txt") && size > 32)) throw new IOException("Backup exceeds size limit");
                             out.write(buffer,0,n);
                         }
@@ -63,6 +63,7 @@ public final class SafeBackup {
             }
             File settings = new File(stage,"settings.json");
             if(settings.isFile()) SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c), read(settings));
+            File named=new File(stage,"named_preferences.json");if(named.isFile())MigrationBackup.validateSettings(c,read(named));
             return stage;
         } catch (Exception error) { remove(stage); throw error; }
     }
@@ -116,6 +117,7 @@ public final class SafeBackup {
             swaps.add(new Swap(MediaScraper.getPosterDirectory(c),new File(stage,"scraper_posters"),token));
             swaps.add(new Swap(MediaScraper.getBackdropDirectory(c),new File(stage,"scraper_backdrops"),token));
             swaps.add(new Swap(MediaScraper.getPictureDirectory(c),new File(stage,"scraper_pictures"),token));
+            File named=new File(stage,"named_preferences.json");Map<String,String> restoredNamed=named.isFile()?MigrationBackup.validateSettings(c,read(named)):Collections.emptyMap();Map<String,String> originalNamed=new LinkedHashMap<>();for(String name:restoredNamed.keySet())originalNamed.put(name,SettingsBackup.encode(c.getSharedPreferences(name,0)));
             String originalSettings=SettingsBackup.encode(PreferenceManager.getDefaultSharedPreferences(c));
             DbHolder holder=VideoDb.getHolder(c);
             holder.lockExclusive();
@@ -123,11 +125,13 @@ public final class SafeBackup {
                 holder.close(); ShortcutDbAdapter.VIDEO.close();
                 try {
                     for(Swap swap:swaps) swap.apply();
+                    for(Map.Entry<String,String> entry:restoredNamed.entrySet())if(!SettingsBackup.decode(c.getSharedPreferences(entry.getKey(),0),entry.getValue()).commit())throw new IOException("Cannot restore account configuration");
                     File settings=new File(stage,"settings.json");
                     if(settings.isFile()&&!SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c),read(settings)).commit())
                         throw new IOException("Cannot save restored settings");
                 } catch(Exception error) {
                     SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c),originalSettings).commit();
+                    for(Map.Entry<String,String> entry:originalNamed.entrySet())SettingsBackup.decode(c.getSharedPreferences(entry.getKey(),0),entry.getValue()).commit();
                     for(int i=swaps.size()-1;i>=0;i--) {
                         try { swaps.get(i).rollback(); } catch(IOException recovery) { error.addSuppressed(recovery); }
                     }

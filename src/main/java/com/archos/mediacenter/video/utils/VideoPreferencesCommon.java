@@ -335,7 +335,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
 
     public VideoPreferencesCommon(PreferenceFragmentCompat preferencesFragment) {
         mPreferencesFragment = preferencesFragment;
-        backupDestination = preferencesFragment.registerForActivityResult(new ActivityResultContracts.CreateDocument("application/zip"), uri -> {
+        backupDestination = preferencesFragment.registerForActivityResult(new ActivityResultContracts.CreateDocument("application/octet-stream"), uri -> {
             if (uri == null) return;
             try{getContext().getContentResolver().takePersistableUriPermission(uri,Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_READ_URI_PERMISSION);}catch(SecurityException transientGrant){android.util.Log.d("NovaPreview","Backup provider offers a temporary grant");}
             Intent intent = new Intent(MediaLibraryBackupService.ACTION_EXPORT, null, getActivity(), MediaLibraryBackupService.class);
@@ -1015,13 +1015,17 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         });
 
         Preference exportLibraryPreference = findPreference(getString(R.string.media_library_export_prefkey));
+        exportLibraryPreference.setSummary("Settings, saved credentials, sources, rows and viewing history. Downloaded artwork is re-fetched after restore. Keep this archive private.");
         exportLibraryPreference.setOnPreferenceClickListener(preference -> {
-            try { backupDestination.launch("nova-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT).format(new java.util.Date()) + ".zip"); }
+            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This archive includes saved network and account credentials. Store it somewhere private. Android storage permissions may need to be granted again on a new device.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
+
+            try { backupDestination.launch("nova-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT).format(new java.util.Date()) + ".zip.in-progress"); }
             catch (android.content.ActivityNotFoundException missing) {
                 new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setMessage("Install a document picker to choose a backup location. You can still export to SUPERNOVA's folder.")
                     .setPositiveButton("Export here", (d,w) -> getContext().startService(new Intent(MediaLibraryBackupService.ACTION_EXPORT, null, getActivity(), MediaLibraryBackupService.class)))
                     .setNegativeButton(android.R.string.cancel,null).show();
             }
+            }).show();
             return true;
         });
         Preference importLibraryPreference = findPreference(getString(R.string.media_library_import_prefkey));

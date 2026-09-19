@@ -166,7 +166,7 @@ public final class StreamingRepository {
                 JSONObject p = entries.optJSONObject(i);
                 if (p == null || p.optInt("provider_id") <= 0 || p.optString("provider_name").isEmpty()) continue;
                 int id = p.getInt("provider_id");
-                if (!offers.containsKey(id)) offers.put(id, new Offer(new Provider(id, p.getString("provider_name")), type));
+                if (!offers.containsKey(id)) offers.put(id, new Offer(new Provider(id, p.getString("provider_name"),p.optString("logo_path")), type));
             }
         }
         return new Availability(new ArrayList<>(offers.values()), region.optString("link"));

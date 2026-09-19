@@ -965,6 +965,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             }
             addNetworkListener();
             requestPreviewNetworkRefresh();
+            com.archos.mediacenter.video.utils.MigrationBackup.resumeArtwork(this);
             launchSambaDiscovery();
             // Trigger an incremental Trakt sync when returning to foreground if signed in and not in private mode
             if (Trakt.isTraktV2Enabled(this, PreferenceManager.getDefaultSharedPreferences(this))) {

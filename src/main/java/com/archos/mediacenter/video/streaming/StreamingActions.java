@@ -60,7 +60,7 @@ public final class StreamingActions {
         if (!(adapter.getPresenterSelector() instanceof StreamingActionPresenter.Selector))
             adapter.setPresenterSelector(new StreamingActionPresenter.Selector(adapter.getPresenterSelector()));
         String signature = StreamingRepository.country(context) + StreamingRepository.selected(context).toString()
-                + StreamingRepository.preferred(context) + StreamingRepository.prefs(context).getBoolean(StreamingRepository.ENABLED, true)
+                + StreamingRepository.preferred(context) + StreamingRepository.prefs(context).getBoolean(StreamingRepository.ENABLED, false)
                 + inPlayer + PrivateMode.isActive();
         if (controller.item == item && signature.equals(controller.signature)) return;
         controller.item = item; controller.inPlayer = inPlayer; controller.signature = signature;
@@ -105,7 +105,7 @@ public final class StreamingActions {
         if (task != null) task.cancel(true);
         clear();
         if (item == null || inPlayer || PrivateMode.isActive()
-                || !StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED, true)) return;
+                || !StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED, false)) return;
         if (StreamingRepository.selected(app).isEmpty()) {
             action(0, app.getString(R.string.streaming_title), app.getString(R.string.streaming_select_providers), this::setup);
             return;

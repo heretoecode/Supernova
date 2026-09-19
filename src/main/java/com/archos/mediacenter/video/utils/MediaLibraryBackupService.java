@@ -132,6 +132,7 @@ public class MediaLibraryBackupService extends Service {
         }
 
         mThread = new Thread(() -> {
+            android.net.Uri[] published={destination==null?null:android.net.Uri.parse(destination)};
             try {
                 nb.setContentTitle(getString(R.string.media_library_export_in_progress));
                 nm.notify(NOTIFICATION_ID, nb.build());
@@ -139,15 +140,20 @@ public class MediaLibraryBackupService extends Service {
                 String exportPath = exportMediaLibrary();
                 if (destination != null) {
                     try (java.io.InputStream in = new FileInputStream(exportPath);
-                         java.io.OutputStream out = getContentResolver().openOutputStream(android.net.Uri.parse(destination), "w")) {
+                         java.io.OutputStream out = getContentResolver().openOutputStream(published[0], "w")) {
                         if (out == null) throw new IOException("Destination unavailable");
                         byte[] data = new byte[8192]; int n; long written=0;while ((n=in.read(data))!=-1){out.write(data,0,n);written+=n;}out.flush();if(written==0||written!=new File(exportPath).length())throw new IOException("Backup destination copy was incomplete");
                     }
                     java.security.MessageDigest expected=java.security.MessageDigest.getInstance("SHA-256"),actual=java.security.MessageDigest.getInstance("SHA-256");
                     byte[] verification=new byte[8192];try(java.io.InputStream local=new FileInputStream(exportPath)){int n;while((n=local.read(verification))!=-1)expected.update(verification,0,n);}
-                    try(java.io.InputStream saved=getContentResolver().openInputStream(android.net.Uri.parse(destination))){if(saved==null)throw new IOException("Cannot verify the selected backup location");int n;while((n=saved.read(verification))!=-1)actual.update(verification,0,n);}
+                    try(java.io.InputStream saved=getContentResolver().openInputStream(published[0])){if(saved==null)throw new IOException("Cannot verify the selected backup location");int n;while((n=saved.read(verification))!=-1)actual.update(verification,0,n);}
                     if(!java.util.Arrays.equals(expected.digest(),actual.digest()))throw new IOException("The selected backup location did not retain a complete copy");
-                    exportPath = "selected location";
+                    String name="nova-backup-"+System.currentTimeMillis()+".zip";
+                    try(android.database.Cursor document=getContentResolver().query(published[0],new String[]{android.provider.OpenableColumns.DISPLAY_NAME},null,null,null)){if(document!=null&&document.moveToFirst()){String chosen=document.getString(0);if(chosen!=null)name=chosen.replaceFirst("\\.in-progress(?:\\.zip)?$","");}}
+                    if(!name.endsWith(".zip"))name+=".zip";
+                    boolean renamed=false;
+                    try{android.net.Uri complete=android.provider.DocumentsContract.renameDocument(getContentResolver(),published[0],name);if(complete!=null){published[0]=complete;renamed=true;}}catch(Exception unsupported){log.info("Backup verified; destination does not support rename");}
+                    exportPath = renamed?name:"selected location (verified archive; this provider cannot rename the .in-progress file — rename it to .zip)";
                 }
 
                 showToast(getString(R.string.media_library_export_success, exportPath));
@@ -156,7 +162,7 @@ public class MediaLibraryBackupService extends Service {
                 log.error("startExport: error exporting media library", e);
                 // The document picker creates the destination before generation. Remove that
                 // newly-created incomplete document instead of leaving a misleading 0 KB ZIP.
-                if(destination!=null)try{android.provider.DocumentsContract.deleteDocument(getContentResolver(),android.net.Uri.parse(destination));}catch(Exception cleanup){log.warn("Could not remove incomplete backup document",cleanup);}
+                if(destination!=null)try{android.provider.DocumentsContract.deleteDocument(getContentResolver(),published[0]);}catch(Exception cleanup){log.warn("Could not remove incomplete backup document",cleanup);}
                 showToast(getString(R.string.media_library_export_error)+" · "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
             } finally {
                 ServiceCompat.stopForeground(MediaLibraryBackupService.this, ServiceCompat.STOP_FOREGROUND_REMOVE);
@@ -199,16 +205,17 @@ public class MediaLibraryBackupService extends Service {
     }
 
     private String exportMediaLibrary() throws IOException {
+        java.util.Set<String> reproducible=MigrationBackup.reproducibleFiles(this);
         DbHolder holder = VideoDb.getHolder(this);
         holder.get(); // Ensure even an empty library has its schema before snapshotting.
         holder.lockExclusive();
         try {
             holder.close();
-            return exportLockedLibrary();
+            return exportLockedLibrary(reproducible);
         } finally { holder.unlockExclusive(); }
     }
 
-    private String exportLockedLibrary() throws IOException {
+    private String exportLockedLibrary(java.util.Set<String> reproducible) throws IOException {
         if (log.isDebugEnabled()) log.debug("exportMediaLibrary: starting full library export");
 
         // Get export directory
@@ -239,6 +246,7 @@ public class MediaLibraryBackupService extends Service {
                 byte[] settings = SettingsBackup.encode(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this))
                     .getBytes(java.nio.charset.StandardCharsets.UTF_8);
                 zos.putNextEntry(new ZipEntry("settings.json")); zos.write(settings); zos.closeEntry();
+                zos.putNextEntry(new ZipEntry("named_preferences.json"));zos.write(MigrationBackup.settings(this).getBytes(java.nio.charset.StandardCharsets.UTF_8));zos.closeEntry();
             } catch (org.json.JSONException e) { throw new IOException("Could not export settings", e); }
             // Export database version first
             int dbVersion = VideoOpenHelper.getDatabaseVersion();
@@ -284,20 +292,16 @@ public class MediaLibraryBackupService extends Service {
             // Export poster directory
             File posterDir = MediaScraper.getPosterDirectory(this);
             if (posterDir.exists()) {
-                addDirectoryToZip(zos, posterDir, "scraper_posters");
+                addPersonalArtworkToZip(zos, posterDir, "scraper_posters",reproducible);
             }
 
             // Export backdrop directory
             File backdropDir = MediaScraper.getBackdropDirectory(this);
             if (backdropDir.exists()) {
-                addDirectoryToZip(zos, backdropDir, "scraper_backdrops");
+                addPersonalArtworkToZip(zos, backdropDir, "scraper_backdrops",reproducible);
             }
 
-            // Export picture directory
-            File pictureDir = MediaScraper.getPictureDirectory(this);
-            if (pictureDir.exists()) {
-                addDirectoryToZip(zos, pictureDir, "scraper_pictures");
-            }
+            // Episode stills are reproducible scraper output, not user-created artwork.
         });
 
         if (log.isDebugEnabled()) log.debug("exportMediaLibrary: export completed to {}", zipFile.getAbsolutePath());
@@ -315,12 +319,13 @@ public class MediaLibraryBackupService extends Service {
             // Keep a complete, dated recovery archive before changing any live data.
             exportMediaLibrary();
             SafeBackup.restore(this,stage);
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("preview_restore_artwork_pending",true).commit();
         } finally { SafeBackup.remove(stage); }
     }
 
     private void flushDatabaseWAL() {
         try {
-            File dbFile = getDatabasePath(DATABASE_NAME);
+            for(String database:new String[]{DATABASE_NAME,CREDENTIALS_DB_NAME,SHORTCUTS_DB_NAME,SHORTCUTS2_DB_NAME}){File dbFile = getDatabasePath(database);
             if (dbFile.exists()) {
                 if (log.isDebugEnabled()) log.debug("flushDatabaseWAL: opening database for WAL checkpoint");
                 try(SQLiteDatabase db = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null,
@@ -332,7 +337,7 @@ public class MediaLibraryBackupService extends Service {
                 }
                 }
                 if (log.isDebugEnabled()) log.debug("flushDatabaseWAL: database WAL flushed successfully");
-            }
+            }}
         } catch (Exception e) {
             throw new IllegalStateException("Cannot make a consistent database backup", e);
         }
@@ -488,6 +493,8 @@ public class MediaLibraryBackupService extends Service {
 
         zos.closeEntry();
     }
+
+    private void addPersonalArtworkToZip(ZipOutputStream zip,File dir,String prefix,java.util.Set<String> reproducible)throws IOException{File[] files=dir.listFiles();if(files==null)throw new IOException("Cannot list personal artwork");for(File file:files)if(file.isDirectory())addPersonalArtworkToZip(zip,file,prefix+"/"+file.getName(),reproducible);else if(!reproducible.contains(file.getCanonicalPath()))addFileToZip(zip,file,prefix+"/"+file.getName());}
 
     private void addDirectoryToZip(ZipOutputStream zos, File dir, String zipDirName) throws IOException {
         if (log.isDebugEnabled()) log.debug("addDirectoryToZip: {}", zipDirName);

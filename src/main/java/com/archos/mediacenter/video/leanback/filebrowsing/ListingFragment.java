@@ -260,6 +260,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
         if(mPrefs.getBoolean("try_new_ui",false)){
             v.setBackground(com.archos.mediacenter.video.leanback.PreviewAccent.utility(requireContext()));
+            getTitleView().setBackgroundColor(android.graphics.Color.TRANSPARENT);View titleText=getTitleView().findViewById(androidx.leanback.R.id.title_text);if(titleText instanceof TextView){TextView title=(TextView)titleText;title.setTextSize(19);title.setTextColor(0xffc7d8e4);title.setSingleLine(true);title.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);}
             if(mUri!=null){String path=mUri.getPath();setTitle((mUri.getHost()==null?"Files":mUri.getHost())+(path==null?"":"  ›  "+path.replace("/","  ›  ")));}
             if(mErrorMessage!=null)mErrorMessage.setTextColor(0xffb4cbe0);if(mErrorDetails!=null)mErrorDetails.setTextColor(0xff9db1c4);
         }
@@ -860,6 +861,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         if(!bgMngr.isAttached())
             bgMngr.attach(getActivity().getWindow());
 
+        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&!PrivateMode.isActive()){bgMngr.setDrawable(com.archos.mediacenter.video.leanback.PreviewAccent.utility(requireContext()));return;}
         if (PrivateMode.isActive()) {
             int privateModeColor = ThemeManager.getInstance(getActivity()).getPrivateModeColor();
             bgMngr.setColor(privateModeColor);
