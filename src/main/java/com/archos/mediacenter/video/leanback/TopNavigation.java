@@ -48,18 +48,7 @@ public final class TopNavigation extends LinearLayout {
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
             tab.setPadding(dp(12), dp(6), dp(12), dp(6));
             tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, 0xff59d8ff, 0xffb4cbe0}));
-            StateListDrawable bg = new StateListDrawable();
-            GradientDrawable focus = new GradientDrawable();
-            focus.setColor(0x403d6888); focus.setCornerRadius(dp(7)); focus.setStroke(dp(1), PreviewAccent.alpha(c,153));
-            bg.addState(new int[]{android.R.attr.state_focused}, focus);
-            GradientDrawable active = new GradientDrawable();
-            active.setColor(PreviewAccent.color(c)); active.setCornerRadius(dp(2));
-            android.graphics.drawable.LayerDrawable underline = new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{active});
-            underline.setLayerHeight(0, dp(3)); underline.setLayerGravity(0, Gravity.BOTTOM);
-            underline.setLayerInset(0, dp(10), 0, dp(10), dp(3));
-            bg.addState(new int[]{android.R.attr.state_selected}, underline);
-            bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
-            tab.setBackground(bg);
+            styleTab(tab);
             tab.setOnFocusChangeListener((v, focused)->{
                 for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon!=null)icon.setTint(focused?PreviewAccent.color(c):0xffb4cbe0);
                 v.animate().scaleX(focused?1.025f:1f).scaleY(focused?1.025f:1f).setDuration(160).start();});
@@ -97,11 +86,14 @@ public final class TopNavigation extends LinearLayout {
         scanParams.setMargins(dp(20),dp(12),dp(20),dp(16));stage.addView(scanStatus,scanParams);
         addView(stage,new LayoutParams(-1,0,1));
     }
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key)){for(TextView tab:tabs)styleTab(tab);invalidate();}};
+    private void styleTab(TextView tab){Context c=getContext();tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected},new int[]{android.R.attr.state_focused},new int[]{}},new int[]{Color.WHITE,PreviewAccent.color(c),0xffb4cbe0}));StateListDrawable bg=new StateListDrawable();GradientDrawable focused=new GradientDrawable();focused.setColor(PreviewAccent.alpha(c,50));focused.setCornerRadius(dp(7));focused.setStroke(dp(1),PreviewAccent.alpha(c,153));bg.addState(new int[]{android.R.attr.state_focused},focused);GradientDrawable active=new GradientDrawable();active.setColor(PreviewAccent.color(c));active.setCornerRadius(dp(2));android.graphics.drawable.LayerDrawable underline=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{active});underline.setLayerHeight(0,dp(3));underline.setLayerGravity(0,Gravity.BOTTOM);underline.setLayerInset(0,dp(10),0,dp(10),dp(3));bg.addState(new int[]{android.R.attr.state_selected},underline);bg.addState(new int[]{},new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));tab.setBackground(bg);}
+    @Override protected void onAttachedToWindow(){super.onAttachedToWindow();androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(accentListener);for(TextView tab:tabs)styleTab(tab);}
     private boolean scrolled;private android.animation.ValueAnimator scrimAnimation;private int scrimAlpha;
     public void setScrolled(boolean value){if(value==scrolled)return;scrolled=value;if(scrimAnimation!=null)scrimAnimation.cancel();scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?247:0);scrimAnimation.setDuration(180);scrimAnimation.addUpdateListener(a->{scrimAlpha=(Integer)a.getAnimatedValue();bar.setBackgroundColor(android.graphics.Color.argb(scrimAlpha,9,23,35));});scrimAnimation.start();}
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public void selectTab(int index) { if(index<0||index>=6)return; for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true); }
-    @Override protected void onDetachedFromWindow() { artwork.release();super.onDetachedFromWindow(); }
+    @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);artwork.release();super.onDetachedFromWindow(); }
     public android.widget.FrameLayout getScanContainer() { return scanStatus; }
     public android.widget.FrameLayout getStatusContainer() { return status; }
     private int dp(int n) { return (int)(n * getResources().getDisplayMetrics().density + .5f); }

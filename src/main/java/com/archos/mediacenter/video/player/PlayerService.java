@@ -204,7 +204,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         private boolean startPositionApplied;
         private long viewedMs, sampleTime;
         private int samplePosition=-1;
-        private boolean seeking, hasPlayed;
+        private boolean seeking, hasPlayed, failed;
 
         private void reset(Uri newUri, String newLaunchGeneration) {
             uri = newUri;
@@ -216,7 +216,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             lastKnownPositionMs = LAST_POSITION_UNKNOWN;
             completed = false;
             startPositionApplied = false;
-            viewedMs=0;sampleTime=0;samplePosition=-1;seeking=false;hasPlayed=false;
+            viewedMs=0;sampleTime=0;samplePosition=-1;seeking=false;hasPlayed=false;failed=false;
         }
 
         private void setCandidate(ResumeSource source, int positionMs) {
@@ -1094,7 +1094,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     private int captureCurrentPosition(boolean rewindForResume) {
         int position = mPlaybackSession.lastKnownPositionMs;
-        boolean capturedFromPlayer = mPlayer != null && mPlayer.isInPlaybackState();
+        boolean capturedFromPlayer = !mPlaybackSession.failed && mPlayer != null && mPlayer.isInPlaybackState();
         if (capturedFromPlayer) {
             position = mPlayer.getDuration() != 0
                     ? mPlayer.getCurrentPosition()
@@ -1932,6 +1932,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public boolean onError(int errorCode, int errorQualCode, String msg) {
         log.warn("Playback failure code={} qualifier={} source={} lastPosition={} duration={} state={}",errorCode,errorQualCode,mPlaybackSession.selectedSource,mPlaybackSession.lastKnownPositionMs,mVideoInfo==null?0:mVideoInfo.duration,mPlayerState);
+        mPlaybackSession.failed=true;
         saveVideoStateIfReady();
         mPlayerState = PlayerState.STOPPED;
         if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
@@ -1970,7 +1971,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void onPlay(int state) {
         if (log.isDebugEnabled()) log.debug("onPlay");
         mPlayerState = PlayerState.PLAYING;
-        mPlaybackSession.hasPlayed=true;mPlaybackSession.sampleTime=0;sampleJourneyTime();
+        mPlaybackSession.hasPlayed=true;mPlaybackSession.failed=false;
+        if(mVideoInfo!=null&&!PrivateMode.isActive()){android.content.SharedPreferences.Editor edit=mPreferences.edit();if(!mVideoInfo.isShow)edit.remove("preview_cw_dismiss:v"+mVideoInfo.id);else{com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();if(library!=null)for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e:library.episodes)if(((Video)e.media).getId()==mVideoInfo.id){edit.remove("preview_cw_dismiss:"+e.key());break;}}edit.apply();}mPlaybackSession.sampleTime=0;sampleJourneyTime();
         if (state == PlayerController.STATE_NORMAL) {
             if (log.isDebugEnabled()) log.debug("onPlay: PlayerController.STATE_NORMAL -> startTrakt()");
             startTrakt();

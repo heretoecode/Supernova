@@ -37,9 +37,9 @@ public class PreviewPagesTest {
         s=PreviewLibraryLoader.build(Arrays.asList(first,episode(2,0,true,200,20),third),Collections.emptyList());
         assertSame(third.media,s.recent.get(0).media);
     }
-    @Test public void completedShowsDoNotSuggestWatchedEpisodes() {
+    @Test public void completedShowsLeaveContinueWatchingButRetainRecentEligibility() {
         Snapshot s=PreviewLibraryLoader.build(Arrays.asList(episode(1,0,true,100,10),episode(2,0,true,200,20)),Collections.emptyList());
-        assertTrue(s.recent.isEmpty());assertTrue(s.continuingShows.isEmpty());
+        assertEquals(1,s.recent.size());assertTrue(s.continuingShows.isEmpty());
     }
     @Test public void tvStorageAggregatesLibraryFilesAndSortsUnknownLast() {
         Entry one=episode(1,0,false,0,10),two=episode(2,0,false,0,20);one.bytes=2000;two.bytes=4000;

@@ -81,8 +81,9 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         }
         for(List<Entry> group:groups.values()) {
             Entry n=next(group); long newest=group.stream().mapToLong(e->e.added).max().orElse(0);
+            Entry recent=n!=null?n:group.get(0);
+            Entry grouped=new Entry(recent.media,newest,recent.show,recent.genres);grouped.onlineId=recent.onlineId;grouped.releaseDate=recent.releaseDate;s.recent.add(grouped);
             if(n!=null) {
-                Entry grouped=new Entry(n.media,newest,n.show,n.genres);grouped.onlineId=n.onlineId;grouped.releaseDate=n.releaseDate;s.recent.add(grouped);
                 if(group.stream().anyMatch(e->((Video)e.media).getLastPlayed()>0 || watched((Video)e.media))){n.playedAt=group.stream().mapToLong(e->e.playedAt).max().orElse(0);s.continuingShows.add(n);}
             }
         }

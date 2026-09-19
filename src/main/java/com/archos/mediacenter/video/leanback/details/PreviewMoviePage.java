@@ -107,7 +107,7 @@ public final class PreviewMoviePage extends ScrollView {
         float rating=movie instanceof Episode?((Episode)movie).getEpisodeRating():movie instanceof Movie?((Movie)movie).getRating():show==null?0:show.getRating();
         if(movie instanceof Episode&&rating<=0&&tags instanceof EpisodeTags)rating=tags.getRating();
         List<String> contextParts=new ArrayList<>();if(!safe(genre).isEmpty())contextParts.add(genre);if(rating>0)contextParts.add(String.format(Locale.UK,"TMDb %.1f / 10",rating));context.setText(android.text.TextUtils.join("  ·  ",contextParts));context.setVisibility(contextParts.isEmpty()?GONE:VISIBLE);
-        pills.removeAllViews();if(movie!=null){if(movie.hasMeasured4K())pill("4K");pill(PreviewMediaInfo.format(movie.getCalculatedVideoFormat()));pill(PreviewMediaInfo.format(movie.getCalculatedBestAudioFormat()));
+        pills.removeAllViews();if(movie!=null){if(movie.hasMeasured4K())pill("4K");else if(movie.getMeasuredHeight()>=1040)pill("1080p");else if(movie.getMeasuredHeight()>=720)pill("720p");
         }
         ((View)details.getParent()).setVisibility(row.getChildCount()==0?GONE:VISIBLE);
     }

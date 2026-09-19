@@ -1,18 +1,11 @@
-NOVA Preview 4.0
+SUPERNOVA Preview 4.1
 
-Section routing, remote focus and recoverable library headers.
-Visible deletion confirmation; preserve the library entry when physical deletion fails.
-Compact playback menus, nested-menu return and Play from beginning resumes.
-English/preferred subtitle choices first; other languages remain accessible.
-Movie/TV list columns, sorting and library-backed storage aggregates.
-Episode-specific Details metadata; compact circular cast portraits.
-Settings category cards, restored Streaming preferences and Subtitles placement.
-Build information and these bundled release notes under About.
-Compact local-library Search; no Recent Searches or remote discovery results.
-Scan Library entry using existing local and indexed-network scanners.
-Automatic scan retry/scheduling corrections; existing scan settings remain in control.
-Home Featured idle rotation pauses when you interact with the hero.
+Home: local-library Featured carousel, source toggles, Watch Next, custom rows, hide/reorder and non-destructive Continue Watching dismissal.
+Progress: one committed series journey separated from per-file bookmarks; meaningful-view threshold; unfinished final-episode and series Resume corrections. Periodic local resume checkpoints use the existing writer.
+Details: constrained synopsis, informational full-screen More Info, working Add to Row, technical information moved into More Info.
+Playback: HUD track selections and episode transport; compact menus with a shared anchor and Back hierarchy; Up Next in existing series/binge playback, using available credits/outro timings or a short fallback. Preparing playback screen preserved without artificial delay.
+Settings: three-panel layout, Rows, Featured source switches, Accent & Colour, preserved/deprecated controls in Legacy. Existing Streaming provider availability and global switch remain available for local-library titles.
+Storage: list presentation, compact folder actions, explicit deletion warning, embedded scan status, automatic scan request correction, verified backup generation and destination readback.
 
-Limits: unknown size/HDR metadata is omitted; some credential, scanner and legacy utility surfaces retain native controls. Add to List remains a disabled placeholder. Streaming uses existing availability/handoff only; no account authentication or playback engine added.
-
-Physical Android TV/Shield validation: NOT TESTED — USER QA REQUIRED.
+Physical Nvidia Shield playback, remote navigation, automatic WebDAV scans, backup-provider behaviour and device-specific audio/video output: NOT TESTED — USER QA REQUIRED.
+No fabricated media logos/seek thumbnails, no new decoder or streaming provider engine, and no deferred 4.2 work.
