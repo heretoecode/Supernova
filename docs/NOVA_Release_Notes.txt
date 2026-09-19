@@ -1,12 +1,56 @@
 NOVA VIDEO PLAYER — MARK'S PREVIEW
 Cumulative release notes — latest release first
-Current release: Preview 4.1 / 6.4.63-mark.4.1-preview / 6040076
+Current release: Preview 4.1.1 / 6.4.63-mark.4.1.1-preview / 6040077
 
 Delivery folder: Nova video player preview (Google Drive)
 Package: org.courville.nova.markpreview — separate from official Nova.
 Update existing Preview with the same signing identity; uninstalling removes app data.
 
 LATEST RELEASE
+
+PREVIEW 4.1.1 — CORRECTIVE SHIELD QA PASS
+Date: 19 September 2026
+Version: 6.4.63-mark.4.1.1-preview / versionCode 6040077
+Authority: Nova_Codex_Handover_2026-09-19_4.1.1_FINAL.zip
+Source: 75cfbf2fb7970912de5660a53c925c5b7ee7d67f
+Build: https://github.com/heretoecode/aos-Video/actions/runs/35451721845
+Package: org.courville.nova.markpreview — existing Preview signing identity; intended install-over 4.1.
+APK: NOVA_Preview_4.1.1.apk
+APK SHA-256: 6849af8484f04e6d4820a02a57ad01e20257ce560169fc8822dd8bb248dee07d
+
+Changes actually included:
+- Clean SUPERNOVA launch/composition surface until Home is ready, with a short fade and no artificial minimum delay. Featured fixed Play/Resume footprint and restrained content transition.
+- One genuine official-title-logo pipeline shared by Featured, Details, loading and HUD. Uses existing TMDb metadata credentials, bounded cached PNGs and readable text fallback. Loading/HUD do not wait for network artwork.
+- Compact Customise Home; Settings Clear Watch Next with confirmation. Existing reorder/hide and non-destructive hidden membership retained.
+- Subtle library List separators; clearer Information/Actions on Details; Add to Row moved into Actions; information layout uses two columns; stale Add to List placeholder removed.
+- Compact Scan Library, neutral dark utility background, transparent Network/Search navigation while scrolling, and corrected actual file-browser list rows/path/focus styling.
+- Automatic-scan startup/interval controls exposed. Only absent values initialise to startup enabled/15 minutes; saved Off/intervals remain. Existing scheduler is re-established and scheduled WebDAV no longer uses the inactive-LAN-server exclusion. Working manual discovery/import engine is retained.
+- Indexed Search folds diacritics/case so Shogun can match Shōgun; episode/title/path matching runs off the UI thread while preserving existing visibility filters.
+- Streaming provider keys hydrate correctly and selections save immediately, including Back. Checkmarks update without dialog recreation. Real availability logo paths are retained. Existing country/provider backend and conditional handoff remain; no invented offers.
+- Settings spacing/help-panel refinement with existing categories/Legacy and saved preferences retained.
+- Concise current Audio/Subtitles labels; centred equal transport controls and corrected 10-second icons; measured compact speed/delay panels and restrained focus; selected options update in place; TV uses Episode ends. PASSED Back/anchor behaviour retained.
+- Refined dark Up Next media overlay; existing countdown/Play Now/Cancel, recap skip and episode progression logic unchanged.
+- Backup exports with an in-progress name, verifies the destination and renames to final ZIP where supported. Portable saved account/configuration preferences join existing library/source/credential/history databases. Reproducible downloaded artwork is excluded and restored in the background; personal/unknown poster/backdrop files retained. Credentials warning and exact preference rollback included.
+- Updated 4.1.1 in-app About notes. Existing preview package/certificate/update path retained; no media database schema change.
+
+Checks actually performed:
+- PASS: signed debug and optimised universal release compilation/APK generation; 33 targeted tests, 0 failures/0 skipped (14.715 seconds test execution); API 28 x86_64 Preview launch/reinstall/restart/warm return, Settings and Home/Movies/TV/Search routes; signed diagnostic-to-release install-over/restart; pinned certificate and four native ABIs; downloaded artifact/APK hashes and ZIP integrity. Existing release lint completed. No physical Shield tests.
+- Actual 4.1-to-4.1.1 user-data upgrade is not emulated; package/certificate match and versionCode increases. Final APK source: 75cfbf2fb7970912de5660a53c925c5b7ee7d67f.
+
+Known limitations / NOT TESTED — USER QA REQUIRED:
+- Physical Shield install-over with the user's database, full D-pad behaviour, populated startup/Featured/logo transitions, playback first-frame/return flashing and device-specific A/V output.
+- Automatic WebDAV with the actual source/preferences, foreground interval/restart/offline recovery and Recently Added. Findings are code-grounded; the persistent Shield failure is not claimed physically verified. Check Settings if an explicit Off value was previously saved.
+- Actual indexed Shōgun/MobLand Search and large-library query responsiveness. Hidden/excluded titles still obey existing filters.
+- Ireland provider availability, empty season responses, real provider apps/browser handoff and account expiry. No confirmed offer is fabricated from a series-level guess.
+- Genuine PNG logo availability; first uncached direct playback uses text. Some optional classic/native/system UI remains, documented in the audit.
+- Real backup/SAF providers and fresh-device restoration, source paths/Android grant renewal, credential/token validity and artwork retry. Backups contain private credentials and are not strongly encrypted. Providers without rename support retain a verified in-progress filename with a manual-rename message.
+- PASSED 4.1 journey/bookmark/Up Next/Back functionality deliberately preserved; must be checked on installed Shield update. No 4.2 features, analytics or unsupported playback functionality added.
+
+Reports: NOVA_CODEX_RETURN_HANDOVER_4.1.1.md; NOVA_UI_AUDIT_REPORT_4.1.1.md.
+Exact Codex allowance/credit information unavailable; no estimate invented.
+No unrelated next pass started.
+
+----------------------------------------------------------------
 
 PREVIEW 4.1 — HOME ROWS, SERIES JOURNEY AND PLAYBACK/EXPORT REMEDIATION
 Date: 19 September 2026
@@ -358,5 +402,4 @@ APK SHA-256: 832de24b77d2d55d411b382830597c720993fe9e5fd7cf62ca0a4a245a6d5f67
 APK size: 98529193 bytes.
 Package: org.courville.nova.markpreview. Install as an update over existing Preview; no uninstall required.
 Physical Shield, populated Movie Details route, full D-pad paths, playback and source scanning: NOT TESTED — USER QA REQUIRED.
-
 
