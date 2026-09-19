@@ -89,14 +89,14 @@ public final class PreviewMoviePage extends ScrollView {
         if(certificate!=null&&!certificate.isEmpty())metadata.add(certificate);
         meta.setText(android.text.TextUtils.join("  ·  ",metadata));meta.setVisibility(metadata.isEmpty()?GONE:VISIBLE);
     }
-    public void setTags(BaseTags value,List<ScraperTrailer> videos,List<ScraperImage> backdrops){tags=value;trailerList=videos==null?Collections.emptyList():videos;
+    public void setTags(BaseTags value,List<ScraperTrailer> videos,List<ScraperImage> backdrops){View oldCast=cast.findFocus();Object castKey=oldCast==null?null:oldCast.getTag();int oldY=getScrollY();tags=value;trailerList=videos==null?Collections.emptyList():videos;
         if(backdrops!=null&&!backdrops.isEmpty()){ScraperImage image=backdrops.get(0);java.io.File file=image.getLargeFileF();if(file!=null&&file.exists()){artwork.accept(Uri.fromFile(file));if(movie!=null)movie.setPreviewBackdrop(Uri.fromFile(file).toString());}else if(image.getLargeUrl()!=null)artwork.accept(Uri.parse(image.getLargeUrl()));}
         portraits.clear();cast.removeAllViews();HorizontalScrollView scroll=new HorizontalScrollView(getContext());scroll.setSmoothScrollingEnabled(false);scroll.setHorizontalScrollBarEnabled(false);LinearLayout people=new LinearLayout(getContext());scroll.addView(people);cast.addView(scroll);
         if(tags!=null){for(Map.Entry<String,String> person:tags.getActors().entrySet())person(people,person.getKey(),person.getValue());
             if(tags.getDirectorsFormatted()!=null&&!tags.getDirectorsFormatted().isEmpty())person(people,tags.getDirectorsFormatted(),"Director");}
         ((View)cast.getParent()).setVisibility(people.getChildCount()==0?GONE:VISIBLE);
         trailer.setVisibility(primaryTrailer()==null?View.GONE:View.VISIBLE);
-        PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderDetails();renderRelated();
+        PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderDetails();renderRelated();restoreRowFocus(cast,castKey,oldY);
     }
     public void setSnapshot(Snapshot value){snapshot=value;renderRelated();}
     private void renderDetails(){observeActions();if(movie==null&&show==null)return;renderHumanMetadata();details.removeAllViews();
@@ -125,7 +125,7 @@ public final class PreviewMoviePage extends ScrollView {
         // The existing scraper stores names/roles but no portrait URLs. Use the real Nova asset.
         ImageView portrait=new ImageView(getContext());portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);portraits.put(name,portrait);portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);portrait.setClipToOutline(true);portrait.setOutlineProvider(new ViewOutlineProvider(){@Override public void getOutline(View view,android.graphics.Outline outline){outline.setOval(0,0,view.getWidth(),view.getHeight());}});card.addView(portrait,new LinearLayout.LayoutParams(dp(42),dp(42)));
         LinearLayout words=new LinearLayout(getContext());words.setOrientation(android.widget.LinearLayout.VERTICAL);words.setPadding(dp(8),0,0,0);card.addView(words,new LinearLayout.LayoutParams(0,-2,1));
-        TextView label=text(name,12);label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);words.addView(label);TextView detail=text(role==null?"":role,10);detail.setMaxLines(1);detail.setTextColor(0xffa4b6c7);words.addView(detail);card.setContentDescription(name+" "+safe(role));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(165),dp(62));lp.rightMargin=dp(10);people.addView(card,lp);
+        TextView label=text(name,12);label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);words.addView(label);TextView detail=text(role==null?"":role,10);detail.setMaxLines(1);detail.setTextColor(0xffa4b6c7);words.addView(detail);card.setContentDescription(name+" "+safe(role));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(165),dp(62));lp.rightMargin=dp(10);people.addView(card,lp);card.setTag("person:"+name+":"+safe(role));rowKeys(card,people);
     }
     private void bindPoster(Base value){
         com.squareup.picasso.Picasso.get().cancelRequest(poster);poster.setImageDrawable(null);
@@ -153,13 +153,15 @@ public final class PreviewMoviePage extends ScrollView {
     private static String shortFile(String s){if(s==null)return "";return s.length()>90?s.substring(0, sixty(s))+"…"+s.substring(s.length()-20):s;}
     private static int sixty(String s){return Math.min(60,s.length());}
     private void info(LinearLayout row,String name,String value){TextView t=text(value.replace("\n\n","    ·    ").replace("\n",": "),13);t.setMaxLines(3);t.setEllipsize(android.text.TextUtils.TruncateAt.END);t.setTextColor(0xffa8becf);t.setPadding(0,dp(3),0,dp(3));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(7);row.addView(t,lp);}
-    private void renderRelated(){for(Presenter.ViewHolder h:cards)presenter.onUnbindViewHolder(h);cards.clear();related.removeAllViews();if(movie==null||snapshot==null||tags==null)return;
+    private void renderRelated(){View oldFocus=related.findFocus();Object focusKey=oldFocus==null?null:oldFocus.getTag();int oldY=getScrollY();for(Presenter.ViewHolder h:cards)presenter.onUnbindViewHolder(h);cards.clear();related.removeAllViews();if(movie==null||snapshot==null||tags==null){restoreRowFocus(related,focusKey,oldY);return;}
         Entry seed=new Entry(movie,0,0,tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():"");
         HorizontalScrollView scroll=new HorizontalScrollView(getContext());scroll.setSmoothScrollingEnabled(false);LinearLayout row=new LinearLayout(getContext());scroll.addView(row);related.addView(scroll);
         int count=0;for(Entry e:PreviewDiscovery.similar(seed,snapshot)){if(!(e.media instanceof Movie))continue;if(count++==12)break;
-            Presenter.ViewHolder h=presenter.onCreateViewHolder(row);presenter.onBindViewHolder(h,e.media);cards.add(h);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(172),-2);lp.rightMargin=dp(12);row.addView(h.view,lp);h.view.setOnClickListener(v->new VideoViewClickedListener((Activity)getContext()).onItemClicked(h,e.media,null,null));}
-        ((View)related.getParent()).setVisibility(count==0?GONE:VISIBLE);
+            Presenter.ViewHolder h=presenter.onCreateViewHolder(row);presenter.onBindViewHolder(h,e.media);cards.add(h);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(172),-2);lp.rightMargin=dp(12);row.addView(h.view,lp);h.view.setTag("related:"+e.key());rowKeys(h.view,row);h.view.setOnClickListener(v->new VideoViewClickedListener((Activity)getContext()).onItemClicked(h,e.media,null,null));}
+        ((View)related.getParent()).setVisibility(count==0?GONE:VISIBLE);restoreRowFocus(related,focusKey,oldY);
     }
+    private void rowKeys(View card,LinearLayout row){card.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN||key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT)return false;int next=row.indexOfChild(v)+(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);if(next>=0&&next<row.getChildCount())row.getChildAt(next).requestFocus();return true;});}
+    private void restoreRowFocus(ViewGroup area,Object key,int y){if(key==null)return;View target=area.findViewWithTag(key);if(target==null)for(View candidate:area.getFocusables(View.FOCUS_FORWARD))if(candidate.getTag()!=null){target=candidate;break;}if(target==null)target=play;target.requestFocus();scrollTo(0,y);final View restored=target;post(()->{if(restored.hasFocus())scrollTo(0,y);});}
     public void play(){if(showPlay!=null){showPlay.run();return;}ObjectAdapter adapter=actions.get();if(adapter==null)return;
         for(int id:new int[]{VideoActionAdapter.ACTION_RESUME,VideoActionAdapter.ACTION_LOCAL_RESUME,VideoActionAdapter.ACTION_PLAY,VideoActionAdapter.ACTION_PLAY_FROM_BEGIN,VideoActionAdapter.ACTION_REMOTE_RESUME})
             for(int i=0;i<adapter.size();i++){Object item=adapter.get(i);if(item instanceof Action&&((Action)item).getId()==id){action.accept((Action)item);return;}}

@@ -684,6 +684,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             public void handleOnBackPressed() {
                 log.info("Back navigation: OnBackPressedDispatcher callback, dialogId={}",
                         mShowingDialogId);
+                if(previewUpNext!=null&&previewUpNext.cancelFocused())return;
                 if (mPlayerController != null && mPlayerController.handleBackPressed()) {
                     // The player controller dismisses a nested TV card before the main TV menu.
                 } else {
@@ -1528,6 +1529,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (intent != null && !intent.hasExtra(PlayerService.LAUNCH_GENERATION)) {
             intent.putExtra(PlayerService.LAUNCH_GENERATION, UUID.randomUUID().toString());
         }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if(previewUpNext!=null&&previewUpNext.handleKey(event,()->{if(mPlayerController!=null)mPlayerController.showControlBar();}))return true;
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
