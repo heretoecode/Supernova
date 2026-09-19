@@ -1,25 +1,13 @@
-# Preview delivery policy
+# Preview delivery policy — current 4.1 checkpoint
 
-Mark requested faster installable APKs on 15 September 2026 and prefers to test new features on his Shield while development continues.
+The authoritative handover controls each pass. Mark performs physical Shield QA. Use implement/fix → compile → minimum relevant checks → final APK → return handover → user testing. Do not start a new pass after delivery.
 
-## Default: preview
+The current workflow runs `validation: preview` by default. It compiles a signed debug checkpoint, runs quick targeted checks and emulator Preview startup/routes, then builds the optimised universal release (`APK_VARIANT: release`), verifies signed install-over/restart and the pinned certificate/ABIs. The delivered 4.1 APK is a release build, not a debug APK. Three earlier 4.1 implementation checkpoints used debug output only.
 
-The Preview workflow defaults to `preview` on personal-branch pushes and manual dispatch. It builds **one development/debug APK**, with the existing isolated Preview package and pinned signing identity. It skips the unit suite, lint and release optimisation. It still verifies compilation, packaging, signing, installed-app launch with Preview enabled, and a same-APK reinstall/restart preserving that preference. This is not a previous-version migration test.
+Do not treat this as physical hardware validation or a populated previous-version migration test. The debug-to-release emulator upgrade preserves Preview enablement; actual 4.0 user data, network sources and playback remain user QA. Keep package/signing identity and increase versionCode for future releases. Never disable a failing gate instead of fixing its cause.
 
-These APKs may be larger and have development logging. Their performance and release-shrinker behaviour are not equivalent to a fully optimised release. Keep normal version-code increments for future app changes so Mark can update his installation.
+Use existing cheap tests relevant to concrete changed behaviour. Do not expand into exhaustive remote, network, playback or screenshot regression before Preview delivery. `validation: full` remains an optional milestone path; it is not required merely because a Preview changes playback or storage. Superseded branch builds cancel automatically; documentation-only commits do not produce another APK.
 
-## Milestones: full
+Upload the verified APK promptly to the existing Drive APKs to Test folder. Update the running release notes in place with latest entry first and preserved history. Record exact source/version/hash, actual checks, limitations and NOT TESTED — USER QA REQUIRED. Exact usage credits must be reported unavailable if no counter is exposed.
 
-Select `validation: full` manually when a feature milestone is ready, before calling a build feature-complete/stable, or when changes to playback, storage/deletion, migrations, signing, dependencies or startup warrant broader checks. This retains the existing selected unit suite, lint, classic and Preview startup/restart, optimised release build and diagnostic-to-release upgrade/restart checks. Add focused tests for the changed risky behaviour where the existing suite does not cover it.
-
-The retained suite is the project's selected regression suite, not every possible test. Physical Shield acceptance is separate and must be reported accurately.
-
-## Avoid repeated work
-
-- Finish each coherent feature or UI batch before starting a delivery build. Do not rebuild for every small cosmetic adjustment.
-- Use existing test results and source inspection where appropriate; reserve populated screenshot review for milestones or concrete layout faults.
-- A newer commit cancels a superseded Preview workflow. Documentation-only pushes do not build an APK.
-- The legacy non-Preview workflow no longer duplicates personal-branch push/PR builds.
-- Deliver the successfully checked APK promptly with concise changes, known gaps, validation mode and checksum. Full release optimisation is not a prerequisite for development delivery.
-- Preserve the cumulative release notes. The previous 3.5 release was fully checked; this policy applies to subsequent development builds.
-- No speed target has been measured for this new workflow yet.
+Current hand-back: `../NOVA_CODEX_RETURN_HANDOVER_4.1.md`; audit: `../NOVA_UI_AUDIT_REPORT_4.1.md`. No 4.2 implementation started.
