@@ -130,8 +130,8 @@ public final class SafeBackup {
                     if(settings.isFile()&&!SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c),read(settings)).commit())
                         throw new IOException("Cannot save restored settings");
                 } catch(Exception error) {
-                    SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c),originalSettings).commit();
-                    for(Map.Entry<String,String> entry:originalNamed.entrySet())SettingsBackup.decode(c.getSharedPreferences(entry.getKey(),0),entry.getValue()).commit();
+                    SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c),originalSettings).clear().commit();
+                    for(Map.Entry<String,String> entry:originalNamed.entrySet())SettingsBackup.decode(c.getSharedPreferences(entry.getKey(),0),entry.getValue()).clear().commit();
                     for(int i=swaps.size()-1;i>=0;i--) {
                         try { swaps.get(i).rollback(); } catch(IOException recovery) { error.addSuppressed(recovery); }
                     }

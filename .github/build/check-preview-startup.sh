@@ -103,10 +103,24 @@ out=Path('../startup-diagnostics')
 def adb(*args):
  return subprocess.run(['adb',*args],check=True,stdout=subprocess.PIPE).stdout
 def capture(name):
- adb('shell','uiautomator','dump','/sdcard/nova-check.xml')
- data=adb('shell','cat','/sdcard/nova-check.xml');(out/(name+'.xml')).write_bytes(data)
- (out/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'))
- return ET.fromstring(data)
+ # Accessibility can briefly return a null root during a window transition.
+ # Never reuse a stale dump, and retain crash diagnostics if retries fail.
+ for attempt in range(3):
+  adb('shell','rm','-f','/sdcard/nova-check.xml')
+  adb('shell','uiautomator','dump','/sdcard/nova-check.xml')
+  result=subprocess.run(['adb','shell','cat','/sdcard/nova-check.xml'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  if result.returncode==0 and result.stdout.strip():
+   try: root=ET.fromstring(result.stdout)
+   except ET.ParseError: pass
+   else:
+    (out/(name+'.xml')).write_bytes(result.stdout)
+    (out/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'))
+    return root
+  logs=adb('logcat','-d');(out/(name+'-logcat.txt')).write_bytes(logs)
+  assert b'FATAL EXCEPTION' not in logs, 'Crash during UI capture'
+  adb('shell','pidof','org.courville.nova.markpreview')
+  time.sleep(1)
+ raise AssertionError('Accessibility root unavailable after bounded retries: '+name)
 def target(root,label,activate=False):
  n=next(n for n in root.iter('node') if n.get('text')==label or n.get('content-desc')==label)
  x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))

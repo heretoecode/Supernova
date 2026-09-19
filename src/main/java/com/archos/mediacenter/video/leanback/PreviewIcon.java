@@ -27,7 +27,7 @@ public final class PreviewIcon extends Drawable {
   else if(kind.contains("info")||kind.contains("about")||kind.contains("details")){c.drawCircle(12,12,9,p);line(c,12,11,12,17);c.drawPoint(12,7,p);}
   else if(kind.contains("list")||kind.contains("sort")||kind.contains("title")||kind.contains("chapter")){for(int y=5;y<=19;y+=7){c.drawPoint(3,y,p);line(c,8,y,21,y);}}
   else if(kind.contains("star")||kind.contains("rating")||kind.contains("popular")||kind.contains("trending")){line(c,12,2,15,9,22,9,17,14,19,21,12,17,5,21,7,14,2,9,9,9,12,2);}
-  else if(kind.contains("more")){c.drawCircle(4,12,1,p);c.drawCircle(12,12,1,p);c.drawCircle(20,12,1,p);}
+  else if(kind.contains("more")||kind.contains("actions")){c.drawCircle(4,12,1,p);c.drawCircle(12,12,1,p);c.drawCircle(20,12,1,p);}
   else if(kind.contains("right")||kind.contains("next")){line(c,9,5,16,12,9,19);}
   else {for(int y=3;y<=14;y+=11)for(int x=3;x<=14;x+=11)c.drawRoundRect(x,y,x+7,y+7,1,1,p);}
   c.restore();

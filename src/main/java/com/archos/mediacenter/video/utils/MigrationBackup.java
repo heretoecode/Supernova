@@ -46,11 +46,31 @@ public final class MigrationBackup {
      BaseTags tags=kind==BaseTags.MOVIE?TagsFactory.buildMovieTags(c,scraper):TagsFactory.buildEpisodeTags(c,scraper);
      if(tags==null)continue;if(tags instanceof EpisodeTags){ShowTags show=((EpisodeTags)tags).getShowTags();if(show!=null&&seen.add("show:"+show.getOnlineId()))complete=download(show,c)&&complete;}
      complete=download(tags,c)&&complete;
+     if(tags instanceof EpisodeTags)complete=downloadEpisodePicture((EpisodeTags)tags,c)&&complete;
     }
    }
    if(complete)p.edit().remove("preview_restore_artwork_pending").apply();
   }catch(Exception failure){android.util.Log.w("SupernovaBackup","Artwork restoration will retry on return",failure);}finally{RESTORING.set(false);}},"supernova-restore-artwork").start();
  }
  private static boolean download(BaseTags tags,Context c){boolean ok=true;for(ScraperImage image:new ScraperImage[]{tags.getDefaultPoster(),tags.getDefaultBackdrop()})if(image!=null&&image.getLargeUrl()!=null&&(image.getLargeFileF()==null||!image.getLargeFileF().isFile()))ok=image.download(c)&&ok;return ok;}
+ /** Restore only the still-image reference; never rescrape or overwrite watch/resume metadata. */
+ private static boolean downloadEpisodePicture(EpisodeTags tags,Context c){
+  ScraperImage existing=tags.getEpisodePicture();
+  if(existing!=null&&existing.getLargeFileF()!=null&&existing.getLargeFileF().isFile())return true;
+  ShowTags show=tags.getShowTags();if(show==null||show.getOnlineId()<=0||tags.getSeason()<0||tags.getEpisode()<0)return true;
+  String language=Locale.getDefault().getLanguage(),key=show.getOnlineId()+"|"+tags.getSeason()+"|"+language;
+  com.archos.mediascraper.themoviedb3.ShowIdSeasonSearchResult result=com.archos.mediascraper.themoviedb3.ShowIdSeasonSearch.getSeasonShowResponse(key,(int)show.getOnlineId(),tags.getSeason(),language,false,new com.archos.mediascraper.themoviedb3.MyTmdb(c.getString(com.archos.medialib.R.string.tmdb_api_key),null));
+  if(result==null)return false;
+  if(result.tvSeason==null)return result.status==ScrapeStatus.NOT_FOUND;
+  if(result.tvSeason.episodes==null)return true;
+  for(com.uwetrottmann.tmdb2.entities.TvEpisode episode:result.tvSeason.episodes){
+   if(episode.episode_number==null||episode.episode_number!=tags.getEpisode()||episode.still_path==null||episode.still_path.isEmpty())continue;
+   tags.setEpisodePicture(episode.still_path,c,false);ScraperImage picture=tags.getEpisodePicture();if(!picture.download(c))return false;
+   ContentValues values=new ContentValues();values.put(com.archos.mediaprovider.video.ScraperStore.Episode.PICTURE,picture.getLargeFile());
+   c.getContentResolver().update(com.archos.mediaprovider.video.ScraperStore.Episode.URI.BASE,values,com.archos.mediaprovider.video.ScraperStore.Episode.ID+"=?",new String[]{Long.toString(tags.getId())});
+   break;
+  }
+  return true;
+ }
  private MigrationBackup(){}
 }
