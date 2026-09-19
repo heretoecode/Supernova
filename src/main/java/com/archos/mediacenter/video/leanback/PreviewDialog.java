@@ -50,5 +50,5 @@ public final class PreviewDialog {
  }
  public static int dp(Context c,int v){return Math.round(v*c.getResources().getDisplayMetrics().density);}
  public static StateListDrawable focus(Context c){StateListDrawable s=new StateListDrawable();s.addState(new int[]{android.R.attr.state_focused},surface(c,true));s.addState(new int[]{},new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));return s;}
- public static GradientDrawable surface(Context c,boolean f){GradientDrawable g=new GradientDrawable();g.setColor(f?0x60416b84:0xef0b1b29);g.setCornerRadius(dp(c,6));g.setStroke(dp(c,1),f?0xff59d8ff:0x50426a80);return g;}
+ public static GradientDrawable surface(Context c,boolean f){GradientDrawable g=new GradientDrawable();g.setColor(f?PreviewAccent.alpha(c,70):0xef0b1b29);g.setCornerRadius(dp(c,6));g.setStroke(dp(c,1),f?PreviewAccent.color(c):0x50426a80);return g;}
 }

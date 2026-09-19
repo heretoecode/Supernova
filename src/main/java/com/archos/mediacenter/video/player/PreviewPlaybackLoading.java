@@ -29,14 +29,14 @@ final class PreviewPlaybackLoading extends FrameLayout {
         title=text("",32);title.setTypeface(null,android.graphics.Typeface.BOLD);title.setMaxLines(2);title.setEllipsize(android.text.TextUtils.TruncateAt.END);labels.addView(title);
         episode=text("",16);episode.setPadding(0,dp(10),0,dp(20));labels.addView(episode);
         LinearLayout status=new LinearLayout(context);status.setGravity(Gravity.CENTER_VERTICAL);status.setPadding(0,dp(18),0,0);labels.addView(status);
-        ProgressBar spinner=new ProgressBar(context,null,android.R.attr.progressBarStyleSmall);spinner.setIndeterminateDrawable(new com.archos.mediacenter.video.leanback.ThinSpinner());spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(0xff62bbf3));status.addView(spinner,new LinearLayout.LayoutParams(dp(28),dp(28)));
-        TextView starting=text("Starting playback…",16);starting.setPadding(dp(14),0,dp(8),0);status.addView(starting);
+        ProgressBar spinner=new ProgressBar(context,null,android.R.attr.progressBarStyleSmall);spinner.setIndeterminateDrawable(new com.archos.mediacenter.video.leanback.ThinSpinner());spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(com.archos.mediacenter.video.leanback.PreviewAccent.color(context)));status.addView(spinner,new LinearLayout.LayoutParams(dp(28),dp(28)));
+        TextView starting=text("Preparing playback…",16);starting.setPadding(dp(14),0,dp(8),0);status.addView(starting);
         TextView buffer=text("",13);buffer.setId(R.id.buffer_percentage);status.addView(buffer);
         TextView torrent=text("",13);torrent.setId(R.id.torrent_status);torrent.setVisibility(GONE);labels.addView(torrent);
         Object value=intent.getSerializableExtra(PlayerService.VIDEO);
         if(value instanceof Video){Video video=(Video)value;source=video.getUri();fileSource=video.getFileUri();cachedArtwork=video.getPreviewBackdrop();
             title.setText(video instanceof Episode?((Episode)video).getShowName():video.getName());
-            if(video instanceof Episode){Episode e=(Episode)video;episode.setText(String.format(Locale.getDefault(),"S%02d E%02d",e.getSeasonNumber(),e.getEpisodeNumber())+(video.getName()==null?"":" · "+video.getName()));}
+            if(video instanceof Episode){Episode e=(Episode)video;episode.setText(String.format(Locale.getDefault(),"Season %d • Episode %d",e.getSeasonNumber(),e.getEpisodeNumber())+(video.getName()==null?"":" · "+video.getName()));}
         }
         episode.setVisibility(episode.length()==0?GONE:VISIBLE);
     }
@@ -63,7 +63,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         if(info==null){if(fallback!=null)title.setText(fallback);return;}
         title.setText(info.isScraped&&info.scraperTitle!=null?info.scraperTitle:fallback);
         boolean show=info.isShow&&info.scraperSeasonNr>=0&&info.scraperEpisodeNr>=0;
-        episode.setText(show?String.format(Locale.getDefault(),"S%02d E%02d",info.scraperSeasonNr,info.scraperEpisodeNr)+(info.scraperEpisodeName==null?"":" · "+info.scraperEpisodeName):"");episode.setVisibility(show?VISIBLE:GONE);
+        episode.setText(show?String.format(Locale.getDefault(),"Season %d • Episode %d",info.scraperSeasonNr,info.scraperEpisodeNr)+(info.scraperEpisodeName==null?"":" · "+info.scraperEpisodeName):"");episode.setVisibility(show?VISIBLE:GONE);
         if(info.uri!=null&&!info.uri.equals(source)&&!info.uri.equals(fileSource)){cachedArtwork=null;Picasso.get().cancelRequest(artwork);artwork.setImageDrawable(null);}
     }
     @Override protected void onVisibilityChanged(View changed,int visibility){

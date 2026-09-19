@@ -9,12 +9,12 @@ import com.squareup.picasso.*;
 /** One bounded artwork decode shared visually by the header and its navigation. */
 public final class PreviewBackdrop extends Drawable implements Target {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-    private final float density;
+    private final float density;private final Context context;
     private Bitmap bitmap, previous;
     private final android.os.Handler handler=new android.os.Handler(android.os.Looper.getMainLooper());
     private Runnable pending;private long fadeStart;
     private Uri uri;
-    public PreviewBackdrop(Context c) { density=c.getResources().getDisplayMetrics().density; }
+    public PreviewBackdrop(Context c) { context=c;density=c.getResources().getDisplayMetrics().density; }
     public void load(Uri next) {
         if(java.util.Objects.equals(uri,next)) return;
         Picasso.get().cancelRequest(this);if(pending!=null)handler.removeCallbacks(pending);uri=next;
@@ -23,7 +23,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     public void release() { handler.removeCallbacksAndMessages(null);Picasso.get().cancelRequest(this); bitmap=previous=null; uri=null; }
     @Override public void draw(Canvas canvas) {
         Rect b=getBounds(); float h=Math.min(b.height(),420*density);
-        canvas.drawColor(0xff0b1b2a);
+        canvas.drawColor(0xff0b1b2a);if(bitmap==null&&previous==null){android.graphics.drawable.GradientDrawable utility=PreviewAccent.utility(context);utility.setBounds(b);utility.draw(canvas);}
         paint.setShader(null);
         float fade=Math.min(1f,(android.os.SystemClock.uptimeMillis()-fadeStart)/180f);
         drawImage(canvas,previous,b.width(),h,1-fade);drawImage(canvas,bitmap,b.width(),h,fade);

@@ -34,9 +34,9 @@ public final class TopNavigation extends LinearLayout {
         bar.setPadding(dp(26), 0, dp(26), 0);
         bar.setBackgroundColor(Color.TRANSPARENT);
         TextView brand = new TextView(c);
-        brand.setText("NOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(22); brand.setTextColor(0xffb7d7f5);
-        brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(85), -1));
-        LinearLayout group = new LinearLayout(c); group.setGravity(Gravity.CENTER);
+        brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(0xffb7d7f5);
+        brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(130), -1));
+        LinearLayout group = new LinearLayout(c); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
         bar.addView(group, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV shows", "Network & files", "Settings", "Search"};
         for (int i = 0; i < labels.length; i++) {
@@ -50,10 +50,10 @@ public final class TopNavigation extends LinearLayout {
             tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, 0xff59d8ff, 0xffb4cbe0}));
             StateListDrawable bg = new StateListDrawable();
             GradientDrawable focus = new GradientDrawable();
-            focus.setColor(0x403d6888); focus.setCornerRadius(dp(7)); focus.setStroke(dp(1), 0x9962bbf3);
+            focus.setColor(0x403d6888); focus.setCornerRadius(dp(7)); focus.setStroke(dp(1), PreviewAccent.alpha(c,153));
             bg.addState(new int[]{android.R.attr.state_focused}, focus);
             GradientDrawable active = new GradientDrawable();
-            active.setColor(0xff62bbf3); active.setCornerRadius(dp(2));
+            active.setColor(PreviewAccent.color(c)); active.setCornerRadius(dp(2));
             android.graphics.drawable.LayerDrawable underline = new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{active});
             underline.setLayerHeight(0, dp(3)); underline.setLayerGravity(0, Gravity.BOTTOM);
             underline.setLayerInset(0, dp(10), 0, dp(10), dp(3));
@@ -61,7 +61,7 @@ public final class TopNavigation extends LinearLayout {
             bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
             tab.setBackground(bg);
             tab.setOnFocusChangeListener((v, focused)->{
-                for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon!=null)icon.setTint(focused?0xff59d8ff:0xffb4cbe0);
+                for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon!=null)icon.setTint(focused?PreviewAccent.color(c):0xffb4cbe0);
                 v.animate().scaleX(focused?1.025f:1f).scaleY(focused?1.025f:1f).setDuration(160).start();});
             tab.setOnClickListener(v -> {
                 if (index < 4) {
@@ -82,8 +82,10 @@ public final class TopNavigation extends LinearLayout {
                 android.graphics.drawable.Drawable search = c.getDrawable(com.archos.mediacenter.video.R.drawable.preview_search);
                 search.setBounds(0, 0, dp(22), dp(22)); tab.setCompoundDrawables(search, null, null, null);
             }
+            if(i==4){View gap=new View(c);group.addView(gap,new LayoutParams(0,1,1));}
             group.addView(tab, new LayoutParams(-2, dp(36)));
         }
+        group.removeView(tabs[5]);group.addView(tabs[5],group.indexOfChild(tabs[4]),new LayoutParams(-2,dp(36)));
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(85), dp(46)));
         android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTextSize(19);clock.setTextColor(0xffd6e5f3);clock.setGravity(Gravity.CENTER);status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
