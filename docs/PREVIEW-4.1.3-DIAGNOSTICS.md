@@ -26,6 +26,11 @@ database/media files, normal logcat, credentials, authentication headers, tokens
 API keys, raw media locations and exception messages. Exceptions retain only types
 and stack locations. Session IDs are random diagnostic correlation IDs, not tokens.
 
+Optimised releases are obfuscated. The matching release R8 mapping is retained
+with the build evidence in the Codex return handover, not copied into device logs.
+Use the report's source/build identity to select that exact mapping for retracing
+Java stack locations. A mapping from another candidate is not interchangeable.
+
 Never pass credentials or arbitrary user/network text into the event API. URLs and
 paths are stripped as defence in depth, and sensitive field names are rejected.
 Only known numeric/enumerated state belongs in instrumentation payloads.

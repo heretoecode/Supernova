@@ -225,6 +225,7 @@ jobs:
             nova/startup-diagnostics/
             nova/Video/build/reports/tests/
             nova/Video/build/reports/preview-ui/
+            nova/Video/build/outputs/mapping/noamazonRelease/
             nova/Video/docs/MARK-EDITION-3.md
             nova/source-manifest.xml
             nova/apk-verification.log
