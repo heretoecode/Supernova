@@ -162,6 +162,7 @@ jobs:
           adb shell input keyevent 82
 
       - name: Check full app startup with Preview enabled
+        timeout-minutes: 6
         working-directory: nova/Video
         run: |
           apk=$(find build/outputs/apk/noamazon/debug -name '*.apk' -type f | head -1)

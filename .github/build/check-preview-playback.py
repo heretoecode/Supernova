@@ -13,11 +13,12 @@ PACKAGE = 'org.courville.nova.markpreview'
 
 
 def adb(*args):
-    return subprocess.run(['adb', *args], check=True, stdout=subprocess.PIPE).stdout
+    return subprocess.run(['adb', *args], check=True, stdout=subprocess.PIPE, timeout=45).stdout
 
 
 def capture(name):
     for attempt in range(3):
+        adb('shell', 'rm', '-f', '/sdcard/nova-playback.xml')
         adb('shell', 'uiautomator', 'dump', '/sdcard/nova-playback.xml')
         data = adb('shell', 'cat', '/sdcard/nova-playback.xml')
         try:
