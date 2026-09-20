@@ -143,6 +143,7 @@ target(root,'Internal storage',True);root=capture('file-browser')
 assert any(n.get('text')=='Sources' for n in root.iter('node')), 'Native browser source rail missing'
 assert any(n.get('text')=='File Information' for n in root.iter('node')) or any(n.get('text')=='Options' for n in root.iter('node')), 'Native browser composition missing'
 target(root,'Search',True);root=capture('search-empty')
+assert not any('inputmethod' in n.get('package','') for n in root.iter('node')), 'System keyboard covers the compact Search layout'
 query=next(n for n in root.iter('node') if n.get('class')=='android.widget.EditText')
 x1,y1,x2,y2=map(int,re.findall(r'\d+',query.get('bounds')))
 adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','text','nova40-smoke-no-match');time.sleep(1)

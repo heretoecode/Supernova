@@ -1108,6 +1108,18 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         return position;
     }
 
+    /** Sample before native teardown without allowing unavailable/zero state to erase progress. */
+    void checkpointBeforePlayerError() {
+        int previous = mPlaybackSession.lastKnownPositionMs;
+        try {
+            if (captureCurrentPosition(false) > 0 || previous <= 0) return;
+        } catch (RuntimeException unavailable) {
+            log.warn("Native error position unavailable; retaining periodic checkpoint");
+        }
+        mPlaybackSession.lastKnownPositionMs = previous;
+        mPlaybackSession.setCandidate(ResumeSource.LIVE, previous);
+    }
+
     public PlaybackSnapshot getPlaybackSnapshot() {
         int position = captureCurrentPosition(false);
         int duration = mVideoInfo != null ? mVideoInfo.duration : -1;

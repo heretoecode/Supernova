@@ -464,9 +464,20 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                 throw new IllegalArgumentException("Invalid Display Mode! "+mDisplayMode);
         }
 
-        VerticalGridPresenter vgp = new VerticalGridPresenter(zoom, focusDimmer);
+        final boolean previewList = mPrefs.getBoolean("try_new_ui", false) && mDisplayMode == DisplayMode.LIST;
+        VerticalGridPresenter vgp = new VerticalGridPresenter(previewList ? FocusHighlight.ZOOM_FACTOR_NONE : zoom, focusDimmer) {
+            @Override protected void initializeGridViewHolder(VerticalGridPresenter.ViewHolder holder) {
+                super.initializeGridViewHolder(holder);
+                if (previewList) {
+                    holder.view.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                    holder.view.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
+                    holder.getGridView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                    holder.getGridView().setPadding(0, 0, 0, 0);
+                }
+            }
+        };
         vgp.setNumberOfColumns(numberOfColumns);
-        vgp.setShadowEnabled(shadowEnabled);
+        vgp.setShadowEnabled(shadowEnabled && !previewList);
         return vgp;
     }
 

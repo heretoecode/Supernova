@@ -191,6 +191,10 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)) {
+            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            new androidx.core.view.WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView()).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+        }
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             private long mBackStartedAt;
 

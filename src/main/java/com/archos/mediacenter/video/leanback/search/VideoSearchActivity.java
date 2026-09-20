@@ -83,6 +83,7 @@ public class VideoSearchActivity extends FragmentActivity {
         }
 
         if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
+            getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN | android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
             previewSearch=new PreviewSearch(this,getIntent().getIntExtra(EXTRA_SEARCH_MODE,SEARCH_MODE_ALL),savedInstanceState);
             com.archos.mediacenter.video.leanback.TopNavigation nav=new com.archos.mediacenter.video.leanback.TopNavigation(this,previewSearch,index->{
                 if(index==5){previewSearch.focusQuery();return;}

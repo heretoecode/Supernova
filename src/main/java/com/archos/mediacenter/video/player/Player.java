@@ -1248,6 +1248,11 @@ public class Player implements IPlayerControl,
 
     public boolean onError(IMediaPlayer mp, int errorCode, int errorQualCode, String msg) {
         log.warn("onError: Error: {},{}", errorCode, errorQualCode);
+        // The service's error callback runs after stopPlayback destroys native position.
+        // Capture the live point first; the existing service error handler persists it.
+        if (Player.sPlayer == this && PlayerService.sPlayerService != null) {
+            PlayerService.sPlayerService.checkpointBeforePlayerError();
+        }
         mCurrentState = STATE_ERROR;
         mTargetState = STATE_ERROR;
 
