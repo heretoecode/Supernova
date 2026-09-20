@@ -161,7 +161,7 @@ public final class StreamingActions {
         for (int i = 0; i < offers.size(); i++) labels[i] = offers.get(i).provider.name;
         if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
             String[] names=new String[labels.length];for(int i=0;i<labels.length;i++)names[i]=labels[i].toString();
-            com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, app.getString(R.string.streaming_more)+" · "+region+" · JustWatch",names,-1,i->openOffer(offers.get(i),watchUrl,title));return;
+            android.app.Dialog dialog=com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, app.getString(R.string.streaming_more)+" · "+region+" · JustWatch",names,-1,i->openOffer(offers.get(i),watchUrl,title));for(int i=0;i<offers.size();i++)PreviewProviderIcons.bind(dialog,i,offers.get(i).provider.logo);return;
         }
         new AlertDialog.Builder(a, com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme() ? R.style.Theme_AlertDialog_Slate : 0).setTitle(app.getString(R.string.streaming_more) + " · " + region + " · JustWatch")
                 .setItems(labels, (dialog, which) -> openOffer(offers.get(which), watchUrl, title))
@@ -188,6 +188,7 @@ public final class StreamingActions {
     private void launchOffer(StreamingRepository.Offer offer, String url, String watchUrl, String title) {
         Activity a = active(); if (a == null) return;
         if (StreamingRepository.safeWebUrl(url)) {
+            android.util.Log.i("SupernovaHandoff","Provider="+offer.provider.name+" host="+Uri.parse(url).getHost()+" titlePathPresent="+!android.text.TextUtils.isEmpty(Uri.parse(url).getPath()));
             for (String pkg : packages(offer.provider.name)) {
                 if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(pkg))) return;
             }

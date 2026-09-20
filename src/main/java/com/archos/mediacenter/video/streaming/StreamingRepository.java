@@ -126,7 +126,25 @@ public final class StreamingRepository {
         JSONObject response = api(context, kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", null);
         Availability availability = parseAvailability(response, country);
         synchronized (CACHE) { CACHE.put(key, new Cached(availability)); }
+        Set<String> knownProviders=new HashSet<>();
+        for(Offer offer:availability.offers)knownProviders.add(Integer.toString(offer.provider.id));
+        prefs(context).edit().putStringSet("streaming_known:"+key,knownProviders)
+            .putLong("streaming_known_at:"+key,System.currentTimeMillis()).apply();
         return availability;
+    }
+    /** Only fresh, successfully returned availability is eligible; unknown is not a match. */
+    public static boolean knownOn(Context context,String kind,long id,String provider){
+        String key=kind+":"+id+":"+country(context)+":-1";
+        if(id<=0||System.currentTimeMillis()-prefs(context).getLong("streaming_known_at:"+key,0)>=TTL)return false;
+        return prefs(context).getStringSet("streaming_known:"+key,Collections.emptySet()).contains(provider);
+    }
+    public static List<Provider> selectedCatalogue(Context context){
+        List<Provider> result=new ArrayList<>();Set<String> selected=selected(context);
+        try{JSONArray rows=new JSONArray(prefs(context).getString("streaming_catalogue_"+country(context),"[]"));
+            for(int i=0;i<rows.length();i++){JSONObject p=rows.getJSONObject(i);if(selected.remove(Integer.toString(p.getInt("id"))))result.add(new Provider(p.getInt("id"),p.getString("name"),p.optString("logo")));}
+        }catch(Exception ignored){}
+        for(String id:selected)try{result.add(new Provider(Integer.parseInt(id),"Saved provider "+id));}catch(NumberFormatException ignored){}
+        result.sort(Comparator.comparing(p->p.name.toLowerCase(Locale.ROOT)));return result;
     }
     /** Title-link enrichment happens on selection; availability is displayed immediately. */
     public static String titleLink(Context context, String kind, long id, String country, Availability availability, int providerId) {

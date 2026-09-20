@@ -758,6 +758,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                     ((PlayerActivity)mContext).createPlayerTVMenu();
                 showTVMenu(true);
             });
+            configurePreviewTransport();
         }
         switchMode(TVUtils.isTV(mContext));
         setUIMode(UIMode);
@@ -1484,7 +1485,18 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
     }
 
-    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null)audio.setVisibility(a.previewHasAudio()?View.VISIBLE:View.GONE);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.previewAdjacentEpisode(id==R.id.preview_previous?-1:1)!=null?View.VISIBLE:View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?a.previewAudioLabel():a.previewSubtitleLabel());}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null){title.setText(a.previewTitle());a.bindPreviewTitleArtwork(title);}if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
+    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null)audio.setVisibility(a.previewHasAudio()?View.VISIBLE:View.GONE);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?a.previewAudioLabel():a.previewSubtitleLabel());}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null){title.setText(a.previewTitle());a.bindPreviewTitleArtwork(title);}if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
+    private void configurePreviewTransport(){
+        for(int id:new int[]{R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward,R.id.preview_speed}){View v=mControllerViewLeft.findViewById(id);if(v!=null){v.setVisibility(View.GONE);v.setFocusable(false);}}
+        for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_info,R.id.preview_more}){View v=mControllerViewLeft.findViewById(id);if(v instanceof ImageButton){ImageButton button=(ImageButton)v;button.setBackgroundColor(android.graphics.Color.TRANSPARENT);button.setImageTintList(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{com.archos.mediacenter.video.leanback.PreviewAccent.color(mContext),0xffc6d7e4}));button.setOnFocusChangeListener((view,focused)->view.animate().scaleX(focused?1.12f:1f).scaleY(focused?1.12f:1f).alpha(focused?1f:.86f).setDuration(160).start());button.setNextFocusUpId(R.id.seek_progress);}}
+        mProgress.setNextFocusDownId(R.id.pause);mPauseButton.setNextFocusLeftId(R.id.preview_audio);mPauseButton.setNextFocusRightId(R.id.preview_info);
+        mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusRightId(R.id.preview_audio);
+        mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusLeftId(R.id.preview_subtitles);
+        mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusRightId(R.id.pause);
+        mControllerViewLeft.findViewById(R.id.preview_info).setNextFocusLeftId(R.id.pause);
+        mControllerViewLeft.findViewById(R.id.preview_info).setNextFocusRightId(R.id.preview_more);
+        mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusLeftId(R.id.preview_info);
+    }
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
             mVideoTitle.setText(title);
@@ -2278,7 +2290,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
         switchMode(true);
         if(experimentalUi()&&event.getAction()==KeyEvent.ACTION_DOWN&&mControlBarShowing)sendFadeOut(SHOW_TIMEOUT);
-        if(experimentalUi()&&mControlBarShowing&&mControlBar.hasFocus()&&(keyCode==KeyEvent.KEYCODE_DPAD_UP||keyCode==KeyEvent.KEYCODE_DPAD_DOWN)){if(event.getAction()==KeyEvent.ACTION_DOWN){if(keyCode==KeyEvent.KEYCODE_DPAD_UP){mProgress.setFocusable(true);mProgress.requestFocus();}else mPauseButton.requestFocus();}return true;}
+        // Seeking may temporarily take focus away from the control bar. Recovery must not
+        // depend on hasFocus(), which was precisely the state lost on the physical remote.
+        if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&(keyCode==KeyEvent.KEYCODE_DPAD_UP||keyCode==KeyEvent.KEYCODE_DPAD_DOWN)){if(event.getAction()==KeyEvent.ACTION_DOWN){if(keyCode==KeyEvent.KEYCODE_DPAD_UP){mProgress.setFocusable(true);mProgress.requestFocus();}else{mPauseButton.setFocusable(true);mPauseButton.requestFocus();}}return true;}
         if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&mControlBar.hasFocus()&&(keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_DPAD_RIGHT||keyCode==KeyEvent.KEYCODE_DPAD_CENTER||keyCode==KeyEvent.KEYCODE_ENTER)){return false;}
         
         if (isTVMenuDisplayed) {
@@ -2561,18 +2575,18 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             if( mControllerViewLeft.findViewById(R.id.pause)!=null)
                 mControllerViewLeft.findViewById(R.id.pause).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
             if( mControllerViewLeft.findViewById(R.id.backward)!=null)
-                mControllerViewLeft.findViewById(R.id.backward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
+                mControllerViewLeft.findViewById(R.id.backward).setVisibility(experimentalUi()||tv?View.GONE:View.VISIBLE);
             if( mControllerViewLeft.findViewById(R.id.forward)!=null)
-                mControllerViewLeft.findViewById(R.id.forward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
+                mControllerViewLeft.findViewById(R.id.forward).setVisibility(experimentalUi()||tv?View.GONE:View.VISIBLE);
             if( mControllerViewLeft.findViewById(R.id.format)!=null)
                 mControllerViewLeft.findViewById(R.id.format).setVisibility(experimentalUi()?View.GONE:tv?View.INVISIBLE:View.VISIBLE);
             if(mControllerViewRight!=null){
                 if( mControllerViewRight.findViewById(R.id.pause)!=null)
                     mControllerViewRight.findViewById(R.id.pause).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
                 if( mControllerViewRight.findViewById(R.id.backward)!=null)
-                    mControllerViewRight.findViewById(R.id.backward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
+                    mControllerViewRight.findViewById(R.id.backward).setVisibility(experimentalUi()||tv?View.GONE:View.VISIBLE);
                 if( mControllerViewRight.findViewById(R.id.forward)!=null)
-                    mControllerViewRight.findViewById(R.id.forward).setVisibility(tv&&!experimentalUi()?View.GONE:View.VISIBLE);
+                    mControllerViewRight.findViewById(R.id.forward).setVisibility(experimentalUi()||tv?View.GONE:View.VISIBLE);
                 if( mControllerViewRight.findViewById(R.id.format)!=null)
                     mControllerViewRight.findViewById(R.id.format).setVisibility(experimentalUi()?View.GONE:tv?View.INVISIBLE:View.VISIBLE);
             }

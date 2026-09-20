@@ -1,3 +1,19 @@
+SUPERNOVA Preview 4.1.2
+
+Continues the 4.1.1 baseline and the recovered 4.1.2 work.
+
+Simplified HUD: one central Play/Pause, remote seeking retained, deterministic Down recovery and concise audio/subtitle labels. Official logo sizing uses visible artwork bounds.
+Navigation: media tabs left, Network & Files/Search/cog/clock right, boxless focus and exact approved utility background.
+Home: readiness waits for visible card/backdrop completion, compact Featured action and focusable indicators; existing scanner feedback is attached to the navigation shell.
+Library: indexed local/network count and storage summaries, subtle list separators and selected-service filtering of known, fresh availability. Unknown availability is not a match.
+Search: compact keyboard beside results, parent series queried from the local index above episodes; diacritic matching retained.
+Details: constrained synopsis, denser cast cards, grouped semantic actions, named provider artwork and centred Information overlay without a close X.
+Settings: responsive category/list/context panels, first-setting entry, no slide-in and selected-first provider chooser with immediate saved ticks and genuine artwork.
+Browser: native source/path/list/context composition replaces the old title/grid underlay while retaining protocol listing and action handlers.
+Playback investigation: ten-second progress checkpoints, error/completion guards and lifecycle diagnostics. A/V desynchronisation and unexpected native exits are not claimed fixed. Netflix title-page handoff remains unconfirmed; Prime routing retained.
+
+NOT TESTED — USER QA REQUIRED: physical Shield playback, populated startup, network/browser sources, real provider title handoffs, controller focus and performance. Existing passed automatic scanning, backup and viewing progression remain protected.
+
 SUPERNOVA Preview 4.1.1
 
 Corrective pass over Preview 4.1. Existing library, playback progress, Home rows and preview update identity are preserved.

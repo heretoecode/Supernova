@@ -4183,6 +4183,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     public void finish() {
+        log.info("Playback Activity finish: completed={} error={} changingConfiguration={}",mVideoFinished,mErrorCode,isChangingConfigurations());
         // Send result before finishing if we haven't already
         if (mIsExternalPlayer && !mResultSent) {
             if (log.isDebugEnabled()) log.debug("finish() called - sending result before finish");

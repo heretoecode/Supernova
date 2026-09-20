@@ -138,6 +138,7 @@ public class MyVerticalGridFragment extends MyBrandedFragment {
     }
 
     private void showOrHideTitle() {
+        if(getView()!=null&&"preview-browser".equals(getView().getTag()))return;
         // ARCHOS ADDED: update the title in case the GridView is already created
         if (mGridViewHolder == null) {
             return;
@@ -227,6 +228,7 @@ public class MyVerticalGridFragment extends MyBrandedFragment {
     }
 
     private void setupFocusSearchListener() {
+        if(getView()!=null&&"preview-browser".equals(getView().getTag()))return;
         BrowseFrameLayout browseFrameLayout = (BrowseFrameLayout) getView().findViewById(
                 R.id.grid_frame);
         browseFrameLayout.setOnFocusSearchListener(getTitleHelper().getOnFocusSearchListener());

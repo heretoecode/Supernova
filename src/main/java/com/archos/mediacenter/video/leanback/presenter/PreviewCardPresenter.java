@@ -33,6 +33,7 @@ public final class PreviewCardPresenter extends Presenter {
         final ProgressBar progress;
         final Style style;
         boolean hasArtwork;
+        public boolean artworkReady=true;
         final int width, height;
         public Card(Context c, Style style) {
             super(c); this.style = style;
@@ -86,9 +87,10 @@ public final class PreviewCardPresenter extends Presenter {
         }
         private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
         void updateFocus() {
-            GradientDrawable border = new GradientDrawable(); border.setColor(Color.TRANSPARENT);
-            border.setCornerRadius(dp(4)); border.setStroke(dp(isFocused() ? 2 : 1), isFocused() ? com.archos.mediacenter.video.leanback.PreviewAccent.color(getContext()) : 0x303d5870);
-            setForeground(border);
+            setForeground(null);
+            // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
+            image.animate().alpha(isFocused()?1f:.76f).setDuration(170).start();
+            title.setTextColor(isFocused()?Color.WHITE:0xffc0ccd6);
             // Poster names remain accessible without permanently covering the artwork.
             caption.setVisibility(View.VISIBLE);
         }
@@ -97,7 +99,7 @@ public final class PreviewCardPresenter extends Presenter {
     @Override public void onBindViewHolder(ViewHolder holder, Object item) {
         Card c = (Card)holder.view;
         Picasso.get().cancelRequest(c.image); c.image.setImageDrawable(null);
-        c.hasArtwork = false; c.subtitle.setText(""); c.subtitle.setVisibility(View.GONE);
+        c.artworkReady=true;c.hasArtwork = false; c.subtitle.setText(""); c.subtitle.setVisibility(View.GONE);
         c.progress.setProgress(0); c.progress.setVisibility(View.GONE);
         Uri uri = null;boolean landscape=false;
         c.subtitle.setTextColor(0xffa4b6c7);
@@ -138,15 +140,15 @@ public final class PreviewCardPresenter extends Presenter {
         c.updateFocus();
         boolean letterbox=style==Style.POSTER||(style==Style.CONTINUE||style==Style.LIST)&&!landscape;
         c.image.setScaleType(letterbox?ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_CROP);
-        if(uri!=null){com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(style==Style.LIST?Math.round(112*c.getResources().getDisplayMetrics().density):c.width,c.height);
+        if(uri!=null){c.artworkReady=false;com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(style==Style.LIST?Math.round(112*c.getResources().getDisplayMetrics().density):c.width,c.height);
         if(letterbox)request.centerInside();else request.centerCrop();request.noFade().into(c.image, new com.squareup.picasso.Callback() {
-                @Override public void onSuccess() { }
-                @Override public void onError(Exception error) { c.hasArtwork = false; c.updateFocus(); }
+                @Override public void onSuccess() { c.artworkReady=true; }
+                @Override public void onError(Exception error) { c.artworkReady=true;c.hasArtwork = false; c.updateFocus(); }
             });}
     }
     public static void bindSecondary(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){
         Card c=(Card)holder.view;
-        if((c.style==Style.CONTINUE||c.style==Style.LIST)&&entry.backdrop!=null){c.image.setScaleType(ImageView.ScaleType.CENTER_CROP);Picasso.get().load(entry.backdrop).resize(c.width,c.height).centerCrop().noFade().into(c.image);}
+        if((c.style==Style.CONTINUE||c.style==Style.LIST)&&entry.backdrop!=null){c.artworkReady=false;c.image.setScaleType(ImageView.ScaleType.CENTER_CROP);Picasso.get().load(entry.backdrop).resize(c.width,c.height).centerCrop().noFade().into(c.image,new com.squareup.picasso.Callback(){public void onSuccess(){c.artworkReady=true;}public void onError(Exception error){c.artworkReady=true;}});}
         if(entry.secondary!=null&&!entry.secondary.isEmpty()){
             c.subtitle.setText(entry.secondary);c.subtitle.setVisibility(View.VISIBLE);c.subtitle.setTextColor(entry.active?0xff59d8ff:0xffa4b6c7);
             c.setContentDescription(c.title.getText()+", "+entry.secondary);

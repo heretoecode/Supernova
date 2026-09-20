@@ -121,7 +121,7 @@ public final class StreamingPreferences {
             try {
                 List<StreamingRepository.Provider> loaded = loader.load(context, region);
                 JSONArray json = new JSONArray();
-                for (StreamingRepository.Provider p : loaded) json.put(new JSONObject().put("id", p.id).put("name", p.name));
+                for (StreamingRepository.Provider p : loaded) json.put(new JSONObject().put("id", p.id).put("name", p.name).put("logo",p.logo));
                 StreamingRepository.prefs(context).edit().putString("streaming_catalogue_" + region, json.toString()).apply();
                 main.post(() -> {
                     if (request != generation || !fragment.isAdded()) return;
@@ -141,7 +141,7 @@ public final class StreamingPreferences {
             JSONArray data = new JSONArray(StreamingRepository.prefs(c).getString("streaming_catalogue_" + region, "[]"));
             for (int i = 0; i < data.length(); i++) {
                 JSONObject p = data.getJSONObject(i);
-                result.add(new StreamingRepository.Provider(p.getInt("id"), p.getString("name")));
+                result.add(new StreamingRepository.Provider(p.getInt("id"), p.getString("name"),p.optString("logo")));
             }
         } catch (Exception ignored) { }
         return result;
@@ -160,6 +160,7 @@ public final class StreamingPreferences {
             try { visible.add(new StreamingRepository.Provider(Integer.parseInt(id), "Saved provider " + id)); }
             catch (NumberFormatException ignored) { }
         }
+        visible.sort(Comparator.comparingInt((StreamingRepository.Provider p)->selected.contains(Integer.toString(p.id))?0:1).thenComparing(p->p.name.toLowerCase(Locale.ROOT)));
         CharSequence[] names = new CharSequence[visible.size()], ids = new CharSequence[visible.size()];
         for (int i = 0; i < visible.size(); i++) {
             names[i] = visible.get(i).name; ids[i] = Integer.toString(visible.get(i).id);

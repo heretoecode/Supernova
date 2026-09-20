@@ -256,7 +256,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public static final String FULLSCREEN_INTENT = "playerservice.fullscreen";
     public static final String PLAYLIST_ID = "playlist_id";
     public static final String VIDEO = "extra_video";
-    private static final long AUTO_SAVE_INTERVAL = 30000;
+    private static final long AUTO_SAVE_INTERVAL = 10000;
     @SuppressLint("StaticFieldLeak")
     public static PlayerService sPlayerService;
     private SharedPreferences mPreferences;
@@ -1094,7 +1094,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     private int captureCurrentPosition(boolean rewindForResume) {
         int position = mPlaybackSession.lastKnownPositionMs;
-        boolean capturedFromPlayer = !mPlaybackSession.failed && mPlayer != null && mPlayer.isInPlaybackState();
+        boolean capturedFromPlayer = !mPlaybackSession.failed && !mPlaybackSession.completed
+                && mPlayerState != PlayerState.STOPPED && mPlayer != null && mPlayer.isInPlaybackState();
         if (capturedFromPlayer) {
             position = mPlayer.getDuration() != 0
                     ? mPlayer.getCurrentPosition()
@@ -1875,6 +1876,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public void onCompletion() { advancePlayback(true); }
     private void advancePlayback(boolean completed) {
+        log.info("Playback transition completed={} lastPosition={} duration={} state={} failed={} next={}",completed,mPlaybackSession.lastKnownPositionMs,mVideoInfo==null?0:mVideoInfo.duration,mPlayerState,mPlaybackSession.failed,mNextUri!=null);
+        if(completed&&mPlaybackSession.failed){log.warn("Ignoring completion following a playback error; preserving the resume checkpoint");return;}
         if (log.isDebugEnabled()) log.debug("onCompletion");
         mPlayerState = PlayerState.STOPPED;
 
@@ -1961,6 +1964,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onAllSeekComplete() {
+        log.info("Playback seek completed position={} audioDelay={} speed={} state={}",mPlayer==null?-1:mPlayer.getCurrentPosition(),mAudioDelay,mAudioSpeed,mPlayerState);
         mPlaybackSession.seeking=false;mPlaybackSession.sampleTime=0;sampleJourneyTime();
         if(mPlayerFrontend!=null) {
             mPlayerFrontend.onAllSeekComplete();

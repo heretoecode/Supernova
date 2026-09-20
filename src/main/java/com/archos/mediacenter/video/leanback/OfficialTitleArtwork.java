@@ -44,11 +44,20 @@ public final class OfficialTitleArtwork {
     JSONObject result=new JSONObject(new String(download(uri.toString(),2*1024*1024),java.nio.charset.StandardCharsets.UTF_8));String path=select(result.optJSONArray("logos"),language);cache.edit().putLong(diskKey,System.currentTimeMillis()).apply();
     if(!path.isEmpty()){byte[] bytes=download("https://image.tmdb.org/t/p/w500"+path,4*1024*1024);BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);if(options.outWidth<=0||options.outHeight<=0||options.outWidth>4096||options.outHeight>4096)return;bitmap=BitmapFactory.decodeByteArray(bytes,0,bytes.length);if(bitmap!=null){directory.mkdirs();android.util.AtomicFile atomic=new android.util.AtomicFile(file);FileOutputStream out=null;try{out=atomic.startWrite();out.write(bytes);atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);}}}
    }
-   if(bitmap==null)return;MEMORY.put(diskKey,bitmap);final Bitmap ready=bitmap;TextView target=weak.get();if(target!=null)target.post(()->{TextView current=weak.get();if(current==null||!identity.equals(BOUND.get(current)))return;current.setForeground(new Logo(ready));current.setTextColor(Color.TRANSPARENT);});
+   if(bitmap==null)return;bitmap=visibleArtwork(bitmap);MEMORY.put(diskKey,bitmap);final Bitmap ready=bitmap;TextView target=weak.get();if(target!=null)target.post(()->{TextView current=weak.get();if(current==null||!identity.equals(BOUND.get(current)))return;current.setForeground(new Logo(ready));current.setTextColor(Color.TRANSPARENT);});
   }catch(Exception unavailable){/* A missing logo never blocks content or playback. */}});
  }
  static String select(JSONArray logos,String language)throws JSONException{String chosen="";double best=-1;if(logos==null)return chosen;for(int i=0;i<logos.length();i++){JSONObject logo=logos.getJSONObject(i);String path=logo.optString("file_path"),lang=logo.optString("iso_639_1");if(!path.matches("/[A-Za-z0-9._-]+\\.png"))continue;double score=(language.equals(lang)?30:"en".equals(lang)?20:lang.isEmpty()||"null".equals(lang)?10:0)+Math.min(9,logo.optDouble("vote_average",0));if(score>best){best=score;chosen=path;}}return chosen;}
  private static byte[] download(String url,int limit)throws IOException{try(Response response=HTTP.newCall(new Request.Builder().url(url).build()).execute()){if(!response.isSuccessful()||response.body()==null)throw new IOException("Artwork unavailable");try(InputStream in=response.body().byteStream();ByteArrayOutputStream out=new ByteArrayOutputStream()){byte[] b=new byte[8192];int n;while((n=in.read(b))!=-1){if(out.size()+n>limit)throw new IOException("Artwork too large");out.write(b,0,n);}return out.toByteArray();}}}
+ /** Decode-worker only. Ignore near-transparent compression/shadow pixels when finding ink. */
+ static Bitmap visibleArtwork(Bitmap bitmap){
+  if(!bitmap.hasAlpha())return bitmap;
+  int w=bitmap.getWidth(),h=bitmap.getHeight(),left=w,top=h,right=-1,bottom=-1;int[] row=new int[w];
+  for(int y=0;y<h;y++){bitmap.getPixels(row,0,w,0,y,w,1);for(int x=0;x<w;x++)if((row[x]>>>24)>=24){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=y;}}
+  if(right<left)return bitmap;
+  int pad=Math.max(1,Math.round(Math.max(right-left,bottom-top)*.015f));left=Math.max(0,left-pad);top=Math.max(0,top-pad);right=Math.min(w-1,right+pad);bottom=Math.min(h-1,bottom+pad);
+  return left==0&&top==0&&right==w-1&&bottom==h-1?bitmap:Bitmap.createBitmap(bitmap,left,top,right-left+1,bottom-top+1);
+ }
  private static final class Logo extends Drawable{private final Bitmap bitmap;private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);Logo(Bitmap bitmap){this.bitmap=bitmap;}public void draw(Canvas canvas){Rect b=getBounds();float scale=Math.min(b.width()/(float)bitmap.getWidth(),b.height()/(float)bitmap.getHeight());float width=bitmap.getWidth()*scale,height=bitmap.getHeight()*scale;canvas.drawBitmap(bitmap,null,new RectF(b.left,b.top+(b.height()-height)/2f,b.left+width,b.top+(b.height()+height)/2f),paint);}public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return PixelFormat.TRANSLUCENT;}}
  private OfficialTitleArtwork(){}
 }

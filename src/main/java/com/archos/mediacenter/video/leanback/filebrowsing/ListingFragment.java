@@ -147,6 +147,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     protected static CharSequence[] mSortOrderEntries;
 
     private ArrayObjectAdapter mFilesAdapter;
+    private PreviewBrowserSurface previewSurface;
     private ListingEngine mListingEngine;
     private View mEmptyView;
     private View mProgressView;
@@ -264,7 +265,20 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
             if(mUri!=null){String path=mUri.getPath();setTitle((mUri.getHost()==null?"Files":mUri.getHost())+(path==null?"":"  ›  "+path.replace("/","  ›  ")));}
             if(mErrorMessage!=null)mErrorMessage.setTextColor(0xffb4cbe0);if(mErrorDetails!=null)mErrorDetails.setTextColor(0xff9db1c4);
         }
+        if(mPrefs.getBoolean("try_new_ui",false)){
+            previewSurface=new PreviewBrowserSurface(requireActivity(),v,mUri,getTitleView(),this::previewOptions);
+            setOnItemViewSelectedListener((holder,item,rowHolder,row)->{if(previewSurface!=null)previewSurface.focusItem(item);});
+            return previewSurface;
+        }
         return v;
+    }
+
+    private void previewOptions(){
+        int[] ids={R.id.title_orb,R.id.title_orb2,R.id.title_orb3,R.id.title_orb4,R.id.title_orb5};
+        int[] descriptions={R.id.orb1_description,R.id.orb2_description,R.id.orb3_description,R.id.orb4_description,R.id.orb5_description};
+        java.util.List<View> commands=new java.util.ArrayList<>();java.util.List<String> labels=new java.util.ArrayList<>();
+        for(int i=0;i<ids.length;i++){View command=getTitleView().findViewById(ids[i]);TextView label=getTitleView().findViewById(descriptions[i]);if(command!=null&&command.getVisibility()==View.VISIBLE&&label!=null&&label.length()>0){commands.add(command);labels.add(label.getText().toString());}}
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File Options",labels.toArray(new String[0]),-1,n->commands.get(n).performClick());
     }
 
     @Override
@@ -320,6 +334,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     public void onDestroyView() {
         if (log.isDebugEnabled()) log.debug("onDestroyView");
         mOverlay.destroy();
+        previewSurface=null;
         // Unregister theme change listener
         if (mThemeChangeListener != null) {
             ThemeManager.getInstance(getActivity()).unregisterThemeChangeListener(mThemeChangeListener);
@@ -457,6 +472,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     private ClassPresenterSelector buildFilePresenter() {
         ClassPresenterSelector filePresenterSelector = new ClassPresenterSelector();
+        if(mPrefs.getBoolean("try_new_ui",false)&&mDisplayMode==DisplayMode.LIST){PreviewFilePresenter presenter=new PreviewFilePresenter();filePresenterSelector.addClassPresenter(MetaFile2.class,presenter);filePresenterSelector.addClassPresenter(Video.class,presenter);return filePresenterSelector;}
         switch (mDisplayMode) {
             case GRID:
                 filePresenterSelector.addClassPresenter(MetaFile2.class, new PosterImageCardPresenter(getActivity()));

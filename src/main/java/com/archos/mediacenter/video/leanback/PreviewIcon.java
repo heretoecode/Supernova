@@ -8,7 +8,15 @@ public final class PreviewIcon extends Drawable {
  public PreviewIcon(String name){kind=name.toLowerCase(Locale.ROOT);p.setColor(0xffb9d8e9);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(1.6f);p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeJoin(Paint.Join.ROUND);}
  private void line(Canvas c,float... pts){Path q=new Path();q.moveTo(pts[0],pts[1]);for(int i=2;i<pts.length;i+=2)q.lineTo(pts[i],pts[i+1]);c.drawPath(q,p);}
  public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);
-  if(kind.contains("check")){line(c,5,12,10,17,20,6);}
+  if(kind.equals("cog")){c.drawCircle(12,12,7,p);c.drawCircle(12,12,3,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,12,2,12,5);c.restore();}}
+  else if(kind.equals("folder")){line(c,2,7,2,4,9,4,12,7,22,7,22,20,2,20,2,7);}
+  else if(kind.equals("video-file")){line(c,5,2,15,2,20,7,20,22,5,22,5,2);line(c,15,2,15,7,20,7);line(c,9,11,16,15,9,19,9,11);}
+  else if(kind.contains("delete")){line(c,5,7,6,21,18,21,19,7);line(c,3,5,21,5);line(c,9,5,9,2,15,2,15,5);line(c,10,10,10,17);line(c,14,10,14,17);}
+  else if(kind.contains("remove")&&kind.contains("info")){c.drawCircle(10,12,8,p);line(c,10,10,10,16);c.drawPoint(10,7,p);line(c,17,18,23,18);}
+  else if(kind.contains("remove")&&kind.contains("library")){line(c,3,3,3,21,18,21);line(c,8,3,8,16);line(c,13,3,13,16);line(c,16,10,23,10);}
+  else if(kind.contains("add to row")){line(c,3,5,16,5);line(c,3,11,13,11);line(c,3,17,11,17);line(c,18,13,18,23);line(c,13,18,23,18);}
+  else if(kind.contains("synopsis")){line(c,5,2,19,2,19,22,5,22,5,2);for(int y=7;y<=17;y+=5)line(c,8,y,16,y);}
+  else if(kind.contains("check")){line(c,5,12,10,17,20,6);}
   else if(kind.contains("clear")||kind.contains("close")||kind.contains("remove")||kind.contains("delete")){line(c,6,6,18,18);line(c,18,6,6,18);}
   else if(kind.contains("home")||kind.contains("discovery")){line(c,2,11,12,3,22,11);line(c,5,10,5,21,10,21,10,15,14,15,14,21,19,21,19,10);}
   else if(kind.equals("general")||kind.contains("settings")||kind.contains("advanced")){for(int y=5;y<=19;y+=7)line(c,3,y,21,y);c.drawCircle(8,5,2,p);c.drawCircle(16,12,2,p);c.drawCircle(10,19,2,p);}

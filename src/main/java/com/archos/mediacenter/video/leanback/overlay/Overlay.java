@@ -74,8 +74,9 @@ public class Overlay {
             throw new IllegalStateException("Overlay is not compatible with this fragment: "+fragment);
         }
 
-        ViewGroup parentView = fragmentView instanceof com.archos.mediacenter.video.leanback.TopNavigation
-            ? ((com.archos.mediacenter.video.leanback.TopNavigation)fragmentView).getStatusContainer()
+        com.archos.mediacenter.video.leanback.TopNavigation previewNav=findPreviewNavigation(fragmentView);
+        ViewGroup parentView = previewNav!=null
+            ? previewNav.getStatusContainer()
             : (ViewGroup)fragmentView.findViewById(parentViewId);
         if (parentView==null) {
             throw new IllegalStateException("parentView not found! Maybe IDs in the leanback library have been changed?");
@@ -85,8 +86,8 @@ public class Overlay {
         mOverlayRoot = parentView.findViewById(R.id.overlay_root);
         mScanProgress = new ScannerAndScraperProgress(mContext, mOverlayRoot);
         mClock = new Clock(mContext, mOverlayRoot);
-        if (fragmentView instanceof com.archos.mediacenter.video.leanback.TopNavigation) {
-            com.archos.mediacenter.video.leanback.TopNavigation nav = (com.archos.mediacenter.video.leanback.TopNavigation) fragmentView;
+        if (previewNav!=null) {
+            com.archos.mediacenter.video.leanback.TopNavigation nav = previewNav;
             View clock = mOverlayRoot.findViewById(R.id.clock);
             ((ViewGroup)clock.getParent()).removeView(clock);
             clock.setPadding(0, 0, 0, 0);
@@ -98,6 +99,12 @@ public class Overlay {
             ((ViewGroup)progress.getParent()).removeView(progress);
             nav.getScanContainer().addView(progress, new android.widget.FrameLayout.LayoutParams(-2, -2, android.view.Gravity.END | android.view.Gravity.BOTTOM));
         }
+    }
+
+    private static com.archos.mediacenter.video.leanback.TopNavigation findPreviewNavigation(View view){
+        if(view instanceof com.archos.mediacenter.video.leanback.TopNavigation)return (com.archos.mediacenter.video.leanback.TopNavigation)view;
+        if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){com.archos.mediacenter.video.leanback.TopNavigation found=findPreviewNavigation(group.getChildAt(i));if(found!=null)return found;}}
+        return null;
     }
 
     /**

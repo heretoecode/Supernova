@@ -82,7 +82,7 @@ if [[ "$phase" == preview ]]; then
   python3 - <<'PYSET'
 import re,subprocess,xml.etree.ElementTree as ET
 root=ET.parse('../startup-diagnostics/preview-settings.xml')
-node=next(n for n in root.iter('node') if n.get('text')=='Home & Discovery')
+node=next(n for n in root.iter('node') if n.get('text')=='Library')
 x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds')))
 subprocess.run(['adb','shell','input','tap',str((x1+x2)//2),str((y1+y2)//2)],check=True)
 PYSET
@@ -128,7 +128,7 @@ def target(root,label,activate=False):
  if activate: adb('shell','input','keyevent','23')
  time.sleep(.6)
 root=capture('settings-check')
-for category in ['Subtitles','Video & Audio','Streaming','About']:
+for category in ['Subtitles','Video','Audio','Streaming','About']:
  target(root,category)
  root=capture('settings-'+category.lower().replace(' & ','-'))
  if category=='Subtitles':
@@ -136,8 +136,12 @@ for category in ['Subtitles','Video & Audio','Streaming','About']:
 # Return to each library via the actual top navigation, then exercise the new local query.
 target(root,'Movies',True);root=capture('navigation-movies')
 assert sum(n.get('text')=='Movies' for n in root.iter('node'))>=2, 'Movies route/header desynchronised'
-target(root,'TV shows',True);root=capture('navigation-tv')
+target(root,'TV Shows',True);root=capture('navigation-tv')
 assert any(n.get('text')=='TV Shows' for n in root.iter('node')), 'TV library failed to open'
+target(root,'Network & Files',True);root=capture('network-files')
+target(root,'Internal storage',True);root=capture('file-browser')
+assert any(n.get('text')=='Sources' for n in root.iter('node')), 'Native browser source rail missing'
+assert any(n.get('text')=='File Information' for n in root.iter('node')) or any(n.get('text')=='Options' for n in root.iter('node')), 'Native browser composition missing'
 target(root,'Search',True);root=capture('search-empty')
 query=next(n for n in root.iter('node') if n.get('class')=='android.widget.EditText')
 x1,y1,x2,y2=map(int,re.findall(r'\d+',query.get('bounds')))
