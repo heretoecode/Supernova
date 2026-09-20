@@ -2995,7 +2995,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){
             // The old handoff launched a second Details activity and could re-probe the
             // active network stream when native metadata was absent. Remain in the
-            // owning player lifecycle and display its immutable metadata snapshot.
+            // owning player lifecycle and render a read-only copy of current metadata.
             VideoMetadata live=mPlayer==null?null:mPlayer.getVideoMetadata();
             PreviewTechnicalInfo.show(this,live==null?null:new VideoMetadata(live),mUri,mPlayer==null?-1:mPlayer.getType());
             return;

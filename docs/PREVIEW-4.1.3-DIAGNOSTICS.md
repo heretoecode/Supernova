@@ -34,7 +34,7 @@ Only known numeric/enumerated state belongs in instrumentation payloads.
 
 The original Shield Information → File & Technical Details restart has a recorded
 navigation sequence but no supplied stack trace. The Preview path now displays
-an immutable snapshot inside the active player rather than launching another
+a read-only metadata snapshot inside the active player rather than launching another
 Details activity, serialising live metadata and potentially probing the stream
 again when metadata is unavailable. Missing metadata has an explicit non-probing
 state. This is a lifecycle correction, **not proof of the original native/Java

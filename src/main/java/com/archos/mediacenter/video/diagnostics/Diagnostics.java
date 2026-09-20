@@ -60,7 +60,14 @@ public final class Diagnostics {
         if(view==null)return "none";
         String id="generated";
         if(view.getId()!=View.NO_ID)try{id=view.getResources().getResourceEntryName(view.getId());}catch(android.content.res.Resources.NotFoundException ignored){}
-        return view.getClass().getSimpleName()+":"+id;
+        // Programmatic TV controls often have no resource ID. Structural child
+        // positions distinguish them without recording titles or user-entered text.
+        StringBuilder position=new StringBuilder();View cursor=view;
+        for(int depth=0;depth<4&&cursor.getParent() instanceof android.view.ViewGroup;depth++){
+            android.view.ViewGroup parent=(android.view.ViewGroup)cursor.getParent();
+            position.insert(0,"/"+parent.indexOfChild(cursor));cursor=parent;
+        }
+        return view.getClass().getSimpleName()+":"+id+position;
     }
     public static boolean enabled(){return enabled;}
     public static void setEnabled(Context c,boolean value){
