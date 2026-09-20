@@ -117,6 +117,7 @@ public final class StreamingRepository {
         return load(context, kind, id, country, -1);
     }
     public static Availability load(Context context, String kind, long id, String country, int season) throws Exception {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("provider_metadata_lookup","media_kind",kind,"season",season);
         if (!("movie".equals(kind) || "tv".equals(kind)) || id <= 0) throw new IOException("Missing title ID");
         String key = kind + ":" + id + ":" + country + ":" + season;
         synchronized (CACHE) {

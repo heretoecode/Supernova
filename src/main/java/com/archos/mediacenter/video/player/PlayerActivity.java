@@ -2984,10 +2984,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     public String previewTitle(){return mVideoInfo!=null&&mVideoInfo.isScraped&&mVideoInfo.scraperTitle!=null?mVideoInfo.scraperTitle:mTitle==null?"":mTitle;}
     public String previewEpisode(){return mVideoInfo!=null&&mVideoInfo.isShow?String.format(java.util.Locale.getDefault(),"Season %d • Episode %d",mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr)+(mVideoInfo.scraperEpisodeName==null?"":" · "+mVideoInfo.scraperEpisodeName):"";}
     void showVideoInfos() {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_information_open","player_present",mPlayer!=null);
         if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){Object media=getIntent().getSerializableExtra(PlayerService.VIDEO);if(media instanceof com.archos.mediacenter.video.browser.adapters.object.Video&&((com.archos.mediacenter.video.browser.adapters.object.Video)media).getId()!=mVideoId)media=null;PreviewPlaybackInfo.show(this,previewTitle(),previewEpisode(),media,()->{if(mPlayer!=null){mPlayer.seekTo(0);mPlayer.start(PlayerController.STATE_NORMAL);}},this::showNativeVideoInfos);return;}
         showNativeVideoInfos();
     }
     private void showNativeVideoInfos() {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_technical_open","player_present",mPlayer!=null,"metadata_present",mPlayer!=null&&mPlayer.getVideoMetadata()!=null);
+        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){
+            // The old handoff launched a second Details activity and could re-probe the
+            // active network stream when native metadata was absent. Remain in the
+            // owning player lifecycle and display its immutable metadata snapshot.
+            VideoMetadata live=mPlayer==null?null:mPlayer.getVideoMetadata();
+            PreviewTechnicalInfo.show(this,live==null?null:new VideoMetadata(live),mUri,mPlayer==null?-1:mPlayer.getType());
+            return;
+        }
         mPlayerController.hide();
 
         Class infoActivity = null;

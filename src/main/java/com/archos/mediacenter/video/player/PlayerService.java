@@ -610,6 +610,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         intent.removeExtra(ExternalResumeIntent.EXTERNAL_PLAYER_LAUNCH);
 
         mUri = intent.getData();
+        if(!java.util.Objects.equals(mPlaybackSession.uri,mUri))com.archos.mediacenter.video.diagnostics.Diagnostics.beginPlayback(mUri);
         mTorrentURL = mIntent.getStringExtra(PlayerActivity.KEY_TORRENT_URL);
         if(mIntent.hasExtra(KEY_ORIGINAL_TORRENT_URL)){
             mUri = Uri.parse(mIntent.getStringExtra(KEY_ORIGINAL_TORRENT_URL));
@@ -1110,10 +1111,12 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     /** Sample before native teardown without allowing unavailable/zero state to erase progress. */
     void checkpointBeforePlayerError() {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("error_checkpoint_attempt","last_known_ms",mPlaybackSession.lastKnownPositionMs);
         int previous = mPlaybackSession.lastKnownPositionMs;
         try {
             if (captureCurrentPosition(false) > 0 || previous <= 0) return;
         } catch (RuntimeException unavailable) {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.error("error_checkpoint_unavailable",unavailable);
             log.warn("Native error position unavailable; retaining periodic checkpoint");
         }
         mPlaybackSession.lastKnownPositionMs = previous;
@@ -1183,6 +1186,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     }
     public void saveVideoStateIfReady(){saveVideoStateIfReady(false);}
     private void saveVideoStateIfReady(boolean periodic){
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_attempt","periodic",periodic,"state",String.valueOf(mPlayerState),"has_played",mPlaybackSession.hasPlayed,"failed",mPlaybackSession.failed);
         if(mIndexHelper!=null) {
             if (mPlaybackSession.startPositionApplied && mPlaybackSession.hasPlayed && mPlayerState != PlayerState.INIT && mPlayerState != PlayerState.PREPARING) {
                 sampleJourneyTime();
@@ -1212,6 +1216,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     com.archos.mediacenter.video.leanback.PreviewSeriesJourney.record(this,mVideoInfo,mPlaybackSession.completed,mPlaybackSession.viewedMs);
                     log.info("saveVideoStateIfReady: save bookmark at {} for videoId {}", mVideoInfo.lastTimePlayed, mVideoInfo.id);
                     mIndexHelper.writeVideoInfo(mVideoInfo, !periodic && mNetworkBookmarksEnabled);
+                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_submitted","position_ms",resumePosition,"periodic",periodic,"network_bookmark",!periodic&&mNetworkBookmarksEnabled);
                     // disable periodic trakt save this should be done with pauseTrakt() anyway
                     //stopTrakt(); //this writes mVideoInfo.traktResume
                     // BootupRecommendationService is for before Android O otherwise TV channels are used
@@ -1609,6 +1614,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     }
     @Override
     public void onDestroy(){
+        com.archos.mediacenter.video.diagnostics.Diagnostics.endPlayback(mPlaybackSession.completed?"completed":mPlaybackSession.failed?"player_error":"service_destroyed");
         super.onDestroy();
         if (log.isDebugEnabled()) log.debug("onDestroy");
         if (mAutoSkipTask != null)

@@ -627,6 +627,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     @Override
     public void onCreate() {
         super.onCreate();
+        com.archos.mediacenter.video.diagnostics.Diagnostics.install(this);
 
         /*
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

@@ -50,8 +50,8 @@ public final class TopNavigation extends LinearLayout {
             tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, 0xff59d8ff, 0xffb4cbe0}));
             styleTab(tab);
             tab.setOnFocusChangeListener((v, focused)->{
-                tab.setShadowLayer(focused?dp(7):0,0,0,PreviewAccent.color(c));
-                for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon!=null)icon.setTint(focused?PreviewAccent.color(c):0xffb4cbe0);
+                tab.setShadowLayer(focused?dp(4):0,0,0,PreviewAccent.color(c));
+                for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon instanceof PreviewIcon)((PreviewIcon)icon).focus(focused,PreviewAccent.color(c));
                 v.animate().scaleX(focused?1.025f:1f).scaleY(focused?1.025f:1f).setDuration(160).start();});
             tab.setOnClickListener(v -> {
                 if (index < 4) {
@@ -69,7 +69,9 @@ public final class TopNavigation extends LinearLayout {
             });
             if (i == 5 || i == 4) {
                 tab.setText("");
-                android.graphics.drawable.Drawable search = i==4?new PreviewIcon("cog"):c.getDrawable(com.archos.mediacenter.video.R.drawable.preview_search);
+                // Custom drawables do not automatically apply Drawable.setTint to their Paint.
+                tab.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                android.graphics.drawable.Drawable search = new PreviewIcon(i==4?"cog":"search");
                 search.setBounds(0, 0, dp(22), dp(22)); tab.setCompoundDrawables(search, null, null, null);
             }
             if(i==3){View gap=new View(c);group.addView(gap,new LayoutParams(0,1,1));}
@@ -89,16 +91,14 @@ public final class TopNavigation extends LinearLayout {
     }
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key)){for(TextView tab:tabs)styleTab(tab);invalidate();}};
     private void styleTab(TextView tab){
-        Context c=getContext();tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{android.R.attr.state_selected},new int[]{}},new int[]{Color.WHITE,0xffe1effa,0xffb4cbe0}));
-        if(tab==tabs[4]||tab==tabs[5]){tab.setBackgroundColor(Color.TRANSPARENT);return;}
-        StateListDrawable states=new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_focused},new PreviewFocusUnderline(c,true));
-        states.addState(new int[]{android.R.attr.state_selected},new PreviewFocusUnderline(c,false));
-        states.addState(new int[]{},new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));tab.setBackground(states);
+        Context c=getContext();tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{PreviewAccent.color(c),0xffe1e9ef}));
+        tab.setBackgroundColor(Color.TRANSPARENT);
+        tab.setShadowLayer(tab.hasFocus()?dp(4):0,0,0,PreviewAccent.color(c));
+        for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon instanceof PreviewIcon)((PreviewIcon)icon).focus(tab.hasFocus(),PreviewAccent.color(c));
     }
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(accentListener);for(TextView tab:tabs)styleTab(tab);}
     private boolean scrolled;private android.animation.ValueAnimator scrimAnimation;private int scrimAlpha;
-    public void setScrolled(boolean value){value=value&&selected!=tabs[3]&&selected!=tabs[4]&&selected!=tabs[5];if(value==scrolled)return;scrolled=value;if(scrimAnimation!=null)scrimAnimation.cancel();scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?210:0);scrimAnimation.setDuration(180);scrimAnimation.addUpdateListener(a->{scrimAlpha=(Integer)a.getAnimatedValue();bar.setBackgroundColor(android.graphics.Color.argb(scrimAlpha,9,23,35));});scrimAnimation.start();}
+    public void setScrolled(boolean value){scrolled=value;if(scrimAnimation!=null)scrimAnimation.cancel();scrimAlpha=0;bar.setBackgroundColor(Color.TRANSPARENT);}
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public boolean readyForFirstFrame(){return artwork.readyForFirstFrame();}
     public void selectTab(int index) { if(index<0||index>=6)return;setBackground(index>=3?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3)setScrolled(false); }

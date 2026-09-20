@@ -105,6 +105,16 @@ public final class PreviewPages extends FrameLayout {
     private final boolean[] ascending={false,false,false};
     private final boolean[] listMode={false,false,false};
     private int featuredIndex;
+    private int featuredDirection;
+    private boolean featuredMoving;
+    private void changeFeatured(int direction){
+        lastInteraction=android.os.SystemClock.elapsedRealtime();
+        if(featuredMoving||featuredCandidates().size()<2)return;
+        View focused=findFocus();View card=focused==null?null:list.findContainingItemView(focused);
+        featuredMoving=true;
+        Runnable next=()->{featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;render();};
+        if(card!=null)card.animate().translationX(-dp(18)*direction).alpha(.3f).setDuration(100).withEndAction(next).start();else next.run();
+    }
     private final android.net.Uri[] lastArtwork=new android.net.Uri[4];
     private final Map<String,String> featuredReasons=new HashMap<>();
     private List<Entry> featuredCandidates(){List<List<Entry>> sources=new ArrayList<>();featuredReasons.clear();if(preferences==null||preferences.getBoolean("preview_featured_recent",true))sources.add(snapshot.recent);else sources.add(Collections.emptyList());sources.add(preferences!=null&&preferences.getBoolean("preview_featured_trending",true)?discovery.matches(snapshot,true):Collections.emptyList());sources.add(preferences!=null&&preferences.getBoolean("preview_featured_popular",true)?discovery.matches(snapshot,false):Collections.emptyList());List<Entry> result=new ArrayList<>();Set<String> seen=new HashSet<>();String[] reasons={"RECENTLY ADDED","TRENDING ON TRAKT · IN YOUR LIBRARY","POPULAR ON TRAKT · IN YOUR LIBRARY"};for(int i=0;i<12;i++)for(int n=0;n<sources.size();n++){List<Entry> source=sources.get(n);if(i<source.size()){Entry e=source.get(i);if(seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),reasons[n]);}}}if(result.isEmpty()){List<Entry> local=new ArrayList<>(snapshot.movies);local.addAll(snapshot.shows);for(Entry e:local)if(seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),"IN YOUR LIBRARY");if(result.size()==8)break;}}return result.subList(0,Math.min(8,result.size()));}
@@ -119,7 +129,7 @@ public final class PreviewPages extends FrameLayout {
     }};
     private Runnable ready=()->{};
     public boolean hasComposedContent(){return loaded&&!list.isComputingLayout()&&list.getChildCount()>0&&list.getWidth()>0&&visibleArtworkReady(list);}
-    private boolean visibleArtworkReady(View view){if(view instanceof PreviewCardPresenter.Card)return ((PreviewCardPresenter.Card)view).artworkReady;if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View child=group.getChildAt(i);if(child.getVisibility()==VISIBLE&&!visibleArtworkReady(child))return false;}}return true;}
+    private boolean visibleArtworkReady(View view){if(view instanceof TextView&&!OfficialTitleArtwork.readyForFirstFrame((TextView)view))return false;if(view instanceof PreviewCardPresenter.Card)return ((PreviewCardPresenter.Card)view).artworkReady;if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View child=group.getChildAt(i);if(child.getVisibility()==VISIBLE&&!visibleArtworkReady(child))return false;}}return true;}
     public void setReadyListener(Runnable listener){ready=listener;if(loaded)post(ready);}
     public boolean hasLoadedSnapshot(){return loaded;}
     public void setArtworkListener(java.util.function.Consumer<android.net.Uri> listener){artwork=listener;updateArtwork();}
@@ -179,7 +189,8 @@ public final class PreviewPages extends FrameLayout {
     public void setTab(int tab) {
         if(this.tab==tab)return;
         rememberFocus();scrollStates[this.tab]=layout.onSaveInstanceState();
-        quietOrder.clear();switchingTab=true;this.tab=tab;setBackground(tab==3?new PreviewUtilityBackground(getContext()):null);featuredIndex=0;render();switchingTab=false;
+        // TopNavigation owns the single full-viewport background, including the header.
+        quietOrder.clear();switchingTab=true;this.tab=tab;setBackground(null);featuredIndex=0;render();switchingTab=false;
         if(scrollStates[tab]!=null)layout.onRestoreInstanceState(scrollStates[tab]);else list.scrollToPosition(0);
     }
     public void setSnapshot(Snapshot s) { if(s==null)return;
@@ -201,7 +212,7 @@ public final class PreviewPages extends FrameLayout {
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){
         if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT||event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT)){
-            View focused=findFocus();String tag=focused==null?"":String.valueOf(focused.getTag());if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT&&tag.equals("hero:play")||event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT&&tag.equals("hero:info")){featuredIndex+=event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT?-1:1;lastInteraction=android.os.SystemClock.elapsedRealtime();render();return true;}}
+            View focused=findFocus();String tag=focused==null?"":String.valueOf(focused.getTag());if(tag.equals("hero:info")||tag.equals("hero:indicators")){changeFeatured(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);return true;}}
         if(event.getAction()==KeyEvent.ACTION_DOWN)lastInteraction=android.os.SystemClock.elapsedRealtime();
         if((tab==1||tab==2)&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_UP){
             View focused=list.findFocus(),item=focused==null?null:list.findContainingItemView(focused);
@@ -219,7 +230,7 @@ public final class PreviewPages extends FrameLayout {
             if(item!=null){int p=list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()){
                 if(cells.get(p).type==HERO&&item.getTop()<list.getPaddingTop()){layout.scrollToPositionWithOffset(0,0);return true;}
                 if(cells.get(p).type==RAIL){boolean first=true;for(int i=0;i<p;i++)if(cells.get(i).type==RAIL)first=false;
-                    if(first){FocusAnchor a=new FocusAnchor();a.cell=HERO+":Featured";a.child="hero:play";anchors[tab]=a;holdFocus();layout.scrollToPositionWithOffset(0,0);restoreFocus();return true;}}
+                    if(first){FocusAnchor a=new FocusAnchor();a.cell=HERO+":Featured";a.child="hero:info";anchors[tab]=a;holdFocus();layout.scrollToPositionWithOffset(0,0);restoreFocus();return true;}}
             }}
         }
         return super.dispatchKeyEvent(event);
@@ -322,9 +333,8 @@ public final class PreviewPages extends FrameLayout {
                     if(!e.genres.isEmpty())meta+=(meta.isEmpty()?"":"   ·   ")+e.genres.replace("|"," · ");if(e.media instanceof Episode){Episode ep=(Episode)e.media;meta+="   ·   S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();}TextView metadata=text(meta,12);metadata.setSingleLine(true);metadata.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(metadata,new LinearLayout.LayoutParams(dp(470),dp(22)));String plot=e.media instanceof Tvshow?((Tvshow)e.media).getPlot():e.media instanceof Video?((Video)e.media).getDescriptionBody():"";
                     TextView description=text(plot==null?"":plot,13);description.setIncludeFontPadding(false);description.setMaxLines(3);description.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(description,new LinearLayout.LayoutParams(dp(450),dp(47)));
                     LinearLayout actions=new LinearLayout(getContext());actions.setPadding(0,dp(6),0,0);
-                    TextView play=button((e.media instanceof Video&&((Video)e.media).getResumeMs()>0?"Resume":"Play"),()->play(e,v));play.setTag("hero:play");play.setSingleLine(true);int playWidth=Math.max(dp(100),(int)Math.ceil(play.getPaint().measureText("Resume"))+play.getCompoundPaddingLeft()+play.getCompoundPaddingRight()+dp(4));actions.addView(play,new LinearLayout.LayoutParams(playWidth,-1));
-                    TextView info=button("More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(10);info.setTag("hero:info");actions.addView(info,lp);
-                    v.setAlpha(.7f);v.animate().alpha(1f).setDuration(220).start();View spacer=new View(getContext());v.addView(spacer,new LinearLayout.LayoutParams(1,0,1));v.addView(actions,new LinearLayout.LayoutParams(-2,dp(40)));
+                    TextView info=button("More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);info.setTag("hero:info");info.setBackground(PreviewDialog.buttonFocus(getContext()));actions.addView(info,lp);
+                    v.animate().cancel();v.setAlpha(1f);v.setTranslationX(0);if(featuredDirection!=0){v.setTranslationX(dp(24)*featuredDirection);v.setAlpha(.3f);v.animate().translationX(0).alpha(1f).setDuration(170).start();featuredDirection=0;}View spacer=new View(getContext());v.addView(spacer,new LinearLayout.LayoutParams(1,0,1));v.addView(actions,new LinearLayout.LayoutParams(-2,dp(40)));
                     LinearLayout markers=new LinearLayout(getContext());markers.setGravity(Gravity.CENTER);markers.setFocusable(true);markers.setTag("hero:indicators");markers.setContentDescription("Featured carousel, Left or Right to change title");markers.setBackground(PreviewDialog.focus(getContext()));markers.setOnKeyListener((marker,key,event)->{if(event.getAction()==KeyEvent.ACTION_DOWN&&(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)){featuredIndex+=key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1;lastInteraction=android.os.SystemClock.elapsedRealtime();render();return true;}return false;});markers.setPadding(0,dp(8),0,0);int count=featuredCandidates().size();for(int i=0;i<count;i++){boolean active=i==Math.floorMod(featuredIndex,count);View dot=new View(getContext());GradientDrawable shape=new GradientDrawable();shape.setCornerRadius(dp(3));shape.setColor(active?PreviewAccent.color(getContext()):0x7792aabd);dot.setBackground(shape);LinearLayout.LayoutParams marker=new LinearLayout.LayoutParams(dp(active?24:5),dp(5));marker.setMargins(dp(3),0,dp(3),0);markers.addView(dot,marker);}v.addView(markers,new LinearLayout.LayoutParams(-1,dp(26)));
 
                 }else{TextView title=text(c.title,30);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title);TextView summary=text(PreviewLibrarySummary.describe(getContext(),snapshot,tab==2),13);summary.setLineSpacing(dp(3),1f);summary.setTextColor(0xffbfd2df);v.addView(summary);}

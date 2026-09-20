@@ -168,6 +168,7 @@ public final class StreamingActions {
                 .setNegativeButton(android.R.string.cancel, null).show();
     }
     private void openOffer(StreamingRepository.Offer offer, String watchUrl, String title) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("provider_handoff_requested","provider_id",offer.provider.id);
         Activity a = active(); if (a == null || opening) return;
         opening = true;
         final int request = generation;
@@ -225,8 +226,8 @@ public final class StreamingActions {
         return new String[0];
     }
     private static boolean start(Activity activity, Intent intent) {
-        try { activity.startActivity(intent); return true; }
-        catch (android.content.ActivityNotFoundException | SecurityException e) { return false; }
+        try { activity.startActivity(intent);com.archos.mediacenter.video.diagnostics.Diagnostics.event("provider_handoff_dispatched");return true; }
+        catch (android.content.ActivityNotFoundException | SecurityException e) {com.archos.mediacenter.video.diagnostics.Diagnostics.error("provider_handoff_failed",e);return false; }
     }
     public static void openWeb(Activity a, String url) {
         if (!StreamingRepository.safeWebUrl(url) || !start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url))))

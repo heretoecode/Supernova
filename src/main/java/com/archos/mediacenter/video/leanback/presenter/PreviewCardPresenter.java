@@ -87,7 +87,7 @@ public final class PreviewCardPresenter extends Presenter {
         }
         private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
         void updateFocus() {
-            setForeground(null);
+            setForeground(isFocused()?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
             image.animate().alpha(isFocused()?1f:.76f).setDuration(170).start();
             title.setTextColor(isFocused()?Color.WHITE:0xffc0ccd6);

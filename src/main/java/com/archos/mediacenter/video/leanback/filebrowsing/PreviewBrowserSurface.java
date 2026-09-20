@@ -18,7 +18,7 @@ final class PreviewBrowserSurface extends BrowseFrameLayout {
     private final ImageView poster;
     private final View dock;private final TextView sourceControl;private final TopNavigation navigation;
     PreviewBrowserSurface(Activity activity,View legacy,Uri uri,View titleCommands,Runnable options){
-        super(activity);setId(R.id.grid_frame);setTag("preview-browser");setBackground(new PreviewUtilityBackground(activity));
+        super(activity);setId(R.id.grid_frame);setTag("preview-browser");
         dock=legacy.findViewById(R.id.browse_grid_dock);((ViewGroup)dock.getParent()).removeView(dock);
         LinearLayout columns=new LinearLayout(activity);columns.setPadding(dp(24),dp(14),dp(24),dp(16));
         LinearLayout rail=column(activity),centre=column(activity),context=column(activity);

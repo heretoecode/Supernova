@@ -37,12 +37,15 @@ final class PreviewPlaybackMenus {
   TVMenu menu=card.previewMenu();if(menu==null||menu.getChildCount()==0){dismissCurrent();card.previewClick();return;}
   List<TVMenuItem> actions=new ArrayList<>();List<String> labels=new ArrayList<>();Set<Integer> checked=new HashSet<>();int selected=focus;boolean hasOther=false;
   boolean subtitles=activity.getString(R.string.menu_subtitles).equals(card.previewTitle());
+  TVMenuItem settings=null;
   for(int i=0;i<menu.getChildCount();i++){
    View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
    boolean other=subtitles&&Boolean.FALSE.equals(item.getTag());if(other)hasOther=true;if(otherLanguages?!other:other)continue;
+   if(subtitles&&!otherLanguages&&activity.getString(R.string.menu_player_settings).equals(item.getText())){settings=item;continue;}
    actions.add(item);labels.add(androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString()+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
   }
   if(hasOther&&!otherLanguages){actions.add(null);labels.add("Other languages");}
+  if(settings!=null){actions.add(settings);labels.add(settings.getText()+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
   dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);
   current=PreviewDialog.choose(activity,otherLanguages?"‹ Subtitles · Other languages":"‹ More · "+card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{
@@ -71,5 +74,5 @@ final class PreviewPlaybackMenus {
   if(view instanceof TVMenuItem){ViewGroup.LayoutParams lp=view.getLayoutParams();if(lp!=null){lp.height=dp(a,38);view.setLayoutParams(lp);}view.setBackground(PreviewDialog.focus(a));}
   if(view instanceof ViewGroup){((ViewGroup)view).setLayoutTransition(null);for(int i=0;i<((ViewGroup)view).getChildCount();i++)compact(((ViewGroup)view).getChildAt(i),a);}
  }
- private static void position(PlayerActivity a,Dialog d,boolean right){Window w=d.getWindow();w.setDimAmount(.12f);w.setGravity(Gravity.TOP|Gravity.END);w.setLayout(dp(a,350),Math.min(w.getAttributes().height>0?w.getAttributes().height:dp(a,310),a.getResources().getDisplayMetrics().heightPixels-dp(a,160)));WindowManager.LayoutParams p=w.getAttributes();p.x=dp(a,32);p.y=dp(a,74);w.setAttributes(p);}
+ private static void position(PlayerActivity a,Dialog d,boolean right){Window w=d.getWindow();w.setDimAmount(.12f);w.setGravity(Gravity.TOP|Gravity.END);w.setLayout(dp(a,290),Math.min(w.getAttributes().height>0?w.getAttributes().height:dp(a,280),Math.min(dp(a,330),a.getResources().getDisplayMetrics().heightPixels-dp(a,160))));WindowManager.LayoutParams p=w.getAttributes();p.x=dp(a,32);p.y=dp(a,74);w.setAttributes(p);}
 }

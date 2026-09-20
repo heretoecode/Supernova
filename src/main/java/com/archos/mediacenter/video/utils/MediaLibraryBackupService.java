@@ -126,6 +126,7 @@ public class MediaLibraryBackupService extends Service {
     }
 
     private void startExport(final String destination) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("backup_export_requested");
         if (mThread != null && mThread.isAlive()) {
             log.warn("startExport: export already in progress");
             return;
@@ -157,9 +158,11 @@ public class MediaLibraryBackupService extends Service {
                 }
 
                 showToast(getString(R.string.media_library_export_success, exportPath));
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event("backup_export_verified");
                 nm.cancel(NOTIFICATION_ID);
             } catch (Exception e) {
                 log.error("startExport: error exporting media library", e);
+                com.archos.mediacenter.video.diagnostics.Diagnostics.error("backup_export_failed",e);
                 // The document picker creates the destination before generation. Remove that
                 // newly-created incomplete document instead of leaving a misleading 0 KB ZIP.
                 if(destination!=null)try{android.provider.DocumentsContract.deleteDocument(getContentResolver(),published[0]);}catch(Exception cleanup){log.warn("Could not remove incomplete backup document",cleanup);}
@@ -173,6 +176,7 @@ public class MediaLibraryBackupService extends Service {
     }
 
     private void startImport(String importFilePath) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("backup_restore_requested");
         if (mThread != null && mThread.isAlive()) {
             log.warn("startImport: import already in progress");
             return;
@@ -184,6 +188,7 @@ public class MediaLibraryBackupService extends Service {
                 nm.notify(NOTIFICATION_ID, nb.build());
 
                 importMediaLibrary(importFilePath);
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event("backup_restore_completed");
 
                 nm.cancel(NOTIFICATION_ID);
                 showToast(getString(R.string.media_library_import_success));
@@ -195,6 +200,7 @@ public class MediaLibraryBackupService extends Service {
                 restartApplication();
             } catch (Exception e) {
                 log.error("startImport: error importing media library", e);
+                com.archos.mediacenter.video.diagnostics.Diagnostics.error("backup_restore_failed",e);
                 showToast(getString(R.string.media_library_import_error));
             } finally {
                 ServiceCompat.stopForeground(MediaLibraryBackupService.this, ServiceCompat.STOP_FOREGROUND_REMOVE);

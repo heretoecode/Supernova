@@ -1670,6 +1670,8 @@
             android:exported="true"
             android:theme="@style/MyLeanbackTheme" />
 
+        <activity android:name="com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity"
+            android:exported="false" android:theme="@style/MyLeanbackTheme.Transparent" />
         <activity
             android:name="com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity"
             android:theme="@style/MyLeanbackTheme.Transparent" />

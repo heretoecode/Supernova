@@ -15,7 +15,9 @@ public final class PreviewLibrarySummary {
         long localBytes=0,networkBytes=0;int known=0;
         for(Entry entry:files){
             if(!(entry.media instanceof Video))continue;
-            Video video=(Video)entry.media;Uri uri=video.getUri();String scheme=uri==null?null:uri.getScheme();
+            // getUri() identifies the database row, including for WebDAV/SMB media.
+            // The indexed file URI identifies storage; resolving it performs no I/O.
+            Video video=(Video)entry.media;Uri uri=video.getFileUri();String scheme=uri==null?null:uri.getScheme();
             boolean remote=scheme!=null&&!scheme.equalsIgnoreCase("file")&&!scheme.equalsIgnoreCase("content");
             String key=television?"show:"+entry.show:entry.key();
             if(remote){network.add(key);networkBytes+=entry.bytes;}else{local.add(key);localBytes+=entry.bytes;}
