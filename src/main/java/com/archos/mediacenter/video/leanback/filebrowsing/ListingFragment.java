@@ -801,12 +801,15 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public void onCredentialRequired(Exception e) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("browser_credentials_required");
         Toast.makeText(getActivity(), "TODO: Credential Required", Toast.LENGTH_SHORT).show();
         log.error("TODO: Credential Required", e);
     }
 
     @Override
     public void onListingFatalError(Exception e, ListingEngine.ErrorEnum errorCode) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("browser_listing_failed","code",String.valueOf(errorCode));
+        if(e!=null)com.archos.mediacenter.video.diagnostics.Diagnostics.error("browser_listing_exception",e);
         mErrorMessage.setText(ListingEngine.getErrorStringResId(errorCode));
         mErrorMessage.setVisibility(View.VISIBLE);
         mActionButton.setVisibility(View.GONE);

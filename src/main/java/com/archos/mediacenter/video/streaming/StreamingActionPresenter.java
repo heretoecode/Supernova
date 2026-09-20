@@ -40,7 +40,7 @@ public final class StreamingActionPresenter extends Presenter {
         focused.setColor(0xff345571); focused.setCornerRadius(6*d); focused.setStroke((int)(2*d), 0xff8fceff);
         bg.addState(new int[]{android.R.attr.state_focused}, focused);
         bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(0xff223b50));
-        frame.setBackground(preview?com.archos.mediacenter.video.leanback.PreviewDialog.focus(c):bg);
+        frame.setBackground(preview?com.archos.mediacenter.video.leanback.PreviewDialog.buttonFocus(c):bg);
         ImageView image = new ImageView(c); image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         FrameLayout.LayoutParams ip = new FrameLayout.LayoutParams((int)(28*d), (int)(28*d),Gravity.START|Gravity.CENTER_VERTICAL); ip.leftMargin=(int)(6*d);
         frame.addView(image, ip);

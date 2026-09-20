@@ -40,7 +40,7 @@ jobs:
       - name: Install NOVA build prerequisites
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget
+          sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget ffmpeg
 
       - name: Install repo tool
         run: |
@@ -168,6 +168,7 @@ jobs:
           phase=debug
           if [[ "$VALIDATION_MODE" == preview ]]; then phase=preview; fi
           bash .github/build/check-preview-startup.sh "$apk" "$phase"
+          python3 .github/build/check-preview-playback.py
 
       - name: Build optimised personal APK
         if: env.APK_VARIANT == 'release'

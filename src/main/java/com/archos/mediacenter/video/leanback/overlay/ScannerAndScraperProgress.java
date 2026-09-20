@@ -154,7 +154,9 @@ public class ScannerAndScraperProgress {
     }
 
     /** update the counter TextView and badge */
+    private long diagnosticSampleAt;
     private void updateCount() {
+        if(com.archos.mediacenter.video.diagnostics.Diagnostics.enabled()&&android.os.SystemClock.elapsedRealtime()-diagnosticSampleAt>=5000){diagnosticSampleAt=android.os.SystemClock.elapsedRealtime();com.archos.mediacenter.video.diagnostics.Diagnostics.event("scanner_state","network_active",NetworkScannerReceiver.isScannerWorking(),"network_files",NetworkScannerServiceVideo.getFilesFoundCount(),"local_import",ImportState.VIDEO.isInitialImport()||ImportState.VIDEO.isRegularImport(),"metadata_remaining",AutoScrapeService.getNumberOfFilesRemainingToProcess());}
         String badge = "";
         int count = 0;
         int textColor = mDefaultTextColor;

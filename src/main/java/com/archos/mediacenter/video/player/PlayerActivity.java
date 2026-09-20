@@ -689,6 +689,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     // The player controller dismisses a nested TV card before the main TV menu.
                 } else {
                     setEnabled(false);
+                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_exit_requested","reason","user_back");
                     getOnBackPressedDispatcher().onBackPressed();
                     setEnabled(true);
                 }
@@ -869,6 +870,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                         if (evt.getOldValue() != evt.getNewValue()) {
                             if (log.isDebugEnabled()) log.debug("NetworkState for {} changed:{} -> {}", evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
                             if (!networkState.hasLocalConnection() && !mPlayer.isLocalVideo()) { // should not finish if playing local file
+                                com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_exit_requested","reason","network_connection_lost");
                                 if (log.isDebugEnabled()) log.debug("lost network: finish");
                                 finishWithResult();
                             }
@@ -4193,6 +4195,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     public void finish() {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_activity_finish","completed",mVideoFinished,"error_code",mErrorCode,"changing_configuration",isChangingConfigurations());
         log.info("Playback Activity finish: completed={} error={} changingConfiguration={}",mVideoFinished,mErrorCode,isChangingConfigurations());
         // Send result before finishing if we haven't already
         if (mIsExternalPlayer && !mResultSent) {

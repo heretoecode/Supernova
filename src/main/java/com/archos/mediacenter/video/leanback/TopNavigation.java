@@ -100,6 +100,7 @@ public final class TopNavigation extends LinearLayout {
     private boolean scrolled;private android.animation.ValueAnimator scrimAnimation;private int scrimAlpha;
     public void setScrolled(boolean value){scrolled=value;if(scrimAnimation!=null)scrimAnimation.cancel();scrimAlpha=0;bar.setBackgroundColor(Color.TRANSPARENT);}
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
+    public void setFeaturedDirection(int direction){artwork.setMotionDirection(direction);}
     public boolean readyForFirstFrame(){return artwork.readyForFirstFrame();}
     public void selectTab(int index) { if(index<0||index>=6)return;setBackground(index>=3?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3)setScrolled(false); }
     @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);artwork.release();super.onDetachedFromWindow(); }

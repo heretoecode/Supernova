@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 public final class PreviewLibraryScan {
  private static long requestedAt;
  public static synchronized void request(Context context){
+  com.archos.mediacenter.video.diagnostics.Diagnostics.event("library_scan_requested","network_busy",NetworkScannerReceiver.isScannerWorking());
   if(NetworkScannerReceiver.isScannerWorking()||requestedAt>0&&SystemClock.elapsedRealtime()-requestedAt<15000){PreviewNotice.show(context,"A library scan is already running or queued",false);return;}
   requestedAt=SystemClock.elapsedRealtime();Context app=context.getApplicationContext();
   LinkedHashSet<String> roots=new LinkedHashSet<>();roots.add(Environment.getExternalStorageDirectory().getAbsolutePath());ExtStorageManager storage=ExtStorageManager.getExtStorageManager();if(storage.hasExtStorage()){roots.addAll(storage.getExtSdcards());roots.addAll(storage.getExtUsbStorages());roots.addAll(storage.getExtOtherStorages());}

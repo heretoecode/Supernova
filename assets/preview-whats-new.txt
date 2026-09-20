@@ -1,3 +1,21 @@
+SUPERNOVA Preview 4.1.3
+
+Continues the delivered 4.1.2 source; no baseline reset.
+
+Poster-free Movie/TV Details: official logos with text fallback, constrained synopsis, compact unboxed cast with See All and one playback/provider action row.
+Shared focus: neutral controls, accent and restrained perimeter/text glow, no top-navigation underline; Settings cog feedback corrected.
+Home: one More Info action with independent Left/Right navigation, directional card motion and official-logo readiness included in first-frame composition.
+Information: wider, shorter centred overlay with a frosted/darkened Details background and bounded cast subset.
+Library: indexed WebDAV/SMB storage now classified using the media file URI rather than the database content URI. No filesystem scan on page entry.
+Network & Files: removed the duplicate background that restarted the image below the header.
+Search: separate Top Result context, title/year/type and View Show action; diacritic-insensitive parent matching retained.
+Menus: smaller Columns, Customise Home and subtitle selectors, with subtitle Settings last.
+Playback: outlined translucent central transport, exact Movie Ends/Episode Ends wording, active-session technical metadata shown without launching a second Details/probe lifecycle.
+Diagnostics: Advanced > Diagnostic Logging (Off by default) and Export Diagnostic Report. Bounded structured logs with process/playback IDs; exception messages, credentials and raw locations excluded.
+Settings: projector positioning and existing torrent folder/blocklist controls remain reachable through the modern panels.
+
+NOT TESTED — USER QA REQUIRED: physical Shield focus/performance, populated artwork readiness, provider handoffs, long-duration playback termination, A/V sync and abnormal-exit progress persistence. The exact original Shield crash exception is not yet confirmed by a device trace. No claim that persistent playback reliability is fixed.
+
 SUPERNOVA Preview 4.1.2
 
 Continues the 4.1.1 baseline and the recovered 4.1.2 work.

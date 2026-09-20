@@ -32,9 +32,9 @@ public final class Diagnostics {
         enabled=PreferenceManager.getDefaultSharedPreferences(app).getBoolean(KEY,false);
         Thread.UncaughtExceptionHandler previous=Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((thread,error)->{
-            if(enabled)write(record("uncaught_exception","thread",thread.getName(),"trace",trace(error)),playback);
-            if(previous!=null)previous.uncaughtException(thread,error);
-            else {android.os.Process.killProcess(android.os.Process.myPid());System.exit(10);}
+            try{if(enabled)write(record("uncaught_exception","thread",thread.getName(),"trace",trace(error)),playback);}
+            finally{if(previous!=null)previous.uncaughtException(thread,error);
+                else {android.os.Process.killProcess(android.os.Process.myPid());System.exit(10);}}
         });
         app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks(){
             private void life(Activity a,String state){event("lifecycle","screen",a.getClass().getSimpleName(),"state",state);}

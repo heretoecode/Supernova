@@ -112,7 +112,7 @@ public final class PreviewPages extends FrameLayout {
         if(featuredMoving||featuredCandidates().size()<2)return;
         View focused=findFocus();View card=focused==null?null:list.findContainingItemView(focused);
         featuredMoving=true;
-        Runnable next=()->{featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;render();};
+        Runnable next=()->{for(android.view.ViewParent parent=getParent();parent!=null;parent=parent.getParent())if(parent instanceof TopNavigation){((TopNavigation)parent).setFeaturedDirection(direction);break;}featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;render();};
         if(card!=null)card.animate().translationX(-dp(18)*direction).alpha(.3f).setDuration(100).withEndAction(next).start();else next.run();
     }
     private final android.net.Uri[] lastArtwork=new android.net.Uri[4];
@@ -303,7 +303,7 @@ public final class PreviewPages extends FrameLayout {
     });}
     private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextColor(Color.WHITE);t.setTextSize(size);return t;}
     private GradientDrawable background(boolean focus){GradientDrawable d=new GradientDrawable();d.setColor(focus?0x60416b84:0xc00b1b29);d.setCornerRadius(dp(5));d.setStroke(dp(focus?2:1),focus?PreviewAccent.color(getContext()):0xff304b60);return d;}
-    private TextView button(String name,Runnable action){TextView b=text(name,13);com.archos.mediacenter.video.leanback.PreviewIcon.apply(b,name,16);b.setGravity(Gravity.CENTER);b.setPadding(dp(14),dp(9),dp(14),dp(9));b.setFocusable(true);b.setFocusableInTouchMode(true);b.setClickable(true);b.setBackground(PreviewDialog.focus(getContext()));b.setOnFocusChangeListener((v,f)->{b.setTextColor(f?Color.WHITE:0xffb9cddd);b.setShadowLayer(f?dp(5):0,0,0,PreviewAccent.color(getContext()));});b.setOnClickListener(v->{quietOrder.clear();action.run();});return b;}
+    private TextView button(String name,Runnable action){TextView b=text(name,13);com.archos.mediacenter.video.leanback.PreviewIcon.apply(b,name,16);b.setGravity(Gravity.CENTER);b.setPadding(dp(14),dp(9),dp(14),dp(9));b.setFocusable(true);b.setFocusableInTouchMode(true);b.setClickable(true);b.setBackground(PreviewDialog.focus(getContext()));b.setOnFocusChangeListener((v,f)->{b.setTextColor(f?PreviewAccent.color(getContext()):0xffe1e9ef);b.setShadowLayer(f?dp(5):0,0,0,PreviewAccent.color(getContext()));});b.setOnClickListener(v->{quietOrder.clear();action.run();});return b;}
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     class Holder extends RecyclerView.ViewHolder {
         Presenter presenter; Presenter.ViewHolder card;

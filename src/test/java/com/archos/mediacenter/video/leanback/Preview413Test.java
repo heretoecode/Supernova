@@ -26,7 +26,9 @@ public class Preview413Test {
     @Test public void mixedEpisodeSourcesCountDistinctShowsAndSumIndexedBytes(){
         Snapshot s=new Snapshot();Entry local=episode(1,7,"/storage/a.mkv"),network=episode(2,7,"https://server/dav/b.mkv"),other=episode(3,8,"webdav://server/c.mkv");
         s.episodes.add(local);s.episodes.add(network);s.episodes.add(other);
+        s.shows.add(new Entry(new Tvshow(7,"Show A",null,1,2,0,"/show-a"),0,7,""));s.shows.add(new Entry(new Tvshow(8,"Show B",null,1,1,0,"/show-b"),0,8,""));
         String text=PreviewLibrarySummary.describe(RuntimeEnvironment.getApplication(),s,true);
+        assertTrue(text.startsWith("2 Shows"));
         assertTrue(text.contains("Local Storage    1 shows"));assertTrue(text.contains("Network / WebDAV    2 shows"));assertTrue(text.contains("Shows spanning sources"));
         assertTrue(text.contains(android.text.format.Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(),3000)));
     }

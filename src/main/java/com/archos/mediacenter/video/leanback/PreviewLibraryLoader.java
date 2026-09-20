@@ -126,6 +126,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         s.continuingShows.sort(Comparator.comparingLong((Entry e)->e.playedAt).reversed());
     }
     @Override public Cursor loadInBackground() {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_load_begin");
         long started=android.os.SystemClock.elapsedRealtime();
         Cursor c=super.loadInBackground();
         if(c==null) return null;
@@ -152,6 +153,6 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 }
             }
             snapshot=build(videos,shows);applyJourneys(snapshot,videos);cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=snapshot;final Snapshot diskSnapshot=snapshot;if(!cachePrivate)cacheWriter.execute(()->writeCache(diskSnapshot)); android.util.Log.d("NovaPreview","Library snapshot: "+(android.os.SystemClock.elapsedRealtime()-started)+" ms, "+videos.size()+" files (local database)");c.moveToPosition(-1); return c;
-        } catch(RuntimeException e) { c.close(); throw e; }
+        } catch(RuntimeException e) {com.archos.mediacenter.video.diagnostics.Diagnostics.error("indexed_library_load_failed",e);c.close();throw e; }
     }
 }

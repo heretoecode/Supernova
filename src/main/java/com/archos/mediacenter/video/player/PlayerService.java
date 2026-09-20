@@ -1877,6 +1877,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onPrepared() {
+        VideoMetadata diagnosticMetadata=mPlayer==null?null:mPlayer.getVideoMetadata();
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_state","state","prepared","source",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mStreamingUri),"decoder",diagnosticMetadata==null||diagnosticMetadata.getVideoTrack()==null?-1:diagnosticMetadata.getVideoTrack().decoder);
         if (log.isDebugEnabled()) log.debug("onPrepared()");
         mPlayerState = PlayerState.PREPARED;
         if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
@@ -1894,6 +1896,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public void onCompletion() { advancePlayback(true); }
     private void advancePlayback(boolean completed) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_transition","completed",completed,"failed",mPlaybackSession.failed,"next_available",mNextUri!=null,"position_ms",mPlaybackSession.lastKnownPositionMs);
         log.info("Playback transition completed={} lastPosition={} duration={} state={} failed={} next={}",completed,mPlaybackSession.lastKnownPositionMs,mVideoInfo==null?0:mVideoInfo.duration,mPlayerState,mPlaybackSession.failed,mNextUri!=null);
         if(completed&&mPlaybackSession.failed){log.warn("Ignoring completion following a playback error; preserving the resume checkpoint");return;}
         if (log.isDebugEnabled()) log.debug("onCompletion");
@@ -1982,6 +1985,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onAllSeekComplete() {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("seek_complete","checkpoint_ms",mPlaybackSession.lastKnownPositionMs,"audio_delay",mAudioDelay,"speed",mAudioSpeed);
         log.info("Playback seek completed position={} audioDelay={} speed={} state={}",mPlayer==null?-1:mPlayer.getCurrentPosition(),mAudioDelay,mAudioSpeed,mPlayerState);
         mPlaybackSession.seeking=false;mPlaybackSession.sampleTime=0;sampleJourneyTime();
         if(mPlayerFrontend!=null) {
@@ -1991,6 +1995,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onPlay(int state) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_state","state","playing","reason_code",state);
         if (log.isDebugEnabled()) log.debug("onPlay");
         mPlayerState = PlayerState.PLAYING;
         mPlaybackSession.hasPlayed=true;mPlaybackSession.failed=false;
@@ -2011,6 +2016,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onPause(int state) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_state","state","paused","reason_code",state);
         if (log.isDebugEnabled()) log.debug("onPause");
         sampleJourneyTime();mPlayerState = PlayerState.PAUSED;
         // pauseTrakt() must run before saveVideoStateIfReady() so that it sets
@@ -2047,6 +2053,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onAudioMetadataUpdated(VideoMetadata vMetadata, int newAudioTrack) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("audio_metadata","selected",newAudioTrack,"tracks",vMetadata==null?0:vMetadata.getAudioTrackNb());
         /*
          * if current audio track is invalid or not supported, choose the first supported one
          */
@@ -2186,6 +2193,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int newSubtitleTrack) {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("subtitle_metadata","selected",newSubtitleTrack,"tracks",vMetadata==null?0:vMetadata.getSubtitleTrackNb());
         // note: if mIsPreparingSubs = true, onSubtitleMetadataUpdated can be called even if in not final state
         // subs could be still being copied in cache directory
         // however in a replay context cache is not  updated since all the subs have already been copied
