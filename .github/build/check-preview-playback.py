@@ -54,6 +54,7 @@ try:
     time.sleep(8)
     adb('shell', 'input', 'keyevent', '23')
     root = capture('playback-hud-runtime')
+    assert any('Movie Ends' in n.get('text', '') for n in root.iter('node')), 'Preview movie end-clock wording missing'
     info = next(n for n in root.iter('node') if n.get('resource-id', '').endswith('/preview_info'))
     activate(info, 'File and technical details')
     root = capture('playback-information-runtime')

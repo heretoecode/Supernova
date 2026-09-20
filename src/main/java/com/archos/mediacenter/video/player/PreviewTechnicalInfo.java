@@ -13,10 +13,11 @@ final class PreviewTechnicalInfo {
         text.append("\nFile size: ").append(metadata.getFileSize()).append(" bytes");
         VideoMetadata.VideoTrack video=metadata.getVideoTrack();
         if(video!=null)text.append("\n\nVIDEO\n").append(value(video.format)).append("\nDecoder: ").append(video.decoder)
-            .append("\nBitrate: ").append(video.bitRate).append(" bit/s")
+            .append("\nResolution: ").append(metadata.getVideoWidth()).append(" × ").append(metadata.getVideoHeight())
+            .append(video.bitRate>0?"\nBitrate: "+video.bitRate+" kb/s":"")
             .append(video.fpsScale>0?"\nFrame rate: "+String.format(java.util.Locale.UK,"%.3f",video.fpsRate/(double)video.fpsScale):"");
         if(metadata.getAudioTrackNb()>0)text.append("\n\nAUDIO");
-        for(int i=0;i<metadata.getAudioTrackNb();i++){VideoMetadata.AudioTrack audio=metadata.getAudioTrack(i);if(audio!=null)text.append('\n').append(i+1).append(". ").append(value(audio.language)).append(" · ").append(value(audio.format)).append(" · ").append(audio.channels).append(" channels");}
+        for(int i=0;i<metadata.getAudioTrackNb();i++){VideoMetadata.AudioTrack audio=metadata.getAudioTrack(i);if(audio!=null)text.append('\n').append(i+1).append(". ").append(value(audio.language)).append(" · ").append(value(audio.format)).append(" · ").append(value(audio.channels));}
         if(metadata.getSubtitleTrackNb()>0)text.append("\n\nSUBTITLES");
         for(int i=0;i<metadata.getSubtitleTrackNb();i++){VideoMetadata.SubtitleTrack subtitle=metadata.getSubtitleTrack(i);if(subtitle!=null)text.append('\n').append(i+1).append(". ").append(value(subtitle.language)).append(subtitle.isExternal?" · External":" · Embedded");}
         return text.toString();

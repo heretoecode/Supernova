@@ -588,8 +588,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             mEndTime = (TextView) v.findViewById(R.id.time);
             mSeekState = v.findViewById(R.id.seek_state);
             mCurrentTime = (TextView) v.findViewById(R.id.time_current);
-            // The clock is only for actual leanback devices
-            if (mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK) || isChromeOS(mContext)) {
+            // Selected Preview TV mode uses the same clock as hardware-detected TV.
+            if (experimentalUi() || mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK) || isChromeOS(mContext)) {
                 if (log.isDebugEnabled()) log.debug("initControllerView: FEATURE_LEANBACK");
                 mClock = (TextView) v.findViewById(R.id.clock);
                 if(mClock!=null) {

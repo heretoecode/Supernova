@@ -10,6 +10,10 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewTechnicalInfoTest {
+    @Test @Config(qualifiers="w960dp-h540dp-land-mdpi") public void readPanelsFitShortContentAndCapLongContent(){
+        org.robolectric.android.controller.ActivityController<android.app.Activity> host=Robolectric.buildActivity(android.app.Activity.class).setup();
+        try{android.app.Dialog small=com.archos.mediacenter.video.leanback.PreviewDialog.read(host.get(),"Information","One short line");int shortHeight=small.getWindow().getAttributes().height;assertTrue(shortHeight<200);small.dismiss();StringBuilder lines=new StringBuilder();for(int i=0;i<100;i++)lines.append("A technical line\n");android.app.Dialog large=com.archos.mediacenter.video.leanback.PreviewDialog.read(host.get(),"Information",lines.toString());assertTrue(large.getWindow().getAttributes().height<=360);assertTrue(large.getWindow().getAttributes().height>shortHeight);large.dismiss();}finally{host.pause().stop().destroy();}
+    }
     @Test public void missingActiveMetadataDoesNotStartProbe(){assertTrue(PreviewTechnicalInfo.describe(null,"webdavs",0).contains("not available"));}
     @Test public void emptySnapshotHasNoNullTrackFailure(){String text=PreviewTechnicalInfo.describe(new VideoMetadata(),"webdavs",0);assertTrue(text.contains("Source: webdavs"));assertFalse(text.contains("null"));}
     @Test public void episodeInformationToTechnicalPanelKeepsOwningActivity(){
