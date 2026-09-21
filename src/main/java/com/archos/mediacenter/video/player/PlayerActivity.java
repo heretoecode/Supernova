@@ -2469,6 +2469,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     // TODO Auto-generated method stub
                     Intent p = new Intent(Intent.ACTION_MAIN);
                     p.setComponent(new ComponentName(mActivity, VideoSettingsActivity.class));
+                    if (mPreferences.getBoolean("try_new_ui", false)) {
+                        mUserPausedVideo = true;
+                        if (mPlayer != null && mPlayer.isPlaying()) mPlayer.pause(PlayerController.STATE_OTHER);
+                        if (PlayerService.sPlayerService != null) {
+                            PlayerService.sPlayerService.setPlayOnResume(false);
+                            PlayerService.sPlayerService.checkpointPlaybackIntent(getIntent());
+                            PlayerService.sPlayerService.saveVideoStateIfReady();
+                        }
+                        com.archos.mediacenter.video.diagnostics.Diagnostics.event("open_settings_from_playback", "paused", true);
+                    }
                     startActivity(p);
                 }
             });
@@ -2950,6 +2960,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 return true;
             }
             case MENU_PREFERENCES: {
+                if (mPreferences.getBoolean("try_new_ui", false)) {
+                    mUserPausedVideo = true;
+                    if (mPlayer != null && mPlayer.isPlaying()) mPlayer.pause(PlayerController.STATE_OTHER);
+                    if (PlayerService.sPlayerService != null) {
+                        PlayerService.sPlayerService.setPlayOnResume(false);
+                        PlayerService.sPlayerService.checkpointPlaybackIntent(getIntent());
+                        PlayerService.sPlayerService.saveVideoStateIfReady();
+                    }
+                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("open_settings_from_playback", "paused", true);
+                }
                 Intent p = new Intent(Intent.ACTION_MAIN);
                 p.setComponent(new ComponentName(this, VideoPreferencesActivity.class));
                 startActivity(p);

@@ -44,7 +44,7 @@ public final class TopNavigation extends LinearLayout {
             TextView tab = new TextView(c); tabs[i] = tab;
             tab.setText(labels[i]); tab.setContentDescription(labels[i]);
             tab.setTextColor(Color.WHITE); tab.setTextSize(15); tab.setGravity(Gravity.CENTER);
-            tab.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+            tab.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
             tab.setPadding(dp(12), dp(6), dp(12), dp(6));
             tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, 0xff59d8ff, 0xffb4cbe0}));
@@ -80,7 +80,7 @@ public final class TopNavigation extends LinearLayout {
         group.removeView(tabs[5]);group.addView(tabs[5],group.indexOfChild(tabs[4]),new LayoutParams(-2,dp(36)));
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(85), dp(46)));
-        android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTextSize(19);clock.setTextColor(0xffd6e5f3);clock.setGravity(Gravity.CENTER);status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTextSize(19);clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextColor(0xffd6e5f3);clock.setGravity(Gravity.CENTER);status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
         selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
         android.widget.FrameLayout stage=new android.widget.FrameLayout(c);
@@ -102,7 +102,7 @@ public final class TopNavigation extends LinearLayout {
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public void setFeaturedDirection(int direction){artwork.setMotionDirection(direction);}
     public boolean readyForFirstFrame(){return artwork.readyForFirstFrame();}
-    public void selectTab(int index) { if(index<0||index>=6)return;setBackground(index>=3?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3)setScrolled(false); }
+    public void selectTab(int index) { if(index<0||index>=6)return;scanStatus.setVisibility(index==3?GONE:VISIBLE);setBackground(index>=3?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3)setScrolled(false); }
     @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);artwork.release();super.onDetachedFromWindow(); }
     public android.widget.FrameLayout getScanContainer() { return scanStatus; }
     public android.widget.FrameLayout getStatusContainer() { return status; }

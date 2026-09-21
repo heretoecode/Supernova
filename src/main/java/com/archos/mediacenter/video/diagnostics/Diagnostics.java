@@ -25,11 +25,14 @@ public final class Diagnostics {
     private static volatile String playback="";
     private static final String PROCESS=UUID.randomUUID().toString();
     private static long focusAt;
+    private static String lastOperation="startup";
+    private static int startedActivities;
     private static final Map<Activity,android.view.ViewTreeObserver.OnGlobalFocusChangeListener> FOCUS=new WeakHashMap<>();
 
     public static void install(Application app){
         context=app.getApplicationContext();
         enabled=PreferenceManager.getDefaultSharedPreferences(app).getBoolean(KEY,false);
+        if(enabled)startProcessRecord();
         Thread.UncaughtExceptionHandler previous=Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((thread,error)->{
             try{if(enabled)write(record("uncaught_exception","thread",thread.getName(),"trace",trace(error)),playback);}
@@ -39,7 +42,7 @@ public final class Diagnostics {
         app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks(){
             private void life(Activity a,String state){event("lifecycle","screen",a.getClass().getSimpleName(),"state",state);}
             public void onActivityCreated(Activity a,Bundle b){life(a,"created");}
-            public void onActivityStarted(Activity a){life(a,"started");}
+            public void onActivityStarted(Activity a){startedActivities++;if(enabled)processMarker(false);life(a,"started");}
             public void onActivityResumed(Activity a){
                 life(a,"resumed");
                 android.view.ViewTreeObserver.OnGlobalFocusChangeListener listener=(old,next)->{
@@ -50,11 +53,26 @@ public final class Diagnostics {
                 FOCUS.put(a,listener);a.getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(listener);
             }
             public void onActivityPaused(Activity a){life(a,"paused");android.view.ViewTreeObserver.OnGlobalFocusChangeListener l=FOCUS.remove(a);if(l!=null)a.getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(l);}
-            public void onActivityStopped(Activity a){life(a,"stopped");}
+            public void onActivityStopped(Activity a){life(a,"stopped");startedActivities=Math.max(0,startedActivities-1);if(enabled&&startedActivities==0){event("process_quiescent","active_playback",!playback.isEmpty());if(playback.isEmpty())processMarker(true);}}
             public void onActivitySaveInstanceState(Activity a,Bundle b){}
             public void onActivityDestroyed(Activity a){life(a,"destroyed");}
         });
         event("startup","version",com.archos.mediacenter.video.BuildConfig.VERSION_NAME,"sdk",android.os.Build.VERSION.SDK_INT);
+    }
+    private static void startProcessRecord(){
+        SharedPreferences state=context.getSharedPreferences("supernova_diagnostic_session",Context.MODE_PRIVATE);
+        String previous=state.getString("process","");
+        if(!previous.isEmpty()&&!previous.equals(PROCESS)&&!state.getBoolean("clean",true))
+            event("PREVIOUS_SESSION_UNCLEAN_EXIT","previous_process",previous,"previous_pid",state.getInt("pid",-1),"last_operation",state.getString("operation","unknown"));
+        processMarker(false);
+    }
+    private static void processMarker(boolean clean){
+        if(context==null)return;
+        // A clean marker means no visible activity or active playback, not proof
+        // of an OS process shutdown; Android need not deliver onDestroy.
+        context.getSharedPreferences("supernova_diagnostic_session",Context.MODE_PRIVATE).edit()
+            .putString("process",PROCESS).putInt("pid",android.os.Process.myPid())
+            .putBoolean("clean",clean).putString("operation",lastOperation).apply();
     }
     private static String viewId(View view){
         if(view==null)return "none";
@@ -73,7 +91,7 @@ public final class Diagnostics {
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
-        enabled=value;if(value)event("logging_enabled","default","off");
+        enabled=value;if(value){startProcessRecord();event("logging_enabled","default","off");}
     }
     public static void beginPlayback(android.net.Uri source){
         playback=UUID.randomUUID().toString();event("playback_begin","source",sourceType(source));
@@ -83,10 +101,13 @@ public final class Diagnostics {
         if(uri==null)return "unknown";String scheme=uri.getScheme();
         if(scheme==null||"file".equalsIgnoreCase(scheme))return "local";
         String lower=scheme.toLowerCase(Locale.ROOT);
-        return Arrays.asList("content","smb","webdav","webdavs","dav","davs","http","https","ftp","ftps","upnp").contains(lower)?lower:"other";
+        return Arrays.asList("sftp","ssh","content","smb","webdav","webdavs","dav","davs","http","https","ftp","ftps","upnp").contains(lower)?lower:"other";
     }
     public static void event(String event,Object... fields){
         if(!enabled||context==null)return;
+        if(!Arrays.asList("focus","scanner_state","checkpoint_attempt","checkpoint_submitted","playback_checkpoint").contains(event)){
+            lastOperation=safe(event);processMarker(false);
+        }
         String line=record(event,fields),session=playback;
         WORK.execute(()->{if(enabled)write(line,session);});
     }
@@ -110,7 +131,7 @@ public final class Diagnostics {
     private static String record(String event,Object... fields){
         try{
             JSONObject json=new JSONObject();json.put("utc_ms",System.currentTimeMillis());json.put("elapsed_ms",android.os.SystemClock.elapsedRealtime());
-            json.put("process",PROCESS);json.put("session",playback);json.put("event",safe(event));
+            json.put("pid",android.os.Process.myPid());json.put("uptime_ms",android.os.SystemClock.uptimeMillis());json.put("process",PROCESS);json.put("session",playback);json.put("event",safe(event));
             for(int i=0;i+1<fields.length;i+=2){String key=String.valueOf(fields[i]);
                 if(!key.matches("[a-z_]{1,48}")||key.matches(".*(password|credential|token|secret|header|cookie|path|url|uri|api_key).*"))continue;
                 Object value=fields[i+1];json.put(key,value instanceof Number||value instanceof Boolean?value:safe(String.valueOf(value)));
@@ -152,11 +173,19 @@ public final class Diagnostics {
             try{for(android.media.MediaCodecInfo codec:new android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS).getCodecInfos())if(!codec.isEncoder())decoders.append(safe(codec.getName())).append(" ").append(Arrays.toString(codec.getSupportedTypes())).append('\n');}catch(RuntimeException failure){decoders.append("Capability enumeration unavailable: ").append(failure.getClass().getSimpleName());}
             entry(zip,"decoders.txt",decoders.toString().getBytes(StandardCharsets.UTF_8));
             entry(zip,"README.txt",("Supernova opt-in diagnostic report\nStructured UTC and monotonic timestamps; process and playback session IDs.\nLogging is off by default. Disabling stops new events, not export of existing bounded logs.\nException messages, credentials, raw media paths, headers and preference dumps are excluded.\nUp to five 256 KiB event files and two 256 KiB playback files; a bounded queue may drop events under load.\nNo native decoder A/V clock precision or physical Shield playback success is implied.\n").getBytes(StandardCharsets.UTF_8));
+            entry(zip,"summary.json",summary().toString(2).getBytes(StandardCharsets.UTF_8));
             File dir=directory();for(String name:new String[]{"events.jsonl","events.jsonl.1","events.jsonl.2","events.jsonl.3","events.jsonl.4","playback.jsonl","playback.jsonl.1"}){
                 File file=new File(dir,name);if(!file.isFile())continue;zip.putNextEntry(new ZipEntry(name));
                 try(InputStream in=new FileInputStream(file)){byte[] buffer=new byte[8192];int read,total=0;while(total<LIMIT&&(read=in.read(buffer,0,Math.min(buffer.length,LIMIT-total)))!=-1){zip.write(buffer,0,read);total+=read;}}zip.closeEntry();
             }
         }catch(org.json.JSONException failure){throw new IOException(failure);}}
+    }
+    private static JSONObject summary() throws IOException,org.json.JSONException {
+        JSONObject result=new JSONObject(),counts=new JSONObject();Set<String> processes=new LinkedHashSet<>(),sessions=new LinkedHashSet<>();org.json.JSONArray abnormal=new org.json.JSONArray();
+        for(int i=ROTATIONS;i>=0;i--){File file=new File(directory(),"events.jsonl"+(i==0?"":"."+i));if(!file.isFile())continue;
+            try(BufferedReader reader=new BufferedReader(new InputStreamReader(new FileInputStream(file),StandardCharsets.UTF_8))){String line;while((line=reader.readLine())!=null){try{JSONObject item=new JSONObject(line);String event=item.optString("event");counts.put(event,counts.optInt(event)+1);processes.add(item.optString("process"));String session=item.optString("session");if(!session.isEmpty())sessions.add(session);if(event.contains("error")||event.contains("exception")||event.contains("UNCLEAN")||event.equals("playback_completed")||event.equals("playback_transition")){if(abnormal.length()==40)abnormal.remove(0);abnormal.put(item);}}catch(org.json.JSONException ignored){}}}
+        }
+        result.put("retained_processes",new org.json.JSONArray(processes));result.put("retained_playback_sessions",new org.json.JSONArray(sessions));result.put("event_counts",counts);result.put("recent_abnormal_or_completion_events",abnormal);result.put("coverage","Bounded retained logs only. Unclean exit is not proof of a crash. A clean marker means quiescent lifecycle, not confirmed OS shutdown. No measured A/V offset is available.");return result;
     }
     private static void entry(ZipOutputStream zip,String name,byte[] bytes)throws IOException{zip.putNextEntry(new ZipEntry(name));zip.write(bytes);zip.closeEntry();}
     private Diagnostics(){}

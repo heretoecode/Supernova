@@ -1191,6 +1191,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if (mPlaybackSession.startPositionApplied && mPlaybackSession.hasPlayed && mPlayerState != PlayerState.INIT && mPlayerState != PlayerState.PREPARING) {
                 sampleJourneyTime();
                 if (log.isDebugEnabled()) log.debug("saveVideoStateIfReady");
+                if(periodic&&mPlayer!=null)com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_checkpoint","position_ms",mPlaybackSession.lastKnownPositionMs,"duration_ms",mPlayer.getDuration(),"buffered_position",mPlayer.getBufferPosition(),"state",String.valueOf(mPlayerState),"speed",mAudioSpeed,"audio_delay_ms",mAudioDelay,"width",mPlayer.getVideoWidth(),"height",mPlayer.getVideoHeight(),"source",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mStreamingUri));
                 int resumePosition = mPlaybackSession.completed
                         ? LAST_POSITION_END
                         : captureCurrentPosition(mPlayer != null && !mPlayer.isPaused());
@@ -1896,7 +1897,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public void onCompletion() { advancePlayback(true); }
     private void advancePlayback(boolean completed) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_transition","completed",completed,"failed",mPlaybackSession.failed,"next_available",mNextUri!=null,"position_ms",mPlaybackSession.lastKnownPositionMs);
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_transition","completed",completed,"failed",mPlaybackSession.failed,"next_available",mNextUri!=null,"position_ms",mPlaybackSession.lastKnownPositionMs,"player_duration_ms",mPlayer==null?-1:mPlayer.getDuration(),"library_duration_ms",mVideoInfo==null?-1:mVideoInfo.duration);
         log.info("Playback transition completed={} lastPosition={} duration={} state={} failed={} next={}",completed,mPlaybackSession.lastKnownPositionMs,mVideoInfo==null?0:mVideoInfo.duration,mPlayerState,mPlaybackSession.failed,mNextUri!=null);
         if(completed&&mPlaybackSession.failed){log.warn("Ignoring completion following a playback error; preserving the resume checkpoint");return;}
         if (log.isDebugEnabled()) log.debug("onCompletion");

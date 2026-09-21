@@ -22,6 +22,7 @@ public final class PreviewMoviePage extends ScrollView {
     private final TextView title,meta,plot,play,trailer,context;
     private final LinearLayout pills;
     private final LinearLayout providerActions;
+    private final TextView versions;
     private ObjectAdapter observedActions;
     private final com.archos.mediacenter.video.streaming.StreamingActionPresenter providerPresenter=new com.archos.mediacenter.video.streaming.StreamingActionPresenter();
     private final List<Presenter.ViewHolder> providerHolders=new ArrayList<>();
@@ -52,14 +53,21 @@ public final class PreviewMoviePage extends ScrollView {
         pills=new LinearLayout(c);pills.setPadding(0,dp(5),0,dp(5));hero.addView(pills);
         plot=text("",13);plot.setMaxLines(3);plot.setLineSpacing(dp(2),1);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);hero.addView(plot,new LinearLayout.LayoutParams(Math.min(dp(390),getResources().getDisplayMetrics().widthPixels-dp(84)),dp(56)));
         LinearLayout buttons=new LinearLayout(c);buttons.setPadding(0,dp(12),0,dp(10));hero.addView(buttons);
-        trailer=button("Play Trailer",this::chooseTrailer);trailer.setVisibility(View.GONE);buttons.addView(trailer);
-        play=button("Play",this::play);margin(buttons,play);providerActions=new LinearLayout(c);buttons.addView(providerActions);
+        trailer=button("Play Trailer",this::chooseTrailer);trailer.setVisibility(View.GONE);
+        play=button("Play",this::play);buttons.addView(play);providerActions=new LinearLayout(c);buttons.addView(providerActions);margin(buttons,trailer);
+        versions=button("Versions",()->{});versions.setVisibility(GONE);margin(buttons,versions);
         margin(buttons,button("More Info",this::moreInfo));margin(buttons,button("Actions",this::more));
         episodes=section("Seasons & Episodes");episodes.getParent();((View)episodes.getParent()).setVisibility(GONE);cast=section("Cast & Crew");details=section("Details");related=section("More Like This — In Your Library");trailers=section("Trailers & Extras");((View)trailers.getParent()).setVisibility(GONE);
         ((View)cast.getParent()).setVisibility(GONE);((View)related.getParent()).setVisibility(GONE);
     }
+    public void setVersions(List<Video> files,Consumer<Video> selected){
+        versions.setVisibility(files.size()>1?VISIBLE:GONE);
+        versions.setText("Versions ("+files.size()+")");
+        versions.setOnClickListener(v->{String[] labels=new String[files.size()];int current=0;for(int i=0;i<files.size();i++){Video file=files.get(i);labels[i]=versionLabel(file);if(movie!=null&&file.getId()==movie.getId())current=i;}PreviewDialog.choose(getContext(),"Versions",labels,current,n->selected.accept(files.get(n)));});
+    }
+    public static String versionLabel(Video file){int h=file.getMeasuredHeight(),w=file.getMeasuredWidth();if(file.getMetadata()!=null){h=file.getMetadata().getVideoHeight();w=file.getMetadata().getVideoWidth();}return (w>0&&h>0?w+" × "+h+" · ":"")+file.getFilenameNonCryptic();}
     public boolean atTop(){return getScrollY()==0 && (play.hasFocus()||trailer.hasFocus()||findFocus()!=null&&String.valueOf(findFocus().getTag()).startsWith("action:"));}
-    public void focusPrimary(){if(trailer.getVisibility()==VISIBLE)trailer.requestFocus();else if(play.getVisibility()==VISIBLE)play.requestFocus();else providerActions.requestFocus();}
+    public void focusPrimary(){if(play.getVisibility()==VISIBLE)play.requestFocus();else if(trailer.getVisibility()==VISIBLE)trailer.requestFocus();else providerActions.requestFocus();}
     @Override public boolean dispatchKeyEvent(KeyEvent e){if(e.getAction()==KeyEvent.ACTION_DOWN&&e.getKeyCode()==KeyEvent.KEYCODE_DPAD_UP&&(play.hasFocus()||trailer.hasFocus())&&getScrollY()>0){smoothScrollTo(0,0);return true;}return super.dispatchKeyEvent(e);}
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String s,int size){TextView t=new TextView(getContext());t.setText(s);t.setTextColor(Color.WHITE);t.setTextSize(size);return t;}
@@ -68,7 +76,7 @@ public final class PreviewMoviePage extends ScrollView {
     private void margin(LinearLayout row,View view){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(12);row.addView(view,lp);}
     private LinearLayout section(String name){LinearLayout section=new LinearLayout(getContext());section.setOrientation(LinearLayout.VERTICAL);section.setPadding(0,dp(14),0,dp(8));TextView label=text(name,19);label.setTextColor(0xff9ed4f7);section.addView(label);LinearLayout content=new LinearLayout(getContext());content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(10),0,0);section.addView(content);body.addView(section);return content;}
     public void bind(Video value){movie=value;title.setText(movie.getName());OfficialTitleArtwork.bind(title,value,false);plot.setText(movie.getDescriptionBody());
-        play.setText(movie.getResumeMs()>0?"Resume":"Play");
+        play.setText("Play");
         if(movie.getPreviewBackdrop()!=null)artwork.accept(movie.getPreviewBackdrop());renderDetails();
     }
     private void renderHumanMetadata(){if(movie==null)return;
@@ -113,11 +121,9 @@ public final class PreviewMoviePage extends ScrollView {
         View focused=providerActions.findFocus();Object focusKey=focused==null?null:focused.getTag();
         for(Presenter.ViewHolder holder:providerHolders)providerPresenter.onUnbindViewHolder(holder);providerHolders.clear();providerActions.removeAllViews();if(observedActions==null){if(focused!=null)play.requestFocus();return;}
         List<Action> offers=new ArrayList<>(),extraOptions=new ArrayList<>();for(int i=0;i<observedActions.size();i++){Object item=observedActions.get(i);if(item instanceof Action&&com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))offers.add((Action)item);else if(item instanceof Action&&"•••".contentEquals(((Action)item).getLabel1()))extraOptions.add((Action)item);}
-        play.setVisibility(offers.isEmpty()?VISIBLE:GONE);
-        if(!offers.isEmpty()){
-            Action offer=offers.get(0);Presenter.ViewHolder holder=providerPresenter.onCreateViewHolder(providerActions);providerPresenter.onBindViewHolder(holder,offer);holder.view.setTag(offer.getId());holder.view.setOnClickListener(v->action.accept(offer));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(160),dp(38));lp.leftMargin=dp(10);providerActions.addView(holder.view,lp);providerHolders.add(holder);
-            margin(providerActions,button("More Options",()->{List<String> labels=new ArrayList<>();labels.add("Play library file");for(int i=1;i<offers.size();i++){Action extra=offers.get(i);labels.add(extra instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction?((com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)extra).provider.name:String.valueOf(extra.getLabel1()));}int providerCount=labels.size();for(Action extra:extraOptions)labels.add("More Streaming Services");PreviewDialog.choose(getContext(),"Playback Options",labels.toArray(new String[0]),-1,n->{if(n==0)play();else if(n<providerCount)action.accept(offers.get(n));else action.accept(extraOptions.get(n-providerCount));});}));
-        }
+        play.setVisibility(VISIBLE);
+        for(Action offer:offers){Presenter.ViewHolder holder=providerPresenter.onCreateViewHolder(providerActions);providerPresenter.onBindViewHolder(holder,offer);holder.view.setTag(offer.getId());holder.view.setOnClickListener(v->action.accept(offer));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(120),dp(38));lp.leftMargin=dp(10);providerActions.addView(holder.view,lp);providerHolders.add(holder);}
+        for(Action extra:extraOptions)margin(providerActions,button("More Services",()->action.accept(extra)));
         if(focused!=null){View replacement=focusKey==null?null:providerActions.findViewWithTag(focusKey);if(replacement!=null)replacement.requestFocus();else if(providerActions.getChildCount()>0)providerActions.getChildAt(0).requestFocus();else play.requestFocus();}
     }
     private void pill(String value){if(value==null||value.isEmpty())return;TextView label=text(value,10);label.setSingleLine(true);label.setPadding(dp(6),dp(3),dp(6),dp(3));GradientDrawable badge=new GradientDrawable();badge.setColor(0x50142634);badge.setCornerRadius(dp(3));badge.setStroke(dp(1),0xff648196);label.setBackground(badge);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.rightMargin=dp(6);pills.addView(label,lp);}

@@ -1,0 +1,35 @@
+--- a/Source/stream_parser_ffmpeg.c
++++ b/Source/stream_parser_ffmpeg.c
+@@ -1236,7 +1236,8 @@
+ 	// Read the next packet, skipping all packets that aren't for this stream
+ 	AVPacket packet = { 0 };
+ 	// Read new packet
+-	if (av_read_frame( fmt, &packet) < 0) {
++	int read_result = av_read_frame( fmt, &packet);
++	if (read_result < 0) {
+ 		// A seek first asks the parser thread to become idle. Interrupt a
+ 		// potentially blocking FFmpeg read so the thread can acknowledge that
+ 		// state transition. This is not EOF: the async seek will reposition the
+@@ -1244,6 +1245,22 @@
+ 		if (s->parser_interrupt) {
+ 			DBG serprintf("FFMPEG: read interrupted for parser state change\n");
+ 			return 0;
++		}
++		// EAGAIN is a temporary lack of input, never completion. FFmpeg may
++		// retain the AVIO error flag across calls, so clear only this retryable
++		// condition. All other failures use the existing player error path.
++		if (read_result == AVERROR(EAGAIN)) {
++			if (fmt->pb && fmt->pb->error == AVERROR(EAGAIN)) {
++				fmt->pb->error = 0;
++				fmt->pb->eof_reached = 0;
++			}
++			return 0;
++		}
++		int io_error = fmt->pb ? fmt->pb->error : 0;
++		if (read_result != AVERROR_EOF || (io_error < 0 && io_error != AVERROR_EOF)) {
++			serprintf("FFMPEG: input failure read=%d io=%d; not completion\n", read_result, io_error);
++			stream_set_error(s, VE_FILE_ERROR);
++			return 1;
+ 		}
+ 		if( !s->video_parse_end ) {
+ DBGP serprintf("FFMPEG: end\r\n");

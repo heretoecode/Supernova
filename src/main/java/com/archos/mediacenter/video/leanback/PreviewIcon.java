@@ -4,9 +4,9 @@ import android.graphics.drawable.Drawable;
 import java.util.Locale;
 /** Small outline icons shared by Nova menus, controls and preference categories. */
 public final class PreviewIcon extends Drawable {
- private final String kind;private final Paint p=new Paint(3);
+ private boolean glowing;private int glowColour;private final String kind;private final Paint p=new Paint(3);
  public PreviewIcon(String name){kind=name.toLowerCase(Locale.ROOT);p.setColor(0xffb9d8e9);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(1.6f);p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeJoin(Paint.Join.ROUND);}
- public void focus(boolean focused,int accent){p.setColor(focused?accent:0xffd6e2ec);p.setShadowLayer(focused?2.5f:0,0,0,accent);invalidateSelf();}
+ public void focus(boolean focused,int accent){if(glowing==focused&&glowColour==accent)return;glowing=focused;glowColour=accent;p.setColor(focused?accent:0xffd6e2ec);p.setShadowLayer(focused?2.5f:0,0,0,accent);invalidateSelf();}
  private void line(Canvas c,float... pts){Path q=new Path();q.moveTo(pts[0],pts[1]);for(int i=2;i<pts.length;i+=2)q.lineTo(pts[i],pts[i+1]);c.drawPath(q,p);}
  public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);
   if(kind.equals("search")){c.drawCircle(10,10,6,p);line(c,15,15,21,21);}

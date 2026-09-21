@@ -46,12 +46,44 @@ public final class PreviewSettings {
   style(root);
 
  }
- private static final String[] NAMES={"Playback","Video","Audio","Subtitles","Library","Streaming","Network","Advanced","About"};
+ private static final String[] NAMES={"Playback","Video","Audio","Subtitles","Library & Metadata","Home","Appearance","Streaming","Network","Integrations","Advanced","About"};
+ private static boolean oneOf(String key,String values){return Arrays.asList(values.split(",")).contains(key);}
  private static void consolidate(PreferenceFragmentCompat fragment,PreferenceScreen root,Map<String,PreferenceCategory> categories){
-  PreferenceCategory video=categories.get("Video & Audio");video.setTitle("Video");categories.get("Sources & Storage").setTitle("Network");
-  PreferenceCategory audio=new PreferenceCategory(fragment.requireContext());audio.setKey("preview_audio");audio.setTitle("Audio");root.addPreference(audio);
-  List<Preference> sound=new ArrayList<>();for(int i=0;i<video.getPreferenceCount();i++){Preference p=video.getPreference(i);String key=String.valueOf(p.getKey());if(key.contains("audio")||key.contains("passthrough"))sound.add(p);}for(Preference p:sound){video.removePreference(p);audio.addPreference(p);}
-  for(String[] merge:new String[][]{{"General","Playback"},{"Home & Discovery","Library"},{"Appearance","Library"},{"Trakt","Advanced"},{"Integrations","Advanced"},{"Legacy","Advanced"}}){PreferenceCategory from=categories.get(merge[0]),to=categories.get(merge[1]);while(from.getPreferenceCount()>0){Preference p=from.getPreference(0);from.removePreference(p);to.addPreference(p);}from.setVisible(false);}
+  Map<String,PreferenceCategory> destinations=new LinkedHashMap<>();
+  for(String name:NAMES){PreferenceCategory category=new PreferenceCategory(fragment.requireContext());category.setKey("preview414_"+name.toLowerCase(Locale.ROOT).replaceAll("[^a-z]","_"));category.setTitle(name);category.setOrder(10000+destinations.size());destinations.put(name,category);}
+  List<Preference> preferences=new ArrayList<>();Map<Preference,String> origin=new IdentityHashMap<>();
+  for(Map.Entry<String,PreferenceCategory> entry:categories.entrySet()){PreferenceCategory category=entry.getValue();while(category.getPreferenceCount()>0){Preference pref=category.getPreference(0);origin.put(pref,entry.getKey());preferences.add(pref);category.removePreference(pref);}category.setVisible(false);}
+  for(PreferenceCategory category:destinations.values())root.addPreference(category);
+  PreferenceCategory trakt=new PreferenceCategory(fragment.requireContext());trakt.setTitle("Trakt");trakt.setKey("preview414_trakt");destinations.get("Integrations").addPreference(trakt);
+  PreferenceCategory subtitles=new PreferenceCategory(fragment.requireContext());subtitles.setTitle("OpenSubtitles");subtitles.setKey("preview414_opensubtitles");destinations.get("Integrations").addPreference(subtitles);
+  PreferenceCategory intro=new PreferenceCategory(fragment.requireContext());intro.setTitle("IntroDB");intro.setKey("preview414_introdb");destinations.get("Integrations").addPreference(intro);
+  Map<String,PreferenceCategory> advanced=new LinkedHashMap<>();
+  for(String name:new String[]{"Video Compatibility","Audio Compatibility","Network Compatibility","Streaming Compatibility","Subtitle Compatibility","Diagnostics"}){PreferenceCategory group=new PreferenceCategory(fragment.requireContext());group.setTitle(name);group.setKey("preview414_"+name.replace(' ','_'));destinations.get("Advanced").addPreference(group);advanced.put(name,group);}
+  for(Preference pref:preferences){String key=String.valueOf(pref.getKey()),old=origin.get(pref);String target="Library & Metadata";PreferenceCategory group=null;
+   if(old.equals("Legacy")||oneOf(key,"uimode,uimode_leanback,preferences_torrent_path,preferences_torrent_blocklist,share_folders,rescan_storage,auto_rescan_on_app_restart,preview_scan_interval_control")){pref.setVisible(false);target="Advanced";}
+   else if(key.startsWith("trakt_"))group=trakt;
+   else if(key.equals("subtitles_credentials"))group=subtitles;
+   else if(old.equals("About"))target="About";
+   else if(old.equals("Streaming"))target="Streaming";
+   else if(old.equals("Home & Discovery"))target="Home";
+   else if(oneOf(key,"ui_lang,ui_zoom,preview_accent_picker"))target="Appearance";
+   else if(oneOf(key,"enable_tv_refreshrate_switch_mode,dolby_vision_mode,activate_tv_switch"))target="Video";
+   else if(oneOf(key,"favAudioLang,prefer_original_audio_track,force_audio_passthrough_multiple,player_spatialization_enabled"))target="Audio";
+   else if(oneOf(key,"favSubLang,languages_list,subtitles_hide_default"))target="Subtitles";
+   else if(key.equals("codepage"))group=advanced.get("Subtitle Compatibility");
+   else if(oneOf(key,"force_software_decoding,dec_choice,enable_cutout_mode_short_edges,enable_cutout_both_sidesx,parser_sync_mode"))group=advanced.get("Video Compatibility");
+   else if(oneOf(key,"audio_interface_choice,audio_decoder_choice,force_passthrough,audio_speed_audiotrack,enable_dynamic_audio_delay,disable_downmix,enable_downmix_androidtv"))group=advanced.get("Audio Compatibility");
+   else if(key.startsWith("pref_smb")||key.equals("pref_sshj"))group=advanced.get("Network Compatibility");
+   else if(oneOf(key,"stream_buffer_size,stream_max_iframe_size"))group=advanced.get("Streaming Compatibility");
+   else if(oneOf(key,"supernova_diagnostic_logging,export_diagnostic_report"))group=advanced.get("Diagnostics");
+   else if(oneOf(key,"playback_speed,display_resume_box,hide_controls_on_pause,player_projector_mode_key,allow_3rd_party_player,network_bookmarks")||key.equals(fragment.getString(R.string.reset_brightness_on_start_key)))target="Playback";
+   else if(key.equals("pref_network_prefer_vpn")||key.equals(fragment.getString(R.string.preferences_network_mobile_vpn_key)))target="Network";
+   else if(old.equals("Advanced"))target="Advanced";
+   (group==null?destinations.get(target):group).addPreference(pref);
+  }
+  SwitchPreferenceCompat skip=new SwitchPreferenceCompat(fragment.requireContext());skip.setKey(com.archos.mediacenter.video.player.PlayerService.KEY_INTRODB_ENABLED);skip.setTitle("Automatic segment skipping");skip.setSummary("Use IntroDB segments during playback; recaps follow the existing binge-mode behaviour.");skip.setDefaultValue(com.archos.mediacenter.video.player.PlayerService.DEFAULT_INTRODB_ENABLED);intro.addPreference(skip);
+  Preference hidden=root.findPreference("subtitles_hide_default");
+  if(hidden instanceof TwoStatePreference){TwoStatePreference original=(TwoStatePreference)hidden;original.setVisible(false);SwitchPreferenceCompat positive=new SwitchPreferenceCompat(fragment.requireContext());positive.setKey("preview_subtitles_default");positive.setPersistent(false);positive.setTitle("Subtitles by Default");positive.setChecked(!original.isChecked());positive.setEnabled(original.isEnabled());positive.setOnPreferenceChangeListener((pref,value)->{boolean hide=!(Boolean)value;if(!original.callChangeListener(hide))return false;original.setChecked(hide);return true;});destinations.get("Subtitles").addPreference(positive);}
  }
  private static String contextFor(Preference p){String text=String.valueOf(p.getTitle())+"\n\n"+(p.getSummary()==null?"Select to change this setting.":p.getSummary());
   if(p instanceof ListPreference){ListPreference list=(ListPreference)p;CharSequence[] entries=list.getEntries(),values=list.getEntryValues();if(entries!=null&&values!=null){text+="\n";for(int i=0;i<Math.min(entries.length,6);i++)text+="\n"+(values[i].toString().equals(list.getValue())?"●  ":"○  ")+entries[i];}}

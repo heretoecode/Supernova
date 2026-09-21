@@ -1155,7 +1155,7 @@ public class Player implements IPlayerControl,
     }
 
     public void onCompletion(IMediaPlayer mp) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_completed","state",mCurrentState);
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_completed","state",mCurrentState,"position_ms",getCurrentPosition(),"duration_ms",getDuration());
         mCurrentState = STATE_PLAYBACK_COMPLETED;
         mTargetState = STATE_PLAYBACK_COMPLETED;
         if (mPlayerListener != null) {

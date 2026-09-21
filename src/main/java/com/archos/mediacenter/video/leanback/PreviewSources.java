@@ -9,6 +9,16 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import java.util.*;
 /** Source grid over Nova's existing discovery adapters and click handlers. */
 public final class PreviewSources extends FrameLayout {
+ private String mode="all";
+ public void setMode(String value){mode=value==null?"all":value;refresh();}
+ private boolean include(Object value){
+  switch(mode){
+   case "library":return value instanceof com.archos.mediacenter.video.leanback.adapter.object.NetworkShortcut;
+   case "saved":return value instanceof com.archos.mediacenter.video.leanback.adapter.object.GenericNetworkShortcut||value instanceof com.archos.mediacenter.video.leanback.adapter.object.NetworkBrowse;
+   case "discover":return value instanceof com.archos.mediacenter.video.leanback.adapter.object.NetworkSource;
+   default:return true;
+  }
+ }
  private final ObjectAdapter rows;private final OnItemViewClickedListener click;private final RecyclerView grid;private final List<Item> items=new ArrayList<>();private final List<ObjectAdapter> observed=new ArrayList<>();private final Adapter adapter=new Adapter();
  private final ObjectAdapter.DataObserver observer=new ObjectAdapter.DataObserver(){public void onChanged(){refresh();}public void onItemRangeChanged(int s,int n){refresh();}public void onItemRangeInserted(int s,int n){refresh();}public void onItemRangeRemoved(int s,int n){refresh();}};
  private static class Item{Object value;Presenter presenter;ListRow row;String heading;}
@@ -17,7 +27,7 @@ public final class PreviewSources extends FrameLayout {
  protected void onDetachedFromWindow(){rows.unregisterObserver(observer);for(ObjectAdapter a:observed)a.unregisterObserver(observer);observed.clear();super.onDetachedFromWindow();}
  public boolean atTop(){View focus=grid.findFocus();View child=focus==null?null:grid.findContainingItemView(focus);if(child==null)return false;int pos=grid.getChildAdapterPosition(child),first=0;while(first<items.size()&&items.get(first).heading!=null)first++;GridLayoutManager lm=(GridLayoutManager)grid.getLayoutManager();return pos>=0&&first<items.size()&&lm.getSpanSizeLookup().getSpanGroupIndex(pos,4)==lm.getSpanSizeLookup().getSpanGroupIndex(first,4)&&!grid.canScrollVertically(-1);}
  private void refresh(){post(()->{if(!isAttachedToWindow())return;Object focused=null;View f=grid.findFocus();View item=f==null?null:grid.findContainingItemView(f);if(item!=null){int p=grid.getChildAdapterPosition(item);if(p>=0&&p<items.size())focused=items.get(p).value;}for(ObjectAdapter a:observed)a.unregisterObserver(observer);observed.clear();items.clear();
-  for(int i=0;i<rows.size();i++){Object value=rows.get(i);if(!(value instanceof ListRow))continue;ListRow row=(ListRow)value;ObjectAdapter children=row.getAdapter();observed.add(children);children.registerObserver(observer);if(children.size()==0)continue;Item heading=new Item();heading.heading=String.valueOf(row.getHeaderItem().getName());items.add(heading);for(int j=0;j<children.size();j++){Item e=new Item();e.value=children.get(j);e.presenter=children.getPresenter(e.value);e.row=row;items.add(e);}}
+  for(int i=0;i<rows.size();i++){Object value=rows.get(i);if(!(value instanceof ListRow))continue;ListRow row=(ListRow)value;ObjectAdapter children=row.getAdapter();observed.add(children);children.registerObserver(observer);boolean any=false;for(int j=0;j<children.size();j++)if(include(children.get(j)))any=true;if(!any)continue;Item heading=new Item();heading.heading=String.valueOf(row.getHeaderItem().getName());items.add(heading);for(int j=0;j<children.size();j++){if(!include(children.get(j)))continue;Item e=new Item();e.value=children.get(j);e.presenter=children.getPresenter(e.value);e.row=row;items.add(e);}}
   final Object restore=focused;adapter.notifyDataSetChanged();if(restore!=null)for(int i=0;i<items.size();i++)if(items.get(i).value==restore){final int p=i;grid.scrollToPosition(p);grid.post(()->{RecyclerView.ViewHolder h=grid.findViewHolderForAdapterPosition(p);if(h!=null)h.itemView.requestFocus();});break;}
  });}
  private void readLabels(View v,List<String> out){if(v instanceof TextView){String t=((TextView)v).getText().toString().trim();if(!t.isEmpty()&&!out.contains(t))out.add(t);}if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)readLabels(((ViewGroup)v).getChildAt(i),out);}

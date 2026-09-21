@@ -53,7 +53,7 @@ public final class PreviewCardPresenter extends Presenter {
             addView(body, bp);
             image = new ImageView(c); image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             body.addView(image, new FrameLayout.LayoutParams(style == Style.LIST ? dp(112) : -1, style == Style.POSTER ? height : -1));
-            caption = new LinearLayout(c); caption.setOrientation(LinearLayout.VERTICAL);
+            caption = new LinearLayout(c); caption.setOrientation(LinearLayout.VERTICAL);caption.setGravity(Gravity.CENTER_VERTICAL);
             caption.setPadding(dp(8), dp(style == Style.POSTER ? 2 : 16), dp(8), dp(style == Style.POSTER ? 3 : style == Style.CONTINUE ? 10 : 7));
             caption.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
                 new int[]{0x00101e2c, 0xee101e2c}));
@@ -87,7 +87,7 @@ public final class PreviewCardPresenter extends Presenter {
         }
         private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
         void updateFocus() {
-            setForeground(isFocused()?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
+            setForeground(null);image.setForeground(isFocused()?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
             image.animate().alpha(isFocused()?1f:.76f).setDuration(170).start();
             title.setTextColor(isFocused()?Color.WHITE:0xffc0ccd6);

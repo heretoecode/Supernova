@@ -1162,6 +1162,15 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             mDetailRowBuilderTask.execute(mVideo);
         }
 
+        if(mPreviewMovie!=null)mPreviewMovie.setVersions(new ArrayList<>(mVideoList), selected -> {
+            Video previous=mVideo;mVideo=selected;mSelectCurrentVideo=true;mShouldUpdateRemoteResume=true;
+            if(!smoothUpdateVideo(mVideo,previous)){
+                if(mDetailRowBuilderTask!=null)mDetailRowBuilderTask.cancel();
+                fullyReloadVideo(mVideo,mPoster);
+            }
+            mPreviewMovie.bind(mVideo);
+            LoaderManager.getInstance(VideoDetailsFragment.this).restartLoader(1,null,VideoDetailsFragment.this);
+        });
         giveOldVideo = true;
     }
 
