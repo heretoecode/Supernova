@@ -2,7 +2,7 @@ name: Build NOVA Preview APK
 
 on:
   push:
-    branches: ['codex/apk-build-*']
+    branches: ['codex/apk-build-*', 'codex/preview-*']
     paths-ignore: ['docs/**', '**/*.md']
   workflow_dispatch:
     inputs:
