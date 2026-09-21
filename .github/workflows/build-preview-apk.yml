@@ -4,6 +4,8 @@ on:
   push:
     branches: ['codex/apk-build-*', 'codex/preview-*']
     paths-ignore: ['docs/**', '**/*.md']
+  pull_request:
+    branches: ['codex/apk-build-fixes']
   workflow_dispatch:
     inputs:
       validation:
