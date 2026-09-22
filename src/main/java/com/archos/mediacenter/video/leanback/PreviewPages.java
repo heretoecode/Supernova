@@ -23,6 +23,18 @@ public final class PreviewPages extends FrameLayout {
     private final Click click;
     private Snapshot snapshot=new Snapshot();
     private List<Box> files=new ArrayList<>();
+    private final List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> librarySources=new ArrayList<>(),savedLocations=new ArrayList<>();
+    private boolean sourcesLoading;
+    private void loadSources(){if(sourcesLoading)return;sourcesLoading=true;Context app=getContext().getApplicationContext();new Thread(()->{
+        List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> indexed=new ArrayList<>(),saved=new ArrayList<>();
+        try(android.database.Cursor c=com.archos.mediacenter.utils.ShortcutDbAdapter.VIDEO.getAllShortcuts(app,null,null)){if(c!=null){com.archos.mediacenter.video.leanback.adapter.NetworkShortcutMapper m=new com.archos.mediacenter.video.leanback.adapter.NetworkShortcutMapper();m.bindColumns(c);while(c.moveToNext())indexed.add((com.archos.mediacenter.video.leanback.adapter.object.Shortcut)m.bind(c));}}
+        catch(Exception e){com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_summary_unavailable",e);}
+        try(android.database.Cursor c=com.archos.mediacenter.video.browser.ShortcutDb.STATIC.getCursorAllShortcuts(app)){if(c!=null){com.archos.mediacenter.video.leanback.adapter.GenericNetworkShortcutMapper m=new com.archos.mediacenter.video.leanback.adapter.GenericNetworkShortcutMapper();m.bindColumns(c);while(c.moveToNext())saved.add((com.archos.mediacenter.video.leanback.adapter.object.Shortcut)m.bind(c));}}
+        catch(Exception e){com.archos.mediacenter.video.diagnostics.Diagnostics.error("saved_locations_unavailable",e);}
+        post(()->{sourcesLoading=false;librarySources.clear();librarySources.addAll(indexed);savedLocations.clear();savedLocations.addAll(saved);if(tab==3&&isAttachedToWindow())render();});
+    },"SupernovaSourceSummary").start();}
+    private void openSource(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source){getContext().startActivity(new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsActivity.class).putExtra(com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsFragment.EXTRA_SHORTCUT,source));}
+
     private final List<Cell> cells=new ArrayList<>();
     private int tab;
     private final FocusAnchor[] anchors=new FocusAnchor[4];
@@ -188,6 +200,7 @@ public final class PreviewPages extends FrameLayout {
         return cells.stream().noneMatch(c->c.type==SCAN)&&first<cells.size()&&layout.getSpanSizeLookup().getSpanGroupIndex(p,24)==layout.getSpanSizeLookup().getSpanGroupIndex(first,24)&&!list.canScrollVertically(-1);
     }
     public void setTab(int tab) {
+        if(tab==3)loadSources();
         if(this.tab==tab)return;
         rememberFocus();scrollStates[this.tab]=layout.onSaveInstanceState();
         // TopNavigation owns the single full-viewport background, including the header.
@@ -342,8 +355,8 @@ public final class PreviewPages extends FrameLayout {
                     TextView title=text(displayName(e),30);title.setMaxLines(2);title.setIncludeFontPadding(false);title.setLineSpacing(0,.92f);title.setEllipsize(android.text.TextUtils.TruncateAt.END);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title,new LinearLayout.LayoutParams(dp(420),dp(64)));OfficialTitleArtwork.bind(title,e.media,false);
                     String meta=e.year()>0?String.valueOf(e.year()):"";
                     if(e.media instanceof Video){Video video=(Video)e.media;if(video.getDurationMs()>0)meta+="   "+video.getDurationMs()/60000+" min";}
-                    if(!e.genres.isEmpty())meta+=(meta.isEmpty()?"":"   ·   ")+e.genres.replace("|"," · ");if(e.media instanceof Episode){Episode ep=(Episode)e.media;meta+="   ·   S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();}TextView metadata=text(meta,12);metadata.setSingleLine(true);metadata.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(metadata,new LinearLayout.LayoutParams(dp(470),dp(22)));String plot=e.media instanceof Tvshow?((Tvshow)e.media).getPlot():e.media instanceof Video?((Video)e.media).getDescriptionBody():"";
-                    TextView description=text(plot==null?"":plot,13);description.setIncludeFontPadding(false);description.setMaxLines(3);description.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(description,new LinearLayout.LayoutParams(dp(450),dp(47)));
+                    if(!e.genres.isEmpty())meta+=(meta.isEmpty()?"":"   ·   ")+e.genres.replace("|"," · ");if(e.media instanceof Episode){Episode ep=(Episode)e.media;meta+="   ·   S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();}TextView metadata=text(meta,12);metadata.setGravity(Gravity.CENTER_VERTICAL);metadata.setSingleLine(true);metadata.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(metadata,new LinearLayout.LayoutParams(dp(470),dp(22)));String plot=e.media instanceof Tvshow?((Tvshow)e.media).getPlot():e.media instanceof Video?((Video)e.media).getDescriptionBody():"";
+                    TextView description=text(plot==null?"":plot,13);description.setIncludeFontPadding(false);description.setMaxLines(3);description.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(description,new LinearLayout.LayoutParams(dp(450),dp(54)));
                     LinearLayout actions=new LinearLayout(getContext());actions.setPadding(0,dp(6),0,0);
                     TextView info=button("More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);info.setTag("hero:info");info.setBackground(PreviewDialog.buttonFocus(getContext()));actions.addView(info,lp);
                     v.animate().cancel();v.setAlpha(1f);v.setTranslationX(0);if(featuredDirection!=0){v.setTranslationX(dp(24)*featuredDirection);v.setAlpha(.3f);v.animate().translationX(0).alpha(1f).setDuration(170).start();featuredDirection=0;}View spacer=new View(getContext());v.addView(spacer,new LinearLayout.LayoutParams(1,0,1));v.addView(actions,new LinearLayout.LayoutParams(-2,dp(40)));
@@ -353,22 +366,25 @@ public final class PreviewPages extends FrameLayout {
             }
             else if(c.type==CUSTOMISE){v.setGravity(Gravity.CENTER);TextView custom=button("Customise Home",()->PreviewHomeRows.customise(getContext(),()->{render();}));custom.setTag("home:customise");v.addView(custom);}
             else if(c.type==NETWORK_PANEL){
-                v.setOrientation(LinearLayout.VERTICAL);v.setPadding(dp(14),dp(12),dp(14),dp(12));v.setBackground(PreviewDialog.surface(getContext(),false));
+                v.setOrientation(LinearLayout.VERTICAL);v.setGravity(Gravity.TOP);v.setPadding(dp(14),dp(12),dp(14),dp(12));v.setBackground(PreviewDialog.surface(getContext(),false));
                 RecyclerView.LayoutParams size=new RecyclerView.LayoutParams(-1,dp(c.title.equals("Local Storage")||c.title.equals("Discover Devices")||c.title.equals("Saved Locations")?145:210));size.setMargins(0,0,dp(10),dp(10));v.setLayoutParams(size);
-                TextView heading=text(c.title,18);heading.setPadding(0,0,0,dp(8));v.addView(heading);
+                TextView heading=text(c.title,16);PreviewIcon.apply(heading,c.title,24);heading.setPadding(0,0,0,dp(8));v.addView(heading);
                 if(c.title.equals("Scan Library")){
                     v.addView(text("Check local storage and library sources for new or changed media.",12));
                     v.addView(button("Scan Library",()->PreviewLibraryScan.request(getContext())));
                     TextView status=text(PreviewNetworkScanning.lastResult(getContext()),12);v.addView(status,new LinearLayout.LayoutParams(-1,dp(70)));
                     status.post(new Runnable(){public void run(){if(!status.isAttachedToWindow())return;status.setText(com.archos.mediaprovider.video.NetworkScannerReceiver.isScannerWorking()?"Scanning network sources · "+com.archos.mediaprovider.video.NetworkScannerServiceVideo.getFilesFoundCount()+" files found":PreviewNetworkScanning.lastResult(getContext()));status.postDelayed(this,1000);}});
                 }else if(c.title.equals("Network Scanning")){
-                    v.addView(text("Automatic scanning for your network sources.",12));v.addView(text(PreviewNetworkScanning.lastResult(getContext()),12));v.addView(button("Configure Network Scanning",()->PreviewNetworkScanning.show(getContext())));
+                    v.addView(text("Automatic scanning for your network sources.",12));
+                    int period=com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(getContext());TextView schedule=text("Automatic: "+(period>0?"On":"Off")+"\nFrequency: "+(period>0?period/60000+" minutes":"Not scheduled")+"\nSources: "+librarySources.size()+"\n"+PreviewNetworkScanning.lastResult(getContext()),12);schedule.setLineSpacing(dp(4),1);schedule.setPadding(0,dp(12),0,dp(8));v.addView(schedule);v.addView(button("Configure Network Scanning",()->PreviewNetworkScanning.show(getContext())));
                 }else if(c.title.equals("Local Storage")){
                     for(Box box:files)if(box.getBoxId()==Box.ID.FOLDERS||box.getBoxId()==Box.ID.USB||box.getBoxId()==Box.ID.SDCARD||box.getBoxId()==Box.ID.OTHER)v.addView(button(box.getBoxId()==Box.ID.FOLDERS?"Internal Storage":box.getName(),()->click.open(new Presenter.ViewHolder(v),box)));
                 }else if(c.title.equals("Discover Devices")){
                     v.addView(button("Network Computers & NAS",()->networkSection("smb")));v.addView(button("Media Servers · DLNA/UPnP",()->networkSection("upnp")));
                 }else{
                     v.addView(text(c.title.equals("Library Sources")?"Indexed network sources appearing in Movies and TV Shows.":"Saved browsing locations.",12));
+                    List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> sourceList=c.title.equals("Library Sources")?librarySources:savedLocations;
+                    for(int i=0;i<Math.min(2,sourceList.size());i++){com.archos.mediacenter.video.leanback.adapter.object.Shortcut source=sourceList.get(i);TextView item=button(source.getName()+" · "+source.getUri().getScheme(),()->openSource(source));item.setSingleLine(true);item.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(item,new LinearLayout.LayoutParams(-1,dp(34)));}
                     v.addView(button("Open "+c.title,()->networkSection(c.title.equals("Library Sources")?"library":"saved")));
                     if(c.title.equals("Library Sources"))v.addView(button("Add Network Source",()->networkSection("add")));
                 }

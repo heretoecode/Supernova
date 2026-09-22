@@ -147,7 +147,7 @@ assert sum(n.get('text')=='Movies' for n in root.iter('node'))>=2, 'Movies route
 target(root,'TV Shows',True);root=capture('navigation-tv')
 assert any(n.get('text')=='TV Shows' for n in root.iter('node')), 'TV library failed to open'
 target(root,'Network & Files',True);root=capture('network-files')
-target(root,'Internal storage',True);root=capture('file-browser')
+target(root,'Internal Storage',True);root=capture('file-browser')
 assert any(n.get('text')=='Sources' for n in root.iter('node')), 'Native browser source rail missing'
 assert any(n.get('text')=='File Information' for n in root.iter('node')) or any(n.get('text')=='Options' for n in root.iter('node')), 'Native browser composition missing'
 target(root,'Search',True);root=capture('search-empty')

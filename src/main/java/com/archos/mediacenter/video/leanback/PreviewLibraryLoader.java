@@ -64,7 +64,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     public static boolean watched(Video v) { return PreviewSeriesJourney.completed(v); }
     @Override public String getSelection() { return com.archos.mediaprovider.video.LoaderUtils.mustHideUserHiddenObjects() ? com.archos.mediaprovider.video.LoaderUtils.HIDE_USER_HIDDEN_FILTER : ""; }
     public static Entry next(List<Entry> episodes) {
-        Comparator<Entry> order=Comparator.comparingInt((Entry e)->((Episode)e.media).getSeasonNumber()).thenComparingInt(e->((Episode)e.media).getEpisodeNumber()).thenComparingLong(e->((Video)e.media).getId());
+        Comparator<Entry> order=Comparator.comparingInt((Entry e)->((Episode)e.media).getSeasonNumber()).thenComparingInt(e->((Episode)e.media).getEpisodeNumber()).thenComparing((a,b)->PreviewVariants.BEST_FIRST.compare((Video)a.media,(Video)b.media));
         // Resume an unfinished episode before starting another. Completed entries never win.
         return episodes.stream().filter(e->!watched((Video)e.media) && ((Video)e.media).getResumeMs()>0)
             .min(order).orElseGet(()->episodes.stream().filter(e->!watched((Video)e.media) && ((Episode)e.media).getSeasonNumber()>0).min(order)
@@ -92,7 +92,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             for(Entry e:group){Episode ep=(Episode)e.media;episodeKeys.add(ep.getSeasonNumber()+":"+ep.getEpisodeNumber());seasonKeys.add(ep.getSeasonNumber());show.files++;show.bytes+=e.bytes;show.knownSizes+=e.knownSizes;show.runtime+=e.runtime;show.modified=Math.max(show.modified,e.modified);
                 if(!e.resolution.isEmpty())resolutions.add(e.resolution);if(!e.audio.isEmpty())audios.add(e.audio);if(!e.codec.isEmpty())codecs.add(e.codec);
             }
-            show.episodes=group.size();show.seasons=seasonKeys.size();show.resolution=resolutions.size()==1?resolutions.iterator().next():resolutions.isEmpty()?"":"Mixed";show.audio=audios.size()==1?audios.iterator().next():audios.isEmpty()?"":"Mixed";show.codec=codecs.size()==1?codecs.iterator().next():codecs.isEmpty()?"":"Mixed";
+            show.episodes=episodeKeys.size();show.seasons=seasonKeys.size();show.resolution=resolutions.size()==1?resolutions.iterator().next():resolutions.isEmpty()?"":"Mixed";show.audio=audios.size()==1?audios.iterator().next():audios.isEmpty()?"":"Mixed";show.codec=codecs.size()==1?codecs.iterator().next():codecs.isEmpty()?"":"Mixed";
         }
         s.recent.sort(Comparator.comparingLong((Entry e)->e.added).reversed());
         s.movies.sort(Comparator.comparingLong((Entry e)->e.added).reversed());s.shows.sort(Comparator.comparingLong((Entry e)->e.added).reversed());

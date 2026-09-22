@@ -44,20 +44,28 @@ final class PreviewPlaybackMenus {
   List<TVMenuItem> actions=new ArrayList<>();List<String> labels=new ArrayList<>();Set<Integer> checked=new HashSet<>();int selected=focus;boolean hasOther=false;
   boolean subtitles=activity.getString(R.string.menu_subtitles).equals(card.previewTitle());
   boolean audio=activity.getString(R.string.menu_audio).equals(card.previewTitle());
-  TVMenuItem settings=null;
+  TVMenuItem settings=null;String lastGroup="";
   for(int i=0;i<menu.getChildCount();i++){
    View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
    if(audio&&activity.getString(R.string.player_pref_audio_speed_title).equals(item.getText()))continue;
    boolean other=subtitles&&Boolean.FALSE.equals(item.getTag());if(other)hasOther=true;if(otherLanguages?!other:other)continue;
    if(subtitles&&!otherLanguages&&activity.getString(R.string.menu_player_settings).equals(item.getText())){settings=item;continue;}
+   if(audio||subtitles){String title=item.getText();String group="TRACK";
+    if(audio){if(title.equals(activity.getString(R.string.player_pref_audio_delay_title)))group="SYNC";else if(title.equals(activity.getString(R.string.pref_audio_filt_title))||title.equals(activity.getString(R.string.pref_audio_filt_night_mode))||title.equals(activity.getString(R.string.spatialization_capabilities)))group="ENHANCEMENTS";}
+    else if(title.equals(activity.getString(R.string.player_pref_subtitle_delay_title)))group="TIMING & APPEARANCE";
+    else if(title.equals(activity.getString(R.string.get_subtitles_online))||title.equals(activity.getString(R.string.get_subtitles_on_drive)))group="ADD SUBTITLES";
+    if(!group.equals(lastGroup)){labels.add("— "+group);actions.add(null);lastGroup=group;}
+   }
    actions.add(item);labels.add(androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString()+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
   }
-  if(hasOther&&!otherLanguages){actions.add(null);labels.add("Other languages");}
-  if(settings!=null){actions.add(settings);labels.add("Subtitle Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
+  if(hasOther&&!otherLanguages){labels.add("— TRACK");actions.add(null);actions.add(null);labels.add("Other languages");}
+  if(settings!=null){labels.add("— TIMING & APPEARANCE");actions.add(null);actions.add(settings);labels.add("Subtitle Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
   dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);
   current=PreviewDialog.choose(activity,otherLanguages?"‹ Subtitles · Other languages":"‹ More · "+card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{
+   if(labels.get(n).startsWith("— "))return;
    TVMenuItem item=actions.get(n);
+   if(item!=null&&(!item.isEnabled()||!item.isFocusable()))return;
    if(item==null){select(activity,card,()->select(activity,card,parent,n,false),-1,true);return;}
    Dialog before=current;restoreParent=()->select(activity,card,parent,n,otherLanguages);item.previewClick();
    // Track and switch actions update in place. A nested native picker replaces current.

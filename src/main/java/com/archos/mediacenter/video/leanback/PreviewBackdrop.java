@@ -23,7 +23,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     public void load(Uri next) {
         if(java.util.Objects.equals(uri,next)){pendingDirection=0;return;}
         Picasso.get().cancelRequest(this);if(pending!=null)handler.removeCallbacks(pending);uri=next;loading=next!=null;requestedAt=android.os.SystemClock.uptimeMillis();
-        pending=()->{if(next==null){previous=bitmap;bitmap=null;fadeStart=android.os.SystemClock.uptimeMillis();invalidateSelf();}else Picasso.get().load(next).resize(1600,900).centerInside().noFade().into(this);};handler.postDelayed(pending,160);
+        pending=()->{if(next==null){previous=bitmap;bitmap=null;fadeStart=android.os.SystemClock.uptimeMillis();invalidateSelf();}else Picasso.get().load(next).resize(1600,900).centerInside().noFade().into(this);};pending.run();
     }
     public void release() { handler.removeCallbacksAndMessages(null);Picasso.get().cancelRequest(this); bitmap=previous=null; uri=null; }
     @Override public void draw(Canvas canvas) {
@@ -40,7 +40,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
         canvas.drawRect(0,0,b.width(),h,paint);paint.setShader(null);
     }
     private void drawImage(Canvas canvas,Bitmap image,float w,float h,float alpha){if(image==null||image.isRecycled()||image.getWidth()<image.getHeight())return;float scale=Math.max(w/image.getWidth(),h/image.getHeight());paint.setAlpha((int)(255*alpha));canvas.save();canvas.clipRect(0,0,w,h);canvas.drawBitmap(image,null,new RectF(w-image.getWidth()*scale,0,w,image.getHeight()*scale),paint);canvas.restore();}
-    @Override public void onBitmapLoaded(Bitmap b,Picasso.LoadedFrom from){loading=false;motionDirection=pendingDirection;pendingDirection=0;if(b.getWidth()<b.getHeight())return;previous=bitmap;bitmap=b;fadeStart=android.os.SystemClock.uptimeMillis();invalidateSelf();}
+    @Override public void onBitmapLoaded(Bitmap b,Picasso.LoadedFrom from){loading=false;motionDirection=pendingDirection;pendingDirection=0;if(b.getWidth()<b.getHeight())return;previous=bitmap;bitmap=b;fadeStart=previous==null?0:android.os.SystemClock.uptimeMillis();invalidateSelf();}
     @Override public void onBitmapFailed(Exception e,Drawable d){loading=false;invalidateSelf();}
     @Override public void onPrepareLoad(Drawable d){}
     @Override public void setAlpha(int alpha){}

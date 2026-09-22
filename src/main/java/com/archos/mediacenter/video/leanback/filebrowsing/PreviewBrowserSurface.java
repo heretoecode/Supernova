@@ -16,6 +16,7 @@ import com.archos.filecorelibrary.MetaFile2;
 final class PreviewBrowserSurface extends BrowseFrameLayout {
     private final TextView name,information;
     private final ImageView poster;
+    private Runnable openSelected=()->{};private final TextView open;
     private final View dock;private final TextView sourceControl;private final TopNavigation navigation;
     PreviewBrowserSurface(Activity activity,View legacy,Uri uri,View titleCommands,Runnable options){
         super(activity);setId(R.id.grid_frame);setTag("preview-browser");
@@ -30,19 +31,20 @@ final class PreviewBrowserSurface extends BrowseFrameLayout {
         rail.addView(control("Network & Files",()->navigate(activity,3)),new LinearLayout.LayoutParams(-1,dp(42)));
         TextView breadcrumb=text((uri.getHost()==null?"Files":uri.getHost())+"  ›  "+(uri.getPath()==null?"":uri.getPath()),14);breadcrumb.setSingleLine(true);breadcrumb.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);centre.addView(breadcrumb,new LinearLayout.LayoutParams(-1,dp(38)));
         dock.setPadding(0,0,0,0);centre.addView(dock,new LinearLayout.LayoutParams(-1,0,1));
-        centre.addView(control("Options",options),new LinearLayout.LayoutParams(-1,dp(36)));
+
         poster=new ImageView(activity);poster.setScaleType(ImageView.ScaleType.FIT_CENTER);context.addView(poster,new LinearLayout.LayoutParams(-1,dp(175)));
         name=text("File Information",18);name.setMaxLines(2);context.addView(name);information=text("Focus a file to see its available information.",13);information.setPadding(0,dp(12),0,0);context.addView(information);
+        open=control("Open",()->openSelected.run());context.addView(open,new LinearLayout.LayoutParams(-1,dp(38)));context.addView(control("Source Options",options),new LinearLayout.LayoutParams(-1,dp(38)));
         navigation=new TopNavigation(activity,columns,index->navigate(activity,index),()->sourceControl.hasFocus());navigation.selectTab(3);addView(navigation,new android.widget.FrameLayout.LayoutParams(-1,-1));
         // The title object remains a detached command registry for protocol-specific actions.
         if(titleCommands.getParent() instanceof ViewGroup)((ViewGroup)titleCommands.getParent()).removeView(titleCommands);
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){if(event.getAction()==KeyEvent.ACTION_DOWN&&dock.hasFocus()){
         if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT){sourceControl.requestFocus();return true;}
-        if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
+        if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){open.requestFocus();return true;}
     }if(event.getAction()==KeyEvent.ACTION_DOWN&&sourceControl.hasFocus()&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){dock.requestFocus();return true;}return super.dispatchKeyEvent(event);}
     private void navigate(Activity activity,int index){if(index==4){activity.startActivity(new Intent(activity,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));return;}if(index==5){activity.startActivity(new Intent(activity,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));return;}activity.startActivity(new Intent(activity,MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));activity.finish();}
-    void focusItem(Object item){com.squareup.picasso.Picasso.get().cancelRequest(poster);poster.setImageDrawable(null);
+    void focusItem(Object item,Runnable action){openSelected=action;open.setText(item instanceof Video?"View Details":"Open");com.squareup.picasso.Picasso.get().cancelRequest(poster);poster.setImageDrawable(null);
         if(item instanceof Video){Video v=(Video)item;name.setText(v.getName());String detail=v.getFilenameNonCryptic();if(v.getSize()>0)detail+="\n\n"+android.text.format.Formatter.formatFileSize(getContext(),v.getSize());if(v.getDurationMs()>0)detail+="\n"+v.getDurationMs()/60000+" min";information.setText(detail);if(v.getPosterUri()!=null)com.squareup.picasso.Picasso.get().load(v.getPosterUri()).resize(dp(180),dp(175)).centerInside().into(poster);}
         else if(item instanceof MetaFile2){MetaFile2 file=(MetaFile2)item;name.setText(file.getName());information.setText((file.isDirectory()?"Folder":"File")+"\n\n"+file.getUri().getPath());}
     }

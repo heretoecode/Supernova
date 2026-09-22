@@ -377,7 +377,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mNavigation = new TopNavigation(requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
         mPreviewPages.setArtworkListener(mNavigation::setArtwork);mPreviewPages.setScrollListener(mNavigation::setScrolled);
         int requestedTab=requireActivity().getIntent().getIntExtra("preview_tab",mActiveTab);
-        if(requestedTab>=0&&requestedTab<4){mActiveTab=requestedTab;mPreviewPages.setTab(requestedTab);mNavigation.selectTab(requestedTab);}
+        if(requestedTab>=0&&requestedTab<4){mActiveTab=requestedTab;mPreviewPages.setTab(requestedTab);mNavigation.selectTab(requestedTab);mNavigation.setEmbeddedScanStatus(requestedTab==3);}
         requireActivity().getIntent().removeExtra("preview_tab");
         android.widget.FrameLayout composed=new android.widget.FrameLayout(requireContext());composed.addView(mNavigation,new android.widget.FrameLayout.LayoutParams(-1,-1));
         View launch=new View(requireContext());launch.setBackground(new PreviewStartupSurface(requireContext()));launch.setClickable(true);composed.addView(launch,new android.widget.FrameLayout.LayoutParams(-1,-1));
@@ -402,7 +402,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             startActivity(search);
         } else {
             mActiveTab = tab;
-            if (mNavigation != null) mNavigation.selectTab(tab);
+            if (mNavigation != null) {mNavigation.selectTab(tab);mNavigation.setEmbeddedScanStatus(tab==3);}
             if (mPreviewPages != null) mPreviewPages.setTab(tab);
             refreshVisibleRows();
             if (mVisibleRows != null && mVisibleRows.size() > 0) super.setSelectedPosition(0, false);

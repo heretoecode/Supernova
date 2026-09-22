@@ -104,6 +104,8 @@ public final class TopNavigation extends LinearLayout {
     public boolean readyForFirstFrame(){return artwork.readyForFirstFrame();}
     public void selectTab(int index) { if(index<0||index>=6)return;setBackground(index>=3?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3)setScrolled(false); }
     @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);artwork.release();super.onDetachedFromWindow(); }
+    /** Exactly one visible scan-status owner: the landing panel or this shell. */
+    public void setEmbeddedScanStatus(boolean embedded){scanStatus.setVisibility(embedded?GONE:VISIBLE);}
     public android.widget.FrameLayout getScanContainer() { return scanStatus; }
     public android.widget.FrameLayout getStatusContainer() { return status; }
     private int dp(int n) { return (int)(n * getResources().getDisplayMetrics().density + .5f); }

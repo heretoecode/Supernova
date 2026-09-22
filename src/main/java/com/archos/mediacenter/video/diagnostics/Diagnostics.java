@@ -81,7 +81,7 @@ public final class Diagnostics {
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
-        enabled=value;if(value)event("logging_enabled","default","off");
+        enabled=value;if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default","off");
     }
     public static void beginPlayback(android.net.Uri source){
         playback=UUID.randomUUID().toString();event("playback_begin","source",sourceType(source));

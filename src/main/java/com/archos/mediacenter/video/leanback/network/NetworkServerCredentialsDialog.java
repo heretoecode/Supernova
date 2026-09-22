@@ -126,6 +126,9 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
         }
         final View v = getActivity().getLayoutInflater().inflate(R.layout.network_credential_layout, null);
         final Spinner typeSp = (Spinner)v.findViewById(R.id.ssh_spinner);
+        final boolean preview=mPreferences.getBoolean("try_new_ui",false);
+        final int[] protocolTypes=preview?new int[]{4,7,6,1,0,2}:new int[]{0,1,2,3,4,5,6,7};
+        if(preview){android.widget.ArrayAdapter<String> adapter=new android.widget.ArrayAdapter<>(requireContext(),android.R.layout.simple_spinner_item,new String[]{"SMB","WebDAV (HTTPS)","WebDAV (HTTP)","SFTP","FTP","FTP (TLS)"});adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);typeSp.setAdapter(adapter);}
         addressEt = (EditText)v.findViewById(R.id.remote);
         portEt = (EditText)v.findViewById(R.id.port);
         final EditText usernameEt = (EditText)v.findViewById(R.id.username);
@@ -139,7 +142,7 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
         typeSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (UriUtils.requiresDomain(position)) v.findViewById(R.id.domain).setVisibility(View.VISIBLE);
+                if (UriUtils.requiresDomain(protocolTypes[position])) v.findViewById(R.id.domain).setVisibility(View.VISIBLE);
                 else {
                     ((EditText) v.findViewById(R.id.domain)).setText("");
                     v.findViewById(R.id.domain).setVisibility(View.GONE);
@@ -163,7 +166,7 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
             }
         });
         int type = mType;
-        typeSp.setSelection(type);
+        int selection=0;for(int i=0;i<protocolTypes.length;i++)if(protocolTypes[i]==type)selection=i;typeSp.setSelection(selection);
         addressEt.setText(mRemote);
         pathEt.setText(mPath);
         int portInt =  mPort;
@@ -175,7 +178,7 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
         if (UriUtils.requiresDomain(type)) domainEt.setText(mDomain);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-        .setTitle(R.string.browse_ftp_server)
+        .setTitle(preview?"Add Network Source":getString(R.string.browse_ftp_server))
         .setView(v)
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
@@ -191,7 +194,7 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
                 final String password = passwordEt.getText().toString();
                 String domain = domainEt.getText().toString().trim();
 
-                final int type = typeSp.getSelectedItemPosition();
+                final int type = protocolTypes[typeSp.getSelectedItemPosition()];
                 final String address = addressEt.getText().toString().trim();
                 String path = pathEt.getText().toString().trim();
 
