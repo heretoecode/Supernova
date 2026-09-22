@@ -70,8 +70,16 @@ PYUI
   sleep 3
   adb shell dumpsys activity activities > ../startup-diagnostics/preview-settings-activities.txt
   adb exec-out screencap -p > ../startup-diagnostics/preview-settings.png
-  adb shell uiautomator dump /sdcard/nova-settings.xml
-  adb pull /sdcard/nova-settings.xml ../startup-diagnostics/preview-settings.xml
+  captured=false
+  for attempt in 1 2 3; do
+    adb logcat -d > ../startup-diagnostics/preview-settings-logcat.txt
+    if grep -q 'FATAL EXCEPTION' ../startup-diagnostics/preview-settings-logcat.txt; then exit 1; fi
+    adb shell pidof "$package" | grep -q '[0-9]'
+    adb shell rm -f /sdcard/nova-settings.xml
+    adb shell uiautomator dump /sdcard/nova-settings.xml
+    if adb pull /sdcard/nova-settings.xml ../startup-diagnostics/preview-settings.xml; then captured=true; break; fi
+  done
+  [[ "$captured" == true ]]
   adb logcat -d > ../startup-diagnostics/preview-settings-logcat.txt
   grep -q "mResumedActivity.*VideoSettingsActivity" ../startup-diagnostics/preview-settings-activities.txt
   if grep -q 'FATAL EXCEPTION' ../startup-diagnostics/preview-settings-logcat.txt; then exit 1; fi
@@ -82,7 +90,7 @@ if [[ "$phase" == preview ]]; then
   python3 - <<'PYSET'
 import re,subprocess,xml.etree.ElementTree as ET
 root=ET.parse('../startup-diagnostics/preview-settings.xml')
-node=next(n for n in root.iter('node') if n.get('text')=='Library')
+node=next(n for n in root.iter('node') if n.get('text')=='Library & Metadata')
 x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds')))
 subprocess.run(['adb','shell','input','tap',str((x1+x2)//2),str((y1+y2)//2)],check=True)
 PYSET
@@ -128,11 +136,11 @@ def target(root,label,activate=False):
  if activate: adb('shell','input','keyevent','23')
  time.sleep(.6)
 root=capture('settings-check')
-for category in ['Subtitles','Video','Audio','Streaming','About']:
+for category in ['Subtitles','Video','Audio','Streaming','Integrations']:
  target(root,category)
  root=capture('settings-'+category.lower().replace(' & ','-'))
- if category=='Subtitles':
-  assert any('OpenSubtitles' in n.get('text','') for n in root.iter('node')), 'Subtitles category lost credentials'
+ if category=='Integrations':
+  assert any('OpenSubtitles' in n.get('text','') for n in root.iter('node')), 'Integrations category lost credentials'
 # Return to each library via the actual top navigation, then exercise the new local query.
 target(root,'Movies',True);root=capture('navigation-movies')
 assert sum(n.get('text')=='Movies' for n in root.iter('node'))>=2, 'Movies route/header desynchronised'

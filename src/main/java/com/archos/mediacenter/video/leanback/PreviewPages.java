@@ -150,7 +150,7 @@ public final class PreviewPages extends FrameLayout {
             com.archos.mediacenter.video.utils.PlayUtils.startVideo((android.app.Activity)getContext(),(Video)e.media,com.archos.mediacenter.video.player.PlayerActivity.RESUME_FROM_LAST_POS,false,-1,null,-1);
         }else open(e,v);
     }
-    private static final int HEADER=0, POSTER=1, RAIL=2, STORAGE=3, HERO=4, NOTICE=5, LIST=6, SCAN=7, CUSTOMISE=8;
+    private static final int HEADER=0, POSTER=1, RAIL=2, STORAGE=3, HERO=4, NOTICE=5, LIST=6, SCAN=7, CUSTOMISE=8, NETWORK_PANEL=9;
     static class Cell {
         int type; String title; Object value;
         Cell(int type,String title,Object value) {this.type=type;this.title=title;this.value=value;}
@@ -158,7 +158,7 @@ public final class PreviewPages extends FrameLayout {
     public PreviewPages(Context c,Click click) {
         super(c); this.click=click; setBackgroundColor(Color.TRANSPARENT);setFocusable(true);setFocusableInTouchMode(true);setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         list=new FocusRecycler(c,false); list.setClipToPadding(false); list.setPadding(dp(28),dp(10),dp(28),dp(12));
-        layout=new GridLayoutManager(c,24); layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?(tab<3&&listMode[tab]?24:4):cells.get(p).type==STORAGE?6:24;}});
+        layout=new GridLayoutManager(c,24); layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?(tab<3&&listMode[tab]?24:4):cells.get(p).type==NETWORK_PANEL?8:cells.get(p).type==STORAGE?6:24;}});
         adapter.setHasStableIds(true);
         list.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView rv,int dx,int dy){notifyScroll();}});list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
         addView(list,new FrameLayout.LayoutParams(-1,-1));
@@ -181,6 +181,7 @@ public final class PreviewPages extends FrameLayout {
         if(tab==0)return cell.type==HERO && item.getTop()>=list.getPaddingTop() || cell.type==CUSTOMISE&&cells.stream().noneMatch(c->c.type==HERO)&&!list.canScrollVertically(-1);
         if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value)&&focused.getTag() instanceof String&&((String)focused.getTag()).startsWith("control:")&&!list.canScrollVertically(-1)
                 ||cell.type==HERO&&item.getTop()>=list.getPaddingTop();
+        if(cell.type==NETWORK_PANEL)return p<=3&&!list.canScrollVertically(-1);
         if(cell.type==SCAN)return !list.canScrollVertically(-1);
         if(cell.type!=STORAGE)return false;
         int first=0;while(first<cells.size()&&cells.get(first).type!=STORAGE)first++;
@@ -266,14 +267,16 @@ public final class PreviewPages extends FrameLayout {
             List<Entry> entries=filtered(); for(Entry e:entries)cells.add(new Cell(POSTER,"",e));
             if(loaded&&entries.isEmpty())header(providers[tab].isEmpty()?"No matching titles":"No known matches — availability is learned when opening Details",false);
         } else {
-            header("Network & files",false);cells.add(new Cell(SCAN,"Scan Library",null));
-            for(int group=0;group<3;group++){boolean heading=false;for(Box box:files){int g=box.getBoxId()==Box.ID.NETWORK?1:box.getBoxId()==Box.ID.VIDEOS_BY_LISTS?2:0;if(g!=group)continue;if(!heading){header(group==0?"Local storage":group==1?"Network":"Playlists",false);heading=true;}cells.add(new Cell(STORAGE,"",box));}}
+            header("Network & Files",false);
+            for(String panel:new String[]{"Scan Library","Library Sources","Network Scanning","Local Storage","Discover Devices","Saved Locations"})cells.add(new Cell(NETWORK_PANEL,panel,null));
+
 
         }
         if(!loaded&&tab!=3)header(tab==0?"Home":tab==1?"Movies":"TV Shows",false);
         updateArtwork();adapter.notifyDataSetChanged(); if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();list.post(this::notifyScroll);
     }
     private List<Entry> source(){return tab==1?snapshot.movies:snapshot.shows;}
+    private void networkSection(String section){getContext().startActivity(new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.network.NetworkRootActivity.class).putExtra("preview_source_section",section));}
     private void chart(String name,boolean trend){
         List<Entry> matches=discovery.matches(snapshot,trend);
         if(!matches.isEmpty())rail(name,matches);
@@ -349,14 +352,35 @@ public final class PreviewPages extends FrameLayout {
                 }else{TextView title=text(c.title,30);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title);TextView summary=text(PreviewLibrarySummary.describe(getContext(),snapshot,tab==2),13);summary.setLineSpacing(dp(3),1f);summary.setTextColor(0xffbfd2df);v.addView(summary);}
             }
             else if(c.type==CUSTOMISE){v.setGravity(Gravity.CENTER);TextView custom=button("Customise Home",()->PreviewHomeRows.customise(getContext(),()->{render();}));custom.setTag("home:customise");v.addView(custom);}
+            else if(c.type==NETWORK_PANEL){
+                v.setOrientation(LinearLayout.VERTICAL);v.setPadding(dp(14),dp(12),dp(14),dp(12));v.setBackground(PreviewDialog.surface(getContext(),false));
+                RecyclerView.LayoutParams size=new RecyclerView.LayoutParams(-1,dp(c.title.equals("Local Storage")||c.title.equals("Discover Devices")||c.title.equals("Saved Locations")?145:210));size.setMargins(0,0,dp(10),dp(10));v.setLayoutParams(size);
+                TextView heading=text(c.title,18);heading.setPadding(0,0,0,dp(8));v.addView(heading);
+                if(c.title.equals("Scan Library")){
+                    v.addView(text("Check local storage and library sources for new or changed media.",12));
+                    v.addView(button("Scan Library",()->PreviewLibraryScan.request(getContext())));
+                    TextView status=text(PreviewNetworkScanning.lastResult(getContext()),12);v.addView(status,new LinearLayout.LayoutParams(-1,dp(70)));
+                    status.post(new Runnable(){public void run(){if(!status.isAttachedToWindow())return;status.setText(com.archos.mediaprovider.video.NetworkScannerReceiver.isScannerWorking()?"Scanning network sources · "+com.archos.mediaprovider.video.NetworkScannerServiceVideo.getFilesFoundCount()+" files found":PreviewNetworkScanning.lastResult(getContext()));status.postDelayed(this,1000);}});
+                }else if(c.title.equals("Network Scanning")){
+                    v.addView(text("Automatic scanning for your network sources.",12));v.addView(text(PreviewNetworkScanning.lastResult(getContext()),12));v.addView(button("Configure Network Scanning",()->PreviewNetworkScanning.show(getContext())));
+                }else if(c.title.equals("Local Storage")){
+                    for(Box box:files)if(box.getBoxId()==Box.ID.FOLDERS||box.getBoxId()==Box.ID.USB||box.getBoxId()==Box.ID.SDCARD||box.getBoxId()==Box.ID.OTHER)v.addView(button(box.getBoxId()==Box.ID.FOLDERS?"Internal Storage":box.getName(),()->click.open(new Presenter.ViewHolder(v),box)));
+                }else if(c.title.equals("Discover Devices")){
+                    v.addView(button("Network Computers & NAS",()->networkSection("smb")));v.addView(button("Media Servers · DLNA/UPnP",()->networkSection("upnp")));
+                }else{
+                    v.addView(text(c.title.equals("Library Sources")?"Indexed network sources appearing in Movies and TV Shows.":"Saved browsing locations.",12));
+                    v.addView(button("Open "+c.title,()->networkSection(c.title.equals("Library Sources")?"library":"saved")));
+                    if(c.title.equals("Library Sources"))v.addView(button("Add Network Source",()->networkSection("add")));
+                }
+            }
             else if(c.type==SCAN){v.setOrientation(LinearLayout.VERTICAL);TextView scan=button("Scan Library",()->PreviewLibraryScan.request(getContext()));scan.setTag("scan:library");v.addView(scan,new LinearLayout.LayoutParams(dp(158),dp(40)));TextView description=text("Scan local storage and indexed network folders. Full Library Scan in Settings also retries unmatched descriptions.",12);description.setPadding(0,dp(8),0,dp(8));description.setTextColor(0xffaac1d1);v.addView(description);TextView progress=text("",13);progress.setTextColor(PreviewAccent.color(getContext()));progress.setMinHeight(dp(36));v.addView(progress,new LinearLayout.LayoutParams(-1,dp(36)));progress.post(new Runnable(){public void run(){if(!progress.isAttachedToWindow())return;String status="";if(com.archos.mediaprovider.video.NetworkScannerReceiver.isScannerWorking())status=com.archos.mediaprovider.video.NetworkScannerServiceVideo.isDeleting()?"Updating network library · "+com.archos.mediaprovider.video.NetworkScannerServiceVideo.getRemainingDeletesCount()+" remaining":"Scanning indexed network folders · "+com.archos.mediaprovider.video.NetworkScannerServiceVideo.getFilesFoundCount()+" files found";else if(com.archos.mediaprovider.ImportState.VIDEO.isInitialImport()||com.archos.mediaprovider.ImportState.VIDEO.isRegularImport())status="Importing local library · "+com.archos.mediaprovider.ImportState.VIDEO.getNumberOfFilesRemainingToImport()+" remaining";else if(com.archos.mediaprovider.video.LoaderUtils.getScrapeInProgress())status="Identifying library titles · "+com.archos.mediascraper.AutoScrapeService.getNumberOfFilesRemainingToProcess()+" remaining";progress.setText(status);progress.setVisibility(VISIBLE);progress.postDelayed(this,1000);}});}
             else if(c.type==NOTICE){v.setOrientation(LinearLayout.VERTICAL);TextView title=text(c.title,18);title.setTextColor(0xff8298aa);v.addView(title);TextView status=text((String)c.value,12);status.setTextColor(0xff8298aa);v.addView(status);v.setPadding(0,dp(12),0,dp(12));}
             else if(c.type==HEADER){
                 if(Boolean.TRUE.equals(c.value)){
                     v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(13),0,dp(18));LinearLayout controls=new LinearLayout(getContext());
                     controls.addView(button("Filters"+(genres[tab].isEmpty()?"":": "+genres[tab])+(years[tab]==0?"":" · "+years[tab])+"  ▾",()->filter()));
-                    String order=listMode[tab]&&columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
-                    for(TextView control:new TextView[]{button("Sort: "+(listMode[tab]&&columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},ascending[tab]?0:1,n->{ascending[tab]=n==0;if(listMode[tab])columns[tab].setAscending(n==0);render();})),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
+                    String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
+                    for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},ascending[tab]?0:1,n->{ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
                     if(listMode[tab]){TextView chooser=button("Columns",()->columns[tab].choose(this::refreshColumns));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(chooser,lp);}
                     for(int i=0;i<controls.getChildCount();i++)controls.getChildAt(i).setTag("control:"+i);v.addView(controls);
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));

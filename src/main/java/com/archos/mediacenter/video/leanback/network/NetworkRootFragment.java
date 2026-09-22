@@ -387,7 +387,7 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                 if (log.isDebugEnabled()) log.debug("onItemClicked: Box");
                 Box box = (Box)item;
                 if (box.getBoxId()==Box.ID.INDEXED_FOLDERS_REFRESH) {
-                    startActivity(new Intent(getActivity(), RescanActivity.class));
+                    if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))com.archos.mediacenter.video.leanback.PreviewNetworkScanning.show(requireContext());else startActivity(new Intent(getActivity(), RescanActivity.class));
                 }
             }
             else if (item instanceof SmbShare) {

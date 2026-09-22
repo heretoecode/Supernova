@@ -1216,7 +1216,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     com.archos.mediacenter.video.leanback.PreviewSeriesJourney.record(this,mVideoInfo,mPlaybackSession.completed,mPlaybackSession.viewedMs);
                     log.info("saveVideoStateIfReady: save bookmark at {} for videoId {}", mVideoInfo.lastTimePlayed, mVideoInfo.id);
                     mIndexHelper.writeVideoInfo(mVideoInfo, !periodic && mNetworkBookmarksEnabled);
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_submitted","position_ms",resumePosition,"periodic",periodic,"network_bookmark",!periodic&&mNetworkBookmarksEnabled);
+                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_submitted","position_ms",resumePosition,"duration_ms",mPlayer==null?-1:mPlayer.getDuration(),"speed",mAudioSpeed,"audio_delay",mAudioDelay,"source",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mStreamingUri),"periodic",periodic,"network_bookmark",!periodic&&mNetworkBookmarksEnabled);
                     // disable periodic trakt save this should be done with pauseTrakt() anyway
                     //stopTrakt(); //this writes mVideoInfo.traktResume
                     // BootupRecommendationService is for before Android O otherwise TV channels are used

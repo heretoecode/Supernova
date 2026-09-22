@@ -28,8 +28,14 @@ final class PreviewPlaybackMenus {
   String audio=activity.getString(R.string.menu_audio),subs=activity.getString(R.string.menu_subtitles),speed=activity.getString(R.string.player_pref_audio_speed_title);
   cards.sort(Comparator.comparingInt(c->audio.equals(c.previewTitle())?0:subs.equals(c.previewTitle())?1:2));
   List<String> labels=new ArrayList<>();List<Runnable> actions=new ArrayList<>();TVMenuItem speedItem=null;
-  for(TVCardView card:cards){labels.add(card.previewTitle());actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View v=menu.getChildAt(i);if(v instanceof TVMenuItem&&speed.equals(((TVMenuItem)v).getText())&&v.isEnabled())speedItem=(TVMenuItem)v;}}
-  if(speedItem!=null){final TVMenuItem item=speedItem;int at=Math.min(2,labels.size());labels.add(at,speed);actions.add(at,()->{restoreParent=()->root(activity,adapter);item.previewClick();});}
+  for(TVCardView card:cards){TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View v=menu.getChildAt(i);if(v instanceof TVMenuItem&&speed.equals(((TVMenuItem)v).getText())&&v.isEnabled())speedItem=(TVMenuItem)v;}}
+  labels.add("— PLAYBACK");actions.add(()->{});
+  if(speedItem!=null){final TVMenuItem item=speedItem;labels.add("Playback Speed");actions.add(()->{restoreParent=()->root(activity,adapter);item.previewClick();});}
+  for(TVCardView card:cards)if(activity.getString(R.string.pref_play_mode_title).equals(card.previewTitle())){labels.add("Play Mode");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
+  labels.add("— VIDEO");actions.add(()->{});
+  for(TVCardView card:cards){String title=card.previewTitle();if(audio.equals(title)||subs.equals(title)||activity.getString(R.string.menu_info).equals(title)||activity.getString(R.string.pref_play_mode_title).equals(title)||activity.getString(R.string.preferences).equals(title))continue;labels.add(title);actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
+  labels.add("— SUPERNOVA");actions.add(()->{});
+  for(TVCardView card:cards)if(activity.getString(R.string.preferences).equals(card.previewTitle())){labels.add("Supernova Settings");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
   current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),rootFocus,Collections.emptySet(),false,n->{rootFocus=n;actions.get(n).run();});
   current.setOnCancelListener(d->close());position(activity,current,true);
  }
@@ -37,15 +43,17 @@ final class PreviewPlaybackMenus {
   TVMenu menu=card.previewMenu();if(menu==null||menu.getChildCount()==0){dismissCurrent();card.previewClick();return;}
   List<TVMenuItem> actions=new ArrayList<>();List<String> labels=new ArrayList<>();Set<Integer> checked=new HashSet<>();int selected=focus;boolean hasOther=false;
   boolean subtitles=activity.getString(R.string.menu_subtitles).equals(card.previewTitle());
+  boolean audio=activity.getString(R.string.menu_audio).equals(card.previewTitle());
   TVMenuItem settings=null;
   for(int i=0;i<menu.getChildCount();i++){
    View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
+   if(audio&&activity.getString(R.string.player_pref_audio_speed_title).equals(item.getText()))continue;
    boolean other=subtitles&&Boolean.FALSE.equals(item.getTag());if(other)hasOther=true;if(otherLanguages?!other:other)continue;
    if(subtitles&&!otherLanguages&&activity.getString(R.string.menu_player_settings).equals(item.getText())){settings=item;continue;}
    actions.add(item);labels.add(androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString()+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
   }
   if(hasOther&&!otherLanguages){actions.add(null);labels.add("Other languages");}
-  if(settings!=null){actions.add(settings);labels.add(settings.getText()+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
+  if(settings!=null){actions.add(settings);labels.add("Subtitle Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
   dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);
   current=PreviewDialog.choose(activity,otherLanguages?"‹ Subtitles · Other languages":"‹ More · "+card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{

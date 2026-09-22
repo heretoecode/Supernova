@@ -24,12 +24,16 @@ public class NetworkShortcutDetailsActivity extends LeanbackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
+            Object source=getIntent().getSerializableExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT);
+            if(source instanceof com.archos.mediacenter.video.leanback.adapter.object.Shortcut){setContentView(PreviewSourceManagement.create(this,(com.archos.mediacenter.video.leanback.adapter.object.Shortcut)source));return;}
+        }
         setContentView(R.layout.androidtv_network_shortcut_details_activity);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false) && keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
             return true;
         
         return super.onKeyDown(keyCode, event);

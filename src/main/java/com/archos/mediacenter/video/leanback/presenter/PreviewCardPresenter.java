@@ -60,7 +60,7 @@ public final class PreviewCardPresenter extends Presenter {
             title = new TextView(c); title.setTextColor(Color.WHITE); title.setTextSize(13);
             title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
             title.setMaxLines(style == Style.CONTINUE ? 1 : 2);
-            if(style == Style.POSTER){title.setLines(1);title.setTextSize(11);title.setIncludeFontPadding(false);caption.setPadding(dp(5),dp(3),dp(5),dp(2));caption.setBackgroundColor(0xc00b1b29);} title.setEllipsize(TextUtils.TruncateAt.END);
+            if(style == Style.POSTER){caption.setGravity(Gravity.CENTER_VERTICAL);title.setLines(1);title.setTextSize(11);title.setIncludeFontPadding(false);caption.setPadding(dp(5),dp(3),dp(5),dp(2));caption.setBackgroundColor(0xc00b1b29);} title.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(title, new LinearLayout.LayoutParams(-1, -2));
             subtitle = new TextView(c); subtitle.setTextSize(style == Style.POSTER ? 9 : 11); subtitle.setTextColor(0xffa4b6c7);subtitle.setIncludeFontPadding(false);
             subtitle.setSingleLine(true); subtitle.setEllipsize(TextUtils.TruncateAt.END);

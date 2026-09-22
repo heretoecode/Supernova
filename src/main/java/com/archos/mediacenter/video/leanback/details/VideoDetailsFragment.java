@@ -217,6 +217,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         return mPreviewNavigation;
     }
     public boolean closePreviewNativeDetails(){return false;}
+    private void showPreviewVersions(){
+        java.util.List<Video> variants=new java.util.ArrayList<>(mVideoList);variants.sort(com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
+        String[] labels=new String[variants.size()];int selected=0;for(int i=0;i<labels.length;i++){labels[i]=com.archos.mediacenter.video.leanback.PreviewVariants.label(variants.get(i));if(variants.get(i).getId()==mVideo.getId())selected=i;}
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"Versions",labels,selected,n->{mSelectCurrentVideo=true;mVideo=variants.get(n);fullyReloadVideo(mVideo,null,false);});
+    }
     private void showPreviewTools(){
         com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File, subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops","File information"},-1,n->{
             if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else if(n==4)com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),mVideo.getFilenameNonCryptic(),mVideo.getFileUri()==null?"":mVideo.getFileUri().getPath());else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
@@ -1120,7 +1125,12 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     mVideo = video;
                 }
             }while (cursor.moveToNext());
-            Collections.sort(mVideoList, new SortByFavoriteSources(oldVideoList));
+            if(!mSelectCurrentVideo&&PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
+                Video history=mVideo;
+                Collections.sort(mVideoList,com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
+                mVideo=mVideoList.get(0);
+                if(history!=null&&history.getResumeMs()>0){mVideo.setResumeMs(history.getResumeMs());mVideo.setRemoteResumeMs(history.getRemoteResumeMs());}
+            }else Collections.sort(mVideoList, new SortByFavoriteSources(oldVideoList));
 
             mSelectCurrentVideo = true;
             if(mVideo == null)
@@ -1554,7 +1564,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(video, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
         }
 
-        if(mPreviewMovie!=null)mPreviewMovie.bind(video);
+        if(mPreviewMovie!=null){mPreviewMovie.bind(video);mPreviewMovie.setVersions(mVideoList.size(),this::showPreviewVersions);}
         if(!mPreviewAutoPlayed&&requireActivity().getIntent().getBooleanExtra("preview_play",false)){
             mPreviewAutoPlayed=true;requireActivity().getIntent().removeExtra("preview_play");
             getView().post(()->{
