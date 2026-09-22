@@ -46,12 +46,35 @@ public final class PreviewSettings {
   style(root);
 
  }
- private static final String[] NAMES={"Playback","Video","Audio","Subtitles","Library","Streaming","Network","Advanced","About"};
+ private static final String[] NAMES={"Playback","Video","Audio","Subtitles","Library & Metadata","Home","Appearance","Streaming","Network","Integrations","Advanced","About"};
  private static void consolidate(PreferenceFragmentCompat fragment,PreferenceScreen root,Map<String,PreferenceCategory> categories){
-  PreferenceCategory video=categories.get("Video & Audio");video.setTitle("Video");categories.get("Sources & Storage").setTitle("Network");
+  PreferenceCategory video=categories.get("Video & Audio");video.setTitle("Video");
+  categories.get("Sources & Storage").setTitle("Network");
+  categories.get("Library").setTitle("Library & Metadata");
+  categories.get("Home & Discovery").setTitle("Home");
   PreferenceCategory audio=new PreferenceCategory(fragment.requireContext());audio.setKey("preview_audio");audio.setTitle("Audio");root.addPreference(audio);
-  List<Preference> sound=new ArrayList<>();for(int i=0;i<video.getPreferenceCount();i++){Preference p=video.getPreference(i);String key=String.valueOf(p.getKey());if(key.contains("audio")||key.contains("passthrough"))sound.add(p);}for(Preference p:sound){video.removePreference(p);audio.addPreference(p);}
-  for(String[] merge:new String[][]{{"General","Playback"},{"Home & Discovery","Library"},{"Appearance","Library"},{"Trakt","Advanced"},{"Integrations","Advanced"},{"Legacy","Advanced"}}){PreferenceCategory from=categories.get(merge[0]),to=categories.get(merge[1]);while(from.getPreferenceCount()>0){Preference p=from.getPreference(0);from.removePreference(p);to.addPreference(p);}from.setVisible(false);}
+  categories.put("Audio",audio);
+  PreferenceCategory general=categories.get("General");
+  while(general.getPreferenceCount()>0){Preference p=general.getPreference(0);general.removePreference(p);categories.get("About").addPreference(p);}general.setVisible(false);
+  for(String key:new String[]{"favAudioLang","prefer_original_audio_track","force_audio_passthrough_multiple","player_spatialization_enabled"})move(root,audio,key);
+  for(String key:new String[]{"allow_3rd_party_player","network_bookmarks",fragment.getString(R.string.reset_brightness_on_start_key)})move(root,categories.get("Playback"),key);
+  for(String key:new String[]{"hide_watched","sort_ignore_articles","preference_display_all_files","pref_create_remote_thumbs"})move(root,categories.get("Library"),key);
+  PreferenceCategory advanced=categories.get("Advanced");
+  String[][] compatibility={
+   {"Video Compatibility","force_software_decoding","dec_choice","parser_sync_mode","enable_cutout_mode_short_edges","enable_cutout_both_sidesx","stream_max_iframe_size"},
+   {"Audio Compatibility","audio_interface_choice","audio_decoder_choice","force_passthrough","audio_speed_audiotrack","enable_dynamic_audio_delay","disable_downmix","enable_downmix_androidtv"},
+   {"Network Compatibility","pref_smbj","pref_smbv2","pref_smb_resolv","pref_smb_disable_tcp_discovery","pref_smb_disable_udp_discovery","pref_smb_disable_mdns_discovery","pref_sshj","stream_buffer_size"},
+   {"Subtitle Compatibility","codepage"}};
+  for(String[] group:compatibility){PreferenceCategory section=new PreferenceCategory(fragment.requireContext());section.setKey("preview_compat_"+group[0]);section.setTitle(group[0]);advanced.addPreference(section);for(int i=1;i<group.length;i++)move(root,section,group[i]);}
+  PreferenceCategory integrations=categories.get("Integrations"),trakt=categories.get("Trakt");root.removePreference(trakt);integrations.addPreference(trakt);
+  PreferenceCategory subtitles=new PreferenceCategory(fragment.requireContext());subtitles.setKey("preview_opensubtitles");subtitles.setTitle("OpenSubtitles");integrations.addPreference(subtitles);move(root,subtitles,"subtitles_credentials");
+  PreferenceCategory intro=new PreferenceCategory(fragment.requireContext());intro.setKey("preview_introdb");intro.setTitle("IntroDB");integrations.addPreference(intro);
+  SwitchPreferenceCompat skip=new SwitchPreferenceCompat(fragment.requireContext());skip.setKey(com.archos.mediacenter.video.player.PlayerService.KEY_INTRODB_ENABLED);skip.setTitle("Automatic segment skipping");skip.setSummary("Use IntroDB segment timings with the existing playback-mode rules");skip.setDefaultValue(com.archos.mediacenter.video.player.PlayerService.DEFAULT_INTRODB_ENABLED);intro.addPreference(skip);
+  Preference hidden=root.findPreference("subtitles_hide_default");
+  if(hidden instanceof TwoStatePreference){TwoStatePreference original=(TwoStatePreference)hidden;original.setVisible(false);SwitchPreferenceCompat positive=new SwitchPreferenceCompat(fragment.requireContext());positive.setKey("preview_subtitles_by_default");positive.setTitle("Subtitles by Default");positive.setPersistent(false);positive.setChecked(!original.isChecked());positive.setOnPreferenceChangeListener((p,value)->{original.setChecked(!(Boolean)value);return true;});categories.get("Subtitles").addPreference(positive);}
+  // Source scheduling has one home, backed by NetworkAutoRefresh, in Network & Files.
+  for(String key:new String[]{"rescan_storage","auto_rescan_on_app_restart","preview_scan_interval_control","share_folders","preferences_torrent_path","preferences_torrent_blocklist","uimode","uimode_leanback"}){Preference p=root.findPreference(key);if(p!=null)p.setVisible(false);}
+  categories.get("Legacy").setVisible(false);
  }
  private static String contextFor(Preference p){String text=String.valueOf(p.getTitle())+"\n\n"+(p.getSummary()==null?"Select to change this setting.":p.getSummary());
   if(p instanceof ListPreference){ListPreference list=(ListPreference)p;CharSequence[] entries=list.getEntries(),values=list.getEntryValues();if(entries!=null&&values!=null){text+="\n";for(int i=0;i<Math.min(entries.length,6);i++)text+="\n"+(values[i].toString().equals(list.getValue())?"●  ":"○  ")+entries[i];}}
