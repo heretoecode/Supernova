@@ -92,6 +92,7 @@ public class Overlay {
             ((ViewGroup)clock.getParent()).removeView(clock);
             clock.setPadding(0, 0, 0, 0);
             ((android.widget.TextView)clock).setGravity(android.view.Gravity.CENTER);
+            ((android.widget.TextView)clock).setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));
             View fallbackClock=nav.getStatusContainer().findViewWithTag("preview-default-clock");if(fallbackClock!=null)nav.getStatusContainer().removeView(fallbackClock);
             nav.getStatusContainer().addView(clock, new android.widget.FrameLayout.LayoutParams(-1, -1));
             mScanProgress.useFloatingStyle();

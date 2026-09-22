@@ -70,7 +70,7 @@ public final class PreviewPages extends FrameLayout {
         if(cells.get(pos).type==RAIL){List<Entry> entries=(List<Entry>)cells.get(pos).value;for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(a.child)){a.inner=i;break;}}
         anchors[tab]=a;
     }
-    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);}}}}
+    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);if(listMode[tab]){Entry focusedEntry=(Entry)cells.get(p).value;PreviewMetadata.request(getContext(),focusedEntry,()->{if(!isAttachedToWindow())return;for(int i=0;i<cells.size();i++)if(cells.get(i).value==focusedEntry){RecyclerView.ViewHolder holder=list.findViewHolderForAdapterPosition(i);if(holder!=null&&holder.itemView instanceof LinearLayout)columns[tab].bind((LinearLayout)holder.itemView,focusedEntry);break;}});}}}}}
     @Override protected boolean onRequestFocusInDescendants(int direction,android.graphics.Rect rect){
         if(restoringFocus)return false;
         if(anchors[tab]!=null){holdFocus();restoreFocus();return true;}

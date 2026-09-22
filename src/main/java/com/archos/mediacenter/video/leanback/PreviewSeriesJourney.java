@@ -39,10 +39,10 @@ public final class PreviewSeriesJourney {
     private static final Comparator<Entry> ORDER=Comparator.comparingInt((Entry e)->((Episode)e.media).getSeasonNumber()).thenComparingInt(e->((Episode)e.media).getEpisodeNumber());
     public static Selection select(Context c,List<Entry> source){
         if(source.isEmpty())return new Selection(null,false,0);
-        List<Entry> episodes=new ArrayList<>(source);episodes.sort(ORDER);SharedPreferences p=prefs(c);String key=key(episodes);
+        List<Entry> episodes=PreviewVariants.logicalChoices(source);episodes.sort(ORDER);SharedPreferences p=prefs(c);String key=key(episodes);
         int season=p.getInt(key+"season",-1),number=p.getInt(key+"episode",-1);boolean complete=p.getBoolean(key+"complete",false);long time=p.getLong(key+"time",0);
         // Explicit Mark Watched is a strong user signal even without a playback session.
-        for(Entry e:episodes){long marked=p.getLong("preview_journey41:mark:"+((Video)e.media).getId(),0);if(marked>0&&marked>=time){Episode ep=(Episode)e.media;season=ep.getSeasonNumber();number=ep.getEpisodeNumber();complete=true;time=marked;}}
+        for(Entry e:source){long marked=p.getLong("preview_journey41:mark:"+((Video)e.media).getId(),0);if(marked>0&&marked>=time){Episode ep=(Episode)e.media;season=ep.getSeasonNumber();number=ep.getEpisodeNumber();complete=true;time=marked;}}
         if(season<0){
             // One-time migration of 4.0 progress, excluding files merely sampled in 4.1.
             Entry seed=episodes.stream().filter(e->resumable((Video)e.media)&&!p.getBoolean("preview_journey41:attempt:"+((Video)e.media).getId(),false)).max(Comparator.comparingLong(e->((Video)e.media).getLastPlayed())).orElse(null);

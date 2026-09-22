@@ -149,7 +149,7 @@ assert any(n.get('text')=='TV Shows' for n in root.iter('node')), 'TV library fa
 target(root,'Network & Files',True);root=capture('network-files')
 target(root,'Internal Storage',True);root=capture('file-browser')
 assert any(n.get('text')=='Sources' for n in root.iter('node')), 'Native browser source rail missing'
-assert any(n.get('text')=='File Information' for n in root.iter('node')) or any(n.get('text')=='Options' for n in root.iter('node')), 'Native browser composition missing'
+assert any(n.get('text')=='File Information' for n in root.iter('node')) or any(n.get('text')=='Source Options' for n in root.iter('node')), 'Native browser composition missing'
 target(root,'Search',True);root=capture('search-empty')
 assert not any('inputmethod' in n.get('package','') for n in root.iter('node')), 'System keyboard covers the compact Search layout'
 query=next(n for n in root.iter('node') if n.get('class')=='android.widget.EditText')

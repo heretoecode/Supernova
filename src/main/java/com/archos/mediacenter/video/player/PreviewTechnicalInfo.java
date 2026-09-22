@@ -28,6 +28,7 @@ final class PreviewTechnicalInfo {
     static void show(Activity activity,VideoMetadata metadata,android.net.Uri uri,int backend){
         View origin=activity.getCurrentFocus();
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_technical_snapshot","metadata_present",metadata!=null,"backend",backend);
+        if(uri!=null&&"content".equals(uri.getScheme())){String path=com.archos.mediacenter.video.utils.VideoUtils.getFileUriStringFromContentUri(activity,uri.toString());if(path!=null)uri=android.net.Uri.parse(path);}
         String full=describe(metadata,com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri),backend);
         android.app.Dialog dialog=new android.app.Dialog(activity);dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
         android.widget.LinearLayout panel=new android.widget.LinearLayout(activity);panel.setOrientation(1);panel.setPadding(dp(activity,20),dp(activity,16),dp(activity,20),dp(activity,16));panel.setBackground(PreviewDialog.surface(activity,false));

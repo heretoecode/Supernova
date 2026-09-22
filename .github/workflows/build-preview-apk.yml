@@ -140,6 +140,10 @@ jobs:
         run: |
           ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview411Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview412Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview413Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview414Test.*' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.*' --tests 'com.archos.mediacenter.video.streaming.StreamingPreferencesTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41RowsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewUpNextTest.*' --tests 'com.archos.mediacenter.video.player.PlaybackResumePolicyTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
 
+      - name: Check selectively ported WebDAV behaviour
+        working-directory: nova/Video
+        run: ./gradlew :FileCoreLibrary:testDebugUnitTest --tests 'com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest' -Puniversal -PmarkPreview --build-cache --no-daemon
+
       - name: Start Android emulator for full process startup checks
         run: |
           export PATH="$ANDROID_HOME/platform-tools:$PATH"
@@ -231,6 +235,7 @@ jobs:
             nova/gradle-tests.log
             nova/startup-diagnostics/
             nova/Video/build/reports/tests/
+            nova/FileCoreLibrary/build/reports/tests/
             nova/Video/build/reports/preview-ui/
             nova/Video/build/outputs/mapping/noamazonRelease/
             nova/Video/docs/MARK-EDITION-3.md
