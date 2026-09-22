@@ -127,7 +127,8 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
         final View v = getActivity().getLayoutInflater().inflate(R.layout.network_credential_layout, null);
         final Spinner typeSp = (Spinner)v.findViewById(R.id.ssh_spinner);
         final boolean preview=mPreferences.getBoolean("try_new_ui",false);
-        final int[] protocolTypes=preview?new int[]{4,7,6,1,0,2}:new int[]{0,1,2,3,4,5,6,7};
+        // Keep an existing implementation choice behind its canonical protocol label.
+        final int[] protocolTypes=preview?new int[]{mType==5?5:4,7,6,mType==3?3:1,0,2}:new int[]{0,1,2,3,4,5,6,7};
         if(preview){android.widget.ArrayAdapter<String> adapter=new android.widget.ArrayAdapter<>(requireContext(),android.R.layout.simple_spinner_item,new String[]{"SMB","WebDAV (HTTPS)","WebDAV (HTTP)","SFTP","FTP","FTP (TLS)"});adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);typeSp.setAdapter(adapter);}
         addressEt = (EditText)v.findViewById(R.id.remote);
         portEt = (EditText)v.findViewById(R.id.port);

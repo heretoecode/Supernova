@@ -188,7 +188,9 @@ jobs:
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
+          extra_args=()
+          if [[ "$VALIDATION_MODE" == preview ]]; then extra_args+=(-x lintNoamazonRelease); fi
+          ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal -PmarkPreview "${extra_args[@]}" --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
 
       - name: Check signed release upgrade with Preview still enabled
         if: env.APK_VARIANT == 'release'
