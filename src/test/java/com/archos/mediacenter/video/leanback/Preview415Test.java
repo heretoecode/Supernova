@@ -62,6 +62,18 @@ public class Preview415Test {
         assertTrue(SftpHostTrust.forget("nas:22"));
         assertTrue(SftpHostTrust.verify("nas",22,new byte[]{9,8,7}));
     }
+    @Test public void sourceInclusionUsesIdentityDespiteDuplicateNames(){
+        Context context=RuntimeEnvironment.getApplication();
+        com.archos.mediacenter.utils.ShortcutDbAdapter adapter=com.archos.mediacenter.utils.ShortcutDbAdapter.VIDEO;
+        com.archos.mediacenter.utils.ShortcutDbAdapter.Shortcut first=new com.archos.mediacenter.utils.ShortcutDbAdapter.Shortcut("Films","smb://one/films");
+        com.archos.mediacenter.utils.ShortcutDbAdapter.Shortcut second=new com.archos.mediacenter.utils.ShortcutDbAdapter.Shortcut("Films","smb://two/films");
+        assertTrue(adapter.addShortcut(context,first));assertTrue(adapter.addShortcut(context,second));
+        long selected=adapter.isShortcut(context,"smb://one/films");
+        adapter.setRescanShortcut(context,true,"Films");adapter.setRescanShortcutById(context,false,selected);
+        try(android.database.Cursor cursor=adapter.getAllShortcuts(context,null,null)){
+            assertEquals(2,cursor.getCount());while(cursor.moveToNext())assertEquals(cursor.getLong(0)==selected?0:1,cursor.getInt(5));
+        }
+    }
     @Test public void detailsWithoutAnAttachedLegacyImageNeedNoTransition(){
         android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().get();
         assertNull(com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment.detailsTransition(activity,null));

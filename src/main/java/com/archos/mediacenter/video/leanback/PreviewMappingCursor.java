@@ -15,10 +15,11 @@ final class PreviewMappingCursor extends CursorWrapper {
             throw new IllegalArgumentException("Library projection is missing a required column");
         type = super.getType(index);
     }
-    @Override public int getInt(int index) { reading(index); return super.getInt(index); }
-    @Override public long getLong(int index) { reading(index); return super.getLong(index); }
-    @Override public float getFloat(int index) { reading(index); return super.getFloat(index); }
+    @Override public int getInt(int index) { reading(index); numeric(); return super.getInt(index); }
+    @Override public long getLong(int index) { reading(index); numeric(); return super.getLong(index); }
+    @Override public float getFloat(int index) { reading(index); numeric(); return super.getFloat(index); }
     @Override public String getString(int index) { reading(index); return super.getString(index); }
+    private void numeric() { if(type == Cursor.FIELD_TYPE_BLOB) throw new IllegalArgumentException("Binary value in numeric library field"); }
     void report(String stage, RuntimeException failure) {
         // No filename/path, raw value, SQL, or exception message is recorded.
         long id = -1;

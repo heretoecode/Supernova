@@ -126,7 +126,7 @@ public class PreviewStartupTest {
     }
     private void insertUnmatched(long id){
         ContentValues values=new ContentValues();values.put("_id",id);values.put("_data","/storage/probe-"+id+".mkv");
-        values.put("title","Probe");database.getWritableDatabase().insertOrThrow(VideoOpenHelper.FILES_TABLE_NAME,null,values);
+        values.put("title","Probe");values.put("media_type",3);database.getWritableDatabase().insertOrThrow(VideoOpenHelper.FILES_TABLE_NAME,null,values);
     }
     @Test public void badScraperReadIsContainedOnAsynchronousWorker()throws Exception{
         insertUnmatched(1);failScraperRead=true;
@@ -134,6 +134,13 @@ public class PreviewStartupTest {
         java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
         try{worker.submit(()->{try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.snapshot);assertNotNull(loader.loadWarning);assertTrue(loader.snapshot.recent.isEmpty());}}).get(15,java.util.concurrent.TimeUnit.SECONDS);}
         finally{worker.shutdownNow();}
+    }
+    @Test public void binaryScraperTypeIsIsolatedWhileHealthyRecordsRemain(){
+        insertUnmatched(10);insertUnmatched(11);
+        ContentValues bad=new ContentValues();bad.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE,new byte[]{1,2});
+        database.getWritableDatabase().update(VideoOpenHelper.FILES_TABLE_NAME,bad,"_id=?",new String[]{"10"});
+        PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
+        try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.loadWarning);assertEquals(1,loader.snapshot.recent.size());assertEquals(11,((com.archos.mediacenter.video.browser.adapters.object.Video)loader.snapshot.recent.get(0).media).getId());}
     }
     @Test public void failedDatabaseQueryReturnsVisibleErrorWithoutWritingEmptyCache(){
         failQuery=true;PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());

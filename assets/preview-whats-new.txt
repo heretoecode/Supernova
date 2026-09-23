@@ -1,47 +1,29 @@
-SUPERNOVA Preview 4.1.3
+SUPERNOVA Preview 4.1.5 — Stability pass
 
-Continues the delivered 4.1.2 source; no baseline reset.
+Based only on Preview 4.1.4. No Details redesign or new metadata features.
 
-Poster-free Movie/TV Details: official logos with text fallback, constrained synopsis, compact unboxed cast with See All and one playback/provider action row.
-Shared focus: neutral controls, accent and restrained perimeter/text glow, no top-navigation underline; Settings cog feedback corrected.
-Home: one More Info action with independent Left/Right navigation, directional card motion and official-logo readiness included in first-frame composition.
-Information: wider, shorter centred overlay with a frosted/darkened Details background and bounded cast subset.
-Library: indexed WebDAV/SMB storage now classified using the media file URI rather than the database content URI. No filesystem scan on page entry.
-Network & Files: removed the duplicate background that restarted the image below the header.
-Search: separate Top Result context, title/year/type and View Show action; diacritic-insensitive parent matching retained.
-Menus: smaller Columns, Customise Home and subtitle selectors, with subtitle Settings last.
-Playback: outlined translucent central transport, exact Movie Ends/Episode Ends wording, active-session technical metadata shown without launching a second Details/probe lifecycle.
-Diagnostics: Advanced > Diagnostic Logging (Off by default) and Export Diagnostic Report. Bounded structured logs with process/playback IDs; exception messages, credentials and raw locations excluded.
-Settings: projector positioning and existing torrent folder/blocklist controls remain reachable through the modern panels.
+Corrections
+• Open file Details without requiring a missing legacy transition image.
+• Carry genuine resume across automatic version selection.
+• Choose a different logical episode for Up Next, then its preferred version.
+• Respect Hide Watched and Ignore Articles in the modern library.
+• Address duplicate source names when changing scan inclusion.
+• Preserve horizontal file-grid navigation; clear stale backdrop after failed artwork.
+• Reject invalid custom ports; replace restored preferences instead of merging old keys.
 
-NOT TESTED — USER QA REQUIRED: physical Shield focus/performance, populated artwork readiness, provider handoffs, long-duration playback termination, A/V sync and abnormal-exit progress persistence. The exact original Shield crash exception is not yet confirmed by a device trace. No claim that persistent playback reliability is fixed.
+Hardening
+• Contain failed library record reads, report a visible error and preserve earlier cached/journey state.
+• Recover interrupted restores before database providers open.
+• Provider skip metadata no longer synthesises playback completion.
+• Home can open without waiting for remote artwork.
 
-SUPERNOVA Preview 4.1.2
+Security
+• Internal media bridge restricted to this device's loopback interface.
+• SFTP stores first-use server identities and rejects changed keys. First-use trust is not independent server authentication. Only reset a stored identity after verifying a legitimate key change.
+• Portable backups remain unencrypted and contain recoverable credentials. Keep them private.
 
-Continues the 4.1.1 baseline and the recovered 4.1.2 work.
+Regression coverage
+Targeted startup, resume/version, next-episode, preference, network trust, source identity, bridge and restore-recovery checks added. Delivery test results are recorded in the return handover.
 
-Simplified HUD: one central Play/Pause, remote seeking retained, deterministic Down recovery and concise audio/subtitle labels. Official logo sizing uses visible artwork bounds.
-Navigation: media tabs left, Network & Files/Search/cog/clock right, boxless focus and exact approved utility background.
-Home: readiness waits for visible card/backdrop completion, compact Featured action and focusable indicators; existing scanner feedback is attached to the navigation shell.
-Library: indexed local/network count and storage summaries, subtle list separators and selected-service filtering of known, fresh availability. Unknown availability is not a match.
-Search: compact keyboard beside results, parent series queried from the local index above episodes; diacritic matching retained.
-Details: constrained synopsis, denser cast cards, grouped semantic actions, named provider artwork and centred Information overlay without a close X.
-Settings: responsive category/list/context panels, first-setting entry, no slide-in and selected-first provider chooser with immediate saved ticks and genuine artwork.
-Browser: native source/path/list/context composition replaces the old title/grid underlay while retaining protocol listing and action handlers.
-Playback investigation: ten-second progress checkpoints, error/completion guards and lifecycle diagnostics. A/V desynchronisation and unexpected native exits are not claimed fixed. Netflix title-page handoff remains unconfirmed; Prime routing retained.
-
-NOT TESTED — USER QA REQUIRED: physical Shield playback, populated startup, network/browser sources, real provider title handoffs, controller focus and performance. Existing passed automatic scanning, backup and viewing progression remain protected.
-
-SUPERNOVA Preview 4.1.1
-
-Corrective pass over Preview 4.1. Existing library, playback progress, Home rows and preview update identity are preserved.
-
-Home: composed SUPERNOVA startup surface, stable Featured action sizing, restrained transitions and genuine official title logos where available. Playback uses cached logos only.
-Rows and Details: compact Customise Home, confirmed Clear Watch Next, clearer Information/Actions, secondary Add to Row and improved information layout.
-Library and sources: restrained list separators, compact Scan Library, dark file-browser rows and transparent Network/Search navigation. Automatic scan controls are exposed; absent settings initialise to startup enabled/15 minutes, explicit Off is preserved. WebDAV automatic eligibility is corrected without rewriting the importer.
-Search and Streaming: accent-insensitive indexed search, including Shogun/Shōgun; provider selections persist immediately and update in place. Genuine provider artwork/availability uses the existing backend only.
-Playback: concise track labels, centred transport controls, compact anchored option panels and restrained focus. TV clock says Episode ends. Up Next visuals are refined while its working timing and episode progression are retained.
-Backup: verified in-progress publication, portable saved configuration/accounts and recovery of downloadable artwork. Export contains private credentials; Android storage grants must be renewed on another device.
-
-NOT TESTED — USER QA REQUIRED: physical Shield upgrade, populated startup/logo transitions, automatic WebDAV, actual Ireland offers/handoff, playback/remote behaviour and real backup/new-device restore.
-No invented service availability, playback functionality or deferred 4.2 features.
+PHYSICAL SHIELD QA REQUIRED
+The precise underlying data/window cause of the 02:35 library exception remains unproven. The historical long WebDAV premature completion is not claimed fixed. Test reboot/cold start, your library, long playback, resume, D-pad/Back, sources and restore on disposable data.
