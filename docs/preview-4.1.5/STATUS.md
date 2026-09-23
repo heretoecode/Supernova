@@ -1,4 +1,4 @@
-# Preview 4.1.5 stability pass — validation pending
+# Preview 4.1.5 stability pass — preview validation passed
 
 Baseline: aa4337d7a3d9e51161e406f232a6531f25e70c36, codex/apk-build-fixes.
 
@@ -12,7 +12,7 @@ Correction: per-record mapping containment with schema/row/type diagnostics, bou
 Two older uncaught scene-transition exceptions occur in this same 4.1.4 build. Preview cards lack the legacy image view; optional transition creation now requires an attached source view. Details still opens without the animation.
 
 ## Validation status
-Local Gradle bootstrap attempted: blocked downloading services.gradle.org (Network is unreachable). This environment also lacks an Android SDK/emulator. CI is the compilation, unit-test, packaging and available smoke-check route. No 4.1.5 test success or APK is claimed yet.
+Local Gradle bootstrap attempted: blocked downloading services.gradle.org (Network is unreachable). This environment also lacks an Android SDK/emulator. CI is the compilation, unit-test, packaging and available smoke-check route. Final source df1ed0185742509917bb180c2c6251220c9dc4a0 passed CI run 35875536264: 74 app tests, 17 WebDAV tests, debug/release packaging, emulator startup/navigation/local-playback and release upgrade/restart. The pinned signature and APK checksum passed. See BUILD_RESULTS.md and RETURN_HANDOVER.md. Physical Shield acceptance remains outstanding.
 
 ## Scope and limits
 Security: bridge binds IPv4 loopback; SFTP uses persisted trust on first use, shared SSH wire-key fingerprints across both backends, rejects changed keys, explicit per-host reset. First connection remains vulnerable to an already-present interceptor. Pins are not portable backup credentials.
@@ -27,3 +27,5 @@ Inspected the matching Android 11 AOSP implementation:
 https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-11.0.0_r1/core/jni/android_database_CursorWindow.cpp
 
 `nativeGetLong` throws IllegalStateException when the row/column field slot is inaccessible or its native type is unknown. Normal NULL returns zero; integers and strings are converted; a BLOB conversion throws SQLiteException instead. Therefore the new BLOB test is defensive hardening, **not a reproduction of the captured IllegalStateException**. The log omitted the message, preventing distinction between missing field slot and unknown type. New diagnostics record row, column, storage type, window start/count and safe record ID. The pinned CustomCursorFactory already documents a cursor-window/refill problem when records change, but only guards cursor movement. This is a plausible mechanism, not proof of the Shield trigger. No fixed timing, migration, duplicate record or particular media file is asserted as its cause.
+
+Candidate startup correction: SFTP trust initialisation now uses the supplied base context files directory because application context is not yet assigned during attachBaseContext. A null-application-context test was added; final full-process launch passed.
