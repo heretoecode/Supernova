@@ -53,7 +53,7 @@ public final class PreviewSeriesJourney {
         if(started){
             for(Entry e:episodes){Episode ep=(Episode)e.media;if(ep.getSeasonNumber()==season&&ep.getEpisodeNumber()==number){if(completed(ep))complete=true;if(!complete)selected=e;break;}}
             if(complete)for(Entry e:episodes){Episode ep=(Episode)e.media;if((ep.getSeasonNumber()>season||ep.getSeasonNumber()==season&&ep.getEpisodeNumber()>number)&&!completed(ep)){selected=e;break;}}
-            if(!PrivateMode.isActive()){SharedPreferences.Editor edit=p.edit();put(edit,key,season,number,complete,time);for(Entry e:episodes)edit.remove("preview_journey41:mark:"+((Video)e.media).getId());edit.apply();}
+            if(!PrivateMode.isActive()){SharedPreferences.Editor edit=p.edit();put(edit,key,season,number,complete,time);for(Entry e:source)edit.remove("preview_journey41:mark:"+((Video)e.media).getId());edit.apply();}
         }else{
             selected=episodes.stream().filter(e->!completed((Video)e.media)&&((Episode)e.media).getSeasonNumber()>0).findFirst().orElse(null);
             if(selected==null)selected=episodes.stream().filter(e->!completed((Video)e.media)).findFirst().orElse(null);

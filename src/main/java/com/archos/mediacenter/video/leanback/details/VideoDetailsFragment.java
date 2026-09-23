@@ -1129,7 +1129,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 Video history=mVideo;
                 Collections.sort(mVideoList,com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
                 mVideo=mVideoList.get(0);
-                if(history!=null&&history.getResumeMs()>0){mVideo.setResumeMs(history.getResumeMs());mVideo.setRemoteResumeMs(history.getRemoteResumeMs());}
+                if(history!=null&&history.getResumeMs()>0){mVideo.setAutomaticResumeMs(history.getResumeMs());mVideo.setRemoteResumeMs(history.getRemoteResumeMs());}
             }else Collections.sort(mVideoList, new SortByFavoriteSources(oldVideoList));
 
             mSelectCurrentVideo = true;

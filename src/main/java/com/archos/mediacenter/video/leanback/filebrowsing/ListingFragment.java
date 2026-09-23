@@ -845,6 +845,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     // -----------------------------------------------------
 
     private void openDetailsActivity(Video video, Presenter.ViewHolder itemViewHolder) {
+        if (!isAdded() || getActivity() == null || getActivity().isFinishing()) return;
         Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
         intent.putExtra(VideoDetailsFragment.EXTRA_VIDEO, video);
         intent.putExtra(VideoDetailsFragment.EXTRA_FORCE_VIDEO_SELECTION, true);
@@ -855,8 +856,9 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
             sourceView = ((ListPresenter.ListViewHolder)itemViewHolder).getImageView();
         }
 
-        ActivityOptionsCompat opts = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                getActivity(), sourceView, VideoDetailsActivity.SHARED_ELEMENT_NAME);
+        ActivityOptionsCompat opts = sourceView != null && sourceView.isAttachedToWindow()
+                ? ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    getActivity(), sourceView, VideoDetailsActivity.SHARED_ELEMENT_NAME) : null;
         infoLauncher.launch(intent, opts);
     }
 

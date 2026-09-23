@@ -1,0 +1,31 @@
+package com.archos.mediacenter.video.utils;
+import android.app.Application;
+import android.content.*;
+import androidx.preference.PreferenceManager;
+import java.io.*;
+import java.nio.file.Files;
+import org.json.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.*;
+import org.robolectric.annotation.Config;
+import static org.junit.Assert.*;
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
+public class RestoreJournalTest {
+    @Test public void interruptedSwapRollsBackFilesAndPreferencesBeforeReopening()throws Exception{exercise(false);}
+    @Test public void committedSwapSurvivesInterruptedCleanup()throws Exception{exercise(true);}
+    private void exercise(boolean commit)throws Exception{
+        Context context=RuntimeEnvironment.getApplication();File dir=new File(context.getFilesDir(),"restore-probe");dir.mkdirs();
+        File live=new File(dir,"db"),old=new File(dir,"db.old"),fresh=new File(dir,"db.new");
+        Files.write(live.toPath(),new byte[]{1});Files.write(fresh.toPath(),new byte[]{2});
+        SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(context);prefs.edit().clear().putString("generation","old").commit();
+        JSONArray files=new JSONArray().put(new JSONObject().put("live",live.getPath()).put("old",old.getPath()).put("fresh",fresh.getPath()).put("existed",true));
+        JSONObject state=RestoreJournal.prepare(context,files,SettingsBackup.encode(prefs),new JSONObject());
+        assertTrue(live.renameTo(old));assertTrue(fresh.renameTo(live));prefs.edit().putString("generation","new").putBoolean("newOnly",true).commit();
+        if(commit)RestoreJournal.commit(context,state);
+        // Simulate a new process using only persisted intent and files, with no Swap object.
+        RestoreJournal.recover(context);RestoreJournal.recover(context);
+        assertArrayEquals(new byte[]{(byte)(commit?2:1)},Files.readAllBytes(live.toPath()));
+        assertEquals(commit?"new":"old",prefs.getString("generation",null));assertEquals(commit,prefs.contains("newOnly"));assertFalse(old.exists());
+    }
+}

@@ -1,0 +1,20 @@
+diff --git a/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java b/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
+index c1da8b9..8115e95 100644
+--- a/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
++++ b/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
+@@ -376,6 +376,15 @@ public enum ShortcutDbAdapter {
+         close();
+     }
+ 
++    public void setRescanShortcutById(Context context, boolean toRescan, long shortcutId) {
++        open(context);
++        try {
++            ContentValues values = new ContentValues(1);
++            values.put(KEY_RESCAN, toRescan ? 1 : 0);
++            mDb.update(mDatabaseTable, values, KEY_ROWID + " = ?", new String[]{Long.toString(shortcutId)});
++        } finally { close(); }
++    }
++
+     public List<Shortcut> cursorToShortcutList(Cursor cursor){
+         List<Shortcut>shortcuts = new ArrayList<>();
+         if(cursor.getCount()>0){

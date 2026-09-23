@@ -140,7 +140,7 @@ public final class PreviewPages extends FrameLayout {
         }
     }};
     private Runnable ready=()->{};
-    public boolean hasComposedContent(){return loaded&&!list.isComputingLayout()&&list.getChildCount()>0&&list.getWidth()>0&&visibleArtworkReady(list);}
+    public boolean hasComposedContent(){return loaded&&!list.isComputingLayout()&&list.getChildCount()>0&&list.getWidth()>0;}
     private boolean visibleArtworkReady(View view){if(view instanceof TextView&&!OfficialTitleArtwork.readyForFirstFrame((TextView)view))return false;if(view instanceof PreviewCardPresenter.Card)return ((PreviewCardPresenter.Card)view).artworkReady;if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View child=group.getChildAt(i);if(child.getVisibility()==VISIBLE&&!visibleArtworkReady(child))return false;}}return true;}
     public void setReadyListener(Runnable listener){ready=listener;if(loaded)post(ready);}
     public boolean hasLoadedSnapshot(){return loaded;}
@@ -316,7 +316,7 @@ public final class PreviewPages extends FrameLayout {
     private void sort(){
         String[] names=sortLabels();if(!discovery.available){names[3]+=" — unavailable";names[4]+=" — unavailable";}
         PreviewDialog.choose(getContext(),"Sort",names,sorts[tab],n->{
-            if(n>=3&&!discovery.available)return;columns[tab].clearSort();sorts[tab]=n;ascending[tab]=n==1;render();
+            if(n>=3&&!discovery.available)return;quietOrder.clear();columns[tab].clearSort();sorts[tab]=n;ascending[tab]=n==1;render();
         });
     }
     private void filter(){PreviewDialog.choose(getContext(),"Filters",new String[]{"Genre"+(genres[tab].isEmpty()?"":": "+genres[tab]),"Year"+(years[tab]==0?"":": "+years[tab]),"Streaming Service"+(providers[tab].isEmpty()?"":": selected"),"Clear Filters"},-1,n->{
@@ -396,7 +396,7 @@ public final class PreviewPages extends FrameLayout {
                     v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(13),0,dp(18));LinearLayout controls=new LinearLayout(getContext());
                     controls.addView(button("Filters"+(genres[tab].isEmpty()?"":": "+genres[tab])+(years[tab]==0?"":" · "+years[tab])+"  ▾",()->filter()));
                     String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
-                    for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},ascending[tab]?0:1,n->{ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
+                    for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},ascending[tab]?0:1,n->{quietOrder.clear();ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
                     if(listMode[tab]){TextView chooser=button("Columns",()->columns[tab].choose(this::refreshColumns));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(chooser,lp);}
                     for(int i=0;i<controls.getChildCount();i++)controls.getChildAt(i).setTag("control:"+i);v.addView(controls);
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));

@@ -217,8 +217,11 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
                 if (! portEt.getText().toString().isEmpty()) {
                     try {
                         port = Integer.parseInt(portEt.getText().toString());
+                        if (port < 1 || port > 65535) throw new NumberFormatException();
                     } catch (NumberFormatException e) {
                         Toast.makeText(getActivity(), getString(R.string.invalid_port), Toast.LENGTH_SHORT).show();
+                        portEt.requestFocus();
+                        return;
                     }
                 }
 
@@ -246,6 +249,8 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
                     validUri = false;
                 } else if (! UriUtils.isValidPort(port)) {
                     Toast.makeText(getActivity(), getString(R.string.invalid_port), Toast.LENGTH_SHORT).show();
+                        portEt.requestFocus();
+                        return;
                     log.warn("onClick: invalid port: {}", port);
                     validUri = false;
                 } else if (! UriUtils.isValidPath(path)) {

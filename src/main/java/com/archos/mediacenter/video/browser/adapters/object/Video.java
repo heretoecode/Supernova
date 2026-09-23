@@ -55,6 +55,8 @@ public class Video extends Base implements Serializable {
     /** Duration in milliseconds. May equals PlayerActivity.LAST_POSITION_UNKNOWN or PlayerActivity.LAST_POSITION_END */
     int mDurationMs;
     int mResumeMs;
+    // Only automatic logical-title selection may transfer another file's real bookmark.
+    private Integer mAutomaticResumeMs;
     int mRemoteResume =-1;
 
     final int mVideo3dMode; // one of ARCHOS_STEREO_2D, ARCHOS_STEREO_3D_UNKNOWN, ARCHOS_STEREO_3D_SBS, ARCHOS_STEREO_3D_TB, ARCHOS_STEREO_3D_ANAGLYPH
@@ -160,6 +162,11 @@ public class Video extends Base implements Serializable {
     public long getSize(){return mSize;}
 
     public void setResumeMs(int resumeMs) { mResumeMs = resumeMs; }
+    public void setAutomaticResumeMs(int resumeMs) {
+        mAutomaticResumeMs = resumeMs > 0 ? resumeMs : null;
+        mResumeMs = resumeMs;
+    }
+    public int getAutomaticResumeMs() { return mAutomaticResumeMs == null ? -1 : mAutomaticResumeMs; }
     public void setRemoteResumeMs(int resumeMs) { mRemoteResume = resumeMs; }
     public boolean is3D() {
         return (mVideo3dMode > VideoStore.Video.VideoColumns.ARCHOS_STEREO_2D);

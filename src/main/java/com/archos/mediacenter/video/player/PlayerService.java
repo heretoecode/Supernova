@@ -1819,18 +1819,20 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         // don't re-skip the same segment if the user deliberately seeks back into it
         if (skip.endMs == mLastAutoSkippedEndMs) return;
         mLastAutoSkippedEndMs = skip.endMs;
-        // When the skip target reaches the end of the media (e.g. an outro that runs to the
-        // file end), seeking there fails ("stream_seek time err") and breaks playback. End the
-        // video naturally instead, which advances to the next episode (binge) or stops cleanly.
-        if (duration > 0 && targetMs >= duration - AUTO_SKIP_END_MARGIN_MS) {
-            if (log.isDebugEnabled()) log.debug("autoSkipIfNeeded: skipping {} from {} reaches end ({}), completing", skip.type, position, duration);
-            showAutoSkipToast(skip.type);
-            onCompletion();
+        // Provider metadata is not engine EOF. Let the backend reach the real end;
+        // an out-of-range seek must never commit watched state or erase resume.
+        if (!isSafeAutoSkipTarget(targetMs, duration)) {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("auto_skip_declined", "target_ms", targetMs, "duration_ms", duration);
             return;
         }
         if (log.isDebugEnabled()) log.debug("autoSkipIfNeeded: skipping {} from {} to {} (segment end {})", skip.type, position, targetMs, skip.endMs);
         Player.sPlayer.seekTo((int) targetMs);
         showAutoSkipToast(skip.type);
+    }
+
+    public static boolean isSafeAutoSkipTarget(long targetMs, int duration) {
+        return targetMs >= 0 && targetMs <= Integer.MAX_VALUE && duration > 0
+                && targetMs < duration - AUTO_SKIP_END_MARGIN_MS;
     }
 
     // User-facing feedback when an auto-skip fires (the user opted in via the Play mode toggle).
@@ -1944,11 +1946,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public com.archos.mediacenter.video.browser.adapters.object.Episode previewAdjacentEpisode(int direction){
         if(mVideoInfo==null||!mVideoInfo.isShow)return null;
         com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();if(snapshot==null)return null;
-        java.util.List<com.archos.mediacenter.video.browser.adapters.object.Episode> episodes=new java.util.ArrayList<>();long show=0;
-        for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e:snapshot.episodes)if(((Video)e.media).getId()==mVideoInfo.id){show=e.show;break;}if(show==0)return null;
-        for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e:snapshot.episodes)if(e.show==show)episodes.add((com.archos.mediacenter.video.browser.adapters.object.Episode)e.media);
-        episodes.sort(java.util.Comparator.comparingInt(com.archos.mediacenter.video.browser.adapters.object.Episode::getSeasonNumber).thenComparingInt(com.archos.mediacenter.video.browser.adapters.object.Episode::getEpisodeNumber));
-        for(int i=0;i<episodes.size();i++)if(episodes.get(i).getId()==mVideoInfo.id){int next=i+direction;return next>=0&&next<episodes.size()?episodes.get(next):null;}return null;
+        return com.archos.mediacenter.video.leanback.PreviewVariants.adjacentEpisode(snapshot.episodes,mVideoInfo.id,direction);
     }
     public void previewNavigateEpisode(int direction){com.archos.mediacenter.video.browser.adapters.object.Episode next=previewAdjacentEpisode(direction);if(next==null)return;mNextUri=next.getUri();mNextVideoId=next.getId();advancePlayback(false);}
     public boolean previewAutoNextEnabled(){return mPlayMode==PLAYMODE_BINGE&&mNextUri!=null;}

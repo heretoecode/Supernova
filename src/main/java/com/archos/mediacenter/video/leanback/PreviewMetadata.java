@@ -16,7 +16,7 @@ final class PreviewMetadata {
         Video video=(Video)entry.media;String key=video.getId()+":"+entry.bytes+":"+entry.modified;
         synchronized(pending){VideoMetadata found=cache.get(key);if(found!=null){apply(entry,found);refreshed.run();return;}if(!pending.add(key))return;}
         Context app=context.getApplicationContext();
-        try{worker.execute(()->{VideoMetadata result=null;try{result=com.archos.mediacenter.video.info.VideoInfoCommonClass.retrieveMetadata(video,app);if(result!=null&&result.getVideoTrack()!=null&&result.getVideoWidth()>0&&video.isIndexed())result.save(app,video.getFilePath());}catch(Exception|LinkageError e){com.archos.mediacenter.video.diagnostics.Diagnostics.error("list_metadata_unavailable",e);}finally{synchronized(pending){pending.remove(key);cache.put(key,result==null?new VideoMetadata():result);}}
+        try{worker.execute(()->{VideoMetadata result=null;try{result=com.archos.mediacenter.video.info.VideoInfoCommonClass.retrieveMetadata(video,app);if(result!=null&&result.getVideoTrack()!=null&&result.getVideoWidth()>0&&video.isIndexed())result.save(app,video.getFilePath());}catch(Exception|LinkageError e){com.archos.mediacenter.video.diagnostics.Diagnostics.error("list_metadata_unavailable",e);}finally{synchronized(pending){pending.remove(key);if(result!=null&&(result.getVideoTrack()!=null||result.getAudioTrackNb()>0))cache.put(key,result);}}
             VideoMetadata ready=result;if(ready!=null)new android.os.Handler(android.os.Looper.getMainLooper()).post(()->{apply(entry,ready);refreshed.run();});
         });}catch(RejectedExecutionException full){synchronized(pending){pending.remove(key);}}
     }

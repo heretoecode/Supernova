@@ -17,7 +17,7 @@ public final class SettingsBackup {
     }
     public static SharedPreferences.Editor decode(SharedPreferences prefs, String json) throws JSONException {
         JSONObject root = new JSONObject(json);
-        SharedPreferences.Editor editor = prefs.edit();
+        SharedPreferences.Editor editor = prefs.edit().clear();
         for (Iterator<String> it = root.keys(); it.hasNext();) {
             String key = it.next(); JSONObject item = root.getJSONObject(key);
             switch (item.getString("type")) {

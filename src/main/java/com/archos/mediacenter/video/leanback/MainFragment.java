@@ -381,7 +381,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         requireActivity().getIntent().removeExtra("preview_tab");
         android.widget.FrameLayout composed=new android.widget.FrameLayout(requireContext());composed.addView(mNavigation,new android.widget.FrameLayout.LayoutParams(-1,-1));
         View launch=new View(requireContext());launch.setBackground(new PreviewStartupSurface(requireContext()));launch.setClickable(true);composed.addView(launch,new android.widget.FrameLayout.LayoutParams(-1,-1));
-        mPreviewPages.setReadyListener(()->{if(launch.getParent()==null)return;composed.post(new Runnable(){public void run(){if(launch.getParent()==null||mPreviewPages==null||mNavigation==null)return;if(!mPreviewPages.hasComposedContent()||!mNavigation.readyForFirstFrame()){composed.postOnAnimation(this);return;}composed.getViewTreeObserver().addOnPreDrawListener(new android.view.ViewTreeObserver.OnPreDrawListener(){public boolean onPreDraw(){composed.getViewTreeObserver().removeOnPreDrawListener(this);launch.animate().alpha(0f).setDuration(160).withEndAction(()->composed.removeView(launch)).start();return true;}});composed.invalidate();}});});
+        mPreviewPages.setReadyListener(()->{if(launch.getParent()==null)return;composed.post(new Runnable(){public void run(){if(launch.getParent()==null||mPreviewPages==null||mNavigation==null)return;if(!mPreviewPages.hasComposedContent()){composed.postOnAnimation(this);return;}composed.getViewTreeObserver().addOnPreDrawListener(new android.view.ViewTreeObserver.OnPreDrawListener(){public boolean onPreDraw(){composed.getViewTreeObserver().removeOnPreDrawListener(this);launch.animate().alpha(0f).setDuration(160).withEndAction(()->composed.removeView(launch)).start();return true;}});composed.invalidate();}});});
         new androidx.core.view.WindowInsetsControllerCompat(requireActivity().getWindow(),composed).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());requireActivity().getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
         return composed;
     }
@@ -1696,6 +1696,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         if (updateActivity("onLoadFinished") == null) return;
         if (cursorLoader.getId() == PreviewLibraryLoader.ID) {
             if (mPreviewPages != null) mPreviewPages.setSnapshot(((PreviewLibraryLoader)cursorLoader).snapshot);
+            String warning=((PreviewLibraryLoader)cursorLoader).loadWarning;
+            if(warning!=null)PreviewNotice.show(requireContext(),warning,true);
             return;
         }
         boolean scanningOnGoing = NetworkScannerReceiver.isScannerWorking() || LoaderUtils.getScrapeInProgress() || isVideoImportRunning();

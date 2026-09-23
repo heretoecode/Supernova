@@ -12,6 +12,7 @@ import java.util.*;
 public final class PreviewLibraryLoader extends AllVideosLoader {
     public static final int ID = 12001;
     public volatile Snapshot snapshot;
+    public volatile String loadWarning;
     private final AllTvshowsLoader showsQuery;
     public PreviewLibraryLoader(Context context) {
         super(context);
@@ -132,15 +133,19 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     @Override public Cursor loadInBackground() {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_load_begin");
         long started=android.os.SystemClock.elapsedRealtime();
-        Cursor c=super.loadInBackground();
-        if(c==null) return null;
+        Cursor c=null;
+        loadWarning=null;
         try {
+            Cursor loaded=super.loadInBackground();
+            if(loaded==null) throw new IllegalStateException("Library query unavailable");
+            c=new PreviewMappingCursor(loaded);
             List<Entry> videos=new ArrayList<>(), shows=new ArrayList<>();
             VideoCursorMapper mapper=new VideoCursorMapper(); mapper.bindColumns(c);
             int added=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATE_ADDED);
             int show=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID);
             int mg=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_M_GENRES), sg=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_GENRES);
-            while(c.moveToNext()) { Video v=(Video)mapper.bind(c);
+            int visited=0, rejected=0, expected=c.getCount();
+            while(c.moveToNext()) { visited++; try { Video v=(Video)mapper.bind(c);
                 String backdrop=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_FILE));
                 if(backdrop!=null && !backdrop.isEmpty()) v.setPreviewBackdrop(android.net.Uri.fromFile(new java.io.File(backdrop)).toString());
                 else { String remote=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL)); if(remote!=null && (remote.startsWith("https://") || remote.startsWith("http://")))v.setPreviewBackdrop(remote); }
@@ -148,7 +153,14 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 entry.modified=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATE_MODIFIED));entry.bitrate=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.ARCHOS_VIDEO_BITRATE));
                 entry.releaseDate=c.getString(c.getColumnIndexOrThrow(v instanceof Episode?VideoStore.Video.VideoColumns.SCRAPER_S_PREMIERED:VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE));
                 if(v instanceof Episode)entry.onlineId=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID));
-                videos.add(entry); }
+                videos.add(entry);
+                } catch(android.database.sqlite.SQLiteException databaseFailure) { throw databaseFailure;
+                } catch(IllegalStateException | IllegalArgumentException badRecord) {
+                    ((PreviewMappingCursor)c).report("video",badRecord);
+                    if(++rejected>=32) throw new IllegalStateException("Library record failure limit",badRecord);
+                }
+            }
+            if(visited!=expected) throw new IllegalStateException("Library cursor ended before its reported count");
             AllTvshowsLoader loader=showsQuery;
             try(Cursor sc=getContext().getContentResolver().query(loader.getUri(),loader.getProjection(),loader.getSelection(),loader.getSelectionArgs(),loader.getSortOrder())) {
                 if(sc!=null) { TvshowCursorMapper sm=new TvshowCursorMapper(); sm.bindColumns(sc);
@@ -156,7 +168,22 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                     while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId()); Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;}shows.add(se); }
                 }
             }
-            snapshot=build(videos,shows);applyJourneys(snapshot,videos);cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=snapshot;final Snapshot diskSnapshot=snapshot;if(!cachePrivate)cacheWriter.execute(()->writeCache(diskSnapshot)); android.util.Log.d("NovaPreview","Library snapshot: "+(android.os.SystemClock.elapsedRealtime()-started)+" ms, "+videos.size()+" files (local database)");c.moveToPosition(-1); return c;
-        } catch(RuntimeException e) {com.archos.mediacenter.video.diagnostics.Diagnostics.error("indexed_library_load_failed",e);c.close();throw e; }
+            Snapshot result=build(videos,shows);
+            if(rejected==0) {
+                applyJourneys(result,videos);
+                cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=result;
+                if(!cachePrivate)cacheWriter.execute(()->writeCache(result));
+            } else loadWarning="Some library records could not be read. Library data was not changed. Please export diagnostics and retry.";
+            snapshot=result;
+            c.moveToPosition(-1); return c;
+        } catch(android.os.OperationCanceledException | androidx.core.os.OperationCanceledException cancelled) {
+            if(c!=null)c.close();throw cancelled;
+        } catch(RuntimeException e) {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.error("indexed_library_load_failed",e);
+            if(c!=null)try{c.close();}catch(RuntimeException closeFailure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("indexed_library_close_failed",closeFailure);}
+            loadWarning="The library could not be read. Library data was not changed. Please export diagnostics and retry.";
+            Snapshot previous=memoryCache();snapshot=previous!=null?previous:new Snapshot();
+            return null;
+        }
     }
 }

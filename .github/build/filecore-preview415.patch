@@ -1,0 +1,122 @@
+diff --git a/src/com/archos/filecorelibrary/StreamOverHttp.java b/src/com/archos/filecorelibrary/StreamOverHttp.java
+index e2c3597..de8880f 100644
+--- a/src/com/archos/filecorelibrary/StreamOverHttp.java
++++ b/src/com/archos/filecorelibrary/StreamOverHttp.java
+@@ -91,7 +91,7 @@ public class StreamOverHttp {
+ 		mUri= f.getUri();
+ 		mName = f.getName();
+ 		fileMimeType = forceMimeType!=null ? forceMimeType : "*/*";
+-		serverSocket = new ServerSocket(0);
++		serverSocket = new ServerSocket(0, 50, java.net.InetAddress.getByName("127.0.0.1"));
+ 		mainThread = new Thread(new Runnable(){
+ 			public void run(){
+ 				try {
+@@ -113,7 +113,7 @@ public class StreamOverHttp {
+ 		mUri = uri;
+ 		mName = FileUtils.getName(mUri);
+         fileMimeType = forceMimeType!=null ? forceMimeType : "*/*";
+-        serverSocket = new ServerSocket(0);
++        serverSocket = new ServerSocket(0, 50, java.net.InetAddress.getByName("127.0.0.1"));
+         mainThread = new Thread(new Runnable(){
+             public void run(){
+                 try {
+@@ -518,7 +518,7 @@ public class StreamOverHttp {
+ 	 */
+ 	public Uri getUri(String fileName){
+ 		int port = serverSocket.getLocalPort();
+-		String url = "http://localhost:"+port;
++		String url = "http://127.0.0.1:"+port;
+ 		if(fileName!=null)
+ 			url += '/'+fileName;
+ 		return Uri.parse(url);
+@@ -526,7 +526,7 @@ public class StreamOverHttp {
+ 
+ 	public Uri getEncodedUri(String fileName){
+ 		int port = serverSocket.getLocalPort();
+-		String url = "http://localhost:"+port;
++		String url = "http://127.0.0.1:"+port;
+ 		if(fileName!=null) {
+ 			try {
+ 				// URL encode the filename to handle spaces and special characters
+diff --git a/src/com/archos/filecorelibrary/sftp/SFTPSession.java b/src/com/archos/filecorelibrary/sftp/SFTPSession.java
+index 6424942..8796a8b 100644
+--- a/src/com/archos/filecorelibrary/sftp/SFTPSession.java
++++ b/src/com/archos/filecorelibrary/sftp/SFTPSession.java
+@@ -181,7 +181,18 @@ public class SFTPSession {
+             session = jsch.getSession(username, path.getHost(), port);
+             session.setPassword(password);
+             java.util.Properties config = new java.util.Properties();
+-            config.put("StrictHostKeyChecking", "no");
++            final String host = path.getHost();
++            final int trustedPort = port;
++            jsch.setHostKeyRepository(new com.jcraft.jsch.HostKeyRepository() {
++                public int check(String ignored, byte[] key) { return SftpHostTrust.verify(host,trustedPort,key)?OK:CHANGED; }
++                public void add(com.jcraft.jsch.HostKey key,com.jcraft.jsch.UserInfo info) { }
++                public void remove(String host,String type) { }
++                public void remove(String host,String type,byte[] key) { }
++                public String getKnownHostsRepositoryID() { return "Supernova persisted SSH identity"; }
++                public com.jcraft.jsch.HostKey[] getHostKey() { return new com.jcraft.jsch.HostKey[0]; }
++                public com.jcraft.jsch.HostKey[] getHostKey(String host,String type) { return getHostKey(); }
++            });
++            config.put("StrictHostKeyChecking", "yes");
+             session.setConfig(config);
+             session.connect();
+             currentSessions.put(cred, session);
+diff --git a/src/com/archos/filecorelibrary/sftp/SftpHostTrust.java b/src/com/archos/filecorelibrary/sftp/SftpHostTrust.java
+new file mode 100644
+index 0000000..b55eaef
+--- /dev/null
++++ b/src/com/archos/filecorelibrary/sftp/SftpHostTrust.java
+@@ -0,0 +1,33 @@
++package com.archos.filecorelibrary.sftp;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.util.Base64;
++import java.security.MessageDigest;
++import java.util.Locale;
++
++/** Persist first-use SSH wire keys; never accept a changed identity automatically. */
++public final class SftpHostTrust {
++    private static SharedPreferences pins;
++    public static synchronized void initialise(Context context) {
++        pins=context.getApplicationContext().getSharedPreferences("sftp_host_trust",Context.MODE_PRIVATE);
++    }
++    private static String identity(String host,int port) {
++        return host.toLowerCase(Locale.ROOT)+":"+(port<0?22:port);
++    }
++    public static synchronized boolean verify(String host,int port,byte[] wireKey) {
++        if(pins==null||host==null||wireKey==null||wireKey.length==0)return false;
++        try {
++            String id=identity(host,port);
++            String fingerprint=Base64.encodeToString(MessageDigest.getInstance("SHA-256").digest(wireKey),Base64.NO_WRAP);
++            String known=pins.getString(id,null);
++            if(known!=null)return known.equals(fingerprint);
++            // Compatibility migration: first use after upgrade establishes the pin.
++            // A failed durable write is a verification failure, not permission to proceed.
++            return pins.edit().putString(id,fingerprint).commit();
++        } catch(java.security.NoSuchAlgorithmException | RuntimeException failure){return false;}
++    }
++    public static synchronized String[] hosts(){return pins==null?new String[0]:pins.getAll().keySet().toArray(new String[0]);}
++    public static synchronized boolean forget(String identity){return pins!=null&&pins.edit().remove(identity).commit();}
++    private SftpHostTrust(){}
++}
+diff --git a/src/com/archos/filecorelibrary/sshj/SshjUtils.java b/src/com/archos/filecorelibrary/sshj/SshjUtils.java
+index 714f781..ce8bc20 100644
+--- a/src/com/archos/filecorelibrary/sshj/SshjUtils.java
++++ b/src/com/archos/filecorelibrary/sshj/SshjUtils.java
+@@ -84,7 +84,13 @@ public class SshjUtils {
+                 if (log.isTraceEnabled()) log.trace("getSshClient: sshClient is null or not connected for {}, connecting to {}", uri, server);
+                 DefaultConfig sshjConfig = new DefaultConfig();
+                 sshClient = new SSHClient(sshjConfig);
+-                sshClient.addHostKeyVerifier(new PromiscuousVerifier());
++                sshClient.addHostKeyVerifier(new net.schmizz.sshj.transport.verification.HostKeyVerifier() {
++                    public boolean verify(String hostname,int port,java.security.PublicKey key) {
++                        return com.archos.filecorelibrary.sftp.SftpHostTrust.verify(hostname,port,
++                                new net.schmizz.sshj.common.Buffer.PlainBuffer().putPublicKey(key).getCompactData());
++                    }
++                    public java.util.List<String> findExistingAlgorithms(String hostname,int port) { return java.util.Collections.emptyList(); }
++                });
+                 if (port != -1) sshClient.connect(server, port);
+                 else sshClient.connect(server);
+                 sshClient.authPassword(username, password.toCharArray());

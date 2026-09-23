@@ -28,6 +28,7 @@ import static org.mockito.Mockito.*;
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewStartupTest {
     private VideoOpenHelper database;
+    private boolean failQuery, failScraperRead;
     private MockedStatic<ExtStorageManager> storage;
     @Before public void setUp() throws Exception {
         Context context=RuntimeEnvironment.getApplication();
@@ -46,7 +47,13 @@ public class PreviewStartupTest {
             public boolean onCreate(){return true;}
             public Cursor query(Uri uri,String[] projection,String selection,String[] args,String order){
                 SQLiteQueryBuilder builder=new SQLiteQueryBuilder();builder.setTables(VideoOpenHelper.VIDEO_VIEW_NAME);
-                return builder.query(db,projection,selection,args,null,null,order);
+                if(failQuery)throw new SQLiteException("Injected unavailable database");
+                Cursor result=builder.query(db,projection,selection,args,null,null,order);
+                if(!failScraperRead)return result;
+                return new android.database.CursorWrapper(result){@Override public int getInt(int column){
+                    if(getColumnName(column).equals(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE))throw new IllegalStateException("Injected window read failure");
+                    return super.getInt(column);
+                }};
             }
             public String getType(Uri uri){return null;}
             public Uri insert(Uri uri,ContentValues values){throw new UnsupportedOperationException();}
@@ -116,6 +123,30 @@ public class PreviewStartupTest {
             throw failure;
         }
         host.pause().stop().destroy();
+    }
+    private void insertUnmatched(long id){
+        ContentValues values=new ContentValues();values.put("_id",id);values.put("_data","/storage/probe-"+id+".mkv");
+        values.put("title","Probe");database.getWritableDatabase().insertOrThrow(VideoOpenHelper.FILES_TABLE_NAME,null,values);
+    }
+    @Test public void badScraperReadIsContainedOnAsynchronousWorker()throws Exception{
+        insertUnmatched(1);failScraperRead=true;
+        PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
+        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
+        try{worker.submit(()->{try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.snapshot);assertNotNull(loader.loadWarning);assertTrue(loader.snapshot.recent.isEmpty());}}).get(15,java.util.concurrent.TimeUnit.SECONDS);}
+        finally{worker.shutdownNow();}
+    }
+    @Test public void failedDatabaseQueryReturnsVisibleErrorWithoutWritingEmptyCache(){
+        failQuery=true;PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
+        PreviewLibraryLoader.Snapshot previous=PreviewLibraryLoader.memoryCache();
+        assertNull(loader.loadInBackground());assertNotNull(loader.loadWarning);assertNotNull(loader.snapshot);
+        assertSame(previous,PreviewLibraryLoader.memoryCache());
+    }
+    @Test public void nullAndBoundaryNumericValuesRemainReadable(){
+        insertUnmatched(2);PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
+        try(Cursor cursor=loader.loadInBackground()){assertNull(loader.loadWarning);assertEquals(1,loader.snapshot.recent.size());}
+        android.database.MatrixCursor raw=new android.database.MatrixCursor(new String[]{"numeric"});
+        raw.addRow(new Object[]{null});raw.addRow(new Object[]{Integer.MAX_VALUE});raw.addRow(new Object[]{Integer.MIN_VALUE});
+        try(PreviewMappingCursor cursor=new PreviewMappingCursor(raw)){assertTrue(cursor.moveToNext());assertEquals(0,cursor.getInt(0));assertTrue(cursor.moveToNext());assertEquals(Integer.MAX_VALUE,cursor.getInt(0));assertTrue(cursor.moveToNext());assertEquals(Integer.MIN_VALUE,cursor.getInt(0));}
     }
     private void draw(MainFragment fragment){
         for(int i=0;i<4;i++){

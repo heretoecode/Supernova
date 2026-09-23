@@ -40,8 +40,8 @@ public final class PreviewBackdrop extends Drawable implements Target {
         canvas.drawRect(0,0,b.width(),h,paint);paint.setShader(null);
     }
     private void drawImage(Canvas canvas,Bitmap image,float w,float h,float alpha){if(image==null||image.isRecycled()||image.getWidth()<image.getHeight())return;float scale=Math.max(w/image.getWidth(),h/image.getHeight());paint.setAlpha((int)(255*alpha));canvas.save();canvas.clipRect(0,0,w,h);canvas.drawBitmap(image,null,new RectF(w-image.getWidth()*scale,0,w,image.getHeight()*scale),paint);canvas.restore();}
-    @Override public void onBitmapLoaded(Bitmap b,Picasso.LoadedFrom from){loading=false;motionDirection=pendingDirection;pendingDirection=0;if(b.getWidth()<b.getHeight())return;previous=bitmap;bitmap=b;fadeStart=previous==null?0:android.os.SystemClock.uptimeMillis();invalidateSelf();}
-    @Override public void onBitmapFailed(Exception e,Drawable d){loading=false;invalidateSelf();}
+    @Override public void onBitmapLoaded(Bitmap b,Picasso.LoadedFrom from){loading=false;motionDirection=pendingDirection;pendingDirection=0;if(b.getWidth()<b.getHeight()){onBitmapFailed(null,null);return;}previous=bitmap;bitmap=b;fadeStart=previous==null?0:android.os.SystemClock.uptimeMillis();invalidateSelf();}
+    @Override public void onBitmapFailed(Exception e,Drawable d){loading=false;bitmap=previous=null;invalidateSelf();}
     @Override public void onPrepareLoad(Drawable d){}
     @Override public void setAlpha(int alpha){}
     @Override public void setColorFilter(ColorFilter f){}

@@ -81,6 +81,13 @@ jobs:
           git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview414.patch
           git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
 
+      - name: Apply bounded Preview 4.1.5 stability corrections
+        run: |
+          git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview415.patch
+          git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview415.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview415.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview415.patch
+
       - name: Isolate Preview package and content providers
         run: python3 source/.github/build/prepare-preview.py nova
 
@@ -134,11 +141,10 @@ jobs:
           if [[ "$VALIDATION_MODE" == preview ]]; then extra_args+=(-x lintNoamazonDebug); fi
           ./gradlew assembleNoamazonDebug -Puniversal -PmarkPreview "${extra_args[@]}" --build-cache --no-daemon 2>&1 | tee ../gradle-debug-build.log
 
-      - name: Quick targeted library metadata checks
-        if: ${{ inputs.validation != 'full' }}
+      - name: Targeted stability and library metadata checks
         working-directory: nova/Video
         run: |
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview411Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview412Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview413Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview414Test.*' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.*' --tests 'com.archos.mediacenter.video.streaming.StreamingPreferencesTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41RowsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewUpNextTest.*' --tests 'com.archos.mediacenter.video.player.PlaybackResumePolicyTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview411Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview412Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview413Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview414Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview415Test.*' --tests 'com.archos.mediacenter.video.utils.Preview415BridgeTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest.*' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.*' --tests 'com.archos.mediacenter.video.streaming.StreamingPreferencesTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.utils.RestoreJournalTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41RowsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewUpNextTest.*' --tests 'com.archos.mediacenter.video.player.PlaybackResumePolicyTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
 
       - name: Check selectively ported WebDAV behaviour
         working-directory: nova/Video

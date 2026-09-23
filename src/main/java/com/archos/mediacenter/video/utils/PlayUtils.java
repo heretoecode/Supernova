@@ -166,6 +166,7 @@ public class PlayUtils implements IndexHelper.Listener {
                              ExternalPlayerWithResultStarter externalPlayerWithResultStarter,
                              long playlistId) {
         reset();
+        resumePosition = resolveAutomaticResume(video, resume, resumePosition);
         mContext = context;
         mResume = resume;
         mVideo = video;
@@ -190,6 +191,13 @@ public class PlayUtils implements IndexHelper.Listener {
             if (log.isDebugEnabled()) log.debug("startPlayer: send onResumeReady");
             onResumeReady(context, mVideo, mimeType, resume, legacyPlayer, resumePosition, externalPlayerWithResultStarter, playlistId);
         }
+    }
+
+    public static int resolveAutomaticResume(Video video, int mode, int explicitPosition) {
+        if (explicitPosition >= 0) return explicitPosition;
+        if (mode == PlayerService.RESUME_FROM_LAST_POS || mode == PlayerService.RESUME_FROM_LOCAL_POS)
+            return video.getAutomaticResumeMs();
+        return explicitPosition;
     }
 
     public void requestVideoDb() {

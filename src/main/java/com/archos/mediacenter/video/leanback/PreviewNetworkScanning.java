@@ -41,11 +41,11 @@ public final class PreviewNetworkScanning {
         });
     }
     private static void sources(Context c){
-        List<String> names=new ArrayList<>();Set<Integer> checked=new HashSet<>();
+        List<String> names=new ArrayList<>();List<Long> ids=new ArrayList<>();Set<Integer> checked=new HashSet<>();
         try(Cursor cursor=ShortcutDbAdapter.VIDEO.getAllShortcuts(c,null,null)){
-            if(cursor!=null)while(cursor.moveToNext()){if(cursor.getInt(5)==1)checked.add(names.size());names.add(cursor.getString(3));}
+            if(cursor!=null)while(cursor.moveToNext()){if(cursor.getInt(5)==1)checked.add(names.size());names.add(cursor.getString(3));ids.add(cursor.getLong(0));}
         }
         if(names.isEmpty()){PreviewDialog.read(c,"Sources Included","Add a Library Source before choosing sources for automatic scanning.");return;}
-        PreviewDialog.choose(c,"Sources Included",names.toArray(new String[0]),0,checked,n->{ShortcutDbAdapter.VIDEO.setRescanShortcut(c,!checked.contains(n),names.get(n));sources(c);});
+        PreviewDialog.choose(c,"Sources Included",names.toArray(new String[0]),0,checked,n->{ShortcutDbAdapter.VIDEO.setRescanShortcutById(c,!checked.contains(n),ids.get(n));sources(c);});
     }
 }

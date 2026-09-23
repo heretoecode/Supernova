@@ -105,6 +105,7 @@ public final class SafeBackup {
         }
     }
     public static void restore(Context c, File stage) throws Exception {
+        RestoreJournal.recover(c);
         String token=UUID.randomUUID().toString();
         List<Swap> swaps=new ArrayList<>();
         try {
@@ -123,22 +124,23 @@ public final class SafeBackup {
             holder.lockExclusive();
             try {
                 holder.close(); ShortcutDbAdapter.VIDEO.close();
+                org.json.JSONArray recoveryFiles=new org.json.JSONArray();
+                for(Swap swap:swaps)recoveryFiles.put(new org.json.JSONObject().put("live",swap.live.getAbsolutePath()).put("old",swap.old.getAbsolutePath()).put("fresh",swap.fresh.getAbsolutePath()).put("existed",swap.live.exists()));
+                org.json.JSONObject recoveryNamed=new org.json.JSONObject();for(Map.Entry<String,String> entry:originalNamed.entrySet())recoveryNamed.put(entry.getKey(),entry.getValue());
+                org.json.JSONObject journal=RestoreJournal.prepare(c,recoveryFiles,originalSettings,recoveryNamed);
                 try {
                     for(Swap swap:swaps) swap.apply();
                     for(Map.Entry<String,String> entry:restoredNamed.entrySet())if(!SettingsBackup.decode(c.getSharedPreferences(entry.getKey(),0),entry.getValue()).commit())throw new IOException("Cannot restore account configuration");
                     File settings=new File(stage,"settings.json");
                     if(settings.isFile()&&!SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c),read(settings)).commit())
                         throw new IOException("Cannot save restored settings");
+                    RestoreJournal.commit(c,journal);
                 } catch(Exception error) {
-                    SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c),originalSettings).clear().commit();
-                    for(Map.Entry<String,String> entry:originalNamed.entrySet())SettingsBackup.decode(c.getSharedPreferences(entry.getKey(),0),entry.getValue()).clear().commit();
-                    for(int i=swaps.size()-1;i>=0;i--) {
-                        try { swaps.get(i).rollback(); } catch(IOException recovery) { error.addSuppressed(recovery); }
-                    }
+                    try { RestoreJournal.recover(c); } catch(Exception recovery) { error.addSuppressed(recovery); }
                     throw error;
                 }
             } finally { holder.unlockExclusive(); }
-            for(Swap swap:swaps) remove(swap.old);
+            RestoreJournal.recover(c);
         } finally {
             for(Swap swap:swaps) remove(swap.fresh);
             remove(stage);

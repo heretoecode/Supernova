@@ -40,9 +40,19 @@ final class PreviewBrowserSurface extends BrowseFrameLayout {
         if(titleCommands.getParent() instanceof ViewGroup)((ViewGroup)titleCommands.getParent()).removeView(titleCommands);
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){if(event.getAction()==KeyEvent.ACTION_DOWN&&dock.hasFocus()){
-        if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT){sourceControl.requestFocus();return true;}
-        if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){open.requestFocus();return true;}
+        if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT){if(moveInsideDock(View.FOCUS_LEFT))return true;sourceControl.requestFocus();return true;}
+        if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){if(moveInsideDock(View.FOCUS_RIGHT))return true;open.requestFocus();return true;}
     }if(event.getAction()==KeyEvent.ACTION_DOWN&&sourceControl.hasFocus()&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){dock.requestFocus();return true;}return super.dispatchKeyEvent(event);}
+    private boolean moveInsideDock(int direction){
+        View focused=dock.findFocus();if(focused==null)return false;
+        View next=android.view.FocusFinder.getInstance().findNextFocus(dock,focused,direction);
+        if(next==null||next==focused)return false;
+        android.graphics.Rect from=new android.graphics.Rect(),to=new android.graphics.Rect();
+        focused.getDrawingRect(from);dock.offsetDescendantRectToMyCoords(focused,from);
+        next.getDrawingRect(to);dock.offsetDescendantRectToMyCoords(next,to);
+        if(direction==View.FOCUS_LEFT?to.centerX()>=from.centerX():to.centerX()<=from.centerX())return false;
+        return next.requestFocus(direction);
+    }
     private void navigate(Activity activity,int index){if(index==4){activity.startActivity(new Intent(activity,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));return;}if(index==5){activity.startActivity(new Intent(activity,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));return;}activity.startActivity(new Intent(activity,MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));activity.finish();}
     void focusItem(Object item,Runnable action){openSelected=action;open.setText(item instanceof Video?"View Details":"Open");com.squareup.picasso.Picasso.get().cancelRequest(poster);poster.setImageDrawable(null);
         if(item instanceof Video){Video v=(Video)item;name.setText(v.getName());String detail=v.getFilenameNonCryptic();if(v.getSize()>0)detail+="\n\n"+android.text.format.Formatter.formatFileSize(getContext(),v.getSize());if(v.getDurationMs()>0)detail+="\n"+v.getDurationMs()/60000+" min";information.setText(detail);if(v.getPosterUri()!=null)com.squareup.picasso.Picasso.get().load(v.getPosterUri()).resize(dp(180),dp(175)).centerInside().into(poster);}
