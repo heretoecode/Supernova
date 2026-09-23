@@ -105,7 +105,10 @@ public final class SafeBackup {
         }
     }
     public static void restore(Context c, File stage) throws Exception {
-        RestoreJournal.recover(c);
+        try(RestoreJournal.Guard guard=RestoreJournal.acquire(c)){restoreLocked(c,stage);}
+    }
+    private static void restoreLocked(Context c, File stage) throws Exception {
+        RestoreJournal.recoverLocked(c);
         String token=UUID.randomUUID().toString();
         List<Swap> swaps=new ArrayList<>();
         try {
@@ -136,11 +139,11 @@ public final class SafeBackup {
                         throw new IOException("Cannot save restored settings");
                     RestoreJournal.commit(c,journal);
                 } catch(Exception error) {
-                    try { RestoreJournal.recover(c); } catch(Exception recovery) { error.addSuppressed(recovery); }
+                    try { RestoreJournal.recoverLocked(c); } catch(Exception recovery) { error.addSuppressed(recovery); }
                     throw error;
                 }
             } finally { holder.unlockExclusive(); }
-            RestoreJournal.recover(c);
+            RestoreJournal.recoverLocked(c);
         } finally {
             for(Swap swap:swaps) remove(swap.fresh);
             remove(stage);

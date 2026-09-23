@@ -10,10 +10,23 @@ import org.json.*;
 
 /** Durable rollback intent, written before any live database/pref replacement. */
 public final class RestoreJournal {
+    private static final java.util.concurrent.locks.ReentrantLock PROCESS_LOCK=new java.util.concurrent.locks.ReentrantLock();
+    static final class Guard implements AutoCloseable {
+        private final RandomAccessFile handle;private final java.nio.channels.FileLock lock;
+        private Guard(RandomAccessFile handle,java.nio.channels.FileLock lock){this.handle=handle;this.lock=lock;}
+        @Override public void close()throws IOException{try{lock.release();}finally{try{handle.close();}finally{PROCESS_LOCK.unlock();}}}
+    }
+    static Guard acquire(Context c)throws IOException{
+        PROCESS_LOCK.lock();RandomAccessFile handle=null;
+        try{handle=new RandomAccessFile(new File(c.getFilesDir(),"restore.lock"),"rw");return new Guard(handle,handle.getChannel().lock());}
+        catch(IOException|RuntimeException failure){if(handle!=null)try{handle.close();}catch(IOException ignored){}PROCESS_LOCK.unlock();throw failure;}
+    }
     private static AtomicFile file(Context c){return new AtomicFile(new File(c.getFilesDir(),"pending-restore.json"));}
     static void write(Context c,JSONObject state)throws Exception{
+        byte[] encoded=state.toString().getBytes(StandardCharsets.UTF_8);
+        if(encoded.length>16777216)throw new IOException("Restore journal exceeds limit");
         AtomicFile journal=file(c);FileOutputStream out=null;
-        try {out=journal.startWrite();out.write(state.toString().getBytes(StandardCharsets.UTF_8));journal.finishWrite(out);}
+        try {out=journal.startWrite();out.write(encoded);journal.finishWrite(out);}
         catch(Exception failure){if(out!=null)journal.failWrite(out);throw failure;}
     }
     static JSONObject prepare(Context c,JSONArray files,String settings,JSONObject named)throws Exception{
@@ -23,6 +36,9 @@ public final class RestoreJournal {
     static void commit(Context c,JSONObject state)throws Exception{state.put("committed",true);write(c,state);}
     /** Called before ContentProviders open databases. Recovery is idempotent across another interruption. */
     public static void recover(Context c)throws Exception{
+        try(Guard guard=acquire(c)){recoverLocked(c);}
+    }
+    static void recoverLocked(Context c)throws Exception{
         AtomicFile journal=file(c);JSONObject state;
         try(InputStream in=journal.openRead();ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
             byte[] buffer=new byte[8192];int n;while((n=in.read(buffer))!=-1){if(bytes.size()+n>16777216)throw new IOException("Restore journal exceeds limit");bytes.write(buffer,0,n);}

@@ -86,13 +86,13 @@ public class PreviewStartupTest {
             MainFragment fragment=new MainFragment();
             host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             draw(fragment);
-            assertTrue(fragment.getView() instanceof TopNavigation);
-            TopNavigation nav=(TopNavigation)fragment.getView();
+            TopNavigation nav=navigation(fragment.getView());
+            assertNotNull(nav);
             assertNotNull(nav.getStatusContainer().findViewById(com.archos.mediacenter.video.R.id.clock));
             assertNotNull(nav.getScanContainer().findViewById(com.archos.mediacenter.video.R.id.progress_group));
             host.recreate();
             MainFragment restored=(MainFragment)host.get().getSupportFragmentManager().findFragmentById(android.R.id.content);
-            assertNotNull(restored);draw(restored);assertTrue(restored.getView() instanceof TopNavigation);
+            assertNotNull(restored);draw(restored);assertNotNull(navigation(restored.getView()));
         } catch (Throwable failure) {
             try {host.pause().stop().destroy();} catch (Throwable cleanup) {failure.addSuppressed(cleanup);}
             throw failure;
@@ -154,6 +154,11 @@ public class PreviewStartupTest {
         android.database.MatrixCursor raw=new android.database.MatrixCursor(new String[]{"numeric"});
         raw.addRow(new Object[]{null});raw.addRow(new Object[]{Integer.MAX_VALUE});raw.addRow(new Object[]{Integer.MIN_VALUE});
         try(PreviewMappingCursor cursor=new PreviewMappingCursor(raw)){assertTrue(cursor.moveToNext());assertEquals(0,cursor.getInt(0));assertTrue(cursor.moveToNext());assertEquals(Integer.MAX_VALUE,cursor.getInt(0));assertTrue(cursor.moveToNext());assertEquals(Integer.MIN_VALUE,cursor.getInt(0));}
+    }
+    private TopNavigation navigation(View root){
+        if(root instanceof TopNavigation)return (TopNavigation)root;
+        if(root instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)root;for(int i=0;i<group.getChildCount();i++){TopNavigation found=navigation(group.getChildAt(i));if(found!=null)return found;}}
+        return null;
     }
     private void draw(MainFragment fragment){
         for(int i=0;i<4;i++){

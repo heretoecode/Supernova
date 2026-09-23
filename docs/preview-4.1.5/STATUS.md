@@ -17,6 +17,13 @@ Local Gradle bootstrap attempted: blocked downloading services.gradle.org (Netwo
 ## Scope and limits
 Security: bridge binds IPv4 loopback; SFTP uses persisted trust on first use, shared SSH wire-key fingerprints across both backends, rejects changed keys, explicit per-host reset. First connection remains vulnerable to an already-present interceptor. Pins are not portable backup credentials.
 
-Restore: durable rollback intent precedes live changes; startup recovery runs before providers, restores the old generation if uncommitted, keeps the new generation after committed marker, and retries interrupted cleanup. Recovery failure deliberately stops before database providers open to avoid using mixed state. Power-loss/disk failure and concurrent non-media database writers still require testing; this is not a claim of a filesystem-wide atomic transaction.
+Restore: cross-process file locking prevents simultaneous restore/recovery. Durable rollback intent precedes live changes; startup recovery runs before providers, restores the old generation if uncommitted, keeps the new generation after committed marker, and retries interrupted cleanup. Recovery failure deliberately stops before database providers open to avoid using mixed state. Power-loss/disk failure and concurrent non-media database writers still require testing; this is not a claim of a filesystem-wide atomic transaction.
 
 Playback: transferred automatic resume crosses the launch boundary; explicit restart/remote/manual file selection remain distinct. Up Next compares season/episode before choosing quality. Provider skips no longer synthesize completion. No evidence connects this provider path to the original long WebDAV failure, which is not declared fixed.
+
+## Android 11 native exception cross-check
+
+Inspected the matching Android 11 AOSP implementation:
+https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-11.0.0_r1/core/jni/android_database_CursorWindow.cpp
+
+`nativeGetLong` throws IllegalStateException when the row/column field slot is inaccessible or its native type is unknown. Normal NULL returns zero; integers and strings are converted; a BLOB conversion throws SQLiteException instead. Therefore the new BLOB test is defensive hardening, **not a reproduction of the captured IllegalStateException**. The log omitted the message, preventing distinction between missing field slot and unknown type. New diagnostics record row, column, storage type, window start/count and safe record ID. The pinned CustomCursorFactory already documents a cursor-window/refill problem when records change, but only guards cursor movement. This is a plausible mechanism, not proof of the Shield trigger. No fixed timing, migration, duplicate record or particular media file is asserted as its cause.

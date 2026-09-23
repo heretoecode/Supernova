@@ -64,41 +64,54 @@ index 6424942..8796a8b 100644
              currentSessions.put(cred, session);
 diff --git a/src/com/archos/filecorelibrary/sftp/SftpHostTrust.java b/src/com/archos/filecorelibrary/sftp/SftpHostTrust.java
 new file mode 100644
-index 0000000..b55eaef
+index 0000000..00b4d88
 --- /dev/null
 +++ b/src/com/archos/filecorelibrary/sftp/SftpHostTrust.java
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,46 @@
 +package com.archos.filecorelibrary.sftp;
 +
 +import android.content.Context;
-+import android.content.SharedPreferences;
++import android.util.AtomicFile;
 +import android.util.Base64;
++import java.io.*;
++import java.nio.channels.FileLock;
 +import java.security.MessageDigest;
 +import java.util.Locale;
++import java.util.Properties;
 +
 +/** Persist first-use SSH wire keys; never accept a changed identity automatically. */
 +public final class SftpHostTrust {
-+    private static SharedPreferences pins;
-+    public static synchronized void initialise(Context context) {
-+        pins=context.getApplicationContext().getSharedPreferences("sftp_host_trust",Context.MODE_PRIVATE);
++    private static File directory;
++    public static synchronized void initialise(Context context) { directory=context.getApplicationContext().getFilesDir(); }
++    private interface Action<T>{T run(Properties pins,AtomicFile file)throws Exception;}
++    /** Reload under an OS lock: the scanner and UI must share the same trust decision. */
++    private static synchronized <T>T access(Action<T> action,T failure){
++        if(directory==null)return failure;
++        try(RandomAccessFile handle=new RandomAccessFile(new File(directory,"sftp-trust.lock"),"rw");FileLock lock=handle.getChannel().lock()){
++            AtomicFile file=new AtomicFile(new File(directory,"sftp-trust.properties"));Properties pins=new Properties();
++            try(InputStream in=file.openRead()){pins.load(in);}catch(FileNotFoundException absent){}
++            return action.run(pins,file);
++        }catch(Exception unavailable){return failure;}
 +    }
-+    private static String identity(String host,int port) {
-+        return host.toLowerCase(Locale.ROOT)+":"+(port<0?22:port);
++    private static void save(Properties pins,AtomicFile file)throws IOException{
++        FileOutputStream out=null;
++        try{out=file.startWrite();pins.store(out,"SSH server identities");file.finishWrite(out);}
++        catch(IOException failure){if(out!=null)file.failWrite(out);throw failure;}
 +    }
-+    public static synchronized boolean verify(String host,int port,byte[] wireKey) {
-+        if(pins==null||host==null||wireKey==null||wireKey.length==0)return false;
-+        try {
++    private static String identity(String host,int port) { return host.toLowerCase(Locale.ROOT)+":"+(port<0?22:port); }
++    public static boolean verify(String host,int port,byte[] wireKey) {
++        if(host==null||wireKey==null||wireKey.length==0)return false;
++        return access((pins,file)->{
 +            String id=identity(host,port);
 +            String fingerprint=Base64.encodeToString(MessageDigest.getInstance("SHA-256").digest(wireKey),Base64.NO_WRAP);
-+            String known=pins.getString(id,null);
++            String known=pins.getProperty(id);
 +            if(known!=null)return known.equals(fingerprint);
-+            // Compatibility migration: first use after upgrade establishes the pin.
-+            // A failed durable write is a verification failure, not permission to proceed.
-+            return pins.edit().putString(id,fingerprint).commit();
-+        } catch(java.security.NoSuchAlgorithmException | RuntimeException failure){return false;}
++            // First use after upgrade establishes the pin. Failed persistence fails closed.
++            pins.setProperty(id,fingerprint);save(pins,file);return true;
++        },false);
 +    }
-+    public static synchronized String[] hosts(){return pins==null?new String[0]:pins.getAll().keySet().toArray(new String[0]);}
-+    public static synchronized boolean forget(String identity){return pins!=null&&pins.edit().remove(identity).commit();}
++    public static String[] hosts(){return access((pins,file)->pins.stringPropertyNames().toArray(new String[0]),new String[0]);}
++    public static boolean forget(String identity){return access((pins,file)->{pins.remove(identity);save(pins,file);return true;},false);}
 +    private SftpHostTrust(){}
 +}
 diff --git a/src/com/archos/filecorelibrary/sshj/SshjUtils.java b/src/com/archos/filecorelibrary/sshj/SshjUtils.java
