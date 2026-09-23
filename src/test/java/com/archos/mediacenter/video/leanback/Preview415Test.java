@@ -62,6 +62,20 @@ public class Preview415Test {
         assertTrue(SftpHostTrust.forget("nas:22"));
         assertTrue(SftpHostTrust.verify("nas",22,new byte[]{9,8,7}));
     }
+    @Test public void detailsWithoutAnAttachedLegacyImageNeedNoTransition(){
+        android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        assertNull(com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment.detailsTransition(activity,null));
+        assertNull(com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment.detailsTransition(activity,new android.view.View(activity)));
+        activity.finish();
+    }
+    @Test public void modernLibraryPreferencesReachFilterAndTitleSort(){
+        Context context=RuntimeEnvironment.getApplication();SharedPreferences prefs=androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        Entry entry=new Entry(movie(9,1920,com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END),0,0,"");entry.sortTitle="Film, The";
+        prefs.edit().putBoolean("sort_ignore_articles",true).putBoolean("hide_watched",true).commit();
+        assertEquals("Film, The",PreviewPages.titleForSort(context,entry));assertTrue(PreviewPages.hiddenByWatchedPreference(context,entry));
+        prefs.edit().putBoolean("sort_ignore_articles",false).putBoolean("hide_watched",false).commit();
+        assertEquals("Film",PreviewPages.titleForSort(context,entry));assertFalse(PreviewPages.hiddenByWatchedPreference(context,entry));
+    }
     @Test public void backdropFailureClearsBothArtworkGenerations(){
         PreviewBackdrop backdrop=new PreviewBackdrop(RuntimeEnvironment.getApplication());
         android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(16,9,android.graphics.Bitmap.Config.ARGB_8888);

@@ -38,7 +38,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public final long added, show;
         public final String genres;
         public String secondary="";public boolean active;public long playedAt;
-        public String releaseDate=""; public long onlineId; public transient android.net.Uri backdrop;
+        public String sortTitle="";public String releaseDate=""; public long onlineId; public transient android.net.Uri backdrop;
         public long bytes, runtime, modified, bitrate;
         public int episodes, seasons, knownSizes, files;
         public String resolution="", hdr="", audio="", codec="", path="", container="";
@@ -150,6 +150,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 if(backdrop!=null && !backdrop.isEmpty()) v.setPreviewBackdrop(android.net.Uri.fromFile(new java.io.File(backdrop)).toString());
                 else { String remote=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL)); if(remote!=null && (remote.startsWith("https://") || remote.startsWith("http://")))v.setPreviewBackdrop(remote); }
                 Entry entry=new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg));
+                entry.sortTitle=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_SORT_NAME));
                 entry.modified=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATE_MODIFIED));entry.bitrate=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.ARCHOS_VIDEO_BITRATE));
                 entry.releaseDate=c.getString(c.getColumnIndexOrThrow(v instanceof Episode?VideoStore.Video.VideoColumns.SCRAPER_S_PREMIERED:VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE));
                 if(v instanceof Episode)entry.onlineId=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID));
@@ -165,7 +166,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             try(Cursor sc=getContext().getContentResolver().query(loader.getUri(),loader.getProjection(),loader.getSelection(),loader.getSelectionArgs(),loader.getSortOrder())) {
                 if(sc!=null) { TvshowCursorMapper sm=new TvshowCursorMapper(); sm.bindColumns(sc);
                     Map<Long,Entry> byShow=new HashMap<>(); for(Entry e:videos) if(e.show>0) { Entry old=byShow.get(e.show); if(old==null||old.added<e.added) byShow.put(e.show,e); }
-                    while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId()); Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;}shows.add(se); }
+                    while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId()); Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;}se.sortTitle=sc.getString(sc.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_SORT_NAME));shows.add(se); }
                 }
             }
             Snapshot result=build(videos,shows);

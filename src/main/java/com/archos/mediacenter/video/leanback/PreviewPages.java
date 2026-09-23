@@ -308,9 +308,18 @@ public final class PreviewPages extends FrameLayout {
         }
         entries.sort(cmp.thenComparing(e->displayName(e),String.CASE_INSENSITIVE_ORDER));return entries;
     }
+    public static String titleForSort(Context context,Entry entry){
+        return com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(context)&&entry.sortTitle!=null&&!entry.sortTitle.isEmpty()?entry.sortTitle:displayName(entry);
+    }
+    public static boolean hiddenByWatchedPreference(Context context,Entry entry){
+        if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("hide_watched",false))return false;
+        return entry.media instanceof Video?PreviewSeriesJourney.completed((Video)entry.media):entry.media instanceof Tvshow&&((Tvshow)entry.media).getEpisodeCount()>0&&((Tvshow)entry.media).isWatched();
+    }
     private List<Entry> filtered(){
-        List<Entry> entries=new ArrayList<>();for(Entry e:source())if((genres[tab].isEmpty()||Arrays.asList(e.genres.split("[|,;/]")).stream().anyMatch(g->g.trim().equals(genres[tab])))&&(years[tab]==0||e.year()==years[tab])&&(providers[tab].isEmpty()||com.archos.mediacenter.video.streaming.StreamingRepository.selected(getContext()).contains(providers[tab])&&com.archos.mediacenter.video.streaming.StreamingRepository.knownOn(getContext(),tab==1?"movie":"tv",e.onlineId,providers[tab])))entries.add(e);
-        entries=sortEntries(entries,sorts[tab],ascending[tab],discovery);if(columns[tab]!=null)entries=columns[tab].sort(entries);if(!quietOrder.isEmpty())entries.sort(Comparator.comparingInt(e->quietOrder.getOrDefault(e.key(),Integer.MAX_VALUE)));return entries;
+        List<Entry> entries=new ArrayList<>();for(Entry e:source())if(!hiddenByWatchedPreference(getContext(),e)&&(genres[tab].isEmpty()||Arrays.asList(e.genres.split("[|,;/]")).stream().anyMatch(g->g.trim().equals(genres[tab])))&&(years[tab]==0||e.year()==years[tab])&&(providers[tab].isEmpty()||com.archos.mediacenter.video.streaming.StreamingRepository.selected(getContext()).contains(providers[tab])&&com.archos.mediacenter.video.streaming.StreamingRepository.knownOn(getContext(),tab==1?"movie":"tv",e.onlineId,providers[tab])))entries.add(e);
+        entries=sortEntries(entries,sorts[tab],ascending[tab],discovery);
+        if(sorts[tab]==1){Comparator<Entry> titles=Comparator.comparing(e->titleForSort(getContext(),e),String.CASE_INSENSITIVE_ORDER);if(!ascending[tab])titles=titles.reversed();entries.sort(titles);}
+        if(columns[tab]!=null)entries=columns[tab].sort(entries);if(!quietOrder.isEmpty())entries.sort(Comparator.comparingInt(e->quietOrder.getOrDefault(e.key(),Integer.MAX_VALUE)));return entries;
     }
     private String[] sortLabels(){return new String[]{"Date Added","Title",tab==2?"Air Date":"Release Date","Trakt Trending","Trakt Popular"};}
     private void sort(){

@@ -435,6 +435,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             mUpdateNextTask.cancel(false);
             mUpdateNextTask.setListener(null);
         }
+        if(binge&&mPreferences.getBoolean("try_new_ui",false)&&mVideoInfo!=null&&mVideoInfo.isShow&&mVideoInfo.id==mVideoId){
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+            if(library!=null&&library.episodes.stream().anyMatch(e->((Video)e.media).getId()==mVideoId)){
+                com.archos.mediacenter.video.browser.adapters.object.Episode next=previewAdjacentEpisode(1);
+                if(next!=null){mNextUri=next.getUri();mNextVideoId=next.getId();}
+                mUpdateNextTask=null;return;
+            }
+        }
         mUpdateNextTask = new UpdateNextTask(getContentResolver(),
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                         ? mIntent.getSerializableExtra(VIDEO, Video.class)

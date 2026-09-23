@@ -850,18 +850,21 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         intent.putExtra(VideoDetailsFragment.EXTRA_VIDEO, video);
         intent.putExtra(VideoDetailsFragment.EXTRA_FORCE_VIDEO_SELECTION, true);
         View sourceView = null;
-        if (itemViewHolder.view instanceof ImageCardView) {
+        if (itemViewHolder != null && itemViewHolder.view instanceof ImageCardView) {
             sourceView = ((ImageCardView) itemViewHolder.view).getMainImageView();
         } else if (itemViewHolder instanceof ListPresenter.ListViewHolder){
             sourceView = ((ListPresenter.ListViewHolder)itemViewHolder).getImageView();
         }
 
-        ActivityOptionsCompat opts = sourceView != null && sourceView.isAttachedToWindow()
-                ? ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    getActivity(), sourceView, VideoDetailsActivity.SHARED_ELEMENT_NAME) : null;
+        ActivityOptionsCompat opts = detailsTransition(getActivity(),sourceView);
         infoLauncher.launch(intent, opts);
     }
 
+
+    public static ActivityOptionsCompat detailsTransition(android.app.Activity activity,View sourceView) {
+        if(activity==null||activity.isFinishing()||activity.isDestroyed()||sourceView==null||!sourceView.isAttachedToWindow())return null;
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(activity,sourceView,VideoDetailsActivity.SHARED_ELEMENT_NAME);
+    }
 
     public void onFileDelete(Uri file) {
 

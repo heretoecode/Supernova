@@ -44,12 +44,14 @@ final class PreviewBrowserSurface extends BrowseFrameLayout {
         if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){if(moveInsideDock(View.FOCUS_RIGHT))return true;open.requestFocus();return true;}
     }if(event.getAction()==KeyEvent.ACTION_DOWN&&sourceControl.hasFocus()&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){dock.requestFocus();return true;}return super.dispatchKeyEvent(event);}
     private boolean moveInsideDock(int direction){
+        if(!(dock instanceof ViewGroup))return false;
+        ViewGroup group=(ViewGroup)dock;
         View focused=dock.findFocus();if(focused==null)return false;
-        View next=android.view.FocusFinder.getInstance().findNextFocus(dock,focused,direction);
+        View next=android.view.FocusFinder.getInstance().findNextFocus(group,focused,direction);
         if(next==null||next==focused)return false;
         android.graphics.Rect from=new android.graphics.Rect(),to=new android.graphics.Rect();
-        focused.getDrawingRect(from);dock.offsetDescendantRectToMyCoords(focused,from);
-        next.getDrawingRect(to);dock.offsetDescendantRectToMyCoords(next,to);
+        focused.getDrawingRect(from);group.offsetDescendantRectToMyCoords(focused,from);
+        next.getDrawingRect(to);group.offsetDescendantRectToMyCoords(next,to);
         if(direction==View.FOCUS_LEFT?to.centerX()>=from.centerX():to.centerX()<=from.centerX())return false;
         return next.requestFocus(direction);
     }

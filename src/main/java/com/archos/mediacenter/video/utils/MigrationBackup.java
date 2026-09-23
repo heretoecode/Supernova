@@ -12,7 +12,7 @@ import org.json.*;
 
 /** Portable configuration complements the existing database snapshot; downloadable caches are excluded. */
 public final class MigrationBackup {
- private static final Set<String> CACHES=new HashSet<>(Arrays.asList("preview_people","preview_tv_trailers","preview_discovery","preview_title_logos","player"));
+ private static final Set<String> CACHES=new HashSet<>(Arrays.asList("preview_people","preview_tv_trailers","preview_discovery","preview_title_logos","player","sftp_host_trust"));
  public static String settings(Context c)throws JSONException{
   JSONObject result=new JSONObject();File folder=new File(c.getApplicationInfo().dataDir,"shared_prefs");File[] files=folder.listFiles();
   if(files!=null)for(File file:files){String name=file.getName();if(!name.endsWith(".xml"))continue;name=name.substring(0,name.length()-4);if(!name.matches("[A-Za-z0-9_.-]+")||CACHES.contains(name)||name.equals(c.getPackageName()+"_preferences"))continue;result.put(name,new JSONObject(SettingsBackup.encode(c.getSharedPreferences(name,0))));}

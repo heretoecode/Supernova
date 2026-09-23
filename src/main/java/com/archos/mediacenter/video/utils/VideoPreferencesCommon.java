@@ -1017,7 +1017,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         Preference exportLibraryPreference = findPreference(getString(R.string.media_library_export_prefkey));
         exportLibraryPreference.setSummary("Settings, saved credentials, sources, rows and viewing history. Downloaded artwork is re-fetched after restore. Keep this archive private.");
         exportLibraryPreference.setOnPreferenceClickListener(preference -> {
-            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This archive includes saved network and account credentials. Store it somewhere private. Android storage permissions may need to be granted again on a new device.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
+            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This archive is not password-encrypted and contains recoverable network passwords and account tokens. Anyone with the archive may access those accounts. Store it somewhere private. Android storage permissions may need to be granted again on a new device.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
 
             try { backupDestination.launch("nova-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT).format(new java.util.Date()) + ".zip.in-progress"); }
             catch (android.content.ActivityNotFoundException missing) {
