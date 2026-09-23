@@ -82,7 +82,7 @@ index 0000000..00b4d88
 +/** Persist first-use SSH wire keys; never accept a changed identity automatically. */
 +public final class SftpHostTrust {
 +    private static File directory;
-+    public static synchronized void initialise(Context context) { directory=context.getApplicationContext().getFilesDir(); }
++    public static synchronized void initialise(Context context) { directory=context.getFilesDir(); }
 +    private interface Action<T>{T run(Properties pins,AtomicFile file)throws Exception;}
 +    /** Reload under an OS lock: the scanner and UI must share the same trust decision. */
 +    private static synchronized <T>T access(Action<T> action,T failure){

@@ -5,6 +5,16 @@ phase=$2
 package=org.courville.nova.markpreview
 activity=com.archos.mediacenter.video.leanback.MainActivityLeanback
 mkdir -p ../startup-diagnostics
+capture_failure() {
+  result=$?
+  if [[ "$result" -ne 0 ]]; then
+    timeout 15 adb logcat -d > "../startup-diagnostics/$phase-failure-logcat.txt" || true
+    timeout 15 adb shell dumpsys activity activities > "../startup-diagnostics/$phase-failure-activities.txt" || true
+    timeout 15 adb exec-out screencap -p > "../startup-diagnostics/$phase-failure.png" || true
+  fi
+  exit "$result"
+}
+trap capture_failure EXIT
 build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
 "$build_tools/apksigner" verify --print-certs "$apk" | tee "../startup-diagnostics/$phase-certificate.txt"
 grep -qi "$(cat ../preview-certificate-sha256.txt)" "../startup-diagnostics/$phase-certificate.txt"
@@ -18,7 +28,7 @@ check_start() {
   label=$1
   adb shell am force-stop "$package"
   adb logcat -c
-  adb shell am start -W -n "$package/$activity"
+  timeout 60 adb shell am start -W -n "$package/$activity"
   sleep 15
   adb logcat -d > "../startup-diagnostics/$label-logcat.txt"
   adb shell dumpsys activity activities > "../startup-diagnostics/$label-activities.txt"
@@ -51,7 +61,7 @@ check_start "$phase-restart"
 if [[ "$phase" == preview ]]; then
   # Real warm relaunch, distinct from force-stop/cold restart above.
   adb shell input keyevent 3
-  adb shell am start -W -n "$package/$activity"
+  timeout 60 adb shell am start -W -n "$package/$activity"
   sleep 2
   adb shell pidof "$package" | grep -q '[0-9]'
   # Open non-exported Settings through its real navigation control.

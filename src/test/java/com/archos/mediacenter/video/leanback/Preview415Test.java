@@ -52,6 +52,13 @@ public class Preview415Test {
         try{SettingsBackup.decode(prefs,"{\"bad\":{\"type\":\"unknown\"}}");fail();}catch(org.json.JSONException expected){}
         assertEquals(7,prefs.getInt("new",0));
     }
+    @Test public void sftpTrustInitialisesBeforeApplicationContextExists(){
+        Context early=new android.content.ContextWrapper(RuntimeEnvironment.getApplication()){
+            @Override public Context getApplicationContext(){return null;}
+        };
+        SftpHostTrust.initialise(early);
+        assertTrue(SftpHostTrust.verify("early-start",22,new byte[]{4,1,5}));
+    }
     @Test public void sftpIdentityPersistsAndRejectsChangedKeyAcrossInitialisation(){
         Context context=RuntimeEnvironment.getApplication();SftpHostTrust.initialise(context);
         assertTrue(SftpHostTrust.verify("NAS",22,new byte[]{1,2,3}));
