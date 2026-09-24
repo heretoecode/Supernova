@@ -110,6 +110,23 @@ jobs:
           chmod +x gradlew
           ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
 
+      - name: Test personal build changes
+        if: ${{ inputs.validation == 'full' }}
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest' --tests 'com.archos.mediacenter.video.leanback.PreviewDiscoveryTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+
+      - name: Targeted stability and library metadata checks
+        working-directory: nova/Video
+        run: |
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview411Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview412Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview413Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview414Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview415Test.*' --tests 'com.archos.mediacenter.video.utils.Preview415BridgeTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest.*' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.*' --tests 'com.archos.mediacenter.video.streaming.StreamingPreferencesTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.utils.RestoreJournalTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41RowsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewUpNextTest.*' --tests 'com.archos.mediacenter.video.player.PlaybackResumePolicyTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
+
+      - name: Check selectively ported WebDAV behaviour
+        working-directory: nova/Video
+        run: ./gradlew :FileCoreLibrary:testDebugUnitTest --tests 'com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest' -Puniversal -PmarkPreview --build-cache --no-daemon
+
       - name: Retain personal development signing key
         uses: actions/cache@v4
         with:
@@ -130,14 +147,6 @@ jobs:
           echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a  /tmp/nova-signing-certificate.der" | sha256sum --check
           echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a" > nova/preview-certificate-sha256.txt
 
-      - name: Test personal build changes
-        if: ${{ inputs.validation == 'full' }}
-        working-directory: nova/Video
-        run: |
-          set -o pipefail
-          chmod +x gradlew
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest' --tests 'com.archos.mediacenter.video.leanback.PreviewDiscoveryTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
-
       - name: Build signed development APK
         working-directory: nova/Video
         run: |
@@ -147,15 +156,6 @@ jobs:
           # Preview delivery defers lint and optimisation to the full milestone run.
           if [[ "$VALIDATION_MODE" == preview ]]; then extra_args+=(-x lintNoamazonDebug); fi
           ./gradlew assembleNoamazonDebug -Puniversal -PmarkPreview "${extra_args[@]}" --build-cache --no-daemon 2>&1 | tee ../gradle-debug-build.log
-
-      - name: Targeted stability and library metadata checks
-        working-directory: nova/Video
-        run: |
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview411Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview412Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview413Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview414Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview415Test.*' --tests 'com.archos.mediacenter.video.utils.Preview415BridgeTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest.*' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.*' --tests 'com.archos.mediacenter.video.streaming.StreamingPreferencesTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.utils.RestoreJournalTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41RowsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewUpNextTest.*' --tests 'com.archos.mediacenter.video.player.PlaybackResumePolicyTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
-
-      - name: Check selectively ported WebDAV behaviour
-        working-directory: nova/Video
-        run: ./gradlew :FileCoreLibrary:testDebugUnitTest --tests 'com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest' -Puniversal -PmarkPreview --build-cache --no-daemon
 
       - name: Start Android emulator for full process startup checks
         run: |
@@ -244,6 +244,7 @@ jobs:
         with:
           name: gradle-build-log
           path: |
+            nova/gradle-source-validation.log
             nova/gradle-build.log
             nova/gradle-debug-build.log
             nova/build-validation.txt

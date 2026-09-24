@@ -375,7 +375,7 @@ public final class PreviewPages extends FrameLayout {
     private TextView button(String name,Runnable action){TextView b=text(name,13);com.archos.mediacenter.video.leanback.PreviewIcon.apply(b,name,16);b.setGravity(Gravity.CENTER);b.setPadding(dp(14),dp(9),dp(14),dp(9));b.setFocusable(true);b.setFocusableInTouchMode(true);b.setClickable(true);b.setBackground(PreviewDialog.focus(getContext()));b.setOnFocusChangeListener((v,f)->{b.setTextColor(f?PreviewAccent.color(getContext()):0xffe1e9ef);b.setShadowLayer(f?dp(5):0,0,0,PreviewAccent.color(getContext()));});b.setOnClickListener(v->{quietOrder.clear();action.run();});return b;}
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     class Holder extends RecyclerView.ViewHolder {
-        Presenter presenter; Presenter.ViewHolder card;
+        PreviewCardPresenter presenter; Presenter.ViewHolder card;
         Holder(View v){super(v);}
     }
     class PageAdapter extends RecyclerView.Adapter<Holder> {
