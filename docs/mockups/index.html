@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supernova TV - Interactive UI Mockup</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- App Container (Fixed 16:9 1920x1080 design canvas, scale responsive) -->
+  <div id="tv-app" class="tv-app">
+
+    <!-- Top Navigation Bar (Global across primary screens) -->
+    <header class="top-nav" id="top-nav">
+      <div class="nav-left">
+        <div class="brand">
+          <span class="brand-logo">🌌</span>
+          <span class="brand-name">SUPERNOVA</span>
+        </div>
+        <nav class="nav-links">
+          <button class="nav-item active" data-target="home-screen" tabindex="0">Home</button>
+          <button class="nav-item" data-target="movies-grid-screen" tabindex="0">Movies</button>
+          <button class="nav-item" data-target="tv-grid-screen" tabindex="0">TV Shows</button>
+          <button class="nav-item" data-target="network-screen" tabindex="0">Network & Files</button>
+          <button class="nav-item" data-target="settings-screen" tabindex="0">Settings</button>
+        </nav>
+      </div>
+      <div class="nav-right">
+        <button class="icon-btn search-btn" id="search-trigger" tabindex="0" title="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="top-clock" id="top-clock">20:45</div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT SCREENS CONTAINER -->
+    <main class="screens-container">
+
+      <!-- 1. HOME SCREEN -->
+      <section id="home-screen" class="screen-surface active">
+        <!-- Hero Featured Banner -->
+        <div class="hero-featured" id="hero-banner">
+          <div class="hero-backdrop" style="background-image: linear-gradient(to right, rgba(15, 23, 42, 0.95) 20%, rgba(15, 23, 42, 0.6) 60%, transparent 100%), linear-gradient(to top, rgba(15, 23, 42, 1) 0%, transparent 50%), url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920&auto=format&fit=crop');"></div>
+
+          <div class="hero-content">
+            <div class="featured-tag">FEATURED SELECTION</div>
+            <h1 class="hero-title">Interstellar Odyssey</h1>
+            <div class="hero-meta">
+              <span class="match-score">98% Match</span>
+              <span class="meta-pill">2024</span>
+              <span class="meta-pill">PG-13</span>
+              <span class="meta-pill duration">2h 49m</span>
+              <span class="quality-badge">4K HDR</span>
+              <span class="quality-badge">DOLBY ATMOS</span>
+            </div>
+            <p class="hero-synopsis">
+              When Earth becomes uninhabitable, a team of ex-NASA astronauts travels through a wormhole near Saturn in search of a new home for humanity.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="btn-hero-play" tabindex="0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Play Now</span>
+              </button>
+              <button class="btn btn-secondary" id="btn-hero-details" tabindex="0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <span>Details</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Home Rows Section -->
+        <div class="home-rows-container">
+          <!-- Row 1: Continue Watching -->
+          <div class="media-row">
+            <div class="row-header">
+              <h2 class="row-title">Continue Watching</h2>
+              <span class="row-subtitle">2 items in progress</span>
+            </div>
+            <div class="row-cards-scroll">
+              <div class="card card-wide" tabindex="0" data-action="resume" data-title="Dune: Part Two" data-progress="65">
+                <div class="card-image-wrap">
+                  <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop" alt="Dune: Part Two">
+                  <div class="play-overlay"><div class="play-icon">▶</div></div>
+                  <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: 65%;"></div></div>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">Dune: Part Two</div>
+                  <div class="card-sub">1h 12m remaining</div>
+                </div>
+              </div>
+
+              <div class="card card-wide" tabindex="0" data-action="resume" data-title="Severance S1 E7" data-progress="40">
+                <div class="card-image-wrap">
+                  <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop" alt="Severance">
+                  <div class="play-overlay"><div class="play-icon">▶</div></div>
+                  <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: 40%;"></div></div>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">Severance S1 · E7</div>
+                  <div class="card-sub">28m remaining</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Recently Added -->
+          <div class="media-row">
+            <div class="row-header">
+              <h2 class="row-title">Recently Added</h2>
+            </div>
+            <div class="row-cards-scroll">
+              <div class="card card-poster" tabindex="0" data-action="details" data-title="Cyberpunk Horizon">
+                <div class="card-image-wrap">
+                  <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=400&auto=format&fit=crop" alt="Cyberpunk Horizon">
+                  <div class="card-badge">4K</div>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">Cyberpunk Horizon</div>
+                  <div class="card-sub">2024 · Sci-Fi</div>
+                </div>
+              </div>
+
+              <div class="card card-poster" tabindex="0" data-action="details" data-title="Solaris Protocol">
+                <div class="card-image-wrap">
+                  <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400&auto=format&fit=crop" alt="Solaris Protocol">
+                  <div class="card-badge">HDR</div>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">Solaris Protocol</div>
+                  <div class="card-sub">2023 · Thriller</div>
+                </div>
+              </div>
+
+              <div class="card card-poster" tabindex="0" data-action="details" data-title="Deep Ocean">
+                <div class="card-image-wrap">
+                  <img src="https://images.unsplash.com/photo-1682687220063-4742bd7fd538?q=80&w=400&auto=format&fit=crop" alt="Deep Ocean">
+                </div>
+                <div class="card-details">
+                  <div class="card-title">Deep Ocean</div>
+                  <div class="card-sub">2024 · Documentary</div>
+                </div>
+              </div>
+
+              <div class="card card-poster" tabindex="0" data-action="details" data-title="Neon Chronicles">
+                <div class="card-image-wrap">
+                  <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop" alt="Neon Chronicles">
+                </div>
+                <div class="card-details">
+                  <div class="card-title">Neon Chronicles</div>
+                  <div class="card-sub">2023 · Action</div>
+                </div>
+              </div>
+
+              <div class="card card-poster" tabindex="0" data-action="details" data-title="The Last Frontier">
+                <div class="card-image-wrap">
+                  <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=400&auto=format&fit=crop" alt="The Last Frontier">
+                  <div class="card-badge">4K HDR</div>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">The Last Frontier</div>
+                  <div class="card-sub">2024 · Drama</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. MOVIES GRID SCREEN -->
+      <section id="movies-grid-screen" class="screen-surface">
+        <div class="screen-header-bar">
+          <div class="screen-title-area">
+            <h1>Movies Library</h1>
+            <span class="count-pill">128 Movies</span>
+          </div>
+
+          <!-- Controls Toolbar -->
+          <div class="toolbar">
+            <div class="view-toggle">
+              <button class="toggle-btn active" id="btn-view-grid" title="Grid View" tabindex="0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></svg>
+                <span>Grid</span>
+              </button>
+              <button class="toggle-btn" id="btn-view-list" title="List View" tabindex="0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                <span>List</span>
+              </button>
+            </div>
+
+            <div class="filter-group">
+              <select class="select-input" id="movie-genre-filter" tabindex="0">
+                <option value="all">All Genres</option>
+                <option value="scifi">Sci-Fi</option>
+                <option value="action">Action</option>
+                <option value="drama">Drama</option>
+              </select>
+
+              <select class="select-input" id="movie-sort-select" tabindex="0">
+                <option value="added">Recently Added</option>
+                <option value="title">Title (A-Z)</option>
+                <option value="rating">Rating</option>
+                <option value="year">Release Year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6-Column Grid Layout -->
+        <div class="grid-6-columns" id="movies-grid-container">
+          <!-- Poster Cards -->
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Interstellar Odyssey">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=400&auto=format&fit=crop" alt="Interstellar Odyssey">
+              <div class="card-badge">4K HDR</div>
+            </div>
+            <div class="card-details">
+              <div class="card-title">Interstellar Odyssey</div>
+              <div class="card-sub">2024 · 8.8 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Dune: Part Two">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop" alt="Dune">
+              <div class="card-badge">4K</div>
+            </div>
+            <div class="card-details">
+              <div class="card-title">Dune: Part Two</div>
+              <div class="card-sub">2024 · 8.6 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Cyberpunk Horizon">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=400&auto=format&fit=crop" alt="Cyberpunk Horizon">
+            </div>
+            <div class="card-details">
+              <div class="card-title">Cyberpunk Horizon</div>
+              <div class="card-sub">2024 · 8.1 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Solaris Protocol">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400&auto=format&fit=crop" alt="Solaris Protocol">
+              <div class="card-badge">HDR</div>
+            </div>
+            <div class="card-details">
+              <div class="card-title">Solaris Protocol</div>
+              <div class="card-sub">2023 · 7.9 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Deep Ocean">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1682687220063-4742bd7fd538?q=80&w=400&auto=format&fit=crop" alt="Deep Ocean">
+            </div>
+            <div class="card-details">
+              <div class="card-title">Deep Ocean</div>
+              <div class="card-sub">2024 · 8.3 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Neon Chronicles">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop" alt="Neon Chronicles">
+            </div>
+            <div class="card-details">
+              <div class="card-title">Neon Chronicles</div>
+              <div class="card-sub">2023 · 7.5 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="The Last Frontier">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=400&auto=format&fit=crop" alt="The Last Frontier">
+            </div>
+            <div class="card-details">
+              <div class="card-title">The Last Frontier</div>
+              <div class="card-sub">2024 · 8.4 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Blade Echoes">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?q=80&w=400&auto=format&fit=crop" alt="Blade Echoes">
+              <div class="card-badge">4K HDR</div>
+            </div>
+            <div class="card-details">
+              <div class="card-title">Blade Echoes</div>
+              <div class="card-sub">2023 · 8.0 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Quantum Rift">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop" alt="Quantum Rift">
+            </div>
+            <div class="card-details">
+              <div class="card-title">Quantum Rift</div>
+              <div class="card-sub">2024 · 7.8 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Apex Horizon">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop" alt="Apex Horizon">
+            </div>
+            <div class="card-details">
+              <div class="card-title">Apex Horizon</div>
+              <div class="card-sub">2022 · 8.2 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Starlight Void">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400&auto=format&fit=crop" alt="Starlight Void">
+            </div>
+            <div class="card-details">
+              <div class="card-title">Starlight Void</div>
+              <div class="card-sub">2024 · 8.5 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Exo Realm">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=400&auto=format&fit=crop" alt="Exo Realm">
+            </div>
+            <div class="card-details">
+              <div class="card-title">Exo Realm</div>
+              <div class="card-sub">2023 · 7.7 ★</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. MOVIES LIST SCREEN (CUSTOMISABLE COLUMNS) -->
+      <section id="movies-list-screen" class="screen-surface">
+        <div class="screen-header-bar">
+          <div class="screen-title-area">
+            <h1>Movies Library (List View)</h1>
+            <span class="count-pill">128 Movies</span>
+          </div>
+
+          <div class="toolbar">
+            <button class="btn btn-secondary btn-sm" id="btn-choose-columns" tabindex="0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/></svg>
+              <span>Choose Columns</span>
+            </button>
+            <button class="toggle-btn" id="btn-back-to-grid" tabindex="0">Grid View</button>
+          </div>
+        </div>
+
+        <!-- Custom Table Container -->
+        <div class="table-container">
+          <table class="supernova-table">
+            <thead>
+              <tr>
+                <th class="col-poster">Poster</th>
+                <th class="col-title sorted-asc">Title ▲</th>
+                <th class="col-year">Year</th>
+                <th class="col-rating">Rating</th>
+                <th class="col-quality">Quality</th>
+                <th class="col-audio">Audio</th>
+                <th class="col-duration">Duration</th>
+                <th class="col-size">Size</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="table-row" tabindex="0" data-action="details" data-title="Blade Echoes">
+                <td class="col-poster"><img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?q=80&w=120&auto=format&fit=crop" class="table-thumb" alt="Blade"></td>
+                <td class="col-title"><div class="td-title">Blade Echoes</div><div class="td-sub">Action / Sci-Fi</div></td>
+                <td class="col-year">2023</td>
+                <td class="col-rating"><span class="rating-badge">8.0</span></td>
+                <td class="col-quality"><span class="pill-quality">4K HDR10</span></td>
+                <td class="col-audio">Atmos 7.1</td>
+                <td class="col-duration">2h 14m</td>
+                <td class="col-size">24.5 GB</td>
+              </tr>
+              <tr class="table-row" tabindex="0" data-action="details" data-title="Cyberpunk Horizon">
+                <td class="col-poster"><img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=120&auto=format&fit=crop" class="table-thumb" alt="Cyberpunk"></td>
+                <td class="col-title"><div class="td-title">Cyberpunk Horizon</div><div class="td-sub">Sci-Fi / Thriller</div></td>
+                <td class="col-year">2024</td>
+                <td class="col-rating"><span class="rating-badge">8.1</span></td>
+                <td class="col-quality"><span class="pill-quality">4K DV</span></td>
+                <td class="col-audio">TrueHD 7.1</td>
+                <td class="col-duration">1h 58m</td>
+                <td class="col-size">18.2 GB</td>
+              </tr>
+              <tr class="table-row" tabindex="0" data-action="details" data-title="Deep Ocean">
+                <td class="col-poster"><img src="https://images.unsplash.com/photo-1682687220063-4742bd7fd538?q=80&w=120&auto=format&fit=crop" class="table-thumb" alt="Deep Ocean"></td>
+                <td class="col-title"><div class="td-title">Deep Ocean</div><div class="td-sub">Documentary</div></td>
+                <td class="col-year">2024</td>
+                <td class="col-rating"><span class="rating-badge">8.3</span></td>
+                <td class="col-quality"><span class="pill-quality">1080p</span></td>
+                <td class="col-audio">DTS-HD 5.1</td>
+                <td class="col-duration">1h 32m</td>
+                <td class="col-size">8.4 GB</td>
+              </tr>
+              <tr class="table-row" tabindex="0" data-action="details" data-title="Dune: Part Two">
+                <td class="col-poster"><img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=120&auto=format&fit=crop" class="table-thumb" alt="Dune"></td>
+                <td class="col-title"><div class="td-title">Dune: Part Two</div><div class="td-sub">Sci-Fi / Adventure</div></td>
+                <td class="col-year">2024</td>
+                <td class="col-rating"><span class="rating-badge">8.6</span></td>
+                <td class="col-quality"><span class="pill-quality">4K HDR10+</span></td>
+                <td class="col-audio">Atmos 7.1</td>
+                <td class="col-duration">2h 46m</td>
+                <td class="col-size">42.1 GB</td>
+              </tr>
+              <tr class="table-row" tabindex="0" data-action="details" data-title="Interstellar Odyssey">
+                <td class="col-poster"><img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=120&auto=format&fit=crop" class="table-thumb" alt="Interstellar"></td>
+                <td class="col-title"><div class="td-title">Interstellar Odyssey</div><div class="td-sub">Sci-Fi / Drama</div></td>
+                <td class="col-year">2024</td>
+                <td class="col-rating"><span class="rating-badge">8.8</span></td>
+                <td class="col-quality"><span class="pill-quality">4K DV</span></td>
+                <td class="col-audio">Atmos 7.1</td>
+                <td class="col-duration">2h 49m</td>
+                <td class="col-size">38.7 GB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 4. TV SHOWS GRID SCREEN -->
+      <section id="tv-grid-screen" class="screen-surface">
+        <div class="screen-header-bar">
+          <div class="screen-title-area">
+            <h1>TV Shows Library</h1>
+            <span class="count-pill">42 Series</span>
+          </div>
+        </div>
+        <div class="grid-6-columns">
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Severance">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400&auto=format&fit=crop" alt="Severance">
+              <div class="card-badge">2 Seasons</div>
+            </div>
+            <div class="card-details">
+              <div class="card-title">Severance</div>
+              <div class="card-sub">2022-2024 · 8.7 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="Arcane">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=400&auto=format&fit=crop" alt="Arcane">
+              <div class="card-badge">2 Seasons</div>
+            </div>
+            <div class="card-details">
+              <div class="card-title">Arcane</div>
+              <div class="card-sub">2021-2024 · 9.0 ★</div>
+            </div>
+          </div>
+
+          <div class="card card-poster" tabindex="0" data-action="details" data-title="The Mandalorian">
+            <div class="card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400&auto=format&fit=crop" alt="Mandalorian">
+              <div class="card-badge">3 Seasons</div>
+            </div>
+            <div class="card-details">
+              <div class="card-title">The Mandalorian</div>
+              <div class="card-sub">2019-2023 · 8.6 ★</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. MOVIE DETAILS SCREEN -->
+      <section id="details-screen" class="screen-surface">
+        <div class="details-backdrop" id="details-bg" style="background-image: linear-gradient(to right, rgba(15,23,42,0.95) 30%, rgba(15,23,42,0.7) 70%, transparent 100%), linear-gradient(to top, rgba(15,23,42,1) 0%, transparent 40%), url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920&auto=format&fit=crop');"></div>
+
+        <div class="details-layout">
+          <!-- Left Poster Column -->
+          <div class="details-left">
+            <div class="uncropped-poster">
+              <img id="details-poster-img" src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop" alt="Poster">
+            </div>
+          </div>
+
+          <!-- Right Content Column -->
+          <div class="details-right">
+            <button class="back-btn" id="btn-details-back" tabindex="0">← Back</button>
+
+            <h1 class="details-title" id="details-title-text">Interstellar Odyssey</h1>
+            <div class="details-tagline" id="details-tagline-text">Humanity was born on Earth. It was never meant to die here.</div>
+
+            <div class="details-meta-row">
+              <span class="meta-item">2024</span>
+              <span class="meta-item">PG-13</span>
+              <span class="meta-item">2h 49m</span>
+              <span class="meta-item score">★ 8.8 / 10</span>
+              <span class="meta-item genre">Sci-Fi, Adventure, Drama</span>
+            </div>
+
+            <!-- Technical Quality Badges -->
+            <div class="tech-badges-row">
+              <span class="badge-tech">4K UHD</span>
+              <span class="badge-tech">DOLBY VISION</span>
+              <span class="badge-tech">DOLBY ATMOS 7.1</span>
+              <span class="badge-tech">HEVC / H.265</span>
+              <span class="badge-tech">23.976 FPS</span>
+            </div>
+
+            <!-- Primary Actions -->
+            <div class="details-actions">
+              <button class="btn btn-primary btn-lg" id="btn-details-play" tabindex="0">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Play Movie</span>
+              </button>
+
+              <button class="btn btn-secondary btn-lg" id="btn-details-resume" tabindex="0">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span>Resume (01:14:20)</span>
+              </button>
+
+              <button class="btn btn-icon-only" id="btn-details-trailer" tabindex="0" title="Trailer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+              </button>
+
+              <button class="btn btn-icon-only" id="btn-details-more" tabindex="0" title="More Options">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+              </button>
+            </div>
+
+            <!-- Synopsis -->
+            <div class="synopsis-section">
+              <h3>Synopsis</h3>
+              <p id="details-synopsis-text">
+                In a dystopian future where crop blights and dust storms threaten humanity's survival, a former NASA pilot leads a courageous team of researchers through a newly discovered wormhole in space to explore three potential habitable worlds.
+              </p>
+            </div>
+
+            <!-- Cast & Crew Circular Avatars -->
+            <div class="cast-section">
+              <h3>Top Cast</h3>
+              <div class="cast-row">
+                <div class="cast-card">
+                  <div class="cast-avatar"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop" alt="Matthew M."></div>
+                  <div class="cast-name">Matthew M.</div>
+                  <div class="cast-role">Cooper</div>
+                </div>
+                <div class="cast-card">
+                  <div class="cast-avatar"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&auto=format&fit=crop" alt="Anne H."></div>
+                  <div class="cast-name">Anne H.</div>
+                  <div class="cast-role">Brand</div>
+                </div>
+                <div class="cast-card">
+                  <div class="cast-avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop" alt="Jessica C."></div>
+                  <div class="cast-name">Jessica C.</div>
+                  <div class="cast-role">Murph</div>
+                </div>
+                <div class="cast-card">
+                  <div class="cast-avatar"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop" alt="Michael C."></div>
+                  <div class="cast-name">Michael C.</div>
+                  <div class="cast-role">Prof. Brand</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. NETWORK & FILES SCREEN -->
+      <section id="network-screen" class="screen-surface">
+        <div class="screen-header-bar">
+          <div class="screen-title-area">
+            <h1>Network & Local Storage</h1>
+            <span class="count-pill">3 Connected Sources</span>
+          </div>
+
+          <div class="toolbar">
+            <button class="btn btn-primary btn-sm" id="btn-scan-library" tabindex="0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>Scan Library</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-add-server" tabindex="0">+ Add Network Server</button>
+          </div>
+        </div>
+
+        <div class="network-grid">
+          <!-- Local Storage -->
+          <div class="card network-card" tabindex="0">
+            <div class="net-icon">💾</div>
+            <div class="net-info">
+              <div class="net-title">Internal Storage</div>
+              <div class="net-sub">/storage/emulated/0/Movies</div>
+              <div class="net-meta">124 GB free of 256 GB</div>
+            </div>
+          </div>
+
+          <div class="card network-card" tabindex="0">
+            <div class="net-icon">🔌</div>
+            <div class="net-info">
+              <div class="net-title">USB Drive (NVIDIA Shield)</div>
+              <div class="net-sub">/storage/4F82-12A0/4K_Library</div>
+              <div class="net-meta">1.4 TB free of 4.0 TB</div>
+            </div>
+          </div>
+
+          <!-- SMB Server -->
+          <div class="card network-card" tabindex="0">
+            <div class="net-icon">🖥️</div>
+            <div class="net-info">
+              <div class="net-title">Home NAS (SMB3)</div>
+              <div class="net-sub">smb://192.168.1.100/Media</div>
+              <div class="net-meta">Connected · 1,420 Media Files</div>
+            </div>
+          </div>
+
+          <!-- WebDAV -->
+          <div class="card network-card" tabindex="0">
+            <div class="net-icon">☁️</div>
+            <div class="net-info">
+              <div class="net-title">Cloud Storage (WebDAV)</div>
+              <div class="net-sub">https://cloud.local/remote.php/webdav</div>
+              <div class="net-meta">Connected · TLS Secured</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. SETTINGS SCREEN -->
+      <section id="settings-screen" class="screen-surface">
+        <div class="settings-layout">
+          <!-- Left Rail Category Selector -->
+          <aside class="settings-rail">
+            <h2 class="rail-title">Settings</h2>
+            <div class="rail-menu">
+              <button class="rail-item active" data-cat="cat-video" tabindex="0">Video & Playback</button>
+              <button class="rail-item" data-cat="cat-audio" tabindex="0">Audio & Passthrough</button>
+              <button class="rail-item" data-cat="cat-subtitles" tabindex="0">Subtitles</button>
+
+              <button class="rail-item" data-cat="cat-ui" tabindex="0">UI & Appearance</button>
+              <button class="rail-item" data-cat="cat-network" tabindex="0">Network & Scrapers</button>
+              <button class="rail-item" data-cat="cat-about" tabindex="0">About & System</button>
+            </div>
+          </aside>
+
+          <!-- Right Settings Cards Grid (3 Columns) -->
+          <main class="settings-content" id="settings-cards-container">
+            <!-- Video & Playback Category -->
+            <div class="settings-category active" id="cat-video">
+              <h3 class="category-title">Video & Hardware Acceleration</h3>
+
+              <div class="settings-card-grid">
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Hardware Decoder</div>
+                    <span class="setting-value">HW+ (MediaCodec)</span>
+                  </div>
+                  <p class="setting-desc">Use GPU hardware acceleration for 4K HEVC and AV1 playback.</p>
+                </div>
+
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Auto Refresh Rate Switch</div>
+                    <span class="setting-toggle active">ON</span>
+                  </div>
+                  <p class="setting-desc">Match TV display frame rate automatically to 23.976 / 24 / 59.94 Hz video content.</p>
+                </div>
+
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Dolby Vision Mode</div>
+                    <span class="setting-value">Engine Default</span>
+                  </div>
+                  <p class="setting-desc">Precision tone mapping for Profile 5, 7, and 8 Dolby Vision streams.</p>
+                </div>
+
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Stream Buffer Size</div>
+                    <span class="setting-value">Auto (64 MB)</span>
+                  </div>
+                  <p class="setting-desc">Pre-buffer network streams to avoid stutter on high-bitrate ISOs.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Audio Category -->
+            <div class="settings-category" id="cat-audio">
+              <h3 class="category-title">Audio & Passthrough</h3>
+              <div class="settings-card-grid">
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Audio Passthrough</div>
+                    <span class="setting-toggle active">RAW Passthrough</span>
+                  </div>
+                  <p class="setting-desc">Pass TrueHD, Atmos, DTS-HD MA directly to AV Receiver via HDMI.</p>
+                </div>
+
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Preferred Audio Language</div>
+                    <span class="setting-value">English (eng)</span>
+                  </div>
+                  <p class="setting-desc">Automatically select matching audio track when available.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subtitles Category -->
+            <div class="settings-category" id="cat-subtitles">
+              <h3 class="category-title">Subtitles & OpenSubtitles</h3>
+              <div class="settings-card-grid">
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Default Subtitle State</div>
+                    <span class="setting-value">Off</span>
+                  </div>
+                  <p class="setting-desc">Hide subtitles by default unless specified otherwise.</p>
+                </div>
+
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">OpenSubtitles.com Auth</div>
+                    <span class="setting-value">Logged In (SuperUser)</span>
+                  </div>
+                  <p class="setting-desc">Download on-demand subtitles directly inside player.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- UI & Appearance -->
+            <div class="settings-category" id="cat-ui">
+              <h3 class="category-title">UI & Customization</h3>
+              <div class="settings-card-grid">
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Theme Accent</div>
+                    <span class="setting-value">Slate Cyan (#03A9F4)</span>
+                  </div>
+                  <p class="setting-desc">Locked Supernova high-contrast focus theme.</p>
+                </div>
+
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Glass Translucency</div>
+                    <span class="setting-toggle active">ON (Slate Frost)</span>
+                  </div>
+                  <p class="setting-desc">Enable smooth translucent panel backdrops over hero artwork.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Network & Scrapers -->
+            <div class="settings-category" id="cat-network">
+              <h3 class="category-title">Network & Metadata Scrapers</h3>
+              <div class="settings-card-grid">
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">SMB Engine</div>
+                    <span class="setting-value">SMBj (SMB2/SMB3)</span>
+                  </div>
+                  <p class="setting-desc">High-performance SMB3 stack with fast directory caching.</p>
+                </div>
+
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Scraper Engine</div>
+                    <span class="setting-value">TMDB & TVDB</span>
+                  </div>
+                  <p class="setting-desc">Fetch posters, backdrops, cast info and episode guides.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- About -->
+            <div class="settings-category" id="cat-about">
+              <h3 class="category-title">About Supernova</h3>
+              <div class="settings-card-grid">
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Application Version</div>
+                    <span class="setting-value">4.1.5-SUPERNOVA</span>
+                  </div>
+                  <p class="setting-desc">Canonical Android TV / Nvidia Shield Build (NOVA Derivative).</p>
+                </div>
+
+                <div class="card settings-card" tabindex="0">
+                  <div class="setting-header">
+                    <div class="setting-name">Device ABI & OS</div>
+                    <span class="setting-value">arm64-v8a · Android 11 (API 30)</span>
+                  </div>
+                  <p class="setting-desc">Targeted optimization for NVIDIA Shield TV Pro & Leanback devices.</p>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </section>
+
+      <!-- 8. VIDEO PLAYER HUD OVERLAY (FULLSCREEN PLAYER SIMULATION) -->
+      <section id="player-hud-screen" class="screen-surface player-surface">
+        <!-- Simulated Video Frame Background -->
+        <div class="player-video-bg" style="background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920&auto=format&fit=crop');"></div>
+
+        <!-- Translucent Top HUD Header -->
+        <div class="player-top-bar">
+          <button class="back-btn" id="btn-player-exit" tabindex="0">← Exit Player</button>
+
+          <div class="player-media-title">
+            <span class="p-title">Interstellar Odyssey</span>
+            <span class="p-subtitle">4K HDR10 · Dolby Atmos · English EA3 7.1</span>
+          </div>
+
+          <div class="player-clock">21:14</div>
+        </div>
+
+        <!-- Center Play/Pause state indicator (fades out during playback) -->
+        <div class="player-center-status">
+          <div class="status-icon">⏸</div>
+        </div>
+
+        <!-- Translucent Bottom Transport Bar -->
+        <div class="player-bottom-bar">
+          <!-- Seek & Time row -->
+          <div class="seek-row">
+            <span class="time-text current-time">01:14:20</span>
+            <div class="seek-bar-container">
+              <div class="seek-bar-fill" style="width: 44%;">
+                <div class="seek-thumb"></div>
+              </div>
+            </div>
+            <span class="time-text remaining-time">-01:34:40</span>
+            <span class="time-text end-time">Ends at 22:49</span>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="transport-controls">
+            <div class="controls-left">
+              <button class="transport-btn" tabindex="0" title="Rewind 10s">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 19l-9-7 9-7v14zM22 19l-9-7 9-7v14z"/></svg>
+              </button>
+
+              <button class="transport-btn play-pause-btn active" id="btn-player-playpause" tabindex="0" title="Play/Pause">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              </button>
+
+              <button class="transport-btn" tabindex="0" title="Forward 10s">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 19l9-7-9-7v14zM2 19l9-7-9-7v14z"/></svg>
+              </button>
+            </div>
+
+            <div class="controls-center">
+              <button class="hud-pill-btn active" id="btn-hud-audio" tabindex="0">
+                <span>🔊 Audio: English (Atmos 7.1)</span>
+              </button>
+
+              <button class="hud-pill-btn" id="btn-hud-subtitles" tabindex="0">
+                <span>💬 Subs: English (SRT)</span>
+              </button>
+
+              <button class="hud-pill-btn" id="btn-hud-video" tabindex="0">
+                <span>⚙️ 4K HDR10 · Passthrough</span>
+              </button>
+            </div>
+
+            <div class="controls-right">
+              <button class="transport-btn" tabindex="0" title="More Playback Info">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Quick Navigation Switcher Floating Overlay (Helper for quick demoing) -->
+    <div class="quick-nav-helper">
+      <span>Quick Surface Switcher:</span>
+      <button class="q-btn" onclick="showScreen('home-screen')">Home</button>
+      <button class="q-btn" onclick="showScreen('movies-grid-screen')">Movies Grid</button>
+      <button class="q-btn" onclick="showScreen('movies-list-screen')">Movies List</button>
+      <button class="q-btn" onclick="showScreen('details-screen')">Details</button>
+      <button class="q-btn" onclick="showScreen('player-hud-screen')">Player HUD</button>
+      <button class="q-btn" onclick="showScreen('settings-screen')">Settings</button>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
