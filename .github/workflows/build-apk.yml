@@ -4,7 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    # Temporary compatibility target lets the canonical main build restore the
+    # preserved Preview signing cache from the former development branch.
+    branches: [main, codex/apk-build-fixes]
   workflow_dispatch:
 
 permissions:
