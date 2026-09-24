@@ -2,7 +2,7 @@ name: Build Supernova Preview APK
 
 on:
   push:
-    branches: ['codex/apk-build-*']
+    branches: ['codex/apk-build-*', 'codex/preview-4.1.6']
     paths-ignore: ['docs/**', '**/*.md']
   workflow_dispatch:
     inputs:
