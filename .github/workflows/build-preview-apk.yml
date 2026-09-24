@@ -1,4 +1,4 @@
-name: Build NOVA Preview APK
+name: Build Supernova Preview APK
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
       APK_VARIANT: release
 
     steps:
-      - name: Check out the triggering Video revision
+      - name: Check out the triggering Supernova revision
         uses: actions/checkout@v4
         with:
           path: source
