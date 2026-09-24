@@ -61,6 +61,24 @@ jobs:
           cd ..
           repo manifest -r -o source-manifest.xml
 
+      - name: Apply bounded Preview 4.0 scan scheduling correction
+        working-directory: nova/MediaLib
+        run: git apply ../Video/.github/build/medialib-preview40.patch
+
+      - name: Apply reviewed Preview 4.1.4 backend corrections
+        run: |
+          git -C nova/native/avos apply --check ../../Video/.github/build/avos-preview414.patch
+          git -C nova/native/avos apply ../../Video/.github/build/avos-preview414.patch
+          git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview414.patch
+          git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
+
+      - name: Apply bounded Preview 4.1.5 stability corrections
+        run: |
+          git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview415.patch
+          git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview415.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview415.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview415.patch
+
       # The pinned FileCoreLibrary declares the published NOVA jcifs-ng package,
       # including its Maven dependency metadata. Do not stage a second bare JAR.
       - name: Set up Java 17 for Android Gradle
