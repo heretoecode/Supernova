@@ -1,10 +1,10 @@
-name: Build NOVA APK
+name: Build Supernova APK
 
 on:
   push:
-    branches: [v6.4]
+    branches: [main]
   pull_request:
-    branches: [v6.4]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      - name: Check out the triggering Video revision
+      - name: Check out the triggering Supernova revision
         uses: actions/checkout@v4
         with:
           path: source
