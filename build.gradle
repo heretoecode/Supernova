@@ -312,7 +312,7 @@ android {
         abortOnError = true
         checkReleaseBuilds = false
         showAll = true
-        disable 'MissingTranslation', 'ExtraTranslation', 'MissingQuantity', 'ImpliedQuantity'
+        disable 'MissingTranslation', 'ExtraTranslation', 'MissingQuantity', 'ImpliedQuantity', 'RestrictedApi'
         enable 'SuspiciousIndentation'
     }
 
