@@ -67,6 +67,11 @@ public final class StreamingRepository {
     public static boolean allowedType(String type) {
         return "flatrate".equals(type) || "free".equals(type) || "ads".equals(type);
     }
+    /** Narrow read-only metadata gateway using the existing TMDb client and credentials. */
+    public static JSONObject metadata(Context context,String kind,long id,String section)throws Exception{
+        if(!(kind.equals("movie")||kind.equals("tv"))||id<=0||!Arrays.asList("","videos","recommendations").contains(section))throw new IOException("Invalid metadata request");
+        return api(context,kind+"/"+id+(section.isEmpty()?"":"/"+section),null);
+    }
     private static JSONObject api(Context context, String path, String country) throws Exception {
         Uri.Builder url = Uri.parse("https://api.themoviedb.org/3/" + path).buildUpon()
                 .appendQueryParameter("api_key", context.getString(com.archos.medialib.R.string.tmdb_api_key))
@@ -76,8 +81,11 @@ public final class StreamingRepository {
     }
     private static String get(String url, int limit) throws IOException {
         if (Thread.currentThread().isInterrupted()) throw new IOException("Cancelled");
+        long started=android.os.SystemClock.elapsedRealtime();
+        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_network");
         try (Response response = HTTP.newCall(new Request.Builder().url(url)
                 .header("User-Agent", "NOVA-Mark/2 (Android TV)").build()).execute()) {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_response","operation_id",operation,"status",response.code(),"protocol",String.valueOf(response.protocol()));
             if (!response.isSuccessful() || response.body() == null) throw new IOException("Availability service unavailable");
             // Bound both API and HTML responses rather than loading an unlimited body.
             java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
@@ -91,7 +99,13 @@ public final class StreamingRepository {
             }
             byte[] data = buffer.toByteArray();
             if (data.length > limit) throw new IOException("Response too large");
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_body","operation_id",operation,"bytes",data.length);
             return new String(data, StandardCharsets.UTF_8);
+        } catch(IOException error) {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_failed","operation_id",operation,"type",error.getClass().getSimpleName());
+            throw error;
+        } finally {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"metadata_network",started);
         }
     }
     public static List<Provider> providers(Context context, String country) throws Exception {

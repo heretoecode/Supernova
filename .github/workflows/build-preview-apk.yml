@@ -103,6 +103,13 @@ jobs:
             source/**/*.gradle*
             source/gradle/wrapper/gradle-wrapper.properties
 
+      - name: Compile and test source before signed delivery gate
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
+
       - name: Retain personal development signing key
         uses: actions/cache@v4
         with:

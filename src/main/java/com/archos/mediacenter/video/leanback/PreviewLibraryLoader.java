@@ -109,6 +109,22 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         s.continuingShows.sort(Comparator.comparingLong((Entry e)->groups.get(e.show).stream().mapToLong(x->((Video)x.media).getLastPlayed()).max().orElse(0)).reversed());
         return s;
     }
+    /** Recalculate display-only series metadata after persisted legacy-file enrichment. */
+    public static void refreshTechnicalSummaries(Snapshot snapshot){
+        Map<Long,List<Entry>> episodes=new HashMap<>();
+        for(Entry entry:snapshot.episodes)episodes.computeIfAbsent(entry.show,k->new ArrayList<>()).add(entry);
+        for(Entry show:snapshot.shows){
+            Set<String> resolutions=new TreeSet<>(),audios=new TreeSet<>(),codecs=new TreeSet<>(),hdr=new TreeSet<>();
+            for(Entry entry:episodes.getOrDefault(show.show,Collections.emptyList())){
+                if(!entry.resolution.isEmpty())resolutions.add(entry.resolution);
+                if(!entry.audio.isEmpty())audios.add(entry.audio);
+                if(!entry.codec.isEmpty())codecs.add(entry.codec);
+                if(!entry.hdr.isEmpty())hdr.add(entry.hdr);
+            }
+            show.resolution=summaryValue(resolutions);show.audio=summaryValue(audios);show.codec=summaryValue(codecs);show.hdr=summaryValue(hdr);
+        }
+    }
+    private static String summaryValue(Set<String> values){return values.isEmpty()?"":values.size()==1?values.iterator().next():"Mixed";}
     private static final Object CACHE_LOCK=new Object();
     private static final java.util.concurrent.ExecutorService cacheWriter=java.util.concurrent.Executors.newSingleThreadExecutor();
     public static void warmCache(Context context){cacheWriter.execute(()->{Snapshot value=readCache(context);if(value!=null&&cached==null&&!com.archos.mediacenter.video.player.PrivateMode.isActive()){cachePrivate=false;cached=value;}});}
@@ -131,7 +147,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         s.continuingShows.sort(Comparator.comparingLong((Entry e)->e.playedAt).reversed());
     }
     @Override public Cursor loadInBackground() {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_load_begin");
+        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("indexed_library_load");
         long started=android.os.SystemClock.elapsedRealtime();
         Cursor c=null;
         loadWarning=null;
@@ -176,6 +192,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 if(!cachePrivate)cacheWriter.execute(()->writeCache(result));
             } else loadWarning="Some library records could not be read. Library data was not changed. Please export diagnostics and retry.";
             snapshot=result;
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_counts","operation_id",operation,"visited",visited,"rejected",rejected,"movies",result.movies.size(),"shows",result.shows.size(),"episodes",result.episodes.size());
             c.moveToPosition(-1); return c;
         } catch(android.os.OperationCanceledException | androidx.core.os.OperationCanceledException cancelled) {
             if(c!=null)c.close();throw cancelled;
@@ -185,6 +202,6 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             loadWarning="The library could not be read. Library data was not changed. Please export diagnostics and retry.";
             Snapshot previous=memoryCache();snapshot=previous!=null?previous:new Snapshot();
             return null;
-        }
+        } finally {com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"indexed_library_load",started);}
     }
 }

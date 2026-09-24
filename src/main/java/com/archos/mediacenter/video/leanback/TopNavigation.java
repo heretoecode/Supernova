@@ -30,29 +30,24 @@ public final class TopNavigation extends LinearLayout {
         scanStatus = new android.widget.FrameLayout(c);scanStatus.setFocusable(false);scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
         artwork = new PreviewBackdrop(c); setBackground(artwork);
-        bar = new LinearLayout(c); bar.setGravity(Gravity.CENTER_VERTICAL);
+        bar = new LinearLayout(c); bar.setClipChildren(false);bar.setClipToPadding(false); bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(26), 0, dp(26), 0);
         bar.setBackgroundColor(Color.TRANSPARENT);
         TextView brand = new TextView(c);
-        brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(0xffb7d7f5);
-        brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(130), -1));
-        LinearLayout group = new LinearLayout(c); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
+        brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(Color.WHITE);
+        brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(136), -1));
+        LinearLayout group = new LinearLayout(c);group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
         bar.addView(group, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search"};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
             TextView tab = new TextView(c); tabs[i] = tab;
             tab.setText(labels[i]); tab.setContentDescription(labels[i]);
-            tab.setTextColor(Color.WHITE); tab.setTextSize(15); tab.setGravity(Gravity.CENTER);
+            tab.setTextColor(Color.WHITE); tab.setTextSize(19); tab.setGravity(Gravity.CENTER);
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
-            tab.setPadding(dp(12), dp(6), dp(12), dp(6));
-            tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_selected}, new int[]{android.R.attr.state_focused}, new int[]{}}, new int[]{Color.WHITE, 0xff59d8ff, 0xffb4cbe0}));
+            tab.setPadding(dp(7), dp(6), dp(7), dp(6));
             styleTab(tab);
-            tab.setOnFocusChangeListener((v, focused)->{
-                tab.setShadowLayer(focused?dp(4):0,0,0,PreviewAccent.color(c));
-                for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon instanceof PreviewIcon)((PreviewIcon)icon).focus(focused,PreviewAccent.color(c));
-                v.animate().scaleX(focused?1.025f:1f).scaleY(focused?1.025f:1f).setDuration(160).start();});
             tab.setOnClickListener(v -> {
                 if (index < 4) {
                     for (TextView t : tabs) t.setSelected(false);
@@ -79,7 +74,7 @@ public final class TopNavigation extends LinearLayout {
         }
         group.removeView(tabs[5]);group.addView(tabs[5],group.indexOfChild(tabs[4]),new LayoutParams(-2,dp(36)));
         status = new android.widget.FrameLayout(c);
-        bar.addView(status, new LayoutParams(dp(85), dp(46)));
+        bar.addView(status, new LayoutParams(dp(64), dp(46)));
         android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19);clock.setTextColor(0xffd6e5f3);clock.setGravity(Gravity.CENTER);status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
         selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
@@ -91,10 +86,11 @@ public final class TopNavigation extends LinearLayout {
     }
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key)){for(TextView tab:tabs)styleTab(tab);invalidate();}};
     private void styleTab(TextView tab){
-        Context c=getContext();tab.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{PreviewAccent.color(c),0xffe1e9ef}));
-        tab.setBackgroundColor(Color.TRANSPARENT);
-        tab.setShadowLayer(tab.hasFocus()?dp(4):0,0,0,PreviewAccent.color(c));
-        for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon instanceof PreviewIcon)((PreviewIcon)icon).focus(tab.hasFocus(),PreviewAccent.color(c));
+        tab.setTextColor(Color.WHITE);
+        tab.setShadowLayer(0,0,0,0);
+        tab.setBackground(PreviewDialog.focus(getContext()));
+        for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon instanceof PreviewIcon)((PreviewIcon)icon).focus(false,0);
+
     }
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(accentListener);for(TextView tab:tabs)styleTab(tab);}
     private boolean scrolled;private android.animation.ValueAnimator scrimAnimation;private int scrimAlpha;

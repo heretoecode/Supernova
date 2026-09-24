@@ -39,12 +39,13 @@ public final class PreviewLibraryColumns {
    ascending=prefs.getBoolean(prefix+"ascending",true);
   }
  }
- private List<Column> available(){List<Column> values=new ArrayList<>(Arrays.asList(Column.values()));if(!tv)values.removeAll(Arrays.asList(Column.SEASONS,Column.EPISODES,Column.AVERAGE));return values;}
+ public List<Column> available(){List<Column> values=new ArrayList<>(Arrays.asList(Column.values()));if(!tv)values.removeAll(Arrays.asList(Column.SEASONS,Column.EPISODES,Column.AVERAGE));return values;}
  private List<Column> parse(String value){List<Column> result=new ArrayList<>();for(String key:value.split(","))try{Column c=Column.valueOf(key);if(available().contains(c)&&!result.contains(c))result.add(c);}catch(IllegalArgumentException ignored){}return result;}
  private void reset(boolean save){order.clear();order.addAll(available());shown.clear();shown.addAll(tv?Arrays.asList(Column.TITLE,Column.SEASONS,Column.EPISODES,Column.DURATION,Column.RESOLUTION,Column.SIZE,Column.AVERAGE,Column.ADDED):Arrays.asList(Column.TITLE,Column.YEAR,Column.DURATION,Column.RESOLUTION,Column.AUDIO,Column.SIZE,Column.ADDED));if(save)save();}
  private void save(){if(!prefs.getBoolean("remember_library_views",true))return;prefs.edit().putString(prefix+"order",TextUtils.join(",",order)).putString(prefix+"shown",TextUtils.join(",",shown)).putString(prefix+"sort",sortColumn==null?"":sortColumn.name()).putBoolean(prefix+"ascending",ascending).apply();}
  public List<Column> visible(){List<Column> result=new ArrayList<>();for(Column c:order)if(shown.contains(c))result.add(c);return result;}
  public void setAscending(boolean value){ascending=value;save();}
+ public void setSort(Column column,boolean direction){sortColumn=column;ascending=direction;save();}
  public void clearSort(){sortColumn=null;save();}
  public List<Entry> sort(List<Entry> source){if(sortColumn==null)return source;List<Entry> copy=new ArrayList<>(source);Column column=sortColumn;
   copy.sort((a,b)->{boolean ak=known(a,column),bk=known(b,column);if(ak!=bk)return ak?-1:1;int compare=isNumeric(column)?Long.compare(number(a,column),number(b,column)):(column==Column.TITLE?PreviewPages.titleForSort(context,a):value(a,column)).compareToIgnoreCase(column==Column.TITLE?PreviewPages.titleForSort(context,b):value(b,column));if(!ascending)compare=-compare;return compare!=0?compare:PreviewPages.displayName(a).compareToIgnoreCase(PreviewPages.displayName(b));});return copy;
@@ -65,8 +66,8 @@ public final class PreviewLibraryColumns {
  private static String duration(long ms){if(ms<=0)return "";long minutes=ms/60000;return minutes>=60?minutes/60+"h "+minutes%60+"m":minutes+" min";}
  private static String date(long date){if(date<=0)return "";return new java.text.SimpleDateFormat("dd MMM yy",Locale.UK).format(new Date(date<100000000000L?date*1000:date));}
  private TextView text(String value,int size){TextView t=new TextView(context);t.setText(value);t.setTextSize(size);t.setTextColor(0xffd5e4ee);t.setGravity(Gravity.CENTER_VERTICAL);t.setPadding(dp(6),0,dp(6),0);t.setSingleLine(true);t.setEllipsize(TextUtils.TruncateAt.END);t.setIncludeFontPadding(false);return t;}
- public View header(Runnable changed){LinearLayout row=new LinearLayout(context);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(0,dp(5),0,0);
-  for(Column c:visible()){TextView label=text(c.label+(sortColumn==c?(ascending?" ↑":" ↓"):""),11);label.setFocusable(true);label.setTag("column:"+c);label.setContentDescription(c.label+", sort"+(sortColumn==c?(ascending?", ascending":", descending"):""));label.setBackground(PreviewDialog.focus(context));label.setOnClickListener(v->{ascending=sortColumn==c?!ascending:c==Column.TITLE||c==Column.YEAR;sortColumn=c;save();changed.run();});row.addView(label,new LinearLayout.LayoutParams(0,dp(30),c.width));}
+ public View header(Runnable changed){LinearLayout row=new LinearLayout(context);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(0,dp(5),0,0);row.setBackgroundColor(0x240b1b29);row.setClipChildren(false);
+  for(Column c:visible()){TextView label=text(c.label+(sortColumn==c?(ascending?" ↑":" ↓"):""),11);label.setFocusable(true);label.setTag("column:"+c);label.setContentDescription(c.label+", sort"+(sortColumn==c?(ascending?", ascending":", descending"):""));label.setBackground(PreviewDialog.focus(context));label.setOnClickListener(v->{setSort(c,sortColumn==c?!ascending:c==Column.TITLE||c==Column.YEAR);changed.run();});row.addView(label,new LinearLayout.LayoutParams(0,dp(30),c.width));}
   return row;
  }
  public LinearLayout newRow(){LinearLayout row=new LinearLayout(context);row.setGravity(Gravity.CENTER_VERTICAL);row.setFocusable(true);row.setFocusableInTouchMode(true);row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);row.setForeground(PreviewDialog.focus(context));row.setBackground(separator(false));return row;}
@@ -86,7 +87,7 @@ public final class PreviewLibraryColumns {
   menu[0]=PreviewDialog.choose(context,"Columns · ◀ ▶ to reorder",labels.toArray(new String[0]),focus,checked,false,n->{
    menu[0].dismiss();if(n==order.size()+1){changed.run();return;}if(n==order.size())reset(true);else {Column column=order.get(n);if(column!=Column.TITLE){if(shown.contains(column))shown.remove(column);else shown.add(column);}save();}choose(changed,Math.min(n,order.size()));
   });menu[0].setOnCancelListener(d->changed.run());menu[0].setOnKeyListener((d,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN||key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT)return false;View selected=menu[0].getCurrentFocus();if(selected==null||!(selected.getTag() instanceof Integer))return false;int from=(Integer)selected.getTag(),to=from+(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);if(from>=order.size()||to<0||to>=order.size())return true;Collections.swap(order,from,to);save();menu[0].dismiss();choose(changed,to);return true;});
-  Window w=menu[0].getWindow();w.setGravity(Gravity.END|Gravity.TOP);WindowManager.LayoutParams attributes=w.getAttributes();attributes.x=dp(20);attributes.y=dp(64);w.setAttributes(attributes);w.setLayout(Math.min(dp(280),context.getResources().getDisplayMetrics().widthPixels-dp(64)),Math.min(dp(330),context.getResources().getDisplayMetrics().heightPixels-dp(112)));
+
  }
  private int dp(int value){return PreviewDialog.dp(context,value);}
 }

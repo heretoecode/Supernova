@@ -5,14 +5,19 @@ import java.util.Locale;
 /** Small outline icons shared by Nova menus, controls and preference categories. */
 public final class PreviewIcon extends Drawable {
  private final String kind;private final Paint p=new Paint(3);
- public PreviewIcon(String name){kind=name.toLowerCase(Locale.ROOT);p.setColor(0xffb9d8e9);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(1.6f);p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeJoin(Paint.Join.ROUND);}
- public void focus(boolean focused,int accent){p.setColor(focused?accent:0xffd6e2ec);p.setShadowLayer(focused?2.5f:0,0,0,accent);invalidateSelf();}
+ public PreviewIcon(String name){kind=name.toLowerCase(Locale.ROOT);p.setColor(0xffe1e9ef);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(1.6f);p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeJoin(Paint.Join.ROUND);}
+ public void focus(boolean focused,int accent){p.setColor(0xffe1e9ef);p.clearShadowLayer();invalidateSelf();}
  private void line(Canvas c,float... pts){Path q=new Path();q.moveTo(pts[0],pts[1]);for(int i=2;i<pts.length;i+=2)q.lineTo(pts[i],pts[i+1]);c.drawPath(q,p);}
  public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);
   if(kind.equals("search")){c.drawCircle(10,10,6,p);line(c,15,15,21,21);}
   else if(kind.equals("cog")){c.drawCircle(12,12,7,p);c.drawCircle(12,12,3,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,12,2,12,5);c.restore();}}
   else if(kind.equals("folder")){line(c,2,7,2,4,9,4,12,7,22,7,22,20,2,20,2,7);}
   else if(kind.equals("video-file")){line(c,5,2,15,2,20,7,20,22,5,22,5,2);line(c,15,2,15,7,20,7);line(c,9,11,16,15,9,19,9,11);}
+  else if(kind.contains("movie")||kind.equals("film")){c.drawRect(3,3,21,21,p);line(c,7,3,7,21);line(c,17,3,17,21);for(int y=7;y<21;y+=5){line(c,3,y,7,y);line(c,17,y,21,y);}}
+  else if(kind.contains("tv")||kind.contains("video")){c.drawRoundRect(2,4,22,18,2,2,p);line(c,8,22,16,22);line(c,12,18,12,22);}
+  else if(kind.contains("total size")||kind.equals("size")){c.drawOval(3,3,21,9,p);line(c,3,6,3,19);line(c,21,6,21,19);c.drawArc(3,15,21,22,0,180,false,p);c.drawArc(3,9,21,16,0,180,false,p);}
+  else if(kind.contains("local")){line(c,6,3,18,3,22,19,2,19,6,3);line(c,3,14,21,14);c.drawPoint(17,17,p);}
+  else if(kind.contains("columns")){c.drawRect(3,3,21,21,p);line(c,9,3,9,21);line(c,16,3,16,21);}
   else if(kind.contains("delete")){line(c,5,7,6,21,18,21,19,7);line(c,3,5,21,5);line(c,9,5,9,2,15,2,15,5);line(c,10,10,10,17);line(c,14,10,14,17);}
   else if(kind.contains("remove")&&kind.contains("info")){c.drawCircle(10,12,8,p);line(c,10,10,10,16);c.drawPoint(10,7,p);line(c,17,18,23,18);}
   else if(kind.contains("remove")&&kind.contains("library")){line(c,3,3,3,21,18,21);line(c,8,3,8,16);line(c,13,3,13,16);line(c,16,10,23,10);}
@@ -35,11 +40,18 @@ public final class PreviewIcon extends Drawable {
   else if(kind.contains("sub")){c.drawRoundRect(2,5,22,19,2,2,p);line(c,5,11,10,11);line(c,14,11,19,11);line(c,5,15,13,15);line(c,17,15,19,15);}
   else if(kind.contains("network")||kind.contains("source")||kind.contains("storage")){c.drawRoundRect(3,3,21,10,2,2,p);c.drawRoundRect(3,14,21,21,2,2,p);c.drawPoint(7,7,p);c.drawPoint(7,18,p);}
   else if(kind.contains("info")||kind.contains("about")||kind.contains("details")){c.drawCircle(12,12,9,p);line(c,12,11,12,17);c.drawPoint(12,7,p);}
-  else if(kind.contains("list")||kind.contains("sort")||kind.contains("title")||kind.contains("chapter")){for(int y=5;y<=19;y+=7){c.drawPoint(3,y,p);line(c,8,y,21,y);}}
+  else if(kind.contains("sort")){line(c,3,5,14,5);line(c,3,11,11,11);line(c,3,17,8,17);line(c,18,3,18,21);line(c,14,17,18,21,22,17);}
+  else if(kind.contains("cloud")){c.drawArc(2,9,12,21,80,210,false,p);c.drawArc(7,3,20,17,185,205,false,p);c.drawArc(15,10,24,21,260,190,false,p);line(c,6,21,19,21);}
+  else if(kind.contains("favourite")||kind.contains("favorite")){line(c,12,21,3,12,3,6,7,3,12,7,17,3,21,6,21,12,12,21);}
+  else if(kind.contains("hdr")){c.drawCircle(12,12,5,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,12,1,12,4);c.restore();}}
+  else if(kind.contains("resolution")){line(c,3,9,3,3,9,3);line(c,15,3,21,3,21,9);line(c,3,15,3,21,9,21);line(c,15,21,21,21,21,15);line(c,8,16,16,8);}
+  else if(kind.contains("codec")){c.drawRect(5,5,19,19,p);for(int n=8;n<=16;n+=4){line(c,n,2,n,5);line(c,n,19,n,22);line(c,2,n,5,n);line(c,19,n,22,n);}c.drawRect(9,9,15,15,p);}
+  else if(kind.contains("list")||kind.contains("title")||kind.contains("chapter")){for(int y=5;y<=19;y+=7){c.drawPoint(3,y,p);line(c,8,y,21,y);}}
   else if(kind.contains("star")||kind.contains("rating")||kind.contains("popular")||kind.contains("trending")){line(c,12,2,15,9,22,9,17,14,19,21,12,17,5,21,7,14,2,9,9,9,12,2);}
   else if(kind.contains("more")||kind.contains("actions")){c.drawCircle(4,12,1,p);c.drawCircle(12,12,1,p);c.drawCircle(20,12,1,p);}
   else if(kind.contains("right")||kind.contains("next")){line(c,9,5,16,12,9,19);}
-  else {for(int y=3;y<=14;y+=11)for(int x=3;x<=14;x+=11)c.drawRoundRect(x,y,x+7,y+7,1,1,p);}
+  else if(kind.contains("grid")){for(int y=3;y<=14;y+=11)for(int x=3;x<=14;x+=11)c.drawRoundRect(x,y,x+7,y+7,1,1,p);}
+  else {c.drawCircle(12,12,8,p);line(c,8,12,16,12);}
   c.restore();
  }
  public void setAlpha(int a){p.setAlpha(a);}public void setColorFilter(ColorFilter f){p.setColorFilter(f);}public int getOpacity(){return PixelFormat.TRANSLUCENT;}

@@ -33,6 +33,9 @@ public final class PreviewCardPresenter extends Presenter {
         final ProgressBar progress;
         final Style style;
         boolean hasArtwork;
+        Uri requestedArtwork,preferredArtwork;
+        Object boundItem;
+        int artworkGeneration;
         public boolean artworkReady=true;
         final int width, height;
         public Card(Context c, Style style) {
@@ -41,7 +44,7 @@ public final class PreviewCardPresenter extends Presenter {
             width = dp(style == Style.LIST ? 860 : style == Style.CONTINUE ? 172 : style == Style.CATEGORY ? 174 : 140);
             height = dp(style == Style.LIST ? 62 : style == Style.CONTINUE ? 105 : style == Style.CATEGORY ? 86 : 210);
             setFocusable(true); setFocusableInTouchMode(true);
-            setCardType(CARD_TYPE_MAIN_ONLY);setBackgroundColor(Color.TRANSPARENT);
+            setCardType(CARD_TYPE_MAIN_ONLY);setBackgroundColor(Color.TRANSPARENT);setClipChildren(false);setClipToPadding(false);
             FrameLayout body = new FrameLayout(c);
             GradientDrawable outline = new GradientDrawable();
             outline.setColor(0xc00b1b29); outline.setCornerRadius(dp(4));
@@ -89,7 +92,7 @@ public final class PreviewCardPresenter extends Presenter {
         void updateFocus() {
             setForeground(isFocused()?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
-            image.animate().alpha(isFocused()?1f:.76f).setDuration(170).start();
+            image.setAlpha(1f);animate().scaleX(isFocused()?1.08f:1f).scaleY(isFocused()?1.08f:1f).setDuration(140).start();
             title.setTextColor(isFocused()?Color.WHITE:0xffc0ccd6);
             // Poster names remain accessible without permanently covering the artwork.
             caption.setVisibility(View.VISIBLE);
@@ -98,7 +101,10 @@ public final class PreviewCardPresenter extends Presenter {
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent) { return new ViewHolder(new Card(parent.getContext(), style)); }
     @Override public void onBindViewHolder(ViewHolder holder, Object item) {
         Card c = (Card)holder.view;
-        Picasso.get().cancelRequest(c.image); c.image.setImageDrawable(null);
+        Object identity=item instanceof Video?"video:"+((Video)item).getId():item instanceof Tvshow?"show:"+((Tvshow)item).getTvshowId():item;
+        boolean sameItem=java.util.Objects.equals(identity,c.boundItem);c.boundItem=identity;
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_bind","same_item",sameItem,"style",style.name());
+        if(!sameItem){Picasso.get().cancelRequest(c.image);c.image.setImageDrawable(null);c.requestedArtwork=null;c.artworkGeneration++;}
         c.artworkReady=true;c.hasArtwork = false; c.subtitle.setText(""); c.subtitle.setVisibility(View.GONE);
         c.progress.setProgress(0); c.progress.setVisibility(View.GONE);
         Uri uri = null;boolean landscape=false;
@@ -136,26 +142,30 @@ public final class PreviewCardPresenter extends Presenter {
             c.subtitle.setText(detail); c.subtitle.setVisibility(detail.isEmpty() ? View.INVISIBLE : View.VISIBLE);
         }
         c.setContentDescription(c.title.getText() + (c.subtitle.length() == 0 ? "" : ", " + c.subtitle.getText()));
+        if(c.preferredArtwork!=null&&(style==Style.CONTINUE||style==Style.LIST)){uri=c.preferredArtwork;landscape=true;}
         c.hasArtwork |= uri != null;
         c.updateFocus();
         boolean letterbox=style==Style.POSTER||(style==Style.CONTINUE||style==Style.LIST)&&!landscape;
         c.image.setScaleType(letterbox?ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_CROP);
-        if(uri!=null){c.artworkReady=false;com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(style==Style.LIST?Math.round(112*c.getResources().getDisplayMetrics().density):c.width,c.height);
-        if(letterbox)request.centerInside();else request.centerCrop();request.noFade().into(c.image, new com.squareup.picasso.Callback() {
-                @Override public void onSuccess() { c.artworkReady=true; }
-                @Override public void onError(Exception error) { c.artworkReady=true;c.hasArtwork = false; c.updateFocus(); }
+        if(uri==null&&c.requestedArtwork!=null){Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.artworkGeneration++;c.image.setImageDrawable(null);}
+        if(uri!=null&&!uri.equals(c.requestedArtwork)){c.requestedArtwork=uri;final int generation=++c.artworkGeneration;c.artworkReady=false;final long started=android.os.SystemClock.elapsedRealtime();
+        if(com.archos.mediacenter.video.diagnostics.Diagnostics.enabled())com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_request","retained_previous",sameItem&&c.image.getDrawable()!=null,"memory_hits",Picasso.get().getSnapshot().cacheHits,"memory_misses",Picasso.get().getSnapshot().cacheMisses);
+        com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(style==Style.LIST?Math.round(112*c.getResources().getDisplayMetrics().density):c.width,c.height);
+        if(letterbox)request.centerInside();else request.centerCrop();request.noPlaceholder().noFade().into(c.image, new com.squareup.picasso.Callback() {
+                @Override public void onSuccess() { if(generation==c.artworkGeneration){c.artworkReady=true;com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_ready","latency_ms",android.os.SystemClock.elapsedRealtime()-started);} }
+                @Override public void onError(Exception error) { if(generation!=c.artworkGeneration)return;c.artworkReady=true;c.requestedArtwork=null;c.hasArtwork=c.image.getDrawable()!=null; c.updateFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_failed","latency_ms",android.os.SystemClock.elapsedRealtime()-started); }
             });}
     }
+    public void bindEntry(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){Card card=(Card)holder.view;card.preferredArtwork=entry.backdrop;try{onBindViewHolder(holder,entry.media);bindSecondary(holder,entry);}finally{card.preferredArtwork=null;}}
     public static void bindSecondary(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){
         Card c=(Card)holder.view;
-        if((c.style==Style.CONTINUE||c.style==Style.LIST)&&entry.backdrop!=null){c.artworkReady=false;c.image.setScaleType(ImageView.ScaleType.CENTER_CROP);Picasso.get().load(entry.backdrop).resize(c.width,c.height).centerCrop().noFade().into(c.image,new com.squareup.picasso.Callback(){public void onSuccess(){c.artworkReady=true;}public void onError(Exception error){c.artworkReady=true;}});}
         if(entry.secondary!=null&&!entry.secondary.isEmpty()){
-            c.subtitle.setText(entry.secondary);c.subtitle.setVisibility(View.VISIBLE);c.subtitle.setTextColor(entry.active?0xff59d8ff:0xffa4b6c7);
+            c.subtitle.setText(entry.secondary);c.subtitle.setVisibility(View.VISIBLE);c.subtitle.setTextColor(0xffd6e2ec);
             c.setContentDescription(c.title.getText()+", "+entry.secondary);
         }
     }
     @Override public void onUnbindViewHolder(ViewHolder holder) {
-        Card c = (Card)holder.view; Picasso.get().cancelRequest(c.image);
+        Card c = (Card)holder.view; Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.boundItem=null;c.artworkGeneration++;
         c.image.setImageDrawable(null); c.setContentDescription(null);
         c.title.setText(""); c.subtitle.setText(""); c.progress.setProgress(0);
     }

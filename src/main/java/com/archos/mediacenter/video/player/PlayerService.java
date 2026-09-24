@@ -685,6 +685,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if(mPlayerFrontend!=null)
             mPlayerFrontend.setUri(mUri, mStreamingUri);
         mVideoId = intent.getIntExtra("id", -1);
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_selection","physical_id",mVideoId,"resume_command",mResume,"explicit_position_ms",explicitPosition,"source",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mUri));
         if (log.isDebugEnabled()) log.debug("onStart mVideoId={}", mVideoId);
         mTorrentFilePosition = mIntent.getIntExtra(PlayerActivity.KEY_TORRENT, -1);
 

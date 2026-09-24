@@ -14,12 +14,18 @@ import java.util.zip.*;
 
 /** Opt-in structured instrumentation. Never pass user text, headers or credentials here. */
 public final class Diagnostics {
+    public static final String LEVEL="supernova_diagnostic_level";
+    private static final java.util.concurrent.atomic.AtomicLong DROPPED=new java.util.concurrent.atomic.AtomicLong(),WRITE_ERRORS=new java.util.concurrent.atomic.AtomicLong(),SEQUENCE=new java.util.concurrent.atomic.AtomicLong();
+    private static final DiagnosticFlightRecorder FLIGHT=new DiagnosticFlightRecorder(252*1024,180000);
+    private static volatile boolean qa;private static volatile long freezeUntil,mainAck=android.os.SystemClock.elapsedRealtime();private static volatile int foreground;private static final Set<String> COVERAGE=java.util.Collections.synchronizedSet(new TreeSet<>());
+    private static final ScheduledExecutorService HEARTBEAT=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"SupernovaHeartbeat");t.setDaemon(true);return t;});
+    private static boolean heartbeatInstalled;
     public static final String KEY="supernova_diagnostic_logging";
     static final int LIMIT=256*1024, ROTATIONS=4;
     private static final Object LOCK=new Object();
     private static final ThreadPoolExecutor WORK=new ThreadPoolExecutor(1,1,0,TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(256),r->{Thread t=new Thread(r,"SupernovaDiagnostics");t.setDaemon(true);return t;},
-            new ThreadPoolExecutor.DiscardPolicy());
+            (task,executor)->DROPPED.incrementAndGet());
     private static volatile Context context;
     private static volatile boolean enabled;
     private static volatile String playback="";
@@ -32,6 +38,9 @@ public final class Diagnostics {
     public static void install(Application app){
         context=app.getApplicationContext();
         enabled=PreferenceManager.getDefaultSharedPreferences(app).getBoolean(KEY,false);
+        qa="qa".equals(PreferenceManager.getDefaultSharedPreferences(app).getString(LEVEL,"normal"));
+        if(!heartbeatInstalled){heartbeatInstalled=true;HEARTBEAT.scheduleWithFixedDelay(Diagnostics::heartbeat,30,30,TimeUnit.SECONDS);}
+        PreferenceManager.getDefaultSharedPreferences(app).registerOnSharedPreferenceChangeListener(CONFIG);
         sessionState=app.getSharedPreferences("supernova_diagnostic_session",Context.MODE_PRIVATE);
         if(enabled){
             String previousProcess=sessionState.getString("process","");
@@ -40,15 +49,15 @@ public final class Diagnostics {
         }
         Thread.UncaughtExceptionHandler previous=Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((thread,error)->{
-            try{if(enabled)write(record("uncaught_exception","thread",thread.getName(),"trace",trace(error)),playback);}
+            try{if(enabled){String line=record("uncaught_exception","thread",thread.getName(),"trace",trace(error));FLIGHT.add(android.os.SystemClock.elapsedRealtime(),line);write(line,playback);freeze("uncaught_exception");}}
             finally{if(previous!=null)previous.uncaughtException(thread,error);
                 else {android.os.Process.killProcess(android.os.Process.myPid());System.exit(10);}}
         });
         app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks(){
             private void life(Activity a,String state){event("lifecycle","screen",a.getClass().getSimpleName(),"state",state);}
             public void onActivityCreated(Activity a,Bundle b){life(a,"created");}
-            public void onActivityStarted(Activity a){life(a,"started");}
-            public void onActivityResumed(Activity a){
+            public void onActivityStarted(Activity a){foreground++;life(a,"started");}
+            public void onActivityResumed(Activity a){mainAck=android.os.SystemClock.elapsedRealtime();
                 life(a,"resumed");if(enabled&&sessionState!=null)sessionState.edit().putBoolean("clean",false).apply();
                 android.view.ViewTreeObserver.OnGlobalFocusChangeListener listener=(old,next)->{
                     long now=android.os.SystemClock.elapsedRealtime();
@@ -58,7 +67,7 @@ public final class Diagnostics {
                 FOCUS.put(a,listener);a.getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(listener);
             }
             public void onActivityPaused(Activity a){life(a,"paused");android.view.ViewTreeObserver.OnGlobalFocusChangeListener l=FOCUS.remove(a);if(l!=null)a.getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(l);}
-            public void onActivityStopped(Activity a){life(a,"stopped");}
+            public void onActivityStopped(Activity a){foreground=Math.max(0,foreground-1);life(a,"stopped");}
             public void onActivitySaveInstanceState(Activity a,Bundle b){}
             public void onActivityDestroyed(Activity a){life(a,"destroyed");if(enabled&&a.isTaskRoot()&&a.isFinishing()&&sessionState!=null){event("session_clean_shutdown");sessionState.edit().putBoolean("clean",true).apply();}}
         });
@@ -81,7 +90,7 @@ public final class Diagnostics {
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
-        enabled=value;if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default","off");
+        enabled=value;mainAck=android.os.SystemClock.elapsedRealtime();if(!value)FLIGHT.clear();if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default","off");
     }
     public static void beginPlayback(android.net.Uri source){
         playback=UUID.randomUUID().toString();event("playback_begin","source",sourceType(source));
@@ -95,10 +104,21 @@ public final class Diagnostics {
     }
     public static void event(String event,Object... fields){
         if(!enabled||context==null)return;
-        String line=record(event,fields),session=playback;
-        if(!event.equals("focus")&&!event.startsWith("checkpoint")&&!event.equals("scanner_state")){lastOperation=safe(event);if(sessionState!=null)sessionState.edit().putString("last_operation",lastOperation).apply();}
-        WORK.execute(()->{if(enabled)write(line,session);});
+        try{String line=record(event,fields),session=playback;long now=android.os.SystemClock.elapsedRealtime();FLIGHT.add(now,line);if(COVERAGE.size()<256)COVERAGE.add(event);
+            boolean detail=event.equals("focus")||event.startsWith("artwork_")||event.equals("home_page_render");
+            if(!detail&&!event.startsWith("checkpoint")&&!event.equals("scanner_state")){lastOperation=safe(event);if(sessionState!=null)sessionState.edit().putString("last_operation",lastOperation).apply();}
+            boolean anomaly=event.contains("error")||event.contains("failed")||event.contains("exception")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected");
+            WORK.execute(()->{if(!enabled)return;if(qa||!detail)write(line,session);if(anomaly)freeze(event);else if(android.os.SystemClock.elapsedRealtime()<freezeUntil)appendFlight(line);});
+        }catch(RuntimeException ignored){DROPPED.incrementAndGet();}
     }
+    private static final SharedPreferences.OnSharedPreferenceChangeListener CONFIG=(prefs,key)->{if(LEVEL.equals(key))qa="qa".equals(prefs.getString(LEVEL,"normal"));if(key!=null&&Arrays.asList(LEVEL,"try_new_ui","remember_library_views","hide_watched","sort_ignore_articles","preview_accent41", "streaming_enabled").contains(key))event("configuration_changed","setting",key);};
+    public static String operation(String kind){String id=PROCESS+":"+SEQUENCE.incrementAndGet();event("operation_begin","operation_id",id,"kind",kind);return id;}
+    public static void finishOperation(String id,String kind,long started){event("operation_end","operation_id",id,"kind",kind,"latency_ms",android.os.SystemClock.elapsedRealtime()-started);}
+    private static void heartbeat(){try{if(!enabled||context==null)return;long now=android.os.SystemClock.elapsedRealtime();if(foreground>0&&now-mainAck>65000)event("main_thread_stall_suspected","unresponsive_ms",now-mainAck);new android.os.Handler(android.os.Looper.getMainLooper()).post(()->mainAck=android.os.SystemClock.elapsedRealtime());Runtime runtime=Runtime.getRuntime();event("heartbeat","foreground",foreground,"heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),"native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"queue_depth",WORK.getQueue().size(),"dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_bytes",FLIGHT.bytes(),"level",qa?"QA_SOAK":"NORMAL");}catch(RuntimeException ignored){WRITE_ERRORS.incrementAndGet();}}
+    private static void freeze(String reason){if(context==null)return;String retained=FLIGHT.snapshot(android.os.SystemClock.elapsedRealtime());synchronized(LOCK){try{File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs()){WRITE_ERRORS.incrementAndGet();return;}android.util.AtomicFile file=new android.util.AtomicFile(new File(dir,"flight.jsonl"));FileOutputStream out=null;try{out=file.startWrite();out.write(record("flight_snapshot","reason",reason,"completeness",retained.isEmpty()?"RECOVERY_DATA_MISSING":"PARTIAL","dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get()).getBytes(StandardCharsets.UTF_8));out.write(retained.getBytes(StandardCharsets.UTF_8));file.finishWrite(out);}catch(Exception error){if(out!=null)file.failWrite(out);WRITE_ERRORS.incrementAndGet();}freezeUntil=android.os.SystemClock.elapsedRealtime()+15000;}catch(RuntimeException error){WRITE_ERRORS.incrementAndGet();}}}
+    private static void appendFlight(String line){synchronized(LOCK){try{append(directory(),"flight.jsonl",1,line.getBytes(StandardCharsets.UTF_8));}catch(IOException error){WRITE_ERRORS.incrementAndGet();}}}
+    public static void reportProblem(Context c){if(!enabled){com.archos.mediacenter.video.leanback.PreviewDialog.read(c,"Diagnostic logging is off","Enable Diagnostic Logging in Advanced settings before recording a problem.");return;}String[] categories={"Playback","UI","Network","Other"};com.archos.mediacenter.video.leanback.PreviewDialog.choose(c,"Report a Problem",categories,-1,n->{String id=PROCESS.substring(0,8)+"-"+SEQUENCE.incrementAndGet();event("manual_problem_marker","category",categories[n],"marker_id",id);com.archos.mediacenter.video.leanback.PreviewDialog.read(c,"Problem marked", "Reference: "+id+"\nUse this reference with your screenshot or video. Export Diagnostic Report to save the evidence.");});}
+    public static void showDigest(Context c){WORK.execute(()->{String digest=summary();new android.os.Handler(android.os.Looper.getMainLooper()).post(()->{if(c instanceof Activity&&(((Activity)c).isFinishing()||((Activity)c).isDestroyed()))return;com.archos.mediacenter.video.leanback.PreviewDialog.read(c,"Issues Digest",digest);});});}
     public static void error(String event,Throwable error){event(event,"trace",trace(error));}
     /** Stack locations are useful; exception messages may contain secrets and are NEVER retained. */
     static String trace(Throwable error){
@@ -119,7 +139,7 @@ public final class Diagnostics {
     private static String record(String event,Object... fields){
         try{
             JSONObject json=new JSONObject();json.put("utc_ms",System.currentTimeMillis());json.put("elapsed_ms",android.os.SystemClock.elapsedRealtime());
-            json.put("pid",android.os.Process.myPid());json.put("last_operation",lastOperation);json.put("process",PROCESS);json.put("session",playback);json.put("event",safe(event));
+            json.put("sequence",SEQUENCE.incrementAndGet());json.put("pid",android.os.Process.myPid());json.put("last_operation",lastOperation);json.put("process",PROCESS);json.put("session",playback);json.put("event",safe(event));
             for(int i=0;i+1<fields.length;i+=2){String key=String.valueOf(fields[i]);
                 if(!key.matches("[a-z_]{1,48}")||key.matches(".*(password|credential|token|secret|header|cookie|path|url|uri|api_key).*"))continue;
                 Object value=fields[i+1];json.put(key,value instanceof Number||value instanceof Boolean?value:safe(String.valueOf(value)));
@@ -137,10 +157,10 @@ public final class Diagnostics {
     }
     private static void write(String line,String session){
         if(context==null||line.isEmpty())return;
-        synchronized(LOCK){try{File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs())return;
+        synchronized(LOCK){try{File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs()){WRITE_ERRORS.incrementAndGet();return;}
             byte[] bytes=line.getBytes(StandardCharsets.UTF_8);append(dir,"events.jsonl",ROTATIONS,bytes);
             if(!session.isEmpty())append(dir,"playback.jsonl",1,bytes);
-        }catch(Exception ignored){/* Instrumentation must not affect playback or storage operations. */}}
+        }catch(Exception ignored){WRITE_ERRORS.incrementAndGet();/* Instrumentation must not affect playback or storage operations. */}}
     }
     /** Called on a worker. Only our bounded, sanitised files and allow-listed device fields are exported. */
     public static void export(Context c,OutputStream destination)throws IOException{
@@ -162,7 +182,8 @@ public final class Diagnostics {
             entry(zip,"decoders.txt",decoders.toString().getBytes(StandardCharsets.UTF_8));
             entry(zip,"README.txt",("Supernova opt-in diagnostic report\nStructured UTC and monotonic timestamps; process and playback session IDs.\nLogging is off by default. Disabling stops new events, not export of existing bounded logs.\nException messages, credentials, raw media paths, headers and preference dumps are excluded.\nUp to five 256 KiB event files and two 256 KiB playback files; a bounded queue may drop events under load.\nNo native decoder A/V clock precision or physical Shield playback success is implied.\n").getBytes(StandardCharsets.UTF_8));
             entry(zip,"summary.txt",summary().getBytes(StandardCharsets.UTF_8));
-            File dir=directory();for(String name:new String[]{"events.jsonl","events.jsonl.1","events.jsonl.2","events.jsonl.3","events.jsonl.4","playback.jsonl","playback.jsonl.1"}){
+            String coverage; synchronized(COVERAGE){coverage=COVERAGE.toString();}entry(zip,"coverage.txt",("Completeness: PARTIAL\nObserved event types: "+coverage+"\nNative decoder and every direct network transport are not fully observable. No app-quality score.\nDropped: "+DROPPED.get()+"; write errors: "+WRITE_ERRORS.get()+"; queued: "+WORK.getQueue().size()+"\n").getBytes(StandardCharsets.UTF_8));
+            File dir=directory();for(String name:new String[]{"events.jsonl","events.jsonl.1","events.jsonl.2","events.jsonl.3","events.jsonl.4","playback.jsonl","playback.jsonl.1","flight.jsonl","flight.jsonl.1"}){
                 File file=new File(dir,name);if(!file.isFile())continue;zip.putNextEntry(new ZipEntry(name));
                 try(InputStream in=new FileInputStream(file)){byte[] buffer=new byte[8192];int read,total=0;while(total<LIMIT&&(read=in.read(buffer,0,Math.min(buffer.length,LIMIT-total)))!=-1){zip.write(buffer,0,read);total+=read;}}zip.closeEntry();
             }
@@ -177,7 +198,7 @@ public final class Diagnostics {
                 }catch(org.json.JSONException ignored){}
             }}catch(IOException ignored){}
         }
-        return "Supernova diagnostic summary\nBuild: "+com.archos.mediacenter.video.BuildConfig.VERSION_NAME+"\nSource: "+com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA+"\nPlayback sessions retained: "+sessions.size()+"\nEvent counts: "+counts+"\nRecent significant events (UTC milliseconds):\n"+android.text.TextUtils.join("\n",timeline)+"\nUnclean exit means no clean marker; it does not prove a crash. Native A/V offset is not exposed.\n";
+        return "Supernova diagnostic summary\nCompleteness: PARTIAL (native/direct transport coverage is incomplete)\nLogger dropped: "+DROPPED.get()+"; write errors: "+WRITE_ERRORS.get()+"\nBuild: "+com.archos.mediacenter.video.BuildConfig.VERSION_NAME+"\nSource: "+com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA+"\nPlayback sessions retained: "+sessions.size()+"\nEvent counts: "+counts+"\nRecent significant events (UTC milliseconds):\n"+android.text.TextUtils.join("\n",timeline)+"\nUnclean exit means no clean marker; it does not prove a crash. Native A/V offset is not exposed.\n";
     }
     private static void entry(ZipOutputStream zip,String name,byte[] bytes)throws IOException{zip.putNextEntry(new ZipEntry(name));zip.write(bytes);zip.closeEntry();}
     private Diagnostics(){}

@@ -36,6 +36,7 @@ final class PreviewPlaybackMenus {
   for(TVCardView card:cards){String title=card.previewTitle();if(audio.equals(title)||subs.equals(title)||activity.getString(R.string.menu_info).equals(title)||activity.getString(R.string.pref_play_mode_title).equals(title)||activity.getString(R.string.preferences).equals(title))continue;labels.add(title);actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
   labels.add("— SUPERNOVA");actions.add(()->{});
   for(TVCardView card:cards)if(activity.getString(R.string.preferences).equals(card.previewTitle())){labels.add("Supernova Settings");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
+  labels.add("Report a Problem");actions.add(()->com.archos.mediacenter.video.diagnostics.Diagnostics.reportProblem(activity));
   current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),rootFocus,Collections.emptySet(),false,n->{rootFocus=n;actions.get(n).run();});
   current.setOnCancelListener(d->close());position(activity,current,true);
  }
@@ -76,7 +77,7 @@ final class PreviewPlaybackMenus {
   Runnable parent=restoreParent;dismissCurrent();
   if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);
   Dialog dialog=new Dialog(activity);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-  card.setAlpha(1f);card.setPadding(dp(activity,12),dp(activity,10),dp(activity,12),dp(activity,10));card.setBackground(PreviewDialog.surface(activity,false));compact(card,activity);
+  card.setAlpha(1f);card.setPadding(dp(activity,12),dp(activity,10),dp(activity,12),dp(activity,10));card.setBackground(PreviewDialog.menuSurface(activity));compact(card,activity);
   card.setPreviewDismiss(()->{dismissCurrent();if(parent!=null)parent.run();else close();});
   dialog.setContentView(card);current=dialog;dialog.setOnCancelListener(d->card.handleBackPressed());dialog.show();
   Window window=dialog.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);int width=dp(activity,330),maximum=activity.getResources().getDisplayMetrics().heightPixels-dp(activity,100);
@@ -90,5 +91,5 @@ final class PreviewPlaybackMenus {
   if(view instanceof TVMenuItem){ViewGroup.LayoutParams lp=view.getLayoutParams();if(lp!=null){lp.height=dp(a,38);view.setLayoutParams(lp);}view.setBackground(PreviewDialog.focus(a));}
   if(view instanceof ViewGroup){((ViewGroup)view).setLayoutTransition(null);for(int i=0;i<((ViewGroup)view).getChildCount();i++)compact(((ViewGroup)view).getChildAt(i),a);}
  }
- private static void position(PlayerActivity a,Dialog d,boolean right){Window w=d.getWindow();w.setDimAmount(.12f);w.setGravity(Gravity.TOP|Gravity.END);w.setLayout(dp(a,290),Math.min(w.getAttributes().height>0?w.getAttributes().height:dp(a,280),Math.min(dp(a,330),a.getResources().getDisplayMetrics().heightPixels-dp(a,160))));WindowManager.LayoutParams p=w.getAttributes();p.x=dp(a,32);p.y=dp(a,74);w.setAttributes(p);}
+ private static void position(PlayerActivity a,Dialog d,boolean right){Window w=d.getWindow();w.setDimAmount(.12f);if(origin==null)return;int[] pos=new int[2];origin.getLocationOnScreen(pos);int width=w.getAttributes().width>0?w.getAttributes().width:dp(a,290),height=w.getAttributes().height>0?w.getAttributes().height:dp(a,280);int[] fit=com.archos.mediacenter.video.leanback.PreviewMenuPlacement.place(width,height,pos[0],pos[1],pos[0]+origin.getWidth(),pos[1]+origin.getHeight(),a.getResources().getDisplayMetrics().widthPixels,a.getResources().getDisplayMetrics().heightPixels,dp(a,24),dp(a,20));WindowManager.LayoutParams p=w.getAttributes();p.gravity=Gravity.TOP|Gravity.LEFT;p.x=fit[0];p.y=fit[1];w.setAttributes(p);w.setLayout(fit[2],fit[3]);}
 }

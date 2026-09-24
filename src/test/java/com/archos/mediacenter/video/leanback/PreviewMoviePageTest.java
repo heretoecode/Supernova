@@ -33,12 +33,18 @@ public class PreviewMoviePageTest {
             Movie m=new Movie(1,"smb://server/movies/film.mkv","The Last Horizon",1,"A journey through the mountains brings a family together.",2024,7.5f,"12",null,7200000,1000,0,0,false,false,false,false,1,0,3840,2160,"Atmos","HEVC",null,null,0,1,1000,0);
             page.bind(m);page.play();assertEquals(VideoActionAdapter.ACTION_RESUME,selected[0]);
             com.archos.mediascraper.ShowTags cast=new com.archos.mediascraper.ShowTags();for(int person=1;person<=10;person++)cast.addActorIfAbsent("Fixture Person "+person,"Role "+person);page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
-            android.view.ViewGroup body=(android.view.ViewGroup)page.getChildAt(0);android.view.ViewGroup hero=(android.view.ViewGroup)body.getChildAt(0);assertEquals("Poster-free hero has only its content column",1,hero.getChildCount());
-            assertNotNull(PreviewPagesTest.findText(page,"See All"));assertNull(PreviewPagesTest.findText(page,"Fixture Person 10"));
+            android.view.ViewGroup body=(android.view.ViewGroup)page.getChildAt(0);android.view.ViewGroup hero=(android.view.ViewGroup)body.getChildAt(0);assertTrue("Hero retains its content and lower tabs",hero.getChildCount()>1);
+            assertNull(PreviewPagesTest.findText(page,"See All"));assertNotNull(PreviewPagesTest.findText(page,"Fixture Person 10"));
+            assertNotNull(page.findViewWithTag("section:More Like This"));assertNotNull(page.findViewWithTag("section:Details"));assertNull(page.findViewWithTag("section:Extras"));
             for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
             PreviewPagesTest.addTestArtwork(nav);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(210));
             android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));java.io.File out=new java.io.File("build/reports/preview-ui/movie-details.png");out.getParentFile().mkdirs();try(java.io.FileOutputStream stream=new java.io.FileOutputStream(out)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,stream);}
-            View origin=PreviewPagesTest.findText(page,"More Info");assertNotNull(origin);origin.requestFocus();origin.performClick();android.app.Dialog information=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(information.isShowing());int iw=information.getWindow().getAttributes().width,ih=information.getWindow().getAttributes().height;assertTrue(iw>ih*2);assertTrue(ih<=360);View panel=information.getWindow().getDecorView();panel.measure(View.MeasureSpec.makeMeasureSpec(iw,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(ih,View.MeasureSpec.EXACTLY));panel.layout(0,0,iw,ih);PreviewPagesTest.capture(panel,"details-information-413");assertNull(PreviewPagesTest.findText(panel,"Fixture Person 10"));information.dismiss();assertTrue(origin.hasFocus());
+            View tab=page.findViewWithTag("section:Details");assertNotNull(tab);tab.requestFocus();
+            page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
+            View restored=page.findViewWithTag("section:Details");assertTrue(restored.isSelected());assertTrue(restored.hasFocus());
+            restored.performClick();PreviewPagesTest.layout(page);
+            assertNotNull(PreviewPagesTest.findText(page,"Key Information"));assertNotNull(PreviewPagesTest.findText(page,"Reception"));assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
+            PreviewPagesTest.capture(page,"details-information-next");
         }finally{host.pause().stop().destroy();}
     }
 }

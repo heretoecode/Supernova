@@ -11,14 +11,14 @@ final class PreviewMetadata {
     private static final Set<String> pending=new HashSet<>();
     private static final android.util.LruCache<String,VideoMetadata> cache=new android.util.LruCache<>(64);
     private static final ThreadPoolExecutor worker=new ThreadPoolExecutor(1,1,0,TimeUnit.SECONDS,new ArrayBlockingQueue<>(8),r->new Thread(r,"SupernovaMetadata"));
-    static void request(Context context,PreviewLibraryLoader.Entry entry,Runnable refreshed){
-        if(!(entry.media instanceof Video)||!entry.codec.isEmpty()&&!entry.audio.isEmpty()&&!entry.resolution.isEmpty())return;
+    static boolean request(Context context,PreviewLibraryLoader.Entry entry,Runnable refreshed){
+        if(!(entry.media instanceof Video)||!entry.codec.isEmpty()&&!entry.audio.isEmpty()&&!entry.resolution.isEmpty())return false;
         Video video=(Video)entry.media;String key=video.getId()+":"+entry.bytes+":"+entry.modified;
-        synchronized(pending){VideoMetadata found=cache.get(key);if(found!=null){apply(entry,found);refreshed.run();return;}if(!pending.add(key))return;}
+        synchronized(pending){VideoMetadata found=cache.get(key);if(found!=null){apply(entry,found);new android.os.Handler(android.os.Looper.getMainLooper()).post(refreshed);return true;}if(!pending.add(key))return false;}
         Context app=context.getApplicationContext();
         try{worker.execute(()->{VideoMetadata result=null;try{result=com.archos.mediacenter.video.info.VideoInfoCommonClass.retrieveMetadata(video,app);if(result!=null&&result.getVideoTrack()!=null&&result.getVideoWidth()>0&&video.isIndexed())result.save(app,video.getFilePath());}catch(Exception|LinkageError e){com.archos.mediacenter.video.diagnostics.Diagnostics.error("list_metadata_unavailable",e);}finally{synchronized(pending){pending.remove(key);if(result!=null&&(result.getVideoTrack()!=null||result.getAudioTrackNb()>0))cache.put(key,result);}}
             VideoMetadata ready=result;if(ready!=null)new android.os.Handler(android.os.Looper.getMainLooper()).post(()->{apply(entry,ready);refreshed.run();});
-        });}catch(RejectedExecutionException full){synchronized(pending){pending.remove(key);}}
+        });return true;}catch(RejectedExecutionException full){synchronized(pending){pending.remove(key);}return false;}
     }
     private static void apply(PreviewLibraryLoader.Entry entry,VideoMetadata metadata){
         ((Video)entry.media).setMetadata(metadata);VideoMetadata.VideoTrack track=metadata.getVideoTrack();

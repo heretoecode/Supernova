@@ -1784,6 +1784,7 @@
             android:authorities="${applicationId}.SentryPerformanceProvider"
             tools:node="remove" />
 
+    <activity android:name="com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity" android:exported="false" android:theme="@style/MyLeanbackTheme" />
     </application>
 
 </manifest>
