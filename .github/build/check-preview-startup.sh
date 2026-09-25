@@ -140,7 +140,8 @@ def capture(name):
   time.sleep(1)
  raise AssertionError('Accessibility root unavailable after bounded retries: '+name)
 def target(root,label,activate=False):
- n=next(n for n in root.iter('node') if n.get('text')==label or n.get('content-desc')==label)
+ # Expandable Settings categories append a disclosure marker to their title.
+ n=next(n for n in root.iter('node') if n.get('text','').rstrip(' ▸▾')==label or n.get('content-desc')==label)
  x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))
  adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
  if activate: adb('shell','input','keyevent','23')
@@ -148,6 +149,10 @@ def target(root,label,activate=False):
 root=capture('settings-check')
 for category in ['Subtitles','Video','Audio','Streaming','Integrations']:
  target(root,category)
+ if category=='Integrations':
+  # Navigate the expanded Trakt/OpenSubtitles children with the remote; this
+  # also scrolls the lower sidebar into view on the fixed 1080p test panel.
+  adb('shell','input','keyevent','20');adb('shell','input','keyevent','20');time.sleep(.6)
  root=capture('settings-'+category.lower().replace(' & ','-'))
  if category=='Integrations':
   assert any('OpenSubtitles' in n.get('text','') for n in root.iter('node')), 'Integrations category lost credentials'
