@@ -1,0 +1,87 @@
+name: Recover original Preview signing identity
+on:
+  push:
+    branches: ['codex/apk-build-fixes']
+    paths: ['.github/workflows/recover-preview-signing.yml']
+permissions:
+  contents: read
+jobs:
+  verify-original:
+    if: github.ref == 'refs/heads/codex/apk-build-fixes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Restore original branch cache without saving
+        id: original
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: ~/.android/debug.keystore
+          key: nova-mark-debug-signing-v1
+          fail-on-cache-miss: true
+      - name: Verify required certificate and private-key usability
+        env:
+          EXACT_CACHE_HIT: ${{ steps.original.outputs.cache-hit }}
+        shell: bash
+        run: |
+          set +x
+          set -euo pipefail
+          umask 077
+          test "$EXACT_CACHE_HIT" = true
+          test -s "$HOME/.android/debug.keystore"
+          work=$(mktemp -d "$RUNNER_TEMP/signing-verification.XXXXXX")
+          python3 - "$work/store-password" <<'PY'
+          import pathlib, sys
+          pathlib.Path(sys.argv[1]).write_bytes(bytes([97,110,100,114,111,105,100]))
+          PY
+          if ! keytool -exportcert -keystore "$HOME/.android/debug.keystore" -alias androiddebugkey -storepass:file "$work/store-password" -file "$work/certificate.der" > "$work/keytool.log" 2>&1; then
+            echo "::error::Keystore certificate export failed; no signing material changed."
+            exit 1
+          fi
+          expected=89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a
+          actual=$(sha256sum "$work/certificate.der" | cut -d ' ' -f 1)
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Certificate mismatch; recovery stopped without cache writes."
+            exit 1
+          fi
+          cat > "$work/VerifyKey.java" <<'JAVA'
+          import java.io.*;
+          import java.nio.file.*;
+          import java.security.*;
+          import java.util.*;
+          public class VerifyKey {
+            public static void main(String[] args) throws Exception {
+              char[] password = {97,110,100,114,111,105,100};
+              KeyStore store = KeyStore.getInstance(new File(args[0]), password);
+              if (!store.isKeyEntry("androiddebugkey")) throw new Exception("Private key absent");
+              Key key = store.getKey("androiddebugkey", password);
+              Arrays.fill(password, '\0');
+              if (!(key instanceof PrivateKey)) throw new Exception("Private key unavailable");
+              byte[] challenge = new byte[32];
+              new SecureRandom().nextBytes(challenge);
+              Signature signer = Signature.getInstance("SHA256withRSA");
+              signer.initSign((PrivateKey)key);
+              signer.update(challenge);
+              byte[] signature = signer.sign();
+              signer.initVerify(store.getCertificate("androiddebugkey"));
+              signer.update(challenge);
+              if (!signer.verify(signature)) throw new Exception("Private-key verification failed");
+              System.out.println("Private-key challenge verification: PASS");
+            }
+          }
+          JAVA
+          if ! java "$work/VerifyKey.java" "$HOME/.android/debug.keystore" > "$work/private-key-check.log" 2>&1; then
+            echo "::error::Private-key usability check failed; no signing material changed."
+            exit 1
+          fi
+          echo "Original cache restored: PASS"
+          echo "Certificate SHA-256: $actual"
+          echo "Private-key challenge verification: PASS"
+          {
+            echo "## Original Preview signing identity verified"
+            echo "- Original branch cache restored with an exact key match."
+            echo "- Certificate SHA-256: $actual"
+            echo "- Private-key challenge verification: PASS."
+            echo "- No build, key generation, cache save or private artefact upload performed."
+            echo "- Durable secret storage remains pending: a separately authorised secret-write mechanism is required."
+            echo "- Original key remains in the existing branch cache; this runner copy is temporary."
+          } >> "$GITHUB_STEP_SUMMARY"

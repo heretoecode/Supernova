@@ -23,6 +23,8 @@ permissions:
 jobs:
   build-debug-apk:
     name: Build isolated Preview APK
+    # A recovery-only commit must never start an APK build.
+    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[signing-recovery-only]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
