@@ -82,6 +82,37 @@ jobs:
             echo "- Certificate SHA-256: $actual"
             echo "- Private-key challenge verification: PASS."
             echo "- No build, key generation, cache save or private artefact upload performed."
-            echo "- Durable secret storage remains pending: a separately authorised secret-write mechanism is required."
-            echo "- Original key remains in the existing branch cache; this runner copy is temporary."
+            echo "- Durable secret preservation follows only after this verification passes."
+            echo "- Original signing cache remains unchanged."
           } >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve verified original key as repository secret
+        env:
+          GH_TOKEN: ${{ secrets.NOVA_RECOVERY_SECRETS_TOKEN }}
+        shell: bash
+        run: |
+          set +x
+          set -euo pipefail
+          python3 <<'PY'
+          import base64, json, os, pathlib, subprocess, sys
+          def fail():
+              print("::error::Protected secret preservation failed; secret values suppressed.")
+              sys.exit(1)
+          try:
+              if not os.environ.get("GH_TOKEN"): fail()
+              repo = "heretoecode/Supernova"
+              listing = subprocess.run(["gh", "secret", "list", "--repo", repo, "--app", "actions", "--json", "name"], capture_output=True)
+              if listing.returncode: fail()
+              if any(x["name"] == "NOVA_SIGNING_KEY_BASE64" for x in json.loads(listing.stdout)):
+                  print("::error::Durable secret already exists; refusing to overwrite it.")
+                  sys.exit(1)
+              raw = (pathlib.Path.home()/".android/debug.keystore").read_bytes()
+              result = subprocess.run(["gh", "secret", "set", "NOVA_SIGNING_KEY_BASE64", "--repo", repo, "--app", "actions"], input=base64.b64encode(raw), capture_output=True)
+              if result.returncode: fail()
+              listing = subprocess.run(["gh", "secret", "list", "--repo", repo, "--app", "actions", "--json", "name"], capture_output=True)
+              if listing.returncode or not any(x["name"] == "NOVA_SIGNING_KEY_BASE64" for x in json.loads(listing.stdout)): fail()
+              print("Durable secret NOVA_SIGNING_KEY_BASE64 stored: PASS")
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as out:
+                  out.write("\nDurable repository secret NOVA_SIGNING_KEY_BASE64 stored. Independent verification in a new run remains required.\n")
+          except Exception:
+              fail()
+          PY
