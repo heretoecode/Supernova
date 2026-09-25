@@ -127,21 +127,16 @@ jobs:
         working-directory: nova/Video
         run: ./gradlew :FileCoreLibrary:testDebugUnitTest --tests 'com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest' -Puniversal -PmarkPreview --build-cache --no-daemon
 
-      - name: Retain personal development signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: nova-mark-debug-signing-v1
-
       - name: Require the existing personal signing identity
         env:
           NOVA_SIGNING_KEY_BASE64: ${{ secrets.NOVA_SIGNING_KEY_BASE64 }}
         run: |
-          if [ -n "$NOVA_SIGNING_KEY_BASE64" ]; then
-            mkdir -p ~/.android
-            printf '%s' "$NOVA_SIGNING_KEY_BASE64" | base64 --decode > ~/.android/debug.keystore
-            chmod 600 ~/.android/debug.keystore
-          fi
+          set +x
+          umask 077
+          test -n "$NOVA_SIGNING_KEY_BASE64" || { echo "Protected signing secret unavailable."; exit 1; }
+          mkdir -p ~/.android
+          printf '%s' "$NOVA_SIGNING_KEY_BASE64" | base64 --decode > ~/.android/debug.keystore
+          chmod 600 ~/.android/debug.keystore
           test -s ~/.android/debug.keystore || { echo "Existing signing key unavailable; refusing to generate a different identity."; exit 1; }
           keytool -exportcert -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -file /tmp/nova-signing-certificate.der
           echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a  /tmp/nova-signing-certificate.der" | sha256sum --check
