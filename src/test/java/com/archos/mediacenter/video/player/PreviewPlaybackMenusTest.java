@@ -17,6 +17,31 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewPlaybackMenusTest {
     @After public void close(){PreviewPlaybackMenus.close();}
+    @Test public void nativeTrackRefreshRebindsCallbacksAndTicksWithoutReplacingTheOpenDialog(){
+        Activity host=Robolectric.buildActivity(Activity.class).setup().get();TVMenu menu=new TVMenu(host);
+        java.util.concurrent.atomic.AtomicInteger oldClicks=new java.util.concurrent.atomic.AtomicInteger(),newClicks=new java.util.concurrent.atomic.AtomicInteger();
+        menu.createAndAddTVMenuItem("English",true,true).setOnClickListener(v->oldClicks.incrementAndGet());menu.createAndAddTVMenuItem("French",true,false);
+        TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_audio));when(card.previewMenu()).thenReturn(menu);
+        TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
+        PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_audio));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        View english=(View)dialog.getWindow().getDecorView().findViewWithTag("preview-label:1").getParent();english.requestFocus();
+        menu.clean();menu.createAndAddTVMenuItem("English",true,false).setOnClickListener(v->newClicks.incrementAndGet());menu.createAndAddTVMenuItem("French",true,true);
+        PreviewPlaybackMenus.refresh(host,card);
+        assertSame(dialog,org.robolectric.shadows.ShadowDialog.getLatestDialog());assertTrue(dialog.isShowing());assertTrue(english.hasFocus());
+        assertEquals(View.VISIBLE,dialog.getWindow().getDecorView().findViewWithTag("preview-check:2").getVisibility());
+        english.performClick();assertEquals(0,oldClicks.get());assertEquals(1,newClicks.get());
+    }
+    @Test public void newlyDiscoveredTrackPreservesTheFocusedExistingChoice(){
+        Activity host=Robolectric.buildActivity(Activity.class).setup().get();TVMenu menu=new TVMenu(host);menu.createAndAddTVMenuItem("English",true,true);menu.createAndAddTVMenuItem("French",true,false);
+        TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_subtitles));when(card.previewMenu()).thenReturn(menu);
+        TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
+        PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_subtitles));Dialog before=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        ((View)before.getWindow().getDecorView().findViewWithTag("preview-label:2").getParent()).requestFocus();
+        menu.clean();menu.createAndAddTVMenuItem("German",true,false);menu.createAndAddTVMenuItem("English",true,true);menu.createAndAddTVMenuItem("French",true,false);
+        PreviewPlaybackMenus.refresh(host,card);Dialog after=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertFalse(before.isShowing());assertTrue(after.isShowing());
+        assertTrue(((View)after.getWindow().getDecorView().findViewWithTag("preview-label:3").getParent()).hasFocus());
+        PreviewPlaybackMenus.back();assertFalse(after.isShowing());assertFalse(PreviewPlaybackMenus.isShowing());
+    }
     @Test public void subtitleTrackUsesSharedLanguageIconWithoutChangingItsSelection(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();TVMenu menu=new TVMenu(host);
         TVMenuItem track=menu.createAndAddTVMenuItem("English",true,true);track.setTag(R.id.preview_track_language,"eng");

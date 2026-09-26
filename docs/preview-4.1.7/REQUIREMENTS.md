@@ -372,7 +372,7 @@ Subtitles: Choose local/downloaded with clear source/active state; Download sear
 
 Status: **IMPLEMENTED IN PART — IN PROGRESS**
 
-Code mapping: PreviewSubtitleResults provides result selection and explicit Download review; SubtitlesDownloaderActivity2 retains native search/download and only reports success after saving. PreviewSettings accepts the full Subtitles category shortcut from Details and HUD. These UI regressions passed in run 36260242226 (255 Video tests). SubtitleTransfer stages responses before destination writes; its four tests passed in run 36260670035 (259 Video tests). Checkpoint 28 adds shared non-toast progress/error presentation and designed HUD labels, with four new dialog/action tests pending CI. Local/downloaded chooser and active-state synchronisation remain unfinished; physical playback refresh remains AWAITING PHYSICAL QA.
+Code mapping: PreviewSubtitleResults provides result selection and explicit Download review; SubtitlesDownloaderActivity2 retains native search/download and only reports success after saving. PreviewSettings accepts the full Subtitles category shortcut from Details and HUD. These UI regressions passed in run 36260242226 (255 Video tests). SubtitleTransfer stages responses before destination writes; its four tests passed in run 36260670035 (259 Video tests). Shared non-toast progress/error presentation and designed HUD labels passed run 36277264981 (263 Video tests). Checkpoint 30 adds live Audio/Subtitles callback/tick reconciliation and focused-choice restoration after native metadata replacement; two new tests pending CI. Local/downloaded chooser remains unfinished; end-to-end active-state synchronisation/playback refresh remains AWAITING PHYSICAL QA.
 
 ### UI-038 — 7. More / contextual workflows
 

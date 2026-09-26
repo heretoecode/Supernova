@@ -2135,6 +2135,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     }
                 });
             }
+            PreviewPlaybackMenus.refresh(this,mSubtitleTVCardView);
         }
     }
 
@@ -2212,6 +2213,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             } else {
                 mPlayerController.getTVMenuAdapter().setCardViewVisibility(View.GONE, mAudioTracksTVCardView);
             }
+            PreviewPlaybackMenus.refresh(this,mAudioTracksTVCardView);
         }
     }
 
@@ -4480,7 +4482,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
             refreshSubtitleTVMenu();
 
-            if (mPlayerController.isTVMenuDisplayed()) {
+            if (mPlayerController.isTVMenuDisplayed() && !PreviewPlaybackMenus.isShowing()) {
                 mPlayerController.showTVMenu(true);
                 // move focus to the currently selected subtitle track (e.g. the one just
                 // downloaded/auto-selected) instead of leaving it on whatever TV menu item had

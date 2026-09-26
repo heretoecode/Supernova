@@ -562,6 +562,12 @@ PreviewLanguageIcon is shared by UI Language, Subtitle Reading Language, subtitl
 
 Checkpoint 28 source is remotely preserved at dae788013f2aa23879748ae4e62a718f4aac4f07 with tree 4da797817fea5cb269b2bcd494b054b7c9389003 identical to local b9f44c1029f266f38eb0df192a37afe137596f43. Run 36277264981 is in progress at this record.
 
+## Checkpoint 30 — live playback track menu reconciliation
+
+Native refreshSubtitleTVMenu/refreshAudioTracksTVMenu replace their TVMenuItem instances, while an already open PreviewPlaybackMenus dialog previously retained callbacks to the old instances. Shared refresh now rebinds those callbacks and checked states in the existing dialog when the structure is unchanged. Structural changes (such as a newly discovered subtitle) rebuild the choices and restore the focused existing item's title where possible; hidden menus are not opened. Subtitle metadata refresh no longer replaces an already open Preview child with the legacy More route. Original player track-switch/persistence callbacks are retained. Two regressions cover live callback/tick replacement without closing the dialog and focus restoration after insertion; CI pending. The separate local-file chooser is still unfinished, and physical track/download/resume behaviour still needs Shield QA.
+
+Checkpoint 28 run 36277264981 passed compilation, 86 targeted tests, all 263 Video tests, 79 overlapping regression tests and 17 WebDAV tests, including shared operation-dialog and subtitle-action regressions. Checkpoint 29 is verified remotely at 99e345b2f3592e7f670d2fd61838591d8c581d55, tree 32d07c5a1fdad093286b7c0548da50e6414432cd identical to local eaea84b99a33a5670ac8927c3f9238ca4dcffeaf. Its validation run 36277635634 is in progress at this record.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

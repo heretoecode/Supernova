@@ -14,8 +14,36 @@ final class PreviewPlaybackMenus {
  private static Dialog current;
  private static Runnable restoreParent;
  private static View origin;private static int rootFocus=-1;
+ private static TVCardView liveCard;private static List<TVMenuItem> liveActions;private static List<Integer> liveIndices;
+ private static List<String> liveShape;private static Runnable liveParent;private static boolean liveOtherLanguages;
+ static boolean isShowing(){return current!=null&&current.isShowing();}
  static boolean back(){if(current==null||!current.isShowing())return false;current.cancel();return true;}
- private static void dismissCurrent(){if(current!=null){current.setOnCancelListener(null);current.dismiss();current=null;}}
+ private static void dismissCurrent(){if(current!=null){current.setOnCancelListener(null);current.dismiss();current=null;}liveCard=null;liveActions=null;liveIndices=null;liveShape=null;liveParent=null;}
+ /** Native metadata refresh replaces menu-item objects. Keep visible callbacks/ticks current. */
+ static void refresh(android.app.Activity activity,TVCardView card){
+  if(!isShowing()||card==null||card!=liveCard||liveActions==null)return;
+  TVMenu menu=card.previewMenu();if(menu==null)return;
+  if(!shape(menu).equals(liveShape)){
+   View focus=current.getCurrentFocus();int index=focus!=null&&focus.getTag() instanceof Integer?(Integer)focus.getTag():-1;
+   String title=index>=0&&index<liveActions.size()&&liveActions.get(index)!=null?liveActions.get(index).getText():null;
+   Runnable parent=liveParent;boolean other=liveOtherLanguages;select(activity,card,parent,index,other);
+   if(title!=null&&liveActions!=null)for(int i=0;i<liveActions.size();i++)if(liveActions.get(i)!=null&&title.equals(liveActions.get(i).getText())){
+    View label=current.getWindow().getDecorView().findViewWithTag("preview-label:"+i);if(label!=null)((View)label.getParent()).requestFocus();break;
+   }
+   return;
+  }
+  Set<Integer> checked=new HashSet<>();
+  for(int i=0;i<liveActions.size();i++){
+   int nativeIndex=liveIndices.get(i);if(nativeIndex<0)continue;
+   TVMenuItem replacement=(TVMenuItem)menu.getChildAt(nativeIndex);liveActions.set(i,replacement);
+   if(replacement.isChecked())checked.add(i);
+   Object code=replacement.getTag(R.id.preview_track_language);if(code instanceof String)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(current,i,(String)code);
+  }
+  PreviewDialog.updateChecks(current,checked);
+ }
+ private static List<String> shape(TVMenu menu){
+  List<String> result=new ArrayList<>();for(int i=0;i<menu.getChildCount();i++){View item=menu.getChildAt(i);result.add(item.getClass().getName()+":"+(item instanceof TVMenuItem?((TVMenuItem)item).getText():"")+":"+item.getVisibility()+":"+item.isEnabled()+":"+item.isFocusable()+":"+item.getTag());}return result;
+ }
  static void close(){dismissCurrent();restoreParent=null;if(origin!=null&&origin.isAttachedToWindow())origin.requestFocus();origin=null;}
  static void show(android.app.Activity activity,TVMenuAdapter adapter,String target){
   close();rootFocus=-1;origin=activity.getCurrentFocus();
@@ -82,6 +110,8 @@ final class PreviewPlaybackMenus {
    if(code instanceof String)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(current,i,(String)code);
   }
   current.setOnCancelListener(d->{dismissCurrent();if(parent!=null)parent.run();else close();});position(activity,current,false);
+  liveCard=card;liveActions=actions;liveParent=parent;liveOtherLanguages=otherLanguages;liveShape=shape(menu);liveIndices=new ArrayList<>();
+  for(TVMenuItem action:actions)liveIndices.add(action==null?-1:menu.indexOfChild(action));
  }
  static void showNested(android.app.Activity activity,TVCardDialog card){
   Runnable parent=restoreParent;dismissCurrent();
