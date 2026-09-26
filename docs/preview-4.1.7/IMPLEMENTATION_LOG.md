@@ -526,6 +526,14 @@ Enabled native graphics for the Find a Match PNG fixture, so the next CI image s
 
 Run 36256717952 compiled and passed the targeted suite, but the full suite exposed a genuine Settings shell crash. Its focus-return callback was stored using android.R.id.custom; View.setTag requires an application-specific resource ID. Replaced both tag access sites with a declared R.id.preview_settings_return. A source-wide search found no other framework-ID keyed tags. The existing Settings entry/lifecycle regression is retained unchanged to validate the correction. The cache-only loading regression passed in that run. Full rerun pending.
 
+## Checkpoint 26 — subtitle result review and credential logging safety
+
+The Settings resource-ID crash is gone in run 36259864259. The remaining Settings test assertion used direct RecyclerView key dispatch, which does not perform ViewRoot's final unhandled-direction traversal in Robolectric. The fixture now exercises the actual overridden focusSearch with the focused preference, verifies the exact returned category view and requests it; this remains pending CI rather than presumed passed.
+
+Preview subtitle search now presents the shared result menu and explicit Download review with language, source and available file-hash/release information. Even one result requires acceptance. Back from review leaves the chooser open, and simply searching no longer clears the previous subtitle cache or reports a completed download. Actual download completion now reports RESULT_OK only when the existing transfer method succeeds; failures report cancellation. Native search, account/quota handling, destination selection and playback refresh mechanisms remain in use. Classic UI keeps its prior single-result behaviour. Added a no-download-until-confirmed regression. Progress/error presentation and local-file chooser conformance remain outstanding.
+
+Removed raw OpenSubtitles token/API-key/signed download URL logging, including login JSON exception output that can contain response content. No credentials are changed. Added two source-safety guards and wired them into CI; both pass locally. This is a targeted correction, not a claim that every legacy logging path has been fully audited.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

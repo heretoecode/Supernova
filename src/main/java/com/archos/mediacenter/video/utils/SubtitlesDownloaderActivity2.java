@@ -98,6 +98,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
     private NovaProgressDialog mDialog;
 
     private OpenSubtitlesTask mOpenSubtitlesTask = null;
+    private boolean previewUi(){return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false);}
 
     private static class NonConfigurationInstance {
         public NovaProgressDialog progressDialog;
@@ -345,13 +346,13 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 return;
             }
             // when there is one sub only directly download it
-            if (searchResults != null && searchResults.size() == 1) {
+            if (!previewUi() && searchResults != null && searchResults.size() == 1) {
                 if (log.isDebugEnabled()) log.debug("getSubtitles: one sub found for {}", fileUrl);
                 getSub(fileUrl, searchResults.get(0));
                 mDoNotFinish = false; // one sub only, we are done
                 return;
             }
-            if (searchResults != null && searchResults.size() > 1) {
+            if (searchResults != null && !searchResults.isEmpty()) {
                 mHandler.post(() -> askSubChoice(fileUrl, searchResults,languages.size()>1, !searchResults.isEmpty()));
             } else {
                 if (searchResults == null) {
@@ -376,8 +377,11 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 mDoNotFinish = false;
                 return;
             }
-            MediaUtils.removeLastSubs(SubtitlesDownloaderActivity2.this);
-            if (!isCancelled && !searchResults.isEmpty()) setResult(AppCompatActivity.RESULT_OK);
+            // Preview search/review is not a completed download and must not disturb existing subtitles.
+            if(!previewUi()){
+                MediaUtils.removeLastSubs(SubtitlesDownloaderActivity2.this);
+                if (!isCancelled && !searchResults.isEmpty()) setResult(AppCompatActivity.RESULT_OK);
+            }
         }
 
         private void getSub(String fileUrl, OpenSubtitlesSearchResult searchResult) {
@@ -412,10 +416,10 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             // The friendly name is for the OpenSubtitles query only.  Saved subtitles
             // must retain the video URL's basename so SubtitleManager can associate
             // them with the currently playing video.
-            downloadSubtitles(subUrl, fileUrl,
+            boolean saved=downloadSubtitles(subUrl, fileUrl,
                     FileUtils.getFileNameWithoutExtension(Uri.parse(fileUrl)),
                     searchResult.getLanguage());
-            setResult(Activity.RESULT_OK);
+            setResult(saved?Activity.RESULT_OK:Activity.RESULT_CANCELED);
             finish();
         }
 
@@ -495,6 +499,12 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         }
 
         private void askSubChoice(final String videoFilePath, final ArrayList<OpenSubtitlesSearchResult> searchResults, final boolean displayLang, final boolean hasSuccess) {
+            if(previewUi()){
+                if(isCancelled||isFinishing()||isDestroyed())return;
+                Dialog choices=com.archos.mediacenter.video.leanback.PreviewSubtitleResults.show(SubtitlesDownloaderActivity2.this,searchResults,
+                        selected->new Thread(()->{if(!isCancelled)getSub(videoFilePath,selected);},"preview-subtitle-download").start());
+                choices.setOnCancelListener(dialog->finish());return;
+            }
             View view = LayoutInflater.from(SubtitlesDownloaderActivity2.this).inflate(R.layout.subtitle_chooser_title_layout, null);
             ((TextView) view.findViewById(R.id.video_name)).setText(HtmlCompat.fromHtml(getString(R.string.select_sub_file, getFriendlyFilename(videoFilePath)), HtmlCompat.FROM_HTML_MODE_LEGACY));
             final AlertDialog subChoiceDialog = new AlertDialog.Builder(SubtitlesDownloaderActivity2.this)
@@ -551,9 +561,9 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             }
         }
 
-        public void downloadSubtitles(String subUrl, String fileUrl, String name, String language){
-            if (log.isDebugEnabled()) log.debug("downloadSubtitles: subUrl={}, fileUrl={}, name={}, language={}", subUrl, fileUrl, name, language);
-            if (fileUrl == null) return;
+        public boolean downloadSubtitles(String subUrl, String fileUrl, String name, String language){
+            if (log.isDebugEnabled()) log.debug("downloadSubtitles: starting subtitle transfer");
+            if (fileUrl == null) return false;
             boolean canWrite = false;
             Uri parentUri = null;
             if(UriUtils.isImplementedByFileCore(Uri.parse(fileUrl))&&!FileUtils.isSlowRemote(Uri.parse(fileUrl))){ // do not write subs on slow remote when downloading
@@ -606,13 +616,14 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             localSb.append(subsDir.getPath()).append('/').append(name).append('.').append(language).append('.').append("srt");
             if(!canWrite)
                 sb = localSb;
-            if (log.isDebugEnabled()) log.debug("downloadSubtitles: download to {} from {} because canwrite={}", sb.toString(), subUrl, canWrite);
+            if (log.isDebugEnabled()) log.debug("downloadSubtitles: writable destination={}", canWrite);
             String srtURl = sb.toString();
             sb = null;
             OutputStream f =null;
             InputStream in = null;
             URL url;
             HttpURLConnection urlConnection = null;
+            boolean saved=false;
             try {
                 url  = new URL(subUrl);
                 if (log.isDebugEnabled()) log.debug("downloadSubtitles: created URL, opening connection");
@@ -622,7 +633,6 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 String userAgent = OpenSubtitlesApiHelper.getUserAgent();
                 if (log.isDebugEnabled()) log.debug("downloadSubtitles: userAgent={}", userAgent);
                 String apiKey = OpenSubtitlesApiHelper.getApiKey();
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: apiKey={}", apiKey);
                 if (userAgent != null) {
                     urlConnection.setRequestProperty("User-Agent", userAgent);
                     if (log.isDebugEnabled()) log.debug("downloadSubtitles: set User-Agent header");
@@ -640,7 +650,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 }
                 if (log.isDebugEnabled()) log.debug("downloadSubtitles: headers set, getting response code");
                 int responseCode = urlConnection.getResponseCode();
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: HTTP response code={} for URL={}", responseCode, subUrl);
+                if (log.isDebugEnabled()) log.debug("downloadSubtitles: HTTP response code={}", responseCode);
                 if (responseCode != HttpURLConnection.HTTP_OK) {
                     log.error("downloadSubtitles: HTTP error {} - {}", responseCode, urlConnection.getResponseMessage());
                     throw new IOException("HTTP error code: " + responseCode);
@@ -690,6 +700,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                         editor.copyFileTo(Uri.parse(localSb.toString()),SubtitlesDownloaderActivity2.this);
                     }
                 }
+                saved=true;
             } catch (FileNotFoundException e) {
                 log.error("downloadSubtitles: caught FileNotFoundException", e);
                 displayToast(getString(R.string.dialog_subloader_fails) + ": " + e.getMessage());
@@ -704,7 +715,9 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 MediaUtils.closeSilently(in);
                 f = null;
                 in = null;
+                if(urlConnection!=null)urlConnection.disconnect();
             }
+            return saved;
         }
 
         private void setInitDialog() {

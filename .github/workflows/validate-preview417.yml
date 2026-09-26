@@ -115,6 +115,7 @@ jobs:
       - name: Audit merged Preview identity without changing it
         run: |
           python3 -m unittest discover -s source/tools -p 'test_audit_preview_identity.py'
+          python3 -m unittest discover -s source/tools -p 'test_subtitle_log_safety.py'
           python3 source/tools/audit_preview_identity.py nova/Video/build/intermediates --output nova/preview-identity-audit.json
 
       - name: Run complete Video unit test suite

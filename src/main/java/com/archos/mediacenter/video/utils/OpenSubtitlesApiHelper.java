@@ -229,7 +229,7 @@ public class OpenSubtitlesApiHelper {
                         if (log.isDebugEnabled()) log.debug("auth: allowed_downloads={}, level={}, vip={}", allowedDownloads, level, vip);
                     }
                     if (authToken != null) {
-                        if (log.isDebugEnabled()) log.debug("auth: authentication successful token={}", authToken);
+                        if (log.isDebugEnabled()) log.debug("auth: authentication successful");
                         setAuthToken(authToken);
                         authenticated = true;
                         return true;
@@ -239,7 +239,7 @@ public class OpenSubtitlesApiHelper {
                 }
             }
         } catch (JSONException e) {
-            log.error("login: caught JSONException", e);
+            log.error("login: invalid authentication response");
         }
         invalidToken();
         return false;
@@ -527,7 +527,7 @@ public class OpenSubtitlesApiHelper {
                     case RESULT_CODE_OK -> {
                         if (log.isDebugEnabled()) log.debug("getDownloadSubtitleLink: remaining downloads={}, number of downloads={}", remainingDownloads, numberDownloads);
                         String subtitleLink = jsonResponse.optString("link", null);
-                        if (log.isDebugEnabled()) log.debug("getDownloadSubtitleLink: found link {}", subtitleLink);
+                        if (log.isDebugEnabled()) log.debug("getDownloadSubtitleLink: download link received");
                         return subtitleLink;
                     }
                     case RESULT_CODE_TOKEN_EXPIRED -> {

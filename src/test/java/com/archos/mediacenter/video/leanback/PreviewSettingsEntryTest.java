@@ -34,7 +34,10 @@ public class PreviewSettingsEntryTest {
             assertTrue(subtitles.hasFocus());assertFalse(fragment.getListView().hasFocus());assertFalse(host.get().getIntent().hasExtra("preview_settings_category"));
             assertFalse(((SwitchPreferenceCompat)fragment.findPreference("Subtitles-option")).isChecked());
             subtitles.performClick();PreviewPagesTest.layout(root);assertTrue(fragment.getListView().hasFocus());
-            fragment.getListView().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));PreviewPagesTest.layout(root);assertTrue(subtitles.hasFocus());
+            // ViewRoot dispatches an unhandled DPAD key through focusSearch; a direct child
+            // dispatch in Robolectric does not execute that final platform traversal.
+            View returned=fragment.getListView().focusSearch(fragment.getListView().findFocus(),View.FOCUS_LEFT);
+            assertSame(subtitles,returned);assertTrue(returned.requestFocus());PreviewPagesTest.layout(root);assertTrue(subtitles.hasFocus());
         }finally{host.pause().stop().destroy();}
     }
 }
