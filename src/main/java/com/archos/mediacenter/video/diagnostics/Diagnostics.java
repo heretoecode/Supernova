@@ -94,6 +94,10 @@ public final class Diagnostics {
         return view.getClass().getSimpleName()+":"+id+position;
     }
     public static boolean enabled(){return enabled;}
+    public static void focusRestored(View requested,View restored,boolean fallback,boolean success){
+        event("focus_restoration","operation_id",PROCESS+":"+SEQUENCE.incrementAndGet(),"requested",viewId(requested),
+                "restored",viewId(restored),"fallback",fallback,"success",success);
+    }
     public static void navigation(View previous,View next,int key,boolean consumed){if(key>=android.view.KeyEvent.KEYCODE_DPAD_UP&&key<=android.view.KeyEvent.KEYCODE_DPAD_CENTER)event("focus_navigation","input",key,"from",viewId(previous),"to",viewId(next),"consumed",consumed,"edge_held",previous==next&&consumed);}
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();

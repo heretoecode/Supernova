@@ -36,6 +36,11 @@ public final class PreviewSeriesJourney {
         public final Entry episode; public final boolean started;public final long activity;
         Selection(Entry episode,boolean started,long activity){this.episode=episode;this.started=started;this.activity=activity;}
     }
+    public static String playLabel(Selection selection){
+        if(selection==null||!selection.started||selection.episode==null||!(selection.episode.media instanceof Episode))return "Play";
+        Episode episode=(Episode)selection.episode.media;
+        return "Resume S"+episode.getSeasonNumber()+" E"+episode.getEpisodeNumber();
+    }
     private static final Comparator<Entry> ORDER=Comparator.comparingInt((Entry e)->((Episode)e.media).getSeasonNumber()).thenComparingInt(e->((Episode)e.media).getEpisodeNumber());
     public static Selection select(Context c,List<Entry> source){
         if(source.isEmpty())return new Selection(null,false,0);

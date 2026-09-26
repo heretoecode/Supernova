@@ -11,6 +11,17 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMoviePageTest {
+    @Test public void backgroundSnapshotRetainsInformationPanelFocus()throws Exception{
+        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try{
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);
+            page.bindRemote(new org.json.JSONObject().put("title","Fixture"),"movie",0);
+            PreviewPagesTest.layout(page);
+            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(panel);assertTrue(panel.requestFocus());
+            page.setSnapshot(new PreviewLibraryLoader.Snapshot());
+            assertNotNull(page.findFocus());assertEquals("semantic:details.panel.key.information",page.findFocus().getTag());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void remotePanelsOmitEmptyReceptionAndLocalFileInformation() throws Exception {
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try{

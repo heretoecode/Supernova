@@ -365,6 +365,16 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         }
     }
 
+    private void updatePreviewPlaybackTarget(){
+        if(preview==null||mSeasonAdapters==null||mTvshow==null)return;
+        java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries=new java.util.ArrayList<>();
+        for(int i=0;i<mSeasonAdapters.size();i++){
+            CursorObjectAdapter adapter=mSeasonAdapters.valueAt(i);
+            for(int j=0;j<adapter.size();j++)entries.add(new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry((Video)adapter.get(j),0,mTvshow.getTvshowId(),""));
+        }
+        preview.setSeriesPlaybackTarget(com.archos.mediacenter.video.leanback.PreviewSeriesJourney.select(requireContext(),journeyEntries(entries)));
+    }
+
     private int getDarkerColor(int color) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
@@ -677,7 +687,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
 
                 if (seasonAdapter != null){
                     seasonAdapter.changeCursor(cursor);
-                    if(preview!=null){java.util.List<Episode> episodes=new java.util.ArrayList<>();for(int i=0;i<seasonAdapter.size();i++)episodes.add((Episode)seasonAdapter.get(i));preview.setSeason(cursorLoader.getId(),episodes);}
+                    if(preview!=null){java.util.List<Episode> episodes=new java.util.ArrayList<>();for(int i=0;i<seasonAdapter.size();i++)episodes.add((Episode)seasonAdapter.get(i));preview.setSeason(cursorLoader.getId(),episodes);updatePreviewPlaybackTarget();}
                 }
                 else
                     LoaderManager.getInstance(this).destroyLoader(cursorLoader.getId());

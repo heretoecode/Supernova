@@ -25,12 +25,14 @@ public final class TopNavigation extends LinearLayout {
     private final BooleanSupplier firstRow;
     private TextView selected;
     private final TextView[] tabs = new TextView[6];
+    private final PreviewNavigationShade navigationShade=new PreviewNavigationShade();
 
     public TopNavigation(Context c, View content, IntConsumer navigate, BooleanSupplier firstRow) {
         super(c);
         this.content = content; this.firstRow = firstRow;
         scanStatus = new android.widget.FrameLayout(c);scanStatus.setFocusable(false);scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
+        setWillNotDraw(false);
         artwork = new PreviewBackdrop(c); setBackground(artwork);
         bar = new LinearLayout(c); bar.setClipChildren(false);bar.setClipToPadding(false); bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(26), 0, dp(26), 0);
@@ -108,12 +110,19 @@ public final class TopNavigation extends LinearLayout {
     }
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(accentListener);for(TextView tab:tabs)styleTab(tab);}
     private boolean scrolled;private android.animation.ValueAnimator scrimAnimation;private int scrimAlpha;
-    public void setScrolled(boolean value){scrolled=value;if(scrimAnimation!=null)scrimAnimation.cancel();scrimAlpha=0;bar.setBackgroundColor(Color.TRANSPARENT);}
+    public void setScrolled(boolean value){
+        if(scrolled==value)return;scrolled=value;
+        if(scrimAnimation!=null)scrimAnimation.cancel();
+        scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?255:0);scrimAnimation.setDuration(180);
+        scrimAnimation.addUpdateListener(animation->{scrimAlpha=(int)animation.getAnimatedValue();invalidate();});scrimAnimation.start();
+    }
+    @Override protected void onDraw(android.graphics.Canvas canvas){super.onDraw(canvas);navigationShade.draw(canvas,getBackground(),getWidth(),dp(116),scrimAlpha);}
+    @Override public void invalidateDrawable(android.graphics.drawable.Drawable who){super.invalidateDrawable(who);if(navigationShade!=null)navigationShade.invalidate();}
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public void setFeaturedDirection(int direction){artwork.setMotionDirection(direction);}
     public boolean readyForFirstFrame(){return artwork.readyForFirstFrame();}
     public void selectTab(int index) { if(index<0||index>=6)return;setBackground(index>=3?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3)setScrolled(false); }
-    @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);artwork.release();super.onDetachedFromWindow(); }
+    @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);if(scrimAnimation!=null)scrimAnimation.cancel();scrimAlpha=scrolled?255:0;navigationShade.release();artwork.release();super.onDetachedFromWindow(); }
     /** Exactly one visible scan-status owner: the landing panel or this shell. */
     public void setEmbeddedScanStatus(boolean embedded){scanStatus.setVisibility(embedded?GONE:VISIBLE);}
     public android.widget.FrameLayout getScanContainer() { return scanStatus; }

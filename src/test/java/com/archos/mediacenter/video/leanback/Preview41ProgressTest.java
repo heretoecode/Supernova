@@ -18,4 +18,9 @@ public class Preview41ProgressTest {
     @Test public void briefLaterVisitPreservesCommittedEpisode(){Entry first=episode(1,5000,false,10),later=episode(4,2000,false,30);PreviewSeriesJourney.select(context,Arrays.asList(first));VideoDbInfo info=new VideoDbInfo();info.id=4;info.isShow=true;info.scraperShowId="7";info.scraperSeasonNr=1;info.scraperEpisodeNr=4;info.duration=1800000;info.lastTimePlayed=30;PreviewSeriesJourney.record(context,info,false,2000);assertSame(first,PreviewSeriesJourney.select(context,Arrays.asList(first,later)).episode);PreviewSeriesJourney.record(context,info,false,180000);assertSame(later,PreviewSeriesJourney.select(context,Arrays.asList(first,later)).episode);}
     @Test public void thresholdHasCentralBounds(){assertEquals(60000,PreviewSeriesJourney.meaningfulViewMs(100000));assertEquals(120000,PreviewSeriesJourney.meaningfulViewMs(1200000));assertEquals(180000,PreviewSeriesJourney.meaningfulViewMs(3600000));}
     @Test public void completionAdvancesToNextAvailableEpisode(){Entry first=episode(1,-2,true,10),next=episode(2,0,false,0);assertSame(next,PreviewSeriesJourney.select(context,Arrays.asList(first,next)).episode);}
+    @Test public void seriesHeroLabelUsesTheSameCommittedTargetAsPlayback(){
+        assertEquals("Play",PreviewSeriesJourney.playLabel(PreviewSeriesJourney.select(context,Arrays.asList(episode(1,0,false,0)))));
+        assertEquals("Resume S1 E3",PreviewSeriesJourney.playLabel(PreviewSeriesJourney.select(context,Arrays.asList(episode(3,12000,false,20)))));
+        assertEquals("Play",PreviewSeriesJourney.playLabel(PreviewSeriesJourney.select(context,Collections.emptyList())));
+    }
 }

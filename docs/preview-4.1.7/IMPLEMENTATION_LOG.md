@@ -278,6 +278,33 @@ https://github.com/heretoecode/Supernova/actions/runs/36243112200
 Local XML/source/whitespace safeguards pass. New source/tests await CI. No APK,
 emulator or Shield behaviour has been validated for this checkpoint.
 
+## Checkpoint 12 — shared navigation shade and Details state
+
+Checkpoint 11 local 935dc4b1 / remote 23fa4f4b have identical source tree
+502a77b8c3be7d9a67e9e7639c85dfccaeead836. CI run 36243449105 succeeded:
+compilation, 78 targeted tests, the full 213-test Video suite, 76 regression-step
+tests and 17 WebDAV tests. Counts overlap. Token envelope tests and explicit
+metadata acceptance tests passed; live OAuth and library migration are not implied.
+https://github.com/heretoecode/Supernova/actions/runs/36243449105
+
+- TopNavigation.setScrolled no longer does nothing. A shared, cached low-resolution
+  artwork sample receives a two-pass blur and a dark gradient which fades below
+  navigation. The bar itself remains transparent, with no separator or permanent
+  rectangle. Strength retargets over 180 ms. Sample width is capped at 240 pixels
+  and refresh rate at 10 Hz; it requires no Android 12 RenderEffect. Three tests
+  cover blur and rendered alpha fade. Real-device visual/performance QA remains.
+- TV Hero Resume Sx Ex is derived from the same committed journey/available episode
+  inputs used by existing playback. No seek/resume policy change. Snapshot refresh
+  now updates Details library information and restores semantic panel focus.
+- Shared Details focus restoration records requested/result/fallback and success,
+  skips hidden/missing targets and uses a visible section fallback for remote
+  titles. Added panel-focus and series-label tests.
+
+Local XML/source/whitespace safeguards pass. New Android tests await CI. Remaining
+Details scope includes sticky compact title, complete provider/non-local episode
+presentation and exact Hero/provider focus conformance; these are not silently
+marked complete. Final three-pass review and signed APK production remain pending.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed
