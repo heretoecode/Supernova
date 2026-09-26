@@ -380,9 +380,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Artwork: Poster/Backdrop grids; one plain white ✓ at top-right safe area, no circle/current label; focus enlargement/boundary/glow; apply immediately, remain open, propagate to surfaces.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — shared grid and movie/episode route; integration incomplete** / **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewArtworkPicker provides independent selection, single-flight save, failure retention and deterministic grid edges. VideoDetailsFragment reuses native savers with completion callbacks and refreshes the current backdrop. Two new tests await CI. TV-overview routing and cross-surface cache propagation are not yet verified or complete.
 
 ### UI-039 — 7. More / contextual workflows
 

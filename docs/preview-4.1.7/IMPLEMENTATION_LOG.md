@@ -389,6 +389,30 @@ Requirements UI-033/UI-036/PUT-003/PUT-004 now reflect the traced implementation
 and distinguish component completion from integration/physical QA. Local safeguards
 pass; new Android stack tests await CI. The full pass remains in progress.
 
+### Checkpoint 17 — Artwork selection grid
+
+Checkpoint 15 passed run 36244922476: compile, 86 targeted tests, full 228-test
+Video suite, 79 regression tests and 17 FileCore WebDAV tests. Counts overlap.
+Checkpoint 16 is preserved remotely at 8fdfc0467599ebbc3b934187ef718c7cc5d819a2,
+tree 4a18d0aa4ba861b9d59c55620095956a00ea4017 matching local 79af6771; CI pending.
+
+Added PreviewArtworkPicker, a reusable poster/backdrop grid using shared boundary
+focus and whole-card enlargement. Selection is a plain white top-right check,
+independent of focus. The grid remains open and serialises save requests; only a
+confirmed save moves the check. Failure retains the previous selection with inline
+feedback. Images are released when the dialog closes. Two tests cover failure,
+success, single-flight writes and grid-edge focus containment.
+
+Movie/episode artwork now routes through the grid and existing native saver tasks.
+Preview backdrop downloads precede default selection; preview success/failure
+toasts are replaced by picker state. A successful backdrop immediately refreshes
+the current Hero. Native non-Preview paths retain their handlers. Current choices
+are kept for reopening the picker and refreshed by normal metadata callbacks.
+
+Local safeguards pass. Android compilation/tests for this change remain pending.
+TV-overview artwork routing and cross-surface cache propagation still require work
+and physical QA; UI-038 is partial. No signed 4.1.7 APK exists yet.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

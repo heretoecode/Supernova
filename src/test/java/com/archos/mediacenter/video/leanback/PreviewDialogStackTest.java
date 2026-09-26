@@ -14,12 +14,12 @@ public class PreviewDialogStackTest {
     @Test public void childBackRestoresMoreRowThenParentBackRestoresHero() {
         org.robolectric.android.controller.ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();
         try {
-            Activity activity=host.get();Button hero=new Button(activity);hero.setText("More");hero.setFocusableInTouchMode(true);activity.setContentView(hero);hero.requestFocus();
+            Activity activity=host.get();Button hero=new Button(activity);hero.setText("More");hero.setFocusableInTouchMode(true);activity.setContentView(hero);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();hero.requestFocus();assertSame(hero,activity.getCurrentFocus());
             Dialog parent=PreviewDialog.choose(activity,"More",new String[]{"Versions","Artwork"},0,java.util.Collections.emptySet(),false,n->{});
             View opener=(View)parent.getWindow().getDecorView().findViewWithTag("preview-label:1").getParent();assertTrue(opener.requestFocus());
             Dialog child=PreviewDialog.read(activity,"Artwork","Fixture");
-            child.dismiss();assertTrue(parent.isShowing());assertSame(opener,parent.getCurrentFocus());
-            parent.dismiss();assertSame(hero,activity.getCurrentFocus());
+            child.dismiss();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertTrue(parent.isShowing());assertSame(opener,parent.getCurrentFocus());
+            parent.dismiss();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertSame(hero,activity.getCurrentFocus());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void rebuiltOpenerRestoresSemanticPeerInSameWindow() {
@@ -27,10 +27,10 @@ public class PreviewDialogStackTest {
         try {
             Activity activity=host.get();activity.setContentView(new FrameLayout(activity));
             Dialog parent=PreviewDialog.create(activity);LinearLayout panel=new LinearLayout(activity);
-            Button opener=new Button(activity);opener.setTag("semantic:child");opener.setFocusableInTouchMode(true);panel.addView(opener);parent.setContentView(panel);parent.show();opener.requestFocus();
+            Button opener=new Button(activity);opener.setTag("semantic:child");opener.setFocusableInTouchMode(true);panel.addView(opener);parent.setContentView(panel);parent.show();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();opener.requestFocus();assertSame(opener,parent.getCurrentFocus());
             Dialog child=PreviewDialog.read(activity,"Edit","Fixture");panel.removeAllViews();
-            Button replacement=new Button(activity);replacement.setTag("semantic:child");replacement.setFocusableInTouchMode(true);panel.addView(replacement);
-            child.dismiss();assertSame(replacement,parent.getCurrentFocus());parent.dismiss();
+            Button replacement=new Button(activity);replacement.setTag("semantic:child");replacement.setFocusableInTouchMode(true);panel.addView(replacement);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            child.dismiss();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertSame(replacement,parent.getCurrentFocus());parent.dismiss();
         }finally{host.pause().stop().destroy();}
     }
     @Test public void dismissingCoveredParentDoesNotStealChildFocus() {
