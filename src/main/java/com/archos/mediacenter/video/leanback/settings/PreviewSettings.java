@@ -108,7 +108,7 @@ public final class PreviewSettings {
   com.archos.mediacenter.video.leanback.PreviewFocusRecycler list=new com.archos.mediacenter.video.leanback.PreviewFocusRecycler(c){
    @Override protected boolean locksHorizontalEdges(){return false;}
    @Override protected boolean focusablePosition(int p){if(!(getAdapter() instanceof PreferenceGroupAdapter))return false;Preference item=((PreferenceGroupAdapter)getAdapter()).getItem(p);return item!=null&&!(item instanceof PreferenceCategory)&&item.isEnabled()&&item.isSelectable();}
-   @Override public View focusSearch(View focused,int direction){View item=findContainingItemView(focused);int pos=item==null?-1:getChildAdapterPosition(item);androidx.recyclerview.widget.GridLayoutManager lm=(androidx.recyclerview.widget.GridLayoutManager)getLayoutManager();if(direction==View.FOCUS_LEFT&&pos>=0&&lm.getSpanSizeLookup().getSpanIndex(pos,1)==0&&getTag() instanceof View){Object back=getTag(android.R.id.custom);if(back instanceof Runnable){((Runnable)back).run();View restored=getRootView().findFocus();if(restored!=null)return restored;}return (View)getTag();}return super.focusSearch(focused,direction);}
+   @Override public View focusSearch(View focused,int direction){View item=findContainingItemView(focused);int pos=item==null?-1:getChildAdapterPosition(item);androidx.recyclerview.widget.GridLayoutManager lm=(androidx.recyclerview.widget.GridLayoutManager)getLayoutManager();if(direction==View.FOCUS_LEFT&&pos>=0&&lm.getSpanSizeLookup().getSpanIndex(pos,1)==0&&getTag() instanceof View){Object back=getTag(R.id.preview_settings_return);if(back instanceof Runnable){((Runnable)back).run();View restored=getRootView().findFocus();if(restored!=null)return restored;}return (View)getTag();}return super.focusSearch(focused,direction);}
   };
   androidx.recyclerview.widget.GridLayoutManager layout=new androidx.recyclerview.widget.GridLayoutManager(c,1);layout.setSpanSizeLookup(new androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup(){public int getSpanSize(int position){if(!(list.getAdapter() instanceof PreferenceGroupAdapter))return 1;return ((PreferenceGroupAdapter)list.getAdapter()).getItem(position) instanceof PreferenceCategory?1:1;}});list.setLayoutManager(layout);list.setClipToPadding(false);return list;
  }
@@ -247,7 +247,7 @@ public final class PreviewSettings {
    }
   };
   fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(), back);
-  list.setTag(android.R.id.custom, (Runnable) back::handleOnBackPressed);
+  list.setTag(R.id.preview_settings_return, (Runnable) back::handleOnBackPressed);
   ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, newView) -> back.setEnabled(middle.hasFocus());
   split.getViewTreeObserver().addOnGlobalFocusChangeListener(focusListener);
   split.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {

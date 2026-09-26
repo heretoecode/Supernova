@@ -516,6 +516,16 @@ The Preparing Playback surface previously ignored a remote backdrop URI even whe
 
 Details subtitle/artwork tools and the HUD Subtitles menu now expose the required full Subtitle Settings shortcut. The existing three-panel Settings shell accepts a one-shot category entry and focuses the Subtitles rail item without toggling an option or bypassing explicit category entry. Existing category contents are retained. Details tools remain open beneath child workflows so Back has a real parent to return to. Added a shell lifecycle regression for category targeting, explicit entry and Left return; compilation and that regression await CI. Subtitle search/download presentation remains a separate outstanding requirement.
 
+## Validation checkpoint after playback changes
+
+Run 36256319349, remote 4ae48ad72ed0f378fbe9575e9d2c4d5e5c6aad10, passed compilation, 86 targeted tests, all 252 Video tests, 79 overlapping regressions, 17 WebDAV tests and the identity audit. The direct HUD track/Back regression and adjustment-value tests passed. Checkpoints 23–24 are remotely preserved at af25e8e8905e6aada0d52dd4601a60063de6893e, tree 032cd89d627f2aff7f0bc5fcfcb29ce48a110379, identical to local d5cd8bf845c10c245f30f34289935830b9924e40. Their validation run is 36256717952 and was still running when recorded.
+
+Enabled native graphics for the Find a Match PNG fixture, so the next CI image supports a real visual inspection rather than an unrendered legacy canvas. This is fixture-only and not a claim of emulator or Shield validation.
+
+## Checkpoint 25 — Settings lifecycle crash correction
+
+Run 36256717952 compiled and passed the targeted suite, but the full suite exposed a genuine Settings shell crash. Its focus-return callback was stored using android.R.id.custom; View.setTag requires an application-specific resource ID. Replaced both tag access sites with a declared R.id.preview_settings_return. A source-wide search found no other framework-ID keyed tags. The existing Settings entry/lifecycle regression is retained unchanged to validate the correction. The cache-only loading regression passed in that run. Full rerun pending.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

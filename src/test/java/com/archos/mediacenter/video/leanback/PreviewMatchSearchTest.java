@@ -39,7 +39,8 @@ public class PreviewMatchSearchTest {
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1));assertEquals(Collections.singletonList("TT0137523"),queries);
         input.setText("550");host.setContentView(new View(host));Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));assertEquals(1,queries.size());
     }
-    @Test public void resultDirectionStaysInListAndReturnsToKeyboard()throws Exception{
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void resultDirectionStaysInListAndReturnsToKeyboard()throws Exception{
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();PreviewMatchSearch page=new PreviewMatchSearch(host,"Example",q->{},t->{});host.setContentView(page);
         page.setResults(Arrays.asList(movie("Example",2024),movie("Another",2025)));PreviewPagesTest.layout(page);
         View first=page.findViewWithTag("semantic:match.result:0"),last=page.findViewWithTag("semantic:match.result:1");first.requestFocus();
