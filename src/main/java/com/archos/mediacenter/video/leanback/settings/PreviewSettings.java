@@ -165,7 +165,9 @@ public final class PreviewSettings {
   final TextView[] selectedRail = {null}, childOpener = {null};
   final Runnable[] returnToCategory = {null};
   List<TextView> railButtons = new ArrayList<>();
+  String requestedCategory = fragment.requireActivity().getIntent().getStringExtra("preview_settings_category");
   boolean streaming = fragment.requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false);
+  fragment.requireActivity().getIntent().removeExtra("preview_settings_category");
   fragment.requireActivity().getIntent().removeExtra("show_streaming_settings");
   TextView initial = null;
   for (String name : NAMES) {
@@ -231,7 +233,7 @@ public final class PreviewSettings {
     }
     return false;
    });
-   if (initial == null || streaming && name.equals("Streaming")) initial = button;
+   if (initial == null || name.equals(requestedCategory) || requestedCategory==null && streaming && name.equals("Streaming")) initial = button;
   }
   androidx.activity.OnBackPressedCallback back = new androidx.activity.OnBackPressedCallback(false) {
    @Override public void handleOnBackPressed() {

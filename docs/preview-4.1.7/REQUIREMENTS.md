@@ -340,7 +340,7 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Watched: exactly one dynamic action. Movie/episode immediate. TV series opens scope submenu Entire Series + seasons with state/progress.
 
-Status: **IMPLEMENTED — pending automated integration validation** / **AWAITING PHYSICAL QA**
+Status: **IMPLEMENTED / TESTED — automated regressions** / **AWAITING PHYSICAL QA**
 
 Code mapping: PreviewMoviePage resolves the current watched action and refreshes open-menu labels. PreviewWatchedScopeDialog/TvshowFragment offer Entire Series and per-season counts, using existing DbUtils writes and Trakt integration. Shared distinct episode counts prevent duplicate versions inflating progress. Five regression tests passed in run 36249337871; real-device refresh and Trakt effects remain unverified.
 
@@ -350,9 +350,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Add to Row: permanent rows with plain white + / ✓ state, toggle immediately while menu stays open, no toast; Watch Next follows same pattern; Create New Row bottom uses shared keyboard and auto-adds title then returns ticked.
 
-Status: **IMPLEMENTED — pending automated validation / AWAITING PHYSICAL QA**
+Status: **IMPLEMENTED / TESTED — automated regressions / AWAITING PHYSICAL QA**
 
-Code mapping: PreviewHomeRows and PreviewDialog.updateMembership provide persistent plain white plus/check state, immediate toggles, shared keyboard creation and return focus on the newly created row. Create/toggle regression added at checkpoint 21; CI validation pending.
+Code mapping: PreviewHomeRows and PreviewDialog.updateMembership provide persistent plain white plus/check state, immediate toggles, shared keyboard creation and return focus on the newly created row. Create/toggle regression passed in run 36256002931.
 
 ### UI-036 — 7. More / contextual workflows
 

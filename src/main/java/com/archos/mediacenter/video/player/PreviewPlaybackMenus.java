@@ -61,10 +61,12 @@ final class PreviewPlaybackMenus {
   }
   if(hasOther&&!otherLanguages){labels.add("— TRACK");actions.add(null);actions.add(null);labels.add("Other languages");}
   if(settings!=null){labels.add("— TIMING & APPEARANCE");actions.add(null);actions.add(settings);labels.add("Subtitle Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
+  if(subtitles&&!otherLanguages){labels.add("Subtitle Settings");actions.add(null);}
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
   dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);
   current=PreviewDialog.choose(activity,otherLanguages?"Subtitles · Other languages":card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{
    if(labels.get(n).startsWith("— "))return;
+   if(subtitles&&labels.get(n).equals("Subtitle Settings")){activity.startActivity(new android.content.Intent(activity,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class).putExtra("preview_settings_category","Subtitles"));return;}
    TVMenuItem item=actions.get(n);
    if(item!=null&&(!item.isEnabled()||!item.isFocusable()))return;
    if(item==null){select(activity,card,()->select(activity,card,parent,n,false),-1,true);return;}

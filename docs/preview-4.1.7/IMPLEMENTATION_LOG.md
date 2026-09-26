@@ -506,6 +506,16 @@ Corrected a concrete navigation defect: direct HUD Audio/Subtitles menus used to
 
 Preview speed and timing pickers now display human-readable values such as 1.00×, 0 ms, +250 ms, −500 ms and +1.5 s. Existing native limits, increments, persistence and engine callbacks are unchanged. Non-timing reuse of the subtitle picker (size/position/opacity) retains its numeric values. Nested native picker windows now use the shared dialog lifetime. Added formatting edge-case coverage. Compilation/tests for this checkpoint are pending; real playback and exact HUD focus remain AWAITING PHYSICAL QA. Subtitle download redesign and complete adjustment-panel conformance remain outstanding.
 
+## Checkpoint 23 — loading artwork cache eligibility
+
+Checkpoint 21 passed run 36256002931 (remote b466cf8199475566bd940525ee86a41ab97b3e0f): compilation, 86 targeted tests, all 250 Video unit tests, 79 overlapping regression checks, 17 WebDAV tests and the identity audit passed. The previously failing matching focus test passes with the intended TV fixture. Both real-provider history tests and Create New Row navigation pass.
+
+The Preparing Playback surface previously ignored a remote backdrop URI even when Picasso had already cached its image. It now accepts HTTP(S) artwork using NetworkPolicy.OFFLINE, as well as existing file/content artwork. Missing cache data retains the dark neutral transition, without starting an artwork network request. Unsupported URI schemes are rejected. Added a regression verifying offline enforcement and local-file handling. This resolves a code-path limitation; absence of flashing on Shield still requires physical QA. Checkpoint 22 and this checkpoint await their own validation.
+
+## Checkpoint 24 — full Subtitle Settings entry
+
+Details subtitle/artwork tools and the HUD Subtitles menu now expose the required full Subtitle Settings shortcut. The existing three-panel Settings shell accepts a one-shot category entry and focuses the Subtitles rail item without toggling an option or bypassing explicit category entry. Existing category contents are retained. Details tools remain open beneath child workflows so Back has a real parent to return to. Added a shell lifecycle regression for category targeting, explicit entry and Left return; compilation and that regression await CI. Subtitle search/download presentation remains a separate outstanding requirement.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed
