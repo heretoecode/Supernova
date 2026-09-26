@@ -62,6 +62,7 @@ public final class PreviewMoviePage extends ScrollView {
         lower=new FrameLayout(c);lower.setClipChildren(false);body.addView(lower,new LinearLayout.LayoutParams(-1,-2));information=new LinearLayout(c);information.setOrientation(LinearLayout.VERTICAL);lower.addView(information,new FrameLayout.LayoutParams(-1,-2));
         for(LinearLayout section:new LinearLayout[]{cast,crew,details}){View wrapper=(View)section.getParent();body.removeView(wrapper);information.addView(wrapper);}
         for(LinearLayout section:new LinearLayout[]{episodes,related,trailers}){View wrapper=(View)section.getParent();body.removeView(wrapper);lower.addView(wrapper,new FrameLayout.LayoutParams(-1,-2));}
+        ((View)cast.getParent()).setVisibility(GONE);((View)crew.getParent()).setVisibility(GONE);
         rebuildTabs();
     }
     @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);heroPage.setLayoutParams(new LinearLayout.LayoutParams(-1,Math.max(dp(360),h-dp(44))));lower.setMinimumHeight(h);}
@@ -73,9 +74,11 @@ public final class PreviewMoviePage extends ScrollView {
     }
     /** Reuse the real title/logo; no second asynchronous request or focus target. */
     @Override protected void dispatchDraw(android.graphics.Canvas canvas){
-        super.dispatchDraw(canvas);
+        float progress=title==null?0:compactTitleProgress(getScrollY(),title.getBottom(),dp(40));
+        int content=canvas.save();
+        if(progress>0)canvas.clipRect(0,getScrollY()+dp(48)*progress,getWidth(),getScrollY()+getHeight());
+        super.dispatchDraw(canvas);canvas.restoreToCount(content);
         if(title==null||title.getWidth()==0||title.getHeight()==0)return;
-        float progress=compactTitleProgress(getScrollY(),title.getBottom(),dp(40));
         if(progress<=0)return;
         float scale=Math.min(dp(220)/(float)title.getWidth(),dp(40)/(float)title.getHeight());
         int saved=canvas.save();
@@ -172,6 +175,7 @@ public final class PreviewMoviePage extends ScrollView {
         if(tags!=null){for(Map.Entry<String,String> person:tags.getActors().entrySet()){person(people,person.getKey(),person.getValue());}
             crew.removeAllViews();HorizontalScrollView crewScroll=new HorizontalScrollView(getContext());LinearLayout crewPeople=new LinearLayout(getContext());crewScroll.addView(crewPeople);crew.addView(crewScroll);if(!safe(tags.getDirectorsFormatted()).isEmpty())person(crewPeople,tags.getDirectorsFormatted(),"Director");if(!safe(tags.getWritersFormatted()).isEmpty())person(crewPeople,tags.getWritersFormatted(),"Writer");}
         ((View)cast.getParent()).setVisibility(people.getChildCount()==0?GONE:VISIBLE);
+        ((View)crew.getParent()).setVisibility(tags==null||safe(tags.getDirectorsFormatted()).isEmpty()&&safe(tags.getWritersFormatted()).isEmpty()?GONE:VISIBLE);
         trailer.setVisibility(GONE);renderExtras();rebuildTabs();
         PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderDetails();renderRelated();requestEnrichment();restoreRowFocus(cast,castKey,oldY);
     }

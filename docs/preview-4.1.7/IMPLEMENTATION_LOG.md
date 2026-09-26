@@ -349,6 +349,31 @@ image fixture. Local XML/structure/whitespace checks pass. Android tests and vis
 inspection of the new fixture remain pending; physical scroll/focus conformance
 is AWAITING PHYSICAL QA. This does not complete the remaining artwork workflow.
 
+### Checkpoint 15 — Durable association boundaries and visual correction
+
+Checkpoint 14 is preserved remotely at 46b1445d7dc9f188ce623e7a651650eb89dc444d,
+tree 08a0e10db7774c6dc102e08e0a7a9323a1f9e8b2 matching local 2dfd447f.
+Run 36244575086 compiled successfully but failed one of 80 targeted tests: the
+new rendering fixture did not initialise Picasso before host teardown. Fixed the
+fixture consistently with existing rendering tests; no assertion was suppressed.
+Checkpoint 13's separate run was superseded/cancelled by checkpoint 14.
+
+Downloaded and inspected the actual CI rendering. This exposed Hero controls
+overlapping the compact title and empty Cast/Crew headings before metadata arrival.
+Scrolling content now clips beneath the compact title, and empty people sections
+remain hidden. Revised rendering awaits the next CI artefact and physical QA.
+
+Added a transactional put.io association sidecar with stable account/file/media IDs,
+source scope, generation fencing, complete-snapshot checks and missing-review flags.
+No existing library rows are changed or deleted. Identity conflict rolls back all
+attachments. New/ambiguous files prevent activation; disconnect requires an explicit
+discovery choice, invalidates in-flight work and preserves links. Credential-bearing
+source URIs are rejected. Six regression tests cover these data-safety boundaries.
+The store is not yet connected to source selection, new-file indexing or scanner
+exclusion. Native put.io is still partial; OAuth configuration remains external.
+
+Local checks pass. New database tests and revised rendering need Android CI.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

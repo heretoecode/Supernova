@@ -38,6 +38,17 @@ checks; production Android Keystore/Shield behaviour remains unverified.
 Platform contracts: https://developer.android.com/privacy-and-security/keystore
 and https://developer.android.com/reference/android/security/keystore/KeyGenParameterSpec
 
-Credential lifecycle integration, association UI/store, scanner ownership hand-off and live
+PutioAssociationStore now persists stable IDs in a separate SQLite database,
+without updating Video rows or their metadata, resume, artwork, versions or rows.
+Per-folder generations reject stale results; partial snapshots cannot attach IDs.
+Conflicting identities abort the entire transaction. Missing IDs become review
+flags, never deletions. New or ambiguous files prevent activation. Disconnect
+requires an explicit inactive/generic discovery choice and retains links. Source
+URIs reject user-info/query/fragment credentials. Six database tests cover these
+boundaries; Android CI validation is pending for this checkpoint.
+
+This store is not yet wired to live source selection or a scanner ownership gate.
+Its activation method must not be used until generic-discovery exclusion is ready.
+Credential lifecycle integration, association UI, scanner ownership hand-off and live
 account validation remain implementation/integration work. Do not label the native
 put.io feature complete on the strength of policy tests alone.
