@@ -805,6 +805,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         // NetworkAutoRefresh.init requires main thread (LifecycleRegistry.addObserver)
         com.archos.mediacenter.video.leanback.PreviewAutoScanPolicy.initialise(this);
         NetworkAutoRefresh.init(this);
+        com.archos.mediacenter.video.leanback.PreviewLibraryScan.install(this);
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(previewScanPreferences);
 
         // Defer heavy initialization to a background thread to speed up cold start

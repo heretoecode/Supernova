@@ -1,0 +1,142 @@
+name: Validate Supernova Preview 4.1.7 source
+
+on:
+  push:
+    branches: ['codex/preview-4.1.7']
+    paths-ignore: ['docs/**', '**/*.md']
+  workflow_dispatch:
+    inputs:
+      validation:
+        description: 'Preview for quick Shield testing; full for milestone validation'
+        required: true
+        default: preview
+        type: choice
+        options: [preview, full]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-debug-apk:
+    name: Build isolated Preview APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VALIDATION_MODE: ${{ inputs.validation || 'preview' }}
+      APK_VARIANT: release
+
+    steps:
+      - name: Check out the triggering Supernova revision
+        uses: actions/checkout@v4
+        with:
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install NOVA build prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget ffmpeg
+
+      - name: Install repo tool
+        run: |
+          curl --fail --location https://storage.googleapis.com/git-repo-downloads/repo | sudo tee /usr/local/bin/repo > /dev/null
+          sudo chmod a+x /usr/local/bin/repo
+
+      - name: Check out pinned NOVA source and prebuilts
+        run: |
+          mkdir nova
+          cd nova
+          repo init -u https://github.com/nova-video-player/aos-AVP -b 9c5842b74ab180c99441ed23fdd5d508448388a7 -m v6_4.xml
+          cp ../source/.github/build/nova-ci.xml .repo/manifests/v6_4.xml
+          if ! repo sync --no-manifest-update -c -d -j 4; then
+            # Some prebuilt histories are not reachable through the default branch.
+            # Seed the exact pinned objects, then let repo finish normal checkout.
+            git --git-dir=.repo/projects/native/prebuilt/ffmpeg.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-ffmpeg.git 6ba0e9340cf725bede2e2f29d30c290a2ab8130e
+            git --git-dir=.repo/projects/native/prebuilt/opus.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-opus.git 27544063be93ee55c6ba58a2ebb32c106eb2e37b
+            repo sync --no-manifest-update -c -d -j 4
+          fi
+
+      - name: Overlay the triggering Video revision
+        working-directory: nova/Video
+        run: |
+          git fetch ../../source HEAD
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$(git -C ../../source rev-parse HEAD)"
+          cd ..
+          repo manifest -r -o source-manifest.xml
+
+      - name: Apply bounded Preview 4.0 scan scheduling correction
+        working-directory: nova/MediaLib
+        run: git apply ../Video/.github/build/medialib-preview40.patch
+
+      - name: Apply reviewed Preview 4.1.4 backend corrections
+        run: |
+          git -C nova/native/avos apply --check ../../Video/.github/build/avos-preview414.patch
+          git -C nova/native/avos apply ../../Video/.github/build/avos-preview414.patch
+          git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview414.patch
+          git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
+
+      - name: Apply bounded Preview 4.1.5 stability corrections
+        run: |
+          git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview415.patch
+          git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview415.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview415.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview415.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview417.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview417.patch
+
+      - name: Isolate Preview package and content providers
+        run: python3 source/.github/build/prepare-preview.py nova
+
+      # The pinned FileCoreLibrary declares the published NOVA jcifs-ng package,
+      # including its Maven dependency metadata. Do not stage a second bare JAR.
+      - name: Set up Java 17 for Android Gradle
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+          cache-dependency-path: |
+            source/**/*.gradle*
+            source/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Compile and test source before signed delivery gate
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.Preview417NavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
+
+      - name: Test personal build changes
+        if: ${{ inputs.validation == 'full' }}
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest' --tests 'com.archos.mediacenter.video.leanback.PreviewDiscoveryTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+
+      - name: Targeted stability and library metadata checks
+        working-directory: nova/Video
+        run: |
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview411Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview412Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview413Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview414Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview415Test.*' --tests 'com.archos.mediacenter.video.utils.Preview415BridgeTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest.*' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.*' --tests 'com.archos.mediacenter.video.streaming.StreamingPreferencesTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.utils.RestoreJournalTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41RowsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewUpNextTest.*' --tests 'com.archos.mediacenter.video.player.PlaybackResumePolicyTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
+
+      - name: Check selectively ported WebDAV behaviour
+        working-directory: nova/Video
+        run: ./gradlew :FileCoreLibrary:testDebugUnitTest --tests 'com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest' -Puniversal -PmarkPreview --build-cache --no-daemon
+
+      - name: Preserve compilation and test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Supernova-4.1.7-source-validation-${{ github.run_id }}
+          path: |
+            nova/gradle*.log
+            nova/Video/build/test-results/**
+            nova/Video/build/reports/**
+            nova/FileCoreLibrary/build/test-results/**
+          retention-days: 30

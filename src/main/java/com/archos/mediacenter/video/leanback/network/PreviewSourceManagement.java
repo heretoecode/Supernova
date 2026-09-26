@@ -21,14 +21,14 @@ final class PreviewSourceManagement {
         LinearLayout.LayoutParams middle=new LinearLayout.LayoutParams(0,-1,.48f);middle.setMargins(dp(a,14),0,dp(a,14),0);columns.addView(centre,middle);
         columns.addView(actions,new LinearLayout.LayoutParams(0,-1,.30f));
         rail.addView(text(a,indexed?"Library Sources":"Saved Locations",18));
-        rail.addView(button(a,"Back",a::finish));
+        rail.setOnKeyListener((v,key,event)->{if(key==KeyEvent.KEYCODE_DPAD_LEFT&&event.getAction()==KeyEvent.ACTION_DOWN){a.finish();return true;}return false;});
         centre.addView(text(a,source.getName(),23));
         centre.addView(text(a,(indexed?"Library source":"Saved browsing location")+"\n\n"+source.getUri().getScheme()+" · "+source.getUri().getHost()+"\n"+source.getUri().getPath(),14));
         centre.addView(text(a,indexed?"Media from this source appears in your library.":"This location is saved for browsing.",14));
         actions.addView(text(a,"Source actions",18));
         TextView open=button(a,"Open / Browse",()->a.startActivity(new Intent(a,ListingActivity.getActivityForUri(source.getUri())).putExtra(ListingActivity.EXTRA_ROOT_URI,source.getUri()).putExtra(ListingActivity.EXTRA_ROOT_NAME,source.getName())));actions.addView(open);
         if(indexed)actions.addView(button(a,"Scan Source",()->NetworkScanner.scanVideos(a,source.getUri())));
-        else actions.addView(button(a,"Add to Library",()->{if(ShortcutDbAdapter.VIDEO.addShortcut(a,new ShortcutDbAdapter.Shortcut(source.getName(),source.getUri().toString()))){ShortcutDb.STATIC.removeShortcut(a,source.getUri());NetworkScanner.scanVideos(a,source.getUri());a.setResult(NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED);a.finish();}}));
+        else actions.addView(button(a,"Add to Library",()->{if(ShortcutDbAdapter.VIDEO.addShortcut(a,new ShortcutDbAdapter.Shortcut(source.getName(),source.getUri().toString()))){NetworkScanner.scanVideos(a,source.getUri());a.setResult(NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED);a.finish();}}));
         actions.addView(button(a,indexed?"Remove from Library":"Remove Saved Location",()->PreviewDialog.choose(a,indexed?"Remove from Library? Actual files will not be deleted.":"Remove saved location? Actual files will not be deleted.",new String[]{"Cancel","Remove"},0,n->{if(n!=1)return;
             if(indexed){if(ShortcutDbAdapter.VIDEO.deleteShortcut(a,source.getId()))NetworkScanner.removeIndexedVideos(a,source.getUri());}
             else ShortcutDb.STATIC.removeShortcut(a,source.getUri());

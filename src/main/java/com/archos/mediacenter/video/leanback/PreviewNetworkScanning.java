@@ -36,16 +36,16 @@ public final class PreviewNetworkScanning {
                 case 2:prefs.edit().putBoolean("auto_rescan_on_app_restart",!prefs.getBoolean("auto_rescan_on_app_restart",true)).apply();show(c);break;
                 case 3:sources(c);break;
                 case 4:PreviewDialog.read(c,"Last Scan / Result",lastResult(c));break;
-                case 5:NetworkAutoRefresh.forceRescan(c);break;
+                case 5:PreviewLibraryScan.requestNetwork(c);break;
             }
         });
     }
-    private static void sources(Context c){
+    public static void sources(Context c){
         List<String> names=new ArrayList<>();List<Long> ids=new ArrayList<>();Set<Integer> checked=new HashSet<>();
         try(Cursor cursor=ShortcutDbAdapter.VIDEO.getAllShortcuts(c,null,null)){
             if(cursor!=null)while(cursor.moveToNext()){if(cursor.getInt(5)==1)checked.add(names.size());names.add(cursor.getString(3));ids.add(cursor.getLong(0));}
         }
         if(names.isEmpty()){PreviewDialog.read(c,"Sources Included","Add a Library Source before choosing sources for automatic scanning.");return;}
-        PreviewDialog.choose(c,"Sources Included",names.toArray(new String[0]),0,checked,n->{ShortcutDbAdapter.VIDEO.setRescanShortcutById(c,!checked.contains(n),ids.get(n));sources(c);});
+        android.app.Dialog[] dialog={null};dialog[0]=PreviewDialog.choose(c,"Sources Included",names.toArray(new String[0]),0,checked,false,n->{boolean include=!checked.contains(n);ShortcutDbAdapter.VIDEO.setRescanShortcutById(c,include,ids.get(n));if(include)checked.add(n);else checked.remove(n);PreviewDialog.updateChecks(dialog[0],checked);});
     }
 }

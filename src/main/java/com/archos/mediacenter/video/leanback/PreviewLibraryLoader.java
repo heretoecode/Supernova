@@ -59,6 +59,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     }
     public static final class Snapshot implements java.io.Serializable {
         public final List<Entry> episodes=new ArrayList<>();
+        public final List<Entry> unmatched=new ArrayList<>();
         public final List<Entry> watched = new ArrayList<>();
         public final List<Entry> movies = new ArrayList<>(), shows = new ArrayList<>(), recent = new ArrayList<>(), played = new ArrayList<>(), continuingMovies = new ArrayList<>(), continuingShows = new ArrayList<>();
     }
@@ -77,6 +78,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         Map<Long,List<Entry>> groups=new LinkedHashMap<>();
         for(Entry e:videos) {
             Video v=(Video)e.media;
+            if (!(v instanceof Movie) && !(v instanceof Episode)) s.unmatched.add(e);
             if(v instanceof Episode && e.show>0) {groups.computeIfAbsent(e.show,k->new ArrayList<>()).add(e);s.episodes.add(e);}
             else { s.recent.add(e); if(v instanceof Movie) { s.movies.add(e); if(!watched(v) && v.getResumeMs()>0) s.continuingMovies.add(e); } }
             if(v.getLastPlayed()>0) { s.played.add(e); if(watched(v))s.watched.add(e); }
