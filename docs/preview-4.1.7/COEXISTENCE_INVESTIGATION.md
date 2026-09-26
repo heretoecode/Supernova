@@ -24,8 +24,13 @@ The source-validation workflow now audits the generated NoamazonDebug merged
 manifest, preserving a JSON report of package, label, banner, shared-user ID,
 provider authorities and task affinities. It fails unexpected identity/provider
 changes and records the inherited shared-user ID as a warning. It makes no
-manifest changes and neither installs nor uninstalls an application. Execution
-against a real merged manifest remains pending the next CI run.
+manifest changes and neither installs nor uninstalls an application. CI run
+36240788783 successfully audited the real merged NoamazonDebug manifest:
+package `org.courville.nova.markpreview`, label `Supernova`, version
+`6.4.63-mark.4.1.7-preview` / `6040083`, banner `@drawable/preview_custom_banner`,
+all eight provider authorities under the Preview package namespace, inherited
+shared-user ID and task affinity as described above. No unexpected identity
+changes were detected. This is not a physical coexistence test.
 
 Remaining evidence: obtain the exact official APK and installer error, compare
 its identifiers/certificate, and inspect installed package/shared-user state on

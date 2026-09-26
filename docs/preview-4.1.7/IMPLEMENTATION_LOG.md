@@ -171,6 +171,39 @@ Local safeguards: 430 XML files parsed; HUD/internal-Details/signing-gate checks
 and diff whitespace passed. Complete feature integration and final three-pass
 conformance reviews remain unfinished. This is not a release-complete candidate.
 
+## Checkpoint 8 — diagnostic evidence and full-suite fixture repair
+
+Checkpoint 7 local 87cb8690 / remote 1b581a58 have identical source tree
+aeda927b88348bd24db41c53d39a34f79ca772c0. Run 36240788783 compiled and passed
+the expanded targeted tests, including cache concurrency, source classification
+and queue migration. Its merged-manifest audit passed. The unfiltered Video
+suite ran 191 tests: 190 passed; SortUtilsTest failed during Robolectric SDK
+initialisation before its five assertions/tests ran. That legacy fixture now
+explicitly uses SDK 28 and Application, consistent with the other pure Android
+utility fixtures; all test methods and assertions remain intact. This correction
+awaits CI. Later WebDAV/regression steps were skipped after the suite failure.
+
+- Diagnostic records now carry INFO/WARNING/ERROR/FATAL severity; suspected
+  unclean exit remains WARNING, not a confirmed crash.
+- Machine-readable manifest schema 2 includes event counts, retained per-process
+  time spans, launch/exit counts, significant-event correlation references and
+  historical drop counts using each process's maximum, not a sum of repeated
+  cumulative counters. Human summaries distinguish retained spans from complete
+  session duration.
+- Incident context includes native heap and available/low-memory state only at
+  capture. Separate manual/automatic daily streams preserve window copies across
+  replacement of the current flight file; roughly 60 seconds before/after,
+  bounded to four 256 KiB files per category/day and seven-day age retention.
+  Size/queue limits still make completeness PARTIAL; physical pressure/soak
+  testing remains necessary. Routine-event rotation cannot replace these files.
+- Advanced settings exposes Show Latest Reference without requiring logging to
+  be enabled. QR presentation is still not implemented; do not mark DIA-003 done.
+- Three new archive tests cover incident allow-list/deduplication, evidence spans
+  and drop-counter aggregation, and conservative severity classification.
+
+Local XML/source/whitespace checks pass. Latest diagnostic changes await Android
+compilation/tests. No Preview 4.1.7 APK or physical/runtime validation is claimed.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed
