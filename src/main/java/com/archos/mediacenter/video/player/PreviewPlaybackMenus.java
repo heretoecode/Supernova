@@ -76,7 +76,12 @@ final class PreviewPlaybackMenus {
    Dialog before=current;restoreParent=()->select(activity,card,parent,n,otherLanguages);item.previewClick();
    // Track and switch actions update in place. A nested native picker replaces current.
    if(current==before&&before.isShowing()){Set<Integer> updated=new HashSet<>();for(int j=0;j<actions.size();j++)if(actions.get(j)!=null&&actions.get(j).isChecked())updated.add(j);PreviewDialog.updateChecks(before,updated);}
-  });current.setOnCancelListener(d->{dismissCurrent();if(parent!=null)parent.run();else close();});position(activity,current,false);
+  });
+  if(subtitles)for(int i=0;i<actions.size();i++){
+   TVMenuItem track=actions.get(i);Object code=track==null?null:track.getTag(R.id.preview_track_language);
+   if(code instanceof String)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(current,i,(String)code);
+  }
+  current.setOnCancelListener(d->{dismissCurrent();if(parent!=null)parent.run();else close();});position(activity,current,false);
  }
  static void showNested(android.app.Activity activity,TVCardDialog card){
   Runnable parent=restoreParent;dismissCurrent();

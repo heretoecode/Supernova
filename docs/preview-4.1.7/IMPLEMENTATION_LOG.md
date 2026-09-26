@@ -556,6 +556,12 @@ Preview subtitle search/download now uses PreviewOperationDialog for indetermina
 
 Added three real-dialog regressions for completion versus cancellation, Back/Cancel equivalence and focused Close without Copy/toast, plus a native-action menu-label regression. Compilation and these four tests await CI. Local 430-XML/source safeguards and six Python checks pass. The local/downloaded chooser and active-track synchronisation remain unfinished; physical download/playback and remote-write failure behaviour remain AWAITING PHYSICAL QA. No APK built, main merge, signing change or OAuth credential change.
 
+## Checkpoint 29 — shared language / locale icons
+
+PreviewLanguageIcon is shared by UI Language, Subtitle Reading Language, subtitle download language selections and the HUD subtitle track menu. Only an explicitly regional stored locale (such as en-GB, pt_BR or zh-Hant-TW) supplies a country flag; generic language codes/names do not infer a nationality. If the device font cannot render the real flag glyph, a neutral outline language globe is shown instead of broken indicator letters. Existing native language values, preferred-language filtering and track selection callbacks remain unchanged. Added locale classification tests and a real track-menu icon/selection test; CI pending. Actual flag/font appearance on Shield remains AWAITING PHYSICAL QA.
+
+Checkpoint 28 source is remotely preserved at dae788013f2aa23879748ae4e62a718f4aac4f07 with tree 4da797817fea5cb269b2bcd494b054b7c9389003 identical to local b9f44c1029f266f38eb0df192a37afe137596f43. Run 36277264981 is in progress at this record.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

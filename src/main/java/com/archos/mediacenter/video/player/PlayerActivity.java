@@ -2089,6 +2089,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 for (int i = 0; i < mSubtitleInfoController.getTrackCount(); i++) {
                     TVMenuItem item = mSubtitleTVMenu.createAndAddTVMenuItem(mSubtitleInfoController.getTrackNameAt(i).toString(), true, mSubtitleInfoController.getTrack() == i);
                     item.setTag(previewPreferredSubtitle(i));
+                    if(i>0&&mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null){
+                        SubtitleTrack subtitle=mPlayer.getVideoMetadata().getSubtitleTrack(positionToSubtitleTrack(i,mVideoInfo.nbSubtitles));
+                        if(subtitle!=null)item.setTag(R.id.preview_track_language,subtitle.language==null?"":subtitle.language);
+                    }
                 }
                 mSubtitleTVMenu.createAndAddSeparator();
                 mSubtitleDelayMenuItem = mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.player_pref_subtitle_delay_title).toString(), false, false);

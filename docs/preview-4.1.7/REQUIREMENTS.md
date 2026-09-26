@@ -90,9 +90,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Add missing language/locale iconography in Settings UI Language, Subtitle Reading Language and playback Select Subtitle Track. Locale flag only for a true locale such as en-GB; generic language uses neutral language iconography.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — TESTING PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewLanguageIcon binds to ui_lang, favSubLang and languages_list preference choices and native subtitle track rows through an application-resource keyed tag. Explicit ISO-country locales use a flag only when the system font supports its glyph; all generic/unknown language values use the neutral language globe. Two locale-policy tests and one real track-menu binding regression added at checkpoint 29, pending CI. Font rendering and readability remain AWAITING PHYSICAL QA.
 
 ### UI-010 — 3. Background metadata enrichment
 

@@ -2,4 +2,5 @@
 <resources>
     <item name="number" type="id"/>
     <item name="preview_settings_return" type="id"/>
+    <item name="preview_track_language" type="id"/>
 </resources>
