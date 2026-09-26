@@ -26,14 +26,14 @@ public class Preview417NavigationTest {
         PreviewKeyboard keyboard = new PreviewKeyboard(host, input, () -> {});
         host.setContentView(keyboard); layout(keyboard);
         assertTrue("Initial keyboard focus request", keyboard.focusLastKey());
-        assertEquals("T", ((TextView) host.getCurrentFocus()).getText().toString());
+        assertEquals("T", ((TextView) keyboard.findFocus()).getText().toString());
         TextView p = (TextView) PreviewPagesTest.findText(keyboard, "P");
         p.requestFocus(); p.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
-        assertSame(p, host.getCurrentFocus());
+        assertSame(p, keyboard.findFocus());
         PreviewPagesTest.findText(keyboard, "Clear").performClick();
         PreviewPagesTest.findText(keyboard, "1").performClick();
         assertEquals("1", input.getText().toString());
-        keyboard.focusLastKey(); assertSame(p, host.getCurrentFocus());
+        keyboard.focusLastKey(); assertSame(p, keyboard.findFocus());
         host.finish();
     }
     @Test public void navigationHasOneBoundaryAndLocksBothEnds() {
@@ -46,11 +46,11 @@ public class Preview417NavigationTest {
         assertTrue(rail instanceof PreviewFocusRail);
         View home = rail.getChildAt(0), settings = rail.getChildAt(6), search = rail.getChildAt(5);
         home.requestFocus(); shell.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
-        assertSame(home, host.getCurrentFocus());
+        assertSame(home, shell.findFocus());
         settings.requestFocus(); shell.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
-        assertSame(settings, host.getCurrentFocus());
+        assertSame(settings, shell.findFocus());
         shell.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
-        assertSame(search, host.getCurrentFocus());
+        assertSame(search, shell.findFocus());
         assertNull(home.getBackground()); assertNull(settings.getBackground());
         host.finish();
     }
@@ -70,10 +70,10 @@ public class Preview417NavigationTest {
         host.setContentView(grid); layout(grid);
         View terminal = grid.findViewHolderForAdapterPosition(2).itemView;
         terminal.requestFocus(); grid.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
-        assertSame(terminal, host.getCurrentFocus());
+        assertSame(terminal, grid.findFocus());
         View last = grid.findViewHolderForAdapterPosition(4).itemView;
         last.requestFocus(); grid.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
-        assertSame(last, host.getCurrentFocus());
+        assertSame(last, grid.findFocus());
         host.finish();
     }
 }

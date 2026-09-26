@@ -99,6 +99,29 @@ Local XML/source safeguards pass. This resumed environment has no javac or
 javalang; Android compilation and unit testing therefore use the isolated CI
 route. No signing material has been accessed by source-validation CI.
 
+## Checkpoint 5 — Details panels, Extras and bounded remote seeking
+
+Checkpoint 4 local 3073dc48 / remote 8b8f28c1 source trees match exactly:
+0a3d521bbd449176fe4ebef14356e03e59fc02d5. CI run 36239377263 compiled and
+ran 47 targeted tests: 44 passed, including all 13 put.io safety tests and all
+three backdrop tests. Three navigation tests still failed because the fixture's
+Activity.getCurrentFocus() was null despite a successful component focus request.
+The next run checks the actual component focus tree with the same exact target
+assertions; none are removed or disabled.
+
+- Extras groups actual playable videos into populated category rows, four across,
+  with focus-only Play indicator and held horizontal edges. Unknown durations are
+  omitted. Episode cards now measure four across and show the local Play indicator.
+- Details adds real release/country/tagline/collection/budget/revenue/vote fields,
+  available bitrate/frame-rate/subtitle facts, TV Library Information and remote
+  Streaming Availability. Empty Reception panels are omitted and columns reflow.
+  Added tests for empty remote panels and Extras categories.
+- Added deterministic 10/30/60/120-second remote seek policy, reset on direction
+  change or 1.25-second pause. Absolute-position remote hold previews the target
+  and commits through the existing player on release; legacy relative-position,
+  joystick and touch paths are retained. Six policy tests added. Decoder callback,
+  pause/resume and physical Shield behaviour still require validation.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

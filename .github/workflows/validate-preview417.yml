@@ -110,7 +110,7 @@ jobs:
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.Preview417NavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.*' --tests 'com.archos.mediacenter.video.leanback.PreviewMetadataCacheTest' --tests 'com.archos.mediacenter.video.leanback.PreviewBackdropTest' --tests 'com.archos.mediacenter.video.streaming.putio.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
+          ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.Preview417NavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.*' --tests 'com.archos.mediacenter.video.leanback.PreviewMetadataCacheTest' --tests 'com.archos.mediacenter.video.leanback.PreviewBackdropTest' --tests 'com.archos.mediacenter.video.streaming.putio.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest' --tests 'com.archos.mediacenter.video.player.PreviewSeekPolicyTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
 
       - name: Test personal build changes
         if: ${{ inputs.validation == 'full' }}

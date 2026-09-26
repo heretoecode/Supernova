@@ -147,17 +147,83 @@ public final class PreviewMoviePage extends ScrollView {
         PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderDetails();renderRelated();requestEnrichment();restoreRowFocus(cast,castKey,oldY);
     }
     public void setSnapshot(Snapshot value){snapshot=value;renderRelated();requestEnrichment();}
-    private void renderDetails(){observeActions();if(movie==null&&show==null&&remoteDetails==null)return;renderHumanMetadata();details.removeAllViews();
-        LinearLayout panels=new LinearLayout(getContext());panels.setClipChildren(false);details.addView(panels);LinearLayout key=factPanel(panels,"Key Information"),reception=factPanel(panels,"Reception"),technical=factPanel(panels,"Technical Information");
-        String genre=tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():"";if(safe(genre).isEmpty()&&tags instanceof EpisodeTags){ShowTags parent=((EpisodeTags)tags).getShowTags();if(parent!=null)genre=parent.getGenresFormatted();}context.setText(safe(genre));context.setVisibility(safe(genre).isEmpty()?GONE:VISIBLE);
-        int year=movie instanceof Movie?((Movie)movie).getYear():show!=null?show.getYear():0;if(year>0)fact(key,"Year",String.valueOf(year));long runtime=movie==null?0:movie.getDurationMs();if(runtime>0)fact(key,"Runtime",runtime/60000+" min");String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;fact(key,"Age rating",certificate);fact(key,"Genres",genre);
-        if(tags instanceof MovieTags)fact(key,"Studio / Network",((MovieTags)tags).getStudiosFormatted());else if(tags instanceof ShowTags)fact(key,"Studio / Network",((ShowTags)tags).getStudiosFormatted());else if(tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null)fact(key,"Studio / Network",((EpisodeTags)tags).getShowTags().getStudiosFormatted());
-        float rating=movie instanceof Episode?(tags instanceof EpisodeTags?((EpisodeTags)tags).getRating():((Episode)movie).getEpisodeRating()):movie instanceof Movie?((Movie)movie).getRating():show==null?0:show.getRating();if(rating>0)fact(reception,"TMDb rating",String.format(Locale.UK,"%.1f / 10",rating));
-        if(movie!=null){if(movie.getMeasuredWidth()>0&&movie.getMeasuredHeight()>0)fact(technical,"Resolution",movie.getMeasuredWidth()+" × "+movie.getMeasuredHeight());fact(technical,"Video codec",PreviewMediaInfo.format(movie.getCalculatedVideoFormat()));fact(technical,"Audio",PreviewMediaInfo.format(movie.getCalculatedBestAudioFormat()));fact(technical,"Source",source(movie.getFileUri()));if(movie.getSize()>0)fact(technical,"File size",android.text.format.Formatter.formatShortFileSize(getContext(),movie.getSize()));fact(technical,"Selected file",movie.getFilenameNonCryptic());}else if(show!=null)fact(technical,"Episode file","Select an episode to inspect its physical file.");
+    private void renderDetails(){
+        observeActions();if(movie==null&&show==null&&remoteDetails==null)return;renderHumanMetadata();details.removeAllViews();
+        LinearLayout panels=new LinearLayout(getContext());panels.setClipChildren(false);details.addView(panels);
+        LinearLayout key=factPanel(panels,"Key Information"),reception=factPanel(panels,"Reception"),
+                technical=factPanel(panels,show!=null?"Library Information":remoteDetails!=null?"Streaming Availability":"Technical Information");
         org.json.JSONObject enriched=enrichment!=null?enrichment.details:remoteDetails;
-        if(movie!=null&&movie.getMetadata()!=null&&movie.getMetadata().getVideoTrack()!=null){int transfer=movie.getMetadata().getVideoTrack().colorTrc;if(transfer==16)fact(technical,"Dynamic range","HDR (PQ)");else if(transfer==18)fact(technical,"Dynamic range","HLG");}
-        if(enriched!=null){long budget=enriched.optLong("budget");if(budget>0)fact(key,"Budget (TMDb)",java.text.NumberFormat.getCurrencyInstance(Locale.US).format(budget));if(remoteDetails!=null){fact(key,"Release / first air date",enriched.optString("release_date",enriched.optString("first_air_date")));if(enriched.optInt("runtime")>0)fact(key,"Runtime",enriched.optInt("runtime")+" min");if(enriched.optDouble("vote_average")>0)fact(reception,"TMDb rating",String.format(Locale.UK,"%.1f / 10",enriched.optDouble("vote_average")));}}
+        String genre=tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():"";
+        if(safe(genre).isEmpty()&&tags instanceof EpisodeTags){ShowTags parent=((EpisodeTags)tags).getShowTags();if(parent!=null)genre=parent.getGenresFormatted();}
+        if(safe(genre).isEmpty()&&enriched!=null)genre=jsonNames(enriched.optJSONArray("genres"),"name");
+        context.setText(safe(genre));context.setVisibility(safe(genre).isEmpty()?GONE:VISIBLE);
+        int year=movie instanceof Movie?((Movie)movie).getYear():show!=null?show.getYear():0;
+        if(year>0)fact(key,"Year",String.valueOf(year));
+        long runtime=movie==null?0:movie.getDurationMs()/60000;
+        if(runtime<=0&&enriched!=null)runtime=enriched.optLong("runtime");
+        if(runtime>0)fact(key,"Runtime",runtime+" min");
+        String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;
+        fact(key,"Age rating",certificate);fact(key,"Genres",genre);
+        String studios=tags instanceof MovieTags?((MovieTags)tags).getStudiosFormatted():tags instanceof ShowTags?((ShowTags)tags).getStudiosFormatted():tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null?((EpisodeTags)tags).getShowTags().getStudiosFormatted():"";
+        if(safe(studios).isEmpty()&&enriched!=null)studios=jsonNames(enriched.optJSONArray(show!=null||"tv".equals(remoteKind)?"networks":"production_companies"),"name");
+        fact(key,"Studio / Network",studios);
+        float rating=movie instanceof Episode?(tags instanceof EpisodeTags?((EpisodeTags)tags).getRating():((Episode)movie).getEpisodeRating()):movie instanceof Movie?((Movie)movie).getRating():show==null?0:show.getRating();
+        if(rating<=0&&enriched!=null&&!(movie instanceof Episode))rating=(float)enriched.optDouble("vote_average");
+        if(rating>0)fact(reception,"TMDb rating",String.format(Locale.UK,"%.1f / 10",rating));
+        if(enriched!=null){
+            fact(key,"Release / first air date",enriched.optString("release_date",enriched.optString("first_air_date")));
+            fact(key,"Countries",jsonNames(enriched.optJSONArray("production_countries"),"name"));
+            fact(key,"Tagline",enriched.optString("tagline"));
+            org.json.JSONObject collection=enriched.optJSONObject("belongs_to_collection");
+            if(collection!=null)fact(key,"Collection",collection.optString("name"));
+            for(String field:new String[]{"budget","revenue"})if(enriched.optLong(field)>0)fact(key,field.equals("budget")?"Budget (TMDb)":"Box office (TMDb)",java.text.NumberFormat.getCurrencyInstance(Locale.US).format(enriched.optLong(field)));
+            if(enriched.optLong("vote_count")>0&&!(movie instanceof Episode))fact(reception,"TMDb votes",java.text.NumberFormat.getIntegerInstance().format(enriched.optLong("vote_count")));
+        }
+        if(movie!=null){
+            if(movie.getMeasuredWidth()>0&&movie.getMeasuredHeight()>0)fact(technical,"Resolution",movie.getMeasuredWidth()+" × "+movie.getMeasuredHeight());
+            fact(technical,"Video codec",PreviewMediaInfo.format(movie.getCalculatedVideoFormat()));
+            fact(technical,"Audio",PreviewMediaInfo.format(movie.getCalculatedBestAudioFormat()));
+            fact(technical,"Source",source(movie.getFileUri()));
+            if(movie.getSize()>0)fact(technical,"File size",android.text.format.Formatter.formatShortFileSize(getContext(),movie.getSize()));
+            fact(technical,"Selected file",movie.getFilenameNonCryptic());
+            if(movie.getMetadata()!=null){
+                com.archos.mediacenter.video.utils.VideoMetadata data=movie.getMetadata();
+                com.archos.mediacenter.video.utils.VideoMetadata.VideoTrack video=data.getVideoTrack();
+                if(video!=null){
+                    if(video.colorTrc==16)fact(technical,"Dynamic range","HDR (PQ)");else if(video.colorTrc==18)fact(technical,"Dynamic range","HLG");
+                    if(video.bitRate>0)fact(technical,"Video bitrate",video.bitRate+" kb/s");
+                    if(video.fpsScale>0)fact(technical,"Frame rate",String.format(Locale.UK,"%.3f fps",video.fpsRate/(double)video.fpsScale));
+                }
+                LinkedHashSet<String> subtitles=new LinkedHashSet<>();
+                for(int n=0;n<data.getSubtitleTrackNb();n++){com.archos.mediacenter.video.utils.VideoMetadata.SubtitleTrack track=data.getSubtitleTrack(n);if(track!=null&&!safe(track.language).isEmpty())subtitles.add(track.language);}
+                fact(technical,"Subtitles",android.text.TextUtils.join(", ",subtitles));
+            }
+        }else if(show!=null){
+            Snapshot library=snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache();
+            if(library!=null){
+                Set<Long> physical=new HashSet<>();Set<String> logical=new HashSet<>();Set<Integer> availableSeasons=new HashSet<>();long bytes=0;
+                for(Entry entry:library.episodes)if(entry.show==show.getTvshowId()&&entry.media instanceof Episode){
+                    Episode episode=(Episode)entry.media;logical.add(episode.getSeasonNumber()+":"+episode.getEpisodeNumber());availableSeasons.add(episode.getSeasonNumber());
+                    if(physical.add(episode.getId()))bytes+=Math.max(0,episode.getSize());
+                }
+                fact(technical,"Local episodes",String.valueOf(logical.size()));fact(technical,"Local seasons",String.valueOf(availableSeasons.size()));
+                if(bytes>0)fact(technical,"Library size",android.text.format.Formatter.formatShortFileSize(getContext(),bytes));
+            }
+        }else{
+            fact(technical,"Region",com.archos.mediacenter.video.streaming.StreamingRepository.country(getContext()));
+            if(observedActions!=null)for(int n=0;n<observedActions.size();n++){
+                Object item=observedActions.get(n);
+                if(item instanceof Action&&com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))fact(technical,"Available on",String.valueOf(((Action)item).getLabel1()));
+            }
+        }
+        reception.setVisibility(reception.getChildCount()>1?VISIBLE:GONE);
+        technical.setVisibility(technical.getChildCount()>1?VISIBLE:GONE);
         ((View)details.getParent()).setVisibility(VISIBLE);pills.setVisibility(GONE);
+    }
+    private static String jsonNames(org.json.JSONArray values,String key){
+        if(values==null)return "";List<String> names=new ArrayList<>();
+        for(int n=0;n<values.length();n++){org.json.JSONObject item=values.optJSONObject(n);if(item!=null&&!item.optString(key).isEmpty())names.add(item.optString(key));}
+        return android.text.TextUtils.join(", ",names);
     }
     private LinearLayout factPanel(LinearLayout panels,String name){LinearLayout panel=new LinearLayout(getContext());panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(16),dp(16),dp(16),dp(20));panel.setBackground(PreviewDialog.surface(getContext(),false));panel.setFocusable(true);panel.setForeground(PreviewDialog.focus(getContext()));LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,-2,1);size.rightMargin=dp(12);panels.addView(panel,size);panel.addView(text(name,18));return panel;}
     private void fact(LinearLayout panel,String label,String value){if(value==null||value.trim().isEmpty())return;TextView name=text(label,12);name.setTextColor(0xffb9c7d2);name.setPadding(0,dp(16),0,dp(4));panel.addView(name);TextView content=text(value,14);content.setLineSpacing(dp(3),1);panel.addView(content);}
@@ -246,7 +312,36 @@ public final class PreviewMoviePage extends ScrollView {
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(142),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);landscapeCards.add(card);rowKeys(card,row);
     }
     private boolean hasPlayableExtras(){for(ScraperTrailer e:trailerList)if("YouTube".equals(e.mSite)&&e.mVideoKey!=null&&e.mVideoKey.matches("[A-Za-z0-9_-]{11}"))return true;return false;}
-    private void renderExtras(){View focused=trailers.findFocus();Object focusKey=focused==null?null:focused.getTag();int y=getScrollY();for(PreviewLandscapeCard old:extraCards)old.release();extraCards.clear();trailers.removeAllViews();LinearLayout row=null;int count=0;for(ScraperTrailer extra:trailerList){if(!"YouTube".equals(extra.mSite)||extra.mVideoKey==null||!extra.mVideoKey.matches("[A-Za-z0-9_-]{11}"))continue;if(count>=12)break;if(count%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);trailers.addView(row);}PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());String name=safe(extra.mName);String lowerName=name.toLowerCase(Locale.ROOT);String type=lowerName.contains("trailer")?"Trailer":lowerName.contains("teaser")?"Teaser":lowerName.contains("featurette")?"Featurette":lowerName.contains("interview")?"Interview":"Video";if(enrichment!=null)for(PreviewDetailsData.Extra e:enrichment.extras)if(e.key.equals(extra.mVideoKey)){type=e.type;break;}card.bind(name,type,Uri.parse("https://i.ytimg.com/vi/"+extra.mVideoKey+"/hqdefault.jpg"),false);card.setTag("extra:"+extra.mVideoKey);card.setOnClickListener(v->PreviewTrailer.show((Activity)getContext(),extra));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(155),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);extraCards.add(card);count++;}if(row!=null)for(int i=count%4;i>0&&i<4;i++)row.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));restoreRowFocus(trailers,focusKey,y);}
+    private void renderExtras(){
+        View focused=trailers.findFocus();Object focusKey=focused==null?null:focused.getTag();int y=getScrollY();
+        for(PreviewLandscapeCard old:extraCards)old.release();extraCards.clear();trailers.removeAllViews();
+        Map<String,List<ScraperTrailer>> categories=new LinkedHashMap<>();
+        for(String category:new String[]{"Trailers","Teasers","Behind the Scenes","Featurettes","Interviews","Clips","Other Videos"})categories.put(category,new ArrayList<>());
+        Set<String> seen=new HashSet<>();
+        for(ScraperTrailer extra:trailerList){
+            if(!"YouTube".equals(extra.mSite)||extra.mVideoKey==null||!extra.mVideoKey.matches("[A-Za-z0-9_-]{11}")||!seen.add(extra.mVideoKey))continue;
+            String type="";
+            if(enrichment!=null)for(PreviewDetailsData.Extra value:enrichment.extras)if(value.key.equals(extra.mVideoKey)){type=value.type;break;}
+            if(type.isEmpty()){String name=safe(extra.mName).toLowerCase(Locale.ROOT);type=name.contains("trailer")?"Trailer":name.contains("teaser")?"Teaser":name.contains("featurette")?"Featurette":name.contains("interview")?"Interview":"Video";}
+            String category=type.equals("Trailer")?"Trailers":type.equals("Teaser")?"Teasers":type.equals("Behind the Scenes")?"Behind the Scenes":type.equals("Featurette")?"Featurettes":type.equals("Interview")?"Interviews":type.equals("Clip")?"Clips":"Other Videos";
+            categories.get(category).add(extra);
+        }
+        for(Map.Entry<String,List<ScraperTrailer>> category:categories.entrySet()){
+            if(category.getValue().isEmpty())continue;
+            TextView heading=text(category.getKey(),18);heading.setPadding(dp(5),dp(12),0,dp(4));trailers.addView(heading);
+            LinearLayout row=null;int column=0;
+            for(ScraperTrailer extra:category.getValue()){
+                if(column%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);trailers.addView(row);}
+                PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
+                // TMDb videos do not provide reliable duration; leave it absent rather than inventing one.
+                card.bind(safe(extra.mName),"",Uri.parse("https://i.ytimg.com/vi/"+extra.mVideoKey+"/hqdefault.jpg"),true);
+                card.setTag("extra:"+extra.mVideoKey);card.setOnClickListener(v->PreviewTrailer.show((Activity)getContext(),extra));
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(142),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);extraCards.add(card);rowKeys(card,row);column++;
+            }
+            if(row!=null)while(row.getChildCount()<4)row.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));
+        }
+        restoreRowFocus(trailers,focusKey,y);
+    }
     public void bindRemote(org.json.JSONObject details,String kind,long id){remoteDetails=details;remoteKind=kind;remoteId=id;title.setText(details.optString("title",details.optString("name")));plot.setText(details.optString("overview"));meta.setText(details.optString("release_date",details.optString("first_air_date")));String backdrop=details.optString("backdrop_path");if(backdrop.matches("/[A-Za-z0-9._-]+"))artwork.accept(Uri.parse("https://image.tmdb.org/t/p/w1280"+backdrop));play.setVisibility(GONE);renderDetails();requestEnrichment();}
     private void requestEnrichment(){long id=remoteDetails!=null?remoteId:movie instanceof Movie?((Movie)movie).getOnlineId():show!=null&&show.getShowTags()!=null?show.getShowTags().getOnlineId():0;String kind=remoteDetails!=null?remoteKind:show==null?"movie":"tv";if(id<=0)return;PreviewEnrichmentQueue.enqueue(getContext(),kind,id,PreviewEnrichmentQueue.FOREGROUND);String key=kind+":"+id;if(key.equals(enrichmentKey))return;enrichmentKey=key;int generation=++enrichmentGeneration;if(enrichmentTask!=null)enrichmentTask.cancel(true);Set<Long> local=new HashSet<>();if(snapshot!=null)for(Entry e:kind.equals("movie")?snapshot.movies:snapshot.shows)local.add(e.onlineId);Context app=getContext().getApplicationContext();enrichmentTask=com.archos.mediacenter.video.streaming.StreamingRepository.IO.submit(()->{long start=android.os.SystemClock.elapsedRealtime();try{PreviewDetailsData.Result result=PreviewDetailsData.load(app,kind,id,local);post(()->{if(generation!=enrichmentGeneration)return;enrichment=result;List<ScraperTrailer> extras=new ArrayList<>();for(PreviewDetailsData.Extra e:result.extras)extras.add(new ScraperTrailer(ScraperTrailer.Type.SHOW_TRAILER,e.name,e.key,"YouTube",""));if(!extras.isEmpty())trailerList=extras;renderDetails();renderRelated();renderExtras();rebuildTabs();});}catch(Exception error){com.archos.mediacenter.video.diagnostics.Diagnostics.error("details_enrichment_unavailable",error);}finally{com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_enrichment","elapsed_ms",android.os.SystemClock.elapsedRealtime()-start);}});}
     private void rowKeys(View card,LinearLayout row){card.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN||key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT)return false;int next=row.indexOfChild(v)+(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);if(next>=0&&next<row.getChildCount())row.getChildAt(next).requestFocus();return true;});}

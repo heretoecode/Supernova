@@ -11,6 +11,31 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMoviePageTest {
+    @Test public void remotePanelsOmitEmptyReceptionAndLocalFileInformation() throws Exception {
+        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        try{
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);
+            page.bindRemote(new org.json.JSONObject().put("title","Remote fixture").put("tagline","A real supplied tagline").put("revenue",1234),"movie",0);
+            assertNotNull(PreviewPagesTest.findText(page,"Streaming Availability"));
+            assertNull(PreviewPagesTest.findText(page,"Technical Information"));
+            View reception=PreviewPagesTest.findText(page,"Reception");assertNotNull(reception);
+            assertEquals(View.GONE,((View)reception.getParent()).getVisibility());
+            assertNotNull(PreviewPagesTest.findText(page,"A real supplied tagline"));
+        }finally{host.pause().stop().destroy();}
+    }
+    @Test public void extrasHavePopulatedCategoriesOnly() throws Exception {
+        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException e){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
+        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        try{
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);
+            page.setTags(null,java.util.Arrays.asList(
+                new com.archos.mediascraper.ScraperTrailer(com.archos.mediascraper.ScraperTrailer.Type.SHOW_TRAILER,"Official Trailer","abcdefghijk","YouTube",""),
+                new com.archos.mediascraper.ScraperTrailer(com.archos.mediascraper.ScraperTrailer.Type.SHOW_TRAILER,"Official Teaser","lmnopqrstuv","YouTube","")),java.util.Collections.emptyList());
+            assertNotNull(PreviewPagesTest.findText(page,"Trailers"));assertNotNull(PreviewPagesTest.findText(page,"Teasers"));
+            assertNull(PreviewPagesTest.findText(page,"Interviews"));assertNotNull(page.findViewWithTag("section:Extras"));
+            View card=page.findViewWithTag("extra:abcdefghijk");assertNotNull(card);assertTrue(card.isFocusable());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void episodeMetadataDoesNotBorrowSeriesRating() throws Exception {
         try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException e){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
