@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 /** Focus recolours the existing divider segment; it does not add a second underline or box. */
 public final class PreviewToolbar extends LinearLayout {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private View selectedSegment;
+    public void setSelectedSegment(View view){selectedSegment=view;invalidate();}
     public PreviewToolbar(Context context) {
         super(context); setClipChildren(false); setClipToPadding(false);
         setPadding(0, 0, 0, PreviewDialog.dp(context, 3));
@@ -32,7 +34,7 @@ public final class PreviewToolbar extends LinearLayout {
         super.dispatchDraw(canvas);
         float y = getHeight() - getResources().getDisplayMetrics().density;
         paint.setColor(0x99ffffff); canvas.drawRect(0, y, getWidth(), getHeight(), paint);
-        View focused = findFocus();
+        View focused = selectedSegment!=null?selectedSegment:findFocus();
         if (focused != null && focused.getParent() == this) {
             paint.setColor(PreviewAccent.color(getContext()));
             canvas.drawRect(focused.getLeft(), y, focused.getRight(), getHeight(), paint);

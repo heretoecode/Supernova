@@ -97,7 +97,8 @@ public final class TopNavigation extends LinearLayout {
         scanParams.setMargins(dp(20),dp(12),dp(20),dp(16));stage.addView(scanStatus,scanParams);
         addView(stage,new LayoutParams(-1,0,1));
     }
-    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key)){for(TextView tab:tabs)styleTab(tab);group.refreshColour();invalidate();}};
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key))refreshAccent();};
+    private void refreshAccent(){for(TextView tab:tabs)styleTab(tab);group.refreshColour();invalidate();}
     private void styleTab(TextView tab){
         tab.setTextColor(Color.WHITE);
         tab.setShadowLayer(0,0,0,0);
@@ -123,6 +124,11 @@ public final class TopNavigation extends LinearLayout {
         selected.requestFocus(); return true;
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
+        View previous=findFocus();boolean consumed=routeKeyEvent(event);
+        if(event.getAction()==KeyEvent.ACTION_DOWN)com.archos.mediacenter.video.diagnostics.Diagnostics.navigation(previous,findFocus(),event.getKeyCode(),consumed);
+        return consumed;
+    }
+    private boolean routeKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP
                 && !bar.hasFocus() && firstRow.getAsBoolean()) {
             selected.requestFocus(); return true;

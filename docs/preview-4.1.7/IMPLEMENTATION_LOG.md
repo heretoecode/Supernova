@@ -48,6 +48,29 @@ Verified locally: Java syntax; all XML parses; HUD/internal-activity/signing-gat
 source checks; whitespace; new scanner patch applies after pinned existing patch.
 Not yet verified: Android compilation, Robolectric tests, emulator, physical Shield.
 
+## Checkpoint 3 — enrichment, Details, technical overlay and diagnostic retention
+
+- Persistent, deduplicated priority queue and locale-aware metadata package cache.
+  Failed refreshes retain usable data but cannot mark a stale package complete;
+  queued retries wake without needing another page visit.
+- Details lower navigation shares the toolbar divider treatment, retains focus
+  across rebinds and hides empty Extras/recommendation entries. Hero action edges
+  are held; duplicate section headings and obsolete More actions are removed.
+- Playback Info goes directly to Video/Audio/File/Source panels. No playback
+  engine or signing changes were made.
+- Important diagnostic events have a separate bounded queue and seven-day daily
+  retention stream. Incident capture no longer depends on the routine queue.
+  Export summaries include retained playback streams and deduplicate events;
+  historical unclean exits remain evidence, not confirmed crash claims.
+- Added archive and metadata-cache regression tests; updated technical overlay
+  and empty recommendation expectations to match written requirements.
+
+CI evidence: run 36216150455 exposed misplaced scanner completion telemetry;
+corrected on the candidate branch. Run 36237617854 then compiled MediaLib and
+exposed a blank-final navigation listener initialisation error, corrected here.
+Neither run reached unit tests. These are compile failures, not signing failures.
+This checkpoint is not full handover completion or a successful Android build.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

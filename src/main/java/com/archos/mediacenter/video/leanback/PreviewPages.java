@@ -214,7 +214,7 @@ public final class PreviewPages extends FrameLayout {
     public void setSnapshot(Snapshot s) { if(s==null)return;
         quietOrder.clear();if(loaded&&(tab==1||tab==2))for(Cell cell:cells)if(cell.type==POSTER)quietOrder.put(((Entry)cell.value).key(),quietOrder.size());
         if(loaded&&tab==0){String featuredKey=featured()==null?null:featured().key();if(featuredKey!=null)for(int i=0;i<Math.min(5,s.recent.size());i++)if(s.recent.get(i).key().equals(featuredKey)){featuredIndex=i;break;}}
-        snapshot=s;loaded=true;render();post(ready);postDelayed(this::requestDiscovery,750);
+        snapshot=s;loaded=true;render();PreviewEnrichmentQueue.library(getContext(),s,tab);post(ready);postDelayed(this::requestDiscovery,750);
     }
     private static void keepOrder(List<Entry> old,List<Entry> current){Map<String,Integer> rank=new HashMap<>();for(Entry e:old)rank.put(e.key(),rank.size());current.sort(Comparator.comparingInt(e->rank.getOrDefault(e.key(),Integer.MAX_VALUE)));}
     public void setFiles(List<Box> f) {

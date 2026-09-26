@@ -3000,7 +3000,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     public String previewEpisode(){return mVideoInfo!=null&&mVideoInfo.isShow?String.format(java.util.Locale.getDefault(),"Season %d • Episode %d",mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr)+(mVideoInfo.scraperEpisodeName==null?"":" · "+mVideoInfo.scraperEpisodeName):"";}
     void showVideoInfos() {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_information_open","player_present",mPlayer!=null);
-        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){Object media=getIntent().getSerializableExtra(PlayerService.VIDEO);if(media instanceof com.archos.mediacenter.video.browser.adapters.object.Video&&((com.archos.mediacenter.video.browser.adapters.object.Video)media).getId()!=mVideoId)media=null;PreviewPlaybackInfo.show(this,previewTitle(),previewEpisode(),media,()->{if(mPlayer!=null){mPlayer.seekTo(0);mPlayer.start(PlayerController.STATE_NORMAL);}},this::showNativeVideoInfos);return;}
+        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){showNativeVideoInfos();return;}
         showNativeVideoInfos();
     }
     private void showNativeVideoInfos() {

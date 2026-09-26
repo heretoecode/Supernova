@@ -69,8 +69,8 @@ public final class StreamingRepository {
     }
     /** Narrow read-only metadata gateway using the existing TMDb client and credentials. */
     public static JSONObject metadata(Context context,String kind,long id,String section)throws Exception{
-        if(!(kind.equals("movie")||kind.equals("tv"))||id<=0||!Arrays.asList("","videos","recommendations").contains(section))throw new IOException("Invalid metadata request");
-        return api(context,kind+"/"+id+(section.isEmpty()?"":"/"+section),null);
+        if(!(kind.equals("movie")||kind.equals("tv"))||id<=0||!(Arrays.asList("","videos","recommendations","credits","images","external_ids","release_dates","content_ratings").contains(section)||kind.equals("tv")&&section.matches("season/[0-9]{1,4}")))throw new IOException("Invalid metadata request");
+        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context,kind,id,section,()->api(context,kind+"/"+id+(section.isEmpty()?"":"/"+section),null));
     }
     private static JSONObject api(Context context, String path, String country) throws Exception {
         Uri.Builder url = Uri.parse("https://api.themoviedb.org/3/" + path).buildUpon()

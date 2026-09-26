@@ -20,10 +20,10 @@ public class PreviewTechnicalInfoTest {
         org.robolectric.android.controller.ActivityController<android.app.Activity> host=Robolectric.buildActivity(android.app.Activity.class).setup();
         try{
             android.app.Activity activity=host.get();activity.setContentView(new android.widget.TextView(activity));
-            PreviewPlaybackInfo.show(activity,"Example series","Season 1 · Episode 1",null,()->{},()->PreviewTechnicalInfo.show(activity,new VideoMetadata(),android.net.Uri.parse("webdavs://example/file.mkv"),0));
-            android.app.Dialog information=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(information.isShowing());
-            android.view.View action=find(information.getWindow().getDecorView(),"File and technical details");assertNotNull(action);action.performClick();
-            android.app.Dialog technical=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(technical.isShowing());assertNotNull(find(technical.getWindow().getDecorView(),"File & Technical Details"));
+            PreviewTechnicalInfo.show(activity,new VideoMetadata(),android.net.Uri.parse("webdavs://example/file.mkv"),0);
+            android.app.Dialog technical=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(technical.isShowing());
+            for(String label:new String[]{"Video","Audio","File","Source"})assertNotNull(find(technical.getWindow().getDecorView(),label));
+            for(String label:new String[]{"File & Technical Details","file.mkv","Resume","Close"})assertNull(find(technical.getWindow().getDecorView(),label));
             assertNull(Shadows.shadowOf(activity).getNextStartedActivity());assertFalse(activity.isFinishing());technical.dismiss();
         }finally{host.pause().stop().destroy();}
     }
