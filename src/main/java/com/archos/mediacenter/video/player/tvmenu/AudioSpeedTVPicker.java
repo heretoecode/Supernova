@@ -211,7 +211,8 @@ public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSl
     }
 
     public void updateTextViewSpeed() {
-        setText(getFormattedSpeed().toString());
+        setText(com.archos.mediacenter.video.player.PreviewAdjustmentValue.enabled(mContext)
+                ?com.archos.mediacenter.video.player.PreviewAdjustmentValue.speed(getSpeed()):getFormattedSpeed().toString());
     }
 
     public void setTextSize(int size) {

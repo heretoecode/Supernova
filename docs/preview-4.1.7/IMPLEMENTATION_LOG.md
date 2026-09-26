@@ -500,6 +500,12 @@ Series correction now transfers explicit Home/Watch Next membership to the corre
 
 Add to Row now displays plain white plus/check state, retains its menu during toggles, and returns from Create New Row with the new membership selected and focused. The shared text-entry dialog dismisses before invoking its accepted action so a replacement menu cannot capture a disappearing keyboard as its parent. Customise Home uses the shared dialog lifetime. Added an integrated create/toggle regression and membership reconciliation coverage. Local XML/source safeguards pass; new tests await CI. Main and signing configuration remain unchanged.
 
+## Checkpoint 22 — playback opener return and adjustment values
+
+Corrected a concrete navigation defect: direct HUD Audio/Subtitles menus used to return to More on Back. Direct entry now returns to the original HUD control; nested child paths retain their parent callbacks. The presentation helper accepts an Activity rather than depending on PlayerActivity internals, enabling a real dialog/track callback test without starting native decoding. The test checks that choosing a track keeps the menu open, moves the tick and Back closes without opening More.
+
+Preview speed and timing pickers now display human-readable values such as 1.00×, 0 ms, +250 ms, −500 ms and +1.5 s. Existing native limits, increments, persistence and engine callbacks are unchanged. Non-timing reuse of the subtitle picker (size/position/opacity) retains its numeric values. Nested native picker windows now use the shared dialog lifetime. Added formatting edge-case coverage. Compilation/tests for this checkpoint are pending; real playback and exact HUD focus remain AWAITING PHYSICAL QA. Subtitle download redesign and complete adjustment-panel conformance remain outstanding.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

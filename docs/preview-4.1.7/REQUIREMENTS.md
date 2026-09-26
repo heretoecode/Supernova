@@ -350,9 +350,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Add to Row: permanent rows with plain white + / ✓ state, toggle immediately while menu stays open, no toast; Watch Next follows same pattern; Create New Row bottom uses shared keyboard and auto-adds title then returns ticked.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — pending automated validation / AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewHomeRows and PreviewDialog.updateMembership provide persistent plain white plus/check state, immediate toggles, shared keyboard creation and return focus on the newly created row. Create/toggle regression added at checkpoint 21; CI validation pending.
 
 ### UI-036 — 7. More / contextual workflows
 
@@ -390,9 +390,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Metadata: unified Find a Match with subtitle "Search by title, TMDB ID or IMDb ID" and one field accepting title, TMDB numeric ID or IMDb tt... identifier. Already matched may show Current Match IDs + Refresh Metadata; unmatched omits Current Match. Compact results + Match Preview + explicit Use This Match/Use This Episode. TV series correction changes series identity then rebuilds/reconciles episodes; episode correction under known parent with Change Series Match escape hatch. Preserve playback/watched/rows/file associations/versions. TMDB/IMDb UI identifiers are clean monochrome.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **PARTIAL — implementation and preservation audit ongoing**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewMatchSearch and DirectMovieLookup implement the shared field, keyboard, compact results and explicit Match Preview path. Series correction retains Home memberships and aborts success reporting on failed batches. Movie/series file-history regressions added. Parent-constrained episode correction and Change Series Match remain outstanding; artwork preservation audit is incomplete.
 
 ### UI-040 — 7. More / contextual workflows
 
@@ -430,9 +430,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Subtitle/Audio menus restore exact HUD opener focus on Back. Track changes remain open and tick updates. Add language-specific/generic icons. Replace legacy Get Subtitles Online with designed search/download workflow.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **PARTIAL / AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewPlaybackMenus direct Audio/Subtitles Back path now returns to the HUD opener, while track changes retain the menu and tick. Real dialog/callback regression added at checkpoint 22. Language icon and subtitle download workflow conformance remain outstanding.
 
 ### UI-044 — 8. Playback HUD
 
@@ -440,9 +440,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Playback Speed/Audio Delay use same compact adjustment panel dimensions; Subtitle Delay may be taller. Human-readable values: 1.00×, 0 ms, +250 ms, −500 ms, +1.5 s. Back exact opener.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **PARTIAL / AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewAdjustmentValue supplies signed human-readable delay values and two-decimal playback speed through the retained native pickers. Existing limits/callbacks preserved. Shared dialog lifetime used; panel dimensions and complete runtime return paths still require review.
 
 ### UI-045 — 8. Playback HUD
 

@@ -257,7 +257,9 @@ public class AudioDelayTVPicker extends AudioDelayPickerAbstract implements TVSl
     }
 
     public void updateTextViewDelay() {
-        setText(mHourFormat ? getFormattedDelay().toString() : "" + getDelay());
+        setText(com.archos.mediacenter.video.player.PreviewAdjustmentValue.enabled(mContext)
+                ?com.archos.mediacenter.video.player.PreviewAdjustmentValue.delay(getDelay())
+                :mHourFormat ? getFormattedDelay().toString() : "" + getDelay());
     }
 
     public void setTextSize(int size) {
