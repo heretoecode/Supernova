@@ -71,6 +71,34 @@ exposed a blank-final navigation listener initialisation error, corrected here.
 Neither run reached unit tests. These are compile failures, not signing failures.
 This checkpoint is not full handover completion or a successful Android build.
 
+## Checkpoint 4 — verified compile, association safety policy and regression fixes
+
+Checkpoint 3 local commit 5909cb1e and remote f675ca47 have the identical tree
+e29e8d7474ee6f757ab45b9e7edd1a5c489b03bb. CI run 36238345377 compiled Android
+source successfully, then ran 31 targeted tests: 28 passed, 3 navigation tests
+failed. Later test steps did not run. Navigation fixture attachment/touch-mode
+handling is corrected for the next run; no test or assertion was suppressed.
+
+- Backdrop replacement failures preserve the displayed artwork instead of clearing
+  it. Same-bitmap rebinds avoid another crossfade. Added three regression tests and
+  privacy-safe request/result/fallback diagnostics. Physical flashing cause remains
+  investigative; this change is not a claim that Shield QA has passed.
+- More Like This now follows TMDb recommendation order, reconciles local titles,
+  then configured providers, with local genre fallback last. Card row edges hold.
+- Settings child LEFT uses the same parent-restoration path as Back, rather than
+  trying to focus a hidden child opener.
+- Added pure put.io reconciliation policy and 13 regression cases. Every page and
+  descendant must complete; failures yield no changes; stable IDs survive moves;
+  ambiguous paths/sizes/multiple claims require review. Missing files are review
+  candidates only, never unconditional delete instructions. This policy is not yet
+  connected to production account linking or library writes.
+- Requirements register now distinguishes tested components, pending integration,
+  physical QA, deferred scope and the external OAuth configuration blocker.
+
+Local XML/source safeguards pass. This resumed environment has no javac or
+javalang; Android compilation and unit testing therefore use the isolated CI
+route. No signing material has been accessed by source-validation CI.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

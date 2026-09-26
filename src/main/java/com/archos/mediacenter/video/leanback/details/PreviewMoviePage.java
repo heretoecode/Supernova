@@ -197,9 +197,53 @@ public final class PreviewMoviePage extends ScrollView {
     private static String shortFile(String s){if(s==null)return "";return s.length()>90?s.substring(0, sixty(s))+"…"+s.substring(s.length()-20):s;}
     private static int sixty(String s){return Math.min(60,s.length());}
     private void info(LinearLayout row,String name,String value){TextView t=text(value.replace("\n\n","    ·    ").replace("\n",": "),13);t.setMaxLines(3);t.setEllipsize(android.text.TextUtils.TruncateAt.END);t.setTextColor(0xffa8becf);t.setPadding(0,dp(3),0,dp(3));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(7);row.addView(t,lp);}
-    private void renderRelated(){View focused=related.findFocus();Object focusKey=focused==null?null:focused.getTag();int oldY=getScrollY();for(PreviewLandscapeCard card:landscapeCards)card.release();landscapeCards.clear();related.removeAllViews();if(movie==null&&show==null&&remoteDetails==null)return;
+    private void renderRelated(){
+        View focused=related.findFocus();Object focusKey=focused==null?null:focused.getTag();int oldY=getScrollY();
+        for(PreviewLandscapeCard card:landscapeCards)card.release();landscapeCards.clear();related.removeAllViews();
+        if(movie==null&&show==null&&remoteDetails==null)return;
+        boolean television=show!=null||"tv".equals(remoteKind);
         Entry selected=remoteDetails!=null?null:new Entry(show!=null?show:movie,0,show==null?0:show.getTvshowId(),tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():context.getText().toString());
-        LinearLayout row=null;int count=0;for(Entry entry:snapshot==null?Collections.<Entry>emptyList():PreviewDiscovery.similar(selected,snapshot)){if(count>=12)break;if(show!=null&&!(entry.media instanceof Tvshow)||show==null&&!(entry.media instanceof Movie))continue;if(count%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);related.addView(row);}PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());card.bind(PreviewPages.displayName(entry),entry.year()>0?String.valueOf(entry.year()):"",entry.backdrop!=null?entry.backdrop:entry.media.getPosterUri(),true);card.setTag("related:"+entry.key());card.setOnClickListener(v->new VideoViewClickedListener((Activity)getContext()).onItemClicked(new Presenter.ViewHolder(v),entry.media,null,null));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(142),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);landscapeCards.add(card);count++;}if(enrichment!=null)for(PreviewDetailsData.Remote remote:enrichment.related){if(count>=12)break;boolean local=false;if(snapshot!=null)for(Entry entry:(show!=null||"tv".equals(remoteKind)?snapshot.shows:snapshot.movies))if(entry.onlineId==remote.title.optLong("id")){local=true;break;}if(local)continue;if(count%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);related.addView(row);}PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());org.json.JSONObject value=remote.title;String name=value.optString("title",value.optString("name"));String backdrop=value.optString("backdrop_path");card.bind(name,value.optString("release_date",value.optString("first_air_date")).replaceFirst("-.*$",""),backdrop.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+backdrop):null,true);card.availability.setImageDrawable(new PreviewIcon("streaming"));String logo=remote.provider.logo;card.availability.setColorFilter(Color.WHITE,android.graphics.PorterDuff.Mode.SRC_IN);if(logo!=null&&logo.matches("/[A-Za-z0-9._-]+"))com.squareup.picasso.Picasso.get().load("https://image.tmdb.org/t/p/w154"+logo).into(card.availability);card.setTag("remote:"+value.optLong("id"));card.setContentDescription(name+" · "+remote.provider.name);card.setOnClickListener(v->getContext().startActivity(new Intent(getContext(),com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity.class).putExtra("kind",remoteDetails!=null?remoteKind:show!=null?"tv":"movie").putExtra("tmdb_id",value.optLong("id"))));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(142),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);landscapeCards.add(card);count++;}if(row!=null)for(int i=count%4;i>0&&i<4;i++)row.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));restoreRowFocus(related,focusKey,oldY);rebuildTabs();
+        Map<Long,Entry> local=new HashMap<>();
+        if(snapshot!=null)for(Entry entry:television?snapshot.shows:snapshot.movies)if(entry.onlineId>0)local.putIfAbsent(entry.onlineId,entry);
+        Set<String> shown=new HashSet<>();
+        if(enrichment!=null)for(PreviewDetailsData.Remote recommendation:enrichment.related){
+            if(landscapeCards.size()>=12)break;
+            long id=recommendation.title.optLong("id");Entry entry=local.get(id);
+            if(entry!=null){addLocalRecommendation(entry);shown.add("id:"+id);shown.add(entry.key());}
+            else if(recommendation.provider!=null){
+                org.json.JSONObject value=recommendation.title;String name=value.optString("title",value.optString("name"));String backdrop=value.optString("backdrop_path");
+                PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
+                card.bind(name,value.optString("release_date",value.optString("first_air_date")).replaceFirst("-.*$",""),backdrop.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+backdrop):null,true);
+                card.availability.setImageDrawable(new PreviewIcon("streaming"));
+                card.availability.setColorFilter(Color.WHITE,android.graphics.PorterDuff.Mode.SRC_IN);
+                String logo=recommendation.provider.logo;
+                if(logo!=null&&logo.matches("/[A-Za-z0-9._-]+"))com.squareup.picasso.Picasso.get().load("https://image.tmdb.org/t/p/w154"+logo).into(card.availability);
+                card.setTag("remote:"+id);card.setContentDescription(name+" · "+recommendation.provider.name);
+                card.setOnClickListener(v->getContext().startActivity(new Intent(getContext(),com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity.class).putExtra("kind",television?"tv":"movie").putExtra("tmdb_id",id)));
+                addRecommendation(card);shown.add("id:"+id);
+            }
+        }
+        if(snapshot!=null)for(Entry entry:PreviewDiscovery.similar(selected,snapshot)){
+            if(landscapeCards.size()>=12)break;
+            if(television?!(entry.media instanceof Tvshow):!(entry.media instanceof Movie))continue;
+            if(shown.contains(entry.key())||entry.onlineId>0&&shown.contains("id:"+entry.onlineId))continue;
+            addLocalRecommendation(entry);shown.add(entry.key());if(entry.onlineId>0)shown.add("id:"+entry.onlineId);
+        }
+        if(related.getChildCount()>0){LinearLayout row=(LinearLayout)related.getChildAt(related.getChildCount()-1);while(row.getChildCount()<4)row.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));}
+        restoreRowFocus(related,focusKey,oldY);rebuildTabs();
+    }
+    private void addLocalRecommendation(Entry entry){
+        PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
+        card.bind(PreviewPages.displayName(entry),entry.year()>0?String.valueOf(entry.year()):"",entry.backdrop!=null?entry.backdrop:entry.media.getPosterUri(),true);
+        card.setTag("related:"+entry.key());
+        card.setOnClickListener(v->new VideoViewClickedListener((Activity)getContext()).onItemClicked(new Presenter.ViewHolder(v),entry.media,null,null));
+        addRecommendation(card);
+    }
+    private void addRecommendation(PreviewLandscapeCard card){
+        LinearLayout row;
+        if(landscapeCards.size()%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);related.addView(row);}
+        else row=(LinearLayout)related.getChildAt(related.getChildCount()-1);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(142),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);landscapeCards.add(card);rowKeys(card,row);
     }
     private boolean hasPlayableExtras(){for(ScraperTrailer e:trailerList)if("YouTube".equals(e.mSite)&&e.mVideoKey!=null&&e.mVideoKey.matches("[A-Za-z0-9_-]{11}"))return true;return false;}
     private void renderExtras(){View focused=trailers.findFocus();Object focusKey=focused==null?null:focused.getTag();int y=getScrollY();for(PreviewLandscapeCard old:extraCards)old.release();extraCards.clear();trailers.removeAllViews();LinearLayout row=null;int count=0;for(ScraperTrailer extra:trailerList){if(!"YouTube".equals(extra.mSite)||extra.mVideoKey==null||!extra.mVideoKey.matches("[A-Za-z0-9_-]{11}"))continue;if(count>=12)break;if(count%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);trailers.addView(row);}PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());String name=safe(extra.mName);String lowerName=name.toLowerCase(Locale.ROOT);String type=lowerName.contains("trailer")?"Trailer":lowerName.contains("teaser")?"Teaser":lowerName.contains("featurette")?"Featurette":lowerName.contains("interview")?"Interview":"Video";if(enrichment!=null)for(PreviewDetailsData.Extra e:enrichment.extras)if(e.key.equals(extra.mVideoKey)){type=e.type;break;}card.bind(name,type,Uri.parse("https://i.ytimg.com/vi/"+extra.mVideoKey+"/hqdefault.jpg"),false);card.setTag("extra:"+extra.mVideoKey);card.setOnClickListener(v->PreviewTrailer.show((Activity)getContext(),extra));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(155),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);extraCards.add(card);count++;}if(row!=null)for(int i=count%4;i>0&&i<4;i++)row.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));restoreRowFocus(trailers,focusKey,y);}

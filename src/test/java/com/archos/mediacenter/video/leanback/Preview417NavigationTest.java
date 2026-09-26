@@ -12,7 +12,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = Application.class, sdk = 28)
+@Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class Preview417NavigationTest {
     private static void layout(View view) {
         view.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
@@ -20,12 +20,12 @@ public class Preview417NavigationTest {
         view.layout(0, 0, 960, 540);
     }
     @Test public void keyboardStartsAtTAndEmptyResultEdgeKeepsFocus() {
-        Activity host = Robolectric.buildActivity(Activity.class).setup().get();
+        Activity host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible().get();
         EditText input = new EditText(host);
         input.setFocusable(false);
         PreviewKeyboard keyboard = new PreviewKeyboard(host, input, () -> {});
         host.setContentView(keyboard); layout(keyboard);
-        keyboard.focusLastKey();
+        assertTrue("Initial keyboard focus request", keyboard.focusLastKey());
         assertEquals("T", ((TextView) host.getCurrentFocus()).getText().toString());
         TextView p = (TextView) PreviewPagesTest.findText(keyboard, "P");
         p.requestFocus(); p.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
@@ -37,7 +37,7 @@ public class Preview417NavigationTest {
         host.finish();
     }
     @Test public void navigationHasOneBoundaryAndLocksBothEnds() {
-        Activity host = Robolectric.buildActivity(Activity.class).setup().get();
+        Activity host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible().get();
         FrameLayout content = new FrameLayout(host);
         TopNavigation shell = new TopNavigation(host, content, index -> {}, () -> true);
         host.setContentView(shell); layout(shell);
@@ -55,13 +55,13 @@ public class Preview417NavigationTest {
         host.finish();
     }
     @Test public void gridRightDoesNotWrapAndLastRowDownDoesNotEscape() {
-        Activity host = Robolectric.buildActivity(Activity.class).setup().get();
+        Activity host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible().get();
         PreviewFocusRecycler grid = new PreviewFocusRecycler(host);
         grid.setLayoutManager(new GridLayoutManager(host, 3));
         grid.setAdapter(new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             public int getItemCount() { return 5; }
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-                TextView card = new TextView(host); card.setFocusable(true);
+                TextView card = new TextView(host); card.setFocusable(true); card.setFocusableInTouchMode(true);
                 card.setLayoutParams(new RecyclerView.LayoutParams(-1, 100));
                 return new RecyclerView.ViewHolder(card) {};
             }

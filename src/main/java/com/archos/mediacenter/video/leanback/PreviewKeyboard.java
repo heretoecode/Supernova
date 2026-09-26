@@ -105,7 +105,7 @@ public final class PreviewKeyboard extends LinearLayout {
         TextView key = new TextView(getContext());
         key.setText(label); key.setTextColor(Color.WHITE); key.setTextSize(14);
         key.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-        key.setGravity(Gravity.CENTER); key.setFocusable(true); key.setId(View.generateViewId());
+        key.setGravity(Gravity.CENTER); key.setFocusable(true); key.setFocusableInTouchMode(true); key.setId(View.generateViewId());
         key.setBackground(PreviewDialog.focus(getContext()));
         key.setOnClickListener(v -> action.run());
         return key;

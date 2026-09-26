@@ -30,9 +30,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 GLOBAL FOCUS DEFECT: when Home in top nav is focused, LEFT must be consumed and focus must remain Home. Implement centrally. Right-edge Settings + RIGHT remains Settings. Never allow edge presses to teleport into page content.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: TopNavigation central edge consumption. Navigation CI tests are being corrected/rechecked; physical D-pad QA remains pending.
 
 ### UI-004 — 1. Global visual language and top navigation
 
@@ -50,9 +50,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Preserve the successful current Home structure and card enlargement feel. Recently Played/Continue Watching remains prominent. Recently Added must be bounded; first import must not create an effectively endless row. A title falling outside a displayed Continue Watching cap retains its playback state and in-progress indication elsewhere.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewPages caps Continue Watching at 30 and Recently Added at 50 without changing stored playback/library records. Source compiled in run 36238345377; physical behaviour not verified.
 
 ### UI-006 — 2. Home
 
@@ -102,7 +102,7 @@ Library membership is based on indexed media, not successful metadata. Launch lo
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewMetadataCache / PreviewEnrichmentQueue and StreamingRepository metadata gateway. Persistent priority/dedup/retry implemented; two cache tests passed in run 36238345377. Complete series packages and remaining enrichment integration are not complete.
 
 ### UI-011 — 3. Background metadata enrichment
 
@@ -262,7 +262,7 @@ TV Seasons & Episodes: stacked season rows, no dropdown. Four episode cards acro
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewEpisodeRow / PreviewMoviePage. Local stacked season rows exist. Complete remote discovery/reconciliation and availability presentation remain in progress.
 
 ### UI-027 — 6. Details Page
 
@@ -272,7 +272,7 @@ More Like This: collapsed compact hero, no repeated heading, landscape thumbnail
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewDetailsData / PreviewMoviePage now order TMDb recommendations before local genre fallback, reconcile local availability, cap 12, hide empty tab and lock row edges. Compact sticky hero and physical visual review remain pending.
 
 ### UI-028 — 6. Details Page
 
@@ -460,9 +460,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Info overlay is technical only: Video, Audio, File, Source. No poster/title/synopsis/path/filename/actions. Remove Resume/Play from Beginning/File & Technical Details from Info. Back restores HUD Info focus.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PlayerActivity opens PreviewTechnicalInfo directly; Video/Audio/File/Source only, existing dismiss restores HUD focus. PreviewTechnicalInfoTest passed in run 36238345377. Physical HUD focus restoration remains unverified.
 
 ### UI-047 — 9. Search
 
@@ -661,9 +661,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Cloud Services → Connect put.io → temporary linking/device code → large TV QR + short code + put.io link → phone sign-in/approve → Supernova polls → connected. Never collect normal put.io username/password in Supernova. QR contains link/code only, never OAuth token/credentials. Manual code fallback. Store OAuth token securely; never export/log/display it. Validate exact production endpoint/deep link during implementation. Supernova requires a registered put.io OAuth app/client.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **BLOCKED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Production registered Supernova put.io OAuth client configuration is absent. No credentials invented, borrowed or exposed; existing WebDAV access remains untouched.
 
 ### PUT-004 — First-time association / zero-duplicate migration
 
@@ -679,7 +679,7 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PutioReconciliation implements conservative path/name/size matching and review decisions as a pure policy. Integration with account linking, association UI and persistent library mappings is not yet complete; regression tests added but not yet run.
 
 ### PUT-005 — First-time association / zero-duplicate migration
 
@@ -709,7 +709,7 @@ Initial complete snapshot; later additions/removals/moves/renames reconcile stab
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PutioReconciliation tracks every descendant/continuation page and rejects interrupted/auth/rate-limit/offline/invalid snapshots. Missing stable IDs are review-only. Tests added; API and persistent sync integration remain pending.
 
 ### PUT-008 — Sync safety
 
@@ -805,9 +805,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Improve multi-day retention. Separate verbose rolling stream from protected important-event/incident stream. Routine focus/heartbeat/success events rotate first; ERROR/FATAL, crashes/exceptions, failed scans, playback failures, significant artwork failures and manual-report windows survive longer. Apply backpressure/prioritisation so routine events cannot cause thousands of important events to be dropped.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Diagnostics IMPORTANT executor and daily protected stream separate routine pressure; seven-day retention. DiagnosticArchiveTest passed in run 36238345377. Long-running Shield pressure/retention validation remains pending.
 
 ### DIA-005 — Required diagnostic/reporting improvements
 
@@ -907,7 +907,7 @@ Export should include a machine-readable and human-readable summary: session dur
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: DiagnosticArchive indexes manual/incident events and deduplicates retained playback streams. Three archive tests passed in run 36238345377. Full summary field conformance remains under review.
 
 ### DIA-015 — Required diagnostic/reporting improvements
 
@@ -916,9 +916,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 Improve clean/unclean process detection so normal Android lifecycle destruction does not automatically become a false crash signal.
 
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Diagnostics marks an orderly transition to background clean, while retaining unclean-exit observations as suspected rather than proven crashes. Physical lifecycle/kill QA remains pending.
 
 ### QA-001 — Build / identity
 
@@ -1103,9 +1103,9 @@ Source: `SCOPE_AND_DEFERRED.md`
 
 DEFERRED: person/cast discovery pages; playback trick-play thumbnails; put.io transfer/download management; put.io playback-position sync; switching primary put.io playback away from proven WebDAV without separate benchmarking; full category-by-category Settings content redesign; unsupported NFS; speculative provider capabilities; any older deferred 4.2 feature not explicitly promoted above.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **DEFERRED-BY-SPEC**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Excluded from implementation. Final scope audit must confirm none of these deferred capabilities entered the candidate.
 
 ### SCOPE-004 — Scope / Deferred Guardrail
 
