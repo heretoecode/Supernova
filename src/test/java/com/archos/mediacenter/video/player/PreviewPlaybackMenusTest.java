@@ -17,6 +17,16 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewPlaybackMenusTest {
     @After public void close(){PreviewPlaybackMenus.close();}
+    @Test public void subtitleDownloadUsesDesignedLabelAndRetainsNativeAction(){
+        Activity host=Robolectric.buildActivity(Activity.class).setup().get();TVMenu menu=new TVMenu(host);
+        TVMenuItem download=menu.createAndAddTVMenuItem(host.getString(R.string.get_subtitles_online),true,false);
+        java.util.concurrent.atomic.AtomicInteger invoked=new java.util.concurrent.atomic.AtomicInteger();download.setOnClickListener(v->invoked.incrementAndGet());
+        TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_subtitles));when(card.previewMenu()).thenReturn(menu);
+        TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
+        PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_subtitles));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        android.widget.TextView label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:1");assertEquals("Download Subtitles",label.getText().toString());
+        ((View)label.getParent()).performClick();assertEquals(1,invoked.get());
+    }
     @Test public void audioTrackChangeStaysOpenAndBackReturnsToHudInsteadOfMore(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();Button opener=new Button(host);opener.setText("Audio");opener.setFocusableInTouchMode(true);host.setContentView(opener);opener.requestFocus();Shadows.shadowOf(host).setCurrentFocus(opener);
         TVMenu menu=new TVMenu(host);TVMenuItem english=menu.createAndAddTVMenuItem("English",true,true),french=menu.createAndAddTVMenuItem("French",true,false);

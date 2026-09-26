@@ -57,7 +57,10 @@ final class PreviewPlaybackMenus {
     else if(title.equals(activity.getString(R.string.get_subtitles_online))||title.equals(activity.getString(R.string.get_subtitles_on_drive)))group="ADD SUBTITLES";
     if(!group.equals(lastGroup)){labels.add("— "+group);actions.add(null);lastGroup=group;}
    }
-   actions.add(item);labels.add(androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString()+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
+   String label=androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
+   if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_online)))label="Download Subtitles";
+   if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_on_drive)))label="Choose Subtitles";
+   actions.add(item);labels.add(label+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
   }
   if(hasOther&&!otherLanguages){labels.add("— TRACK");actions.add(null);actions.add(null);labels.add("Other languages");}
   if(settings!=null){labels.add("— TIMING & APPEARANCE");actions.add(null);actions.add(settings);labels.add("Subtitle Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}

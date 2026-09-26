@@ -540,6 +540,22 @@ Checkpoint 26 is verified remotely at 2ac73f006cca2db306f4e874d6480c060db62eac, 
 
 Inspection found that the inherited destination write probe could truncate an existing subtitle before the HTTP transfer succeeded. Responses are now staged in app-private cache before any destination probe/write, with connection/read timeouts, cancellation, empty/truncated-response rejection and a 32 MiB transfer bound. Existing subtitle files are no longer probed by writing a zero byte. Temporary payloads are removed on completion/failure; native destination selection is retained. Transfer/save failure logs omit URL-bearing exception messages. Four unit tests cover complete, empty/cancelled, interrupted and oversized staging; pending CI. Local XML/source checks and six Python safety/identity tests pass. Final destination write failures are not yet transactional on every remote protocol; this change does not claim that guarantee. Subtitle progress/error presentation and local chooser conformance remain outstanding.
 
+## Checkpoint 27 preservation and visual inspection
+
+Remote 9ddd6b9227bb1035f3729e2de0ca4b293076b23a is verified against local 9aaa937f9b2fa6a11d282b6478bbbee94e5209c8: both have tree fccd9177ed0a8baa5c3e2ee9c75c45107fa31be2. Validation run 36260670035 is in progress at this record.
+
+Downloaded checkpoint 26's retained validation artifact and visually inspected its native-rendered Find a Match PNG. The heading/instruction, query, full keyboard, T focus and compact result column render visibly without the prior blank-canvas issue. This fixture uses sample results, not a live metadata-provider or physical Shield session.
+
+Started updating stale register mappings from actual source rather than assuming pending means unimplemented. UI-001/002/004 now distinguish existing top-nav structure/animation/shade from outstanding global conformance. In particular, the current blur samples background artwork and the content stage sits below the navigation bar; scrolling-content layering still requires investigation. These are intermediate findings, not any of the three final conformance sign-offs.
+
+## Checkpoint 28 — shared subtitle operation states
+
+Checkpoint 27 run 36260670035 passed compilation, 86 targeted tests, all 259 Video tests, 79 overlapping regression tests and 17 WebDAV tests. The four staged-transfer regressions passed.
+
+Preview subtitle search/download now uses PreviewOperationDialog for indeterminate progress and explicit Cancel/Back; normal completion dismissal does not cancel the operation. No-network, empty results, login/quota and transfer errors remain visible in a shared Close notice rather than toast messages or an immediate Activity exit. Completion is dispatched on the main thread, and cancelled/destroyed activities do not show late results. Search completion dismisses progress before opening the chooser. Classic UI keeps its legacy progress/toast presentation. HUD labels are now Download Subtitles and Choose Subtitles while invoking the existing native actions.
+
+Added three real-dialog regressions for completion versus cancellation, Back/Cancel equivalence and focused Close without Copy/toast, plus a native-action menu-label regression. Compilation and these four tests await CI. Local 430-XML/source safeguards and six Python checks pass. The local/downloaded chooser and active-track synchronisation remain unfinished; physical download/playback and remote-write failure behaviour remain AWAITING PHYSICAL QA. No APK built, main merge, signing change or OAuth credential change.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

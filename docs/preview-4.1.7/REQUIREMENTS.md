@@ -10,9 +10,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Canonical top navigation: SUPERNOVA far left; Home · Movies · TV Shows; flexible spacer; Network & Files; Search icon; Settings icon; Clock. No Streaming/Library top-nav items, no Settings/clock separator, no line under nav. All textual nav uses 19sp normal/light styling. Unfocused controls have no box. Focus is a compact rounded Supernova-blue outline/boundary with restrained outward glow; contents stay white; no cyan focus text. Tighten the current oversized focus container without shrinking typography.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: TopNavigation builds the specified visual order (its internal Settings/Search indices are reordered visually), a flexible spacer, 19sp light text, transparent bar and background-free tabs. PreviewFocusRail supplies the compact shared boundary. TopNavigationTest and Preview417NavigationTest passed in run 36260242226. Exact colour/geometry and all screen entry points still need conformance review; the default clock currently uses a pale tinted white rather than Color.WHITE. Physical navigation remains AWAITING PHYSICAL QA.
 
 ### UI-002 — 1. Global visual language and top navigation
 
@@ -20,9 +20,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Adjacent persistent navigation controls should use a travelling focus boundary animation: animate X/width roughly 140–180ms and retarget smoothly during rapid D-pad movement. Cards do not use this mechanism; cards enlarge individually.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — IN PROGRESS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewFocusRail uses one boundary, a 160ms ValueAnimator and retargeting from its current interpolated rectangle. TopNavigation uses that rail; individual cards retain their own focus treatment. The single-boundary/edge regression passes. All other persistent navigation groups and rapid repeat animation still require a systematic audit; this is not a global completion claim.
 
 ### UI-003 — 1. Global visual language and top navigation
 
@@ -40,9 +40,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Top nav is not a solid bar. On vertically scrolling pages, content may continue behind it but a progressive blur + darkening gradient is strongest immediately behind the nav and fades seamlessly below. No visible rectangle/separator/permanent bar.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — IN PROGRESS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewNavigationShade samples and blurs the background drawable with a fading mask plus dark gradient. Its three blur/fade tests pass in run 36260242226. TopNavigation currently places the content stage below the 52dp navigation bar: background sampling alone is not proof of scrolling-content-behind-nav conformance. Review page layering and scrolling integration before closing this requirement; physical appearance/performance remains AWAITING PHYSICAL QA.
 
 ### UI-005 — 2. Home
 
@@ -372,7 +372,7 @@ Subtitles: Choose local/downloaded with clear source/active state; Download sear
 
 Status: **IMPLEMENTED IN PART — IN PROGRESS**
 
-Code mapping: PreviewSubtitleResults provides result selection and explicit Download review; SubtitlesDownloaderActivity2 retains native search/download and only reports success after saving. PreviewSettings accepts the full Subtitles category shortcut from Details and HUD. These UI regressions passed in run 36260242226 (255 Video tests). SubtitleTransfer stages responses before destination writes (four additional tests pending CI). Local/downloaded chooser, active-state synchronisation and shared non-toast progress/error presentation remain unfinished; physical playback refresh remains AWAITING PHYSICAL QA.
+Code mapping: PreviewSubtitleResults provides result selection and explicit Download review; SubtitlesDownloaderActivity2 retains native search/download and only reports success after saving. PreviewSettings accepts the full Subtitles category shortcut from Details and HUD. These UI regressions passed in run 36260242226 (255 Video tests). SubtitleTransfer stages responses before destination writes; its four tests passed in run 36260670035 (259 Video tests). Checkpoint 28 adds shared non-toast progress/error presentation and designed HUD labels, with four new dialog/action tests pending CI. Local/downloaded chooser and active-state synchronisation remain unfinished; physical playback refresh remains AWAITING PHYSICAL QA.
 
 ### UI-038 — 7. More / contextual workflows
 
