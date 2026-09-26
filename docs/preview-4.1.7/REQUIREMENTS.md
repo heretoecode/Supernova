@@ -322,7 +322,7 @@ Keep/refine More as a dark/translucent rounded context stack with monochrome ico
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewMoreActions now filters native Movie/TV IDs independent of translated labels; two tests await CI. PreviewMoviePage hides empty remote More controls and omits empty groups, retaining subtitle/artwork access without a delete action. Duplicate File Information child removed. The metadata correction engine still needs a separate preservation audit; this requirement is not fully signed off.
 
 ### UI-033 — 7. More / contextual workflows
 
@@ -382,7 +382,7 @@ Artwork: Poster/Backdrop grids; one plain white ✓ at top-right safe area, no c
 
 Status: **IMPLEMENTED — shared grid and movie/episode route; integration incomplete** / **AWAITING PHYSICAL QA**
 
-Code mapping: PreviewArtworkPicker provides independent selection, single-flight save, failure retention and deterministic grid edges. VideoDetailsFragment reuses native savers with completion callbacks and refreshes the current backdrop. Two new tests await CI. TV-overview routing and cross-surface cache propagation are not yet verified or complete.
+Code mapping: PreviewArtworkPicker provides independent selection, single-flight save, failure retention and deterministic grid edges. VideoDetailsFragment reuses native savers with completion callbacks and refreshes the current backdrop. TvshowFragment now routes through the same grid with worker-based native scraper saves and existing TV refresh. Two new grid tests await CI; cross-surface cache propagation and physical behaviour remain unverified.
 
 ### UI-039 — 7. More / contextual workflows
 

@@ -38,6 +38,7 @@ public class PreviewArtworkPickerTest {
             List<ScraperImage> images=new ArrayList<>();for(int i=0;i<4;i++)images.add(mock(ScraperImage.class));
             Dialog dialog=PreviewArtworkPicker.show(host.get(),"Backdrops",images,images.get(0),false,(image,done)->{});
             View root=dialog.getWindow().getDecorView(),first=root.findViewWithTag("artwork:0"),last=root.findViewWithTag("artwork:3");
+            PreviewPagesTest.layout(root);
             first.requestFocus();first.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(first,dialog.getCurrentFocus());
             first.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(last,dialog.getCurrentFocus());
             last.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(last,dialog.getCurrentFocus());dialog.dismiss();

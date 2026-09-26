@@ -265,6 +265,7 @@ public final class PreviewMoviePage extends ScrollView {
     private void fact(LinearLayout panel,String label,String value){if(value==null||value.trim().isEmpty())return;TextView name=text(label,12);name.setTextColor(0xffb9c7d2);name.setPadding(0,dp(16),0,dp(4));panel.addView(name);TextView content=text(value,14);content.setLineSpacing(dp(3),1);panel.addView(content);}
     private void observeActions(){ObjectAdapter next=actions.get();if(next!=observedActions){if(observedActions!=null)observedActions.unregisterObserver(actionObserver);observedActions=next;if(next!=null)next.registerObserver(actionObserver);}renderProviders();}
     private void renderProviders(){
+        moreButton.setVisibility(remoteDetails==null?VISIBLE:GONE);
         View focused=providerActions.findFocus();Object focusKey=focused==null?null:focused.getTag();
         for(Presenter.ViewHolder holder:providerHolders)providerPresenter.onUnbindViewHolder(holder);providerHolders.clear();providerActions.removeAllViews();if(observedActions==null){if(focused!=null)play.requestFocus();return;}
         List<Action> offers=new ArrayList<>(),extraOptions=new ArrayList<>();for(int i=0;i<observedActions.size();i++){Object item=observedActions.get(i);if(item instanceof Action&&com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))offers.add((Action)item);else if(item instanceof Action&&"•••".contentEquals(((Action)item).getLabel1()))extraOptions.add((Action)item);}
@@ -420,15 +421,15 @@ public final class PreviewMoviePage extends ScrollView {
         String[] groups={"Playback & Navigation","Library","Streaming Services","Files & Media"};
         for(int group=0;group<groups.length;group++){
             List<Action> section=new ArrayList<>();for(int i=0;i<adapter.size();i++){Object value=adapter.get(i);if(!(value instanceof Action))continue;Action a=(Action)value;
-                if(show!=null&&a.getId()==com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter.ACTION_MORE_DETAILS)continue;
-                String label=String.valueOf(a.getLabel1()).toLowerCase(Locale.ROOT);if(label.contains("resume")||label.startsWith("play")||label.contains("synopsis")||label.contains("add to list")||label.contains("remove info")||label.contains("list episodes")||label.contains("streaming")||label.equals("•••")||a instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)continue;int category=a instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction||label.contains("streaming")||label.equals("•••")?2:label.contains("delete")||label.contains("file")||label.contains("remove info")?3:label.contains("play")||label.contains("resume")||label.contains("episode")?0:1;
+                int category=remoteDetails!=null?-1:PreviewMoreActions.group(a,show!=null);
                 if(category==group)section.add(a);
             }
-            if(section.isEmpty()&&(group!=1||remoteDetails!=null))continue;
+            if(section.isEmpty()&&!(group==1&&remoteDetails==null)&&!(group==3&&(movie!=null||show!=null)))continue;
             labels.add("— "+groups[group]);commands.add(null);
             for(Action a:section){String label=a instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction?((com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)a).provider.name:titleStyle(String.valueOf(a.getLabel1()));if(a instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)logos.put(labels.size(),((com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)a).provider.logo);labels.add(label.equals("•••")?"More Streaming Services":label);commands.add(()->action.accept(a));}
             if(group==1){if(remoteDetails==null){labels.add("Add to Row");commands.add(()->PreviewHomeRows.add(getContext(),rowEntry(),()->{}));}}
-            if(group==3&&movie!=null){labels.add("File, Subtitles and Artwork");commands.add(nativeDetails);}
+            if(group==3&&movie!=null){labels.add("Subtitles and Artwork");commands.add(nativeDetails);}
+            else if(group==3&&show!=null){labels.add("Artwork");commands.add(nativeDetails);}
         }
         Dialog dialog=PreviewDialog.choose(getContext(),"Actions",labels.toArray(new String[0]),-1,Collections.emptySet(),false,n->{if(commands.get(n)!=null)commands.get(n).run();});for(Map.Entry<Integer,String> logo:logos.entrySet())com.archos.mediacenter.video.streaming.PreviewProviderIcons.bind(dialog,logo.getKey(),logo.getValue());
     }

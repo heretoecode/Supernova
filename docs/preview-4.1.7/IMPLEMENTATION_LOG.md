@@ -413,6 +413,44 @@ Local safeguards pass. Android compilation/tests for this change remain pending.
 TV-overview artwork routing and cross-surface cache propagation still require work
 and physical QA; UI-038 is partial. No signed 4.1.7 APK exists yet.
 
+### Checkpoint 18 — Locale-safe More actions and TV artwork route
+
+Checkpoint 17 plus its fixture correction is preserved remotely at
+54421aec4cab58d369f08a028cd4ba28979e86aa, tree
+8916c01ce72c987db5bbdb7736c32b8829f55a7a matching local 61e136a8.
+Checkpoint 16 compiled but two dialog-stack tests failed on unlaid-out fixture
+views (null window focus). The fixtures now wait for layout and explicitly assert
+initial focus before testing restoration; the same final assertions remain.
+Run 36248451832 is validating the correction and artwork picker.
+
+More action filtering now uses the separate native Movie/TV action ID namespaces,
+not English label substrings. This keeps the specified exclusions consistent in
+other languages. Empty streaming-only More controls are omitted. Local subtitle/
+artwork tools no longer depend on a delete/file action being present, and duplicate
+File Information is removed. Two tests cover translated labels and action namespaces.
+
+TV overview now opens the same shared artwork grid. Choices and saves run off the
+UI thread; cancellation is checked before changing the default. The existing
+scraper default setters and normal TV refresh path are retained. Successful
+backdrops refresh immediately. Callbacks are guarded against destroyed/replaced
+Details views. No new remote transport or library migration is involved.
+
+Local XML/source/whitespace safeguards pass. Android compilation and tests for this
+checkpoint remain pending. Cross-surface artwork propagation, UI visuals and real
+Shield navigation remain AWAITING PHYSICAL QA; this is not a final conformance sign-off.
+
+#### Checkpoint 18 validation follow-up
+
+Run 36248451832 compiled and passed 86 targeted tests, then ran 233 Video tests
+with two fixture failures. Rebuilt-opener restoration now passed. The remaining
+Hero assertion was traced to Robolectric ShadowActivity.getCurrentFocus, which
+returns a separately supplied field rather than the real focused view (confirmed
+against the provider's 4.16.1 source). The fixture now supplies that initial field,
+clears actual Hero focus while the parent opens, then asserts real View.hasFocus
+after dismissal. Grid navigation was tested before layout (0×0 cards); the fixture
+now lays out the dialog before sending DPAD input. No application failure was
+established by these two assertions, and neither test has been removed or disabled.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

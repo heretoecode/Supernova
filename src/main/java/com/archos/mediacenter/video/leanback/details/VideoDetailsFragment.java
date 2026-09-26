@@ -228,8 +228,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         });
     }
     private void showPreviewTools(){
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File, subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops","File information"},-1,n->{
-            if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else if(n==4)com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),mVideo.getFilenameNonCryptic(),mVideo.getFileUri()==null?"":mVideo.getFileUri().getPath());else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"Subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops"},-1,n->{
+            if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
         });
     }
     private void showPreviewArtwork(Row sourceRow){
