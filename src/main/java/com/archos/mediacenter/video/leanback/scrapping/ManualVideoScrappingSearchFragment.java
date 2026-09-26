@@ -63,7 +63,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
         // Start a search using the search suggestion. It makes it easy for the user to edit it for typo if needed
         // Allow often the second or third suggestion is the right one
-        setSearchQuery(mSearchInfo.getSearchSuggestion(), true);
+        setInitialQuery(mSearchInfo.getSearchSuggestion());
 
         setTitle(getString(R.string.leanback_video_info_custom_search_file_hint));
     }
@@ -94,6 +94,10 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
     @Override
     protected ScrapeSearchResult performSearch(String text) {
         mTagsToSearchResultMap.clear();
+        if(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie||!(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Episode)&&!(mSearchInfo instanceof TvShowSearchInfo)){
+            try{ScrapeSearchResult direct=com.archos.mediacenter.video.utils.DirectMovieLookup.find(requireContext().getApplicationContext(),text,mVideo.getFileUri());if(direct!=null)return direct;}
+            catch(Exception failed){return new ScrapeSearchResult(java.util.Collections.emptyList(),false,com.archos.mediascraper.ScrapeStatus.ERROR,failed);}
+        }
         mSearchInfo.setUserInput(text);
         ScrapeSearchResult result = mScraper.getAllMatches(mSearchInfo);
         if (result.isOkay() && result.results != null && result.results.size() > SEARCH_RESULT_MAX_ITEMS) {

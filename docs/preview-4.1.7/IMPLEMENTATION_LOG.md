@@ -484,6 +484,14 @@ Local safeguards pass. Compilation and the five new tests await CI. TV watched
 state, Trakt behaviour and live refresh remain AWAITING PHYSICAL QA. Full delivery
 and the three final conformance reviews are not complete.
 
+## Checkpoint 20 — shared Find a Match surface and movie identifiers
+
+Checkpoint 19 is now verified by run 36249337871 (remote eab995faee54948377da772ab19f40c98986e9ec): compilation passed, 86 targeted tests, all 240 Video unit tests, 79 overlapping regression tests and 17 FileCore WebDAV tests passed. The identity audit passed. These are CI results, not device QA.
+
+Movie and series correction now share a Preview Find a Match presentation with the specified subtitle, shared keyboard, compact results and explicit Match Preview acceptance. Results append without stealing existing result focus. Typing is debounced and detached views cancel queued searches. Movie numeric TMDB/IMDb identifiers use the native details/save route, with strict provider-host parsing and a bounded response. Uppercase IMDb input from the TV keyboard works. Search clearing invalidates old tasks; legitimate no-match results remain distinct from network failure. Search hardware keys retain Preview keyboard focus.
+
+Added identifier, result-focus, debounce, detach and retained-fragment lifecycle regressions. Local XML/source safeguards and four identity-audit tests pass; this checkpoint's Java compilation/new tests await CI. Metadata correction remains PARTIAL: parent-series episode correction/escape, full database preservation audit and runtime evidence remain outstanding. No metadata is deliberately removed before correction. This is not final conformance approval.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

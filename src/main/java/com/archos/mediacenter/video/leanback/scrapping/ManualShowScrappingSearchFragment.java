@@ -86,7 +86,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
 
         // Start a search using the search suggestion. It makes it easy for the user to edit it for typo if needed
         // Allow often the second or third suggestion is the right one
-        setSearchQuery(mShowName, true);
+        setInitialQuery(mShowName);
 
         setTitle("TV show title, TMDb ID or IMDb ID / link");
     }

@@ -332,7 +332,7 @@ Navigation stack: Details Hero→More→child→Back restores More child opener 
 
 Status: **IMPLEMENTED — shared dialog infrastructure; remaining native-child integration pending** / **AWAITING PHYSICAL QA**
 
-Code mapping: PreviewDialog.create tracks weak dialog windows and restores the actual parent-window opener, with semantic replacement/fallback diagnostics. Choose/read/review, Versions and shared keyboard use it. Three new stack tests await CI. Retained native dialogs and every More child route still require integration review.
+Code mapping: PreviewDialog.create tracks weak dialog windows and restores the actual parent-window opener, with semantic replacement/fallback diagnostics. Choose/read/review, Versions and shared keyboard use it. Three stack tests passed in run 36249337871. Retained native dialogs and every More child route still require integration review.
 
 ### UI-034 — 7. More / contextual workflows
 
@@ -342,7 +342,7 @@ Watched: exactly one dynamic action. Movie/episode immediate. TV series opens sc
 
 Status: **IMPLEMENTED — pending automated integration validation** / **AWAITING PHYSICAL QA**
 
-Code mapping: PreviewMoviePage resolves the current watched action and refreshes open-menu labels. PreviewWatchedScopeDialog/TvshowFragment offer Entire Series and per-season counts, using existing DbUtils writes and Trakt integration. Shared distinct episode counts prevent duplicate versions inflating progress. Five new regression tests await CI; real-device refresh and Trakt effects remain unverified.
+Code mapping: PreviewMoviePage resolves the current watched action and refreshes open-menu labels. PreviewWatchedScopeDialog/TvshowFragment offer Entire Series and per-season counts, using existing DbUtils writes and Trakt integration. Shared distinct episode counts prevent duplicate versions inflating progress. Five regression tests passed in run 36249337871; real-device refresh and Trakt effects remain unverified.
 
 ### UI-035 — 7. More / contextual workflows
 
