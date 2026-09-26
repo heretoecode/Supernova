@@ -326,6 +326,29 @@ tests await CI for this checkpoint. Full title-history persistence/reload and
 different-duration encode playback still require further verification; UI-036 is
 partial, not complete. Artwork selection remains a separate unfinished workflow.
 
+### Checkpoint 14 — Scrolling Details title and selected backdrop
+
+Checkpoint 13 is remotely preserved at 7767b4a51e5105d69453879b482c9a30650eb092,
+tree f9bc42bd7b70cf36ddc45b42c62e3e53e74affb4 matching local e705d88b.
+CI run 36244361818 was still in progress at this checkpoint.
+
+The shared Details page now reuses its existing text/logo rendering as a compact
+sticky title below global navigation once the Hero title leaves view. It does not
+issue a second artwork request or introduce another focus target. The transition
+reverses with scroll; lower-section entry and automatic focused-child scrolling
+reserve space for it. Scroll changes now drive the shared navigation shade on
+movie, episode, TV and remote Details wherever hosted by TopNavigation.
+
+Metadata refresh now prefers the saved default backdrop, falling back to the first
+available only if no default exists; the chosen local or remote URI is retained
+for the current video. This fixes a concrete preference-preservation defect found
+while tracing the unfinished artwork picker.
+
+Added transition and rendered focus-retention regression coverage, including a CI
+image fixture. Local XML/structure/whitespace checks pass. Android tests and visual
+inspection of the new fixture remain pending; physical scroll/focus conformance
+is AWAITING PHYSICAL QA. This does not complete the remaining artwork workflow.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

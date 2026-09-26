@@ -11,6 +11,23 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMoviePageTest {
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void scrolledTitleDoesNotIntroduceAFocusTarget()throws Exception{
+        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try{
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});
+            TopNavigation nav=new TopNavigation(host.get(),page,i->{},page::atTop);host.get().setContentView(nav);
+            page.bindRemote(new org.json.JSONObject().put("title","Compact title fixture"),"movie",0);
+            PreviewPagesTest.layout(nav);
+            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertTrue(panel.requestFocus());
+            page.scrollTo(0,250);
+            android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);
+            nav.draw(new android.graphics.Canvas(bitmap));
+            assertSame(panel,page.findFocus());
+            java.io.File out=new java.io.File("build/reports/preview-ui/details-compact-title.png");out.getParentFile().mkdirs();
+            try(java.io.FileOutputStream stream=new java.io.FileOutputStream(out)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,stream);}bitmap.recycle();
+            page.scrollTo(0,0);assertSame(panel,page.findFocus());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void backgroundSnapshotRetainsInformationPanelFocus()throws Exception{
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
