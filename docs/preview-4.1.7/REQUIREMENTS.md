@@ -663,7 +663,7 @@ Cloud Services → Connect put.io → temporary linking/device code → large TV
 
 Status: **BLOCKED**
 
-Code mapping / verification: Production registered Supernova put.io OAuth client configuration is absent. No credentials invented, borrowed or exposed; existing WebDAV access remains untouched.
+Code mapping / verification: Production registered Supernova put.io OAuth client configuration is absent. PutioTokenStore now implements device-local encrypted persistence, with four tests awaiting CI and credential lifecycle integration pending. No production credentials invented, borrowed or exposed; existing WebDAV access remains untouched.
 
 ### PUT-004 — First-time association / zero-duplicate migration
 

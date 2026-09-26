@@ -176,6 +176,10 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
         // Hence we need to get the ShowTags from the EpisodeTags
         if (newTags instanceof ShowTags) {
             final ShowTags newShowTags = (ShowTags)newTags;
+            if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
+                // The shared Match Preview already required explicit Use This Match.
+                mEpisodeSaveTask=new EpSaveTask();mEpisodeSaveTask.execute(newShowTags);return;
+            }
             String confirmationMessage = getString(R.string.scrap_change_confirmation, mShowName, newShowTags.getTitle());
             new AlertDialog.Builder(getActivity())
                     .setMessage(confirmationMessage)

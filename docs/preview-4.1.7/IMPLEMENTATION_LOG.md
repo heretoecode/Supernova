@@ -253,6 +253,31 @@ https://github.com/heretoecode/Supernova/actions/runs/36241450416
 Local XML/source/whitespace checks pass; these latest Home changes await CI.
 This checkpoint remains an implementation candidate, not final delivery.
 
+## Checkpoint 11 — protected OAuth persistence and explicit metadata acceptance
+
+Checkpoint 10 local 96f188b6 / remote 4f68f2f8 have identical source tree
+1ecdc2819b2ef6bfe7b93a50ebb18ab1cac1b4fa. CI run 36243112200 succeeded:
+compilation, 74 targeted tests, the full 208-test Video suite, 76 regression-step
+tests and 17 WebDAV tests. Counts overlap between steps. The exact-limit dialog
+and persistent indicator tests passed.
+https://github.com/heretoecode/Supernova/actions/runs/36243112200
+
+- Added PutioTokenStore: Android Keystore AES-GCM encryption, atomic no-backup
+  envelope, no plaintext fallback, no replacement key on read and sanitised
+  exceptions. No live credential is used or stored. Four tests exercise encryption
+  and failure behaviour with a test-only symmetric key. OAuth UI/configuration,
+  credential lifecycle integration and actual-device verification remain pending.
+- New-UI manual movie/show/episode results now open shared Match Preview with
+  title/available year or episode coordinates and real synopsis. Only Use This
+  Match/Use This Episode invokes the existing save path; Back makes no changes.
+  Series correction avoids a duplicate confirmation after explicit acceptance.
+  Classic UI is unchanged. Added an acceptance/Back/double-activation test.
+  Unified matching search/ID/current-match presentation and full reconciliation
+  conformance are still unfinished; this is not all of UI-039.
+
+Local XML/source/whitespace safeguards pass. New source/tests await CI. No APK,
+emulator or Shield behaviour has been validated for this checkpoint.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

@@ -26,7 +26,18 @@ credentials. An incomplete snapshot yields no reconciliation changes.
 
 OOB contracts are confirmed in the provider SDK, but registered Supernova client
 configuration and production linking-link validation are still absent. No live
-account request has been made and no token has been obtained or stored. Secure
-credential persistence, association UI/store, scanner ownership hand-off and live
+account request has been made and no production token has been obtained or stored.
+PutioTokenStore now provides device-local AES-256-GCM storage with an Android
+Keystore encryption key and an atomic encrypted envelope in noBackupFilesDir.
+This is not an APK signing key and has no relationship to NOVA_SIGNING_KEY_BASE64.
+Read never creates a replacement key; authentication failure requires reconnect,
+without deleting the encrypted evidence or touching library records. There is no
+plaintext fallback or credential logging. Four tests use an injected test-only
+symmetric key for round-trip, random IV, tamper, missing-key and invalid-input
+checks; production Android Keystore/Shield behaviour remains unverified.
+Platform contracts: https://developer.android.com/privacy-and-security/keystore
+and https://developer.android.com/reference/android/security/keystore/KeyGenParameterSpec
+
+Credential lifecycle integration, association UI/store, scanner ownership hand-off and live
 account validation remain implementation/integration work. Do not label the native
 put.io feature complete on the strength of policy tests alone.

@@ -125,10 +125,26 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
             @Override
             public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 if (item instanceof BaseTags) {
-                    saveTagsAndFinish((BaseTags) item);
+                    if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))
+                        previewMatch((BaseTags)item);
+                    else saveTagsAndFinish((BaseTags) item);
                 }
             }
         });
+    }
+
+    private void previewMatch(BaseTags tags){
+        boolean episode=tags instanceof com.archos.mediascraper.EpisodeTags;
+        String title="Metadata match";
+        if(tags instanceof com.archos.mediascraper.MovieTags){
+            com.archos.mediascraper.MovieTags movie=(com.archos.mediascraper.MovieTags)tags;
+            title=movie.getTitle()+(movie.getYear()>0?" ("+movie.getYear()+")":"");
+        }else if(tags instanceof com.archos.mediascraper.ShowTags)title=((com.archos.mediascraper.ShowTags)tags).getTitle();
+        else if(episode){com.archos.mediascraper.EpisodeTags item=(com.archos.mediascraper.EpisodeTags)tags;title=item.getShowTitle()+" · S"+item.getSeason()+" E"+item.getEpisode();}
+        String plot=tags.getPlot();
+        com.archos.mediacenter.video.leanback.PreviewDialog.review(requireContext(),"Match Preview",
+                title+"\n\n"+(plot==null||plot.trim().isEmpty()?"Synopsis unavailable":plot),
+                episode?"Use This Episode":"Use This Match",()->{if(isAdded())saveTagsAndFinish(tags);});
     }
 
     @Override
