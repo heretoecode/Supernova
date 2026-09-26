@@ -9,6 +9,30 @@ import android.widget.*;
 import java.util.function.IntConsumer;
 /** Content-sized Nova menus. The caller still owns every real action and selection. */
 public final class PreviewDialog {
+ private static final java.util.Map<Context,java.util.List<java.lang.ref.WeakReference<Dialog>>> WINDOWS=new java.util.WeakHashMap<>();
+ /** Shared child-dialog lifetime: Back restores the opener in the parent window. */
+ public static Dialog create(Context context){
+  Context owner=owner(context);View opener=anchor(context);
+  java.lang.ref.WeakReference<View> previous=new java.lang.ref.WeakReference<>(opener);
+  java.lang.ref.WeakReference<View> previousRoot=new java.lang.ref.WeakReference<>(opener==null?null:opener.getRootView());
+  Object semantic=opener==null?null:opener.getTag();int id=opener==null?View.NO_ID:opener.getId();
+  return new Dialog(context){
+   @Override protected void onStart(){super.onStart();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.computeIfAbsent(owner,k->new java.util.ArrayList<>());windows.removeIf(reference->reference.get()==null||reference.get()==this);windows.add(new java.lang.ref.WeakReference<>(this));}
+   @Override public void dismiss(){
+    boolean showing=isShowing();super.dismiss();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.get(owner);if(windows!=null){windows.removeIf(reference->reference.get()==null||reference.get()==this);if(windows.isEmpty())WINDOWS.remove(owner);}
+    if(!showing)return;View root=previousRoot.get(),requested=previous.get(),target=requested;boolean fallback=false;
+    if(root==null||!root.isAttachedToWindow())return;
+    Dialog parent=top(owner);if(parent!=null&&parent.getWindow()!=null&&parent.getWindow().getDecorView()!=root)return;
+    if(target==null||!target.isAttachedToWindow()||!target.isShown()||!target.isFocusable()){
+     fallback=true;target=semantic==null?null:root.findViewWithTag(semantic);if(target==null&&id!=View.NO_ID)target=root.findViewById(id);
+     if(target==null||!target.isShown()||!target.isFocusable()){target=null;for(View candidate:root.getFocusables(View.FOCUS_FORWARD))if(candidate.isShown()&&candidate.isEnabled()){target=candidate;break;}}
+    }
+    boolean restored=target!=null&&target.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(requested,target,fallback,restored);
+   }
+  };
+ }
+ private static Context owner(Context context){while(context instanceof android.content.ContextWrapper&&!(context instanceof android.app.Activity)){Context base=((android.content.ContextWrapper)context).getBaseContext();if(base==context)break;context=base;}return context;}
+ private static Dialog top(Context context){java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.get(owner(context));if(windows!=null)for(int i=windows.size()-1;i>=0;i--){Dialog dialog=windows.get(i).get();if(dialog!=null&&dialog.isShowing())return dialog;}return null;}
  /** Presentation only for retained credential/artwork dialogs; original listeners and inputs remain. */
  public static void styleNative(Dialog dialog){
   Context c=dialog.getContext();if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui",false))return;
@@ -30,7 +54,7 @@ public final class PreviewDialog {
   return readInternal(c,title,body,null,confirmation,accepted);
  }
  private static Dialog readInternal(Context c,String title,String body,android.graphics.Bitmap referenceImage,String confirmation,Runnable accepted){
-  Dialog dialog=new Dialog(c);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(surface(c,false));
+  Dialog dialog=create(c);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(surface(c,false));
   TextView heading=new TextView(c);heading.setText(title);heading.setTextSize(20);heading.setTextColor(Color.WHITE);panel.addView(heading);
   ScrollView scroll=new ScrollView(c);TextView text=new TextView(c);text.setText(body);text.setTextColor(0xffd2e1ed);text.setTextSize(13);text.setPadding(0,dp(c,14),0,dp(c,14));View content=text;
   if(referenceImage!=null){LinearLayout reference=new LinearLayout(c);reference.setGravity(Gravity.CENTER_VERTICAL);reference.addView(text,new LinearLayout.LayoutParams(0,-2,1));ImageView image=new ImageView(c);image.setImageBitmap(referenceImage);image.setScaleType(ImageView.ScaleType.FIT_CENTER);image.setContentDescription("QR containing only report reference, category and timestamp");LinearLayout.LayoutParams picture=new LinearLayout.LayoutParams(dp(c,180),dp(c,180));picture.setMargins(dp(c,16),dp(c,12),0,dp(c,12));reference.addView(image,picture);content=reference;}
@@ -48,7 +72,7 @@ public final class PreviewDialog {
  }
  public static Dialog choose(Context c,String title,String[] labels,int selected,java.util.Set<Integer> checked,boolean dismissOnSelect,IntConsumer action){
   View anchor=anchor(c);
-  Dialog d=new Dialog(c){@Override public void dismiss(){super.dismiss();if(anchor!=null&&anchor.isAttachedToWindow()&&anchor.isShown())anchor.requestFocus();}};d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+  Dialog d=create(c);d.requestWindowFeature(Window.FEATURE_NO_TITLE);
   LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);int pad=dp(c,12);panel.setPadding(pad,pad,Math.round(pad*1.2f),pad);panel.setBackground(menuSurface(c));panel.setClipChildren(false);panel.setClipToPadding(false);
   TextView heading=new TextView(c);heading.setText(title);heading.setTextSize(17);heading.setTextColor(Color.WHITE);heading.setPadding(dp(c,6),dp(c,2),0,dp(c,12));panel.addView(heading);View divider=new View(c);divider.setBackgroundColor(0x50426a80);panel.addView(divider,new LinearLayout.LayoutParams(-1,dp(c,1)));
   ScrollView scroll=new ScrollView(c);scroll.setVerticalScrollBarEnabled(false);LinearLayout rows=new LinearLayout(c);rows.setOrientation(android.widget.LinearLayout.VERTICAL);scroll.addView(rows);panel.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
@@ -66,7 +90,7 @@ public final class PreviewDialog {
   if(anchor!=null){int[] pos=new int[2];anchor.getLocationOnScreen(pos);int[] fit=PreviewMenuPlacement.place(width,menuHeight,pos[0],pos[1],pos[0]+anchor.getWidth(),pos[1]+anchor.getHeight(),c.getResources().getDisplayMetrics().widthPixels,c.getResources().getDisplayMetrics().heightPixels,dp(c,24),dp(c,14));WindowManager.LayoutParams params=w.getAttributes();params.gravity=Gravity.TOP|Gravity.LEFT;params.x=fit[0];params.y=fit[1];w.setAttributes(params);width=fit[2];menuHeight=fit[3];}
   scroll.setLayoutParams(new LinearLayout.LayoutParams(-1,Math.max(dp(c,30),menuHeight-chrome-footerHeight)));w.setLayout(width,menuHeight);if(initial!=null)initial.requestFocus();return d;
  }
- private static View anchor(Context c){while(c instanceof android.content.ContextWrapper){if(c instanceof android.app.Activity)return ((android.app.Activity)c).getCurrentFocus();Context next=((android.content.ContextWrapper)c).getBaseContext();if(next==c)break;c=next;}return null;}
+ private static View anchor(Context c){Dialog parent=top(c);if(parent!=null&&parent.getCurrentFocus()!=null)return parent.getCurrentFocus();Context owner=owner(c);return owner instanceof android.app.Activity?((android.app.Activity)owner).getCurrentFocus():null;}
  public static android.graphics.drawable.Drawable menuSurface(Context c){return surface(c,false);}
  public static void updateChecks(Dialog dialog,java.util.Set<Integer> checked){if(dialog==null||dialog.getWindow()==null)return;updateChecks(dialog.getWindow().getDecorView(),checked);}
  private static void updateChecks(View view,java.util.Set<Integer> checked){Object tag=view.getTag();if(tag instanceof String&&((String)tag).startsWith("preview-check:")){int index=Integer.parseInt(((String)tag).substring(14));view.setVisibility(checked.contains(index)?View.VISIBLE:View.INVISIBLE);View parent=(View)view.getParent();CharSequence description=parent.getContentDescription();if(description!=null)parent.setContentDescription(description.toString().replace(", selected","")+(checked.contains(index)?", selected":""));}if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)updateChecks(((ViewGroup)view).getChildAt(i),checked);}

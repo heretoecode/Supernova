@@ -12,8 +12,7 @@ import java.util.function.Consumer;
 /** Selection stays open; the current file and keyboard focus are independent states. */
 public final class PreviewVersionsDialog {
     public static Dialog show(Activity activity, List<Video> versions, Video current, Consumer<Video> select) {
-        View anchor = activity.getCurrentFocus();
-        Dialog dialog = new Dialog(activity);
+        Dialog dialog = PreviewDialog.create(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel = new LinearLayout(activity);
         panel.setOrientation(LinearLayout.VERTICAL);
@@ -61,7 +60,6 @@ public final class PreviewVersionsDialog {
             rows.addView(row, new LinearLayout.LayoutParams(-1, -2));
         }
         dialog.setContentView(panel);
-        dialog.setOnDismissListener(d -> { if (anchor != null && anchor.isAttachedToWindow() && anchor.isShown()) anchor.requestFocus(); });
         dialog.show();
         Window window = dialog.getWindow();
         window.setBackgroundDrawableResource(android.R.color.transparent);

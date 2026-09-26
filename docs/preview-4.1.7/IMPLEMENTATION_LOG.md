@@ -374,6 +374,21 @@ exclusion. Native put.io is still partial; OAuth configuration remains external.
 
 Local checks pass. New database tests and revised rendering need Android CI.
 
+### Checkpoint 16 — Shared child-window focus restoration
+
+Found a shared navigation defect: menu anchoring used Activity.getCurrentFocus even
+when the opener was inside another dialog. Children could return focus to the Hero
+instead of the More row. PreviewDialog.create now tracks weak dialog references,
+captures the actual parent opener, restores semantic replacements after a rebuild,
+and records requested/result/fallback diagnostics. Closing a covered parent does
+not steal focus from a remaining child. Choose/read/review, Versions and the shared
+keyboard use this lifecycle. Three tests cover nested Back, replaced opener and
+covered-parent dismissal. Retained native dialogs still need route-by-route review.
+
+Requirements UI-033/UI-036/PUT-003/PUT-004 now reflect the traced implementation
+and distinguish component completion from integration/physical QA. Local safeguards
+pass; new Android stack tests await CI. The full pass remains in progress.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

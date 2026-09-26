@@ -330,9 +330,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Navigation stack: Details Hero→More→child→Back restores More child opener focus→Back restores Hero More focus.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — shared dialog infrastructure; remaining native-child integration pending** / **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewDialog.create tracks weak dialog windows and restores the actual parent-window opener, with semantic replacement/fallback diagnostics. Choose/read/review, Versions and shared keyboard use it. Three new stack tests await CI. Retained native dialogs and every More child route still require integration review.
 
 ### UI-034 — 7. More / contextual workflows
 
@@ -360,9 +360,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Versions: only when 2+ physical versions. Compact horizontal rows with resolution/HDR/codec/audio/channels/size/source/location. Plain monochrome ✓ Current independent of focus. Selection updates current while menu stays; no toast; Technical updates; resume is title-level.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — picker presentation; title-history verification incomplete** / **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewVersionsDialog and PreviewVariants.details use cached facts, independent Current state, a persistent window and credential-free location display. VideoDetailsFragment retains the native Details update and carries in-memory resume on switching. Two picker tests await full CI; reload/persistence and different-duration playback still need verification.
 
 ### UI-037 — 7. More / contextual workflows
 
@@ -663,7 +663,7 @@ Cloud Services → Connect put.io → temporary linking/device code → large TV
 
 Status: **BLOCKED**
 
-Code mapping / verification: Production registered Supernova put.io OAuth client configuration is absent. PutioTokenStore now implements device-local encrypted persistence, with four tests awaiting CI and credential lifecycle integration pending. No production credentials invented, borrowed or exposed; existing WebDAV access remains untouched.
+Code mapping / verification: Production registered Supernova put.io OAuth client configuration is absent. PutioTokenStore implements device-local encrypted persistence; four tests passed in the 213-test checkpoint. Credential lifecycle integration remains pending. No production credentials invented, borrowed or exposed; existing WebDAV access remains untouched.
 
 ### PUT-004 — First-time association / zero-duplicate migration
 
@@ -679,7 +679,7 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping / verification: PutioReconciliation implements conservative path/name/size matching and review decisions as a pure policy. Integration with account linking, association UI and persistent library mappings is not yet complete; regression tests added but not yet run.
+Code mapping / verification: PutioReconciliation implements conservative path/name/size matching and review decisions (13 policy tests passed). PutioAssociationStore adds atomic stable mappings, generation fencing and missing-review flags; six database tests await CI. Account linking, association UI, new-item indexing and scanner hand-off remain incomplete.
 
 ### PUT-005 — First-time association / zero-duplicate migration
 

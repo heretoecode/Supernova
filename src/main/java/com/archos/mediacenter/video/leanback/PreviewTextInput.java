@@ -12,7 +12,7 @@ public final class PreviewTextInput {
         showValidated(c,title,previous,limit,value->value.isEmpty()?"Enter a name":null,accept);
     }
     public static void showValidated(Context c,String title,String previous,int limit,java.util.function.Function<String,String> validate,Consumer<String> accept){
-        Dialog d=new Dialog(c);d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Dialog d=PreviewDialog.create(c);d.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel=new LinearLayout(c);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(PreviewDialog.surface(c,false));
         TextView heading=new TextView(c);heading.setText(title);heading.setTextColor(-1);heading.setTextSize(20);panel.addView(heading);
         EditText input=new EditText(c);input.setSingleLine(true);input.setShowSoftInputOnFocus(false);input.setText(previous);input.setTextColor(-1);input.setTextSize(16);input.setBackground(PreviewDialog.focus(c));input.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(limit)});panel.addView(input,new LinearLayout.LayoutParams(-1,dp(c,44)));input.setSelection(input.length());
