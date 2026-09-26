@@ -230,6 +230,29 @@ https://github.com/heretoecode/Supernova/actions/runs/36241111976
 New source and tests await CI. XML/source/whitespace safeguards pass. Remaining
 workstreams and final conformance reviews are still in progress; no APK yet.
 
+## Checkpoint 10 — Home exact limits and persistent carousel indicators
+
+Checkpoint 9 local 2546fc93 / remote e4147f29 have identical source tree
+dd3f845df7fc76f5844bf6d3b84d779cb1e200a5. CI run 36241450416 succeeded:
+compilation, 74 targeted tests, the full 203-test Video suite, 76 regression-step
+tests and 17 WebDAV tests. The QR round-trip/privacy and provider-refresh tests
+passed. Counts between steps overlap.
+https://github.com/heretoecode/Supernova/actions/runs/36241450416
+
+- A further source audit found the exact Maximum Items option was absent despite
+  an earlier continuation summary describing it as present. The actual code now
+  offers Select alongside No Limit and the approved presets, using the shared
+  full QWERTY keyboard. Invalid input stays in the dialog; no saved limit changes.
+  Added boundary/overflow tests and a real dialog validation/correction test.
+- Featured indicators now retain their view/state while the Hero is rebound.
+  A 200 ms ease-out animation morphs pill widths/colour, retargeting from the
+  current visible state during rapid navigation. Indicators do not take focus
+  away from More Info. Two animation/wrap tests added. Logo/synopsis geometry
+  remains under review; this does not mark all of UI-006 complete.
+
+Local XML/source/whitespace checks pass; these latest Home changes await CI.
+This checkpoint remains an implementation candidate, not final delivery.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

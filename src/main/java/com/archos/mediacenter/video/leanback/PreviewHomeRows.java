@@ -77,9 +77,19 @@ public final class PreviewHomeRows {
    if(n==2&&(!row.movies||row.tv))row.movies=!row.movies;
    if(n==3&&(!row.tv||row.movies))row.tv=!row.tv;
    if(n==4){PreviewDialog.choose(context,"Row sort",new String[]{"Date Added","Title","Year"},Arrays.asList("added","title","year").indexOf(row.sort),i->{row.sort=new String[]{"added","title","year"}[i];refresh.run();});return;}
-   if(n==5){int[] limits={0,10,20,30,40,50,75,100};String[] options={"No Limit","10","20","30","40","50","75","100"};int selected=-1;for(int i=0;i<limits.length;i++)if(limits[i]==row.maximum)selected=i;PreviewDialog.choose(context,"Maximum items",options,selected,i->{row.maximum=limits[i];refresh.run();});return;}
+   if(n==5){int[] limits={0,10,20,30,40,50,75,100};String[] options={"No Limit","10","20","30","40","50","75","100","Select…"};int selected=-1;for(int i=0;i<limits.length;i++)if(limits[i]==row.maximum)selected=i;PreviewDialog.choose(context,"Maximum items",options,selected,i->{
+    if(i<limits.length){row.maximum=limits[i];refresh.run();return;}
+    PreviewTextInput.showValidated(context,"Maximum items",row.maximum==0?"":String.valueOf(row.maximum),10,
+      value->parseMaximum(value)==null?"Enter a whole number from 0 to 2147483647. Zero means No Limit.":null,value->{
+     row.maximum=parseMaximum(value);refresh.run();
+    });
+   });return;}
    refresh.run();
   });
+ }
+ static Integer parseMaximum(String value){
+  if(value==null||!value.trim().matches("[0-9]{1,10}"))return null;
+  try{return Integer.valueOf(value.trim());}catch(NumberFormatException invalid){return null;}
  }
  private TextView label(String text,int size){TextView v=new TextView(context);v.setText(text);v.setTextSize(size);v.setTextColor(0xffd6e5ef);return v;}
  private TextView control(String text,Runnable action){TextView v=label(text,14);v.setGravity(Gravity.CENTER_VERTICAL);v.setPadding(dp(12),0,dp(12),0);v.setFocusable(true);v.setFocusableInTouchMode(true);v.setBackground(PreviewDialog.focus(context));v.setOnClickListener(w->action.run());return v;}

@@ -120,6 +120,7 @@ public final class PreviewPages extends FrameLayout {
     private final boolean[] ascending={false,false,false};
     private final boolean[] listMode={false,false,false};
     private int featuredIndex;
+    private PreviewFeaturedIndicators featuredIndicators;
     private int featuredDirection;
     private boolean featuredMoving;
     private void changeFeatured(int direction){
@@ -444,7 +445,10 @@ public final class PreviewPages extends FrameLayout {
                     LinearLayout actions=new LinearLayout(getContext());actions.setPadding(0,dp(6),0,0);
                     TextView info=button("More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);info.setTag("hero:info");info.setOnKeyListener((view,key,event)->{if(event.getAction()==KeyEvent.ACTION_DOWN&&(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)){featuredIndex+=key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1;lastInteraction=android.os.SystemClock.elapsedRealtime();renderFeatured();return true;}return false;});info.setBackground(PreviewDialog.buttonFocus(getContext()));actions.addView(info,lp);
                     v.animate().cancel();v.setAlpha(1f);v.setTranslationX(0);if(featuredDirection!=0){v.setTranslationX(dp(24)*featuredDirection);v.setAlpha(.3f);v.animate().translationX(0).alpha(1f).setDuration(170).start();featuredDirection=0;}View spacer=new View(getContext());v.addView(spacer,new LinearLayout.LayoutParams(1,0,1));v.addView(actions,new LinearLayout.LayoutParams(-2,dp(40)));
-                    LinearLayout markers=new LinearLayout(getContext());markers.setGravity(Gravity.CENTER);markers.setFocusable(false);markers.setTag("hero:indicators");markers.setContentDescription("Featured carousel, Left or Right to change title");markers.setBackground(PreviewDialog.focus(getContext()));markers.setOnKeyListener((marker,key,event)->{if(event.getAction()==KeyEvent.ACTION_DOWN&&(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)){featuredIndex+=key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1;lastInteraction=android.os.SystemClock.elapsedRealtime();renderFeatured();return true;}return false;});markers.setPadding(0,dp(8),0,0);int count=featuredCandidates().size();for(int i=0;i<count;i++){boolean active=i==Math.floorMod(featuredIndex,count);View dot=new View(getContext());GradientDrawable shape=new GradientDrawable();shape.setCornerRadius(dp(3));shape.setColor(active?PreviewAccent.color(getContext()):0x7792aabd);dot.setBackground(shape);LinearLayout.LayoutParams marker=new LinearLayout.LayoutParams(dp(active?24:5),dp(5));marker.setMargins(dp(3),0,dp(3),0);markers.addView(dot,marker);}v.addView(markers,new LinearLayout.LayoutParams(-1,dp(26)));
+                    if(featuredIndicators==null)featuredIndicators=new PreviewFeaturedIndicators(getContext());
+                    if(featuredIndicators.getParent() instanceof ViewGroup)((ViewGroup)featuredIndicators.getParent()).removeView(featuredIndicators);
+                    v.addView(featuredIndicators,new LinearLayout.LayoutParams(-1,dp(26)));
+                    featuredIndicators.setPosition(featuredCandidates().size(),featuredIndex);
 
                 }else{TextView title=text(c.title,30);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title);String[] lines=PreviewLibrarySummary.describe(getContext(),snapshot,tab==2).split("\n");String[] icons={tab==2?"TV Shows":"Movies","Total Size","Local Storage","Network"};for(int line=0;line<lines.length;line++){TextView summary=text(lines[line],13);summary.setTextColor(0xffe1e9ef);summary.setPadding(0,dp(2),0,dp(2));if(line<icons.length)PreviewIcon.apply(summary,icons[line],17);v.addView(summary);}}
             }
