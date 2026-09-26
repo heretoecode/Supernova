@@ -144,6 +144,33 @@ the earlier test step failed. No emulator, APK or physical Shield validation yet
   local/network handlers remain responsible for indexing. Network indexing no
   longer removes the independent saved bookmark.
 
+## Checkpoint 7 — enrichment, classification and identity evidence
+
+Checkpoint 6 local 25693fce / remote 4b3a4add have identical source tree
+165d3697dc13be8aa5d46379d95e2ff8894ffaee. CI run 36240119933 succeeded:
+Android compilation; 62 targeted tests; 76 wider regression tests; and 17
+FileCore WebDAV tests. These step counts overlap and are not a unique-test total.
+https://github.com/heretoecode/Supernova/actions/runs/36240119933
+
+- Persistent enrichment now covers TV season packages and classification data,
+  yielding between seasons. Schema migration preserves pending jobs. Locale is
+  included in newly enqueued identities. Completed packages become eligible for
+  provider refresh after six hours; section caches retain their own freshness.
+- Cache network coalescing uses separate locks from atomic disk access so a
+  cache read does not wait for a slow network request. Added a concurrent test.
+- Unmatched classification honours explicitly classified source folders, using
+  the deepest matching folder and strict path boundaries without inventing a
+  metadata identity. Added four classification tests and a queue migration test.
+- Added a read-only merged-manifest identity audit and four passing local Python
+  tests. Documented inherited shared-user-ID evidence without changing it or
+  claiming a confirmed cause of upstream Nova installation failure.
+- Validation now requests the unfiltered Video unit suite as well as targeted
+  and WebDAV checks. New Android tests and merged-manifest audit await CI.
+
+Local safeguards: 430 XML files parsed; HUD/internal-Details/signing-gate checks
+and diff whitespace passed. Complete feature integration and final three-pass
+conformance reviews remain unfinished. This is not a release-complete candidate.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

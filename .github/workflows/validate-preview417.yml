@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   build-debug-apk:
-    name: Build isolated Preview APK
+    name: Compile and test Preview source (no APK/signing)
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
@@ -110,15 +110,19 @@ jobs:
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.Preview417NavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.*' --tests 'com.archos.mediacenter.video.leanback.PreviewMetadataCacheTest' --tests 'com.archos.mediacenter.video.leanback.PreviewBackdropTest' --tests 'com.archos.mediacenter.video.streaming.putio.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest' --tests 'com.archos.mediacenter.video.player.PreviewSeekPolicyTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
+          ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.Preview417NavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.*' --tests 'com.archos.mediacenter.video.leanback.PreviewMetadataCacheTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMediaClassificationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewEnrichmentQueueTest' --tests 'com.archos.mediacenter.video.leanback.PreviewBackdropTest' --tests 'com.archos.mediacenter.video.streaming.putio.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest' --tests 'com.archos.mediacenter.video.player.PreviewSeekPolicyTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
 
-      - name: Test personal build changes
-        if: ${{ inputs.validation == 'full' }}
+      - name: Audit merged Preview identity without changing it
+        run: |
+          python3 -m unittest discover -s source/tools -p 'test_audit_preview_identity.py'
+          python3 source/tools/audit_preview_identity.py nova/Video/build/intermediates --output nova/preview-identity-audit.json
+
+      - name: Run complete Video unit test suite
         working-directory: nova/Video
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest' --tests 'com.archos.mediacenter.video.leanback.PreviewDiscoveryTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+          ./gradlew testNoamazonDebugUnitTest -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
 
       - name: Targeted stability and library metadata checks
         working-directory: nova/Video
@@ -136,6 +140,7 @@ jobs:
           name: Supernova-4.1.7-source-validation-${{ github.run_id }}
           path: |
             nova/gradle*.log
+            nova/preview-identity-audit.json
             nova/Video/build/test-results/**
             nova/Video/build/reports/**
             nova/FileCoreLibrary/build/test-results/**

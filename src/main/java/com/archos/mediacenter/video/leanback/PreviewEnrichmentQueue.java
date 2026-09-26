@@ -15,8 +15,8 @@ public final class PreviewEnrichmentQueue {
     private static Store store;
     private static boolean draining;
     private static ScheduledFuture<?> retry;
-    private static final String[] SECTIONS={"","credits","images","videos","recommendations","external_ids","providers"};
-    private static final long STALE=7L*24*60*60*1000;
+    private static final String[] SECTIONS={"","credits","images","videos","recommendations","external_ids","providers","seasons","classification"};
+    private static final long STALE=6L*60*60*1000;
     private static Store store(Context context){if(store==null)store=new Store(context.getApplicationContext());return store;}
     public static void enqueue(Context c,String kind,long id,int priority) {
         if(id<=0||!(kind.equals("movie")||kind.equals("tv")))return;Context app=c.getApplicationContext();
@@ -32,9 +32,9 @@ public final class PreviewEnrichmentQueue {
         }finally{db.endTransaction();}start(app);});
     }
     private static void offer(SQLiteDatabase db,String kind,long id,int priority) {
-        if(id<=0)return;String key=kind+":"+id;long now=System.currentTimeMillis();
+        if(id<=0)return;String key=kind+":"+id+":"+Locale.getDefault().toLanguageTag();long now=System.currentTimeMillis();
         db.execSQL("INSERT OR IGNORE INTO jobs(identity,kind,media,priority,stage,next_at,completed_at) VALUES(?,?,?,?,0,0,0)",new Object[]{key,kind,id,priority});
-        db.execSQL("UPDATE jobs SET priority=MIN(priority,?),stage=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE stage END,next_at=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE next_at END WHERE identity=?",new Object[]{priority,now-STALE,now-STALE,key});
+        db.execSQL("UPDATE jobs SET priority=MIN(priority,?),stage=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE stage END,season_cursor=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE season_cursor END,next_at=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE next_at END WHERE identity=?",new Object[]{priority,now-STALE,now-STALE,now-STALE,key});
     }
     private static void start(Context app){if(retry!=null){retry.cancel(false);retry=null;}if(!draining){draining=true;WORK.execute(()->drain(app));}}
     private static void waitForRetry(Context app,SQLiteDatabase db){
@@ -44,14 +44,31 @@ public final class PreviewEnrichmentQueue {
         }
     }
     private static void drain(Context app) {
-        SQLiteDatabase db=store(app).getWritableDatabase();String key,kind;long id;int stage;
-        try(Cursor cursor=db.rawQuery("SELECT identity,kind,media,stage FROM jobs WHERE stage<? AND next_at<=? ORDER BY priority,next_at,identity LIMIT 1",new String[]{String.valueOf(SECTIONS.length),String.valueOf(System.currentTimeMillis())})){
-            if(!cursor.moveToFirst()){waitForRetry(app,db);return;}key=cursor.getString(0);kind=cursor.getString(1);id=cursor.getLong(2);stage=cursor.getInt(3);
+        SQLiteDatabase db=store(app).getWritableDatabase();String key,kind;long id;int stage,seasonCursor;
+        try(Cursor cursor=db.rawQuery("SELECT identity,kind,media,stage,season_cursor FROM jobs WHERE stage<? AND next_at<=? ORDER BY priority,next_at,identity LIMIT 1",new String[]{String.valueOf(SECTIONS.length),String.valueOf(System.currentTimeMillis())})){
+            if(!cursor.moveToFirst()){waitForRetry(app,db);return;}key=cursor.getString(0);kind=cursor.getString(1);id=cursor.getLong(2);stage=cursor.getInt(3);seasonCursor=cursor.getInt(4);
         }
         long started=android.os.SystemClock.elapsedRealtime();String operation=Diagnostics.operation("metadata_package");
         try {
             if(SECTIONS[stage].equals("providers")) {
                 if(StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false))StreamingRepository.load(app,kind,id,StreamingRepository.country(app));
+            } else if(SECTIONS[stage].equals("seasons")) {
+                if(kind.equals("tv")){
+                    org.json.JSONArray seasons=StreamingRepository.metadata(app,kind,id,"").optJSONArray("seasons");
+                    if(seasons==null)throw new java.io.IOException("Incomplete series package");
+                    if(seasonCursor<seasons.length()){
+                        int number=seasons.getJSONObject(seasonCursor).getInt("season_number");
+                        if(number<0)throw new java.io.IOException("Invalid season identity");
+                        String section="season/"+number;StreamingRepository.metadata(app,kind,id,section);
+                        if(!PreviewMetadataCache.fresh(app,kind,id,section))throw new java.io.IOException("Season refresh retained stale cache");
+                        db.execSQL("UPDATE jobs SET season_cursor=? WHERE identity=?",new Object[]{seasonCursor+1,key});
+                        if(seasonCursor+1<seasons.length())return; // finally schedules the next pre-emptible turn.
+                    }
+                }
+            } else if(SECTIONS[stage].equals("classification")) {
+                String section=kind.equals("tv")?"content_ratings":"release_dates";
+                StreamingRepository.metadata(app,kind,id,section);
+                if(!PreviewMetadataCache.fresh(app,kind,id,section))throw new java.io.IOException("Classification refresh retained stale cache");
             } else {
                 StreamingRepository.metadata(app,kind,id,SECTIONS[stage]);
                 if(!PreviewMetadataCache.fresh(app,kind,id,SECTIONS[stage]))throw new java.io.IOException("Metadata refresh retained stale cache");
@@ -62,9 +79,9 @@ public final class PreviewEnrichmentQueue {
         finally{Diagnostics.finishOperation(operation,"metadata_package",started);WORK.schedule(()->drain(app),250,TimeUnit.MILLISECONDS);}
     }
     private static final class Store extends SQLiteOpenHelper {
-        Store(Context c){super(c,"preview-enrichment.db",null,1);}
-        public void onCreate(SQLiteDatabase db){db.execSQL("CREATE TABLE jobs(identity TEXT PRIMARY KEY,kind TEXT NOT NULL,media INTEGER NOT NULL,priority INTEGER NOT NULL,stage INTEGER NOT NULL,next_at INTEGER NOT NULL,completed_at INTEGER NOT NULL)");}
-        public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){throw new IllegalStateException("Explicit enrichment migration required");}
+        Store(Context c){super(c,"preview-enrichment.db",null,2);}
+        public void onCreate(SQLiteDatabase db){db.execSQL("CREATE TABLE jobs(identity TEXT PRIMARY KEY,kind TEXT NOT NULL,media INTEGER NOT NULL,priority INTEGER NOT NULL,stage INTEGER NOT NULL,next_at INTEGER NOT NULL,completed_at INTEGER NOT NULL,season_cursor INTEGER NOT NULL DEFAULT 0)");}
+        public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){if(oldVersion==1&&newVersion==2)db.execSQL("ALTER TABLE jobs ADD COLUMN season_cursor INTEGER NOT NULL DEFAULT 0");else throw new IllegalStateException("Explicit enrichment migration required");}
     }
     private PreviewEnrichmentQueue(){}
 }

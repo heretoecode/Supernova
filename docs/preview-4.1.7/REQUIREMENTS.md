@@ -102,7 +102,7 @@ Library membership is based on indexed media, not successful metadata. Launch lo
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping / verification: PreviewMetadataCache / PreviewEnrichmentQueue and StreamingRepository metadata gateway. Persistent priority/dedup/retry implemented; two cache tests passed in run 36238345377. Complete series packages and remaining enrichment integration are not complete.
+Code mapping / verification: PreviewMetadataCache / PreviewEnrichmentQueue and StreamingRepository metadata gateway. Persistent priority/dedup/retry implemented; cache tests passed through run 36240119933. Season-package queue, classification requests, schema-preserving migration and independent network/disk locks added at checkpoint 7; new tests await CI. Complete series presentation and remaining enrichment integration are not complete.
 
 ### UI-011 — 3. Background metadata enrichment
 

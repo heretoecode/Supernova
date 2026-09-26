@@ -327,7 +327,8 @@ public final class PreviewPages extends FrameLayout {
     private List<Entry> source(){
         if(!unmatched[tab])return tab==1?snapshot.movies:snapshot.shows;
         List<Entry> result=new ArrayList<>();
-        if(snapshot.unmatched!=null)for(Entry entry:snapshot.unmatched){PreviewMediaClassification.Kind kind=PreviewMediaClassification.classify(((Video)entry.media).getFilenameNonCryptic());if(kind==PreviewMediaClassification.Kind.UNKNOWN||kind==(tab==1?PreviewMediaClassification.Kind.MOVIE:PreviewMediaClassification.Kind.TV))result.add(entry);}
+        Map<android.net.Uri,PreviewMediaClassification.Kind> hints=PreviewMediaClassification.hints(preferences);
+        if(snapshot.unmatched!=null)for(Entry entry:snapshot.unmatched){Video video=(Video)entry.media;PreviewMediaClassification.Kind kind=PreviewMediaClassification.classify(video.getFilenameNonCryptic(),video.getFileUri(),hints);if(kind==PreviewMediaClassification.Kind.UNKNOWN||kind==(tab==1?PreviewMediaClassification.Kind.MOVIE:PreviewMediaClassification.Kind.TV))result.add(entry);}
         return result;
     }
     private void networkSection(String section){getContext().startActivity(new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.network.NetworkRootActivity.class).putExtra("preview_source_section",section));}
