@@ -47,7 +47,7 @@ public final class PreviewCardPresenter extends Presenter {
             setCardType(CARD_TYPE_MAIN_ONLY);setBackgroundColor(Color.TRANSPARENT);setClipChildren(false);setClipToPadding(false);
             FrameLayout body = new FrameLayout(c);
             GradientDrawable outline = new GradientDrawable();
-            outline.setColor(0xc00b1b29); outline.setCornerRadius(dp(4));
+            outline.setColor(0xc00b1b29); outline.setCornerRadius(dp(6));
             body.setBackground(outline); body.setClipToOutline(true);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;

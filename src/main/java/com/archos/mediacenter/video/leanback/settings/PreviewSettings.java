@@ -106,6 +106,7 @@ public final class PreviewSettings {
  @android.annotation.SuppressLint("RestrictedApi")
  public static androidx.recyclerview.widget.RecyclerView grid(android.content.Context c){
   com.archos.mediacenter.video.leanback.PreviewFocusRecycler list=new com.archos.mediacenter.video.leanback.PreviewFocusRecycler(c){
+   @Override protected boolean locksHorizontalEdges(){return false;}
    @Override protected boolean focusablePosition(int p){if(!(getAdapter() instanceof PreferenceGroupAdapter))return false;Preference item=((PreferenceGroupAdapter)getAdapter()).getItem(p);return item!=null&&!(item instanceof PreferenceCategory)&&item.isEnabled()&&item.isSelectable();}
    @Override public View focusSearch(View focused,int direction){View item=findContainingItemView(focused);int pos=item==null?-1:getChildAdapterPosition(item);androidx.recyclerview.widget.GridLayoutManager lm=(androidx.recyclerview.widget.GridLayoutManager)getLayoutManager();if(direction==View.FOCUS_LEFT&&pos>=0&&lm.getSpanSizeLookup().getSpanIndex(pos,1)==0&&getTag() instanceof View)return (View)getTag();return super.focusSearch(focused,direction);}
   };
@@ -114,22 +115,138 @@ public final class PreviewSettings {
  private static void tintSwitches(View view){int colour=PreviewAccent.color(view.getContext());android.content.res.ColorStateList tint=new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{colour,0xff738493});if(view instanceof androidx.appcompat.widget.SwitchCompat){((androidx.appcompat.widget.SwitchCompat)view).setThumbTintList(tint);((androidx.appcompat.widget.SwitchCompat)view).setTrackTintList(tint.withAlpha(90));}else if(view instanceof android.widget.CompoundButton)((android.widget.CompoundButton)view).setButtonTintList(tint);if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)tintSwitches(((ViewGroup)view).getChildAt(i));}
  private static void fitBadge(View view){if(view instanceof ImageView){ImageView image=(ImageView)view;image.setScaleType(ImageView.ScaleType.FIT_CENTER);ViewGroup.LayoutParams size=image.getLayoutParams();size.width=ViewGroup.LayoutParams.MATCH_PARENT;size.height=ViewGroup.LayoutParams.MATCH_PARENT;image.setLayoutParams(size);}else if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++)fitBadge(group.getChildAt(i));}}
  private static void move(PreferenceScreen root,PreferenceCategory dest,String key){Preference p=root.findPreference(key);if(p==null||p.getParent()==dest)return;PreferenceGroup parent=p.getParent();if(parent!=null)parent.removePreference(p);dest.addPreference(p);}
- public static void sidebar(PreferenceFragmentCompat fragment){
-  android.content.Context c=fragment.requireContext();androidx.recyclerview.widget.RecyclerView list=fragment.getListView();ViewGroup parent=(ViewGroup)list.getParent();int index=parent.indexOfChild(list);ViewGroup.LayoutParams original=list.getLayoutParams();parent.removeView(list);
-  LinearLayout split=new LinearLayout(c);split.setPadding(0,dp(fragment,12),0,0);split.setClipChildren(false);
-  ScrollView scroll=new ScrollView(c);scroll.setVerticalScrollBarEnabled(false);LinearLayout links=new LinearLayout(c);links.setOrientation(LinearLayout.VERTICAL);links.setClipChildren(false);scroll.addView(links);LinearLayout.LayoutParams rail=new LinearLayout.LayoutParams(0,-1,.23f);rail.rightMargin=dp(fragment,12);split.addView(scroll,rail);
-  split.addView(list,new LinearLayout.LayoutParams(0,-1,.44f));TextView help=new TextView(c);help.setTextSize(14);help.setTextColor(0xffe1e9ef);help.setLineSpacing(dp(fragment,4),1);help.setPadding(dp(fragment,16),dp(fragment,12),dp(fragment,12),dp(fragment,12));ScrollView helpScroll=new ScrollView(c);helpScroll.addView(help);helpScroll.setFocusable(false);helpScroll.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);LinearLayout.LayoutParams helpSize=new LinearLayout.LayoutParams(0,-1,.33f);helpSize.leftMargin=dp(fragment,12);split.addView(helpScroll,helpSize);HELP.put(activityContext(c),new java.lang.ref.WeakReference<>(help));parent.addView(split,index,original);
-  PreferenceScreen root=fragment.getPreferenceScreen();Map<Preference,Boolean> visibility=new IdentityHashMap<>();for(int i=0;i<root.getPreferenceCount();i++)if(root.getPreference(i) instanceof PreferenceGroup){PreferenceGroup group=(PreferenceGroup)root.getPreference(i);for(int k=0;k<group.getPreferenceCount();k++)visibility.put(group.getPreference(k),group.getPreference(k).isVisible());}
-  android.content.SharedPreferences state=PreferenceManager.getDefaultSharedPreferences(c);String requested=fragment.requireActivity().getIntent().getBooleanExtra("show_streaming_settings",false)?"Streaming":state.getString("preview_settings_category","Playback");fragment.requireActivity().getIntent().removeExtra("show_streaming_settings");List<View> childLinks=new ArrayList<>();TextView initial=null;
-  for(String name:NAMES){PreferenceCategory target=null;for(int i=0;i<root.getPreferenceCount();i++)if(root.getPreference(i) instanceof PreferenceCategory&&name.contentEquals(root.getPreference(i).getTitle()))target=(PreferenceCategory)root.getPreference(i);if(target==null||target.getPreferenceCount()==0)continue;final PreferenceCategory category=target;
-   List<PreferenceCategory> children=new ArrayList<>();for(int k=0;k<category.getPreferenceCount();k++)if(category.getPreference(k) instanceof PreferenceCategory&&Boolean.TRUE.equals(visibility.get(category.getPreference(k))))children.add((PreferenceCategory)category.getPreference(k));
-   TextView button=sidebarButton(c,name+(children.isEmpty()?"":"  ▸"),false);links.addView(button,new LinearLayout.LayoutParams(-1,dp(fragment,40)));List<View> owned=new ArrayList<>();
-   java.util.function.Consumer<PreferenceCategory> select=child->{for(View link:childLinks)link.setVisibility(owned.contains(link)?View.VISIBLE:View.GONE);button.setText(name+(children.isEmpty()?"":"  ▾"));for(int i=0;i<root.getPreferenceCount();i++)root.getPreference(i).setVisible(root.getPreference(i)==category);for(int k=0;k<category.getPreferenceCount();k++){Preference p=category.getPreference(k);p.setVisible(Boolean.TRUE.equals(visibility.get(p))&&(child==null?!(p instanceof PreferenceCategory):p==child));}state.edit().putString("preview_settings_category",name).apply();help.setText((child==null?name:child.getTitle())+"\n\nMove right to review and change settings.");list.scrollToPosition(0);};
-   button.setOnFocusChangeListener((v,focused)->{if(focused){list.setTag(button);select.accept(null);}});button.setOnClickListener(v->{select.accept(null);focusFirst(list);});button.setOnKeyListener((v,key,event)->{if(key==KeyEvent.KEYCODE_DPAD_RIGHT&&event.getAction()==KeyEvent.ACTION_DOWN){focusFirst(list);return true;}return false;});
-   for(PreferenceCategory child:children){TextView link=sidebarButton(c,String.valueOf(child.getTitle()),true);link.setVisibility(View.GONE);links.addView(link,new LinearLayout.LayoutParams(-1,dp(fragment,36)));owned.add(link);childLinks.add(link);link.setOnFocusChangeListener((v,focused)->{if(focused){list.setTag(link);select.accept(child);}});link.setOnClickListener(v->{select.accept(child);focusFirst(list);});link.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_RIGHT){focusFirst(list);return true;}if(key==KeyEvent.KEYCODE_DPAD_LEFT){button.requestFocus();return true;}return false;});}
-   if(initial==null||name.equals(requested))initial=button;
+ public static void sidebar(PreferenceFragmentCompat fragment) {
+  android.content.Context c = fragment.requireContext();
+  androidx.recyclerview.widget.RecyclerView list = fragment.getListView();
+  ViewGroup parent = (ViewGroup) list.getParent();
+  int index = parent.indexOfChild(list);
+  ViewGroup.LayoutParams original = list.getLayoutParams();
+  parent.removeView(list);
+  LinearLayout split = new LinearLayout(c);
+  split.setPadding(0, dp(fragment, 12), 0, dp(fragment, 8));
+  split.setClipChildren(false);
+  LinearLayout links = new LinearLayout(c);
+  links.setOrientation(LinearLayout.VERTICAL);
+  links.setClipChildren(false);
+  LinearLayout.LayoutParams rail = new LinearLayout.LayoutParams(0, -1, .23f);
+  rail.rightMargin = dp(fragment, 12);
+  split.addView(links, rail);
+  LinearLayout middle = new LinearLayout(c);
+  middle.setOrientation(LinearLayout.VERTICAL);
+  middle.setClipChildren(false);
+  LinearLayout children = new LinearLayout(c);
+  children.setOrientation(LinearLayout.VERTICAL);
+  children.setClipChildren(false);
+  middle.addView(children, new LinearLayout.LayoutParams(-1, -2));
+  middle.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
+  split.addView(middle, new LinearLayout.LayoutParams(0, -1, .44f));
+  TextView help = new TextView(c);
+  help.setTextSize(14); help.setTextColor(0xffe1e9ef);
+  help.setLineSpacing(dp(fragment, 4), 1);
+  help.setPadding(dp(fragment, 16), dp(fragment, 12), dp(fragment, 12), dp(fragment, 12));
+  ScrollView helpScroll = new ScrollView(c);
+  helpScroll.addView(help); helpScroll.setFocusable(false);
+  helpScroll.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+  LinearLayout.LayoutParams helpSize = new LinearLayout.LayoutParams(0, -1, .33f);
+  helpSize.leftMargin = dp(fragment, 12);
+  split.addView(helpScroll, helpSize);
+  HELP.put(activityContext(c), new java.lang.ref.WeakReference<>(help));
+  parent.addView(split, index, original);
+  PreferenceScreen root = fragment.getPreferenceScreen();
+  Map<Preference, Boolean> visibility = new IdentityHashMap<>();
+  for (int i = 0; i < root.getPreferenceCount(); i++) {
+   Preference p = root.getPreference(i);
+   if (p instanceof PreferenceGroup) {
+    PreferenceGroup group = (PreferenceGroup) p;
+    for (int k = 0; k < group.getPreferenceCount(); k++)
+     visibility.put(group.getPreference(k), group.getPreference(k).isVisible());
+   }
   }
-  if(initial!=null){TextView first=initial;first.post(()->{first.requestFocus();focusFirst(list);});}
+  final TextView[] selectedRail = {null}, childOpener = {null};
+  final Runnable[] returnToCategory = {null};
+  List<TextView> railButtons = new ArrayList<>();
+  boolean streaming = fragment.requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false);
+  fragment.requireActivity().getIntent().removeExtra("show_streaming_settings");
+  TextView initial = null;
+  for (String name : NAMES) {
+   PreferenceCategory found = null;
+   for (int i = 0; i < root.getPreferenceCount(); i++)
+    if (root.getPreference(i) instanceof PreferenceCategory && name.contentEquals(root.getPreference(i).getTitle()))
+     found = (PreferenceCategory) root.getPreference(i);
+   final PreferenceCategory category = found;
+   TextView button = sidebarButton(c, name, false);
+   button.setTag("semantic:settings:category:" + name);
+   links.addView(button, new LinearLayout.LayoutParams(-1, 0, 1));
+   railButtons.add(button);
+   Runnable showCategory = () -> {
+    children.removeAllViews(); childOpener[0] = null;
+    selectedRail[0] = button; list.setTag(button);
+    for (int i = 0; i < root.getPreferenceCount(); i++) root.getPreference(i).setVisible(root.getPreference(i) == category);
+    if (category != null) for (int k = 0; k < category.getPreferenceCount(); k++) {
+     Preference p = category.getPreference(k);
+     p.setVisible(Boolean.TRUE.equals(visibility.get(p)) && !(p instanceof PreferenceCategory));
+    }
+    help.setText(name + "\n\nPress OK or Right to enter this category.");
+    list.scrollToPosition(0);
+   };
+   Runnable enter = () -> {
+    showCategory.run();
+    if (category != null) for (int k = 0; k < category.getPreferenceCount(); k++) {
+     Preference p = category.getPreference(k);
+     if (!(p instanceof PreferenceCategory) || !Boolean.TRUE.equals(visibility.get(p))) continue;
+     TextView child = sidebarButton(c, String.valueOf(p.getTitle()), false);
+     child.setTag("semantic:settings:section:" + p.getKey());
+     children.addView(child, new LinearLayout.LayoutParams(-1, dp(fragment, 40)));
+     Runnable openChild = () -> {
+      childOpener[0] = child; children.setVisibility(View.GONE); list.setTag(child);
+      for (int n = 0; n < category.getPreferenceCount(); n++) category.getPreference(n).setVisible(category.getPreference(n) == p);
+      help.setText(String.valueOf(p.getTitle())); list.scrollToPosition(0); focusFirst(list);
+     };
+     child.setOnClickListener(v -> openChild.run());
+     child.setOnKeyListener((v, key, event) -> {
+      if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+      if (key == KeyEvent.KEYCODE_DPAD_RIGHT) { openChild.run(); return true; }
+      if (key == KeyEvent.KEYCODE_DPAD_LEFT) { button.requestFocus(); return true; }
+      return false;
+     });
+    }
+    children.setVisibility(View.VISIBLE);
+    if (children.getChildCount() > 0) children.getChildAt(0).requestFocus(); else focusFirst(list);
+   };
+   button.setOnFocusChangeListener((v, focused) -> { if (focused) { showCategory.run(); returnToCategory[0] = enter; } });
+   button.setOnClickListener(v -> enter.run());
+   button.setOnKeyListener((v, key, event) -> {
+    if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+    if (key == KeyEvent.KEYCODE_DPAD_RIGHT) { enter.run(); return true; }
+    if (key == KeyEvent.KEYCODE_DPAD_LEFT) return true;
+    int position = railButtons.indexOf(button);
+    if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+     if (position + 1 < railButtons.size()) railButtons.get(position + 1).requestFocus();
+     return true;
+    }
+    if (key == KeyEvent.KEYCODE_DPAD_UP) {
+     if (position > 0) railButtons.get(position - 1).requestFocus();
+     else { View ancestor = split; while (ancestor.getParent() instanceof View) { ancestor = (View) ancestor.getParent(); if (ancestor instanceof com.archos.mediacenter.video.leanback.TopNavigation) { ((com.archos.mediacenter.video.leanback.TopNavigation) ancestor).focusNavigation(); break; } } }
+     return true;
+    }
+    return false;
+   });
+   if (initial == null || streaming && name.equals("Streaming")) initial = button;
+  }
+  androidx.activity.OnBackPressedCallback back = new androidx.activity.OnBackPressedCallback(false) {
+   @Override public void handleOnBackPressed() {
+    if (childOpener[0] != null && returnToCategory[0] != null) {
+     String label = childOpener[0].getText().toString(); returnToCategory[0].run();
+     for (int i = 0; i < children.getChildCount(); i++) {
+      TextView child = (TextView) children.getChildAt(i);
+      if (label.contentEquals(child.getText())) { child.requestFocus(); break; }
+     }
+    } else if (selectedRail[0] != null) selectedRail[0].requestFocus();
+   }
+  };
+  fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(), back);
+  split.getViewTreeObserver().addOnGlobalFocusChangeListener((oldView, newView) -> back.setEnabled(middle.hasFocus()));
+  if (initial != null) { TextView first = initial; first.post(first::requestFocus); }
  }
  private static TextView sidebarButton(android.content.Context c,String name,boolean child){TextView button=new TextView(c);button.setText(name);button.setTextSize(13);button.setTextColor(android.graphics.Color.WHITE);button.setGravity(Gravity.CENTER_VERTICAL);button.setPadding(PreviewDialog.dp(c,child?24:10),0,PreviewDialog.dp(c,10),0);PreviewIcon.apply(button,name,17);button.setFocusable(true);button.setFocusableInTouchMode(true);button.setBackground(PreviewDialog.focus(c));return button;}
  private static android.content.Context activityContext(android.content.Context c){while(c instanceof android.content.ContextWrapper&&!(c instanceof android.app.Activity))c=((android.content.ContextWrapper)c).getBaseContext();return c;}

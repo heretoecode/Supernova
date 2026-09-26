@@ -22,7 +22,7 @@ public class PreviewNextTest {
         PreviewPagesTest.findText(keyboard,"1").performClick();
         assertEquals("1",input.getText().toString());
         input.setText("A😀");input.setSelection(input.length());
-        PreviewPagesTest.findText(keyboard,"Delete").performClick();
+        PreviewPagesTest.findText(keyboard,"Backspace").performClick();
         assertEquals("A",input.getText().toString());
         input.setSelection(0,input.length());
         PreviewPagesTest.findText(keyboard,"Q").performClick();

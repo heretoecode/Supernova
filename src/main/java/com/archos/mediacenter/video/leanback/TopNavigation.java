@@ -16,6 +16,8 @@ import java.util.function.BooleanSupplier;
 /** Optional navigation shell; the same native BrowseSupportFragment owns all library rows. */
 public final class TopNavigation extends LinearLayout {
     private final LinearLayout bar;
+    private final PreviewFocusRail group;
+    private static final int[] VISUAL_ORDER = {0, 1, 2, 3, 5, 4};
     private final PreviewBackdrop artwork;
     private final View content;
     private final android.widget.FrameLayout scanStatus;
@@ -36,13 +38,13 @@ public final class TopNavigation extends LinearLayout {
         TextView brand = new TextView(c);
         brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(Color.WHITE);
         brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(136), -1));
-        LinearLayout group = new LinearLayout(c);group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
+        group = new PreviewFocusRail(c);group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
         bar.addView(group, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search"};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
             TextView tab = new TextView(c); tabs[i] = tab;
-            tab.setText(labels[i]); tab.setContentDescription(labels[i]);
+            tab.setText(labels[i]); tab.setContentDescription(labels[i]); tab.setTag("semantic:nav:" + index);
             tab.setTextColor(Color.WHITE); tab.setTextSize(19); tab.setGravity(Gravity.CENTER);
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
@@ -59,6 +61,17 @@ public final class TopNavigation extends LinearLayout {
             tab.setOnKeyListener((v, key, event) -> {
                 if (key == KeyEvent.KEYCODE_DPAD_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
                     content.requestFocus(); return true;
+                }
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (key == KeyEvent.KEYCODE_DPAD_UP) return true;
+                    if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        for (int position = 0; position < VISUAL_ORDER.length; position++) {
+                            if (VISUAL_ORDER[position] != index) continue;
+                            int target = position + (key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
+                            if (target >= 0 && target < VISUAL_ORDER.length) tabs[VISUAL_ORDER[target]].requestFocus();
+                            return true;
+                        }
+                    }
                 }
                 return false;
             });
@@ -84,11 +97,11 @@ public final class TopNavigation extends LinearLayout {
         scanParams.setMargins(dp(20),dp(12),dp(20),dp(16));stage.addView(scanStatus,scanParams);
         addView(stage,new LayoutParams(-1,0,1));
     }
-    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key)){for(TextView tab:tabs)styleTab(tab);invalidate();}};
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key)){for(TextView tab:tabs)styleTab(tab);group.refreshColour();invalidate();}};
     private void styleTab(TextView tab){
         tab.setTextColor(Color.WHITE);
         tab.setShadowLayer(0,0,0,0);
-        tab.setBackground(PreviewDialog.focus(getContext()));
+        tab.setBackground(null);
         for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon instanceof PreviewIcon)((PreviewIcon)icon).focus(false,0);
 
     }
