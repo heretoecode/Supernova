@@ -12,17 +12,7 @@
                      if (log.isDebugEnabled()) log.debug("onReceive: skip scan for inactive server {}", uri);
 --- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 +++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
-@@ -336,7 +336,8 @@
-                 // reach zero and post-scan scraping would never start. Standalone requests
-                 // (no batch id) are a no-op for the active batch.
-                 if (log.isDebugEnabled()) log.debug("skip scanning {}, already in queue", key);
--                com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion =
-+                previewScanEvent(what, scanResolved && !scanHadDbError ? "complete" : "failed");
-+            com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion =
-                         com.archos.mediascraper.AutoScrapeService.completeNetworkScan(batchId, false, false);
-                 com.archos.mediascraper.AutoScrapeService.handleNetworkScanCompletion(this, completion);
-             }
-@@ -633,6 +634,20 @@
+@@ -633,6 +633,20 @@
      }
      private static int mFoundFiles = 0;
      private static final String IN_FOLDER_SELECT = MediaColumns.DATA + " LIKE ?||'%'";
@@ -43,7 +33,7 @@
      private static final String SELECT_ID = BaseColumns._ID + "=?";
      /** scans files into our db */
      void doScan(Uri what, long batchId) {
-@@ -640,6 +655,8 @@
+@@ -640,6 +654,8 @@
          long start = log.isDebugEnabled() ? System.currentTimeMillis() : 0;
          boolean scanResolved = false;
          boolean scanHadDbError = false;
@@ -52,6 +42,14 @@
          try {
              ScanResult result = performScan(what);
              scanResolved = result.resolved;
+@@ -651,6 +667,7 @@
+             // strand the batch and never start post-scan scraping). The error and success
+             // state are aggregated across the whole batch under a single lock, so the decision
+             // no longer depends on whichever thread happens to finish last.
++            previewScanEvent(what, scanResolved && !scanHadDbError ? "complete" : "failed");
+             com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion =
+                     com.archos.mediascraper.AutoScrapeService.completeNetworkScan(batchId, scanHadDbError, scanResolved);
+             if (log.isDebugEnabled()) {
 @@ -786,6 +803,8 @@
                  int insertCount = bulkHandler.getInsertHandled();
                  int updateCount = bulkHandler.getUpdatesHandled();
