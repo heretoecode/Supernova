@@ -14,7 +14,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMatchSearchTest {
     @Test public void appendingResultsPreservesFocusAndSelectionRequiresReviewClick(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();
@@ -24,9 +24,10 @@ public class PreviewMatchSearchTest {
         assertTrue(page.findViewWithTag("semantic:keyboard:T").hasFocus());
         MovieTags first=movie("Example",2024),second=movie("Example sequel",2025);
         page.setResults(Collections.singletonList(first));PreviewPagesTest.layout(page);
-        View result=page.findViewWithTag("semantic:match.result:0");result.requestFocus();
+        View result=page.findViewWithTag("semantic:match.result:0");assertTrue("Result has visible width",result.getWidth()>0);assertTrue("Result accepts focus before append",result.requestFocus());
         page.setResults(Arrays.asList(first,second));PreviewPagesTest.layout(page);
-        assertSame(result,page.findViewWithTag("semantic:match.result:0"));assertTrue(result.hasFocus());assertNull(chosen.get());
+        assertSame("Appending keeps the existing row",result,page.findViewWithTag("semantic:match.result:0"));
+        assertTrue("Appending preserves result focus",result.hasFocus());assertNull(chosen.get());
         result.performClick();assertSame(first,chosen.get());
         page.setResults(Collections.emptyList());assertTrue(page.findViewWithTag("semantic:keyboard:T").hasFocus());
     }

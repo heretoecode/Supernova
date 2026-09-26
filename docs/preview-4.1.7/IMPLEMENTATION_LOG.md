@@ -492,6 +492,14 @@ Movie and series correction now share a Preview Find a Match presentation with t
 
 Added identifier, result-focus, debounce, detach and retained-fragment lifecycle regressions. Local XML/source safeguards and four identity-audit tests pass; this checkpoint's Java compilation/new tests await CI. Metadata correction remains PARTIAL: parent-series episode correction/escape, full database preservation audit and runtime evidence remain outstanding. No metadata is deliberately removed before correction. This is not final conformance approval.
 
+## Checkpoint 21 — metadata state preservation and membership child workflow
+
+Checkpoint 20 compiled and passed its targeted suite in run 36250172546. The full suite ran 246 tests with one failure in matching-result focus preservation. The fixture now declares the intended TV display density/size and asserts visible width and successful initial focus separately; this still requires a CI rerun, not a presumed pass. The real retained-fragment lifecycle regression passed.
+
+Series correction now transfers explicit Home/Watch Next membership to the corrected series ID without changing row order, visibility or unrelated members. Continue Watching dismissal is retained. A failed episode batch no longer reports a successful correction or proceeds to Trakt/row remapping. Added real-schema/provider tests for retaining two physical files, their identifiers, bookmarks and last-played values through movie and series correction. These tests do not yet verify every artwork-selection or cross-type correction case.
+
+Add to Row now displays plain white plus/check state, retains its menu during toggles, and returns from Create New Row with the new membership selected and focused. The shared text-entry dialog dismisses before invoking its accepted action so a replacement menu cannot capture a disappearing keyboard as its parent. Customise Home uses the shared dialog lifetime. Added an integrated create/toggle regression and membership reconciliation coverage. Local XML/source safeguards pass; new tests await CI. Main and signing configuration remain unchanged.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

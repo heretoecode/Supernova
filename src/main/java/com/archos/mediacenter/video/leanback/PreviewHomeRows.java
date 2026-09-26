@@ -24,27 +24,44 @@ public final class PreviewHomeRows {
   PreviewHomeRows model = new PreviewHomeRows(c);
   model.membership(entry, changed);
  }
+ /** Series correction keeps explicit Home memberships attached to the corrected local series. */
+ public static void reconcileShowIdentity(Context context,long previous,long replacement){
+  if(previous<=0||replacement<=0||previous==replacement)return;
+  PreviewHomeRows model=new PreviewHomeRows(context);String oldKey="s"+previous,newKey="s"+replacement;boolean changed=false;
+  for(Row row:model.rows)if(row.members.contains(oldKey)){
+   Set<String> updated=new LinkedHashSet<>();for(String key:row.members)updated.add(key.equals(oldKey)?newKey:key);
+   row.members.clear();row.members.addAll(updated);changed=true;
+  }
+  if(changed)model.save();
+  String oldDismiss="preview_cw_dismiss:"+oldKey,newDismiss="preview_cw_dismiss:"+newKey;
+  if(model.prefs.contains(oldDismiss))model.prefs.edit().putLong(newDismiss,Math.max(model.prefs.getLong(oldDismiss,0),model.prefs.getLong(newDismiss,0))).apply();
+ }
  private void membership(Entry entry, Runnable changed) {
+  membership(entry,changed,null);
+ }
+ private void membership(Entry entry,Runnable changed,String focusRow) {
   List<Row> choices = new ArrayList<>();
   for (Row row : rows) if (row.custom() && !row.dynamic || row.id.equals("watchnext")) choices.add(row);
   List<String> labels = new ArrayList<>(); Set<Integer> checks = new HashSet<>();
   for (Row row : choices) { if (row.members.contains(entry.key())) checks.add(labels.size()); labels.add(row.name); }
-  labels.add("Create new row…");
+  labels.add("Create New Row…");int selected=-1;
+  if(focusRow!=null)for(int i=0;i<choices.size();i++)if(choices.get(i).id.equals(focusRow))selected=i;
   Dialog[] menu = {null};
-  menu[0] = PreviewDialog.choose(context,"Add to Row",labels.toArray(new String[0]),-1,checks,false,n -> {
+  menu[0] = PreviewDialog.choose(context,"Add to Row",labels.toArray(new String[0]),selected,checks,false,n -> {
    if (n == choices.size()) {
     name("Create new row","",value -> {
      Row row = new Row("custom:" + UUID.randomUUID(), value);
      row.members.add(entry.key()); rows.add(row); save(); changed.run();
-     menu[0].dismiss(); membership(entry,changed);
+     menu[0].dismiss(); membership(entry,changed,row.id);
     });
    } else {
     Row row = choices.get(n);
     if (!row.members.add(entry.key())) row.members.remove(entry.key());
     if (row.members.contains(entry.key())) checks.add(n); else checks.remove(n);
-    save(); PreviewDialog.updateChecks(menu[0],checks); changed.run();
+    save(); PreviewDialog.updateMembership(menu[0],checks,choices.size()); changed.run();
    }
   });
+  PreviewDialog.updateMembership(menu[0],checks,choices.size());
  }
  private void name(String title,String previous,java.util.function.Consumer<String> accept){PreviewTextInput.show(context,title,previous,40,accept);}
 
@@ -60,7 +77,7 @@ public final class PreviewHomeRows {
    PreviewDialog.choose(c,"Move row to",positions,model.rows.indexOf(row),position->{model.rows.remove(row);model.rows.add(Math.min(position,model.rows.size()),row);model.save();changed.run();});
   });
  }
- private void editor(Runnable changed){Dialog dialog=new Dialog(context);LinearLayout screen=new LinearLayout(context);screen.setOrientation(LinearLayout.VERTICAL);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);screen.setPadding(dp(16),dp(12),dp(16),dp(12));screen.setBackground(PreviewDialog.surface(context,false));TextView heading=label("Customise Home",21);screen.addView(heading);TextView help=label("Select to edit · Up/Down to reorder",13);help.setPadding(0,dp(8),0,dp(16));screen.addView(help);ScrollView scroll=new ScrollView(context);LinearLayout list=new LinearLayout(context);list.setOrientation(LinearLayout.VERTICAL);scroll.addView(list);screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));final String[] moving={null};final Runnable[] render={null};render[0]=()->{list.removeAllViews();for(Row row:rows){LinearLayout line=new LinearLayout(context);TextView move=control((row.id.equals(moving[0])?"↕  ":"")+row.name,()->{moving[0]=row.id.equals(moving[0])?null:row.id;save();render[0].run();View target=list.findViewWithTag(row.id);if(target!=null)target.requestFocus();});move.setTag(row.id);move.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN||!row.id.equals(moving[0])||key!=KeyEvent.KEYCODE_DPAD_UP&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;int index=rows.indexOf(row),next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<rows.size()){Collections.swap(rows,index,next);save();render[0].run();list.findViewWithTag(row.id).requestFocus();}return true;});line.addView(move,new LinearLayout.LayoutParams(0,dp(36),1));TextView visible=control(row.visible?"Shown":"Hidden",()->{row.visible=!row.visible;save();TextView control=list.findViewWithTag(row.id+":visibility");if(control!=null)control.setText(row.visible?"Shown":"Hidden");});visible.setTag(row.id+":visibility");line.addView(visible,new LinearLayout.LayoutParams(dp(95),dp(36)));if(row.custom()){TextView more=control("More",()->PreviewDialog.choose(context,row.name,new String[]{"Rename","Genre rule & contents","Delete row"},-1,n->{if(n==0)name("Rename row",row.name,value->{row.name=value;save();render[0].run();});else if(n==1)rule(row,()->{save();render[0].run();});else PreviewDialog.confirmDelete(context,"Delete row?","Titles remain in your library. Only this Home row is removed.",()->{rows.remove(row);save();render[0].run();});}));line.addView(more,new LinearLayout.LayoutParams(dp(82),dp(36)));}LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(3);list.addView(line,lp);}list.addView(control("Create new row…",()->name("Create new row","",name->{Row row=new Row("custom:"+UUID.randomUUID(),name);row.dynamic=true;rows.add(row);save();rule(row,()->{save();render[0].run();});render[0].run();})),new LinearLayout.LayoutParams(-1,dp(36)));};render[0].run();dialog.setContentView(screen);dialog.setOnDismissListener(d->changed.run());dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setDimAmount(.4f);dialog.getWindow().setLayout(Math.min(dp(430),context.getResources().getDisplayMetrics().widthPixels-dp(60)),Math.min(dp(Math.min(350,100+39*(rows.size()+1))),context.getResources().getDisplayMetrics().heightPixels-dp(100)));if(!rows.isEmpty())list.findViewWithTag(rows.get(0).id).requestFocus();}
+ private void editor(Runnable changed){Dialog dialog=PreviewDialog.create(context);LinearLayout screen=new LinearLayout(context);screen.setOrientation(LinearLayout.VERTICAL);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);screen.setPadding(dp(16),dp(12),dp(16),dp(12));screen.setBackground(PreviewDialog.surface(context,false));TextView heading=label("Customise Home",21);screen.addView(heading);TextView help=label("Select to edit · Up/Down to reorder",13);help.setPadding(0,dp(8),0,dp(16));screen.addView(help);ScrollView scroll=new ScrollView(context);LinearLayout list=new LinearLayout(context);list.setOrientation(LinearLayout.VERTICAL);scroll.addView(list);screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));final String[] moving={null};final Runnable[] render={null};render[0]=()->{list.removeAllViews();for(Row row:rows){LinearLayout line=new LinearLayout(context);TextView move=control((row.id.equals(moving[0])?"↕  ":"")+row.name,()->{moving[0]=row.id.equals(moving[0])?null:row.id;save();render[0].run();View target=list.findViewWithTag(row.id);if(target!=null)target.requestFocus();});move.setTag(row.id);move.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN||!row.id.equals(moving[0])||key!=KeyEvent.KEYCODE_DPAD_UP&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;int index=rows.indexOf(row),next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<rows.size()){Collections.swap(rows,index,next);save();render[0].run();list.findViewWithTag(row.id).requestFocus();}return true;});line.addView(move,new LinearLayout.LayoutParams(0,dp(36),1));TextView visible=control(row.visible?"Shown":"Hidden",()->{row.visible=!row.visible;save();TextView control=list.findViewWithTag(row.id+":visibility");if(control!=null)control.setText(row.visible?"Shown":"Hidden");});visible.setTag(row.id+":visibility");line.addView(visible,new LinearLayout.LayoutParams(dp(95),dp(36)));if(row.custom()){TextView more=control("More",()->PreviewDialog.choose(context,row.name,new String[]{"Rename","Genre rule & contents","Delete row"},-1,n->{if(n==0)name("Rename row",row.name,value->{row.name=value;save();render[0].run();});else if(n==1)rule(row,()->{save();render[0].run();});else PreviewDialog.confirmDelete(context,"Delete row?","Titles remain in your library. Only this Home row is removed.",()->{rows.remove(row);save();render[0].run();});}));line.addView(more,new LinearLayout.LayoutParams(dp(82),dp(36)));}LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(3);list.addView(line,lp);}list.addView(control("Create new row…",()->name("Create new row","",name->{Row row=new Row("custom:"+UUID.randomUUID(),name);row.dynamic=true;rows.add(row);save();rule(row,()->{save();render[0].run();});render[0].run();})),new LinearLayout.LayoutParams(-1,dp(36)));};render[0].run();dialog.setContentView(screen);dialog.setOnDismissListener(d->changed.run());dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setDimAmount(.4f);dialog.getWindow().setLayout(Math.min(dp(430),context.getResources().getDisplayMetrics().widthPixels-dp(60)),Math.min(dp(Math.min(350,100+39*(rows.size()+1))),context.getResources().getDisplayMetrics().heightPixels-dp(100)));if(!rows.isEmpty())list.findViewWithTag(rows.get(0).id).requestFocus();}
  private void rule(Row row,Runnable changed) {
   Dialog[] menu={null};
   java.util.function.IntFunction<String> label = n -> new String[]{

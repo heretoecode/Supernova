@@ -92,6 +92,17 @@ public final class PreviewDialog {
  }
  private static View anchor(Context c){Dialog parent=top(c);if(parent!=null&&parent.getCurrentFocus()!=null)return parent.getCurrentFocus();Context owner=owner(c);return owner instanceof android.app.Activity?((android.app.Activity)owner).getCurrentFocus():null;}
  public static android.graphics.drawable.Drawable menuSurface(Context c){return surface(c,false);}
+ /** Membership states use a plain white plus/check rather than a second generic row icon. */
+ public static void updateMembership(Dialog dialog,java.util.Set<Integer> checked,int count){
+  if(dialog==null||dialog.getWindow()==null)return;View root=dialog.getWindow().getDecorView();
+  for(int i=0;i<count;i++){
+   ImageView mark=root.findViewWithTag("preview-check:"+i);if(mark==null)continue;
+   android.view.ViewGroup row=(android.view.ViewGroup)mark.getParent();
+   if(row.getChildCount()>0&&row.getChildAt(0) instanceof ImageView)row.getChildAt(0).setVisibility(View.GONE);
+   mark.setImageDrawable(new PreviewIcon(checked.contains(i)?"check":"plus"));mark.setColorFilter(Color.WHITE);mark.setVisibility(View.VISIBLE);
+   TextView label=root.findViewWithTag("preview-label:"+i);row.setContentDescription(label.getText()+(checked.contains(i)?", selected":", not selected"));
+  }
+ }
  public static void updateChecks(Dialog dialog,java.util.Set<Integer> checked){if(dialog==null||dialog.getWindow()==null)return;updateChecks(dialog.getWindow().getDecorView(),checked);}
  private static void updateChecks(View view,java.util.Set<Integer> checked){Object tag=view.getTag();if(tag instanceof String&&((String)tag).startsWith("preview-check:")){int index=Integer.parseInt(((String)tag).substring(14));view.setVisibility(checked.contains(index)?View.VISIBLE:View.INVISIBLE);View parent=(View)view.getParent();CharSequence description=parent.getContentDescription();if(description!=null)parent.setContentDescription(description.toString().replace(", selected","")+(checked.contains(index)?", selected":""));}if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)updateChecks(((ViewGroup)view).getChildAt(i),checked);}
  public static void updateLabel(Dialog dialog,int index,String label){

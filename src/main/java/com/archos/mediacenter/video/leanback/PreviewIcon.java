@@ -23,6 +23,7 @@ public final class PreviewIcon extends Drawable {
   else if(kind.contains("remove")&&kind.contains("library")){line(c,3,3,3,21,18,21);line(c,8,3,8,16);line(c,13,3,13,16);line(c,16,10,23,10);}
   else if(kind.contains("add to row")){line(c,3,5,16,5);line(c,3,11,13,11);line(c,3,17,11,17);line(c,18,13,18,23);line(c,13,18,23,18);}
   else if(kind.contains("synopsis")){line(c,5,2,19,2,19,22,5,22,5,2);for(int y=7;y<=17;y+=5)line(c,8,y,16,y);}
+  else if(kind.equals("plus")){line(c,5,12,19,12);line(c,12,5,12,19);}
   else if(kind.contains("check")){line(c,5,12,10,17,20,6);}
   else if(kind.contains("clear")||kind.contains("close")||kind.contains("remove")||kind.contains("delete")){line(c,6,6,18,18);line(c,18,6,6,18);}
   else if(kind.contains("home")||kind.contains("discovery")){line(c,2,11,12,3,22,11);line(c,5,10,5,21,10,21,10,15,14,15,14,21,19,21,19,10);}

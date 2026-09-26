@@ -371,6 +371,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
 
             // Update all episodes
             final long newShowId = newShow.save(mContext, 0); // second argument is not used in case of ShowTags
+            if(newShowId<=0)return null;
             newShow.setId(newShowId);
             int size = targetEpisodesList.size();
             int i = 1;
@@ -411,10 +412,13 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
                     mContext.getContentResolver().applyBatch(ScraperStore.AUTHORITY, opList);
                 } catch (RemoteException e) {
                     log.error("handleSave failed", e);
+                    return null;
                 } catch (OperationApplicationException e) {
                     log.error("handleSave failed", e);
+                    return null;
                 }
             }
+            com.archos.mediacenter.video.leanback.PreviewHomeRows.reconcileShowIdentity(mContext,mShowId,newShowId);
             TraktService.onNewVideo(mContext);
             log.info("saving in the end:" + t.step() + " thats:" + t.total());
             return newShow;
