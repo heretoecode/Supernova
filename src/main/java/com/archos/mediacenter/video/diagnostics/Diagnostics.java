@@ -183,10 +183,8 @@ public final class Diagnostics {
             String id=PROCESS.substring(0,8)+"-"+SEQUENCE.incrementAndGet();
             long time=System.currentTimeMillis();
             event("manual_problem_marker","category",categories[n],"marker_id",id,"reported_at",time);
-            java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'",Locale.UK);format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            String confirmation="Reference: "+id+"\nCategory: "+categories[n]+"\nTime: "+format.format(new Date(time));
             c.getSharedPreferences("supernova_diagnostic_session",Context.MODE_PRIVATE).edit().putString("latest_manual_reference",id).putString("latest_manual_category",categories[n]).putLong("latest_manual_time",time).apply();
-            com.archos.mediacenter.video.leanback.PreviewDialog.read(c,"Problem recorded",confirmation+"\n\nUse this reference with your screenshot or video. Export Diagnostic Report to preserve the evidence.");
+            showReference(c,"Problem recorded",id,categories[n],time);
         });
     }
     public static void showDigest(Context c){WORK.execute(()->{String digest=summary();new android.os.Handler(android.os.Looper.getMainLooper()).post(()->{if(c instanceof Activity&&(((Activity)c).isFinishing()||((Activity)c).isDestroyed()))return;com.archos.mediacenter.video.leanback.PreviewDialog.read(c,"Issues Digest",digest);});});}
@@ -194,8 +192,18 @@ public final class Diagnostics {
         SharedPreferences saved=c.getSharedPreferences("supernova_diagnostic_session",Context.MODE_PRIVATE);
         String id=saved.getString("latest_manual_reference","");
         if(id.isEmpty()){com.archos.mediacenter.video.leanback.PreviewDialog.read(c,"Latest Reference","No problem has been recorded yet.");return;}
-        java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'",Locale.UK);format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        com.archos.mediacenter.video.leanback.PreviewDialog.read(c,"Latest Reference","Reference: "+id+"\nCategory: "+saved.getString("latest_manual_category","")+"\nTime: "+format.format(new Date(saved.getLong("latest_manual_time",0))));
+        showReference(c,"Latest Reference",id,saved.getString("latest_manual_category",""),saved.getLong("latest_manual_time",0));
+    }
+    private static void showReference(Context c,String title,String id,String category,long time){
+        try{DiagnosticReference.payload(id,category,time);}catch(IllegalArgumentException invalid){
+            com.archos.mediacenter.video.leanback.PreviewDialog.read(c,title,"The saved reference is unavailable. Record a new problem to create a reference.");return;
+        }
+        java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS 'UTC'",Locale.UK);format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String confirmation="Reference: "+id+"\nCategory: "+category+"\nTime: "+format.format(new Date(time))
+                +"\n\nUse this reference with your screenshot or video. Export Diagnostic Report to preserve the evidence.";
+        android.graphics.Bitmap qr=null;
+        try{qr=DiagnosticReference.bitmap(id,category,time,512);}catch(com.google.zxing.WriterException|RuntimeException failure){confirmation+="\nQR unavailable; the readable reference remains valid.";}
+        com.archos.mediacenter.video.leanback.PreviewDialog.read(c,title,confirmation,qr);
     }
     public static void error(String event,Throwable error){event(event,"trace",trace(error));}
     /** Stack locations are useful; exception messages may contain secrets and are NEVER retained. */

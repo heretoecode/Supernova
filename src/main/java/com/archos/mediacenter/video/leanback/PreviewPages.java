@@ -150,11 +150,28 @@ public final class PreviewPages extends FrameLayout {
     public void setArtworkListener(java.util.function.Consumer<android.net.Uri> listener){artwork=listener;updateArtwork();}
     public void setDiscovery(PreviewDiscovery value){requestedDiscovery=true;discovery=value;render();}
     private boolean requestedDiscovery;
+    private final Runnable providerRefresh=()->{if(isAttachedToWindow()&&(tab==1||tab==2)&&!providers[tab].isEmpty()){
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("library_filter_refresh","reason","provider_cache_changed","tab",tab);
+        render(); // Diff the existing snapshot; never re-query the media library here.
+    }};
+    static boolean providerCacheAffectsPage(String key,int tab,String country,boolean filtered){
+        return filtered&&key!=null&&(tab==1||tab==2)
+                &&key.startsWith("streaming_known_at:"+(tab==1?"movie:":"tv:"))&&key.endsWith(":"+country+":-1");
+    }
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener providerSettings=(prefs,key)->{
+        if(key==null)return;
+        boolean scope=key.equals("streaming_country")||key.equals("streaming_enabled");
+        if(scope)PreviewEnrichmentQueue.library(getContext(),snapshot,tab);
+        if(scope||key.startsWith("streaming_providers_")||providerCacheAffectsPage(key,tab,
+                com.archos.mediacenter.video.streaming.StreamingRepository.country(getContext()),tab>0&&tab<3&&!providers[tab].isEmpty())){
+            removeCallbacks(providerRefresh);postDelayed(providerRefresh,500);
+        }
+    };
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener homeSettings=(prefs,key)->{if(key!=null&&(key.startsWith("preview_featured_")||key.equals("preview_home_rows41")||key.equals("preview_accent41")||key.equals("hide_watched")||key.equals("sort_ignore_articles")))post(()->{if(isAttachedToWindow()){if(key.equals("hide_watched")||key.equals("sort_ignore_articles"))quietOrder.clear();render();}});};
-    @Override protected void onAttachedToWindow(){super.onAttachedToWindow();preferences.registerOnSharedPreferenceChangeListener(homeSettings);requestDiscovery();lastInteraction=android.os.SystemClock.elapsedRealtime();postDelayed(rotateFeatured,30000);}
+    @Override protected void onAttachedToWindow(){super.onAttachedToWindow();preferences.registerOnSharedPreferenceChangeListener(homeSettings);preferences.registerOnSharedPreferenceChangeListener(providerSettings);requestDiscovery();lastInteraction=android.os.SystemClock.elapsedRealtime();postDelayed(rotateFeatured,30000);}
     private void requestDiscovery(){if(requestedDiscovery||!isAttachedToWindow()||snapshot.movies.isEmpty()&&snapshot.shows.isEmpty())return;requestedDiscovery=true;
         worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{try{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});}finally{worker.shutdown();}});}
-    @Override protected void onDetachedFromWindow(){removeCallbacks(rotateFeatured);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);super.onDetachedFromWindow();}
+    @Override protected void onDetachedFromWindow(){removeCallbacks(rotateFeatured);removeCallbacks(providerRefresh);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);preferences.unregisterOnSharedPreferenceChangeListener(providerSettings);super.onDetachedFromWindow();}
     private Entry featured(){List<Entry> entries=tab==1?snapshot.movies:tab==2?snapshot.shows:featuredCandidates();return entries.isEmpty()?null:entries.get(Math.floorMod(featuredIndex,entries.size()));}
     private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==3||entry==null?null:entry.backdrop);}
     public static String displayName(Entry e){return e.media instanceof Episode?((Episode)e.media).getShowName():e.media.getName();}

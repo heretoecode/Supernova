@@ -204,6 +204,32 @@ awaits CI. Later WebDAV/regression steps were skipped after the suite failure.
 Local XML/source/whitespace checks pass. Latest diagnostic changes await Android
 compilation/tests. No Preview 4.1.7 APK or physical/runtime validation is claimed.
 
+## Checkpoint 9 — safe reference QR and live provider filtering
+
+Checkpoint 8 local 7b3bf24c / remote e8176a9c have identical source tree
+79b512ac3d15f17af619173853b06c34d1d1fd1b. CI run 36241111976 succeeded:
+compilation, 71 targeted tests, the full 198-test Video suite, 76 regression-step
+tests and 17 FileCore WebDAV tests. Step counts overlap. Merged identity audit
+also passed. This validates checkpoint 8, not subsequent changes.
+https://github.com/heretoecode/Supernova/actions/runs/36241111976
+
+- Manual-report confirmation and Show Latest Reference now display an offline QR
+  beside the readable reference/category/millisecond UTC timestamp. Payload
+  construction accepts only the generated reference format, four fixed categories
+  and a positive timestamp: no URL, credentials, arbitrary text or report payload.
+  Uses pinned ZXing core 3.5.3; encoder contract checked against upstream source:
+  https://github.com/zxing/zxing/blob/zxing-3.5.3/core/src/main/java/com/google/zxing/qrcode/QRCodeWriter.java
+  Three tests cover QR encode/decode round-trip and rejection of unsafe fields.
+- Provider cache updates now trigger a debounced DiffUtil refresh only for active
+  Movies/TV provider-filtered pages with the matching country/title scope. No
+  media-library requery and no unfiltered-page rebuild. Country/enabled state is
+  included in enrichment identity, so changes cannot be blocked by completion of
+  an earlier country's package. Two policy tests added; live-service/Shield
+  integration remains unverified.
+
+New source and tests await CI. XML/source/whitespace safeguards pass. Remaining
+workstreams and final conformance reviews are still in progress; no APK yet.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

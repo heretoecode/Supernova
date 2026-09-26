@@ -32,7 +32,7 @@ GLOBAL FOCUS DEFECT: when Home in top nav is focused, LEFT must be consumed and 
 
 Status: **IMPLEMENTED**
 
-Code mapping / verification: TopNavigation central edge consumption. Navigation CI tests are being corrected/rechecked; physical D-pad QA remains pending.
+Code mapping / verification: TopNavigation central edge consumption. Navigation CI tests passed through run 36241111976; physical D-pad QA remains pending.
 
 ### UI-004 — 1. Global visual language and top navigation
 
@@ -807,7 +807,7 @@ Improve multi-day retention. Separate verbose rolling stream from protected impo
 
 Status: **AWAITING PHYSICAL QA**
 
-Code mapping / verification: Diagnostics IMPORTANT executor and daily protected stream separate routine pressure; seven-day retention. DiagnosticArchiveTest passed in run 36238345377. Long-running Shield pressure/retention validation remains pending.
+Code mapping / verification: Diagnostics IMPORTANT executor and daily protected stream separate routine pressure; seven-day age retention with daily size caps. Manual and automatic incident windows now have separate protected daily streams. Archive tests passed through run 36241111976. Long-running Shield pressure/retention validation remains pending.
 
 ### DIA-005 — Required diagnostic/reporting improvements
 
@@ -907,7 +907,7 @@ Export should include a machine-readable and human-readable summary: session dur
 
 Status: **PENDING IMPLEMENTATION REVIEW**
 
-Code mapping / verification: DiagnosticArchive indexes manual/incident events and deduplicates retained playback streams. Three archive tests passed in run 36238345377. Full summary field conformance remains under review.
+Code mapping / verification: DiagnosticArchive indexes manual/incident events, event counts, retained process spans, launches/exit markers, per-process maximum drop counters and timestamp/sequence/operation evidence. Six archive tests passed in run 36241111976. Retained spans are explicitly not complete session lifetimes. Full summary field conformance remains under review.
 
 ### DIA-015 — Required diagnostic/reporting improvements
 

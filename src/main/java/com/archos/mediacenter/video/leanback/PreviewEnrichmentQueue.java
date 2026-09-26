@@ -20,19 +20,21 @@ public final class PreviewEnrichmentQueue {
     private static Store store(Context context){if(store==null)store=new Store(context.getApplicationContext());return store;}
     public static void enqueue(Context c,String kind,long id,int priority) {
         if(id<=0||!(kind.equals("movie")||kind.equals("tv")))return;Context app=c.getApplicationContext();
-        WORK.execute(()->{offer(store(app).getWritableDatabase(),kind,id,priority);start(app);});
+        WORK.execute(()->{offer(store(app).getWritableDatabase(),kind,id,priority,scope(app));start(app);});
     }
     public static void library(Context c,PreviewLibraryLoader.Snapshot snapshot,int tab) {
         Context app=c.getApplicationContext();
         WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();db.beginTransaction();try{
-            for(PreviewLibraryLoader.Entry entry:snapshot.movies)offer(db,"movie",entry.onlineId,tab==1?CURRENT_PAGE:BACKGROUND);
-            for(PreviewLibraryLoader.Entry entry:snapshot.shows)offer(db,"tv",entry.onlineId,tab==2?CURRENT_PAGE:BACKGROUND);
-            for(int i=0;i<Math.min(30,snapshot.recent.size());i++){PreviewLibraryLoader.Entry entry=snapshot.recent.get(i);offer(db,entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv",entry.onlineId,HOME);}
+            String scope=scope(app);
+            for(PreviewLibraryLoader.Entry entry:snapshot.movies)offer(db,"movie",entry.onlineId,tab==1?CURRENT_PAGE:BACKGROUND,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.shows)offer(db,"tv",entry.onlineId,tab==2?CURRENT_PAGE:BACKGROUND,scope);
+            for(int i=0;i<Math.min(30,snapshot.recent.size());i++){PreviewLibraryLoader.Entry entry=snapshot.recent.get(i);offer(db,entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv",entry.onlineId,HOME,scope);}
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}start(app);});
     }
-    private static void offer(SQLiteDatabase db,String kind,long id,int priority) {
-        if(id<=0)return;String key=kind+":"+id+":"+Locale.getDefault().toLanguageTag();long now=System.currentTimeMillis();
+    private static String scope(Context app){return Locale.getDefault().toLanguageTag()+":"+StreamingRepository.country(app)+":"+StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false);}
+    private static void offer(SQLiteDatabase db,String kind,long id,int priority,String scope) {
+        if(id<=0)return;String key=kind+":"+id+":"+scope;long now=System.currentTimeMillis();
         db.execSQL("INSERT OR IGNORE INTO jobs(identity,kind,media,priority,stage,next_at,completed_at) VALUES(?,?,?,?,0,0,0)",new Object[]{key,kind,id,priority});
         db.execSQL("UPDATE jobs SET priority=MIN(priority,?),stage=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE stage END,season_cursor=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE season_cursor END,next_at=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE next_at END WHERE identity=?",new Object[]{priority,now-STALE,now-STALE,now-STALE,key});
     }

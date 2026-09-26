@@ -367,6 +367,8 @@ androidComponents {
 }
 
 dependencies {
+    // Offline encoding of strictly allow-listed diagnostic references; no camera/network API.
+    implementation 'com.google.zxing:core:3.5.3'
     implementation project(':FileCoreLibrary')
     implementation project(':MediaLib')
     // Reuse MediaLib's existing TMDb client for progressive person portraits.
