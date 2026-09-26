@@ -122,6 +122,28 @@ assertions; none are removed or disabled.
   joystick and touch paths are retained. Six policy tests added. Decoder callback,
   pause/resume and physical Shield behaviour still require validation.
 
+## Checkpoint 6 — API reader, Home row actions and broader regression validation
+
+Checkpoint 5 local 59a21e4d / remote ae4eea8d have identical tree
+8ff3f7044c08e4e643ebf069bf0358df31a92609. Run 36239715389 compiled and passed
+all 55 targeted tests, including navigation, Details categories/panels and seek
+policy. Its wider regression step ran 76 tests: 74 passed; two old expectations
+failed (clearing displayed artwork on failure; old Add to Watch Next label).
+These expectations are updated to the approved retention/keep-open membership
+behaviour, retaining library-state assertions. WebDAV tests did not run because
+the earlier test step failed. No emulator, APK or physical Shield validation yet.
+
+- put.io read-only adapter and recursive cursor reader use provider-maintained
+  API contracts, fixed HTTPS host, header authorisation, no redirects, bounded
+  responses and sanitised errors. Added seven reader/parser safety tests.
+  No live token/account access; native integration remains incomplete.
+- Home leftmost-row LEFT exposes only Move/Hide; moving and hiding keep row
+  membership and playback history intact.
+- Shared file options expose Movies/TV classification when the native folder
+  capability offers indexing, and independent Saved Locations. Existing native
+  local/network handlers remain responsible for indexing. Network indexing no
+  longer removes the independent saved bookmark.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

@@ -276,9 +276,18 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     private void previewOptions(){
         int[] ids={R.id.title_orb,R.id.title_orb2,R.id.title_orb3,R.id.title_orb4,R.id.title_orb5};
         int[] descriptions={R.id.orb1_description,R.id.orb2_description,R.id.orb3_description,R.id.orb4_description,R.id.orb5_description};
-        java.util.List<View> commands=new java.util.ArrayList<>();java.util.List<String> labels=new java.util.ArrayList<>();
-        for(int i=0;i<ids.length;i++){View command=getTitleView().findViewById(ids[i]);TextView label=getTitleView().findViewById(descriptions[i]);if(command!=null&&command.getVisibility()==View.VISIBLE&&label!=null&&label.length()>0){commands.add(command);labels.add(label.getText().toString().replace("Index folder","Add to Library").replace("Index Folder","Add to Library"));}}
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File Options",labels.toArray(new String[0]),-1,n->commands.get(n).performClick());
+        java.util.List<Runnable> commands=new java.util.ArrayList<>();java.util.List<String> labels=new java.util.ArrayList<>();
+        for(int i=0;i<ids.length;i++){
+            View command=getTitleView().findViewById(ids[i]);TextView label=getTitleView().findViewById(descriptions[i]);
+            if(command==null||command.getVisibility()!=View.VISIBLE||label==null||label.length()==0)continue;
+            if(mUri!=null&&label.getText().toString().equals(getString(R.string.add_to_indexed_folders))){
+                for(String kind:new String[]{"movie","tv"}){labels.add(kind.equals("movie")?"Add to Movies":"Add to TV Shows");commands.add(()->{mPrefs.edit().putString("preview_source_kind:"+mUri,kind).apply();command.performClick();});}
+            }else{labels.add(label.getText().toString().replace("Index folder","Add to Library").replace("Index Folder","Add to Library"));commands.add(command::performClick);}
+        }
+        if(mUri!=null&&com.archos.mediacenter.video.browser.ShortcutDb.STATIC.isShortcut(requireContext(),mUri.toString())<0){
+            labels.add("Add to Saved Locations");commands.add(()->com.archos.mediacenter.video.leanback.PreviewFolderActions.save(requireContext(),mUri,mUri.getLastPathSegment()==null?"Files":mUri.getLastPathSegment()));
+        }
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File Options",labels.toArray(new String[0]),-1,n->commands.get(n).run());
     }
 
     @Override

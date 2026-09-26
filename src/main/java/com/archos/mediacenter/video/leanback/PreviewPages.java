@@ -167,7 +167,7 @@ public final class PreviewPages extends FrameLayout {
     }
     private static final int HEADER=0, POSTER=1, RAIL=2, STORAGE=3, HERO=4, NOTICE=5, LIST=6, SCAN=7, CUSTOMISE=8, NETWORK_PANEL=9, NETWORK=10;
     static class Cell {
-        int type; String title; Object value; String signature=""; int viewType;
+        int type; String title; Object value; String signature="",homeRowId=""; int viewType;
         Cell(int type,String title,Object value) {this.type=type;this.title=title;this.value=value;}
     }
     public PreviewPages(Context c,Click click) {
@@ -229,6 +229,16 @@ public final class PreviewPages extends FrameLayout {
         String k="preview_library_"+tab+"_";preferences.edit().putInt(k+"sort",sorts[tab]).putString(k+"genre",genres[tab]).putInt(k+"year",years[tab]).putString(k+"years",selectedYears[tab]).putString(k+"providers",providers[tab]).putBoolean(k+"ascending",ascending[tab]).putBoolean(k+"list",listMode[tab]).apply();
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){
+        if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT){
+            View focus=findFocus(),item=focus==null?null:list.findContainingItemView(focus);
+            int position=item==null?-1:list.getChildAdapterPosition(item);
+            if(position>=0&&cells.get(position).type==RAIL&&!cells.get(position).homeRowId.isEmpty()&&item instanceof ViewGroup){
+                View child=((ViewGroup)item).getChildAt(0);
+                if(child instanceof RecyclerView){RecyclerView rail=(RecyclerView)child;View card=rail.findContainingItemView(focus);
+                    if(card!=null&&rail.getChildAdapterPosition(card)==0){PreviewHomeRows.rowControls(getContext(),cells.get(position).homeRowId,this::render);return true;}
+                }
+            }
+        }
         if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT||event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT)){
             View focused=findFocus();String tag=focused==null?"":String.valueOf(focused.getTag());if(tag.equals("hero:info")||tag.equals("hero:indicators")){changeFeatured(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);return true;}}
         if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_DOWN&&findFocus()!=null&&"hero:info".equals(findFocus().getTag())){for(int i=0;i<cells.size();i++)if(cells.get(i).type==RAIL){FocusAnchor anchor=new FocusAnchor();anchor.cell=cellKey(cells.get(i));anchor.position=i;anchors[tab]=anchor;holdFocus();restoreFocus();return true;}}
@@ -276,7 +286,7 @@ public final class PreviewPages extends FrameLayout {
             PreviewHomeRows home=new PreviewHomeRows(getContext());Set<String> continuingKeys=new HashSet<>();for(Entry e:continuing)continuingKeys.add(e.key());continuing.removeIf(home::dismissed);home.supersedeWatchNext(continuingKeys);
             for(PreviewHomeRows.Row row:home.rows){if(!row.visible)continue;List<Entry> entries=new ArrayList<>();String name=row.name;
                 switch(row.id){case "continue":entries=new ArrayList<>(continuing.subList(0,Math.min(30,continuing.size())));break;case "recent":for(Entry e:snapshot.recent)if(!continuingKeys.contains(e.key())&&entries.size()<50)entries.add(e);break;case "trending":entries=discovery.matches(snapshot,true);break;case "popular":entries=discovery.matches(snapshot,false);break;case "watched":entries=snapshot.watched;break;case "similar":Entry seed=snapshot.played.isEmpty()?null:snapshot.played.get(0);if(seed!=null){entries=PreviewDiscovery.similar(seed,snapshot);name="Because You Watched "+displayName(seed);}break;default:entries=home.members(row,snapshot);}
-                rail(name,entries);
+                int before=cells.size();rail(name,entries);if(cells.size()>before)cells.get(cells.size()-1).homeRowId=row.id;
             }
             cells.add(new Cell(CUSTOMISE,"Customise Home",null));
             if(loaded&&snapshot.movies.isEmpty()&&snapshot.shows.isEmpty()&&snapshot.recent.isEmpty()) header("Your library is empty — add media through Network & files",false);
