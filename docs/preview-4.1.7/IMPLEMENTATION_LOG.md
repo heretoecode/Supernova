@@ -534,6 +534,12 @@ Preview subtitle search now presents the shared result menu and explicit Downloa
 
 Removed raw OpenSubtitles token/API-key/signed download URL logging, including login JSON exception output that can contain response content. No credentials are changed. Added two source-safety guards and wired them into CI; both pass locally. This is a targeted correction, not a claim that every legacy logging path has been fully audited.
 
+## Checkpoint 27 — subtitle transfer staging
+
+Checkpoint 26 is verified remotely at 2ac73f006cca2db306f4e874d6480c060db62eac, with tree 26881c16f11c76423743410cb7d2794ca2d6892f identical to local 598ed56d2d4743c469c3d7568280273bd19e9c79. Run 36260242226 passed compilation, 86 targeted tests, all 255 Video tests, 79 overlapping regression tests, 17 WebDAV tests and the identity/safety checks. Settings category return and explicit subtitle review regressions now pass. This is not runtime/Shield validation.
+
+Inspection found that the inherited destination write probe could truncate an existing subtitle before the HTTP transfer succeeded. Responses are now staged in app-private cache before any destination probe/write, with connection/read timeouts, cancellation, empty/truncated-response rejection and a 32 MiB transfer bound. Existing subtitle files are no longer probed by writing a zero byte. Temporary payloads are removed on completion/failure; native destination selection is retained. Transfer/save failure logs omit URL-bearing exception messages. Four unit tests cover complete, empty/cancelled, interrupted and oversized staging; pending CI. Local XML/source checks and six Python safety/identity tests pass. Final destination write failures are not yet transactional on every remote protocol; this change does not claim that guarantee. Subtitle progress/error presentation and local chooser conformance remain outstanding.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

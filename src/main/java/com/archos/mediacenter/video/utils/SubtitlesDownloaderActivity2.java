@@ -62,6 +62,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -564,6 +566,18 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         public boolean downloadSubtitles(String subUrl, String fileUrl, String name, String language){
             if (log.isDebugEnabled()) log.debug("downloadSubtitles: starting subtitle transfer");
             if (fileUrl == null) return false;
+            // Complete the response in private temporary storage BEFORE probing or opening a
+            // destination. The legacy probe truncates files and must never precede a download.
+            File staged;
+            try {
+                staged = stageSubtitle(subUrl);
+            } catch (IOException | RuntimeException e) {
+                log.warn("downloadSubtitles: transfer staging failed ({})", e.getClass().getSimpleName());
+                displayToast(getString(R.string.dialog_subloader_fails));
+                return false;
+            }
+            try {
+            if (isCancelled) return false;
             boolean canWrite = false;
             Uri parentUri = null;
             if(UriUtils.isImplementedByFileCore(Uri.parse(fileUrl))&&!FileUtils.isSlowRemote(Uri.parse(fileUrl))){ // do not write subs on slow remote when downloading
@@ -590,6 +604,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 try {
                     if (log.isDebugEnabled()) log.debug("downloadSubtitles: test we can write to {}", sb);
                     FileEditor editor = FileEditorFactory.getFileEditorForUrl(Uri.parse(sb.toString()), SubtitlesDownloaderActivity2.this);
+                    if (!editor.exists()) {
                     OutputStream tmp = editor.getOutputStream();
                     // on the nvidia shield canWrite is reported to be false on exfat/ntfs external HDD USB storage /storage/XXX/serie but true on deeper directory levels e.g. /storage/XXX/serie/season1
                     // thus sadly to know if we can write we need to test writing on the file
@@ -600,6 +615,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                     if (!editor.exists()) {
                         if (log.isDebugEnabled()) log.debug("downloadSubtitles: file does not exist after real write test, canWrite=false");
                         canWrite = false;
+                    }
                     }
                 } catch (FileNotFoundException e) {
                     /* Fallback to subsDir */
@@ -621,43 +637,9 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             sb = null;
             OutputStream f =null;
             InputStream in = null;
-            URL url;
-            HttpURLConnection urlConnection = null;
             boolean saved=false;
             try {
-                url  = new URL(subUrl);
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: created URL, opening connection");
-                urlConnection = (HttpURLConnection) url.openConnection();
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: connection opened, getting headers");
-                // Set required OpenSubtitles headers
-                String userAgent = OpenSubtitlesApiHelper.getUserAgent();
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: userAgent={}", userAgent);
-                String apiKey = OpenSubtitlesApiHelper.getApiKey();
-                if (userAgent != null) {
-                    urlConnection.setRequestProperty("User-Agent", userAgent);
-                    if (log.isDebugEnabled()) log.debug("downloadSubtitles: set User-Agent header");
-                }
-                if (apiKey != null) {
-                    urlConnection.setRequestProperty("Api-Key", apiKey);
-                    if (log.isDebugEnabled()) log.debug("downloadSubtitles: set Api-Key header");
-                }
-                if (OpenSubtitlesApiHelper.isAuthenticated()) {
-                    String authToken = OpenSubtitlesApiHelper.getAuthToken();
-                    if (authToken != null) {
-                        urlConnection.setRequestProperty("Authorization", "Bearer " + authToken);
-                        if (log.isDebugEnabled()) log.debug("downloadSubtitles: set Authorization header");
-                    }
-                }
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: headers set, getting response code");
-                int responseCode = urlConnection.getResponseCode();
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: HTTP response code={}", responseCode);
-                if (responseCode != HttpURLConnection.HTTP_OK) {
-                    log.error("downloadSubtitles: HTTP error {} - {}", responseCode, urlConnection.getResponseMessage());
-                    throw new IOException("HTTP error code: " + responseCode);
-                }
-
-                // Only get the input stream and create the file if response was OK
-                in = urlConnection.getInputStream();
+                in = new FileInputStream(staged);
                 if (log.isDebugEnabled()) log.debug("downloadSubtitles: successfully got input stream, will now create/write subtitle file");
 
                 // We get the first matching subtitle
@@ -702,22 +684,57 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 }
                 saved=true;
             } catch (FileNotFoundException e) {
-                log.error("downloadSubtitles: caught FileNotFoundException", e);
-                displayToast(getString(R.string.dialog_subloader_fails) + ": " + e.getMessage());
+                log.warn("downloadSubtitles: destination unavailable");
+                displayToast(getString(R.string.dialog_subloader_fails));
             } catch (IOException e) {
-                log.error("downloadSubtitles: caught IOException", e);
-                displayToast(getString(R.string.dialog_subloader_fails) + ": " + e.getMessage());
+                log.warn("downloadSubtitles: destination write failed");
+                displayToast(getString(R.string.dialog_subloader_fails));
             } catch (Throwable e){ //for various service outages
-                log.error("downloadSubtitles: caught Throwable", e);
-                displayToast(getString(R.string.dialog_subloader_fails) + ": " + e.getMessage());
+                log.warn("downloadSubtitles: save failed ({})", e.getClass().getSimpleName());
+                displayToast(getString(R.string.dialog_subloader_fails));
             }finally{
                 MediaUtils.closeSilently(f);
                 MediaUtils.closeSilently(in);
                 f = null;
                 in = null;
-                if(urlConnection!=null)urlConnection.disconnect();
             }
             return saved;
+            } finally {
+                if (!staged.delete()) log.warn("downloadSubtitles: temporary staging cleanup deferred");
+            }
+        }
+
+        private File stageSubtitle(String subUrl) throws IOException {
+            HttpURLConnection connection = (HttpURLConnection) new URL(subUrl).openConnection();
+            File staged = null;
+            boolean complete = false;
+            try {
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(30000);
+                String userAgent = OpenSubtitlesApiHelper.getUserAgent();
+                String apiKey = OpenSubtitlesApiHelper.getApiKey();
+                if (userAgent != null) connection.setRequestProperty("User-Agent", userAgent);
+                if (apiKey != null) connection.setRequestProperty("Api-Key", apiKey);
+                if (OpenSubtitlesApiHelper.isAuthenticated()) {
+                    String authToken = OpenSubtitlesApiHelper.getAuthToken();
+                    if (authToken != null) connection.setRequestProperty("Authorization", "Bearer " + authToken);
+                }
+                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+                    throw new IOException("Subtitle HTTP response rejected");
+                staged = File.createTempFile("subtitle-transfer-", ".tmp", getCacheDir());
+                try (InputStream source = connection.getInputStream(); OutputStream target = new FileOutputStream(staged)) {
+                    long received = SubtitleTransfer.stage(source, target, () -> isCancelled);
+                    long expected = connection.getContentLength();
+                    if (expected >= 0 && expected != received)
+                        throw new IOException("Incomplete subtitle response");
+                }
+                complete = true;
+                return staged;
+            } finally {
+                connection.disconnect();
+                if (!complete && staged != null && !staged.delete())
+                    log.warn("downloadSubtitles: temporary staging cleanup deferred");
+            }
         }
 
         private void setInitDialog() {

@@ -370,9 +370,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Subtitles: Choose local/downloaded with clear source/active state; Download search workflow; Subtitle Settings shortcut opens full Settings→Subtitles; no toast. Sync with HUD selection.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — IN PROGRESS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewSubtitleResults provides result selection and explicit Download review; SubtitlesDownloaderActivity2 retains native search/download and only reports success after saving. PreviewSettings accepts the full Subtitles category shortcut from Details and HUD. These UI regressions passed in run 36260242226 (255 Video tests). SubtitleTransfer stages responses before destination writes (four additional tests pending CI). Local/downloaded chooser, active-state synchronisation and shared non-toast progress/error presentation remain unfinished; physical playback refresh remains AWAITING PHYSICAL QA.
 
 ### UI-038 — 7. More / contextual workflows
 
