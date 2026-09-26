@@ -219,8 +219,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     public boolean closePreviewNativeDetails(){return false;}
     private void showPreviewVersions(){
         java.util.List<Video> variants=new java.util.ArrayList<>(mVideoList);variants.sort(com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
-        String[] labels=new String[variants.size()];int selected=0;for(int i=0;i<labels.length;i++){labels[i]=com.archos.mediacenter.video.leanback.PreviewVariants.label(variants.get(i));if(variants.get(i).getId()==mVideo.getId())selected=i;}
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"Versions",labels,selected,n->{mSelectCurrentVideo=true;mVideo=variants.get(n);fullyReloadVideo(mVideo,null,false);});
+        com.archos.mediacenter.video.leanback.PreviewVersionsDialog.show(requireActivity(),variants,mVideo,video->{
+            // Switching encode keeps the already selected title's playback position.
+            video.setAutomaticResumeMs(mVideo.getResumeMs());video.setRemoteResumeMs(mVideo.getRemoteResumeMs());
+            mSelectCurrentVideo=true;mVideo=video;fullyReloadVideo(mVideo,null,false);
+        });
     }
     private void showPreviewTools(){
         com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File, subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops","File information"},-1,n->{

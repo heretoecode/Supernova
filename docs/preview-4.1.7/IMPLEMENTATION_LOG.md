@@ -305,6 +305,27 @@ Details scope includes sticky compact title, complete provider/non-local episode
 presentation and exact Hero/provider focus conformance; these are not silently
 marked complete. Final three-pass review and signed APK production remain pending.
 
+### Checkpoint 13 — Versions presentation and retained selection
+
+Checkpoint 12 was preserved remotely at 9f57d45ac07e1bce256b8e2163f374b00d4ef281
+with tree a5049985143eb7827613046cba49f5afd7181e76 matching local a1c4ba43.
+Run 36243903397 passed compilation, 79 targeted tests, the full 218-test Video
+suite, 78 regression checks and 17 FileCore WebDAV tests. Counts overlap.
+
+Versions now uses compact horizontal rows with cached resolution, known HDR,
+codec/audio/channels, size and source/location. Unknown metadata is omitted;
+opening the menu does not probe files. URI authentication/query/fragment material
+is omitted from location text. A separate white check and Current label remain
+independent of focus. Selecting a version keeps the menu open, updates Details
+through the retained handler and carries the selected title's in-memory resume
+position to the chosen encode. No toast or database migration is introduced.
+
+Two new regressions cover persistent selection/focus state and credential-free
+URI display. Local XML/source checks and four identity-audit tests pass. Android
+tests await CI for this checkpoint. Full title-history persistence/reload and
+different-duration encode playback still require further verification; UI-036 is
+partial, not complete. Artwork selection remains a separate unfinished workflow.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

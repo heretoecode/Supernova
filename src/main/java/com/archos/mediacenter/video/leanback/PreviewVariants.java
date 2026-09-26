@@ -16,6 +16,32 @@ public final class PreviewVariants {
         String resolution=w>0&&h>0?w+" × "+h:"Resolution unavailable";
         return resolution+" · "+video.getFilenameNonCryptic();
     }
+    /** Cached/indexed facts only: opening Versions never probes a network file. */
+    public static String details(android.content.Context context, Video video) {
+        List<String> facts = new ArrayList<>();
+        if (video.getMeasuredWidth() > 0 && video.getMeasuredHeight() > 0)
+            facts.add(video.getMeasuredWidth() + " × " + video.getMeasuredHeight());
+        if (video.getMetadata() != null && video.getMetadata().getVideoTrack() != null) {
+            int transfer = video.getMetadata().getVideoTrack().colorTrc;
+            if (transfer == 16) facts.add("HDR (PQ)");
+            else if (transfer == 18) facts.add("HLG");
+        }
+        String codec = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedVideoFormat());
+        String audio = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedBestAudioFormat());
+        if (!codec.isEmpty()) facts.add(codec);
+        if (!audio.isEmpty()) facts.add(audio);
+        if (video.getSize() > 0) facts.add(android.text.format.Formatter.formatShortFileSize(context, video.getSize()));
+        return video.getFilenameNonCryptic() + (facts.isEmpty() ? "" : "\n" + android.text.TextUtils.join(" · ", facts))
+                + "\n" + safeLocation(video.getFileUri());
+    }
+    /** Never render URI user-info, query credentials or fragments in the picker. */
+    static String safeLocation(android.net.Uri uri) {
+        if (uri == null) return "Location unavailable";
+        String scheme = uri.getScheme(), path = uri.getPath();
+        if (scheme == null || "file".equalsIgnoreCase(scheme)) return "Local storage · " + (path == null ? "" : path);
+        String host = uri.getHost();
+        return scheme.toUpperCase(Locale.ROOT) + " · " + (host == null ? "" : host) + (path == null ? "" : path);
+    }
     public static String logicalKey(Entry e){
         if(e.media instanceof Episode){Episode ep=(Episode)e.media;return "episode:"+e.show+":"+ep.getSeasonNumber()+":"+ep.getEpisodeNumber();}
         if(e.media instanceof Movie&&((Movie)e.media).getOnlineId()>0)return "movie:"+((Movie)e.media).getOnlineId();
