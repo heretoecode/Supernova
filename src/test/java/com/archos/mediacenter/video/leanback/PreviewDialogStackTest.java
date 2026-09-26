@@ -14,11 +14,13 @@ public class PreviewDialogStackTest {
     @Test public void childBackRestoresMoreRowThenParentBackRestoresHero() {
         org.robolectric.android.controller.ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();
         try {
-            Activity activity=host.get();Button hero=new Button(activity);hero.setText("More");hero.setFocusableInTouchMode(true);activity.setContentView(hero);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();hero.requestFocus();
+            Activity activity=host.get();Button hero=new Button(activity);hero.setText("More");hero.setFocusableInTouchMode(true);
+            Button other=new Button(activity);other.setText("Other");other.setFocusableInTouchMode(true);
+            LinearLayout controls=new LinearLayout(activity);controls.addView(hero);controls.addView(other);activity.setContentView(controls);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();hero.requestFocus();
             // ShadowActivity stubs getCurrentFocus with an explicitly supplied field.
             Shadows.shadowOf(activity).setCurrentFocus(hero);assertTrue(hero.hasFocus());
             Dialog parent=PreviewDialog.choose(activity,"More",new String[]{"Versions","Artwork"},0,java.util.Collections.emptySet(),false,n->{});
-            hero.clearFocus();assertFalse(hero.hasFocus());
+            other.requestFocus();assertFalse(hero.hasFocus());
             View opener=(View)parent.getWindow().getDecorView().findViewWithTag("preview-label:1").getParent();assertTrue(opener.requestFocus());
             Dialog child=PreviewDialog.read(activity,"Artwork","Fixture");
             child.dismiss();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertTrue(parent.isShowing());assertSame(opener,parent.getCurrentFocus());

@@ -340,9 +340,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Watched: exactly one dynamic action. Movie/episode immediate. TV series opens scope submenu Entire Series + seasons with state/progress.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — pending automated integration validation** / **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping: PreviewMoviePage resolves the current watched action and refreshes open-menu labels. PreviewWatchedScopeDialog/TvshowFragment offer Entire Series and per-season counts, using existing DbUtils writes and Trakt integration. Shared distinct episode counts prevent duplicate versions inflating progress. Five new regression tests await CI; real-device refresh and Trakt effects remain unverified.
 
 ### UI-035 — 7. More / contextual workflows
 

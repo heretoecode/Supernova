@@ -10,6 +10,14 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewMoreActionsTest {
+    @Test public void watchedCommandResolvesLatestStateWhileMenuStaysOpen(){
+        androidx.leanback.widget.ArrayObjectAdapter actions=new androidx.leanback.widget.ArrayObjectAdapter();
+        Action original=new Action(VideoActionAdapter.ACTION_MARK_AS_WATCHED,"Mark watched");actions.add(original);
+        assertSame(original,PreviewMoreActions.current(actions,original,false));
+        Action updated=new Action(VideoActionAdapter.ACTION_MARK_AS_NOT_WATCHED,"Mark unwatched");actions.clear();actions.add(updated);
+        assertSame(updated,PreviewMoreActions.current(actions,original,false));
+        actions.clear();assertNull(PreviewMoreActions.current(actions,original,false));
+    }
     @Test public void translatedLabelsCannotRestoreRemovedActions(){
         for(int id:new int[]{VideoActionAdapter.ACTION_RESUME,VideoActionAdapter.ACTION_PLAY,VideoActionAdapter.ACTION_LIST_EPISODES,VideoActionAdapter.ACTION_UNSCRAP,VideoActionAdapter.ACTION_ADD_TO_LIST})
             assertEquals(-1,PreviewMoreActions.group(new Action(id,"Libellé traduit"),false));

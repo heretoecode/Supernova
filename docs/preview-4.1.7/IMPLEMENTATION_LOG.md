@@ -451,6 +451,39 @@ after dismissal. Grid navigation was tested before layout (0×0 cards); the fixt
 now lays out the dialog before sending DPAD input. No application failure was
 established by these two assertions, and neither test has been removed or disabled.
 
+### Checkpoint 19 — Watched scope, live menu state and distinct episode counts
+
+Checkpoint 18 is preserved remotely at fa9b6d0abd123aa985d565c5ae75865b518e53c9,
+tree d4fc9ddd2b40c2c49b215ec175ebe63a396c6dea matching local 81d59525.
+Run 36248882548 compiled and passed the targeted suite; full Video ran 235 tests
+with one remaining fixture failure. Artwork tests and semantic replacement passed.
+The last fixture used clearFocus on the host's sole control, which Android
+automatically reselected. It now moves focus to a second real control before
+asserting restoration to the captured Hero opener. Assertions remain enabled.
+
+TV watched state now opens a shared Entire Series / season scope menu with real
+watched counts and explicit Mark watched/unwatched labels. Existing SeasonsLoader
+and DbUtils writes/Trakt integration are retained; query and write work is off the
+UI thread. Failed/partial operations refresh the actual library state and report
+failure without claiming success. Two scope tests cover Back, single-season and
+mixed-series choices.
+
+Open More menus now resolve watched actions against the current native adapter,
+update the visible label after state changes and stop using stale action objects.
+A regression tests watched-to-unwatched replacement. Remote Details without any
+primary action fall back to the visible section tab for focus.
+
+Found and corrected a shared SQL counting defect: watched physical encodes were
+counted against distinct episode totals, so two watched copies of one episode
+could falsely complete a two-episode season. All relevant TV/season loaders now
+use one distinct watched-episode expression (season+episode for whole shows).
+Two real SQLite aggregate regressions cover duplicate encodes and season identity.
+No watched/resume rows are rewritten by this query correction.
+
+Local safeguards pass. Compilation and the five new tests await CI. TV watched
+state, Trakt behaviour and live refresh remain AWAITING PHYSICAL QA. Full delivery
+and the three final conformance reviews are not complete.
+
 ## Dependencies and remaining implementation
 
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed

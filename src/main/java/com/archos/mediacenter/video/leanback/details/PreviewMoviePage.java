@@ -25,6 +25,8 @@ public final class PreviewMoviePage extends ScrollView {
     private final LinearLayout providerActions;
     private TextView versions;
     private Runnable chooseVersions=()->{};
+    private Dialog moreDialog;
+    private final Map<Integer,Action> moreRows=new HashMap<>();
     private ObjectAdapter observedActions;
     private final com.archos.mediacenter.video.streaming.StreamingActionPresenter providerPresenter=new com.archos.mediacenter.video.streaming.StreamingActionPresenter();
     private final List<Presenter.ViewHolder> providerHolders=new ArrayList<>();
@@ -118,7 +120,7 @@ public final class PreviewMoviePage extends ScrollView {
     private void focusNextEpisode(){Snapshot cache=snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache();if(cache!=null&&show!=null){List<Entry> values=new ArrayList<>();for(Entry e:cache.episodes)if(e.show==show.getTvshowId())values.add(e);PreviewSeriesJourney.Selection selected=PreviewSeriesJourney.select(getContext(),values);if(selected.episode!=null)for(PreviewEpisodeRow row:episodeRows)if(row.focusEpisode(((Video)selected.episode.media).getId()))return;}if(!episodeRows.isEmpty())episodeRows.get(0).focusRemembered();}
 
     public boolean atTop(){View focused=findFocus();return getScrollY()==0&&focused!=null&&inside(focused,heroPage)&&!inside(focused,tabBar);}
-    public void focusPrimary(){if(play.getVisibility()==VISIBLE)play.requestFocus();else if(trailer.getVisibility()==VISIBLE)trailer.requestFocus();else if(!providerActions.requestFocus())heroPage.requestFocus();}
+    public void focusPrimary(){if(play.getVisibility()==VISIBLE)play.requestFocus();else if(trailer.getVisibility()==VISIBLE)trailer.requestFocus();else if(!providerActions.requestFocus()&&!sectionTabs.isEmpty())sectionTabs.get(0).requestFocus();}
     public void setVersions(int count,Runnable choose){chooseVersions=choose;versions.setText("Versions ("+count+")");versionCount=count;versions.setVisibility(GONE);}
     @Override public boolean dispatchKeyEvent(KeyEvent event){
         if(event.getAction()!=KeyEvent.ACTION_DOWN)return super.dispatchKeyEvent(event);
@@ -265,6 +267,7 @@ public final class PreviewMoviePage extends ScrollView {
     private void fact(LinearLayout panel,String label,String value){if(value==null||value.trim().isEmpty())return;TextView name=text(label,12);name.setTextColor(0xffb9c7d2);name.setPadding(0,dp(16),0,dp(4));panel.addView(name);TextView content=text(value,14);content.setLineSpacing(dp(3),1);panel.addView(content);}
     private void observeActions(){ObjectAdapter next=actions.get();if(next!=observedActions){if(observedActions!=null)observedActions.unregisterObserver(actionObserver);observedActions=next;if(next!=null)next.registerObserver(actionObserver);}renderProviders();}
     private void renderProviders(){
+        refreshMoreRows();
         moreButton.setVisibility(remoteDetails==null?VISIBLE:GONE);
         View focused=providerActions.findFocus();Object focusKey=focused==null?null:focused.getTag();
         for(Presenter.ViewHolder holder:providerHolders)providerPresenter.onUnbindViewHolder(holder);providerHolders.clear();providerActions.removeAllViews();if(observedActions==null){if(focused!=null)play.requestFocus();return;}
@@ -415,7 +418,15 @@ public final class PreviewMoviePage extends ScrollView {
         LinearLayout line=null;for(int i=0;i<values.size();i++){if(i%2==0){line=new LinearLayout(getContext());parent.addView(line);}TextView badge=text(values.get(i),11);badge.setPadding(dp(7),dp(5),dp(7),dp(5));badge.setBackground(PreviewDialog.surface(getContext(),false));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);lp.setMargins(0,dp(4),dp(5),0);line.addView(badge,lp);}
     }
     private static String titleStyle(String label){StringBuilder out=new StringBuilder();for(String word:label.split(" ")){if(out.length()>0)out.append(' ');if(!word.isEmpty())out.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));}return out.toString();}
+    private void refreshMoreRows(){
+        if(moreDialog==null||!moreDialog.isShowing())return;
+        for(Map.Entry<Integer,Action> row:moreRows.entrySet()){
+            Action current=PreviewMoreActions.current(actions.get(),row.getValue(),show!=null);
+            if(current!=null)PreviewDialog.updateLabel(moreDialog,row.getKey(),titleStyle(String.valueOf(current.getLabel1())));
+        }
+    }
     private void more(){ObjectAdapter adapter=actions.get();if(adapter==null)return;
+        moreRows.clear();
         List<String> labels=new ArrayList<>();List<Runnable> commands=new ArrayList<>();Map<Integer,String> logos=new HashMap<>();
         if(versionCount>1){labels.add("Versions ("+versionCount+")");commands.add(chooseVersions);}
         String[] groups={"Playback & Navigation","Library","Streaming Services","Files & Media"};
@@ -426,12 +437,12 @@ public final class PreviewMoviePage extends ScrollView {
             }
             if(section.isEmpty()&&!(group==1&&remoteDetails==null)&&!(group==3&&(movie!=null||show!=null)))continue;
             labels.add("— "+groups[group]);commands.add(null);
-            for(Action a:section){String label=a instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction?((com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)a).provider.name:titleStyle(String.valueOf(a.getLabel1()));if(a instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)logos.put(labels.size(),((com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)a).provider.logo);labels.add(label.equals("•••")?"More Streaming Services":label);commands.add(()->action.accept(a));}
+            for(Action a:section){moreRows.put(labels.size(),a);labels.add(titleStyle(String.valueOf(a.getLabel1())));commands.add(()->{Action current=PreviewMoreActions.current(actions.get(),a,show!=null);if(current!=null)action.accept(current);refreshMoreRows();});}
             if(group==1){if(remoteDetails==null){labels.add("Add to Row");commands.add(()->PreviewHomeRows.add(getContext(),rowEntry(),()->{}));}}
             if(group==3&&movie!=null){labels.add("Subtitles and Artwork");commands.add(nativeDetails);}
             else if(group==3&&show!=null){labels.add("Artwork");commands.add(nativeDetails);}
         }
-        Dialog dialog=PreviewDialog.choose(getContext(),"Actions",labels.toArray(new String[0]),-1,Collections.emptySet(),false,n->{if(commands.get(n)!=null)commands.get(n).run();});for(Map.Entry<Integer,String> logo:logos.entrySet())com.archos.mediacenter.video.streaming.PreviewProviderIcons.bind(dialog,logo.getKey(),logo.getValue());
+        Dialog dialog=PreviewDialog.choose(getContext(),"Actions",labels.toArray(new String[0]),-1,Collections.emptySet(),false,n->{if(commands.get(n)!=null)commands.get(n).run();});moreDialog=dialog;dialog.setOnDismissListener(d->{if(moreDialog==dialog){moreDialog=null;moreRows.clear();}});
     }
     private ScraperTrailer primaryTrailer(){
         ScraperTrailer best=null;int score=0;for(ScraperTrailer t:trailerList){if(!"YouTube".equals(t.mSite)||t.mVideoKey==null||!t.mVideoKey.matches("[A-Za-z0-9_-]{11}"))continue;String name=t.mName==null?"":t.mName.toLowerCase(Locale.ROOT);if(!name.contains("trailer")||name.contains("fan")||name.contains("reaction"))continue;int rank=(name.contains("official")?4:1)+(name.contains("main")?2:0)+(name.contains("teaser")?-1:0);if(rank>score){score=rank;best=t;}}return best;

@@ -6,6 +6,17 @@ import com.archos.mediacenter.video.streaming.StreamingActionPresenter;
 
 /** Native action IDs, rather than translated labels, define the approved More groups. */
 public final class PreviewMoreActions {
+    public static boolean watched(Action action,boolean television){
+        if(action==null)return false;long id=action.getId();
+        return television?id==TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED||id==TvshowActionAdapter.ACTION_MARK_SHOW_AS_NOT_WATCHED
+                :id==VideoActionAdapter.ACTION_MARK_AS_WATCHED||id==VideoActionAdapter.ACTION_MARK_AS_NOT_WATCHED;
+    }
+    public static Action current(androidx.leanback.widget.ObjectAdapter adapter,Action previous,boolean television){
+        if(adapter==null||previous==null)return null;
+        for(int i=0;i<adapter.size();i++){Object item=adapter.get(i);if(item instanceof Action){Action candidate=(Action)item;
+            if(group(candidate,television)>=0&&(watched(previous,television)?watched(candidate,television):candidate.getId()==previous.getId()))return candidate;
+        }}return null;
+    }
     public static int group(Action action,boolean television) {
         if(action==null||action instanceof StreamingActionPresenter.LogoAction)return -1;
         long id=action.getId();
