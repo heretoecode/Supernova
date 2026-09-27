@@ -204,6 +204,7 @@ public final class PreviewPages extends FrameLayout {
         if(PreviewLibraryLoader.memoryCache()==null){java.util.concurrent.ExecutorService cacheWorker=java.util.concurrent.Executors.newSingleThreadExecutor();cacheWorker.execute(()->{try{Snapshot previous=PreviewLibraryLoader.readCache(c.getApplicationContext());post(()->{if(!loaded&&previous!=null)setSnapshot(previous);});}finally{cacheWorker.shutdown();}});}
     }
     private java.util.function.Consumer<Boolean> scrollListener=value->{};
+    public void setNavigationInset(int inset){list.setPadding(dp(28),dp(10)+inset,dp(28),dp(12));}
     public void setScrollListener(java.util.function.Consumer<Boolean> listener){scrollListener=listener;notifyScroll();}
     private void notifyScroll(){scrollListener.accept(list.canScrollVertically(-1));}
     public boolean atTop() {

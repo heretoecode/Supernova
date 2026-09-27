@@ -20,6 +20,17 @@ public final class TopNavigation extends LinearLayout {
     private static final int[] VISUAL_ORDER = {0, 1, 2, 3, 5, 4};
     private final PreviewBackdrop artwork;
     private final View content;
+    private final android.widget.FrameLayout stage;
+    private final boolean scrollingContent;
+    private final android.graphics.drawable.Drawable navigationScene=new android.graphics.drawable.Drawable(){
+        @Override public void draw(android.graphics.Canvas canvas){
+            android.graphics.drawable.Drawable background=getBackground();if(background!=null)background.draw(canvas);
+            int saved=canvas.save();canvas.translate(stage.getLeft(),stage.getTop());stage.draw(canvas);canvas.restoreToCount(saved);
+        }
+        @Override public void setAlpha(int alpha){}
+        @Override public void setColorFilter(android.graphics.ColorFilter filter){}
+        @Override public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
+    };
     private final android.widget.FrameLayout scanStatus;
     private final android.widget.FrameLayout status;
     private final BooleanSupplier firstRow;
@@ -90,15 +101,28 @@ public final class TopNavigation extends LinearLayout {
         group.removeView(tabs[5]);group.addView(tabs[5],group.indexOfChild(tabs[4]),new LayoutParams(-2,dp(36)));
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(64), dp(46)));
-        android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19);clock.setTextColor(0xffd6e5f3);clock.setGravity(Gravity.CENTER);status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19);clock.setTextColor(Color.WHITE);clock.setGravity(Gravity.CENTER);status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
         selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
-        android.widget.FrameLayout stage=new android.widget.FrameLayout(c);
+        stage=new android.widget.FrameLayout(c);
+        scrollingContent=prepareScrollingContent(content);
         stage.addView(content,new android.widget.FrameLayout.LayoutParams(-1,-1));
         android.widget.FrameLayout.LayoutParams scanParams=new android.widget.FrameLayout.LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.END);
         scanParams.setMargins(dp(20),dp(12),dp(20),dp(16));stage.addView(scanStatus,scanParams);
         addView(stage,new LayoutParams(-1,0,1));
+        setChildrenDrawingOrderEnabled(true);
     }
+    /** Insets belong to the scroll viewport so scrolled pixels can travel behind the bar. */
+    private boolean prepareScrollingContent(View view){
+        if(view.getVisibility()==GONE)return false;
+        if(view instanceof PreviewPages){((PreviewPages)view).setNavigationInset(dp(52));return true;}
+        if(view instanceof android.widget.ScrollView){view.setPadding(view.getPaddingLeft(),view.getPaddingTop()+dp(52),view.getPaddingRight(),view.getPaddingBottom());((android.widget.ScrollView)view).setClipToPadding(false);return true;}
+        if(view instanceof android.widget.FrameLayout){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++)if(prepareScrollingContent(group.getChildAt(i)))return true;}
+        return false;
+    }
+    @Override protected void onMeasure(int width,int height){super.onMeasure(width,height);if(scrollingContent)stage.measure(View.MeasureSpec.makeMeasureSpec(getMeasuredWidth(),View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(getMeasuredHeight(),View.MeasureSpec.EXACTLY));}
+    @Override protected void onLayout(boolean changed,int left,int top,int right,int bottom){super.onLayout(changed,left,top,right,bottom);if(scrollingContent)stage.layout(0,0,getWidth(),getHeight());}
+    @Override protected int getChildDrawingOrder(int count,int position){return count==2?1-position:position;}
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key))refreshAccent();};
     private void refreshAccent(){for(TextView tab:tabs)styleTab(tab);group.refreshColour();invalidate();}
     private void styleTab(TextView tab){
@@ -116,7 +140,10 @@ public final class TopNavigation extends LinearLayout {
         scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?255:0);scrimAnimation.setDuration(180);
         scrimAnimation.addUpdateListener(animation->{scrimAlpha=(int)animation.getAnimatedValue();invalidate();});scrimAnimation.start();
     }
-    @Override protected void onDraw(android.graphics.Canvas canvas){super.onDraw(canvas);navigationShade.draw(canvas,getBackground(),getWidth(),dp(116),scrimAlpha);}
+    @Override protected boolean drawChild(android.graphics.Canvas canvas,View child,long time){
+        if(child==bar){navigationShade.invalidate();navigationShade.draw(canvas,navigationScene,getWidth(),dp(116),scrimAlpha);}
+        return super.drawChild(canvas,child,time);
+    }
     @Override public void invalidateDrawable(android.graphics.drawable.Drawable who){super.invalidateDrawable(who);if(navigationShade!=null)navigationShade.invalidate();}
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public void setFeaturedDirection(int direction){artwork.setMotionDirection(direction);}

@@ -9,6 +9,23 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewNavigationShadeTest {
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers="w960dp-h540dp-land-mdpi")
+    public void scrollingViewportExtendsBehindNavigationAndShadeSamplesItsPixels(){
+        android.app.Activity host=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        android.widget.ScrollView scroll=new android.widget.ScrollView(host);android.view.View red=new android.view.View(host);red.setBackgroundColor(android.graphics.Color.RED);
+        scroll.addView(red,new android.widget.ScrollView.LayoutParams(-1,1200));
+        TopNavigation nav=new TopNavigation(host,scroll,index->{},()->scroll.getScrollY()==0);host.setContentView(nav);
+        nav.measure(android.view.View.MeasureSpec.makeMeasureSpec(960,1073741824),android.view.View.MeasureSpec.makeMeasureSpec(540,1073741824));nav.layout(0,0,960,540);
+        assertEquals(540,scroll.getHeight());assertEquals(52,scroll.getPaddingTop());assertEquals(0,((android.view.View)scroll.getParent()).getTop());
+        scroll.scrollTo(0,160);nav.setScrolled(true);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(220));
+        android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(image));
+        // At the blank left margin: scrolled red content survives, darkened behind the nav.
+        int covered=image.getPixel(4,20),clear=image.getPixel(4,140);
+        assertTrue(android.graphics.Color.red(covered)>android.graphics.Color.blue(covered));
+        assertTrue(android.graphics.Color.red(covered)<android.graphics.Color.red(clear));
+        assertEquals(android.graphics.Color.RED,clear);image.recycle();host.finish();
+    }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void navigationShadeFadesToTransparentWithoutASeparator(){
         android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(240,160,android.graphics.Bitmap.Config.ARGB_8888);
         android.graphics.drawable.ColorDrawable source=new android.graphics.drawable.ColorDrawable(0xff355878);source.setBounds(0,0,240,160);

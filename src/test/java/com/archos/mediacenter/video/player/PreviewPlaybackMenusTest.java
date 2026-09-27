@@ -17,6 +17,24 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewPlaybackMenusTest {
     @After public void close(){PreviewPlaybackMenus.close();}
+    @Test public void speedAndAudioDelayShareCompactBoundsAndRetainNativeDismissCallbacks(){
+        Activity host=Robolectric.buildActivity(TopNavigationTestHost.class).setup().get();
+        int[] size=null;java.util.concurrent.atomic.AtomicInteger dismissed=new java.util.concurrent.atomic.AtomicInteger();
+        for(int layout:new int[]{R.layout.audio_speed_tv_picker,R.layout.audio_delay_tv_picker}){
+            android.view.ViewGroup container=(android.view.ViewGroup)android.view.LayoutInflater.from(host).inflate(R.layout.card_dialog_layout,null);
+            TVCardDialog card=container.findViewById(R.id.card_view);card.setText("Adjustment");
+            TVMenu menu=new TVMenu(host);View picker=android.view.LayoutInflater.from(host).inflate(layout,menu,false);menu.addView(picker);
+            menu.createAndAddTVSwitchableMenuItem("Keep setting",false);card.addOtherView(menu);card.setOnDialogResultListener(code->dismissed.incrementAndGet());
+            PreviewPlaybackMenus.showNested(host,card);Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            android.view.WindowManager.LayoutParams bounds=dialog.getWindow().getAttributes();
+            if(size==null)size=new int[]{bounds.width,bounds.height};else{assertEquals(size[0],bounds.width);assertEquals(size[1],bounds.height);}
+            assertTrue(bounds.height<270);assertTrue(PreviewPlaybackMenus.back());
+        }
+        assertEquals(2,dismissed.get());host.finish();
+    }
+    public static class TopNavigationTestHost extends Activity {
+        @Override public void onCreate(android.os.Bundle saved){setTheme(R.style.MyLeanbackTheme);super.onCreate(saved);}
+    }
     @Test public void nativeTrackRefreshRebindsCallbacksAndTicksWithoutReplacingTheOpenDialog(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();TVMenu menu=new TVMenu(host);
         java.util.concurrent.atomic.AtomicInteger oldClicks=new java.util.concurrent.atomic.AtomicInteger(),newClicks=new java.util.concurrent.atomic.AtomicInteger();

@@ -48,7 +48,7 @@ public class PreviewSubtitleChooserTest {
         PreviewSubtitleChooser chooser=new PreviewSubtitleChooser(host,backend,Runnable::run);chooser.start();idle();Dialog choices=latest();row(choices,1).performClick();Dialog actions=latest();
         row(actions,0).performClick();Dialog review=latest();assertEquals(0,backend.associations);review.onBackPressed();idle();
         assertTrue(choices.isShowing());assertTrue(actions.isShowing());assertEquals(0,backend.associations);
-        row(actions,0).performClick();View accept=PreviewPagesTest.findText(latest().getWindow().getDecorView(),"Associate");assertNotNull(accept);accept.performClick();idle();
+        row(actions,0).performClick();View accept=exact(latest().getWindow().getDecorView(),"Associate");assertNotNull(accept);assertTrue(accept.isClickable());accept.performClick();idle();
         assertEquals(1,backend.associations);assertEquals(PATH,Shadows.shadowOf(host).getResultIntent().getStringExtra(PreviewSubtitleChooser.SELECTED_PATH));chooser.close();
     }
     @Test public void cancelledLoadCannotDisplayLateChoices(){
@@ -67,4 +67,5 @@ public class PreviewSubtitleChooserTest {
         assertFalse(PreviewSubtitleChooser.sameFile(null,null));
         assertFalse(PreviewSubtitleChooser.sameFile("https://a/file.srt","https://b/file.srt"));
     }
+    private static View exact(View view,String label){if(view instanceof android.widget.TextView&&label.contentEquals(((android.widget.TextView)view).getText()))return view;if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++){View result=exact(((android.view.ViewGroup)view).getChildAt(i),label);if(result!=null)return result;}return null;}
 }

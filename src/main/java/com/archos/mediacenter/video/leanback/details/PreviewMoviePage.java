@@ -67,7 +67,7 @@ public final class PreviewMoviePage extends ScrollView {
         ((View)cast.getParent()).setVisibility(GONE);((View)crew.getParent()).setVisibility(GONE);
         rebuildTabs();
     }
-    @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);heroPage.setLayoutParams(new LinearLayout.LayoutParams(-1,Math.max(dp(360),h-dp(44))));lower.setMinimumHeight(h);}
+    @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);int viewport=h-getPaddingTop()-getPaddingBottom();heroPage.setLayoutParams(new LinearLayout.LayoutParams(-1,Math.max(dp(360),viewport-dp(44))));lower.setMinimumHeight(viewport);}
     @Override protected void onScrollChanged(int left,int top,int oldLeft,int oldTop){
         super.onScrollChanged(left,top,oldLeft,oldTop);
         android.view.ViewParent parent=getParent();
@@ -78,13 +78,13 @@ public final class PreviewMoviePage extends ScrollView {
     @Override protected void dispatchDraw(android.graphics.Canvas canvas){
         float progress=title==null?0:compactTitleProgress(getScrollY(),title.getBottom(),dp(40));
         int content=canvas.save();
-        if(progress>0)canvas.clipRect(0,getScrollY()+dp(48)*progress,getWidth(),getScrollY()+getHeight());
+        if(progress>0)canvas.clipRect(0,getScrollY()+getPaddingTop()+dp(48)*progress,getWidth(),getScrollY()+getHeight());
         super.dispatchDraw(canvas);canvas.restoreToCount(content);
         if(title==null||title.getWidth()==0||title.getHeight()==0)return;
         if(progress<=0)return;
         float scale=Math.min(dp(220)/(float)title.getWidth(),dp(40)/(float)title.getHeight());
         int saved=canvas.save();
-        canvas.translate(body.getPaddingLeft(),getScrollY()+dp(4));
+        canvas.translate(body.getPaddingLeft(),getScrollY()+getPaddingTop()+dp(4));
         canvas.scale(scale,scale);
         int layer=canvas.saveLayerAlpha(0,0,title.getWidth(),title.getHeight(),Math.round(255*progress));
         title.draw(canvas);canvas.restoreToCount(layer);canvas.restoreToCount(saved);

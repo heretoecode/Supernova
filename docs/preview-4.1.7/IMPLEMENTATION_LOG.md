@@ -573,3 +573,30 @@ Checkpoint 28 run 36277264981 passed compilation, 86 targeted tests, all 263 Vid
 Production put.io OAuth configuration is absent. Do not supply invented or borrowed
 credentials. API/migration safety and all other workstreams remain in progress.
 No 4.1.7 APK has been built. No main merge or signing identity change has occurred.
+
+## Checkpoint 31 — recovered local subtitle chooser
+
+Recovered continuation worktree and matching remote source tree; see
+RECOVERY_2026-09-27.md. Completed retained chooser wiring and added six tests.
+Run 36313890161 compiled and passed targeted checks; 274 full Video tests ran
+with one failure. Five chooser tests passed. The association acceptance test
+used a substring text finder and clicked the heading instead of the button;
+changed it to exact text with an explicit clickable assertion. No assertion
+was removed. Full rerun pending. No native playback or Shield validation.
+
+## Checkpoint 32 — scrolling navigation and adjustment geometry
+
+The scroll viewport now extends behind the navigation controls, with the
+52dp top inset inside the scrolling content rather than a separate clipped
+stage. Non-scrolling utility content retains its existing layout. The
+shared shade samples the background and actual content (bounded to a small
+cached bitmap), then renders between content and the foreground navigation.
+Details compact title accounts for the inset and retains its initial hero
+height. Clock text is white. Added a native-rendered pixel regression for
+content behind the shade and its darkening/fade.
+
+Playback Speed and Audio Delay now use the same compact 330×180dp panel
+bounds; larger subtitle controls retain measured height. Native pickers,
+limits, callbacks and persistence are retained. Added real inflated panel
+size and dismissal-callback coverage. Compilation and new regressions
+await CI; visual performance and physical focus remain unverified.
