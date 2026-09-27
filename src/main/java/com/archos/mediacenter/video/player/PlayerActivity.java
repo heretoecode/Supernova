@@ -279,7 +279,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     private final ActivityResultLauncher<Intent> subtitleLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> { if (result.getResultCode() == Activity.RESULT_OK) onSubtitleResult(); });
+            result -> { if (result.getResultCode() == Activity.RESULT_OK) onSubtitleResult(result.getData()); });
+    private String previewPendingSubtitlePath;
 
     private boolean mHasAskedFloatingPermission;
     private boolean mIsInfoActivityDisplayed;
@@ -4014,9 +4015,32 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         return true;
     }
 
-    private void onSubtitleResult() {
+    private void onSubtitleResult(Intent data) {
         if (log.isDebugEnabled()) log.debug("Get result from SubtitlesDownloaderActivity/SubtitlesWizardActivity");
+        if(mPlayer==null)return;
+        previewPendingSubtitlePath=data==null?null:data.getStringExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH);
+        if(previewPendingSubtitlePath!=null){
+            String requested=previewPendingSubtitlePath;previewPendingSubtitlePath=null;
+            if(applyPreviewSubtitle(requested,mPlayer.getVideoMetadata()))return;
+            previewPendingSubtitlePath=requested;
+        }
         mPlayer.checkSubtitles();
+    }
+
+    /** Explicit chooser action, routed through the existing user track-selection/persistence path. */
+    private boolean applyPreviewSubtitle(String path,VideoMetadata metadata){
+        if(path==null||metadata==null||mVideoInfo==null||mSubtitleInfoController==null)return false;
+        for(int i=0;i<metadata.getSubtitleTrackNb();i++){
+            SubtitleTrack track=metadata.getSubtitleTrack(i);
+            if(track==null||!track.isExternal||!com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.sameFile(path,track.path))continue;
+            int position=subtitleTrackToPosition(i,mVideoInfo.nbSubtitles);
+            if(position<0||position>=mSubtitleInfoController.getTrackCount())return false;
+            if(mVideoInfo.subtitleTrack==i||onTrackSelected(mSubtitleInfoController,position,"","")){
+                mSubtitleInfoController.setTrack(position);refreshSubtitleTVMenu();return true;
+            }
+            return false;
+        }
+        return false;
     }
 
     private void downloadSubtitles() {
@@ -4035,6 +4059,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         subIntent.setClass(mContext, SubtitlesWizardActivity.class);
         subIntent.setData(uri);
+        subIntent.putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.ALLOW_SELECTION,true);
+        if(mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null&&mVideoInfo.subtitleTrack>=0&&mVideoInfo.subtitleTrack<mPlayer.getVideoMetadata().getSubtitleTrackNb()){
+            SubtitleTrack active=mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
+            if(active!=null&&active.isExternal)subIntent.putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.ACTIVE_PATH,active.path);
+        }
         subtitleLauncher.launch(subIntent);
     }
 
@@ -4480,6 +4509,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 }
             }
 
+            // A chooser request is a user action, not inferred metadata selection. Clear before
+            // applying so a synchronous engine callback cannot repeat it.
+            String requested=previewPendingSubtitlePath;previewPendingSubtitlePath=null;
+            if(requested!=null&&!applyPreviewSubtitle(requested,vMetadata)&&!isFinishing()&&!isDestroyed())
+                com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(PlayerActivity.this,"Choose Subtitles","The selected subtitle is not available as a playable track. Your current selection has been kept.",()->{});
             refreshSubtitleTVMenu();
 
             if (mPlayerController.isTVMenuDisplayed() && !PreviewPlaybackMenus.isShowing()) {

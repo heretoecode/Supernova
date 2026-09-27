@@ -23,10 +23,15 @@ import androidx.leanback.app.GuidedStepSupportFragment;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 
 public class SubtitlesWizardActivity extends LeanbackActivity {
+    private com.archos.mediacenter.video.leanback.PreviewSubtitleChooser previewChooser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
+            previewChooser=com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.create(this);
+            previewChooser.start();return;
+        }
         GuidedStepSupportFragment fragment = new SubtitlesWizardFragment();
         GuidedStepSupportFragment.addAsRoot(this, fragment, android.R.id.content);
 
@@ -47,4 +52,5 @@ public class SubtitlesWizardActivity extends LeanbackActivity {
             }
         });
     }
+    @Override protected void onDestroy(){if(previewChooser!=null)previewChooser.close();super.onDestroy();}
 }

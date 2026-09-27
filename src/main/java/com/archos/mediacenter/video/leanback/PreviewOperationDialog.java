@@ -14,6 +14,8 @@ public final class PreviewOperationDialog {
     public static Dialog notice(Context context, String title, String message, Runnable closed) {
         return build(context,title,message,false,closed);
     }
+    /** A mutation whose backend cannot safely cancel must not advertise Cancel. */
+    public static Dialog waiting(Context context,String title,String message){return build(context,title,message,true,null);}
     private static Dialog build(Context context,String title,String message,boolean running,Runnable action) {
         Dialog dialog=PreviewDialog.create(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -30,10 +32,11 @@ public final class PreviewOperationDialog {
         cancel.setOnClickListener(view->{if(running)dialog.cancel();else dialog.dismiss();});
         panel.addView(cancel,new LinearLayout.LayoutParams(-1,PreviewDialog.dp(context,40)));
         dialog.setContentView(panel);dialog.setCanceledOnTouchOutside(false);
-        if(running)dialog.setOnCancelListener(ignored->action.run());else dialog.setOnDismissListener(ignored->action.run());dialog.show();
+        if(running&&action==null){cancel.setVisibility(View.GONE);dialog.setCancelable(false);}
+        else if(running)dialog.setOnCancelListener(ignored->action.run());else dialog.setOnDismissListener(ignored->action.run());dialog.show();
         Window window=dialog.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);window.setDimAmount(.35f);
         window.setLayout(Math.min(PreviewDialog.dp(context,420),context.getResources().getDisplayMetrics().widthPixels-PreviewDialog.dp(context,48)),WindowManager.LayoutParams.WRAP_CONTENT);
-        cancel.requestFocus();return dialog;
+        if(cancel.getVisibility()==View.VISIBLE)cancel.requestFocus();return dialog;
     }
     private static TextView text(Context context,String value,int size){TextView view=new TextView(context);view.setText(value);view.setTextColor(Color.WHITE);view.setTextSize(size);return view;}
     private PreviewOperationDialog(){}

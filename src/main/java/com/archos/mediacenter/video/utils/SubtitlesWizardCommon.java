@@ -55,6 +55,8 @@ public class SubtitlesWizardCommon {
 
     private List<String> mAvailableFiles;
     private int mAvailableFilesCount;
+    private boolean mLoadFailed;
+    public boolean hasLoadFailure(){return mLoadFailed;}
 
     public Uri getVideoUri() {
         return mVideoUri;
@@ -108,6 +110,7 @@ public class SubtitlesWizardCommon {
 
     /** Call on a worker after prepare() on the UI thread. */
     public void loadFiles() {
+        mLoadFailed=false;
         if (mVideoPath == null) return;
         mCurrentFilesCount = buildCurrentSubtitlesFilesList(mVideoPath);
         mAvailableFilesCount = buildAvailableSubtitlesFilesList(mVideoPath);
@@ -159,6 +162,7 @@ public class SubtitlesWizardCommon {
                 mCurrentFiles.add(path);
             }
         } catch (Exception ex) {
+            mLoadFailed=true;
             log.error("buildCurrentSubtitlesFilesList error : failed to get data from SubtitleManager");
         }
         
@@ -186,6 +190,7 @@ public class SubtitlesWizardCommon {
                     mAvailableFiles.add(path);
             }
         } catch (Exception ex) {
+            mLoadFailed=true;
             log.error("buildAvailableSubtitlesFilesList error : failed to get data from SubtitleManager");
         }
         
