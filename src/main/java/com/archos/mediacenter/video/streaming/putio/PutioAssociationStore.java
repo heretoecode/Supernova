@@ -49,10 +49,17 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
             }
         }
         ContentValues row=new ContentValues();row.put("account_id",account);row.put("folder_id",folder);
+        try(Cursor c=db.rawQuery("SELECT source FROM scopes",null)){
+            while(c.moveToNext()){
+                Uri previous=Uri.parse(c.getString(0));
+                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.contains(previous,source)||com.archos.mediaprovider.video.ProviderDiscoveryGate.contains(source,previous))throw new IllegalStateException("Overlapping source requires reassignment review");
+            }
+        }
         row.put("source",safe);row.put("ownership",Ownership.PREPARING.name());db.insertOrThrow("scopes",null,row);
     }
     /** A new generation invalidates every earlier in-flight result for this folder. */
     public synchronized Session begin(long account,long folder) {
+        synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
         SQLiteDatabase db=getWritableDatabase();db.beginTransaction();
         try {
             long generation;
@@ -64,6 +71,24 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
             db.update("scopes",values,"account_id=? AND folder_id=?",args(account,folder));
             db.setTransactionSuccessful();return new Session(account,folder,generation);
         } finally { db.endTransaction(); }
+        }
+    }
+    public synchronized boolean isCurrent(Session session){return current(getReadableDatabase(),session);}
+    /** Reconnect keeps mappings but requires a fresh complete snapshot before API ownership. */
+    public synchronized void resume(long account,long folder){
+        synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+            begin(account,folder);ContentValues values=new ContentValues();values.put("ownership",Ownership.PREPARING.name());values.put("complete_generation",-1);
+            getWritableDatabase().update("scopes",values,"account_id=? AND folder_id=?",args(account,folder));
+        }
+    }
+    public static final class Scope {
+        public final long folderId;public final Uri source;public final Ownership ownership;
+        Scope(long folder,String source,String ownership){folderId=folder;this.source=Uri.parse(source);this.ownership=Ownership.valueOf(ownership);}
+    }
+    public synchronized List<Scope> scopes(long account){
+        List<Scope> result=new ArrayList<>();try(Cursor c=getReadableDatabase().rawQuery("SELECT folder_id,source,ownership FROM scopes WHERE account_id=? ORDER BY folder_id",new String[]{""+account})){
+            while(c.moveToNext())result.add(new Scope(c.getLong(0),c.getString(1),c.getString(2)));
+        }return result;
     }
     /** Only complete, current snapshots may attach IDs. Conflicts roll back all attachments. */
     public synchronized boolean commit(Session session,PutioReconciliation.Snapshot snapshot,Collection<PutioReconciliation.Existing> existing) {
