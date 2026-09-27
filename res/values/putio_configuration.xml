@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Intentionally empty. Supply the registered Supernova app ID and validated linking
+         URL template together. Never put an OAuth token, password or client secret here. -->
+    <string name="putio_registered_client_id" translatable="false"></string>
+    <string name="putio_validated_link_template" translatable="false"></string>
+</resources>

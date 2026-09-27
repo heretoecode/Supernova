@@ -38,6 +38,7 @@ public final class PreviewLibraryScan {
     }
     public static synchronized void requestNetwork(Context context){
         install(context);
+        com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler.request(context);
         // Do not confuse metadata/import activity with an active network traversal.
         boolean busy=NetworkScannerServiceVideo.isScannerAlive()||com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()>0;
         if(busy){Diagnostics.event("scan_request_coalesced","operation_id",operation,"trigger","manual");return;}

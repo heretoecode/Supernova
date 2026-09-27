@@ -932,6 +932,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 DbUtils.markAsHiddenByUser(getActivity(), mVideo);
             }
             else if (action.getId() == VideoActionAdapter.ACTION_DELETE) {
+                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(requireContext(),mVideo.getFileUri())){
+                    com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),"Manage put.io file","This file is managed by put.io. Use put.io to delete it; Supernova will not send destructive operations through WebDAV.");return;
+                }
                 if (mPreviewMovie != null) {
                     com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
                             getString(R.string.confirm_delete), new String[]{getString(android.R.string.cancel), getString(R.string.delete)},

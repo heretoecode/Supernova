@@ -57,6 +57,7 @@ final class PutioSync {
                 PutioReconciliation.Plan finalPlan=PutioReconciliation.plan(review.snapshot,rows);
                 boolean unresolved=false;for(PutioReconciliation.Change change:finalPlan.changes)if(change.decision==PutioReconciliation.Decision.NEEDS_REVIEW||change.decision==PutioReconciliation.Decision.NEW_FILE)unresolved=true;
                 if(!unresolved&&store.ownership(review.session.accountId,review.session.folderId)==PutioAssociationStore.Ownership.PREPARING&&!store.activate(review.session))throw new IllegalStateException("Discovery hand-off could not finish");
+                context.getSharedPreferences("putio-library-selection-v1",0).edit().putLong("sync:"+review.session.scope,System.currentTimeMillis()).putString("status:"+review.session.scope,unresolved||!finalPlan.missingMediaIds.isEmpty()?"Needs review":"Up to date").apply();
                 if(changed)library.enrich();
                 return new Review(review.session,review.source,review.snapshot,finalPlan,rows);
             }}

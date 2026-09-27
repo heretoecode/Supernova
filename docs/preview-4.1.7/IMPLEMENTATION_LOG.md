@@ -650,3 +650,12 @@ These changes require a full CI rerun; no failures are waived.
 - Added explicit resume of retained inactive/generic scopes after reconnect. Source overlap is rejected pending deliberate reassignment support. Native OAuth setup, source reassignment, connected-overview polish and live-device tests remain outstanding.
 - Added fixture-backed coordinator tests for stable-ID rename, one-time new-file insertion, incomplete/disconnected snapshots, explicit ambiguity decisions, Keep Separate and safe URI encoding. Native ContentProvider integration still requires verification; fake-library tests alone do not prove it.
 - Excluded device-specific provider scanner ownership from portable settings restore so a restored device cannot silently suppress discovery before reconnection.
+
+## Continuation checkpoint 37 — OAuth boundary, scheduling and native safeguards
+
+- Checkpoint 36 CI 36333943160 passed compilation and all source/backend/WebDAV suites, including five new sync coordinator fixtures.
+- Added provider-documented OOB request/poll parsing and TV QR/short-code flow. Both registered client ID and validated linking URL remain empty; production connection cannot start. QR contains only the link/code; token goes directly to encrypted storage. Cancellation, timeout and reconnection paths preserve the library. Parser fixtures use test-only values, with no live account requests.
+- Native sync joins the existing manual and foreground automatic scan schedule, coalesces concurrent requests and records sanitised operation outcomes. It processes API-owned scopes only and leaves ambiguous matches for explicit review.
+- Guarded generic WebDAV deletion (including ancestor folders), associated-file deletion and subtitle rename/delete for API-managed scopes. These operations require provider API support; generic unassociated sources retain their original behaviour.
+- Added real native database-schema/trigger tests for new-file insertion, duplicate-path refusal and rename with preserved ID, bookmark and movie match. Added account display-path/status persistence and explicit previous-source handling when reconnecting to a different account.
+- Local syntax and XML checks passed before this checkpoint; new CI is required. Source reassignment, remaining UI/register reconciliation, three conformance passes and signed delivery are still open. No physical Shield verification claimed.

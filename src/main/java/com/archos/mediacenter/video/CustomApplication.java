@@ -1214,6 +1214,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         boolean due=previewScanOnReturn&&NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)||period>0&&now-prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)>=period;
         if(due&&(NetworkState.isLocalNetworkConnectedOrVpnMobileEnabled(CustomApplication.this)||NetworkState.isNetworkConnected(CustomApplication.this))&&!com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()&&com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()==0&&(previewRefreshAt==0||android.os.SystemClock.elapsedRealtime()-previewRefreshAt>=60000)){
             previewRefreshAt=android.os.SystemClock.elapsedRealtime();previewRefreshRequestedWallTime=now;android.util.Log.i("SupernovaScan","Requesting configured automatic indexed-source scan");NetworkAutoRefresh.forceRescan(CustomApplication.this);
+            com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler.request(CustomApplication.this);
         }
         // Retry after an offline/busy launch and honour the existing periodic schedule while open.
         if(previewScanOnReturn||period>0)previewRefreshHandler.postDelayed(this,30000);

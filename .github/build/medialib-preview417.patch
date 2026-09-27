@@ -104,7 +104,7 @@
              for (PrescanItem item : mPrescanItemsMap.values()) {
 --- /dev/null
 +++ b/src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java
-@@ -0,0 +1,30 @@
+@@ -0,0 +1,34 @@
 +package com.archos.mediaprovider.video;
 +
 +import android.content.Context;
@@ -130,6 +130,10 @@
 +        List<String> a=root.getPathSegments(),b=candidate.getPathSegments();if(a.size()>b.size())return false;
 +        for(int i=0;i<a.size();i++)if(!a.get(i).equals(b.get(i)))return false;
 +        return true;
++    }
++    public static boolean protects(Context c,Uri candidate){
++        if(candidate==null)return false;
++        synchronized(LOCK){for(Object value:prefs(c).getAll().values())if(value instanceof String){Uri root=Uri.parse((String)value);if(contains(root,candidate)||contains(candidate,root))return true;}return false;}
 +    }
 +    private static String scheme(Uri uri){String s=uri.getScheme();if(s==null)return "";s=s.toLowerCase(Locale.ROOT);return s.equals("webdavs")||s.equals("davs")?"https":s.equals("webdav")||s.equals("dav")?"http":s;}
 +    private static int port(Uri uri){return uri.getPort()>=0?uri.getPort():scheme(uri).equals("https")?443:scheme(uri).equals("http")?80:-1;}
