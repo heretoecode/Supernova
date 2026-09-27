@@ -16,14 +16,30 @@ final class PutioSync {
     static final class Review {
         final PutioAssociationStore.Session session;final Uri source;final PutioReconciliation.Snapshot snapshot;
         final PutioReconciliation.Plan plan;final List<PutioReconciliation.Existing> existing;
-        Review(PutioAssociationStore.Session session,Uri source,PutioReconciliation.Snapshot snapshot,PutioReconciliation.Plan plan,List<PutioReconciliation.Existing> existing){this.session=session;this.source=source;this.snapshot=snapshot;this.plan=plan;this.existing=existing;}
+        final Set<Long> initialMediaIds;
+        Review(PutioAssociationStore.Session session,Uri source,PutioReconciliation.Snapshot snapshot,PutioReconciliation.Plan plan,List<PutioReconciliation.Existing> existing){this(session,source,snapshot,plan,existing,mediaIds(existing));}
+        private Review(PutioAssociationStore.Session session,Uri source,PutioReconciliation.Snapshot snapshot,PutioReconciliation.Plan plan,List<PutioReconciliation.Existing> existing,Set<Long> initialMediaIds){this.session=session;this.source=source;this.snapshot=snapshot;this.plan=plan;this.existing=existing;this.initialMediaIds=initialMediaIds;}
+        private static Set<Long> mediaIds(List<PutioReconciliation.Existing> rows){Set<Long> ids=new HashSet<>();for(PutioReconciliation.Existing row:rows)ids.add(row.mediaId);return Collections.unmodifiableSet(ids);}
+        int matchedExisting(){int count=0;for(PutioReconciliation.Change change:plan.changes)if(change.mediaId>0&&initialMediaIds.contains(change.mediaId))count++;return count;}
+        int newlyImported(){int count=0;for(PutioReconciliation.Change change:plan.changes)if(change.mediaId>0&&!initialMediaIds.contains(change.mediaId))count++;return count;}
     }
-    static Review fetch(Context context,PutioReadClient client,long account,long folder,Uri source)throws PutioReadClient.Unavailable {
+    static Review fetch(Context context,PutioReadClient client,long account,long folder,Uri source)throws Exception {
+        List<String> rootPath=PutioRootLocation.readPath(context,client,folder);
+        Uri currentSource=PutioRootLocation.target(context,account,folder,source,rootPath);
+        if(!source.equals(currentSource)){
+            PutioReconciliation.Snapshot movedSnapshot=PutioSnapshotReader.read(account+":"+folder,folder,client::list);
+            if(!movedSnapshot.complete())throw new PutioReadClient.Unavailable(movedSnapshot.failure(),0);
+            if(!rootPath.equals(PutioRootLocation.readPath(context,client,folder)))throw new PutioReadClient.Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);
+            Review moved=PutioReassignment.apply(context,account,folder,folder,currentSource,PutioAssociationStore.DisconnectChoice.KEEP_INACTIVE,movedSnapshot);
+            PutioRootLocation.remember(context,account,folder,currentSource,rootPath);return moved;
+        }
         PutioAssociationStore.Session session;try(PutioAssociationStore store=new PutioAssociationStore(context)){store.prepare(account,folder,source);session=store.begin(account,folder);}
         PutioReconciliation.Snapshot snapshot=PutioSnapshotReader.read(session.scope,folder,client::list);
         if(!snapshot.complete())throw new PutioReadClient.Unavailable(snapshot.failure(),0);
+        if(!rootPath.equals(PutioRootLocation.readPath(context,client,folder)))throw new PutioReadClient.Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);
         try(PutioAssociationStore store=new PutioAssociationStore(context)){
             List<PutioReconciliation.Existing> rows=new PutioLibraryBridge(context).existing(source,store.links(account,folder));
+            PutioRootLocation.remember(context,account,folder,source,rootPath);
             return new Review(session,source,snapshot,PutioReconciliation.plan(snapshot,rows),rows);
         }
     }
@@ -59,7 +75,7 @@ final class PutioSync {
                 if(!unresolved&&store.ownership(review.session.accountId,review.session.folderId)==PutioAssociationStore.Ownership.PREPARING&&!store.activate(review.session))throw new IllegalStateException("Discovery hand-off could not finish");
                 context.getSharedPreferences("putio-library-selection-v1",0).edit().putLong("sync:"+review.session.scope,System.currentTimeMillis()).putString("status:"+review.session.scope,unresolved||!finalPlan.missingMediaIds.isEmpty()?"Needs review":"Up to date").apply();
                 if(changed)library.enrich();
-                return new Review(review.session,review.source,review.snapshot,finalPlan,rows);
+                return new Review(review.session,review.source,review.snapshot,finalPlan,rows,review.initialMediaIds);
             }}
         }
     }

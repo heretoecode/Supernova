@@ -674,3 +674,10 @@ These changes require a full CI rerun; no failures are waived.
 - Added account-level Search Files using the shared TV keyboard, cursor pagination and repeated-cursor rejection. Search results accept different parent folders without weakening folder-list parent checks. Search never changes the library.
 - File information selects provider metadata, container, duration, bit rate and stream codec/dimensions/channels. No API playback URL is requested or exposed; existing WebDAV playback is unchanged. Back returns to the originating browser/search page.
 - Added parsing regressions for cross-folder search, missing totals, wrong file identity, invalid technical values and exclusion of arbitrary response/transport fields. Local syntax/XML checks passed; new tests require CI. Production OAuth and physical Shield behaviour remain unverified.
+
+## Continuation checkpoint 40 — selected-folder moves and honest sync counts
+
+- The sync review retains its original media-ID set across repeated ambiguity choices, so its completion summary separately reports matched existing items and new imports. Duplicate-path prevention is reported specifically as playback-path duplicates, not a claim about semantic title similarity.
+- Selected folder ancestry is read by stable IDs before and after a complete listing. A later root rename/move rebases the existing WebDAV path only where the recorded API path is an exact suffix; server and mount prefix remain unchanged. Custom mappings that cannot be proved require review. The existing reassignment journal preserves identity and keeps previous discovery inactive.
+- Ancestor cycles and movement during the snapshot invalidate the operation. Added tests for path ancestry/cycles, URI encoding, account/source binding, uncertain mounts and counts across multiple review steps. These tests and native integration require the new CI checkpoint; no physical validation is claimed.
+- Ongoing requirements review found that legacy technical-column hydration is still list-triggered. Background technical enrichment remains implementation work, not an OAuth blocker.

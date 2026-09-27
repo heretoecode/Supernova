@@ -20,9 +20,12 @@ final class PutioReassignment {
         }
     }
     static PutioSync.Review run(Context context,PutioReadClient client,long account,long oldFolder,long newFolder,Uri newSource,PutioAssociationStore.DisconnectChoice choice)throws Exception{
+        List<String> rootPath=PutioRootLocation.readPath(context,client,newFolder);
         PutioReconciliation.Snapshot snapshot=PutioSnapshotReader.read(account+":"+newFolder,newFolder,client::list);
         if(!snapshot.complete())throw new PutioReadClient.Unavailable(snapshot.failure(),0);
-        return apply(context,account,oldFolder,newFolder,newSource,choice,snapshot);
+        if(!rootPath.equals(PutioRootLocation.readPath(context,client,newFolder)))throw new PutioReadClient.Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);
+        PutioSync.Review result=apply(context,account,oldFolder,newFolder,newSource,choice,snapshot);
+        PutioRootLocation.remember(context,account,newFolder,newSource,rootPath);return result;
     }
     static PutioSync.Review apply(Context context,long account,long oldFolder,long newFolder,Uri newSource,PutioAssociationStore.DisconnectChoice choice,PutioReconciliation.Snapshot snapshot)throws Exception{
         if(account<=0||oldFolder<0||newFolder<0||choice==null||!snapshot.complete()||!snapshot.scope.equals(account+":"+newFolder)||newSource==null||newSource.getHost()==null||newSource.getUserInfo()!=null||newSource.getQuery()!=null||newSource.getFragment()!=null||!Arrays.asList("http","https","webdav","webdavs","dav","davs").contains(newSource.getScheme()))throw new IllegalArgumentException("Complete reassignment and discovery choice required");

@@ -46,6 +46,15 @@ public class PutioSyncTest {
         library.rows.put(7L,new PutioReconciliation.Existing(7,"old/title.mkv",100,0));PutioSync.Review pending=review(true,file(30,"new/title.mkv"));
         PutioSync.apply(context,pending,Collections.singletonMap(30L,0L),library);assertEquals(1,library.inserts);assertEquals("old/title.mkv",library.rows.get(7L).relativePath);
     }
+    @Test public void summaryKeepsInitialCountsAcrossSeveralReviewSteps(){
+        library.rows.put(7L,new PutioReconciliation.Existing(7,"old/title.mkv",100,0));
+        PutioSync.Review pending=PutioSync.apply(context,review(true,file(30,"new/title.mkv"),file(31,"new.mkv")),Collections.emptyMap(),library);
+        assertEquals(0,pending.matchedExisting());assertEquals(1,pending.newlyImported());
+        PutioSync.Review complete=PutioSync.apply(context,pending,Collections.singletonMap(30L,7L),library);
+        assertEquals(1,complete.matchedExisting());assertEquals(1,complete.newlyImported());
+        PutioSync.Review repeated=PutioSync.apply(context,complete,Collections.emptyMap(),library);
+        assertEquals(1,repeated.matchedExisting());assertEquals(1,repeated.newlyImported());assertEquals(1,library.inserts);
+    }
     @Test public void playbackPathEncodesNamesWithoutTurningPercentTextIntoSeparators(){
         assertEquals("https://webdav.put.io/Films/100%25%20real/a%252Fb.mkv",PutioLibraryBridge.playback(source,"100% real/a%2Fb.mkv").toString());
         try{PutioLibraryBridge.playback(source,"../escape.mkv");fail();}catch(IllegalArgumentException expected){}
