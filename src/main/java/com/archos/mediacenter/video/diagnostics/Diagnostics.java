@@ -18,6 +18,8 @@ public final class Diagnostics {
     private static final java.util.concurrent.atomic.AtomicLong DROPPED=new java.util.concurrent.atomic.AtomicLong(),WRITE_ERRORS=new java.util.concurrent.atomic.AtomicLong(),SEQUENCE=new java.util.concurrent.atomic.AtomicLong();
     private static final DiagnosticFlightRecorder FLIGHT=new DiagnosticFlightRecorder(252*1024,60000);
     private static String activeIncident;
+    private static final Map<String,Long> incidentCounts=new HashMap<>();
+    private static String incidentId="";
     private static volatile boolean qa;private static volatile long freezeUntil,mainAck=android.os.SystemClock.elapsedRealtime();private static volatile int foreground;private static final Set<String> COVERAGE=java.util.Collections.synchronizedSet(new TreeSet<>());
     private static final ScheduledExecutorService HEARTBEAT=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"SupernovaHeartbeat");t.setDaemon(true);return t;});
     private static boolean heartbeatInstalled;
@@ -36,6 +38,25 @@ public final class Diagnostics {
     private static volatile String playback="";
     private static final String PROCESS=UUID.randomUUID().toString();
     private static long focusAt;
+    private static volatile String uiScreen="unknown",uiFocus="none",uiPage="unknown",uiCategory="none",uiMode="unknown",uiSort="unknown",uiFilters="none";
+    private static volatile long uiMedia;
+    private static volatile int uiModals;
+    /** Only structural, developer-owned labels belong here; never titles, queries or paths. */
+    public static void uiState(String page,String category,String mode,String sort,String filters,long media){
+        uiPage=uiLabel(page);uiCategory=uiLabel(category);uiMode=uiLabel(mode);uiSort=uiLabel(sort);uiFilters=uiLabel(filters);uiMedia=Math.max(0,media);
+    }
+    static String uiLabel(String value){return value==null||value.isEmpty()?"none":value.matches("[A-Za-z0-9_.:,& -]{1,100}")?value:"unknown";}
+    public static void modalDepth(int depth){uiModals=Math.max(0,depth);}
+    public static void focusedMedia(long id){uiMedia=Math.max(0,id);}
+    /** Coarse connectivity only: no SSID, address, interface or network name. */
+    public static String connectivity(){
+        if(context==null)return "unknown";
+        try{
+            android.net.ConnectivityManager manager=(android.net.ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            android.net.NetworkInfo active=manager==null?null:manager.getActiveNetworkInfo();
+            return active==null?"disconnected":active.isConnected()?"connected":"disconnected";
+        }catch(RuntimeException unavailable){return "unknown";}
+    }
     private static volatile String lastOperation="startup";
     private static SharedPreferences sessionState;
     private static final Map<Activity,android.view.ViewTreeObserver.OnGlobalFocusChangeListener> FOCUS=new WeakHashMap<>();
@@ -63,8 +84,10 @@ public final class Diagnostics {
             public void onActivityCreated(Activity a,Bundle b){life(a,"created");}
             public void onActivityStarted(Activity a){foreground++;life(a,"started");}
             public void onActivityResumed(Activity a){mainAck=android.os.SystemClock.elapsedRealtime();
+                uiScreen=a.getClass().getSimpleName();uiFocus=viewId(a.getCurrentFocus());
                 life(a,"resumed");if(enabled&&sessionState!=null)sessionState.edit().putBoolean("clean",false).apply();
                 android.view.ViewTreeObserver.OnGlobalFocusChangeListener listener=(old,next)->{
+                    uiFocus=viewId(next);
                     long now=android.os.SystemClock.elapsedRealtime();
                     if(!enabled||now-focusAt<100)return;focusAt=now;
                     event("focus","screen",a.getClass().getSimpleName(),"from",viewId(old),"to",viewId(next));
@@ -141,13 +164,21 @@ public final class Diagnostics {
         }catch(IOException failure){WRITE_ERRORS.incrementAndGet();}}
     }
     private static final SharedPreferences.OnSharedPreferenceChangeListener CONFIG=(prefs,key)->{if(LEVEL.equals(key))qa="qa".equals(prefs.getString(LEVEL,"normal"));if(key!=null&&Arrays.asList(LEVEL,"try_new_ui","remember_library_views","hide_watched","sort_ignore_articles","preview_accent41", "streaming_enabled").contains(key))event("configuration_changed","setting",key);};
-    public static String operation(String kind){String id=PROCESS+":"+SEQUENCE.incrementAndGet();event("operation_begin","operation_id",id,"kind",kind);return id;}
+    public static String operation(String kind){String id=PROCESS+":"+SEQUENCE.incrementAndGet();event("artwork".equals(kind)?"artwork_operation_begin":"operation_begin","operation_id",id,"kind",kind);return id;}
     public static void finishOperation(String id,String kind,long started){event("operation_end","operation_id",id,"kind",kind,"latency_ms",android.os.SystemClock.elapsedRealtime()-started);}
     private static void heartbeat(){try{if(!enabled||context==null)return;long now=android.os.SystemClock.elapsedRealtime();if(foreground>0&&now-mainAck>65000)event("main_thread_stall_suspected","unresponsive_ms",now-mainAck);new android.os.Handler(android.os.Looper.getMainLooper()).post(()->mainAck=android.os.SystemClock.elapsedRealtime());Runtime runtime=Runtime.getRuntime();event("heartbeat","foreground",foreground,"heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),"native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"queue_depth",WORK.getQueue().size(),"dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_bytes",FLIGHT.bytes(),"level",qa?"QA_SOAK":"NORMAL");}catch(RuntimeException ignored){WRITE_ERRORS.incrementAndGet();}}
-    private static void freeze(String reason){
+    private static synchronized void freeze(String reason){
         if(context==null)return;
         boolean manual=reason.equals("manual_problem_marker");
-        if(!manual&&android.os.SystemClock.elapsedRealtime()<freezeUntil){appendFlight(record("incident_repeated","reason",reason));return;}
+        if(!manual&&android.os.SystemClock.elapsedRealtime()<freezeUntil){
+            long count=incidentCounts.containsKey(reason)?incidentCounts.get(reason)+1:1;
+            incidentCounts.put(reason,count);
+            appendFlight(record("incident_repeated","reason",reason,"incident_id",incidentId,"occurrences",count));
+            // Cumulative power-of-two summaries bound noise without dropping the underlying events.
+            if((count&(count-1))==0)writeImportant(record("incident_burst_summary","reason",reason,"incident_id",incidentId,"occurrences",count,"count_kind","cumulative"));
+            return;
+        }
+        incidentId=PROCESS+":incident:"+SEQUENCE.incrementAndGet();incidentCounts.clear();incidentCounts.put(reason,1L);
         String incident=incidentContext(reason);writeImportant(incident);
         String retained=FLIGHT.snapshot(android.os.SystemClock.elapsedRealtime());
         String snapshot=record("flight_snapshot","reason",reason,"completeness",retained.isEmpty()?"RECOVERY_DATA_MISSING":"PARTIAL",
@@ -171,7 +202,8 @@ public final class Diagnostics {
             if(manager!=null){ActivityManager.MemoryInfo memory=new ActivityManager.MemoryInfo();manager.getMemoryInfo(memory);available=memory.availMem;lowMemory=memory.lowMemory;}
         }catch(RuntimeException ignored){/* Missing resource data must not prevent incident capture. */}
         Runtime runtime=Runtime.getRuntime();
-        return record("incident_capture","reason",reason,"foreground",foreground,
+        return record("incident_capture","reason",reason,"incident_id",incidentId,"foreground",foreground,
+                "screen",uiScreen,"page",uiPage,"category",uiCategory,"focused_control",uiFocus,"view_mode",uiMode,"sort",uiSort,"active_filters",uiFilters,"media_id",uiMedia,"modal_depth",uiModals,
                 "heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),
                 "native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"available_memory",available,
                 "low_memory",lowMemory,"storage_free",context.getFilesDir().getUsableSpace(),"thread_count",Thread.activeCount());

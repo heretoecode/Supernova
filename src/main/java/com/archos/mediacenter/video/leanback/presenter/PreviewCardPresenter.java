@@ -35,6 +35,7 @@ public final class PreviewCardPresenter extends Presenter {
         boolean hasArtwork;
         Uri requestedArtwork,preferredArtwork;
         Object boundItem;
+        long diagnosticMediaId;
         int artworkGeneration;
         public boolean artworkReady=true;
         final int width, height;
@@ -90,6 +91,7 @@ public final class PreviewCardPresenter extends Presenter {
         }
         private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
         void updateFocus() {
+            if(isFocused())com.archos.mediacenter.video.diagnostics.Diagnostics.focusedMedia(diagnosticMediaId);
             setForeground(isFocused()?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
             image.setAlpha(1f);animate().scaleX(isFocused()?1.08f:1f).scaleY(isFocused()?1.08f:1f).setDuration(140).start();
@@ -101,6 +103,7 @@ public final class PreviewCardPresenter extends Presenter {
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent) { return new ViewHolder(new Card(parent.getContext(), style)); }
     @Override public void onBindViewHolder(ViewHolder holder, Object item) {
         Card c = (Card)holder.view;
+        c.diagnosticMediaId=item instanceof Video?((Video)item).getId():item instanceof Tvshow?((Tvshow)item).getTvshowId():0;
         Object identity=item instanceof Video?"video:"+((Video)item).getId():item instanceof Tvshow?"show:"+((Tvshow)item).getTvshowId():item;
         boolean sameItem=java.util.Objects.equals(identity,c.boundItem);c.boundItem=identity;
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_bind","same_item",sameItem,"style",style.name());
@@ -149,11 +152,12 @@ public final class PreviewCardPresenter extends Presenter {
         c.image.setScaleType(letterbox?ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_CROP);
         if(uri==null&&c.requestedArtwork!=null){Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.artworkGeneration++;c.image.setImageDrawable(null);}
         if(uri!=null&&!uri.equals(c.requestedArtwork)){c.requestedArtwork=uri;final int generation=++c.artworkGeneration;c.artworkReady=false;final long started=android.os.SystemClock.elapsedRealtime();
-        if(com.archos.mediacenter.video.diagnostics.Diagnostics.enabled())com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_request","retained_previous",sameItem&&c.image.getDrawable()!=null,"memory_hits",Picasso.get().getSnapshot().cacheHits,"memory_misses",Picasso.get().getSnapshot().cacheMisses);
+        final String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("artwork");final long mediaId=item instanceof Video?((Video)item).getId():item instanceof Tvshow?((Tvshow)item).getTvshowId():0;final String surface=style==Style.CONTINUE?"home.row":style==Style.LIST?"library.list":item instanceof Movie?"movies.grid":"tv.grid";
+        if(com.archos.mediacenter.video.diagnostics.Diagnostics.enabled())com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_request","operation_id",operation,"media_id",mediaId,"surface",surface,"artwork_type",style==Style.POSTER?"poster":"landscape","layer","picasso_cache_and_source","retained_previous",sameItem&&c.image.getDrawable()!=null,"memory_hits",Picasso.get().getSnapshot().cacheHits,"memory_misses",Picasso.get().getSnapshot().cacheMisses);
         com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(style==Style.LIST?Math.round(112*c.getResources().getDisplayMetrics().density):c.width,c.height);
         if(letterbox)request.centerInside();else request.centerCrop();request.noPlaceholder().noFade().into(c.image, new com.squareup.picasso.Callback() {
-                @Override public void onSuccess() { if(generation==c.artworkGeneration){c.artworkReady=true;com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_ready","latency_ms",android.os.SystemClock.elapsedRealtime()-started);} }
-                @Override public void onError(Exception error) { if(generation!=c.artworkGeneration)return;c.artworkReady=true;c.requestedArtwork=null;c.hasArtwork=c.image.getDrawable()!=null; c.updateFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_failed","latency_ms",android.os.SystemClock.elapsedRealtime()-started); }
+                @Override public void onSuccess() { if(generation==c.artworkGeneration){c.artworkReady=true;com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_ready","operation_id",operation,"media_id",mediaId,"surface",surface,"latency_ms",android.os.SystemClock.elapsedRealtime()-started);} }
+                @Override public void onError(Exception error) { if(generation!=c.artworkGeneration)return;c.artworkReady=true;c.requestedArtwork=null;c.hasArtwork=c.image.getDrawable()!=null; c.updateFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_failed","operation_id",operation,"media_id",mediaId,"surface",surface,"artwork_type",style==Style.POSTER?"poster":"landscape","layer","picasso_cache_and_source","failure_type",error==null?"unknown":error.getClass().getSimpleName(),"fallback_attempted",false,"retained_visible",c.hasArtwork,"latency_ms",android.os.SystemClock.elapsedRealtime()-started); }
             });}
     }
     public void bindEntry(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){Card card=(Card)holder.view;card.preferredArtwork=entry.backdrop;try{onBindViewHolder(holder,entry.media);bindSecondary(holder,entry);}finally{card.preferredArtwork=null;}}

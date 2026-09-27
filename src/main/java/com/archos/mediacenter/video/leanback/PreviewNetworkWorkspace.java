@@ -46,6 +46,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
     private void show(String name) {
         if (name.equals(area)) return;
         area = name; items.removeAllViews(); context.removeAllViews(); selectedItem = null;
+        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("network",name,"workspace","none","none",0);
         if (name.equals("Overview")) {
             item("Scan Library", () -> { heading("Scan Library"); description("Check local storage and indexed network sources. Progress continues when you leave this page."); action("Scan Library", () -> PreviewLibraryScan.request(getContext())); status(); });
             item("Network Scanning", this::scanControls);

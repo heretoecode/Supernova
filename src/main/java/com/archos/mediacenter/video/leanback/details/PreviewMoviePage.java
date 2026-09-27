@@ -111,6 +111,7 @@ public final class PreviewMoviePage extends ScrollView {
         if(focusedTag!=null){View restore=tabBar.findViewWithTag(focusedTag);if(restore!=null)restore.requestFocus();}
     }
     private void showSection(String label,boolean enter){
+        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("details",label,"details","none","none",movie!=null?movie.getId():show!=null?show.getTvshowId():remoteId);
         activeSection=label;
         for(LinearLayout section:new LinearLayout[]{episodes,related,trailers})((View)section.getParent()).setVisibility(label.equals(section==episodes?"Seasons & Episodes":section==related?"More Like This":"Extras")?VISIBLE:GONE);
         information.setVisibility(label.equals("Details")?VISIBLE:GONE);

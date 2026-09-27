@@ -189,6 +189,7 @@ public final class PreviewSettings {
      Preference p = category.getPreference(k);
      p.setVisible(Boolean.TRUE.equals(visibility.get(p)) && !(p instanceof PreferenceCategory));
     }
+    com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("settings",name,"workspace","none","none",0);
     help.setText(name + "\n\nPress OK or Right to enter this category.");
     list.scrollToPosition(0);
    };

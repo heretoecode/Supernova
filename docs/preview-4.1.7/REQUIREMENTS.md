@@ -80,9 +80,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Customise Home remains a hub with inline row controls. Leftmost Home-row LEFT reveals Move/Hide only; no delete there. Fix clipped delete confirmation focus/button and awkward wrapping. Movies/TV row toggles update locally without whole-page flash/rebuild. Genre selector uses fixed header/footer with middle scrolling viewport and no clipping. Maximum Items supports No Limit, 10,20,30,40,50,75,100 and exact numeric Select; internal 0 may represent No Limit. Full QWERTY keyboard must be used for numeric Select where the existing wrong keyboard appears. Preserve good keyboard behaviour; subtle backdrop/shadow is acceptable.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — VISUAL/PHYSICAL VERIFICATION PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewHomeRows retains the inline editor; row-edge controls expose only Move/Hide. Rule toggles update existing labels without rebuilding the menu. Maximum values are 0/10/20/30/40/50/75/100 plus validated exact input through PreviewTextInput; PreviewHomeMaximumTest covers parsing. Shared confirmDelete and PreviewGenres provide bounded controls. Exact delete-button/genre clipping and keyboard appearance remain visual pass 2 and Shield QA, not yet verified here.
 
 ### UI-009 — 2. Home
 
@@ -130,9 +130,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Toolbar: Filters, Sort, Order, Unmatched, List/Grid and Columns where applicable move close to the divider, visually echoing Details lower navigation. White icon/text, no cyan/glow text and no large rounded focus box. Focus is represented by the associated divider segment turning Supernova blue with restrained outward glow. Unlike Details tabs there is no persistent selected blue segment after focus leaves.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — TESTING/VISUAL VERIFICATION PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewToolbar removes per-control backgrounds and colours the existing divider segment; library toolbars do not set the persistent selectedSegment used by Details. Checkpoint 43 added an eight-dp low-alpha gradient halo without thickening the stroke. New CI and normative image comparison remain pending.
 
 ### UI-014 — 4. Movies and TV Shows
 
@@ -865,9 +865,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 On important failure, capture small structured UI-state snapshot (not screenshot): page, selected tab/category, focused semantic control, grid/list mode, active filters/sort, anonymous media ID, open modal/menu. Add severity INFO/WARNING/ERROR/FATAL.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — TESTING/CONFORMANCE PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Incident records now contain structural screen/page/category, semantic focus, grid/list mode, sort, active filter types, anonymous media ID and modal depth. Library, Details, Settings and Network update this state; card focus supplies its media ID. INFO/WARNING/ERROR/FATAL classification already exists. New snapshot/privacy regression awaits CI. Remaining navigation surfaces and exact filter-state completeness still require reconciliation.
 
 ### DIA-011 — Required diagnostic/reporting improvements
 
@@ -875,9 +875,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Automatic incident capture: preserve roughly 30–60 seconds before/after significant failures (uncaught exception, ANR-like stall, failed library operation, playback failure, repeated artwork-failure burst). Add burst summarisation while retaining underlying events.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — TESTING/PHYSICAL VERIFICATION PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Bounded DiagnosticFlightRecorder retains up to 60 seconds before an incident and capture continues for 60 seconds afterwards, subject to explicit byte limits/eviction counters. Repeated failures retain underlying important events and correlated incident_repeated records; power-of-two cumulative burst summaries bound extra summary traffic. New regression checks the raw repeats and correlated cumulative counts; CI and long-running Shield validation remain pending.
 
 ### DIA-012 — Required diagnostic/reporting improvements
 
@@ -895,9 +895,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Network diagnostics: provider/service, operation type, status/error category, duration, retry number and connectivity state; redact full sensitive URLs, authorization headers, passwords, tokens and sensitive query parameters. put.io OAuth secrets must never enter logs/export/QR.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PutioReadClient now emits explicit developer-owned operation type, putio service, correlation ID, HTTP status, sanitised failure category, duration, retry_number=0 (this adapter does not retry), and coarse connectivity. No request URL/header/body, query, cursor or token is logged. Transport completion is distinct from semantic response validation. Other network/provider adapters and schema-validation failure coverage remain under review; no live OAuth QA is claimed.
 
 ### DIA-014 — Required diagnostic/reporting improvements
 

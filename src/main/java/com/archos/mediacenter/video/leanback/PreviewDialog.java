@@ -17,9 +17,10 @@ public final class PreviewDialog {
   java.lang.ref.WeakReference<View> previousRoot=new java.lang.ref.WeakReference<>(opener==null?null:opener.getRootView());
   Object semantic=opener==null?null:opener.getTag();int id=opener==null?View.NO_ID:opener.getId();
   return new Dialog(context){
-   @Override protected void onStart(){super.onStart();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.computeIfAbsent(owner,k->new java.util.ArrayList<>());windows.removeIf(reference->reference.get()==null||reference.get()==this);windows.add(new java.lang.ref.WeakReference<>(this));}
+   @Override protected void onStart(){super.onStart();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.computeIfAbsent(owner,k->new java.util.ArrayList<>());windows.removeIf(reference->reference.get()==null||reference.get()==this);windows.add(new java.lang.ref.WeakReference<>(this));com.archos.mediacenter.video.diagnostics.Diagnostics.modalDepth(windows.size());}
    @Override public void dismiss(){
     boolean showing=isShowing();super.dismiss();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.get(owner);if(windows!=null){windows.removeIf(reference->reference.get()==null||reference.get()==this);if(windows.isEmpty())WINDOWS.remove(owner);}
+    com.archos.mediacenter.video.diagnostics.Diagnostics.modalDepth(windows==null?0:windows.size());
     if(!showing)return;View root=previousRoot.get(),requested=previous.get(),target=requested;boolean fallback=false;
     if(root==null||!root.isAttachedToWindow())return;
     Dialog parent=top(owner);if(parent!=null&&parent.getWindow()!=null&&parent.getWindow().getDecorView()!=root)return;

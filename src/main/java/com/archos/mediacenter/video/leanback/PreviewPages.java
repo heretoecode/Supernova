@@ -293,6 +293,7 @@ public final class PreviewPages extends FrameLayout {
         if(preserve)restoreFocus();
     }
     private void render() {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState(new String[]{"home","movies","tv","network"}[tab],"none",tab>0&&tab<3&&listMode[tab]?"list":"grid",tab<3?String.valueOf(sorts[tab]):"none",tab>0&&tab<3?(genres[tab].isEmpty()?"":"genre,")+(selectedYears[tab].isEmpty()?"":"year,")+(providers[tab].isEmpty()?"":"provider,")+(unmatched[tab]?"unmatched":""):"none",0);
         long started=android.os.SystemClock.elapsedRealtime();
         List<Cell> previous=new ArrayList<>(cells);
         persistViews();

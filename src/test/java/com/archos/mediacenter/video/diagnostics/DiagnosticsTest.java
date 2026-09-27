@@ -9,6 +9,32 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void incidentSnapshotContainsStructuralUiStateWithoutRawPaths()throws Exception{
+        Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
+        try{
+            Diagnostics.uiState("movies","library","list","2","genre,year",42);Diagnostics.modalDepth(2);
+            java.lang.reflect.Method snapshot=Diagnostics.class.getDeclaredMethod("incidentContext",String.class);snapshot.setAccessible(true);
+            org.json.JSONObject value=new org.json.JSONObject((String)snapshot.invoke(null,"artwork_failed"));
+            assertEquals("movies",value.getString("page"));assertEquals("list",value.getString("view_mode"));assertEquals("genre,year",value.getString("active_filters"));assertEquals(42,value.getLong("media_id"));assertEquals(2,value.getInt("modal_depth"));
+            Diagnostics.uiState("https://private.example/token=secret","/storage/private.mkv","grid","none","none",-1);Diagnostics.modalDepth(-1);
+            String safe=(String)snapshot.invoke(null,"artwork_failed");assertFalse(safe.contains("private"));assertFalse(safe.contains("secret"));
+            value=new org.json.JSONObject(safe);assertEquals(0,value.getLong("media_id"));assertEquals(0,value.getInt("modal_depth"));
+        }finally{Diagnostics.uiState("unknown","none","unknown","unknown","none",0);Diagnostics.modalDepth(0);Diagnostics.setEnabled(c,false);}
+    }
+    @Test public void repeatedFailuresKeepRawEventsAndAddCorrelatedCumulativeSummaries()throws Exception{
+        Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
+        try{
+            java.lang.reflect.Method freeze=Diagnostics.class.getDeclaredMethod("freeze",String.class);freeze.setAccessible(true);
+            freeze.invoke(null,"manual_problem_marker");freeze.invoke(null,"artwork_failed");freeze.invoke(null,"artwork_failed");freeze.invoke(null,"artwork_failed");
+            java.util.List<org.json.JSONObject> records=DiagnosticArchive.records(new java.io.File(c.getFilesDir(),"supernova-diagnostics"));
+            int repeats=0;boolean summary=false;String incident=null;
+            for(org.json.JSONObject row:records){
+                if("incident_repeated".equals(row.optString("event"))&&"artwork_failed".equals(row.optString("reason"))){repeats++;if(incident==null)incident=row.getString("incident_id");assertEquals(incident,row.getString("incident_id"));}
+                if("incident_burst_summary".equals(row.optString("event"))&&row.optLong("occurrences")==2)summary=true;
+            }
+            assertEquals(3,repeats);assertTrue(summary);
+        }finally{Diagnostics.setEnabled(c,false);}
+    }
     @Test public void generatedFocusControlsAreDistinctWithoutText()throws Exception{
         Application c=RuntimeEnvironment.getApplication();android.widget.LinearLayout parent=new android.widget.LinearLayout(c);android.widget.TextView a=new android.widget.TextView(c),b=new android.widget.TextView(c);a.setText("private title");b.setText("private query");parent.addView(a);parent.addView(b);
         java.lang.reflect.Method id=Diagnostics.class.getDeclaredMethod("viewId",android.view.View.class);id.setAccessible(true);String first=(String)id.invoke(null,a),second=(String)id.invoke(null,b);assertNotEquals(first,second);assertFalse(first.contains("private"));assertFalse(second.contains("private"));
