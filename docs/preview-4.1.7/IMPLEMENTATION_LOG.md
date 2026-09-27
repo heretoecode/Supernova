@@ -681,3 +681,11 @@ These changes require a full CI rerun; no failures are waived.
 - Selected folder ancestry is read by stable IDs before and after a complete listing. A later root rename/move rebases the existing WebDAV path only where the recorded API path is an exact suffix; server and mount prefix remain unchanged. Custom mappings that cannot be proved require review. The existing reassignment journal preserves identity and keeps previous discovery inactive.
 - Ancestor cycles and movement during the snapshot invalidate the operation. Added tests for path ancestry/cycles, URI encoding, account/source binding, uncertain mounts and counts across multiple review steps. These tests and native integration require the new CI checkpoint; no physical validation is claimed.
 - Ongoing requirements review found that legacy technical-column hydration is still list-triggered. Background technical enrichment remains implementation work, not an OAuth blocker.
+
+## Continuation checkpoint 41 — background technical enrichment
+
+- Checkpoint 40 CI 36337372113 passed compilation, complete Video tests, backend checks and WebDAV tests. This includes checkpoint 39's search/media-info additions.
+- Replaced List scroll/view-triggered extraction with a single-file background queue offered from loaded snapshots. Continue Watching/recent items precede the current library category and remaining physical files, including alternate versions. Completion and failure backoff persist by media ID/size/modification fingerprint; cold restart resumes unfinished indexed work.
+- Native codec/bitrate/dimensions/audio persist through the existing metadata save path. Cached HDR is loaded without extraction; retriever media metadata is consulted for colour transfer when present, with unknown values left unknown. No playback engine or transport change.
+- Removed extraction triggers from list scrolling and Grid/List controls. Added regressions for background coverage of physical variants and fingerprint-specific persisted HDR. The derived completion cache is excluded from portable preference restores.
+- Java syntax (797 files), XML/identity/HUD checks (431 files) and six Python tests pass locally. New Android tests and compilation require CI; physical extraction performance and HDR coverage still require Shield QA.

@@ -193,7 +193,7 @@ public final class PreviewPages extends FrameLayout {
         list=new FocusRecycler(c,false); list.setClipChildren(false);list.setClipToPadding(false);setClipChildren(false); list.setPadding(dp(28),dp(10),dp(28),dp(12));
         layout=new GridLayoutManager(c,24); layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?(tab<3&&listMode[tab]?24:4):cells.get(p).type==NETWORK_PANEL?8:cells.get(p).type==STORAGE?6:24;}});
         adapter.setHasStableIds(true);
-        list.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView rv,int dx,int dy){notifyScroll();if(dy!=0)enrichList();}});list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
+        list.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView rv,int dx,int dy){notifyScroll();}});list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
         addView(list,new FrameLayout.LayoutParams(-1,-1));
         preferences=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
         if(preferences.getBoolean("remember_library_views",true))for(int i=1;i<=2;i++){
@@ -228,12 +228,12 @@ public final class PreviewPages extends FrameLayout {
         rememberFocus();scrollStates[this.tab]=layout.onSaveInstanceState();
         // TopNavigation owns the single full-viewport background, including the header.
         quietOrder.clear();switchingTab=true;this.tab=tab;setBackground(null);featuredIndex=0;render();switchingTab=false;
-        if(scrollStates[tab]!=null)layout.onRestoreInstanceState(scrollStates[tab]);else list.scrollToPosition(0);if(tab>0&&tab<3&&listMode[tab])enrichList();
+        if(scrollStates[tab]!=null)layout.onRestoreInstanceState(scrollStates[tab]);else list.scrollToPosition(0);PreviewMetadata.library(getContext(),snapshot,tab);
     }
     public void setSnapshot(Snapshot s) { if(s==null)return;
         quietOrder.clear();if(loaded&&(tab==1||tab==2))for(Cell cell:cells)if(cell.type==POSTER)quietOrder.put(((Entry)cell.value).key(),quietOrder.size());
         if(loaded&&tab==0){String featuredKey=featured()==null?null:featured().key();if(featuredKey!=null)for(int i=0;i<Math.min(5,s.recent.size());i++)if(s.recent.get(i).key().equals(featuredKey)){featuredIndex=i;break;}}
-        snapshot=s;loaded=true;render();PreviewEnrichmentQueue.library(getContext(),s,tab);post(ready);postDelayed(this::requestDiscovery,750);
+        snapshot=s;loaded=true;render();PreviewEnrichmentQueue.library(getContext(),s,tab);PreviewMetadata.library(getContext(),s,tab);post(ready);postDelayed(this::requestDiscovery,750);
     }
     private static void keepOrder(List<Entry> old,List<Entry> current){Map<String,Integer> rank=new HashMap<>();for(Entry e:old)rank.put(e.key(),rank.size());current.sort(Comparator.comparingInt(e->rank.getOrDefault(e.key(),Integer.MAX_VALUE)));}
     public void setFiles(List<Box> f) {
@@ -328,21 +328,6 @@ public final class PreviewPages extends FrameLayout {
     }
     private static String entrySignature(Entry e){return e.key()+"|"+displayName(e)+"|"+e.backdrop+"|"+e.media.getPosterUri()+"|"+e.secondary+"|"+e.active+"|"+e.bytes+"|"+e.runtime+"|"+e.year()+"|"+e.resolution+"|"+e.audio+"|"+e.codec+"|"+e.hdr+"|"+(e.media instanceof Video?((Video)e.media).getResumeMs():0);}
     private String signature(Cell c){String base=tab+":"+c.title+":"+c.type+":"+(tab>0&&tab<3?listMode[tab]+":"+sorts[tab]+":"+ascending[tab]+":"+genres[tab]+":"+selectedYears[tab]+":"+unmatched[tab]+":"+providers[tab]+":"+columns[tab].sortColumn+":"+columns[tab].ascending+":"+columns[tab].visible():"");if(c.value instanceof Entry)base+=entrySignature((Entry)c.value);else if(c.type==RAIL){StringBuilder rail=new StringBuilder(base);for(Entry e:(List<Entry>)c.value)rail.append(entrySignature(e));base=rail.toString();}else base+=String.valueOf(c.value);if(c.type==HERO&&tab>0)base+=PreviewLibrarySummary.describe(getContext(),snapshot,tab==2);if(c.type==NETWORK_PANEL||c.type==NETWORK){StringBuilder sources=new StringBuilder(base);for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:librarySources)sources.append(source.getName()).append(source.getUri());for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:savedLocations)sources.append(source.getName()).append(source.getUri());base=sources.append(files).toString();}return base;}
-    private final Set<String> enrichmentRequested=new HashSet<>();
-    private void enrichList(){
-        if(tab<1||tab>2||!listMode[tab])return;
-        List<Entry> candidates=filtered();
-        if(tab==2){Set<Long> shows=new HashSet<>();for(Entry e:candidates)shows.add(e.show);candidates=new ArrayList<>();for(Entry e:snapshot.episodes)if(shows.contains(e.show))candidates.add(e);}
-        int requested=0;
-        for(Entry entry:candidates){
-            if(!(entry.media instanceof Video))continue;
-            String key=((Video)entry.media).getId()+":"+entry.modified+":"+entry.bytes;
-            if((entry.codec.isEmpty()||entry.audio.isEmpty()||entry.resolution.isEmpty())&&!enrichmentRequested.contains(key)){
-                boolean accepted=PreviewMetadata.request(getContext(),entry,()->{PreviewLibraryLoader.refreshTechnicalSummaries(snapshot);if(isAttachedToWindow()&&tab>0&&tab<3&&listMode[tab])render();});
-                if(accepted)enrichmentRequested.add(key);if(++requested==8)break;
-            }
-        }
-    }
     private List<Entry> source(){
         if(!unmatched[tab])return tab==1?snapshot.movies:snapshot.shows;
         List<Entry> result=new ArrayList<>();
@@ -464,7 +449,7 @@ public final class PreviewPages extends FrameLayout {
                     v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(13),0,dp(18));LinearLayout controls=new PreviewToolbar(getContext());
                     controls.addView(button("Filters"+(genres[tab].isEmpty()?"":": "+genres[tab])+(years[tab]==0?"":" · "+years[tab])+"  ▾",()->filter()));
                     String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
-                    for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?0:1,n->{quietOrder.clear();ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(unmatched[tab]?"Matched":"Unmatched",()->{unmatched[tab]=!unmatched[tab];quietOrder.clear();render();}),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();if(listMode[tab])enrichList();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
+                    for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?0:1,n->{quietOrder.clear();ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(unmatched[tab]?"Matched":"Unmatched",()->{unmatched[tab]=!unmatched[tab];quietOrder.clear();render();}),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
                     if(listMode[tab]){TextView chooser=button("Columns",()->columns[tab].choose(this::refreshColumns));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(chooser,lp);}
                     for(int i=0;i<controls.getChildCount();i++)controls.getChildAt(i).setTag("control:"+i);v.addView(controls);
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));

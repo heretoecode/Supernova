@@ -58,6 +58,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public int year() { return media instanceof Movie ? ((Movie)media).getYear() : media instanceof Tvshow ? ((Tvshow)media).getYear() : 0; }
     }
     public static final class Snapshot implements java.io.Serializable {
+        public final List<Entry> technical=new ArrayList<>();
         public final List<Entry> episodes=new ArrayList<>();
         public final List<Entry> unmatched=new ArrayList<>();
         public final List<Entry> watched = new ArrayList<>();
@@ -74,7 +75,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 .orElseGet(()->choices.stream().filter(e->!watched((Video)e.media)).min(order).orElse(null)));
     }
     public static Snapshot build(List<Entry> videos, List<Entry> shows) {
-        Snapshot s=new Snapshot(); s.shows.addAll(shows);
+        Snapshot s=new Snapshot();s.technical.addAll(videos); s.shows.addAll(shows);
         Map<Long,List<Entry>> groups=new LinkedHashMap<>();
         for(Entry e:videos) {
             Video v=(Video)e.media;
@@ -187,7 +188,9 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                     while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId()); Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;}se.sortTitle=sc.getString(sc.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_SORT_NAME));shows.add(se); }
                 }
             }
+            PreviewMetadata.hydrate(getContext(),videos);
             Snapshot result=build(videos,shows);
+            refreshTechnicalSummaries(result);
             if(rejected==0) {
                 applyJourneys(result,videos);
                 cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=result;
