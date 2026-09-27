@@ -28,7 +28,8 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
             size=cursor.getLong(3);relativePath=cursor.getString(4);missing=cursor.getInt(5)!=0;
         }
     }
-    public PutioAssociationStore(Context context) { super(context,"putio-associations.db",null,1); }
+    private final Context context;
+    public PutioAssociationStore(Context context) { super(context,"putio-associations.db",null,1);this.context=context.getApplicationContext(); }
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE scopes (account_id INTEGER NOT NULL,folder_id INTEGER NOT NULL,source TEXT NOT NULL,generation INTEGER NOT NULL DEFAULT 0,ownership TEXT NOT NULL,complete_generation INTEGER NOT NULL DEFAULT -1,unresolved INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(account_id,folder_id))");
         db.execSQL("CREATE TABLE links (account_id INTEGER NOT NULL,file_id INTEGER NOT NULL,folder_id INTEGER NOT NULL,parent_id INTEGER NOT NULL,media_id INTEGER NOT NULL UNIQUE,size INTEGER NOT NULL,relative_path TEXT NOT NULL,missing INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(account_id,file_id))");
@@ -99,18 +100,44 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
             } finally { db.endTransaction(); }
         }
     }
-    /** The scanner hand-off must call this only after its own source exclusion is ready. */
+    /** Persist scanner exclusion while holding the same lock as an entire generic scan. */
     public synchronized boolean activate(Session session) {
-        ContentValues values=new ContentValues();values.put("ownership",Ownership.API.name());
-        return getWritableDatabase().update("scopes",values,"account_id=? AND folder_id=? AND generation=? AND complete_generation=? AND unresolved=0 AND ownership=?",
-                new String[]{""+session.accountId,""+session.folderId,""+session.generation,""+session.generation,Ownership.PREPARING.name()})==1;
+        synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+            SQLiteDatabase db=getWritableDatabase();db.beginTransaction();
+            try{
+                String source;
+                try(Cursor c=db.rawQuery("SELECT source FROM scopes WHERE account_id=? AND folder_id=? AND generation=? AND complete_generation=? AND unresolved=0 AND ownership=?",new String[]{""+session.accountId,""+session.folderId,""+session.generation,""+session.generation,Ownership.PREPARING.name()})){
+                    if(!c.moveToFirst())return false;source=c.getString(0);
+                }
+                // Exclusion first: interruption can leave a source inactive, never double-owned.
+                com.archos.mediaprovider.video.ProviderDiscoveryGate.exclude(context,"putio:"+session.scope,Uri.parse(source));
+                ContentValues values=new ContentValues();values.put("ownership",Ownership.API.name());
+                db.update("scopes",values,"account_id=? AND folder_id=?",args(session.accountId,session.folderId));db.setTransactionSuccessful();return true;
+            }finally{db.endTransaction();}
+        }
     }
     /** Explicit user choice; neither path erases the retained stable identities. */
     public synchronized void disconnect(long account,long folder,DisconnectChoice choice) {
         if(choice==null)throw new IllegalArgumentException("Discovery choice is required");
-        Session invalidate=begin(account,folder);
-        ContentValues values=new ContentValues();values.put("ownership",choice==DisconnectChoice.KEEP_INACTIVE?Ownership.INACTIVE.name():Ownership.GENERIC.name());
-        getWritableDatabase().update("scopes",values,"account_id=? AND folder_id=? AND generation=?",new String[]{""+account,""+folder,""+invalidate.generation});
+        synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+            Session invalidate=begin(account,folder);
+            if(choice==DisconnectChoice.KEEP_INACTIVE){
+                try(Cursor c=getReadableDatabase().rawQuery("SELECT source FROM scopes WHERE account_id=? AND folder_id=?",args(account,folder))){if(c.moveToFirst())com.archos.mediaprovider.video.ProviderDiscoveryGate.exclude(context,"putio:"+invalidate.scope,Uri.parse(c.getString(0)));}
+            }
+            ContentValues values=new ContentValues();values.put("ownership",choice==DisconnectChoice.KEEP_INACTIVE?Ownership.INACTIVE.name():Ownership.GENERIC.name());
+            getWritableDatabase().update("scopes",values,"account_id=? AND folder_id=? AND generation=?",new String[]{""+account,""+folder,""+invalidate.generation});
+            if(choice==DisconnectChoice.REVERT_TO_GENERIC)com.archos.mediaprovider.video.ProviderDiscoveryGate.release(context,"putio:"+invalidate.scope);
+        }
+    }
+
+    public synchronized void disconnectAccount(long account,DisconnectChoice choice) {
+        if(choice==null)throw new IllegalArgumentException("Discovery choice is required");
+        synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+        SQLiteDatabase db=getWritableDatabase();db.beginTransaction();
+        try{List<Long> folders=new ArrayList<>();try(Cursor c=db.rawQuery("SELECT folder_id FROM scopes WHERE account_id=?",new String[]{""+account})){while(c.moveToNext())folders.add(c.getLong(0));}
+            for(long folder:folders)disconnect(account,folder,choice);db.setTransactionSuccessful();
+        }finally{db.endTransaction();}
+        }
     }
     public synchronized List<Link> links(long account,long folder) {
         List<Link> result=new ArrayList<>();

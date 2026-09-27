@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioAssociationStoreTest {
     private PutioAssociationStore store;
-    @Before public void setup(){RuntimeEnvironment.getApplication().deleteDatabase("putio-associations.db");store=new PutioAssociationStore(RuntimeEnvironment.getApplication());store.prepare(10,20,Uri.parse("https://webdav.put.io/Films"));}
+    @Before public void setup(){RuntimeEnvironment.getApplication().deleteDatabase("putio-associations.db");RuntimeEnvironment.getApplication().getSharedPreferences("provider-discovery-ownership-v1",0).edit().clear().commit();store=new PutioAssociationStore(RuntimeEnvironment.getApplication());store.prepare(10,20,Uri.parse("https://webdav.put.io/Films"));}
     @After public void close(){store.close();}
     private PutioReconciliation.File file(long id,String path){return new PutioReconciliation.File(id,20,path,100);}
     private PutioReconciliation.Existing existing(long media,String path,long id){return new PutioReconciliation.Existing(media,path,100,id);}
@@ -23,7 +23,7 @@ public class PutioAssociationStoreTest {
     @Test public void completeAssociationRetainsMediaIdentityAcrossRenameAndMarksMissingWithoutDeleting(){
         PutioAssociationStore.Session first=store.begin(10,20);
         assertTrue(store.commit(first,snapshot(first,file(30,"a.mkv")),Collections.singletonList(existing(5,"a.mkv",0))));
-        assertTrue(store.activate(first));assertEquals(PutioAssociationStore.Ownership.API,store.ownership(10,20));
+        assertTrue(store.activate(first));assertTrue(com.archos.mediaprovider.video.ProviderDiscoveryGate.excludes(RuntimeEnvironment.getApplication(),Uri.parse("https://webdav.put.io/Films/a.mkv")));assertEquals(PutioAssociationStore.Ownership.API,store.ownership(10,20));
         PutioAssociationStore.Session rename=store.begin(10,20);
         assertTrue(store.commit(rename,snapshot(rename,file(30,"renamed/a.mkv")),Collections.singletonList(existing(5,"a.mkv",30))));
         assertEquals(5,store.links(10,20).get(0).mediaId);assertEquals("renamed/a.mkv",store.links(10,20).get(0).relativePath);
@@ -71,5 +71,12 @@ public class PutioAssociationStoreTest {
             try{store.prepare(10,21,Uri.parse(uri));fail("Credential-bearing source accepted");}catch(IllegalArgumentException expected){}
         }
         try{store.prepare(10,20,Uri.parse("https://webdav.put.io/Other"));fail("Silent reassignment accepted");}catch(IllegalStateException expected){}
+    }
+    @Test public void accountDisconnectInvalidatesEveryFolderButKeepsOtherAccount(){
+        store.prepare(10,21,Uri.parse("https://webdav.put.io/TV"));store.prepare(11,22,Uri.parse("https://webdav.put.io/Other"));
+        PutioAssociationStore.Session first=store.begin(10,20),second=store.begin(10,21);
+        store.disconnectAccount(10,PutioAssociationStore.DisconnectChoice.KEEP_INACTIVE);
+        assertEquals(PutioAssociationStore.Ownership.INACTIVE,store.ownership(10,20));assertEquals(PutioAssociationStore.Ownership.INACTIVE,store.ownership(10,21));assertEquals(PutioAssociationStore.Ownership.PREPARING,store.ownership(11,22));
+        assertFalse(store.commit(first,snapshot(first),Collections.emptyList()));assertFalse(store.commit(second,snapshot(second),Collections.emptyList()));
     }
 }

@@ -35,14 +35,30 @@ public final class PutioReadClient {
         http=new OkHttpClient.Builder().connectTimeout(10,TimeUnit.SECONDS).readTimeout(20,TimeUnit.SECONDS).callTimeout(30,TimeUnit.SECONDS)
                 .followRedirects(false).followSslRedirects(false).build();
     }
+    public static final class Account {
+        public final long id,usedBytes,totalBytes;public final String username,status;
+        Account(long id,String username,String status,long used,long total){this.id=id;this.username=username;this.status=status;usedBytes=used;totalBytes=total;}
+    }
+    public Account account()throws Unavailable {return parseAccount(request(new Request.Builder().url(ROOT+"account/info").header("Authorization","Token "+token).build()));}
+    static Account parseAccount(JSONObject response)throws Unavailable {
+        try{
+            if(!"OK".equals(response.getString("status")))throw new JSONException("Invalid envelope");
+            JSONObject info=response.getJSONObject("info"),disk=info.getJSONObject("disk");long id=info.getLong("user_id"),used=disk.getLong("used"),total=disk.getLong("size");String name=info.getString("username"),status=info.getString("account_status");
+            if(id<=0||used<0||total<0||name.isEmpty()||name.length()>256||!Arrays.asList("active","inactive","stranger").contains(status))throw new JSONException("Invalid account");
+            return new Account(id,name,status,used,total);
+        }catch(JSONException invalid){throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);}
+    }
     public Page list(long parentId,String cursor)throws Unavailable {
         if(parentId<0)throw new IllegalArgumentException("Only selected account folders are supported");
         HttpUrl url=HttpUrl.parse(ROOT+(cursor==null?"files/list":"files/list/continue")).newBuilder().addQueryParameter("per_page","200").build();
         Request.Builder request=new Request.Builder().header("Authorization","Token "+token);
         if(cursor==null)request.url(url.newBuilder().addQueryParameter("parent_id",String.valueOf(parentId)).addQueryParameter("total","1").build());
         else request.url(url).post(new FormBody.Builder().add("cursor",cursor).build());
+        return parse(request(request.build()),parentId);
+    }
+    private JSONObject request(Request request)throws Unavailable {
         if(Thread.currentThread().isInterrupted())throw new Unavailable(PutioReconciliation.Failure.CANCELLED,0);
-        try(Response response=http.newCall(request.build()).execute()){
+        try(Response response=http.newCall(request).execute()){
             if(!response.isSuccessful())throw new Unavailable(response.code()==401||response.code()==403?PutioReconciliation.Failure.UNAUTHORISED:response.code()==429?PutioReconciliation.Failure.RATE_LIMITED:PutioReconciliation.Failure.OFFLINE,response.code());
             if(response.body()==null)throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,response.code());
             ByteArrayOutputStream bytes=new ByteArrayOutputStream();InputStream input=response.body().byteStream();byte[] buffer=new byte[8192];int count;
@@ -51,7 +67,7 @@ public final class PutioReadClient {
                 if(bytes.size()+count>8*1024*1024)throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);
                 bytes.write(buffer,0,count);
             }
-            return parse(new JSONObject(bytes.toString("UTF-8")),parentId);
+            return new JSONObject(bytes.toString("UTF-8"));
         }catch(Unavailable safe){throw safe;}
         catch(JSONException invalid){throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);}
         catch(IOException network){throw new Unavailable(Thread.currentThread().isInterrupted()?PutioReconciliation.Failure.CANCELLED:PutioReconciliation.Failure.OFFLINE,0);}

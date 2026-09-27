@@ -33,16 +33,24 @@
      private static final String SELECT_ID = BaseColumns._ID + "=?";
      /** scans files into our db */
      void doScan(Uri what, long batchId) {
-@@ -640,6 +654,8 @@
+@@ -640,16 +654,21 @@
          long start = log.isDebugEnabled() ? System.currentTimeMillis() : 0;
          boolean scanResolved = false;
          boolean scanHadDbError = false;
 +        previewAdded = 0; previewUpdated = 0;
 +        previewScanEvent(what, "started");
          try {
-             ScanResult result = performScan(what);
-             scanResolved = result.resolved;
-@@ -651,6 +667,7 @@
+-            ScanResult result = performScan(what);
+-            scanResolved = result.resolved;
+-            scanHadDbError = result.hadDbError;
++            synchronized (ProviderDiscoveryGate.LOCK) {
++                ScanResult result = performScan(what);
++                scanResolved = result.resolved;
++                scanHadDbError = result.hadDbError;
++            }
+         } finally {
+             // Always record this scan's completion, even if the scan body threw an unchecked
+             // error, so the batch counter cannot be left permanently non-zero (which would
              // strand the batch and never start post-scan scraping). The error and success
              // state are aggregated across the whole batch under a single lock, so the decision
              // no longer depends on whichever thread happens to finish last.
@@ -50,12 +58,80 @@
              com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion =
                      com.archos.mediascraper.AutoScrapeService.completeNetworkScan(batchId, scanHadDbError, scanResolved);
              if (log.isDebugEnabled()) {
-@@ -786,6 +803,8 @@
+@@ -684,6 +703,7 @@
+     private String mCurrentRootUri = null;
+
+     ScanResult performScan(Uri what) {
++        if (ProviderDiscoveryGate.excludes(this, what)) return new ScanResult(false, false);
+         mFoundFiles = 0;
+         sFilesFoundCount = 0;
+         sRemainingDeletes = 0;
+@@ -786,6 +806,8 @@
                  int insertCount = bulkHandler.getInsertHandled();
                  int updateCount = bulkHandler.getUpdatesHandled();
                  int deleteCount = bulkHandler.getDeletesHandled();
 +                previewAdded = insertCount; previewUpdated = updateCount;
 +                previewScanEvent(what, traversalHadError ? "partial" : "reconciled");
                  if (log.isDebugEnabled()) log.debug("added:{} modified:{} deleted:{}", insertCount, updateCount, deleteCount);
- 
+
                  int newSubs = handleSubtitles(cr);
+@@ -999,6 +1021,7 @@
+
+         @Override
+         public boolean onDirectory(MetaFile2 directory) {
++            if (mService != null && directory != null && ProviderDiscoveryGate.excludes(mService, directory.getUri())) return false;
+             // hidden directories are not scanned
+             if (ArchosMediaFile.isHiddenFile(directory)) {
+                 if (log.isDebugEnabled()) log.debug("skipping {}, .hidden!", (directory != null ? directory.getName() : "null"));
+@@ -1025,6 +1048,7 @@
+
+         @Override
+         public void onFile(MetaFile2 file) {
++            if (mService != null && file != null && ProviderDiscoveryGate.excludes(mService, file.getUri())) return;
+             mFoundFiles ++;
+             int fileType = getFileType(file);
+             if (!isValidType(fileType)) return;
+@@ -1088,6 +1112,10 @@
+         @Override
+         public void onStop(MetaFile2 root) {
+             if (log.isDebugEnabled()) log.debug("onStop");
++            // An ancestor scan must retain provider-owned descendants even when omitted by traversal.
++            if (mService != null) for (PrescanItem item : mPrescanItemsMap.values()) {
++                if (ProviderDiscoveryGate.excludes(mService, Uri.parse(item._data))) item.needsDelete = false;
++            }
+             // Count total files that need deletion
+             int totalNeedsDelete = 0;
+             for (PrescanItem item : mPrescanItemsMap.values()) {
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java
+@@ -0,0 +1,30 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.net.Uri;
++import java.util.*;
++
++/** Same-process scanner/provider hand-off. Both services run in the application process. */
++public final class ProviderDiscoveryGate {
++    public static final Object LOCK=new Object();
++    private static SharedPreferences prefs(Context c){return c.getSharedPreferences("provider-discovery-ownership-v1",Context.MODE_PRIVATE);}
++    public static void exclude(Context c,String scope,Uri source){
++        if(scope==null||!scope.matches("putio:[0-9]+:[0-9]+")||source==null||source.getUserInfo()!=null||source.getQuery()!=null||source.getFragment()!=null||source.getHost()==null)throw new IllegalArgumentException("Invalid provider source");
++        synchronized(LOCK){if(!prefs(c).edit().putString(scope,source.toString()).commit())throw new IllegalStateException("Unable to preserve scanner ownership");}
++    }
++    public static void release(Context c,String scope){synchronized(LOCK){if(!prefs(c).edit().remove(scope).commit())throw new IllegalStateException("Unable to restore scanner ownership");}}
++    public static boolean excludes(Context c,Uri candidate){
++        if(candidate==null)return false;
++        synchronized(LOCK){for(Object value:prefs(c).getAll().values())if(value instanceof String&&contains(Uri.parse((String)value),candidate))return true;return false;}
++    }
++    public static boolean contains(Uri root,Uri candidate){
++        if(root==null||candidate==null||root.getHost()==null||candidate.getHost()==null||!root.getHost().equalsIgnoreCase(candidate.getHost())||!scheme(root).equals(scheme(candidate))||port(root)!=port(candidate))return false;
++        List<String> a=root.getPathSegments(),b=candidate.getPathSegments();if(a.size()>b.size())return false;
++        for(int i=0;i<a.size();i++)if(!a.get(i).equals(b.get(i)))return false;
++        return true;
++    }
++    private static String scheme(Uri uri){String s=uri.getScheme();if(s==null)return "";s=s.toLowerCase(Locale.ROOT);return s.equals("webdavs")||s.equals("davs")?"https":s.equals("webdav")||s.equals("dav")?"http":s;}
++    private static int port(Uri uri){return uri.getPort()>=0?uri.getPort():scheme(uri).equals("https")?443:scheme(uri).equals("http")?80:-1;}
++    private ProviderDiscoveryGate(){}
++}

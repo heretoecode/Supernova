@@ -633,3 +633,11 @@ These changes require a full CI rerun; no failures are waived.
 - Added model regressions for local precedence, duplicate remote episodes, invalid season coordinates, specials and release-date gating.
 - Source CI 36330790505 compiled successfully; 278/279 unit tests passed. The failing navigation fixture used a zero-minimum-height plain View inside ScrollView; the expected 160px scroll stayed at zero. Added a minimum height, keeping the rendered-pixel assertions intact. New CI pending.
 - Local Java syntax, 430 XML checks and six Python regressions passed. No physical Shield claim, signed APK or final conformance claim.
+
+## Continuation checkpoint 35 — put.io account and discovery ownership
+
+- Checkpoint 34 CI 36331412791 passed compilation, the complete Video suite, targeted backend regressions and WebDAV checks. Navigation pixel regression now passes with a genuinely scrollable fixture.
+- Added the provider-documented account/info reader, selecting only identity/status/storage fields. Cloud Services opens native account controls and a paginated read-only file browser. OAuth production connection is still explicitly unavailable, not simulated.
+- Disconnect requires inactive versus generic discovery selection, invalidates all account scope generations and retains identity/history. New account parsing and account-wide disconnect regressions cover the boundary.
+- The pinned MediaLib patch adds a shared discovery gate. Generic network scans and ownership changes share a lock (NetworkScannerServiceVideo runs in the app process). Owned roots are skipped; owned descendants of ancestor scans are excluded from traversal and retained in stale-record reconciliation. Unrelated sibling sources remain discoverable. Activation persists exclusion before recording API ownership.
+- Patch applicability was checked against the recovered pinned scanner source. New source compilation and regression run still required. Association selection, new-file indexing, review UI, source reassignment and production OAuth remain outstanding; this is not a native put.io completion claim.

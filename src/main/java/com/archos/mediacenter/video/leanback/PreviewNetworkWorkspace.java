@@ -64,7 +64,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
             if (saved.isEmpty()) items.addView(label("No saved locations. Use Add to Saved Locations while browsing a folder.", 14));
             for (Shortcut source : saved) source(source, false);
         } else {
-            item("put.io", () -> { heading("put.io"); description("Native account linking requires the registered Supernova OAuth client configuration. Existing WebDAV library access and playback remain available."); });
+            item("put.io", () -> { heading("put.io"); description("Connect your put.io account for native account and library management. Original-quality playback uses your WebDAV source."); action("Account / Connection", () -> com.archos.mediacenter.video.streaming.putio.PutioAccountController.open(getContext())); });
             for (String provider : new String[]{"Google Drive", "OneDrive", "Dropbox"}) {
                 TextView unavailable = label(provider + " · Coming soon", 14); unavailable.setPadding(dp(10), dp(14), dp(10), dp(14)); unavailable.setAlpha(.5f); items.addView(unavailable);
             }
