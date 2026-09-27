@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewProviderBrowserTest {
-    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void providerListingUsesSharedPanelsAndReadOnlyAction(){
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void providerListingUsesSharedPanelsAndReadOnlyAction() throws Exception {
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             LinearLayout listing=new LinearLayout(host.get());listing.setOrientation(LinearLayout.VERTICAL);TextView row=new TextView(host.get());row.setText("Example.mkv");row.setTextColor(-1);row.setFocusable(true);row.setFocusableInTouchMode(true);listing.addView(row,new LinearLayout.LayoutParams(-1,44));
