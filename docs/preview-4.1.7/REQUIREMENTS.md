@@ -641,9 +641,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Hybrid model. put.io supported public API/OAuth handles authentication, account/storage, browse, stable file/folder IDs, discovery/sync, search, file metadata/media info and supported file operations. Existing WebDAV remains the PRIMARY original-quality playback transport initially. Playback stack remains Supernova → AVOS/core → FFmpeg → Android/Nvidia Shield hardware. Do not describe current engine as mpv.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — LIVE ACCOUNT QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PutioReadClient/OAuthClient cover account/storage, stable-ID listing, cursor search and selected file/media information. PutioSnapshotReader/Sync/AssociationStore own API discovery; native bridge retains original WebDAV playback. No API streaming or transfer management. Tests passed through CI 36337372113. Production OAuth/live account use remains blocked under PUT-003.
 
 ### PUT-002 — Architecture
 
@@ -651,9 +651,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Provider abstraction: Library → Local / Generic Network / Cloud Provider. put.io provider owns API client, stable ID mapping, sync/account/file management. Playback resolver continues to support local/SMB/SFTP/WebDAV and put.io WebDAV original-quality transport. API direct original/HLS/MP4 may be benchmarked later as fallback/future, not primary now. Transfers/download management and playback-position sync are deferred.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Separate putio package owns API identity/sync; ProviderDiscoveryGate marks native-owned subtrees; PutioLibraryBridge maps stable IDs to existing WebDAV native records. Generic local/network transports are retained. Source/backend/WebDAV tests passed through CI 36337372113. Physical mixed-provider playback remains QA.
 
 ### PUT-003 — Authentication
 
@@ -661,9 +661,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Cloud Services → Connect put.io → temporary linking/device code → large TV QR + short code + put.io link → phone sign-in/approve → Supernova polls → connected. Never collect normal put.io username/password in Supernova. QR contains link/code only, never OAuth token/credentials. Manual code fallback. Store OAuth token securely; never export/log/display it. Validate exact production endpoint/deep link during implementation. Supernova requires a registered put.io OAuth app/client.
 
-Status: **BLOCKED**
+Status: **BLOCKED — PRODUCTION OAUTH CONFIGURATION**
 
-Code mapping / verification: Production registered Supernova put.io OAuth client configuration is absent. PutioTokenStore implements device-local encrypted persistence; four tests passed in the 213-test checkpoint. Credential lifecycle integration remains pending. No production credentials invented, borrowed or exposed; existing WebDAV access remains untouched.
+Code mapping / verification: Device-code request/poll, temporary link/code-only QR, manual fallback, timeout/cancel and encrypted Android Keystore token storage are implemented. Production registered client ID and validated linking template are intentionally empty. Parser and token-envelope tests pass; no live token was obtained and no live authorisation claim is made. Production client/link validation and subsequent real-account QA remain blocked by the acknowledged dependency.
 
 ### PUT-004 — First-time association / zero-duplicate migration
 
@@ -677,9 +677,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 6. Ambiguous matches remain untouched and go to Needs Review: Existing Supernova item vs put.io item; Same File / Keep Separate; Finish Later.
 7. Success summary includes matched existing items and duplicates created (target zero).
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA / LIVE OAUTH DEPENDENCY**
 
-Code mapping / verification: PutioReconciliation implements conservative path/name/size matching and review decisions (13 policy tests passed). PutioAssociationStore adds atomic stable mappings, generation fencing and missing-review flags; six database tests await CI. Account linking, association UI, new-item indexing and scanner hand-off remain incomplete.
+Code mapping / verification: Movies/TV folder browser and explicit matching WebDAV source selection feed Save & Continue and complete-snapshot ingestion. Existing IDs are matched conservatively; new native files_scanned records invoke enrichment; ambiguous records remain Same File/Keep Separate/Finish Later. Summary retains original IDs across review steps and separates existing/new items and zero duplicate playback paths. Native schema and coordinator fixtures passed CI 36337372113. Actual Films/TV migration requires production OAuth and Shield QA.
 
 ### PUT-005 — First-time association / zero-duplicate migration
 
@@ -687,9 +687,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Preserve metadata, watched/resume, custom rows, artwork, versions and file associations. Provider fields include provider=put.io, put.io File ID, Parent Folder ID, Supernova Media ID, playback source existing WebDAV URI. Stable file ID survives rename/move.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Association sidecar stores account/file/parent/folder/native media IDs and relative path; native relocation updates the scanner URI for the same canonical record. Native schema/trigger tests preserve bookmark and movie match through rename and interrupted reassignment. Tests passed CI 36337372113. Complete watched/artwork/custom-row/version preservation remains real-library QA, not proven by those fixtures alone.
 
 ### PUT-006 — First-time association / zero-duplicate migration
 
@@ -697,9 +697,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Once associated, discovery/index changes for those folders come from put.io API; playback remains WebDAV. Generic network scanner must not independently rediscover the same associated folder.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: ProviderDiscoveryGate and scanner share a lock; native-owned roots and descendants are excluded while ancestor scans retain their records during stale reconciliation. Activation persists exclusion before API ownership. Backend regression suite passed CI 36337372113; simultaneous physical generic/API scanning remains QA.
 
 ### PUT-007 — Sync safety
 
@@ -707,9 +707,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Initial complete snapshot; later additions/removals/moves/renames reconcile stable IDs. Correctly paginate large libraries. Partial/interrupted/auth-failed/rate-limited/incomplete listings MUST NEVER trigger mass deletions. Destructive reconciliation only after complete valid sync.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping / verification: PutioReconciliation tracks every descendant/continuation page and rejects interrupted/auth/rate-limit/offline/invalid snapshots. Missing stable IDs are review-only. Tests added; API and persistent sync integration remain pending.
+Code mapping / verification: SnapshotReader requires every descendant and cursor, stable counts and successful completion. Generation-fenced Sync never removes history; missing IDs are review-only. Root ancestry is checked before/after listing and exact known path suffixes support root moves. Page, coordinator and native interrupted-reassignment tests passed CI 36337372113. Large live library and rate-limit/outage scenarios remain account/Shield QA.
 
 ### PUT-008 — Sync safety
 
@@ -717,9 +717,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 API unavailable → indexed library remains and WebDAV playback may continue. WebDAV unavailable → API browse/sync may continue but playback source reports unavailable; no library deletion. OAuth invalid → Reconnect put.io; do not delete library. Changing selected library folder is source reassignment, not silent deletion; sync new scope and deliberately retire old association while preserving state. Disconnect removes native sync/API credential, never deletes put.io media or silently erases Supernova history. Because WebDAV is independent, explicitly ask whether associated sources revert to generic discovery or remain inactive; do not guess.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: OAuth failures route to Reconnect without deleting records. Native and WebDAV connections remain independent. Reassignment journals before URI mutation, reads a complete snapshot first and asks inactive/generic retirement; account changes and disconnect explicitly choose ownership and preserve history. Pending changes can resume safely. CI 36337372113 passed; live expiry, independent outages and reconnect still require account/Shield QA.
 
 ### PUT-009 — Sync safety
 
@@ -727,9 +727,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Native destructive put.io file operations, if implemented, use supported API. Do not rely on WebDAV destructive behaviour merely because a physical WebDAV delete happened to pass.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED AND VERIFIED — SOURCE/REGRESSION**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: No native destructive put.io operation is offered. Generic WebDAV Delete, ancestor deletion, associated-file deletion and subtitle rename/delete are guarded when API ownership overlaps. Unassociated generic sources retain their behaviour. Guarded-deletion/backend tests passed CI 36337372113.
 
 ### PUT-010 — Cloud Services visual behaviour
 
@@ -737,9 +737,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Blue remains focus/accent everywhere; no green status theme. Connected/Up to date may use restrained blue/neutral without focus-level glow. Provider logos may retain recognizable brand shapes but are monochrome. put.io is implemented provider. Google Drive, OneDrive, Dropbox may remain monochrome Coming soon reminders only; do not imply implemented.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — VISUAL REVIEW PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Cloud Services uses shared blue/white controls and neutral Coming soon reminders for Google Drive/OneDrive/Dropbox. No green status theme or implied integrations. Normative visual comparison remains pass 2.
 
 ### PUT-011 — Cloud Services visual behaviour
 
@@ -747,9 +747,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Connected put.io overview: identity/status, Storage Used, Last Sync/Up to date, Movies folder, TV Shows folder, Sync Now, Browse Files, Change Library Folders, Account/Connection, Disconnect. Avoid duplicate Disconnect actions. No transfers/download UI.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — TESTING / VISUAL REVIEW PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Account overview now displays identity/status/storage plus Movies and TV paths, ownership/sync state and last-sync age. Sync, Browse/Search, Change Library Folders, Account/Connection and one Disconnect remain available. Shared provider browser added at checkpoint 43. No transfer/download UI. New CI and normative visual review remain pending.
 
 ### PUT-012 — Required QA
 
@@ -757,9 +757,9 @@ Source: `PUTIO_ARCHITECTURE.md`
 
 Large paginated library; interrupted sync; expired auth; rename; folder move; API outage; WebDAV outage; new file; removed file; ambiguous association; reconnect; no duplicate/lost-state migration. Physical path: Connect → associate Films/TV → sync → new put.io item appears → play over WebDAV → rename/move → sync → same record.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AUTOMATED COVERAGE PASSED — LIVE/PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Policy, pagination, token, account, native schema/trigger, stable rename, incomplete snapshot, explicit review, source reassignment and interruption tests passed CI 36337372113. Required real-account Connect→associate→new item→WebDAV play→rename/move path has not been run; production OAuth configuration is required for it.
 
 ### DIA-001 — Preview 4.1.6 Diagnostic Findings and Next-Version Logging Requirements
 

@@ -35,7 +35,7 @@ public final class PreviewVariants {
                 + "\n" + safeLocation(video.getFileUri());
     }
     /** Never render URI user-info, query credentials or fragments in the picker. */
-    static String safeLocation(android.net.Uri uri) {
+    public static String safeLocation(android.net.Uri uri) {
         if (uri == null) return "Location unavailable";
         String scheme = uri.getScheme(), path = uri.getPath();
         if (scheme == null || "file".equalsIgnoreCase(scheme)) return "Local storage · " + (path == null ? "" : path);

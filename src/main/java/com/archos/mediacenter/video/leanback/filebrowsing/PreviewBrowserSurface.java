@@ -13,14 +13,21 @@ import com.archos.filecorelibrary.MetaFile2;
 
 /** Primary Preview composition. The existing listing engine/credentials/actions are retained;
  * the classic title/orbs and layout are not attached beneath this surface. */
-final class PreviewBrowserSurface extends BrowseFrameLayout {
+public final class PreviewBrowserSurface extends BrowseFrameLayout {
     private final TextView name,information;
     private final ImageView poster;
     private Runnable openSelected=()->{};private final TextView open;
     private final View dock;private final TextView sourceControl;private final TopNavigation navigation;
     PreviewBrowserSurface(Activity activity,View legacy,Uri uri,View titleCommands,Runnable options){
+        this(activity,legacy,uri,titleCommands,options,false);
+    }
+    /** Provider listings use the same location/content/context composition and routing. */
+    public PreviewBrowserSurface(Activity activity,View content,Uri uri,Runnable options){
+        this(activity,content,uri,null,options,true);
+    }
+    private PreviewBrowserSurface(Activity activity,View legacy,Uri uri,View titleCommands,Runnable options,boolean suppliedDock){
         super(activity);setId(R.id.grid_frame);setTag("preview-browser");
-        dock=legacy.findViewById(R.id.browse_grid_dock);((ViewGroup)dock.getParent()).removeView(dock);
+        dock=suppliedDock?legacy:legacy.findViewById(R.id.browse_grid_dock);if(dock.getParent() instanceof ViewGroup)((ViewGroup)dock.getParent()).removeView(dock);
         LinearLayout columns=new LinearLayout(activity);columns.setPadding(dp(24),dp(14),dp(24),dp(16));
         LinearLayout rail=column(activity),centre=column(activity),context=column(activity);
         LinearLayout.LayoutParams left=new LinearLayout.LayoutParams(0,-1,.21f);left.rightMargin=dp(16);columns.addView(rail,left);
@@ -37,7 +44,7 @@ final class PreviewBrowserSurface extends BrowseFrameLayout {
         open=control("Open",()->openSelected.run());context.addView(open,new LinearLayout.LayoutParams(-1,dp(38)));context.addView(control("Source Options",options),new LinearLayout.LayoutParams(-1,dp(38)));
         navigation=new TopNavigation(activity,columns,index->navigate(activity,index),()->sourceControl.hasFocus());navigation.selectTab(3);addView(navigation,new android.widget.FrameLayout.LayoutParams(-1,-1));
         // The title object remains a detached command registry for protocol-specific actions.
-        if(titleCommands.getParent() instanceof ViewGroup)((ViewGroup)titleCommands.getParent()).removeView(titleCommands);
+        if(titleCommands!=null&&titleCommands.getParent() instanceof ViewGroup)((ViewGroup)titleCommands.getParent()).removeView(titleCommands);
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){if(event.getAction()==KeyEvent.ACTION_DOWN&&dock.hasFocus()){
         if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT){if(moveInsideDock(View.FOCUS_LEFT))return true;sourceControl.requestFocus();return true;}
@@ -59,6 +66,9 @@ final class PreviewBrowserSurface extends BrowseFrameLayout {
     void focusItem(Object item,Runnable action){openSelected=action;open.setText(item instanceof Video?"View Details":"Open");com.squareup.picasso.Picasso.get().cancelRequest(poster);poster.setImageDrawable(null);
         if(item instanceof Video){Video v=(Video)item;name.setText(v.getName());String detail=v.getFilenameNonCryptic();if(v.getSize()>0)detail+="\n\n"+android.text.format.Formatter.formatFileSize(getContext(),v.getSize());if(v.getDurationMs()>0)detail+="\n"+v.getDurationMs()/60000+" min";information.setText(detail);if(v.getPosterUri()!=null)com.squareup.picasso.Picasso.get().load(v.getPosterUri()).resize(dp(180),dp(175)).centerInside().into(poster);}
         else if(item instanceof MetaFile2){MetaFile2 file=(MetaFile2)item;name.setText(file.getName());information.setText((file.isDirectory()?"Folder":"File")+"\n\n"+file.getUri().getPath());}
+    }
+    public void providerItem(String title,String details,boolean folder,Runnable action){
+        openSelected=action;open.setText(folder?"Open Folder":"File Information");poster.setVisibility(GONE);name.setText(title);information.setText(details);
     }
     private LinearLayout column(Activity a){LinearLayout v=new LinearLayout(a);v.setOrientation(LinearLayout.VERTICAL);v.setPadding(dp(8),dp(8),dp(8),dp(8));android.graphics.drawable.GradientDrawable panel=PreviewDialog.surface(a,false);panel.setColor(0x66071520);v.setBackground(panel);return v;}
     private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextSize(size);t.setTextColor(0xffd5e2ec);return t;}

@@ -57,7 +57,7 @@ final class PreviewMetadata {
     }
     private static void apply(PreviewLibraryLoader.Entry entry,VideoMetadata metadata){
         ((Video)entry.media).setMetadata(metadata);VideoMetadata.VideoTrack track=metadata.getVideoTrack();
-        if(track!=null){entry.codec=com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(track.format);entry.bitrate=Math.max(0,track.bitRate);if(track.colorTrc==16)entry.hdr="HDR (PQ)";else if(track.colorTrc==18)entry.hdr="HLG";}
+        if(track!=null){entry.codec=com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(track.format);entry.bitrate=1000L*Math.max(0,track.bitRate);if(track.colorTrc==16)entry.hdr="HDR (PQ)";else if(track.colorTrc==18)entry.hdr="HLG";}
         int w=metadata.getVideoWidth(),h=metadata.getVideoHeight();if(w>0&&h>0)entry.resolution=w>=3840||h>=2160?"4K":w>=1728||h>=1040?"1080p":w>=1200||h>=720?"720p":"SD";
         LinkedHashSet<String> audio=new LinkedHashSet<>();for(int i=0;i<metadata.getAudioTrackNb();i++){VideoMetadata.AudioTrack a=metadata.getAudioTrack(i);if(a!=null&&a.format!=null)audio.add(a.format+(a.channels==null?"":" · "+a.channels));}if(!audio.isEmpty())entry.audio=android.text.TextUtils.join(" · ",audio);
     }

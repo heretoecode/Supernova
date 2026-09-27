@@ -37,10 +37,23 @@ public final class PutioAccountController {
     private void load(){work("put.io",()->{String token=tokens.read();if(token==null)return this::disconnected;client=new PutioReadClient(token);account=client.account();long previous=selections().getLong("account",0);if(previous>0&&previous!=account.id)return ()->accountChanged(previous);selections().edit().putLong("account",account.id).apply();return this::overview;});}
     private void accountChanged(long previous){replace(PreviewDialog.choose(activity,"Different put.io account · keep the previous library and choose discovery ownership",new String[]{"Cancel","Keep previous sources inactive","Return previous sources to generic discovery"},0,index->{if(index==0)return;work("Change account",()->{try(PutioAssociationStore store=new PutioAssociationStore(activity)){store.disconnectAccount(previous,index==1?PutioAssociationStore.DisconnectChoice.KEEP_INACTIVE:PutioAssociationStore.DisconnectChoice.REVERT_TO_GENERIC);}selections().edit().putLong("account",account.id).apply();return this::overview;});}));}
     private void disconnected(){replace(PreviewDialog.choose(activity,"put.io",new String[]{"Connect put.io"},0,index->PutioAuthFlow.open(activity,this::load)));}
-    private void overview(){String title="put.io · "+account.username+"\nStorage used: "+Formatter.formatFileSize(activity,account.usedBytes)+" of "+Formatter.formatFileSize(activity,account.totalBytes);
+    private void overview(){work("put.io account",()->{
+        StringBuilder summary=new StringBuilder("put.io · ").append(account.username).append(" · ").append(account.status).append("\nStorage used: ").append(Formatter.formatFileSize(activity,account.usedBytes)).append(" of ").append(Formatter.formatFileSize(activity,account.totalBytes));
+        try(PutioAssociationStore store=new PutioAssociationStore(activity)){List<PutioAssociationStore.Scope> scopes=store.scopes(account.id);
+            for(String kind:new String[]{"movie","tv"}){PutioAssociationStore.Scope chosen=null;for(PutioAssociationStore.Scope scope:scopes)if(kind.equals(selections().getString("kind:"+account.id+":"+scope.folderId,""))&&(chosen==null||scope.ownership==PutioAssociationStore.Ownership.API))chosen=scope;
+                summary.append("\n").append(kind.equals("movie")?"Movies: ":"TV Shows: ");
+                if(chosen==null){summary.append("Not associated");continue;}String key=account.id+":"+chosen.folderId;String name=selections().getString("name:"+key,chosen.source.getPath());
+                summary.append(name!=null&&name.length()>60?"…"+name.substring(name.length()-59):name);
+                summary.append(" · ").append(chosen.ownership==PutioAssociationStore.Ownership.API?selections().getString("status:"+key,"Connected"):chosen.ownership==PutioAssociationStore.Ownership.INACTIVE?"Inactive":"Needs review");
+                long synced=selections().getLong("sync:"+key,0);summary.append(" · Last sync: ").append(synced>0?android.text.format.DateUtils.getRelativeTimeSpanString(synced):"Not yet synced");
+            }
+        }
+        return ()->showOverview(summary.toString());
+    });}
+    private void showOverview(String title){
         replace(PreviewDialog.choose(activity,title,new String[]{"Library folders / Sync Now","Associate Movies folder","Associate TV Shows folder","Change Library Folders","Browse Files","Search Files","Account / Connection","Disconnect"},0,index->{
             changing=null;if(index==0)scopes(false);else if(index==1||index==2)chooseFolder(0,"put.io",index==1?"movie":"tv",null,Collections.emptySet());
-            else if(index==3)scopes(true);else if(index==4)browse(0,"put.io",new ArrayList<>());else if(index==5)searchInput("");else if(index==6)replace(PreviewDialog.read(activity,"Account / Connection",account.username+"\n"+account.status+"\n\nAPI discovery and WebDAV playback use independent connections."));else disconnect();}));
+            else if(index==3)scopes(true);else if(index==4)activity.startActivity(new android.content.Intent(activity,PutioBrowserActivity.class).putExtra("account",account.id));else if(index==5)searchInput("");else if(index==6)replace(PreviewDialog.read(activity,"Account / Connection",account.username+"\n"+account.status+"\n\nAPI discovery and WebDAV playback use independent connections."));else disconnect();}));
     }
     private void scopes(boolean changeFolder){work("Library folders",()->{
         List<PutioAssociationStore.Scope> scopes;try(PutioAssociationStore store=new PutioAssociationStore(activity)){scopes=store.scopes(account.id);}

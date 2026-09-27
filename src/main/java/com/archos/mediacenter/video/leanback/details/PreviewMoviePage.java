@@ -126,6 +126,8 @@ public final class PreviewMoviePage extends ScrollView {
         if(event.getAction()!=KeyEvent.ACTION_DOWN)return super.dispatchKeyEvent(event);
         View focused=findFocus();int key=event.getKeyCode();String tag=focused==null?"":String.valueOf(focused.getTag());
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
+        if(focused==play&&key==KeyEvent.KEYCODE_DPAD_RIGHT&&moreButton.getVisibility()==VISIBLE){moreButton.requestFocus();return true;}
+        if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_LEFT&&play.getVisibility()==VISIBLE){play.requestFocus();return true;}
         if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
         if(tag.startsWith("section:")){
             if(key==KeyEvent.KEYCODE_DPAD_UP){focusPrimary();scrollTo(0,0);return true;}
@@ -209,6 +211,8 @@ public final class PreviewMoviePage extends ScrollView {
         if(rating>0)fact(reception,"TMDb rating",String.format(Locale.UK,"%.1f / 10",rating));
         if(enriched!=null){
             fact(key,"Release / first air date",enriched.optString("release_date",enriched.optString("first_air_date")));
+            fact(key,"Original title",enriched.optString("original_title",enriched.optString("original_name")));
+            if(show!=null||"tv".equals(remoteKind)){fact(key,"Last air date",enriched.optString("last_air_date"));fact(key,"Series status",enriched.optString("status"));}
             fact(key,"Countries",jsonNames(enriched.optJSONArray("production_countries"),"name"));
             fact(key,"Tagline",enriched.optString("tagline"));
             org.json.JSONObject collection=enriched.optJSONObject("belongs_to_collection");
@@ -223,6 +227,9 @@ public final class PreviewMoviePage extends ScrollView {
             fact(technical,"Source",source(movie.getFileUri()));
             if(movie.getSize()>0)fact(technical,"File size",android.text.format.Formatter.formatShortFileSize(getContext(),movie.getSize()));
             fact(technical,"Selected file",movie.getFilenameNonCryptic());
+            fact(technical,"Location",PreviewVariants.safeLocation(movie.getFileUri()));
+            String filename=movie.getFilenameNonCryptic();int extension=filename==null?-1:filename.lastIndexOf('.');
+            if(extension>=0&&filename.length()-extension<=6)fact(technical,"Container",filename.substring(extension+1).toUpperCase(Locale.ROOT));
             if(movie.getMetadata()!=null){
                 com.archos.mediacenter.video.utils.VideoMetadata data=movie.getMetadata();
                 com.archos.mediacenter.video.utils.VideoMetadata.VideoTrack video=data.getVideoTrack();
@@ -232,19 +239,31 @@ public final class PreviewMoviePage extends ScrollView {
                     if(video.fpsScale>0)fact(technical,"Frame rate",String.format(Locale.UK,"%.3f fps",video.fpsRate/(double)video.fpsScale));
                 }
                 LinkedHashSet<String> subtitles=new LinkedHashSet<>();
+                LinkedHashSet<String> audioTracks=new LinkedHashSet<>();
+                for(int n=0;n<data.getAudioTrackNb();n++){com.archos.mediacenter.video.utils.VideoMetadata.AudioTrack track=data.getAudioTrack(n);if(track!=null){String format=PreviewMediaInfo.format(track.format);if(track.sampleRate>0)format+=(format.isEmpty()?"":" · ")+track.sampleRate+" Hz";if(!format.isEmpty())audioTracks.add(format);}}
+                fact(technical,"Audio tracks",android.text.TextUtils.join("\n",audioTracks));
                 for(int n=0;n<data.getSubtitleTrackNb();n++){com.archos.mediacenter.video.utils.VideoMetadata.SubtitleTrack track=data.getSubtitleTrack(n);if(track!=null&&!safe(track.language).isEmpty())subtitles.add(track.language);}
                 fact(technical,"Subtitles",android.text.TextUtils.join(", ",subtitles));
             }
         }else if(show!=null){
             Snapshot library=snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache();
             if(library!=null){
-                Set<Long> physical=new HashSet<>();Set<String> logical=new HashSet<>();Set<Integer> availableSeasons=new HashSet<>();long bytes=0;
+                Set<Long> physical=new HashSet<>();Set<String> logical=new HashSet<>();Set<Integer> availableSeasons=new HashSet<>();long bytes=0;int specials=0;
+                Set<String> locations=new TreeSet<>();Map<String,Integer> formats=new TreeMap<>();
                 for(Entry entry:library.episodes)if(entry.show==show.getTvshowId()&&entry.media instanceof Episode){
                     Episode episode=(Episode)entry.media;logical.add(episode.getSeasonNumber()+":"+episode.getEpisodeNumber());availableSeasons.add(episode.getSeasonNumber());
-                    if(physical.add(episode.getId()))bytes+=Math.max(0,episode.getSize());
+                    if(physical.add(episode.getId())){bytes+=Math.max(0,episode.getSize());if(episode.getSeasonNumber()==0)specials++;
+                        android.net.Uri uri=episode.getFileUri();if(uri!=null){String path=uri.getPath();int slash=path==null?-1:path.lastIndexOf('/');locations.add(PreviewVariants.safeLocation(uri.buildUpon().path(slash>=0?path.substring(0,slash):"").clearQuery().fragment(null).build()));}
+                        String format=(entry.resolution+" "+entry.codec+" "+entry.hdr).trim();if(!format.isEmpty())formats.put(format,formats.getOrDefault(format,0)+1);
+                    }
                 }
                 fact(technical,"Local episodes",String.valueOf(logical.size()));fact(technical,"Local seasons",String.valueOf(availableSeasons.size()));
                 if(bytes>0)fact(technical,"Library size",android.text.format.Formatter.formatShortFileSize(getContext(),bytes));
+                if(!physical.isEmpty()&&bytes>0)fact(technical,"Average file size",android.text.format.Formatter.formatShortFileSize(getContext(),bytes/physical.size()));
+                if(specials>0)fact(technical,"Specials (files)",String.valueOf(specials));
+                if(enriched!=null&&enriched.optInt("number_of_episodes")>0)fact(technical,"Series episodes (metadata)",String.valueOf(enriched.optInt("number_of_episodes")));
+                for(Map.Entry<String,Integer> format:formats.entrySet())fact(technical,format.getKey(),format.getValue()+" files");
+                fact(technical,"Storage locations",android.text.TextUtils.join("\n",locations));
             }
         }else{
             fact(technical,"Region",com.archos.mediacenter.video.streaming.StreamingRepository.country(getContext()));
