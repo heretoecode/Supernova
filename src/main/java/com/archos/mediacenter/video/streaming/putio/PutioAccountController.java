@@ -38,9 +38,9 @@ public final class PutioAccountController {
     private void accountChanged(long previous){replace(PreviewDialog.choose(activity,"Different put.io account · keep the previous library and choose discovery ownership",new String[]{"Cancel","Keep previous sources inactive","Return previous sources to generic discovery"},0,index->{if(index==0)return;work("Change account",()->{try(PutioAssociationStore store=new PutioAssociationStore(activity)){store.disconnectAccount(previous,index==1?PutioAssociationStore.DisconnectChoice.KEEP_INACTIVE:PutioAssociationStore.DisconnectChoice.REVERT_TO_GENERIC);}selections().edit().putLong("account",account.id).apply();return this::overview;});}));}
     private void disconnected(){replace(PreviewDialog.choose(activity,"put.io",new String[]{"Connect put.io"},0,index->PutioAuthFlow.open(activity,this::load)));}
     private void overview(){String title="put.io · "+account.username+"\nStorage used: "+Formatter.formatFileSize(activity,account.usedBytes)+" of "+Formatter.formatFileSize(activity,account.totalBytes);
-        replace(PreviewDialog.choose(activity,title,new String[]{"Library folders / Sync Now","Associate Movies folder","Associate TV Shows folder","Change Library Folders","Browse Files","Account / Connection","Disconnect"},0,index->{
+        replace(PreviewDialog.choose(activity,title,new String[]{"Library folders / Sync Now","Associate Movies folder","Associate TV Shows folder","Change Library Folders","Browse Files","Search Files","Account / Connection","Disconnect"},0,index->{
             changing=null;if(index==0)scopes(false);else if(index==1||index==2)chooseFolder(0,"put.io",index==1?"movie":"tv",null,Collections.emptySet());
-            else if(index==3)scopes(true);else if(index==4)browse(0,"put.io",new ArrayList<>());else if(index==5)replace(PreviewDialog.read(activity,"Account / Connection",account.username+"\n"+account.status+"\n\nAPI discovery and WebDAV playback use independent connections."));else disconnect();}));
+            else if(index==3)scopes(true);else if(index==4)browse(0,"put.io",new ArrayList<>());else if(index==5)searchInput("");else if(index==6)replace(PreviewDialog.read(activity,"Account / Connection",account.username+"\n"+account.status+"\n\nAPI discovery and WebDAV playback use independent connections."));else disconnect();}));
     }
     private void scopes(boolean changeFolder){work("Library folders",()->{
         List<PutioAssociationStore.Scope> scopes;try(PutioAssociationStore store=new PutioAssociationStore(activity)){scopes=store.scopes(account.id);}
@@ -84,6 +84,19 @@ public final class PutioAccountController {
         replace(PreviewDialog.choose(activity,"Needs Review · put.io: "+change.file.relativePath+" · "+Formatter.formatFileSize(activity,change.file.size),labels.toArray(new String[0]),0,index->{if(index==0)return;applyReview(review,Collections.singletonMap(change.file.id,index==1?0L:change.candidates.get(index-2)));}));
     }
     private static final class Folder {final long id;final String name;Folder(long id,String name){this.id=id;this.name=name;}}
+    private void searchInput(String previous){if(dialog!=null)dialog.dismiss();com.archos.mediacenter.video.leanback.PreviewTextInput.show(activity,"Search put.io files",previous,256,query->searchPage(query,null,Collections.emptySet()));}
+    private void searchPage(String query,String cursor,Set<String> visited){work("Search put.io files",()->{
+        PutioReadClient.Page page=client.search(query,cursor);Set<String> seen=new HashSet<>(visited);if(cursor!=null)seen.add(cursor);
+        if(page.cursor!=null&&seen.contains(page.cursor))throw new PutioReadClient.Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);
+        return ()->{String[] labels=new String[page.items.size()+2+(page.cursor==null?0:1)];labels[0]="Back to account";labels[1]="Change search";
+            for(int i=0;i<page.items.size();i++){PutioReadClient.Item item=page.items.get(i);labels[i+2]=(item.folder()?"Folder · ":"")+item.name;}
+            if(page.cursor!=null)labels[labels.length-1]="Next page";
+            replace(PreviewDialog.choose(activity,"Search · "+query+" · "+page.total+" results",labels,0,index->{if(index==0)overview();else if(index==1)searchInput(query);else if(index>=page.items.size()+2)searchPage(query,page.cursor,seen);else{PutioReadClient.Item item=page.items.get(index-2);if(item.folder())browse(item.id,item.name,new ArrayList<>());else fileInfo(item,()->searchPage(query,cursor,visited));}}));};
+    });}
+    private void fileInfo(PutioReadClient.Item item,Runnable back){work("File information",()->{PutioReadClient.FileInfo info=client.file(item.id);return ()->{
+        replace(PreviewDialog.read(activity,info.item.name,Formatter.formatFileSize(activity,info.item.size)+"\n"+info.description+"\n\nPlay indexed media through its existing WebDAV library source."));
+        dialog.setOnDismissListener(d->{if(!activity.isFinishing()&&!activity.isDestroyed())back.run();});
+    };});}
     private void browse(long folder,String name,List<Folder> parents){browsePage(folder,name,parents,null,Collections.emptySet());}
     private void browsePage(long folder,String name,List<Folder> parents,String cursor,Set<String> visited){work("Browse "+name,()->{
         PutioReadClient.Page page=client.list(folder,cursor);Set<String> seen=new HashSet<>(visited);if(cursor!=null)seen.add(cursor);
@@ -93,7 +106,7 @@ public final class PutioAccountController {
         return ()->{String[] labels=new String[items.size()+1+(page.cursor==null?0:1)];labels[0]=parents.isEmpty()?"Back to account":"Parent folder";for(int i=0;i<items.size();i++)labels[i+1]=(items.get(i).folder()?"Folder · ":"")+items.get(i).name;if(page.cursor!=null)labels[labels.length-1]="Next page";
             replace(PreviewDialog.choose(activity,name,labels,0,index->{if(index==0){if(parents.isEmpty())overview();else{List<Folder> previous=new ArrayList<>(parents);Folder parent=previous.remove(previous.size()-1);browse(parent.id,parent.name,previous);}}
                 else if(index>items.size())browsePage(folder,name,parents,page.cursor,seen);
-                else{PutioReadClient.Item item=items.get(index-1);if(item.folder()){List<Folder> next=new ArrayList<>(parents);next.add(new Folder(folder,name));browse(item.id,item.name,next);}else replace(PreviewDialog.read(activity,item.name,Formatter.formatFileSize(activity,item.size)+"\n\nPlay indexed media through its existing WebDAV library source."));}}));};
+                else{PutioReadClient.Item item=items.get(index-1);if(item.folder()){List<Folder> next=new ArrayList<>(parents);next.add(new Folder(folder,name));browse(item.id,item.name,next);}else fileInfo(item,()->browsePage(folder,name,parents,cursor,visited));}}));};
     });}
     private void disconnect(){replace(PreviewDialog.choose(activity,"Disconnect put.io? Keep media and library history.",new String[]{"Cancel","Keep associated sources inactive","Return associated sources to generic discovery"},0,index->{if(index==0){overview();return;}work("Disconnect put.io",()->{try(PutioAssociationStore store=new PutioAssociationStore(activity)){store.disconnectAccount(account.id,index==1?PutioAssociationStore.DisconnectChoice.KEEP_INACTIVE:PutioAssociationStore.DisconnectChoice.REVERT_TO_GENERIC);}tokens.clear();client=null;return this::disconnected;});}));}
 }

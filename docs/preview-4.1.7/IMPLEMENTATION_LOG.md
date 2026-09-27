@@ -667,3 +667,10 @@ These changes require a full CI rerun; no failures are waived.
 - Added a non-destructive association database v1→v2 migration for reassignment journals and retained source ownership. Same-folder WebDAV-root changes preserve absent file identities as missing, not deletions. Account disconnect handles retained sources explicitly.
 - Native relocation reads the current canonical URI by media ID, making a retry safe when interruption occurs between the native path write and sidecar commit. Source collisions remain review failures, never overwrites.
 - Added native-schema tests for interruption after URI commit, incomplete snapshots and same-folder root changes; new CI pending. Remaining conformance includes complete put.io feature/visual audit, full 115-entry reconciliation, three review passes and signed delivery.
+
+## Continuation checkpoint 39 — read-only put.io search and media information
+
+- Checkpoint 38 CI 36336639069 passed all compilation, Video, backend and WebDAV gates, including resumable source-reassignment fixtures.
+- Added account-level Search Files using the shared TV keyboard, cursor pagination and repeated-cursor rejection. Search results accept different parent folders without weakening folder-list parent checks. Search never changes the library.
+- File information selects provider metadata, container, duration, bit rate and stream codec/dimensions/channels. No API playback URL is requested or exposed; existing WebDAV playback is unchanged. Back returns to the originating browser/search page.
+- Added parsing regressions for cross-folder search, missing totals, wrong file identity, invalid technical values and exclusion of arbitrary response/transport fields. Local syntax/XML checks passed; new tests require CI. Production OAuth and physical Shield behaviour remain unverified.

@@ -56,6 +56,58 @@ public final class PutioReadClient {
         else request.url(url).post(new FormBody.Builder().add("cursor",cursor).build());
         return parse(request(request.build()),parentId);
     }
+    public Page search(String query,String cursor)throws Unavailable {
+        if(query==null||query.trim().isEmpty()||query.length()>256)throw new IllegalArgumentException("Enter a search query");
+        HttpUrl.Builder url=HttpUrl.parse(ROOT+(cursor==null?"files/search":"files/search/continue")).newBuilder().addQueryParameter("per_page","200");
+        Request.Builder request=new Request.Builder().header("Authorization","Token "+token);
+        if(cursor==null)request.url(url.addQueryParameter("query",query).build());
+        else request.url(url.build()).post(new FormBody.Builder().add("cursor",cursor).build());
+        return parseSearch(request(request.build()));
+    }
+    static Page parseSearch(JSONObject response)throws Unavailable {
+        Page page=parse(response,-1);
+        if(page.total<0)throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);
+        return page;
+    }
+    public static final class FileInfo {
+        public final Item item;public final String description;
+        FileInfo(Item item,String description){this.item=item;this.description=description;}
+    }
+    public FileInfo file(long id)throws Unavailable {
+        if(id<=0)throw new IllegalArgumentException("Missing file identity");
+        HttpUrl url=HttpUrl.parse(ROOT+"files/"+id).newBuilder().addQueryParameter("media_info","1").build();
+        return parseFile(request(new Request.Builder().url(url).header("Authorization","Token "+token).build()),id);
+    }
+    static FileInfo parseFile(JSONObject response,long expectedId)throws Unavailable {
+        try {
+            if(!"OK".equals(response.getString("status")))throw new JSONException("Invalid envelope");
+            JSONObject value=response.getJSONObject("file");Item item=parseItem(value,-1);
+            if(item.id!=expectedId)throw new JSONException("Wrong file identity");
+            StringBuilder text=new StringBuilder();appendText(text,"Type",value,"content_type");
+            appendText(text,"Created",value,"created_at");appendText(text,"Updated",value,"updated_at");
+            JSONObject media=value.optJSONObject("media_info");
+            if(media!=null){JSONObject format=media.optJSONObject("format");
+                if(format!=null){appendText(text,"Container",format,"name");appendNumber(text,"Duration (seconds)",format,"duration");appendNumber(text,"Bit rate (bits/s)",format,"bit_rate");}
+                JSONArray streams=media.optJSONArray("streams");
+                if(streams!=null){if(streams.length()>256)throw new JSONException("Too many streams");
+                    for(int i=0;i<streams.length();i++){JSONObject stream=streams.getJSONObject(i);text.append("\nStream ").append(i+1).append('\n');
+                        appendText(text,"Type",stream,"codec_type");appendText(text,"Codec",stream,"codec_name");appendText(text,"Profile",stream,"profile");
+                        appendNumber(text,"Width",stream,"width");appendNumber(text,"Height",stream,"height");appendNumber(text,"Channels",stream,"channels");}
+                }
+            }
+            return new FileInfo(item,text.toString().trim());
+        }catch(JSONException invalid){throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);}
+    }
+    private static void appendText(StringBuilder text,String label,JSONObject value,String key)throws JSONException {
+        if(!value.has(key)||value.isNull(key))return;Object raw=value.get(key);
+        if(!(raw instanceof String)||((String)raw).length()>256||((String)raw).matches(".*[\\p{Cntrl}].*"))throw new JSONException("Invalid display field");
+        if(!((String)raw).isEmpty())text.append(label).append(": ").append(raw).append('\n');
+    }
+    private static void appendNumber(StringBuilder text,String label,JSONObject value,String key)throws JSONException {
+        if(!value.has(key)||value.isNull(key))return;Object raw=value.get(key);
+        if(!(raw instanceof Number)||!Double.isFinite(((Number)raw).doubleValue())||((Number)raw).doubleValue()<0)throw new JSONException("Invalid media value");
+        text.append(label).append(": ").append(raw).append('\n');
+    }
     private JSONObject request(Request request)throws Unavailable {
         if(Thread.currentThread().isInterrupted())throw new Unavailable(PutioReconciliation.Failure.CANCELLED,0);
         try(Response response=http.newCall(request).execute()){
@@ -80,14 +132,19 @@ public final class PutioReadClient {
             if(rawCursor!=JSONObject.NULL&&(!(rawCursor instanceof String)||((String)rawCursor).isEmpty()))throw new JSONException("Invalid continuation");
             JSONArray values=response.getJSONArray("files");List<Item> items=new ArrayList<>();Set<Long> seen=new HashSet<>();
             for(int n=0;n<values.length();n++){
-                JSONObject value=values.getJSONObject(n);long id=value.getLong("id"),parent=value.getLong("parent_id"),size=value.getLong("size");
-                String name=value.getString("name"),type=value.getString("file_type");
-                if(id<=0||parent!=parentId||size<0||!seen.add(id)||name.isEmpty()||name.contains("/")||name.contains("\\")||name.indexOf('\0')>=0||name.equals(".")||name.equals(".."))throw new JSONException("Invalid file identity");
-                items.add(new Item(id,parent,size,name,type));
+                Item item=parseItem(values.getJSONObject(n),parentId);
+                if(!seen.add(item.id))throw new JSONException("Duplicate file identity");
+                items.add(item);
             }
             long total=response.has("total")?response.getLong("total"):-1;
             if(total< -1||total>=0&&total<items.size())throw new JSONException("Invalid count");
             return new Page(items,rawCursor==JSONObject.NULL?null:(String)rawCursor,total);
         }catch(JSONException invalid){throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);}
+    }
+    private static Item parseItem(JSONObject value,long parentId)throws JSONException {
+        long id=value.getLong("id"),parent=value.getLong("parent_id"),size=value.getLong("size");
+        String name=value.getString("name"),type=value.getString("file_type");
+        if(id<=0||parent<0||parentId>=0&&parent!=parentId||size<0||name.isEmpty()||name.contains("/")||name.contains("\\")||name.indexOf('\0')>=0||name.equals(".")||name.equals(".."))throw new JSONException("Invalid file identity");
+        return new Item(id,parent,size,name,type);
     }
 }
