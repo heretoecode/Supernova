@@ -125,7 +125,7 @@ public final class PreviewSettings {
   LinearLayout split = new LinearLayout(c);
   split.setPadding(0, dp(fragment, 12), 0, dp(fragment, 8));
   split.setClipChildren(false);
-  LinearLayout links = new LinearLayout(c);
+  LinearLayout links = new com.archos.mediacenter.video.leanback.PreviewFocusRail(c);
   links.setOrientation(LinearLayout.VERTICAL);
   links.setClipChildren(false);
   LinearLayout.LayoutParams rail = new LinearLayout.LayoutParams(0, -1, .23f);
@@ -177,6 +177,7 @@ public final class PreviewSettings {
      found = (PreferenceCategory) root.getPreference(i);
    final PreferenceCategory category = found;
    TextView button = sidebarButton(c, name, false);
+   button.setBackground(null);
    button.setTag("semantic:settings:category:" + name);
    links.addView(button, new LinearLayout.LayoutParams(-1, 0, 1));
    railButtons.add(button);

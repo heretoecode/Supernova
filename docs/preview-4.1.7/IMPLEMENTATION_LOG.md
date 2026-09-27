@@ -689,3 +689,9 @@ These changes require a full CI rerun; no failures are waived.
 - Native codec/bitrate/dimensions/audio persist through the existing metadata save path. Cached HDR is loaded without extraction; retriever media metadata is consulted for colour transfer when present, with unknown values left unknown. No playback engine or transport change.
 - Removed extraction triggers from list scrolling and Grid/List controls. Added regressions for background coverage of physical variants and fingerprint-specific persisted HDR. The derived completion cache is excluded from portable preference restores.
 - Java syntax (797 files), XML/identity/HUD checks (431 files) and six Python tests pass locally. New Android tests and compilation require CI; physical extraction performance and HDR coverage still require Shield QA.
+
+## Continuation checkpoint 42 — first conformance review in progress
+
+- Re-read the delivery gate and began reconciling the register against current source rather than its stale early-checkpoint descriptions. Updated fourteen early UI entries with actual implementations, CI evidence and remaining physical/visual checks. All 115 original entries and requirement text are retained; this is not a completed conformance pass.
+- Found the travelling boundary covered top navigation but not persistent category rails. Settings and Network categories now use the same 160ms retargetable rail, without a second per-item background. Top-navigation and Network telemetry now use named semantic controls instead of numeric/generated identities.
+- Existing navigation/Settings fixtures now assert the rail/semantic-tag integration. Local syntax/XML checks pass; new CI required. Details information completeness, remaining register entries and normative visual comparison are still under review.

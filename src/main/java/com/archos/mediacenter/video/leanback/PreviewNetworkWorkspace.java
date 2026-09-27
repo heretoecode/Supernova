@@ -30,7 +30,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         super(c); this.volumes = volumes; this.sources = sources; this.saved = saved;
         this.browseVolume = browseVolume; this.browseNetwork = browseNetwork;
         setClipChildren(false); setClipToPadding(false);
-        rail = column(); items = column(); context = column();
+        rail = new PreviewFocusRail(c);rail.setOrientation(VERTICAL); items = column(); context = column();
         addView(rail, new LayoutParams(0, -1, .23f));
         ScrollView middle = new ScrollView(c); middle.setClipChildren(false); middle.addView(items);
         LayoutParams middleSize = new LayoutParams(0, -1, .45f); middleSize.setMargins(dp(12), 0, dp(12), 0); addView(middle, middleSize);
@@ -38,7 +38,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         addView(right, new LayoutParams(0, -1, .32f));
         for (String name : new String[]{"Overview", "Local Storage", "Network Shares", "Cloud Services", "Saved Locations"}) {
             TextView section = control(name, () -> items.requestFocus());
-            section.setTag("network:" + name); sections.add(section); rail.addView(section, new LayoutParams(-1, dp(42)));
+            section.setBackground(null);section.setTag("semantic:network.category." + name.toLowerCase(java.util.Locale.ROOT).replace(' ', '_')); sections.add(section); rail.addView(section, new LayoutParams(-1, dp(42)));
             section.setOnFocusChangeListener((v, focused) -> { if (focused) { selectedSection = section; show(name); } });
         }
         selectedSection = sections.get(0); show("Overview");

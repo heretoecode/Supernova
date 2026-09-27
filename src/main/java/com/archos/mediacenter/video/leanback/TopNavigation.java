@@ -57,7 +57,7 @@ public final class TopNavigation extends LinearLayout {
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
             TextView tab = new TextView(c); tabs[i] = tab;
-            tab.setText(labels[i]); tab.setContentDescription(labels[i]); tab.setTag("semantic:nav:" + index);
+            tab.setText(labels[i]); tab.setContentDescription(labels[i]); tab.setTag("semantic:topnav." + new String[]{"home","movies","tv","network","settings","search"}[index]);
             tab.setTextColor(Color.WHITE); tab.setTextSize(19); tab.setGravity(Gravity.CENTER);
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);

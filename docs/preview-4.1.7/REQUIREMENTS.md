@@ -10,9 +10,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Canonical top navigation: SUPERNOVA far left; Home · Movies · TV Shows; flexible spacer; Network & Files; Search icon; Settings icon; Clock. No Streaming/Library top-nav items, no Settings/clock separator, no line under nav. All textual nav uses 19sp normal/light styling. Unfocused controls have no box. Focus is a compact rounded Supernova-blue outline/boundary with restrained outward glow; contents stay white; no cyan focus text. Tighten the current oversized focus container without shrinking typography.
 
-Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: TopNavigation builds the specified visual order (its internal Settings/Search indices are reordered visually), a flexible spacer, 19sp light text, transparent bar and background-free tabs. PreviewFocusRail supplies the compact shared boundary. TopNavigationTest and Preview417NavigationTest passed in run 36260242226. Exact colour/geometry and all screen entry points still need conformance review; the default clock currently uses a pale tinted white rather than Color.WHITE. Physical navigation remains AWAITING PHYSICAL QA.
+Code mapping / verification: TopNavigation has the canonical order, flexible spacer, white 19sp light text/icons, no unfocused boxes and a shared compact boundary. Clock is now Color.WHITE. TopNavigationTest / Preview417NavigationTest passed through CI 36337372113. Named semantic tags added during conformance review; latest CI required. Exact Shield geometry remains physical QA.
 
 ### UI-002 — 1. Global visual language and top navigation
 
@@ -20,9 +20,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Adjacent persistent navigation controls should use a travelling focus boundary animation: animate X/width roughly 140–180ms and retarget smoothly during rapid D-pad movement. Cards do not use this mechanism; cards enlarge individually.
 
-Status: **IMPLEMENTED IN PART — IN PROGRESS**
+Status: **IMPLEMENTED — TESTING PENDING**
 
-Code mapping: PreviewFocusRail uses one boundary, a 160ms ValueAnimator and retargeting from its current interpolated rectangle. TopNavigation uses that rail; individual cards retain their own focus treatment. The single-boundary/edge regression passes. All other persistent navigation groups and rapid repeat animation still require a systematic audit; this is not a global completion claim.
+Code mapping / verification: PreviewFocusRail uses a single 160ms boundary and retargets from its interpolated rectangle. Top navigation is verified through CI 36337372113. Conformance review extended the same rail to persistent Settings and Network categories, removing their per-item focus backgrounds. Latest rail changes await CI; fast physical remote repeats remain Shield QA. Cards and explicitly specified divider tabs retain their separate treatments.
 
 ### UI-003 — 1. Global visual language and top navigation
 
@@ -40,9 +40,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Top nav is not a solid bar. On vertically scrolling pages, content may continue behind it but a progressive blur + darkening gradient is strongest immediately behind the nav and fades seamlessly below. No visible rectangle/separator/permanent bar.
 
-Status: **IMPLEMENTED IN PART — IN PROGRESS**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: PreviewNavigationShade samples and blurs the background drawable with a fading mask plus dark gradient. Its three blur/fade tests pass in run 36260242226. TopNavigation currently places the content stage below the 52dp navigation bar: background sampling alone is not proof of scrolling-content-behind-nav conformance. Review page layering and scrolling integration before closing this requirement; physical appearance/performance remains AWAITING PHYSICAL QA.
+Code mapping / verification: TopNavigation now lays supported scrolling stages behind the bar; the inset belongs to the scroll viewport. PreviewNavigationShade samples the actual stage plus backdrop and fades blur/darkening without a bar edge. Native graphics fixtures include scrolling content, blur axes and fade continuity; passed through CI 36337372113. Shield appearance/performance remains physical QA.
 
 ### UI-005 — 2. Home
 
@@ -60,9 +60,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Featured: normalize visible logo bounds while ignoring transparent artwork padding; preserve aspect ratio. Synopsis width should relate to visible logo width (target around 90%, clamped approximately 25–32vw). Showcase artwork stays on the right, below the Network & Files→clock region, right of synopsis and above Continue Watching. Reposition/crop first; use real source art; darken/blur text-safe areas if needed; never fabricate people. More Info LEFT/RIGHT cycles Featured while focus remains on More Info. Featured indicators use persistent pill/dots with smooth ~180–220ms ease-out morphing.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: OfficialTitleArtwork trims transparent bounds and preserves aspect ratio; synopsisWidth uses 90% fitted logo width clamped 25–32% viewport. PreviewFeaturedIndicators retains a 200ms ease-out pill morph; More Info cycles via the existing focus anchor. Geometry remains to be checked against the normative references in visual pass 2; physical appearance is not claimed.
 
 ### UI-007 — 2. Home
 
@@ -70,9 +70,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Home/movie/TV cards: preserve the physically liked enlargement amount. Artwork + rounded boundary + outward glow scale as ONE aligned component. Artwork may never protrude outside the boundary; glow may not clip into square corners.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewCardPresenter.Card scales the complete card/foreground 1.08x, retaining the baseline enlargement. Rounded body clipping contains artwork; PreviewFocusGlow draws the outward rounded boundary with unclipped parent rails. Source compiled through CI 36337372113. Cross-surface normative image comparison and physical glow/clipping remain in visual/Shield QA.
 
 ### UI-008 — 2. Home
 
@@ -90,9 +90,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Add missing language/locale iconography in Settings UI Language, Subtitle Reading Language and playback Select Subtitle Track. Locale flag only for a true locale such as en-GB; generic language uses neutral language iconography.
 
-Status: **IMPLEMENTED — TESTING PENDING**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: PreviewLanguageIcon binds to ui_lang, favSubLang and languages_list preference choices and native subtitle track rows through an application-resource keyed tag. Explicit ISO-country locales use a flag only when the system font supports its glyph; all generic/unknown language values use the neutral language globe. Two locale-policy tests and one real track-menu binding regression added at checkpoint 29, pending CI. Font rendering and readability remain AWAITING PHYSICAL QA.
+Code mapping / verification: PreviewLanguageIcon covers UI language, subtitle reading-language choices and subtitle track rows. Generic languages use a neutral globe; a true country locale uses a flag only when its glyph is supported. Locale/track binding fixtures passed through CI 36337372113. Font rendering/readability require Shield QA.
 
 ### UI-010 — 3. Background metadata enrichment
 
@@ -100,9 +100,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Library membership is based on indexed media, not successful metadata. Launch local/Home immediately; enrichment runs persistently in background. Priority: visible/current Home content, current page/title, likely next items, then remaining library. TV expansion understands Episode→Season→Series and can enrich the complete local series; Details Seasons & Episodes can discover non-local/provider episodes too. Fetch/persist complete title packages where applicable: core metadata, logos/artwork, ratings, cast/crew, season/episode data, provider availability, Extras, recommendations, reception and local technical codecs. Deduplicate requests; cached data displays immediately; foreground requests temporarily override queue then background resumes. Persist completeness/staleness.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping / verification: PreviewMetadataCache / PreviewEnrichmentQueue and StreamingRepository metadata gateway. Persistent priority/dedup/retry implemented; cache tests passed through run 36240119933. Season-package queue, classification requests, schema-preserving migration and independent network/disk locks added at checkpoint 7; new tests await CI. Complete series presentation and remaining enrichment integration are not complete.
+Code mapping / verification: Indexed membership is independent of scraper matches. PreviewEnrichmentQueue persists priority, stage, staleness and retries; title sections, providers and full TV season packages are cached. PreviewEpisodeChoice reconciles local/remote episodes. Checkpoint 41 adds background native technical enrichment for all physical variants and persisted fingerprint completion/backoff, awaiting CI. Full title-package completeness and foreground/background priority conformance still require reconciliation.
 
 ### UI-011 — 3. Background metadata enrichment
 
@@ -110,9 +110,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Provider/filter state must not depend on opening Details. The observed case where a provider appeared only after visiting Details is a defect.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewEnrichmentQueue.library queues provider availability independently of Details when enabled. PreviewPages observes country/kind/title-scoped changes and refreshes only active filtered pages; PreviewProviderRefreshTest passed through CI 36337372113. Live provider population on Shield remains QA.
 
 ### UI-012 — 4. Movies and TV Shows
 
@@ -120,9 +120,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Preserve the liked six-wide grid and general layout. Fix poster focus geometry globally as described above.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewPages uses a 24-span layout with four spans per poster, preserving six columns. PreviewCardPresenter supplies shared 1.08x rounded focus scaling. Automated source/UI suite passed through CI 36337372113; actual Shield grid geometry remains QA.
 
 ### UI-013 — 4. Movies and TV Shows
 
@@ -150,9 +150,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Grid edges: RIGHT on terminal item stays on terminal item; no wrap/jump. Top-row UP→toolbar. Bottom edge stays. Horizontal row lock remains until explicit vertical movement.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewFocusRecycler centralises terminal horizontal and bottom edge consumption; PreviewPages handles top-row UP to toolbar. Preview417NavigationTest covers terminal RIGHT and final-row DOWN, passed through CI 36337372113. Remote repeat and partially visible rows remain Shield QA.
 
 ### UI-016 — 4. Movies and TV Shows
 
@@ -160,9 +160,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Return from Details: restore exact originating item, scroll position, view mode and visible focus. In List restore exact row. Do not fall back to leftmost item/top nav.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewPages stores per-tab FocusAnchor, cell/media key, child control and layout state; restores after child navigation and selective DiffUtil changes. Existing navigation tests pass through CI 36337372113. Full exact Grid/List Details-return matrix remains integration/physical QA.
 
 ### UI-017 — 4. Movies and TV Shows
 
@@ -170,9 +170,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 List View: fix flicker/rebuild when switching Grid/List, toggling/reordering Columns and background metadata updates. Sort remains one criterion. Columns controls visibility/order. Populate/persist Codec, Bitrate, HDR and other technical values through scan/index/background work; List reads cache rather than triggering focus-driven extraction.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — TESTING PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewPages uses cell signatures and DiffUtil rather than adapter replacement. Checkpoint 41 removes scroll/List toggles as technical extraction triggers; PreviewMetadata queues background native retrieval, saves native codec/bitrate/audio/dimensions and caches HDR when supplied. Completion/backoff is keyed by media ID/size/modification. Loader hydration reads stored values; new coverage/fingerprint tests await CI. Native extractor may not report colour transfer for every format; unknown HDR is not invented. Physical flicker/performance remains QA.
 
 ### UI-018 — 4. Movies and TV Shows
 
@@ -180,9 +180,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Filters: Genre only genres actually present; fix phantom genre entries. Genre multi-select + Done. Year becomes multi-select + Done. Streaming Service becomes persistent multi-select + Done with ticks retained on reopen and monochrome provider icons. Provider availability is populated in background. Clear Filters works.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewGenres derives choices from current indexed entries; Genre, Year and Streaming Service persist separate multi-select sets. Clear resets all three. Background providers are independently queued. Menu icon/tick geometry and full persistence matrix remain conformance/physical QA.
 
 ### UI-019 — 4. Movies and TV Shows
 
@@ -190,9 +190,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Movies artwork regression: after Network & Files → Scan Library, some Movies posters disappeared while titles/year and Details artwork remained; cold restart did not restore. Investigate/fix cache/binding invalidation. Latest diagnostics show repeated artwork failures and are evidence, but do not assume causality without code proof. TV did not show the same physical symptom at that time.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewCardPresenter fences asynchronous artwork callbacks by binding generation, resets failed requestedArtwork for retry and avoids accepting a prior item response after recycling. This addresses a code-supported binding/retry failure without asserting it proves the original Shield incident cause. Source/UI suite passes through CI 36337372113. Repeat scan/restart artwork regression on Shield remains required.
 
 ### UI-020 — 5. Unmatched media
 

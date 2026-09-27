@@ -52,6 +52,7 @@ public class Preview417NavigationTest {
         shell.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
         assertSame(search, shell.findFocus());
         assertNull(home.getBackground()); assertNull(settings.getBackground());
+        assertEquals("semantic:topnav.home",home.getTag());assertEquals("semantic:topnav.settings",settings.getTag());
         host.finish();
     }
     @Test public void gridRightDoesNotWrapAndLastRowDownDoesNotEscape() {
