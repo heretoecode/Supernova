@@ -22,6 +22,9 @@ public class PreviewProviderBrowserTest {
             assertNotNull(listing.getParent());assertNotNull(PreviewPagesTest.findText(browser,"File Information"));assertNull(PreviewPagesTest.findText(browser,"Delete"));
             row.requestFocus();browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));
             assertEquals("File Information",((TextView)browser.findFocus()).getText().toString());browser.findFocus().performClick();assertEquals(1,opened[0]);
+            browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(row,browser.findFocus());
+            browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertEquals("put.io",((TextView)browser.findFocus()).getText().toString());
+            browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(row,browser.findFocus());
             PreviewPagesTest.capture(browser,"putio-shared-browser");
         }finally{host.pause().stop().destroy();}
     }

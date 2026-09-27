@@ -714,3 +714,9 @@ These changes require a full CI rerun; no failures are waived.
 - Card artwork events now carry operation/media/surface/type/cache-layer/failure/latency fields without URIs or exception messages. Artwork operation starts remain verbose flight-recorder traffic rather than generating normal-stream preference churn.
 - put.io read requests now record safe service/operation/status/category/duration/retry-count/connectivity fields. Transport completion does not imply schema validation or successful library reconciliation. No credentials or request contents are logged.
 - Local Java syntax, XML/identity/HUD checks and six Python tests pass. Android tests for this diagnostic checkpoint remain pending. The complete 115-entry reconciliation, remaining diagnostic coverage, visual/regression passes and signed APK delivery are still outstanding; no physical Shield validation is claimed.
+
+## Continuation checkpoint 45 — shared browser focus hand-off
+
+- CI 36349549771 passed compilation/targeted tests and package identity audit. Full Video suite: 312 tests, one failure; backend/WebDAV gates were consequently skipped. Failure was PreviewProviderBrowserTest: RIGHT retained Example.mkv instead of reaching File Information.
+- Shared browser controls now accept programmatic focus in touch mode, consistently with its supplied provider rows and other Preview controls. Explicit context LEFT / source RIGHT return to the prior attached content control, with normal dock fallback if the row was replaced. Extended the fixture to cover content→context→content→source→content.
+- This is a source correction, not yet a passing Android regression result. Main and the unrelated missing symlinks remain untouched.

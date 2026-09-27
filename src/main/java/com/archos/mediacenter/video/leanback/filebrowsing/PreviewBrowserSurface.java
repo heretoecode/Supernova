@@ -18,6 +18,7 @@ public final class PreviewBrowserSurface extends BrowseFrameLayout {
     private final ImageView poster;
     private Runnable openSelected=()->{};private final TextView open;
     private final View dock;private final TextView sourceControl;private final TopNavigation navigation;
+    private View lastDockFocus;
     PreviewBrowserSurface(Activity activity,View legacy,Uri uri,View titleCommands,Runnable options){
         this(activity,legacy,uri,titleCommands,options,false);
     }
@@ -47,9 +48,14 @@ public final class PreviewBrowserSurface extends BrowseFrameLayout {
         if(titleCommands!=null&&titleCommands.getParent() instanceof ViewGroup)((ViewGroup)titleCommands.getParent()).removeView(titleCommands);
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){if(event.getAction()==KeyEvent.ACTION_DOWN&&dock.hasFocus()){
+        lastDockFocus=dock.findFocus();
         if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT){if(moveInsideDock(View.FOCUS_LEFT))return true;sourceControl.requestFocus();return true;}
         if(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){if(moveInsideDock(View.FOCUS_RIGHT))return true;open.requestFocus();return true;}
-    }if(event.getAction()==KeyEvent.ACTION_DOWN&&sourceControl.hasFocus()&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT){dock.requestFocus();return true;}return super.dispatchKeyEvent(event);}
+    }if(event.getAction()==KeyEvent.ACTION_DOWN){
+        if(sourceControl.hasFocus()&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT||open.hasFocus()&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT){
+            if(lastDockFocus==null||!lastDockFocus.isAttachedToWindow()||!lastDockFocus.requestFocus())dock.requestFocus();return true;
+        }
+    }return super.dispatchKeyEvent(event);}
     private boolean moveInsideDock(int direction){
         if(!(dock instanceof ViewGroup))return false;
         ViewGroup group=(ViewGroup)dock;
@@ -72,6 +78,6 @@ public final class PreviewBrowserSurface extends BrowseFrameLayout {
     }
     private LinearLayout column(Activity a){LinearLayout v=new LinearLayout(a);v.setOrientation(LinearLayout.VERTICAL);v.setPadding(dp(8),dp(8),dp(8),dp(8));android.graphics.drawable.GradientDrawable panel=PreviewDialog.surface(a,false);panel.setColor(0x66071520);v.setBackground(panel);return v;}
     private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextSize(size);t.setTextColor(0xffd5e2ec);return t;}
-    private TextView control(String value,Runnable action){TextView t=text(value,14);t.setGravity(Gravity.CENTER_VERTICAL);t.setFocusable(true);t.setPadding(dp(8),0,dp(8),0);t.setBackground(PreviewDialog.focus(getContext()));t.setOnClickListener(v->action.run());return t;}
+    private TextView control(String value,Runnable action){TextView t=text(value,14);t.setGravity(Gravity.CENTER_VERTICAL);t.setFocusable(true);t.setFocusableInTouchMode(true);t.setPadding(dp(8),0,dp(8),0);t.setBackground(PreviewDialog.focus(getContext()));t.setOnClickListener(v->action.run());return t;}
     private int dp(int n){return PreviewDialog.dp(getContext(),n);}
 }
