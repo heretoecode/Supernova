@@ -13,7 +13,7 @@ public class PreviewNavigationShadeTest {
     @Config(qualifiers="w960dp-h540dp-land-mdpi")
     public void scrollingViewportExtendsBehindNavigationAndShadeSamplesItsPixels()throws Exception{
         android.app.Activity host=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
-        android.widget.ScrollView scroll=new android.widget.ScrollView(host);android.view.View red=new android.view.View(host);red.setBackgroundColor(android.graphics.Color.RED);
+        android.widget.ScrollView scroll=new android.widget.ScrollView(host);android.view.View red=new android.view.View(host);red.setBackgroundColor(android.graphics.Color.RED);red.setMinimumHeight(1200);
         scroll.addView(red,new android.widget.ScrollView.LayoutParams(-1,1200));
         TopNavigation nav=new TopNavigation(host,scroll,index->{},()->scroll.getScrollY()==0);host.setContentView(nav);
         nav.measure(android.view.View.MeasureSpec.makeMeasureSpec(960,1073741824),android.view.View.MeasureSpec.makeMeasureSpec(540,1073741824));nav.layout(0,0,960,540);

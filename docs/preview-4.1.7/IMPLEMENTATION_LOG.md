@@ -624,3 +624,12 @@ layout before scrolling, waits for the bounded sample cache and retains its PNG
 and pixel values for investigation. A pending shade sample schedules a redraw
 so the final scroll frame cannot retain a stale cached strip indefinitely.
 These changes require a full CI rerun; no failures are waived.
+
+## Continuation checkpoint 34 — complete-series card reconciliation
+
+- Home synopsis now uses visible title-logo ink width clamped to the handover's 25–32% viewport range (UI006).
+- Series enrichment fetches cached season episode metadata and configured season provider availability. The episode rails merge local preferred versions first, then remote metadata, retaining unavailable episodes without making library rows. Recycled provider indicators reset to the local Play glyph. Unreleased/unknown-date episodes do not inherit a season's playable indication.
+- Provider episode actions currently resolve the specific series title and record an explicit episode-to-series fallback. Provider-supported exact episode routing still needs conformance review; this checkpoint does not claim it complete.
+- Added model regressions for local precedence, duplicate remote episodes, invalid season coordinates, specials and release-date gating.
+- Source CI 36330790505 compiled successfully; 278/279 unit tests passed. The failing navigation fixture used a zero-minimum-height plain View inside ScrollView; the expected 160px scroll stayed at zero. Added a minimum height, keeping the rendered-pixel assertions intact. New CI pending.
+- Local Java syntax, 430 XML checks and six Python regressions passed. No physical Shield claim, signed APK or final conformance claim.
