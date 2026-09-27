@@ -720,3 +720,11 @@ These changes require a full CI rerun; no failures are waived.
 - CI 36349549771 passed compilation/targeted tests and package identity audit. Full Video suite: 312 tests, one failure; backend/WebDAV gates were consequently skipped. Failure was PreviewProviderBrowserTest: RIGHT retained Example.mkv instead of reaching File Information.
 - Shared browser controls now accept programmatic focus in touch mode, consistently with its supplied provider rows and other Preview controls. Explicit context LEFT / source RIGHT return to the prior attached content control, with normal dock fallback if the row was replaced. Extended the fixture to cover content→context→content→source→content.
 - This is a source correction, not yet a passing Android regression result. Main and the unrelated missing symlinks remain untouched.
+
+## Continuation checkpoint 46 — initial visual comparison
+
+- Downloaded CI 36349549771 evidence and inspected Details, Home, Grid/List, Customise Home and HUD renders against the applicable written/reference characteristics. Recorded observations and limits in CONFORMANCE_REVIEW.md; this is not a completed visual pass.
+- The Details image exposed a hidden lower-content teaser: layout-time hero resizing interacted with the navigation overlay's two measurements. Hero height now resolves before measurement, with a regression requiring 44dp of lower content in the initial viewport. New Android CI/render verification is required.
+- Synthetic fixture artwork cannot prove real-logo/crop conformance or physical Shield rendering. The review retains these as explicit pending checks rather than extrapolating success.
+
+- CI 36349938513 compiled the diagnostics checkpoint but failed the old routine-rotation fixture (110 targeted tests, one failure): it counted protected daily/incident streams against the routine stream's seven-file budget. The new incident test legitimately creates those separate streams. The assertion now counts only events/playback rotations; the existing per-file byte-bound assertion still covers every file. Retention limits were not increased. A new complete CI run is required.

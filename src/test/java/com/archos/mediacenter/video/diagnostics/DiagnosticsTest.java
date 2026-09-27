@@ -44,7 +44,9 @@ public class DiagnosticsTest {
         java.lang.reflect.Method write=Diagnostics.class.getDeclaredMethod("write",String.class,String.class);write.setAccessible(true);
         String payload=new String(new char[4000]).replace('\0','x');
         for(int i=0;i<500;i++)write.invoke(null,"{\"session\":\"fixture-session\",\"event\":\"bounded_test\",\"detail\":\""+payload+"\"}\n","fixture-session");
-        java.io.File[] files=new java.io.File(c.getFilesDir(),"supernova-diagnostics").listFiles();assertNotNull(files);assertTrue(files.length<=7);
+        java.io.File[] files=new java.io.File(c.getFilesDir(),"supernova-diagnostics").listFiles();assertNotNull(files);
+        // Protected daily/incident streams have a separate budget and may already exist.
+        long routine=java.util.Arrays.stream(files).filter(file->file.getName().matches("(?:events|playback)\\.jsonl(?:\\.[1-4])?")).count();assertTrue(routine<=7);
         for(java.io.File file:files)assertTrue(file.length()<=Diagnostics.LIMIT);
         java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();Diagnostics.export(c,bytes);boolean playback=false;
         try(java.util.zip.ZipInputStream zip=new java.util.zip.ZipInputStream(new java.io.ByteArrayInputStream(bytes.toByteArray()))){java.util.zip.ZipEntry entry;while((entry=zip.getNextEntry())!=null){if(entry.getName().equals("playback.jsonl")){java.io.ByteArrayOutputStream content=new java.io.ByteArrayOutputStream();byte[] buffer=new byte[8192];int count;while((count=zip.read(buffer))!=-1)content.write(buffer,0,count);assertTrue(content.toString("UTF-8").contains("fixture-session"));playback=true;}}}

@@ -67,7 +67,18 @@ public final class PreviewMoviePage extends ScrollView {
         ((View)cast.getParent()).setVisibility(GONE);((View)crew.getParent()).setVisibility(GONE);
         rebuildTabs();
     }
-    @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);int viewport=h-getPaddingTop()-getPaddingBottom();heroPage.setLayoutParams(new LinearLayout.LayoutParams(-1,Math.max(dp(360),viewport-dp(44))));lower.setMinimumHeight(viewport);}
+    @Override protected void onMeasure(int widthSpec,int heightSpec){
+        int available=View.MeasureSpec.getSize(heightSpec);
+        if(available>0&&heroPage!=null){
+            int viewport=Math.max(0,available-getPaddingTop()-getPaddingBottom());
+            int heroHeight=Math.max(dp(360),viewport-dp(44));
+            // Navigation measures the stage twice. Resolve before child measurement,
+            // not from an intermediate layout size, so the lower-content teaser stays visible.
+            if(heroPage.getLayoutParams().height!=heroHeight)heroPage.getLayoutParams().height=heroHeight;
+            if(lower.getMinimumHeight()!=viewport)lower.setMinimumHeight(viewport);
+        }
+        super.onMeasure(widthSpec,heightSpec);
+    }
     @Override protected void onScrollChanged(int left,int top,int oldLeft,int oldTop){
         super.onScrollChanged(left,top,oldLeft,oldTop);
         android.view.ViewParent parent=getParent();
