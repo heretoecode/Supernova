@@ -20,7 +20,23 @@ import static org.junit.Assert.*;
 @Config(application=Application.class,sdk=28)
 public class PreviewVersionsDialogTest {
     private Video movie(long id) {
-        return new Movie(id,"/storage/version-"+id+".mkv","Film",1,"Plot",2024,7,"",null,100000,0,0,0,false,false,false,false,1,0,1920,1080,null,null,null,null,0,1,500000,0);
+        return movie(id,0,0);
+    }
+    private Video movie(long id,int resume,long played) {
+        return new Movie(id,"/storage/version-"+id+".mkv","Film",1,"Plot",2024,7,"",null,100000,resume,0,0,false,false,false,false,1,played,1920,1080,null,null,null,null,0,1,500000,0);
+    }
+    @Test public void titlePositionIsReconstructedAfterSelectedVersionReload(){
+        Video played=movie(1,42000,200),selected=movie(2,7000,100);
+        PreviewVariants.restoreTitleResume(Arrays.asList(played,selected),selected);
+        assertEquals(42000,selected.getResumeMs());assertEquals(42000,selected.getAutomaticResumeMs());
+        Video refreshed=movie(2,7000,100);
+        PreviewVariants.restoreTitleResume(Arrays.asList(movie(1,42000,200),refreshed),refreshed);
+        assertEquals(42000,refreshed.getResumeMs());assertEquals(100,refreshed.getLastPlayed());
+    }
+    @Test public void newestRestartOverridesOlderPositionWithoutChangingOtherFileHistory(){
+        Video old=movie(1,42000,100),restarted=movie(2,0,200);
+        PreviewVariants.restoreTitleResume(Arrays.asList(old,restarted),old);
+        assertEquals(0,old.getResumeMs());assertEquals(0,restarted.getResumeMs());assertEquals(200,restarted.getLastPlayed());
     }
     @Test public void selectingVersionKeepsDialogOpenAndCurrentIndependentOfFocus() {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();

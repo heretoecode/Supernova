@@ -200,9 +200,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Add first-class Unmatched toolbar workflow to Movies and TV. Classification is separate from metadata identity. Strong TV filename/folder patterns may classify TV; standalone title/year may classify Movie; genuinely uncertain remains Unknown Type. Movies→Unmatched shows confidently Movie unmatched + Unknown; TV→Unmatched shows confidently TV unmatched + the SAME underlying Unknown records. No duplication. Once matched, item disappears from unmatched and enters normal library.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewMediaClassification supplies non-mutating Movie/TV/Unknown hints from filenames and longest matching source-folder boundaries. PreviewPages.source filters the shared snapshot.unmatched list, including the same Unknown entries in both categories without insertion/duplication. Classification regressions passed in targeted CI 36349549771. Live match/removal/refresh behaviour remains physical QA.
 
 ### UI-021 — 5. Unmatched media
 
@@ -220,9 +220,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 One continuous vertically scrolling Details page. Initial cinematic Hero; lower nav near bottom with teaser content below. DOWN from actions→lower nav→content/collapse. As user scrolls, title/logo becomes compact/sticky below global nav; hero metadata/actions scroll away. UP reverses smoothly.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — CORRECTION AWAITING CI/VISUAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewMoviePage is one ScrollView with hero/tab/content routing and a non-focusable compact rendering of the same title/logo. Compact-title and focus-retention regressions passed CI 36349549771. Initial visual comparison found the required teaser hidden by layout-time sizing; checkpoint 46 moves sizing before measurement and adds a 44dp teaser assertion. Corrected render and physical reverse-scrolling smoothness remain pending.
 
 ### UI-023 — 6. Details Page
 
@@ -230,9 +230,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Movie lower tabs: Details → Extras → More Like This. TV: Seasons & Episodes → Details → Extras → More Like This. Missing tabs disappear/reflow.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewMoviePage.rebuildTabs starts with Seasons & Episodes only for TV, then Details, populated playable Extras and populated More Like This. Empty tabs are omitted rather than disabled/spaced placeholders. PreviewMoviePageTest verifies populated Extras categories and absence of empty recommendation/extra tabs; passed CI 36349549771. Live TV population/remote navigation remains physical QA.
 
 ### UI-024 — 6. Details Page
 
@@ -240,9 +240,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 STRICT divider: selected segment is the EXISTING divider line recoloured blue, exactly same stroke width as white unselected divider; glow is optical outside only. No second underline/thicker bar. Tab text remains white.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — VISUAL/PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewToolbar draws the white divider and selected blue segment at identical y/height, with a separate low-alpha optical halo. PreviewMoviePage stores selectedSegment; its obsolete separate tabLine is GONE. Initial Details render confirms no second thick underline. Focused/unfocused pixel comparison and physical glow remain pending.
 
 ### UI-025 — 6. Details Page
 
@@ -360,9 +360,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Versions: only when 2+ physical versions. Compact horizontal rows with resolution/HDR/codec/audio/channels/size/source/location. Plain monochrome ✓ Current independent of focus. Selection updates current while menu stays; no toast; Technical updates; resume is title-level.
 
-Status: **IMPLEMENTED — picker presentation; title-history verification incomplete** / **AWAITING PHYSICAL QA**
+Status: **IMPLEMENTED IN PART — TITLE-HISTORY CORRECTION AWAITING CI**
 
-Code mapping: PreviewVersionsDialog and PreviewVariants.details use cached facts, independent Current state, a persistent window and credential-free location display. VideoDetailsFragment retains the native Details update and carries in-memory resume on switching. Two picker tests await full CI; reload/persistence and different-duration playback still need verification.
+Code mapping / verification: PreviewVersionsDialog and PreviewVariants.details use cached facts, independent Current state, a persistent window and credential-free location display. Picker tests passed in CI 36349549771. Review found subsequent loader refresh could replace the copied title position with per-file state. PreviewVariants.restoreTitleResume now reconstructs it from the latest persisted file history on every Preview Details loader refresh; new reload/restart-zero tests await CI. Cached channels/HDR completeness and different-duration physical playback still require verification.
 
 ### UI-037 — 7. More / contextual workflows
 
@@ -795,9 +795,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Manual Report a Problem creates a short unique reference (example D78C2515-1009), category and exact timestamp. Confirmation shows readable reference and a QR containing ONLY non-sensitive reference/category/time/linking data. Never include credentials, tokens, private paths or raw diagnostic payload. Provide Show Latest Reference. Export manifest indexes manual markers.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Diagnostics.reportProblem generates a process-prefix/sequence reference, allow-listed category and exact UTC timestamp; showReference renders the strict DiagnosticReference QR and persists Show Latest Reference. DiagnosticArchive indexes manual markers. QR round-trip, arbitrary-field rejection and archive marker-index tests passed targeted CI 36349549771. Real Shield QR readability/export workflow remains physical QA.
 
 ### DIA-004 — Required diagnostic/reporting improvements
 
@@ -885,9 +885,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 At major failures only, capture safe resource context: app heap/native memory, available memory/storage, thread count and foreground/background state. Avoid continuous heavy profiling.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Diagnostics.incidentContext captures heap/native heap, available memory, low-memory flag, storage free, thread count and foreground state when freezing an incident. Failed resource lookup cannot prevent recording; repeat incidents use the lightweight burst path. New structural snapshot regression passed targeted CI 36349938513 (the run failed a separate rotation-budget assertion). Physical resource pressure/retention remains QA.
 
 ### DIA-013 — Required diagnostic/reporting improvements
 

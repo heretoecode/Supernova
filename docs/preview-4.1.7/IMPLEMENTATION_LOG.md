@@ -728,3 +728,9 @@ These changes require a full CI rerun; no failures are waived.
 - Synthetic fixture artwork cannot prove real-logo/crop conformance or physical Shield rendering. The review retains these as explicit pending checks rather than extrapolating success.
 
 - CI 36349938513 compiled the diagnostics checkpoint but failed the old routine-rotation fixture (110 targeted tests, one failure): it counted protected daily/incident streams against the routine stream's seven-file budget. The new incident test legitimately creates those separate streams. The assertion now counts only events/playback rotations; the existing per-file byte-bound assertion still covers every file. Retention limits were not increased. A new complete CI run is required.
+
+## Continuation checkpoint 47 — title-level resume after version reload
+
+- Source review found version switching carried title resume in memory, but a later loader refresh selected the physical file's persisted position. PreviewVariants.restoreTitleResume now derives the selected version's automatic position from the latest persisted title history on every Preview Details loader refresh. It does not rewrite media records or change classic UI behaviour.
+- Added regressions for a fresh selected-file reload and a later restart at zero overriding older progress. These require CI; different-duration files and physical playback remain unverified.
+- Reconciled further Unmatched, Details and diagnostic entries with explicit evidence and unresolved visual/physical conditions. The 115-entry pass remains in progress.

@@ -16,6 +16,15 @@ public final class PreviewVariants {
         String resolution=w>0&&h>0?w+" × "+h:"Resolution unavailable";
         return resolution+" · "+video.getFilenameNonCryptic();
     }
+    /** Reconstruct title-level position from persisted file history after any loader refresh.
+     * The caller supplies only physical variants of the same title; no database rows are rewritten. */
+    public static void restoreTitleResume(List<? extends Video> variants,Video selected){
+        if(selected==null||variants.size()<2)return;
+        Video latest=null;
+        for(Video candidate:variants)if(candidate.getLastPlayed()>0&&(latest==null||candidate.getLastPlayed()>latest.getLastPlayed()
+                ||candidate.getLastPlayed()==latest.getLastPlayed()&&candidate.getId()<latest.getId()))latest=candidate;
+        if(latest!=null){selected.setAutomaticResumeMs(latest.getResumeMs());if(latest.getRemoteResumeMs()>=0)selected.setRemoteResumeMs(latest.getRemoteResumeMs());}
+    }
     /** Cached/indexed facts only: opening Versions never probes a network file. */
     public static String details(android.content.Context context, Video video) {
         List<String> facts = new ArrayList<>();

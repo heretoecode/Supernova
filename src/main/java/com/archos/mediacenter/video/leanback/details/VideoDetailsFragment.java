@@ -1148,6 +1148,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             mSelectCurrentVideo = true;
             if(mVideo == null)
                 mVideo = mVideoList.get(0);
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))
+                com.archos.mediacenter.video.leanback.PreviewVariants.restoreTitleResume(mVideoList,mVideo);
             if(mVideoList.size()>1){
                 int i = 0;
                 for(Video video : mVideoList) {
