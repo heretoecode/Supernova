@@ -117,7 +117,7 @@
 +    public static final Object LOCK=new Object();
 +    private static SharedPreferences prefs(Context c){return c.getSharedPreferences("provider-discovery-ownership-v1",Context.MODE_PRIVATE);}
 +    public static void exclude(Context c,String scope,Uri source){
-+        if(scope==null||!scope.matches("putio:[0-9]+:[0-9]+")||source==null||source.getUserInfo()!=null||source.getQuery()!=null||source.getFragment()!=null||source.getHost()==null)throw new IllegalArgumentException("Invalid provider source");
++        if(scope==null||!scope.matches("putio(?:-retired)?:[0-9]+:[a-f0-9]+")||source==null||source.getUserInfo()!=null||source.getQuery()!=null||source.getFragment()!=null||source.getHost()==null)throw new IllegalArgumentException("Invalid provider source");
 +        synchronized(LOCK){if(!prefs(c).edit().putString(scope,source.toString()).commit())throw new IllegalStateException("Unable to preserve scanner ownership");}
 +    }
 +    public static void release(Context c,String scope){synchronized(LOCK){if(!prefs(c).edit().remove(scope).commit())throw new IllegalStateException("Unable to restore scanner ownership");}}

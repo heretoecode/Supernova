@@ -659,3 +659,11 @@ These changes require a full CI rerun; no failures are waived.
 - Guarded generic WebDAV deletion (including ancestor folders), associated-file deletion and subtitle rename/delete for API-managed scopes. These operations require provider API support; generic unassociated sources retain their original behaviour.
 - Added real native database-schema/trigger tests for new-file insertion, duplicate-path refusal and rename with preserved ID, bookmark and movie match. Added account display-path/status persistence and explicit previous-source handling when reconnecting to a different account.
 - Local syntax and XML checks passed before this checkpoint; new CI is required. Source reassignment, remaining UI/register reconciliation, three conformance passes and signed delivery are still open. No physical Shield verification claimed.
+
+## Continuation checkpoint 38 — resumable source reassignment
+
+- Checkpoint 37 CI 36336048449 passed all gates, including the native import/rename/schema tests, guarded deletion and OOB parser tests. Production OAuth values remain empty.
+- Change Library Folders now obtains a complete new snapshot before mutation, requests explicit inactive/generic retirement of the previous source and journals the change before updating native paths. Stable provider IDs transfer the same media IDs. A pending change suspends ordinary sync and can be resumed from either affected folder.
+- Added a non-destructive association database v1→v2 migration for reassignment journals and retained source ownership. Same-folder WebDAV-root changes preserve absent file identities as missing, not deletions. Account disconnect handles retained sources explicitly.
+- Native relocation reads the current canonical URI by media ID, making a retry safe when interruption occurs between the native path write and sidecar commit. Source collisions remain review failures, never overwrites.
+- Added native-schema tests for interruption after URI commit, incomplete snapshots and same-folder root changes; new CI pending. Remaining conformance includes complete put.io feature/visual audit, full 115-entry reconciliation, three review passes and signed delivery.

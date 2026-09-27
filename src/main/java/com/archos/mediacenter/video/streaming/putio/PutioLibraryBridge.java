@@ -14,13 +14,14 @@ final class PutioLibraryBridge implements PutioSync.Library {
     private final Context context;
     PutioLibraryBridge(Context context){this.context=context.getApplicationContext();}
     public List<PutioReconciliation.Existing> existing(Uri source,List<PutioAssociationStore.Link> links){
-        Map<Long,Long> identities=new HashMap<>();for(PutioAssociationStore.Link link:links)identities.put(link.mediaId,link.fileId);
+        Map<Long,Long> identities=new HashMap<>();Map<Long,PutioAssociationStore.Link> retained=new HashMap<>();for(PutioAssociationStore.Link link:links){identities.put(link.mediaId,link.fileId);retained.put(link.mediaId,link);}
         List<PutioReconciliation.Existing> rows=new ArrayList<>();
         try(Cursor cursor=context.getContentResolver().query(FILES,new String[]{"_id","_data","_size"},"media_type=?",new String[]{""+VideoStore.Files.FileColumns.MEDIA_TYPE_VIDEO},null)){
             if(cursor==null)throw new IllegalStateException("Library unavailable");
             while(cursor.moveToNext()){
                 Uri path=Uri.parse(cursor.getString(1));if(!ProviderDiscoveryGate.contains(source,path)){
-                    if(identities.containsKey(cursor.getLong(0)))throw new IllegalStateException("Linked source has moved; reassignment needs review");
+                    PutioAssociationStore.Link link=retained.get(cursor.getLong(0));
+                    if(link!=null){if(!link.missing)throw new IllegalStateException("Linked source has moved; reassignment needs review");rows.add(new PutioReconciliation.Existing(link.mediaId,link.relativePath,link.size,link.fileId));}
                     continue;
                 }
                 List<String> parts=path.getPathSegments();int start=source.getPathSegments().size();if(parts.size()<=start)continue;
@@ -58,9 +59,15 @@ final class PutioLibraryBridge implements PutioSync.Library {
         }
     }
     public void relocate(Uri source,PutioReconciliation.Existing old,PutioReconciliation.File file){
-        if(old.relativePath.equals(file.relativePath))return;
-        Uri before=playback(source,old.relativePath),after=playback(source,file.relativePath);ContentResolver resolver=context.getContentResolver();
-        try(Cursor collision=resolver.query(FILES,new String[]{"_id"},"_data=? AND _id<>?",new String[]{after.toString(),""+old.mediaId},null)){
+        move(old.mediaId,playback(source,file.relativePath));
+    }
+    void move(long mediaId,Uri after){
+        ContentResolver resolver=context.getContentResolver();Uri before;
+        try(Cursor current=resolver.query(FILES,new String[]{"_data"},"_id=?",new String[]{""+mediaId},null)){
+            if(current==null||!current.moveToFirst())throw new IllegalStateException("Original indexed file is unavailable");before=Uri.parse(current.getString(0));
+        }
+        if(before.equals(after))return;
+        try(Cursor collision=resolver.query(FILES,new String[]{"_id"},"_data=? AND _id<>?",new String[]{after.toString(),""+mediaId},null)){
             if(collision==null||collision.moveToFirst())throw new IllegalStateException("Moved file needs review");
         }
         // The native URI-update trigger preserves the same canonical ID and metadata/history.

@@ -10,7 +10,7 @@ import java.util.*;
 
 /** Sidecar identities only. Never updates/deletes a Video row, file or playback history. */
 public final class PutioAssociationStore extends SQLiteOpenHelper {
-    public enum Ownership { PREPARING, API, INACTIVE, GENERIC }
+    public enum Ownership { PREPARING, API, INACTIVE, GENERIC, REASSIGNING }
     public enum DisconnectChoice { KEEP_INACTIVE, REVERT_TO_GENERIC }
     public static final class Session {
         public final long accountId, folderId, generation;
@@ -29,12 +29,18 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
         }
     }
     private final Context context;
-    public PutioAssociationStore(Context context) { super(context,"putio-associations.db",null,1);this.context=context.getApplicationContext(); }
+    public PutioAssociationStore(Context context) { super(context,"putio-associations.db",null,2);this.context=context.getApplicationContext(); }
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE scopes (account_id INTEGER NOT NULL,folder_id INTEGER NOT NULL,source TEXT NOT NULL,generation INTEGER NOT NULL DEFAULT 0,ownership TEXT NOT NULL,complete_generation INTEGER NOT NULL DEFAULT -1,unresolved INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(account_id,folder_id))");
         db.execSQL("CREATE TABLE links (account_id INTEGER NOT NULL,file_id INTEGER NOT NULL,folder_id INTEGER NOT NULL,parent_id INTEGER NOT NULL,media_id INTEGER NOT NULL UNIQUE,size INTEGER NOT NULL,relative_path TEXT NOT NULL,missing INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(account_id,file_id))");
+        createReassignmentTables(db);
+    }
+    private static void createReassignmentTables(SQLiteDatabase db){
+        db.execSQL("CREATE TABLE reassignments (account_id INTEGER NOT NULL,folder_id INTEGER NOT NULL,old_folder INTEGER NOT NULL,old_source TEXT NOT NULL,new_source TEXT NOT NULL,choice TEXT NOT NULL,PRIMARY KEY(account_id,folder_id))");
+        db.execSQL("CREATE TABLE retired_sources (account_id INTEGER NOT NULL,source TEXT NOT NULL,gate_key TEXT NOT NULL,PRIMARY KEY(account_id,source))");
     }
     @Override public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion) {
+        if(oldVersion==1&&newVersion==2){createReassignmentTables(db);return;}
         throw new IllegalStateException("Association migration is required");
     }
     /** Explicit folder selection; changing a source requires a separate reassignment review. */
@@ -77,6 +83,7 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
     /** Reconnect keeps mappings but requires a fresh complete snapshot before API ownership. */
     public synchronized void resume(long account,long folder){
         synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+            if(ownership(account,folder)==Ownership.REASSIGNING)throw new IllegalStateException("Finish the pending source change first");
             begin(account,folder);ContentValues values=new ContentValues();values.put("ownership",Ownership.PREPARING.name());values.put("complete_generation",-1);
             getWritableDatabase().update("scopes",values,"account_id=? AND folder_id=?",args(account,folder));
         }
@@ -160,7 +167,10 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
         synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
         SQLiteDatabase db=getWritableDatabase();db.beginTransaction();
         try{List<Long> folders=new ArrayList<>();try(Cursor c=db.rawQuery("SELECT folder_id FROM scopes WHERE account_id=?",new String[]{""+account})){while(c.moveToNext())folders.add(c.getLong(0));}
-            for(long folder:folders)disconnect(account,folder,choice);db.setTransactionSuccessful();
+            for(long folder:folders)disconnect(account,folder,choice);
+            try(Cursor c=db.rawQuery("SELECT gate_key FROM retired_sources WHERE account_id=?",new String[]{""+account})){while(c.moveToNext())if(choice==DisconnectChoice.REVERT_TO_GENERIC)com.archos.mediaprovider.video.ProviderDiscoveryGate.release(context,c.getString(0));}
+            if(choice==DisconnectChoice.REVERT_TO_GENERIC)db.delete("retired_sources","account_id=?",new String[]{""+account});
+            db.delete("reassignments","account_id=?",new String[]{""+account});db.setTransactionSuccessful();
         }finally{db.endTransaction();}
         }
     }
