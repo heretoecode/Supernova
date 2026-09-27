@@ -11,6 +11,7 @@ final class PreviewNavigationShade {
     private boolean dirty=true;
     private long sampledAt;
     void invalidate(){dirty=true;}
+    boolean hasPendingSample(){return dirty;}
     void release(){if(sample!=null)sample.recycle();sample=null;source=null;dirty=true;}
     void draw(Canvas canvas,Drawable background,int width,float height,int alpha){
         if(alpha<=0||width<=0||height<=0)return;

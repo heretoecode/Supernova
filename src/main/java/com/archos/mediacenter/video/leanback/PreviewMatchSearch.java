@@ -51,6 +51,13 @@ public final class PreviewMatchSearch extends LinearLayout {
         status.setText(results.isEmpty()?"No matches":"Choose a match to review");
     }
     public void focusInput(){keyboard.focusLastKey();}
+    public void refresh(){removeCallbacks(query);query.run();}
+    public void parentSeries(String name,Runnable change){
+        LinearLayout parent=new LinearLayout(getContext());parent.setGravity(Gravity.CENTER_VERTICAL);
+        TextView label=text("Episodes in "+name+" · enter S1 E1, an episode title or ID",13);parent.addView(label,new LayoutParams(0,-2,1));
+        TextView action=text("Change Series Match",14);action.setPadding(dp(10),dp(6),dp(10),dp(6));action.setFocusable(true);action.setFocusableInTouchMode(true);action.setBackground(PreviewDialog.focus(getContext()));action.setOnClickListener(view->change.run());action.setTag("semantic:match.change-series");parent.addView(action);
+        addView(parent,2,new LayoutParams(-1,dp(40)));
+    }
     private void focusResults(){if(rows.getChildCount()>0)rows.getChildAt(0).requestFocus();}
     public static String label(BaseTags tags){
         if(tags instanceof MovieTags){MovieTags movie=(MovieTags)tags;return movie.getTitle()+(movie.getYear()>0?" ("+movie.getYear()+")":"");}

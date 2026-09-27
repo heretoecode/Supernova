@@ -89,8 +89,11 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
         if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
         android.widget.FrameLayout root=new android.widget.FrameLayout(requireContext());root.addView(nativeView);nativeView.setVisibility(View.GONE);
         previewSearch=new com.archos.mediacenter.video.leanback.PreviewMatchSearch(requireContext(),initialQuery,this::onQueryTextSubmit,this::previewMatch);
+        configurePreviewSearch(previewSearch);
         root.addView(previewSearch,new android.widget.FrameLayout.LayoutParams(-1,-1));return root;
     }
+    protected void configurePreviewSearch(com.archos.mediacenter.video.leanback.PreviewMatchSearch search){}
+    protected void refreshPreviewSearch(){if(previewSearch!=null)previewSearch.refresh();}
     private void updatePreviewResults(){if(previewSearch==null)return;java.util.List<BaseTags> values=new java.util.ArrayList<>();if(mResultsAdapter!=null)for(int i=0;i<mResultsAdapter.size();i++)if(mResultsAdapter.get(i) instanceof BaseTags)values.add((BaseTags)mResultsAdapter.get(i));previewSearch.setResults(values);}
 
 

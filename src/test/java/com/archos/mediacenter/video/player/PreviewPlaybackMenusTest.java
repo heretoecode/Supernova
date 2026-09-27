@@ -28,7 +28,7 @@ public class PreviewPlaybackMenusTest {
             PreviewPlaybackMenus.showNested(host,card);Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
             android.view.WindowManager.LayoutParams bounds=dialog.getWindow().getAttributes();
             if(size==null)size=new int[]{bounds.width,bounds.height};else{assertEquals(size[0],bounds.width);assertEquals(size[1],bounds.height);}
-            assertTrue(bounds.height<270);assertTrue(PreviewPlaybackMenus.back());
+            assertTrue(bounds.height<270);assertTrue(PreviewPlaybackMenus.back());Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
         }
         assertEquals(2,dismissed.get());host.finish();
     }

@@ -11,18 +11,24 @@ import static org.junit.Assert.*;
 public class PreviewNavigationShadeTest {
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
     @Config(qualifiers="w960dp-h540dp-land-mdpi")
-    public void scrollingViewportExtendsBehindNavigationAndShadeSamplesItsPixels(){
+    public void scrollingViewportExtendsBehindNavigationAndShadeSamplesItsPixels()throws Exception{
         android.app.Activity host=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
         android.widget.ScrollView scroll=new android.widget.ScrollView(host);android.view.View red=new android.view.View(host);red.setBackgroundColor(android.graphics.Color.RED);
         scroll.addView(red,new android.widget.ScrollView.LayoutParams(-1,1200));
         TopNavigation nav=new TopNavigation(host,scroll,index->{},()->scroll.getScrollY()==0);host.setContentView(nav);
         nav.measure(android.view.View.MeasureSpec.makeMeasureSpec(960,1073741824),android.view.View.MeasureSpec.makeMeasureSpec(540,1073741824));nav.layout(0,0,960,540);
         assertEquals(540,scroll.getHeight());assertEquals(52,scroll.getPaddingTop());assertEquals(0,((android.view.View)scroll.getParent()).getTop());
-        scroll.scrollTo(0,160);nav.setScrolled(true);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(220));
+        nav.setScrolled(true);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(220));
+        // Finish the Activity's posted initial layout before positioning this scroll fixture.
+        nav.measure(android.view.View.MeasureSpec.makeMeasureSpec(960,1073741824),android.view.View.MeasureSpec.makeMeasureSpec(540,1073741824));nav.layout(0,0,960,540);
+        scroll.scrollTo(0,160);assertEquals(160,scroll.getScrollY());assertEquals(0,((android.view.View)scroll.getParent()).getTop());
         android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(image));
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(120));
+        scroll.scrollTo(0,160);nav.draw(new android.graphics.Canvas(image));
+        java.io.File png=new java.io.File("build/reports/preview-ui/navigation-scroll.png");png.getParentFile().mkdirs();try(java.io.FileOutputStream stream=new java.io.FileOutputStream(png)){image.compress(android.graphics.Bitmap.CompressFormat.PNG,100,stream);}
         // At the blank left margin: scrolled red content survives, darkened behind the nav.
         int covered=image.getPixel(4,20),clear=image.getPixel(4,140);
-        assertTrue(android.graphics.Color.red(covered)>android.graphics.Color.blue(covered));
+        assertTrue("Covered pixel="+Integer.toHexString(covered)+", clear="+Integer.toHexString(clear),android.graphics.Color.red(covered)>android.graphics.Color.blue(covered));
         assertTrue(android.graphics.Color.red(covered)<android.graphics.Color.red(clear));
         assertEquals(android.graphics.Color.RED,clear);image.recycle();host.finish();
     }

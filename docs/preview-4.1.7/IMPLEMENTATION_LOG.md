@@ -600,3 +600,27 @@ bounds; larger subtitle controls retain measured height. Native pickers,
 limits, callbacks and persistence are retained. Added real inflated panel
 size and dismissal-callback coverage. Compilation and new regressions
 await CI; visual performance and physical focus remain unverified.
+
+## Checkpoint 33 — parent-constrained episode correction
+
+Episode Find a Match now searches the current series by S/E coordinates,
+episode title, TMDB episode ID or IMDb episode ID. IMDb results cannot silently
+switch the parent. Change Series Match explicitly opens the retained complete
+series correction workflow. On return, the physical media record resolves the
+current parent instead of reusing a stale Episode object's scraper ID. Failed
+episode fetches cannot offer a title-only replacement; explicit accepted saves
+recheck parent identity, retain the physical video row, report failure and keep
+the chooser available. The legacy refetch now also supplies the chosen episode
+number. Added coordinate/ID/parent-boundary tests. Native schema preservation
+coverage already exists; live metadata-provider/physical Shield QA is pending.
+Provider contracts checked against TMDB's own find-by-id and tv-season-details
+documentation; no additional provider is introduced.
+
+Checkpoint 32 run 36314258924 compiled and passed targeted source checks, then
+ran 276 Video tests with two new-test failures. All six subtitle chooser tests
+now passed. Adjustment dismissal coverage needed to drain Android's posted
+OnCancel listener. The navigation pixel fixture now completes initial Activity
+layout before scrolling, waits for the bounded sample cache and retains its PNG
+and pixel values for investigation. A pending shade sample schedules a redraw
+so the final scroll frame cannot retain a stale cached strip indefinitely.
+These changes require a full CI rerun; no failures are waived.
