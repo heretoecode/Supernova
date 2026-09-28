@@ -24,4 +24,6 @@ Synthetic test images are diagnostic fixtures, not replacement artwork and not e
 
 Not complete. CI 36349549771: application/test compilation and targeted suite passed; identity audit passed; full Video suite 312 tests, 1 failure (shared provider browser focus); backend/WebDAV gates skipped. The focus fix and diagnostics checkpoint are submitted in remote ab0c9eaea404b1f39b7a88b742dd7dc774b9b8f1, CI 36349938513 pending.
 
+CI 36350179013 subsequently passed every gate, including the shared-browser repair, diagnostics regressions and Details teaser assertion. This clears the earlier failures for that source tree, not later changes. The corrected Details image still needs reinspection.
+
 No signed Preview 4.1.7 APK has been produced or validated by this continuation. Signing fingerprint, installed-data upgrade, smoke checks, final complete register reconciliation and physical Shield QA remain delivery gates. Only live production put.io OAuth configuration/account validation is an acknowledged external credential dependency; unfinished implementation/review work must not be labelled OAuth-blocked.

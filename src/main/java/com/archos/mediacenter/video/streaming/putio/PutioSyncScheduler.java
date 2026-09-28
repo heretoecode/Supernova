@@ -9,11 +9,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /** Uses the existing manual/foreground scan schedule, without Activity ownership or new timers. */
 public final class PutioSyncScheduler {
     private static final AtomicBoolean BUSY=new AtomicBoolean();
-    public static void request(Context context){
+    public static void request(Context context){request(context,"unknown");}
+    public static void request(Context context,String origin){
+        final String trigger=Arrays.asList("manual","startup","resume","scheduled").contains(origin)?origin:"unknown";
         if(!BUSY.compareAndSet(false,true))return;Context app=context.getApplicationContext();
         StreamingRepository.IO.submit(()->{String operation="";try{
             String token=new PutioTokenStore(app).read();if(token==null)return;
-            operation=Diagnostics.operation("putio_sync");PutioReadClient client=new PutioReadClient(token);PutioReadClient.Account account=client.account();
+            operation=Diagnostics.operation("putio_sync");Diagnostics.event("putio_sync_started","operation_id",operation,"trigger",trigger);PutioReadClient client=new PutioReadClient(token);PutioReadClient.Account account=client.account();
             List<PutioAssociationStore.Scope> scopes;try(PutioAssociationStore store=new PutioAssociationStore(app)){scopes=store.scopes(account.id);}
             int synced=0,review=0;
             for(PutioAssociationStore.Scope scope:scopes){

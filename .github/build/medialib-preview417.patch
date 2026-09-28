@@ -12,11 +12,12 @@
                      if (log.isDebugEnabled()) log.debug("onReceive: skip scan for inactive server {}", uri);
 --- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 +++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
-@@ -633,6 +633,20 @@
+@@ -633,6 +633,23 @@
      }
      private static int mFoundFiles = 0;
      private static final String IN_FOLDER_SELECT = MediaColumns.DATA + " LIKE ?||'%'";
 +    private int previewAdded, previewUpdated;
++    private String previewBatchId;
 +    private void previewScanEvent(Uri root, String phase) {
 +        try {
 +            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
@@ -24,8 +25,10 @@
 +            StringBuilder id = new StringBuilder();
 +            for (int i=0;i<12;i++) id.append(String.format(java.util.Locale.ROOT,"%02x",hash[i]));
 +            Intent event = new Intent(getPackageName()+".SCAN_LIFECYCLE").setPackage(getPackageName());
-+            event.putExtra("phase",phase).putExtra("source_id",id.toString()).putExtra("checked",sFilesFoundCount)
-+                .putExtra("added",previewAdded).putExtra("updated",previewUpdated);
++            event.putExtra("phase",phase).putExtra("source_id",id.toString()).putExtra("checked","started".equals(phase)?0:sFilesFoundCount)
++                .putExtra("added",previewAdded).putExtra("updated",previewUpdated)
++                .putExtra("batch_id",previewBatchId)
++                .putExtra("source_location",(root.getHost()==null?"":root.getHost())+(root.getPath()==null?"":root.getPath()));
 +            sendBroadcast(event);
 +        } catch (java.security.GeneralSecurityException ignored) { /* telemetry cannot interrupt scanning */ }
 +    }
@@ -33,11 +36,13 @@
      private static final String SELECT_ID = BaseColumns._ID + "=?";
      /** scans files into our db */
      void doScan(Uri what, long batchId) {
-@@ -640,16 +654,21 @@
+@@ -640,16 +657,23 @@
          long start = log.isDebugEnabled() ? System.currentTimeMillis() : 0;
          boolean scanResolved = false;
          boolean scanHadDbError = false;
 +        previewAdded = 0; previewUpdated = 0;
++        previewBatchId = batchId == com.archos.mediascraper.AutoScrapeService.STANDALONE_SCAN_BATCH_ID
++                ? java.util.UUID.randomUUID().toString() : Long.toString(batchId);
 +        previewScanEvent(what, "started");
          try {
 -            ScanResult result = performScan(what);
