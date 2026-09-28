@@ -210,9 +210,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Unmatched Details uses honest placeholders such as Not matched/Unavailable/Unknown and a prominent Match Metadata action. Inferred TV structure may group provisionally. Matching and More→Edit/Correct use the same matching engine.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — TESTING/VISUAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Review found the prominent hero action missing. PreviewMoviePage now shows Match Metadata for unmatched files when native ACTION_SCRAP is available, invokes that same matching engine directly, and supplies Not matched / Synopsis unavailable instead of fabricated metadata. Play UP reaches Match; Match DOWN returns to Play; specified Play/More horizontal mapping is unchanged. New callback/placeholder/focus regression awaits CI. Provisional TV grouping is optional and does not invent identity.
 
 ### UI-022 — 6. Details Page
 
@@ -835,9 +835,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Scan diagnostics: Requested→Queued→Started→source/phase→Index/Reconciliation→Metadata queued→Completed/Failed/Cancelled. Include source counts and honest progress. Make manual scan trace directly comparable to startup/resume scan.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — LIFECYCLE CONFORMANCE PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewLibraryScan shares the native indexed-source scheduler across owned manual/startup/resume/scheduled requests, records trigger and operation, and correlates backend started/reconciled/partial/complete/failed events by batch/source. PreviewScanProgress aggregates source counts and deduplicates terminal notifications; live phase/source is shown without percentages. Request timeout is explicit. New checkpoint 48 tests await CI; queued/source-count and metadata-queued lifecycle coverage still need reconciliation. Unknown native scheduler triggers remain labelled as such.
 
 ### DIA-008 — Required diagnostic/reporting improvements
 

@@ -11,6 +11,20 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMoviePageTest {
+    @Test public void unmatchedHeroExposesTheExistingMatchHandlerAndHonestPlaceholders()throws Exception{
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try{
+            ArrayObjectAdapter actions=new ArrayObjectAdapter();actions.add(new Action(VideoActionAdapter.ACTION_SCRAP,"Find a Match"));long[] chosen={-1};
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),()->actions,a->chosen[0]=a.getId(),()->{},uri->{});host.get().setContentView(page);
+            android.net.Uri file=android.net.Uri.parse("file:///storage/unmatched.mkv");page.bind(new com.archos.mediacenter.video.browser.adapters.object.NonIndexedVideo(file,file,"Unmatched fixture",null));PreviewPagesTest.layout(page);
+            View match=page.findViewWithTag("action:Match Metadata"),play=page.findViewWithTag("action:Play");assertNotNull(match);assertEquals(View.VISIBLE,match.getVisibility());
+            assertNotNull(PreviewPagesTest.findText(page,"Not matched"));assertNotNull(PreviewPagesTest.findText(page,"Not matched · Synopsis unavailable"));
+            play.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertSame(match,page.findFocus());
+            match.performClick();assertEquals(VideoActionAdapter.ACTION_SCRAP,chosen[0]);
+            page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(play,page.findFocus());
+            actions.clear();assertEquals(View.GONE,match.getVisibility());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void scrolledTitleDoesNotIntroduceAFocusTarget()throws Exception{
         try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException e){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();

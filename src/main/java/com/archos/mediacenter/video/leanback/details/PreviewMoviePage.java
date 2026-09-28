@@ -20,7 +20,7 @@ import java.util.function.*;
 public final class PreviewMoviePage extends ScrollView {
     private final LinearLayout body,cast,crew,details,related,trailers;
     private final LinearLayout heroPage,tabBar,information;private final FrameLayout lower;private final View tabLine;private final List<TextView> sectionTabs=new ArrayList<>();private String activeSection="";private int versionCount;private final List<PreviewEpisodeRow> episodeRows=new ArrayList<>();private final List<PreviewLandscapeCard> landscapeCards=new ArrayList<>(),extraCards=new ArrayList<>();
-    private final TextView title,meta,plot,play,trailer,context,moreButton;
+    private final TextView title,meta,plot,play,trailer,context,moreButton,matchMetadata;
     private final LinearLayout pills;
     private final LinearLayout providerActions;
     private TextView versions;
@@ -56,6 +56,7 @@ public final class PreviewMoviePage extends ScrollView {
         context=text("",13);context.setTextColor(0xffe1e9ef);context.setMaxLines(1);context.setEllipsize(android.text.TextUtils.TruncateAt.END);heroPage.addView(context);
         pills=new LinearLayout(c);pills.setVisibility(GONE);heroPage.addView(pills);
         plot=text("",14);plot.setMaxLines(4);plot.setLineSpacing(dp(2),1);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);LinearLayout.LayoutParams plotSize=new LinearLayout.LayoutParams(Math.min(dp(440),getResources().getDisplayMetrics().widthPixels-dp(84)),dp(88));plotSize.topMargin=dp(12);heroPage.addView(plot,plotSize);
+        matchMetadata=button("Match Metadata",()->{Action match=matchingAction();if(match!=null)action.accept(match);});matchMetadata.setVisibility(GONE);heroPage.addView(matchMetadata,new LinearLayout.LayoutParams(-2,dp(38)));
         LinearLayout buttons=new LinearLayout(c);buttons.setClipChildren(false);buttons.setPadding(0,dp(12),0,dp(10));heroPage.addView(buttons);
         trailer=button("Play Trailer",this::chooseTrailer);trailer.setVisibility(GONE);play=button("Play",this::play);buttons.addView(play);providerActions=new LinearLayout(c);providerActions.setClipChildren(false);buttons.addView(providerActions);moreButton=button("More",this::more);margin(buttons,moreButton);
         versions=button("Versions",()->chooseVersions.run());versions.setVisibility(GONE);
@@ -137,6 +138,8 @@ public final class PreviewMoviePage extends ScrollView {
     @Override public boolean dispatchKeyEvent(KeyEvent event){
         if(event.getAction()!=KeyEvent.ACTION_DOWN)return super.dispatchKeyEvent(event);
         View focused=findFocus();int key=event.getKeyCode();String tag=focused==null?"":String.valueOf(focused.getTag());
+        if(focused==play&&key==KeyEvent.KEYCODE_DPAD_UP&&matchMetadata.getVisibility()==VISIBLE){matchMetadata.requestFocus();return true;}
+        if(focused==matchMetadata){if(key==KeyEvent.KEYCODE_DPAD_DOWN){play.requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;}
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_RIGHT&&moreButton.getVisibility()==VISIBLE){moreButton.requestFocus();return true;}
         if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_LEFT&&play.getVisibility()==VISIBLE){play.requestFocus();return true;}
@@ -166,6 +169,7 @@ public final class PreviewMoviePage extends ScrollView {
     private void margin(LinearLayout row,View view){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(18);row.addView(view,lp);}
     private LinearLayout section(String name){LinearLayout section=new LinearLayout(getContext());section.setOrientation(LinearLayout.VERTICAL);section.setPadding(0,dp(14),0,dp(8));TextView label=text(name,19);label.setTextColor(0xff9ed4f7);section.addView(label);if(name.equals("More Like This")||name.equals("Details")||name.equals("Episodes")||name.equals("Extras"))label.setVisibility(GONE);LinearLayout content=new LinearLayout(getContext());content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(10),0,0);section.addView(content);body.addView(section);return content;}
     public void bind(Video value){movie=value;title.setText(movie.getName());OfficialTitleArtwork.bind(title,value,false);plot.setText(movie.getDescriptionBody());
+        if(!movie.hasScraperData()){if(safe(movie.getName()).isEmpty())title.setText(movie.getFilenameNonCryptic());plot.setText("Not matched · Synopsis unavailable");}
         play.setText(movie.getResumeMs()>0&&!PreviewSeriesJourney.completed(movie)?"Resume":"Play");
         if(movie.getPreviewBackdrop()!=null)artwork.accept(movie.getPreviewBackdrop());renderDetails();requestEnrichment();
     }
@@ -204,6 +208,7 @@ public final class PreviewMoviePage extends ScrollView {
         LinearLayout key=factPanel(panels,"Key Information"),reception=factPanel(panels,"Reception"),
                 technical=factPanel(panels,show!=null?"Library Information":remoteDetails!=null?"Streaming Availability":"Technical Information");
         org.json.JSONObject enriched=enrichment!=null?enrichment.details:remoteDetails;
+        if(movie!=null&&!movie.hasScraperData())fact(key,"Metadata","Not matched");
         String genre=tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():"";
         if(safe(genre).isEmpty()&&tags instanceof EpisodeTags){ShowTags parent=((EpisodeTags)tags).getShowTags();if(parent!=null)genre=parent.getGenresFormatted();}
         if(safe(genre).isEmpty()&&enriched!=null)genre=jsonNames(enriched.optJSONArray("genres"),"name");
@@ -299,6 +304,7 @@ public final class PreviewMoviePage extends ScrollView {
     private void observeActions(){ObjectAdapter next=actions.get();if(next!=observedActions){if(observedActions!=null)observedActions.unregisterObserver(actionObserver);observedActions=next;if(next!=null)next.registerObserver(actionObserver);}renderProviders();}
     private void renderProviders(){
         refreshMoreRows();
+        matchMetadata.setVisibility(movie!=null&&!movie.hasScraperData()&&matchingAction()!=null?VISIBLE:GONE);
         moreButton.setVisibility(remoteDetails==null?VISIBLE:GONE);
         View focused=providerActions.findFocus();Object focusKey=focused==null?null:focused.getTag();
         for(Presenter.ViewHolder holder:providerHolders)providerPresenter.onUnbindViewHolder(holder);providerHolders.clear();providerActions.removeAllViews();if(observedActions==null){if(focused!=null)play.requestFocus();return;}
@@ -310,6 +316,7 @@ public final class PreviewMoviePage extends ScrollView {
         }
         if(focused!=null){View replacement=focusKey==null?null:providerActions.findViewWithTag(focusKey);if(replacement!=null)replacement.requestFocus();else if(providerActions.getChildCount()>0)providerActions.getChildAt(0).requestFocus();else play.requestFocus();}
     }
+    private Action matchingAction(){ObjectAdapter adapter=actions.get();if(adapter!=null)for(int i=0;i<adapter.size();i++){Object item=adapter.get(i);if(item instanceof Action&&((Action)item).getId()==VideoActionAdapter.ACTION_SCRAP)return (Action)item;}return null;}
     private void pill(String value){if(value==null||value.isEmpty())return;TextView label=text(value,10);label.setSingleLine(true);label.setPadding(dp(6),dp(3),dp(6),dp(3));GradientDrawable badge=new GradientDrawable();badge.setColor(0x50142634);badge.setCornerRadius(dp(3));badge.setStroke(dp(1),0xff648196);label.setBackground(badge);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.rightMargin=dp(6);pills.addView(label,lp);}
 
     private void person(LinearLayout people,String name,String role){
