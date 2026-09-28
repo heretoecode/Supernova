@@ -755,3 +755,12 @@ These changes require a full CI rerun; no failures are waived.
 - Scan progress now retains partial/failed-source flags across subsequent successful sources. The persisted summary cannot report clean completion just because the final source succeeded; raw events include failed-source counts. Extended the batch regression accordingly.
 - Added actual Search-surface tests for cursorless/non-focusable query, required placeholder, initial T focus, absence of Caps/Shift, retained keyboard key and an empty Search render fixture. These do not claim populated-result return or physical keyboard QA.
 - Reconciled previously stale subtitle/metadata correction/loading/Search entries with their implemented routes and real passing evidence through CI 36367506423. Remaining live/visual/preservation checks stay explicit.
+
+## Post-audit checkpoint 51 — cached technical facts, enrichment and people
+
+- Resumed from the accepted audit without touching the thirteen pre-existing missing symlinks or main. Preserved and incorporated the three pending Java edits and two audio-channel tests.
+- CI 36368502479 passed the prior committed tree: 111 targeted, 321 complete Video, 82 selected regression and 17 WebDAV test invocations, with zero failures. These invocations overlap; they are not additive unique-test counts.
+- Details and Versions now present measured audio channels without inventing a speaker layout. Both read HDR from the current indexed ID/size/modification fingerprint when runtime metadata is unavailable, without file probing; changed fingerprints and unknown values are rejected.
+- Background package offers now include Continue Watching, visible entries and nearby entries; previous page priority is reset when a library scope is offered. Completed foreground packages relinquish their priority. Episode Details queues the known parent series rather than a movie request or an episode ID in the TV namespace.
+- Existing cached TMDb credits now populate individual principal-crew and cast cards on local and remote Details. Portrait rails reserve whole columns and use edge fades. No person discovery pages or new data provider were added.
+- Added tests for channel unknowns, HDR fingerprint changes, parent-series queue identity/progress preservation and separate principal-crew/remote cast presentation. Java syntax (805 files), XML/identity/HUD/whitespace checks pass; Android compilation and these new regressions still require CI. No requirement verification count or completed conformance pass is claimed from syntax checks.

@@ -13,6 +13,21 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewEnrichmentQueueTest {
+    @Test public void episodePriorityTargetsParentSeriesAndKeepsPackageProgress()throws Exception{
+        Context context=RuntimeEnvironment.getApplication();
+        SQLiteOpenHelper helper=(SQLiteOpenHelper)ReflectionHelpers.callConstructor(Class.forName("com.archos.mediacenter.video.leanback.PreviewEnrichmentQueue$Store"),ReflectionHelpers.ClassParameter.from(Context.class,context));
+        try{
+            SQLiteDatabase db=helper.getWritableDatabase();
+            db.execSQL("INSERT INTO jobs VALUES('tv:42:test','tv',42,40,3,0,0,2)");
+            com.archos.mediacenter.video.browser.adapters.object.Episode episode=org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Episode.class);
+            org.mockito.Mockito.when(episode.getOnlineId()).thenReturn(999L);
+            PreviewLibraryLoader.Entry entry=new PreviewLibraryLoader.Entry(episode,0,7,"");entry.onlineId=42;
+            ReflectionHelpers.callStaticMethod(PreviewEnrichmentQueue.class,"offerEntry",ReflectionHelpers.ClassParameter.from(SQLiteDatabase.class,db),ReflectionHelpers.ClassParameter.from(PreviewLibraryLoader.Entry.class,entry),ReflectionHelpers.ClassParameter.from(int.class,PreviewEnrichmentQueue.HOME),ReflectionHelpers.ClassParameter.from(String.class,"test"));
+            try(Cursor cursor=db.rawQuery("SELECT media,priority,stage,season_cursor FROM jobs",null)){
+                assertEquals(1,cursor.getCount());assertTrue(cursor.moveToFirst());assertEquals(42,cursor.getLong(0));assertEquals(PreviewEnrichmentQueue.HOME,cursor.getInt(1));assertEquals(3,cursor.getInt(2));assertEquals(2,cursor.getInt(3));
+            }
+        }finally{helper.close();}
+    }
     @Test public void seasonQueueUpgradePreservesPendingJobs()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
         try(SQLiteDatabase db=context.openOrCreateDatabase("preview-enrichment.db",0,null)){

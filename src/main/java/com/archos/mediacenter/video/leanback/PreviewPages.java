@@ -144,6 +144,21 @@ public final class PreviewPages extends FrameLayout {
         }
     }};
     private Runnable ready=()->{};
+    private final Runnable prioritiseVisible=this::prioritiseVisibleEntries;
+    private void prioritiseVisibleEntries(){
+        if(!loaded||!isAttachedToWindow()||tab==3)return;
+        List<Entry> visible=new ArrayList<>(),next=new ArrayList<>();int last=-1;
+        for(int n=0;n<list.getChildCount();n++){
+            int position=list.getChildAdapterPosition(list.getChildAt(n));
+            if(position<0||position>=cells.size())continue;last=Math.max(last,position);
+            Cell cell=cells.get(position);
+            if(cell.value instanceof Entry)visible.add((Entry)cell.value);
+            else if(cell.type==RAIL){List<Entry> row=(List<Entry>)cell.value;visible.addAll(row.subList(0,Math.min(6,row.size())));next.addAll(row.subList(Math.min(6,row.size()),Math.min(12,row.size())));}
+        }
+        for(int n=last+1;n<Math.min(cells.size(),last+13);n++)if(cells.get(n).value instanceof Entry)next.add((Entry)cells.get(n).value);
+        PreviewEnrichmentQueue.visible(getContext(),visible,next);
+    }
+    private void scheduleVisibleEnrichment(){removeCallbacks(prioritiseVisible);postDelayed(prioritiseVisible,300);}
     public boolean hasComposedContent(){return loaded&&!list.isComputingLayout()&&list.getChildCount()>0&&list.getWidth()>0;}
     private boolean visibleArtworkReady(View view){if(view instanceof TextView&&!OfficialTitleArtwork.readyForFirstFrame((TextView)view))return false;if(view instanceof PreviewCardPresenter.Card)return ((PreviewCardPresenter.Card)view).artworkReady;if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View child=group.getChildAt(i);if(child.getVisibility()==VISIBLE&&!visibleArtworkReady(child))return false;}}return true;}
     public void setReadyListener(Runnable listener){ready=listener;if(loaded)post(ready);}
@@ -193,7 +208,7 @@ public final class PreviewPages extends FrameLayout {
         list=new FocusRecycler(c,false); list.setClipChildren(false);list.setClipToPadding(false);setClipChildren(false); list.setPadding(dp(28),dp(10),dp(28),dp(12));
         layout=new GridLayoutManager(c,24); layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?(tab<3&&listMode[tab]?24:4):cells.get(p).type==NETWORK_PANEL?8:cells.get(p).type==STORAGE?6:24;}});
         adapter.setHasStableIds(true);
-        list.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView rv,int dx,int dy){notifyScroll();}});list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
+        list.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView rv,int dx,int dy){notifyScroll();scheduleVisibleEnrichment();}});list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
         addView(list,new FrameLayout.LayoutParams(-1,-1));
         preferences=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
         if(preferences.getBoolean("remember_library_views",true))for(int i=1;i<=2;i++){
@@ -325,7 +340,7 @@ public final class PreviewPages extends FrameLayout {
         updateArtwork();for(Cell cell:cells){cell.signature=signature(cell);cell.viewType=cell.type==POSTER&&tab<3&&listMode[tab]?LIST:cell.type;}
         DiffUtil.calculateDiff(new DiffUtil.Callback(){public int getOldListSize(){return previous.size();}public int getNewListSize(){return cells.size();}public boolean areItemsTheSame(int a,int b){return previous.get(a).viewType==cells.get(b).viewType&&cellKey(previous.get(a)).equals(cellKey(cells.get(b)));}public boolean areContentsTheSame(int a,int b){return previous.get(a).signature.equals(cells.get(b).signature);}}).dispatchUpdatesTo(adapter);
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("home_page_render","tab",tab,"cells",cells.size(),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-started);
-        if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();list.post(this::notifyScroll);
+        if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();list.post(this::notifyScroll);scheduleVisibleEnrichment();
     }
     private static String entrySignature(Entry e){return e.key()+"|"+displayName(e)+"|"+e.backdrop+"|"+e.media.getPosterUri()+"|"+e.secondary+"|"+e.active+"|"+e.bytes+"|"+e.runtime+"|"+e.year()+"|"+e.resolution+"|"+e.audio+"|"+e.codec+"|"+e.hdr+"|"+(e.media instanceof Video?((Video)e.media).getResumeMs():0);}
     private String signature(Cell c){String base=tab+":"+c.title+":"+c.type+":"+(tab>0&&tab<3?listMode[tab]+":"+sorts[tab]+":"+ascending[tab]+":"+genres[tab]+":"+selectedYears[tab]+":"+unmatched[tab]+":"+providers[tab]+":"+columns[tab].sortColumn+":"+columns[tab].ascending+":"+columns[tab].visible():"");if(c.value instanceof Entry)base+=entrySignature((Entry)c.value);else if(c.type==RAIL){StringBuilder rail=new StringBuilder(base);for(Entry e:(List<Entry>)c.value)rail.append(entrySignature(e));base=rail.toString();}else base+=String.valueOf(c.value);if(c.type==HERO&&tab>0)base+=PreviewLibrarySummary.describe(getContext(),snapshot,tab==2);if(c.type==NETWORK_PANEL||c.type==NETWORK){StringBuilder sources=new StringBuilder(base);for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:librarySources)sources.append(source.getName()).append(source.getUri());for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:savedLocations)sources.append(source.getName()).append(source.getUri());base=sources.append(files).toString();}return base;}

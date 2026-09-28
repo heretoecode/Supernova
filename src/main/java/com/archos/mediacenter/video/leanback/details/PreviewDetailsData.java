@@ -9,9 +9,10 @@ import java.util.*;
 final class PreviewDetailsData {
     static final class Remote {final JSONObject title;final StreamingRepository.Provider provider;Remote(JSONObject title,StreamingRepository.Provider provider){this.title=title;this.provider=provider;}}
     static final class Extra {final String name,type,key;Extra(String name,String type,String key){this.name=name;this.type=type;this.key=key;}}
-    static final class Result {JSONObject details;final List<Remote> related=new ArrayList<>();final List<Extra> extras=new ArrayList<>();final SortedMap<Integer,JSONArray> episodes=new TreeMap<>();final Map<Integer,StreamingRepository.Availability> seasonAvailability=new HashMap<>();}
+    static final class Result {JSONObject details,credits;final List<Remote> related=new ArrayList<>();final List<Extra> extras=new ArrayList<>();final SortedMap<Integer,JSONArray> episodes=new TreeMap<>();final Map<Integer,StreamingRepository.Availability> seasonAvailability=new HashMap<>();}
     static Result load(Context c,String kind,long id,Set<Long> localIds)throws Exception{
         Result result=new Result();result.details=StreamingRepository.metadata(c,kind,id,"");
+        try{result.credits=StreamingRepository.metadata(c,kind,id,"credits");}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("credits_metadata_unavailable");}
         if("tv".equals(kind)){
             JSONArray seasons=result.details.optJSONArray("seasons");
             if(seasons!=null)for(int i=0;i<seasons.length();i++){

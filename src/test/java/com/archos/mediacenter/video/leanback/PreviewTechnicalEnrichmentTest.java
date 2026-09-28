@@ -26,4 +26,14 @@ public class PreviewTechnicalEnrichmentTest {
         Entry replaced=entry(7);replaced.modified=51;PreviewMetadata.hydrate(app,Arrays.asList(replaced));assertEquals("",replaced.hdr);
         Entry resized=entry(7);resized.modified=50;resized.bytes=2000;PreviewMetadata.hydrate(app,Arrays.asList(resized));assertEquals("",resized.hdr);
     }
+    @Test public void detailsReadsOnlyTheCurrentIndexedFingerprint(){
+        Application app=RuntimeEnvironment.getApplication();Entry entry=entry(17);entry.modified=100;
+        PreviewLibraryLoader.Snapshot snapshot=new PreviewLibraryLoader.Snapshot();snapshot.technical.add(entry);
+        app.getSharedPreferences("preview-technical-v1",0).edit().clear().putString("hdr:"+PreviewMetadata.key(entry),"HLG").commit();
+        Video reloaded=(Video)entry(17).media;
+        assertEquals("HLG",PreviewVariants.dynamicRange(app,reloaded,snapshot));
+        entry.modified=101;assertEquals("",PreviewVariants.dynamicRange(app,reloaded,snapshot));
+        assertEquals("",PreviewVariants.dynamicRange(app,reloaded,null));
+        assertNull(reloaded.getMetadata());
+    }
 }

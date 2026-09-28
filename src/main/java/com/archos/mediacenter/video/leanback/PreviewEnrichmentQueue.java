@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 
 /** Persistent priority queue. One package section per turn lets foreground work pre-empt background work. */
 public final class PreviewEnrichmentQueue {
-    public static final int FOREGROUND=0, HOME=10, CURRENT_PAGE=20, BACKGROUND=40;
+    public static final int FOREGROUND=0, HOME=10, CURRENT_PAGE=20, NEXT=30, BACKGROUND=40;
     private static final ScheduledExecutorService WORK=Executors.newSingleThreadScheduledExecutor(r->new Thread(r,"SupernovaEnrichment"));
     private static Store store;
     private static boolean draining;
@@ -26,9 +26,26 @@ public final class PreviewEnrichmentQueue {
         Context app=c.getApplicationContext();
         WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();db.beginTransaction();try{
             String scope=scope(app);
+            // A previous page must not retain page priority forever. Active foreground
+            // packages keep their temporary override until their package completes.
+            db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,HOME});
             for(PreviewLibraryLoader.Entry entry:snapshot.movies)offer(db,"movie",entry.onlineId,tab==1?CURRENT_PAGE:BACKGROUND,scope);
             for(PreviewLibraryLoader.Entry entry:snapshot.shows)offer(db,"tv",entry.onlineId,tab==2?CURRENT_PAGE:BACKGROUND,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.continuingMovies)offerEntry(db,entry,HOME,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.continuingShows)offerEntry(db,entry,HOME,scope);
             for(int i=0;i<Math.min(30,snapshot.recent.size());i++){PreviewLibraryLoader.Entry entry=snapshot.recent.get(i);offer(db,entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv",entry.onlineId,HOME,scope);}
+            db.setTransactionSuccessful();
+        }finally{db.endTransaction();}start(app);});
+    }
+    private static void offerEntry(SQLiteDatabase db,PreviewLibraryLoader.Entry entry,int priority,String scope){
+        offer(db,entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv",entry.onlineId,priority,scope);
+    }
+    /** Indexed entry onlineId is the parent series ID for episodes, never the episode ID. */
+    public static void visible(Context c,List<PreviewLibraryLoader.Entry> visible,List<PreviewLibraryLoader.Entry> next){
+        Context app=c.getApplicationContext();List<PreviewLibraryLoader.Entry> shown=new ArrayList<>(visible),following=new ArrayList<>(next);
+        WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();String scope=scope(app);db.beginTransaction();try{
+            for(PreviewLibraryLoader.Entry entry:following)offerEntry(db,entry,NEXT,scope);
+            for(PreviewLibraryLoader.Entry entry:shown)offerEntry(db,entry,HOME,scope);
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}start(app);});
     }
@@ -75,7 +92,7 @@ public final class PreviewEnrichmentQueue {
                 StreamingRepository.metadata(app,kind,id,SECTIONS[stage]);
                 if(!PreviewMetadataCache.fresh(app,kind,id,SECTIONS[stage]))throw new java.io.IOException("Metadata refresh retained stale cache");
             }
-            db.execSQL("UPDATE jobs SET stage=?,next_at=0,completed_at=? WHERE identity=?",new Object[]{stage+1,stage+1==SECTIONS.length?System.currentTimeMillis():0,key});
+            db.execSQL("UPDATE jobs SET stage=?,next_at=0,completed_at=?,priority=CASE WHEN ? THEN ? ELSE priority END WHERE identity=?",new Object[]{stage+1,stage+1==SECTIONS.length?System.currentTimeMillis():0,stage+1==SECTIONS.length?1:0,BACKGROUND,key});
             Diagnostics.event("metadata_package_stage","operation_id",operation,"media_id",key,"section",SECTIONS[stage],"complete",stage+1==SECTIONS.length);
         }catch(Exception failure){db.execSQL("UPDATE jobs SET next_at=? WHERE identity=?",new Object[]{System.currentTimeMillis()+30*60*1000,key});Diagnostics.error("metadata_package_failed",failure);}
         finally{Diagnostics.finishOperation(operation,"metadata_package",started);WORK.schedule(()->drain(app),250,TimeUnit.MILLISECONDS);}

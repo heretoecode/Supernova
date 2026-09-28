@@ -30,13 +30,18 @@ public final class PreviewVariants {
         List<String> facts = new ArrayList<>();
         if (video.getMeasuredWidth() > 0 && video.getMeasuredHeight() > 0)
             facts.add(video.getMeasuredWidth() + " × " + video.getMeasuredHeight());
-        if (video.getMetadata() != null && video.getMetadata().getVideoTrack() != null) {
-            int transfer = video.getMetadata().getVideoTrack().colorTrc;
-            if (transfer == 16) facts.add("HDR (PQ)");
-            else if (transfer == 18) facts.add("HLG");
-        }
+        String range=dynamicRange(context,video);
+        if(!range.isEmpty())facts.add(range);
         String codec = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedVideoFormat());
         String audio = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedBestAudioFormat());
+        if(video.getMetadata()!=null){
+            Set<String> tracks=new LinkedHashSet<>();
+            for(int n=0;n<video.getMetadata().getAudioTrackNb();n++){
+                com.archos.mediacenter.video.utils.VideoMetadata.AudioTrack track=video.getMetadata().getAudioTrack(n);
+                if(track!=null){String label=com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.audioTrack(track.format,track.channels,0);if(!label.isEmpty())tracks.add(label);}
+            }
+            if(!tracks.isEmpty())audio=android.text.TextUtils.join(" / ",tracks);
+        }
         if (!codec.isEmpty()) facts.add(codec);
         if (!audio.isEmpty()) facts.add(audio);
         if (video.getSize() > 0) facts.add(android.text.format.Formatter.formatShortFileSize(context, video.getSize()));
@@ -44,6 +49,25 @@ public final class PreviewVariants {
                 + "\n" + safeLocation(video.getFileUri());
     }
     /** Never render URI user-info, query credentials or fragments in the picker. */
+    public static String dynamicRange(android.content.Context context,Video video){
+        return dynamicRange(context,video,PreviewLibraryLoader.memoryCache());
+    }
+    static String dynamicRange(android.content.Context context,Video video,PreviewLibraryLoader.Snapshot snapshot){
+        if(video.getMetadata()!=null&&video.getMetadata().getVideoTrack()!=null){
+            int transfer=video.getMetadata().getVideoTrack().colorTrc;
+            if(transfer==16)return "HDR (PQ)";
+            if(transfer==18)return "HLG";
+            if(transfer>0)return ""; // Known current metadata takes precedence over old cache.
+        }
+        if(snapshot!=null)for(Entry entry:snapshot.technical){
+            if(!(entry.media instanceof Video))continue;
+            Video indexed=(Video)entry.media;
+            if(indexed.getId()!=video.getId()||entry.bytes!=Math.max(0,video.getSize())||!Objects.equals(indexed.getFilePath(),video.getFilePath()))continue;
+            String cached=context.getSharedPreferences("preview-technical-v1",0).getString("hdr:"+PreviewMetadata.key(entry),"");
+            return "HDR (PQ)".equals(cached)||"HLG".equals(cached)?cached:"";
+        }
+        return "";
+    }
     public static String safeLocation(android.net.Uri uri) {
         if (uri == null) return "Location unavailable";
         String scheme = uri.getScheme(), path = uri.getPath();
