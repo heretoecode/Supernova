@@ -749,3 +749,9 @@ These changes require a full CI rerun; no failures are waived.
 - Reinspected the corrected Details screenshot from CI 36350179013: divider now leaves visible lower content. This confirms the specific teaser correction, not complete visual conformance or physical Shield behaviour.
 - Found UI-021's prominent Match Metadata action absent from the current hero. Added an unmatched-only action through the existing native ACTION_SCRAP callback, honest metadata/synopsis placeholders and explicit Play UP / Match DOWN routing. The strict Play/More horizontal mapping remains untouched. Added regression for callback, placeholders, focus and removal when the native action becomes unavailable.
 - Java syntax/XML checks pass; new Android tests and the scan backend patch require CI. Full register reconciliation, remaining diagnostic lifecycle coverage, all three conformance passes and signed delivery are still incomplete.
+
+## Continuation checkpoint 50 — mixed scan outcomes and Search presentation coverage
+
+- Scan progress now retains partial/failed-source flags across subsequent successful sources. The persisted summary cannot report clean completion just because the final source succeeded; raw events include failed-source counts. Extended the batch regression accordingly.
+- Added actual Search-surface tests for cursorless/non-focusable query, required placeholder, initial T focus, absence of Caps/Shift, retained keyboard key and an empty Search render fixture. These do not claim populated-result return or physical keyboard QA.
+- Reconciled previously stale subtitle/metadata correction/loading/Search entries with their implemented routes and real passing evidence through CI 36367506423. Remaining live/visual/preservation checks stay explicit.

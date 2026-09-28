@@ -370,9 +370,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Subtitles: Choose local/downloaded with clear source/active state; Download search workflow; Subtitle Settings shortcut opens full Settings→Subtitles; no toast. Sync with HUD selection.
 
-Status: **IMPLEMENTED IN PART — IN PROGRESS**
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
 
-Code mapping: PreviewSubtitleResults provides result selection and explicit Download review; SubtitlesDownloaderActivity2 retains native search/download and only reports success after saving. PreviewSettings accepts the full Subtitles category shortcut from Details and HUD. These UI regressions passed in run 36260242226 (255 Video tests). SubtitleTransfer stages responses before destination writes; its four tests passed in run 36260670035 (259 Video tests). Shared non-toast progress/error presentation and designed HUD labels passed run 36277264981 (263 Video tests). Checkpoint 30 adds live Audio/Subtitles callback/tick reconciliation and focused-choice restoration after native metadata replacement; two new tests pending CI. Local/downloaded chooser remains unfinished; end-to-end active-state synchronisation/playback refresh remains AWAITING PHYSICAL QA.
+Code mapping / verification: PreviewSubtitleChooser now uses retained native discovery/association, labels Media folder/Saved subtitle cache and active choice, honours read-only capabilities, and returns explicit selected paths. PlayerActivity applies that path via the existing user track-selection/persistence route, or waits for native subtitle metadata refresh; PreviewPlaybackMenus refreshes ticks/callbacks in place. PreviewSubtitleResults/SubtitleTransfer retain reviewed download staging, non-toast feedback and full Settings→Subtitles shortcut. Chooser, menu and transfer regressions pass through CI 36367506423. Real source permissions/download/track refresh and exact HUD return remain Shield QA.
 
 ### UI-038 — 7. More / contextual workflows
 
@@ -392,7 +392,7 @@ Metadata: unified Find a Match with subtitle "Search by title, TMDB ID or IMDb I
 
 Status: **PARTIAL — implementation and preservation audit ongoing**
 
-Code mapping: PreviewMatchSearch and DirectMovieLookup implement the shared field, keyboard, compact results and explicit Match Preview path. Series correction retains Home memberships and aborts success reporting on failed batches. Movie/series file-history regressions added. Parent-constrained episode correction and Change Series Match remain outstanding; artwork preservation audit is incomplete.
+Code mapping / verification: PreviewMatchSearch and DirectMovieLookup implement the shared field, keyboard, compact results and explicit Match Preview. ManualVideoScrappingSearchFragment now constrains episode correction to the known parent, prevents NFO bypass, and exposes Change Series Match. Series correction retains Home memberships and aborts success reporting on failed batches. Movie/series file-history and match workflow tests pass through CI 36367506423. Full artwork/file-association preservation and live provider matching remain under review; no blanket completion claim.
 
 ### UI-040 — 7. More / contextual workflows
 
@@ -430,9 +430,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Subtitle/Audio menus restore exact HUD opener focus on Back. Track changes remain open and tick updates. Add language-specific/generic icons. Replace legacy Get Subtitles Online with designed search/download workflow.
 
-Status: **PARTIAL / AWAITING PHYSICAL QA**
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
 
-Code mapping: PreviewPlaybackMenus direct Audio/Subtitles Back path now returns to the HUD opener, while track changes retain the menu and tick. Real dialog/callback regression added at checkpoint 22. Language icon and subtitle download workflow conformance remain outstanding.
+Code mapping / verification: PreviewPlaybackMenus preserves the HUD opener, keeps track menus open, and refreshes selected ticks/live callbacks when native metadata replaces items. PreviewLanguageIcon supplies generic language/true-locale marks; designed subtitle search/download/chooser replace the old online shortcut route. Menu callback/restoration and language fixtures pass through CI 36367506423. Physical remote Back and native track changes remain Shield QA.
 
 ### UI-044 — 8. Playback HUD
 
@@ -450,9 +450,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Preparing Playback: fix Movies generic background and TV generic flash. Use cached real backdrop + gradient + logo/title/minimal info + Preparing playback…; use dark neutral transition while cache resolves; generic only no-art/failure. Do not fetch internet artwork synchronously at Play time.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewPlaybackLoading starts dark/neutral, uses cached backdrop and official title artwork, and follows native preparation/frame readiness. Remote image requests explicitly use Picasso OFFLINE policy; unsupported transport schemes cannot be probed by this image loader. PreviewPlaybackLoadingTest verifies offline remote/local routing and rejection, passing CI 36367506423. Real Movie/TV startup flashes and first-frame timing remain Shield QA.
 
 ### UI-046 — 8. Playback HUD
 
@@ -470,9 +470,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Remove duplicate upper-right Search and subtitle. Keep left heading Search. Field placeholder "Search Movies and TV Shows"; field is non-focusable query display, subtle neutral/translucent boundary, no permanent blue, no X. Search opens keyboard focus immediately on T.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — ADDITIONAL PRESENTATION TESTING PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewSearch has one left Search heading, a non-focusable/cursorless query display with the required placeholder, neutral surface and no clear-X control. PreviewKeyboard defaults to T. Initial-T/empty-edge navigation passed CI 36367506423; new full Search presentation/screenshot fixture awaits CI. Populated-query visual and physical routing review remains pending.
 
 ### UI-048 — 9. Search
 
@@ -480,9 +480,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Keyboard rows exactly: 1 2 3 4 5 6 7 8 9 0 / Q W E R T Y U I O P / inset A S D F G H J K L / further inset Z X C V B N M / bottom Clear | Space | Backspace. No Caps/Shift/123. Traditional stagger, subtle dark/translucent backdrop, unfocused subtle key surfaces, focused compact blue outline/glow and white character.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AWAITING VISUAL/PHYSICAL QA**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewKeyboard.ROWS contains exactly the specified number/QWERTY/ASDF/ZXCV rows plus Clear/Space/Backspace, with 12dp and 36dp shorter-row insets. Keys use shared compact focus styling and stable semantic tags. PreviewNextTest verifies rows/code-point editing and Preview417NavigationTest verifies T/edge behaviour; passed CI 36367506423. New Search render fixture and physical font/glow review remain pending.
 
 ### UI-049 — 9. Search
 

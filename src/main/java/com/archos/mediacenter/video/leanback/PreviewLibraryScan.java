@@ -27,8 +27,8 @@ public final class PreviewLibraryScan {
                 sourceId=source;String location=intent.getStringExtra("source_location");sourceLocation=location==null?"":location.replaceAll("[\\p{Cntrl}]","");
                 if(sourceLocation.length()>180)sourceLocation=sourceLocation.substring(0,177)+"…";
                 phase=next;checked=progress.total(0);added=progress.total(1);updated=progress.total(2);completed=progress.total(3);
-                Diagnostics.event("scan_"+next,"operation_id",operation,"batch_id",batch,"trigger",trigger,"source_id",source,"checked",checked,"new",added,"updated",updated,"sources_completed",completed,"elapsed_ms",SystemClock.elapsedRealtime()-requestedAt);
-                if(next.equals("complete")||next.equals("failed"))androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().putString("preview_scan_result",phase+" · "+checked+" checked · "+added+" new · "+updated+" updated").putLong("preview_scan_result_time",System.currentTimeMillis()).apply();
+                Diagnostics.event("scan_"+next,"operation_id",operation,"batch_id",batch,"trigger",trigger,"source_id",source,"checked",checked,"new",added,"updated",updated,"sources_completed",completed,"sources_failed",progress.total(4),"elapsed_ms",SystemClock.elapsedRealtime()-requestedAt);
+                if(next.equals("complete")||next.equals("failed"))androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().putString("preview_scan_result",(progress.total(4)>0?"Partial / failed sources":phase)+" · "+checked+" checked · "+added+" new · "+updated+" updated").putLong("preview_scan_result_time",System.currentTimeMillis()).apply();
             }
         }};
         IntentFilter filter=new IntentFilter(app.getPackageName()+".SCAN_LIFECYCLE");

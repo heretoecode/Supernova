@@ -11,7 +11,8 @@ final class PreviewScanProgress {
         if(fresh){sources.clear();this.batch=batch;}
         long[] previous=sources.get(source);
         long terminal="complete".equals(phase)||"failed".equals(phase)?1:previous==null?0:previous[3];
-        sources.put(source,new long[]{Math.max(0,checked),Math.max(0,added),Math.max(0,updated),terminal});
+        long failure="failed".equals(phase)||"partial".equals(phase)?1:previous==null?0:previous[4];
+        sources.put(source,new long[]{Math.max(0,checked),Math.max(0,added),Math.max(0,updated),terminal,failure});
         return fresh;
     }
     long total(int column){long count=0;for(long[] source:sources.values())count+=source[column];return count;}
