@@ -783,3 +783,10 @@ These changes require a full CI rerun; no failures are waived.
 - Details now publishes disk-cached core metadata, credits, seasons/episodes, Extras and locally reconciled recommendations before waiting for network refreshes. Unknown remote availability is not manufactured. Local tag refreshes retain cached individual principal-crew cards.
 - Added viewport/baseline regressions, extended the crew refresh regression, and added a disk-only package-consumption regression. New Android tests require CI. The scheduler request now emits an explicit Queued diagnostic; native per-source queuing and Metadata queued evidence remain open.
 - The 13 pre-existing missing symlinks remain untouched. Implementation, full 115-entry reconciliation, conformance review and signed delivery are not complete.
+
+## Post-audit checkpoint 54 — measured scan batch and metadata enqueue outcomes
+
+- Checkpoint 53 CI 36490240467 passed compilation/identity, 119 targeted, 335 complete Video, 83 selected regression and 17 WebDAV test invocations (overlapping sets, zero failures).
+- Native scheduling now emits per-source Queued events with the actual eligible batch size. Source completion remains distinct from batch completion, and pending sources remain visible between staggered dispatches. Unstarted/coalesced requests release their progress slots without invented checked-item counts.
+- Traced the existing metadata start helper and found it swallowed service-start failures. A result-returning companion now reports accepted, null and restricted starts while preserving the existing void entry points and scheduling semantics. Batch diagnostics record Metadata queued, skipped or failed from that outcome, including alternate completion paths.
+- Added receiver/accounting and service-enqueue regressions plus a terminal-slot regression. Patch applicability, 809-file Video syntax, four backend-source syntax checks, 431 XML/identity/whitespace checks and six Python tests pass. Complete Android/backend CI remains required. Local-library scan lifecycle/progress still needs completion, so the scan requirements are not marked fully implemented.

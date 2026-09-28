@@ -10,8 +10,8 @@ final class PreviewScanProgress {
         boolean fresh=!Objects.equals(this.batch,batch);
         if(fresh){sources.clear();this.batch=batch;}
         long[] previous=sources.get(source);
-        long terminal="complete".equals(phase)||"failed".equals(phase)?1:previous==null?0:previous[3];
-        long failure="failed".equals(phase)||"partial".equals(phase)?1:previous==null?0:previous[4];
+        long terminal="complete".equals(phase)||"failed".equals(phase)||"coalesced".equals(phase)||"not_started".equals(phase)?1:previous==null?0:previous[3];
+        long failure="failed".equals(phase)||"partial".equals(phase)||"not_started".equals(phase)?1:previous==null?0:previous[4];
         sources.put(source,new long[]{Math.max(0,checked),Math.max(0,added),Math.max(0,updated),terminal,failure});
         return fresh;
     }

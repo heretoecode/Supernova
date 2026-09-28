@@ -837,7 +837,7 @@ Scan diagnostics: Requested→Queued→Started→source/phase→Index/Reconcilia
 
 Status: **IMPLEMENTED IN PART — LIFECYCLE CONFORMANCE PENDING**
 
-Code mapping / verification: PreviewLibraryScan shares the native indexed-source scheduler across owned manual/startup/resume/scheduled requests, records trigger and operation, and correlates backend started/reconciled/partial/complete/failed events by batch/source. PreviewScanProgress aggregates source counts and deduplicates terminal notifications; live phase/source is shown without percentages. Request timeout is explicit. New checkpoint 48 tests await CI; queued/source-count and metadata-queued lifecycle coverage still need reconciliation. Unknown native scheduler triggers remain labelled as such.
+Code mapping / verification: PreviewLibraryScan shares the native indexed-source scheduler across owned manual/startup/resume/scheduled requests, records trigger and operation, and correlates backend lifecycle by batch/source. PreviewScanProgress aggregates source counts and deduplicates terminal notifications; live phase/source is shown without percentages. Through checkpoint 53 CI, existing accounting tests pass. Checkpoint 54 adds native per-source Queued/eligible totals, distinct batch completion and actual metadata enqueue outcomes (accepted/skipped/failed), including coalesced/unstarted terminal slots; its new Android/backend regressions await CI. Local scan tracing remains incomplete. Unknown native scheduler triggers remain labelled as such.
 
 ### DIA-008 — Required diagnostic/reporting improvements
 

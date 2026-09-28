@@ -4,6 +4,13 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class PreviewScanProgressTest {
+    @Test public void unstartedAndCoalescedSourcesReleaseTheirProgressSlots(){
+        PreviewScanProgress state=new PreviewScanProgress();
+        state.accept("1","a","queued",0,0,0);state.accept("1","b","queued",0,0,0);
+        state.accept("1","a","coalesced",0,0,0);state.accept("1","b","not_started",0,0,0);
+        state.accept("1","b","metadata_skipped",0,0,0);state.accept("1","b","batch_failed",0,0,0);
+        assertEquals(2,state.total(3));assertEquals(1,state.total(4));assertEquals(0,state.total(0));
+    }
     @Test public void sourceCountsAccumulateWithoutCountingRepeatedCompletionTwice(){
         PreviewScanProgress state=new PreviewScanProgress();
         assertTrue(state.accept("1","a","complete",10,2,3));
