@@ -15,6 +15,9 @@ public final class PreviewEnrichmentQueue {
     private static Store store;
     private static boolean draining;
     private static ScheduledFuture<?> retry;
+    // Worker-confined baseline: each viewport offer replaces, rather than accumulates,
+    // temporary visible priorities. Package progress remains in the persistent store.
+    private static final Map<String,Integer> pagePriorities=new HashMap<>();
     private static final String[] SECTIONS={"","credits","images","videos","recommendations","external_ids","providers","seasons","classification"};
     private static final long STALE=6L*60*60*1000;
     private static Store store(Context context){if(store==null)store=new Store(context.getApplicationContext());return store;}
@@ -26,28 +29,42 @@ public final class PreviewEnrichmentQueue {
         Context app=c.getApplicationContext();
         WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();db.beginTransaction();try{
             String scope=scope(app);
+            pagePriorities.clear();
             // A previous page must not retain page priority forever. Active foreground
             // packages keep their temporary override until their package completes.
             db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,HOME});
-            for(PreviewLibraryLoader.Entry entry:snapshot.movies)offer(db,"movie",entry.onlineId,tab==1?CURRENT_PAGE:BACKGROUND,scope);
-            for(PreviewLibraryLoader.Entry entry:snapshot.shows)offer(db,"tv",entry.onlineId,tab==2?CURRENT_PAGE:BACKGROUND,scope);
-            for(PreviewLibraryLoader.Entry entry:snapshot.continuingMovies)offerEntry(db,entry,HOME,scope);
-            for(PreviewLibraryLoader.Entry entry:snapshot.continuingShows)offerEntry(db,entry,HOME,scope);
-            for(int i=0;i<Math.min(30,snapshot.recent.size());i++){PreviewLibraryLoader.Entry entry=snapshot.recent.get(i);offer(db,entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv",entry.onlineId,HOME,scope);}
+            for(PreviewLibraryLoader.Entry entry:snapshot.movies)offerPage(db,entry,tab==1?CURRENT_PAGE:BACKGROUND,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.shows)offerPage(db,entry,tab==2?CURRENT_PAGE:BACKGROUND,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.continuingMovies)offerPage(db,entry,HOME,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.continuingShows)offerPage(db,entry,HOME,scope);
+            for(int i=0;i<Math.min(30,snapshot.recent.size());i++)offerPage(db,snapshot.recent.get(i),HOME,scope);
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}start(app);});
     }
     private static void offerEntry(SQLiteDatabase db,PreviewLibraryLoader.Entry entry,int priority,String scope){
         offer(db,entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv",entry.onlineId,priority,scope);
     }
+    private static void offerPage(SQLiteDatabase db,PreviewLibraryLoader.Entry entry,int priority,String scope){
+        if(entry.onlineId<=0)return;
+        String kind=entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv";
+        String key=kind+":"+entry.onlineId+":"+scope;
+        pagePriorities.put(key,Math.min(priority,pagePriorities.getOrDefault(key,BACKGROUND)));
+        offer(db,kind,entry.onlineId,priority,scope);
+    }
     /** Indexed entry onlineId is the parent series ID for episodes, never the episode ID. */
     public static void visible(Context c,List<PreviewLibraryLoader.Entry> visible,List<PreviewLibraryLoader.Entry> next){
         Context app=c.getApplicationContext();List<PreviewLibraryLoader.Entry> shown=new ArrayList<>(visible),following=new ArrayList<>(next);
         WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();String scope=scope(app);db.beginTransaction();try{
+            restorePagePriorities(db,pagePriorities);
             for(PreviewLibraryLoader.Entry entry:following)offerEntry(db,entry,NEXT,scope);
             for(PreviewLibraryLoader.Entry entry:shown)offerEntry(db,entry,HOME,scope);
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}start(app);});
+    }
+    static void restorePagePriorities(SQLiteDatabase db,Map<String,Integer> priorities){
+        db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,HOME});
+        for(Map.Entry<String,Integer> entry:priorities.entrySet())
+            db.execSQL("UPDATE jobs SET priority=? WHERE identity=? AND priority>=?",new Object[]{entry.getValue(),entry.getKey(),HOME});
     }
     private static String scope(Context app){return Locale.getDefault().toLanguageTag()+":"+StreamingRepository.country(app)+":"+StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false);}
     private static void offer(SQLiteDatabase db,String kind,long id,int priority,String scope) {

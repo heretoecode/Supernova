@@ -51,6 +51,7 @@ public final class PreviewLibraryScan {
         requestedAt=SystemClock.elapsedRealtime();operation=Diagnostics.operation("library_scan");phase="queued";trigger=origin;checked=added=updated=completed=0;progress.clear();sourceLocation=sourceId="";
         Diagnostics.event("scan_requested","operation_id",operation,"trigger",trigger,"scheduler","indexed_sources");
         NetworkAutoRefresh.forceRescan(context.getApplicationContext());
+        Diagnostics.event("scan_queued","operation_id",operation,"trigger",trigger,"phase","scheduler_request","source_count_known",false);
         final String request=operation;
         MAIN.postDelayed(()->{synchronized(PreviewLibraryScan.class){if(request.equals(operation)&&phase.equals("queued")){phase="not_started";Diagnostics.event("scan_not_started","operation_id",operation,"scheduler_error",NetworkAutoRefresh.getLastError(context));}}},15000);
     }

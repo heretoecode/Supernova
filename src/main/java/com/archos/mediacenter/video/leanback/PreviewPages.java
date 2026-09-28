@@ -155,10 +155,24 @@ public final class PreviewPages extends FrameLayout {
             if(position<0||position>=cells.size())continue;last=Math.max(last,position);
             Cell cell=cells.get(position);
             if(cell.value instanceof Entry)visible.add((Entry)cell.value);
-            else if(cell.type==RAIL){List<Entry> row=(List<Entry>)cell.value;visible.addAll(row.subList(0,Math.min(6,row.size())));next.addAll(row.subList(Math.min(6,row.size()),Math.min(12,row.size())));}
+            else if(cell.type==RAIL){
+                View item=list.getChildAt(n);
+                if(item instanceof ViewGroup&&((ViewGroup)item).getChildCount()>0&&((ViewGroup)item).getChildAt(0) instanceof RecyclerView)
+                    collectVisibleRail((RecyclerView)((ViewGroup)item).getChildAt(0),(List<Entry>)cell.value,visible,next);
+            }
         }
         for(int n=last+1;n<Math.min(cells.size(),last+13);n++)if(cells.get(n).value instanceof Entry)next.add((Entry)cells.get(n).value);
         PreviewEnrichmentQueue.visible(getContext(),visible,next);
+    }
+    static void collectVisibleRail(RecyclerView rail,List<Entry> entries,List<Entry> visible,List<Entry> next){
+        int last=-1;
+        for(int i=0;i<rail.getChildCount();i++){
+            View child=rail.getChildAt(i);int position=rail.getChildAdapterPosition(child);
+            if(position>=0&&position<entries.size()&&child.getRight()>rail.getPaddingLeft()&&child.getLeft()<rail.getWidth()-rail.getPaddingRight()){
+                visible.add(entries.get(position));last=Math.max(last,position);
+            }
+        }
+        if(last>=0)next.addAll(entries.subList(last+1,Math.min(entries.size(),last+7)));
     }
     private void scheduleVisibleEnrichment(){removeCallbacks(prioritiseVisible);postDelayed(prioritiseVisible,300);}
     public boolean hasComposedContent(){return loaded&&!list.isComputingLayout()&&list.getChildCount()>0&&list.getWidth()>0;}
@@ -482,7 +496,7 @@ public final class PreviewPages extends FrameLayout {
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));
                 }else{TextView title=text(c.title,tab==3&&c.title.equals("Network & files")?30:19);title.setTextColor(0xff9ed4f7);v.addView(title);}
             }
-            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setClipChildren(false);rail.setClipToPadding(false);rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));v.addView(rail,new LinearLayout.LayoutParams(-1,dp(105)));}
+            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setClipChildren(false);rail.setClipToPadding(false);rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));rail.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView row,int dx,int dy){scheduleVisibleEnrichment();}});v.addView(rail,new LinearLayout.LayoutParams(-1,dp(105)));}
             else if(c.type==STORAGE){Box b=(Box)c.value;v.setPadding(dp(12),dp(12),dp(12),dp(12));RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,dp(76));lp.setMargins(0,0,dp(12),dp(12));v.setLayoutParams(lp);v.setBackground(PreviewDialog.surface(getContext(),false));v.setForeground(PreviewDialog.focus(getContext()));v.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);v.setFocusable(true);v.setClickable(true);
                 ImageView icon=new ImageView(getContext());icon.setImageDrawable(new StorageIcon(b.getBoxId()));v.addView(icon,new LinearLayout.LayoutParams(dp(35),dp(35)));
                 LinearLayout labels=new LinearLayout(getContext());labels.setOrientation(LinearLayout.VERTICAL);labels.setPadding(dp(12),0,0,0);

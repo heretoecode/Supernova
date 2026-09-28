@@ -27,5 +27,9 @@ public class PreviewPeopleRailTest {
         assertNull(page.findViewWithTag("person:Crew Other:Production Assistant"));
         PreviewPeopleRail rail=(PreviewPeopleRail)first.getParent().getParent();assertTrue(rail.isHorizontalFadingEdgeEnabled());
         assertTrue(first.isFocusable());assertFalse(first.isClickable());
+        page.setTags(null,java.util.Collections.emptyList(),java.util.Collections.emptyList());
+        assertNotNull("A local tag refresh must retain cached individual crew",page.findViewWithTag("person:Director One:Director"));
+        assertNotNull(page.findViewWithTag("person:Director Two:Director"));
+        assertNotNull(page.findViewWithTag("person:Actor One:Lead"));
     }
 }

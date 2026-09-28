@@ -13,6 +13,38 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewEnrichmentQueueTest {
+    @Test public void horizontalViewportUsesScrolledCardsRatherThanFirstSix(){
+        androidx.recyclerview.widget.RecyclerView rail=org.mockito.Mockito.mock(androidx.recyclerview.widget.RecyclerView.class);
+        org.mockito.Mockito.when(rail.getWidth()).thenReturn(300);
+        org.mockito.Mockito.when(rail.getChildCount()).thenReturn(3);
+        java.util.List<PreviewLibraryLoader.Entry> entries=new java.util.ArrayList<>(),visible=new java.util.ArrayList<>(),next=new java.util.ArrayList<>();
+        for(int i=0;i<20;i++)entries.add(new PreviewLibraryLoader.Entry(org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Movie.class),0,0,""));
+        for(int i=0;i<3;i++){
+            android.view.View child=org.mockito.Mockito.mock(android.view.View.class);
+            org.mockito.Mockito.when(rail.getChildAt(i)).thenReturn(child);org.mockito.Mockito.when(rail.getChildAdapterPosition(child)).thenReturn(i+7);
+            org.mockito.Mockito.when(child.getLeft()).thenReturn(i*100-100);org.mockito.Mockito.when(child.getRight()).thenReturn(i*100);
+        }
+        PreviewPages.collectVisibleRail(rail,entries,visible,next);
+        assertEquals(java.util.Arrays.asList(entries.get(8),entries.get(9)),visible);
+        assertEquals(entries.subList(10,16),next);
+    }
+    @Test public void replacingViewportRestoresPagePriorityWithoutLosingForegroundOrProgress()throws Exception{
+        Context context=RuntimeEnvironment.getApplication();
+        SQLiteOpenHelper helper=(SQLiteOpenHelper)ReflectionHelpers.callConstructor(Class.forName("com.archos.mediacenter.video.leanback.PreviewEnrichmentQueue$Store"),ReflectionHelpers.ClassParameter.from(Context.class,context));
+        try{
+            SQLiteDatabase db=helper.getWritableDatabase();
+            db.execSQL("INSERT INTO jobs VALUES('movie:1:test','movie',1,10,3,1234,0,2)");
+            db.execSQL("INSERT INTO jobs VALUES('movie:2:test','movie',2,0,4,0,0,0)");
+            db.execSQL("INSERT INTO jobs VALUES('tv:3:test','tv',3,10,2,0,0,0)");
+            java.util.Map<String,Integer> baseline=new java.util.HashMap<>();baseline.put("movie:1:test",PreviewEnrichmentQueue.CURRENT_PAGE);baseline.put("movie:2:test",PreviewEnrichmentQueue.CURRENT_PAGE);
+            PreviewEnrichmentQueue.restorePagePriorities(db,baseline);
+            try(Cursor cursor=db.rawQuery("SELECT priority,stage,next_at,season_cursor FROM jobs ORDER BY identity",null)){
+                assertTrue(cursor.moveToNext());assertEquals(PreviewEnrichmentQueue.CURRENT_PAGE,cursor.getInt(0));assertEquals(3,cursor.getInt(1));assertEquals(1234,cursor.getLong(2));assertEquals(2,cursor.getInt(3));
+                assertTrue(cursor.moveToNext());assertEquals(PreviewEnrichmentQueue.FOREGROUND,cursor.getInt(0));assertEquals(4,cursor.getInt(1));
+                assertTrue(cursor.moveToNext());assertEquals(PreviewEnrichmentQueue.BACKGROUND,cursor.getInt(0));
+            }
+        }finally{helper.close();}
+    }
     @Test public void episodePriorityTargetsParentSeriesAndKeepsPackageProgress()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
         SQLiteOpenHelper helper=(SQLiteOpenHelper)ReflectionHelpers.callConstructor(Class.forName("com.archos.mediacenter.video.leanback.PreviewEnrichmentQueue$Store"),ReflectionHelpers.ClassParameter.from(Context.class,context));

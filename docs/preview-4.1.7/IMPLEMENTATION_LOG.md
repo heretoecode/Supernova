@@ -775,3 +775,11 @@ These changes require a full CI rerun; no failures are waived.
 - Library diff telemetry now reports reason, old/new counts, inserted/removed/moved/rebound counts and adapter reuse, without changing DiffUtil updates. Source snapshot, discovery, provider refresh, tab and column changes have distinct reasons.
 - Corrected an audit finding: the existing generic choice helper already anchors finite choices to the current opener. Network Frequency uses that helper and persisted ticks. Added an actual-window anchor/tick/return test rather than replacing working code. This does not establish physical geometry.
 - Android compilation/new regression validation for this checkpoint remain required. No signed APK or completed conformance pass is claimed.
+
+## Post-audit checkpoint 53 — viewport priorities and cache-first Details
+
+- Checkpoint 52 CI 36489423042 passed every gate: 117 targeted, 332 complete Video, 83 selected regression and 17 WebDAV test invocations, zero failures. Counts overlap and must not be added as unique tests. Compilation and packaged/merged identity source checks passed; this was not an APK build or physical test.
+- Scrolling now replaces temporary visible priorities instead of accumulating them. The current library-page baseline is restored without resetting persistent package progress or active foreground requests. Horizontal rails inspect actual visible children and schedule reprioritisation when scrolled, rather than assuming the first six titles are visible.
+- Details now publishes disk-cached core metadata, credits, seasons/episodes, Extras and locally reconciled recommendations before waiting for network refreshes. Unknown remote availability is not manufactured. Local tag refreshes retain cached individual principal-crew cards.
+- Added viewport/baseline regressions, extended the crew refresh regression, and added a disk-only package-consumption regression. New Android tests require CI. The scheduler request now emits an explicit Queued diagnostic; native per-source queuing and Metadata queued evidence remain open.
+- The 13 pre-existing missing symlinks remain untouched. Implementation, full 115-entry reconciliation, conformance review and signed delivery are not complete.
