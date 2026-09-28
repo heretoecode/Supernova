@@ -33,11 +33,6 @@ index b3ce9f4..2dcd079 100644
                          if (log.isDebugEnabled()) log.debug("onReceive: queued scan for {} with delay {}ms", uri, delayMs);
                      }
 
-@@ -319,4 +321,3 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
-         if (log.isDebugEnabled()) log.debug("onStop: lifecycle background");
-     }
- }
--
 diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 index cb7fe4d..55258f8 100644
 --- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
@@ -178,11 +173,6 @@ index cb7fe4d..55258f8 100644
              // Count total files that need deletion
              int totalNeedsDelete = 0;
              for (PrescanItem item : mPrescanItemsMap.values()) {
-@@ -1729,4 +1775,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
-         isForeground = true;
-     }
- }
--
 diff --git a/src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java b/src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java
 new file mode 100644
 index 0000000..d696a3b
@@ -270,8 +260,3 @@ index 95c26f2..b9cb099 100644
      }
 
      public void cleanup() {
-@@ -1402,4 +1413,3 @@ public class AutoScrapeService extends Service implements DefaultLifecycleObserv
-     }
-
- }
--
