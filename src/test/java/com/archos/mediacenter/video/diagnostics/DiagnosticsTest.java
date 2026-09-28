@@ -9,6 +9,16 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void delayedIncidentKeepsFailureTimeState()throws Exception{
+        Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
+        try{
+            Diagnostics.uiState("movies","library","list","2","genre,year",42);Diagnostics.modalDepth(2);
+            Diagnostics.UiSnapshot captured=new Diagnostics.UiSnapshot();
+            Diagnostics.uiState("settings","playback","workspace","none","none",0);Diagnostics.modalDepth(0);
+            org.json.JSONObject value=new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed",captured));
+            assertEquals("movies",value.getString("page"));assertEquals("list",value.getString("view_mode"));assertEquals(42,value.getLong("media_id"));assertEquals(2,value.getInt("modal_depth"));assertEquals(captured.utc,value.getLong("failure_utc_ms"));
+        }finally{Diagnostics.uiState("unknown","none","unknown","unknown","none",0);Diagnostics.modalDepth(0);Diagnostics.setEnabled(c,false);}
+    }
     @Test public void incidentSnapshotContainsStructuralUiStateWithoutRawPaths()throws Exception{
         Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
         try{

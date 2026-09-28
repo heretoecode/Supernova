@@ -12,6 +12,24 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=android.app.Application.class,sdk=28)
 public class DiagnosticArchiveTest {
+    @Test public void foregroundUsageDurationIsDistinctFromProcessLifetime()throws Exception{
+        write("events.jsonl","{process:'p',sequence:1,event:'app_session_begin',utc_ms:1000,elapsed_ms:10,app_session:'a'}\n"
+                +"{process:'p',sequence:2,event:'app_session_end',utc_ms:4000,elapsed_ms:3010,app_session:'a'}\n"
+                +"{process:'p',sequence:3,event:'heartbeat',utc_ms:5000,elapsed_ms:4010,app_session:'b'}\n");
+        org.json.JSONObject manifest=DiagnosticArchive.manifest(temporary.getRoot());org.json.JSONArray intervals=manifest.getJSONArray("app_session_summaries");
+        assertEquals(2,intervals.length());assertEquals(3000,intervals.getJSONObject(0).getLong("duration_ms"));assertTrue(intervals.getJSONObject(1).isNull("duration_ms"));
+        assertEquals(0,manifest.getInt("playback_sessions"));assertTrue(Diagnostics.important("app_session_end"));
+    }
+    @Test public void completePlaybackHasMeasuredDurationButCarriedInSessionDoesNot()throws Exception{
+        write("events.jsonl","{process:'p',sequence:1,event:'playback_begin',utc_ms:1000,elapsed_ms:10,session:'complete'}\n"
+                +"{process:'p',sequence:2,event:'playback_end',utc_ms:999999,elapsed_ms:3010,session:'complete'}\n"
+                +"{process:'p',sequence:3,event:'playback_end',utc_ms:1000000,elapsed_ms:4000,session:'carried'}\n"
+                +"{process:'p',sequence:4,event:'scan_requested',utc_ms:1000001,operation_id:'scan1'}\n");
+        org.json.JSONObject manifest=DiagnosticArchive.manifest(temporary.getRoot());org.json.JSONArray sessions=manifest.getJSONArray("playback_session_summaries");
+        assertEquals(3000,sessions.getJSONObject(0).getLong("duration_ms"));assertTrue(sessions.getJSONObject(1).isNull("duration_ms"));
+        assertEquals(1,manifest.getInt("scans_requested_retained"));assertEquals("scan1",manifest.getJSONArray("operation_summaries").getJSONObject(0).getString("operation_id"));
+        assertTrue(DiagnosticArchive.linkedSummary(temporary.getRoot()).contains("duration_ms=3000"));assertTrue(DiagnosticArchive.linkedSummary(temporary.getRoot()).contains("incomplete_retained_evidence"));
+    }
     @Test public void summaryUsesPerProcessDropMaximaAndRetainedEvidenceSpans()throws Exception{
         write("events.jsonl","{\"process\":\"a\",\"sequence\":1,\"event\":\"startup\",\"utc_ms\":1000,\"dropped\":7}\n"
                 +"{\"process\":\"a\",\"sequence\":2,\"event\":\"heartbeat\",\"utc_ms\":4000,\"dropped\":9}\n"

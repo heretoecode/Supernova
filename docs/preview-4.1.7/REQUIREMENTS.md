@@ -520,9 +520,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Overview keeps Scan Library and Network Scanning separate. Network Scanning right panel: Automatic scanning On/Off; Frequency; Scan when Supernova opens/returns On/Off; Sources Included; Last Scan/Result; Scan Network Sources Now. Remove Configure Network Scanning button. Frequency choices exactly 15m,30m,1h,6h,24h. Use small anchored overlay with tick for finite choices; Sources Included may use larger multi-select. Increase vertical spacing between controls.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED/VISUAL/PHYSICAL VERIFICATION PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewNetworkWorkspace provides separate scanning controls and exact interval choices. Full helper tracing corrects the audit: PreviewDialog.choose already anchors to the opener through PreviewMenuPlacement and displays the selected tick. Checkpoint 52 adds an actual-window anchor/tick/return regression, awaiting CI. Control spacing and physical operation remain visual/Shield QA.
 
 ### UI-053 — 10. Network & Files
 
@@ -905,9 +905,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Export should include a machine-readable and human-readable summary: session duration, launches, clean/suspected unclean exits, playback sessions, scans, artwork request/failure counts, dropped-event count, manual reports and automatic incidents, each linked by timestamp/correlation ID to raw evidence.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — NEW SUMMARY REGRESSIONS AWAITING CI**
 
-Code mapping / verification: DiagnosticArchive indexes manual/incident events, event counts, retained process spans, launches/exit markers, per-process maximum drop counters and timestamp/sequence/operation evidence. Six archive tests passed in run 36241111976. Retained spans are explicitly not complete session lifetimes. Full summary field conformance remains under review.
+Code mapping / verification: DiagnosticArchive schema 3 adds linked operation, playback-session and foreground-use summaries with UTC/process/sequence references. Monotonic durations require both retained boundaries; carried-in or incomplete sessions remain explicitly unknown. Human export includes the same linked summary and explicit scan/artwork counts; manual/incident indexes and per-process maximum drop counters are retained. Checkpoint 52 complete/carried-in/foreground fixtures await CI; physical multi-day export coverage remains QA.
 
 ### DIA-015 — Required diagnostic/reporting improvements
 

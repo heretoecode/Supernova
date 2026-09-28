@@ -36,11 +36,18 @@ public final class Diagnostics {
     private static volatile Context context;
     private static volatile boolean enabled;
     private static volatile String playback="";
+    private static volatile String appSession="";
     private static final String PROCESS=UUID.randomUUID().toString();
     private static long focusAt;
     private static volatile String uiScreen="unknown",uiFocus="none",uiPage="unknown",uiCategory="none",uiMode="unknown",uiSort="unknown",uiFilters="none";
     private static volatile long uiMedia;
     private static volatile int uiModals;
+    /** Immutable failure-time state; worker queue delays must not change its meaning. */
+    static final class UiSnapshot {
+        final String screen=uiScreen,focus=uiFocus,page=uiPage,category=uiCategory,mode=uiMode,sort=uiSort,filters=uiFilters;
+        final long media=uiMedia,utc=System.currentTimeMillis();
+        final int modals=uiModals,foregroundCount=foreground;
+    }
     /** Only structural, developer-owned labels belong here; never titles, queries or paths. */
     public static void uiState(String page,String category,String mode,String sort,String filters,long media){
         uiPage=uiLabel(page);uiCategory=uiLabel(category);uiMode=uiLabel(mode);uiSort=uiLabel(sort);uiFilters=uiLabel(filters);uiMedia=Math.max(0,media);
@@ -48,6 +55,7 @@ public final class Diagnostics {
     static String uiLabel(String value){return value==null||value.isEmpty()?"none":value.matches("[A-Za-z0-9_.:,& -]{1,100}")?value:"unknown";}
     public static void modalDepth(int depth){uiModals=Math.max(0,depth);}
     public static void focusedMedia(long id){uiMedia=Math.max(0,id);}
+    public static String artworkSurface(){return uiPage;}
     /** Coarse connectivity only: no SSID, address, interface or network name. */
     public static String connectivity(){
         if(context==null)return "unknown";
@@ -82,7 +90,7 @@ public final class Diagnostics {
         app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks(){
             private void life(Activity a,String state){event("lifecycle","screen",a.getClass().getSimpleName(),"state",state);}
             public void onActivityCreated(Activity a,Bundle b){life(a,"created");}
-            public void onActivityStarted(Activity a){foreground++;life(a,"started");}
+            public void onActivityStarted(Activity a){if(foreground++==0){appSession=UUID.randomUUID().toString();event("app_session_begin");}life(a,"started");}
             public void onActivityResumed(Activity a){mainAck=android.os.SystemClock.elapsedRealtime();
                 uiScreen=a.getClass().getSimpleName();uiFocus=viewId(a.getCurrentFocus());
                 life(a,"resumed");if(enabled&&sessionState!=null)sessionState.edit().putBoolean("clean",false).apply();
@@ -95,7 +103,7 @@ public final class Diagnostics {
                 FOCUS.put(a,listener);a.getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(listener);
             }
             public void onActivityPaused(Activity a){life(a,"paused");android.view.ViewTreeObserver.OnGlobalFocusChangeListener l=FOCUS.remove(a);if(l!=null)a.getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(l);}
-            public void onActivityStopped(Activity a){foreground=Math.max(0,foreground-1);life(a,"stopped");if(enabled&&foreground==0&&sessionState!=null){event("session_backgrounded");sessionState.edit().putBoolean("clean",true).apply();}}
+            public void onActivityStopped(Activity a){foreground=Math.max(0,foreground-1);life(a,"stopped");if(foreground==0){event("app_session_end");appSession="";if(enabled&&sessionState!=null){event("session_backgrounded");sessionState.edit().putBoolean("clean",true).apply();}}}
             public void onActivitySaveInstanceState(Activity a,Bundle b){}
             public void onActivityDestroyed(Activity a){life(a,"destroyed");if(enabled&&a.isTaskRoot()&&a.isFinishing()&&sessionState!=null){event("session_clean_shutdown");sessionState.edit().putBoolean("clean",true).apply();}}
         });
@@ -103,8 +111,10 @@ public final class Diagnostics {
     }
     private static String viewId(View view){
         if(view==null)return "none";
-        Object semantic=view.getTag();
+        Object semantic=view.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic);
+        if(!(semantic instanceof String))semantic=view.getTag();
         if(semantic instanceof String&&((String)semantic).matches("semantic:[A-Za-z0-9 _:.-]{1,100}"))return (String)semantic;
+        if(semantic instanceof String&&((String)semantic).matches("[vs][0-9]+"))return "semantic:media."+semantic;
         String id="generated";
         if(view.getId()!=View.NO_ID)try{id=view.getResources().getResourceEntryName(view.getId());}catch(android.content.res.Resources.NotFoundException ignored){}
         // Programmatic TV controls often have no resource ID. Structural child
@@ -117,11 +127,21 @@ public final class Diagnostics {
         return view.getClass().getSimpleName()+":"+id+position;
     }
     public static boolean enabled(){return enabled;}
+    public static void semantic(View view,String identity){
+        if(view!=null&&identity!=null&&identity.matches("[A-Za-z0-9_.:-]{1,90}"))view.setTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic,"semantic:"+identity);
+    }
+    public static String focusEntry(View opener,String flow){
+        String token=PROCESS+":focus:"+SEQUENCE.incrementAndGet();
+        event("focus_entry","operation_id",token,"flow",uiLabel(flow),"opener",viewId(opener),"screen",uiScreen);return token;
+    }
     public static void focusRestored(View requested,View restored,boolean fallback,boolean success){
-        event("focus_restoration","operation_id",PROCESS+":"+SEQUENCE.incrementAndGet(),"requested",viewId(requested),
+        focusRestored("",requested,restored,fallback,success);
+    }
+    public static void focusRestored(String token,View requested,View restored,boolean fallback,boolean success){
+        event("focus_restoration","operation_id",token,"screen",uiScreen,"requested",viewId(requested),
                 "restored",viewId(restored),"fallback",fallback,"success",success);
     }
-    public static void navigation(View previous,View next,int key,boolean consumed){if(key>=android.view.KeyEvent.KEYCODE_DPAD_UP&&key<=android.view.KeyEvent.KEYCODE_DPAD_CENTER)event("focus_navigation","input",key,"from",viewId(previous),"to",viewId(next),"consumed",consumed,"edge_held",previous==next&&consumed);}
+    public static void navigation(View previous,View next,int key,boolean consumed){if(key>=android.view.KeyEvent.KEYCODE_DPAD_UP&&key<=android.view.KeyEvent.KEYCODE_DPAD_CENTER)event("focus_navigation","screen",uiScreen,"input",key,"from",viewId(previous),"to",viewId(next),"consumed",consumed,"edge_held",previous==next&&consumed);}
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
@@ -143,11 +163,12 @@ public final class Diagnostics {
             boolean detail=event.startsWith("focus")||event.startsWith("artwork_")||event.equals("home_page_render");
             if(!detail&&!event.startsWith("checkpoint")&&!event.equals("scanner_state")){lastOperation=safe(event);if(sessionState!=null)sessionState.edit().putString("last_operation",lastOperation).apply();}
             boolean anomaly=event.contains("error")||event.contains("failed")||event.contains("exception")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected");
-            if(important(event)||anomaly)IMPORTANT.execute(()->{if(!enabled)return;writeImportant(line);if(anomaly)freeze(event);});
+            UiSnapshot failureState=anomaly?new UiSnapshot():null;
+            if(important(event)||anomaly)IMPORTANT.execute(()->{if(!enabled)return;writeImportant(line);if(anomaly)freeze(event,failureState);});
             WORK.execute(()->{if(!enabled)return;if(qa||!detail)write(line,session);if(!anomaly&&android.os.SystemClock.elapsedRealtime()<freezeUntil)appendFlight(line);});
         }catch(RuntimeException ignored){DROPPED.incrementAndGet();}
     }
-    static boolean important(String event){return event.contains("failed")||event.contains("error")||event.contains("exception")||event.contains("UNCLEAN")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.startsWith("session_")||event.equals("startup")||event.equals("playback_begin")||event.equals("playback_end")||event.equals("scan_started")||event.equals("scan_complete")||event.equals("scan_partial")||event.equals("incident_capture");}
+    static boolean important(String event){return event.contains("failed")||event.contains("error")||event.contains("exception")||event.contains("UNCLEAN")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.startsWith("session_")||event.startsWith("app_session_")||event.equals("startup")||event.equals("playback_begin")||event.equals("playback_end")||event.equals("scan_started")||event.equals("scan_complete")||event.equals("scan_partial")||event.equals("incident_capture");}
     static String severity(String event){
         if(event.equals("uncaught_exception"))return "FATAL";
         if(event.contains("failed")||event.contains("error")||event.contains("exception"))return "ERROR";
@@ -168,6 +189,9 @@ public final class Diagnostics {
     public static void finishOperation(String id,String kind,long started){event("operation_end","operation_id",id,"kind",kind,"latency_ms",android.os.SystemClock.elapsedRealtime()-started);}
     private static void heartbeat(){try{if(!enabled||context==null)return;long now=android.os.SystemClock.elapsedRealtime();if(foreground>0&&now-mainAck>65000)event("main_thread_stall_suspected","unresponsive_ms",now-mainAck);new android.os.Handler(android.os.Looper.getMainLooper()).post(()->mainAck=android.os.SystemClock.elapsedRealtime());Runtime runtime=Runtime.getRuntime();event("heartbeat","foreground",foreground,"heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),"native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"queue_depth",WORK.getQueue().size(),"dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_bytes",FLIGHT.bytes(),"level",qa?"QA_SOAK":"NORMAL");}catch(RuntimeException ignored){WRITE_ERRORS.incrementAndGet();}}
     private static synchronized void freeze(String reason){
+        freeze(reason,new UiSnapshot());
+    }
+    private static synchronized void freeze(String reason,UiSnapshot state){
         if(context==null)return;
         boolean manual=reason.equals("manual_problem_marker");
         if(!manual&&android.os.SystemClock.elapsedRealtime()<freezeUntil){
@@ -179,7 +203,7 @@ public final class Diagnostics {
             return;
         }
         incidentId=PROCESS+":incident:"+SEQUENCE.incrementAndGet();incidentCounts.clear();incidentCounts.put(reason,1L);
-        String incident=incidentContext(reason);writeImportant(incident);
+        String incident=incidentContext(reason,state);writeImportant(incident);
         String retained=FLIGHT.snapshot(android.os.SystemClock.elapsedRealtime());
         String snapshot=record("flight_snapshot","reason",reason,"completeness",retained.isEmpty()?"RECOVERY_DATA_MISSING":"PARTIAL",
                 "dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_evicted",FLIGHT.evicted());
@@ -197,13 +221,16 @@ public final class Diagnostics {
         }catch(IOException|RuntimeException error){WRITE_ERRORS.incrementAndGet();}}
     }
     private static String incidentContext(String reason){
+        return incidentContext(reason,new UiSnapshot());
+    }
+    static String incidentContext(String reason,UiSnapshot state){
         long available=-1;boolean lowMemory=false;
         try{ActivityManager manager=(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
             if(manager!=null){ActivityManager.MemoryInfo memory=new ActivityManager.MemoryInfo();manager.getMemoryInfo(memory);available=memory.availMem;lowMemory=memory.lowMemory;}
         }catch(RuntimeException ignored){/* Missing resource data must not prevent incident capture. */}
         Runtime runtime=Runtime.getRuntime();
-        return record("incident_capture","reason",reason,"incident_id",incidentId,"foreground",foreground,
-                "screen",uiScreen,"page",uiPage,"category",uiCategory,"focused_control",uiFocus,"view_mode",uiMode,"sort",uiSort,"active_filters",uiFilters,"media_id",uiMedia,"modal_depth",uiModals,
+        return record("incident_capture","reason",reason,"incident_id",incidentId,"foreground",state.foregroundCount,"failure_utc_ms",state.utc,
+                "screen",state.screen,"page",state.page,"category",state.category,"focused_control",state.focus,"view_mode",state.mode,"sort",state.sort,"active_filters",state.filters,"media_id",state.media,"modal_depth",state.modals,
                 "heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),
                 "native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"available_memory",available,
                 "low_memory",lowMemory,"storage_free",context.getFilesDir().getUsableSpace(),"thread_count",Thread.activeCount());
@@ -261,7 +288,7 @@ public final class Diagnostics {
     private static String record(String event,Object... fields){
         try{
             JSONObject json=new JSONObject();json.put("utc_ms",System.currentTimeMillis());json.put("elapsed_ms",android.os.SystemClock.elapsedRealtime());json.put("severity",severity(event));
-            json.put("sequence",SEQUENCE.incrementAndGet());json.put("pid",android.os.Process.myPid());json.put("last_operation",lastOperation);json.put("process",PROCESS);json.put("session",playback);json.put("event",safe(event));
+            json.put("sequence",SEQUENCE.incrementAndGet());json.put("pid",android.os.Process.myPid());json.put("last_operation",lastOperation);json.put("process",PROCESS);json.put("session",playback);json.put("app_session",appSession);json.put("event",safe(event));
             for(int i=0;i+1<fields.length;i+=2){String key=String.valueOf(fields[i]);
                 if(!key.matches("[a-z_]{1,48}")||key.matches(".*(password|credential|token|secret|header|cookie|path|url|uri|api_key).*"))continue;
                 Object value=fields[i+1];json.put(key,value instanceof Number||value instanceof Boolean?value:safe(String.valueOf(value)));
@@ -331,7 +358,8 @@ public final class Diagnostics {
                 +"; suspected unclean exits: "+counts.getOrDefault("PREVIOUS_SESSION_UNCLEAN_EXIT",0)
                 +"\nManual reports: "+counts.getOrDefault("manual_problem_marker",0)+"; incident captures: "+counts.getOrDefault("incident_capture",0)
                 +"\nDropped events (sum of retained per-process maxima): "+droppedTotal+"\n";
-        return "Supernova diagnostic summary\nCompleteness: PARTIAL (native/direct transport coverage is incomplete)\n"+retained+"Current logger dropped: "+DROPPED.get()+"; write errors: "+WRITE_ERRORS.get()+"\nBuild: "+com.archos.mediacenter.video.BuildConfig.VERSION_NAME+"\nSource: "+com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA+"\nPlayback sessions retained: "+sessions.size()+"\nEvent counts: "+counts+"\nRecent significant events (UTC milliseconds):\n"+android.text.TextUtils.join("\n",timeline)+"\nUnclean exit means no clean marker; it does not prove a crash. Native A/V offset is not exposed.\n";
+        String linked="";try{linked=DiagnosticArchive.linkedSummary(directory());}catch(org.json.JSONException incomplete){linked="\nLinked summary unavailable; raw evidence retained.\n";}
+        return linked+"Supernova diagnostic summary\nCompleteness: PARTIAL (native/direct transport coverage is incomplete)\n"+retained+"Current logger dropped: "+DROPPED.get()+"; write errors: "+WRITE_ERRORS.get()+"\nBuild: "+com.archos.mediacenter.video.BuildConfig.VERSION_NAME+"\nSource: "+com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA+"\nPlayback sessions retained: "+sessions.size()+"\nEvent counts: "+counts+"\nRecent significant events (UTC milliseconds):\n"+android.text.TextUtils.join("\n",timeline)+"\nUnclean exit means no clean marker; it does not prove a crash. Native A/V offset is not exposed.\n";
     }
     private static void entry(ZipOutputStream zip,String name,byte[] bytes)throws IOException{zip.putNextEntry(new ZipEntry(name));zip.write(bytes);zip.closeEntry();}
     private Diagnostics(){}

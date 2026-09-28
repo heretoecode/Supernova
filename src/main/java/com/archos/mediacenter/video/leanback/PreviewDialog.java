@@ -13,6 +13,7 @@ public final class PreviewDialog {
  /** Shared child-dialog lifetime: Back restores the opener in the parent window. */
  public static Dialog create(Context context){
   Context owner=owner(context);View opener=anchor(context);
+  String restorationToken=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(opener,"dialog");
   java.lang.ref.WeakReference<View> previous=new java.lang.ref.WeakReference<>(opener);
   java.lang.ref.WeakReference<View> previousRoot=new java.lang.ref.WeakReference<>(opener==null?null:opener.getRootView());
   Object semantic=opener==null?null:opener.getTag();int id=opener==null?View.NO_ID:opener.getId();
@@ -28,7 +29,7 @@ public final class PreviewDialog {
      fallback=true;target=semantic==null?null:root.findViewWithTag(semantic);if(target==null&&id!=View.NO_ID)target=root.findViewById(id);
      if(target==null||!target.isShown()||!target.isFocusable()){target=null;for(View candidate:root.getFocusables(View.FOCUS_FORWARD))if(candidate.isShown()&&candidate.isEnabled()){target=candidate;break;}}
     }
-    boolean restored=target!=null&&target.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(requested,target,fallback,restored);
+    boolean restored=target!=null&&target.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(restorationToken,requested,target,fallback,restored);
    }
   };
  }
@@ -80,6 +81,7 @@ public final class PreviewDialog {
   View initial=null;int height=60;int footerHeight=0;
   for(int i=0;i<labels.length;i++){final int index=i;boolean group=labels[i].startsWith("— ");boolean enabled=!group&&!labels[i].endsWith(" (unavailable)")&&!labels[i].endsWith(" — unavailable")&&!labels[i].contains("Coming soon");
    LinearLayout row=new LinearLayout(c);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(dp(c,10),0,dp(c,10),0);row.setBackground(focus(c));row.setFocusable(enabled);row.setFocusableInTouchMode(enabled);row.setEnabled(enabled);row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);row.setAlpha(enabled?1f:group?1f:.4f);
+   com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(row,"dialog.choice."+i);
    if(!group){ImageView icon=new ImageView(c);String iconLabel=title.equals(c.getString(com.archos.mediacenter.video.R.string.menu_audio))?"Audio":title.equals(c.getString(com.archos.mediacenter.video.R.string.menu_subtitles))?"Subtitles":labels[i];icon.setImageDrawable(PreviewGenres.known(iconLabel)?new PreviewGenres.Icon(iconLabel):new PreviewIcon(iconLabel));row.addView(icon,new LinearLayout.LayoutParams(dp(c,18),dp(c,18)));}
    TextView label=new TextView(c);label.setText(group?labels[i].substring(2):labels[i]);label.setTag("preview-label:"+i);label.setTextSize(group?11:14);label.setTextColor(group?0xff8aaec5:Color.WHITE);label.setSingleLine(true);label.setEllipsize(android.text.TextUtils.TruncateAt.END);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);lp.leftMargin=group?0:dp(c,10);row.addView(label,lp);
    if(!group){ImageView check=new ImageView(c);check.setTag("preview-check:"+i);check.setImageDrawable(new PreviewIcon("check"));check.setVisibility(checked.contains(i)?View.VISIBLE:View.INVISIBLE);row.addView(check,new LinearLayout.LayoutParams(dp(c,18),dp(c,18)));}

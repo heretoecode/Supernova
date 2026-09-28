@@ -43,7 +43,7 @@ public final class PreviewPages extends FrameLayout {
     private android.content.SharedPreferences preferences;
     private int focusGeneration;
     private static final class FocusAnchor {
-        String cell, child; int position, inner;
+        String cell, child,token=""; int position, inner;
     }
     private String cellKey(Cell c){return c.type+":"+(c.type==POSTER?((Entry)c.value).key():c.type==STORAGE?((Box)c.value).getBoxId()+":"+((Box)c.value).getPath():c.title);}
     private boolean inside(View view,View ancestor){while(view!=null){if(view==ancestor)return true;android.view.ViewParent p=view.getParent();view=p instanceof View?(View)p:null;}return false;}
@@ -67,6 +67,7 @@ public final class PreviewPages extends FrameLayout {
         int pos=list.getChildAdapterPosition(item);if(pos<0||pos>=cells.size())return;
         FocusAnchor a=new FocusAnchor();a.cell=cellKey(cells.get(pos));a.position=pos;
         a.child=focused.getTag() instanceof String?(String)focused.getTag():null;
+        if(anchors[tab]!=null&&a.cell.equals(anchors[tab].cell)&&java.util.Objects.equals(a.child,anchors[tab].child))a.token=anchors[tab].token;
         if(cells.get(pos).type==RAIL){List<Entry> entries=(List<Entry>)cells.get(pos).value;for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(a.child)){a.inner=i;break;}}
         anchors[tab]=a;
     }
@@ -102,6 +103,7 @@ public final class PreviewPages extends FrameLayout {
                 View exact=item==null||anchor==null?null:tagged(item,anchor.child);
                 restoringFocus=false;
                 if(exact!=null)exact.requestFocus();else if(item!=null&&item.requestFocus()){}else list.requestFocus();
+                if(anchor!=null&&!anchor.token.isEmpty()){com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(anchor.token,null,list.findFocus(),exact==null,list.findFocus()!=null);anchor.token="";if(anchors[tab]!=null)anchors[tab].token="";}
                 rememberFocus();
             }
         });
@@ -164,11 +166,11 @@ public final class PreviewPages extends FrameLayout {
     public void setReadyListener(Runnable listener){ready=listener;if(loaded)post(ready);}
     public boolean hasLoadedSnapshot(){return loaded;}
     public void setArtworkListener(java.util.function.Consumer<android.net.Uri> listener){artwork=listener;updateArtwork();}
-    public void setDiscovery(PreviewDiscovery value){requestedDiscovery=true;discovery=value;render();}
+    public void setDiscovery(PreviewDiscovery value){requestedDiscovery=true;discovery=value;render("discovery_update");}
     private boolean requestedDiscovery;
     private final Runnable providerRefresh=()->{if(isAttachedToWindow()&&(tab==1||tab==2)&&!providers[tab].isEmpty()){
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("library_filter_refresh","reason","provider_cache_changed","tab",tab);
-        render(); // Diff the existing snapshot; never re-query the media library here.
+        render("provider_cache_changed"); // Diff the existing snapshot; never re-query the media library here.
     }};
     static boolean providerCacheAffectsPage(String key,int tab,String country,boolean filtered){
         return filtered&&key!=null&&(tab==1||tab==2)
@@ -191,7 +193,7 @@ public final class PreviewPages extends FrameLayout {
     private Entry featured(){List<Entry> entries=tab==1?snapshot.movies:tab==2?snapshot.shows:featuredCandidates();return entries.isEmpty()?null:entries.get(Math.floorMod(featuredIndex,entries.size()));}
     private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==3||entry==null?null:entry.backdrop);}
     public static String displayName(Entry e){return e.media instanceof Episode?((Episode)e.media).getShowName():e.media.getName();}
-    private void open(Entry e,View v){click.open(new Presenter.ViewHolder(v),e.media);}
+    private void open(Entry e,View v){rememberFocus();if(anchors[tab]!=null)anchors[tab].token=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(v,"details");click.open(new Presenter.ViewHolder(v),e.media);}
     private void play(Entry e,View v){
         if(e.media instanceof Tvshow){List<Entry> episodes=new ArrayList<>();for(Entry ep:snapshot.episodes)if(ep.show==e.show)episodes.add(ep);Entry next=PreviewSeriesJourney.select(getContext(),episodes).episode;if(next!=null){play(next,v);return;}}
         if(e.media instanceof Video && getContext() instanceof android.app.Activity){
@@ -242,13 +244,13 @@ public final class PreviewPages extends FrameLayout {
         if(this.tab==tab)return;
         rememberFocus();scrollStates[this.tab]=layout.onSaveInstanceState();
         // TopNavigation owns the single full-viewport background, including the header.
-        quietOrder.clear();switchingTab=true;this.tab=tab;setBackground(null);featuredIndex=0;render();switchingTab=false;
+        quietOrder.clear();switchingTab=true;this.tab=tab;setBackground(null);featuredIndex=0;render("tab_change");switchingTab=false;
         if(scrollStates[tab]!=null)layout.onRestoreInstanceState(scrollStates[tab]);else list.scrollToPosition(0);PreviewMetadata.library(getContext(),snapshot,tab);
     }
     public void setSnapshot(Snapshot s) { if(s==null)return;
         quietOrder.clear();if(loaded&&(tab==1||tab==2))for(Cell cell:cells)if(cell.type==POSTER)quietOrder.put(((Entry)cell.value).key(),quietOrder.size());
         if(loaded&&tab==0){String featuredKey=featured()==null?null:featured().key();if(featuredKey!=null)for(int i=0;i<Math.min(5,s.recent.size());i++)if(s.recent.get(i).key().equals(featuredKey)){featuredIndex=i;break;}}
-        snapshot=s;loaded=true;render();PreviewEnrichmentQueue.library(getContext(),s,tab);PreviewMetadata.library(getContext(),s,tab);post(ready);postDelayed(this::requestDiscovery,750);
+        snapshot=s;loaded=true;render("indexed_snapshot");PreviewEnrichmentQueue.library(getContext(),s,tab);PreviewMetadata.library(getContext(),s,tab);post(ready);postDelayed(this::requestDiscovery,750);
     }
     private static void keepOrder(List<Entry> old,List<Entry> current){Map<String,Integer> rank=new HashMap<>();for(Entry e:old)rank.put(e.key(),rank.size());current.sort(Comparator.comparingInt(e->rank.getOrDefault(e.key(),Integer.MAX_VALUE)));}
     public void setFiles(List<Box> f) {
@@ -308,6 +310,9 @@ public final class PreviewPages extends FrameLayout {
         if(preserve)restoreFocus();
     }
     private void render() {
+        render("control_change");
+    }
+    private void render(String reason) {
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiState(new String[]{"home","movies","tv","network"}[tab],"none",tab>0&&tab<3&&listMode[tab]?"list":"grid",tab<3?String.valueOf(sorts[tab]):"none",tab>0&&tab<3?(genres[tab].isEmpty()?"":"genre,")+(selectedYears[tab].isEmpty()?"":"year,")+(providers[tab].isEmpty()?"":"provider,")+(unmatched[tab]?"unmatched":""):"none",0);
         long started=android.os.SystemClock.elapsedRealtime();
         List<Cell> previous=new ArrayList<>(cells);
@@ -338,8 +343,14 @@ public final class PreviewPages extends FrameLayout {
         }
         if(!loaded&&tab!=3)header(tab==0?"Home":tab==1?"Movies":"TV Shows",false);
         updateArtwork();for(Cell cell:cells){cell.signature=signature(cell);cell.viewType=cell.type==POSTER&&tab<3&&listMode[tab]?LIST:cell.type;}
-        DiffUtil.calculateDiff(new DiffUtil.Callback(){public int getOldListSize(){return previous.size();}public int getNewListSize(){return cells.size();}public boolean areItemsTheSame(int a,int b){return previous.get(a).viewType==cells.get(b).viewType&&cellKey(previous.get(a)).equals(cellKey(cells.get(b)));}public boolean areContentsTheSame(int a,int b){return previous.get(a).signature.equals(cells.get(b).signature);}}).dispatchUpdatesTo(adapter);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("home_page_render","tab",tab,"cells",cells.size(),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-started);
+        int[] changes=new int[4];androidx.recyclerview.widget.AdapterListUpdateCallback updates=new androidx.recyclerview.widget.AdapterListUpdateCallback(adapter);
+        DiffUtil.calculateDiff(new DiffUtil.Callback(){public int getOldListSize(){return previous.size();}public int getNewListSize(){return cells.size();}public boolean areItemsTheSame(int a,int b){return previous.get(a).viewType==cells.get(b).viewType&&cellKey(previous.get(a)).equals(cellKey(cells.get(b)));}public boolean areContentsTheSame(int a,int b){return previous.get(a).signature.equals(cells.get(b).signature);}}).dispatchUpdatesTo(new androidx.recyclerview.widget.ListUpdateCallback(){
+            public void onInserted(int position,int count){changes[0]+=count;updates.onInserted(position,count);}
+            public void onRemoved(int position,int count){changes[1]+=count;updates.onRemoved(position,count);}
+            public void onMoved(int from,int to){changes[2]++;updates.onMoved(from,to);}
+            public void onChanged(int position,int count,Object payload){changes[3]+=count;updates.onChanged(position,count,payload);}
+        });
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("home_page_render","reason",reason,"tab",tab,"previous_cells",previous.size(),"cells",cells.size(),"inserted",changes[0],"removed",changes[1],"moved",changes[2],"rebound",changes[3],"adapter_recreated",false,"elapsed_ms",android.os.SystemClock.elapsedRealtime()-started);
         if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();list.post(this::notifyScroll);scheduleVisibleEnrichment();
     }
     private static String entrySignature(Entry e){return e.key()+"|"+displayName(e)+"|"+e.backdrop+"|"+e.media.getPosterUri()+"|"+e.secondary+"|"+e.active+"|"+e.bytes+"|"+e.runtime+"|"+e.year()+"|"+e.resolution+"|"+e.audio+"|"+e.codec+"|"+e.hdr+"|"+(e.media instanceof Video?((Video)e.media).getResumeMs():0);}
@@ -420,7 +431,7 @@ public final class PreviewPages extends FrameLayout {
         Holder(View v){super(v);}
     }
     class PageAdapter extends RecyclerView.Adapter<Holder> {
-        private void refreshColumns(){quietOrder.clear();render();}
+        private void refreshColumns(){quietOrder.clear();render("columns_change");}
         @Override public long getItemId(int p){Cell c=cells.get(p);String key=c.type==POSTER?((Entry)c.value).key():c.type==STORAGE?((Box)c.value).getBoxId()+":"+((Box)c.value).getPath():c.title;return ((long)c.type<<32) | (key.hashCode() & 0xffffffffL);}
         @Override public int getItemCount(){return cells.size();}
         @Override public int getItemViewType(int p){return cells.get(p).type==POSTER&&tab<3&&listMode[tab]?LIST:cells.get(p).type;}
@@ -430,8 +441,8 @@ public final class PreviewPages extends FrameLayout {
             LinearLayout v=new LinearLayout(getContext());v.setGravity(Gravity.CENTER_VERTICAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));return new Holder(v);
         }
         @Override public void onBindViewHolder(Holder h,int p){Cell c=cells.get(p);
-            if(c.type==POSTER&&h.itemView instanceof LinearLayout){Entry e=(Entry)c.value;columns[tab].bind((LinearLayout)h.itemView,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->click.open(new Presenter.ViewHolder(v),e.media));h.itemView.setOnLongClickListener(v->{contextMenu(e,v,false);return true;});return;}
-            if(c.type==POSTER){Entry e=(Entry)c.value;h.presenter.bindEntry(h.card,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->click.open(h.card,e.media));h.itemView.setOnLongClickListener(v->{contextMenu(e,v,false);return true;});return;}
+            if(c.type==POSTER&&h.itemView instanceof LinearLayout){Entry e=(Entry)c.value;columns[tab].bind((LinearLayout)h.itemView,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->open(e,v));h.itemView.setOnLongClickListener(v->{contextMenu(e,v,false);return true;});return;}
+            if(c.type==POSTER){Entry e=(Entry)c.value;h.presenter.bindEntry(h.card,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->open(e,v));h.itemView.setOnLongClickListener(v->{contextMenu(e,v,false);return true;});return;}
             LinearLayout v=(LinearLayout)h.itemView;
             if(c.type==RAIL&&v.getChildCount()==1&&v.getChildAt(0) instanceof RecyclerView){RecyclerView rail=(RecyclerView)v.getChildAt(0);if(rail.getAdapter() instanceof RailAdapter){((RailAdapter)rail.getAdapter()).update((List<Entry>)c.value);return;}}
             v.removeAllViews();v.setFocusable(false);v.setOnClickListener(null);v.setBackground(null);v.setOrientation(LinearLayout.HORIZONTAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));
@@ -517,7 +528,7 @@ public final class PreviewPages extends FrameLayout {
         void update(List<Entry> next){List<Entry> old=new ArrayList<>(entries);entries.clear();entries.addAll(next);DiffUtil.calculateDiff(new DiffUtil.Callback(){public int getOldListSize(){return old.size();}public int getNewListSize(){return entries.size();}public boolean areItemsTheSame(int a,int b){return old.get(a).key().equals(entries.get(b).key());}public boolean areContentsTheSame(int a,int b){return entrySignature(old.get(a)).equals(entrySignature(entries.get(b)));}}).dispatchUpdatesTo(this);}
         public long getItemId(int p){return entries.get(p).key().hashCode();}public int getItemCount(){return entries.size();}
         public Holder onCreateViewHolder(ViewGroup p,int type){Presenter.ViewHolder card=pr.onCreateViewHolder(p);Holder h=new Holder(card.view);h.card=card;h.presenter=pr;RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(dp(172),dp(105));lp.rightMargin=dp(12);h.itemView.setLayoutParams(lp);return h;}
-        public void onBindViewHolder(Holder h,int p){Entry e=entries.get(p);pr.bindEntry(h.card,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->{if(resume)play(e,v);else click.open(h.card,e.media);});h.itemView.setOnLongClickListener(v->{contextMenu(e,v,resume);return true;});}
+        public void onBindViewHolder(Holder h,int p){Entry e=entries.get(p);pr.bindEntry(h.card,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->{if(resume)play(e,v);else open(e,v);});h.itemView.setOnLongClickListener(v->{contextMenu(e,v,resume);return true;});}
         public void onViewRecycled(Holder h){pr.onUnbindViewHolder(h.card);}
     }
     private void contextMenu(Entry e,View view,boolean continuing){List<String> labels=new ArrayList<>(Arrays.asList("More Info","Add to Row"));if(continuing)labels.add("Dismiss from Continue Watching");PreviewDialog.choose(getContext(),displayName(e),labels.toArray(new String[0]),-1,n->{if(n==0)open(e,view);else if(n==1)PreviewHomeRows.add(getContext(),e,this::render);else{new PreviewHomeRows(getContext()).dismiss(e);render();}});}

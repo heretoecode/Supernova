@@ -4,6 +4,8 @@ Authority: 26 September handover. This record supplements, not replaces, the 115
 
 ## Pass 1: source and requirement tracing
 
+Post-audit correction: UI-052's frequency chooser already uses PreviewDialog.choose, which obtains the current opener and places the window using PreviewMenuPlacement. The audit's missing-anchor claim was not supported after tracing that helper. Checkpoint 52 adds an actual-window regression; no replacement UI was necessary. Other scan/presentation and physical checks remain open.
+
 In progress. Recent reconciliation covers early global/Home/library requirements and the twelve put.io entries. Diagnostics coverage is being traced. Pending register entries are not completion claims; earlier implementation checkpoints and test results must be reconciled individually.
 
 ## Pass 2: rendered visual comparison

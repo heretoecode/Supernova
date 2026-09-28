@@ -11,6 +11,19 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewDialogStackTest {
+    @Test @Config(qualifiers="w960dp-h540dp") public void frequencyChoiceUsesItsOpenerAsAnAnchor(){
+        org.robolectric.android.controller.ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();
+        try{
+            Activity activity=host.get();FrameLayout root=new FrameLayout(activity);Button opener=new Button(activity);opener.setFocusableInTouchMode(true);FrameLayout.LayoutParams size=new FrameLayout.LayoutParams(180,50);size.leftMargin=500;size.topMargin=100;root.addView(opener,size);activity.setContentView(root);
+            root.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));root.layout(0,0,960,540);opener.requestFocus();Shadows.shadowOf(activity).setCurrentFocus(opener);
+            Dialog choice=PreviewDialog.choose(activity,"Frequency",new String[]{"15 minutes","30 minutes","1 hour","6 hours","24 hours"},2,n->{});
+            android.view.WindowManager.LayoutParams position=choice.getWindow().getAttributes();
+            assertEquals(android.view.Gravity.TOP|android.view.Gravity.LEFT,position.gravity);
+            assertTrue(position.x>0);assertTrue(position.y>=0);
+            View selected=choice.getWindow().getDecorView().findViewWithTag("preview-check:2");assertEquals(View.VISIBLE,selected.getVisibility());
+            choice.dismiss();assertTrue(opener.hasFocus());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void childBackRestoresMoreRowThenParentBackRestoresHero() {
         org.robolectric.android.controller.ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();
         try {

@@ -22,6 +22,7 @@ public final class OfficialTitleArtwork {
  private static final OkHttpClient HTTP=new OkHttpClient.Builder().connectTimeout(5,TimeUnit.SECONDS).readTimeout(7,TimeUnit.SECONDS).callTimeout(10,TimeUnit.SECONDS).build();
  private static final Map<TextView,String> BOUND=new WeakHashMap<>();
  private static final Map<TextView,Boolean> READY=new WeakHashMap<>();
+ private static final Map<TextView,com.archos.mediacenter.video.diagnostics.ArtworkTrace> TRACES=new WeakHashMap<>();
  private static final android.util.LruCache<String,Bitmap> ALIASES=new android.util.LruCache<>(12);
  public static boolean readyForFirstFrame(TextView view){return !Boolean.FALSE.equals(READY.get(view));}
  private static final android.util.LruCache<String,Bitmap> MEMORY=new android.util.LruCache<>(12);
@@ -36,26 +37,29 @@ public final class OfficialTitleArtwork {
   String id=info==null?null:info.isShow?info.scraperShowId:info.scraperMovieId;
   if(id==null||!id.matches("[1-9][0-9]*")){clear(view);return;}String key=(info.isShow?"tv/":"movie/")+id;request(view,key,true,()->key,null);
  }
- private static void clear(TextView view){BOUND.remove(view);READY.put(view,true);view.setForeground(null);view.setTextColor(0xffffffff);}
+ private static void clear(TextView view){com.archos.mediacenter.video.diagnostics.ArtworkTrace trace=TRACES.remove(view);if(trace!=null)trace.cancelled();BOUND.remove(view);READY.put(view,true);view.setForeground(null);view.setTextColor(0xffffffff);}
  private static void request(TextView view,String identity,boolean cachedOnly,Callable<String> resolve,Runnable changed){
   if(identity.equals(BOUND.get(view)))return;clear(view);BOUND.put(view,identity);
+  long media=0;if(identity.matches("(?:video|show)-local:[0-9]+"))try{media=Long.parseLong(identity.substring(identity.indexOf(':')+1));}catch(NumberFormatException ignored){}
+  com.archos.mediacenter.video.diagnostics.ArtworkTrace trace=new com.archos.mediacenter.video.diagnostics.ArtworkTrace(media,cachedOnly?"playback_loading":com.archos.mediacenter.video.diagnostics.Diagnostics.artworkSurface(),"title_logo",cachedOnly?"cache_only":"tmdb");TRACES.put(view,trace);
   String alias=identity+":"+Locale.getDefault().getLanguage();Bitmap existing=ALIASES.get(alias);
-  if(existing!=null){view.setForeground(new Logo(existing));view.setTextColor(Color.TRANSPARENT);READY.put(view,true);if(changed!=null)changed.run();return;}
+  if(existing!=null){view.setForeground(new Logo(existing));view.setTextColor(Color.TRANSPARENT);READY.put(view,true);trace.ready("memory_alias");if(changed!=null)changed.run();return;}
   READY.put(view,false);
   Context app=view.getContext().getApplicationContext();WeakReference<TextView> weak=new WeakReference<>(view);
-  IO.execute(()->{try{
+  IO.execute(()->{boolean submitted=false;String cacheLayer="memory";try{
    String key=resolve.call();if(key==null)return;String language=Locale.getDefault().getLanguage();String diskKey=key.replace('/','_')+"_"+language;
    Bitmap bitmap=MEMORY.get(diskKey);File directory=new File(app.getCacheDir(),"official-title-artwork"),file=new File(directory,diskKey+".png");
-   if(bitmap==null&&file.isFile())bitmap=BitmapFactory.decodeFile(file.getPath());
+   if(bitmap==null&&file.isFile()){bitmap=BitmapFactory.decodeFile(file.getPath());cacheLayer="disk";}
    if(bitmap==null&&!cachedOnly){android.content.SharedPreferences cache=app.getSharedPreferences("preview_title_logos",0);long last=cache.getLong(diskKey,0);
+    cacheLayer="network";
     if(System.currentTimeMillis()-last<86400000L)return;
     android.net.Uri uri=android.net.Uri.parse("https://api.themoviedb.org/3/"+key+"/images").buildUpon().appendQueryParameter("api_key",app.getString(com.archos.medialib.R.string.tmdb_api_key)).appendQueryParameter("include_image_language",language+",en,null").build();
     JSONObject result=new JSONObject(new String(download(uri.toString(),2*1024*1024),java.nio.charset.StandardCharsets.UTF_8));String path=select(result.optJSONArray("logos"),language);cache.edit().putLong(diskKey,System.currentTimeMillis()).apply();
     if(!path.isEmpty()){byte[] bytes=download("https://image.tmdb.org/t/p/w500"+path,4*1024*1024);BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);if(options.outWidth<=0||options.outHeight<=0||options.outWidth>4096||options.outHeight>4096)return;bitmap=BitmapFactory.decodeByteArray(bytes,0,bytes.length);if(bitmap!=null){directory.mkdirs();android.util.AtomicFile atomic=new android.util.AtomicFile(file);FileOutputStream out=null;try{out=atomic.startWrite();out.write(bytes);atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);}}}
    }
-   if(bitmap==null)return;bitmap=visibleArtwork(bitmap);MEMORY.put(diskKey,bitmap);ALIASES.put(alias,bitmap);final Bitmap ready=bitmap;TextView target=weak.get();if(target!=null)target.post(()->{TextView current=weak.get();if(current==null||!identity.equals(BOUND.get(current)))return;current.setForeground(new Logo(ready));current.setTextColor(Color.TRANSPARENT);if(changed!=null)changed.run();});
-  }catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.error("official_artwork_unavailable",unavailable);}
-  finally{TextView target=weak.get();if(target!=null)target.post(()->{TextView current=weak.get();if(current!=null&&identity.equals(BOUND.get(current)))READY.put(current,true);});}});
+   if(bitmap==null)return;bitmap=visibleArtwork(bitmap);MEMORY.put(diskKey,bitmap);ALIASES.put(alias,bitmap);final Bitmap ready=bitmap;final String origin=cacheLayer;TextView target=weak.get();if(target!=null)submitted=target.post(()->{TextView current=weak.get();if(current==null||!identity.equals(BOUND.get(current))){trace.cancelled();return;}current.setForeground(new Logo(ready));current.setTextColor(Color.TRANSPARENT);trace.ready(origin);if(changed!=null)changed.run();});
+  }catch(Exception unavailable){trace.failed(unavailable.getClass().getSimpleName(),true);}
+  finally{if(!submitted)trace.fallback("no_cached_or_available_logo");TextView target=weak.get();if(target!=null)target.post(()->{TextView current=weak.get();if(current!=null&&identity.equals(BOUND.get(current)))READY.put(current,true);});}});
  }
  static int synopsisWidth(int viewportWidth,float visibleLogoWidth){return Math.round(Math.max(viewportWidth*.25f,Math.min(viewportWidth*.32f,visibleLogoWidth*.9f)));}
  public static int synopsisWidth(TextView title,int viewportWidth){
