@@ -825,9 +825,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Artwork failure diagnostics: safe anonymous media ID, surface (Movies Grid/Home Featured/etc.), artwork type, source/cache layer attempted, failure category/reason, elapsed time, fallback attempted/succeeded. No sensitive path/token leakage.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED IN PART — ROUTE RECONCILIATION / VALIDATION PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: ArtworkTrace supplies correlated safe context and terminal outcomes. Checkpoints 52–54 validated backdrop/title-logo traces. Checkpoint 55 routes library cards, Details episode/recommendation/Extras cards, provider marks, portraits and artwork selection through equivalent traces, with explicit unknown Picasso cache layer and cancellation/rebinding/privacy regression. Checkpoint 55 Android tests and remaining-route reconciliation are pending; physical loading/fallback/soak behaviour is not verified.
 
 ### DIA-007 — Required diagnostic/reporting improvements
 

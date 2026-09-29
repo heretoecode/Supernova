@@ -37,6 +37,7 @@ public final class PreviewCardPresenter extends Presenter {
         Object boundItem;
         long diagnosticMediaId;
         int artworkGeneration;
+        com.archos.mediacenter.video.diagnostics.ArtworkTrace artworkTrace;
         public boolean artworkReady=true;
         final int width, height;
         public Card(Context c, Style style) {
@@ -106,8 +107,8 @@ public final class PreviewCardPresenter extends Presenter {
         c.diagnosticMediaId=item instanceof Video?((Video)item).getId():item instanceof Tvshow?((Tvshow)item).getTvshowId():0;
         Object identity=item instanceof Video?"video:"+((Video)item).getId():item instanceof Tvshow?"show:"+((Tvshow)item).getTvshowId():item;
         boolean sameItem=java.util.Objects.equals(identity,c.boundItem);c.boundItem=identity;
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_bind","same_item",sameItem,"style",style.name());
-        if(!sameItem){Picasso.get().cancelRequest(c.image);c.image.setImageDrawable(null);c.requestedArtwork=null;c.artworkGeneration++;}
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_bind","same_item",sameItem,"style",style.name(),"media_id",c.diagnosticMediaId,"reason",sameItem?"metadata_rebind":"identity_changed");
+        if(!sameItem){if(c.artworkTrace!=null)c.artworkTrace.cancelled();Picasso.get().cancelRequest(c.image);c.image.setImageDrawable(null);c.requestedArtwork=null;c.artworkGeneration++;}
         c.artworkReady=true;c.hasArtwork = false; c.subtitle.setText(""); c.subtitle.setVisibility(View.GONE);
         c.progress.setProgress(0); c.progress.setVisibility(View.GONE);
         Uri uri = null;boolean landscape=false;
@@ -150,14 +151,15 @@ public final class PreviewCardPresenter extends Presenter {
         c.updateFocus();
         boolean letterbox=style==Style.POSTER||(style==Style.CONTINUE||style==Style.LIST)&&!landscape;
         c.image.setScaleType(letterbox?ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_CROP);
-        if(uri==null&&c.requestedArtwork!=null){Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.artworkGeneration++;c.image.setImageDrawable(null);}
-        if(uri!=null&&!uri.equals(c.requestedArtwork)){c.requestedArtwork=uri;final int generation=++c.artworkGeneration;c.artworkReady=false;final long started=android.os.SystemClock.elapsedRealtime();
-        final String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("artwork");final long mediaId=item instanceof Video?((Video)item).getId():item instanceof Tvshow?((Tvshow)item).getTvshowId():0;final String surface=style==Style.CONTINUE?"home.row":style==Style.LIST?"library.list":item instanceof Movie?"movies.grid":"tv.grid";
-        if(com.archos.mediacenter.video.diagnostics.Diagnostics.enabled())com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_request","operation_id",operation,"media_id",mediaId,"surface",surface,"artwork_type",style==Style.POSTER?"poster":"landscape","layer","picasso_cache_and_source","retained_previous",sameItem&&c.image.getDrawable()!=null,"memory_hits",Picasso.get().getSnapshot().cacheHits,"memory_misses",Picasso.get().getSnapshot().cacheMisses);
+        if(uri==null&&c.requestedArtwork!=null){if(c.artworkTrace!=null)c.artworkTrace.cancelled();Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.artworkGeneration++;c.image.setImageDrawable(null);}
+        if(uri!=null&&!uri.equals(c.requestedArtwork)){c.requestedArtwork=uri;final int generation=++c.artworkGeneration;c.artworkReady=false;
+        final long mediaId=item instanceof Video?((Video)item).getId():item instanceof Tvshow?((Tvshow)item).getTvshowId():0;final String surface=style==Style.CONTINUE?"home.row":style==Style.LIST?"library.list":item instanceof Movie?"movies.grid":"tv.grid";
+        if(c.artworkTrace!=null)c.artworkTrace.cancelled();
+        final com.archos.mediacenter.video.diagnostics.ArtworkTrace trace=new com.archos.mediacenter.video.diagnostics.ArtworkTrace(mediaId,surface,style==Style.POSTER?"poster":"landscape",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri));c.artworkTrace=trace;
         com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(style==Style.LIST?Math.round(112*c.getResources().getDisplayMetrics().density):c.width,c.height);
         if(letterbox)request.centerInside();else request.centerCrop();request.noPlaceholder().noFade().into(c.image, new com.squareup.picasso.Callback() {
-                @Override public void onSuccess() { if(generation==c.artworkGeneration){c.artworkReady=true;com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_ready","operation_id",operation,"media_id",mediaId,"surface",surface,"latency_ms",android.os.SystemClock.elapsedRealtime()-started);} }
-                @Override public void onError(Exception error) { if(generation!=c.artworkGeneration)return;c.artworkReady=true;c.requestedArtwork=null;c.hasArtwork=c.image.getDrawable()!=null; c.updateFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_failed","operation_id",operation,"media_id",mediaId,"surface",surface,"artwork_type",style==Style.POSTER?"poster":"landscape","layer","picasso_cache_and_source","failure_type",error==null?"unknown":error.getClass().getSimpleName(),"fallback_attempted",false,"retained_visible",c.hasArtwork,"latency_ms",android.os.SystemClock.elapsedRealtime()-started); }
+                @Override public void onSuccess() { if(generation==c.artworkGeneration){c.artworkReady=true;trace.ready("picasso_unspecified");} }
+                @Override public void onError(Exception error) { if(generation!=c.artworkGeneration)return;c.artworkReady=true;c.requestedArtwork=null;c.hasArtwork=c.image.getDrawable()!=null; c.updateFocus();trace.failed(error==null?"unknown":error.getClass().getSimpleName(),c.hasArtwork); }
             });}
     }
     public void bindEntry(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){Card card=(Card)holder.view;card.preferredArtwork=entry.backdrop;try{onBindViewHolder(holder,entry.media);bindSecondary(holder,entry);}finally{card.preferredArtwork=null;}}
@@ -169,7 +171,7 @@ public final class PreviewCardPresenter extends Presenter {
         }
     }
     @Override public void onUnbindViewHolder(ViewHolder holder) {
-        Card c = (Card)holder.view; Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.boundItem=null;c.artworkGeneration++;
+        Card c = (Card)holder.view; if(c.artworkTrace!=null)c.artworkTrace.cancelled();c.artworkTrace=null;Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.boundItem=null;c.artworkGeneration++;
         c.image.setImageDrawable(null); c.setContentDescription(null);
         c.title.setText(""); c.subtitle.setText(""); c.progress.setProgress(0);
     }

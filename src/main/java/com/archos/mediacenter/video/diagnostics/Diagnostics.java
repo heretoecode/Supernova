@@ -56,6 +56,7 @@ public final class Diagnostics {
     public static void modalDepth(int depth){uiModals=Math.max(0,depth);}
     public static void focusedMedia(long id){uiMedia=Math.max(0,id);}
     public static String artworkSurface(){return uiPage;}
+    public static long artworkMedia(){return uiMedia;}
     /** Coarse connectivity only: no SSID, address, interface or network name. */
     public static String connectivity(){
         if(context==null)return "unknown";

@@ -31,8 +31,8 @@ public final class PreviewArtworkPicker {
             FrameLayout card=new FrameLayout(context);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setTag("artwork:"+i);
             card.setBackgroundColor(0xff142431);card.setForeground(PreviewDialog.focus(context));card.setContentDescription(heading+" "+(i+1));
             ImageView picture=new ImageView(context);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);card.addView(picture,new FrameLayout.LayoutParams(-1,-1));pictures.add(picture);
-            java.io.File file=image.getLargeFileF();com.squareup.picasso.RequestCreator request=file!=null&&file.isFile()?Picasso.get().load(file):Picasso.get().load(image.getLargeUrl());
-            request.resize(cardWidth,cardHeight).centerCrop().noFade().into(picture);
+            java.io.File file=image.getLargeFileF();android.net.Uri uri=file!=null&&file.isFile()?android.net.Uri.fromFile(file):image.getLargeUrl()==null?null:android.net.Uri.parse(image.getLargeUrl());
+            if(uri!=null)com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(picture,uri,com.archos.mediacenter.video.diagnostics.Diagnostics.artworkMedia(),"details.artwork_picker",posters?"poster":"backdrop",Picasso.get().load(uri).resize(cardWidth,cardHeight).centerCrop().noFade());
             TextView check=new TextView(context);check.setTag("artwork-check:"+i);check.setText("✓");check.setTextColor(Color.WHITE);check.setTextSize(22);check.setGravity(Gravity.CENTER);
             boolean current=same(image,selected);check.setVisibility(current?View.VISIBLE:View.INVISIBLE);if(current)initial=i;
             if(current)card.setContentDescription(heading+" "+(i+1)+", selected");
@@ -58,7 +58,7 @@ public final class PreviewArtworkPicker {
             });
             GridLayout.LayoutParams cell=new GridLayout.LayoutParams();cell.width=cardWidth;cell.height=cardHeight;cell.setMargins(gap,gap,gap,gap);grid.addView(card,cell);cards.add(card);
         }
-        dialog.setContentView(panel);dialog.setOnDismissListener(d->{for(ImageView picture:pictures){Picasso.get().cancelRequest(picture);picture.setImageDrawable(null);}});
+        dialog.setContentView(panel);dialog.setOnDismissListener(d->{for(ImageView picture:pictures){com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(picture);picture.setImageDrawable(null);}});
         dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setDimAmount(.32f);
         int height=PreviewDialog.dp(context,74)+(cardHeight+gap*2)*((images.size()+columns-1)/columns)+gap*2;
         dialog.getWindow().setLayout(width,Math.min(height,context.getResources().getDisplayMetrics().heightPixels-gap*4));

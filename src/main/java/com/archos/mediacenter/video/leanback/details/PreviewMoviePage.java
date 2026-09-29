@@ -322,7 +322,7 @@ public final class PreviewMoviePage extends ScrollView {
     private void person(LinearLayout people,String name,String role){
         LinearLayout card=new LinearLayout(getContext());card.setOrientation(android.widget.LinearLayout.VERTICAL);card.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);card.setBackgroundColor(Color.TRANSPARENT);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(dp(4),dp(4),dp(4),dp(4));
         // The existing scraper stores names/roles but no portrait URLs. Use the real Nova asset.
-        ImageView portrait=new ImageView(getContext());portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);portraits.put(name,portrait);portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);portrait.setClipToOutline(true);portrait.setOutlineProvider(new ViewOutlineProvider(){@Override public void getOutline(View view,android.graphics.Outline outline){outline.setRoundRect(0,0,view.getWidth(),view.getHeight(),dp(4));}});card.addView(portrait,new LinearLayout.LayoutParams(dp(52),dp(52)));
+        ImageView portrait=new ImageView(getContext()){@Override protected void onDetachedFromWindow(){com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(this);super.onDetachedFromWindow();}};portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);portraits.put(name,portrait);portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);portrait.setClipToOutline(true);portrait.setOutlineProvider(new ViewOutlineProvider(){@Override public void getOutline(View view,android.graphics.Outline outline){outline.setRoundRect(0,0,view.getWidth(),view.getHeight(),dp(4));}});card.addView(portrait,new LinearLayout.LayoutParams(dp(52),dp(52)));
         LinearLayout words=new LinearLayout(getContext());words.setOrientation(android.widget.LinearLayout.VERTICAL);words.setGravity(Gravity.CENTER_HORIZONTAL);words.setPadding(0,dp(6),0,0);card.addView(words,new LinearLayout.LayoutParams(-1,-2));
         TextView label=text(name,11);label.setGravity(Gravity.CENTER);label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);words.addView(label,new LinearLayout.LayoutParams(-1,dp(28)));TextView detail=text(role==null?"":role,9);detail.setGravity(Gravity.CENTER);detail.setMaxLines(1);detail.setTextColor(0xffa4b6c7);words.addView(detail);card.setContentDescription(name+" "+safe(role));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(96),dp(108));lp.rightMargin=dp(10);people.addView(card,lp);card.setTag("person:"+name+":"+safe(role));rowKeys(card,people);
         card.setForeground(PreviewDialog.focus(getContext()));card.setOnFocusChangeListener((v,f)->v.animate().scaleX(f?1.08f:1f).scaleY(f?1.08f:1f).setDuration(140).start());
@@ -340,7 +340,7 @@ public final class PreviewMoviePage extends ScrollView {
                 if(name.isEmpty()||section.equals("crew")&&!Arrays.asList("Director","Writer","Screenplay","Story","Creator","Producer","Executive Producer","Original Music Composer","Director of Photography","Editor").contains(role))continue;
                 if(!seen.add(value.optLong("id")+":"+name+":"+role))continue;
                 person(people,name,role);ImageView portrait=portraits.get(name);String path=value.optString("profile_path");
-                if(portrait!=null&&path.matches("/[A-Za-z0-9._-]+"))com.squareup.picasso.Picasso.get().load("https://image.tmdb.org/t/p/w185"+path).fit().centerCrop().placeholder(com.archos.mediacenter.video.R.drawable.preview_person).into(portrait);
+                if(portrait!=null&&path.matches("/[A-Za-z0-9._-]+")){Uri uri=Uri.parse("https://image.tmdb.org/t/p/w185"+path);com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(portrait,uri,diagnosticMedia(),"details."+section,"portrait",com.squareup.picasso.Picasso.get().load(uri).fit().centerCrop().placeholder(com.archos.mediacenter.video.R.drawable.preview_person).error(com.archos.mediacenter.video.R.drawable.preview_person),true);}
             }
             target.removeAllViews();PreviewPeopleRail rail=new PreviewPeopleRail(getContext());rail.addView(people);target.addView(rail);
             ((View)target.getParent()).setVisibility(people.getChildCount()==0?GONE:VISIBLE);restoreRowFocus(target,focusKey,y);
@@ -392,11 +392,11 @@ public final class PreviewMoviePage extends ScrollView {
             else if(recommendation.provider!=null){
                 org.json.JSONObject value=recommendation.title;String name=value.optString("title",value.optString("name"));String backdrop=value.optString("backdrop_path");
                 PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
-                card.bind(name,value.optString("release_date",value.optString("first_air_date")).replaceFirst("-.*$",""),backdrop.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+backdrop):null,true);
+                card.bind(name,value.optString("release_date",value.optString("first_air_date")).replaceFirst("-.*$",""),backdrop.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+backdrop):null,true,id,"details.related","landscape");
                 card.availability.setImageDrawable(new PreviewIcon("streaming"));
                 card.availability.setColorFilter(Color.WHITE,android.graphics.PorterDuff.Mode.SRC_IN);
                 String logo=recommendation.provider.logo;
-                if(logo!=null&&logo.matches("/[A-Za-z0-9._-]+"))com.squareup.picasso.Picasso.get().load("https://image.tmdb.org/t/p/w154"+logo).into(card.availability);
+                if(logo!=null&&logo.matches("/[A-Za-z0-9._-]+")){Uri uri=Uri.parse("https://image.tmdb.org/t/p/w154"+logo);com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(card.availability,uri,id,"details.related","provider_mark",com.squareup.picasso.Picasso.get().load(uri));}
                 card.setTag("remote:"+id);card.setContentDescription(name+" · "+recommendation.provider.name);
                 card.setOnClickListener(v->getContext().startActivity(new Intent(getContext(),com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity.class).putExtra("kind",television?"tv":"movie").putExtra("tmdb_id",id)));
                 addRecommendation(card);shown.add("id:"+id);
@@ -413,7 +413,7 @@ public final class PreviewMoviePage extends ScrollView {
     }
     private void addLocalRecommendation(Entry entry){
         PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
-        card.bind(PreviewPages.displayName(entry),entry.year()>0?String.valueOf(entry.year()):"",entry.backdrop!=null?entry.backdrop:entry.media.getPosterUri(),true);
+        card.bind(PreviewPages.displayName(entry),entry.year()>0?String.valueOf(entry.year()):"",entry.backdrop!=null?entry.backdrop:entry.media.getPosterUri(),true,entry.media instanceof Video?((Video)entry.media).getId():entry.media instanceof Tvshow?((Tvshow)entry.media).getTvshowId():0,"details.related","landscape");
         card.setTag("related:"+entry.key());
         card.setOnClickListener(v->new VideoViewClickedListener((Activity)getContext()).onItemClicked(new Presenter.ViewHolder(v),entry.media,null,null));
         addRecommendation(card);
@@ -447,7 +447,7 @@ public final class PreviewMoviePage extends ScrollView {
                 if(column%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);trailers.addView(row);}
                 PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
                 // TMDb videos do not provide reliable duration; leave it absent rather than inventing one.
-                card.bind(safe(extra.mName),"",Uri.parse("https://i.ytimg.com/vi/"+extra.mVideoKey+"/hqdefault.jpg"),true);
+                card.bind(safe(extra.mName),"",Uri.parse("https://i.ytimg.com/vi/"+extra.mVideoKey+"/hqdefault.jpg"),true,diagnosticMedia(),"details.extras","video_thumbnail");
                 card.setTag("extra:"+extra.mVideoKey);card.setOnClickListener(v->PreviewTrailer.show((Activity)getContext(),extra));
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(142),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);extraCards.add(card);rowKeys(card,row);column++;
             }
@@ -456,6 +456,7 @@ public final class PreviewMoviePage extends ScrollView {
         restoreRowFocus(trailers,focusKey,y);
     }
     public void bindRemote(org.json.JSONObject details,String kind,long id){remoteDetails=details;remoteKind=kind;remoteId=id;title.setText(details.optString("title",details.optString("name")));plot.setText(details.optString("overview"));meta.setText(details.optString("release_date",details.optString("first_air_date")));String backdrop=details.optString("backdrop_path");if(backdrop.matches("/[A-Za-z0-9._-]+"))artwork.accept(Uri.parse("https://image.tmdb.org/t/p/w1280"+backdrop));play.setVisibility(GONE);renderDetails();requestEnrichment();}
+    private long diagnosticMedia(){return movie!=null?movie.getId():show!=null?show.getTvshowId():remoteId;}
     private void requestEnrichment(){
         long id=remoteDetails!=null?remoteId:movie instanceof Movie?((Movie)movie).getOnlineId():tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null?((EpisodeTags)tags).getShowTags().getOnlineId():show!=null&&show.getShowTags()!=null?show.getShowTags().getOnlineId():0;
         String kind=remoteDetails!=null?remoteKind:show!=null||movie instanceof Episode?"tv":"movie";if(id<=0)return;

@@ -21,16 +21,16 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
             PreviewEpisodeChoice choice=episodes.get(position);Episode ep=choice.local;PreviewLandscapeCard card=(PreviewLandscapeCard)holder.itemView;
             card.progress.setVisibility(View.GONE);card.setOnClickListener(null);card.setClickable(false);
             if(ep!=null){
-                card.bind(ep.getEpisodeNumber()+" · "+ep.getEpisodeName(),(ep.getDurationMs()>0?ep.getDurationMs()/60000+" min":"")+(PreviewSeriesJourney.completed(ep)?" · Watched":""),ep.getPictureUri()!=null?ep.getPictureUri():ep.getPreviewBackdrop(),true);
+                card.bind(ep.getEpisodeNumber()+" · "+ep.getEpisodeName(),(ep.getDurationMs()>0?ep.getDurationMs()/60000+" min":"")+(PreviewSeriesJourney.completed(ep)?" · Watched":""),ep.getPictureUri()!=null?ep.getPictureUri():ep.getPreviewBackdrop(),true,ep.getId(),"details.episodes","episode_still");
                 card.setTag("episode:"+ep.getId());card.progress.setProgress(com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(ep.getResumeMs(),ep.getDurationMs()));card.progress.setVisibility(ep.getResumeMs()>0?View.VISIBLE:View.GONE);
                 card.setOnClickListener(v->new VideoViewClickedListener(activity).onItemClicked(new Presenter.ViewHolder(v),ep,null,null));return;
             }
             org.json.JSONObject remote=choice.remote;String name=choice.number+" · "+remote.optString("name","Episode "+choice.number),still=remote.optString("still_path");int runtime=remote.optInt("runtime");
             List<StreamingRepository.Offer> offers=availability!=null&&StreamingRepository.prefs(activity).getBoolean(StreamingRepository.ENABLED,false)&&aired(remote.optString("air_date"))?StreamingRepository.filter(availability,StreamingRepository.selected(activity),StreamingRepository.preferred(activity)):Collections.emptyList();
-            card.bind(name,(runtime>0?runtime+" min · ":"")+(offers.isEmpty()?"Unavailable":offers.get(0).provider.name),still.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+still):null,!offers.isEmpty());card.setTag("remote-episode:"+choice.season+":"+choice.number);
+            card.bind(name,(runtime>0?runtime+" min · ":"")+(offers.isEmpty()?"Unavailable":offers.get(0).provider.name),still.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+still):null,!offers.isEmpty(),remote.optLong("id"),"details.episodes","episode_still");card.setTag("remote-episode:"+choice.season+":"+choice.number);
             if(!offers.isEmpty()){
                 StreamingRepository.Provider provider=offers.get(0).provider;card.availability.setImageDrawable(new PreviewIcon("streaming"));card.availability.setColorFilter(android.graphics.Color.WHITE,android.graphics.PorterDuff.Mode.SRC_IN);card.availability.setImageAlpha(205);
-                if(provider.logo!=null&&provider.logo.matches("/[A-Za-z0-9._-]+"))com.squareup.picasso.Picasso.get().load("https://image.tmdb.org/t/p/w154"+provider.logo).into(card.availability);
+                if(provider.logo!=null&&provider.logo.matches("/[A-Za-z0-9._-]+")){Uri logo=Uri.parse("https://image.tmdb.org/t/p/w154"+provider.logo);com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(card.availability,logo,remote.optLong("id"),"details.episodes","provider_mark",com.squareup.picasso.Picasso.get().load(logo));}
                 card.setOnClickListener(v->{String[] labels=new String[offers.size()];for(int i=0;i<labels.length;i++)labels[i]="Watch on "+offers.get(i).provider.name;
                     PreviewDialog.choose(activity,name,labels,0,index->StreamingRepository.IO.submit(()->{
                         String link=StreamingRepository.titleLink(activity.getApplicationContext(),"tv",showId,StreamingRepository.country(activity),availability,offers.get(index).provider.id);

@@ -6,6 +6,7 @@ import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.squareup.picasso.Picasso;
+import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
 
 /** Shared landscape discovery/episode card with clean artwork and boundary focus. */
 final class PreviewLandscapeCard extends LinearLayout {
@@ -18,8 +19,9 @@ final class PreviewLandscapeCard extends LinearLayout {
         title=text(13);metadata=text(11);title.setPadding(dp(4),dp(5),dp(4),0);metadata.setPadding(dp(4),0,dp(4),dp(4));addView(title);addView(metadata);
         setOnFocusChangeListener((v,focus)->{availability.setVisibility(Boolean.TRUE.equals(availability.getTag())&&focus?VISIBLE:INVISIBLE);animate().scaleX(focus?1.08f:1f).scaleY(focus?1.08f:1f).setDuration(140).start();});
     }
-    void bind(String name,String detail,Uri art,boolean localIndicator){title.setText(name);metadata.setText(detail);metadata.setVisibility(detail==null||detail.isEmpty()?GONE:VISIBLE);availability.setTag(localIndicator);availability.setVisibility(localIndicator&&hasFocus()?VISIBLE:INVISIBLE);Picasso.get().cancelRequest(image);Picasso.get().cancelRequest(availability);availability.setImageDrawable(playGlyph);availability.clearColorFilter();availability.setImageAlpha(255);image.setImageDrawable(null);if(art!=null)Picasso.get().load(art).resize(dp(360),dp(204)).centerCrop().noFade().into(image);setContentDescription(name+(detail==null?"":" · "+detail));}
-    void release(){Picasso.get().cancelRequest(image);Picasso.get().cancelRequest(availability);image.setImageDrawable(null);}
+    void bind(String name,String detail,Uri art,boolean localIndicator){bind(name,detail,art,localIndicator,0,"details","landscape");}
+    void bind(String name,String detail,Uri art,boolean localIndicator,long media,String surface,String type){title.setText(name);metadata.setText(detail);metadata.setVisibility(detail==null||detail.isEmpty()?GONE:VISIBLE);availability.setTag(localIndicator);availability.setVisibility(localIndicator&&hasFocus()?VISIBLE:INVISIBLE);ArtworkRequest.cancel(image);ArtworkRequest.cancel(availability);availability.setImageDrawable(playGlyph);availability.clearColorFilter();availability.setImageAlpha(255);image.setImageDrawable(null);if(art!=null)ArtworkRequest.load(image,art,media,surface,type,Picasso.get().load(art).resize(dp(360),dp(204)).centerCrop().noFade());setContentDescription(name+(detail==null?"":" · "+detail));}
+    void release(){ArtworkRequest.cancel(image);ArtworkRequest.cancel(availability);image.setImageDrawable(null);}
     private TextView text(int size){TextView text=new TextView(getContext());text.setTextSize(size);text.setTextColor(0xffe1e9ef);text.setSingleLine(true);text.setEllipsize(android.text.TextUtils.TruncateAt.END);text.setTypeface(android.graphics.Typeface.create("sans-serif-light",0));return text;}
     private int dp(int n){return PreviewDialog.dp(getContext(),n);}
 }

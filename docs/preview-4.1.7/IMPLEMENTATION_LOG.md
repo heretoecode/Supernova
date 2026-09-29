@@ -794,3 +794,10 @@ These changes require a full CI rerun; no failures are waived.
 ### Checkpoint 54 validation correction
 
 - CI 36491115615 failed while applying the backend patch, before Java compilation or tests. The generated diff included three unintended end-of-file blank-line removals; the locally retrieved comparison copies had an extra final blank line absent from the pinned CI checkout. Removed only those non-functional hunks. The scan changes and tests are retained and require a fresh CI run. No tests from the failed run are reported as passed.
+
+## Post-audit checkpoint 55 — correlated artwork routes
+
+- Corrected checkpoint 54 CI 36491589158 passed every gate: 119 targeted, 338 complete Video, 83 selected regression and 17 WebDAV test invocations, zero failures. This validates the actual metadata-enqueue outcome and batch/source accounting regressions. Sets overlap; no APK or physical QA is implied.
+- Shared correlated artwork traces now cover library cards, episode stills, recommendations, Extras thumbnails, provider marks, individual cast/crew portraits and the artwork picker, alongside the existing backdrop/title-logo routes. Replaced/recycled requests terminate once; stale callbacks cannot turn cancelled requests into successful outcomes. Portrait failures retain an explicit neutral silhouette.
+- Records carry numeric media context, structural surface/type, coarse source, elapsed time and fallback outcome. Picasso callbacks that do not expose the actual cache layer report picasso_unspecified rather than guessing. No URI, path, title, person name or exception message is recorded by the adapter.
+- Added a regression for cancellation/rebinding, late callback suppression, fallback reporting and privacy. Java syntax (811 files), 431 XML/identity/whitespace checks and six Python tests pass locally; new Android validation remains required. Full diagnostic route reconciliation and physical artwork/soak QA remain open.
