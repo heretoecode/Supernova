@@ -327,7 +327,8 @@ public final class PreviewPages extends FrameLayout {
         render("control_change");
     }
     private void render(String reason) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState(new String[]{"home","movies","tv","network"}[tab],"none",tab>0&&tab<3&&listMode[tab]?"list":"grid",tab<3?String.valueOf(sorts[tab]):"none",tab>0&&tab<3?(genres[tab].isEmpty()?"":"genre,")+(selectedYears[tab].isEmpty()?"":"year,")+(providers[tab].isEmpty()?"":"provider,")+(unmatched[tab]?"unmatched":""):"none",0);
+        if(tab==1||tab==2)com.archos.mediacenter.video.diagnostics.Diagnostics.libraryState(tab==1?"movies":"tv",listMode[tab]?"list":"grid",(columns[tab].sortColumn==null?"preset_"+sorts[tab]:columns[tab].sortColumn.name())+":"+((columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?"ascending":"descending"),genres[tab],selectedYears[tab],providers[tab],unmatched[tab]);
+        else com.archos.mediacenter.video.diagnostics.Diagnostics.uiState(tab==0?"home":"network","none","grid","none","none",0);
         long started=android.os.SystemClock.elapsedRealtime();
         List<Cell> previous=new ArrayList<>(cells);
         persistViews();

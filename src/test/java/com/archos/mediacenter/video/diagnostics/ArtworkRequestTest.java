@@ -17,6 +17,9 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class ArtworkRequestTest {
+    @org.junit.Before public void initialisePicasso(){
+        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException uninitialised){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
+    }
     @Test public void rebindTerminatesOldRequestAndDoesNotLeakSourceOrFailureMessage()throws Exception{
         Application app=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(app,true);
         ImageView view=new ImageView(app);

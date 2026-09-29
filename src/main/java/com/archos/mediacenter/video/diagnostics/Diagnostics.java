@@ -41,19 +41,34 @@ public final class Diagnostics {
     private static long focusAt;
     private static volatile String uiScreen="unknown",uiFocus="none",uiPage="unknown",uiCategory="none",uiMode="unknown",uiSort="unknown",uiFilters="none";
     private static volatile long uiMedia;
+    private static volatile String uiFilterDetails="{}";
     private static volatile int uiModals;
+    private static volatile String uiModalKinds="none";
     /** Immutable failure-time state; worker queue delays must not change its meaning. */
     static final class UiSnapshot {
-        final String screen=uiScreen,focus=uiFocus,page=uiPage,category=uiCategory,mode=uiMode,sort=uiSort,filters=uiFilters;
-        final long media=uiMedia,utc=System.currentTimeMillis();
-        final int modals=uiModals,foregroundCount=foreground;
+        final String screen,focus,page,category,mode,sort,filters,filterDetails,modalKinds;
+        final long media,utc;
+        final int modals,foregroundCount;
+        UiSnapshot(){synchronized(Diagnostics.class){screen=uiScreen;focus=uiFocus;page=uiPage;category=uiCategory;mode=uiMode;sort=uiSort;filters=uiFilters;filterDetails=uiFilterDetails;modalKinds=uiModalKinds;media=uiMedia;utc=System.currentTimeMillis();modals=uiModals;foregroundCount=foreground;}}
     }
     /** Only structural, developer-owned labels belong here; never titles, queries or paths. */
-    public static void uiState(String page,String category,String mode,String sort,String filters,long media){
-        uiPage=uiLabel(page);uiCategory=uiLabel(category);uiMode=uiLabel(mode);uiSort=uiLabel(sort);uiFilters=uiLabel(filters);uiMedia=Math.max(0,media);
+    public static synchronized void uiState(String page,String category,String mode,String sort,String filters,long media){
+        uiPage=uiLabel(page);uiCategory=uiLabel(category);uiMode=uiLabel(mode);uiSort=uiLabel(sort);uiFilters=uiLabel(filters);uiFilterDetails="{}";uiMedia=Math.max(0,media);
     }
+    /** Numeric filter values only; arbitrary genre metadata is represented by count and digest. */
+    public static synchronized void libraryState(String page,String mode,String sort,String genres,String years,String providers,boolean unmatched){
+        uiState(page,"library",mode,sort,(genres.isEmpty()?"":"genre,")+(years.isEmpty()?"":"year,")+(providers.isEmpty()?"":"provider,")+(unmatched?"unmatched":""),0);
+        try{
+            java.util.Set<String> genreSet=new java.util.TreeSet<>();for(String genre:genres.split("\\|"))if(!genre.trim().isEmpty())genreSet.add(genre.trim());
+            String digest="none";
+            if(!genreSet.isEmpty()){byte[] hash=java.security.MessageDigest.getInstance("SHA-256").digest(android.text.TextUtils.join("|",genreSet).getBytes(java.nio.charset.StandardCharsets.UTF_8));StringBuilder value=new StringBuilder();for(byte b:hash)value.append(String.format(java.util.Locale.ROOT,"%02x",b));digest=value.toString();}
+            uiFilterDetails=new org.json.JSONObject().put("genre_count",genreSet.size()).put("genre_selection_id",digest).put("years",numericFilters(years)).put("provider_ids",numericFilters(providers)).put("unmatched",unmatched).toString();
+        }catch(Exception unavailable){uiFilterDetails="{}";}
+    }
+    private static org.json.JSONArray numericFilters(String values){org.json.JSONArray result=new org.json.JSONArray();for(String value:values.split("\\|"))if(value.matches("[0-9]{1,9}")&&result.length()<100)result.put(Long.parseLong(value));return result;}
     static String uiLabel(String value){return value==null||value.isEmpty()?"none":value.matches("[A-Za-z0-9_.:,& -]{1,100}")?value:"unknown";}
-    public static void modalDepth(int depth){uiModals=Math.max(0,depth);}
+    public static synchronized void modalDepth(int depth){modalState(depth,depth>0?"unknown":"none");}
+    public static synchronized void modalState(int depth,String kinds){uiModals=Math.max(0,depth);uiModalKinds=uiModals==0?"none":uiLabel(kinds);}
     public static void focusedMedia(long id){uiMedia=Math.max(0,id);}
     public static String artworkSurface(){return uiPage;}
     public static long artworkMedia(){return uiMedia;}
@@ -231,7 +246,7 @@ public final class Diagnostics {
         }catch(RuntimeException ignored){/* Missing resource data must not prevent incident capture. */}
         Runtime runtime=Runtime.getRuntime();
         return record("incident_capture","reason",reason,"incident_id",incidentId,"foreground",state.foregroundCount,"failure_utc_ms",state.utc,
-                "screen",state.screen,"page",state.page,"category",state.category,"focused_control",state.focus,"view_mode",state.mode,"sort",state.sort,"active_filters",state.filters,"media_id",state.media,"modal_depth",state.modals,
+                "screen",state.screen,"page",state.page,"category",state.category,"focused_control",state.focus,"view_mode",state.mode,"sort",state.sort,"active_filters",state.filters,"filter_state",state.filterDetails,"media_id",state.media,"modal_depth",state.modals,"modal_kinds",state.modalKinds,
                 "heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),
                 "native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"available_memory",available,
                 "low_memory",lowMemory,"storage_free",context.getFilesDir().getUsableSpace(),"thread_count",Thread.activeCount());

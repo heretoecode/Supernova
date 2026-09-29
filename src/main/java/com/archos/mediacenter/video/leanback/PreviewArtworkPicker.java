@@ -14,7 +14,7 @@ import java.util.function.*;
 public final class PreviewArtworkPicker {
     public static Dialog show(Context context,String heading,List<ScraperImage> images,ScraperImage selected,boolean posters,
                               BiConsumer<ScraperImage,Consumer<Boolean>> apply) {
-        Dialog dialog=PreviewDialog.create(context);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Dialog dialog=PreviewDialog.create(context,"artwork_picker");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel=new LinearLayout(context);panel.setOrientation(LinearLayout.VERTICAL);
         int gap=PreviewDialog.dp(context,12);panel.setPadding(gap,gap,gap,gap);panel.setBackground(PreviewDialog.menuSurface(context));
         TextView title=new TextView(context);title.setText(heading);title.setTextColor(Color.WHITE);title.setTextSize(19);panel.addView(title);

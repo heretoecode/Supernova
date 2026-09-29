@@ -9,6 +9,31 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void nestedDialogSnapshotRetainsKindsAfterDismissal()throws Exception{
+        android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        Diagnostics.setEnabled(activity,true);
+        android.app.Dialog parent=com.archos.mediacenter.video.leanback.PreviewDialog.create(activity,"reader"),child=com.archos.mediacenter.video.leanback.PreviewDialog.create(activity,"choice");
+        try{
+            parent.show();child.show();Diagnostics.UiSnapshot captured=new Diagnostics.UiSnapshot();child.dismiss();parent.dismiss();
+            org.json.JSONObject row=new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed",captured));
+            assertEquals(2,row.getInt("modal_depth"));assertEquals("reader,choice",row.getString("modal_kinds"));
+            row=new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed",new Diagnostics.UiSnapshot()));assertEquals(0,row.getInt("modal_depth"));assertEquals("none",row.getString("modal_kinds"));
+        }finally{child.dismiss();parent.dismiss();Diagnostics.setEnabled(activity,false);activity.finish();}
+    }
+    @Test public void librarySnapshotRetainsSafeFilterValuesAndExactSort()throws Exception{
+        Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
+        try{
+            Diagnostics.libraryState("movies","list","SIZE:descending","Drama|private-filename.mkv","2024|2025|secret","8|9|https://private.example",true);
+            Diagnostics.UiSnapshot captured=new Diagnostics.UiSnapshot();
+            Diagnostics.uiState("settings","playback","workspace","none","none",0);
+            String text=Diagnostics.incidentContext("artwork_failed",captured);org.json.JSONObject row=new org.json.JSONObject(text);
+            assertEquals("SIZE:descending",row.getString("sort"));assertFalse(text.contains("private"));assertFalse(text.contains("secret"));assertFalse(text.contains("Drama"));
+            org.json.JSONObject filters=new org.json.JSONObject(row.getString("filter_state"));
+            assertEquals(2,filters.getInt("genre_count"));assertEquals(64,filters.getString("genre_selection_id").length());
+            assertEquals("[2024,2025]",filters.getJSONArray("years").toString());assertEquals("[8,9]",filters.getJSONArray("provider_ids").toString());assertTrue(filters.getBoolean("unmatched"));
+            assertEquals("{}",new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed",new Diagnostics.UiSnapshot())).getString("filter_state"));
+        }finally{Diagnostics.uiState("unknown","none","unknown","unknown","none",0);Diagnostics.setEnabled(c,false);}
+    }
     @Test public void delayedIncidentKeepsFailureTimeState()throws Exception{
         Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
         try{

@@ -10,18 +10,22 @@ import java.util.function.IntConsumer;
 /** Content-sized Nova menus. The caller still owns every real action and selection. */
 public final class PreviewDialog {
  private static final java.util.Map<Context,java.util.List<java.lang.ref.WeakReference<Dialog>>> WINDOWS=new java.util.WeakHashMap<>();
+ private static final java.util.Map<Dialog,String> KINDS=new java.util.WeakHashMap<>();
  /** Shared child-dialog lifetime: Back restores the opener in the parent window. */
  public static Dialog create(Context context){
+  return create(context,"dialog");
+ }
+ public static Dialog create(Context context,String kind){
   Context owner=owner(context);View opener=anchor(context);
   String restorationToken=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(opener,"dialog");
   java.lang.ref.WeakReference<View> previous=new java.lang.ref.WeakReference<>(opener);
   java.lang.ref.WeakReference<View> previousRoot=new java.lang.ref.WeakReference<>(opener==null?null:opener.getRootView());
   Object semantic=opener==null?null:opener.getTag();int id=opener==null?View.NO_ID:opener.getId();
-  return new Dialog(context){
-   @Override protected void onStart(){super.onStart();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.computeIfAbsent(owner,k->new java.util.ArrayList<>());windows.removeIf(reference->reference.get()==null||reference.get()==this);windows.add(new java.lang.ref.WeakReference<>(this));com.archos.mediacenter.video.diagnostics.Diagnostics.modalDepth(windows.size());}
+  Dialog dialog=new Dialog(context){
+   @Override protected void onStart(){super.onStart();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.computeIfAbsent(owner,k->new java.util.ArrayList<>());windows.removeIf(reference->reference.get()==null||reference.get()==this);windows.add(new java.lang.ref.WeakReference<>(this));modalState(windows);}
    @Override public void dismiss(){
     boolean showing=isShowing();super.dismiss();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.get(owner);if(windows!=null){windows.removeIf(reference->reference.get()==null||reference.get()==this);if(windows.isEmpty())WINDOWS.remove(owner);}
-    com.archos.mediacenter.video.diagnostics.Diagnostics.modalDepth(windows==null?0:windows.size());
+    modalState(windows);
     if(!showing)return;View root=previousRoot.get(),requested=previous.get(),target=requested;boolean fallback=false;
     if(root==null||!root.isAttachedToWindow())return;
     Dialog parent=top(owner);if(parent!=null&&parent.getWindow()!=null&&parent.getWindow().getDecorView()!=root)return;
@@ -32,7 +36,9 @@ public final class PreviewDialog {
     boolean restored=target!=null&&target.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(restorationToken,requested,target,fallback,restored);
    }
   };
+  KINDS.put(dialog,java.util.Arrays.asList("dialog","choice","reader","review","artwork_picker").contains(kind)?kind:"dialog");return dialog;
  }
+ private static void modalState(java.util.List<java.lang.ref.WeakReference<Dialog>> windows){java.util.List<String> kinds=new java.util.ArrayList<>();if(windows!=null)for(java.lang.ref.WeakReference<Dialog> reference:windows){Dialog dialog=reference.get();if(dialog!=null)kinds.add(KINDS.getOrDefault(dialog,"dialog"));}com.archos.mediacenter.video.diagnostics.Diagnostics.modalState(kinds.size(),android.text.TextUtils.join(",",kinds));}
  private static Context owner(Context context){while(context instanceof android.content.ContextWrapper&&!(context instanceof android.app.Activity)){Context base=((android.content.ContextWrapper)context).getBaseContext();if(base==context)break;context=base;}return context;}
  private static Dialog top(Context context){java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.get(owner(context));if(windows!=null)for(int i=windows.size()-1;i>=0;i--){Dialog dialog=windows.get(i).get();if(dialog!=null&&dialog.isShowing())return dialog;}return null;}
  /** Presentation only for retained credential/artwork dialogs; original listeners and inputs remain. */
@@ -56,7 +62,7 @@ public final class PreviewDialog {
   return readInternal(c,title,body,null,confirmation,accepted);
  }
  private static Dialog readInternal(Context c,String title,String body,android.graphics.Bitmap referenceImage,String confirmation,Runnable accepted){
-  Dialog dialog=create(c);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(surface(c,false));
+  Dialog dialog=create(c,accepted==null?"reader":"review");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(surface(c,false));
   TextView heading=new TextView(c);heading.setText(title);heading.setTextSize(20);heading.setTextColor(Color.WHITE);panel.addView(heading);
   ScrollView scroll=new ScrollView(c);TextView text=new TextView(c);text.setText(body);text.setTextColor(0xffd2e1ed);text.setTextSize(13);text.setPadding(0,dp(c,14),0,dp(c,14));View content=text;
   if(referenceImage!=null){LinearLayout reference=new LinearLayout(c);reference.setGravity(Gravity.CENTER_VERTICAL);reference.addView(text,new LinearLayout.LayoutParams(0,-2,1));ImageView image=new ImageView(c);image.setImageBitmap(referenceImage);image.setScaleType(ImageView.ScaleType.FIT_CENTER);image.setContentDescription("QR containing only report reference, category and timestamp");LinearLayout.LayoutParams picture=new LinearLayout.LayoutParams(dp(c,180),dp(c,180));picture.setMargins(dp(c,16),dp(c,12),0,dp(c,12));reference.addView(image,picture);content=reference;}
@@ -74,7 +80,7 @@ public final class PreviewDialog {
  }
  public static Dialog choose(Context c,String title,String[] labels,int selected,java.util.Set<Integer> checked,boolean dismissOnSelect,IntConsumer action){
   View anchor=anchor(c);
-  Dialog d=create(c);d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+  Dialog d=create(c,"choice");d.requestWindowFeature(Window.FEATURE_NO_TITLE);
   LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);int pad=dp(c,12);panel.setPadding(pad,pad,Math.round(pad*1.2f),pad);panel.setBackground(menuSurface(c));panel.setClipChildren(false);panel.setClipToPadding(false);
   TextView heading=new TextView(c);heading.setText(title);heading.setTextSize(17);heading.setTextColor(Color.WHITE);heading.setPadding(dp(c,6),dp(c,2),0,dp(c,12));panel.addView(heading);View divider=new View(c);divider.setBackgroundColor(0x50426a80);panel.addView(divider,new LinearLayout.LayoutParams(-1,dp(c,1)));
   ScrollView scroll=new ScrollView(c);scroll.setVerticalScrollBarEnabled(false);LinearLayout rows=new LinearLayout(c);rows.setOrientation(android.widget.LinearLayout.VERTICAL);scroll.addView(rows);panel.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
