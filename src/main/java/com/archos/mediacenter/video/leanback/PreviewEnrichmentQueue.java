@@ -75,13 +75,18 @@ public final class PreviewEnrichmentQueue {
     private static void start(Context app){if(retry!=null){retry.cancel(false);retry=null;}if(!draining){draining=true;WORK.execute(()->drain(app));}}
     private static void waitForRetry(Context app,SQLiteDatabase db){
         draining=false;
-        try(Cursor pending=db.rawQuery("SELECT MIN(next_at) FROM jobs WHERE stage<?",new String[]{String.valueOf(SECTIONS.length)})){
+        String suffix=":"+scope(app);
+        try(Cursor pending=db.rawQuery("SELECT MIN(next_at) FROM jobs WHERE stage<? AND substr(identity,length(identity)-length(?)+1)=?",new String[]{String.valueOf(SECTIONS.length),suffix,suffix})){
             if(pending.moveToFirst()&&!pending.isNull(0))retry=WORK.schedule(()->start(app),Math.max(250,pending.getLong(0)-System.currentTimeMillis()),TimeUnit.MILLISECONDS);
         }
     }
+    static Cursor nextJob(SQLiteDatabase db,String currentScope,long now){
+        String suffix=":"+currentScope;
+        return db.rawQuery("SELECT identity,kind,media,stage,season_cursor FROM jobs WHERE stage<? AND next_at<=? AND substr(identity,length(identity)-length(?)+1)=? ORDER BY priority,next_at,identity LIMIT 1",new String[]{String.valueOf(SECTIONS.length),String.valueOf(now),suffix,suffix});
+    }
     private static void drain(Context app) {
         SQLiteDatabase db=store(app).getWritableDatabase();String key,kind;long id;int stage,seasonCursor;
-        try(Cursor cursor=db.rawQuery("SELECT identity,kind,media,stage,season_cursor FROM jobs WHERE stage<? AND next_at<=? ORDER BY priority,next_at,identity LIMIT 1",new String[]{String.valueOf(SECTIONS.length),String.valueOf(System.currentTimeMillis())})){
+        try(Cursor cursor=nextJob(db,scope(app),System.currentTimeMillis())){
             if(!cursor.moveToFirst()){waitForRetry(app,db);return;}key=cursor.getString(0);kind=cursor.getString(1);id=cursor.getLong(2);stage=cursor.getInt(3);seasonCursor=cursor.getInt(4);
         }
         long started=android.os.SystemClock.elapsedRealtime();String operation=Diagnostics.operation("metadata_package");
@@ -97,6 +102,8 @@ public final class PreviewEnrichmentQueue {
                         if(number<0)throw new java.io.IOException("Invalid season identity");
                         String section="season/"+number;StreamingRepository.metadata(app,kind,id,section);
                         if(!PreviewMetadataCache.fresh(app,kind,id,section))throw new java.io.IOException("Season refresh retained stale cache");
+                        if(StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false))StreamingRepository.load(app,kind,id,StreamingRepository.country(app),number);
+                        if(!key.endsWith(":"+scope(app)))return;
                         db.execSQL("UPDATE jobs SET season_cursor=? WHERE identity=?",new Object[]{seasonCursor+1,key});
                         if(seasonCursor+1<seasons.length())return; // finally schedules the next pre-emptible turn.
                     }
@@ -109,6 +116,7 @@ public final class PreviewEnrichmentQueue {
                 StreamingRepository.metadata(app,kind,id,SECTIONS[stage]);
                 if(!PreviewMetadataCache.fresh(app,kind,id,SECTIONS[stage]))throw new java.io.IOException("Metadata refresh retained stale cache");
             }
+            if(!key.endsWith(":"+scope(app)))return;
             db.execSQL("UPDATE jobs SET stage=?,next_at=0,completed_at=?,priority=CASE WHEN ? THEN ? ELSE priority END WHERE identity=?",new Object[]{stage+1,stage+1==SECTIONS.length?System.currentTimeMillis():0,stage+1==SECTIONS.length?1:0,BACKGROUND,key});
             Diagnostics.event("metadata_package_stage","operation_id",operation,"media_id",key,"section",SECTIONS[stage],"complete",stage+1==SECTIONS.length);
         }catch(Exception failure){db.execSQL("UPDATE jobs SET next_at=? WHERE identity=?",new Object[]{System.currentTimeMillis()+30*60*1000,key});Diagnostics.error("metadata_package_failed",failure);}

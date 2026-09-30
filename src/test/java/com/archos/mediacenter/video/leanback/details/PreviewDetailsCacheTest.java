@@ -14,6 +14,16 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewDetailsCacheTest {
+    @Test public void cachedSeasonAndRecommendationsConsumeKnownProviderPackages()throws Exception{
+        Context context=RuntimeEnvironment.getApplication();
+        PreviewMetadataCache.load(context,"tv",432,"",()->new JSONObject("{name:'Series',seasons:[{season_number:1}]}"));
+        PreviewMetadataCache.load(context,"tv",432,"recommendations",()->new JSONObject("{results:[{id:433,name:'Remote'},{id:434,name:'Unknown'}]}"));
+        android.content.SharedPreferences prefs=com.archos.mediacenter.video.streaming.StreamingRepository.prefs(context);
+        prefs.edit().putBoolean("streaming_enabled",true).putString("streaming_country","IE").putStringSet("streaming_providers_IE",Collections.singleton("8")).apply();
+        for(String key:new String[]{"tv:432:IE:1","tv:433:IE:-1"})prefs.edit().putLong("streaming_known_at:"+key,System.currentTimeMillis()).putString("streaming_snapshot:"+key,"{results:{IE:{flatrate:[{provider_id:8,provider_name:'Provider'}]}}}").apply();
+        PreviewDetailsData.Result result=PreviewDetailsData.cached(context,"tv",432,Collections.emptySet());
+        assertNotNull(result.seasonAvailability.get(1));assertEquals(1,result.related.size());assertEquals(433,result.related.get(0).title.getLong("id"));assertEquals(8,result.related.get(0).provider.id);
+    }
     @Test public void diskPackageSuppliesDetailsWithoutInventingProviderAvailability()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
         PreviewMetadataCache.load(context,"tv",42,"",()->new JSONObject("{name:'Series',seasons:[{season_number:1}]}"));

@@ -223,7 +223,7 @@ public final class PreviewSettings {
     children.setVisibility(View.VISIBLE);
     if (children.getChildCount() > 0) children.getChildAt(0).requestFocus(); else focusFirst(list);
    };
-   button.setOnFocusChangeListener((v, focused) -> { if (focused) { showCategory.run(); returnToCategory[0] = enter; } });
+   button.setOnFocusChangeListener((v, focused) -> { if (focused) { if(selectedRail[0]!=button)showCategory.run(); returnToCategory[0] = enter; } });
    button.setOnClickListener(v -> enter.run());
    button.setOnKeyListener((v, key, event) -> {
     if (event.getAction() != KeyEvent.ACTION_DOWN) return false;

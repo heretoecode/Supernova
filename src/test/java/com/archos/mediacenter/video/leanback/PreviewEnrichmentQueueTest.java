@@ -13,6 +13,18 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewEnrichmentQueueTest {
+    @Test public void oldCountryOrLanguageJobsCannotRunUnderCurrentScope()throws Exception{
+        Context context=RuntimeEnvironment.getApplication();
+        SQLiteOpenHelper helper=(SQLiteOpenHelper)ReflectionHelpers.callConstructor(Class.forName("com.archos.mediacenter.video.leanback.PreviewEnrichmentQueue$Store"),ReflectionHelpers.ClassParameter.from(Context.class,context));
+        try{
+            SQLiteDatabase db=helper.getWritableDatabase();
+            db.execSQL("INSERT INTO jobs VALUES('movie:1:en:US:true','movie',1,0,3,0,0,0)");
+            db.execSQL("INSERT INTO jobs VALUES('movie:2:en:IE:true','movie',2,40,1,0,0,0)");
+            try(Cursor row=PreviewEnrichmentQueue.nextJob(db,"en:IE:true",1)){assertTrue(row.moveToFirst());assertEquals(2,row.getLong(2));}
+            try(Cursor row=PreviewEnrichmentQueue.nextJob(db,"fr:IE:true",1)){assertFalse(row.moveToFirst());}
+            try(Cursor row=PreviewEnrichmentQueue.nextJob(db,"en:US:true",1)){assertTrue(row.moveToFirst());assertEquals(1,row.getLong(2));assertEquals(3,row.getInt(3));}
+        }finally{helper.close();}
+    }
     @Test public void horizontalViewportUsesScrolledCardsRatherThanFirstSix(){
         androidx.recyclerview.widget.RecyclerView rail=org.mockito.Mockito.mock(androidx.recyclerview.widget.RecyclerView.class);
         org.mockito.Mockito.when(rail.getWidth()).thenReturn(300);

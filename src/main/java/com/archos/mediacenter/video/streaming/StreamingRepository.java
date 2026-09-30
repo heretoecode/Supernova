@@ -37,8 +37,9 @@ public final class StreamingRepository {
         @Override protected boolean removeEldestEntry(Map.Entry<String, Cached> e) { return size() > 80; }
     };
     private static class Cached {
-        final long at = System.currentTimeMillis(); final Availability value;
-        Cached(Availability value) { this.value = value; }
+        final long at; final Availability value;
+        Cached(Availability value) { this(value,System.currentTimeMillis()); }
+        Cached(Availability value,long at) { this.value=value;this.at=at; }
     }
     public static final class Provider {
         public final int id; public final String name; public final String logo;
@@ -178,14 +179,24 @@ public final class StreamingRepository {
             Cached c = CACHE.get(key);
             if (c != null && System.currentTimeMillis() - c.at < TTL) return c.value;
         }
+        Availability persisted=cachedAvailability(context,kind,id,country,season);
+        if(persisted!=null){synchronized(CACHE){CACHE.put(key,new Cached(persisted,prefs(context).getLong("streaming_known_at:"+key,0)));}return persisted;}
         JSONObject response = api(context, kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", null);
         Availability availability = parseAvailability(response, country);
         synchronized (CACHE) { CACHE.put(key, new Cached(availability)); }
         Set<String> knownProviders=new HashSet<>();
         for(Offer offer:availability.offers)knownProviders.add(Integer.toString(offer.provider.id));
         prefs(context).edit().putStringSet("streaming_known:"+key,knownProviders)
-            .putLong("streaming_known_at:"+key,System.currentTimeMillis()).apply();
+            .putLong("streaming_known_at:"+key,System.currentTimeMillis())
+            .putString("streaming_snapshot:"+key,new JSONObject().put("results",new JSONObject().put(country,response.getJSONObject("results").optJSONObject(country)==null?new JSONObject():response.getJSONObject("results").getJSONObject(country))).toString()).apply();
         return availability;
+    }
+    /** Disk-only availability; null means unknown/stale, not known unavailable. */
+    public static Availability cachedAvailability(Context context,String kind,long id,String country,int season){
+        String key=kind+":"+id+":"+country+":"+season;SharedPreferences preferences=prefs(context);
+        long age=System.currentTimeMillis()-preferences.getLong("streaming_known_at:"+key,0);
+        if(age<0||age>=TTL)return null;
+        try{String value=preferences.getString("streaming_snapshot:"+key,"");if(value.isEmpty())return null;JSONObject payload=new JSONObject(value);if(payload.optJSONObject("results")==null)return null;return parseAvailability(payload,country);}catch(Exception invalid){return null;}
     }
     /** Only fresh, successfully returned availability is eligible; unknown is not a match. */
     public static boolean knownOn(Context context,String kind,long id,String provider){

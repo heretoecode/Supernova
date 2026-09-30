@@ -848,3 +848,16 @@ These changes require a full CI rerun; no failures are waived.
 - Settings child return uses semantic identity rather than matching display text, retaining entry/return tokens. Added a duplicate-label child regression.
 - Season/series streaming offers no longer claim availability for an exact episode. Unknown episodes remain visible and non-playable; the series hero retains its own provider route. Conditional handling accepts only an explicitly supplied, matching episode-scoped TMDb watch URL and does not construct speculative provider URLs. No live exact-episode source has been verified, so this remains a provider-capability verification gap, not a claimed live integration. Added scope and non-playability regressions.
 - Local syntax/XML/identity/Python checks pass. Full Android revalidation remains required; all three conformance passes and signed delivery remain incomplete.
+
+## Post-audit checkpoint 62 — cached availability consumption and queue scope
+
+- Successful availability responses now persist the selected country's package, keyed by media and season. Disk-only reads distinguish fresh known-empty results from unknown/stale data. Memory promotion retains the original timestamp rather than extending freshness.
+- Cached Details consumes season availability and previously validated provider recommendations without waiting for a refresh. The background series package now fetches each season's availability alongside its episode package when streaming is enabled.
+- Enrichment selection/retry now respects the current language/country/streaming scope; old-scope jobs remain preserved, not accidentally completed using a new scope. Mid-request scope changes do not advance the old package cursor.
+- Added scope isolation, persisted-availability states and cached Details consumption regressions. Local 814-file Java syntax, 431 XML/identity/whitespace checks and six Python tests pass. Android CI remains pending.
+
+## Post-audit checkpoint 63 — applicable remote Details facts
+
+- Checkpoint 61 CI 36682204794 compiled and passed targeted checks; the full Video suite ran 354 tests, 353 passed and one failed. The scan fixture corrections passed. The new Settings duplicate-label regression exposed a real return-path rebuild: refocusing the already-selected rail could clear the newly recreated children. Same-category focus no longer triggers that destructive presentation rebuild; the regression remains unchanged.
+- Details now consumes cached/refreshed classification packages, using only the selected country's rating. Streaming-only titles gain published release year, TV episode runtimes where provided, and the same official-title logo cache/render path as local titles. No awards, distributor, locations or technical claims are invented where the existing sources lack them.
+- Added country isolation, applicable published fact and shared remote-logo-cache tests. Local 817-file syntax and 431 XML/identity/whitespace checks pass. New tests and the Settings correction still require CI.

@@ -25,6 +25,10 @@ public final class OfficialTitleArtwork {
  private static final Map<TextView,com.archos.mediacenter.video.diagnostics.ArtworkTrace> TRACES=new WeakHashMap<>();
  private static final android.util.LruCache<String,Bitmap> ALIASES=new android.util.LruCache<>(12);
  public static boolean readyForFirstFrame(TextView view){return !Boolean.FALSE.equals(READY.get(view));}
+ public static void bindRemote(TextView view,String kind,long id){
+  if(id<=0||!("movie".equals(kind)||"tv".equals(kind))){clear(view);return;}
+  String key=kind+"/"+id;request(view,key,false,()->key,null);
+ }
  private static final android.util.LruCache<String,Bitmap> MEMORY=new android.util.LruCache<>(12);
  public static void bind(TextView view,Base media,boolean cachedOnly){
   bind(view,media,cachedOnly,null);
@@ -41,6 +45,7 @@ public final class OfficialTitleArtwork {
  private static void request(TextView view,String identity,boolean cachedOnly,Callable<String> resolve,Runnable changed){
   if(identity.equals(BOUND.get(view)))return;clear(view);BOUND.put(view,identity);
   long media=0;if(identity.matches("(?:video|show)-local:[0-9]+"))try{media=Long.parseLong(identity.substring(identity.indexOf(':')+1));}catch(NumberFormatException ignored){}
+  if(identity.matches("(?:movie|tv)/[0-9]+"))try{media=Long.parseLong(identity.substring(identity.indexOf('/')+1));}catch(NumberFormatException ignored){}
   com.archos.mediacenter.video.diagnostics.ArtworkTrace trace=new com.archos.mediacenter.video.diagnostics.ArtworkTrace(media,cachedOnly?"playback_loading":com.archos.mediacenter.video.diagnostics.Diagnostics.artworkSurface(),"title_logo",cachedOnly?"cache_only":"tmdb");TRACES.put(view,trace);
   String alias=identity+":"+Locale.getDefault().getLanguage();Bitmap existing=ALIASES.get(alias);
   if(existing!=null){view.setForeground(new Logo(existing));view.setTextColor(Color.TRANSPARENT);READY.put(view,true);trace.ready("memory_alias");if(changed!=null)changed.run();return;}

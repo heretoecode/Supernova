@@ -15,6 +15,15 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {
+    @Test public void persistedAvailabilityDistinguishesUnknownEmptyAndStale()throws Exception{
+        android.content.Context context=org.robolectric.RuntimeEnvironment.getApplication();
+        assertNull(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1));
+        StreamingRepository.prefs(context).edit().putLong("streaming_known_at:tv:987:IE:1",System.currentTimeMillis()).putString("streaming_snapshot:tv:987:IE:1","{results:{IE:{}}}").apply();
+        assertNotNull(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1));assertTrue(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1).offers.isEmpty());
+        assertNull(StreamingRepository.cachedAvailability(context,"tv",987,"US",1));
+        StreamingRepository.prefs(context).edit().putLong("streaming_known_at:tv:987:IE:1",System.currentTimeMillis()-7*60*60*1000L).apply();
+        assertNull(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1));
+    }
     @Test public void seriesAndSeasonOffersDoNotProveExactEpisodeAvailability(){
         for(String path:new String[]{"/tv/42/watch","/tv/42/season/1/watch","/tv/43/season/1/episode/2/watch","/tv/42/season/1/episode/3/watch"})
             assertFalse(StreamingRepository.exactEpisodeAvailability(new StreamingRepository.Availability(java.util.Collections.emptyList(),"https://www.themoviedb.org"+path),42,1,2));

@@ -12,6 +12,7 @@ import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
 import com.archos.mediascraper.*;
 import java.util.*;
 import java.util.function.*;
@@ -214,11 +215,14 @@ public final class PreviewMoviePage extends ScrollView {
         if(safe(genre).isEmpty()&&enriched!=null)genre=jsonNames(enriched.optJSONArray("genres"),"name");
         context.setText(safe(genre));context.setVisibility(safe(genre).isEmpty()?GONE:VISIBLE);
         int year=movie instanceof Movie?((Movie)movie).getYear():show!=null?show.getYear():0;
+        if(year<=0)year=PreviewDetailsFacts.year(enriched);
         if(year>0)fact(key,"Year",String.valueOf(year));
         long runtime=movie==null?0:movie.getDurationMs()/60000;
         if(runtime<=0&&enriched!=null)runtime=enriched.optLong("runtime");
         if(runtime>0)fact(key,"Runtime",runtime+" min");
+        else if(show!=null||"tv".equals(remoteKind))fact(key,"Episode runtime",PreviewDetailsFacts.episodeRuntimes(enriched));
         String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;
+        if(safe(certificate).isEmpty()&&enrichment!=null)certificate=PreviewDetailsFacts.certificate(enrichment.classification,StreamingRepository.country(getContext()));
         fact(key,"Age rating",certificate);fact(key,"Genres",genre);
         String studios=tags instanceof MovieTags?((MovieTags)tags).getStudiosFormatted():tags instanceof ShowTags?((ShowTags)tags).getStudiosFormatted():tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null?((EpisodeTags)tags).getShowTags().getStudiosFormatted():"";
         if(safe(studios).isEmpty()&&enriched!=null)studios=jsonNames(enriched.optJSONArray(show!=null||"tv".equals(remoteKind)?"networks":"production_companies"),"name");
@@ -459,7 +463,7 @@ public final class PreviewMoviePage extends ScrollView {
         }
         restoreRowFocus(trailers,focusKey,y);
     }
-    public void bindRemote(org.json.JSONObject details,String kind,long id){remoteDetails=details;remoteKind=kind;remoteId=id;title.setText(details.optString("title",details.optString("name")));plot.setText(details.optString("overview"));meta.setText(details.optString("release_date",details.optString("first_air_date")));String backdrop=details.optString("backdrop_path");if(backdrop.matches("/[A-Za-z0-9._-]+"))artwork.accept(Uri.parse("https://image.tmdb.org/t/p/w1280"+backdrop));play.setVisibility(GONE);renderDetails();requestEnrichment();}
+    public void bindRemote(org.json.JSONObject details,String kind,long id){remoteDetails=details;remoteKind=kind;remoteId=id;title.setText(details.optString("title",details.optString("name")));OfficialTitleArtwork.bindRemote(title,kind,id);plot.setText(details.optString("overview"));meta.setText(details.optString("release_date",details.optString("first_air_date")));String backdrop=details.optString("backdrop_path");if(backdrop.matches("/[A-Za-z0-9._-]+"))artwork.accept(Uri.parse("https://image.tmdb.org/t/p/w1280"+backdrop));play.setVisibility(GONE);renderDetails();requestEnrichment();}
     private long diagnosticMedia(){return movie!=null?movie.getId():show!=null?show.getTvshowId():remoteId;}
     private void requestEnrichment(){
         long id=remoteDetails!=null?remoteId:movie instanceof Movie?((Movie)movie).getOnlineId():tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null?((EpisodeTags)tags).getShowTags().getOnlineId():show!=null&&show.getShowTags()!=null?show.getShowTags().getOnlineId():0;
