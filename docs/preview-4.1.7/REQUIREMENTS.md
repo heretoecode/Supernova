@@ -827,7 +827,7 @@ Artwork failure diagnostics: safe anonymous media ID, surface (Movies Grid/Home 
 
 Status: **IMPLEMENTED IN PART — ROUTE RECONCILIATION / VALIDATION PENDING**
 
-Code mapping / verification: ArtworkTrace supplies correlated safe context and terminal outcomes. Checkpoints 52–54 validated backdrop/title-logo traces. Checkpoint 55 routes library cards, Details episode/recommendation/Extras cards, provider marks, portraits and artwork selection through equivalent traces, with explicit unknown Picasso cache layer and cancellation/rebinding/privacy regression. Checkpoint 55 Android tests and remaining-route reconciliation are pending; physical loading/fallback/soak behaviour is not verified.
+Code mapping / verification: ArtworkTrace supplies correlated safe context and terminal outcomes across cards, backdrops, logos, Details episode/recommendation/Extras cards, provider marks, portraits and artwork selection. Unknown Picasso cache layers remain explicit. Cancellation/rebinding/privacy and terminal idempotence regressions passed through checkpoint 64 CI 36715503044. Checkpoint 67 adds safe parent-linked logo transport status and invalid-payload handling; its test is pending. Final route reconciliation and physical loading/fallback/soak checks remain open.
 
 ### DIA-007 — Required diagnostic/reporting improvements
 
@@ -837,7 +837,7 @@ Scan diagnostics: Requested→Queued→Started→source/phase→Index/Reconcilia
 
 Status: **IMPLEMENTED IN PART — LIFECYCLE CONFORMANCE PENDING**
 
-Code mapping / verification: PreviewLibraryScan shares the native indexed-source scheduler across owned manual/startup/resume/scheduled requests, records trigger and operation, and correlates backend lifecycle by batch/source. PreviewScanProgress aggregates source counts and deduplicates terminal notifications; live phase/source is shown without percentages. Through checkpoint 53 CI, existing accounting tests pass. Checkpoint 54 adds native per-source Queued/eligible totals, distinct batch completion and actual metadata enqueue outcomes (accepted/skipped/failed), including coalesced/unstarted terminal slots; its new Android/backend regressions await CI. Local scan tracing remains incomplete. Unknown native scheduler triggers remain labelled as such.
+Code mapping / verification: PreviewLibraryScan shares the native indexed-source scheduler across owned manual/startup/resume/scheduled requests, records trigger and operation, and correlates backend lifecycle by batch/source. PreviewScanProgress aggregates/deduplicates source accounting; native per-source Queued/eligible totals, batch completion and actual metadata enqueue outcomes are covered through CI 36715503044. Native local imports report mode, checked rows, measured reconciliation counts, enqueue outcome and complete/partial/cancelled/failed states. Concurrent local/network/metadata progress remains visible without invented percentages. Local pre-start queue/trigger correlation and complete lifecycle conformance remain open; unknown native triggers are not inferred.
 
 ### DIA-008 — Required diagnostic/reporting improvements
 
@@ -897,7 +897,7 @@ Network diagnostics: provider/service, operation type, status/error category, du
 
 Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping / verification: PutioReadClient now emits explicit developer-owned operation type, putio service, correlation ID, HTTP status, sanitised failure category, duration, retry_number=0 (this adapter does not retry), and coarse connectivity. No request URL/header/body, query, cursor or token is logged. Transport completion is distinct from semantic response validation. Other network/provider adapters and schema-validation failure coverage remain under review; no live OAuth QA is claimed.
+Code mapping / verification: PutioReadClient emits fixed operation type, service, correlation ID, HTTP status, safe failure category, duration, retry count and connectivity. Checkpoint 65 keeps account/list/search/file semantic validation within that operation and adds equally redacted OAuth begin/poll diagnostics. Metadata gateway validation/correlation tests have passed; intercepted put.io and title-logo transport/privacy regressions from checkpoints 65–67 await CI. No request URL/header/body, query, cursor or credential is recorded. Remaining adapter reconciliation and live provider/physical validation remain open.
 
 ### DIA-014 — Required diagnostic/reporting improvements
 
@@ -905,9 +905,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Export should include a machine-readable and human-readable summary: session duration, launches, clean/suspected unclean exits, playback sessions, scans, artwork request/failure counts, dropped-event count, manual reports and automatic incidents, each linked by timestamp/correlation ID to raw evidence.
 
-Status: **IMPLEMENTED — NEW SUMMARY REGRESSIONS AWAITING CI**
+Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / PHYSICAL QA PENDING**
 
-Code mapping / verification: DiagnosticArchive schema 3 adds linked operation, playback-session and foreground-use summaries with UTC/process/sequence references. Monotonic durations require both retained boundaries; carried-in or incomplete sessions remain explicitly unknown. Human export includes the same linked summary and explicit scan/artwork counts; manual/incident indexes and per-process maximum drop counters are retained. Checkpoint 52 complete/carried-in/foreground fixtures await CI; physical multi-day export coverage remains QA.
+Code mapping / verification: DiagnosticArchive schema 3 includes linked operation, playback-session and foreground-use summaries with UTC/process/sequence references. Monotonic durations require both retained boundaries; carried-in/incomplete sessions remain explicitly unknown. Operations retain parent links and reject stage-relative or wall-clock-derived lifetime estimates. Human export includes the linked summary, scan/artwork counts, manual/incident indexes and per-process maximum drop counters. Complete/carried-in/foreground/clock-change/operation regressions passed CI 36715503044. Physical multi-day export coverage remains QA.
 
 ### DIA-015 — Required diagnostic/reporting improvements
 

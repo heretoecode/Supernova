@@ -12,6 +12,7 @@ import java.util.*;
 public final class PreviewLibraryScan {
     private static long requestedAt;
     private static boolean installed;
+    private static boolean operationEnded=true;
     private static String operation = "", phase = "", trigger="unknown",sourceLocation="",sourceId="";
     private static long checked, added, updated, completed;
     private static int sourcesTotal=-1;
@@ -29,12 +30,15 @@ public final class PreviewLibraryScan {
                 if(fresh){sourcesTotal=-1;metadataOutcome="unknown";}
                 int total=intent.getIntExtra("sources_total",-1);if(total>=0)sourcesTotal=total;
                 if(next.startsWith("metadata_"))metadataOutcome=next;
-                if(operation.isEmpty()||fresh&&!phase.equals("queued")){operation=Diagnostics.operation("library_scan");requestedAt=SystemClock.elapsedRealtime();trigger="native_scheduler";}
+                if(operation.isEmpty()||fresh&&!phase.equals("queued")||operationEnded&&(next.equals("queued")||next.equals("started"))){
+                    finishOperation("superseded");operation=Diagnostics.operation("library_scan");operationEnded=false;requestedAt=SystemClock.elapsedRealtime();trigger="native_scheduler";
+                }
                 sourceId=source;String location=intent.getStringExtra("source_location");sourceLocation=location==null?"":location.replaceAll("[\\p{Cntrl}]","");
                 if(sourceLocation.length()>180)sourceLocation=sourceLocation.substring(0,177)+"…";
                 phase=next;checked=progress.total(0);added=progress.total(1);updated=progress.total(2);completed=progress.total(3);
                 Diagnostics.event("scan_"+next,"operation_id",operation,"batch_id",batch,"trigger",trigger,"source_id",source,"checked",checked,"new",added,"updated",updated,"sources_completed",completed,"sources_total",sourcesTotal,"source_count_known",sourcesTotal>=0,"sources_failed",progress.total(4),"metadata_outcome",metadataOutcome,"elapsed_ms",SystemClock.elapsedRealtime()-requestedAt);
                 if(next.equals("complete")||next.equals("failed")||next.startsWith("batch_"))androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().putString("preview_scan_result",(progress.total(4)>0||next.equals("batch_failed")?"Partial / failed sources":phase)+" · "+checked+" checked · "+added+" new · "+updated+" updated"+(metadataOutcome.equals("metadata_failed")?" · Metadata could not be queued":"")).putLong("preview_scan_result_time",System.currentTimeMillis()).apply();
+                if(next.startsWith("batch_"))finishOperation(next);
             }
         }};
         IntentFilter filter=new IntentFilter(app.getPackageName()+".SCAN_LIFECYCLE");
@@ -55,13 +59,18 @@ public final class PreviewLibraryScan {
         // Do not confuse metadata/import activity with an active network traversal.
         boolean busy=NetworkScannerServiceVideo.isScannerAlive()||com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()>0;
         if(busy){Diagnostics.event("scan_request_coalesced","operation_id",operation,"trigger",origin);return;}
-        requestedAt=SystemClock.elapsedRealtime();operation=Diagnostics.operation("library_scan");phase="queued";trigger=origin;checked=added=updated=completed=0;progress.clear();sourceLocation=sourceId="";
+        finishOperation("superseded");requestedAt=SystemClock.elapsedRealtime();operation=Diagnostics.operation("library_scan");operationEnded=false;phase="queued";trigger=origin;checked=added=updated=completed=0;progress.clear();sourceLocation=sourceId="";
         sourcesTotal=-1;metadataOutcome="unknown";
         Diagnostics.event("scan_requested","operation_id",operation,"trigger",trigger,"scheduler","indexed_sources");
         NetworkAutoRefresh.forceRescan(context.getApplicationContext());
         Diagnostics.event("scan_queued","operation_id",operation,"trigger",trigger,"phase","scheduler_request","source_count_known",false);
         final String request=operation;
-        MAIN.postDelayed(()->{synchronized(PreviewLibraryScan.class){if(request.equals(operation)&&phase.equals("queued")){phase="not_started";Diagnostics.event("scan_not_started","operation_id",operation,"scheduler_error",NetworkAutoRefresh.getLastError(context));}}},15000);
+        MAIN.postDelayed(()->{synchronized(PreviewLibraryScan.class){if(request.equals(operation)&&phase.equals("queued")){phase="not_started";Diagnostics.event("scan_not_started","operation_id",operation,"scheduler_error",NetworkAutoRefresh.getLastError(context));finishOperation("not_started");}}},15000);
+    }
+    private static void finishOperation(String reason){
+        if(operationEnded||operation.isEmpty())return;operationEnded=true;
+        Diagnostics.event("scan_operation_terminal","operation_id",operation,"reason",reason);
+        Diagnostics.finishOperation(operation,"library_scan",requestedAt);
     }
     public static String libraryStatus(Context c){
         String nativeState=PreviewLocalScanState.status(c);

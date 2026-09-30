@@ -1,9 +1,9 @@
 diff --git a/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java b/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
 new file mode 100644
-index 0000000..d8f1a5d
+index 0000000..d6fde48
 --- /dev/null
 +++ b/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,48 @@
 +package com.archos.mediaprovider.video;
 +
 +import android.content.Context;
@@ -14,6 +14,9 @@ index 0000000..d8f1a5d
 +/** Worker-local, bounded telemetry; never changes import decisions or records media paths. */
 +public final class PreviewLocalImportTrace {
 +    private static final ThreadLocal<PreviewLocalImportTrace> CURRENT=new ThreadLocal<>();
++    private static final java.util.Map<android.os.Message,PreviewLocalImportTrace> QUEUED=new java.util.IdentityHashMap<>();
++    private android.os.Handler owner;
++    private String trigger="native_import";
 +    private final Context context;
 +    private final String batch=UUID.randomUUID().toString(),mode;
 +    private final long started=SystemClock.elapsedRealtime();
@@ -21,7 +24,17 @@ index 0000000..d8f1a5d
 +    private boolean partial,countsKnown;
 +    private PreviewLocalImportTrace(Context context,boolean full){this.context=context;mode=full?"full":"incremental";}
 +    public static void begin(Context context,boolean full){
-+        PreviewLocalImportTrace trace=new PreviewLocalImportTrace(context,full);CURRENT.set(trace);trace.emit("started");
++        PreviewLocalImportTrace trace=CURRENT.get();if(trace==null)trace=new PreviewLocalImportTrace(context,full);CURRENT.set(trace);trace.emit("started");
++    }
++    public static synchronized void queued(Context context,android.os.Handler owner,android.os.Message message,boolean full){
++        PreviewLocalImportTrace trace=new PreviewLocalImportTrace(context,full);trace.owner=owner;
++        String trigger=message.getData().getString("preview_trigger");if(java.util.Arrays.asList("startup","resume","content_change","android_scan").contains(trigger))trace.trigger=trigger;
++        QUEUED.put(message,trace);trace.emit("requested");trace.emit("queued");
++    }
++    public static synchronized void starting(android.os.Message message){PreviewLocalImportTrace trace=QUEUED.remove(message);if(trace!=null)CURRENT.set(trace);}
++    public static synchronized void rejected(android.os.Message message){PreviewLocalImportTrace trace=QUEUED.remove(message);if(trace!=null)trace.emit("cancelled");}
++    public static synchronized void cancelQueued(android.os.Handler owner){
++        java.util.Iterator<PreviewLocalImportTrace> iterator=QUEUED.values().iterator();while(iterator.hasNext()){PreviewLocalImportTrace trace=iterator.next();if(trace.owner==owner){iterator.remove();trace.emit("cancelled");}}
 +    }
 +    public static void checked(){PreviewLocalImportTrace t=CURRENT.get();if(t!=null){t.checked++;long now=SystemClock.elapsedRealtime();if(now-t.lastProgress>=1000){t.lastProgress=now;t.emit("indexing");}}}
 +    public static void reconciled(int added,int updated){PreviewLocalImportTrace t=CURRENT.get();if(t!=null){t.added=Math.max(0,added);t.updated=Math.max(0,updated);t.countsKnown=added>=0&&updated>=0;t.emit("reconciled");}}
@@ -33,7 +46,7 @@ index 0000000..d8f1a5d
 +    }
 +    private void emit(String phase){
 +        try{context.sendBroadcast(new Intent(context.getPackageName()+".LOCAL_IMPORT_LIFECYCLE").setPackage(context.getPackageName())
-+            .putExtra("batch_id",batch).putExtra("phase",phase).putExtra("mode",mode)
++            .putExtra("batch_id",batch).putExtra("phase",phase).putExtra("mode",mode).putExtra("trigger",trigger)
 +            .putExtra("checked",checked).putExtra("added",added).putExtra("updated",updated).putExtra("counts_known",countsKnown)
 +            .putExtra("elapsed_ms",Math.max(0,SystemClock.elapsedRealtime()-started)));}catch(RuntimeException ignored){/* Telemetry must not interrupt indexing. */}
 +    }
@@ -220,10 +233,49 @@ index 10f7d15..bfb19e7 100644
                      log.error("getRemoteIdList: exception while moving to next cursor row!", e);
                      if (e instanceof IllegalArgumentException && projectionHasStorageId) {
 diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportService.java b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
-index a4c072a..4c7bda4 100644
+index a4c072a..14c0bb6 100644
 --- a/src/com/archos/mediaprovider/video/VideoStoreImportService.java
 +++ b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
-@@ -495,7 +495,21 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -199,5 +199,13 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         Looper looper = mHandlerThread.getLooper();
+         // associate a handler with the new thread
+-        mHandler = new Handler(looper, this);
++        mHandler = new Handler(looper, this) {
++            @Override public boolean sendMessageAtTime(Message message,long time) {
++                boolean importing=message.what==MESSAGE_IMPORT_FULL||message.what==MESSAGE_IMPORT_INCR;
++                if(importing)PreviewLocalImportTrace.queued(VideoStoreImportService.this,this,message,message.what==MESSAGE_IMPORT_FULL);
++                boolean accepted=super.sendMessageAtTime(message,time);
++                if(importing&&!accepted)PreviewLocalImportTrace.rejected(message);
++                return accepted;
++            }
++        };
+         // associate content observer that reports in background thread
+         mContentObserver = new ContentChangeObserver(mHandler);
+@@ -271,4 +279,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+             removeAllMessages(mHandler);
+             Message m;
++            boolean previewInitialStart=!sActive;
+             if (sActive) { // not first start
+                 // Post-Android P: Use incremental import since our enhanced volume management handles external storage properly
+@@ -295,4 +304,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+             // we also may need to init scraper default content
+             mNeedToInitScraper = true;
++            m.getData().putString("preview_trigger",previewInitialStart?"startup":"resume");
+             mHandler.sendMessageDelayed(m, 1000);
+         } else {
+@@ -307,4 +317,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                 removeAllMessages(mHandler);
+                 Message m = mHandler.obtainMessage(MESSAGE_IMPORT_FULL, startId, flags);
++                m.getData().putString("preview_trigger","android_scan");
+                 mHandler.sendMessageDelayed(m, 1000);
+                 mNeedToInitScraper = true;
+@@ -409,4 +420,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+     /** handler implementation, called in background thread */
+     public boolean handleMessage(Message msg) {
++        if(msg.what==MESSAGE_IMPORT_FULL||msg.what==MESSAGE_IMPORT_INCR)PreviewLocalImportTrace.starting(msg);
+         if (log.isDebugEnabled()) log.debug("handleMessage:{} what:{} startid:{}", msg, msg.what, msg.arg1);
+         switch (msg.what) {
+@@ -495,7 +507,21 @@ public class VideoStoreImportService extends Service implements Handler.Callback
 
      /** starts import, fullMode decides which import implementation is used */
 +    private boolean previewImportAttempted;
@@ -245,7 +297,7 @@ index a4c072a..4c7bda4 100644
 +            PreviewLocalImportTrace.problem();
              if (log.isDebugEnabled()) log.debug("doImport: no read permission : stop import");
              return;
-@@ -503,8 +517,10 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -503,8 +529,10 @@ public class VideoStoreImportService extends Service implements Handler.Callback
              if (log.isDebugEnabled()) log.debug("doImport: read permission : continue import");
          if (!isForeground) {
 +            PreviewLocalImportTrace.problem();
@@ -256,7 +308,7 @@ index a4c072a..4c7bda4 100644
 +        previewImportAttempted = true;
          if (fullMode)
              mImporter.doFullImport();
-@@ -527,5 +543,7 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -527,5 +555,7 @@ public class VideoStoreImportService extends Service implements Handler.Callback
          if (com.archos.mediascraper.AutoScrapeService.isEnable(this)) {
              if (log.isDebugEnabled()) log.debug("doImport: starting AutoScrapeService after scan completion");
 -            com.archos.mediascraper.AutoScrapeService.startService(this);
@@ -265,66 +317,84 @@ index a4c072a..4c7bda4 100644
 +            PreviewLocalImportTrace.phase("metadata_skipped");
          }
      }
-@@ -551,4 +569,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -551,4 +581,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
              db.execSQL("delete from genre where _id in (select _id from v_genre_deletable)");
          } catch (SQLException | IllegalStateException e) {
 +            PreviewLocalImportTrace.problem();
              log.error("processDeleteFileAndVobCallback: SQLException or IllegalStateException",e);
          } finally {
-@@ -585,4 +604,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -585,4 +616,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
                      db.execSQL("DELETE FROM delete_files WHERE name IN (SELECT " + column + " FROM " + table + " WHERE " + column + " IS NOT NULL)");
                  } catch (SQLException e) {
 +                    PreviewLocalImportTrace.problem();
                      log.error("processDeleteFileAndVobCallback: Error protecting metadata from {}.{}", table, column, e);
                      protectionSuccess = false;
-@@ -591,4 +611,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -591,4 +623,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
              }
          } catch (Exception e) {
 +            PreviewLocalImportTrace.problem();
              log.error("processDeleteFileAndVobCallback: unexpected error during protection phase", e);
              protectionSuccess = false;
-@@ -596,4 +617,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -596,4 +629,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
 
          if (!protectionSuccess) {
 +            PreviewLocalImportTrace.problem();
              log.error("processDeleteFileAndVobCallback: protection phase failed, ABORTING disk deletion to prevent data loss");
              return;
-@@ -607,4 +629,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -607,4 +641,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
                      "SELECT COUNT(*) FROM delete_files", null);
          } catch (RuntimeException e) {
 +            PreviewLocalImportTrace.problem();
              log.error("processDeleteFileAndVobCallback: unable to count delete_files", e);
              return;
-@@ -650,4 +673,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -650,4 +685,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
                                          new String[] {String.valueOf(id), path});
                          } catch (SQLException sqlE) {
 +                            PreviewLocalImportTrace.problem();
                              log.error("processDeleteFileAndVobCallback: SQLException", sqlE);
                          }
-@@ -658,4 +682,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -658,4 +694,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
                          updateDeleteNotification(remainingDeleteFiles, "");
                          if (deletedFromBatch == 0) {
 +                            PreviewLocalImportTrace.problem();
                              log.error("processDeleteFileAndVobCallback: delete_files batch made no progress ({} remaining), stopping cleanup for this import",
                                      remainingDeleteFiles);
-@@ -664,4 +689,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -664,4 +701,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
                      }
                  } catch (RuntimeException e) {
 +                    PreviewLocalImportTrace.problem();
                      log.error("processDeleteFileAndVobCallback: SQLException or IllegalStateException or CursorWindowAllocationException",e);
                      if (CRASH_ON_ERROR) throw new RuntimeException(e);
-@@ -704,4 +730,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -704,4 +742,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
                              db.execSQL("DELETE FROM vob_insert WHERE _id=" + String.valueOf(id) + " AND name='" + path + "'");
                      } catch (SQLException sqlE) {
 +                        PreviewLocalImportTrace.problem();
                          log.error("processDeleteFileAndVobCallback: SQLException", sqlE);
                      }
-@@ -709,4 +736,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -709,4 +748,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
              } catch (RuntimeException e) {
                  ArchosUtils.addBreadcrumb(SentryLevel.INFO, "VideoStoreImportService.processDeleteFileAndVobCallback", "crash " + e.getMessage());
 +                PreviewLocalImportTrace.problem();
                  log.error("processDeleteFileAndVobCallback: SQLException or IllegalStateException",e);
                  if (CRASH_ON_ERROR) throw new RuntimeException(e);
+@@ -769,4 +809,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         handler.removeMessages(MESSAGE_IMPORT_FULL);
+         handler.removeMessages(MESSAGE_IMPORT_INCR);
++        PreviewLocalImportTrace.cancelQueued(handler);
+     }
+
+@@ -787,4 +828,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                 removeAllMessages(mHandler);
+                 Message msg = mHandler.obtainMessage(MESSAGE_IMPORT_INCR, DONT_KILL_SELF, 0);
++                msg.getData().putString("preview_trigger","content_change");
+                 mHandler.sendMessageDelayed(msg, 1000);
+             } else {
+@@ -836,4 +878,5 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         // Stop the handler thread
+         if (mHandlerThread != null) {
++            PreviewLocalImportTrace.cancelQueued(mHandler);
+             mHandlerThread.quit();
+             mHandlerThread = null;
 diff --git a/src/com/archos/mediascraper/AutoScrapeService.java b/src/com/archos/mediascraper/AutoScrapeService.java
 index b9cb099..8c87df6 100644
 --- a/src/com/archos/mediascraper/AutoScrapeService.java

@@ -886,3 +886,16 @@ These changes require a full CI rerun; no failures are waived.
 - Checkpoint 64 CI 36715503044 passed compilation/identity, 125 targeted, 362 full Video, 86 selected regression and 17 WebDAV tests (overlapping sets). Trailer modal lifetime and operation-duration regressions passed.
 - Title-logo metadata/image transports now have safe provider/type/status/outcome/duration/retry/connectivity records linked to the parent artwork operation. URLs, API keys and response bodies are never recorded. Metadata must match the requested title and contain a logo list; invalid dimensions/decode are failures rather than an unexplained absence.
 - Added an intercepted bounded-response/privacy test. Checkpoints 65–67 Android CI remains pending; no live provider or physical Shield validation is claimed.
+
+## Post-audit checkpoint 68 — network batch operation closure
+
+- Network scan operations now close once at the batch terminal, not at each source terminal. Superseded and never-started requests close explicitly, and a later actual start creates a new operation rather than stretching an already-ended request. Added duplicate-batch-terminal and source-versus-batch lifetime coverage.
+- Reconciled DIA-006/007/013/014 register evidence against actual recent CI, retaining route/lifecycle/physical gaps. These edits do not declare Pass 1 complete or change the mutually exclusive audit totals.
+- Local Java/XML/identity checks pass; new Android regression pending.
+
+## Post-audit checkpoint 69 — native local request/queue correlation
+
+- Checkpoints 65–67 CI 36716475104 passed compilation/identity, 127 targeted tests, all 366 Video tests, 86 selected regression checks and 17 WebDAV tests (overlapping sets).
+- Native local-import messages now emit Requested and Queued before execution, retaining their batch through Started/reconciliation/metadata/terminal states. Removed/rejected queued requests receive cancellation evidence. Service startup/resume, content-change and Android-scan triggers are recorded where established; other origins remain native_import rather than being guessed.
+- Import scheduling/delays, reconciliation and authentication behaviour are unchanged. App-side local tracing tracks overlapping batches separately, bounds retained state and suppresses repeated terminal broadcasts.
+- Added actual queued/start/cancel state and same-batch/trigger sequence tests. Backend patch applies cleanly to the pinned baseline; local 818 Java files parse, 431 XML/identity checks and six Python tests pass. Android/backend validation remains pending.
