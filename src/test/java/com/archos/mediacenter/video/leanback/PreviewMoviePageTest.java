@@ -115,9 +115,12 @@ public class PreviewMoviePageTest {
             View tab=page.findViewWithTag("section:Details");assertNotNull(tab);tab.requestFocus();
             page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
             View restored=page.findViewWithTag("section:Details");assertTrue(restored.isSelected());assertTrue(restored.hasFocus());
-            restored.performClick();PreviewPagesTest.layout(page);
+            restored.performClick();PreviewPagesTest.layout(nav);
             assertNotNull(PreviewPagesTest.findText(page,"Key Information"));assertNotNull(PreviewPagesTest.findText(page,"Reception"));assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
-            PreviewPagesTest.capture(page,"details-information-next");
+            View keyPanel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(keyPanel);keyPanel.requestFocus();
+            for(int frame=0;frame<8;frame++){page.computeScroll();PreviewPagesTest.layout(nav);}
+            android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertTrue(visible.height()>80);
+            PreviewPagesTest.capture(nav,"details-information-next");
         }finally{host.pause().stop().destroy();}
     }
 }

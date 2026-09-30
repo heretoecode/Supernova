@@ -14,6 +14,13 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewScanLifecycleTest {
+    @Test public void libraryControlIncludesLocalProgressButNetworkControlStaysNetworkOnly(){
+        Context context=RuntimeEnvironment.getApplication();
+        PreviewLocalScanState.accept(context,new Intent().putExtra("batch_id",java.util.UUID.randomUUID().toString())
+                .putExtra("mode","full").putExtra("phase","complete").putExtra("checked",23L));
+        assertTrue(PreviewNetworkWorkspace.scanStatus(context,true).contains("23 media rows checked"));
+        assertFalse(PreviewNetworkWorkspace.scanStatus(context,false).contains("23 media rows checked"));
+    }
     @org.junit.Before public void registerReceiverForThisTestApplication(){
         // Robolectric replaces the Application/registered receivers between tests;
         // the production process-wide installation guard otherwise retains the old registration.

@@ -49,7 +49,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         area = name; items.removeAllViews(); context.removeAllViews(); selectedItem = null;
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("network",name,"workspace","none","none",0);
         if (name.equals("Overview")) {
-            item("Scan Library", () -> { heading("Scan Library"); description("Check local storage and indexed network sources. Progress continues when you leave this page."); action("Scan Library", () -> PreviewLibraryScan.request(getContext())); status(); });
+            item("Scan Library", () -> { heading("Scan Library"); description("Check local storage and indexed network sources. Progress continues when you leave this page."); action("Scan Library", () -> PreviewLibraryScan.request(getContext())); status(true); });
             item("Network Scanning", this::scanControls);
         } else if (name.equals("Local Storage")) {
             for (Box box : volumes) if (box.getBoxId() == Box.ID.FOLDERS || box.getBoxId() == Box.ID.USB || box.getBoxId() == Box.ID.SDCARD || box.getBoxId() == Box.ID.OTHER) {
@@ -99,10 +99,11 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         action("Frequency: " + Math.max(15, (period > 0 ? period : prefs.getInt("preview_scan_frequency", 3600000)) / 60000) + " minutes", () -> PreviewDialog.choose(c, "Frequency", new String[]{"15 minutes", "30 minutes", "1 hour", "6 hours", "24 hours"}, java.util.Arrays.asList(900000,1800000,3600000,21600000,86400000).indexOf(period>0?period:prefs.getInt("preview_scan_frequency",3600000)), n -> { int value = new int[]{900000,1800000,3600000,21600000,86400000}[n]; prefs.edit().putInt("preview_scan_frequency", value).apply(); if(period > 0) com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(c,0,value,true); refreshContext(1); }));
         action("On open / return: " + (prefs.getBoolean("auto_rescan_on_app_restart",true) ? "On" : "Off"), () -> { prefs.edit().putBoolean("auto_rescan_on_app_restart", !prefs.getBoolean("auto_rescan_on_app_restart",true)).apply(); refreshContext(2); });
         action("Sources Included", () -> PreviewNetworkScanning.sources(c));
-        status(); action("Scan Now", () -> PreviewLibraryScan.requestNetwork(c));
+        status(false); action("Scan Now", () -> PreviewLibraryScan.requestNetwork(c));
     }
     private void refreshContext(int button) { context.removeAllViews(); scanControls(); context.getChildAt(button + 1).requestFocus(); }
-    private void status() { TextView status = label(PreviewNetworkScanning.lastResult(getContext()),12); context.addView(status); status.post(new Runnable(){public void run(){if(!status.isAttachedToWindow())return;status.setText(PreviewLibraryScan.status(getContext()));status.postDelayed(this,1000);}}); }
+    private void status(boolean library) { TextView status = label(scanStatus(getContext(),library),12); context.addView(status); status.post(new Runnable(){public void run(){if(!status.isAttachedToWindow())return;status.setText(scanStatus(getContext(),library));status.postDelayed(this,1000);}}); }
+    static String scanStatus(Context context,boolean library){return library?PreviewLibraryScan.libraryStatus(context):PreviewLibraryScan.status(context);}
     private void item(String title, Runnable update) {
         Runnable show = () -> { int previous=context.getChildCount();context.removeAllViews(); update.run();com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(context,"network.context","selection_changed",previous,context.getChildCount(),false); };
         TextView row = control(title, () -> context.requestFocus()); row.setTag(show);

@@ -55,6 +55,16 @@ public class Preview417NavigationTest {
         assertEquals("semantic:topnav.home",home.getTag());assertEquals("semantic:topnav.settings",settings.getTag());
         host.finish();
     }
+    @Test public void toolbarColumnsRightCannotEscapeAndDownEntersContent(){
+        Activity host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible().get();
+        LinearLayout page=new LinearLayout(host);page.setOrientation(LinearLayout.VERTICAL);PreviewToolbar toolbar=new PreviewToolbar(host);page.addView(toolbar);
+        for(String label:new String[]{"Filters","Sort","Order","Unmatched","Grid view","Columns"}){TextView control=new TextView(host);control.setText(label);control.setFocusable(true);control.setFocusableInTouchMode(true);toolbar.addView(control,new LinearLayout.LayoutParams(130,50));}
+        TextView header=new TextView(host);header.setText("Library header");header.setFocusable(true);header.setFocusableInTouchMode(true);page.addView(header,new LinearLayout.LayoutParams(-1,50));
+        host.setContentView(page);layout(page);View first=toolbar.getChildAt(0),last=toolbar.getChildAt(5);
+        first.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(first,page.findFocus());
+        last.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(last,page.findFocus());
+        page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(header,page.findFocus());host.finish();
+    }
     @Test public void gridRightDoesNotWrapAndLastRowDownDoesNotEscape() {
         Activity host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible().get();
         PreviewFocusRecycler grid = new PreviewFocusRecycler(host);

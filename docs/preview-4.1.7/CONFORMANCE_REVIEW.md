@@ -22,6 +22,17 @@ Initial inspection uses CI 36349549771, remote source e961c51ef85bd35b1ce8dde157
 
 Synthetic test images are diagnostic fixtures, not replacement artwork and not evidence of physical Shield rendering. The generated reference's thicker underline and obsolete navigation are not specifications; written same-stroke divider and canonical navigation take priority.
 
+### Checkpoint 69 rendered-evidence reinspection
+
+Source: remote `4c8234d8f805dcb3a377cc6e7624425169bb1189`, successful CI 36717304246, artifact 11096828194. This is an intermediate source tree, not the final candidate.
+
+- `movie-details.png`: corrected hero now leaves lower content visible below the existing divider (Cast heading teaser). Canonical top navigation, left title/actions and right artwork region are visible. Synthetic artwork cannot establish real-logo/crop conformance.
+- `search-empty-next.png`: one Search heading, required placeholder, number/QWERTY/staggered rows and Clear/Space/Backspace are visible; T is initially focused. Populated-results return/routing and real Shield appearance remain separate checks.
+- `details-information-next.png`: rejected as adequate panel evidence. It captured the transparent page without its shell and did not actually expose the information panels. The fixture now requests the real Key Information panel, advances scrolling/layout, asserts panel visibility and captures the shell. Its corrected render must be inspected after CI; no panel conformance is inferred from the old image.
+- `episode-details.png`: metadata assertions are useful, but the shell-less image is insufficient for whole-screen visual acceptance.
+
+Pass 2 remains incomplete.
+
 ## Pass 3: regression, identity and signed delivery
 
 Not complete. CI 36349549771: application/test compilation and targeted suite passed; identity audit passed; full Video suite 312 tests, 1 failure (shared provider browser focus); backend/WebDAV gates skipped. The focus fix and diagnostics checkpoint are submitted in remote ab0c9eaea404b1f39b7a88b742dd7dc774b9b8f1, CI 36349938513 pending.

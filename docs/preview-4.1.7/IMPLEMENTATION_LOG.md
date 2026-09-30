@@ -911,3 +911,14 @@ These changes require a full CI rerun; no failures are waived.
 - The Details reader now participates in shared modal-state capture and retained opener restoration while preserving its existing layout/frost treatment. Actions, recommendation/Extras cards and fallback people slots receive structural/numeric semantic identifiers rather than generated view positions or names.
 - Added reader-modal/opener regression. Local 818-file Java parsing, 431 XML/identity checks and six Python tests pass. Checkpoints 70/71 still need Android CI.
 - Checkpoints 68/69 CI 36717304246 completed successfully, including native local queue/backend compilation and the full Video suite. This clears the previously pending scan-lifecycle run, not subsequent local changes.
+
+## Post-audit checkpoint 72 — Scan Library surface reconciliation
+
+- Source review found that Network & Files → Scan Library still displayed network-only status, unlike Home. It now displays combined local/network/metadata status; Network Scanning remains network-only. Added a regression for the distinction.
+- Added an explicit toolbar fixture for first-item LEFT, Columns RIGHT retention and DOWN to the library header. This validates the shared toolbar behaviour without claiming full physical navigation coverage.
+- Checkpoint 69 exact CI counts: 127 targeted, 369 complete Video, 86 selected regression and 17 WebDAV tests, all passed (overlapping sets). Local Java/XML checks pass; newest tests await CI.
+
+## Post-audit checkpoint 73 — meaningful Details panel evidence
+
+- Reinspected intermediate rendered fixtures and recorded their limitations in CONFORMANCE_REVIEW.md. The old information-panel screenshot did not show its subject; its test now asserts real panel visibility and captures the complete shell after focus/scroll/layout settle.
+- Existing field assertions remain intact. This is a test-evidence correction, not a claim that the normative visual pass is finished. Corrected output and latest tests await CI.
