@@ -63,7 +63,11 @@ public class Preview417NavigationTest {
         host.setContentView(page);layout(page);View first=toolbar.getChildAt(0),last=toolbar.getChildAt(5);
         first.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(first,page.findFocus());
         last.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(last,page.findFocus());
-        page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(header,page.findFocus());host.finish();
+        // A direct View dispatch does not run ViewRootImpl's fallback focus navigation.
+        // Verify DOWN is released to that fallback and its geometric target is the header.
+        assertFalse(page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN)));
+        View down=last.focusSearch(View.FOCUS_DOWN);assertSame(header,down);
+        assertTrue(down.requestFocus(View.FOCUS_DOWN));assertSame(header,page.findFocus());host.finish();
     }
     @Test public void gridRightDoesNotWrapAndLastRowDownDoesNotEscape() {
         Activity host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible().get();

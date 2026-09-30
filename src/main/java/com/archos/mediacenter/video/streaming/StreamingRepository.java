@@ -333,22 +333,34 @@ public final class StreamingRepository {
     }
     /** Resolve an affiliate redirect only when the viewer selects the offer. */
     public static String resolveTitleUrl(String url) {
+        return resolveTitleUrl(url,HTTP);
+    }
+    static String resolveTitleUrl(String url,OkHttpClient client) {
         if (!safeWebUrl(url)) return "";
         String host = Uri.parse(url).getHost();
         // Only known link redirectors need expansion; normal provider links are left intact.
         if (host == null || !(host.endsWith(".bn5x.net") || host.endsWith(".pxf.io") || host.equals("click.justwatch.com"))) return url;
-        OkHttpClient redirects = HTTP.newBuilder().followRedirects(false).followSslRedirects(false).build();
+        OkHttpClient redirects = client.newBuilder().followRedirects(false).followSslRedirects(false).build();
+        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("provider_redirect");
+        long started=android.os.SystemClock.elapsedRealtime();
         String current = url;
+        try{
         for (int i = 0; i < 5; i++) {
+            long requestStarted=android.os.SystemClock.elapsedRealtime();int status=0;String outcome="transport_failed";
             try (Response response = redirects.newCall(new Request.Builder().url(current).head().build()).execute()) {
+                status=response.code();
                 String location = response.header("Location");
-                if (response.code() < 300 || response.code() >= 400 || location == null) return current;
+                if (response.code() < 300 || response.code() >= 400 || location == null){outcome=response.isSuccessful()?"resolved":"unresolved_http";return current;}
                 okhttp3.HttpUrl next = response.request().url().resolve(location);
-                if (next == null || !safeWebUrl(next.toString())) return url;
-                current = next.toString();
+                if (next == null || !safeWebUrl(next.toString())){outcome="unsafe_redirect";return url;}
+                current = next.toString();outcome="redirect";
             } catch (Exception e) { return url; }
+            finally{com.archos.mediacenter.video.diagnostics.Diagnostics.event("resolved".equals(outcome)||"redirect".equals(outcome)?"provider_request_complete":"provider_request_failed",
+                "operation_id",operation,"provider","provider_link","operation_type","title_redirect","status",status,"outcome",outcome,"redirect_index",i,
+                "duration_ms",android.os.SystemClock.elapsedRealtime()-requestStarted,"retry_number",0,"connectivity",com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());}
         }
         return current;
+        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"provider_redirect",started);}
     }
     public static boolean safeWebUrl(String url) {
         if (url == null || url.length() > 12000) return false;

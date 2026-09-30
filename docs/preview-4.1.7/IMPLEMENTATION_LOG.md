@@ -922,3 +922,9 @@ These changes require a full CI rerun; no failures are waived.
 
 - Reinspected intermediate rendered fixtures and recorded their limitations in CONFORMANCE_REVIEW.md. The old information-panel screenshot did not show its subject; its test now asserts real panel visibility and captures the complete shell after focus/scroll/layout settle.
 - Existing field assertions remain intact. This is a test-evidence correction, not a claim that the normative visual pass is finished. Corrected output and latest tests await CI.
+
+## Post-audit checkpoint 74 — provider redirect evidence and navigation fixture correction
+
+- Provider-link redirect requests now record bounded, correlated status/outcome/duration events without URLs, query values or response bodies. Existing redirect safety checks and fallback behaviour are retained. Added a fake-response regression for unsafe redirect rejection and private-query exclusion.
+- CI 36753786357 compiled and ran 130 targeted tests: 129 passed, one failed. The new toolbar fixture dispatched DOWN directly to a View, bypassing Android ViewRootImpl's fallback navigation. The corrected fixture asserts that DOWN is unconsumed, the framework focus-search target is the header, and directional focus succeeds. Existing LEFT/RIGHT edge assertions remain unchanged. Full Video, identity and backend stages were skipped after this failure, so this run is not a full validation pass.
+- Checkpoints 70/71 CI 36752959935 passed 129 targeted, 371 complete Video, 87 selected regression and 17 WebDAV tests (overlapping sets). Checkpoints 72–74 still require successful complete CI.

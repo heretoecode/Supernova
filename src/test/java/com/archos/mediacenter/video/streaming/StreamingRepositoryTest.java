@@ -15,6 +15,22 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {
+    @Test public void providerRedirectRejectsUnsafeTargetAndDoesNotLogPrivateQuery()throws Exception{
+        Application app=org.robolectric.RuntimeEnvironment.getApplication();com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
+        try{
+            okhttp3.OkHttpClient fake=new okhttp3.OkHttpClient.Builder().addInterceptor(chain->new okhttp3.Response.Builder().request(chain.request())
+                    .protocol(okhttp3.Protocol.HTTP_1_1).code(302).message("Found").header("Location","http://localhost/private")
+                    .body(okhttp3.ResponseBody.create(null,new byte[0])).build()).build();
+            String original="https://click.justwatch.com/fixture?token=fixture-private-query";
+            assertEquals(original,StreamingRepository.resolveTitleUrl(original,fake));
+            Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class,"FLIGHT");
+            java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());assertFalse(evidence.contains("fixture-private-query"));assertFalse(evidence.contains("localhost"));
+            int failures=0;for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject row=new JSONObject(line);
+                if("title_redirect".equals(row.optString("operation_type"))){failures++;assertEquals("unsafe_redirect",row.getString("outcome"));assertEquals(302,row.getInt("status"));}}
+            assertEquals(1,failures);
+        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,false);}
+    }
     @Test public void persistedAvailabilityDistinguishesUnknownEmptyAndStale()throws Exception{
         android.content.Context context=org.robolectric.RuntimeEnvironment.getApplication();
         assertNull(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1));
