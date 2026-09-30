@@ -339,7 +339,10 @@ public final class PreviewMoviePage extends ScrollView {
                 String name=value.optString("name"),role=value.optString(section.equals("cast")?"character":"job");
                 if(name.isEmpty()||section.equals("crew")&&!Arrays.asList("Director","Writer","Screenplay","Story","Creator","Producer","Executive Producer","Original Music Composer","Director of Photography","Editor").contains(role))continue;
                 if(!seen.add(value.optLong("id")+":"+name+":"+role))continue;
-                person(people,name,role);ImageView portrait=portraits.get(name);String path=value.optString("profile_path");
+                person(people,name,role);
+                long personId=value.optLong("id");
+                com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(people.getChildAt(people.getChildCount()-1),"details."+section+(personId>0?".person."+personId:".slot."+n));
+                ImageView portrait=portraits.get(name);String path=value.optString("profile_path");
                 if(portrait!=null&&path.matches("/[A-Za-z0-9._-]+")){Uri uri=Uri.parse("https://image.tmdb.org/t/p/w185"+path);com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(portrait,uri,diagnosticMedia(),"details."+section,"portrait",com.squareup.picasso.Picasso.get().load(uri).fit().centerCrop().placeholder(com.archos.mediacenter.video.R.drawable.preview_person).error(com.archos.mediacenter.video.R.drawable.preview_person),true);}
             }
             target.removeAllViews();PreviewPeopleRail rail=new PreviewPeopleRail(getContext());rail.addView(people);target.addView(rail);

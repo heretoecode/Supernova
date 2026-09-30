@@ -24,6 +24,8 @@ public class PreviewPeopleRailTest {
         assertNotNull(page.findViewWithTag("person:Actor One:Lead"));
         View first=page.findViewWithTag("person:Director One:Director"),second=page.findViewWithTag("person:Director Two:Director");
         assertNotNull(first);assertNotNull(second);assertNotSame(first,second);
+        assertEquals("semantic:details.crew.person.2",first.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
+        assertEquals("semantic:details.crew.person.3",second.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
         assertNull(page.findViewWithTag("person:Crew Other:Production Assistant"));
         PreviewPeopleRail rail=(PreviewPeopleRail)first.getParent().getParent();assertTrue(rail.isHorizontalFadingEdgeEnabled());
         assertTrue(first.isFocusable());assertFalse(first.isClickable());

@@ -61,6 +61,19 @@ public final class PreviewLibraryScan {
         final String request=operation;
         MAIN.postDelayed(()->{synchronized(PreviewLibraryScan.class){if(request.equals(operation)&&phase.equals("queued")){phase="not_started";Diagnostics.event("scan_not_started","operation_id",operation,"scheduler_error",NetworkAutoRefresh.getLastError(context));}}},15000);
     }
+    public static String libraryStatus(Context c){
+        return formatLibraryStatus(status(c),
+            com.archos.mediaprovider.ImportState.VIDEO.isInitialImport()||com.archos.mediaprovider.ImportState.VIDEO.isRegularImport(),
+            com.archos.mediaprovider.ImportState.VIDEO.getNumberOfFilesRemainingToImport(),
+            LoaderUtils.getScrapeInProgress(),com.archos.mediascraper.AutoScrapeService.getNumberOfFilesRemainingToProcess());
+    }
+    static String formatLibraryStatus(String network,boolean importing,long importRemaining,boolean identifying,long metadataRemaining){
+        List<String> stages=new ArrayList<>();
+        if(importing)stages.add("Importing local library"+(importRemaining>=0?" · "+importRemaining+" remaining":" · progress unavailable"));
+        if(identifying)stages.add("Identifying library titles"+(metadataRemaining>=0?" · "+metadataRemaining+" remaining":" · progress unavailable"));
+        if(network!=null&&!network.isEmpty())stages.add(network);
+        return android.text.TextUtils.join("\n",stages);
+    }
     public static synchronized String status(Context c){
         if(NetworkScannerServiceVideo.isScannerAlive()||sourcesTotal>=0&&completed<sourcesTotal)return "Scanning indexed sources · "+phase+(sourceLocation.isEmpty()?"":"\n"+sourceLocation)+"\n"+(phase.equals("started")?progress.liveChecked(sourceId,NetworkScannerServiceVideo.getFilesFoundCount()):checked)+" checked · "+added+" new · "+updated+" updated\n"+completed+(sourcesTotal>=0?" / "+sourcesTotal:"")+" sources completed · "+Math.max(0,(SystemClock.elapsedRealtime()-requestedAt)/1000)+" seconds";
         if(phase.equals("queued"))return "Scan requested · waiting for the scanner";

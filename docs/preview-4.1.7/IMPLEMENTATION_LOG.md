@@ -815,3 +815,14 @@ These changes require a full CI rerun; no failures are waived.
 - Metadata transport operations now link to their parent request. Successful HTTP responses must also supply the expected identity and section structure before new data enters the enrichment cache. Recommendation pages correctly accept their results-based envelope without requiring a source-title ID. Empty valid lists and empty availability regions remain valid; no availability is invented.
 - Added semantic rejection, optional-empty-list and invalid-package cache regressions. Local parsing of 811 Java files, 431 XML/identity/whitespace checks and six Python tests pass. The new Android tests still require CI.
 - Preserved an unrelated modified store screenshot and the 13 previously missing tracked symlinks. Implementation gaps, full requirements reconciliation, three-pass conformance and signed delivery remain open.
+
+## Post-audit checkpoint 58 — concurrent library progress presentation
+
+- Home's Scan Library card previously used mutually exclusive network/local/metadata branches, hiding concurrent local work. It now presents all observed active phases alongside the shared source/batch network status, and retains the recorded network outcome after activity stops.
+- Removed the progress text's fixed 36dp height so multiline source/count details are not clipped. Native remaining-item counters are explicitly labelled remaining; negative/unknown values are indeterminate, never converted into processed totals or percentages.
+- Added a regression covering simultaneous phases, unknown counts and retained outcomes. Local 811-file Java syntax, 431 XML/identity/whitespace checks and six Python tests pass. Android validation remains pending; checkpoint 57 CI 36649306709 was still running when this checkpoint was recorded.
+- This closes a presentation gap, not the outstanding native local-import lifecycle/accounting requirement. No requirement count or conformance-pass completion is advanced.
+
+### Details focus follow-up
+
+- Enriched cast/crew cards now expose structural diagnostic identifiers using the provider's numeric person ID, with a position fallback only when no valid ID exists. Human names/character text remain outside the diagnostic identifier. Added assertions to the existing individual-crew regression. Local syntax and identity checks pass; Android execution remains pending.

@@ -14,6 +14,16 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewScanLifecycleTest {
+    @Test public void libraryProgressKeepsConcurrentPhasesAndHonestRemainingCounts(){
+        String value=PreviewLibraryScan.formatLibraryStatus("Scanning indexed sources · 5 checked",true,7,true,3);
+        assertTrue(value.contains("Importing local library · 7 remaining"));
+        assertTrue(value.contains("Identifying library titles · 3 remaining"));
+        assertTrue(value.contains("5 checked"));
+        assertFalse(value.contains("7 checked"));
+        assertFalse(value.contains("%"));
+        assertEquals("Importing local library · progress unavailable",PreviewLibraryScan.formatLibraryStatus("",true,-1,false,0));
+        assertEquals("Last result",PreviewLibraryScan.formatLibraryStatus("Last result",false,0,false,0));
+    }
     private void event(Context context,String source,String phase,int checked){
         context.sendBroadcast(new Intent(context.getPackageName()+".SCAN_LIFECYCLE").setPackage(context.getPackageName())
             .putExtra("batch_id","42").putExtra("source_id",source).putExtra("phase",phase).putExtra("sources_total",2)
