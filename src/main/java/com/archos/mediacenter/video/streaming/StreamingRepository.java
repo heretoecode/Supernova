@@ -77,12 +77,52 @@ public final class StreamingRepository {
                 .appendQueryParameter("api_key", context.getString(com.archos.medialib.R.string.tmdb_api_key))
                 .appendQueryParameter("language", Locale.getDefault().toLanguageTag());
         if (country != null) url.appendQueryParameter("watch_region", country);
-        return new JSONObject(get(url.build().toString(), 2 * 1024 * 1024));
+        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_request");
+        long started=android.os.SystemClock.elapsedRealtime();
+        try{
+            String body=get(url.build().toString(),2*1024*1024,operation);
+            try{
+                JSONObject value=new JSONObject(body);validateMetadataResponse(path,value);
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_semantic_validated","operation_id",operation);
+                return value;
+            }catch(org.json.JSONException|IOException invalid){
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_semantic_failed","operation_id",operation,"failure_category",invalid instanceof org.json.JSONException?"invalid_json":"invalid_payload");
+                throw new IOException("Invalid metadata response",invalid);
+            }
+        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"metadata_request",started);}
+    }
+    /** A 200 transport response is not proof that a usable metadata package was returned. */
+    static void validateMetadataResponse(String path,JSONObject value)throws IOException{
+        if(value.has("success")&&!value.optBoolean("success",false))throw new IOException("Service rejected metadata request");
+        if(path.startsWith("watch/providers/")){
+            if(value.optJSONArray("results")==null)throw new IOException("Missing provider catalogue");return;
+        }
+        if(path.endsWith("/watch/providers")){
+            if(value.optJSONObject("results")==null)throw new IOException("Missing availability regions");return;
+        }
+        String[] parts=path.split("/");
+        if(parts.length<2||!parts[1].matches("[0-9]+"))throw new IOException("Invalid metadata identity");
+        if(parts.length==4&&"season".equals(parts[2])){
+            if(value.optInt("season_number",-1)!=Integer.parseInt(parts[3])||value.optJSONArray("episodes")==null)throw new IOException("Invalid season package");return;
+        }
+        String section=parts.length==2?"":parts[2];
+        // Recommendation pages carry result IDs, not a top-level source-title ID.
+        if("recommendations".equals(section)){
+            if(value.optJSONArray("results")==null)throw new IOException("Missing recommendations");return;
+        }
+        if(value.optLong("id",-1)!=Long.parseLong(parts[1]))throw new IOException("Mismatched metadata identity");
+        if(Arrays.asList("videos","release_dates","content_ratings").contains(section)&&value.optJSONArray("results")==null)throw new IOException("Missing metadata results");
+        if("credits".equals(section)&&(value.optJSONArray("cast")==null||value.optJSONArray("crew")==null))throw new IOException("Missing credit lists");
+        if("images".equals(section)&&value.optJSONArray("logos")==null&&value.optJSONArray("backdrops")==null&&value.optJSONArray("posters")==null)throw new IOException("Missing artwork lists");
     }
     private static String get(String url, int limit) throws IOException {
+        return get(url,limit,"");
+    }
+    private static String get(String url,int limit,String parentOperation)throws IOException{
         if (Thread.currentThread().isInterrupted()) throw new IOException("Cancelled");
         long started=android.os.SystemClock.elapsedRealtime();
         String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_network");
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_started","operation_id",operation,"parent_operation_id",parentOperation);
         try (Response response = HTTP.newCall(new Request.Builder().url(url)
                 .header("User-Agent", "NOVA-Mark/2 (Android TV)").build()).execute()) {
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_response","operation_id",operation,"status",response.code(),"protocol",String.valueOf(response.protocol()));

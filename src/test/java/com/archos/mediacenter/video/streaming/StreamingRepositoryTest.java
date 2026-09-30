@@ -15,6 +15,39 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {
+    @Test public void successfulTransportStillRequiresSemanticMetadata()throws Exception{
+        for(String[] invalid:new String[][]{{"movie/42","{success:false,status_code:7}"},{"movie/42","{id:43}"},{"tv/42/season/1","{season_number:2,episodes:[]}"},{"movie/42/credits","{id:42,cast:[]}"},{"movie/42/videos","{id:42}"},{"movie/42/watch/providers","{results:[]}"}}){
+            try{StreamingRepository.validateMetadataResponse(invalid[0],new JSONObject(invalid[1]));fail("Invalid package accepted: "+invalid[0]);}catch(java.io.IOException expected){}
+        }
+        StreamingRepository.validateMetadataResponse("movie/42",new JSONObject("{id:42}"));
+        StreamingRepository.validateMetadataResponse("tv/42/season/1",new JSONObject("{season_number:1,episodes:[]}"));
+        StreamingRepository.validateMetadataResponse("movie/42/videos",new JSONObject("{id:42,results:[]}"));
+        StreamingRepository.validateMetadataResponse("movie/42/recommendations",new JSONObject("{page:1,results:[],total_pages:0,total_results:0}"));
+        StreamingRepository.validateMetadataResponse("tv/42/recommendations",new JSONObject("{page:1,results:[],total_pages:0,total_results:0}"));
+        StreamingRepository.validateMetadataResponse("movie/42/watch/providers",new JSONObject("{results:{}}"));
+        StreamingRepository.validateMetadataResponse("watch/providers/tv",new JSONObject("{results:[]}"));
+    }
+    @Test public void rejectedMetadataCannotBecomeAFreshCachedPackage()throws Exception{
+        android.content.Context context=org.robolectric.RuntimeEnvironment.getApplication();
+        long id=System.nanoTime();
+        try{
+            com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context,"movie",id,"recommendations",()->{
+                JSONObject payload=new JSONObject("{page:1}");
+                StreamingRepository.validateMetadataResponse("movie/"+id+"/recommendations",payload);
+                return payload;
+            });
+            fail("Incomplete recommendations must reach the retry path");
+        }catch(java.io.IOException expected){}
+        assertFalse(com.archos.mediacenter.video.leanback.PreviewMetadataCache.fresh(context,"movie",id,"recommendations"));
+        assertNull(com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(context,"movie",id,"recommendations"));
+    }
+    @Test public void emptyOptionalListsRemainValidMetadata()throws Exception{
+        for(String section:new String[]{"videos","release_dates","content_ratings"})
+            StreamingRepository.validateMetadataResponse("movie/42/"+section,new JSONObject("{id:42,results:[]}"));
+        StreamingRepository.validateMetadataResponse("movie/42/credits",new JSONObject("{id:42,cast:[],crew:[]}"));
+        StreamingRepository.validateMetadataResponse("movie/42/images",new JSONObject("{id:42,logos:[],backdrops:[],posters:[]}"));
+        StreamingRepository.validateMetadataResponse("tv/42/season/1/watch/providers",new JSONObject("{results:{}}"));
+    }
     private static String provider(int id, String name) {
         return "{\"provider_id\":" + id + ",\"provider_name\":\"" + name + "\"}";
     }

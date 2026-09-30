@@ -808,3 +808,10 @@ These changes require a full CI rerun; no failures are waived.
 - Incident snapshots now retain numeric selected years/provider IDs, unmatched state, genre count/selection digest, and the exact active sort criterion/direction. Raw genre metadata is never logged. Page/filter state is captured together before asynchronous incident processing; navigating elsewhere clears the current filter details without changing a captured incident.
 - Shared dialogs report structural kinds (choice, reader, review, artwork picker, or generic dialog), with nested-stack restoration. Snapshot regressions cover privacy, delayed-state retention and nested modal dismissal. Native dialog routes still require final reconciliation.
 - Local syntax/XML/identity/whitespace and six Python tests pass. Corrected artwork assertions and the new snapshot tests require CI. Requirement counts and conformance-pass completion are not advanced solely on these local checks.
+
+## Post-audit checkpoint 57 — metadata response validation
+
+- Checkpoint 56 CI 36618615484 passed: 122 targeted, 341 complete Video, 85 selected regression and 17 WebDAV test invocations, zero failures. Sets overlap; this is not APK or physical Shield validation.
+- Metadata transport operations now link to their parent request. Successful HTTP responses must also supply the expected identity and section structure before new data enters the enrichment cache. Recommendation pages correctly accept their results-based envelope without requiring a source-title ID. Empty valid lists and empty availability regions remain valid; no availability is invented.
+- Added semantic rejection, optional-empty-list and invalid-package cache regressions. Local parsing of 811 Java files, 431 XML/identity/whitespace checks and six Python tests pass. The new Android tests still require CI.
+- Preserved an unrelated modified store screenshot and the 13 previously missing tracked symlinks. Implementation gaps, full requirements reconciliation, three-pass conformance and signed delivery remain open.
