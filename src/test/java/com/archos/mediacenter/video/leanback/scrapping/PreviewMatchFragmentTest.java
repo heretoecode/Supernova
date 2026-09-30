@@ -17,6 +17,15 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMatchFragmentTest {
+    @Test public void negativeNativeSaveResultCannotReportAcceptedMatchSuccess()throws Exception{
+        android.content.Context context=RuntimeEnvironment.getApplication();
+        for(BaseTags tags:new BaseTags[]{org.mockito.Mockito.mock(MovieTags.class),org.mockito.Mockito.mock(EpisodeTags.class)}){
+            org.mockito.Mockito.when(tags.save(context,12L)).thenReturn(-1L);
+            try{ManualVideoScrappingSearchFragment.persistAcceptedMatch(context,tags,12L);fail("Failed native save must remain a failed match");}catch(java.io.IOException expected){}
+            org.mockito.Mockito.when(tags.save(context,12L)).thenReturn(42L);
+            ManualVideoScrappingSearchFragment.persistAcceptedMatch(context,tags,12L);
+        }
+    }
     public static class Fixture extends ManualScrappingSearchFragment {
         @Override public void onCreate(Bundle state){super.onCreate(state);setInitialQuery("Example");}
         protected ScrapeSearchResult performSearch(String text){return new ScrapeSearchResult(Collections.emptyList(),true,ScrapeStatus.NOT_FOUND,null);}

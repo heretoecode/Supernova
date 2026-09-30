@@ -440,9 +440,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Playback Speed/Audio Delay use same compact adjustment panel dimensions; Subtitle Delay may be taller. Human-readable values: 1.00×, 0 ms, +250 ms, −500 ms, +1.5 s. Back exact opener.
 
-Status: **PARTIAL / AWAITING PHYSICAL QA**
+Status: **IMPLEMENTED — AWAITING VERIFICATION / PHYSICAL QA**
 
-Code mapping: PreviewAdjustmentValue supplies signed human-readable delay values and two-decimal playback speed through the retained native pickers. Existing limits/callbacks preserved. Shared dialog lifetime used; panel dimensions and complete runtime return paths still require review.
+Code mapping: PreviewAdjustmentValue supplies signed human-readable delay values and two-decimal playback speed through the retained native pickers. Existing limits/callbacks preserved. PlayerController routes Preview TVCardDialog adjustments through PreviewPlaybackMenus.showNested, which gives Audio Delay and Speed the same 330dp × 180dp bounds (clamped to available screen). The native-picker fixture verifies equal compact bounds and retained dismissal callbacks. Checkpoint 75 corrects direct HUD Speed Back to restore its exact opener rather than opening More; the new regression awaits CI. Nested menu return and physical Shield geometry/rapid Back remain acceptance checks.
 
 ### UI-045 — 8. Playback HUD
 

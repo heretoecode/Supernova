@@ -172,7 +172,9 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
      */
     @Override
     protected void saveTagsAndFinish(final BaseTags fTags) {
-        if(previewEpisode){savePreviewEpisode(fTags);return;}
+        if(previewEpisode||fTags instanceof MovieTags&&androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
+            savePreviewMatch(fTags);return;
+        }
 
         if (log.isDebugEnabled()) log.debug("saveTagsAndFinish");
 
@@ -252,27 +254,34 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
     }
 
     /** Keep the accepted parent/episode fixed while saving; failures leave the chooser available. */
-    private void savePreviewEpisode(BaseTags accepted){
-        if(!(accepted instanceof EpisodeTags)||!isAdded())return;
-        final EpisodeTags choice=(EpisodeTags)accepted;
+    private void savePreviewMatch(BaseTags accepted){
+        if(accepted==null||!isAdded()||previewEpisode&&!(accepted instanceof EpisodeTags))return;
+        final BaseTags choice=accepted;
         final android.content.Context app=requireContext().getApplicationContext();
-        final android.app.Dialog progress=com.archos.mediacenter.video.leanback.PreviewOperationDialog.waiting(requireContext(),"Find a Match","Saving the selected episode…");
+        final android.app.Dialog progress=com.archos.mediacenter.video.leanback.PreviewOperationDialog.waiting(requireContext(),"Find a Match","Saving the selected match…");
         java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
         worker.execute(()->{
             boolean saved=false;
             try{
-                EpisodeTags current=com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(app,mVideo.getId());
-                if(current.getShowTags()==null||choice.getShowTags()==null||current.getShowTags().getOnlineId()!=choice.getShowTags().getOnlineId())throw new IOException("The series match changed. Search again before saving.");
-                choice.save(app,mVideo.getId());saved=true;
+                if(previewEpisode){
+                    EpisodeTags current=com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(app,mVideo.getId());
+                    EpisodeTags episode=(EpisodeTags)choice;
+                    if(current.getShowTags()==null||episode.getShowTags()==null||current.getShowTags().getOnlineId()!=episode.getShowTags().getOnlineId())throw new IOException("The series match changed. Search again before saving.");
+                }
+                persistAcceptedMatch(app,choice,mVideo.getId());saved=true;
                 try{TraktService.onNewVideo(app);}catch(Exception ignored){}
                 if(NfoWriter.isNfoAutoExportEnabled(app))try{NfoWriter.export(mVideo.getFileUri(),choice,null);}catch(IOException ignored){}
-            }catch(Exception failed){com.archos.mediacenter.video.diagnostics.Diagnostics.event("episode_match_save_failed","category","metadata_save");}
+            }catch(Exception failed){com.archos.mediacenter.video.diagnostics.Diagnostics.event("match_save_failed","category","metadata_save");}
             finally{worker.shutdown();}
             final boolean complete=saved;new android.os.Handler(android.os.Looper.getMainLooper()).post(()->{
                 progress.dismiss();if(!isAdded()||getActivity()==null||getActivity().isFinishing()||getActivity().isDestroyed())return;
-                if(complete)getActivity().finish();else com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(requireContext(),"Find a Match","The episode match could not be saved. Check the current series match and try again.",()->{});
+                if(complete)getActivity().finish();else com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(requireContext(),"Find a Match","The match could not be saved. Check the current match and try again.",()->{});
             });
         });
+    }
+
+    static void persistAcceptedMatch(android.content.Context context,BaseTags tags,long videoId)throws IOException{
+        if(tags.save(context,videoId)<0)throw new IOException("Metadata persistence failed");
     }
 
     private static MovieTags buildNewMovieTags(String movieTitle) {

@@ -928,3 +928,15 @@ These changes require a full CI rerun; no failures are waived.
 - Provider-link redirect requests now record bounded, correlated status/outcome/duration events without URLs, query values or response bodies. Existing redirect safety checks and fallback behaviour are retained. Added a fake-response regression for unsafe redirect rejection and private-query exclusion.
 - CI 36753786357 compiled and ran 130 targeted tests: 129 passed, one failed. The new toolbar fixture dispatched DOWN directly to a View, bypassing Android ViewRootImpl's fallback navigation. The corrected fixture asserts that DOWN is unconsumed, the framework focus-search target is the header, and directional focus succeeds. Existing LEFT/RIGHT edge assertions remain unchanged. Full Video, identity and backend stages were skipped after this failure, so this run is not a full validation pass.
 - Checkpoints 70/71 CI 36752959935 passed 129 targeted, 371 complete Video, 87 selected regression and 17 WebDAV tests (overlapping sets). Checkpoints 72–74 still require successful complete CI.
+
+## Post-audit checkpoint 75 — direct Speed opener restoration
+
+- Traced UI-044 through PlayerController's actual Preview HUD callback and TVCardDialog bridge. Equal compact Speed/Audio Delay dimensions and a native-picker regression already existed; the requirements-register dimension note was stale.
+- Found and corrected a real direct-HUD Speed return defect: the targeted menu-item route installed More as its parent. Direct entry now has no intermediate parent, so Back restores the captured HUD opener. Entry from More retains its existing More return callback; track-menu nesting remains unchanged.
+- Added a real nested-dialog regression asserting dismissal, no replacement More dialog and exact Speed opener focus. Updated UI-044 to implemented/verification pending; physical geometry and remote behaviour are not claimed verified. Automated validation remains pending for this correction.
+
+## Post-audit checkpoint 76 — honest accepted-match persistence result
+
+- Inspection of pinned native MovieTags/EpisodeTags revealed that save returns a negative ID on persistence failure. The Preview episode acceptance path ignored that return and could report success. It now requires a nonnegative native save result before closing the chooser, exporting NFO or notifying Trakt.
+- Preview movie acceptance uses the same bounded failure presentation and application-context save. Classic matching and unmatched-to-episode enrichment retain their existing paths; the known-parent episode guard is unchanged.
+- Added negative-result/valid-result regressions for both native tag types. These are save-result checks, not proof of live metadata-provider or full artwork preservation; UI-039 remains under audit. Tests await CI.

@@ -17,6 +17,22 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewPlaybackMenusTest {
     @After public void close(){PreviewPlaybackMenus.close();}
+    @Test public void directSpeedAdjustmentBackReturnsToExactHudOpener(){
+        Activity host=Robolectric.buildActivity(TopNavigationTestHost.class).setup().visible().get();
+        Button opener=new Button(host);opener.setText("Speed");opener.setFocusableInTouchMode(true);host.setContentView(opener);opener.requestFocus();Shadows.shadowOf(host).setCurrentFocus(opener);
+        TVMenu menu=new TVMenu(host);String title=host.getString(R.string.player_pref_audio_speed_title);
+        menu.createAndAddTVMenuItem(title,true,false).setOnClickListener(v->{
+            android.view.ViewGroup container=(android.view.ViewGroup)android.view.LayoutInflater.from(host).inflate(R.layout.card_dialog_layout,null);
+            TVCardDialog adjustment=container.findViewById(R.id.card_view);adjustment.setText(title);
+            TVMenu controls=new TVMenu(host);controls.addView(android.view.LayoutInflater.from(host).inflate(R.layout.audio_speed_tv_picker,controls,false));adjustment.addOtherView(controls);
+            PreviewPlaybackMenus.showNested(host,adjustment);
+        });
+        TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_audio));when(card.previewMenu()).thenReturn(menu);
+        TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
+        PreviewPlaybackMenus.show(host,adapter,title);Dialog adjustment=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(adjustment.isShowing());
+        assertTrue(PreviewPlaybackMenus.back());Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        assertFalse(adjustment.isShowing());assertFalse("Direct Speed must not return through More",PreviewPlaybackMenus.isShowing());assertTrue(opener.hasFocus());host.finish();
+    }
     @Test public void speedAndAudioDelayShareCompactBoundsAndRetainNativeDismissCallbacks(){
         Activity host=Robolectric.buildActivity(TopNavigationTestHost.class).setup().get();
         int[] size=null;java.util.concurrent.atomic.AtomicInteger dismissed=new java.util.concurrent.atomic.AtomicInteger();

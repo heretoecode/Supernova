@@ -48,7 +48,7 @@ final class PreviewPlaybackMenus {
  static void show(android.app.Activity activity,TVMenuAdapter adapter,String target){
   close();rootFocus=-1;origin=activity.getCurrentFocus();
   if(target!=null)for(TVCardView card:adapter.previewCards())if(target.equals(card.previewTitle())){select(activity,card,null,-1,false);return;}
-  if(target!=null)for(TVCardView card:adapter.previewCards()){TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View view=menu.getChildAt(i);if(view instanceof TVMenuItem&&target.equals(((TVMenuItem)view).getText())&&view.isEnabled()){restoreParent=()->root(activity,adapter);((TVMenuItem)view).previewClick();return;}}}
+  if(target!=null)for(TVCardView card:adapter.previewCards()){TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View view=menu.getChildAt(i);if(view instanceof TVMenuItem&&target.equals(((TVMenuItem)view).getText())&&view.isEnabled()){restoreParent=null;((TVMenuItem)view).previewClick();return;}}}
   root(activity,adapter);
  }
  private static void root(android.app.Activity activity,TVMenuAdapter adapter){
