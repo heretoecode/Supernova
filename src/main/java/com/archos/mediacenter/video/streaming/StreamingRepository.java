@@ -219,6 +219,28 @@ public final class StreamingRepository {
         return "";
     }
     public static void invalidate() { synchronized (CACHE) { CACHE.clear(); } }
+    /** Read only public duration metadata for an already authorised YouTube Extra. */
+    public static long extraDuration(String key)throws IOException{
+        if(key==null||!key.matches("[A-Za-z0-9_-]{11}"))throw new IOException("Invalid Extra identity");
+        return parseExtraDuration(get("https://www.youtube.com/watch?v="+key,2*1024*1024),key);
+    }
+    static long parseExtraDuration(String html,String key){
+        if(html==null||key==null||!key.matches("[A-Za-z0-9_-]{11}"))return 0;
+        String identity="",duration="";
+        Matcher tags=Pattern.compile("<meta\\s[^>]{0,4096}>",Pattern.CASE_INSENSITIVE).matcher(html);
+        Pattern attrs=Pattern.compile("([A-Za-z]+)\\s*=\\s*([\"'])(.*?)\\2");
+        while(tags.find()){
+            Map<String,String> values=new HashMap<>();Matcher fields=attrs.matcher(tags.group());
+            while(fields.find())values.put(fields.group(1).toLowerCase(Locale.ROOT),fields.group(3));
+            if("videoId".equals(values.get("itemprop")))identity=values.getOrDefault("content","");
+            if("duration".equals(values.get("itemprop")))duration=values.getOrDefault("content","");
+        }
+        if(!key.equals(identity))return 0;
+        Matcher iso=Pattern.compile("PT(?:(\\d{1,3})H)?(?:(\\d{1,5})M)?(?:(\\d{1,7})S)?").matcher(duration);
+        if(!iso.matches())return 0;
+        long seconds=(iso.group(1)==null?0:Long.parseLong(iso.group(1))*3600)+(iso.group(2)==null?0:Long.parseLong(iso.group(2))*60)+(iso.group(3)==null?0:Long.parseLong(iso.group(3)));
+        return seconds>0&&seconds<=86400?seconds:0;
+    }
     static boolean isTmdbWatchUrl(String url, String kind, long id) {
         Uri u = Uri.parse(url);
         if (!"https".equals(u.getScheme()) || !"www.themoviedb.org".equals(u.getHost())) return false;

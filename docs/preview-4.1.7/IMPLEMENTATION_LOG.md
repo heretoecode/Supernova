@@ -826,3 +826,16 @@ These changes require a full CI rerun; no failures are waived.
 ### Details focus follow-up
 
 - Enriched cast/crew cards now expose structural diagnostic identifiers using the provider's numeric person ID, with a position fallback only when no valid ID exists. Human names/character text remain outside the diagnostic identifier. Added assertions to the existing individual-crew regression. Local syntax and identity checks pass; Android execution remains pending.
+
+## Post-audit checkpoint 59 — native local-import evidence
+
+- Checkpoint 57 CI 36649306709 passed all gates: 122 targeted, 344 complete Video, 85 selected regression and 17 WebDAV invocations, zero failures (overlapping sets). Checkpoint 58 is in CI.
+- Added a separate additive backend patch for worker-local import traces: native start, reconciliation counts, bounded checked-row progress, actual metadata enqueue outcome, and complete/partial/failed/cancelled termination. Paths and media names never enter these events. Existing caught import errors mark the operation partial rather than falsely reporting clean completion. Counters identify technical rows checked, not an invented whole-library percentage or source total.
+- Native metadata starts retain their original behaviour; a result-returning companion observes null/restricted/accepted starts. A null scan cursor is now handled before accessing its count. The UI retains local results independently of network results, across page navigation.
+- Added backend-to-receiver accounting/partial-outcome and local metadata-start regressions. Four backend files and 812 Video Java files parse; patch applicability, 431 XML/identity/whitespace checks and six Python tests pass. Android compilation/tests remain required. Local request-to-queue correlation and complete source accounting still need reconciliation; this checkpoint does not declare those requirements complete.
+
+## Post-audit checkpoint 60 — published Extra durations
+
+- Extras now accepts bounded ISO duration metadata from the existing YouTube video's public page, only when its published video identity exactly matches the requested Extra. No API credentials, replacement provider, feature-runtime estimate or media probing is used. Missing/changed public metadata remains unknown; live-source availability is not asserted by fixture tests.
+- Cached durations display immediately. Focus requests optional metadata with deduplication, a bounded pending set and daily retry throttling, retaining known durations on refresh failure. The existing focus animation and playback action remain intact.
+- Added identity/malformed/unknown duration parser regressions and duration-format coverage. Local 814-file syntax, 431 XML/identity/whitespace checks and six Python tests pass. Android CI and real artwork/geometry/remote interaction validation remain outstanding.

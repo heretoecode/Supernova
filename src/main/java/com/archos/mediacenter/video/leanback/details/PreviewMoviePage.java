@@ -449,9 +449,10 @@ public final class PreviewMoviePage extends ScrollView {
             for(ScraperTrailer extra:category.getValue()){
                 if(column%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);trailers.addView(row);}
                 PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
-                // TMDb videos do not provide reliable duration; leave it absent rather than inventing one.
-                card.bind(safe(extra.mName),"",Uri.parse("https://i.ytimg.com/vi/"+extra.mVideoKey+"/hqdefault.jpg"),true,diagnosticMedia(),"details.extras","video_thumbnail");
+                card.bind(safe(extra.mName),PreviewExtraDuration.label(PreviewExtraDuration.cached(getContext(),extra.mVideoKey)),Uri.parse("https://i.ytimg.com/vi/"+extra.mVideoKey+"/hqdefault.jpg"),true,diagnosticMedia(),"details.extras","video_thumbnail");
                 card.setTag("extra:"+extra.mVideoKey);card.setOnClickListener(v->PreviewTrailer.show((Activity)getContext(),extra));
+                View.OnFocusChangeListener focus=card.getOnFocusChangeListener();
+                card.setOnFocusChangeListener((v,active)->{if(focus!=null)focus.onFocusChange(v,active);if(active)PreviewExtraDuration.request(card,extra.mVideoKey);});
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(142),1);lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);extraCards.add(card);rowKeys(card,row);column++;
             }
             if(row!=null)while(row.getChildCount()<4)row.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));

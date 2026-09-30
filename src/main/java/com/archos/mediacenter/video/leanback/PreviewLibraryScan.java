@@ -21,6 +21,7 @@ public final class PreviewLibraryScan {
     public static synchronized void install(Context context) {
         if(installed)return;installed=true;Context app=context.getApplicationContext();
         BroadcastReceiver receiver=new BroadcastReceiver(){public void onReceive(Context c,Intent intent){
+            if((c.getPackageName()+".LOCAL_IMPORT_LIFECYCLE").equals(intent.getAction())){PreviewLocalScanState.accept(c,intent);return;}
             String next=intent.getStringExtra("phase"),batch=intent.getStringExtra("batch_id"),source=intent.getStringExtra("source_id");
             if(!Arrays.asList("queued","started","reconciled","partial","complete","failed","coalesced","not_started","metadata_queued","metadata_skipped","metadata_failed","batch_complete","batch_failed").contains(next)||batch==null||!batch.matches("[A-Za-z0-9-]{1,100}")||source==null||!source.matches("[a-f0-9]{24}"))return;
             synchronized(PreviewLibraryScan.class){
@@ -37,6 +38,7 @@ public final class PreviewLibraryScan {
             }
         }};
         IntentFilter filter=new IntentFilter(app.getPackageName()+".SCAN_LIFECYCLE");
+        filter.addAction(app.getPackageName()+".LOCAL_IMPORT_LIFECYCLE");
         if(Build.VERSION.SDK_INT>=33)app.registerReceiver(receiver,filter,Context.RECEIVER_NOT_EXPORTED);else app.registerReceiver(receiver,filter);
     }
     public static synchronized void request(Context context){
@@ -62,10 +64,12 @@ public final class PreviewLibraryScan {
         MAIN.postDelayed(()->{synchronized(PreviewLibraryScan.class){if(request.equals(operation)&&phase.equals("queued")){phase="not_started";Diagnostics.event("scan_not_started","operation_id",operation,"scheduler_error",NetworkAutoRefresh.getLastError(context));}}},15000);
     }
     public static String libraryStatus(Context c){
-        return formatLibraryStatus(status(c),
+        String nativeState=PreviewLocalScanState.status(c);
+        String live=formatLibraryStatus(status(c),
             com.archos.mediaprovider.ImportState.VIDEO.isInitialImport()||com.archos.mediaprovider.ImportState.VIDEO.isRegularImport(),
             com.archos.mediaprovider.ImportState.VIDEO.getNumberOfFilesRemainingToImport(),
             LoaderUtils.getScrapeInProgress(),com.archos.mediascraper.AutoScrapeService.getNumberOfFilesRemainingToProcess());
+        return nativeState.isEmpty()?live:nativeState+"\n"+live;
     }
     static String formatLibraryStatus(String network,boolean importing,long importRemaining,boolean identifying,long metadataRemaining){
         List<String> stages=new ArrayList<>();

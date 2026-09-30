@@ -15,6 +15,14 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {
+    @Test public void extraDurationRequiresMatchingPublishedVideoIdentity(){
+        String identity="<meta itemprop='videoId' content='abcdefghijk'>";
+        assertEquals(135,StreamingRepository.parseExtraDuration(identity+"<meta content='PT2M15S' itemprop='duration'>","abcdefghijk"));
+        assertEquals(3661,StreamingRepository.parseExtraDuration(identity+"<meta itemprop=\"duration\" content=\"PT1H1M1S\">","abcdefghijk"));
+        assertEquals(0,StreamingRepository.parseExtraDuration(identity+"<meta itemprop='duration' content='PT2M15S'>","differentid"));
+        assertEquals(0,StreamingRepository.parseExtraDuration("<meta itemprop='duration' content='PT2M15S'>","abcdefghijk"));
+        for(String invalid:new String[]{"PT","PT0S","PT999H","P1D","unknown","-1"})assertEquals(0,StreamingRepository.parseExtraDuration(identity+"<meta itemprop='duration' content='"+invalid+"'>","abcdefghijk"));
+    }
     @Test public void successfulTransportStillRequiresSemanticMetadata()throws Exception{
         for(String[] invalid:new String[][]{{"movie/42","{success:false,status_code:7}"},{"movie/42","{id:43}"},{"tv/42/season/1","{season_number:2,episodes:[]}"},{"movie/42/credits","{id:42,cast:[]}"},{"movie/42/videos","{id:42}"},{"movie/42/watch/providers","{results:[]}"}}){
             try{StreamingRepository.validateMetadataResponse(invalid[0],new JSONObject(invalid[1]));fail("Invalid package accepted: "+invalid[0]);}catch(java.io.IOException expected){}
