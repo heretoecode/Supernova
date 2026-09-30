@@ -899,3 +899,15 @@ These changes require a full CI rerun; no failures are waived.
 - Native local-import messages now emit Requested and Queued before execution, retaining their batch through Started/reconciliation/metadata/terminal states. Removed/rejected queued requests receive cancellation evidence. Service startup/resume, content-change and Android-scan triggers are recorded where established; other origins remain native_import rather than being guessed.
 - Import scheduling/delays, reconciliation and authentication behaviour are unchanged. App-side local tracing tracks overlapping batches separately, bounds retained state and suppresses repeated terminal broadcasts.
 - Added actual queued/start/cancel state and same-batch/trigger sequence tests. Backend patch applies cleanly to the pinned baseline; local 818 Java files parse, 431 XML/identity checks and six Python tests pass. Android/backend validation remains pending.
+
+## Post-audit checkpoint 70 — enrichment cross-layer correlation
+
+- Synchronous worker operation scopes link background package and foreground Details enrichment to metadata request/transport children. Nested scopes restore their previous parent even after exceptions and do not use inheritable thread state.
+- Package and Details failure/terminal records carry their operation ID and safe numeric media identity/category. No title, URL, credential or exception message is introduced. Foreground Details now has an explicit begin/end lifetime.
+- Added nested-scope restoration regression. Local syntax/identity checks pass; Android CI remains pending.
+
+## Post-audit checkpoint 71 — Details semantic controls and reader lifetime
+
+- The Details reader now participates in shared modal-state capture and retained opener restoration while preserving its existing layout/frost treatment. Actions, recommendation/Extras cards and fallback people slots receive structural/numeric semantic identifiers rather than generated view positions or names.
+- Added reader-modal/opener regression. Local 818-file Java parsing, 431 XML/identity checks and six Python tests pass. Checkpoints 70/71 still need Android CI.
+- Checkpoints 68/69 CI 36717304246 completed successfully, including native local queue/backend compilation and the full Video suite. This clears the previously pending scan-lifecycle run, not subsequent local changes.

@@ -208,7 +208,15 @@ public final class Diagnostics {
         }catch(IOException failure){WRITE_ERRORS.incrementAndGet();}}
     }
     private static final SharedPreferences.OnSharedPreferenceChangeListener CONFIG=(prefs,key)->{if(LEVEL.equals(key))qa="qa".equals(prefs.getString(LEVEL,"normal"));if(key!=null&&Arrays.asList(LEVEL,"try_new_ui","remember_library_views","hide_watched","sort_ignore_articles","preview_accent41", "streaming_enabled").contains(key))event("configuration_changed","setting",key);};
-    public static String operation(String kind){String id=PROCESS+":"+SEQUENCE.incrementAndGet();event("artwork".equals(kind)?"artwork_operation_begin":"operation_begin","operation_id",id,"kind",kind);return id;}
+    private static final ThreadLocal<String> OPERATION_PARENT=new ThreadLocal<>();
+    public static final class OperationScope implements AutoCloseable {
+        private final String previous=OPERATION_PARENT.get();
+        private OperationScope(String operation){OPERATION_PARENT.set(operation);}
+        @Override public void close(){if(previous==null)OPERATION_PARENT.remove();else OPERATION_PARENT.set(previous);}
+    }
+    /** Synchronous worker scope only; never propagates into unrelated executor work. */
+    public static OperationScope operationScope(String operation){return new OperationScope(operation);}
+    public static String operation(String kind){String id=PROCESS+":"+SEQUENCE.incrementAndGet();event("artwork".equals(kind)?"artwork_operation_begin":"operation_begin","operation_id",id,"kind",kind,"parent_operation_id",OPERATION_PARENT.get()==null?"":OPERATION_PARENT.get());return id;}
     public static void finishOperation(String id,String kind,long started){event("operation_end","operation_id",id,"kind",kind,"latency_ms",android.os.SystemClock.elapsedRealtime()-started);}
     private static void heartbeat(){try{if(!enabled||context==null)return;long now=android.os.SystemClock.elapsedRealtime();if(foreground>0&&now-mainAck>65000)event("main_thread_stall_suspected","unresponsive_ms",now-mainAck);new android.os.Handler(android.os.Looper.getMainLooper()).post(()->mainAck=android.os.SystemClock.elapsedRealtime());Runtime runtime=Runtime.getRuntime();event("heartbeat","foreground",foreground,"heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),"native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"queue_depth",WORK.getQueue().size(),"dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_bytes",FLIGHT.bytes(),"level",qa?"QA_SOAK":"NORMAL");}catch(RuntimeException ignored){WRITE_ERRORS.incrementAndGet();}}
     private static synchronized void freeze(String reason){

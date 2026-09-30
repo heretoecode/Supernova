@@ -80,7 +80,7 @@ public final class StreamingRepository {
         if (country != null) url.appendQueryParameter("watch_region", country);
         String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_request");
         long started=android.os.SystemClock.elapsedRealtime();
-        try{
+        try(com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored=com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)){
             String body=get(url.build().toString(),2*1024*1024,operation);
             try{
                 JSONObject value=new JSONObject(body);validateMetadataResponse(path,value);

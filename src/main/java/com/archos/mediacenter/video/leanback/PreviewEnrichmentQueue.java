@@ -90,7 +90,7 @@ public final class PreviewEnrichmentQueue {
             if(!cursor.moveToFirst()){waitForRetry(app,db);return;}key=cursor.getString(0);kind=cursor.getString(1);id=cursor.getLong(2);stage=cursor.getInt(3);seasonCursor=cursor.getInt(4);
         }
         long started=android.os.SystemClock.elapsedRealtime();String operation=Diagnostics.operation("metadata_package");
-        try {
+        try (Diagnostics.OperationScope ignored=Diagnostics.operationScope(operation)) {
             if(SECTIONS[stage].equals("providers")) {
                 if(StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false))StreamingRepository.load(app,kind,id,StreamingRepository.country(app));
             } else if(SECTIONS[stage].equals("seasons")) {
@@ -119,7 +119,7 @@ public final class PreviewEnrichmentQueue {
             if(!key.endsWith(":"+scope(app)))return;
             db.execSQL("UPDATE jobs SET stage=?,next_at=0,completed_at=?,priority=CASE WHEN ? THEN ? ELSE priority END WHERE identity=?",new Object[]{stage+1,stage+1==SECTIONS.length?System.currentTimeMillis():0,stage+1==SECTIONS.length?1:0,BACKGROUND,key});
             Diagnostics.event("metadata_package_stage","operation_id",operation,"media_id",key,"section",SECTIONS[stage],"complete",stage+1==SECTIONS.length);
-        }catch(Exception failure){db.execSQL("UPDATE jobs SET next_at=? WHERE identity=?",new Object[]{System.currentTimeMillis()+30*60*1000,key});Diagnostics.error("metadata_package_failed",failure);}
+        }catch(Exception failure){db.execSQL("UPDATE jobs SET next_at=? WHERE identity=?",new Object[]{System.currentTimeMillis()+30*60*1000,key});Diagnostics.event("metadata_package_failed","operation_id",operation,"media_id",id,"section",SECTIONS[stage],"failure_category",failure.getClass().getSimpleName());}
         finally{Diagnostics.finishOperation(operation,"metadata_package",started);WORK.schedule(()->drain(app),250,TimeUnit.MILLISECONDS);}
     }
     private static final class Store extends SQLiteOpenHelper {

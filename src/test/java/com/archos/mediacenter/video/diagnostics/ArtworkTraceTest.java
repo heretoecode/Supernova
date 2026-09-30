@@ -11,6 +11,23 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class ArtworkTraceTest {
+    @Test public void workerOperationScopeLinksChildrenAndRestoresAfterNestedFailure()throws Exception{
+        Application app=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(app,true);
+        try{
+            String child,nested="",restored,outside;
+            try(Diagnostics.OperationScope parent=Diagnostics.operationScope("fixture-parent")){
+                child=Diagnostics.operation("fixture_child");
+                try(Diagnostics.OperationScope inner=Diagnostics.operationScope(child)){nested=Diagnostics.operation("fixture_nested");throw new IllegalStateException("fixture");}catch(IllegalStateException expected){}
+                restored=Diagnostics.operation("fixture_restored");
+            }
+            outside=Diagnostics.operation("fixture_outside");
+            DiagnosticFlightRecorder recorder=ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");java.util.Map<String,String> parents=new java.util.HashMap<>();
+            for(String line:recorder.snapshot(android.os.SystemClock.elapsedRealtime()).split("\n")){
+                if(line.isEmpty())continue;JSONObject row=new JSONObject(line);if("operation_begin".equals(row.optString("event")))parents.put(row.optString("operation_id"),row.optString("parent_operation_id"));
+            }
+            assertEquals("fixture-parent",parents.get(child));assertEquals(child,parents.get(nested));assertEquals("fixture-parent",parents.get(restored));assertEquals("",parents.get(outside));
+        }finally{Diagnostics.setEnabled(app,false);}
+    }
     @Test public void sharedTraceCorrelatesOnceAndExpectedFallbackIsNotAnIncident()throws Exception{
         Application app=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(app,true);
         try{

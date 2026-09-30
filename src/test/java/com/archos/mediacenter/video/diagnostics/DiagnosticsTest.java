@@ -9,6 +9,18 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void detailsReaderRetainsSemanticOpenerAndModalContext()throws Exception{
+        android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        com.archos.mediacenter.video.leanback.details.PreviewMoviePage page=new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(activity,androidx.leanback.widget.ArrayObjectAdapter::new,a->{},()->{},uri->{});
+        activity.setContentView(page);android.view.View opener=page.findViewWithTag("action:More");assertNotNull(opener);opener.requestFocus();
+        assertEquals("semantic:details.action.more",opener.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
+        Diagnostics.setEnabled(activity,true);android.app.Dialog dialog=null;
+        try{
+            org.robolectric.util.ReflectionHelpers.callInstanceMethod(page,"moreInfo");dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertNotNull(dialog);
+            assertEquals("reader",new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed",new Diagnostics.UiSnapshot())).getString("modal_kinds"));
+            dialog.dismiss();org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertTrue(opener.hasFocus());
+        }finally{if(dialog!=null)dialog.dismiss();Diagnostics.setEnabled(activity,false);activity.finish();}
+    }
     @Test public void trailerModalIsCapturedAndDismissalRestoresItsOpener()throws Exception{
         android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().get();Diagnostics.setEnabled(activity,true);
         android.widget.Button opener=new android.widget.Button(activity);opener.setFocusableInTouchMode(true);activity.setContentView(opener);opener.requestFocus();
