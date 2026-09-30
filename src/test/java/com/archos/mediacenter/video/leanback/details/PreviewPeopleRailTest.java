@@ -16,6 +16,17 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewPeopleRailTest {
+    @Test public void nativePrincipalCrewUsesIndividualNamesAndRetainsFocusedPerson(){
+        Activity activity=Robolectric.buildActivity(Activity.class).setup().visible().get();
+        PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);
+        com.archos.mediascraper.MovieTags tags=new com.archos.mediascraper.MovieTags();
+        tags.setDirectors(java.util.Arrays.asList("Director One","Director Two"));tags.setWriters(java.util.Collections.singletonList("Writer, Jr."));
+        page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
+        View second=page.findViewWithTag("person:Director Two:Director");assertNotNull(second);assertNotNull(page.findViewWithTag("person:Director One:Director"));
+        assertNotNull(page.findViewWithTag("person:Writer, Jr.:Writer"));assertTrue(second.requestFocus());
+        page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
+        assertEquals("person:Director Two:Director",page.findFocus().getTag());
+    }
     @Test public void creditsCreateIndividualPrincipalCrewAndRemoteCast()throws Exception{
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();
         PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);

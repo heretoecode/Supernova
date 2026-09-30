@@ -29,7 +29,8 @@ public class PreviewMatchStateTest {
         for(int mediaId=1;mediaId<=2;mediaId++){
             ContentValues tags=new ContentValues();tags.put(ScraperStore.Movie.VIDEO_ID,mediaId);tags.put(ScraperStore.Movie.NAME,"Original");
             assertNotNull(provider.insert(ScraperStore.Movie.URI.BASE,tags));tags.put(ScraperStore.Movie.NAME,"Corrected");
-            assertNotNull(provider.insert(ScraperStore.Movie.URI.BASE,tags));
+            android.net.Uri corrected=provider.insert(ScraperStore.Movie.URI.BASE,tags);assertNotNull(corrected);
+            assertAssociation(mediaId,ContentUris.parseId(corrected),ScraperStore.SCRAPER_TYPE_MOVIE);
         }
         assertFiles();
     }
@@ -39,17 +40,25 @@ public class PreviewMatchStateTest {
         long newId=ContentUris.parseId(provider.insert(ScraperStore.Show.URI.BASE,show));
         for(int mediaId=1;mediaId<=2;mediaId++){
             ContentValues tags=new ContentValues();tags.put(ScraperStore.Episode.VIDEO_ID,mediaId);tags.put(ScraperStore.Episode.SHOW,oldId);tags.put(ScraperStore.Episode.NAME,"Original episode");
-            assertNotNull(provider.insert(ScraperStore.Episode.URI.BASE,tags));
+            android.net.Uri corrected=provider.insert(ScraperStore.Episode.URI.BASE,tags);assertNotNull(corrected);
+            assertAssociation(mediaId,ContentUris.parseId(corrected),ScraperStore.SCRAPER_TYPE_SHOW);
         }
         for(int mediaId=1;mediaId<=2;mediaId++){
             ContentValues tags=new ContentValues();tags.put(ScraperStore.Episode.VIDEO_ID,mediaId);tags.put(ScraperStore.Episode.SHOW,newId);tags.put(ScraperStore.Episode.NAME,"Corrected episode");
-            assertNotNull(provider.insert(ScraperStore.Episode.URI.BASE,tags));
+            android.net.Uri corrected=provider.insert(ScraperStore.Episode.URI.BASE,tags);assertNotNull(corrected);
+            assertAssociation(mediaId,ContentUris.parseId(corrected),ScraperStore.SCRAPER_TYPE_SHOW);
         }
         assertFiles();
     }
     private void assertFiles(){
         try(Cursor files=database.get().query(VideoOpenHelper.FILES_TABLE_NAME,new String[]{"_id","remote_id","_data",VideoStore.Video.VideoColumns.BOOKMARK,VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED},null,null,null,null,"_id")){
             assertEquals(2,files.getCount());for(int id=1;id<=2;id++){assertTrue(files.moveToNext());assertEquals(id,files.getLong(0));assertEquals(id,files.getLong(1));assertEquals("/movies/version-"+id+".mkv",files.getString(2));assertEquals(id==1?12345:-2,files.getInt(3));assertEquals(900L+id,files.getLong(4));}
+        }
+    }
+    private void assertAssociation(long mediaId,long scraperId,int type){
+        try(Cursor file=database.get().query(VideoOpenHelper.FILES_TABLE_NAME,
+                new String[]{"ArchosMediaScraper_id","ArchosMediaScraper_type"},"remote_id=?",new String[]{Long.toString(mediaId)},null,null,null)){
+            assertEquals(1,file.getCount());assertTrue(file.moveToFirst());assertEquals(scraperId,file.getLong(0));assertEquals(type,file.getInt(1));
         }
     }
 }

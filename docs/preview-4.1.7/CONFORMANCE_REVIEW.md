@@ -33,6 +33,14 @@ Source: remote `4c8234d8f805dcb3a377cc6e7624425169bb1189`, successful CI 3671730
 
 Pass 2 remains incomplete.
 
+### Checkpoint 74 corrected Details evidence
+
+CI 36787091119, remote d500fe78d27753baf177be6ceb095b04ad4393d7, artifact 11130596438 passed compilation/identity, 130 targeted, 374 complete Video, 87 selected regression and 17 WebDAV tests (overlapping sets).
+
+- `details-information-next.png` now shows its actual subject inside the complete navigation shell: Key Information on the left, populated Reception in the middle, Technical Information on the right. The focused panel boundary, compact title and complete visible cast cards are inspectable. This resolves the earlier inadequate screenshot, not the full Details acceptance checklist.
+- `details-compact-title.png` shows the remote fixture's compact title and Key/Streaming two-panel reflow with absent Reception/Technical content. Synthetic/absent artwork and fixed scroll positions do not establish physical scrolling, real crop or Shield legibility.
+- The later direct Speed return and match-save corrections are outside this validated tree and need another complete run. All three final conformance passes remain incomplete.
+
 ## Pass 3: regression, identity and signed delivery
 
 Not complete. CI 36349549771: application/test compilation and targeted suite passed; identity audit passed; full Video suite 312 tests, 1 failure (shared provider browser focus); backend/WebDAV gates skipped. The focus fix and diagnostics checkpoint are submitted in remote ab0c9eaea404b1f39b7a88b742dd7dc774b9b8f1, CI 36349938513 pending.

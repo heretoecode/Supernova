@@ -188,17 +188,19 @@ public final class PreviewMoviePage extends ScrollView {
         if(certificate!=null&&!certificate.isEmpty())metadata.add(certificate);
         meta.setText((movie instanceof Episode?safe(((Episode)movie).getEpisodeName())+"\n":"")+android.text.TextUtils.join("  ·  ",metadata));meta.setVisibility(metadata.isEmpty()?GONE:VISIBLE);
     }
-    public void setTags(BaseTags value,List<ScraperTrailer> videos,List<ScraperImage> backdrops){View oldCast=cast.findFocus();Object castKey=oldCast==null?null:oldCast.getTag();int oldY=getScrollY();tags=value;trailerList=videos==null?Collections.emptyList():videos;
+    public void setTags(BaseTags value,List<ScraperTrailer> videos,List<ScraperImage> backdrops){View oldCast=cast.findFocus(),oldCrew=crew.findFocus();Object castKey=oldCast==null?null:oldCast.getTag(),crewKey=oldCrew==null?null:oldCrew.getTag();int oldY=getScrollY();tags=value;trailerList=videos==null?Collections.emptyList():videos;
         ScraperImage selectedBackdrop=tags==null?null:tags.getDefaultBackdrop();
         if(selectedBackdrop==null&&backdrops!=null&&!backdrops.isEmpty())selectedBackdrop=backdrops.get(0);
         if(selectedBackdrop!=null){java.io.File file=selectedBackdrop.getLargeFileF();Uri uri=file!=null&&file.exists()?Uri.fromFile(file):selectedBackdrop.getLargeUrl()==null?null:Uri.parse(selectedBackdrop.getLargeUrl());if(uri!=null){artwork.accept(uri);if(movie!=null)movie.setPreviewBackdrop(uri.toString());}}
         portraits.clear();cast.removeAllViews();HorizontalScrollView scroll=new PreviewPeopleRail(getContext());LinearLayout people=new LinearLayout(getContext());scroll.addView(people);cast.addView(scroll);
+        crew.removeAllViews();HorizontalScrollView crewScroll=new PreviewPeopleRail(getContext());LinearLayout crewPeople=new LinearLayout(getContext());crewScroll.addView(crewPeople);crew.addView(crewScroll);
         if(tags!=null){for(Map.Entry<String,String> person:tags.getActors().entrySet()){person(people,person.getKey(),person.getValue());}
-            crew.removeAllViews();HorizontalScrollView crewScroll=new PreviewPeopleRail(getContext());LinearLayout crewPeople=new LinearLayout(getContext());crewScroll.addView(crewPeople);crew.addView(crewScroll);if(!safe(tags.getDirectorsFormatted()).isEmpty())person(crewPeople,tags.getDirectorsFormatted(),"Director");if(!safe(tags.getWritersFormatted()).isEmpty())person(crewPeople,tags.getWritersFormatted(),"Writer");}
+            if(tags.getDirectors()!=null)for(String name:tags.getDirectors())if(!safe(name).isEmpty())person(crewPeople,name,"Director");
+            if(tags.getWriters()!=null)for(String name:tags.getWriters())if(!safe(name).isEmpty())person(crewPeople,name,"Writer");}
         ((View)cast.getParent()).setVisibility(people.getChildCount()==0?GONE:VISIBLE);
-        ((View)crew.getParent()).setVisibility(tags==null||safe(tags.getDirectorsFormatted()).isEmpty()&&safe(tags.getWritersFormatted()).isEmpty()?GONE:VISIBLE);
+        ((View)crew.getParent()).setVisibility(crewPeople.getChildCount()==0?GONE:VISIBLE);
         trailer.setVisibility(GONE);renderExtras();rebuildTabs();
-        PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderEnrichedPeople();renderDetails();renderRelated();requestEnrichment();restoreRowFocus(cast,castKey,oldY);
+        PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderEnrichedPeople();renderDetails();renderRelated();requestEnrichment();restoreRowFocus(cast,castKey,oldY);restoreRowFocus(crew,crewKey,oldY);
     }
     public void setSnapshot(Snapshot value){snapshot=value;renderDetails();renderRelated();requestEnrichment();}
     public void setSeriesPlaybackTarget(PreviewSeriesJourney.Selection selection){play.setText(PreviewSeriesJourney.playLabel(selection));}

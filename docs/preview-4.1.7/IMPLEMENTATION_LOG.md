@@ -940,3 +940,14 @@ These changes require a full CI rerun; no failures are waived.
 - Inspection of pinned native MovieTags/EpisodeTags revealed that save returns a negative ID on persistence failure. The Preview episode acceptance path ignored that return and could report success. It now requires a nonnegative native save result before closing the chooser, exporting NFO or notifying Trakt.
 - Preview movie acceptance uses the same bounded failure presentation and application-context save. Classic matching and unmatched-to-episode enrichment retain their existing paths; the known-parent episode guard is unchanged.
 - Added negative-result/valid-result regressions for both native tag types. These are save-result checks, not proof of live metadata-provider or full artwork preservation; UI-039 remains under audit. Tests await CI.
+
+## Post-audit checkpoint 77 — file-association and corrected visual evidence
+
+- Reconciled the pinned native schema: replacement metadata is linked to physical files by remote video ID; insert triggers update each file's scraper ID/type without replacing the physical file row. Extended real-provider movie/series correction tests to assert those associations point to the newly inserted metadata, in addition to existing two-version/bookmark/last-played preservation assertions. This extension awaits CI.
+- CI through checkpoint 74 passed: 130 targeted, 374 complete Video, 87 selected regression and 17 WebDAV tests, plus compilation and identity validation. Counts overlap. Corrected Details screenshots were inspected and their limited conclusions recorded in CONFORMANCE_REVIEW.md; no final visual-pass completion is claimed.
+
+## Post-audit checkpoint 78 — individual native crew and refresh focus
+
+- UI-030 review found the enriched-credit path produced individual principal cards, but native tags still put a formatted list of directors/writers into one card. Native structured director/writer lists now produce separate cards without splitting names on punctuation. Missing structured names are not fabricated from an ambiguous formatted string; enriched credits remain the fuller principal-crew source.
+- Local tag refresh captures and restores the crew opener as well as cast focus. Empty native crew is cleared before applying any cached enriched credits, avoiding stale people on a later tag update.
+- Added a native two-director/one-writer regression, including a comma inside a real name and focused-person restoration. Android validation remains pending.
