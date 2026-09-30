@@ -41,4 +41,26 @@ public class PreviewSettingsEntryTest {
             assertSame(subtitles,returned);assertTrue(returned.requestFocus());PreviewPagesTest.layout(root);assertTrue(subtitles.hasFocus());
         }finally{host.pause().stop().destroy();}
     }
+    public static class NestedSettings extends Settings {
+        @Override public void onCreatePreferences(Bundle state,String rootKey){
+            super.onCreatePreferences(state,rootKey);
+            PreferenceCategory parent=findPreference("Playback");
+            for(String key:new String[]{"first","second"}){
+                PreferenceCategory child=new PreferenceCategory(requireContext());child.setKey(key);child.setTitle("Shared label");parent.addPreference(child);
+                Preference option=new Preference(requireContext());option.setKey(key+"-option");option.setTitle("Option");child.addPreference(option);
+            }
+        }
+    }
+    @Test public void childReturnUsesStableIdentityWhenLabelsMatch(){
+        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        try{
+            NestedSettings fragment=new NestedSettings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
+            View root=fragment.requireView();PreviewPagesTest.layout(root);
+            root.findViewWithTag("semantic:settings:category:Playback").performClick();PreviewPagesTest.layout(root);
+            View second=root.findViewWithTag("semantic:settings:section:second");assertNotNull(second);second.requestFocus();second.performClick();PreviewPagesTest.layout(root);
+            ((Runnable)fragment.getListView().getTag(com.archos.mediacenter.video.R.id.preview_settings_return)).run();PreviewPagesTest.layout(root);
+            assertTrue(root.findViewWithTag("semantic:settings:section:second").hasFocus());
+            assertFalse(root.findViewWithTag("semantic:settings:section:first").hasFocus());
+        }finally{host.pause().stop().destroy();}
+    }
 }

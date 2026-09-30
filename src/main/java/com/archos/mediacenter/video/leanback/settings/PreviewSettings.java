@@ -163,6 +163,7 @@ public final class PreviewSettings {
    }
   }
   final TextView[] selectedRail = {null}, childOpener = {null};
+  final String[] categoryToken={""},childToken={""};
   final Runnable[] returnToCategory = {null};
   List<TextView> railButtons = new ArrayList<>();
   String requestedCategory = fragment.requireActivity().getIntent().getStringExtra("preview_settings_category");
@@ -182,6 +183,8 @@ public final class PreviewSettings {
    links.addView(button, new LinearLayout.LayoutParams(-1, 0, 1));
    railButtons.add(button);
    Runnable showCategory = () -> {
+    if(selectedRail[0]!=button){categoryToken[0]="";childToken[0]="";}
+    int previous=children.getChildCount();
     children.removeAllViews(); childOpener[0] = null;
     selectedRail[0] = button; list.setTag(button);
     for (int i = 0; i < root.getPreferenceCount(); i++) root.getPreference(i).setVisible(root.getPreference(i) == category);
@@ -192,9 +195,11 @@ public final class PreviewSettings {
     com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("settings",name,"workspace","none","none",0);
     help.setText(name + "\n\nPress OK or Right to enter this category.");
     list.scrollToPosition(0);
+    com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(children,"settings.sections","category_changed",previous,children.getChildCount(),false);
    };
    Runnable enter = () -> {
     showCategory.run();
+    if(categoryToken[0].isEmpty())categoryToken[0]=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(button,"settings.category");
     if (category != null) for (int k = 0; k < category.getPreferenceCount(); k++) {
      Preference p = category.getPreference(k);
      if (!(p instanceof PreferenceCategory) || !Boolean.TRUE.equals(visibility.get(p))) continue;
@@ -202,6 +207,7 @@ public final class PreviewSettings {
      child.setTag("semantic:settings:section:" + p.getKey());
      children.addView(child, new LinearLayout.LayoutParams(-1, dp(fragment, 40)));
      Runnable openChild = () -> {
+      childToken[0]=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(child,"settings.child");
       childOpener[0] = child; children.setVisibility(View.GONE); list.setTag(child);
       for (int n = 0; n < category.getPreferenceCount(); n++) category.getPreference(n).setVisible(category.getPreference(n) == p);
       help.setText(String.valueOf(p.getTitle())); list.scrollToPosition(0); focusFirst(list);
@@ -210,7 +216,7 @@ public final class PreviewSettings {
      child.setOnKeyListener((v, key, event) -> {
       if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
       if (key == KeyEvent.KEYCODE_DPAD_RIGHT) { openChild.run(); return true; }
-      if (key == KeyEvent.KEYCODE_DPAD_LEFT) { button.requestFocus(); return true; }
+      if (key == KeyEvent.KEYCODE_DPAD_LEFT) { boolean restored=button.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(categoryToken[0],button,button,false,restored);categoryToken[0]="";return true; }
       return false;
      });
     }
@@ -240,12 +246,15 @@ public final class PreviewSettings {
   androidx.activity.OnBackPressedCallback back = new androidx.activity.OnBackPressedCallback(false) {
    @Override public void handleOnBackPressed() {
     if (childOpener[0] != null && returnToCategory[0] != null) {
-     String label = childOpener[0].getText().toString(); returnToCategory[0].run();
+     View requested=childOpener[0];Object key=requested.getTag();String token=childToken[0];returnToCategory[0].run();
+     View target=null;
      for (int i = 0; i < children.getChildCount(); i++) {
       TextView child = (TextView) children.getChildAt(i);
-      if (label.contentEquals(child.getText())) { child.requestFocus(); break; }
+      if (java.util.Objects.equals(key,child.getTag())) { target=child;break; }
      }
-    } else if (selectedRail[0] != null) selectedRail[0].requestFocus();
+     boolean fallback=target==null;if(target==null)target=selectedRail[0];boolean restored=target!=null&&target.requestFocus();
+     com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(token,requested,target,fallback,restored);childToken[0]="";
+    } else if (selectedRail[0] != null) {boolean restored=selectedRail[0].requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(categoryToken[0],selectedRail[0],selectedRail[0],false,restored);categoryToken[0]="";}
    }
   };
   fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(), back);

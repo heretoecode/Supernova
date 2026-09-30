@@ -14,6 +14,11 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewScanLifecycleTest {
+    @org.junit.Before public void registerReceiverForThisTestApplication(){
+        // Robolectric replaces the Application/registered receivers between tests;
+        // the production process-wide installation guard otherwise retains the old registration.
+        ReflectionHelpers.setStaticField(PreviewLibraryScan.class,"installed",false);
+    }
     @Test public void nativeLocalTraceReportsMeasuredCountsAndPartialOutcome(){
         Context context=RuntimeEnvironment.getApplication();PreviewLibraryScan.install(context);
         com.archos.mediaprovider.video.PreviewLocalImportTrace.begin(context,true);

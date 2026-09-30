@@ -45,6 +45,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
     }
     private void show(String name) {
         if (name.equals(area)) return;
+        int previous=items.getChildCount();String reason=area.isEmpty()?"initial":"category_changed";
         area = name; items.removeAllViews(); context.removeAllViews(); selectedItem = null;
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("network",name,"workspace","none","none",0);
         if (name.equals("Overview")) {
@@ -74,6 +75,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
             // Populate context without entering the middle panel.
             Object action = items.getChildAt(0).getTag(); if (action instanceof Runnable) ((Runnable) action).run();
         }
+        com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(items,"network.items",reason,previous,items.getChildCount(),false);
     }
     private void source(Shortcut source, boolean indexed) {
         item(source.getName(), () -> {
@@ -102,7 +104,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
     private void refreshContext(int button) { context.removeAllViews(); scanControls(); context.getChildAt(button + 1).requestFocus(); }
     private void status() { TextView status = label(PreviewNetworkScanning.lastResult(getContext()),12); context.addView(status); status.post(new Runnable(){public void run(){if(!status.isAttachedToWindow())return;status.setText(PreviewLibraryScan.status(getContext()));status.postDelayed(this,1000);}}); }
     private void item(String title, Runnable update) {
-        Runnable show = () -> { context.removeAllViews(); update.run(); };
+        Runnable show = () -> { int previous=context.getChildCount();context.removeAllViews(); update.run();com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(context,"network.context","selection_changed",previous,context.getChildCount(),false); };
         TextView row = control(title, () -> context.requestFocus()); row.setTag(show);
         row.setOnFocusChangeListener((v, focused) -> { if(focused){selectedItem=v;show.run();} }); items.addView(row,new LayoutParams(-1,dp(44)));
     }

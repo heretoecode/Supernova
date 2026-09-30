@@ -12,6 +12,18 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewEpisodeChoiceTest {
+    @Test @SuppressWarnings({"rawtypes","unchecked"}) public void seasonOfferDoesNotMakeAnUnverifiedEpisodePlayable()throws Exception{
+        android.app.Activity activity=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException unset){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(activity.getApplicationContext()).build());}
+        com.archos.mediacenter.video.streaming.StreamingRepository.prefs(activity).edit().putBoolean("streaming_enabled",true).putString("streaming_country","IE").putStringSet("streaming_providers_IE",Collections.singleton("8")).apply();
+        com.archos.mediacenter.video.streaming.StreamingRepository.Availability season=com.archos.mediacenter.video.streaming.StreamingRepository.parseAvailability(new JSONObject("{results:{IE:{link:'https://www.themoviedb.org/tv/42/watch',flatrate:[{provider_id:8,provider_name:'Provider'}]}}}"),"IE");
+        PreviewEpisodeRow row=new PreviewEpisodeRow(activity,Collections.singletonList(new PreviewEpisodeChoice(1,2,null,new JSONObject("{id:99,name:'Episode',air_date:'2000-01-01'}"))),42,season);
+        androidx.recyclerview.widget.RecyclerView.Adapter adapter=row.getAdapter();
+        androidx.recyclerview.widget.RecyclerView.ViewHolder holder=adapter.onCreateViewHolder(row,0);adapter.onBindViewHolder(holder,0);
+        PreviewLandscapeCard card=(PreviewLandscapeCard)holder.itemView;
+        assertEquals("Availability unknown",card.metadata.getText().toString());assertFalse(card.isClickable());assertEquals(Boolean.FALSE,card.availability.getTag());
+        adapter.onViewRecycled(holder);activity.finish();
+    }
     @Test public void localVersionWinsAndUnknownEpisodesRemainVisible()throws Exception{
         Episode first=mock(Episode.class),duplicate=mock(Episode.class);when(first.getEpisodeNumber()).thenReturn(2);when(duplicate.getEpisodeNumber()).thenReturn(2);
         JSONArray remote=new JSONArray("[{episode_number:3,season_number:1},{episode_number:2,season_number:1},{episode_number:1,season_number:1},{episode_number:3,season_number:1}]");

@@ -143,6 +143,13 @@ public final class Diagnostics {
         return view.getClass().getSimpleName()+":"+id+position;
     }
     public static boolean enabled(){return enabled;}
+    private static final java.util.Map<View,Integer> UI_REBUILDS=new java.util.WeakHashMap<>();
+    public static void uiRebuild(View view,String surface,String reason,int before,int after,boolean recreated){
+        if(!enabled)return;int count;
+        synchronized(UI_REBUILDS){count=UI_REBUILDS.getOrDefault(view,0)+1;UI_REBUILDS.put(view,count);}
+        event("ui_rebuild","surface",uiLabel(surface),"reason",uiLabel(reason),"view_instance",System.identityHashCode(view),"rebuild_count",count,
+            "previous_items",Math.max(0,before),"items",Math.max(0,after),"adapter_recreated",recreated);
+    }
     public static void semantic(View view,String identity){
         if(view!=null&&identity!=null&&identity.matches("[A-Za-z0-9_.:-]{1,90}"))view.setTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic,"semantic:"+identity);
     }

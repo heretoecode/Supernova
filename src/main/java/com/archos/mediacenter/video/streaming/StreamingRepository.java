@@ -242,12 +242,25 @@ public final class StreamingRepository {
         return seconds>0&&seconds<=86400?seconds:0;
     }
     static boolean isTmdbWatchUrl(String url, String kind, long id) {
+        if(url==null)return false;
         Uri u = Uri.parse(url);
         if (!"https".equals(u.getScheme()) || !"www.themoviedb.org".equals(u.getHost())) return false;
         List<String> path = u.getPathSegments();
-        return path.size() == 3 && kind.equals(path.get(0))
+        return (path.size() == 3 || "tv".equals(kind)&&path.size()==5&&"season".equals(path.get(2))&&path.get(3).matches("[0-9]{1,4}")
+                || "tv".equals(kind)&&path.size()==7&&"season".equals(path.get(2))&&path.get(3).matches("[0-9]{1,4}")&&"episode".equals(path.get(4))&&path.get(5).matches("[0-9]{1,4}")) && kind.equals(path.get(0))
                 && (path.get(1).equals(Long.toString(id)) || path.get(1).startsWith(id + "-"))
-                && "watch".equals(path.get(2));
+                && "watch".equals(path.get(path.size()-1));
+    }
+    /** An API-supplied season/series offer cannot establish availability for an exact episode. */
+    public static boolean exactEpisodeAvailability(Availability availability,long showId,int season,int episode){
+        if(availability==null||!isTmdbWatchUrl(availability.watchUrl,"tv",showId))return false;
+        List<String> path=Uri.parse(availability.watchUrl).getPathSegments();
+        return path.size()==7&&Integer.toString(season).equals(path.get(3))&&Integer.toString(episode).equals(path.get(5));
+    }
+    public static String episodeLink(Context c,long showId,int season,int episode,Availability availability,int provider){
+        if(!exactEpisodeAvailability(availability,showId,season,episode))return "";
+        String link=titleLink(c,"tv",showId,country(c),availability,provider);
+        return safeWebUrl(link)?resolveTitleUrl(link):availability.watchUrl;
     }
     public static Availability parseAvailability(JSONObject root, String country) throws Exception {
         JSONObject regions = root.optJSONObject("results");

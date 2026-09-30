@@ -27,15 +27,15 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
             }
             org.json.JSONObject remote=choice.remote;String name=choice.number+" · "+remote.optString("name","Episode "+choice.number),still=remote.optString("still_path");int runtime=remote.optInt("runtime");
             List<StreamingRepository.Offer> offers=availability!=null&&StreamingRepository.prefs(activity).getBoolean(StreamingRepository.ENABLED,false)&&aired(remote.optString("air_date"))?StreamingRepository.filter(availability,StreamingRepository.selected(activity),StreamingRepository.preferred(activity)):Collections.emptyList();
-            card.bind(name,(runtime>0?runtime+" min · ":"")+(offers.isEmpty()?"Unavailable":offers.get(0).provider.name),still.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+still):null,!offers.isEmpty(),remote.optLong("id"),"details.episodes","episode_still");card.setTag("remote-episode:"+choice.season+":"+choice.number);
-            if(!offers.isEmpty()){
+            boolean exact=StreamingRepository.exactEpisodeAvailability(availability,showId,choice.season,choice.number);
+            card.bind(name,(runtime>0?runtime+" min · ":"")+(availability==null||!offers.isEmpty()&&!exact?"Availability unknown":offers.isEmpty()?"Unavailable":offers.get(0).provider.name),still.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+still):null,exact&&!offers.isEmpty(),remote.optLong("id"),"details.episodes","episode_still");card.setTag("remote-episode:"+choice.season+":"+choice.number);
+            if(exact&&!offers.isEmpty()){
                 StreamingRepository.Provider provider=offers.get(0).provider;card.availability.setImageDrawable(new PreviewIcon("streaming"));card.availability.setColorFilter(android.graphics.Color.WHITE,android.graphics.PorterDuff.Mode.SRC_IN);card.availability.setImageAlpha(205);
                 if(provider.logo!=null&&provider.logo.matches("/[A-Za-z0-9._-]+")){Uri logo=Uri.parse("https://image.tmdb.org/t/p/w154"+provider.logo);com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(card.availability,logo,remote.optLong("id"),"details.episodes","provider_mark",com.squareup.picasso.Picasso.get().load(logo));}
                 card.setOnClickListener(v->{String[] labels=new String[offers.size()];for(int i=0;i<labels.length;i++)labels[i]="Watch on "+offers.get(i).provider.name;
                     PreviewDialog.choose(activity,name,labels,0,index->StreamingRepository.IO.submit(()->{
-                        String link=StreamingRepository.titleLink(activity.getApplicationContext(),"tv",showId,StreamingRepository.country(activity),availability,offers.get(index).provider.id);
-                        String resolved=StreamingRepository.resolveTitleUrl(link);
-                        com.archos.mediacenter.video.diagnostics.Diagnostics.event("episode_provider_series_fallback","season",choice.season);
+                        String resolved=StreamingRepository.episodeLink(activity.getApplicationContext(),showId,choice.season,choice.number,availability,offers.get(index).provider.id);
+                        com.archos.mediacenter.video.diagnostics.Diagnostics.event("episode_provider_link","season",choice.season,"episode",choice.number,"exact_scope",true);
                         activity.runOnUiThread(()->{if(!activity.isFinishing()&&!activity.isDestroyed())StreamingActions.openWeb(activity,StreamingRepository.safeWebUrl(resolved)?resolved:availability.watchUrl);});
                     }));
                 });

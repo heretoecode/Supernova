@@ -15,6 +15,12 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {
+    @Test public void seriesAndSeasonOffersDoNotProveExactEpisodeAvailability(){
+        for(String path:new String[]{"/tv/42/watch","/tv/42/season/1/watch","/tv/43/season/1/episode/2/watch","/tv/42/season/1/episode/3/watch"})
+            assertFalse(StreamingRepository.exactEpisodeAvailability(new StreamingRepository.Availability(java.util.Collections.emptyList(),"https://www.themoviedb.org"+path),42,1,2));
+        assertTrue(StreamingRepository.exactEpisodeAvailability(new StreamingRepository.Availability(java.util.Collections.emptyList(),"https://www.themoviedb.org/tv/42/season/1/episode/2/watch"),42,1,2));
+        assertFalse(StreamingRepository.exactEpisodeAvailability(new StreamingRepository.Availability(java.util.Collections.emptyList(),"https://untrusted.example/tv/42/season/1/episode/2/watch"),42,1,2));
+    }
     @Test public void extraDurationRequiresMatchingPublishedVideoIdentity(){
         String identity="<meta itemprop='videoId' content='abcdefghijk'>";
         assertEquals(135,StreamingRepository.parseExtraDuration(identity+"<meta content='PT2M15S' itemprop='duration'>","abcdefghijk"));
