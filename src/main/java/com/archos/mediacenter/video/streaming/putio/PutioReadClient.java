@@ -39,7 +39,7 @@ public final class PutioReadClient {
         public final long id,usedBytes,totalBytes;public final String username,status;
         Account(long id,String username,String status,long used,long total){this.id=id;this.username=username;this.status=status;usedBytes=used;totalBytes=total;}
     }
-    public Account account()throws Unavailable {return parseAccount(request(new Request.Builder().url(ROOT+"account/info").header("Authorization","Token "+token).build(),"account_info"));}
+    public Account account()throws Unavailable {return request(new Request.Builder().url(ROOT+"account/info").header("Authorization","Token "+token).build(),"account_info",PutioReadClient::parseAccount);}
     static Account parseAccount(JSONObject response)throws Unavailable {
         try{
             if(!"OK".equals(response.getString("status")))throw new JSONException("Invalid envelope");
@@ -54,7 +54,7 @@ public final class PutioReadClient {
         Request.Builder request=new Request.Builder().header("Authorization","Token "+token);
         if(cursor==null)request.url(url.newBuilder().addQueryParameter("parent_id",String.valueOf(parentId)).addQueryParameter("total","1").build());
         else request.url(url).post(new FormBody.Builder().add("cursor",cursor).build());
-        return parse(request(request.build(),cursor==null?"folder_list":"folder_continue"),parentId);
+        return request(request.build(),cursor==null?"folder_list":"folder_continue",response->parse(response,parentId));
     }
     public Page search(String query,String cursor)throws Unavailable {
         if(query==null||query.trim().isEmpty()||query.length()>256)throw new IllegalArgumentException("Enter a search query");
@@ -62,7 +62,7 @@ public final class PutioReadClient {
         Request.Builder request=new Request.Builder().header("Authorization","Token "+token);
         if(cursor==null)request.url(url.addQueryParameter("query",query).build());
         else request.url(url.build()).post(new FormBody.Builder().add("cursor",cursor).build());
-        return parseSearch(request(request.build(),cursor==null?"search":"search_continue"));
+        return request(request.build(),cursor==null?"search":"search_continue",PutioReadClient::parseSearch);
     }
     static Page parseSearch(JSONObject response)throws Unavailable {
         Page page=parse(response,-1);
@@ -76,7 +76,7 @@ public final class PutioReadClient {
     public FileInfo file(long id)throws Unavailable {
         if(id<=0)throw new IllegalArgumentException("Missing file identity");
         HttpUrl url=HttpUrl.parse(ROOT+"files/"+id).newBuilder().addQueryParameter("media_info","1").build();
-        return parseFile(request(new Request.Builder().url(url).header("Authorization","Token "+token).build(),"file_info"),id);
+        return request(new Request.Builder().url(url).header("Authorization","Token "+token).build(),"file_info",response->parseFile(response,id));
     }
     static FileInfo parseFile(JSONObject response,long expectedId)throws Unavailable {
         try {
@@ -108,7 +108,8 @@ public final class PutioReadClient {
         if(!(raw instanceof Number)||!Double.isFinite(((Number)raw).doubleValue())||((Number)raw).doubleValue()<0)throw new JSONException("Invalid media value");
         text.append(label).append(": ").append(raw).append('\n');
     }
-    private JSONObject request(Request request,String kind)throws Unavailable {
+    private interface Parser<T>{T parse(JSONObject response)throws Unavailable;}
+    private <T> T request(Request request,String kind,Parser<T> parser)throws Unavailable {
         String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("putio_"+kind);
         long started=android.os.SystemClock.elapsedRealtime();int status=0;String outcome="cancelled";
         try{
@@ -123,12 +124,14 @@ public final class PutioReadClient {
                 if(bytes.size()+count>8*1024*1024)throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);
                 bytes.write(buffer,0,count);
             }
-            JSONObject result=new JSONObject(bytes.toString("UTF-8"));outcome="transport_complete";return result;
+            JSONObject body=new JSONObject(bytes.toString("UTF-8"));
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("provider_transport_complete","operation_id",operation,"provider","putio","operation_type",kind,"status",status);
+            T result=parser.parse(body);outcome="validated_complete";return result;
         }catch(Unavailable safe){outcome=safe.reason.name();throw safe;}
         catch(JSONException invalid){outcome="INVALID_PAGE";throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);}
         catch(IOException network){outcome=Thread.currentThread().isInterrupted()?"CANCELLED":"OFFLINE";throw new Unavailable(Thread.currentThread().isInterrupted()?PutioReconciliation.Failure.CANCELLED:PutioReconciliation.Failure.OFFLINE,0);}
         }finally{
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("transport_complete".equals(outcome)?"provider_request_complete":"provider_request_failed",
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("validated_complete".equals(outcome)?"provider_request_complete":"provider_request_failed",
                     "operation_id",operation,"provider","putio","operation_type",kind,"status",status,"outcome",outcome,
                     "duration_ms",android.os.SystemClock.elapsedRealtime()-started,"retry_number",0,"connectivity",com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
             com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"putio_"+kind,started);

@@ -2,18 +2,19 @@ package com.archos.mediacenter.video.leanback.details;
 
 import android.app.Activity;
 import android.app.Application;
-import android.view.View;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import org.json.JSONObject;
+import org.robolectric.util.ReflectionHelpers;
+import android.view.View;
+import android.widget.LinearLayout;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewPeopleRailTest {
     @Test public void creditsCreateIndividualPrincipalCrewAndRemoteCast()throws Exception{
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();
@@ -33,5 +34,21 @@ public class PreviewPeopleRailTest {
         assertNotNull("A local tag refresh must retain cached individual crew",page.findViewWithTag("person:Director One:Director"));
         assertNotNull(page.findViewWithTag("person:Director Two:Director"));
         assertNotNull(page.findViewWithTag("person:Actor One:Lead"));
+    }
+    @Test public void awkwardViewportWidthKeepsWholeCardsOnFocusScroll(){
+        Activity activity=Robolectric.buildActivity(Activity.class).setup().get();
+        PreviewPeopleRail rail=new PreviewPeopleRail(activity);LinearLayout row=new LinearLayout(activity);rail.addView(row);activity.setContentView(rail);
+        int margin=com.archos.mediacenter.video.leanback.PreviewDialog.dp(activity,10);
+        for(int n=0;n<12;n++){View card=new View(activity);card.setFocusable(true);card.setFocusableInTouchMode(true);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(96,108);lp.rightMargin=margin;row.addView(card,lp);}
+        int width=com.archos.mediacenter.video.leanback.PreviewDialog.dp(activity,651)+1;
+        rail.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(160,View.MeasureSpec.EXACTLY));rail.layout(0,0,width,160);
+        int available=width-rail.getPaddingLeft()-rail.getPaddingRight();
+        int count=Math.max(1,available/com.archos.mediacenter.video.leanback.PreviewDialog.dp(activity,106));
+        assertEquals(available,row.getChildAt(count).getLeft());
+        row.getChildAt(count).requestFocus();
+        assertEquals(row.getChildAt(1).getLeft(),rail.getScrollX());
+        assertEquals(available,row.getChildAt(count).getRight()+margin-rail.getScrollX());
+        row.getChildAt(0).requestFocus();assertEquals(0,rail.getScrollX());
+        assertTrue(rail.isHorizontalFadingEdgeEnabled());
     }
 }

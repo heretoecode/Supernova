@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import okhttp3.*;
 import org.json.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 
 /** Genuine TMDb title logos. All lookup/decode is off the UI thread; playback only reads cache.
  * Text remains the accessibility/fallback title and fixes layout geometry even when artwork loads. */
@@ -59,8 +60,10 @@ public final class OfficialTitleArtwork {
     cacheLayer="network";
     if(System.currentTimeMillis()-last<86400000L)return;
     android.net.Uri uri=android.net.Uri.parse("https://api.themoviedb.org/3/"+key+"/images").buildUpon().appendQueryParameter("api_key",app.getString(com.archos.medialib.R.string.tmdb_api_key)).appendQueryParameter("include_image_language",language+",en,null").build();
-    JSONObject result=new JSONObject(new String(download(uri.toString(),2*1024*1024),java.nio.charset.StandardCharsets.UTF_8));String path=select(result.optJSONArray("logos"),language);cache.edit().putLong(diskKey,System.currentTimeMillis()).apply();
-    if(!path.isEmpty()){byte[] bytes=download("https://image.tmdb.org/t/p/w500"+path,4*1024*1024);BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);if(options.outWidth<=0||options.outHeight<=0||options.outWidth>4096||options.outHeight>4096)return;bitmap=BitmapFactory.decodeByteArray(bytes,0,bytes.length);if(bitmap!=null){directory.mkdirs();android.util.AtomicFile atomic=new android.util.AtomicFile(file);FileOutputStream out=null;try{out=atomic.startWrite();out.write(bytes);atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);}}}
+    JSONObject result=new JSONObject(new String(download(uri.toString(),2*1024*1024,trace.operationId(),"logo_metadata"),java.nio.charset.StandardCharsets.UTF_8));
+    if(result.optLong("id",-1)!=Long.parseLong(key.substring(key.indexOf('/')+1))||result.optJSONArray("logos")==null)throw new IOException("Invalid artwork metadata");
+    String path=select(result.optJSONArray("logos"),language);cache.edit().putLong(diskKey,System.currentTimeMillis()).apply();
+    if(!path.isEmpty()){byte[] bytes=download("https://image.tmdb.org/t/p/w500"+path,4*1024*1024,trace.operationId(),"logo_image");BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);if(options.outWidth<=0||options.outHeight<=0||options.outWidth>4096||options.outHeight>4096)throw new IOException("Invalid artwork dimensions");bitmap=BitmapFactory.decodeByteArray(bytes,0,bytes.length);if(bitmap==null)throw new IOException("Invalid artwork bitmap");if(bitmap!=null){directory.mkdirs();android.util.AtomicFile atomic=new android.util.AtomicFile(file);FileOutputStream out=null;try{out=atomic.startWrite();out.write(bytes);atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);}}}
    }
    if(bitmap==null)return;bitmap=visibleArtwork(bitmap);MEMORY.put(diskKey,bitmap);ALIASES.put(alias,bitmap);final Bitmap ready=bitmap;final String origin=cacheLayer;TextView target=weak.get();if(target!=null)submitted=target.post(()->{TextView current=weak.get();if(current==null||!identity.equals(BOUND.get(current))){trace.cancelled();return;}current.setForeground(new Logo(ready));current.setTextColor(Color.TRANSPARENT);trace.ready(origin);if(changed!=null)changed.run();});
   }catch(Exception unavailable){trace.failed(unavailable.getClass().getSimpleName(),true);}
@@ -74,7 +77,24 @@ public final class OfficialTitleArtwork {
   return synopsisWidth(viewportWidth,visible);
  }
  static String select(JSONArray logos,String language)throws JSONException{String chosen="";double best=-1;if(logos==null)return chosen;for(int i=0;i<logos.length();i++){JSONObject logo=logos.getJSONObject(i);String path=logo.optString("file_path"),lang=logo.optString("iso_639_1");if(!path.matches("/[A-Za-z0-9._-]+\\.png"))continue;double score=(language.equals(lang)?30:"en".equals(lang)?20:lang.isEmpty()||"null".equals(lang)?10:0)+Math.min(9,logo.optDouble("vote_average",0));if(score>best){best=score;chosen=path;}}return chosen;}
- private static byte[] download(String url,int limit)throws IOException{try(Response response=HTTP.newCall(new Request.Builder().url(url).build()).execute()){if(!response.isSuccessful()||response.body()==null)throw new IOException("Artwork unavailable");try(InputStream in=response.body().byteStream();ByteArrayOutputStream out=new ByteArrayOutputStream()){byte[] b=new byte[8192];int n;while((n=in.read(b))!=-1){if(out.size()+n>limit)throw new IOException("Artwork too large");out.write(b,0,n);}return out.toByteArray();}}}
+ private static byte[] download(String url,int limit,String parent,String kind)throws IOException{
+  return download(HTTP,url,limit,parent,kind);
+ }
+ static byte[] download(OkHttpClient client,String url,int limit,String parent,String kind)throws IOException{
+  String operation=Diagnostics.operation("artwork_network"),outcome="transport_failed";long started=android.os.SystemClock.elapsedRealtime();int status=0;
+  try(Response response=client.newCall(new Request.Builder().url(url).build()).execute()){
+   status=response.code();if(!response.isSuccessful()){outcome="http_error";throw new IOException("Artwork unavailable");}
+   if(response.body()==null){outcome="empty_body";throw new IOException("Artwork unavailable");}
+   try(InputStream in=response.body().byteStream();ByteArrayOutputStream out=new ByteArrayOutputStream()){
+    byte[] b=new byte[8192];int n;while((n=in.read(b))!=-1){if(Thread.currentThread().isInterrupted()){outcome="cancelled";throw new IOException("Artwork cancelled");}if(out.size()+n>limit){outcome="size_limit";throw new IOException("Artwork too large");}out.write(b,0,n);}
+    outcome="transport_complete";return out.toByteArray();
+   }
+  }finally{
+   Diagnostics.event("transport_complete".equals(outcome)?"provider_request_complete":"provider_request_failed","operation_id",operation,"parent_operation_id",parent,
+       "provider","tmdb","operation_type",kind,"status",status,"outcome",outcome,"duration_ms",android.os.SystemClock.elapsedRealtime()-started,"retry_number",0,"connectivity",Diagnostics.connectivity());
+   Diagnostics.finishOperation(operation,"artwork_network",started);
+  }
+ }
  /** Decode-worker only. Ignore near-transparent compression/shadow pixels when finding ink. */
  static Bitmap visibleArtwork(Bitmap bitmap){
   if(!bitmap.hasAlpha())return bitmap;

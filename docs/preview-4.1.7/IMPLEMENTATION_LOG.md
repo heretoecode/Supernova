@@ -868,3 +868,21 @@ These changes require a full CI rerun; no failures are waived.
 - Trailer dialogs now use the shared modal/focus lifetime, including the external-player fallback. Added incident modal-state and opener-restoration coverage.
 - Artwork terminal outcomes close their operation exactly once; put.io read transport closes operations on success, failure and cancellation. Exported operation summaries retain parent correlation and report measured monotonic begin/end durations only when both boundaries survive retention. Missing boundaries remain explicitly unknown; stage-relative elapsed values and wall-clock changes are not used to invent durations.
 - Added operation-duration/clock-jump/incomplete-retention tests and artwork terminal idempotence coverage. Local 817-file Java parsing, 431 XML/identity/whitespace checks and six Python tests pass. Android CI for this checkpoint remains pending. Requirement counts and conformance/release readiness are not promoted by these source changes alone.
+
+## Post-audit checkpoint 65 — provider semantic-validation correlation
+
+- put.io account/list/search/file parsing now remains inside the request operation. A successful HTTP/JSON transport is recorded separately from a validated provider result; malformed schemas produce a correlated INVALID_PAGE failure instead of a misleading completed request.
+- OAuth begin/poll records only fixed operation labels, status, safe outcome, duration, retry count and connectivity. Pending authorisation is not an error. Semantic failures and operation ends are captured without request URLs, link codes, credentials, response bodies or exception messages. Production configuration and live linking remain externally blocked.
+- Added intercepted, no-network tests for malformed account and OAuth responses, correlated terminal events and sensitive-fixture exclusion. Local Java/XML/identity checks and six Python tests pass; Android CI remains pending.
+
+## Post-audit checkpoint 66 — complete people-card viewport and shared credits cache
+
+- People rails distribute integer-pixel remainder across repeated visible-card groups and align focus-driven scrolling to complete card boundaries. Added an awkward-width geometry/focus regression without removing individual principal-crew, semantic-identity or remote-cast coverage. Physical glow/fade and rapid D-pad QA remain required.
+- The legacy portrait-name mapping now reads credits through the existing shared metadata cache/gateway instead of making a separate untraced TMDb credits request. This reuses enrichment packages and their bounded, semantically validated network diagnostics; no new provider is introduced.
+- Local syntax validation passes. Android tests and visual conformance remain pending.
+
+## Post-audit checkpoint 67 — title-logo network context
+
+- Checkpoint 64 CI 36715503044 passed compilation/identity, 125 targeted, 362 full Video, 86 selected regression and 17 WebDAV tests (overlapping sets). Trailer modal lifetime and operation-duration regressions passed.
+- Title-logo metadata/image transports now have safe provider/type/status/outcome/duration/retry/connectivity records linked to the parent artwork operation. URLs, API keys and response bodies are never recorded. Metadata must match the requested title and contain a logo list; invalid dimensions/decode are failures rather than an unexplained absence.
+- Added an intercepted bounded-response/privacy test. Checkpoints 65–67 Android CI remains pending; no live provider or physical Shield validation is claimed.

@@ -13,6 +13,7 @@ public final class ArtworkTrace {
     public synchronized void failed(String category,boolean retained){if(ended)return;ended=true;emit("artwork_failed","unknown",category,retained,retained);}
     public synchronized void fallback(String category){if(ended)return;ended=true;emit("artwork_fallback","unknown",category,true,true);}
     public synchronized void cancelled(){if(ended)return;ended=true;emit("artwork_cancelled","unknown","superseded",false,false);}
+    public String operationId(){return operation;}
     private void emit(String event,String cache,String failure,boolean fallbackAttempted,boolean fallbackSucceeded){
         Diagnostics.event(event,"operation_id",operation,"media_id",media,"surface",surface,"artwork_type",type,"source",source,
                 "cache_layer",Diagnostics.uiLabel(cache),"failure_category",Diagnostics.uiLabel(failure),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-started,
