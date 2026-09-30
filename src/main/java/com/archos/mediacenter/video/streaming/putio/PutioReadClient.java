@@ -131,6 +131,7 @@ public final class PutioReadClient {
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("transport_complete".equals(outcome)?"provider_request_complete":"provider_request_failed",
                     "operation_id",operation,"provider","putio","operation_type",kind,"status",status,"outcome",outcome,
                     "duration_ms",android.os.SystemClock.elapsedRealtime()-started,"retry_number",0,"connectivity",com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
+            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"putio_"+kind,started);
         }
         // Never propagate request, response body, cursor or authorisation into diagnostics.
     }

@@ -17,5 +17,6 @@ public final class ArtworkTrace {
         Diagnostics.event(event,"operation_id",operation,"media_id",media,"surface",surface,"artwork_type",type,"source",source,
                 "cache_layer",Diagnostics.uiLabel(cache),"failure_category",Diagnostics.uiLabel(failure),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-started,
                 "fallback_attempted",fallbackAttempted,"fallback_succeeded",fallbackSucceeded);
+        if(ended)Diagnostics.finishOperation(operation,"artwork",started);
     }
 }

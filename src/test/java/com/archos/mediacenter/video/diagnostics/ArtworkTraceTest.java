@@ -24,6 +24,12 @@ public class ArtworkTraceTest {
                 switch(row.getString("event")){case "artwork_request":requests++;break;case "artwork_fallback":fallbacks++;assertTrue(row.getBoolean("fallback_succeeded"));break;default:other++;}
             }
             assertEquals(1,requests);assertEquals(1,fallbacks);assertEquals(0,other);assertFalse(Diagnostics.important("artwork_fallback"));
+            int ends=0;
+            for(String line:recorder.snapshot(android.os.SystemClock.elapsedRealtime()).split("\n")){
+                if(line.isEmpty())continue;JSONObject row=new JSONObject(line);
+                if(operation.equals(row.optString("operation_id"))&&"operation_end".equals(row.optString("event")))ends++;
+            }
+            assertEquals(1,ends);
         }finally{Diagnostics.setEnabled(app,false);}
     }
     @Test public void focusReturnReusesEntryIdentityWithoutControlText()throws Exception{

@@ -12,6 +12,19 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=android.app.Application.class,sdk=28)
 public class DiagnosticArchiveTest {
+    @Test public void operationDurationNeedsBothBoundariesAndUsesMonotonicTime()throws Exception{
+        write("events.jsonl","{process:'p',sequence:1,event:'artwork_operation_begin',utc_ms:9000,elapsed_ms:100,operation_id:'art'}\n"
+                +"{process:'p',sequence:2,event:'artwork_ready',utc_ms:9100,elapsed_ms:25,operation_id:'art',parent_operation_id:'details'}\n"
+                +"{process:'p',sequence:3,event:'operation_end',utc_ms:8000,elapsed_ms:150,operation_id:'art'}\n"
+                +"{process:'p',sequence:4,event:'operation_end',utc_ms:9200,elapsed_ms:200,operation_id:'truncated'}\n");
+        org.json.JSONArray operations=DiagnosticArchive.manifest(temporary.getRoot()).getJSONArray("operation_summaries");
+        assertEquals(2,operations.length());
+        org.json.JSONObject complete=operations.getJSONObject(0),partial=operations.getJSONObject(1);
+        assertEquals("art",complete.getString("operation_id"));assertEquals(50,complete.getLong("duration_ms"));
+        assertEquals("details",complete.getString("parent_operation_id"));
+        assertEquals("measured_begin_to_end",complete.getString("duration_status"));
+        assertTrue(partial.isNull("duration_ms"));assertEquals("incomplete_retained_evidence",partial.getString("duration_status"));
+    }
     @Test public void foregroundUsageDurationIsDistinctFromProcessLifetime()throws Exception{
         write("events.jsonl","{process:'p',sequence:1,event:'app_session_begin',utc_ms:1000,elapsed_ms:10,app_session:'a'}\n"
                 +"{process:'p',sequence:2,event:'app_session_end',utc_ms:4000,elapsed_ms:3010,app_session:'a'}\n"

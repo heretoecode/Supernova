@@ -59,7 +59,12 @@ final class DiagnosticArchive {
                 if(event.equals("app_session_begin")&&record.has("elapsed_ms"))item.put("started_elapsed_ms",record.getLong("elapsed_ms"));
                 if(event.equals("app_session_end")&&record.has("elapsed_ms"))item.put("ended_elapsed_ms",record.getLong("elapsed_ms"));
             }
-            if(!operation.isEmpty())aggregate(operations,process+":"+operation,record,"operation_id",operation);
+            if(!operation.isEmpty()){
+                JSONObject item=aggregate(operations,process+":"+operation,record,"operation_id",operation);
+                if((event.equals("operation_begin")||event.equals("artwork_operation_begin"))&&record.has("elapsed_ms"))item.put("started_elapsed_ms",record.getLong("elapsed_ms"));
+                if(event.equals("operation_end")&&record.has("elapsed_ms"))item.put("ended_elapsed_ms",record.getLong("elapsed_ms"));
+                if(!record.optString("parent_operation_id").isEmpty())item.put("parent_operation_id",record.getString("parent_operation_id"));
+            }
             if(!session.isEmpty()){
                 JSONObject item=aggregate(playback,process+":"+session,record,"session",session);
                 if(event.equals("playback_begin")){item.put("started_utc_ms",time);if(record.has("elapsed_ms"))item.put("started_elapsed_ms",record.getLong("elapsed_ms"));}
@@ -88,7 +93,7 @@ final class DiagnosticArchive {
                 .put("last_retained_utc_ms",span.getValue()[1])
                 .put("retained_span_ms",span.getValue()[1]-span.getValue()[0]));
         long retainedDropped = 0; for (long count : dropped.values()) retainedDropped += count;
-        List<JSONObject> timed=new ArrayList<>(playback.values());timed.addAll(appSessions.values());
+        List<JSONObject> timed=new ArrayList<>(playback.values());timed.addAll(appSessions.values());timed.addAll(operations.values());
         for(JSONObject item:timed){
             boolean complete=item.has("started_elapsed_ms")&&item.has("ended_elapsed_ms")&&item.getLong("ended_elapsed_ms")>=item.getLong("started_elapsed_ms");
             item.put("duration_ms",complete?item.getLong("ended_elapsed_ms")-item.getLong("started_elapsed_ms"):JSONObject.NULL);

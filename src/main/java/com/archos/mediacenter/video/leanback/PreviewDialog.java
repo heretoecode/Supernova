@@ -36,7 +36,7 @@ public final class PreviewDialog {
     boolean restored=target!=null&&target.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(restorationToken,requested,target,fallback,restored);
    }
   };
-  KINDS.put(dialog,java.util.Arrays.asList("dialog","choice","reader","review","artwork_picker").contains(kind)?kind:"dialog");return dialog;
+  KINDS.put(dialog,java.util.Arrays.asList("dialog","choice","reader","review","artwork_picker","trailer").contains(kind)?kind:"dialog");return dialog;
  }
  private static void modalState(java.util.List<java.lang.ref.WeakReference<Dialog>> windows){java.util.List<String> kinds=new java.util.ArrayList<>();if(windows!=null)for(java.lang.ref.WeakReference<Dialog> reference:windows){Dialog dialog=reference.get();if(dialog!=null)kinds.add(KINDS.getOrDefault(dialog,"dialog"));}com.archos.mediacenter.video.diagnostics.Diagnostics.modalState(kinds.size(),android.text.TextUtils.join(",",kinds));}
  private static Context owner(Context context){while(context instanceof android.content.ContextWrapper&&!(context instanceof android.app.Activity)){Context base=((android.content.ContextWrapper)context).getBaseContext();if(base==context)break;context=base;}return context;}
