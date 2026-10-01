@@ -45,8 +45,31 @@ public final class PreviewDialog {
  public static void styleNative(Dialog dialog){
   Context c=dialog.getContext();if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui",false))return;
   Window window=dialog.getWindow();if(window==null)return;window.setBackgroundDrawable(surface(c,false));window.setDimAmount(.35f);
+  trackNative(dialog);
   window.setLayout(Math.min(dp(c,560),c.getResources().getDisplayMetrics().widthPixels-dp(c,64)),WindowManager.LayoutParams.WRAP_CONTENT);
   styleNativeChildren(window.getDecorView(),c);
+ }
+ /** Observe retained native windows without replacing their cancel/dismiss/action listeners. */
+ private static void trackNative(Dialog dialog){
+  if(KINDS.containsKey(dialog))return;
+  Context context=owner(dialog.getContext());Dialog parent=top(context);View opener=anchor(context);
+  java.lang.ref.WeakReference<View> previous=new java.lang.ref.WeakReference<>(opener);
+  String token=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(opener,"native_dialog");
+  KINDS.put(dialog,"native_dialog");
+  View decor=dialog.getWindow().getDecorView();
+  View.OnAttachStateChangeListener observer=new View.OnAttachStateChangeListener(){
+   public void onViewAttachedToWindow(View view){
+    java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.computeIfAbsent(context,k->new java.util.ArrayList<>());
+    windows.removeIf(reference->reference.get()==null||reference.get()==dialog);windows.add(new java.lang.ref.WeakReference<>(dialog));modalState(windows);
+   }
+   public void onViewDetachedFromWindow(View view){
+    java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.get(context);
+    if(windows!=null){windows.removeIf(reference->reference.get()==null||reference.get()==dialog);if(windows.isEmpty())WINDOWS.remove(context);}modalState(windows);
+    View target=previous.get();boolean restored=top(context)==parent&&target!=null&&target.isAttachedToWindow()&&target.isShown()&&target.isFocusable()&&target.requestFocus();
+    com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(token,target,restored?target:null,false,restored);
+   }
+  };
+  decor.addOnAttachStateChangeListener(observer);if(decor.isAttachedToWindow())observer.onViewAttachedToWindow(decor);
  }
  private static void styleNativeChildren(View view,Context c){
   if(view instanceof TextView){TextView text=(TextView)view;if(!(view instanceof EditText)){text.setTextColor(0xffd6e5ef);text.setTextSize(Math.min(15,text.getTextSize()/c.getResources().getDisplayMetrics().scaledDensity));}if(view instanceof Button){view.setBackground(focus(c));view.setMinimumHeight(dp(c,36));}}

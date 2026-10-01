@@ -951,3 +951,9 @@ These changes require a full CI rerun; no failures are waived.
 - UI-030 review found the enriched-credit path produced individual principal cards, but native tags still put a formatted list of directors/writers into one card. Native structured director/writer lists now produce separate cards without splitting names on punctuation. Missing structured names are not fabricated from an ambiguous formatted string; enriched credits remain the fuller principal-crew source.
 - Local tag refresh captures and restores the crew opener as well as cast focus. Empty native crew is cleared before applying any cached enriched credits, avoiding stale people on a later tag update.
 - Added a native two-director/one-writer regression, including a comma inside a real name and focused-person restoration. Android validation remains pending.
+
+## Post-audit checkpoint 79 — retained native dialog diagnostics
+
+- Preview-styled native credential/delete dialogs now participate in modal-state capture using window attachment observation. Their original action, cancel and dismiss listeners are retained. Only the structural `native_dialog` kind is recorded; no title, input or credential text is read.
+- Entry/return diagnostic tokens retain the opener; dismissal restores it only if the same parent remains active. A newly opened modal is not overridden. Added confirmation cancellation, original-dismiss-callback and safe-modal-context coverage.
+- CI 36787680412 (through checkpoint 76) passed compilation/identity, 130 targeted, 376 complete Video, 87 selected regression and 17 WebDAV tests (overlapping sets), including direct Speed return and native-save failure regressions. Checkpoints 77–79 need their own CI.

@@ -9,6 +9,20 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void nativeConfirmationTracksModalWithoutReplacingDismissOrDeleteCallbacks()throws Exception{
+        android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().visible().get();
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).edit().putBoolean("try_new_ui",true).commit();
+        android.widget.Button opener=new android.widget.Button(activity);opener.setFocusableInTouchMode(true);activity.setContentView(opener);opener.requestFocus();Shadows.shadowOf(activity).setCurrentFocus(opener);
+        Diagnostics.setEnabled(activity,true);int[] deleted={0},dismissed={0};
+        android.app.Dialog dialog=com.archos.mediacenter.video.leanback.PreviewDialog.confirmDelete(activity,"Fixture","Private fixture text",()->deleted[0]++);
+        try{
+            dialog.setOnDismissListener(d->dismissed[0]++);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            String evidence=Diagnostics.incidentContext("operation_failed",new Diagnostics.UiSnapshot());assertEquals("native_dialog",new org.json.JSONObject(evidence).getString("modal_kinds"));assertFalse(evidence.contains("Private fixture text"));
+            ((android.app.AlertDialog)dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE).performClick();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals(0,deleted[0]);assertEquals(1,dismissed[0]);assertTrue(opener.hasFocus());
+            assertEquals(0,new org.json.JSONObject(Diagnostics.incidentContext("operation_failed",new Diagnostics.UiSnapshot())).getInt("modal_depth"));
+        }finally{dialog.dismiss();Diagnostics.setEnabled(activity,false);activity.finish();}
+    }
     @Test public void detailsReaderRetainsSemanticOpenerAndModalContext()throws Exception{
         android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().get();
         com.archos.mediacenter.video.leanback.details.PreviewMoviePage page=new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(activity,androidx.leanback.widget.ArrayObjectAdapter::new,a->{},()->{},uri->{});
