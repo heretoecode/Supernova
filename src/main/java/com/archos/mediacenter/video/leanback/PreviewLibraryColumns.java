@@ -68,6 +68,12 @@ public final class PreviewLibraryColumns {
  private TextView text(String value,int size){TextView t=new TextView(context);t.setText(value);t.setTextSize(size);t.setTextColor(0xffd5e4ee);t.setGravity(Gravity.CENTER_VERTICAL);t.setPadding(dp(6),0,dp(6),0);t.setSingleLine(true);t.setEllipsize(TextUtils.TruncateAt.END);t.setIncludeFontPadding(false);return t;}
  public View header(Runnable changed){LinearLayout row=new LinearLayout(context);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(0,dp(5),0,0);row.setBackgroundColor(0x240b1b29);row.setClipChildren(false);
   for(Column c:visible()){TextView label=text(c.label+(sortColumn==c?(ascending?" ↑":" ↓"):""),11);label.setFocusable(true);label.setTag("column:"+c);label.setContentDescription(c.label+", sort"+(sortColumn==c?(ascending?", ascending":", descending"):""));label.setBackground(PreviewDialog.focus(context));label.setOnClickListener(v->{setSort(c,sortColumn==c?!ascending:c==Column.TITLE||c==Column.YEAR);changed.run();});row.addView(label,new LinearLayout.LayoutParams(0,dp(30),c.width));}
+  // Match the toolbar/list rows: a retained touch-input state must not remove
+  // column headings from DOWN navigation when a remote takes over.
+  for(int i=0;i<row.getChildCount();i++){
+   View heading=row.getChildAt(i);heading.setFocusableInTouchMode(true);
+   com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(heading,"library.header."+visible().get(i).name().toLowerCase(Locale.ROOT));
+  }
   return row;
  }
  public LinearLayout newRow(){LinearLayout row=new LinearLayout(context);row.setGravity(Gravity.CENTER_VERTICAL);row.setFocusable(true);row.setFocusableInTouchMode(true);row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);row.setForeground(PreviewDialog.focus(context));row.setBackground(separator(false));return row;}
