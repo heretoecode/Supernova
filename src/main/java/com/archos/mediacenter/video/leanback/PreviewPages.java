@@ -366,6 +366,7 @@ public final class PreviewPages extends FrameLayout {
             public void onChanged(int position,int count,Object payload){changes[3]+=count;updates.onChanged(position,count,payload);}
         });
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("home_page_render","reason",reason,"tab",tab,"previous_cells",previous.size(),"cells",cells.size(),"inserted",changes[0],"removed",changes[1],"moved",changes[2],"rebound",changes[3],"adapter_recreated",false,"elapsed_ms",android.os.SystemClock.elapsedRealtime()-started);
+        com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list,tab==0?"home.rows":tab==1?"movies.library":tab==2?"tv.library":"network.page",reason,previous.size(),cells.size(),false);
         if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();list.post(this::notifyScroll);scheduleVisibleEnrichment();
     }
     private static String entrySignature(Entry e){return e.key()+"|"+displayName(e)+"|"+e.backdrop+"|"+e.media.getPosterUri()+"|"+e.secondary+"|"+e.active+"|"+e.bytes+"|"+e.runtime+"|"+e.year()+"|"+e.resolution+"|"+e.audio+"|"+e.codec+"|"+e.hdr+"|"+(e.media instanceof Video?((Video)e.media).getResumeMs():0);}
@@ -493,7 +494,8 @@ public final class PreviewPages extends FrameLayout {
                     String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
                     for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?0:1,n->{quietOrder.clear();ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(unmatched[tab]?"Matched":"Unmatched",()->{unmatched[tab]=!unmatched[tab];quietOrder.clear();render();}),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
                     if(listMode[tab]){TextView chooser=button("Columns",()->columns[tab].choose(this::refreshColumns));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(chooser,lp);}
-                    for(int i=0;i<controls.getChildCount();i++)controls.getChildAt(i).setTag("control:"+i);v.addView(controls);
+                    String[] controlIds={"filters","sort","order","unmatched","view","columns"};
+                    for(int i=0;i<controls.getChildCount();i++){View control=controls.getChildAt(i);control.setTag("control:"+i);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds[i]);}v.addView(controls);
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));
                 }else{TextView title=text(c.title,tab==3&&c.title.equals("Network & files")?30:19);title.setTextColor(0xff9ed4f7);v.addView(title);}
             }

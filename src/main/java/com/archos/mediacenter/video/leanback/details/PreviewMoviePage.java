@@ -202,9 +202,13 @@ public final class PreviewMoviePage extends ScrollView {
         trailer.setVisibility(GONE);renderExtras();rebuildTabs();
         PreviewPeople.load(getContext().getApplicationContext(),tags,new HashMap<>(portraits));renderEnrichedPeople();renderDetails();renderRelated();requestEnrichment();restoreRowFocus(cast,castKey,oldY);restoreRowFocus(crew,crewKey,oldY);
     }
-    public void setSnapshot(Snapshot value){snapshot=value;renderDetails();renderRelated();requestEnrichment();}
+    public void setSnapshot(Snapshot value){snapshot=value;renderDetails("indexed_snapshot");renderRelated();requestEnrichment();}
     public void setSeriesPlaybackTarget(PreviewSeriesJourney.Selection selection){play.setText(PreviewSeriesJourney.playLabel(selection));}
     private void renderDetails(){
+        renderDetails("information_refresh");
+    }
+    private void renderDetails(String reason){
+        int previous=details.getChildCount();
         View focused=details.findFocus();Object focusKey=focused==null?null:focused.getTag();int oldY=getScrollY();
         observeActions();if(movie==null&&show==null&&remoteDetails==null)return;renderHumanMetadata();details.removeAllViews();
         LinearLayout panels=new LinearLayout(getContext());panels.setClipChildren(false);details.addView(panels);
@@ -299,6 +303,7 @@ public final class PreviewMoviePage extends ScrollView {
         technical.setVisibility(technical.getChildCount()>1?VISIBLE:GONE);
         ((View)details.getParent()).setVisibility(VISIBLE);pills.setVisibility(GONE);
         restoreRowFocus(details,focusKey,oldY);
+        com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(details,"details.information",reason,previous,details.getChildCount(),false);
     }
     private static String jsonNames(org.json.JSONArray values,String key){
         if(values==null)return "";List<String> names=new ArrayList<>();

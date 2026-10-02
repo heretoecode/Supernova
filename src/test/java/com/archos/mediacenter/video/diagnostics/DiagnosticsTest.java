@@ -9,6 +9,28 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void activityReturnRestoresItsOwnPageAndUnknownChildDoesNotInheritIt(){
+        android.app.Activity library=Robolectric.buildActivity(android.app.Activity.class).setup().get(),child=Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        Diagnostics.libraryState("movies","list","SIZE:descending","Drama","2024","8",true);Diagnostics.pauseUi(library);
+        Diagnostics.resumeUi(child);assertEquals("unknown",new Diagnostics.UiSnapshot().page);
+        Diagnostics.uiState("playback","player","video","none","none",42);Diagnostics.pauseUi(child);Diagnostics.resumeUi(library);
+        Diagnostics.UiSnapshot restored=new Diagnostics.UiSnapshot();assertEquals("movies",restored.page);assertEquals("list",restored.mode);assertEquals("SIZE:descending",restored.sort);assertTrue(restored.filterDetails.contains("2024"));
+        Diagnostics.pauseUi(library);Diagnostics.resumeUi(child);assertEquals("playback",new Diagnostics.UiSnapshot().page);assertEquals(42,new Diagnostics.UiSnapshot().media);
+        Diagnostics.uiState("unknown","none","unknown","unknown","none",0);library.finish();child.finish();
+    }
+    @Test public void detailsRebindReportsReasonAndPerViewCountWithoutTitle()throws Exception{
+        android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().get();Diagnostics.setEnabled(activity,true);
+        try{
+            com.archos.mediacenter.video.leanback.details.PreviewMoviePage page=new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(activity,androidx.leanback.widget.ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);
+            page.bindRemote(new org.json.JSONObject().put("title","private-fixture-title"),"movie",0);
+            page.setSnapshot(new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot());
+            Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());assertFalse(evidence.contains("private-fixture-title"));
+            int count=0;boolean indexed=false;for(String line:evidence.split("\n")){if(line.isEmpty())continue;org.json.JSONObject row=new org.json.JSONObject(line);
+                if("ui_rebuild".equals(row.optString("event"))&&"details.information".equals(row.optString("surface"))){assertEquals(++count,row.getInt("rebuild_count"));assertFalse(row.getBoolean("adapter_recreated"));assertEquals(1,row.getInt("items"));indexed|="indexed_snapshot".equals(row.getString("reason"));}}
+            assertTrue(count>=2);assertTrue(indexed);
+        }finally{Diagnostics.setEnabled(activity,false);activity.finish();}
+    }
     @Test public void nativeConfirmationTracksModalWithoutReplacingDismissOrDeleteCallbacks()throws Exception{
         android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().visible().get();
         androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).edit().putBoolean("try_new_ui",true).commit();

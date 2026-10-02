@@ -51,6 +51,17 @@ public final class Diagnostics {
         final int modals,foregroundCount;
         UiSnapshot(){synchronized(Diagnostics.class){screen=uiScreen;focus=uiFocus;page=uiPage;category=uiCategory;mode=uiMode;sort=uiSort;filters=uiFilters;filterDetails=uiFilterDetails;modalKinds=uiModalKinds;media=uiMedia;utc=System.currentTimeMillis();modals=uiModals;foregroundCount=foreground;}}
     }
+    private static final Map<Activity,UiSnapshot> ACTIVITY_UI=new java.util.WeakHashMap<>();
+    static synchronized void pauseUi(Activity activity){
+        ACTIVITY_UI.put(activity,new UiSnapshot());
+        // A new activity without a Preview surface must not inherit the old page.
+        uiState("unknown","none","unknown","unknown","none",0);uiFocus="none";
+    }
+    static synchronized void resumeUi(Activity activity){
+        UiSnapshot saved=ACTIVITY_UI.get(activity);
+        if(saved!=null&&"unknown".equals(uiPage)){uiPage=saved.page;uiCategory=saved.category;uiMode=saved.mode;uiSort=saved.sort;uiFilters=saved.filters;uiFilterDetails=saved.filterDetails;uiMedia=saved.media;}
+        uiScreen=activity.getClass().getSimpleName();uiFocus=viewId(activity.getCurrentFocus());
+    }
     /** Only structural, developer-owned labels belong here; never titles, queries or paths. */
     public static synchronized void uiState(String page,String category,String mode,String sort,String filters,long media){
         uiPage=uiLabel(page);uiCategory=uiLabel(category);uiMode=uiLabel(mode);uiSort=uiLabel(sort);uiFilters=uiLabel(filters);uiFilterDetails="{}";uiMedia=Math.max(0,media);
@@ -108,7 +119,7 @@ public final class Diagnostics {
             public void onActivityCreated(Activity a,Bundle b){life(a,"created");}
             public void onActivityStarted(Activity a){if(foreground++==0){appSession=UUID.randomUUID().toString();event("app_session_begin");}life(a,"started");}
             public void onActivityResumed(Activity a){mainAck=android.os.SystemClock.elapsedRealtime();
-                uiScreen=a.getClass().getSimpleName();uiFocus=viewId(a.getCurrentFocus());
+                resumeUi(a);
                 life(a,"resumed");if(enabled&&sessionState!=null)sessionState.edit().putBoolean("clean",false).apply();
                 android.view.ViewTreeObserver.OnGlobalFocusChangeListener listener=(old,next)->{
                     uiFocus=viewId(next);
@@ -118,7 +129,7 @@ public final class Diagnostics {
                 };
                 FOCUS.put(a,listener);a.getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(listener);
             }
-            public void onActivityPaused(Activity a){life(a,"paused");android.view.ViewTreeObserver.OnGlobalFocusChangeListener l=FOCUS.remove(a);if(l!=null)a.getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(l);}
+            public void onActivityPaused(Activity a){life(a,"paused");pauseUi(a);android.view.ViewTreeObserver.OnGlobalFocusChangeListener l=FOCUS.remove(a);if(l!=null)a.getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(l);}
             public void onActivityStopped(Activity a){foreground=Math.max(0,foreground-1);life(a,"stopped");if(foreground==0){event("app_session_end");appSession="";if(enabled&&sessionState!=null){event("session_backgrounded");sessionState.edit().putBoolean("clean",true).apply();}}}
             public void onActivitySaveInstanceState(Activity a,Bundle b){}
             public void onActivityDestroyed(Activity a){life(a,"destroyed");if(enabled&&a.isTaskRoot()&&a.isFinishing()&&sessionState!=null){event("session_clean_shutdown");sessionState.edit().putBoolean("clean",true).apply();}}

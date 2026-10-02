@@ -1144,6 +1144,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @Override
     protected void onResume() {
         super.onResume();
+        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("playback","player","video","none","none",mVideoId);
         if (log.isDebugEnabled()) log.debug("onResume");
         // Clock (for leanback devices only)
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK) || isChromeOS(mContext)) {

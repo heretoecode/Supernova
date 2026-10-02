@@ -957,3 +957,15 @@ These changes require a full CI rerun; no failures are waived.
 - Preview-styled native credential/delete dialogs now participate in modal-state capture using window attachment observation. Their original action, cancel and dismiss listeners are retained. Only the structural `native_dialog` kind is recorded; no title, input or credential text is read.
 - Entry/return diagnostic tokens retain the opener; dismissal restores it only if the same parent remains active. A newly opened modal is not overridden. Added confirmation cancellation, original-dismiss-callback and safe-modal-context coverage.
 - CI 36787680412 (through checkpoint 76) passed compilation/identity, 130 targeted, 376 complete Video, 87 selected regression and 17 WebDAV tests (overlapping sets), including direct Speed return and native-save failure regressions. Checkpoints 77–79 need their own CI.
+
+## Post-audit checkpoint 80 — consistent rebind evidence and activity-state return
+
+- Home/Movie/TV dataset updates now also emit the shared per-view rebuild counter and reason/item accounting alongside the existing detailed diff event. Details information reconstruction uses the same bounded counter with a distinct indexed-snapshot reason where applicable.
+- Incident-state review found that a child activity could inherit the preceding page, and returning without a rebuild could retain the child's state. Activity pause now retains its own structural state and clears the active page to unknown; resume restores that state only when no fresh surface state has been supplied. Playback explicitly identifies its page and anonymous native media ID. Modal state remains tied to actual window lifetime, not restored stale activity snapshots.
+- Added Details rebind/count/privacy and activity-return/filter-state regressions. Latest completed CI 36788311924 passed 130 targeted, 377 complete Video, 87 selected regression and 17 WebDAV tests (overlapping sets), plus compile/identity. This checkpoint's new changes still require CI.
+
+## Post-audit checkpoint 81 — toolbar semantic identities and register evidence
+
+- Library toolbar controls now carry fixed semantic identifiers independent of translated text, active filters or generated view positions. Existing structural restoration tags remain unchanged.
+- Strengthened the actual library-page render fixture: List mode must really be entered, Columns must retain RIGHT, and framework DOWN must target a list header. This complements the isolated toolbar test rather than silently accepting a missing control. New assertions await CI.
+- Updated stale evidence paragraphs for enrichment, artwork, scan lifecycle and provider diagnostics to the latest completed run. Final route/package reconciliation remains explicitly open; requirement counts were not inflated from test/commit activity.

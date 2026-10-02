@@ -102,7 +102,7 @@ Library membership is based on indexed media, not successful metadata. Launch lo
 
 Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping / verification: Indexed membership is independent of scraper matches. PreviewEnrichmentQueue persists priority, stage, staleness and retries; title sections, providers and full TV season packages are cached. PreviewEpisodeChoice reconciles local/remote episodes. Checkpoint 41 adds background native technical enrichment for all physical variants and persisted fingerprint completion/backoff, awaiting CI. Full title-package completeness and foreground/background priority conformance still require reconciliation.
+Code mapping / verification: Indexed membership is independent of scraper matches. PreviewEnrichmentQueue persists priority, stage, staleness and retries; viewport offers restore prior page priorities rather than permanently promoting old cards, preserve active foreground/package progress, and resolve episode entries to parent-series IDs. Core/credits/images/videos/recommendations/external IDs/classification and complete season packages are cached, with enabled-provider availability; PreviewDetailsData supplies disk-only initial delivery before refresh. Native technical enrichment operates on physical variants with fingerprint completion/backoff. Queue scope/viewport/parent identity/migration, metadata cache and technical-index regressions passed through CI 36788311924. Final package-to-surface reconciliation and physical foreground/background behaviour remain open; this is not a claim of live provider completeness.
 
 ### UI-011 — 3. Background metadata enrichment
 
@@ -827,7 +827,7 @@ Artwork failure diagnostics: safe anonymous media ID, surface (Movies Grid/Home 
 
 Status: **IMPLEMENTED IN PART — ROUTE RECONCILIATION / VALIDATION PENDING**
 
-Code mapping / verification: ArtworkTrace supplies correlated safe context and terminal outcomes across cards, backdrops, logos, Details episode/recommendation/Extras cards, provider marks, portraits and artwork selection. Unknown Picasso cache layers remain explicit. Cancellation/rebinding/privacy and terminal idempotence regressions passed through checkpoint 64 CI 36715503044. Checkpoint 67 adds safe parent-linked logo transport status and invalid-payload handling; its test is pending. Final route reconciliation and physical loading/fallback/soak checks remain open.
+Code mapping / verification: ArtworkTrace supplies correlated safe context and terminal outcomes across cards, backdrops, logos, Details episode/recommendation/Extras cards, provider marks, portraits and artwork selection. Unknown Picasso cache layers remain explicit. Cancellation/rebinding/privacy, terminal idempotence and parent-linked logo transport/status/invalid-payload regressions passed through CI 36788311924. Final route reconciliation and physical loading/fallback/soak checks remain open.
 
 ### DIA-007 — Required diagnostic/reporting improvements
 
@@ -837,7 +837,7 @@ Scan diagnostics: Requested→Queued→Started→source/phase→Index/Reconcilia
 
 Status: **IMPLEMENTED IN PART — LIFECYCLE CONFORMANCE PENDING**
 
-Code mapping / verification: PreviewLibraryScan shares the native indexed-source scheduler across owned manual/startup/resume/scheduled requests, records trigger and operation, and correlates backend lifecycle by batch/source. PreviewScanProgress aggregates/deduplicates source accounting; native per-source Queued/eligible totals, batch completion and actual metadata enqueue outcomes are covered through CI 36715503044. Native local imports report mode, checked rows, measured reconciliation counts, enqueue outcome and complete/partial/cancelled/failed states. Concurrent local/network/metadata progress remains visible without invented percentages. Local pre-start queue/trigger correlation and complete lifecycle conformance remain open; unknown native triggers are not inferred.
+Code mapping / verification: PreviewLibraryScan shares the native indexed-source scheduler across owned manual/startup/resume/scheduled requests, records trigger and operation, and correlates backend lifecycle by batch/source. PreviewScanProgress aggregates/deduplicates source accounting; per-source Queued/eligible totals, batch completion and actual metadata enqueue outcomes are recorded. Native local imports retain requested/queued/start correlation via the actual Handler message, including rejected/removed queue cancellation and known native trigger labels, then checked/reconciliation/metadata enqueue/terminal states. Local/network operations finish once at batch termination, not each source. Combined Scan Library and network-only Network Scanning presentation, local overlap/queue and terminal-idempotence tests passed through CI 36788311924. Final lifecycle conformance and physical manual/startup/resume comparability remain open; unknown native triggers are not inferred.
 
 ### DIA-008 — Required diagnostic/reporting improvements
 
@@ -897,7 +897,7 @@ Network diagnostics: provider/service, operation type, status/error category, du
 
 Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
 
-Code mapping / verification: PutioReadClient emits fixed operation type, service, correlation ID, HTTP status, safe failure category, duration, retry count and connectivity. Checkpoint 65 keeps account/list/search/file semantic validation within that operation and adds equally redacted OAuth begin/poll diagnostics. Metadata gateway validation/correlation tests have passed; intercepted put.io and title-logo transport/privacy regressions from checkpoints 65–67 await CI. No request URL/header/body, query, cursor or credential is recorded. Remaining adapter reconciliation and live provider/physical validation remain open.
+Code mapping / verification: PutioReadClient emits fixed operation type, service, correlation ID, HTTP status, safe failure category, duration, retry count and connectivity, including account/list/search/file semantic validation in the same operation. OAuth begin/poll, metadata gateway, title-logo transport and provider-link redirects have intercepted response/error/privacy regressions passing through CI 36788311924. Enrichment scopes retain parent links across metadata-package → request → network operations. These paths do not record request URLs/headers/bodies, queries, cursors or credentials. Remaining adapter reconciliation and live provider/physical validation remain open.
 
 ### DIA-014 — Required diagnostic/reporting improvements
 
