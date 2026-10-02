@@ -140,9 +140,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Toolbar edges are deterministic: LEFT on first stays; RIGHT on final stays; DOWN enters library/header. Columns + RIGHT must not fall to a header.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewToolbar consumes horizontal movement and retains both terminal controls. Actual PreviewPages List headers remain focusable across touch/remote input state. Preview417NavigationTest verifies first LEFT/final RIGHT; PreviewPagesTest verifies actual Columns RIGHT and DOWN from all six toolbar controls to an actual focused column header. All passed in CI 37078654379. Rapid-repeat and physical Shield behaviour remain QA.
 
 ### UI-015 — 4. Movies and TV Shows
 
@@ -220,9 +220,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 One continuous vertically scrolling Details page. Initial cinematic Hero; lower nav near bottom with teaser content below. DOWN from actions→lower nav→content/collapse. As user scrolls, title/logo becomes compact/sticky below global nav; hero metadata/actions scroll away. UP reverses smoothly.
 
-Status: **IMPLEMENTED — CORRECTION AWAITING CI/VISUAL QA**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewMoviePage is one ScrollView with hero/tab/content routing and a non-focusable compact rendering of the same title/logo. Compact-title and focus-retention regressions passed CI 36349549771. Initial visual comparison found the required teaser hidden by layout-time sizing; checkpoint 46 moves sizing before measurement and adds a 44dp teaser assertion. Corrected render and physical reverse-scrolling smoothness remain pending.
+Code mapping / verification: PreviewMoviePage is one ScrollView with hero/tab/content routing and a non-focusable compact rendering of the same title/logo. Compact-title reversal, focus retention and the 44dp teaser assertion pass through CI 37078654379. The corrected hero and information-panel renders were inspected at checkpoint 74; the earlier layout-time sizing defect is resolved in that evidence. Physical continuous/reverse scrolling, real logos and remote navigation remain QA.
 
 ### UI-023 — 6. Details Page
 
@@ -300,9 +300,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Cast/Crew: separate stacked rows, square/rounded portraits (not circles), portrait+name+role one focus unit, whole boundary/glow, complete cards in viewport, subtle edge fade, principal crew. Person/cast discovery is future work; do not implement person pages now.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / VISUAL AND PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewMoviePage builds separate cast/principal-crew rows from structured native names and enriched credits, with individual rounded portraits and whole-card focus. PreviewPeopleRail distributes integral complete-card widths and aligns focus scrolling to card boundaries with fading edges. Native names containing commas are not split; focused crew identity survives tag refresh. PreviewPeopleRailTest covers native and enriched principal cards, retained focus and awkward-width complete-card geometry, passing through CI 37078654379. Real portraits, fade/glow appearance and physical scrolling remain visual/Shield QA; no person pages were added.
 
 ### UI-031 — 6. Details Page
 

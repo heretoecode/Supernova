@@ -80,14 +80,17 @@ public final class PreviewLibraryColumns {
  private android.graphics.drawable.Drawable separator(boolean vertical){android.graphics.drawable.LayerDrawable d=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{new android.graphics.drawable.ColorDrawable(0x120b1b29),new android.graphics.drawable.ColorDrawable(vertical?0x10708695:0x16708695)});if(vertical){d.setLayerWidth(1,dp(1));d.setLayerGravity(1,Gravity.END);}else{d.setLayerHeight(1,dp(1));d.setLayerGravity(1,Gravity.BOTTOM);}return d;}
  public void bind(LinearLayout row,Entry entry){clear(row);row.removeAllViews();StringBuilder description=new StringBuilder();
   for(Column c:visible()){
-   if(c==Column.TITLE){LinearLayout title=new LinearLayout(context);title.setGravity(Gravity.CENTER_VERTICAL);title.setPadding(dp(5),dp(3),0,dp(3));ImageView image=new ImageView(context);image.setScaleType(ImageView.ScaleType.FIT_CENTER);title.addView(image,new LinearLayout.LayoutParams(dp(58),dp(34)));Uri uri=entry.backdrop!=null?entry.backdrop:entry.media.getPosterUri();if(uri!=null)Picasso.get().load(uri).resize(dp(58),dp(34)).centerInside().noFade().into(image);TextView name=text(value(entry,c),12);name.setTextColor(Color.WHITE);title.addView(name,new LinearLayout.LayoutParams(0,-1,1));row.addView(title,new LinearLayout.LayoutParams(0,dp(42),c.width));
+   if(c==Column.TITLE){LinearLayout title=new LinearLayout(context);title.setGravity(Gravity.CENTER_VERTICAL);title.setPadding(dp(5),dp(3),0,dp(3));ImageView image=new ImageView(context);image.setScaleType(ImageView.ScaleType.FIT_CENTER);title.addView(image,new LinearLayout.LayoutParams(dp(58),dp(34)));Uri uri=entry.backdrop!=null?entry.backdrop:entry.media.getPosterUri();
+    if(uri!=null){long media=entry.media instanceof Video?((Video)entry.media).getId():entry.media instanceof Tvshow?((Tvshow)entry.media).getTvshowId():0;
+     com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(image,uri,media,"library.list",entry.backdrop!=null?"landscape":"poster",Picasso.get().load(uri).resize(dp(58),dp(34)).centerInside().noFade());}
+    TextView name=text(value(entry,c),12);name.setTextColor(Color.WHITE);title.addView(name,new LinearLayout.LayoutParams(0,-1,1));row.addView(title,new LinearLayout.LayoutParams(0,dp(42),c.width));
    }else{TextView cell=text(value(entry,c),11);row.addView(cell,new LinearLayout.LayoutParams(0,dp(42),c.width));}
    if(row.getChildCount()<visible().size())row.getChildAt(row.getChildCount()-1).setBackground(separator(true));
    String value=value(entry,c);if(!value.isEmpty())description.append(c.label).append(": ").append(value).append(". ");
   }
   row.setContentDescription(description.toString());
  }
- public void clear(View view){if(view instanceof ImageView){Picasso.get().cancelRequest((ImageView)view);((ImageView)view).setImageDrawable(null);}if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)clear(((ViewGroup)view).getChildAt(i));}
+ public void clear(View view){if(view instanceof ImageView){com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel((ImageView)view);((ImageView)view).setImageDrawable(null);}if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)clear(((ViewGroup)view).getChildAt(i));}
  public void choose(Runnable changed){choose(changed,0);}
  private void choose(Runnable changed,int focus){List<String> labels=new ArrayList<>();Set<Integer> checked=new HashSet<>();for(int i=0;i<order.size();i++){Column c=order.get(i);labels.add(c.label+(c==Column.TITLE?" (always shown)":"")+"   ≡");if(shown.contains(c))checked.add(i);}labels.add("Reset to default");labels.add("Done");final Dialog[] menu={null};
   menu[0]=PreviewDialog.choose(context,"Columns · ◀ ▶ to reorder",labels.toArray(new String[0]),focus,checked,false,n->{

@@ -975,3 +975,15 @@ These changes require a full CI rerun; no failures are waived.
 - CI 36829209419, remote revision 6d35a4c9a36315daf2645c92fe9447b66424bd6d (through checkpoint 79), passed compilation and identity checks, 131 targeted tests, all 378 Video tests, 88 selected regression checks and 17 WebDAV tests. These sets overlap and must not be added as a unique-test total.
 - Checkpoints 80–81 were submitted as remote a57f8dfa376872d2ab83c548e2457bd43fd5c955, with the same tree as local a001a18c. CI 37077962022 passed compilation/identity and 133 targeted tests; the complete Video suite passed 379 of 380 tests, failing the new actual-page toolbar DOWN-to-header assertion. Later regression/WebDAV stages were skipped.
 - The actual headers were focusable but, unlike toolbar controls and list rows, not focusable in touch mode. They now retain eligibility when remote input follows touch input, and receive stable column semantic identities. The render fixture now attaches a visible activity and checks DOWN from every toolbar control, requiring an actual focused column heading. This correction needs CI; it does not weaken the original assertion or establish physical Shield behaviour.
+
+## Post-audit checkpoint 83 — library and browser artwork route parity
+
+- DIA-006 route tracing found direct Picasso bindings in the actual library table and browser context poster which bypassed the shared artwork evidence. Both now use ArtworkRequest with anonymous numeric media identity, structural surface/type and source category, without recording titles or paths.
+- List recycling/rebinding cancels the corresponding trace; browser selection changes, provider transitions and detach terminate the prior poster request. Existing image geometry is unchanged.
+- Added actual list-binding and browser-selection regressions for request/cancellation correlation, single terminal operation and private-path/title exclusion. These tests await CI. Local 818-file Java parsing and 431 XML/source checks pass.
+
+## Post-audit checkpoint 84 — exact library return coverage
+
+- Added Grid and List integration fixtures exercising the real library adapter, a scrolled non-leftmost item, its Details callback and a refreshed snapshot while a child stand-in holds focus. Return must restore the exact media tag, scroll offset, first visible position and view mode without stealing the child's focus during refresh.
+- The stand-in exercises the page's retained-anchor mechanism, not the complete native Details activity lifecycle or physical remote behaviour. Both tests await CI; UI-016 is not yet promoted on their existence alone.
+- Checkpoint 82 CI 37078654379 passed compilation/identity, 133 targeted tests, all 380 Video tests, 90 selected regression checks and 17 WebDAV tests (overlapping sets). The actual toolbar DOWN assertion now passes. Updated UI-014, UI-022 and UI-030 with traced behaviour and completed evidence; their physical/visual limitations remain explicit. Checkpoints 83–84 still need validation.
