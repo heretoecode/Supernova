@@ -8,6 +8,14 @@ Post-audit correction: UI-052's frequency chooser already uses PreviewDialog.cho
 
 In progress. Recent reconciliation covers early global/Home/library requirements and the twelve put.io entries. Diagnostics coverage is being traced. Pending register entries are not completion claims; earlier implementation checkpoints and test results must be reconciled individually.
 
+### Checkpoints 89–95 source reconciliation
+
+- All 115 unique register paragraphs still match their named authoritative handover documents after status/evidence updates; this checks scope-text integrity, not implementation completion.
+- Search retained-surface Details entry/return correlation passed CI 37113656058. Network item/action semantics passed CI 37120075931. Actual Network category UP routing passed CI 37120377842 after correcting the page-wide top-edge predicate.
+- Rebuild reasons and stronger actual Details hero edge/DOWN assertions passed CI 37120690556: compilation/identity, 137 targeted, all 391 Video, 92 selected regression and 17 WebDAV tests (overlapping sets).
+- UI-017/025/032/047/048/052 and DIA-010/011/012 have been reconciled with inspected behaviour and successful evidence. Physical/native/live limitations remain recorded per requirement; these are not blanket completion declarations.
+- Further defects found: chooser artwork lacked rounded inner containment; selecting Network did not explicitly enter Overview. Corrections at checkpoints 93–94 are awaiting CI. No conformance pass is complete while these and the remaining register reconciliation are outstanding.
+
 ## Pass 2: rendered visual comparison
 
 Initial inspection uses CI 36349549771, remote source e961c51ef85bd35b1ce8dde157c697c93fc03b33. That run has one full-suite browser-focus failure, so it is **not** an accepted candidate. Reference characteristics were checked against VISUAL_AUTHORITY.md and IMPLEMENTATION_SPEC.md, not copied from generated navigation.

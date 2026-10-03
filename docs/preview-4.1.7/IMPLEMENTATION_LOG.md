@@ -1046,3 +1046,15 @@ These changes require a full CI rerun; no failures are waived.
 
 - Further UI-050 source tracing found selecting Network changed the page but left global navigation focused. PreviewPages now fulfils that explicit entry request when the workspace binds, focusing Overview only; reselecting an already visible Network page also returns to Overview. Switching to another tab cancels the pending entry request.
 - Extended the actual page/shell regression to assert initial entry and re-entry as well as the verified UP sequence. No action is clicked and no middle-panel control is activated by entry. Validation is pending.
+
+## Post-audit checkpoint 95 — verified source/register reconciliation
+
+- Traced UI-017 technical indexing/cache and retained library adapter, UI-025 actual hero edges/DOWN/Resume and series playback target, and UI-032 More action filtering/direct correction entry. Updated stale register entries against actual behaviour and passed CI 37120690556 (137 targeted, all 391 Video, 92 selected regression, 17 WebDAV; overlapping sets).
+- Updated the conformance record with current evidence, newly found defects and explicit incomplete-pass status. Physical rendering/native/live checks are not inferred from unit tests. Checkpoints 93–94 still require their own successful validation.
+
+## Interim Shield QA snapshot requested — 3 October 2026
+
+- The user explicitly requested an interim APK now, followed by continued development towards a separate final APK. This overrides the earlier timing gate for this interim snapshot only, not final acceptance or remaining conformance.
+- Application source is unchanged from remote 07aef20b29b85aebb6cf2364f98af4bd9fbb5dd1 (local 8dd4ee6fa0c4b5eecfde44481ffa2b61609586eb; tree cee8a4843d28b2c739156868cebadc1ad6efa83c). Source CI 37121048586 passed all gates, including the corrected artwork picker and explicit Network Overview entry.
+- The existing APK workflow is enabled on this branch only for an explicit [interim-shield-qa] commit marker (or its existing manual dispatch). Build commands, signing identity, application identity and branding are unchanged. The workflow records the exact triggering build SHA in its validation artifact.
+- Deliver as **Preview 4.1.7 — INTERIM SHIELD QA BUILD**, never final. Signing, packaging and startup results are pending until that workflow finishes. The three-pass conformance review remains incomplete; production put.io OAuth and physical/coexistence evidence remain separate dependencies.

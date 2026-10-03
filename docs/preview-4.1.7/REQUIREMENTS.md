@@ -170,9 +170,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 List View: fix flicker/rebuild when switching Grid/List, toggling/reordering Columns and background metadata updates. Sort remains one criterion. Columns controls visibility/order. Populate/persist Codec, Bitrate, HDR and other technical values through scan/index/background work; List reads cache rather than triggering focus-driven extraction.
 
-Status: **IMPLEMENTED — TESTING PENDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewPages uses cell signatures and DiffUtil rather than adapter replacement. Checkpoint 41 removes scroll/List toggles as technical extraction triggers; PreviewMetadata queues background native retrieval, saves native codec/bitrate/audio/dimensions and caches HDR when supplied. Completion/backoff is keyed by media ID/size/modification. Loader hydration reads stored values; new coverage/fingerprint tests await CI. Native extractor may not report colour transfer for every format; unknown HDR is not invented. Physical flicker/performance remains QA.
+Code mapping / verification: PreviewPages retains its adapter and uses signatures/DiffUtil for library changes; Columns retains one active sort and separate visibility/order. Technical extraction is queued from indexed snapshot/page priority, not focus or List scrolling. PreviewMetadata saves native measurements and fingerprint-cached HDR with retry/backoff; loader hydration reads stored results. PreviewTechnicalEnrichmentTest verifies every physical version is eligible and rejects changed size/modification fingerprints, including cache-only Details reads; these and complete Video regressions passed CI 37120690556. Actual extractor format coverage, storage load and visible flicker still need Shield QA; unavailable HDR remains unknown.
 
 ### UI-018 — 4. Movies and TV Shows
 
@@ -250,9 +250,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Hero actions: Play + LEFT stays; Play + RIGHT→More; More + LEFT→Play; More + RIGHT stays; DOWN lower nav. Dynamic Play: unwatched Play, partial movie Resume, TV Resume Sx Ex. Subtle internal progress is allowed behind readable contents; external focus remains separate. Buttons content-sized with constant gap. Streaming-only may have provider primary action and no More when no useful actions.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewMoviePage consumes Play LEFT and More RIGHT, routes Play RIGHT/More LEFT directly, and sends hero DOWN to the selected lower tab. Play/More wrap their contents with an 18dp gap. Movie Resume uses positive incomplete playback state; TvshowFragment supplies the same PreviewSeriesJourney selection used for playback, labelled Resume Sx Ex. Remote Details hides local Play and unnecessary More while exposing the available provider action. Actual hero edge/DOWN/Resume assertions and series-label selection tests passed CI 37120690556. Remote-provider launch and physical geometry remain Shield QA.
 
 ### UI-026 — 6. Details Page
 
@@ -320,9 +320,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Keep/refine More as a dark/translucent rounded context stack with monochrome icons, full-row blue focus boundary/glow and white contents. Content-driven; no empty headings/groups. Remove duplicated Resume/ordinary Play/Play Local File, Full Synopsis, Add to List, Streaming Services shortcut, File Information, List Episodes and Remove Info. Metadata correction must not secretly run legacy Remove Info first.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / VISUAL AND PHYSICAL QA PENDING**
 
-Code mapping: PreviewMoreActions now filters native Movie/TV IDs independent of translated labels; two tests await CI. PreviewMoviePage hides empty remote More controls and omits empty groups, retaining subtitle/artwork access without a delete action. Duplicate File Information child removed. The metadata correction engine still needs a separate preservation audit; this requirement is not fully signed off.
+Code mapping / verification: PreviewMoreActions filters native Movie/TV action IDs, independent of translated labels, excluding duplicate play/resume, removed information/list routes and Remove Info. PreviewMoviePage builds only groups with real actions (including its explicit Add to Row and artwork/subtitle entries); the shared choice stack supplies white content, monochrome icons and rounded focus. VideoDetailsFragment ACTION_SCRAP starts matching directly; TvshowFragment ACTION_CHANGE_INFO starts series correction directly, without invoking their separate legacy removal paths. Action namespace/filter/dynamic-state tests passed CI 37120690556. Full matching preservation is tracked separately in UI-039; actual menu appearance and native child returns remain visual/Shield QA.
 
 ### UI-033 — 7. More / contextual workflows
 
