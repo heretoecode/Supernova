@@ -25,6 +25,7 @@ public final class PreviewPages extends FrameLayout {
     private List<Box> files=new ArrayList<>();
     private final List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> librarySources=new ArrayList<>(),savedLocations=new ArrayList<>();
     private boolean sourcesLoading;
+    private boolean networkEntryPending;
     private void loadSources(){if(sourcesLoading)return;sourcesLoading=true;Context app=getContext().getApplicationContext();new Thread(()->{
         List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> indexed=new ArrayList<>(),saved=new ArrayList<>();
         try(android.database.Cursor c=com.archos.mediacenter.utils.ShortcutDbAdapter.VIDEO.getAllShortcuts(app,null,null)){if(c!=null){com.archos.mediacenter.video.leanback.adapter.NetworkShortcutMapper m=new com.archos.mediacenter.video.leanback.adapter.NetworkShortcutMapper();m.bindColumns(c);while(c.moveToNext())indexed.add((com.archos.mediacenter.video.leanback.adapter.object.Shortcut)m.bind(c));}}
@@ -261,12 +262,18 @@ public final class PreviewPages extends FrameLayout {
         return cells.stream().noneMatch(c->c.type==SCAN)&&first<cells.size()&&layout.getSpanSizeLookup().getSpanGroupIndex(p,24)==layout.getSpanSizeLookup().getSpanGroupIndex(first,24)&&!list.canScrollVertically(-1);
     }
     public void setTab(int tab) {
+        networkEntryPending=tab==3;
         if(tab==3)loadSources();
-        if(this.tab==tab)return;
+        if(this.tab==tab){if(tab==3)requestNetworkEntryFocus();return;}
         rememberFocus();scrollStates[this.tab]=layout.onSaveInstanceState();
         // TopNavigation owns the single full-viewport background, including the header.
         quietOrder.clear();switchingTab=true;this.tab=tab;setBackground(null);featuredIndex=0;render("tab_change");switchingTab=false;
         if(scrollStates[tab]!=null)layout.onRestoreInstanceState(scrollStates[tab]);else list.scrollToPosition(0);PreviewMetadata.library(getContext(),snapshot,tab);
+    }
+    private void requestNetworkEntryFocus(){
+        if(!networkEntryPending||tab!=3||!isAttachedToWindow())return;
+        View overview=list.findViewWithTag("semantic:network.category.overview");
+        if(overview!=null&&overview.requestFocus())networkEntryPending=false;
     }
     public void setSnapshot(Snapshot s) { if(s==null)return;
         quietOrder.clear();if(loaded&&(tab==1||tab==2))for(Cell cell:cells)if(cell.type==POSTER)quietOrder.put(((Entry)cell.value).key(),quietOrder.size());
@@ -542,6 +549,7 @@ public final class PreviewPages extends FrameLayout {
         private void networkLayout(LinearLayout container){
             container.setOrientation(LinearLayout.HORIZONTAL);container.setGravity(Gravity.TOP);container.setClipChildren(false);container.setLayoutParams(new RecyclerView.LayoutParams(-1,Math.max(dp(360),getHeight()-dp(28))));
             container.addView(new PreviewNetworkWorkspace(getContext(),files,librarySources,savedLocations,box->click.open(new Presenter.ViewHolder(container),box),PreviewPages.this::networkSection),new LinearLayout.LayoutParams(-1,-1));
+            if(networkEntryPending)container.post(PreviewPages.this::requestNetworkEntryFocus);
         }
         private void setNetworkBack(View view,Runnable back){if(view.isFocusable())view.setOnKeyListener((v,key,event)->{if(key==KeyEvent.KEYCODE_DPAD_LEFT&&event.getAction()==KeyEvent.ACTION_DOWN){back.run();return true;}return false;});if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)setNetworkBack(((ViewGroup)view).getChildAt(i),back);}
         @Override public void onViewRecycled(Holder h){if(h.presenter!=null)h.presenter.onUnbindViewHolder(h.card);else if(h.itemView instanceof LinearLayout&&h.itemView.isFocusable()&&tab>0&&tab<3)columns[tab].clear(h.itemView);else if(h.itemView instanceof ViewGroup){ViewGroup group=(ViewGroup)h.itemView;for(int i=0;i<group.getChildCount();i++)if(group.getChildAt(i) instanceof RecyclerView)((RecyclerView)group.getChildAt(i)).setAdapter(null);}}

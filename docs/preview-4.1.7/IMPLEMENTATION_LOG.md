@@ -1034,3 +1034,15 @@ These changes require a full CI rerun; no failures are waived.
 - DIA-009 source reconciliation found initial construction, source-list loading, storage updates and Home preference changes still using the generic control-change reason. These existing rebuild paths now have fixed, distinct diagnostic reasons; scheduling, diffing, adapter lifetime and focus behaviour are unchanged.
 - The existing rebuild counters/item counts and indexed-library operation/count records remain in place. This small telemetry correction is covered by source checks and the next complete regression run; it is not evidence of physical flicker or soak performance.
 - Reconciled DIA-010/011/012 with failure-time snapshot/resource/burst regressions that passed CI 37120075931 (137 targeted, all 390 Video, 92 selected regression and 17 WebDAV tests). Physical pressure/incident windows remain unverified. Extended the existing actual Details test to cover both hero edges, Resume label and DOWN to the selected lower tab; these added assertions await CI.
+
+## Post-audit checkpoint 93 — artwork chooser rounded containment
+
+- UI-038/global visual tracing found the chooser still placed square artwork directly in its rounded-focus card. It now uses the same rounded inner artwork body as the existing media cards, keeping the outer focus glow unclipped and the established 1.08 whole-card scale. Check marks remain independent in their existing safe corner position.
+- Added fixed poster/backdrop-index semantic IDs without image URLs or titles. Save/selection callbacks and single-flight behaviour are unchanged. Existing chooser save/failure/edge tests must pass on the corrected tree; actual image corners/glow remain part of visual and physical QA.
+- Source-register integrity check found all 115 unique requirement paragraphs still match the controlling handover. A preliminary added-code search found no named Fanart/SubDL/StevenLu/MDBList/SkipDB, trick-play, transfer-management, position-sync or NFS additions; this does not replace the final complete scope review. Remote main remains 77b2617ad1e48b7a7a85ba28463de0961af5ba4d.
+- Network UP correction passed CI 37120377842: compilation/identity, 137 targeted, all 391 Video, 92 selected regression and 17 WebDAV tests (overlapping sets). Checkpoint 92 remains pending separately.
+
+## Post-audit checkpoint 94 — explicit Network entry target
+
+- Further UI-050 source tracing found selecting Network changed the page but left global navigation focused. PreviewPages now fulfils that explicit entry request when the workspace binds, focusing Overview only; reselecting an already visible Network page also returns to Overview. Switching to another tab cancels the pending entry request.
+- Extended the actual page/shell regression to assert initial entry and re-entry as well as the verified UP sequence. No action is clicked and no middle-panel control is activated by entry. Validation is pending.

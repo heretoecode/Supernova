@@ -29,8 +29,10 @@ public final class PreviewArtworkPicker {
         for(int i=0;i<images.size();i++) {
             final int index=i;ScraperImage image=images.get(i);
             FrameLayout card=new FrameLayout(context);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setTag("artwork:"+i);
-            card.setBackgroundColor(0xff142431);card.setForeground(PreviewDialog.focus(context));card.setContentDescription(heading+" "+(i+1));
-            ImageView picture=new ImageView(context);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);card.addView(picture,new FrameLayout.LayoutParams(-1,-1));pictures.add(picture);
+            com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(card,"details.artwork."+(posters?"poster.":"backdrop.")+i);
+            card.setClipChildren(false);card.setClipToPadding(false);card.setForeground(PreviewDialog.focus(context));card.setContentDescription(heading+" "+(i+1));
+            FrameLayout body=new FrameLayout(context);android.graphics.drawable.GradientDrawable outline=new android.graphics.drawable.GradientDrawable();outline.setColor(0xff142431);outline.setCornerRadius(PreviewDialog.dp(context,6));body.setBackground(outline);body.setClipToOutline(true);card.addView(body,new FrameLayout.LayoutParams(-1,-1));
+            ImageView picture=new ImageView(context);picture.setScaleType(ImageView.ScaleType.CENTER_CROP);body.addView(picture,new FrameLayout.LayoutParams(-1,-1));pictures.add(picture);
             java.io.File file=image.getLargeFileF();android.net.Uri uri=file!=null&&file.isFile()?android.net.Uri.fromFile(file):image.getLargeUrl()==null?null:android.net.Uri.parse(image.getLargeUrl());
             if(uri!=null)com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(picture,uri,com.archos.mediacenter.video.diagnostics.Diagnostics.artworkMedia(),"details.artwork_picker",posters?"poster":"backdrop",Picasso.get().load(uri).resize(cardWidth,cardHeight).centerCrop().noFade());
             TextView check=new TextView(context);check.setTag("artwork-check:"+i);check.setText("✓");check.setTextColor(Color.WHITE);check.setTextSize(22);check.setGravity(Gravity.CENTER);
