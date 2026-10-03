@@ -215,16 +215,22 @@ public final class PreviewMoviePage extends ScrollView {
         LinearLayout key=factPanel(panels,"Key Information"),reception=factPanel(panels,"Reception"),
                 technical=factPanel(panels,show!=null?"Library Information":remoteDetails!=null?"Streaming Availability":"Technical Information");
         org.json.JSONObject enriched=enrichment!=null?enrichment.details:remoteDetails;
+        Episode selectedEpisode=movie instanceof Episode?(Episode)movie:null;
+        org.json.JSONObject episodeFacts=selectedEpisode!=null&&enrichment!=null?PreviewDetailsFacts.episode(enrichment.episodes,selectedEpisode.getSeasonNumber(),selectedEpisode.getEpisodeNumber()):null;
+        long episodeDate=selectedEpisode==null?0:selectedEpisode.getEpisodeDate();
+        if(episodeDate<=0&&tags instanceof EpisodeTags&&((EpisodeTags)tags).getAired()!=null)episodeDate=((EpisodeTags)tags).getAired().getTime();
         if(movie!=null&&!movie.hasScraperData())fact(key,"Metadata","Not matched");
         String genre=tags instanceof VideoTags?((VideoTags)tags).getGenresFormatted():"";
         if(safe(genre).isEmpty()&&tags instanceof EpisodeTags){ShowTags parent=((EpisodeTags)tags).getShowTags();if(parent!=null)genre=parent.getGenresFormatted();}
         if(safe(genre).isEmpty()&&enriched!=null)genre=jsonNames(enriched.optJSONArray("genres"),"name");
         context.setText(safe(genre));context.setVisibility(safe(genre).isEmpty()?GONE:VISIBLE);
         int year=movie instanceof Movie?((Movie)movie).getYear():show!=null?show.getYear():0;
-        if(year<=0)year=PreviewDetailsFacts.year(enriched);
+        if(selectedEpisode!=null)year=episodeDate>0?PreviewDetailsFacts.dateYear(episodeDate):PreviewDetailsFacts.year(episodeFacts);
+        else if(year<=0)year=PreviewDetailsFacts.year(enriched);
         if(year>0)fact(key,"Year",String.valueOf(year));
         long runtime=movie==null?0:movie.getDurationMs()/60000;
-        if(runtime<=0&&enriched!=null)runtime=enriched.optLong("runtime");
+        if(runtime<=0&&selectedEpisode!=null&&tags instanceof EpisodeTags)runtime=tags.getRuntime(java.util.concurrent.TimeUnit.MINUTES);
+        if(runtime<=0){org.json.JSONObject runtimeFacts=selectedEpisode!=null?episodeFacts:enriched;if(runtimeFacts!=null)runtime=runtimeFacts.optLong("runtime");}
         if(runtime>0)fact(key,"Runtime",runtime+" min");
         else if(show!=null||"tv".equals(remoteKind))fact(key,"Episode runtime",PreviewDetailsFacts.episodeRuntimes(enriched));
         String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;
@@ -233,19 +239,23 @@ public final class PreviewMoviePage extends ScrollView {
         String studios=tags instanceof MovieTags?((MovieTags)tags).getStudiosFormatted():tags instanceof ShowTags?((ShowTags)tags).getStudiosFormatted():tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null?((EpisodeTags)tags).getShowTags().getStudiosFormatted():"";
         if(safe(studios).isEmpty()&&enriched!=null)studios=jsonNames(enriched.optJSONArray(show!=null||"tv".equals(remoteKind)?"networks":"production_companies"),"name");
         fact(key,"Studio / Network",studios);
-        float rating=movie instanceof Episode?(tags instanceof EpisodeTags?((EpisodeTags)tags).getRating():((Episode)movie).getEpisodeRating()):movie instanceof Movie?((Movie)movie).getRating():show==null?0:show.getRating();
+        float rating=selectedEpisode!=null?(tags instanceof EpisodeTags?((EpisodeTags)tags).getRating():selectedEpisode.getEpisodeRating()):movie instanceof Movie?((Movie)movie).getRating():show==null?0:show.getRating();
+        if(rating<=0&&selectedEpisode!=null)rating=selectedEpisode.getEpisodeRating();
+        if(rating<=0&&episodeFacts!=null)rating=(float)episodeFacts.optDouble("vote_average",0);
         if(rating<=0&&enriched!=null&&!(movie instanceof Episode))rating=(float)enriched.optDouble("vote_average");
         if(rating>0)fact(reception,"TMDb rating",String.format(Locale.UK,"%.1f / 10",rating));
+        if(selectedEpisode!=null)fact(key,"Air date",episodeDate>0?PreviewDetailsFacts.date(episodeDate):episodeFacts==null?"":episodeFacts.optString("air_date"));
         if(enriched!=null){
-            fact(key,"Release / first air date",enriched.optString("release_date",enriched.optString("first_air_date")));
-            fact(key,"Original title",enriched.optString("original_title",enriched.optString("original_name")));
+            if(selectedEpisode==null)fact(key,"Release / first air date",enriched.optString("release_date",enriched.optString("first_air_date")));
+            fact(key,selectedEpisode!=null?"Series original title":"Original title",enriched.optString("original_title",enriched.optString("original_name")));
             if(show!=null||"tv".equals(remoteKind)){fact(key,"Last air date",enriched.optString("last_air_date"));fact(key,"Series status",enriched.optString("status"));}
             fact(key,"Countries",jsonNames(enriched.optJSONArray("production_countries"),"name"));
-            fact(key,"Tagline",enriched.optString("tagline"));
+            fact(key,selectedEpisode!=null?"Series tagline":"Tagline",enriched.optString("tagline"));
             org.json.JSONObject collection=enriched.optJSONObject("belongs_to_collection");
             if(collection!=null)fact(key,"Collection",collection.optString("name"));
             for(String field:new String[]{"budget","revenue"})if(enriched.optLong(field)>0)fact(key,field.equals("budget")?"Budget (TMDb)":"Box office (TMDb)",java.text.NumberFormat.getCurrencyInstance(Locale.US).format(enriched.optLong(field)));
             if(enriched.optLong("vote_count")>0&&!(movie instanceof Episode))fact(reception,"TMDb votes",java.text.NumberFormat.getIntegerInstance().format(enriched.optLong("vote_count")));
+            if(episodeFacts!=null&&episodeFacts.optLong("vote_count")>0)fact(reception,"TMDb votes",java.text.NumberFormat.getIntegerInstance().format(episodeFacts.optLong("vote_count")));
         }
         if(movie!=null){
             if(movie.getMeasuredWidth()>0&&movie.getMeasuredHeight()>0)fact(technical,"Resolution",movie.getMeasuredWidth()+" × "+movie.getMeasuredHeight());

@@ -987,3 +987,15 @@ These changes require a full CI rerun; no failures are waived.
 - Added Grid and List integration fixtures exercising the real library adapter, a scrolled non-leftmost item, its Details callback and a refreshed snapshot while a child stand-in holds focus. Return must restore the exact media tag, scroll offset, first visible position and view mode without stealing the child's focus during refresh.
 - The stand-in exercises the page's retained-anchor mechanism, not the complete native Details activity lifecycle or physical remote behaviour. Both tests await CI; UI-016 is not yet promoted on their existence alone.
 - Checkpoint 82 CI 37078654379 passed compilation/identity, 133 targeted tests, all 380 Video tests, 90 selected regression checks and 17 WebDAV tests (overlapping sets). The actual toolbar DOWN assertion now passes. Updated UI-014, UI-022 and UI-030 with traced behaviour and completed evidence; their physical/visual limitations remain explicit. Checkpoints 83–84 still need validation.
+
+## Post-audit checkpoint 85 — failure-time session correlation
+
+- Further incident tracing found the immutable UI state was captured at failure time, but serialization still inherited the worker-time playback/foreground session and last operation. Delayed incident records now retain those failure-time identifiers, including repeat records.
+- Resource measurements remain bounded to major-incident processing, avoiding heavy work in the event producer. Their sampling timestamp and monotonic delay from failure are now explicit, so later resource samples are not presented as instantaneous failure-time measurements.
+- Added a delayed-capture regression spanning two actual diagnostic playback sessions. It asserts original-session association, retained failure time, explicit resource-sampling delay and private-path exclusion. Validation is pending.
+
+## Post-audit checkpoint 86 — episode information package consumption
+
+- UI-010/UI-029 tracing found that local episode Key Information could inherit a series premiere year/date while omitting a known native episode runtime. It now uses the selected episode's native date/runtime first, then that exact episode's already-cached season record. Episode rating/counts cannot borrow the series totals; missing values remain absent.
+- Inherited series original-title/tagline fields are explicitly labelled as series facts. No provider or new feature was introduced; the existing series/season package supplies the data.
+- Added a conflicting-series/episode fixture for year, date, runtime, rating and vote count, plus missing-episode fallback checks. It remains unverified until CI passes.

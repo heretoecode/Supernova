@@ -46,10 +46,10 @@ public final class Diagnostics {
     private static volatile String uiModalKinds="none";
     /** Immutable failure-time state; worker queue delays must not change its meaning. */
     static final class UiSnapshot {
-        final String screen,focus,page,category,mode,sort,filters,filterDetails,modalKinds;
-        final long media,utc;
+        final String screen,focus,page,category,mode,sort,filters,filterDetails,modalKinds,playbackSession,foregroundSession,operation;
+        final long media,utc,elapsed;
         final int modals,foregroundCount;
-        UiSnapshot(){synchronized(Diagnostics.class){screen=uiScreen;focus=uiFocus;page=uiPage;category=uiCategory;mode=uiMode;sort=uiSort;filters=uiFilters;filterDetails=uiFilterDetails;modalKinds=uiModalKinds;media=uiMedia;utc=System.currentTimeMillis();modals=uiModals;foregroundCount=foreground;}}
+        UiSnapshot(){synchronized(Diagnostics.class){screen=uiScreen;focus=uiFocus;page=uiPage;category=uiCategory;mode=uiMode;sort=uiSort;filters=uiFilters;filterDetails=uiFilterDetails;modalKinds=uiModalKinds;media=uiMedia;utc=System.currentTimeMillis();elapsed=android.os.SystemClock.elapsedRealtime();modals=uiModals;foregroundCount=foreground;playbackSession=playback;foregroundSession=appSession;operation=lastOperation;}}
     }
     private static final Map<Activity,UiSnapshot> ACTIVITY_UI=new java.util.WeakHashMap<>();
     static synchronized void pauseUi(Activity activity){
@@ -239,7 +239,7 @@ public final class Diagnostics {
         if(!manual&&android.os.SystemClock.elapsedRealtime()<freezeUntil){
             long count=incidentCounts.containsKey(reason)?incidentCounts.get(reason)+1:1;
             incidentCounts.put(reason,count);
-            appendFlight(record("incident_repeated","reason",reason,"incident_id",incidentId,"occurrences",count));
+            appendFlight(record("incident_repeated","reason",reason,"incident_id",incidentId,"occurrences",count,"failure_utc_ms",state.utc,"session",state.playbackSession,"app_session",state.foregroundSession,"last_operation",state.operation));
             // Cumulative power-of-two summaries bound noise without dropping the underlying events.
             if((count&(count-1))==0)writeImportant(record("incident_burst_summary","reason",reason,"incident_id",incidentId,"occurrences",count,"count_kind","cumulative"));
             return;
@@ -266,12 +266,15 @@ public final class Diagnostics {
         return incidentContext(reason,new UiSnapshot());
     }
     static String incidentContext(String reason,UiSnapshot state){
+        long sampledUtc=System.currentTimeMillis(),sampledElapsed=android.os.SystemClock.elapsedRealtime();
         long available=-1;boolean lowMemory=false;
         try{ActivityManager manager=(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
             if(manager!=null){ActivityManager.MemoryInfo memory=new ActivityManager.MemoryInfo();manager.getMemoryInfo(memory);available=memory.availMem;lowMemory=memory.lowMemory;}
         }catch(RuntimeException ignored){/* Missing resource data must not prevent incident capture. */}
         Runtime runtime=Runtime.getRuntime();
         return record("incident_capture","reason",reason,"incident_id",incidentId,"foreground",state.foregroundCount,"failure_utc_ms",state.utc,
+                "session",state.playbackSession,"app_session",state.foregroundSession,"last_operation",state.operation,
+                "resource_sample_utc_ms",sampledUtc,"resource_sample_delay_ms",Math.max(0,sampledElapsed-state.elapsed),
                 "screen",state.screen,"page",state.page,"category",state.category,"focused_control",state.focus,"view_mode",state.mode,"sort",state.sort,"active_filters",state.filters,"filter_state",state.filterDetails,"media_id",state.media,"modal_depth",state.modals,"modal_kinds",state.modalKinds,
                 "heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),
                 "native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"available_memory",available,

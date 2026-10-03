@@ -6,6 +6,17 @@ import java.util.LinkedHashSet;
 
 /** Read only applicable published facts; absence must not become a guessed classification/runtime. */
 final class PreviewDetailsFacts {
+    static JSONObject episode(java.util.Map<Integer,JSONArray> seasons,int season,int number){
+        JSONArray episodes=seasons.get(season);if(episodes==null)return null;
+        for(int i=0;i<episodes.length();i++){JSONObject episode=episodes.optJSONObject(i);if(episode!=null&&episode.optInt("episode_number",-1)==number)return episode;}
+        return null;
+    }
+    static int dateYear(long date){
+        if(date<=0)return 0;java.util.Calendar calendar=java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));calendar.setTimeInMillis(date);return calendar.get(java.util.Calendar.YEAR);
+    }
+    static String date(long date){
+        if(date<=0)return "";java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ROOT);format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));return format.format(new java.util.Date(date));
+    }
     static String certificate(JSONObject classification,String country){
         JSONArray regions=classification==null?null:classification.optJSONArray("results");
         if(regions==null)return "";
@@ -20,7 +31,7 @@ final class PreviewDetailsFacts {
         return "";
     }
     static int year(JSONObject details){
-        if(details==null)return 0;String date=details.optString("release_date",details.optString("first_air_date"));
+        if(details==null)return 0;String date=details.optString("release_date",details.optString("first_air_date",details.optString("air_date")));
         return date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")?Integer.parseInt(date.substring(0,4)):0;
     }
     static String episodeRuntimes(JSONObject details){

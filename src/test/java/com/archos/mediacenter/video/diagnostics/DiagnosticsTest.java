@@ -103,6 +103,19 @@ public class DiagnosticsTest {
             assertEquals("movies",value.getString("page"));assertEquals("list",value.getString("view_mode"));assertEquals(42,value.getLong("media_id"));assertEquals(2,value.getInt("modal_depth"));assertEquals(captured.utc,value.getLong("failure_utc_ms"));
         }finally{Diagnostics.uiState("unknown","none","unknown","unknown","none",0);Diagnostics.modalDepth(0);Diagnostics.setEnabled(c,false);}
     }
+    @Test public void delayedIncidentDoesNotAttachToALaterPlaybackSession()throws Exception{
+        Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
+        try{
+            Diagnostics.beginPlayback(android.net.Uri.parse("file:///private/first.mkv"));
+            Diagnostics.UiSnapshot captured=new Diagnostics.UiSnapshot();
+            Diagnostics.endPlayback("user_back");Diagnostics.beginPlayback(android.net.Uri.parse("file:///private/second.mkv"));
+            assertNotEquals(captured.playbackSession,new Diagnostics.UiSnapshot().playbackSession);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(40));
+            String evidence=Diagnostics.incidentContext("playback_failed",captured);org.json.JSONObject value=new org.json.JSONObject(evidence);
+            assertEquals(captured.playbackSession,value.getString("session"));assertEquals(captured.foregroundSession,value.getString("app_session"));assertEquals(captured.operation,value.getString("last_operation"));
+            assertEquals(captured.utc,value.getLong("failure_utc_ms"));assertTrue(value.getLong("resource_sample_delay_ms")>=40);assertTrue(value.has("resource_sample_utc_ms"));assertFalse(evidence.contains("private"));
+        }finally{Diagnostics.endPlayback("fixture_complete");Diagnostics.setEnabled(c,false);}
+    }
     @Test public void incidentSnapshotContainsStructuralUiStateWithoutRawPaths()throws Exception{
         Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
         try{
