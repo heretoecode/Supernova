@@ -143,7 +143,10 @@ def target(root,label,activate=False):
  # Expandable Settings categories append a disclosure marker to their title.
  n=next(n for n in root.iter('node') if n.get('text','').rstrip(' ▸▾')==label or n.get('content-desc')==label)
  x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))
- adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+ # A tap on an already-focused TV control activates it. Do not then send
+ # centre again into its newly opened child (for example a credential dialog).
+ if not (activate and n.get('focused')=='true'):
+  adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
  if activate: adb('shell','input','keyevent','23')
  time.sleep(.6)
 root=capture('settings-check')
