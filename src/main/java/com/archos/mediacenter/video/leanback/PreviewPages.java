@@ -31,7 +31,7 @@ public final class PreviewPages extends FrameLayout {
         catch(Exception e){com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_summary_unavailable",e);}
         try(android.database.Cursor c=com.archos.mediacenter.video.browser.ShortcutDb.STATIC.getCursorAllShortcuts(app)){if(c!=null){com.archos.mediacenter.video.leanback.adapter.GenericNetworkShortcutMapper m=new com.archos.mediacenter.video.leanback.adapter.GenericNetworkShortcutMapper();m.bindColumns(c);while(c.moveToNext())saved.add((com.archos.mediacenter.video.leanback.adapter.object.Shortcut)m.bind(c));}}
         catch(Exception e){com.archos.mediacenter.video.diagnostics.Diagnostics.error("saved_locations_unavailable",e);}
-        post(()->{sourcesLoading=false;librarySources.clear();librarySources.addAll(indexed);savedLocations.clear();savedLocations.addAll(saved);if(tab==3&&isAttachedToWindow())render();});
+        post(()->{sourcesLoading=false;librarySources.clear();librarySources.addAll(indexed);savedLocations.clear();savedLocations.addAll(saved);if(tab==3&&isAttachedToWindow())render("sources_loaded");});
     },"SupernovaSourceSummary").start();}
     private void openSource(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source){getContext().startActivity(new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsActivity.class).putExtra(com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsFragment.EXTRA_SHORTCUT,source));}
 
@@ -199,7 +199,7 @@ public final class PreviewPages extends FrameLayout {
             removeCallbacks(providerRefresh);postDelayed(providerRefresh,500);
         }
     };
-    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener homeSettings=(prefs,key)->{if(key!=null&&(key.startsWith("preview_featured_")||key.equals("preview_home_rows41")||key.equals("preview_accent41")||key.equals("hide_watched")||key.equals("sort_ignore_articles")))post(()->{if(isAttachedToWindow()){if(key.equals("hide_watched")||key.equals("sort_ignore_articles"))quietOrder.clear();render();}});};
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener homeSettings=(prefs,key)->{if(key!=null&&(key.startsWith("preview_featured_")||key.equals("preview_home_rows41")||key.equals("preview_accent41")||key.equals("hide_watched")||key.equals("sort_ignore_articles")))post(()->{if(isAttachedToWindow()){if(key.equals("hide_watched")||key.equals("sort_ignore_articles"))quietOrder.clear();render("home_settings_changed");}});};
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();preferences.registerOnSharedPreferenceChangeListener(homeSettings);preferences.registerOnSharedPreferenceChangeListener(providerSettings);requestDiscovery();lastInteraction=android.os.SystemClock.elapsedRealtime();postDelayed(rotateFeatured,30000);}
     private void requestDiscovery(){if(requestedDiscovery||!isAttachedToWindow()||snapshot.movies.isEmpty()&&snapshot.shows.isEmpty())return;requestedDiscovery=true;
         worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{try{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});}finally{worker.shutdown();}});}
@@ -231,7 +231,7 @@ public final class PreviewPages extends FrameLayout {
             String k="preview_library_"+i+"_";sorts[i]=Math.max(0,Math.min(4,preferences.getInt(k+"sort",0)));genres[i]=preferences.getString(k+"genre","");years[i]=preferences.getInt(k+"year",0);selectedYears[i]=preferences.getString(k+"years",years[i]==0?"":String.valueOf(years[i]));providers[i]=preferences.getString(k+"providers","");ascending[i]=preferences.getBoolean(k+"ascending",false);listMode[i]=preferences.getBoolean(k+"list",false);
         }
         columns[1]=new PreviewLibraryColumns(c,false);columns[2]=new PreviewLibraryColumns(c,true);
-        render();
+        render("initial");
         if(PreviewLibraryLoader.memoryCache()==null){java.util.concurrent.ExecutorService cacheWorker=java.util.concurrent.Executors.newSingleThreadExecutor();cacheWorker.execute(()->{try{Snapshot previous=PreviewLibraryLoader.readCache(c.getApplicationContext());post(()->{if(!loaded&&previous!=null)setSnapshot(previous);});}finally{cacheWorker.shutdown();}});}
     }
     private java.util.function.Consumer<Boolean> scrollListener=value->{};
@@ -277,7 +277,7 @@ public final class PreviewPages extends FrameLayout {
     public void setFiles(List<Box> f) {
         boolean same=f.size()==files.size();
         for(int i=0;same && i<f.size();i++)same=f.get(i).getBoxId()==files.get(i).getBoxId() && Objects.equals(f.get(i).getName(),files.get(i).getName()) && Objects.equals(f.get(i).getPath(),files.get(i).getPath());
-        if(same)return;files=f;if(tab==3)render();
+        if(same)return;files=f;if(tab==3)render("storage_changed");
     }
     private void header(String title,boolean controls) {cells.add(new Cell(HEADER,title,controls));}
     private void rail(String title,List<Entry> items) {if(items.isEmpty())return; header(title,false);cells.add(new Cell(RAIL,title,new ArrayList<>(items.subList(0,items.size()))));}
@@ -323,7 +323,7 @@ public final class PreviewPages extends FrameLayout {
     }
     /** A carousel change must not rebind the library rows below it. */
     private void renderFeatured() {
-        if(tab!=0 || cells.isEmpty() || cells.get(0).type!=HERO){render();return;}
+        if(tab!=0 || cells.isEmpty() || cells.get(0).type!=HERO){render("featured_structure_changed");return;}
         rememberFocus();boolean preserve=hasFocus();if(preserve)holdFocus();
         cells.set(0,new Cell(HERO,"Featured",featured()));
         updateArtwork();

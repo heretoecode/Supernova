@@ -865,9 +865,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 On important failure, capture small structured UI-state snapshot (not screenshot): page, selected tab/category, focused semantic control, grid/list mode, active filters/sort, anonymous media ID, open modal/menu. Add severity INFO/WARNING/ERROR/FATAL.
 
-Status: **IMPLEMENTED IN PART — TESTING/CONFORMANCE PENDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: Incident records now contain structural screen/page/category, semantic focus, grid/list mode, sort, active filter types, anonymous media ID and modal depth. Library, Details, Settings and Network update this state; card focus supplies its media ID. INFO/WARNING/ERROR/FATAL classification already exists. New snapshot/privacy regression awaits CI. Remaining navigation surfaces and exact filter-state completeness still require reconciliation.
+Code mapping / verification: Diagnostics.UiSnapshot captures failure-time page/category, semantic focus, grid/list mode, sort, safe filter values, numeric media ID, modal kinds/depth, activity state and playback/foreground session. Library filters use numeric years/provider IDs and a genre-selection digest rather than raw metadata. Activity pause/return restores the correct page; delayed incident serialization retains the original state/session. Actual Details/native modal, filter/privacy and delayed-session regressions passed complete-suite CI 37120075931. Remaining semantic-route reconciliation is recorded separately under DIA-008; physical incident/soak behaviour is still required.
 
 ### DIA-011 — Required diagnostic/reporting improvements
 
@@ -875,9 +875,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Automatic incident capture: preserve roughly 30–60 seconds before/after significant failures (uncaught exception, ANR-like stall, failed library operation, playback failure, repeated artwork-failure burst). Add burst summarisation while retaining underlying events.
 
-Status: **IMPLEMENTED — TESTING/PHYSICAL VERIFICATION PENDING**
+Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / PHYSICAL QA PENDING**
 
-Code mapping / verification: Bounded DiagnosticFlightRecorder retains up to 60 seconds before an incident and capture continues for 60 seconds afterwards, subject to explicit byte limits/eviction counters. Repeated failures retain underlying important events and correlated incident_repeated records; power-of-two cumulative burst summaries bound extra summary traffic. New regression checks the raw repeats and correlated cumulative counts; CI and long-running Shield validation remain pending.
+Code mapping / verification: DiagnosticFlightRecorder maintains a bounded 60-second pre-incident ring; freeze appends protected incident evidence and continues capture for 60 seconds. Byte budgets and eviction/drop counters explicitly limit completeness. Repeated failure records keep the incident correlation and power-of-two cumulative summaries while important raw failures are retained. DiagnosticsTest repeated-failure coverage and DiagnosticArchiveTest protected-stream/deduplication checks passed CI 37120075931. Sustained load, process termination and actual Shield failure windows remain physical QA.
 
 ### DIA-012 — Required diagnostic/reporting improvements
 
@@ -885,9 +885,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 At major failures only, capture safe resource context: app heap/native memory, available memory/storage, thread count and foreground/background state. Avoid continuous heavy profiling.
 
-Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: Diagnostics.incidentContext captures heap/native heap, available memory, low-memory flag, storage free, thread count and foreground state when freezing an incident. Failed resource lookup cannot prevent recording; repeat incidents use the lightweight burst path. New structural snapshot regression passed targeted CI 36349938513 (the run failed a separate rotation-budget assertion). Physical resource pressure/retention remains QA.
+Code mapping / verification: Diagnostics.incidentContext records app/native heap, available memory/low-memory status, free app storage and thread count only during major incident processing. Failure-time foreground state is retained; resource sampling has its own UTC timestamp and monotonic delay so it is not misrepresented as instantaneous. Missing memory service data does not prevent incident capture. Structural resource and delayed-session tests passed CI 37120075931. Physical pressure and overhead remain Shield QA.
 
 ### DIA-013 — Required diagnostic/reporting improvements
 

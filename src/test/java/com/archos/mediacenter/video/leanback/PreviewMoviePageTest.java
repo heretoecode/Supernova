@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.view.*;
+import android.widget.TextView;
 import androidx.leanback.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.details.*;
@@ -120,8 +121,13 @@ public class PreviewMoviePageTest {
             Movie m=new Movie(1,"smb://server/movies/film.mkv","The Last Horizon",1,"A journey through the mountains brings a family together.",2024,7.5f,"12",null,7200000,1000,0,0,false,false,false,false,1,0,3840,2160,"Atmos","HEVC",null,null,0,1,1000,0);
             page.bind(m);page.play();assertEquals(VideoActionAdapter.ACTION_RESUME,selected[0]);
             View primary=page.findViewWithTag("action:Play"),more=page.findViewWithTag("action:More");
+            assertEquals("Resume",((TextView)primary).getText().toString());
+            primary.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(primary,page.findFocus());
             primary.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(more,page.findFocus());
+            page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(more,page.findFocus());
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(primary,page.findFocus());
+            page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(page.findViewWithTag("section:Details"),page.findFocus());
+            primary.requestFocus();
             assertNotNull(PreviewPagesTest.findText(page,"SMB · server/movies/film.mkv"));assertNotNull(PreviewPagesTest.findText(page,"MKV"));
             com.archos.mediascraper.ShowTags cast=new com.archos.mediascraper.ShowTags();for(int person=1;person<=10;person++)cast.addActorIfAbsent("Fixture Person "+person,"Role "+person);page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
             android.view.ViewGroup body=(android.view.ViewGroup)page.getChildAt(0);android.view.ViewGroup hero=(android.view.ViewGroup)body.getChildAt(0);assertTrue("Hero retains its content and lower tabs",hero.getChildCount()>1);

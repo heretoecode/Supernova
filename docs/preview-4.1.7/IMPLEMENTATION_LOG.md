@@ -1028,3 +1028,9 @@ These changes require a full CI rerun; no failures are waived.
 - UI-050 tracing found PreviewPages treated the entire Network workspace as its top row. TopNavigation therefore intercepted UP from any category/control before the workspace could handle it. The page now delegates top-edge eligibility to the actual workspace: only its Overview category qualifies.
 - Added actual PreviewPages/TopNavigation coverage for Network Shares → Local Storage → Overview, middle-panel LEFT return and Overview → global Network & Files. Validation remains pending; no physical remote behaviour is claimed.
 - Checkpoint 89 passed CI 37113656058: compilation/identity, 137 targeted, all 389 Video, 92 selected regression and 17 WebDAV tests (overlapping sets). Checkpoint 90 has been submitted separately and is not yet verified.
+
+## Post-audit checkpoint 92 — distinguish background refresh reasons
+
+- DIA-009 source reconciliation found initial construction, source-list loading, storage updates and Home preference changes still using the generic control-change reason. These existing rebuild paths now have fixed, distinct diagnostic reasons; scheduling, diffing, adapter lifetime and focus behaviour are unchanged.
+- The existing rebuild counters/item counts and indexed-library operation/count records remain in place. This small telemetry correction is covered by source checks and the next complete regression run; it is not evidence of physical flicker or soak performance.
+- Reconciled DIA-010/011/012 with failure-time snapshot/resource/burst regressions that passed CI 37120075931 (137 targeted, all 390 Video, 92 selected regression and 17 WebDAV tests). Physical pressure/incident windows remain unverified. Extended the existing actual Details test to cover both hero edges, Resume label and DOWN to the selected lower tab; these added assertions await CI.
