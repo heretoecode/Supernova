@@ -18,6 +18,21 @@ import static org.junit.Assert.*;
 @RunWith(org.robolectric.RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class PreviewNetworkSemanticsTest {
+    @Test @Config(qualifiers="w960dp-h540dp-land-mdpi") public void actualPageUpTraversesCategoriesBeforeReturningToGlobalNavigation(){
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try{
+            PreviewPages pages=new PreviewPages(host.get(),(holder,item)->{});
+            TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);
+            host.get().setContentView(nav);pages.setSnapshot(new PreviewLibraryLoader.Snapshot());pages.setTab(3);nav.selectTab(3);PreviewPagesTest.layout(nav);
+            View overview=nav.findViewWithTag("semantic:network.category.overview"),local=nav.findViewWithTag("semantic:network.category.local_storage"),network=nav.findViewWithTag("semantic:network.category.network_shares");
+            assertNotNull(overview);assertTrue(network.requestFocus());assertFalse(pages.atTop());
+            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_UP));assertSame(local,nav.findFocus());
+            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_UP));assertSame(overview,nav.findFocus());assertTrue(pages.atTop());
+            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));assertFalse(pages.atTop());
+            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_LEFT));assertSame(overview,nav.findFocus());
+            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_UP));assertSame(nav.findViewWithTag("semantic:topnav.network"),nav.findFocus());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void actualWorkspaceKeepsContextActionsAndPrivateLocationsSemanticallyDistinct()throws Exception {
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {

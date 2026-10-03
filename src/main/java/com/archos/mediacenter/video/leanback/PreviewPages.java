@@ -246,7 +246,14 @@ public final class PreviewPages extends FrameLayout {
         if(tab==0)return cell.type==HERO && item.getTop()>=list.getPaddingTop() || cell.type==CUSTOMISE&&cells.stream().noneMatch(c->c.type==HERO)&&!list.canScrollVertically(-1);
         if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value)&&focused.getTag() instanceof String&&((String)focused.getTag()).startsWith("control:")&&!list.canScrollVertically(-1)
                 ||cell.type==HERO&&item.getTop()>=list.getPaddingTop();
-        if(cell.type==NETWORK)return !list.canScrollVertically(-1);
+        if(cell.type==NETWORK){
+            View cursor=focused;
+            while(cursor!=null&&cursor!=item){
+                if(cursor instanceof PreviewNetworkWorkspace)return ((PreviewNetworkWorkspace)cursor).atTop();
+                cursor=cursor.getParent() instanceof View?(View)cursor.getParent():null;
+            }
+            return false;
+        }
         if(cell.type==NETWORK_PANEL)return p<=3&&!list.canScrollVertically(-1);
         if(cell.type==SCAN)return !list.canScrollVertically(-1);
         if(cell.type!=STORAGE)return false;

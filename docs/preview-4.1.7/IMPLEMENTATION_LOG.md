@@ -1022,3 +1022,9 @@ These changes require a full CI rerun; no failures are waived.
 
 - DIA-008 reconciliation found semantic category identifiers but positional identifiers for middle-panel locations and right-panel actions. Existing controls now use fixed action names, numeric source IDs with separate indexed/saved namespaces, and volume type/position without names or paths.
 - Keyed diagnostic tags preserve the existing Runnable context-population tag and all navigation/actions. Added an actual-workspace regression covering initial context, scanning controls, indexed/saved sources and private volume labels. Android validation is pending; no live source operation is performed by this fixture.
+
+## Post-audit checkpoint 91 — Network category UP routing
+
+- UI-050 tracing found PreviewPages treated the entire Network workspace as its top row. TopNavigation therefore intercepted UP from any category/control before the workspace could handle it. The page now delegates top-edge eligibility to the actual workspace: only its Overview category qualifies.
+- Added actual PreviewPages/TopNavigation coverage for Network Shares → Local Storage → Overview, middle-panel LEFT return and Overview → global Network & Files. Validation remains pending; no physical remote behaviour is claimed.
+- Checkpoint 89 passed CI 37113656058: compilation/identity, 137 targeted, all 389 Video, 92 selected regression and 17 WebDAV tests (overlapping sets). Checkpoint 90 has been submitted separately and is not yet verified.

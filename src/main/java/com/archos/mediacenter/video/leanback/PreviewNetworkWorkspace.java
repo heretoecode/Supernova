@@ -116,6 +116,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
     private TextView label(String value,int size){TextView label=new TextView(getContext());label.setText(value);label.setTextSize(size);label.setTextColor(-1);return label;}
     private LinearLayout column(){LinearLayout column=new LinearLayout(getContext());column.setOrientation(VERTICAL);column.setClipChildren(false);column.setClipToPadding(false);return column;}
     private int dp(int value){return PreviewDialog.dp(getContext(),value);}
+    public boolean atTop(){return sections.get(0).hasFocus();}
     public static String protocol(Uri uri){String scheme=uri.getScheme();if(scheme==null)return "Local storage";switch(scheme.toLowerCase(Locale.ROOT)){case "file":return "Local storage";case "https":case "davs":return "WebDAV · HTTPS";case "http":case "dav":return "WebDAV · HTTP";case "smb":return "SMB";case "sftp":return "SFTP";case "ftps":return "FTP over TLS";case "ftp":return "FTP";default:return scheme.toUpperCase(Locale.ROOT);}}
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
         if(event.getAction()==KeyEvent.ACTION_DOWN){int key=event.getKeyCode();
