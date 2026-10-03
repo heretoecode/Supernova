@@ -49,24 +49,24 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         area = name; items.removeAllViews(); context.removeAllViews(); selectedItem = null;
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("network",name,"workspace","none","none",0);
         if (name.equals("Overview")) {
-            item("Scan Library", () -> { heading("Scan Library"); description("Check local storage and indexed network sources. Progress continues when you leave this page."); action("Scan Library", () -> PreviewLibraryScan.request(getContext())); status(true); });
-            item("Network Scanning", this::scanControls);
+            item("scan_library", "Scan Library", () -> { heading("Scan Library"); description("Check local storage and indexed network sources. Progress continues when you leave this page."); action("scan_library", "Scan Library", () -> PreviewLibraryScan.request(getContext())); status(true); });
+            item("network_scanning", "Network Scanning", this::scanControls);
         } else if (name.equals("Local Storage")) {
             for (Box box : volumes) if (box.getBoxId() == Box.ID.FOLDERS || box.getBoxId() == Box.ID.USB || box.getBoxId() == Box.ID.SDCARD || box.getBoxId() == Box.ID.OTHER) {
                 String title = box.getBoxId() == Box.ID.FOLDERS ? "Internal Storage" : box.getName();
-                item(title, () -> { heading(title); String path = box.getPath(); if (path == null) path = android.os.Environment.getExternalStorageDirectory().getPath();
-                    java.io.File file = new java.io.File(path); description(path + "\n\n" + (file.canRead() ? "Available" : "Unavailable") + "\n" + android.text.format.Formatter.formatFileSize(getContext(), file.getUsableSpace()) + " free of " + android.text.format.Formatter.formatFileSize(getContext(), file.getTotalSpace())); action("Browse", () -> browseVolume.accept(box)); });
+                item("volume."+box.getBoxId().name().toLowerCase(Locale.ROOT)+"."+volumes.indexOf(box), title, () -> { heading(title); String path = box.getPath(); if (path == null) path = android.os.Environment.getExternalStorageDirectory().getPath();
+                    java.io.File file = new java.io.File(path); description(path + "\n\n" + (file.canRead() ? "Available" : "Unavailable") + "\n" + android.text.format.Formatter.formatFileSize(getContext(), file.getUsableSpace()) + " free of " + android.text.format.Formatter.formatFileSize(getContext(), file.getTotalSpace())); action("browse", "Browse", () -> browseVolume.accept(box)); });
             }
             if (items.getChildCount() == 0) items.addView(label("No storage volumes are currently available", 14));
         } else if (name.equals("Network Shares")) {
             for (Shortcut source : sources) source(source, true);
-            item("Add Network Source", () -> { heading("Add Network Source"); description("SMB · WebDAV (HTTPS/HTTP) · SFTP · FTP · FTP over TLS\n\nConnect, then choose a Movies or TV Shows folder."); action("Connect", () -> browseNetwork.accept("add")); });
-            item("Discover Devices", () -> { heading("Discover Devices"); description("Discover computers/NAS using SMB and media servers using DLNA/UPnP. FTP and SFTP require a server address."); action("Computers & NAS", () -> browseNetwork.accept("smb")); action("Media Servers", () -> browseNetwork.accept("upnp")); });
+            item("add_source", "Add Network Source", () -> { heading("Add Network Source"); description("SMB · WebDAV (HTTPS/HTTP) · SFTP · FTP · FTP over TLS\n\nConnect, then choose a Movies or TV Shows folder."); action("connect", "Connect", () -> browseNetwork.accept("add")); });
+            item("discover", "Discover Devices", () -> { heading("Discover Devices"); description("Discover computers/NAS using SMB and media servers using DLNA/UPnP. FTP and SFTP require a server address."); action("discover_smb", "Computers & NAS", () -> browseNetwork.accept("smb")); action("discover_upnp", "Media Servers", () -> browseNetwork.accept("upnp")); });
         } else if (name.equals("Saved Locations")) {
             if (saved.isEmpty()) items.addView(label("No saved locations. Use Add to Saved Locations while browsing a folder.", 14));
             for (Shortcut source : saved) source(source, false);
         } else {
-            item("put.io", () -> { heading("put.io"); description("Connect your put.io account for native account and library management. Original-quality playback uses your WebDAV source."); action("Account / Connection", () -> com.archos.mediacenter.video.streaming.putio.PutioAccountController.open(getContext())); });
+            item("putio", "put.io", () -> { heading("put.io"); description("Connect your put.io account for native account and library management. Original-quality playback uses your WebDAV source."); action("putio_account", "Account / Connection", () -> com.archos.mediacenter.video.streaming.putio.PutioAccountController.open(getContext())); });
             for (String provider : new String[]{"Google Drive", "OneDrive", "Dropbox"}) {
                 TextView unavailable = label(provider + " · Coming soon", 14); unavailable.setPadding(dp(10), dp(14), dp(10), dp(14)); unavailable.setAlpha(.5f); items.addView(unavailable);
             }
@@ -78,12 +78,12 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(items,"network.items",reason,previous,items.getChildCount(),false);
     }
     private void source(Shortcut source, boolean indexed) {
-        item(source.getName(), () -> {
+        item((indexed?"source.":"saved.")+source.getId(), source.getName(), () -> {
             heading(source.getName()); description((indexed ? "Library source" : "Saved browsing location") + "\n" + protocol(source.getUri()) + "\n" + source.getUri().getHost() + "\n" + source.getUri().getPath());
-            action("Browse", () -> getContext().startActivity(new Intent(getContext(), ListingActivity.getActivityForUri(source.getUri())).putExtra(ListingActivity.EXTRA_ROOT_URI, source.getUri()).putExtra(ListingActivity.EXTRA_ROOT_NAME, source.getName())));
-            if (indexed) action("Scan Source", () -> NetworkScanner.scanVideos(getContext(), source.getUri()));
-            else action("Add to Library", () -> PreviewFolderActions.chooseLibrary(getContext(), source.getUri(), source.getName()));
-            action(indexed ? "Remove from Library" : "Remove Saved Location", () -> PreviewDialog.choose(getContext(), "Remove this " + (indexed ? "library source" : "saved location") + "? Media files will be kept.", new String[]{"Cancel", "Remove"}, 0, n -> {
+            action("browse", "Browse", () -> getContext().startActivity(new Intent(getContext(), ListingActivity.getActivityForUri(source.getUri())).putExtra(ListingActivity.EXTRA_ROOT_URI, source.getUri()).putExtra(ListingActivity.EXTRA_ROOT_NAME, source.getName())));
+            if (indexed) action("scan_source", "Scan Source", () -> NetworkScanner.scanVideos(getContext(), source.getUri()));
+            else action("add_library", "Add to Library", () -> PreviewFolderActions.chooseLibrary(getContext(), source.getUri(), source.getName()));
+            action("remove_location", indexed ? "Remove from Library" : "Remove Saved Location", () -> PreviewDialog.choose(getContext(), "Remove this " + (indexed ? "library source" : "saved location") + "? Media files will be kept.", new String[]{"Cancel", "Remove"}, 0, n -> {
                 if (n != 1) return;
                 if (indexed) { if (ShortcutDbAdapter.VIDEO.deleteShortcut(getContext(), source.getId())) NetworkScanner.removeIndexedVideos(getContext(), source.getUri()); sources.remove(source); }
                 else { ShortcutDb.STATIC.removeShortcut(getContext(), source.getUri()); saved.remove(source); }
@@ -95,23 +95,23 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         heading("Network Scanning");
         Context c = getContext(); android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
         int period = com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(c);
-        action("Automatic: " + (period > 0 ? "On" : "Off"), () -> { if (period > 0) prefs.edit().putInt("preview_scan_frequency", period).apply(); com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(c, 0, period > 0 ? 0 : prefs.getInt("preview_scan_frequency", 3600000), true); refreshContext(0); });
-        action("Frequency: " + Math.max(15, (period > 0 ? period : prefs.getInt("preview_scan_frequency", 3600000)) / 60000) + " minutes", () -> PreviewDialog.choose(c, "Frequency", new String[]{"15 minutes", "30 minutes", "1 hour", "6 hours", "24 hours"}, java.util.Arrays.asList(900000,1800000,3600000,21600000,86400000).indexOf(period>0?period:prefs.getInt("preview_scan_frequency",3600000)), n -> { int value = new int[]{900000,1800000,3600000,21600000,86400000}[n]; prefs.edit().putInt("preview_scan_frequency", value).apply(); if(period > 0) com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(c,0,value,true); refreshContext(1); }));
-        action("On open / return: " + (prefs.getBoolean("auto_rescan_on_app_restart",true) ? "On" : "Off"), () -> { prefs.edit().putBoolean("auto_rescan_on_app_restart", !prefs.getBoolean("auto_rescan_on_app_restart",true)).apply(); refreshContext(2); });
-        action("Sources Included", () -> PreviewNetworkScanning.sources(c));
-        status(false); action("Scan Now", () -> PreviewLibraryScan.requestNetwork(c));
+        action("automatic", "Automatic: " + (period > 0 ? "On" : "Off"), () -> { if (period > 0) prefs.edit().putInt("preview_scan_frequency", period).apply(); com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(c, 0, period > 0 ? 0 : prefs.getInt("preview_scan_frequency", 3600000), true); refreshContext(0); });
+        action("frequency", "Frequency: " + Math.max(15, (period > 0 ? period : prefs.getInt("preview_scan_frequency", 3600000)) / 60000) + " minutes", () -> PreviewDialog.choose(c, "Frequency", new String[]{"15 minutes", "30 minutes", "1 hour", "6 hours", "24 hours"}, java.util.Arrays.asList(900000,1800000,3600000,21600000,86400000).indexOf(period>0?period:prefs.getInt("preview_scan_frequency",3600000)), n -> { int value = new int[]{900000,1800000,3600000,21600000,86400000}[n]; prefs.edit().putInt("preview_scan_frequency", value).apply(); if(period > 0) com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(c,0,value,true); refreshContext(1); }));
+        action("on_return", "On open / return: " + (prefs.getBoolean("auto_rescan_on_app_restart",true) ? "On" : "Off"), () -> { prefs.edit().putBoolean("auto_rescan_on_app_restart", !prefs.getBoolean("auto_rescan_on_app_restart",true)).apply(); refreshContext(2); });
+        action("sources_included", "Sources Included", () -> PreviewNetworkScanning.sources(c));
+        status(false); action("scan_now", "Scan Now", () -> PreviewLibraryScan.requestNetwork(c));
     }
     private void refreshContext(int button) { context.removeAllViews(); scanControls(); context.getChildAt(button + 1).requestFocus(); }
     private void status(boolean library) { TextView status = label(scanStatus(getContext(),library),12); context.addView(status); status.post(new Runnable(){public void run(){if(!status.isAttachedToWindow())return;status.setText(scanStatus(getContext(),library));status.postDelayed(this,1000);}}); }
     static String scanStatus(Context context,boolean library){return library?PreviewLibraryScan.libraryStatus(context):PreviewLibraryScan.status(context);}
-    private void item(String title, Runnable update) {
+    private void item(String identity, String title, Runnable update) {
         Runnable show = () -> { int previous=context.getChildCount();context.removeAllViews(); update.run();com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(context,"network.context","selection_changed",previous,context.getChildCount(),false); };
-        TextView row = control(title, () -> context.requestFocus()); row.setTag(show);
+        TextView row = control(title, () -> context.requestFocus()); row.setTag(show); com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(row,"network.item."+identity);
         row.setOnFocusChangeListener((v, focused) -> { if(focused){selectedItem=v;show.run();} }); items.addView(row,new LayoutParams(-1,dp(44)));
     }
     private void heading(String title) { context.addView(label(title,19)); }
     private void description(String text) { TextView label=label(text,13);label.setPadding(0,dp(12),0,dp(12));context.addView(label); }
-    private void action(String label, Runnable action) { context.addView(control(label,action),new LayoutParams(-1,dp(42))); }
+    private void action(String identity, String label, Runnable action) { TextView row=control(label,action);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(row,"network.action."+identity);context.addView(row,new LayoutParams(-1,dp(42))); }
     private TextView control(String label, Runnable action) { TextView row=label(label,14);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(dp(8),0,dp(8),0);row.setFocusable(true);row.setFocusableInTouchMode(true);row.setBackground(PreviewDialog.focus(getContext()));row.setOnClickListener(v->action.run());return row; }
     private TextView label(String value,int size){TextView label=new TextView(getContext());label.setText(value);label.setTextSize(size);label.setTextColor(-1);return label;}
     private LinearLayout column(){LinearLayout column=new LinearLayout(getContext());column.setOrientation(VERTICAL);column.setClipChildren(false);column.setClipToPadding(false);return column;}

@@ -470,9 +470,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Remove duplicate upper-right Search and subtitle. Keep left heading Search. Field placeholder "Search Movies and TV Shows"; field is non-focusable query display, subtle neutral/translucent boundary, no permanent blue, no X. Search opens keyboard focus immediately on T.
 
-Status: **IMPLEMENTED — ADDITIONAL PRESENTATION TESTING PENDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewSearch has one left Search heading, a non-focusable/cursorless query display with the required placeholder, neutral surface and no clear-X control. PreviewKeyboard defaults to T. Initial-T/empty-edge navigation passed CI 36367506423; new full Search presentation/screenshot fixture awaits CI. Populated-query visual and physical routing review remains pending.
+Code mapping / verification: PreviewSearch has one left heading, the specified non-focusable/cursorless query display, neutral surface and no clear-X control. PreviewKeyboard starts on T. The actual Search presentation fixture verifies these properties and saved keyboard focus; Preview417NavigationTest verifies empty-result edges. Both passed complete-suite CI 37113071931. The empty Search render was inspected in conformance checkpoint 69. Populated presentation and physical font/glow/routing remain Shield QA.
 
 ### UI-048 — 9. Search
 
@@ -480,9 +480,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Keyboard rows exactly: 1 2 3 4 5 6 7 8 9 0 / Q W E R T Y U I O P / inset A S D F G H J K L / further inset Z X C V B N M / bottom Clear | Space | Backspace. No Caps/Shift/123. Traditional stagger, subtle dark/translucent backdrop, unfocused subtle key surfaces, focused compact blue outline/glow and white character.
 
-Status: **IMPLEMENTED — AWAITING VISUAL/PHYSICAL QA**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewKeyboard.ROWS contains exactly the specified number/QWERTY/ASDF/ZXCV rows plus Clear/Space/Backspace, with 12dp and 36dp shorter-row insets. Keys use shared compact focus styling and stable semantic tags. PreviewNextTest verifies rows/code-point editing and Preview417NavigationTest verifies T/edge behaviour; passed CI 36367506423. New Search render fixture and physical font/glow review remain pending.
+Code mapping / verification: PreviewKeyboard.ROWS contains the exact number/QWERTY/ASDF/ZXCV rows and Clear/Space/Backspace; shorter rows use 12dp/36dp insets. White keys use shared compact focus styling and stable semantic tags. PreviewNextTest and Preview417NavigationTest passed CI 37113071931, with actual Search rendering already inspected at conformance checkpoint 69. Physical typography, glow and rapid D-pad use remain Shield QA.
 
 ### UI-049 — 9. Search
 
@@ -520,9 +520,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Overview keeps Scan Library and Network Scanning separate. Network Scanning right panel: Automatic scanning On/Off; Frequency; Scan when Supernova opens/returns On/Off; Sources Included; Last Scan/Result; Scan Network Sources Now. Remove Configure Network Scanning button. Frequency choices exactly 15m,30m,1h,6h,24h. Use small anchored overlay with tick for finite choices; Sources Included may use larger multi-select. Increase vertical spacing between controls.
 
-Status: **IMPLEMENTED — AUTOMATED/VISUAL/PHYSICAL VERIFICATION PENDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / VISUAL AND PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewNetworkWorkspace provides separate scanning controls and exact interval choices. Full helper tracing corrects the audit: PreviewDialog.choose already anchors to the opener through PreviewMenuPlacement and displays the selected tick. Checkpoint 52 adds an actual-window anchor/tick/return regression, awaiting CI. Control spacing and physical operation remain visual/Shield QA.
+Code mapping / verification: PreviewNetworkWorkspace separates Scan Library from Network Scanning and supplies Automatic, Frequency, On open/return, Sources Included, live status and Scan Now. Frequency values are exactly 15/30/60/360/1440 minutes. PreviewDialog.choose anchors to the current opener through PreviewMenuPlacement and shows the selected tick; actual-window anchor/tick/return coverage passed CI 37113071931. The right-panel controls use 42dp rows. Physical spacing, source-selection behaviour and actual scheduling remain visual/Shield QA; the fixture does not prove live scanning.
 
 ### UI-053 — 10. Network & Files
 

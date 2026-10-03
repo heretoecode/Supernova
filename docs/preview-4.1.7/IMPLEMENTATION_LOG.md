@@ -1017,3 +1017,8 @@ These changes require a full CI rerun; no failures are waived.
 - Search result entry to Details now retains a safe entry token and weak opener reference until its window loses and regains focus. It records the actual restored semantic control and fallback/success once. Search queries, refresh scheduling and focus routing are unchanged.
 - Added an actual result-click/Details-intent regression with window return, retained exact focus, matching entry/return ID and private-title/path exclusion. This covers retained-surface return, not process recreation or physical Shield activity transitions. CI remains pending.
 - Checkpoints 87–88 passed CI 37113071931: compilation/identity, 137 targeted, all 388 Video, 92 selected regression and 17 WebDAV tests (overlapping sets). Local checkpoint 89 validation parsed 820 Java and 431 XML files and passed six Python checks; its Android regression still requires CI.
+
+## Post-audit checkpoint 90 — Network workspace semantic controls
+
+- DIA-008 reconciliation found semantic category identifiers but positional identifiers for middle-panel locations and right-panel actions. Existing controls now use fixed action names, numeric source IDs with separate indexed/saved namespaces, and volume type/position without names or paths.
+- Keyed diagnostic tags preserve the existing Runnable context-population tag and all navigation/actions. Added an actual-workspace regression covering initial context, scanning controls, indexed/saved sources and private volume labels. Android validation is pending; no live source operation is performed by this fixture.
