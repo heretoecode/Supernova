@@ -167,16 +167,21 @@ target(root,'TV Shows',True);root=capture('navigation-tv')
 assert any(n.get('text')=='TV Shows' for n in root.iter('node')), 'TV library failed to open'
 target(root,'Network & Files',True);root=capture('network-files')
 target(root,'Local Storage');root=capture('network-local-storage')
-target(root,'Internal Storage',True);root=capture('file-browser')
+target(root,'Internal Storage',True);root=capture('network-storage-context')
+target(root,'Browse',True);root=capture('file-browser')
 assert any(n.get('text')=='Sources' for n in root.iter('node')), 'Native browser source rail missing'
 assert any(n.get('text')=='File Information' for n in root.iter('node')) or any(n.get('text')=='Source Options' for n in root.iter('node')), 'Native browser composition missing'
 target(root,'Search',True);root=capture('search-empty')
 assert not any('inputmethod' in n.get('package','') for n in root.iter('node')), 'System keyboard covers the compact Search layout'
 query=next(n for n in root.iter('node') if n.get('class')=='android.widget.EditText')
-x1,y1,x2,y2=map(int,re.findall(r'\d+',query.get('bounds')))
-adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','text','nova40-smoke-no-match');time.sleep(1)
-adb('shell','input','keyevent','66');time.sleep(.4)
+assert query.get('focusable')=='false', 'Search query display should not accept focus'
+assert any(n.get('text')=='T' and n.get('focused')=='true' for n in root.iter('node')), 'Search keyboard did not enter on T'
+# Type through the actual compact keyboard, not the intentionally non-focusable
+# query display. The emulator has an empty library at this point.
+for letter in 'NOVA': target(root,letter,True)
+time.sleep(1)
 root=capture('search-query')
+assert any(n.get('class')=='android.widget.EditText' and n.get('text')=='NOVA' for n in root.iter('node')), 'Keyboard did not update the query display'
 assert any(n.get('text')=='No matching library titles' for n in root.iter('node')), 'Local query failed'
 logs=adb('logcat','-d');(out/'targeted-routes-logcat.txt').write_bytes(logs)
 assert b'FATAL EXCEPTION' not in logs, 'Crash during changed-route smoke check'
