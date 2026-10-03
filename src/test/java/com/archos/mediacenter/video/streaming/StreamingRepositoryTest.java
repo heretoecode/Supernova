@@ -15,6 +15,20 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {
+    @Test public void metadataTransportReportsSafeServiceStatusBoundsAndParent()throws Exception{
+        android.app.Application app=org.robolectric.RuntimeEnvironment.getApplication();com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
+        try{
+            for(int code:new int[]{200,404}){
+                okhttp3.OkHttpClient client=new okhttp3.OkHttpClient.Builder().addInterceptor(chain->new okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(code).message("private-response").body(okhttp3.ResponseBody.create(okhttp3.MediaType.parse("text/plain"),"private-response-body")).build()).build();
+                try{StreamingRepository.get("https://api.themoviedb.org/3/movie/42?api_key=private-secret",4,"fixture-parent",client);fail("Bound/error response accepted");}catch(java.io.IOException expected){}
+            }
+            Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class,"FLIGHT");java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());assertFalse(evidence.contains("private"));assertFalse(evidence.contains("api_key"));assertFalse(evidence.contains("/movie/42"));
+            int outcomes=0;for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject event=new JSONObject(line);if(!"metadata_network_outcome".equals(event.optString("event")))continue;
+                outcomes++;assertEquals("tmdb",event.getString("service"));assertEquals("metadata",event.getString("operation_type"));assertEquals("fixture-parent",event.getString("parent_operation_id"));assertEquals(0,event.getInt("retry_number"));assertTrue(event.getLong("duration_ms")>=0);assertTrue(event.has("connectivity"));assertEquals(event.getInt("status")==200?"response_too_large":"http_error",event.getString("outcome"));
+            }assertEquals(2,outcomes);
+        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,false);}
+    }
     @Test public void providerRedirectRejectsUnsafeTargetAndDoesNotLogPrivateQuery()throws Exception{
         Application app=org.robolectric.RuntimeEnvironment.getApplication();com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
         try{

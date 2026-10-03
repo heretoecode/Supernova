@@ -120,32 +120,44 @@ public final class StreamingRepository {
         return get(url,limit,"");
     }
     private static String get(String url,int limit,String parentOperation)throws IOException{
+        return get(url,limit,parentOperation,HTTP);
+    }
+    static String get(String url,int limit,String parentOperation,OkHttpClient client)throws IOException{
         if (Thread.currentThread().isInterrupted()) throw new IOException("Cancelled");
         long started=android.os.SystemClock.elapsedRealtime();
         String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_network");
+        String host=Uri.parse(url).getHost();
+        String service="api.themoviedb.org".equals(host)||"www.themoviedb.org".equals(host)?"tmdb":"www.youtube.com".equals(host)?"youtube":"other";
+        String kind="api.themoviedb.org".equals(host)?"metadata":"www.themoviedb.org".equals(host)?"title_links":"www.youtube.com".equals(host)?"extras_metadata":"read";
+        int status=0;String outcome="transport_failure";
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_started","operation_id",operation,"parent_operation_id",parentOperation);
-        try (Response response = HTTP.newCall(new Request.Builder().url(url)
+        try (Response response = client.newCall(new Request.Builder().url(url)
                 .header("User-Agent", "NOVA-Mark/2 (Android TV)").build()).execute()) {
+            status=response.code();
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_response","operation_id",operation,"status",response.code(),"protocol",String.valueOf(response.protocol()));
-            if (!response.isSuccessful() || response.body() == null) throw new IOException("Availability service unavailable");
+            if (!response.isSuccessful() || response.body() == null){outcome=response.isSuccessful()?"missing_body":"http_error";throw new IOException("Availability service unavailable");}
             // Bound both API and HTML responses rather than loading an unlimited body.
             java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
             java.io.InputStream input = response.body().byteStream();
             byte[] chunk = new byte[8192];
             int count;
             while ((count = input.read(chunk)) != -1) {
-                if (Thread.currentThread().isInterrupted()) throw new IOException("Cancelled");
-                if (buffer.size() + count > limit) throw new IOException("Response too large");
+                if (Thread.currentThread().isInterrupted()){outcome="cancelled";throw new IOException("Cancelled");}
+                if (buffer.size() + count > limit){outcome="response_too_large";throw new IOException("Response too large");}
                 buffer.write(chunk, 0, count);
             }
             byte[] data = buffer.toByteArray();
             if (data.length > limit) throw new IOException("Response too large");
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_body","operation_id",operation,"bytes",data.length);
+            outcome="transport_complete";
             return new String(data, StandardCharsets.UTF_8);
         } catch(IOException error) {
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_failed","operation_id",operation,"type",error.getClass().getSimpleName());
             throw error;
         } finally {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_outcome","operation_id",operation,"parent_operation_id",parentOperation,
+                    "service",service,"operation_type",kind,"status",status,"outcome",outcome,"retry_number",0,
+                    "duration_ms",android.os.SystemClock.elapsedRealtime()-started,"connectivity",com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
             com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"metadata_network",started);
         }
     }

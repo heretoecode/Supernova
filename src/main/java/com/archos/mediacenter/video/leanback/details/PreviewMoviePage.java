@@ -285,18 +285,18 @@ public final class PreviewMoviePage extends ScrollView {
         }else if(show!=null){
             Snapshot library=snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache();
             if(library!=null){
-                Set<Long> physical=new HashSet<>();Set<String> logical=new HashSet<>();Set<Integer> availableSeasons=new HashSet<>();long bytes=0;int specials=0;
+                Set<Long> physical=new HashSet<>();Set<String> logical=new HashSet<>();Set<Integer> availableSeasons=new HashSet<>();long bytes=0;int specials=0,knownSizes=0;
                 Set<String> locations=new TreeSet<>();Map<String,Integer> formats=new TreeMap<>();
                 for(Entry entry:library.episodes)if(entry.show==show.getTvshowId()&&entry.media instanceof Episode){
                     Episode episode=(Episode)entry.media;logical.add(episode.getSeasonNumber()+":"+episode.getEpisodeNumber());availableSeasons.add(episode.getSeasonNumber());
-                    if(physical.add(episode.getId())){bytes+=Math.max(0,episode.getSize());if(episode.getSeasonNumber()==0)specials++;
+                    if(physical.add(episode.getId())){bytes+=Math.max(0,episode.getSize());if(episode.getSize()>0)knownSizes++;if(episode.getSeasonNumber()==0)specials++;
                         android.net.Uri uri=episode.getFileUri();if(uri!=null){String path=uri.getPath();int slash=path==null?-1:path.lastIndexOf('/');locations.add(PreviewVariants.safeLocation(uri.buildUpon().path(slash>=0?path.substring(0,slash):"").clearQuery().fragment(null).build()));}
                         String format=(entry.resolution+" "+entry.codec+" "+entry.hdr).trim();if(!format.isEmpty())formats.put(format,formats.getOrDefault(format,0)+1);
                     }
                 }
                 fact(technical,"Local episodes",String.valueOf(logical.size()));fact(technical,"Local seasons",String.valueOf(availableSeasons.size()));
-                if(bytes>0)fact(technical,"Library size",android.text.format.Formatter.formatShortFileSize(getContext(),bytes));
-                if(!physical.isEmpty()&&bytes>0)fact(technical,"Average file size",android.text.format.Formatter.formatShortFileSize(getContext(),bytes/physical.size()));
+                if(bytes>0)fact(technical,"Library size",(knownSizes<physical.size()?"≥ ":"")+android.text.format.Formatter.formatShortFileSize(getContext(),bytes));
+                if(!physical.isEmpty()&&knownSizes==physical.size())fact(technical,"Average file size",android.text.format.Formatter.formatShortFileSize(getContext(),bytes/physical.size()));
                 if(specials>0)fact(technical,"Specials (files)",String.valueOf(specials));
                 if(enriched!=null&&enriched.optInt("number_of_episodes")>0)fact(technical,"Series episodes (metadata)",String.valueOf(enriched.optInt("number_of_episodes")));
                 for(Map.Entry<String,Integer> format:formats.entrySet())fact(technical,format.getKey(),format.getValue()+" files");

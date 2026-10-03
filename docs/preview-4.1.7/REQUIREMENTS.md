@@ -160,9 +160,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Return from Details: restore exact originating item, scroll position, view mode and visible focus. In List restore exact row. Do not fall back to leftmost item/top nav.
 
-Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / ACTIVITY AND PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewPages stores per-tab FocusAnchor, cell/media key, child control and layout state; restores after child navigation and selective DiffUtil changes. Existing navigation tests pass through CI 36337372113. Full exact Grid/List Details-return matrix remains integration/physical QA.
+Code mapping / verification: PreviewPages stores per-tab FocusAnchor, cell/media key, child control and layout state; restores after child navigation and selective DiffUtil changes. PreviewLibraryReturnTest exercises the actual Grid/List adapters at a non-leftmost scrolled item, invokes the Details callback, refreshes while a child stand-in holds focus and verifies exact item/row, offset, first visible position and view mode on return. Both tests passed CI 37079271165. The stand-in does not establish complete native-activity lifecycle or physical Shield Back behaviour; those remain QA.
 
 ### UI-017 — 4. Movies and TV Shows
 
@@ -360,9 +360,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Versions: only when 2+ physical versions. Compact horizontal rows with resolution/HDR/codec/audio/channels/size/source/location. Plain monochrome ✓ Current independent of focus. Selection updates current while menu stays; no toast; Technical updates; resume is title-level.
 
-Status: **IMPLEMENTED IN PART — TITLE-HISTORY CORRECTION AWAITING CI**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewVersionsDialog and PreviewVariants.details use cached facts, independent Current state, a persistent window and credential-free location display. Picker tests passed in CI 36349549771. Review found subsequent loader refresh could replace the copied title position with per-file state. PreviewVariants.restoreTitleResume now reconstructs it from the latest persisted file history on every Preview Details loader refresh; new reload/restart-zero tests await CI. Cached channels/HDR completeness and different-duration physical playback still require verification.
+Code mapping / verification: PreviewVersionsDialog and PreviewVariants.details use cached facts, independent Current state, a persistent window and credential-free location display. PreviewVariants.restoreTitleResume reconstructs title position from the latest persisted file history on Preview Details loader refresh, including an explicit zero-position restart. Channel labels use measured counts without inventing speaker layouts; HDR reads current metadata or the matching technical-cache fingerprint without file probes. Picker/current-state, reload/restart-zero, channel-format and changed-fingerprint rejection tests passed through CI 37079271165. Actual native metadata completeness, menu geometry and different-duration physical playback remain Shield QA.
 
 ### UI-037 — 7. More / contextual workflows
 
@@ -420,9 +420,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Seeking acceleration: presses 1–3 = 10s, 4–6 = 30s, 7–9 = 1m, 10+ = 2m maximum. Reset after roughly 1–1.5s pause; direction change resets to 10s; hold accelerates; release resumes displayed position. If HUD hidden, LEFT/RIGHT reveals HUD + floating timestamp. Trick-play thumbnail is deferred.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — POLICY VERIFIED / PLAYER AND PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewSeekPolicy implements exact press groups, a 1250ms reset, direction reset and bounded positions. PlayerController uses that policy for Preview key-seeking, advances held keys on its existing handler, and commits the displayed position on release of the active direction. Policy boundary/reset tests passed through CI 37079271165. Actual hidden-HUD reveal, native seek completion/resume and hold/release timing remain player/physical QA; no trick-play thumbnails were added.
 
 ### UI-043 — 8. Playback HUD
 
@@ -440,9 +440,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Playback Speed/Audio Delay use same compact adjustment panel dimensions; Subtitle Delay may be taller. Human-readable values: 1.00×, 0 ms, +250 ms, −500 ms, +1.5 s. Back exact opener.
 
-Status: **IMPLEMENTED — AWAITING VERIFICATION / PHYSICAL QA**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: PreviewAdjustmentValue supplies signed human-readable delay values and two-decimal playback speed through the retained native pickers. Existing limits/callbacks preserved. PlayerController routes Preview TVCardDialog adjustments through PreviewPlaybackMenus.showNested, which gives Audio Delay and Speed the same 330dp × 180dp bounds (clamped to available screen). The native-picker fixture verifies equal compact bounds and retained dismissal callbacks. Checkpoint 75 corrects direct HUD Speed Back to restore its exact opener rather than opening More; the new regression awaits CI. Nested menu return and physical Shield geometry/rapid Back remain acceptance checks.
+Code mapping: PreviewAdjustmentValue supplies signed human-readable delay values and two-decimal playback speed through the retained native pickers. Existing limits/callbacks are preserved. PlayerController routes Preview TVCardDialog adjustments through PreviewPlaybackMenus.showNested, which gives Audio Delay and Speed the same 330dp × 180dp bounds (clamped to available screen). Native-picker bounds/dismissal and direct HUD Speed Back restoration regressions passed through CI 37079271165. More entry retains its own parent callback. Physical Shield geometry, nested navigation and rapid Back remain acceptance checks.
 
 ### UI-045 — 8. Playback HUD
 

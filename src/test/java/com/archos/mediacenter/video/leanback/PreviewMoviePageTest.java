@@ -11,6 +11,25 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMoviePageTest {
+    @Test public void seriesInformationDoesNotCountUnknownFileSizesAsZero(){
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try{
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);
+            page.bindShow(new com.archos.mediacenter.video.browser.adapters.object.Tvshow(7,"Series",null,1,2,0,"/series"),()->{});
+            for(boolean complete:new boolean[]{false,true}){
+                PreviewLibraryLoader.Snapshot snapshot=new PreviewLibraryLoader.Snapshot();
+                for(int id=1;id<=2;id++){
+                    var episode=new com.archos.mediacenter.video.browser.adapters.object.Episode(id,id,1,id,"Episode",0,0,"","Synopsis","Series","/fixture/"+id,null,null,0,0,0,0,false,false,false,false,0,0,1920,1080,null,null,null,null,0,1,id==1||complete?1000:0);
+                    snapshot.episodes.add(new PreviewLibraryLoader.Entry(episode,0,7,""));
+                }
+                page.setSnapshot(snapshot);
+                View panel=page.findViewWithTag("semantic:details.panel.library.information");assertNotNull(panel);
+                assertNotNull(PreviewPagesTest.findText(panel,"Library size"));
+                if(complete){assertNull(PreviewPagesTest.findText(panel,"≥ "));assertNotNull(PreviewPagesTest.findText(panel,"Average file size"));}
+                else{assertNotNull(PreviewPagesTest.findText(panel,"≥ "));assertNull(PreviewPagesTest.findText(panel,"Average file size"));}
+            }
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void unmatchedHeroExposesTheExistingMatchHandlerAndHonestPlaceholders()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{

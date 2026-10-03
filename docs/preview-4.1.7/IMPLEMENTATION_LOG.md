@@ -999,3 +999,15 @@ These changes require a full CI rerun; no failures are waived.
 - UI-010/UI-029 tracing found that local episode Key Information could inherit a series premiere year/date while omitting a known native episode runtime. It now uses the selected episode's native date/runtime first, then that exact episode's already-cached season record. Episode rating/counts cannot borrow the series totals; missing values remain absent.
 - Inherited series original-title/tagline fields are explicitly labelled as series facts. No provider or new feature was introduced; the existing series/season package supplies the data.
 - Added a conflicting-series/episode fixture for year, date, runtime, rating and vote count, plus missing-episode fallback checks. It remains unverified until CI passes.
+
+## Post-audit checkpoint 87 — metadata transport outcome parity
+
+- DIA-013 adapter reconciliation found the shared TMDb/YouTube read transport logged HTTP status/body size but lacked a single outcome carrying service, operation type, retry count and connectivity. It now supplies these fixed categories, correlated parent/operation IDs and monotonic duration; oversized, cancelled and HTTP-error outcomes remain distinct.
+- Response URLs, query values, headers, bodies and exception messages are not recorded. Added intercepted oversized-200 and HTTP-404 coverage with private query/body sentinels; no live requests are used by that regression.
+- CI through checkpoint 84 (37079271165) passed compilation/identity, 135 targeted, all 384 Video, 90 selected regression and 17 WebDAV tests (overlapping sets), including actual library return and both artwork routes. Checkpoints 85–87 still need successful CI.
+
+## Post-audit checkpoint 88 — honest TV library size accounting
+
+- Details Library Information now labels a partially known byte total as a lower bound and omits average file size until every physical file has a known size. Previously unknown files were implicitly treated as zero in that average. This aligns Details with the existing library-table unknown-size policy.
+- Added an actual TV panel regression transitioning from partial to complete size knowledge. It awaits CI; physical library/duplicate-version QA remains separate.
+- Checkpoints 85–86 passed CI 37112603608: compilation/identity, 136 targeted, all 386 Video, 91 selected regression and 17 WebDAV tests (overlapping sets). This verifies the episode-package and delayed-session fixes, not the subsequent transport/size-accounting changes.
