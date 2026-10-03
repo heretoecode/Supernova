@@ -56,8 +56,13 @@ try:
     adb('shell', 'input', 'keyevent', '23')
     root = capture('playback-hud-runtime')
     assert any('Movie Ends' in n.get('text', '') for n in root.iter('node')), 'Preview movie end-clock wording missing'
-    info = next(n for n in root.iter('node') if n.get('resource-id', '').endswith('/preview_info'))
-    activate(info, 'Video')
+    # Remote focus, not a touch click: touching a non-touch-focusable ImageButton
+    # clears keyboard focus and cannot establish the opener this check verifies.
+    assert any(n.get('resource-id', '').endswith('/pause') and n.get('focused') == 'true' for n in root.iter('node')), 'HUD did not enter on Play/Pause'
+    adb('shell', 'input', 'keyevent', '22')
+    root = capture('playback-info-focused')
+    assert any(n.get('resource-id', '').endswith('/preview_info') and n.get('focused') == 'true' for n in root.iter('node')), 'Remote RIGHT did not focus Info'
+    adb('shell', 'input', 'keyevent', '23')
     root = capture('playback-technical-runtime')
     labels = {n.get('text') for n in root.iter('node')}
     assert {'Video', 'Audio', 'File', 'Source'} <= labels, 'Technical-only information panels missing'
