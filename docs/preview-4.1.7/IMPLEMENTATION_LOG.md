@@ -1011,3 +1011,9 @@ These changes require a full CI rerun; no failures are waived.
 - Details Library Information now labels a partially known byte total as a lower bound and omits average file size until every physical file has a known size. Previously unknown files were implicitly treated as zero in that average. This aligns Details with the existing library-table unknown-size policy.
 - Added an actual TV panel regression transitioning from partial to complete size knowledge. It awaits CI; physical library/duplicate-version QA remains separate.
 - Checkpoints 85–86 passed CI 37112603608: compilation/identity, 136 targeted, all 386 Video, 91 selected regression and 17 WebDAV tests (overlapping sets). This verifies the episode-package and delayed-session fixes, not the subsequent transport/size-accounting changes.
+
+## Post-audit checkpoint 89 — Search Details return correlation
+
+- Search result entry to Details now retains a safe entry token and weak opener reference until its window loses and regains focus. It records the actual restored semantic control and fallback/success once. Search queries, refresh scheduling and focus routing are unchanged.
+- Added an actual result-click/Details-intent regression with window return, retained exact focus, matching entry/return ID and private-title/path exclusion. This covers retained-surface return, not process recreation or physical Shield activity transitions. CI remains pending.
+- Checkpoints 87–88 passed CI 37113071931: compilation/identity, 137 targeted, all 388 Video, 92 selected regression and 17 WebDAV tests (overlapping sets). Local checkpoint 89 validation parsed 820 Java and 431 XML files and passed six Python checks; its Android regression still requires CI.
