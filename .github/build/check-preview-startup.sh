@@ -150,12 +150,16 @@ root=capture('settings-check')
 for category in ['Subtitles','Video','Audio','Streaming','Integrations']:
  target(root,category)
  if category=='Integrations':
-  # Navigate the expanded Trakt/OpenSubtitles children with the remote; this
-  # also scrolls the lower sidebar into view on the fixed 1080p test panel.
-  adb('shell','input','keyevent','20');adb('shell','input','keyevent','20');time.sleep(.6)
+  # 4.1.7 keeps the category rail fixed. Focus alone must not expand children;
+  # explicitly enter the middle workspace with the remote's RIGHT key.
+  focused=capture('settings-integrations-focused')
+  assert not any(n.get('text')=='OpenSubtitles' for n in focused.iter('node')), 'Integrations expanded on focus'
+  adb('shell','input','keyevent','22');time.sleep(.6)
  root=capture('settings-'+category.lower().replace(' & ','-'))
  if category=='Integrations':
   assert any('OpenSubtitles' in n.get('text','') for n in root.iter('node')), 'Integrations category lost credentials'
+  target(root,'OpenSubtitles',True);root=capture('settings-opensubtitles')
+  assert any(n.get('text')=='OpenSubtitles credentials' for n in root.iter('node')), 'OpenSubtitles credentials option missing'
 # Return to each library via the actual top navigation, then exercise the new local query.
 target(root,'Movies',True);root=capture('navigation-movies')
 assert sum(n.get('text')=='Movies' for n in root.iter('node'))>=2, 'Movies route/header desynchronised'
