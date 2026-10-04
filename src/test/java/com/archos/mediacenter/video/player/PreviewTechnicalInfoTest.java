@@ -17,7 +17,7 @@ public class PreviewTechnicalInfoTest {
     @Test public void missingActiveMetadataDoesNotStartProbe(){assertTrue(PreviewTechnicalInfo.describe(null,"webdavs",0).contains("not available"));}
     @Test public void emptySnapshotHasNoNullTrackFailure(){String text=PreviewTechnicalInfo.describe(new VideoMetadata(),"webdavs",0);assertTrue(text.contains("Source: webdavs"));assertFalse(text.contains("null"));}
     @Test public void dismissRevealsHiddenHudBeforeRestoringExactInfoOpener(){
-        org.robolectric.android.controller.ActivityController<android.app.Activity> host=Robolectric.buildActivity(android.app.Activity.class).setup();
+        org.robolectric.android.controller.ActivityController<android.app.Activity> host=Robolectric.buildActivity(android.app.Activity.class).setup().visible();
         try{
             android.app.Activity activity=host.get();
             android.widget.LinearLayout hud=new android.widget.LinearLayout(activity);
