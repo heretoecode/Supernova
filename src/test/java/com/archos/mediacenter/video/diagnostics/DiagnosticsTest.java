@@ -9,6 +9,25 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void queuedIncidentPreservesThePreFailureRecorderWindow()throws Exception{
+        Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
+        java.util.concurrent.ExecutorService writer=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"IMPORTANT");
+        java.util.concurrent.CountDownLatch entered=new java.util.concurrent.CountDownLatch(1),release=new java.util.concurrent.CountDownLatch(1);
+        try{
+            writer.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);
+            org.robolectric.util.ReflectionHelpers.setStaticField(Diagnostics.class,"freezeUntil",0L);
+            writer.execute(()->{entered.countDown();try{release.await(5,java.util.concurrent.TimeUnit.SECONDS);}catch(InterruptedException stopped){Thread.currentThread().interrupt();}});
+            assertTrue(entered.await(5,java.util.concurrent.TimeUnit.SECONDS));
+            Diagnostics.event("fixture_before_queued_failure");Diagnostics.event("playback_failed","failure_category","fixture");
+            DiagnosticFlightRecorder recorder=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");
+            // Simulate full rotation while the protected writer is busy.
+            recorder.clear();recorder.add(android.os.SystemClock.elapsedRealtime(),"{\"event\":\"later_fixture\"}\n");
+            release.countDown();writer.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);
+            String frozen=java.nio.file.Files.readString(new java.io.File(c.getFilesDir(),"supernova-diagnostics/flight.jsonl").toPath());
+            assertTrue(frozen.contains("fixture_before_queued_failure"));assertTrue(frozen.contains("playback_failed"));
+            assertFalse(frozen.contains("later_fixture"));assertTrue(frozen.contains("writer_delay_ms"));
+        }finally{release.countDown();Diagnostics.setEnabled(c,false);}
+    }
     @Test public void activityReturnRestoresItsOwnPageAndUnknownChildDoesNotInheritIt(){
         android.app.Activity library=Robolectric.buildActivity(android.app.Activity.class).setup().get(),child=Robolectric.buildActivity(android.app.Activity.class).setup().get();
         Diagnostics.libraryState("movies","list","SIZE:descending","Drama","2024","8",true);Diagnostics.pauseUi(library);

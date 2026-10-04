@@ -16,6 +16,21 @@ public class PreviewTechnicalInfoTest {
     }
     @Test public void missingActiveMetadataDoesNotStartProbe(){assertTrue(PreviewTechnicalInfo.describe(null,"webdavs",0).contains("not available"));}
     @Test public void emptySnapshotHasNoNullTrackFailure(){String text=PreviewTechnicalInfo.describe(new VideoMetadata(),"webdavs",0);assertTrue(text.contains("Source: webdavs"));assertFalse(text.contains("null"));}
+    @Test public void dismissRevealsHiddenHudBeforeRestoringExactInfoOpener(){
+        org.robolectric.android.controller.ActivityController<android.app.Activity> host=Robolectric.buildActivity(android.app.Activity.class).setup();
+        try{
+            android.app.Activity activity=host.get();
+            android.widget.LinearLayout hud=new android.widget.LinearLayout(activity);
+            android.widget.Button pause=new android.widget.Button(activity),info=new android.widget.Button(activity);
+            pause.setFocusableInTouchMode(true);info.setFocusableInTouchMode(true);
+            hud.addView(pause);hud.addView(info);activity.setContentView(hud);info.requestFocus();assertSame(info,activity.getCurrentFocus());
+            PreviewTechnicalInfo.show(activity,null,null,0,()->{hud.setVisibility(android.view.View.VISIBLE);pause.requestFocus();});
+            android.app.Dialog technical=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            hud.setVisibility(android.view.View.GONE); // The player's inactivity fade while Info is open.
+            technical.dismiss();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals(android.view.View.VISIBLE,hud.getVisibility());assertSame(info,activity.getCurrentFocus());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void episodeInformationToTechnicalPanelKeepsOwningActivity(){
         org.robolectric.android.controller.ActivityController<android.app.Activity> host=Robolectric.buildActivity(android.app.Activity.class).setup();
         try{

@@ -3018,7 +3018,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             // active network stream when native metadata was absent. Remain in the
             // owning player lifecycle and render a read-only copy of current metadata.
             VideoMetadata live=mPlayer==null?null:mPlayer.getVideoMetadata();
-            PreviewTechnicalInfo.show(this,live==null?null:new VideoMetadata(live),mUri,mPlayer==null?-1:mPlayer.getType());
+            PreviewTechnicalInfo.show(this,live==null?null:new VideoMetadata(live),mUri,mPlayer==null?-1:mPlayer.getType(),()->{
+                if(mPlayerController!=null)mPlayerController.showControlBar();
+            });
             return;
         }
         mPlayerController.hide();

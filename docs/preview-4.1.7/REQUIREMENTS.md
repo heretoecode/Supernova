@@ -460,9 +460,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Info overlay is technical only: Video, Audio, File, Source. No poster/title/synopsis/path/filename/actions. Remove Resume/Play from Beginning/File & Technical Details from Info. Back restores HUD Info focus.
 
-Status: **AWAITING PHYSICAL QA**
+Status: **CORRECTION IMPLEMENTED — AWAITING AUTOMATED AND PHYSICAL VERIFICATION**
 
-Code mapping / verification: PlayerActivity opens PreviewTechnicalInfo directly; Video/Audio/File/Source only, existing dismiss restores HUD focus. PreviewTechnicalInfoTest passed in run 36238345377. Physical HUD focus restoration remains unverified.
+Code mapping / verification: PlayerActivity opens PreviewTechnicalInfo directly with Video/Audio/File/Source only. Real native emulator run 37156506482 disproved the earlier focus-restoration claim: Info was focused before activation, but the HUD was hidden after Back. The authorised unchanged interim retains this known defect. Subsequent local code now reveals the HUD before requesting the captured Info opener, with a hidden-parent regression test; Android execution and native smoke confirmation are pending. Physical Shield behaviour remains unverified.
 
 ### UI-047 — 9. Search
 
@@ -490,9 +490,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Keyboard primary. Appropriate right-edge key RIGHT→first result when results exist; result LEFT→last keyboard key; UP from number row→top nav; no result edge stays keyboard. Results update only when query changes, not focus. Details return restores query/results/scroll/exact result focus. Preserve current successful live search and series/version routing.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / NATIVE AND PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewSearch routes right-edge keyboard entry to the first result, result LEFT to the remembered key, and top-number-row UP through the shell. Query TextWatcher, not focus, schedules lookup; cancellation/generation checks reject stale results. Saved state retains query, result identity, scroll and keyboard key. The actual result adapter click/retained-window return test verifies the same focused result and one matching diagnostic restoration token; keyboard/presentation tests passed complete Video CI 37137362694. Full populated query/scroll activity recreation, rapid remote use and live series/version routing still require native/Shield QA.
 
 ### UI-050 — 10. Network & Files
 
@@ -500,9 +500,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Final left rail: Overview · Local Storage · Network Shares · Cloud Services · Saved Locations. Remove Advanced from Network & Files; advanced app config belongs Settings. Selecting Network & Files enters page with Overview focused. UP/DOWN one rail item; UP Overview→global Network & Files; DOWN final stays; RIGHT→first meaningful middle control; LEFT from centre→originating category. Entering page never auto-activates/expands/enters middle.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewNetworkWorkspace has exactly Overview, Local Storage, Network Shares, Cloud Services and Saved Locations. Its central routing consumes final DOWN and horizontal boundaries, enters the middle on RIGHT and returns to the originating rail on LEFT. PreviewPages now explicitly focuses Overview on initial entry/reselection and reports its top edge only while Overview is focused. The actual page/shell fixture verifies entry, category-by-category UP, middle return and Overview UP to global Network; passed complete Video CI 37137362694. Actual Shield repeats and live source binding remain physical QA.
 
 ### UI-051 — 10. Network & Files
 
@@ -590,9 +590,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Fixed non-scrolling left rail with all top-level categories visible and About permanently visible at bottom. Current categories: Playback, Video, Audio, Subtitles, Library & Metadata, Home, Appearance, Streaming, Network, Integrations, Advanced, About.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — EMULATOR LAYOUT INSPECTED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewSettings.NAMES contains the twelve specified categories in order. The non-scrolling PreviewFocusRail allocates equal weighted heights to all categories, with About last. The 1920×1080 emulator capture from CI 37137362573 shows the entire rail and About at the bottom. That run failed an obsolete Integrations smoke navigation sequence, so it is not an accepted APK; this observation establishes only the captured layout. Shield viewing-distance legibility and focus animation remain physical QA.
 
 ### UI-060 — 11. Settings foundation
 
@@ -600,9 +600,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Enter Settings focuses Playback in LEFT rail, never first middle setting. Focusing category NEVER expands it. Indented children do not appear on hover/focus. Explicit OK/Select or RIGHT enters category/subcategory; nested subcategories appear in middle workspace, never inserted into permanent left rail. Deterministic focus: rail UP/DOWN one category; RIGHT first appropriate middle; LEFT returns origin; middle UP/DOWN; RIGHT enters value/control when meaningful; Back reverses hierarchy; choice panel Back exact setting. No teleporting.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / EMULATOR AND PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewSettings initially focuses Playback unless an explicit existing shortcut requests another category. Rail focus updates context but hides nested categories; OK/RIGHT constructs children in the middle and enters them. LEFT/Back return through retained category/child identities and restoration tokens. PreviewSettingsEntryTest verifies rail-only shortcut entry, explicit option entry and stable child return with duplicate labels; passed complete Video CI 37137362694. The obsolete smoke script navigated DOWN to About instead of entering Integrations; corrected explicit-entry and credential-presence checks are running. Full physical hierarchy/rapid-Back behaviour remains QA.
 
 ### UI-061 — 12. Launcher branding / app name
 
@@ -875,9 +875,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Automatic incident capture: preserve roughly 30–60 seconds before/after significant failures (uncaught exception, ANR-like stall, failed library operation, playback failure, repeated artwork-failure burst). Add burst summarisation while retaining underlying events.
 
-Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / PHYSICAL QA PENDING**
+Status: **PARTIAL — QUEUED-WRITER WINDOW CORRECTION / VERIFICATION PENDING**
 
-Code mapping / verification: DiagnosticFlightRecorder maintains a bounded 60-second pre-incident ring; freeze appends protected incident evidence and continues capture for 60 seconds. Byte budgets and eviction/drop counters explicitly limit completeness. Repeated failure records keep the incident correlation and power-of-two cumulative summaries while important raw failures are retained. DiagnosticsTest repeated-failure coverage and DiagnosticArchiveTest protected-stream/deduplication checks passed CI 37120075931. Sustained load, process termination and actual Shield failure windows remain physical QA.
+Code mapping / verification: DiagnosticFlightRecorder maintains a bounded 60-second ring; protected incident streams, repeat correlation, power-of-two summaries and deduplication passed prior CI 37120075931 and the interim source suite. Further tracing found that a delayed writer could capture a later ring instead of pre-failure records. Local checkpoint 98 now captures immutable references at failure time and reports writer delay, with rotation/clear/budget and blocked-writer tests awaiting Android execution. Post-failure window timing and queue-pressure coverage still require reconciliation; sustained load, process termination and actual Shield failure windows remain physical QA. The frozen interim does not contain this correction.
 
 ### DIA-012 — Required diagnostic/reporting improvements
 

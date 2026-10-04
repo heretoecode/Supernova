@@ -2,6 +2,15 @@
 
 Authority: 26 September handover. This record supplements, not replaces, the 115-entry REQUIREMENTS.md register. No review pass is declared complete.
 
+## 4 October interim evidence update (not final acceptance)
+
+- Frozen interim build commit ff955d90d7a76d157776b07cfb116fd7c67ea924 has fresh successful source CI 37192141281: 137 targeted, all 391 Video, 92 regression and 17 WebDAV tests, with compilation and identity/log-safety gates passing. Test sets overlap.
+- Re-inspected that run's `movie-details.png`, `details-information-next.png` and `playback-hud.png` against written requirements and VISUAL_AUTHORITY. The hero retains a lower Cast teaser; the scrolled Details fixture shows complete cast cards and Key/Reception/Technical panels; HUD composition retains five controls and time/seek elements. Synthetic artwork, absent HUD focus in the fixture, and static positions prevent claims about real crops, focus glow, continuous scrolling or physical rendering. This is limited visual evidence, not completion of Pass 2.
+- Also re-inspected `customise-home.png`, `page-1.png`, `library-list.png` and `search-empty-next.png`: inline Shown/Hidden controls, six-column Grid/header/divider, List column headers, and the single Search heading with T-focused required keyboard are visible. Poster cyan frames/text belong to the synthetic geometry fixture, not actual artwork or focus styling. These captures do not prove focused-card enlargement, numeric keyboard/delete flows, populated Search return or physical repeat behaviour.
+- Native emulator run 37156506482 exposed a real Back-from-Info HUD visibility/focus defect despite prior unit tests. UI-046 has been corrected from the stale physical-only status. Mark authorised delivery of the frozen interim with this known defect; the assertion remains active after this interim's APK upload and must pass before any final release. The local correction and new hidden-parent test are outside the interim snapshot and awaiting Android/native verification.
+- DIA-011 pre-failure capture was also found vulnerable to delayed writer execution after ring rotation. Local immutable failure-time capture and new tests are awaiting Android execution; post-failure timing under queue delay still needs reconciliation. Do not infer completion from the older passing coverage.
+- No final conformance pass is complete. Interim signing/build results do not waive remaining final-source or physical Shield acceptance.
+
 ## Pass 1: source and requirement tracing
 
 Post-audit correction: UI-052's frequency chooser already uses PreviewDialog.choose, which obtains the current opener and places the window using PreviewMenuPlacement. The audit's missing-anchor claim was not supported after tracing that helper. Checkpoint 52 adds an actual-window regression; no replacement UI was necessary. Other scan/presentation and physical checks remain open.

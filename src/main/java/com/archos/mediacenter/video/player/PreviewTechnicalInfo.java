@@ -26,6 +26,9 @@ final class PreviewTechnicalInfo {
     private static android.widget.TextView text(Activity a,String value,int size){android.widget.TextView t=new android.widget.TextView(a);t.setText(value);t.setTextSize(size);t.setTextColor(0xffd2e1ed);return t;}
     private static String value(String text){return text==null||text.isEmpty()?"Unknown":text;}
     static void show(Activity activity,VideoMetadata metadata,android.net.Uri uri,int backend){
+        show(activity,metadata,uri,backend,null);
+    }
+    static void show(Activity activity,VideoMetadata metadata,android.net.Uri uri,int backend,Runnable restoreHud){
         View origin=activity.getCurrentFocus();
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_technical_snapshot","metadata_present",metadata!=null,"backend",backend);
         if(uri!=null&&"content".equals(uri.getScheme())){String path=com.archos.mediacenter.video.utils.VideoUtils.getFileUriStringFromContentUri(activity,uri.toString());if(path!=null)uri=android.net.Uri.parse(path);}
@@ -40,6 +43,14 @@ final class PreviewTechnicalInfo {
         for(int i:new int[]{1,2,3,0}){android.widget.LinearLayout column=new android.widget.LinearLayout(activity);column.setOrientation(android.widget.LinearLayout.VERTICAL);column.setPadding(dp(activity,10),0,dp(activity,10),0);column.addView(text(activity,titles[i],15));android.widget.TextView body=text(activity,bodies[i],12);body.setPadding(0,dp(activity,12),0,0);column.addView(body);columns.addView(column,new android.widget.LinearLayout.LayoutParams(0,-2,1));}
         android.widget.ScrollView scroll=new android.widget.ScrollView(activity);scroll.addView(columns);scroll.setFocusable(true);panel.addView(scroll,new android.widget.LinearLayout.LayoutParams(-1,0,1));
         dialog.setContentView(panel);dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setDimAmount(.3f);dialog.getWindow().setLayout(Math.min(dp(activity,800),activity.getResources().getDisplayMetrics().widthPixels-dp(activity,64)),Math.min(dp(activity,300),activity.getResources().getDisplayMetrics().heightPixels-dp(activity,64)));scroll.requestFocus();
-        dialog.setOnDismissListener(d->{if(origin!=null&&origin.isAttachedToWindow())origin.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_technical_closed");});
+        dialog.setOnDismissListener(d->{
+            if(!activity.isFinishing()&&!activity.isDestroyed()){
+                // Playback's normal inactivity timer may have hidden the HUD
+                // behind this dialog. Reveal it before restoring the opener.
+                if(restoreHud!=null)restoreHud.run();
+                if(origin!=null&&origin.isAttachedToWindow())origin.requestFocus();
+            }
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_technical_closed");
+        });
     }
 }

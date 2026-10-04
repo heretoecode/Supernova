@@ -198,7 +198,8 @@ public final class Diagnostics {
             if(!detail&&!event.startsWith("checkpoint")&&!event.equals("scanner_state")){lastOperation=safe(event);if(sessionState!=null)sessionState.edit().putString("last_operation",lastOperation).apply();}
             boolean anomaly=event.contains("error")||event.contains("failed")||event.contains("exception")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected");
             UiSnapshot failureState=anomaly?new UiSnapshot():null;
-            if(important(event)||anomaly)IMPORTANT.execute(()->{if(!enabled)return;writeImportant(line);if(anomaly)freeze(event,failureState);});
+            DiagnosticFlightRecorder.Capture failureFlight=anomaly?FLIGHT.capture(now):null;
+            if(important(event)||anomaly)IMPORTANT.execute(()->{if(!enabled)return;writeImportant(line);if(anomaly)freeze(event,failureState,failureFlight);});
             WORK.execute(()->{if(!enabled)return;if(qa||!detail)write(line,session);if(!anomaly&&android.os.SystemClock.elapsedRealtime()<freezeUntil)appendFlight(line);});
         }catch(RuntimeException ignored){DROPPED.incrementAndGet();}
     }
@@ -231,9 +232,9 @@ public final class Diagnostics {
     public static void finishOperation(String id,String kind,long started){event("operation_end","operation_id",id,"kind",kind,"latency_ms",android.os.SystemClock.elapsedRealtime()-started);}
     private static void heartbeat(){try{if(!enabled||context==null)return;long now=android.os.SystemClock.elapsedRealtime();if(foreground>0&&now-mainAck>65000)event("main_thread_stall_suspected","unresponsive_ms",now-mainAck);new android.os.Handler(android.os.Looper.getMainLooper()).post(()->mainAck=android.os.SystemClock.elapsedRealtime());Runtime runtime=Runtime.getRuntime();event("heartbeat","foreground",foreground,"heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),"native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"queue_depth",WORK.getQueue().size(),"dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_bytes",FLIGHT.bytes(),"level",qa?"QA_SOAK":"NORMAL");}catch(RuntimeException ignored){WRITE_ERRORS.incrementAndGet();}}
     private static synchronized void freeze(String reason){
-        freeze(reason,new UiSnapshot());
+        freeze(reason,new UiSnapshot(),FLIGHT.capture(android.os.SystemClock.elapsedRealtime()));
     }
-    private static synchronized void freeze(String reason,UiSnapshot state){
+    private static synchronized void freeze(String reason,UiSnapshot state,DiagnosticFlightRecorder.Capture flight){
         if(context==null)return;
         boolean manual=reason.equals("manual_problem_marker");
         if(!manual&&android.os.SystemClock.elapsedRealtime()<freezeUntil){
@@ -246,9 +247,10 @@ public final class Diagnostics {
         }
         incidentId=PROCESS+":incident:"+SEQUENCE.incrementAndGet();incidentCounts.clear();incidentCounts.put(reason,1L);
         String incident=incidentContext(reason,state);writeImportant(incident);
-        String retained=FLIGHT.snapshot(android.os.SystemClock.elapsedRealtime());
+        String retained=flight.text();
         String snapshot=record("flight_snapshot","reason",reason,"completeness",retained.isEmpty()?"RECOVERY_DATA_MISSING":"PARTIAL",
-                "dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_evicted",FLIGHT.evicted());
+                "dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_evicted",flight.evicted,
+                "captured_elapsed_ms",flight.elapsed,"writer_delay_ms",Math.max(0,android.os.SystemClock.elapsedRealtime()-flight.elapsed));
         synchronized(LOCK){try{
             File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs()){WRITE_ERRORS.incrementAndGet();return;}
             java.text.SimpleDateFormat day=new java.text.SimpleDateFormat("yyyyMMdd",Locale.ROOT);day.setTimeZone(TimeZone.getTimeZone("UTC"));
