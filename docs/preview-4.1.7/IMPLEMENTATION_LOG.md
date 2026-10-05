@@ -1155,3 +1155,9 @@ Reconciled 39 source/QA/visual/scope entries, retaining all 115 original paragra
 ## Checkpoint 108 — focused visual scenario evidence (5 October)
 
 Added production-control captures for the outstanding Home genre footer, delete confirmation and exact-value shared keyboard, with viewport/focus assertions. The existing Search return test now captures the populated focused result inside the actual navigation shell after returning. These exercise missing visual scenarios rather than repeat already reviewed static pages. Android rendering and image inspection are pending; no physical pass is inferred. Corrected checkpoint 107's lint explanation after tracing build.gradle's existing assemble-to-lint dependency.
+
+## Checkpoint 109 — full-mode lint findings (5 October)
+
+Checkpoint 107 source CI 37355045014 passed all gates, including the three new sync regressions. Full/native run 37355045176 reached signed development build and failed its already-enforced debug lint: eleven errors, retained in artifact 11364722004. No native playback/upgrade or APK acceptance is claimed for that run.
+
+Corrections: use named Typeface.NORMAL constants in two Details views; use AppCompatImageView for the custom cancelling portrait; relocate the already documented narrow RestrictedApi annotation from an unrelated help lookup back onto the intentional pinned PreferenceGroupAdapter extension (seven reports); migrate put.io browser Back handling to ComponentActivity's lifecycle-aware OnBackPressedDispatcher, preserving its existing folder/root/finish logic. A dispatcher regression checks folder-to-root before Activity finish. Lint remains abort-on-error; no blanket suppression or baseline was added. The pending focused visual scenarios from checkpoint 108 are included in the next validation.

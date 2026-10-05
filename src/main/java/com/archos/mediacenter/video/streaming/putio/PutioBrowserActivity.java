@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.streaming.putio;
 
-import android.app.Activity;
+import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedCallback;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
@@ -11,12 +12,13 @@ import java.util.*;
 import java.util.concurrent.Future;
 
 /** Read-only provider adapter for the shared three-panel browser. No transport credentials in intents. */
-public final class PutioBrowserActivity extends Activity {
+public final class PutioBrowserActivity extends ComponentActivity {
     private PreviewBrowserSurface surface;private LinearLayout rows;private Future<?> task;private int generation;
     private PutioReadClient client;private long folder;private String title="put.io",cursor;
     private final Deque<Folder> parents=new ArrayDeque<>();private final Set<String> cursors=new HashSet<>();
     private static final class Folder {final long id,selected;final String title;Folder(long id,String title,long selected){this.id=id;this.title=title;this.selected=selected;}}
     @Override public void onCreate(Bundle state){super.onCreate(state);
+        getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true){@Override public void handleOnBackPressed(){back();}});
         rows=new LinearLayout(this);rows.setOrientation(LinearLayout.VERTICAL);rows.setClipChildren(false);rows.setClipToPadding(false);
         ScrollView listing=new ScrollView(this);listing.setClipChildren(false);listing.setClipToPadding(false);listing.addView(rows);
         surface=new PreviewBrowserSurface(this,listing,android.net.Uri.parse("putio://put.io/"),this::options);setContentView(surface);
@@ -60,7 +62,6 @@ public final class PutioBrowserActivity extends Activity {
     private TextView add(String text,long id,Runnable action){TextView v=label(text);v.setFocusable(true);v.setFocusableInTouchMode(true);v.setSingleLine(true);v.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);v.setTag("semantic:putio.file."+id);v.setBackground(PreviewDialog.focus(this));v.setOnClickListener(view->action.run());rows.addView(v,new LinearLayout.LayoutParams(-1,dp(44)));return v;}
     private int dp(int value){return PreviewDialog.dp(this,value);}
     private void back(){if(!parents.isEmpty()){Folder previous=parents.pop();folder=previous.id;title=previous.title;cursors.clear();load(null,previous.selected);}else if(folder!=0){folder=0;title="put.io";cursors.clear();load(null,-1);}else finish();}
-    @Override public void onBackPressed(){back();}
     @Override protected void onSaveInstanceState(Bundle state){state.putLong("folder",folder);state.putString("title",title);super.onSaveInstanceState(state);}
     @Override protected void onDestroy(){generation++;if(task!=null)task.cancel(true);client=null;super.onDestroy();}
 }
