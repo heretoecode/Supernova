@@ -85,8 +85,16 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
             else action("add_library", "Add to Library", () -> PreviewFolderActions.chooseLibrary(getContext(), source.getUri(), source.getName()));
             action("remove_location", indexed ? "Remove from Library" : "Remove Saved Location", () -> PreviewDialog.choose(getContext(), "Remove this " + (indexed ? "library source" : "saved location") + "? Media files will be kept.", new String[]{"Cancel", "Remove"}, 0, n -> {
                 if (n != 1) return;
-                if (indexed) { if (ShortcutDbAdapter.VIDEO.deleteShortcut(getContext(), source.getId())) NetworkScanner.removeIndexedVideos(getContext(), source.getUri()); sources.remove(source); }
-                else { ShortcutDb.STATIC.removeShortcut(getContext(), source.getUri()); saved.remove(source); }
+                boolean removed;
+                try { removed=indexed?ShortcutDbAdapter.VIDEO.deleteShortcut(getContext(), source.getId()):ShortcutDb.STATIC.removeShortcut(getContext(), source.getUri())>0; }
+                catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_removal_failed",failure);removed=false;}
+                if(!removed){
+                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("source_removal_failed","domain",indexed?"library_source":"saved_location","failure_category","not_confirmed");
+                    PreviewDialog.read(getContext(),"Removal not confirmed","The location could not be confirmed as removed. It remains visible; refresh the library or export diagnostics before retrying. Media files have not been deleted.");
+                    return;
+                }
+                if (indexed) { NetworkScanner.removeIndexedVideos(getContext(), source.getUri()); sources.remove(source); }
+                else saved.remove(source);
                 String previous = area; area = ""; selectedSection.requestFocus(); show(previous);
             }));
         });

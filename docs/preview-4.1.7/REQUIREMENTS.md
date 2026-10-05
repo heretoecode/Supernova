@@ -610,9 +610,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Change launcher-facing display name from "Nova Preview" to "Supernova". Keep Preview/build identity inside About/version information. Do NOT change package/application ID or signing identity.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — ABOUT BASELINE CORRECTION AWAITING TEST / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: prepare-preview.py assigns the launcher label Supernova without changing the established package/authority conversion. Merged identity audit passed CI 37192141281; interim signed install/upgrade and certificate checks passed run 37192141331. PreviewBuildInfo retains Preview, current version/code, package, build SHA/time and build type. This review found its descriptive implementation-baseline line still named 4.1.5; it now names the register's verified 4.1.6 baseline 094d8e8, with a new About-content test awaiting execution. No package/version/signing identity was changed. Physical launcher/About appearance remains QA.
 
 ### UI-062 — 12. Launcher branding / app name
 
@@ -620,9 +620,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Use BRANDING/Supernova_Shield_Launcher_Master_APPROVED.png as approved artwork direction and BRANDING/Supernova_Shield_Launcher_320x180_APPROVED.png as the derived Android TV launcher banner target. Preserve high-resolution master. Ensure manifest/resource wiring uses the Android TV banner appropriately. Validate appearance on Nvidia Shield Favourite Apps row at real viewing distance.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — PACKAGED ASSET VERIFIED / PHYSICAL SHIELD QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: preview_custom_banner.xml references supernova_shield_banner; merged manifest selects that banner. Source asset SHA-256 925dd63a8e865d9621642ec283d994af8f4061ef3f21bfd4dd2c6456f4751631 matches the authoritative derived asset exactly. The signed interim APK's res/vy.png was decoded and matched the approved 320×180 pixels exactly. The original master remains preserved in the authoritative handover archive and recovered BRANDING directory, not redesigned. Real Shield Favourite Apps legibility at viewing distance remains physical QA.
 
 ### UI-063 — 12. Launcher branding / app name
 
@@ -631,9 +631,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 Investigate coexistence: user reports upstream Nova Video Player fails to install both from GitHub APK and Shield app store while Supernova remains installed/unaffected. Do not assume cause. Verify Supernova package identity, manifest authorities/providers and identifiers are isolated from upstream Nova. Acceptance target: Supernova and official/upstream Nova can coexist, launch and upgrade independently if upstream packaging/platform permits. Do not "fix" by changing Supernova's established package/signing identity without evidence.
 
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REPOSITORY INVESTIGATION COMPLETE — EXTERNAL INSTALLER / UPSTREAM EVIDENCE REQUIRED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: COEXISTENCE_INVESTIGATION.md records the verified Preview package, all eight namespaced authorities, preserved shared-user identity/max SDK and inherited task affinities. Real merged-manifest audits passed, most recently for the interim in CI 37192141281; signed interim uses the required certificate. No collision cause is asserted and no identity migration was attempted. Exact upstream APK/manifest/certificate, Shield installer failure code and installed shared-user state are still required to establish cause and test independent coexistence/upgrade. This is an external-evidence block, not the put.io OAuth dependency.
 
 ### PUT-001 — Architecture
 
