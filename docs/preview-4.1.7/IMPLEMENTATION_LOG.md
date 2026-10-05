@@ -1131,3 +1131,9 @@ These changes require a full CI rerun; no failures are waived.
 - Reconciled fifteen stale requirement entries with inspected source and existing successful evidence. Explicit live-data, physical and incomplete visual coverage remains recorded. Rejected page-3/episode-only screenshots as proof of Network/full episode-page appearance; no conformance pass is declared complete.
 
 Checkpoint-102 validation: CI 37348732185 at 7503e70f46527ba43a60364b5fa063bf18c24501 passed compilation, identity, complete Video, selected regression and WebDAV checks, including the unchanged delayed-writer assertions and new provider-card/rebind regression. This validates those source corrections, not final APK/native/physical acceptance.
+
+## Post-audit checkpoint 104 — Network and episode visual evidence repair
+
+- The old page render loop clicked children by position; after the canonical navigation spacer was introduced, its fourth click hit that spacer and captured TV again. The fixture now clicks semantic Home/Movies/TV/Network controls and requires actual Overview/Scan Library content before taking the Network image. It supplies an empty source inventory rather than starting asynchronous database discovery in a geometry fixture.
+- Episode metadata rendering now includes the actual TopNavigation shell, retaining the original episode-versus-series fact assertions. These are evidence repairs, not a new UI implementation. Android rendering/CI and image inspection are pending.
+- Read the pinned MediaLib MovieTags/ShowTags save paths during metadata-preservation review. Existing provider tests establish physical rows/bookmarks/associations, not every live correction/version/artwork scenario; UI-039 remains explicitly under review rather than promoting that evidence beyond what it proves.
