@@ -1,6 +1,6 @@
-# Preview 4.1.7 conformance review — in progress
+# Preview 4.1.7 conformance review
 
-Authority: 26 September handover. This record supplements, not replaces, the 115-entry REQUIREMENTS.md register. No review pass is declared complete.
+Authority: 26 September handover. This record supplements, not replaces, the 115-entry REQUIREMENTS.md register. Current closeout: all three development reviews are complete with explicit physical/live limitations. FINAL artifact evidence is recorded in IMPLEMENTATION_REPORT.md. Dated earlier pending statements below are retained history, superseded only by the later evidence and delivery interpretation.
 
 ## 5 October continuation evidence update (not final acceptance)
 
@@ -104,3 +104,23 @@ The source mapping inventory is now reconciled, but this does not close all thre
 | Physical Shield | Real remote/rapid focus and seeking; real library scan/startup/resume equivalence; artwork after scan/restart; installed 4.1.6 data preservation; launcher viewing-distance legibility; multi-day diagnostics. No attached Shield session or new physical report is available here. |
 | Live put.io/provider | Production OAuth client/account configuration and real provider app/region handoff. OAuth is not a blocker for unrelated implementation or tests. |
 | Final delivery | A separate FINAL APK only after acceptance is resolved, tied to the final source commit and pinned signing identity. Current full-build artefacts are validation candidates. |
+
+## Delivery interpretation and final closeout — 5 October
+
+The original 01_CODEX_PROMPT delivery gate requires build/tests, a signed and cryptographically verified APK, smoke/regression checks, release notes and an implementation report. PREFLIGHT explicitly keeps device checks AWAITING PHYSICAL QA. Therefore a final development APK may be delivered with those limitations; it does not constitute physical acceptance or permission to merge. Earlier wording in this review that treated every physical check as a pre-APK gate was too broad. Main remains outside this task.
+
+Pass 1 source/completeness review: the 115-entry mapping is reconciled, with source/component coverage, external configuration and device-only evidence explicitly classified. Review findings were corrected centrally (including incident timing, provider logo reuse, sync correlation, Back routing and menu viewport clipping), rather than starting a replacement implementation. No unexplained pending implementation-review placeholders remain. Source conformance does not turn live provider, NFO or physical-library scenarios into proven tests.
+
+Pass 2 visual/behavioural closeout and Pass 3 final signed regression acceptance are awaiting the checkpoint-111 results below. Release notes and the implementation/limitations report are prepared locally and will be committed with the final evidence.
+
+### Checkpoint 111 visual and source acceptance
+
+Source CI 37359092502 at 7efb4195639205a6526281491af40c0dab1776b7 passed compilation, identity, complete Video, selected regression and WebDAV gates. Artifact 11365583449 was inspected. Both initial and scrolled genre images now keep rows strictly in the middle viewport: header and Done footer remain unobscured; the focused footer boundary is contained. The new before/after header pixel test passed. Checkpoint-110 delete confirmation, exact-number keyboard, populated Search return and updated Details portrait/panel captures were already inspected and remain applicable outside the bounded viewport correction.
+
+Pass 2 review is complete for available rendered/component evidence, with real artwork/crops, physical glow/readability and device/live scenarios explicitly retained as AWAITING PHYSICAL QA in the register/report. This is review completion with classified limitations, not a claim that every synthetic image proves physical conformance. Pass 3 remains open until current-source signed/native validation and final artifact verification succeed.
+
+### Final signed regression and delivery acceptance
+
+Pass 3 is complete. Full CI 37359092413 at 7efb4195639205a6526281491af40c0dab1776b7 passed every required step: full Video/regression/WebDAV, lint-enabled signed development packaging, emulator startup, strict native Info return before release packaging, optimised release, explicit release lint, signed upgrade/restart and exact pinned certificate verification. No interim exception was used. APK artifact 11367082061 was downloaded through the authorised file materialisation route; its archive digest and extracted APK SHA-256 matched recorded CI values. The final APK is 82,738,089 bytes, SHA-256 4070ee3d259b3cf57bb10a26fbc789363cf812e8b81fe7f3101522634705681a.
+
+The artifact is accepted as the separate FINAL Preview 4.1.7 development APK. Release notes/report and classified physical/live limitations accompany it. Earlier dated incomplete statements are historical, not instructions to repeat closed development gates. This does not close physical Shield QA, supply missing production OAuth configuration, establish an unknown installer diagnosis, or authorise any main merge/Phase 1/next release.

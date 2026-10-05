@@ -2,6 +2,8 @@
 
 Baseline: `094d8e80938501222b4b16ed715c03937abde68f`.
 
+Final development review: application source `7efb4195639205a6526281491af40c0dab1776b7`; source CI 37359092502 and full/native CI 37359092413 passed. See IMPLEMENTATION_REPORT.md for the final APK and exact limits. AWAITING PHYSICAL QA and production OAuth BLOCKED are retained outcomes, not claimed passes.
+
 This verbatim requirement register preserves every substantive paragraph from the six implementation/acceptance/authority documents. Paragraphs may contain multiple acceptance conditions; all must be verified before their status changes. Pending is a planning state, not a completion claim. Final outcomes will use IMPLEMENTED, TESTED, BLOCKED, DEFERRED-BY-SPEC and AWAITING PHYSICAL QA.
 
 ### UI-001 — 1. Global visual language and top navigation
@@ -12,7 +14,7 @@ Canonical top navigation: SUPERNOVA far left; Home · Movies · TV Shows; flexib
 
 Status: **AWAITING PHYSICAL QA**
 
-Code mapping / verification: TopNavigation has the canonical order, flexible spacer, white 19sp light text/icons, no unfocused boxes and a shared compact boundary. Clock is now Color.WHITE. TopNavigationTest / Preview417NavigationTest passed through CI 36337372113. Named semantic tags added during conformance review; latest CI required. Exact Shield geometry remains physical QA.
+Code mapping / verification: TopNavigation has the canonical order, flexible spacer, white 19sp light text/icons, no unfocused boxes and a shared compact boundary. Clock is now Color.WHITE. TopNavigationTest / Preview417NavigationTest passed through CI 36337372113. Named semantic tags and edge routing passed through source CI 37357790177. Exact Shield geometry remains physical QA.
 
 ### UI-002 — 1. Global visual language and top navigation
 
@@ -60,9 +62,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Featured: normalize visible logo bounds while ignoring transparent artwork padding; preserve aspect ratio. Synopsis width should relate to visible logo width (target around 90%, clamped approximately 25–32vw). Showcase artwork stays on the right, below the Network & Files→clock region, right of synopsis and above Continue Watching. Reposition/crop first; use real source art; darken/blur text-safe areas if needed; never fabricate people. More Info LEFT/RIGHT cycles Featured while focus remains on More Info. Featured indicators use persistent pill/dots with smooth ~180–220ms ease-out morphing.
 
-Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
+Status: **IMPLEMENTED — SOURCE/GEOMETRY COVERAGE / REAL-ARTWORK AND PHYSICAL QA PENDING**
 
-Code mapping / verification: OfficialTitleArtwork trims transparent bounds and preserves aspect ratio; synopsisWidth uses 90% fitted logo width clamped 25–32% viewport. PreviewFeaturedIndicators retains a 200ms ease-out pill morph; More Info cycles via the existing focus anchor. Geometry remains to be checked against the normative references in visual pass 2; physical appearance is not claimed.
+Code mapping / verification: OfficialTitleArtwork trims transparent bounds and preserves aspect ratio; synopsisWidth uses 90% fitted logo width clamped 25–32% viewport. PreviewFeaturedIndicators retains a 200ms ease-out pill morph; More Info cycles via the existing focus anchor. Existing geometry/indicator coverage passed through source CI 37357790177. The synthetic Home render establishes basic layout but cannot establish real-logo/face crop quality; those remain explicitly classified visual/physical QA.
 
 ### UI-007 — 2. Home
 
@@ -82,7 +84,7 @@ Customise Home remains a hub with inline row controls. Leftmost Home-row LEFT re
 
 Status: **IMPLEMENTED — VISUAL/PHYSICAL VERIFICATION PENDING**
 
-Code mapping / verification: PreviewHomeRows retains the inline editor; row-edge controls expose only Move/Hide. Rule toggles update existing labels without rebuilding the menu. Maximum values are 0/10/20/30/40/50/75/100 plus validated exact input through PreviewTextInput; PreviewHomeMaximumTest covers parsing. Shared confirmDelete and PreviewGenres provide bounded controls. Exact delete-button/genre clipping and keyboard appearance remain visual pass 2 and Shield QA, not yet verified here.
+Code mapping / verification: PreviewHomeRows retains the inline editor; row-edge controls expose only Move/Hide. Rule toggles update existing labels without rebuilding the menu. Maximum values are 0/10/20/30/40/50/75/100 plus validated exact input through PreviewTextInput; PreviewHomeMaximumTest covers parsing. Shared confirmDelete and PreviewGenres provide bounded controls. Focused delete/keyboard captures were inspected at checkpoint 110. Checkpoint 111 corrects actual genre-row paint bleed centrally in PreviewDialog; source CI 37359092502 passed the unchanged viewport/focus assertions plus a new fixed-heading pixel comparison, and both corrected genre images were inspected. Physical remote, readability and glow remain Shield QA.
 
 ### UI-009 — 2. Home
 
@@ -130,9 +132,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Toolbar: Filters, Sort, Order, Unmatched, List/Grid and Columns where applicable move close to the divider, visually echoing Details lower navigation. White icon/text, no cyan/glow text and no large rounded focus box. Focus is represented by the associated divider segment turning Supernova blue with restrained outward glow. Unlike Details tabs there is no persistent selected blue segment after focus leaves.
 
-Status: **IMPLEMENTED — TESTING/VISUAL VERIFICATION PENDING**
+Status: **IMPLEMENTED — AUTOMATED AND RENDER COVERAGE / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewToolbar removes per-control backgrounds and colours the existing divider segment; library toolbars do not set the persistent selectedSegment used by Details. Checkpoint 43 added an eight-dp low-alpha gradient halo without thickening the stroke. New CI and normative image comparison remain pending.
+Code mapping / verification: PreviewToolbar removes per-control backgrounds and colours the existing divider segment; library toolbars do not set the persistent selectedSegment used by Details. Checkpoint 43 added an eight-dp low-alpha gradient halo without thickening the stroke. Toolbar/edge tests passed through source CI 37357790177, and the inspected Grid/List renders show the written divider-based layout. Real transition/glow appearance remains physical QA.
 
 ### UI-014 — 4. Movies and TV Shows
 
@@ -262,7 +264,7 @@ TV Seasons & Episodes: stacked season rows, no dropdown. Four episode cards acro
 
 Status: **IMPLEMENTED — AUTOMATED VERIFIED / LIVE AND PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewDetailsData reads cached and refreshed season packages. PreviewEpisodeChoice merges season/episode coordinates, retaining local physical versions first and showing unknown non-local episodes without duplicates. PreviewEpisodeRow measures four cards across with whole-unit focus and local playback; exact-episode provider offers are required for Watch actions. Season/series offers do not prove every episode playable. Reconciliation, invalid-coordinate and availability-honesty tests passed current-source CI 37341405225. The current provider data can leave non-local availability unknown; live exact-episode coverage and physical navigation remain unverified. Checkpoint 102 provider-mark rendering additionally awaits its own CI.
+Code mapping / verification: PreviewDetailsData reads cached and refreshed season packages. PreviewEpisodeChoice merges season/episode coordinates, retaining local physical versions first and showing unknown non-local episodes without duplicates. PreviewEpisodeRow measures four cards across with whole-unit focus and local playback; exact-episode provider offers are required for Watch actions. Season/series offers do not prove every episode playable. Reconciliation, invalid-coordinate and availability-honesty tests passed current-source CI 37341405225. The current provider data can leave non-local availability unknown; live exact-episode coverage and physical navigation remain unverified. Checkpoint 102 provider-mark/rebind regressions also passed through source CI 37357790177.
 
 ### UI-027 — 6. Details Page
 
@@ -602,7 +604,7 @@ Enter Settings focuses Playback in LEFT rail, never first middle setting. Focusi
 
 Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / EMULATOR AND PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewSettings initially focuses Playback unless an explicit existing shortcut requests another category. Rail focus updates context but hides nested categories; OK/RIGHT constructs children in the middle and enters them. LEFT/Back return through retained category/child identities and restoration tokens. PreviewSettingsEntryTest verifies rail-only shortcut entry, explicit option entry and stable child return with duplicate labels; passed complete Video CI 37137362694. The obsolete smoke script navigated DOWN to About instead of entering Integrations; corrected explicit-entry and credential-presence checks are running. Full physical hierarchy/rapid-Back behaviour remains QA.
+Code mapping / verification: PreviewSettings initially focuses Playback unless an explicit existing shortcut requests another category. Rail focus updates context but hides nested categories; OK/RIGHT constructs children in the middle and enters them. LEFT/Back return through retained category/child identities and restoration tokens. PreviewSettingsEntryTest verifies rail-only shortcut entry, explicit option entry and stable child return with duplicate labels; passed complete Video CI 37137362694. The obsolete smoke sequence was corrected; current-source full/native CI 37359092413 passed the explicit-entry and credential-presence smoke checks. Full physical hierarchy/rapid-Back behaviour remains QA.
 
 ### UI-061 — 12. Launcher branding / app name
 
@@ -612,7 +614,7 @@ Change launcher-facing display name from "Nova Preview" to "Supernova". Keep Pre
 
 Status: **IMPLEMENTED — AUTOMATED AND IDENTITY VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: prepare-preview.py retains the established application/provider conversion and sets launcher label Supernova. PreviewBuildInfo retains Preview/version/code/package/build identity and now correctly names the verified 4.1.6 baseline 094d8e8. The About correction test and identity gate passed CI 37341405225 and later source runs through 37350349198. Earlier signed native run 37338324041 verified the pinned certificate and upgrade for its source. Current-source full/native validation and physical launcher/About remain pending.
+Code mapping / verification: prepare-preview.py retains the established application/provider conversion and sets launcher label Supernova. PreviewBuildInfo retains Preview/version/code/package/build identity and now correctly names the verified 4.1.6 baseline 094d8e8. The About correction test and identity gate passed CI 37341405225 and later source runs through 37350349198. Earlier signed native run 37338324041 verified the pinned certificate and upgrade for its source. Current-source full/native CI 37359092413 passed; physical launcher/About remains pending.
 
 ### UI-062 — 12. Launcher branding / app name
 
@@ -815,9 +817,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Add operation correlation IDs across library scans, network scans, metadata enrichment, artwork, playback, provider sync and significant navigation flows. Record trigger/source (Manual, Startup, Resume, Scheduled, Provider Sync) and explicit lifecycle stages.
 
-Status: **IMPLEMENTED — SOURCE REVIEWED / NEW SYNC REGRESSIONS AWAITING CI**
+Status: **IMPLEMENTED — SOURCE AND SYNC REGRESSIONS VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: Scans carry owned operation/batch/trigger identity; metadata packages scope request and transport operations; ArtworkTrace carries operation/media/surface; playback uses session and lifecycle identity; Details/menu/Settings entry uses restoration tokens. Audit found put.io sync children were not scoped and cancellation lacked a terminal event. Checkpoint 106 adds sync scope, completion/incomplete/cancellation and finally termination with three regression tests. Earlier coverage passed CI 37350349198; these new tests require current-source CI, and cross-process/physical correlation remains QA.
+Code mapping / verification: Scans carry owned operation/batch/trigger identity; metadata packages scope request and transport operations; ArtworkTrace carries operation/media/surface; playback uses session and lifecycle identity; Details/menu/Settings entry uses restoration tokens. Audit found put.io sync children were not scoped and cancellation lacked a terminal event. Checkpoint 106 adds sync scope, completion/incomplete/cancellation and finally termination with three regression tests. All three new sync tests passed through source CI 37357790177. Cross-process/physical correlation remains QA.
 
 ### DIA-006 — Required diagnostic/reporting improvements
 
@@ -934,7 +936,7 @@ Source: `QA_AND_ACCEPTANCE.md`
 
 Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping / verification: UI-061–063, PREFLIGHT.md and COEXISTENCE_INVESTIGATION.md; source CI 37350349198 passes, with earlier strict native/signing evidence at 37338324041. Current-source full/native run is pending. Real installed 4.1.6 data and Shield banner remain physical acceptance.
+Code mapping / verification: UI-061–063, PREFLIGHT.md and COEXISTENCE_INVESTIGATION.md; source CI 37359092502 and current-source full/native CI 37359092413 pass. Real installed 4.1.6 data and Shield banner remain physical acceptance.
 
 ### QA-002 — Startup / global navigation
 
@@ -947,7 +949,7 @@ Source: `QA_AND_ACCEPTANCE.md`
 
 Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping / verification: UI-001–004 and UI-063; source navigation/startup tests and inspected shell captures are recorded. Current-source native startup and physical rapid-input/blur remain pending.
+Code mapping / verification: UI-001–004 and UI-063; source navigation/startup tests and inspected shell captures are recorded. Current-source native startup passed CI 37359092413; physical rapid-input/blur remains pending.
 
 ### QA-003 — Home
 
@@ -1005,7 +1007,7 @@ Source: `QA_AND_ACCEPTANCE.md`
 
 Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping / verification: UI-041–046; component tests and earlier strict native Info-return run 37338324041 passed. Current-source full/native validation and real playback/remote seeking remain pending.
+Code mapping / verification: UI-041–046; component tests and earlier strict native Info-return run 37338324041 passed. Current-source full/native validation passed CI 37359092413; real Shield playback/remote seeking remains pending.
 
 ### QA-007 — Search
 
@@ -1075,7 +1077,7 @@ Source: `QA_AND_ACCEPTANCE.md`
 
 Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping / verification: DIA-001–015; sanitisation/reference/archive/recorder and source-route coverage are recorded. Checkpoint 106 sync tests require CI; multi-day pressure, physical exports and clean-exit scenarios remain pending.
+Code mapping / verification: DIA-001–015; sanitisation/reference/archive/recorder and source-route coverage are recorded. Checkpoint 106 sync tests passed through CI 37357790177; multi-day pressure, physical exports and clean-exit scenarios remain pending.
 
 ### SCOPE-001 — Scope / Deferred Guardrail
 
@@ -1105,7 +1107,7 @@ DEFERRED: person/cast discovery pages; playback trick-play thumbnails; put.io tr
 
 Status: **DEFERRED-BY-SPEC**
 
-Code mapping / verification: Excluded from implementation. Final scope audit must confirm none of these deferred capabilities entered the candidate.
+Code mapping / verification: Excluded from the promoted implementation. Final scope review retains these deferred boundaries: no person-page navigation, trick-play generation, put.io transfer/position-sync/primary-transport replacement, unsupported NFS or broad Settings redesign was introduced.
 
 ### SCOPE-004 — Scope / Deferred Guardrail
 

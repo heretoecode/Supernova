@@ -1,4 +1,17 @@
-# Preview 4.1.7 continuation — 5 October 2026
+# Preview 4.1.7 — latest continuation state, 5 October
+
+Latest application/test source: **7efb4195639205a6526281491af40c0dab1776b7** (checkpoint 111), tree **e92d340c28fcd85fd2b90d4827dadb2e60ad66c2**. Branch codex/preview-4.1.7 continues the original work.
+
+- Source CI **37359092502** passes compilation, identity, complete Video, regression and WebDAV gates.
+- Source/completeness mapping and available rendered visual review are reconciled. All 115 authoritative paragraphs are unchanged. The focused genre captures now prove the shared scroll-viewport correction; Home delete/keyboard, populated Search and updated Details captures were also inspected.
+- Full/native CI **37359092413** passed all required gates, including strict pre-packaging Info return, release lint, signed upgrade/restart and exact certificate validation.
+- Release notes and IMPLEMENTATION_REPORT.md record the final delivery and limitations. Closeout changes are documentation only; application/test/build source is frozen at the SHA above.
+- The original delivery gate allows an explicit AWAITING PHYSICAL QA list with the APK. Physical acceptance is never inferred from tests, and no main merge is authorised. Production put.io OAuth/live-account configuration remains the acknowledged external dependency.
+- The separate FINAL APK is **Supernova-4.1.7-FINAL-7efb4195.apk**, 82,738,089 bytes, SHA-256 **4070ee3d259b3cf57bb10a26fbc789363cf812e8b81fe7f3101522634705681a**. Artifact 11367082061 and the local bytes were verified. The earlier interim remains separate.
+
+See IMPLEMENTATION_LOG.md checkpoints 105–111 and the latest CONFORMANCE_REVIEW.md closeout for failures, corrections and precise evidence. Do not repeat completed source or visual audits as unperformed work.
+
+## Earlier checkpoint-104 continuation record (retained history)
 
 This is a continuation checkpoint, **not final release acceptance**.
 
