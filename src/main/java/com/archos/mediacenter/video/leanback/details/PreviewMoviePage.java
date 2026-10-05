@@ -13,6 +13,7 @@ import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import com.archos.mediacenter.video.streaming.PreviewProviderIcons;
 import com.archos.mediascraper.*;
 import java.util.*;
 import java.util.function.*;
@@ -418,10 +419,8 @@ public final class PreviewMoviePage extends ScrollView {
                 org.json.JSONObject value=recommendation.title;String name=value.optString("title",value.optString("name"));String backdrop=value.optString("backdrop_path");
                 PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
                 card.bind(name,value.optString("release_date",value.optString("first_air_date")).replaceFirst("-.*$",""),backdrop.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+backdrop):null,true,id,"details.related","landscape");
-                card.availability.setImageDrawable(new PreviewIcon("streaming"));
-                card.availability.setColorFilter(Color.WHITE,android.graphics.PorterDuff.Mode.SRC_IN);
-                String logo=recommendation.provider.logo;
-                if(logo!=null&&logo.matches("/[A-Za-z0-9._-]+")){Uri uri=Uri.parse("https://image.tmdb.org/t/p/w154"+logo);com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(card.availability,uri,id,"details.related","provider_mark",com.squareup.picasso.Picasso.get().load(uri));}
+                PreviewProviderIcons.bind(card.availability,recommendation.provider.logo,id,"details.related");
+                card.availability.setImageAlpha(205);
                 card.setTag("remote:"+id);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(card,"details.related.remote."+id);card.setContentDescription(name+" · "+recommendation.provider.name);
                 card.setOnClickListener(v->getContext().startActivity(new Intent(getContext(),com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity.class).putExtra("kind",television?"tv":"movie").putExtra("tmdb_id",id)));
                 addRecommendation(card);shown.add("id:"+id);

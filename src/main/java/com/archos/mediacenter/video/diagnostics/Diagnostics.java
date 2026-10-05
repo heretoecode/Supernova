@@ -257,6 +257,7 @@ public final class Diagnostics {
         String incident=incidentContext(reason,state);writeImportant(incident);
         String retained=flight.text();
         String snapshot=record("flight_snapshot","reason",reason,"completeness",retained.isEmpty()?"RECOVERY_DATA_MISSING":"PARTIAL",
+                "session",state.playbackSession,"app_session",state.foregroundSession,"last_operation",state.operation,
                 "dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_evicted",flight.evicted,
                 "post_window_until_elapsed_ms",state.elapsed+60000,"captured_elapsed_ms",flight.elapsed,"writer_delay_ms",Math.max(0,android.os.SystemClock.elapsedRealtime()-flight.elapsed));
         synchronized(LOCK){try{
