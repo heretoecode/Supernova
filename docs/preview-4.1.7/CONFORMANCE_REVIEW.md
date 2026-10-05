@@ -71,3 +71,12 @@ Not complete. CI 36349549771: application/test compilation and targeted suite pa
 CI 36350179013 subsequently passed every gate, including the shared-browser repair, diagnostics regressions and Details teaser assertion. This clears the earlier failures for that source tree, not later changes. The corrected Details image still needs reinspection.
 
 No signed Preview 4.1.7 APK has been produced or validated by this continuation. Signing fingerprint, installed-data upgrade, smoke checks, final complete register reconciliation and physical Shield QA remain delivery gates. Only live production put.io OAuth configuration/account validation is an acknowledged external credential dependency; unfinished implementation/review work must not be labelled OAuth-blocked.
+
+## 5 October checkpoint-100 render review and continued source tracing
+
+Source CI 37341405225 at 81efbf6d, artifact 11359475136. Twenty retained images were inspected against the written authority and selected references. This is intermediate evidence, not final validation.
+
+- Home, Movies/TV six-column grid, List, Search keyboard, matching surface, compact Details, three information panels, populated cast and shared put.io browser show the intended basic composition. Synthetic posters and empty live data do not prove real artwork, provider completeness, all focused states or Shield readability.
+- `playback-info.png` was rejected as current evidence: its render fixture invoked obsolete PreviewPlaybackInfo directly even though production PlayerActivity opens PreviewTechnicalInfo. The fixture now invokes the production technical overlay and asserts its four sections and excluded actions/private filename. The corrected image still needs CI and inspection. Existing production Info-return verification remains valid and independent.
+- `page-3.png` shows the retained TV page, not a Network workspace, so it is not Network visual acceptance. `episode-details.png` lacks the full shell and remains inadequate whole-screen evidence. Network/episode visual acceptance is still open.
+- Source tracing reconciled filters, episode identity/availability, Extras, recommendations, conditional Details facts, source-removal semantics, shared scan scheduling and rebuild/network diagnostics with existing successful tests. Detailed limitations are retained in REQUIREMENTS.md. Checkpoint 102 addresses the newly found Details logo-mask defect.

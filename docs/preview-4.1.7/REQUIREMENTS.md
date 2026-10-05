@@ -20,9 +20,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Adjacent persistent navigation controls should use a travelling focus boundary animation: animate X/width roughly 140–180ms and retarget smoothly during rapid D-pad movement. Cards do not use this mechanism; cards enlarge individually.
 
-Status: **IMPLEMENTED — TESTING PENDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewFocusRail uses a single 160ms boundary and retargets from its interpolated rectangle. Top navigation is verified through CI 36337372113. Conformance review extended the same rail to persistent Settings and Network categories, removing their per-item focus backgrounds. Latest rail changes await CI; fast physical remote repeats remain Shield QA. Cards and explicitly specified divider tabs retain their separate treatments.
+Code mapping / verification: PreviewFocusRail uses a single retargetable 160ms boundary for the persistent navigation/category rails; cards retain their independent enlargement. Current-source complete Video CI 37341405225 includes the navigation/rail regressions. Rapid remote input and Shield animation remain physical QA.
 
 ### UI-003 — 1. Global visual language and top navigation
 
@@ -180,9 +180,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Filters: Genre only genres actually present; fix phantom genre entries. Genre multi-select + Done. Year becomes multi-select + Done. Streaming Service becomes persistent multi-select + Done with ticks retained on reopen and monochrome provider icons. Provider availability is populated in background. Clear Filters works.
 
-Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewGenres derives choices from current indexed entries; Genre, Year and Streaming Service persist separate multi-select sets. Clear resets all three. Background providers are independently queued. Menu icon/tick geometry and full persistence matrix remain conformance/physical QA.
+Code mapping / verification: PreviewGenres derives options from indexed entries. PreviewPages persists separate Movie/TV genre, year and provider selections, Done and Clear. PreviewProviderFilterTest exercises multi-selection, Done, reopen, page recreation, per-kind isolation and both clearing actions; passed current-source CI 37341405225. The shared provider helper desaturates real catalogue logos without flattening opaque shapes. Actual catalogue completeness and Shield menu appearance remain physical/live QA.
 
 ### UI-019 — 4. Movies and TV Shows
 
@@ -210,9 +210,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Unmatched Details uses honest placeholders such as Not matched/Unavailable/Unknown and a prominent Match Metadata action. Inferred TV structure may group provisionally. Matching and More→Edit/Correct use the same matching engine.
 
-Status: **IMPLEMENTED — TESTING/VISUAL QA PENDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: Review found the prominent hero action missing. PreviewMoviePage now shows Match Metadata for unmatched files when native ACTION_SCRAP is available, invokes that same matching engine directly, and supplies Not matched / Synopsis unavailable instead of fabricated metadata. Play UP reaches Match; Match DOWN returns to Play; specified Play/More horizontal mapping is unchanged. New callback/placeholder/focus regression awaits CI. Provisional TV grouping is optional and does not invent identity.
+Code mapping / verification: PreviewMoviePage supplies Match Metadata through native ACTION_SCRAP and honest unmatched placeholders. The actual-page regression checks the callback and Play/Match vertical focus route; it passed current-source CI 37341405225. Optional provisional grouping does not invent identity. Real unmatched libraries and remote appearance remain Shield QA.
 
 ### UI-022 — 6. Details Page
 
@@ -260,9 +260,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 TV Seasons & Episodes: stacked season rows, no dropdown. Four episode cards across. Focus is whole episode unit (artwork + title/runtime), same physical card enlargement ratio, one boundary/glow, no second artwork border. Local uses plain white HUD Play glyph on focus. Streaming-only uses monochrome/translucent provider mark and Watch/deep link. Unavailable remains visible but non-playable. Complete series discovery reconciles local first, then enabled streaming, then unavailable/unknown; no duplicate episode.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / LIVE AND PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewEpisodeRow / PreviewMoviePage. Local stacked season rows exist. Complete remote discovery/reconciliation and availability presentation remain in progress.
+Code mapping / verification: PreviewDetailsData reads cached and refreshed season packages. PreviewEpisodeChoice merges season/episode coordinates, retaining local physical versions first and showing unknown non-local episodes without duplicates. PreviewEpisodeRow measures four cards across with whole-unit focus and local playback; exact-episode provider offers are required for Watch actions. Season/series offers do not prove every episode playable. Reconciliation, invalid-coordinate and availability-honesty tests passed current-source CI 37341405225. The current provider data can leave non-local availability unknown; live exact-episode coverage and physical navigation remain unverified. Checkpoint 102 provider-mark rendering additionally awaits its own CI.
 
 ### UI-027 — 6. Details Page
 
@@ -270,9 +270,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 More Like This: collapsed compact hero, no repeated heading, landscape thumbnails four across, up to three rows / max 12 but fewer when relevance is weak. Unfocused artwork+title+year. Focus whole unit with same enlargement/boundary/glow. Source mark only on focus: local plain white HUD Play; streaming monochrome/translucent preferred provider. Strong TMDB relevance first, then local reconciliation, then enabled streaming; genre fallback only. Hide tab if none.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED COVERAGE / VISUAL AND PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewDetailsData / PreviewMoviePage now order TMDb recommendations before local genre fallback, reconcile local availability, cap 12, hide empty tab and lock row edges. Compact sticky hero and physical visual review remain pending.
+Code mapping / verification: PreviewDetailsData preserves TMDb recommendation order, filters configured-country subscription providers and bounds twelve results. PreviewMoviePage reconciles local IDs first, appends local genre fallback last, lays out four across, hides empty tabs and locks horizontal edges. Shared compact-title and card-focus mechanisms are retained. Existing discovery/cache/page regressions passed CI 37341405225. Checkpoint 102 corrects provider-mark monochrome shape; populated visual and live relevance/physical review remain open.
 
 ### UI-028 — 6. Details Page
 
@@ -280,9 +280,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Extras: collapsed hero; category rows only when content exists; no counts; four cards across; title+duration; whole-unit focus/enlarge; HUD Play glyph; LEFT/RIGHT within row, UP/DOWN categories; strict divider.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED COVERAGE / VISUAL AND PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewMoviePage.renderExtras rejects unsupported/invalid/duplicate video IDs, creates only populated categories, four cards across, and uses PreviewLandscapeCard whole-unit focus plus row edge locks. PreviewExtraDuration reads cached published durations and requests them asynchronously on focus; unknown values remain absent. PreviewTrailer opens the existing playback path. Populated-category, published-duration and shared page regressions passed CI 37341405225. Multi-category physical routing and full-screen live playback remain QA.
 
 ### UI-029 — 6. Details Page
 
@@ -290,9 +290,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Details information: Key Information always left. Middle Reception if available. Right = Technical for local movie/episode, Library for local TV overview, Streaming for streaming-only. Empty panels omit/reflow. Key Info includes the agreed movie/TV fields (year/dates/runtime/age/genres/studio/network/distributor/country/budget/box office/collection/filming locations/original title/tagline as applicable). Reception: awards summary, critic/audience monochrome ratings/counts and optional reliable quote. Technical: resolution/codec/HDR/fps, audio format/channels/rate, container/size, subtitles, source, human-friendly path. TV Library: season/episode availability, specials, library size/average, technical counts, storage locations. Streaming: enabled/available providers, region and reliable quality/HDR/audio/subtitles; expiry only if reliable. No "last checked" clutter.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED COVERAGE / LIVE AND PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewMoviePage.renderDetails uses native/cached facts and selected-episode package facts, builds Key/Reception/Technical, Library or Streaming panels and omits empty panels. Unknown byte sizes produce a lower bound and suppress an invalid average. Episode ratings/dates/runtime cannot borrow series totals. Empty remote-panel, episode-package, size-accounting and native metadata regressions passed CI 37341405225. Rendered Key/Reception/Technical and remote two-panel layouts were inspected again on 5 October. Awards/quotes/distributor/locations and provider quality fields are not fabricated when the supplied metadata lacks them; their absence is not evidence of provider completeness. Physical readability and live data remain QA.
 
 ### UI-030 — 6. Details Page
 
@@ -400,9 +400,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Remove from Library is not a broad redesign in this pass. Existing source-context action may remain. Existing Delete remains where applicable; physical WebDAV Delete passed.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE REVIEWED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Native Delete handlers remain. PreviewNetworkWorkspace separates source removal/bookmark removal from physical media deletion; failed database removal now keeps the displayed row and prevents subsequent indexed cleanup. PreviewSourceRemovalTest passed CI 37341405225 for both failure paths. No broad deletion redesign was introduced; successful live source removal and WebDAV deletion remain physical checks.
 
 ### UI-041 — 8. Playback HUD
 
@@ -410,9 +410,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Do not ground-up redesign the physically approved base HUD. Upper left title/logo + TV season/episode/name; upper right current time + Ends. HUD sits low; seekbar close to controls. Seekbar has no blue container: blue played, neutral remaining, scrub dot, floating timestamp, current left/duration right. Exactly five controls: Subtitles | Audio | Play/Pause | Info | More. Unfocused no boxes; focused compact rounded blue boundary/glow; contents white; one-line labels.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED AND EMULATOR COVERAGE / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: player_controller_experimental retains exactly Subtitles, Audio, Play/Pause, Info and More with existing title/episode, clock, seekbar and timestamp bindings in PlayerController. Structural checks and CI 37341405225 passed; strict native playback CI 37338324041 verified HUD entry and technical Info return. The rendered HUD composition was reinspected on 5 October. Synthetic imagery and missing focused-state capture do not establish real Shield typography, glow or live seek appearance.
 
 ### UI-042 — 8. Playback HUD
 
@@ -510,9 +510,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Architecture: Left = Where am I? Middle = What can I select? Right = What is it / what can I do with it? Small contextual overlay for finite values. Full-screen transition only for a genuine workspace such as filesystem browser.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE AND COMPONENT VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewNetworkWorkspace has permanent category, item and context panels. Focus updates source context without activating a source; finite choices use PreviewDialog and the existing anchored placement. ListingActivity/PreviewBrowserSurface supplies the filesystem workspace. Actual network semantic/routing and shared provider-browser fixtures passed CI 37341405225. Physical/live-source behaviour remains QA.
 
 ### UI-052 — 10. Network & Files
 
@@ -530,9 +530,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Scan Library live state: current phase/source, honest progress only if measurable, items processed/new/updated/elapsed; indeterminate otherwise. Network Scan also exposes live source/location, checked/new/updated, sources completed and elapsed, with unobtrusive persistence while navigating Network & Files. Cancel only if genuinely supported.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewLibraryScan, PreviewLocalScanState and PreviewScanProgress combine measured native phases/counters with explicit unknown progress. Network status remains independent of local import; source totals and terminal notifications are deduplicated, and page status reads lifecycle state rather than owning a scan. No fake cancel operation is exposed. Scan lifecycle/progress regressions passed CI 37341405225. Physical source counts, network delays and page-switch presentation remain QA.
 
 ### UI-054 — 10. Network & Files
 
@@ -540,9 +540,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 PHYSICAL DEFECT: Manual Scan Network Sources Now failed to discover a newly added WebDAV movie/no useful feedback, while close/relaunch scanning found it. Compare manual pipeline with successful startup/resume path and make manual action use the same reliable discovery/reconciliation semantics with start/completion/failure feedback.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE AND AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: CustomApplication startup/resume/scheduled requests and Network Scan Now converge on PreviewLibraryScan.requestNetwork and NetworkAutoRefresh.forceRescan. Busy checks use actual network traversal; the pinned scheduler patch recognises HTTP/HTTPS WebDAV aliases. Lifecycle tests passed CI 37341405225. This resolves the verified pipeline/classification inconsistencies; the original newly-added WebDAV movie scenario still requires physical reproduction and must not be claimed passed from unit tests.
 
 ### UI-055 — 10. Network & Files
 
@@ -550,9 +550,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Library Sources = indexed network folders/media. Actions Browse/Open, Scan Source, Remove from Library (not delete media). Saved Locations = bookmarks, not necessarily indexed; actions Browse/Open, Add to Library, Remove Saved Location. Shared browser action Add to Saved Locations populates it. Empty state explains saving frequent folders.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE AND COMPONENT VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewNetworkWorkspace keeps indexed ShortcutDbAdapter sources separate from ShortcutDb saved browsing bookmarks, with Browse/Scan/Remove versus Browse/Add/Remove semantics. PreviewFolderActions and ListingFragment expose saved locations independently of indexing. Empty state explains the workflow. Failed-removal regressions passed CI 37341405225; real database/source operations and retained user history remain physical QA.
 
 ### UI-056 — 10. Network & Files
 
@@ -855,9 +855,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 UI rebuild/flicker telemetry: lightweight records when whole adapter/view-model/library dataset is recreated/rebound, with reason and item count. This must not itself cause performance problems.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Diagnostics.uiRebuild records bounded per-view counts, reason, item totals and adapter recreation. Actual library/Search adapter installation and Home rail replacement report recreation; snapshot changes and Network/Details rebuilds retain distinct reasons. Adapter recreation, Details rebind and semantic-context tests passed CI 37341405225. Instrumentation records structural data, not titles/paths. Physical flicker and multi-day performance remain QA.
 
 ### DIA-010 — Required diagnostic/reporting improvements
 
@@ -875,9 +875,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Automatic incident capture: preserve roughly 30–60 seconds before/after significant failures (uncaught exception, ANR-like stall, failed library operation, playback failure, repeated artwork-failure burst). Add burst summarisation while retaining underlying events.
 
-Status: **PARTIAL — QUEUED-WRITER WINDOW CORRECTION / VERIFICATION PENDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PRESSURE AND PHYSICAL QA PENDING**
 
-Code mapping / verification: DiagnosticFlightRecorder maintains a bounded 60-second ring; protected incident streams, repeat correlation, power-of-two summaries and deduplication passed prior CI 37120075931 and the interim source suite. Further tracing found that a delayed writer could capture a later ring instead of pre-failure records. Local checkpoint 98 now captures immutable references at failure time and reports writer delay, with rotation/clear/budget and blocked-writer tests awaiting Android execution. Post-failure window timing and queue-pressure coverage still require reconciliation; sustained load, process termination and actual Shield failure windows remain physical QA. The frozen interim does not contain this correction.
+Code mapping / verification: Failure-time immutable bounded recorder captures survive later ring rotation/clear. Incident and snapshot envelopes retain failure-time UI/playback/app-session/operation; resource samples explicitly report their later timing. Producer-time post-window routing preserves immediate context despite delayed writers and excludes events beyond sixty seconds. CI 37348732185 passed the blocked-writer, rotation/budget, repeated-burst and delayed-session regressions. Protected daily incident streams contain post-context; flight.jsonl is the latest pre-failure snapshot. Bounded routine queues can still drop post-context under sustained pressure and expose the drop count; no lossless or complete process-termination capture is claimed. Physical multi-day/pressure validation remains pending.
 
 ### DIA-012 — Required diagnostic/reporting improvements
 
@@ -895,9 +895,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Network diagnostics: provider/service, operation type, status/error category, duration, retry number and connectivity state; redact full sensitive URLs, authorization headers, passwords, tokens and sensitive query parameters. put.io OAuth secrets must never enter logs/export/QR.
 
-Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / LIVE AND PHYSICAL QA PENDING**
 
-Code mapping / verification: PutioReadClient emits fixed operation type, service, correlation ID, HTTP status, safe failure category, duration, retry count and connectivity, including account/list/search/file semantic validation in the same operation. OAuth begin/poll, metadata gateway, title-logo transport and provider-link redirects have intercepted response/error/privacy regressions passing through CI 36788311924. Enrichment scopes retain parent links across metadata-package → request → network operations. These paths do not record request URLs/headers/bodies, queries, cursors or credentials. Remaining adapter reconciliation and live provider/physical validation remain open.
+Code mapping / verification: PutioReadClient/OAuth, metadata read transport, title-logo transport and provider redirect paths emit fixed service/operation/outcome categories, correlation, duration, retries and connectivity. Intercepted HTTP/oversized/invalid-body/redirect/privacy regressions passed CI 37341405225. Enrichment scopes link parent operations; request URLs, headers, queries, cursors, bodies and credentials are excluded from these structured records. Live service failures and physical export remain QA.
 
 ### DIA-014 — Required diagnostic/reporting improvements
 
