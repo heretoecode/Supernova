@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 public class PreviewHomeMaximumTest {
     @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     @Config(qualifiers="w960dp-h540dp-land-mdpi") public void invalidExactValueKeepsSharedKeyboardOpen()throws Exception{
+        androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().setInTouchMode(false);
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> controller=
                 org.robolectric.Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
@@ -22,6 +23,7 @@ public class PreviewHomeMaximumTest {
             PreviewPagesTest.findText(root,"Select").performClick();
             assertTrue(dialog.isShowing());assertEquals(-1,accepted.get());
             android.widget.EditText input=findInput(root);assertNotNull(input);assertNotNull(input.getError());input.setText("37");
+            PreviewHomeVisualTest.measure(dialog);
             android.view.View select=PreviewPagesTest.findText(root,"Select");select.requestFocus();
             assertTrue(select.hasFocus());PreviewPagesTest.capture(PreviewHomeVisualTest.measure(dialog),"home-maximum-keyboard-focused");
             PreviewPagesTest.findText(root,"Select").performClick();
