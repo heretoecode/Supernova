@@ -23,12 +23,17 @@ public class PreviewTechnicalInfoTest {
             android.widget.LinearLayout hud=new android.widget.LinearLayout(activity);
             android.widget.Button pause=new android.widget.Button(activity),info=new android.widget.Button(activity);
             pause.setFocusableInTouchMode(true);info.setFocusableInTouchMode(true);
-            hud.addView(pause);hud.addView(info);activity.setContentView(hud);info.requestFocus();assertSame(info,activity.getCurrentFocus());
+            hud.addView(pause);hud.addView(info);activity.setContentView(hud);
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();info.requestFocus();assertSame(info,hud.findFocus());
+            // ShadowActivity uses an explicit field for getCurrentFocus rather
+            // than delegating to the window. Seed only the initial opener;
+            // verify the real view-tree focus after dismissal below.
+            Shadows.shadowOf(activity).setCurrentFocus(info);assertSame(info,activity.getCurrentFocus());
             PreviewTechnicalInfo.show(activity,null,null,0,()->{hud.setVisibility(android.view.View.VISIBLE);pause.requestFocus();});
             android.app.Dialog technical=org.robolectric.shadows.ShadowDialog.getLatestDialog();
             hud.setVisibility(android.view.View.GONE); // The player's inactivity fade while Info is open.
             technical.dismiss();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
-            assertEquals(android.view.View.VISIBLE,hud.getVisibility());assertSame(info,activity.getCurrentFocus());
+            assertEquals(android.view.View.VISIBLE,hud.getVisibility());assertSame(info,hud.findFocus());assertFalse(pause.hasFocus());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void episodeInformationToTechnicalPanelKeepsOwningActivity(){
