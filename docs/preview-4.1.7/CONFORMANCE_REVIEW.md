@@ -92,7 +92,7 @@ Reconciled 39 stale entries against source and existing evidence, including elev
 New findings/corrections:
 - Put.io sync lacked parent correlation for child transport and cancellation termination. Checkpoint 106 corrects this with three behavioural regressions; current-source Android CI must pass.
 - Network's friendly protocol formatter omitted actual internal webdav/webdavs/smbj/sshj aliases; checkpoint 107 maps them to WebDAV HTTP/HTTPS, SMB and SFTP without changing connection implementations.
-- Full APK mode previously relied on assemble tasks without explicitly invoking general lint. Checkpoint 107 adds `lintNoamazonRelease` as a required full-mode step with retained logs. Checkpoint 105 also replaces its selected full-mode unit subset with the complete Video suite. No existing strict playback, signing or upgrade gate is relaxed.
+- Full APK mode already invokes lint through the assemble dependency configured in build.gradle. Checkpoint 107 additionally makes `lintNoamazonRelease` explicit, with its own retained log; this improves evidence visibility rather than correcting an absent lint dependency. Checkpoint 105 also replaces its selected full-mode unit subset with the complete Video suite. No existing strict playback, signing or upgrade gate is relaxed.
 
 The source mapping inventory is now reconciled, but this does not close all three acceptance passes. The concrete remaining matrix is:
 

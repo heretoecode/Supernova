@@ -8,9 +8,10 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewHomeMaximumTest {
-    @Test public void invalidExactValueKeepsSharedKeyboardOpen(){
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers="w960dp-h540dp-land-mdpi") public void invalidExactValueKeepsSharedKeyboardOpen()throws Exception{
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> controller=
-                org.robolectric.Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+                org.robolectric.Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             java.util.concurrent.atomic.AtomicInteger accepted=new java.util.concurrent.atomic.AtomicInteger(-1);
             PreviewTextInput.showValidated(controller.get(),"Maximum items","bad",10,
@@ -21,6 +22,8 @@ public class PreviewHomeMaximumTest {
             PreviewPagesTest.findText(root,"Select").performClick();
             assertTrue(dialog.isShowing());assertEquals(-1,accepted.get());
             android.widget.EditText input=findInput(root);assertNotNull(input);assertNotNull(input.getError());input.setText("37");
+            android.view.View select=PreviewPagesTest.findText(root,"Select");select.requestFocus();
+            assertTrue(select.hasFocus());PreviewPagesTest.capture(PreviewHomeVisualTest.measure(dialog),"home-maximum-keyboard-focused");
             PreviewPagesTest.findText(root,"Select").performClick();
             assertEquals(37,accepted.get());assertFalse(dialog.isShowing());
         }finally{controller.pause().stop().destroy();}
