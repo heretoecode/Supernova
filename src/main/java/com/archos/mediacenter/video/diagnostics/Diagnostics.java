@@ -18,6 +18,9 @@ public final class Diagnostics {
     private static final java.util.concurrent.atomic.AtomicLong DROPPED=new java.util.concurrent.atomic.AtomicLong(),WRITE_ERRORS=new java.util.concurrent.atomic.AtomicLong(),SEQUENCE=new java.util.concurrent.atomic.AtomicLong();
     private static final DiagnosticFlightRecorder FLIGHT=new DiagnosticFlightRecorder(252*1024,60000);
     private static String activeIncident;
+    // Producer-time routing survives delayed writers and later manual/automatic windows.
+    private static long captureUntil;
+    private static String captureIncident;
     private static final Map<String,Long> incidentCounts=new HashMap<>();
     private static String incidentId="";
     private static volatile boolean qa;private static volatile long freezeUntil,mainAck=android.os.SystemClock.elapsedRealtime();private static volatile int foreground;private static final Set<String> COVERAGE=java.util.Collections.synchronizedSet(new TreeSet<>());
@@ -179,7 +182,7 @@ public final class Diagnostics {
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
-        enabled=value;mainAck=android.os.SystemClock.elapsedRealtime();if(!value)FLIGHT.clear();if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default","off");
+        enabled=value;mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default","off");
     }
     public static void beginPlayback(android.net.Uri source){
         playback=UUID.randomUUID().toString();event("playback_begin","source",sourceType(source));
@@ -191,7 +194,7 @@ public final class Diagnostics {
         String lower=scheme.toLowerCase(Locale.ROOT);
         return Arrays.asList("content","smb","webdav","webdavs","dav","davs","http","https","ftp","ftps","upnp").contains(lower)?lower:"other";
     }
-    public static void event(String event,Object... fields){
+    public static synchronized void event(String event,Object... fields){
         if(!enabled||context==null)return;
         try{String line=record(event,fields),session=playback;long now=android.os.SystemClock.elapsedRealtime();FLIGHT.add(now,line);if(COVERAGE.size()<256)COVERAGE.add(event);
             boolean detail=event.startsWith("focus")||event.startsWith("artwork_")||event.equals("home_page_render");
@@ -199,8 +202,13 @@ public final class Diagnostics {
             boolean anomaly=event.contains("error")||event.contains("failed")||event.contains("exception")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected");
             UiSnapshot failureState=anomaly?new UiSnapshot():null;
             DiagnosticFlightRecorder.Capture failureFlight=anomaly?FLIGHT.capture(now):null;
+            if(anomaly&&(event.equals("manual_problem_marker")||now>=captureUntil)){
+                captureUntil=now+60000;
+                captureIncident=incidentFile(event.equals("manual_problem_marker"),failureState.utc);
+            }
+            final String postTarget=!anomaly&&now<captureUntil?captureIncident:null;
             if(important(event)||anomaly)IMPORTANT.execute(()->{if(!enabled)return;writeImportant(line);if(anomaly)freeze(event,failureState,failureFlight);});
-            WORK.execute(()->{if(!enabled)return;if(qa||!detail)write(line,session);if(!anomaly&&android.os.SystemClock.elapsedRealtime()<freezeUntil)appendFlight(line);});
+            WORK.execute(()->{if(!enabled)return;if(qa||!detail)write(line,session);if(postTarget!=null)appendPostFlight(postTarget,line);});
         }catch(RuntimeException ignored){DROPPED.incrementAndGet();}
     }
     static boolean important(String event){return event.contains("failed")||event.contains("error")||event.contains("exception")||event.contains("UNCLEAN")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.startsWith("session_")||event.startsWith("app_session_")||event.equals("startup")||event.equals("playback_begin")||event.equals("playback_end")||event.equals("scan_started")||event.equals("scan_complete")||event.equals("scan_partial")||event.equals("incident_capture");}
@@ -237,7 +245,7 @@ public final class Diagnostics {
     private static synchronized void freeze(String reason,UiSnapshot state,DiagnosticFlightRecorder.Capture flight){
         if(context==null)return;
         boolean manual=reason.equals("manual_problem_marker");
-        if(!manual&&android.os.SystemClock.elapsedRealtime()<freezeUntil){
+        if(!manual&&state.elapsed<freezeUntil){
             long count=incidentCounts.containsKey(reason)?incidentCounts.get(reason)+1:1;
             incidentCounts.put(reason,count);
             appendFlight(record("incident_repeated","reason",reason,"incident_id",incidentId,"occurrences",count,"failure_utc_ms",state.utc,"session",state.playbackSession,"app_session",state.foregroundSession,"last_operation",state.operation));
@@ -250,18 +258,17 @@ public final class Diagnostics {
         String retained=flight.text();
         String snapshot=record("flight_snapshot","reason",reason,"completeness",retained.isEmpty()?"RECOVERY_DATA_MISSING":"PARTIAL",
                 "dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_evicted",flight.evicted,
-                "captured_elapsed_ms",flight.elapsed,"writer_delay_ms",Math.max(0,android.os.SystemClock.elapsedRealtime()-flight.elapsed));
+                "post_window_until_elapsed_ms",state.elapsed+60000,"captured_elapsed_ms",flight.elapsed,"writer_delay_ms",Math.max(0,android.os.SystemClock.elapsedRealtime()-flight.elapsed));
         synchronized(LOCK){try{
             File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs()){WRITE_ERRORS.incrementAndGet();return;}
-            java.text.SimpleDateFormat day=new java.text.SimpleDateFormat("yyyyMMdd",Locale.ROOT);day.setTimeZone(TimeZone.getTimeZone("UTC"));
-            activeIncident="incident-"+(manual?"manual-":"auto-")+day.format(new Date())+".jsonl";
+            activeIncident=incidentFile(manual,state.utc);
             // Append protected copies instead of replacing the previous incident window.
             // Manual windows have a separate daily budget from automatic failures.
             append(dir,activeIncident,3,(incident+snapshot+retained).getBytes(StandardCharsets.UTF_8));
             android.util.AtomicFile file=new android.util.AtomicFile(new File(dir,"flight.jsonl"));FileOutputStream out=null;
             try{out=file.startWrite();out.write((snapshot+retained).getBytes(StandardCharsets.UTF_8));file.finishWrite(out);}
             catch(Exception error){if(out!=null)file.failWrite(out);WRITE_ERRORS.incrementAndGet();}
-            freezeUntil=android.os.SystemClock.elapsedRealtime()+60000;
+            freezeUntil=state.elapsed+60000;
         }catch(IOException|RuntimeException error){WRITE_ERRORS.incrementAndGet();}}
     }
     private static String incidentContext(String reason){
@@ -282,6 +289,17 @@ public final class Diagnostics {
                 "native_heap",android.os.Debug.getNativeHeapAllocatedSize(),"available_memory",available,
                 "low_memory",lowMemory,"storage_free",context.getFilesDir().getUsableSpace(),"thread_count",Thread.activeCount());
     }
+    private static String incidentFile(boolean manual,long utc){
+        java.text.SimpleDateFormat day=new java.text.SimpleDateFormat("yyyyMMdd",Locale.ROOT);
+        day.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return "incident-"+(manual?"manual-":"auto-")+day.format(new Date(utc))+".jsonl";
+    }
+    private static void appendPostFlight(String target,String line){synchronized(LOCK){try{
+        File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs()){WRITE_ERRORS.incrementAndGet();return;}
+        // The protected daily stream is append-only. The latest flight file may be replaced
+        // by a delayed pre-failure snapshot, so it is not the post-window authority.
+        append(dir,target,3,line.getBytes(StandardCharsets.UTF_8));
+    }catch(IOException error){WRITE_ERRORS.incrementAndGet();}}}
     private static void appendFlight(String line){synchronized(LOCK){try{
         byte[] bytes=line.getBytes(StandardCharsets.UTF_8);append(directory(),"flight.jsonl",1,bytes);
         if(activeIncident!=null)append(directory(),activeIncident,3,bytes);

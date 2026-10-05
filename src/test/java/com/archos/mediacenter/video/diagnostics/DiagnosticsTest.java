@@ -9,6 +9,34 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void postFailureWindowUsesEventTimeEvenWhenBothWritersAreDelayed()throws Exception{
+        Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
+        java.util.concurrent.ExecutorService important=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"IMPORTANT");
+        java.util.concurrent.ExecutorService routine=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"WORK");
+        java.util.concurrent.CountDownLatch entered=new java.util.concurrent.CountDownLatch(2),release=new java.util.concurrent.CountDownLatch(1);
+        try{
+            important.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);
+            routine.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);
+            org.robolectric.util.ReflectionHelpers.setStaticField(Diagnostics.class,"freezeUntil",0L);
+            for(java.util.concurrent.ExecutorService writer:new java.util.concurrent.ExecutorService[]{important,routine})
+                writer.execute(()->{entered.countDown();try{release.await(5,java.util.concurrent.TimeUnit.SECONDS);}catch(InterruptedException stopped){Thread.currentThread().interrupt();}});
+            assertTrue(entered.await(5,java.util.concurrent.TimeUnit.SECONDS));
+            long failureTime=android.os.SystemClock.elapsedRealtime();
+            Diagnostics.event("playback_failed","failure_category","fixture");
+            Diagnostics.event("fixture_immediately_after_failure");
+            org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofSeconds(61));
+            Diagnostics.event("fixture_outside_post_window");
+            release.countDown();important.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);
+            routine.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);
+            StringBuilder retained=new StringBuilder();
+            for(java.io.File file:new java.io.File(c.getFilesDir(),"supernova-diagnostics").listFiles())
+                if(file.getName().startsWith("incident-auto-"))retained.append(java.nio.file.Files.readString(file.toPath()));
+            assertTrue(retained.toString().contains("fixture_immediately_after_failure"));
+            assertFalse(retained.toString().contains("fixture_outside_post_window"));
+            long deadline=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"freezeUntil");
+            assertEquals(failureTime+60000,deadline);
+        }finally{release.countDown();Diagnostics.setEnabled(c,false);}
+    }
     @Test public void queuedIncidentPreservesThePreFailureRecorderWindow()throws Exception{
         Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
         java.util.concurrent.ExecutorService writer=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"IMPORTANT");

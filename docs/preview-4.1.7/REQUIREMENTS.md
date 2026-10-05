@@ -460,9 +460,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Info overlay is technical only: Video, Audio, File, Source. No poster/title/synopsis/path/filename/actions. Remove Resume/Play from Beginning/File & Technical Details from Info. Back restores HUD Info focus.
 
-Status: **CORRECTION IMPLEMENTED — AWAITING AUTOMATED AND PHYSICAL VERIFICATION**
+Status: **IMPLEMENTED — EMULATOR VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: PlayerActivity opens PreviewTechnicalInfo directly with Video/Audio/File/Source only. Real native emulator run 37156506482 disproved the earlier focus-restoration claim: Info was focused before activation, but the HUD was hidden after Back. The authorised unchanged interim retains this known defect. Subsequent local code now reveals the HUD before requesting the captured Info opener, with a hidden-parent regression test; Android execution and native smoke confirmation are pending. Physical Shield behaviour remains unverified.
+Code mapping / verification: PreviewTechnicalInfo retains technical-only fields and invokes its owning PlayerController HUD restoration before focusing the captured Info opener. Strict native CI 37338324041 at fbcbc20d passed the real remote Info activation/Back assertion before release packaging, without the interim-known-defect exception. Current-source CI 37341405225 also passed the actual-view hidden-parent regression. Physical Shield remote/playback QA remains pending.
 
 ### UI-047 — 9. Search
 

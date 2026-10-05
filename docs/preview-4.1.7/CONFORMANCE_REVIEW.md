@@ -2,6 +2,12 @@
 
 Authority: 26 September handover. This record supplements, not replaces, the 115-entry REQUIREMENTS.md register. No review pass is declared complete.
 
+## 5 October continuation evidence update (not final acceptance)
+
+- Current-source CI 37341405225 passed at 81efbf6d, including checkpoint 100 source-removal/About corrections and the follow-on provider, immutable pre-failure recorder and Info tests.
+- Strict native run 37338324041 at fbcbc20d passed exact Info return before packaging and signed release upgrade/signature checks. The authorised earlier interim exception was not used. This supersedes the pending Info-fix statements below for that source tree, not physical Shield acceptance.
+- Checkpoint 101 corrects worker-time post-failure routing and adds a delayed-writer regression. Its Android validation is pending. No final conformance pass is declared complete.
+
 ## 4 October interim evidence update (not final acceptance)
 
 - Frozen interim build commit ff955d90d7a76d157776b07cfb116fd7c67ea924 has fresh successful source CI 37192141281: 137 targeted, all 391 Video, 92 regression and 17 WebDAV tests, with compilation and identity/log-safety gates passing. Test sets overlap.
