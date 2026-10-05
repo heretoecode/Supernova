@@ -26,9 +26,11 @@ public class PreviewHomeVisualTest {
             View done=(View)PreviewPagesTest.findText(root,"Done").getParent();
             PreviewPagesTest.capture(root,"home-genres-initial");
             Rect headerBefore=bounds(root,heading),footerBefore=bounds(root,done);
+            android.graphics.Bitmap headingBefore=renderRegion(root,heading);
             ScrollView scroll=findScroll(root);assertNotNull(scroll);assertTrue(scroll.getChildAt(0).getHeight()>scroll.getHeight());
             scroll.fullScroll(View.FOCUS_DOWN);done.requestFocus();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();root=measure(dialog);
             assertTrue(done.hasFocus());assertEquals(headerBefore,bounds(root,heading));assertEquals(footerBefore,bounds(root,done));
+            assertTrue("Scrolling rows must not paint over the fixed heading",headingBefore.sameAs(renderRegion(root,heading)));
             PreviewPagesTest.capture(root,"home-genres-footer-focused");dialog.dismiss();
         }finally{host.pause().stop().destroy();}
     }
@@ -54,6 +56,11 @@ public class PreviewHomeVisualTest {
             root.layout(0,0,root.getMeasuredWidth(),root.getMeasuredHeight());
         }
         return root;
+    }
+    private static android.graphics.Bitmap renderRegion(View root,View child){
+        android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(root.getWidth(),root.getHeight(),android.graphics.Bitmap.Config.ARGB_8888);root.draw(new android.graphics.Canvas(image));
+        Rect area=new Rect(0,0,child.getWidth(),child.getHeight());((ViewGroup)root).offsetDescendantRectToMyCoords(child,area);
+        return android.graphics.Bitmap.createBitmap(image,area.left,area.top,area.width(),area.height());
     }
     private static Rect bounds(View root,View child){
         Rect result=new Rect();assertTrue("Control must be visible: "+child,child.getGlobalVisibleRect(result));assertEquals(child.getWidth(),result.width());assertEquals(child.getHeight(),result.height());
