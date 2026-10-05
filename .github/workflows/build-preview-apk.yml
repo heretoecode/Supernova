@@ -22,13 +22,13 @@ permissions:
 
 jobs:
   build-debug-apk:
-    # Explicit interim snapshots only; ordinary 4.1.7 implementation commits keep source-only CI.
-    if: github.ref != 'refs/heads/codex/preview-4.1.7' || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[interim-shield-qa]')
+    # Explicit validation/interim snapshots only; ordinary implementation commits keep source-only CI.
+    if: github.ref != 'refs/heads/codex/preview-4.1.7' || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[interim-shield-qa]') || contains(github.event.head_commit.message, '[full-validation]')
     name: Build isolated Preview APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      VALIDATION_MODE: ${{ inputs.validation || 'preview' }}
+      VALIDATION_MODE: ${{ contains(github.event.head_commit.message, '[full-validation]') && 'full' || inputs.validation || 'preview' }}
       APK_VARIANT: release
 
     steps:
@@ -116,13 +116,13 @@ jobs:
           chmod +x gradlew
           ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
 
-      - name: Test personal build changes
-        if: ${{ inputs.validation == 'full' }}
+      - name: Test complete Video suite for full validation
+        if: env.VALIDATION_MODE == 'full'
         working-directory: nova/Video
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest' --tests 'com.archos.mediacenter.video.leanback.PreviewDiscoveryTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+          ./gradlew testNoamazonDebugUnitTest -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
 
       - name: Targeted stability and library metadata checks
         working-directory: nova/Video
@@ -246,8 +246,9 @@ jobs:
               echo "Deferred: broad unit suite and physical TV playback/network/library QA."
               echo "Development checkpoint; physical Shield acceptance remains user QA."
             else
-              echo "Passed: selected unit suite, lint, classic/Preview startup and signed diagnostic-to-release upgrade/restart."
+              echo "Passed: complete Video unit suite, lint, classic/Preview startup, strict playback Info return and signed diagnostic-to-release upgrade/restart."
             fi
+            echo "Validation candidate only; final release acceptance is recorded separately."
           } > nova/build-validation.txt
         env:
           APPROVED_KNOWN_DEFECT: ${{ env.VALIDATION_MODE == 'preview' && contains(github.event.head_commit.message, '[interim-known-info-return]') }}
