@@ -84,3 +84,23 @@ Source CI 37341405225 at 81efbf6d, artifact 11359475136. Twenty retained images 
 ### Checkpoint 104 corrected surface evidence
 
 CI 37350349198 at 798669e6 passed all source gates. Artifact 11362870687 was inspected: Network now shows Overview focus, five categories and independent Scan Library/Network Scanning items; episode Details is inside the canonical shell with episode-specific metadata and lower divider/teaser; active technical Info shows Video/Audio/File/Source without legacy actions or private filename. This resolves those three inadequate captures. Synthetic/absent artwork and empty decoder metadata do not establish physical rendering or full scenario coverage. Final conformance remains open as listed in CONTINUATION_2026-10-05.md.
+
+## 5 October checkpoint 107 — register reconciliation and current gates
+
+Reconciled 39 stale entries against source and existing evidence, including eleven aggregate QA entries and the visual/scope rules. All 115 original authority paragraphs are byte-for-byte unchanged. No entry remains an unexplained `PENDING IMPLEMENTATION REVIEW`; aggregate acceptance is explicitly in progress rather than converted to a pass. Earlier dated pending statements above remain historical records and are superseded only by cited later evidence.
+
+New findings/corrections:
+- Put.io sync lacked parent correlation for child transport and cancellation termination. Checkpoint 106 corrects this with three behavioural regressions; current-source Android CI must pass.
+- Network's friendly protocol formatter omitted actual internal webdav/webdavs/smbj/sshj aliases; checkpoint 107 maps them to WebDAV HTTP/HTTPS, SMB and SFTP without changing connection implementations.
+- Full APK mode previously relied on assemble tasks without explicitly invoking general lint. Checkpoint 107 adds `lintNoamazonRelease` as a required full-mode step with retained logs. Checkpoint 105 also replaces its selected full-mode unit subset with the complete Video suite. No existing strict playback, signing or upgrade gate is relaxed.
+
+The source mapping inventory is now reconciled, but this does not close all three acceptance passes. The concrete remaining matrix is:
+
+| Area | Remaining evidence/action |
+| --- | --- |
+| Home/customisation and focused visuals | Real logo/crop comparison; delete/genre/numeric chooser focused layouts; populated Search return; native child focus and retained artwork propagation scenarios. Existing synthetic images establish only their stated geometry. |
+| Metadata correction | End-to-end version grouping and series/NFO failure behaviour. Provider-level tests preserve physical rows/history but do not prove every multi-version UI selection or external NFO side effect. |
+| Current-source CI/native | Complete Video suite, source identity, WebDAV, explicit release lint, strict native Info return, signed release upgrade and certificate. Earlier native success cannot validate later source changes. |
+| Physical Shield | Real remote/rapid focus and seeking; real library scan/startup/resume equivalence; artwork after scan/restart; installed 4.1.6 data preservation; launcher viewing-distance legibility; multi-day diagnostics. No attached Shield session or new physical report is available here. |
+| Live put.io/provider | Production OAuth client/account configuration and real provider app/region handoff. OAuth is not a blocker for unrelated implementation or tests. |
+| Final delivery | A separate FINAL APK only after acceptance is resolved, tied to the final source commit and pinned signing identity. Current full-build artefacts are validation candidates. |

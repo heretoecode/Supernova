@@ -211,6 +211,13 @@ jobs:
           if [[ "$VALIDATION_MODE" == preview ]]; then extra_args+=(-x lintNoamazonRelease); fi
           ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal -PmarkPreview "${extra_args[@]}" --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
 
+      - name: Run explicit full release lint
+        if: env.VALIDATION_MODE == 'full'
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          ./gradlew lintNoamazonRelease -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-lint.log
+
       - name: Check signed release upgrade with Preview still enabled
         if: env.APK_VARIANT == 'release'
         working-directory: nova/Video
@@ -259,6 +266,7 @@ jobs:
         with:
           name: gradle-build-log
           path: |
+            nova/gradle-lint.log
             nova/gradle-source-validation.log
             nova/gradle-build.log
             nova/gradle-debug-build.log

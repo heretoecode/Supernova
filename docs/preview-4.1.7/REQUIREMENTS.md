@@ -100,9 +100,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Library membership is based on indexed media, not successful metadata. Launch local/Home immediately; enrichment runs persistently in background. Priority: visible/current Home content, current page/title, likely next items, then remaining library. TV expansion understands Episode→Season→Series and can enrich the complete local series; Details Seasons & Episodes can discover non-local/provider episodes too. Fetch/persist complete title packages where applicable: core metadata, logos/artwork, ratings, cast/crew, season/episode data, provider availability, Extras, recommendations, reception and local technical codecs. Deduplicate requests; cached data displays immediately; foreground requests temporarily override queue then background resumes. Persist completeness/staleness.
 
-Status: **IMPLEMENTED IN PART — CONFORMANCE REVIEW OUTSTANDING**
+Status: **IMPLEMENTED — SOURCE AND AUTOMATED COVERAGE / LIVE AND PHYSICAL QA PENDING**
 
-Code mapping / verification: Indexed membership is independent of scraper matches. PreviewEnrichmentQueue persists priority, stage, staleness and retries; viewport offers restore prior page priorities rather than permanently promoting old cards, preserve active foreground/package progress, and resolve episode entries to parent-series IDs. Core/credits/images/videos/recommendations/external IDs/classification and complete season packages are cached, with enabled-provider availability; PreviewDetailsData supplies disk-only initial delivery before refresh. Native technical enrichment operates on physical variants with fingerprint completion/backoff. Queue scope/viewport/parent identity/migration, metadata cache and technical-index regressions passed through CI 36788311924. Final package-to-surface reconciliation and physical foreground/background behaviour remain open; this is not a claim of live provider completeness.
+Code mapping / verification: PreviewEnrichmentQueue persists all nine package stages, country/language identity, staleness, retry and per-season cursor; each season turn is pre-emptible. PreviewDetailsData reads cached core/credits/classification/seasons/videos/recommendations before refreshing. OfficialTitleArtwork consumes cached images; provider filters observe availability independently of Details; native technical enrichment remains fingerprinted and file-specific. Existing queue/cache/episode/technical tests passed through source CI 37350349198. This closes package-to-surface source reconciliation; real provider completeness, interruption recovery and foreground responsiveness remain live/Shield QA.
 
 ### UI-011 — 3. Background metadata enrichment
 
@@ -310,9 +310,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Streaming-only uses the same Details component/quality as local. Advanced provider deep links are IN scope: where provider/platform supports it, open the specific movie/series/episode rather than generic provider hub; implement safe fallback/logging where unsupported.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE REVIEWED / LIVE PROVIDER QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewRemoteDetailsActivity constructs the same PreviewMoviePage and binds remote metadata, offers and the indexed snapshot. StreamingRepository.titleLink parses title/provider offers and resolves bounded known redirects with safe-URL validation and structured outcomes. Local StreamingActions attempts provider-package title intents, generic title intents, then explicit app/watch-page fallback; the remote route opens the resolved title URL or safe watch page. Exact-episode eligibility remains constrained by UI-025. Parser/redirect/unsafe-URL coverage passed CI 37350349198; installed provider apps, platform link support and account/region behaviour still require live QA.
 
 ### UI-032 — 7. More / contextual workflows
 
@@ -330,9 +330,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Navigation stack: Details Hero→More→child→Back restores More child opener focus→Back restores Hero More focus.
 
-Status: **IMPLEMENTED — shared dialog infrastructure; remaining native-child integration pending** / **AWAITING PHYSICAL QA**
+Status: **IMPLEMENTED — SOURCE AND SHARED-STACK COVERAGE / ROUTE QA PENDING**
 
-Code mapping: PreviewDialog.create tracks weak dialog windows and restores the actual parent-window opener, with semantic replacement/fallback diagnostics. Choose/read/review, Versions and shared keyboard use it. Three stack tests passed in run 36249337871. Retained native dialogs and every More child route still require integration review.
+Code mapping / verification: PreviewMoviePage retains More while child callbacks run. Shared choose/read/review, Versions, artwork and keyboard windows use PreviewDialog.create, retaining the actual parent opener and semantic replacement fallback. Native credential windows call styleNative/trackNative without replacing cancel/dismiss listeners. Shared child/parent, rebuilt-opener and covered-parent tests passed CI 37350349198. These tests do not exercise every native credential window or child Activity return; the complete route matrix remains acceptance QA.
 
 ### UI-034 — 7. More / contextual workflows
 
@@ -380,9 +380,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Artwork: Poster/Backdrop grids; one plain white ✓ at top-right safe area, no circle/current label; focus enlargement/boundary/glow; apply immediately, remain open, propagate to surfaces.
 
-Status: **IMPLEMENTED — shared grid and movie/episode route; integration incomplete** / **AWAITING PHYSICAL QA**
+Status: **IMPLEMENTED — SOURCE AND GRID COVERAGE / CROSS-SURFACE QA PENDING**
 
-Code mapping: PreviewArtworkPicker provides independent selection, single-flight save, failure retention and deterministic grid edges. VideoDetailsFragment reuses native savers with completion callbacks and refreshes the current backdrop. TvshowFragment now routes through the same grid with worker-based native scraper saves and existing TV refresh. Two new grid tests await CI; cross-surface cache propagation and physical behaviour remain unverified.
+Code mapping / verification: PreviewArtworkPicker supplies one selected tick, single-flight apply, retained window and failure retention. Movie/episode routes use native PosterSaverTask/BackdropSaverTask; series uses the same picker with a worker and native ScraperImage setters. The pinned MediaLib setters update scraper image fields, and ScraperProvider emits content/video notifications; MainFragment receives refreshed PreviewLibraryLoader snapshots. Successful backdrop apply also refreshes the current Details backdrop. Picker tests passed CI 37350349198. Immediate image propagation across retained Home/library/Details and physical focus/crop remain scenario QA; no blanket cache-propagation pass is inferred.
 
 ### UI-039 — 7. More / contextual workflows
 
@@ -390,9 +390,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Metadata: unified Find a Match with subtitle "Search by title, TMDB ID or IMDb ID" and one field accepting title, TMDB numeric ID or IMDb tt... identifier. Already matched may show Current Match IDs + Refresh Metadata; unmatched omits Current Match. Compact results + Match Preview + explicit Use This Match/Use This Episode. TV series correction changes series identity then rebuilds/reconciles episodes; episode correction under known parent with Change Series Match escape hatch. Preserve playback/watched/rows/file associations/versions. TMDB/IMDb UI identifiers are clean monochrome.
 
-Status: **PARTIAL — implementation and preservation audit ongoing**
+Status: **IMPLEMENTED — SOURCE AND PERSISTENCE COVERAGE / LIVE WORKFLOW QA PENDING**
 
-Code mapping / verification: PreviewMatchSearch and DirectMovieLookup implement the shared field, keyboard, compact results and explicit Match Preview. ManualVideoScrappingSearchFragment now constrains episode correction to the known parent, prevents NFO bypass, and exposes Change Series Match. Series correction retains Home memberships and aborts success reporting on failed batches. Movie/series file-history and match workflow tests pass through CI 36367506423. Full artwork/file-association preservation and live provider matching remain under review; no blanket completion claim.
+Code mapping / verification: PreviewMatchSearch/DirectMovieLookup provide the shared field and explicit review. ManualVideoScrappingSearchFragment saves accepted metadata without Remove Info, rejects changed episode parents and treats negative persistence results as failure. ManualShowScrappingSearchFragment preserves each episode video ID/file through the provider batch, rejects failed batches and migrates Home show memberships. PreviewMatchStateTest uses the real provider/schema to verify physical IDs, paths, scraper associations, bookmarks and last-played values for two versions; membership and match tests passed CI 37350349198. The test updates both movie versions explicitly and is not evidence that one UI selection corrects every encode. End-to-end version grouping and live series/NFO failure behaviour remain acceptance review. The controlling paragraph requires playback/watched/rows/file associations/versions preservation; it does not require retaining incorrect-match artwork.
 
 ### UI-040 — 7. More / contextual workflows
 
@@ -560,9 +560,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Network Shares: flatten nested Library Sources→source→actions. Focusing source immediately updates right panel with friendly path/protocol and actions. No right-panel Back button; remote LEFT returns. Distinguish network connection from library source. Add Network Source establishes connection first, then browse/select folder and add to Movies/TV library. Protocols: SMB, WebDAV HTTPS, WebDAV HTTP, SFTP, FTP, FTP TLS. Do NOT add NFS unless implementation genuinely supports it. Credentials include protocol, server/address, optional port 1–65535, path, username/password, save/show password and SMB domain when needed. WebDAV(s) may allow anonymous empty user. Discovery: SMB computers/NAS and DLNA/UPnP media servers; FTP/SFTP direct, not discovery.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE REVIEWED / PROTOCOL AND DEVICE QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewNetworkWorkspace flattens sources into the middle list with immediate right context and LEFT return. NetworkRootFragment connects through retained SMB/SMBJ, WebDAV(S), SFTP/SSHJ, FTP and FTPS handlers, then opens ListingActivity before folder indexing. NetworkServerCredentialsDialog exposes six canonical protocols, optional port validation 1–65535, path/save/show/domain and anonymous WebDAV; SMB/UPnP discovery remains separate. Checkpoint 107 corrects friendly labels for internal webdav/webdavs/smbj/sshj aliases. Network semantic/focus tests passed CI 37350349198; real protocol/discovery/credential flows remain device QA.
 
 ### UI-057 — 10. Network & Files
 
@@ -570,9 +570,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Local Storage: middle storage volumes; right capacity/status/location + Browse. Shared browser is reused for Local Storage, Network Shares, Saved Locations and put.io. Three-panel model location/source→contents→context actions. Actions are capability-driven; never show destructive operations unsupported by/read-only source. Folder actions include Add Folder to Movies Library, Add Folder to TV Shows Library, Add to Saved Locations.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE AND COMPONENT COVERAGE / DEVICE QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewNetworkWorkspace supplies volume capacity/location/status and Browse. ListingFragment wraps its existing browser in PreviewBrowserSurface and derives context commands from visible native capabilities, with separate Movies/TV indexing and Saved Locations. The put.io browser reuses PreviewBrowserSurface and read-only actions. Existing browser/folder-action/put.io fixtures passed CI 37350349198. Real removable/read-only storage and protocol permissions remain device QA; destructive capability support is not inferred from a synthetic browser.
 
 ### UI-058 — 11. Settings foundation
 
@@ -580,9 +580,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 This is foundation/navigation only, NOT category-by-category settings redesign. Preserve existing settings and semantics. Three-panel shell: Left Categories → Middle Settings/options → Right contextual explanation/current value. Dark/translucent Supernova styling, white type, monochrome icons, blue focus boundary/glow.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE AND NAVIGATION COVERAGE / SETTINGS QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewSettings organises retained Preference objects into the fixed category rail, middle preference workspace and right explanation/current value. PreferenceGroupAdapter preserves native preference listeners, storage keys and value controls; nested navigation is handled in the workspace. Compatibility/legacy controls retain existing saved values and are not a new category redesign. Entry/child return coverage passed CI 37350349198. Exhaustive settings semantics and physical appearance remain acceptance QA.
 
 ### UI-059 — 11. Settings foundation
 
@@ -610,9 +610,9 @@ Source: `IMPLEMENTATION_SPEC.md`
 
 Change launcher-facing display name from "Nova Preview" to "Supernova". Keep Preview/build identity inside About/version information. Do NOT change package/application ID or signing identity.
 
-Status: **IMPLEMENTED — ABOUT BASELINE CORRECTION AWAITING TEST / PHYSICAL QA PENDING**
+Status: **IMPLEMENTED — AUTOMATED AND IDENTITY VERIFIED / PHYSICAL QA PENDING**
 
-Code mapping / verification: prepare-preview.py assigns the launcher label Supernova without changing the established package/authority conversion. Merged identity audit passed CI 37192141281; interim signed install/upgrade and certificate checks passed run 37192141331. PreviewBuildInfo retains Preview, current version/code, package, build SHA/time and build type. This review found its descriptive implementation-baseline line still named 4.1.5; it now names the register's verified 4.1.6 baseline 094d8e8, with a new About-content test awaiting execution. No package/version/signing identity was changed. Physical launcher/About appearance remains QA.
+Code mapping / verification: prepare-preview.py retains the established application/provider conversion and sets launcher label Supernova. PreviewBuildInfo retains Preview/version/code/package/build identity and now correctly names the verified 4.1.6 baseline 094d8e8. The About correction test and identity gate passed CI 37341405225 and later source runs through 37350349198. Earlier signed native run 37338324041 verified the pinned certificate and upgrade for its source. Current-source full/native validation and physical launcher/About remain pending.
 
 ### UI-062 — 12. Launcher branding / app name
 
@@ -767,9 +767,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Evidence: QA_EVIDENCE/DIAGNOSTICS/Supernova-Diagnostics-1790390625048.zip. Treat all manual Report-a-Problem markers in this particular export as test/noise: the user explicitly did not intentionally use Report for defects in this report. Automatic diagnostics remain valid evidence.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — HISTORICAL EVIDENCE RULE APPLIED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: This paragraph is an evidence interpretation rule, not an unimplemented feature. Manual markers in the named 4.1.6 report remain test/noise; no defect claim or acceptance failure in this continuation is based on them. Automatic evidence informs DIA-002 and the separate implementation requirements.
 
 ### DIA-002 — Findings from latest retained report
 
@@ -785,9 +785,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 - 916 focus transitions were retained, but generated view IDs are not semantically useful enough to diagnose focus routes.
 - No evidence of the historical CursorWindow startup crash was present in this retained report.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — FINDINGS MAPPED / PHYSICAL FOLLOW-UP PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Artwork failures map to DIA-006/UI-020; suspected clean-exit markers to DIA-015; retention/drop pressure to DIA-004/011; scan comparability to DIA-007/UI-052–054; reload/focus to DIA-008/010 and library-return requirements; playback correlation to DIA-005/009. Historical timings/counts remain observations, not proof of causality, crashes or the absent CursorWindow failure. Physical follow-up is still required for the original reported symptoms.
 
 ### DIA-003 — Required diagnostic/reporting improvements
 
@@ -815,9 +815,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Add operation correlation IDs across library scans, network scans, metadata enrichment, artwork, playback, provider sync and significant navigation flows. Record trigger/source (Manual, Startup, Resume, Scheduled, Provider Sync) and explicit lifecycle stages.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE REVIEWED / NEW SYNC REGRESSIONS AWAITING CI**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Scans carry owned operation/batch/trigger identity; metadata packages scope request and transport operations; ArtworkTrace carries operation/media/surface; playback uses session and lifecycle identity; Details/menu/Settings entry uses restoration tokens. Audit found put.io sync children were not scoped and cancellation lacked a terminal event. Checkpoint 106 adds sync scope, completion/incomplete/cancellation and finally termination with three regression tests. Earlier coverage passed CI 37350349198; these new tests require current-source CI, and cross-process/physical correlation remains QA.
 
 ### DIA-006 — Required diagnostic/reporting improvements
 
@@ -825,9 +825,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Artwork failure diagnostics: safe anonymous media ID, surface (Movies Grid/Home Featured/etc.), artwork type, source/cache layer attempted, failure category/reason, elapsed time, fallback attempted/succeeded. No sensitive path/token leakage.
 
-Status: **IMPLEMENTED IN PART — ROUTE RECONCILIATION / VALIDATION PENDING**
+Status: **IMPLEMENTED — SOURCE AND AUTOMATED COVERAGE / PHYSICAL QA PENDING**
 
-Code mapping / verification: ArtworkTrace supplies correlated safe context and terminal outcomes across cards, backdrops, logos, Details episode/recommendation/Extras cards, provider marks, portraits and artwork selection. Unknown Picasso cache layers remain explicit. Cancellation/rebinding/privacy, terminal idempotence and parent-linked logo transport/status/invalid-payload regressions passed through CI 36788311924. Final route reconciliation and physical loading/fallback/soak checks remain open.
+Code mapping / verification: ArtworkTrace/ArtworkRequest cover cards, backdrops, logos, Details rails, provider marks, portraits and the picker with safe media/surface/type/source, elapsed time, explicit unknown cache layers and fallback outcomes. Checkpoint 102 routes both Details provider-image surfaces through the same helper instead of independent white masks. Cancellation, privacy, terminal-idempotence, logo transport/payload and provider rebind tests passed CI 37350349198. Real loading/fallback and multi-day pressure remain Shield QA.
 
 ### DIA-007 — Required diagnostic/reporting improvements
 
@@ -835,9 +835,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Scan diagnostics: Requested→Queued→Started→source/phase→Index/Reconciliation→Metadata queued→Completed/Failed/Cancelled. Include source counts and honest progress. Make manual scan trace directly comparable to startup/resume scan.
 
-Status: **IMPLEMENTED IN PART — LIFECYCLE CONFORMANCE PENDING**
+Status: **IMPLEMENTED — SOURCE AND LIFECYCLE COVERAGE / PHYSICAL QA PENDING**
 
-Code mapping / verification: PreviewLibraryScan shares the native indexed-source scheduler across owned manual/startup/resume/scheduled requests, records trigger and operation, and correlates backend lifecycle by batch/source. PreviewScanProgress aggregates/deduplicates source accounting; per-source Queued/eligible totals, batch completion and actual metadata enqueue outcomes are recorded. Native local imports retain requested/queued/start correlation via the actual Handler message, including rejected/removed queue cancellation and known native trigger labels, then checked/reconciliation/metadata enqueue/terminal states. Local/network operations finish once at batch termination, not each source. Combined Scan Library and network-only Network Scanning presentation, local overlap/queue and terminal-idempotence tests passed through CI 36788311924. Final lifecycle conformance and physical manual/startup/resume comparability remain open; unknown native triggers are not inferred.
+Code mapping / verification: PreviewLibraryScan and native backend patches trace requested/queued/start, source/batch phase, reconciliation, actual metadata enqueue outcome and one terminal operation. PreviewScanProgress deduplicates source counts; PreviewLocalScanState retains Handler-message correlation and cancelled/rejected queue outcomes. Unknown counts/triggers remain explicit. Manual/startup/resume/scheduled owned requests use the shared indexed-source scheduler; lifecycle/overlap/idempotence coverage passed CI 37350349198. Finding the same new real file through manual/startup/resume remains physical validation.
 
 ### DIA-008 — Required diagnostic/reporting improvements
 
@@ -845,9 +845,9 @@ Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
 
 Semantic focus diagnostics: stable IDs such as topnav.home/settings.category.playback, not generated LinearLayout IDs. Log input → previous focus → resulting focus → screen and whether edge input was consumed. Add focus-restoration token on entry to Details/menus/settings children and log requested/restored/fallback result on return.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE AND AUTOMATED COVERAGE / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Diagnostics.semantic stores stable identities separately from functional View tags; input captures before/after focus, screen and consumed result. TopNavigation, Network context/actions, library rows, Details, keyboard and Settings bind semantic IDs; entry/restoration tokens cover retained Details, shared menus and nested Settings returns. Existing semantic/privacy/restore tests passed CI 37350349198. Native-window route completeness and rapid physical input remain QA; generated IDs are not treated as stable semantic identities.
 
 ### DIA-009 — Required diagnostic/reporting improvements
 
@@ -932,9 +932,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Shield Favourite Apps displays approved 16:9 banner legibly.
 - Investigate official/upstream Nova install failure and package/authority coexistence without changing Supernova identity casually.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-061–063, PREFLIGHT.md and COEXISTENCE_INVESTIGATION.md; source CI 37350349198 passes, with earlier strict native/signing evidence at 37338324041. Current-source full/native run is pending. Real installed 4.1.6 data and Shield banner remain physical acceptance.
 
 ### QA-002 — Startup / global navigation
 
@@ -945,9 +945,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Home+LEFT remains Home. Settings+RIGHT remains Settings. No edge teleport.
 - Travelling focus boundary is smooth and never leaves two simultaneous focus indications.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-001–004 and UI-063; source navigation/startup tests and inspected shell captures are recorded. Current-source native startup and physical rapid-input/blur remain pending.
 
 ### QA-003 — Home
 
@@ -958,9 +958,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Recently Added is bounded; Continue Watching display cap never destroys playback state.
 - Customise Home row controls, delete confirmation, genre selector, Maximum Items and keyboard pass; toggles do not flash/rebuild whole page.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-005–009; Home/row/maximum/keyboard coverage and synthetic renders exist. Real featured artwork, clipping and customisation visual scenarios remain open.
 
 ### QA-004 — Movies / TV
 
@@ -973,9 +973,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Columns changes do not flicker/rebuild; technical columns populate from cache/index.
 - Movies artwork survives library/network scan and restart; no poster bleed outside focus boundary.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-012–020; actual toolbar/list/grid edge, return/filter/cache and retained artwork regressions are recorded. Real scan/restart poster retention remains physical QA.
 
 ### QA-005 — Details / More
 
@@ -990,9 +990,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Streaming-only title parity and specific-title provider deep links/fallback pass.
 - More child workflows restore exact focus and preserve playback/library state.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-021–040; Details fixtures, episode reconciliation, panel/focus and persistence coverage are recorded. Live provider links, all More/native routes and metadata/NFO failure/version-grouping scenarios remain open.
 
 ### QA-006 — Playback
 
@@ -1003,9 +1003,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Preparing Playback uses cached real artwork when available; no generic flash; no blocking internet art fetch.
 - Info overlay technical only and Back restores Info focus.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-041–046; component tests and earlier strict native Info-return run 37338324041 passed. Current-source full/native validation and real playback/remote seeking remain pending.
 
 ### QA-007 — Search
 
@@ -1014,9 +1014,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - No duplicate heading/subtitle/X; keyboard opens on T; exact rows/buttons; deterministic keyboard↔results routing.
 - Results only update on query change; Details return restores query/result/scroll/focus.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-047–048; keyboard/retained query and exact result-return tests passed through 37350349198. Populated visual and physical input acceptance remain separate.
 
 ### QA-008 — Network & Files
 
@@ -1029,9 +1029,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Network protocol flows support only specified protocols; connection then folder selection; no Add/Browse bounce.
 - Shared browser reused and capability-driven.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-049–057; source/component routing and corrected Network capture passed through 37350349198. Manual/startup/resume same-new-file testing and real protocols/permissions require device QA.
 
 ### QA-009 — put.io
 
@@ -1043,9 +1043,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Pagination, interruption, auth expiry, rate limit/incomplete sync cannot mass-delete.
 - Rename/move remains same record; API outage/WebDAV outage/reconnect/folder change/disconnect safe.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PUT-001–012; association/reconciliation/token/snapshot tests cover safety conditions. Production OAuth configuration and live account are the acknowledged external dependency. No live association or outage pass is claimed.
 
 ### QA-010 — Settings
 
@@ -1056,9 +1056,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Hover/focus never expands children; explicit select/right enters middle workspace; Back reverses exact hierarchy.
 - Existing setting semantics preserved.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-058–060; fixed rail and explicit hierarchy/return coverage are recorded. Actual retained setting semantics across all categories and physical navigation remain acceptance QA.
 
 ### QA-011 — Diagnostics
 
@@ -1073,9 +1073,9 @@ Source: `QA_AND_ACCEPTANCE.md`
 - Export summary generated; secrets/tokens/passwords/private URLs absent.
 - Clean-exit detector does not label normal lifecycle destroy as crash.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: DIA-001–015; sanitisation/reference/archive/recorder and source-route coverage are recorded. Checkpoint 106 sync tests require CI; multi-day pressure, physical exports and clean-exit scenarios remain pending.
 
 ### SCOPE-001 — Scope / Deferred Guardrail
 
@@ -1083,9 +1083,9 @@ Source: `SCOPE_AND_DEFERRED.md`
 
 IN SCOPE: global focus/navigation fixes; Home polish/customisation corrections; background metadata enrichment; Movies/TV toolbar/filter/list/grid/focus/artwork corrections; Unmatched workflow; complete approved Details/Seasons/Extras/More Like This/Details panels; refined More child workflows; advanced provider deep links with fallback; playback HUD corrections/seek acceleration/technical Info; Search cleanup/shared keyboard; Network & Files redesign and reliable scanning; shared browser; Saved Locations; native put.io API/OAuth + safe existing-library association while retaining WebDAV playback; Settings foundation/navigation shell only; expanded diagnostics/reporting; Supernova launcher rename/Shield banner; upstream Nova coexistence investigation.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — SCOPE MAPPED; ACCEPTANCE STILL OPEN**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: The UI, PUT and DIA entries map the promoted work; QA-001–011 map its acceptance. This continuation changes diagnostics, provider artwork, evidence fixtures and validation only within Preview 4.1.7. No Phase 1, next release or main merge is authorised or performed.
 
 ### SCOPE-002 — Scope / Deferred Guardrail
 
@@ -1093,9 +1093,9 @@ Source: `SCOPE_AND_DEFERRED.md`
 
 NOT A BROAD REDESIGN: Remove from Library. Existing source-context action remains. Existing Delete remains where applicable.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — EXISTING SOURCE ACTION PRESERVED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: PreviewNetworkWorkspace uses NetworkScanner.removeIndexedVideos for existing Remove from Library, with failed-removal state retained; native Delete remains capability-driven. UI-055 records the correction and successful regression. No general removal redesign was introduced.
 
 ### SCOPE-003 — Scope / Deferred Guardrail
 
@@ -1114,9 +1114,9 @@ Source: `SCOPE_AND_DEFERRED.md`
 Do not add functionality merely because an old mockup contains it.
 
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — WRITTEN AUTHORITY APPLIED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Reference inspection is limited to named characteristics in CONFORMANCE_REVIEW.md. Canonical navigation, same-stroke divider and absent deferred person pages follow the written specification rather than generated mockup content.
 
 ### VIS-001 — Visual Authority Rules
 
@@ -1124,9 +1124,9 @@ Source: `VISUAL_AUTHORITY.md`
 
 Priority order: (1) written requirements in this handover; (2) specifically identified normative reference characteristic; (3) current physically approved Shield behaviour; (4) reference imagery; (5) older/historical material.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — AUTHORITY ORDER APPLIED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: CONFORMANCE_REVIEW.md records comparisons against written requirements first, selected reference characteristics second and physical acceptance separately. Reference rendering is not substituted for current Shield evidence.
 
 ### VIS-002 — Visual Authority Rules
 
@@ -1134,9 +1134,9 @@ Source: `VISUAL_AUTHORITY.md`
 
 Generated mockups frequently contain an incorrect top navigation. IGNORE generated top navigation unless a written requirement explicitly says otherwise. For many mockups the top nav is intentionally outside the design target.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — CANONICAL NAVIGATION RETAINED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-001 and the inspected checkpoint-104 full-shell captures retain SUPERNOVA/Home/Movies/TV Shows/spacer/Network & Files/Search/Settings/Clock. Generated alternative navigation was not copied.
 
 ### VIS-003 — Visual Authority Rules
 
@@ -1148,9 +1148,9 @@ Labels:
 - 🧪 QA EVIDENCE — demonstrates current behaviour/problem, NOT desired design.
 - 🚫 SUPERSEDED — do not implement.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — EVIDENCE LABELS RESPECTED**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: The named authority documents and reference contact sheet were inspected before changes. Normative traits are mapped to UI entries; QA evidence identifies symptoms, not desired design. Inadequate test captures were explicitly rejected and corrected, as recorded in CONFORMANCE_REVIEW.md.
 
 ### VIS-004 — Visual Authority Rules
 
@@ -1158,9 +1158,9 @@ Source: `VISUAL_AUTHORITY.md`
 
 Global language: near-black/navy surfaces, brighter white text, monochrome iconography, Supernova blue as focus/accent. No cyan text as focus state. Focus is compact blue boundary/fill where specified + restrained outward glow; only ONE active focus target at a time. Media artwork itself is not recoloured.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — COMPONENT/RENDER COVERAGE / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: Shared PreviewDialog/PreviewFocusGlow/PreviewFocusRail and card controls implement dark surfaces, white content, blue boundaries and one active focus. Provider logos use monochrome treatment separately from media artwork. Inspected fixtures support basic composition, while real glow, legibility and transitions remain visual/Shield acceptance.
 
 ### VIS-005 — Visual Authority Rules
 
@@ -1168,9 +1168,9 @@ Source: `VISUAL_AUTHORITY.md`
 
 Physical Movies/TV card enlargement is the scale authority. Scale artwork+boundary+glow together. Do not zoom artwork inside a fixed box.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SHARED CARD GEOMETRY / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-007/012 retain the baseline 1.08x whole-card enlargement with rounded artwork clipping and outward glow. Existing geometry coverage is successful; physical approved feel remains the authority and is not re-established by synthetic images.
 
 ### VIS-006 — Visual Authority Rules
 
@@ -1178,9 +1178,9 @@ Source: `VISUAL_AUTHORITY.md`
 
 Details selected-tab divider: the existing divider segment itself turns blue at identical stroke width. Never draw a thicker secondary underline.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE/RENDER REVIEWED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-023 and PreviewToolbar use the existing divider stroke with selectedSegment for Details; focus glow is separate from stroke width. Inspected Details renders show the intended composition; physical stroke/glow comparison remains QA.
 
 ### VIS-007 — Visual Authority Rules
 
@@ -1188,9 +1188,9 @@ Source: `VISUAL_AUTHORITY.md`
 
 Movies/TV toolbar: divider-segment focus is temporary focus only, not persistent selected-tab state.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — SOURCE/RENDER REVIEWED / PHYSICAL QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-013 and the library PreviewToolbar do not retain selectedSegment after focus leaves. The inspected Grid/List fixtures show the associated divider, not a large focus box. Physical transition appearance remains QA.
 
 ### VIS-008 — Visual Authority Rules
 
@@ -1198,9 +1198,9 @@ Source: `VISUAL_AUTHORITY.md`
 
 The files in VISUAL_REFERENCES/REFERENCE imported from the 24-Sep package remain references only. They are useful for Dune hero geometry, playback HUD composition, current Movies baseline and library header direction, but newer written corrections in this handover win.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — REFERENCES USED ONLY FOR NAMED TRAITS**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: CONFORMANCE_REVIEW.md documents Dune hero, HUD and library-header comparisons and their fixture limitations. Written corrections win over older imported images.
 
 ### VIS-009 — Visual Authority Rules
 
@@ -1208,9 +1208,9 @@ Source: `VISUAL_AUTHORITY.md`
 
 VISUAL_REFERENCES/SOURCE_ARCHIVE/Supernova_chat_images_2026-09-24.zip is a preservation archive, NOT a set of instructions. Do not bulk-implement it. Use only images explicitly identified by the written specification or implementation team after matching to the described approved design.
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **REVIEWED — ARCHIVE PRESERVED, NOT IMPLEMENTED AS A SPEC**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: The source image archive remains preservation material. No bulk implementation or new functionality was derived from it in this continuation.
 
 ### VIS-010 — Visual Authority Rules
 
@@ -1219,6 +1219,6 @@ Source: `VISUAL_AUTHORITY.md`
 Branding: BRANDING/Supernova_Shield_Launcher_Master_APPROVED.png is approved visual direction. The derived 320x180 file is the Android TV launcher banner target. Preserve the master for future replacement. The wordmark/art may be refined only for legibility during exact asset production, not redesigned.
 
 
-Status: **PENDING IMPLEMENTATION REVIEW**
+Status: **IMPLEMENTED — ASSET VERIFIED / PHYSICAL SHIELD QA PENDING**
 
-Code mapping: pending detailed tracing. Verification: not yet run for this pass.
+Code mapping / verification: UI-062 records exact approved derived-asset SHA-256 and decoded signed-interim pixel equivalence; the high-resolution master remains preserved in the handover archive. No branding redesign occurred. Final package wiring and real Favourite Apps viewing-distance appearance remain validation/physical QA.
