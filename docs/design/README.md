@@ -1,58 +1,55 @@
 # Supernova — Design Authority Index
 
-Status: **ACTIVE project knowledge preservation**
+Status: **ACTIVE durable project authority**
 
-This directory is the durable design-memory layer for Supernova. Its purpose is to make the repository sufficient for a new developer or AI to understand not only *what* a feature is called, but how approved UI and behaviour are intended to look and operate without access to historical ChatGPT conversations.
+This directory is the repository's design-memory layer. A future developer/AI must be able to understand the approved appearance, behaviour, parked work and unresolved decisions without access to ChatGPT history.
 
-## Authority rules
-
-- **APPROVED** — may be implemented as specified.
-- **PARKED** — preserve the complete recoverable concept, but do not implement in the current fixes pass.
-- **REJECTED** — retained only to prevent accidental revival.
-- **SUPERSEDED** — historical design replaced by a later decision.
+## Authority/status rules
+- **APPROVED** — may be implemented when in active scope.
+- **PARKED** — preserve completely; do not implement until activated.
+- **REJECTED** — retained to prevent accidental revival.
+- **SUPERSEDED** — historical direction replaced by later authority.
 - **NEEDS DECISION** — do not guess.
-- An approved mock-up is normative only for the aspects explicitly recorded as authoritative.
-- Written later decisions override an older mock-up where they conflict.
-- Missing original image bytes must be identified as missing; never fabricate a replacement and label it as the original.
-- Historical handovers/audits may contain useful evidence, but current design records must state what remains authoritative.
+- Later written decisions override older mock-ups where they conflict.
+- A mock-up is normative only for explicitly approved aspects; generated accidental UI is not a requirement.
+- Missing original image bytes are marked missing, never recreated and mislabeled as original.
 
-## Preservation coverage
+## Surface authorities
+- [HOME.md](HOME.md) — Home, Featured, rows, Continue Watching, Customise Home; current hero vs parked exposed-card redesign.
+- [MOVIES_TV.md](MOVIES_TV.md) — grid/list, toolbar, filters, Unmatched, focus/return and artwork.
+- [DETAILS.md](DETAILS.md) — Hero, tabs, Seasons & Episodes, More Like This, Extras, information, Cast & Crew.
+- [SEARCH_MATCHING.md](SEARCH_MATCHING.md) — Search keyboard/results and Find a Match/manual correction.
+- [NETWORK_FILES.md](NETWORK_FILES.md) — three-panel model, scanning, sources, browser and protocols.
+- [SETTINGS.md](SETTINGS.md) — three-panel shell, hierarchy, providers and language presentation.
+- [PLAYBACK.md](PLAYBACK.md) — loading/preparation, primary HUD, tracks, More and restoration.
+- [GLOBAL_VISUAL_SYSTEM.md](GLOBAL_VISUAL_SYSTEM.md) — typography, focus, dividers, navigation, blur/fade and language iconography.
+- [PARKED_FUTURE.md](PARKED_FUTURE.md) — future identity, Profiles, Smart Collections, Discovery, Library Health and broader audits.
 
-The preservation pass must reconcile, at minimum:
+## Recovered historical design evidence
+The preservation pass reconciled current repository authority with older release/audit records and Project Library design records. Historical approved visual identifiers have been retained in relevant surface documents. Some original generated-image bytes are no longer available as a complete recoverable set; this is explicitly recorded rather than hidden.
 
-1. Home — top navigation, Featured/hero, startup/artwork behaviour, rows, Continue Watching, Recently Played/Added, customisation.
-2. Movies and TV — grids/lists, controls, summaries, focus/scrolling and return-focus.
-3. Details — hero, actions, tabs, More Like This, Extras, Details information, Cast & Crew, TV seasons/episodes.
-4. Search and Find a Match.
-5. Network & Files.
-6. Settings and Integrations/provider selection.
-7. Playback — loading/preparation screen, HUD, subtitles, audio, More, focus and return behaviour.
-8. Metadata, provider availability, artwork and language presentation.
-9. Global visual system — typography, focus, glow, spacing, backgrounds and top navigation.
-10. Future/parked product work — enough detail to resume safely, not merely a feature name.
+Historical records also show that implementation agents for earlier previews inspected supplied approved/reference images (six in the 4.1.2 lineage; five in the 4.1.4 handover). Their implementation/audit results remain evidence even where the original image bytes are absent.
 
-## Current implementation evidence already in GitHub
+## Current coding boundary
+The active next development job remains the frozen **35-item fixes-only** Shield QA scope in `docs/qa/4.1.7-final-shield-qa.md`. Parked design work in this directory does not expand that scope. In particular, the parked Home exposed-card Featured redesign is not activated by being documented here.
 
-Earlier release records preserve substantial design evidence. Examples include:
-- Preview 4.1.2 return handover and UI audit: global focus, top navigation, Home startup/Featured behaviour, compact Home editor, library summary, Details, Information, Search, file browser, Settings, provider selection and HUD.
-- Preview 4.1.4 recovery/release records: five approved/reference images were read during implementation; Featured hero update behaviour, focus, Network & Files, Settings and HUD corrections are documented.
-- Preview 4.1.7 requirements/implementation/conformance records: current implementation authority.
-- Physical Shield QA: current fixes-only corrections.
+## Repository self-containment standard
+A fresh developer/AI should be able to determine from GitHub:
+1. current baseline and next job;
+2. what each major surface should look like and how focus/navigation behaves;
+3. what is approved versus parked/rejected/superseded;
+4. which design details remain unresolved and must not be invented;
+5. historical implementation/QA evidence;
+6. known missing visual assets.
 
-These are inputs to preservation, not substitutes for consolidated design specifications.
+The repository stores durable project knowledge, not raw chat transcripts. When a chat produces a durable Supernova decision, the relevant authority file must be updated.
 
-## Visual asset gap
+## Visual asset recovery policy
+If an original approved mock-up becomes accessible later:
+1. commit it under `docs/design/assets/`;
+2. preserve original bytes;
+3. add a manifest entry with source/date/status/surfaces;
+4. state exactly which aspects are authoritative;
+5. retain superseded images when they are useful historical evidence.
 
-Some historical handovers explicitly record that approved/reference images were supplied to implementation agents, but those image bytes are not currently present on authoritative `main` as a complete design library. The preservation pass must recover actual visual assets wherever accessible. Where an original cannot be recovered, preserve its recoverable specification and provenance and mark **ORIGINAL VISUAL ASSET NOT RECOVERED**.
-
-## Completion standard
-
-This preservation work is complete only when a fresh developer/AI, given this repository and no ChatGPT history, can determine:
-- current visual/behavioural intent;
-- exact approved versus parked/rejected/superseded status;
-- what an approved design requires beyond a feature name;
-- which historical visual is authoritative and for what;
-- unresolved decisions that must not be invented;
-- links to implementation/QA evidence.
-
-See `/PROJECT_STATUS.md` for current execution scope. This preservation pass does not authorise implementation of parked/future work.
+Never infer an image from an opaque mock-up identifier.
