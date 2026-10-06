@@ -53,6 +53,12 @@ adb('shell', 'am', 'start', '-W', '-n', PACKAGE + '/com.archos.mediacenter.video
     '-a', 'android.intent.action.VIEW', '-d', 'file:///sdcard/Download/supernova-preview-smoke.mp4', '-t', 'video/mp4')
 try:
     time.sleep(8)
+    before = capture('playback-before-reveal')
+    if any('Movie Ends' in n.get('text', '') for n in before.iter('node')):
+        adb('shell', 'input', 'keyevent', '4')  # Hide an initially visible HUD only.
+        before = capture('playback-hidden-precondition')
+    assert not any('Movie Ends' in n.get('text', '') for n in before.iter('node')), 'HUD must be hidden before reveal test'
+    assert PACKAGE in adb('shell', 'dumpsys', 'activity', 'activities').decode(), 'Player disappeared before reveal'
     # Hidden-HUD Up reveals without opening More or pausing/seeking. The native
     # player owns this state; a phone AVD has no TV-only MediaSession. uiautomator's
     # idle wait exceeds the unchanged HUD timeout, so pause deliberately for capture.
@@ -62,7 +68,9 @@ try:
     (OUT / 'playback-reveal-native-state.txt').write_text(reveal)
     state = re.search(r'Preview transport event=reveal_complete key=19 playing=true position=(\d+)', reveal)
     assert state, 'HUD reveal gesture did not complete with native playback still running'
-    assert int(state.group(1)) < 15000, 'Hidden-HUD Up unexpectedly sought forward'
+    start = re.search(r'Preview transport event=reveal_begin key=19 playing=true position=(\d+)', reveal)
+    assert start, 'Reveal did not begin with native playback running'
+    assert 0 <= int(state.group(1)) - int(start.group(1)) < 2000, 'Hidden-HUD Up unexpectedly sought'
     (OUT / 'playback-hidden-up-reveal.png').write_bytes(adb('exec-out', 'screencap', '-p'))
     adb('shell', 'input', 'keyevent', '23')
     time.sleep(.2)

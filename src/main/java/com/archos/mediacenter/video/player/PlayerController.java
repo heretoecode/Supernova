@@ -1516,7 +1516,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if(!experimentalUi())return;
         boolean playing=Player.sPlayer!=null&&Player.sPlayer.isPlaying();
         int position=Player.sPlayer==null?-1:Player.sPlayer.getCurrentPosition();
-        log.info("Preview transport event={} key={} playing={} position={}",phase,key,playing,position);
+        android.util.Log.i("SupernovaTransport","Preview transport event="+phase+" key="+key+" playing="+playing+" position="+position);
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_transport","phase",phase,"key",key,"playing",playing,"position_ms",position);
     }
     private void restorePreviewAccent(){
@@ -2336,9 +2336,17 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
 
     /** Consume the remainder before newly focused HUD children receive the gesture. */
     public boolean consumePreviewRevealKey(KeyEvent event){
-        if(!experimentalUi()||event.getKeyCode()!=mPreviewRevealKey)return false;
-        if(event.getAction()==KeyEvent.ACTION_UP){tracePreviewTransport("reveal_complete",event.getKeyCode());mPreviewRevealKey=-1;}
-        return true;
+        if(!experimentalUi())return false;
+        int keyCode=event.getKeyCode();
+        if(keyCode==mPreviewRevealKey){
+            if(event.getAction()==KeyEvent.ACTION_UP){tracePreviewTransport("reveal_complete",keyCode);mPreviewRevealKey=-1;}
+            return true;
+        }
+        if(!isTVMenuDisplayed&&!mControlBarShowing&&keyCode>=KeyEvent.KEYCODE_DPAD_UP&&keyCode<=KeyEvent.KEYCODE_DPAD_CENTER){
+            if(event.getAction()==KeyEvent.ACTION_DOWN){switchMode(true);mPreviewRevealKey=keyCode;tracePreviewTransport("reveal_begin",keyCode);showControlBar();mPauseButton.requestFocus();}
+            return true;
+        }
+        return false;
     }
 
     public boolean onKey(int keyCode, KeyEvent event) {
@@ -2352,10 +2360,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
         switchMode(true);
         if(consumePreviewRevealKey(event))return true;
-        if(experimentalUi()&&!isTVMenuDisplayed&&!mControlBarShowing&&keyCode>=KeyEvent.KEYCODE_DPAD_UP&&keyCode<=KeyEvent.KEYCODE_DPAD_CENTER){
-            if(event.getAction()==KeyEvent.ACTION_DOWN){mPreviewRevealKey=keyCode;showControlBar();mPauseButton.requestFocus();}
-            return true;
-        }
         if(experimentalUi()&&event.getAction()==KeyEvent.ACTION_DOWN&&mControlBarShowing)sendFadeOut(SHOW_TIMEOUT);
         // Seeking may temporarily take focus away from the control bar. Recovery must not
         // depend on hasFocus(), which was precisely the state lost on the physical remote.
