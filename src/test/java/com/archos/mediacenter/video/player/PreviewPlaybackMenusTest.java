@@ -17,6 +17,22 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewPlaybackMenusTest {
     @After public void close(){PreviewPlaybackMenus.close();}
+    @Test public void fullSettingsAreAbsentFromMoreAndSubtitlePanels(){
+        Activity host=Robolectric.buildActivity(Activity.class).setup().get();
+        TVMenu menu=new TVMenu(host);menu.createAndAddTVMenuItem("English",true,true);
+        menu.createAndAddTVMenuItem(host.getString(R.string.preferences),true,false);
+        TVCardView subtitles=mock(TVCardView.class),settings=mock(TVCardView.class);
+        when(subtitles.previewTitle()).thenReturn(host.getString(R.string.menu_subtitles));when(subtitles.previewMenu()).thenReturn(menu);
+        when(settings.previewTitle()).thenReturn(host.getString(R.string.preferences));when(settings.previewMenu()).thenReturn(menu);
+        TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(java.util.Arrays.asList(subtitles,settings));
+        PreviewPlaybackMenus.show(host,adapter,null);Dialog more=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertFalse(allText(more.getWindow().getDecorView()).contains("Supernova Settings"));
+        assertFalse(allText(more.getWindow().getDecorView()).contains(host.getString(R.string.preferences)));
+        PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_subtitles));Dialog tracks=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertTrue(allText(tracks.getWindow().getDecorView()).contains("English"));assertFalse(allText(tracks.getWindow().getDecorView()).contains("Subtitle Settings"));
+        assertFalse(allText(tracks.getWindow().getDecorView()).contains(host.getString(R.string.preferences)));host.finish();
+    }
+    private String allText(View view){String result=view instanceof android.widget.TextView?((android.widget.TextView)view).getText().toString()+"\n":"";if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)result+=allText(((android.view.ViewGroup)view).getChildAt(i));return result;}
     @Test public void directSpeedAdjustmentBackReturnsToExactHudOpener(){
         Activity host=Robolectric.buildActivity(TopNavigationTestHost.class).setup().visible().get();
         Button opener=new Button(host);opener.setText("Speed");opener.setFocusableInTouchMode(true);host.setContentView(opener);opener.requestFocus();Shadows.shadowOf(host).setCurrentFocus(opener);

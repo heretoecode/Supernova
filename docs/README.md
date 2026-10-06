@@ -57,3 +57,7 @@ Existing build/delivery architecture records under `docs/` and CI material under
 ## Status vocabulary
 
 Use **APPROVED**, **PARKED**, **REJECTED**, **SUPERSEDED**, and **NEEDS DECISION** consistently. Do not infer approval from an idea merely appearing in an old handover or discussion.
+
+## Active fixes development
+
+- [Post-4.1.7 Shield fixes implementation and 35-item traceability](qa/post-4.1.7-fixes-implementation.md) — development branch only; accepted baseline remains 4.1.7 Final, physical acceptance pending.

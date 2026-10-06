@@ -8,6 +8,15 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class Preview41RowsTest {
+ @Test public void directHomeRowControlsOfferOnlyMoveAndHideAndRetainMembership(){
+  var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();try{
+   var context=host.get();androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+   PreviewHomeRows model=new PreviewHomeRows(context);PreviewHomeRows.Row row=model.rows.stream().filter(r->r.id.equals("watchnext")).findFirst().get();row.members.add("video:sample");org.robolectric.util.ReflectionHelpers.callInstanceMethod(model,"save");
+   PreviewHomeRows.rowControls(context,"watchnext",()->{});Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();View root=dialog.getWindow().getDecorView();
+   assertNotNull(PreviewPagesTest.findText(root,"Move"));View hide=PreviewPagesTest.findText(root,"Hide");assertNotNull(hide);assertNull(PreviewPagesTest.findText(root,"Delete"));
+   ((View)hide.getParent()).performClick();row=new PreviewHomeRows(context).rows.stream().filter(r->r.id.equals("watchnext")).findFirst().get();assertFalse(row.visible);assertTrue(row.members.contains("video:sample"));
+  }finally{host.pause().stop().destroy();}
+ }
  @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void watchNextMembershipSurvivesHidingAndReorder()throws Exception{
   org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();try{
    android.content.Context c=host.get();androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().clear().commit();PreviewLibraryLoader.Entry e=new PreviewPagesTest().episode(1,0,false,0,0);

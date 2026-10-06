@@ -35,6 +35,8 @@ The fixes are defined in `docs/qa/4.1.7-final-shield-qa.md`. Do not silently bro
 
 The version number for this fixes release is **NEEDS DECISION**.
 
+Implementation is in progress on `codex/post-4.1.7-shield-fixes`, created from authoritative main `dcb0e2be008a14b7da5a86e389aeae707ffb00fc`. The [35-item development traceability record](docs/qa/post-4.1.7-fixes-implementation.md) distinguishes implementation, automated validation, unresolved decisions and pending physical Shield acceptance. This branch does not replace the accepted Final baseline.
+
 ## Explicit non-goals for the immediate fixes pass
 
 - Do not begin the package/application-ID transition.

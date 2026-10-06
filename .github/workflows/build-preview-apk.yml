@@ -2,7 +2,7 @@ name: Build Supernova Preview APK
 
 on:
   push:
-    branches: ['codex/apk-build-*', 'codex/preview-4.1.6', 'codex/preview-4.1.7']
+    branches: ['codex/apk-build-*', 'codex/preview-4.1.6', 'codex/preview-4.1.7', 'codex/post-4.1.7-shield-fixes']
     paths-ignore: ['docs/**', '**/*.md']
   workflow_dispatch:
     inputs:
@@ -23,7 +23,7 @@ permissions:
 jobs:
   build-debug-apk:
     # Explicit validation/interim snapshots only; ordinary implementation commits keep source-only CI.
-    if: github.ref != 'refs/heads/codex/preview-4.1.7' || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[interim-shield-qa]') || contains(github.event.head_commit.message, '[full-validation]')
+    if: (github.ref != 'refs/heads/codex/preview-4.1.7' && github.ref != 'refs/heads/codex/post-4.1.7-shield-fixes') || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[interim-shield-qa]') || contains(github.event.head_commit.message, '[full-validation]')
     name: Build isolated Preview APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
