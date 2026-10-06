@@ -48,6 +48,10 @@ subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-f', 'lav
                 'libx264', '-preset', 'ultrafast', '-pix_fmt', 'yuv420p', '-c:a',
                 'aac', '-b:a', '64k', '/tmp/supernova-preview-smoke.mp4'], check=True)
 adb('push', '/tmp/supernova-preview-smoke.mp4', '/sdcard/Download/supernova-preview-smoke.mp4')
+# Startup captures/taps leave this phone AVD in touch mode. Android consumes
+# its first directional Down to establish focus before Activity dispatch. Switch
+# to remote navigation on the preceding screen, before launching the player.
+adb('shell', 'input', 'keyevent', '22')
 adb('logcat', '-c')
 preferences = adb('shell', 'run-as', PACKAGE, 'cat', 'shared_prefs/' + PACKAGE + '_preferences.xml')
 (OUT / 'playback-preferences.xml').write_bytes(preferences)
