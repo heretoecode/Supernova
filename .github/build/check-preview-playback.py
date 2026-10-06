@@ -19,11 +19,11 @@ def adb(*args):
 def capture(name):
     for attempt in range(3):
         adb('shell', 'rm', '-f', '/sdcard/nova-playback.xml')
-        adb('shell', 'uiautomator', 'dump', '/sdcard/nova-playback.xml')
-        data = adb('shell', 'cat', '/sdcard/nova-playback.xml')
         try:
+            adb('shell', 'uiautomator', 'dump', '/sdcard/nova-playback.xml')
+            data = adb('shell', 'cat', '/sdcard/nova-playback.xml')
             root = ET.fromstring(data)
-        except ET.ParseError:
+        except (subprocess.CalledProcessError, ET.ParseError):
             time.sleep(1)
             continue
         (OUT / (name + '.xml')).write_bytes(data)
