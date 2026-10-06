@@ -35,3 +35,20 @@ Playback return to calling surfaces must restore originating focus where valid.
 
 ## Evidence
 `docs/preview-4.1.7/REQUIREMENTS.md` playback requirements; Preview 4.1.2 handover/audit; Preview 4.1.4 release notes; `docs/qa/4.1.7-final-shield-qa.md`.
+
+## Historical approved visual references recovered from Project Library
+A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered during the preservation pass. It is historical evidence; later written 4.1.7 decisions override conflicts. It records these mock-up identifiers so the visual lineage is not lost:
+- List View + Genre/Sort/Order: `bb6ed615-ca35-4578-88c5-5855ad766c4d`
+- Broad UI states: `9f0856cb-2d33-49af-999d-734853aea861`
+- Primary Details: `db06b3cb-2136-4b1c-a1b9-69b01db3b80c`
+- Network compact Option 3: `bb06fd93-a13b-49b3-8525-97eadce38c3b`
+- Network no-divider/cyan-nav: `063d1a2d-4380-4db3-8251-6025c32bfb8a`
+- Custom red-ribbon concept: `8703e387-1c95-4752-a284-7f988338f811`
+- Playback current/end-time HUD: `7435ef99-a0f1-443d-b416-e2c44364e07c`
+- Playback tighter-bottom: `4287b280-80d5-4023-b6f1-e4b47b57cf29`
+- Playback compact controls: `b483b883-3a0e-4042-8525-9d7cb4778d26`
+- Seeking thumbnail: `f36ed05a-13e5-4183-bf3d-e4d898240cdb`
+
+The same historical record explicitly rejected permanent left-sidebar primary navigation, two-line grid titles, empty Continue Watching placeholder panels, huge bright-blue list rows, grey stock Android filter/sort/order dialogs, “NEW” Settings badges, invented analytics settings, an assistant-invented launcher icon, and generated Network/Settings mock-ups that invented unsupported features.
+
+**Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
