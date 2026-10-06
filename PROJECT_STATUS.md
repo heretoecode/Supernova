@@ -18,7 +18,7 @@ The word "Final" here means the accepted 4.1.7 development APK. It does not mean
 
 ## Authoritative 4.1.7 records
 
-Read these when implementation detail or evidence is needed:
+Read `docs/README.md` for the documentation map. Read these when implementation detail or evidence is needed:
 
 - `docs/preview-4.1.7/IMPLEMENTATION_REPORT.md` — frozen source, artifact, hashes and validation evidence.
 - `docs/preview-4.1.7/RELEASE_NOTES.md` — 4.1.7 delivered changes and limits.
