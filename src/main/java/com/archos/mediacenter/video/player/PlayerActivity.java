@@ -1538,6 +1538,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if(mPlayerController!=null&&mPlayerController.consumePreviewRevealKey(event))return true;
         if(previewUpNext!=null&&previewUpNext.handleKey(event,()->{if(mPlayerController!=null)mPlayerController.showControlBar();}))return true;
         return super.dispatchKeyEvent(event);
     }

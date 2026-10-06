@@ -2334,6 +2334,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         return mControlBar.isFocused() || mVolumeBar.isFocused();
     }
 
+    /** Consume the remainder before newly focused HUD children receive the gesture. */
+    public boolean consumePreviewRevealKey(KeyEvent event){
+        if(!experimentalUi()||event.getKeyCode()!=mPreviewRevealKey)return false;
+        if(event.getAction()==KeyEvent.ACTION_UP){tracePreviewTransport("reveal_complete",event.getKeyCode());mPreviewRevealKey=-1;}
+        return true;
+    }
+
     public boolean onKey(int keyCode, KeyEvent event) {
         if (log.isDebugEnabled()) log.debug("onKey()");
         if (mLastTouchEventTime == event.getEventTime()) {
@@ -2344,10 +2351,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             return true;
         }
         switchMode(true);
-        if(experimentalUi()&&keyCode==mPreviewRevealKey){
-            if(event.getAction()==KeyEvent.ACTION_UP){tracePreviewTransport("reveal_complete",keyCode);mPreviewRevealKey=-1;}
-            return true;
-        }
+        if(consumePreviewRevealKey(event))return true;
         if(experimentalUi()&&!isTVMenuDisplayed&&!mControlBarShowing&&keyCode>=KeyEvent.KEYCODE_DPAD_UP&&keyCode<=KeyEvent.KEYCODE_DPAD_CENTER){
             if(event.getAction()==KeyEvent.ACTION_DOWN){mPreviewRevealKey=keyCode;showControlBar();mPauseButton.requestFocus();}
             return true;
