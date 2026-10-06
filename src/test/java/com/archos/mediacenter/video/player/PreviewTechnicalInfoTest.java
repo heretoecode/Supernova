@@ -42,6 +42,8 @@ public class PreviewTechnicalInfoTest {
             android.app.Activity activity=host.get();activity.setContentView(new android.widget.TextView(activity));
             PreviewTechnicalInfo.show(activity,new VideoMetadata(),android.net.Uri.parse("webdavs://example/file.mkv"),0);
             android.app.Dialog technical=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(technical.isShowing());
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            android.view.View focus=technical.getWindow().getDecorView().findFocus();assertNotNull(focus);assertTrue(focus instanceof android.widget.ScrollView);assertTrue(focus.isFocusableInTouchMode());
             for(String label:new String[]{"Video","Audio","File","Source"})assertNotNull(find(technical.getWindow().getDecorView(),label));
             for(String label:new String[]{"File & Technical Details","file.mkv","Resume","Close"})assertNull(find(technical.getWindow().getDecorView(),label));
             assertNull(Shadows.shadowOf(activity).getNextStartedActivity());assertFalse(activity.isFinishing());technical.dismiss();
