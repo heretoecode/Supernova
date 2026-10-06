@@ -49,6 +49,10 @@ subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-f', 'lav
                 'aac', '-b:a', '64k', '/tmp/supernova-preview-smoke.mp4'], check=True)
 adb('push', '/tmp/supernova-preview-smoke.mp4', '/sdcard/Download/supernova-preview-smoke.mp4')
 adb('logcat', '-c')
+preferences = adb('shell', 'run-as', PACKAGE, 'cat', 'shared_prefs/' + PACKAGE + '_preferences.xml')
+(OUT / 'playback-preferences.xml').write_bytes(preferences)
+assert b'name="try_new_ui" value="true"' in preferences, 'Preview must be enabled before playback'
+assert b'name="uimode">2<' in preferences, 'Native player must use TV mode in this AVD'
 adb('shell', 'am', 'start', '-W', '-n', PACKAGE + '/com.archos.mediacenter.video.player.PlayerActivity',
     '-a', 'android.intent.action.VIEW', '-d', 'file:///sdcard/Download/supernova-preview-smoke.mp4', '-t', 'video/mp4')
 try:
@@ -99,6 +103,9 @@ try:
     assert any(n.get('resource-id', '').endswith('/preview_more') and n.get('focused') == 'true' for n in root.iter('node')), 'Back did not restore exact HUD More opener'
     adb('shell', 'pidof', PACKAGE)
 finally:
+    (OUT / 'playback-final-input.txt').write_bytes(adb('shell', 'dumpsys', 'input'))
+    (OUT / 'playback-final-activities.txt').write_bytes(adb('shell', 'dumpsys', 'activity', 'activities'))
+    (OUT / 'playback-final-screen.png').write_bytes(adb('exec-out', 'screencap', '-p'))
     logs = adb('logcat', '-d')
     (OUT / 'playback-runtime-logcat.txt').write_bytes(logs)
     assert b'FATAL EXCEPTION' not in logs, 'Playback/Information runtime crash'

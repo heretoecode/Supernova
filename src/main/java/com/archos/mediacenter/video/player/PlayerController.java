@@ -2336,8 +2336,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
 
     /** Consume the remainder before newly focused HUD children receive the gesture. */
     public boolean consumePreviewRevealKey(KeyEvent event){
-        if(!experimentalUi())return false;
         int keyCode=event.getKeyCode();
+        if(event.getAction()==KeyEvent.ACTION_DOWN&&keyCode>=19&&keyCode<=23)android.util.Log.i("SupernovaTransport","Preview input key="+keyCode+" preview="+experimentalUi()+" hud="+mControlBarShowing+" menu="+isTVMenuDisplayed);
+        if(!experimentalUi())return false;
         if(keyCode==mPreviewRevealKey){
             if(event.getAction()==KeyEvent.ACTION_UP){tracePreviewTransport("reveal_complete",keyCode);mPreviewRevealKey=-1;}
             return true;

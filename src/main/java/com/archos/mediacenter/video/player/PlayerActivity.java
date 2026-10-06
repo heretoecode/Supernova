@@ -1538,6 +1538,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if(event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()>=19&&event.getKeyCode()<=23)android.util.Log.i("SupernovaTransport","Preview activity input key="+event.getKeyCode()+" controller="+(mPlayerController!=null));
         if(previewUpNext!=null&&previewUpNext.handleKey(event,()->{if(mPlayerController!=null)mPlayerController.showControlBar();}))return true;
         if(mPlayerController!=null&&mPlayerController.consumePreviewRevealKey(event))return true;
         return super.dispatchKeyEvent(event);
