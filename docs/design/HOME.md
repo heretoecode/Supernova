@@ -32,6 +32,7 @@ The current baseline is the 4.1.7 Featured implementation, not the later exposed
 - Synopsis width relates to visible logo width: target ~90% of fitted visible logo width, clamped to approximately 25–32% of viewport width.
 - Showcase artwork sits on the right, beneath the Network & Files→clock area, to the right of synopsis and above Continue Watching.
 - Prefer reposition/crop of real artwork. Darken/blur text-safe areas when required for legibility.
+- When only poster-shaped fallback artwork is available for a landscape Home card, preserve the uncropped artwork with letterbox/framing rather than destructive centre-cropping.
 - Historical geometry rule retained from the approved Featured work: title maximum two lines; synopsis maximum three lines with ellipsis; content changes must not resize the hero/control geometry.
 
 ### Actions and cycling
@@ -139,6 +140,7 @@ Primary repository evidence:
 - `docs/archive/root-history/NOVA_UI_AUDIT_REPORT_4.1.2.md` — runtime visual audit.
 - `docs/preview-4.1.4/RELEASE_NOTES.md` — hero-only Featured update, first-backdrop behaviour and focus.
 - `docs/qa/4.1.7-final-shield-qa.md` — current physical fixes-only scope.
+- `docs/project/HISTORY_RECONCILIATION.md` — recovered older product/design decisions and supersession notes.
 
 Historical ChatGPT design discussion has now been consolidated here for the later exposed-card direction so that the design intent is not dependent on chat retention.
 
