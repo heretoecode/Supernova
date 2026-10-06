@@ -104,7 +104,7 @@ final class PreviewPlaybackMenus {
    // Track and switch actions update in place. A nested native picker replaces current.
    if(current==before&&before.isShowing()){Set<Integer> updated=new HashSet<>();for(int j=0;j<actions.size();j++)if(actions.get(j)!=null&&actions.get(j).isChecked())updated.add(j);PreviewDialog.updateChecks(before,updated);}
   });
-  if(subtitles)for(int i=0;i<actions.size();i++){
+  if(subtitles||audio)for(int i=0;i<actions.size();i++){
    TVMenuItem track=actions.get(i);Object code=track==null?null:track.getTag(R.id.preview_track_language);
    if(code instanceof String)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(current,i,(String)code);
   }

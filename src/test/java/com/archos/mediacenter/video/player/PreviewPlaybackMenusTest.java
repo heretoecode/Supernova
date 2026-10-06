@@ -102,6 +102,15 @@ public class PreviewPlaybackMenusTest {
         assertTrue(((android.widget.ImageView)row.getChildAt(0)).getDrawable() instanceof com.archos.mediacenter.video.leanback.PreviewLanguageIcon);
         assertTrue(track.isChecked());assertEquals(View.VISIBLE,dialog.getWindow().getDecorView().findViewWithTag("preview-check:1").getVisibility());
     }
+    @Test public void audioTrackUsesItsActualLanguageOnInitialMenuDelivery(){
+        Activity host=Robolectric.buildActivity(Activity.class).setup().get();TVMenu menu=new TVMenu(host);
+        TVMenuItem track=menu.createAndAddTVMenuItem("English",true,true);track.setTag(R.id.preview_track_language,"eng");
+        TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_audio));when(card.previewMenu()).thenReturn(menu);
+        TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
+        PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_audio));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        android.view.ViewGroup row=(android.view.ViewGroup)dialog.getWindow().getDecorView().findViewWithTag("preview-label:1").getParent();
+        assertTrue(((android.widget.ImageView)row.getChildAt(0)).getDrawable() instanceof com.archos.mediacenter.video.leanback.PreviewLanguageIcon);assertTrue(track.isChecked());host.finish();
+    }
     @Test public void subtitleDownloadUsesDesignedLabelAndRetainsNativeAction(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();TVMenu menu=new TVMenu(host);
         TVMenuItem download=menu.createAndAddTVMenuItem(host.getString(R.string.get_subtitles_online),true,false);

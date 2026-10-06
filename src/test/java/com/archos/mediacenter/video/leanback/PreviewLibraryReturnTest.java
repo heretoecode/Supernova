@@ -35,6 +35,7 @@ public class PreviewLibraryReturnTest {
             // 60 records sorted newest first, plus the summary and toolbar cells.
             int position=28;layout.scrollToPositionWithOffset(position,120);PreviewPagesTest.layout(container);
             View item=list.findViewHolderForAdapterPosition(position).itemView;assertEquals("v34",item.getTag());assertTrue(item.requestFocus());PreviewPagesTest.layout(container);
+            if(!table){int centre=list.getPaddingTop()+(list.getHeight()-list.getPaddingTop()-list.getPaddingBottom())/2;assertTrue("Grid focus centers the row",Math.abs((item.getTop()+item.getBottom())/2-centre)<=2);}
             int top=item.getTop();int first=layout.findFirstVisibleItemPosition();assertTrue(first>2);assertEquals(table?24:4,layout.getSpanSizeLookup().getSpanSize(position));
             item.performClick();assertEquals(34,opened[0]);
             pages.suspendForChild();

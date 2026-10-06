@@ -2149,7 +2149,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 mPlayerController.getTVMenuAdapter().setCardViewVisibility(View.VISIBLE, mAudioTracksTVCardView);
 
                 for (int i = 0; i < mAudioInfoController.getTrackCount(); i++) {
-                    mAudioTracksTVMenu.createAndAddTVMenuItem(mAudioInfoController.getTrackNameAt(i).toString(), true, mAudioInfoController.getTrack() == i);
+                    TVMenuItem item=mAudioTracksTVMenu.createAndAddTVMenuItem(mAudioInfoController.getTrackNameAt(i).toString(), true, mAudioInfoController.getTrack() == i);
+                    if(mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&i<mPlayer.getVideoMetadata().getAudioTrackNb()){
+                        VideoMetadata.AudioTrack audio=mPlayer.getVideoMetadata().getAudioTrack(i);
+                        if(audio!=null)item.setTag(R.id.preview_track_language,audio.language==null?"":audio.language);
+                    }
                 }
 
                 mAudioTracksTVMenu.createAndAddSeparator();

@@ -146,6 +146,7 @@ public class PreviewMoviePageTest {
             for(int frame=0;frame<8;frame++){page.computeScroll();PreviewPagesTest.layout(nav);}
             android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertTrue(visible.height()>80);
             PreviewPagesTest.capture(nav,"details-information-next");
+            View firstPerson=page.findViewWithTag("person:Fixture Person 1:Role 1");assertNotNull(firstPerson);assertTrue(firstPerson.requestFocus());page.scrollTo(0,200);
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));
             assertSame(page.findViewWithTag("section:Details"),page.findFocus());assertTrue("Lower Up retains collapsed hero",page.getScrollY()>0);
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertEquals(0,page.getScrollY());assertSame(primary,page.findFocus());
