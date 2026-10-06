@@ -18,7 +18,7 @@ The accepted development baseline is **Preview 4.1.7 Final**.
 - Current physical Shield QA / fixes-only scope: `docs/qa/4.1.7-final-shield-qa.md`
 - Project decisions and parked roadmap: `docs/project/DECISIONS_AND_ROADMAP.md`
 
-At the time of the repository-memory cleanup, `main` is not yet the authoritative 4.1.7 branch. See `PROJECT_STATUS.md` before making branch or release assumptions.
+The cleaned Preview 4.1.7 lineage was promoted on 6 October 2026, and `main` is now the authoritative repository branch. The exact source used for the accepted 4.1.7 Final APK remains the frozen commit listed above.
 
 ## Repository and build
 
