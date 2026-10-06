@@ -18,8 +18,6 @@ public final class PreviewToolbar extends LinearLayout {
     @Override public void onViewAdded(View child) {
         super.onViewAdded(child);
         child.setBackground(null);
-        int shift=PreviewDialog.dp(getContext(),6);
-        child.setPadding(child.getPaddingLeft(),child.getPaddingTop()+shift,child.getPaddingRight(),Math.max(0,child.getPaddingBottom()-shift));
         child.setOnFocusChangeListener((v, focused) -> invalidate());
         child.setOnKeyListener((v, key, event) -> {
             if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
