@@ -6,7 +6,9 @@ This index separates **current authority** from **historical evidence**. If a hi
 
 1. `/PROJECT_STATUS.md` — current baseline, active work, constraints and session workflow.
 2. `project/DECISIONS_AND_ROADMAP.md` — durable approved/parked/future project decisions.
-3. `qa/4.1.7-final-shield-qa.md` — current physical QA findings and bounded fixes-only scope.
+3. `design/README.md` — current design authority and status rules.
+4. `qa/4.1.7-final-shield-qa.md` — current physical QA findings and bounded fixes-only scope.
+5. `project/HISTORY_RECONCILIATION.md` — recovered historical decisions, superseded designs, rejections and future explorations needed to interpret older project history safely.
 
 ## Current 4.1.7 authority
 
@@ -22,6 +24,10 @@ The `preview-4.1.7/` directory is the detailed release/development record.
 - `INTERIM_SHIELD_QA.md` — historical interim evidence only; it is not the Final APK.
 - `RECOVERY_2026-09-27.md` and `CONTINUATION_2026-10-05.md` — recovery/continuation records; historical once superseded by final report.
 
+## Design authority
+
+`design/` preserves the current visual/behaviour authority for Home, Movies/TV, Details, Search/Matching, Network & Files, Settings, Playback, the global visual system and parked future design. Later written decisions override conflicting older mock-ups. Missing original visual bytes are explicitly identified rather than recreated.
+
 ## Historical records
 
 Older Preview 3.x / 4.0 / 4.1.x handovers, audits, build records, recovery notes and QA files remain useful evidence. They are **SUPERSEDED as statements of current project state** unless explicitly linked by a current authority file.
@@ -29,6 +35,8 @@ Older Preview 3.x / 4.0 / 4.1.x handovers, audits, build records, recovery notes
 The older root-level `NOVA_*` handover/audit/QA files have been preserved under `archive/root-history/`. Older version-specific material already under `docs/` remains historical unless explicitly promoted by a current authority record.
 
 The legacy `doc/` directory is inherited/upstream technical documentation. Do not confuse it with Supernova's project-state records under `docs/`.
+
+`project/HISTORY_RECONCILIATION.md` is the bridge for historically important decisions recovered from older project records that should remain understandable without ChatGPT history. It does not override newer current authority.
 
 ## Preview-next material
 
@@ -44,6 +52,7 @@ Existing build/delivery architecture records under `docs/` and CI material under
 - Prefer indexed evidence with source/version/time context over dumping unlabelled media into Git history.
 - GitHub Releases are the intended durable home for distributable APK artifacts.
 - Historical evidence must be labelled so it cannot be mistaken for the current baseline.
+- Raw ChatGPT transcripts are not project authority; durable decisions from discussion must be reconciled into current GitHub records.
 
 ## Status vocabulary
 
