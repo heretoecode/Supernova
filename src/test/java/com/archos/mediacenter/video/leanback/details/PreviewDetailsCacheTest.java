@@ -14,6 +14,22 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewDetailsCacheTest {
+    @Test public void progressiveDeliveryRetainsCachedSectionsUntilTheirRefreshCompletes()throws Exception{
+        PreviewDetailsData.Result cached=new PreviewDetailsData.Result();cached.credits=new JSONObject("{cast:[{name:'Actor'}]}");
+        cached.extras.add(new PreviewDetailsData.Extra("Trailer","Trailer","abcdefghijk"));cached.extrasReady=true;
+        cached.episodes.put(1,new org.json.JSONArray("[{episode_number:1}]"));
+        PreviewDetailsData.Result partial=new PreviewDetailsData.Result();partial.details=new JSONObject("{name:'Refreshed'}");
+        PreviewDetailsData.Result merged=PreviewDetailsData.merge(cached,partial);
+        assertEquals("Refreshed",merged.details.getString("name"));assertEquals(1,merged.extras.size());assertNotNull(merged.credits);assertNotNull(merged.episodes.get(1));
+        PreviewDetailsData.Result emptyVideos=new PreviewDetailsData.Result();emptyVideos.extrasReady=true;
+        PreviewDetailsData.merge(merged,emptyVideos);assertTrue(merged.extras.isEmpty());assertNotNull(merged.episodes.get(1));
+    }
+    @Test public void publishedCollectionsCannotBeChangedByLaterWorkerSections(){
+        PreviewDetailsData.Result worker=new PreviewDetailsData.Result();worker.extras.add(new PreviewDetailsData.Extra("Trailer","Trailer","abcdefghijk"));
+        java.util.concurrent.atomic.AtomicReference<PreviewDetailsData.Result> posted=new java.util.concurrent.atomic.AtomicReference<>();
+        PreviewDetailsData.publish(worker,posted::set);worker.extras.clear();worker.episodes.put(2,new org.json.JSONArray());
+        assertEquals(1,posted.get().extras.size());assertTrue(posted.get().episodes.isEmpty());
+    }
     @Test public void cachedSeasonAndRecommendationsConsumeKnownProviderPackages()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
         PreviewMetadataCache.load(context,"tv",432,"",()->new JSONObject("{name:'Series',seasons:[{season_number:1}]}"));

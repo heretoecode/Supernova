@@ -62,8 +62,6 @@ final class PreviewPlaybackMenus {
   for(TVCardView card:cards)if(activity.getString(R.string.pref_play_mode_title).equals(card.previewTitle())){labels.add("Play Mode");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
   labels.add("— VIDEO");actions.add(()->{});
   for(TVCardView card:cards){String title=card.previewTitle();if(audio.equals(title)||subs.equals(title)||activity.getString(R.string.menu_info).equals(title)||activity.getString(R.string.pref_play_mode_title).equals(title)||activity.getString(R.string.preferences).equals(title))continue;labels.add(title);actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
-  labels.add("— SUPERNOVA");actions.add(()->{});
-  for(TVCardView card:cards)if(activity.getString(R.string.preferences).equals(card.previewTitle())){labels.add("Supernova Settings");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
   labels.add("Report a Problem");actions.add(()->com.archos.mediacenter.video.diagnostics.Diagnostics.reportProblem(activity));
   current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),rootFocus,Collections.emptySet(),false,n->{rootFocus=n;actions.get(n).run();});
   current.setOnCancelListener(d->close());position(activity,current,true);
@@ -76,6 +74,7 @@ final class PreviewPlaybackMenus {
   TVMenuItem settings=null;String lastGroup="";
   for(int i=0;i<menu.getChildCount();i++){
    View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
+   if(activity.getString(R.string.preferences).equals(item.getText()))continue;
    if(audio&&activity.getString(R.string.player_pref_audio_speed_title).equals(item.getText()))continue;
    boolean other=subtitles&&Boolean.FALSE.equals(item.getTag());if(other)hasOther=true;if(otherLanguages?!other:other)continue;
    if(subtitles&&!otherLanguages&&activity.getString(R.string.menu_player_settings).equals(item.getText())){settings=item;continue;}
@@ -92,12 +91,12 @@ final class PreviewPlaybackMenus {
   }
   if(hasOther&&!otherLanguages){labels.add("— TRACK");actions.add(null);actions.add(null);labels.add("Other languages");}
   if(settings!=null){labels.add("— TIMING & APPEARANCE");actions.add(null);actions.add(settings);labels.add("Subtitle Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
-  if(subtitles&&!otherLanguages){labels.add("Subtitle Settings");actions.add(null);}
+
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
   dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);
   current=PreviewDialog.choose(activity,otherLanguages?"Subtitles · Other languages":card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{
    if(labels.get(n).startsWith("— "))return;
-   if(subtitles&&labels.get(n).equals("Subtitle Settings")){activity.startActivity(new android.content.Intent(activity,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class).putExtra("preview_settings_category","Subtitles"));return;}
+
    TVMenuItem item=actions.get(n);
    if(item!=null&&(!item.isEnabled()||!item.isFocusable()))return;
    if(item==null){select(activity,card,()->select(activity,card,parent,n,false),-1,true);return;}

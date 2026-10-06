@@ -37,6 +37,7 @@ public final class PreviewCardPresenter extends Presenter {
         Object boundItem;
         long diagnosticMediaId;
         int artworkGeneration;
+        Uri failedArtwork;int artworkFailures;long retryArtworkAt;
         com.archos.mediacenter.video.diagnostics.ArtworkTrace artworkTrace;
         public boolean artworkReady=true;
         final int width, height;
@@ -47,7 +48,14 @@ public final class PreviewCardPresenter extends Presenter {
             height = dp(style == Style.LIST ? 62 : style == Style.CONTINUE ? 105 : style == Style.CATEGORY ? 86 : 210);
             setFocusable(true); setFocusableInTouchMode(true);
             setCardType(CARD_TYPE_MAIN_ONLY);setBackgroundColor(Color.TRANSPARENT);setClipChildren(false);setClipToPadding(false);
-            FrameLayout body = new FrameLayout(c);
+            FrameLayout body = new FrameLayout(c){
+                private final android.graphics.Path clip=new android.graphics.Path();
+                @Override protected void dispatchDraw(android.graphics.Canvas canvas){
+                    int saved=canvas.save();float inset=.5f*getResources().getDisplayMetrics().density;
+                    clip.reset();clip.addRoundRect(new android.graphics.RectF(inset,inset,getWidth()-inset,getHeight()-inset),dp(6),dp(6),android.graphics.Path.Direction.CW);
+                    canvas.clipPath(clip);super.dispatchDraw(canvas);canvas.restoreToCount(saved);
+                }
+            };
             GradientDrawable outline = new GradientDrawable();
             outline.setColor(0xc00b1b29); outline.setCornerRadius(dp(6));
             body.setBackground(outline); body.setClipToOutline(true);
@@ -101,6 +109,7 @@ public final class PreviewCardPresenter extends Presenter {
             caption.setVisibility(View.VISIBLE);
         }
     }
+    public static long retryDelay(int failures){return Math.min(30000L,1000L << Math.min(5,Math.max(0,failures-1)));}
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent) { return new ViewHolder(new Card(parent.getContext(), style)); }
     @Override public void onBindViewHolder(ViewHolder holder, Object item) {
         Card c = (Card)holder.view;
@@ -108,8 +117,8 @@ public final class PreviewCardPresenter extends Presenter {
         Object identity=item instanceof Video?"video:"+((Video)item).getId():item instanceof Tvshow?"show:"+((Tvshow)item).getTvshowId():item;
         boolean sameItem=java.util.Objects.equals(identity,c.boundItem);c.boundItem=identity;
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_bind","same_item",sameItem,"style",style.name(),"media_id",c.diagnosticMediaId,"reason",sameItem?"metadata_rebind":"identity_changed");
-        if(!sameItem){if(c.artworkTrace!=null)c.artworkTrace.cancelled();Picasso.get().cancelRequest(c.image);c.image.setImageDrawable(null);c.requestedArtwork=null;c.artworkGeneration++;}
-        c.artworkReady=true;c.hasArtwork = false; c.subtitle.setText(""); c.subtitle.setVisibility(View.GONE);
+        if(!sameItem){if(c.artworkTrace!=null)c.artworkTrace.cancelled();Picasso.get().cancelRequest(c.image);c.image.setImageDrawable(null);c.requestedArtwork=null;c.failedArtwork=null;c.artworkFailures=0;c.retryArtworkAt=0;c.artworkGeneration++;}
+        if(!sameItem)c.artworkReady=true;c.hasArtwork = false; c.subtitle.setText(""); c.subtitle.setVisibility(View.GONE);
         c.progress.setProgress(0); c.progress.setVisibility(View.GONE);
         Uri uri = null;boolean landscape=false;
         c.subtitle.setTextColor(0xffa4b6c7);
@@ -152,14 +161,14 @@ public final class PreviewCardPresenter extends Presenter {
         boolean letterbox=style==Style.POSTER||(style==Style.CONTINUE||style==Style.LIST)&&!landscape;
         c.image.setScaleType(letterbox?ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_CROP);
         if(uri==null&&c.requestedArtwork!=null){if(c.artworkTrace!=null)c.artworkTrace.cancelled();Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.artworkGeneration++;c.image.setImageDrawable(null);}
-        if(uri!=null&&!uri.equals(c.requestedArtwork)){c.requestedArtwork=uri;final int generation=++c.artworkGeneration;c.artworkReady=false;
+        if(uri!=null&&!uri.equals(c.requestedArtwork)&&(!uri.equals(c.failedArtwork)||android.os.SystemClock.elapsedRealtime()>=c.retryArtworkAt)){c.requestedArtwork=uri;final int generation=++c.artworkGeneration;c.artworkReady=false;
         final long mediaId=item instanceof Video?((Video)item).getId():item instanceof Tvshow?((Tvshow)item).getTvshowId():0;final String surface=style==Style.CONTINUE?"home.row":style==Style.LIST?"library.list":item instanceof Movie?"movies.grid":"tv.grid";
         if(c.artworkTrace!=null)c.artworkTrace.cancelled();
         final com.archos.mediacenter.video.diagnostics.ArtworkTrace trace=new com.archos.mediacenter.video.diagnostics.ArtworkTrace(mediaId,surface,style==Style.POSTER?"poster":"landscape",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri));c.artworkTrace=trace;
         com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(style==Style.LIST?Math.round(112*c.getResources().getDisplayMetrics().density):c.width,c.height);
         if(letterbox)request.centerInside();else request.centerCrop();request.noPlaceholder().noFade().into(c.image, new com.squareup.picasso.Callback() {
-                @Override public void onSuccess() { if(generation==c.artworkGeneration){c.artworkReady=true;trace.ready("picasso_unspecified");} }
-                @Override public void onError(Exception error) { if(generation!=c.artworkGeneration)return;c.artworkReady=true;c.requestedArtwork=null;c.hasArtwork=c.image.getDrawable()!=null; c.updateFocus();trace.failed(error==null?"unknown":error.getClass().getSimpleName(),c.hasArtwork); }
+                @Override public void onSuccess() { if(generation==c.artworkGeneration){c.artworkReady=true;c.failedArtwork=null;c.artworkFailures=0;c.retryArtworkAt=0;trace.ready("picasso_unspecified");} }
+                @Override public void onError(Exception error) { if(generation!=c.artworkGeneration)return;c.artworkReady=true;c.failedArtwork=c.requestedArtwork;c.artworkFailures++;c.retryArtworkAt=android.os.SystemClock.elapsedRealtime()+retryDelay(c.artworkFailures);c.requestedArtwork=null;c.hasArtwork=c.image.getDrawable()!=null; c.updateFocus();trace.failed(error==null?"unknown":error.getClass().getSimpleName(),c.hasArtwork); }
             });}
     }
     public void bindEntry(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){Card card=(Card)holder.view;card.preferredArtwork=entry.backdrop;try{onBindViewHolder(holder,entry.media);bindSecondary(holder,entry);}finally{card.preferredArtwork=null;}}

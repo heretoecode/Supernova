@@ -18,7 +18,7 @@ public final class PreviewProviderIcons {
   if(!(found instanceof ViewGroup)||((ViewGroup)found).getChildCount()==0)return;
   View child=((ViewGroup)found).getChildAt(0);if(!(child instanceof ImageView))return;
   ImageView icon=(ImageView)child;
-  bind(icon,path,0,"library.filters".equals(surface)?"library.filters":"provider.choice");
+  bind(icon,path,0,surface);
  }
  /** Shared monochrome treatment also used by focus-only Details provider marks. */
  public static void bind(ImageView icon,String path,long media,String surface){
@@ -26,7 +26,7 @@ public final class PreviewProviderIcons {
   // Desaturate rather than replacing every opaque pixel with white: catalogue
   // logos can have opaque backgrounds whose internal brand shape must survive.
   android.graphics.ColorMatrix monochrome=new android.graphics.ColorMatrix();monochrome.setSaturation(0);
-  icon.setColorFilter(new android.graphics.ColorMatrixColorFilter(monochrome));
+  if("settings.providers".equals(surface))icon.clearColorFilter();else icon.setColorFilter(new android.graphics.ColorMatrixColorFilter(monochrome));
   android.graphics.drawable.Drawable fallback=new com.archos.mediacenter.video.leanback.PreviewIcon("streaming");
   icon.setImageDrawable(fallback);
   if(path==null||!path.matches("/[A-Za-z0-9._-]+"))return;

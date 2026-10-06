@@ -152,6 +152,21 @@ public final class PreviewDialog {
  public static Dialog confirmDelete(Context c,String title,String message,Runnable action){android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(c).setTitle(title).setMessage(message).setIcon(android.R.drawable.ic_dialog_alert).setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->action.run()).create();dialog.setOnShowListener(d->{styleNative(dialog);dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(0xffffa5a5);dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).requestFocus();});dialog.show();return dialog;}
  public static int dp(Context c,int v){return Math.round(v*c.getResources().getDisplayMetrics().density);}
  public static StateListDrawable focus(Context c){return new PreviewContentFocus(c);}
- public static StateListDrawable buttonFocus(Context c){return focus(c);}
+ public static StateListDrawable buttonFocus(Context c){
+  StateListDrawable states=new StateListDrawable();
+  android.graphics.drawable.LayerDrawable focused=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{surface(c,false),new PreviewFocusGlow(c)});
+  states.addState(new int[]{android.R.attr.state_focused},focused);states.addState(new int[]{},surface(c,false));return states;
+ }
+ public static void separateDone(Dialog dialog,int index){
+  if(dialog==null||dialog.getWindow()==null)return;
+  View row=dialog.getWindow().getDecorView().findViewWithTag(index);if(!(row instanceof LinearLayout))return;
+  LinearLayout action=(LinearLayout)row;action.setBackground(buttonFocus(action.getContext()));
+  action.setPadding(dp(action.getContext(),12),0,dp(action.getContext(),12),0);
+  if(action.getChildCount()>0)action.getChildAt(0).setVisibility(View.GONE);
+  View check=action.findViewWithTag("preview-check:"+index);if(check!=null)check.setVisibility(View.GONE);
+  LinearLayout.LayoutParams params=(LinearLayout.LayoutParams)action.getLayoutParams();params.topMargin=dp(action.getContext(),8);
+  // Keep total footer height unchanged so the fixed menu viewport remains bounded.
+  params.height=Math.max(dp(action.getContext(),28),params.height-params.topMargin);action.setLayoutParams(params);
+ }
  public static GradientDrawable surface(Context c,boolean f){GradientDrawable g=new GradientDrawable();g.setColor(f?PreviewAccent.alpha(c,70):0xef0b1b29);g.setCornerRadius(dp(c,6));g.setStroke(dp(c,1),f?PreviewAccent.color(c):0x50426a80);return g;}
 }

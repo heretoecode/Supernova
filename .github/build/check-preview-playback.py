@@ -60,9 +60,10 @@ try:
     # clears keyboard focus and cannot establish the opener this check verifies.
     assert any(n.get('resource-id', '').endswith('/pause') and n.get('focused') == 'true' for n in root.iter('node')), 'HUD did not enter on Play/Pause'
     adb('shell', 'input', 'keyevent', '22')
-    root = capture('playback-info-focused')
-    assert any(n.get('resource-id', '').endswith('/preview_info') and n.get('focused') == 'true' for n in root.iter('node')), 'Remote RIGHT did not focus Info'
-    adb('shell', 'input', 'keyevent', '23')
+    root = capture('playback-more-focused')
+    assert any(n.get('resource-id', '').endswith('/preview_more') and n.get('focused') == 'true' for n in root.iter('node')), 'Remote RIGHT did not focus More'
+    assert not any(n.get('resource-id', '').endswith('/preview_info') for n in root.iter('node')), 'Info remained in primary HUD'
+    adb('shell', 'input', 'keyevent', '37')  # Existing hardware I technical-information shortcut
     root = capture('playback-technical-runtime')
     labels = {n.get('text') for n in root.iter('node')}
     assert {'Video', 'Audio', 'File', 'Source'} <= labels, 'Technical-only information panels missing'
@@ -72,7 +73,7 @@ try:
     assert b'mResumedActivity' in activities and b'PlayerActivity' in activities
     adb('shell', 'input', 'keyevent', '4')
     root = capture('playback-info-return')
-    assert any(n.get('resource-id', '').endswith('/preview_info') and n.get('focused') == 'true' for n in root.iter('node')), 'Back did not restore HUD Info focus'
+    assert any(n.get('resource-id', '').endswith('/preview_more') and n.get('focused') == 'true' for n in root.iter('node')), 'Back did not restore exact HUD More opener'
     adb('shell', 'pidof', PACKAGE)
 finally:
     logs = adb('logcat', '-d')

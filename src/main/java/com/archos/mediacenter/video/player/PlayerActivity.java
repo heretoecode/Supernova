@@ -335,6 +335,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                                 Long.parseLong(parsed[4])/1024/1024+"MB/"
                                 +Long.parseLong(parsed[5])/1024/1024+"MB";
 
+                        if(mProgressView instanceof PreviewPlaybackLoading){com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_preparation_progress","source_type","torrent");break;}
                         View torrent_status = mProgressView.findViewById(R.id.torrent_status);
                         torrent_status.setVisibility(View.VISIBLE);
                         ((TextView)torrent_status).setText(toDisplay);

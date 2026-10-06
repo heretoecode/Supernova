@@ -222,6 +222,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private int                 mSeekKeyDirection;
     private final PreviewSeekPolicy mPreviewSeekPolicy = new PreviewSeekPolicy();
     private boolean mPreviewKeySeeking;
+    private int mPreviewRevealKey=-1;
     private int                 mBarXYIconResource = R.drawable.video_format_arrow_horizontal;
 
     private static boolean      mControlBarShowing, mSystemBarShowing, mSystemBarGone, mActionBarShowing, mVolumeBarShowing, mNavigationBarShowing, mIsNavBarOnBottom, mIsGestureAreaShowing;
@@ -1495,15 +1496,31 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null){audio.setVisibility(View.VISIBLE);audio.setEnabled(true);audio.setAlpha(a.previewHasAudio()?1f:.5f);}mPauseButton.setNextFocusLeftId(R.id.preview_audio);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?"Audio":"Subtitles");}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null){title.setText(a.previewTitle());a.bindPreviewTitleArtwork(title);}if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
     private void configurePreviewTransport(){
         for(int id:new int[]{R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward,R.id.preview_speed}){View v=mControllerViewLeft.findViewById(id);if(v!=null){v.setVisibility(View.GONE);v.setFocusable(false);}}
-        for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_info,R.id.preview_more}){View v=mControllerViewLeft.findViewById(id);if(v instanceof ImageButton){ImageButton button=(ImageButton)v;button.setBackgroundColor(android.graphics.Color.TRANSPARENT);if(button.getParent() instanceof android.widget.LinearLayout){android.widget.LinearLayout group=(android.widget.LinearLayout)button.getParent();group.setAddStatesFromChildren(true);group.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));}button.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));button.setOnFocusChangeListener((view,focused)->updatePreviewScrubber());button.setNextFocusUpId(R.id.seek_progress);}}
+        for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_more}){View v=mControllerViewLeft.findViewById(id);if(v instanceof ImageButton){ImageButton button=(ImageButton)v;button.setBackgroundColor(android.graphics.Color.TRANSPARENT);if(button.getParent() instanceof android.widget.LinearLayout){android.widget.LinearLayout group=(android.widget.LinearLayout)button.getParent();group.setAddStatesFromChildren(true);group.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));}button.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));button.setOnFocusChangeListener((view,focused)->updatePreviewScrubber());button.setNextFocusUpId(R.id.seek_progress);}}
         mProgress.setBackgroundColor(android.graphics.Color.TRANSPARENT);mProgress.setOnFocusChangeListener((v,focused)->updatePreviewScrubber());
-        mProgress.setNextFocusDownId(R.id.pause);mPauseButton.setNextFocusLeftId(mControllerViewLeft.findViewById(R.id.preview_audio).getVisibility()==View.VISIBLE?R.id.preview_audio:R.id.preview_subtitles);mPauseButton.setNextFocusRightId(R.id.preview_info);
+        mProgress.setNextFocusDownId(R.id.pause);mPauseButton.setNextFocusLeftId(mControllerViewLeft.findViewById(R.id.preview_audio).getVisibility()==View.VISIBLE?R.id.preview_audio:R.id.preview_subtitles);mPauseButton.setNextFocusRightId(R.id.preview_more);
         mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusRightId(R.id.preview_audio);
         mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusLeftId(R.id.preview_subtitles);
         mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusRightId(R.id.pause);
         mControllerViewLeft.findViewById(R.id.preview_info).setNextFocusLeftId(R.id.pause);
         mControllerViewLeft.findViewById(R.id.preview_info).setNextFocusRightId(R.id.preview_more);
-        mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusLeftId(R.id.preview_info);
+        mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusLeftId(R.id.pause);
+        mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusRightId(R.id.preview_more);
+        mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusLeftId(R.id.preview_subtitles);
+        View information=mControllerViewLeft.findViewById(R.id.preview_info);information.setFocusable(false);((View)information.getParent()).setVisibility(View.GONE);
+        restorePreviewAccent();
+    }
+    private void restorePreviewAccent(){
+        if(!experimentalUi()||mProgress==null)return;
+        int colour=com.archos.mediacenter.video.leanback.PreviewAccent.color(mContext);
+        mProgress.setProgressTintList(android.content.res.ColorStateList.valueOf(colour));
+        mProgress.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(0xff627386));
+        mProgress.setThumbTintList(android.content.res.ColorStateList.valueOf(colour));
+        for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_more}){
+            View control=mControllerViewLeft.findViewById(id);
+            ((View)control.getParent()).setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));
+            control.refreshDrawableState();
+        }
     }
     private void updatePreviewScrubber(){if(!experimentalUi()||mControllerViewLeft==null||mProgress==null)return;TextView bubble=mControllerViewLeft.findViewById(R.id.preview_scrub_time);if(bubble==null)return;boolean focused=mProgress.hasFocus();bubble.setVisibility(focused?View.VISIBLE:View.INVISIBLE);if(!focused)return;bubble.setText(mCurrentTime==null?"":mCurrentTime.getText());bubble.setBackground(new com.archos.mediacenter.video.leanback.PreviewFocusGlow(mContext));bubble.measure(View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));float fraction=mProgress.getMax()>0?(float)mProgress.getProgress()/mProgress.getMax():0;float x=mProgress.getPaddingLeft()+fraction*(mProgress.getWidth()-mProgress.getPaddingLeft()-mProgress.getPaddingRight())-bubble.getMeasuredWidth()/2f;bubble.setTranslationX(Math.max(0,Math.min(x,mProgress.getWidth()-bubble.getMeasuredWidth())));}
     public void setVideoTitle(String title) {
@@ -1546,6 +1563,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if (!mIsStopped) {
             /* volume can be changed by an other application: update it */
             if (hasFocus) {
+                restorePreviewAccent();
                 updateVolumeBar();
                 if (mActionBarShowing) show(FLAG_SIDE_ACTION_BAR, SHOW_TIMEOUT);
             } else {
@@ -2317,6 +2335,14 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             return true;
         }
         switchMode(true);
+        if(experimentalUi()&&keyCode==mPreviewRevealKey){
+            if(event.getAction()==KeyEvent.ACTION_UP)mPreviewRevealKey=-1;
+            return true;
+        }
+        if(experimentalUi()&&!isTVMenuDisplayed&&!mControlBarShowing&&keyCode>=KeyEvent.KEYCODE_DPAD_UP&&keyCode<=KeyEvent.KEYCODE_DPAD_CENTER){
+            if(event.getAction()==KeyEvent.ACTION_DOWN){mPreviewRevealKey=keyCode;showControlBar();mPauseButton.requestFocus();}
+            return true;
+        }
         if(experimentalUi()&&event.getAction()==KeyEvent.ACTION_DOWN&&mControlBarShowing)sendFadeOut(SHOW_TIMEOUT);
         // Seeking may temporarily take focus away from the control bar. Recovery must not
         // depend on hasFocus(), which was precisely the state lost on the physical remote.

@@ -16,6 +16,18 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMatchSearchTest {
+    @Test public void visibleEmptyInputAndTypedLettersKeepTheExactKeyboardKey(){
+        Activity host=Robolectric.buildActivity(Activity.class).setup().get();
+        PreviewMatchSearch page=new PreviewMatchSearch(host,"",q->{},t->{});host.setContentView(page);PreviewPagesTest.layout(page);
+        EditText input=page.findViewWithTag("semantic:match.query");assertNotNull(input.getBackground());assertTrue(input.getHeight()>0);
+        View letter=page.findViewWithTag("semantic:keyboard:T");letter.requestFocus();letter.performClick();
+        assertEquals("T",input.getText().toString());assertTrue(letter.hasFocus());
+        letter.performClick();assertEquals("TT",input.getText().toString());assertTrue(letter.hasFocus());
+        page.setResults(Collections.singletonList(movie("Example",2024)));PreviewPagesTest.layout(page);
+        android.widget.ImageView poster=page.findViewWithTag("semantic:match.poster:0");assertEquals(60,poster.getWidth());assertEquals(90,poster.getHeight());
+        assertTrue(poster.getContentDescription().toString().contains("Example"));assertTrue(letter.hasFocus());
+        host.finish();
+    }
     @Test public void appendingResultsPreservesFocusAndSelectionRequiresReviewClick(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();
         AtomicReference<BaseTags> chosen=new AtomicReference<>();

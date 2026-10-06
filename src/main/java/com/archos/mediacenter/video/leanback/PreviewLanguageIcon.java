@@ -13,10 +13,21 @@ public final class PreviewLanguageIcon extends Drawable {
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final PreviewIcon neutral=new PreviewIcon("language");
     private final String flag;
+    private final String label;
     public PreviewLanguageIcon(String code){
-        String country=country(code);
+        String country=country(code);label=languageLabel(code);
         flag=country.isEmpty()?"":new String(Character.toChars(0x1f1e6+country.charAt(0)-'A'))+new String(Character.toChars(0x1f1e6+country.charAt(1)-'A'));
         paint.setColor(Color.WHITE);paint.setTextAlign(Paint.Align.CENTER);
+    }
+    /** Language identifiers are useful without assigning an ambiguous country flag. */
+    static String languageLabel(String code){
+        if(code==null||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})*"))return "";
+        String language=code.split("[-_]")[0].toLowerCase(Locale.ROOT);
+        for(String iso:Locale.getISOLanguages()){
+            if(iso.equals(language))return iso.toUpperCase(Locale.ROOT);
+            try{if(new Locale(iso).getISO3Language().equals(language))return iso.toUpperCase(Locale.ROOT);}catch(MissingResourceException unavailable){}
+        }
+        return "";
     }
     static String country(String code){
         if(code==null||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})+"))return "";
@@ -29,7 +40,10 @@ public final class PreviewLanguageIcon extends Drawable {
         // Shield/system font availability varies. Missing flag glyphs use the neutral icon,
         // never two regional-indicator letters or an invented substitute flag.
         if(flag.isEmpty()||android.os.Build.VERSION.SDK_INT<23||!paint.hasGlyph(flag)){
-            neutral.setBounds(bounds);neutral.draw(canvas);return;
+            if(label.isEmpty()){neutral.setBounds(bounds);neutral.draw(canvas);}else{
+                paint.setTextSize(bounds.height()*.42f);paint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
+                Paint.FontMetrics metrics=paint.getFontMetrics();canvas.drawText(label,bounds.exactCenterX(),bounds.exactCenterY()-(metrics.ascent+metrics.descent)/2,paint);
+            }return;
         }
         paint.setTextSize(bounds.height()*.85f);Paint.FontMetrics metrics=paint.getFontMetrics();
         canvas.drawText(flag,bounds.exactCenterX(),bounds.exactCenterY()-(metrics.ascent+metrics.descent)/2,paint);

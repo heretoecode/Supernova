@@ -11,6 +11,13 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewPlaybackLoadingTest {
+    @Test public void preparationRejectsAnyInternalStatusIncludingVisibilityUpdates(){
+        PreviewPlaybackLoading loading=new PreviewPlaybackLoading(RuntimeEnvironment.getApplication(),new android.content.Intent());
+        android.widget.TextView internal=loading.findViewById(com.archos.mediacenter.video.R.id.torrent_status);
+        for(String message:new String[]{"worker initialising","protocol negotiation","torrent private source"}){
+            internal.setText(message);internal.setVisibility(android.view.View.VISIBLE);assertEquals("",internal.getText().toString());assertEquals(android.view.View.GONE,internal.getVisibility());
+        }
+    }
     @Test public void remoteArtworkIsStrictlyOfflineAndLocalArtworkUsesExistingFile(){
         Picasso picasso=mock(Picasso.class);RequestCreator request=mock(RequestCreator.class,RETURNS_SELF);
         Uri remote=Uri.parse("https://image.tmdb.org/t/p/w1280/backdrop.jpg");when(picasso.load(remote)).thenReturn(request);

@@ -31,10 +31,11 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         this.browseVolume = browseVolume; this.browseNetwork = browseNetwork;
         setClipChildren(false); setClipToPadding(false);
         rail = new PreviewFocusRail(c);rail.setOrientation(VERTICAL); items = column(); context = column();
+        panel(rail,"semantic:network.panel.categories");
         addView(rail, new LayoutParams(0, -1, .23f));
-        ScrollView middle = new ScrollView(c); middle.setClipChildren(false); middle.addView(items);
+        ScrollView middle = new ScrollView(c); middle.setClipChildren(false); middle.addView(items);panel(middle,"semantic:network.panel.items");
         LayoutParams middleSize = new LayoutParams(0, -1, .45f); middleSize.setMargins(dp(12), 0, dp(12), 0); addView(middle, middleSize);
-        ScrollView right = new ScrollView(c); right.setClipChildren(false); right.addView(context);
+        ScrollView right = new ScrollView(c); right.setClipChildren(false); right.addView(context);panel(right,"semantic:network.panel.context");
         addView(right, new LayoutParams(0, -1, .32f));
         for (String name : new String[]{"Overview", "Local Storage", "Network Shares", "Cloud Services", "Saved Locations"}) {
             TextView section = control(name, () -> items.requestFocus());
@@ -43,6 +44,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
         }
         selectedSection = sections.get(0); show("Overview");
     }
+    private void panel(View view,String identity){view.setTag(identity);view.setBackground(PreviewDialog.surface(getContext(),false));view.setPadding(dp(12),dp(12),dp(12),dp(12));}
     private void show(String name) {
         if (name.equals(area)) return;
         int previous=items.getChildCount();String reason=area.isEmpty()?"initial":"category_changed";

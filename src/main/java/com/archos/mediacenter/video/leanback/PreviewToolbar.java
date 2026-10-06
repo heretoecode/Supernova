@@ -13,7 +13,7 @@ public final class PreviewToolbar extends LinearLayout {
     public void setSelectedSegment(View view){selectedSegment=view;invalidate();}
     public PreviewToolbar(Context context) {
         super(context); setClipChildren(false); setClipToPadding(false);
-        setPadding(0, 0, 0, PreviewDialog.dp(context, 3));
+        setPadding(0, 0, 0, PreviewDialog.dp(context, 3));setGravity(Gravity.BOTTOM);
     }
     @Override public void onViewAdded(View child) {
         super.onViewAdded(child);

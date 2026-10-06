@@ -141,7 +141,7 @@ public final class TopNavigation extends LinearLayout {
         scrimAnimation.addUpdateListener(animation->{scrimAlpha=(int)animation.getAnimatedValue();invalidate();});scrimAnimation.start();
     }
     @Override protected boolean drawChild(android.graphics.Canvas canvas,View child,long time){
-        if(child==bar){navigationShade.invalidate();navigationShade.draw(canvas,navigationScene,getWidth(),dp(116),scrimAlpha);if(scrimAlpha>0&&navigationShade.hasPendingSample())postInvalidateDelayed(100);}
+        if(child==bar){navigationShade.invalidate();navigationShade.draw(canvas,navigationScene,getWidth(),dp(selected==tabs[3]||selected==tabs[4]||selected==tabs[5]?84:116),scrimAlpha);if(scrimAlpha>0&&navigationShade.hasPendingSample())postInvalidateDelayed(100);}
         return super.drawChild(canvas,child,time);
     }
     @Override public void invalidateDrawable(android.graphics.drawable.Drawable who){super.invalidateDrawable(who);if(navigationShade!=null)navigationShade.invalidate();}

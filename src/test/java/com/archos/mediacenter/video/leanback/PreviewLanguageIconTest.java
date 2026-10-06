@@ -7,6 +7,11 @@ public class PreviewLanguageIconTest {
     @Test public void genericLanguagesNeverInventCountries(){
         for(String value:new String[]{null,"","en","eng","English","pt","Portuguese","default","English (UK)","en-001","en-XX"})assertEquals("",PreviewLanguageIcon.country(value));
     }
+    @Test public void genericLanguageIdentifiersAreDistinctWithoutInventingFlags(){
+        assertEquals("EN",PreviewLanguageIcon.languageLabel("eng"));assertEquals("PT",PreviewLanguageIcon.languageLabel("pt"));
+        assertEquals("ZH",PreviewLanguageIcon.languageLabel("zh-Hant-TW"));assertEquals("",PreviewLanguageIcon.languageLabel("English"));
+        assertEquals("",PreviewLanguageIcon.languageLabel("und"));assertEquals("",PreviewLanguageIcon.languageLabel(null));
+    }
     @Test public void explicitLocalesKeepTheirCountry(){
         assertEquals("GB",PreviewLanguageIcon.country("en-GB"));assertEquals("BR",PreviewLanguageIcon.country("pt_BR"));
         assertEquals("TW",PreviewLanguageIcon.country("zh-Hant-TW"));assertEquals("US",PreviewLanguageIcon.country("en-us"));

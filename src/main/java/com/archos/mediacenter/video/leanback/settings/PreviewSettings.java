@@ -128,12 +128,14 @@ public final class PreviewSettings {
   LinearLayout links = new com.archos.mediacenter.video.leanback.PreviewFocusRail(c);
   links.setOrientation(LinearLayout.VERTICAL);
   links.setClipChildren(false);
+  links.setTag("semantic:settings.panel.categories");links.setBackground(PreviewDialog.surface(c,false));links.setPadding(dp(fragment,10),dp(fragment,8),dp(fragment,10),dp(fragment,8));
   LinearLayout.LayoutParams rail = new LinearLayout.LayoutParams(0, -1, .23f);
   rail.rightMargin = dp(fragment, 12);
   split.addView(links, rail);
   LinearLayout middle = new LinearLayout(c);
   middle.setOrientation(LinearLayout.VERTICAL);
   middle.setClipChildren(false);
+  middle.setTag("semantic:settings.panel.options");middle.setBackground(PreviewDialog.surface(c,false));middle.setPadding(dp(fragment,12),dp(fragment,8),dp(fragment,12),dp(fragment,8));
   LinearLayout children = new LinearLayout(c);
   children.setOrientation(LinearLayout.VERTICAL);
   children.setClipChildren(false);
@@ -145,7 +147,7 @@ public final class PreviewSettings {
   help.setLineSpacing(dp(fragment, 4), 1);
   help.setPadding(dp(fragment, 16), dp(fragment, 12), dp(fragment, 12), dp(fragment, 12));
   ScrollView helpScroll = new ScrollView(c);
-  helpScroll.addView(help); helpScroll.setFocusable(false);
+  helpScroll.addView(help);helpScroll.setTag("semantic:settings.panel.context");helpScroll.setBackground(PreviewDialog.surface(c,false)); helpScroll.setFocusable(false);
   helpScroll.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
   LinearLayout.LayoutParams helpSize = new LinearLayout.LayoutParams(0, -1, .33f);
   helpSize.leftMargin = dp(fragment, 12);
@@ -205,12 +207,14 @@ public final class PreviewSettings {
      if (!(p instanceof PreferenceCategory) || !Boolean.TRUE.equals(visibility.get(p))) continue;
      TextView child = sidebarButton(c, String.valueOf(p.getTitle()), false);
      child.setTag("semantic:settings:section:" + p.getKey());
+     child.setPadding(dp(fragment,22),0,dp(fragment,10),0);
      children.addView(child, new LinearLayout.LayoutParams(-1, dp(fragment, 40)));
      Runnable openChild = () -> {
       childToken[0]=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(child,"settings.child");
       childOpener[0] = child; children.setVisibility(View.GONE); list.setTag(child);
       for (int n = 0; n < category.getPreferenceCount(); n++) category.getPreference(n).setVisible(category.getPreference(n) == p);
-      help.setText(String.valueOf(p.getTitle())); list.scrollToPosition(0); focusFirst(list);
+      help.setText(name+" › "+p.getTitle());
+      child.setContentDescription(name+" › "+p.getTitle()); list.scrollToPosition(0); focusFirst(list);
      };
      child.setOnClickListener(v -> openChild.run());
      child.setOnKeyListener((v, key, event) -> {

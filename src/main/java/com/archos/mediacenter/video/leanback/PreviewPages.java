@@ -56,6 +56,11 @@ public final class PreviewPages extends FrameLayout {
         final boolean horizontal;
         FocusRecycler(Context c,boolean horizontal){super(c);this.horizontal=horizontal;}
         @Override protected boolean focusablePosition(int p){if(horizontal)return true;if(p<0||p>=cells.size())return false;Cell c=cells.get(p);return c.type!=NOTICE&&(c.type!=HEADER||Boolean.TRUE.equals(c.value));}
+        @Override public boolean requestChildRectangleOnScreen(View child,android.graphics.Rect rect,boolean immediate){
+            int position=getChildAdapterPosition(child);
+            if(!horizontal&&(tab==1||tab==2)&&position>=0&&position<cells.size()&&cells.get(position).type==POSTER)return false;
+            return super.requestChildRectangleOnScreen(child,rect,immediate);
+        }
         @Override public View focusSearch(View focused,int direction){
             View next=super.focusSearch(focused,direction);
             // At loaded-content boundaries retain the last valid card; do not let
@@ -80,7 +85,7 @@ public final class PreviewPages extends FrameLayout {
             railScrollStates.put(a.cell,rail.getLayoutManager().onSaveInstanceState());
         }
     }
-    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);}}}}
+    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);if(!restoringFocus&&!suspended)post(()->{if(focused.hasFocus()&&!restoringFocus&&!suspended){int centre=list.getPaddingTop()+(list.getHeight()-list.getPaddingTop()-list.getPaddingBottom())/2;list.scrollBy(0,(item.getTop()+item.getBottom())/2-centre);}});}}}}
 
     /** A launch transaction owns return focus, independently of Android's retained View focus. */
     private void beginReturn(View opener,String destination){
@@ -132,8 +137,8 @@ public final class PreviewPages extends FrameLayout {
                     RecyclerView.ViewHolder holder=rail.findViewHolderForAdapterPosition(inner);if(holder!=null)item=holder.itemView;
                 }
                 View exact=item==null||anchor==null?null:tagged(item,anchor.child);
-                restoringFocus=false;
                 if(exact!=null)exact.requestFocus();else if(item!=null&&item.requestFocus()){}else list.requestFocus();
+                restoringFocus=false;
                 if(anchor!=null&&!anchor.token.isEmpty()){com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(anchor.token,null,list.findFocus(),exact==null,list.findFocus()!=null);anchor.token="";if(anchors[tab]!=null)anchors[tab].token="";}
                 rememberFocus();
                 if(returnPending&&tab==returnTab&&list.findFocus()!=null){returnPending=false;returnScroll=null;}
@@ -538,7 +543,7 @@ public final class PreviewPages extends FrameLayout {
             else if(c.type==NOTICE){v.setOrientation(LinearLayout.VERTICAL);TextView title=text(c.title,18);title.setTextColor(0xff8298aa);v.addView(title);TextView status=text((String)c.value,12);status.setTextColor(0xff8298aa);v.addView(status);v.setPadding(0,dp(12),0,dp(12));}
             else if(c.type==HEADER){
                 if(Boolean.TRUE.equals(c.value)){
-                    v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(13),0,dp(18));LinearLayout controls=new PreviewToolbar(getContext());
+                    v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(13),0,dp(18));LinearLayout controls=new PreviewToolbar(getContext());controls.setGravity(Gravity.BOTTOM);
                     controls.addView(button("Filters"+(genres[tab].isEmpty()?"":": "+genres[tab])+(years[tab]==0?"":" · "+years[tab])+"  ▾",()->filter()));
                     String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
                     for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?0:1,n->{quietOrder.clear();ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(unmatched[tab]?"Matched":"Unmatched",()->{unmatched[tab]=!unmatched[tab];quietOrder.clear();render();}),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
@@ -548,7 +553,7 @@ public final class PreviewPages extends FrameLayout {
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));
                 }else{TextView title=text(c.title,tab==3&&c.title.equals("Network & files")?30:19);title.setTextColor(0xff9ed4f7);v.addView(title);}
             }
-            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setClipChildren(false);rail.setClipToPadding(false);rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(rail,"home.rail","row_bound",0,rail.getAdapter().getItemCount(),true);rail.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView row,int dx,int dy){scheduleVisibleEnrichment();}});v.addView(rail,new LinearLayout.LayoutParams(-1,dp(105)));android.os.Parcelable railState=railScrollStates.get(cellKey(c));if(railState!=null)rail.getLayoutManager().onRestoreInstanceState(railState);}
+            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setClipChildren(false);rail.setClipToPadding(false);rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(rail,"home.rail","row_bound",0,rail.getAdapter().getItemCount(),true);rail.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView row,int dx,int dy){scheduleVisibleEnrichment();}});LinearLayout.LayoutParams strip=new LinearLayout.LayoutParams(-1,dp(105));strip.rightMargin=-list.getPaddingRight();v.addView(rail,strip);android.os.Parcelable railState=railScrollStates.get(cellKey(c));if(railState!=null)rail.getLayoutManager().onRestoreInstanceState(railState);}
             else if(c.type==STORAGE){Box b=(Box)c.value;v.setPadding(dp(12),dp(12),dp(12),dp(12));RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,dp(76));lp.setMargins(0,0,dp(12),dp(12));v.setLayoutParams(lp);v.setBackground(PreviewDialog.surface(getContext(),false));v.setForeground(PreviewDialog.focus(getContext()));v.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);v.setFocusable(true);v.setClickable(true);
                 ImageView icon=new ImageView(getContext());icon.setImageDrawable(new StorageIcon(b.getBoxId()));v.addView(icon,new LinearLayout.LayoutParams(dp(35),dp(35)));
                 LinearLayout labels=new LinearLayout(getContext());labels.setOrientation(LinearLayout.VERTICAL);labels.setPadding(dp(12),0,0,0);
