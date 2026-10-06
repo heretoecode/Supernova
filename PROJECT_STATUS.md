@@ -76,3 +76,7 @@ The repository is intended to be sufficient for a new developer or AI with no Ch
 ## Repository authority
 
 The cleaned Preview 4.1.7 lineage was promoted to `main` on 6 October 2026 by PR #5. `main` is now the authoritative repository branch. The accepted 4.1.7 Final APK remains tied to the frozen application/test source commit `7efb4195639205a6526281491af40c0dab1776b7`; later `main` commits may contain documentation or repository-maintenance changes and must not be mistaken for that APK source.
+
+### Post-4.1.7 fixes candidate — unmerged branch
+
+The signed post-4.1.7 fixes candidate is available on `codex/post-4.1.7-shield-fixes`; exact APK source is `61a1ae5a21be90d185d448362c9729eb6c33cc42`. See the [candidate identity/build/validation record](docs/qa/post-4.1.7-fixes-candidate.md) and [all 35 development statuses](docs/qa/post-4.1.7-fixes-implementation.md). Automated/build validation is green and candidate APK production is complete. **Physical Shield validation is pending; this candidate is not Final and does not replace the accepted 4.1.7 Final baseline.** The fixes branch has not been merged into main. Cast & Crew, final Audio/Subtitles/More design and fixes-release numbering remain unresolved; #35 raw Shield-log attribution is incomplete. Existing application ID, certificate and version fields are retained.

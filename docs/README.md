@@ -61,3 +61,5 @@ Use **APPROVED**, **PARKED**, **REJECTED**, **SUPERSEDED**, and **NEEDS DECISION
 ## Active fixes development
 
 - [Post-4.1.7 Shield fixes implementation and 35-item traceability](qa/post-4.1.7-fixes-implementation.md) — development branch only; accepted baseline remains 4.1.7 Final, physical acceptance pending.
+
+- [Post-4.1.7 signed fixes candidate](qa/post-4.1.7-fixes-candidate.md): exact build source/APK hash/certificate, green workflow evidence, unresolved decisions and physical Shield validation pending. This unmerged candidate does not supersede accepted 4.1.7 Final.
