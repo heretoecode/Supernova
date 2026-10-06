@@ -26,7 +26,7 @@ The `preview-4.1.7/` directory is the detailed release/development record.
 
 Older Preview 3.x / 4.0 / 4.1.x handovers, audits, build records, recovery notes and QA files remain useful evidence. They are **SUPERSEDED as statements of current project state** unless explicitly linked by a current authority file.
 
-This includes the older root-level `NOVA_*` handover/audit/QA files and older version-specific material already under `docs/`.
+The older root-level `NOVA_*` handover/audit/QA files have been preserved under `archive/root-history/`. Older version-specific material already under `docs/` remains historical unless explicitly promoted by a current authority record.
 
 The legacy `doc/` directory is inherited/upstream technical documentation. Do not confuse it with Supernova's project-state records under `docs/`.
 
