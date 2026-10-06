@@ -53,7 +53,22 @@ adb('shell', 'am', 'start', '-W', '-n', PACKAGE + '/com.archos.mediacenter.video
     '-a', 'android.intent.action.VIEW', '-d', 'file:///sdcard/Download/supernova-preview-smoke.mp4', '-t', 'video/mp4')
 try:
     time.sleep(8)
+    # Hidden-HUD Up now reveals the HUD without opening More or pausing/seeking.
+    # uiautomator's idle wait can exceed the unchanged three-second HUD timeout:
+    # prove native playback stays PLAYING, then deliberately pause for stable capture.
+    adb('shell', 'input', 'keyevent', '19')
+    time.sleep(.2)  # Let the native state acknowledge the complete DOWN/UP gesture.
+    sessions = adb('shell', 'dumpsys', 'media_session').decode()
+    (OUT / 'playback-reveal-media-session.txt').write_text(sessions)
+    owned = next((part for part in sessions.split('package=') if part.startswith(PACKAGE)), '')
+    assert re.search(r'state=PlaybackState[^\n]*state=3(?:,|\s)', owned), 'HUD reveal unexpectedly paused/stopped native playback'
+    (OUT / 'playback-hidden-up-reveal.png').write_bytes(adb('exec-out', 'screencap', '-p'))
     adb('shell', 'input', 'keyevent', '23')
+    time.sleep(.2)
+    sessions = adb('shell', 'dumpsys', 'media_session').decode()
+    (OUT / 'playback-explicit-pause-media-session.txt').write_text(sessions)
+    owned = next((part for part in sessions.split('package=') if part.startswith(PACKAGE)), '')
+    assert re.search(r'state=PlaybackState[^\n]*state=2(?:,|\s)', owned), 'Explicit focused Play/Pause did not pause native playback'
     root = capture('playback-hud-runtime')
     assert any('Movie Ends' in n.get('text', '') for n in root.iter('node')), 'Preview movie end-clock wording missing'
     # Remote focus, not a touch click: touching a non-touch-focusable ImageButton
