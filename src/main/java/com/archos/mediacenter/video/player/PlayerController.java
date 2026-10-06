@@ -1473,6 +1473,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
            // setVisibility(mAdView, !Player.sPlayer.isPlaying(), true);
         }
         updatePausePlay();
+        tracePreviewTransport("toggle",-1);
     }
 
     public void setEnabled(boolean enabled) {
@@ -1509,6 +1510,14 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusLeftId(R.id.preview_subtitles);
         View information=mControllerViewLeft.findViewById(R.id.preview_info);information.setFocusable(false);((View)information.getParent()).setVisibility(View.GONE);
         restorePreviewAccent();
+    }
+    /** Native state, not MediaSession availability (which is TV hardware-only). No private text. */
+    private void tracePreviewTransport(String phase,int key){
+        if(!experimentalUi())return;
+        boolean playing=Player.sPlayer!=null&&Player.sPlayer.isPlaying();
+        int position=Player.sPlayer==null?-1:Player.sPlayer.getCurrentPosition();
+        log.info("Preview transport event={} key={} playing={} position={}",phase,key,playing,position);
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_transport","phase",phase,"key",key,"playing",playing,"position_ms",position);
     }
     private void restorePreviewAccent(){
         if(!experimentalUi()||mProgress==null)return;
@@ -2336,7 +2345,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
         switchMode(true);
         if(experimentalUi()&&keyCode==mPreviewRevealKey){
-            if(event.getAction()==KeyEvent.ACTION_UP)mPreviewRevealKey=-1;
+            if(event.getAction()==KeyEvent.ACTION_UP){tracePreviewTransport("reveal_complete",keyCode);mPreviewRevealKey=-1;}
             return true;
         }
         if(experimentalUi()&&!isTVMenuDisplayed&&!mControlBarShowing&&keyCode>=KeyEvent.KEYCODE_DPAD_UP&&keyCode<=KeyEvent.KEYCODE_DPAD_CENTER){

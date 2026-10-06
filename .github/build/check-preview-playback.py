@@ -53,22 +53,22 @@ adb('shell', 'am', 'start', '-W', '-n', PACKAGE + '/com.archos.mediacenter.video
     '-a', 'android.intent.action.VIEW', '-d', 'file:///sdcard/Download/supernova-preview-smoke.mp4', '-t', 'video/mp4')
 try:
     time.sleep(8)
-    # Hidden-HUD Up now reveals the HUD without opening More or pausing/seeking.
-    # uiautomator's idle wait can exceed the unchanged three-second HUD timeout:
-    # prove native playback stays PLAYING, then deliberately pause for stable capture.
+    # Hidden-HUD Up reveals without opening More or pausing/seeking. The native
+    # player owns this state; a phone AVD has no TV-only MediaSession. uiautomator's
+    # idle wait exceeds the unchanged HUD timeout, so pause deliberately for capture.
     adb('shell', 'input', 'keyevent', '19')
-    time.sleep(.2)  # Let the native state acknowledge the complete DOWN/UP gesture.
-    sessions = adb('shell', 'dumpsys', 'media_session').decode()
-    (OUT / 'playback-reveal-media-session.txt').write_text(sessions)
-    owned = next((part for part in sessions.split('package=') if part.startswith(PACKAGE)), '')
-    assert re.search(r'state=PlaybackState[^\n]*state=3(?:,|\s)', owned), 'HUD reveal unexpectedly paused/stopped native playback'
+    time.sleep(.2)
+    reveal = adb('logcat', '-d').decode(errors='replace')
+    (OUT / 'playback-reveal-native-state.txt').write_text(reveal)
+    state = re.search(r'Preview transport event=reveal_complete key=19 playing=true position=(\d+)', reveal)
+    assert state, 'HUD reveal gesture did not complete with native playback still running'
+    assert int(state.group(1)) < 15000, 'Hidden-HUD Up unexpectedly sought forward'
     (OUT / 'playback-hidden-up-reveal.png').write_bytes(adb('exec-out', 'screencap', '-p'))
     adb('shell', 'input', 'keyevent', '23')
     time.sleep(.2)
-    sessions = adb('shell', 'dumpsys', 'media_session').decode()
-    (OUT / 'playback-explicit-pause-media-session.txt').write_text(sessions)
-    owned = next((part for part in sessions.split('package=') if part.startswith(PACKAGE)), '')
-    assert re.search(r'state=PlaybackState[^\n]*state=2(?:,|\s)', owned), 'Explicit focused Play/Pause did not pause native playback'
+    toggled = adb('logcat', '-d').decode(errors='replace')
+    (OUT / 'playback-explicit-pause-native-state.txt').write_text(toggled)
+    assert re.search(r'Preview transport event=toggle key=-1 playing=false position=', toggled), 'Explicit focused Play/Pause did not pause native playback'
     root = capture('playback-hud-runtime')
     assert any('Movie Ends' in n.get('text', '') for n in root.iter('node')), 'Preview movie end-clock wording missing'
     # Remote focus, not a touch click: touching a non-touch-focusable ImageButton
