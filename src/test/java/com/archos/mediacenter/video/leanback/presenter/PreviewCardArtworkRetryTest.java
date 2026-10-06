@@ -42,6 +42,8 @@ public class PreviewCardArtworkRetryTest {
             verify(loader,times(2)).load(any(Uri.class));assertFalse(((PreviewCardPresenter.Card)holder.view).artworkReady);
             presenter.onBindViewHolder(holder,second);old.onSuccess();assertFalse(((PreviewCardPresenter.Card)holder.view).artworkReady);
             verify(loader,times(3)).load(any(Uri.class));
+            ArgumentCaptor<Callback> all=ArgumentCaptor.forClass(Callback.class);verify(request,times(3)).into(any(android.widget.ImageView.class),all.capture());all.getValue().onError(new java.io.IOException());
+            Uri corrected=Uri.parse("https://example.org/corrected.jpg");when(second.getPosterUri()).thenReturn(corrected);presenter.onBindViewHolder(holder,second);verify(loader).load(corrected);
         }finally{presenter.onUnbindViewHolder(holder);ReflectionHelpers.setStaticField(Picasso.class,"singleton",previous);}
     }
     private Video media(long id){Video video=mock(Video.class);when(video.getId()).thenReturn(id);when(video.getName()).thenReturn("Title");when(video.getPosterUri()).thenReturn(Uri.parse("https://example.org/"+id+".jpg"));return video;}

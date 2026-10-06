@@ -152,7 +152,9 @@ public final class PreviewDialog {
  public static Dialog confirmDelete(Context c,String title,String message,Runnable action){android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(c).setTitle(title).setMessage(message).setIcon(android.R.drawable.ic_dialog_alert).setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->action.run()).create();dialog.setOnShowListener(d->{styleNative(dialog);dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(0xffffa5a5);dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).requestFocus();});dialog.show();return dialog;}
  public static int dp(Context c,int v){return Math.round(v*c.getResources().getDisplayMetrics().density);}
  public static StateListDrawable focus(Context c){return new PreviewContentFocus(c);}
- public static StateListDrawable buttonFocus(Context c){
+ public static StateListDrawable buttonFocus(Context c){return focus(c);}
+ /** Permanent surface for approved Details actions and the separated provider Done footer. */
+ public static StateListDrawable actionContainerFocus(Context c){
   StateListDrawable states=new StateListDrawable();
   android.graphics.drawable.LayerDrawable focused=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{surface(c,false),new PreviewFocusGlow(c)});
   states.addState(new int[]{android.R.attr.state_focused},focused);states.addState(new int[]{},surface(c,false));return states;
@@ -160,7 +162,7 @@ public final class PreviewDialog {
  public static void separateDone(Dialog dialog,int index){
   if(dialog==null||dialog.getWindow()==null)return;
   View row=dialog.getWindow().getDecorView().findViewWithTag(index);if(!(row instanceof LinearLayout))return;
-  LinearLayout action=(LinearLayout)row;action.setBackground(buttonFocus(action.getContext()));
+  LinearLayout action=(LinearLayout)row;action.setBackground(actionContainerFocus(action.getContext()));
   action.setPadding(dp(action.getContext(),12),0,dp(action.getContext(),12),0);
   if(action.getChildCount()>0)action.getChildAt(0).setVisibility(View.GONE);
   View check=action.findViewWithTag("preview-check:"+index);if(check!=null)check.setVisibility(View.GONE);

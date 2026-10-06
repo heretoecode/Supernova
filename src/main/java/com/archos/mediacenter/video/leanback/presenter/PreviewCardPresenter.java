@@ -161,7 +161,7 @@ public final class PreviewCardPresenter extends Presenter {
         boolean letterbox=style==Style.POSTER||(style==Style.CONTINUE||style==Style.LIST)&&!landscape;
         c.image.setScaleType(letterbox?ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_CROP);
         if(uri==null&&c.requestedArtwork!=null){if(c.artworkTrace!=null)c.artworkTrace.cancelled();Picasso.get().cancelRequest(c.image);c.requestedArtwork=null;c.artworkGeneration++;c.image.setImageDrawable(null);}
-        if(uri!=null&&!uri.equals(c.requestedArtwork)&&(!uri.equals(c.failedArtwork)||android.os.SystemClock.elapsedRealtime()>=c.retryArtworkAt)){c.requestedArtwork=uri;final int generation=++c.artworkGeneration;c.artworkReady=false;
+        if(uri!=null&&!uri.equals(c.requestedArtwork)&&(!uri.equals(c.failedArtwork)||android.os.SystemClock.elapsedRealtime()>=c.retryArtworkAt)){if(!uri.equals(c.failedArtwork)){c.artworkFailures=0;c.retryArtworkAt=0;}c.requestedArtwork=uri;final int generation=++c.artworkGeneration;c.artworkReady=false;
         final long mediaId=item instanceof Video?((Video)item).getId():item instanceof Tvshow?((Tvshow)item).getTvshowId():0;final String surface=style==Style.CONTINUE?"home.row":style==Style.LIST?"library.list":item instanceof Movie?"movies.grid":"tv.grid";
         if(c.artworkTrace!=null)c.artworkTrace.cancelled();
         final com.archos.mediacenter.video.diagnostics.ArtworkTrace trace=new com.archos.mediacenter.video.diagnostics.ArtworkTrace(mediaId,surface,style==Style.POSTER?"poster":"landscape",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri));c.artworkTrace=trace;

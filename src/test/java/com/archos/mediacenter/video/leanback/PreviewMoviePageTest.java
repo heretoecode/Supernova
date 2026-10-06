@@ -124,6 +124,7 @@ public class PreviewMoviePageTest {
             assertEquals("Resume",((TextView)primary).getText().toString());
             primary.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(primary,page.findFocus());
             primary.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(more,page.findFocus());
+            assertTrue("Unfocused Play keeps its container",primary.getBackground().getCurrent() instanceof android.graphics.drawable.GradientDrawable);
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(more,page.findFocus());
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(primary,page.findFocus());
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(page.findViewWithTag("section:Details"),page.findFocus());
