@@ -34,6 +34,12 @@ Discovery: SMB computers/NAS and DLNA/UPnP; FTP/SFTP direct, not discovery.
 Middle lists volumes; right shows capacity/status/location + Browse. Shared browser is reused for local, network, saved and put.io contexts. Actions are capability-driven; never show destructive operations unsupported by a read-only source.
 Folder actions include Add Folder to Movies Library, Add Folder to TV Shows Library and Add to Saved Locations.
 
+## Scanning safety invariants
+Scanning work must preserve mature-library safety: one scan at a time with overlapping triggers coalesced; temporary NAS/share unavailability must not become mass deletion; no temporary duplicates; cached artwork remains visible during refresh; background updates must not steal D-pad focus/reset scroll; interrupted scans recover safely.
+
+## Superseded visual foundation
+An older approved Network & Files design used a compact source/location tile landing of roughly four columns by two rows with no permanent sidebar. That design is historical lineage only and is **SUPERSEDED** by the current three-panel model above.
+
 ## Current correction
 Shield QA says Network & Files still needs the intended three-panel structure/visual correction. Preserve the semantics above while correcting presentation; do not regress into the classic browser.
 
@@ -56,3 +62,6 @@ A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered d
 The same historical record explicitly rejected permanent left-sidebar primary navigation, two-line grid titles, empty Continue Watching placeholder panels, huge bright-blue list rows, grey stock Android filter/sort/order dialogs, “NEW” Settings badges, invented analytics settings, an assistant-invented launcher icon, and generated Network/Settings mock-ups that invented unsupported features.
 
 **Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
+
+
+See `docs/project/HISTORY_RECONCILIATION.md` for the older Network foundation and supersession context.

@@ -23,6 +23,15 @@ Edges are deterministic: first+LEFT stays; final+RIGHT stays; DOWN enters librar
 - Active row positioning should keep the focused row comfortably visible; current Shield QA requires correction here.
 - Current Shield QA also requires toolbar/control-bar vertical alignment correction.
 
+## Remembered library view state — APPROVED
+Grid/List mode, Filters, Sort and Order are remembered separately for Movies and TV Shows. Preserve these preferences across navigation and background updates unless the user explicitly changes/resets them.
+
+## TV status metadata — APPROVED historical behaviour
+Keep grid title to one line with secondary metadata. Normal TV items may show season/episode totals; an active series may show `Up Next · Sx Ey` where this remains compatible with the current card layout.
+
+## Filter / Sort / Order visual lineage
+Historical approved direction used compact slate-blue/dark translucent TV-friendly popups with restrained backdrop dim, clear current-value checkmarks and human-readable terminology. Do not regress to giant bright-blue rows or grey stock Android dialogs. Current global visual/focus authority controls the exact accent treatment.
+
 ## Exact return focus
 Movies/TV → Details → Back restores exact originating media item, scroll position, view mode and visible focus. List mode restores the exact row. Never fall back to the leftmost item or top navigation when the original target is still valid.
 
@@ -66,3 +75,6 @@ A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered d
 The same historical record explicitly rejected permanent left-sidebar primary navigation, two-line grid titles, empty Continue Watching placeholder panels, huge bright-blue list rows, grey stock Android filter/sort/order dialogs, “NEW” Settings badges, invented analytics settings, an assistant-invented launcher icon, and generated Network/Settings mock-ups that invented unsupported features.
 
 **Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
+
+
+See `docs/project/HISTORY_RECONCILIATION.md` for recovered historical decisions and supersession context.

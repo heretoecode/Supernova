@@ -27,3 +27,9 @@ Shield QA requires the intended three-panel structure and nested/indented naviga
 
 ## Evidence
 `docs/preview-4.1.7/REQUIREMENTS.md` UI-058–060 and UI-009; 4.1.2 audit/handover; 4.1.4 release notes; current Shield QA.
+
+
+## Superseded historical category structure
+An older 13-category foundation (General; Home & Discovery; Playback; Video & Audio; Subtitles; Library; Sources & Storage; Appearance; Trakt; Streaming; Integrations; Advanced; About) is **SUPERSEDED** by the current 12-category rail above. Do not restore it by accident. Historical “Remember library view preferences” semantics remain valid: Grid/List, Filters, Sort and Order are remembered separately for Movies and TV Shows.
+
+See `docs/project/HISTORY_RECONCILIATION.md` for the historical lineage.

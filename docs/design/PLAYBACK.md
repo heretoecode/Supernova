@@ -18,6 +18,9 @@ Protected surrounding HUD information: title/logo and episode/title context, clo
 
 First Back dismisses HUD; second Back exits playback. Remote seeking remains available even though old backward/forward transport buttons are not primary HUD controls.
 
+## Seeking / timing — protected historical direction
+Where supported, retain current time plus predicted end time in the top-right HUD. Historical approved seeking direction included target timestamp/chapter information and favoured a thumbnail preview above the scrub position. **Preview 4.1.7 explicitly deferred playback trick-play thumbnails**, so thumbnail generation/implementation is not current authority or fixes-only scope unless separately promoted later. This does not change the current four-control primary HUD authority.
+
 ## Subtitles / Audio
 Both should be simplified from the current hierarchy. Direction is approved; exact final submenu hierarchy remains **NEEDS DECISION**. Do not invent a new menu during the fixes pass.
 
@@ -52,3 +55,6 @@ A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered d
 The same historical record explicitly rejected permanent left-sidebar primary navigation, two-line grid titles, empty Continue Watching placeholder panels, huge bright-blue list rows, grey stock Android filter/sort/order dialogs, “NEW” Settings badges, invented analytics settings, an assistant-invented launcher icon, and generated Network/Settings mock-ups that invented unsupported features.
 
 **Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
+
+
+See `docs/project/HISTORY_RECONCILIATION.md` for older HUD concepts that are explicitly superseded by current physical-QA authority.
