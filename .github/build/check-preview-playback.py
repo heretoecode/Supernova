@@ -51,7 +51,7 @@ adb('push', '/tmp/supernova-preview-smoke.mp4', '/sdcard/Download/supernova-prev
 # Startup captures/taps leave this phone AVD in touch mode. Android consumes
 # its first directional Down to establish focus before Activity dispatch. Switch
 # to remote navigation on the preceding screen, before launching the player.
-adb('shell', 'input', 'keyevent', '22')
+adb('shell', 'input', 'keyevent', '61')  # Tab changes focus, never toggles a switch.
 adb('logcat', '-c')
 preferences = adb('shell', 'run-as', PACKAGE, 'cat', 'shared_prefs/' + PACKAGE + '_preferences.xml')
 (OUT / 'playback-preferences.xml').write_bytes(preferences)
