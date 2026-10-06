@@ -1,3 +1,25 @@
+SUPERNOVA Preview 4.1.6 — Source candidate (24 September handover)
+
+Evolution of Preview 4.1.5. This source candidate has NOT yet passed Android compilation or physical Shield QA.
+
+• Shared boundary focus, monochrome icons and spatial context menus.
+• Consistent 19sp top navigation and compact Movies/TV statistics.
+• Incremental Home updates retain stable artwork; render/artwork timing instrumentation added.
+• Sort reflects List metadata columns, including Audio; bounded background legacy metadata enrichment.
+• Shared QWERTY/number keyboard, multi-genre filters and dynamic custom Home rows.
+• Three-panel Network & Files and hierarchical Settings, retaining native actions.
+• Continuous tabbed Details, recycled season rows, local/provider-filtered related titles, Extras and information panels.
+• Five-control playback HUD with focus-only scrub timestamp.
+• Opt-in Normal/QA diagnostics, bounded flight recorder, heartbeat, issue markers and coverage/self-health reporting.
+
+Known limitations
+• YouTube Extras retain supported embedded playback: native-player integration and clip durations are not supplied by the current integration.
+• Awards, review quotations and filming locations remain absent where no validated source is available.
+• Diagnostic coverage is PARTIAL, particularly native/direct-network transport.
+• Compilation, runtime navigation, smoke tests and signed APK delivery remain pending. No replacement signing key was created.
+• Physical Multiple Versions/Resume, Up Next, Backup/Restore and extended soak QA remain parked.
+
+Previous release notes
 SUPERNOVA Preview 4.1.5 — Stability pass
 
 Based only on Preview 4.1.4. No Details redesign or new metadata features.

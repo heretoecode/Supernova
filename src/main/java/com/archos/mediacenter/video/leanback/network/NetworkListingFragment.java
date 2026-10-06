@@ -215,7 +215,7 @@ public class NetworkListingFragment extends ListingFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         ShortcutDbAdapter.VIDEO.addShortcut(getActivity(),
                                 new ShortcutDbAdapter.Shortcut(getShortcutName(), mUri.toString(), getFriendlyUri()));
-                        ShortcutDb.STATIC.removeShortcut(getActivity(), mUri);
+                        // Saved Locations and indexed library membership are independent.
                         NetworkScanner.scanVideos(getActivity(), mUri);
                     }
                 }).setNegativeButton(getNegativeForAskForIndexing(), null).show().getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();

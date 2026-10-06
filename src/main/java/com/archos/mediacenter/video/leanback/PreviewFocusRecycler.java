@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.*;
 public class PreviewFocusRecycler extends RecyclerView {
  private int pending=NO_POSITION;
  public PreviewFocusRecycler(Context c){super(c);setItemAnimator(null);setPreserveFocusAfterLayout(true);}
+ protected boolean locksHorizontalEdges(){return true;}
  protected boolean focusablePosition(int position){return true;}
  @Override public boolean requestChildRectangleOnScreen(View child,android.graphics.Rect rect,boolean immediate){return super.requestChildRectangleOnScreen(child,rect,true);}
  @Override public boolean dispatchKeyEvent(KeyEvent e){
@@ -16,12 +17,23 @@ public class PreviewFocusRecycler extends RecyclerView {
   int pos=getChildAdapterPosition(item),target=pos;boolean horizontal=((LinearLayoutManager)lm).getOrientation()==HORIZONTAL;
   if(pos==NO_POSITION)return super.dispatchKeyEvent(e);int key=e.getKeyCode();
   if(horizontal&&(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)){target+=key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1;if(target<0||target>=getAdapter().getItemCount())return true;}
+  else if(!horizontal && locksHorizontalEdges() && lm instanceof GridLayoutManager && focus == item && item.isFocusable()
+       && (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT)) {
+   GridLayoutManager grid = (GridLayoutManager) lm;
+   target = pos + (key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
+   if (target < 0 || target >= getAdapter().getItemCount()
+       || grid.getSpanSizeLookup().getSpanGroupIndex(target, grid.getSpanCount())
+          != grid.getSpanSizeLookup().getSpanGroupIndex(pos, grid.getSpanCount())
+       || !focusablePosition(target)) return true;
+  }
   else if(!horizontal&&(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN)){
    int direction=key==KeyEvent.KEYCODE_DPAD_UP?-1:1;
    if(lm instanceof GridLayoutManager){GridLayoutManager g=(GridLayoutManager)lm;int group=g.getSpanSizeLookup().getSpanGroupIndex(pos,g.getSpanCount()),span=g.getSpanSizeLookup().getSpanIndex(pos,g.getSpanCount());target=NO_POSITION;int best=Integer.MAX_VALUE,targetGroup=NO_POSITION;
     for(int i=pos+direction;i>=0&&i<getAdapter().getItemCount();i+=direction){int row=g.getSpanSizeLookup().getSpanGroupIndex(i,g.getSpanCount());if(row==group)continue;if(targetGroup!=NO_POSITION&&row!=targetGroup)break;if(!focusablePosition(i))continue;targetGroup=row;int distance=Math.abs(g.getSpanSizeLookup().getSpanIndex(i,g.getSpanCount())-span);if(distance<best){target=i;best=distance;}}
    }else target+=direction;
   }
+  if (!horizontal && key == KeyEvent.KEYCODE_DPAD_DOWN && focus == item
+      && (target == NO_POSITION || target >= getAdapter().getItemCount())) return true;
   int step=target<pos?-1:1;while(target>=0&&target<getAdapter().getItemCount()&&target!=pos&&!focusablePosition(target))target+=step;
   if(target>=0&&target<getAdapter().getItemCount()&&target!=pos&&item.isFocusable()){
    ViewHolder attached=findViewHolderForAdapterPosition(target);

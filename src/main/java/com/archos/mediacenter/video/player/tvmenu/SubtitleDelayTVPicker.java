@@ -247,7 +247,9 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
     }
    public void updateTextViewDelay(int delay){
        
-       setText(mHourFormat? SubtitleDelayPickerDialog.getFormattedDelay(mContext, delay).toString():""+(delay/100));
+       setText(mHourFormat&&com.archos.mediacenter.video.player.PreviewAdjustmentValue.enabled(mContext)
+               ?com.archos.mediacenter.video.player.PreviewAdjustmentValue.delay(delay)
+               :mHourFormat? SubtitleDelayPickerDialog.getFormattedDelay(mContext, delay).toString():""+(delay/100));
        
    }
    public void setTextSize(int size){

@@ -1,0 +1,1226 @@
+# 26 September requirement and verification register
+
+Baseline: `094d8e80938501222b4b16ed715c03937abde68f`.
+
+Final development review: application source `7efb4195639205a6526281491af40c0dab1776b7`; source CI 37359092502 and full/native CI 37359092413 passed. See IMPLEMENTATION_REPORT.md for the final APK and exact limits. AWAITING PHYSICAL QA and production OAuth BLOCKED are retained outcomes, not claimed passes.
+
+This verbatim requirement register preserves every substantive paragraph from the six implementation/acceptance/authority documents. Paragraphs may contain multiple acceptance conditions; all must be verified before their status changes. Pending is a planning state, not a completion claim. Final outcomes will use IMPLEMENTED, TESTED, BLOCKED, DEFERRED-BY-SPEC and AWAITING PHYSICAL QA.
+
+### UI-001 — 1. Global visual language and top navigation
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Canonical top navigation: SUPERNOVA far left; Home · Movies · TV Shows; flexible spacer; Network & Files; Search icon; Settings icon; Clock. No Streaming/Library top-nav items, no Settings/clock separator, no line under nav. All textual nav uses 19sp normal/light styling. Unfocused controls have no box. Focus is a compact rounded Supernova-blue outline/boundary with restrained outward glow; contents stay white; no cyan focus text. Tighten the current oversized focus container without shrinking typography.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: TopNavigation has the canonical order, flexible spacer, white 19sp light text/icons, no unfocused boxes and a shared compact boundary. Clock is now Color.WHITE. TopNavigationTest / Preview417NavigationTest passed through CI 36337372113. Named semantic tags and edge routing passed through source CI 37357790177. Exact Shield geometry remains physical QA.
+
+### UI-002 — 1. Global visual language and top navigation
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Adjacent persistent navigation controls should use a travelling focus boundary animation: animate X/width roughly 140–180ms and retarget smoothly during rapid D-pad movement. Cards do not use this mechanism; cards enlarge individually.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewFocusRail uses a single retargetable 160ms boundary for the persistent navigation/category rails; cards retain their independent enlargement. Current-source complete Video CI 37341405225 includes the navigation/rail regressions. Rapid remote input and Shield animation remain physical QA.
+
+### UI-003 — 1. Global visual language and top navigation
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+GLOBAL FOCUS DEFECT: when Home in top nav is focused, LEFT must be consumed and focus must remain Home. Implement centrally. Right-edge Settings + RIGHT remains Settings. Never allow edge presses to teleport into page content.
+
+Status: **IMPLEMENTED**
+
+Code mapping / verification: TopNavigation central edge consumption. Navigation CI tests passed through run 36241111976; physical D-pad QA remains pending.
+
+### UI-004 — 1. Global visual language and top navigation
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Top nav is not a solid bar. On vertically scrolling pages, content may continue behind it but a progressive blur + darkening gradient is strongest immediately behind the nav and fades seamlessly below. No visible rectangle/separator/permanent bar.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: TopNavigation now lays supported scrolling stages behind the bar; the inset belongs to the scroll viewport. PreviewNavigationShade samples the actual stage plus backdrop and fades blur/darkening without a bar edge. Native graphics fixtures include scrolling content, blur axes and fade continuity; passed through CI 36337372113. Shield appearance/performance remains physical QA.
+
+### UI-005 — 2. Home
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Preserve the successful current Home structure and card enlargement feel. Recently Played/Continue Watching remains prominent. Recently Added must be bounded; first import must not create an effectively endless row. A title falling outside a displayed Continue Watching cap retains its playback state and in-progress indication elsewhere.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewPages caps Continue Watching at 30 and Recently Added at 50 without changing stored playback/library records. Source compiled in run 36238345377; physical behaviour not verified.
+
+### UI-006 — 2. Home
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Featured: normalize visible logo bounds while ignoring transparent artwork padding; preserve aspect ratio. Synopsis width should relate to visible logo width (target around 90%, clamped approximately 25–32vw). Showcase artwork stays on the right, below the Network & Files→clock region, right of synopsis and above Continue Watching. Reposition/crop first; use real source art; darken/blur text-safe areas if needed; never fabricate people. More Info LEFT/RIGHT cycles Featured while focus remains on More Info. Featured indicators use persistent pill/dots with smooth ~180–220ms ease-out morphing.
+
+Status: **IMPLEMENTED — SOURCE/GEOMETRY COVERAGE / REAL-ARTWORK AND PHYSICAL QA PENDING**
+
+Code mapping / verification: OfficialTitleArtwork trims transparent bounds and preserves aspect ratio; synopsisWidth uses 90% fitted logo width clamped 25–32% viewport. PreviewFeaturedIndicators retains a 200ms ease-out pill morph; More Info cycles via the existing focus anchor. Existing geometry/indicator coverage passed through source CI 37357790177. The synthetic Home render establishes basic layout but cannot establish real-logo/face crop quality; those remain explicitly classified visual/physical QA.
+
+### UI-007 — 2. Home
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Home/movie/TV cards: preserve the physically liked enlargement amount. Artwork + rounded boundary + outward glow scale as ONE aligned component. Artwork may never protrude outside the boundary; glow may not clip into square corners.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewCardPresenter.Card scales the complete card/foreground 1.08x, retaining the baseline enlargement. Rounded body clipping contains artwork; PreviewFocusGlow draws the outward rounded boundary with unclipped parent rails. Source compiled through CI 36337372113. Cross-surface normative image comparison and physical glow/clipping remain in visual/Shield QA.
+
+### UI-008 — 2. Home
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Customise Home remains a hub with inline row controls. Leftmost Home-row LEFT reveals Move/Hide only; no delete there. Fix clipped delete confirmation focus/button and awkward wrapping. Movies/TV row toggles update locally without whole-page flash/rebuild. Genre selector uses fixed header/footer with middle scrolling viewport and no clipping. Maximum Items supports No Limit, 10,20,30,40,50,75,100 and exact numeric Select; internal 0 may represent No Limit. Full QWERTY keyboard must be used for numeric Select where the existing wrong keyboard appears. Preserve good keyboard behaviour; subtle backdrop/shadow is acceptable.
+
+Status: **IMPLEMENTED — VISUAL/PHYSICAL VERIFICATION PENDING**
+
+Code mapping / verification: PreviewHomeRows retains the inline editor; row-edge controls expose only Move/Hide. Rule toggles update existing labels without rebuilding the menu. Maximum values are 0/10/20/30/40/50/75/100 plus validated exact input through PreviewTextInput; PreviewHomeMaximumTest covers parsing. Shared confirmDelete and PreviewGenres provide bounded controls. Focused delete/keyboard captures were inspected at checkpoint 110. Checkpoint 111 corrects actual genre-row paint bleed centrally in PreviewDialog; source CI 37359092502 passed the unchanged viewport/focus assertions plus a new fixed-heading pixel comparison, and both corrected genre images were inspected. Physical remote, readability and glow remain Shield QA.
+
+### UI-009 — 2. Home
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Add missing language/locale iconography in Settings UI Language, Subtitle Reading Language and playback Select Subtitle Track. Locale flag only for a true locale such as en-GB; generic language uses neutral language iconography.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewLanguageIcon covers UI language, subtitle reading-language choices and subtitle track rows. Generic languages use a neutral globe; a true country locale uses a flag only when its glyph is supported. Locale/track binding fixtures passed through CI 36337372113. Font rendering/readability require Shield QA.
+
+### UI-010 — 3. Background metadata enrichment
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Library membership is based on indexed media, not successful metadata. Launch local/Home immediately; enrichment runs persistently in background. Priority: visible/current Home content, current page/title, likely next items, then remaining library. TV expansion understands Episode→Season→Series and can enrich the complete local series; Details Seasons & Episodes can discover non-local/provider episodes too. Fetch/persist complete title packages where applicable: core metadata, logos/artwork, ratings, cast/crew, season/episode data, provider availability, Extras, recommendations, reception and local technical codecs. Deduplicate requests; cached data displays immediately; foreground requests temporarily override queue then background resumes. Persist completeness/staleness.
+
+Status: **IMPLEMENTED — SOURCE AND AUTOMATED COVERAGE / LIVE AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewEnrichmentQueue persists all nine package stages, country/language identity, staleness, retry and per-season cursor; each season turn is pre-emptible. PreviewDetailsData reads cached core/credits/classification/seasons/videos/recommendations before refreshing. OfficialTitleArtwork consumes cached images; provider filters observe availability independently of Details; native technical enrichment remains fingerprinted and file-specific. Existing queue/cache/episode/technical tests passed through source CI 37350349198. This closes package-to-surface source reconciliation; real provider completeness, interruption recovery and foreground responsiveness remain live/Shield QA.
+
+### UI-011 — 3. Background metadata enrichment
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Provider/filter state must not depend on opening Details. The observed case where a provider appeared only after visiting Details is a defect.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewEnrichmentQueue.library queues provider availability independently of Details when enabled. PreviewPages observes country/kind/title-scoped changes and refreshes only active filtered pages; PreviewProviderRefreshTest passed through CI 36337372113. Live provider population on Shield remains QA.
+
+### UI-012 — 4. Movies and TV Shows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Preserve the liked six-wide grid and general layout. Fix poster focus geometry globally as described above.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewPages uses a 24-span layout with four spans per poster, preserving six columns. PreviewCardPresenter supplies shared 1.08x rounded focus scaling. Automated source/UI suite passed through CI 36337372113; actual Shield grid geometry remains QA.
+
+### UI-013 — 4. Movies and TV Shows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Toolbar: Filters, Sort, Order, Unmatched, List/Grid and Columns where applicable move close to the divider, visually echoing Details lower navigation. White icon/text, no cyan/glow text and no large rounded focus box. Focus is represented by the associated divider segment turning Supernova blue with restrained outward glow. Unlike Details tabs there is no persistent selected blue segment after focus leaves.
+
+Status: **IMPLEMENTED — AUTOMATED AND RENDER COVERAGE / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewToolbar removes per-control backgrounds and colours the existing divider segment; library toolbars do not set the persistent selectedSegment used by Details. Checkpoint 43 added an eight-dp low-alpha gradient halo without thickening the stroke. Toolbar/edge tests passed through source CI 37357790177, and the inspected Grid/List renders show the written divider-based layout. Real transition/glow appearance remains physical QA.
+
+### UI-014 — 4. Movies and TV Shows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Toolbar edges are deterministic: LEFT on first stays; RIGHT on final stays; DOWN enters library/header. Columns + RIGHT must not fall to a header.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewToolbar consumes horizontal movement and retains both terminal controls. Actual PreviewPages List headers remain focusable across touch/remote input state. Preview417NavigationTest verifies first LEFT/final RIGHT; PreviewPagesTest verifies actual Columns RIGHT and DOWN from all six toolbar controls to an actual focused column header. All passed in CI 37078654379. Rapid-repeat and physical Shield behaviour remain QA.
+
+### UI-015 — 4. Movies and TV Shows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Grid edges: RIGHT on terminal item stays on terminal item; no wrap/jump. Top-row UP→toolbar. Bottom edge stays. Horizontal row lock remains until explicit vertical movement.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewFocusRecycler centralises terminal horizontal and bottom edge consumption; PreviewPages handles top-row UP to toolbar. Preview417NavigationTest covers terminal RIGHT and final-row DOWN, passed through CI 36337372113. Remote repeat and partially visible rows remain Shield QA.
+
+### UI-016 — 4. Movies and TV Shows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Return from Details: restore exact originating item, scroll position, view mode and visible focus. In List restore exact row. Do not fall back to leftmost item/top nav.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / ACTIVITY AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewPages stores per-tab FocusAnchor, cell/media key, child control and layout state; restores after child navigation and selective DiffUtil changes. PreviewLibraryReturnTest exercises the actual Grid/List adapters at a non-leftmost scrolled item, invokes the Details callback, refreshes while a child stand-in holds focus and verifies exact item/row, offset, first visible position and view mode on return. Both tests passed CI 37079271165. The stand-in does not establish complete native-activity lifecycle or physical Shield Back behaviour; those remain QA.
+
+### UI-017 — 4. Movies and TV Shows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+List View: fix flicker/rebuild when switching Grid/List, toggling/reordering Columns and background metadata updates. Sort remains one criterion. Columns controls visibility/order. Populate/persist Codec, Bitrate, HDR and other technical values through scan/index/background work; List reads cache rather than triggering focus-driven extraction.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewPages retains its adapter and uses signatures/DiffUtil for library changes; Columns retains one active sort and separate visibility/order. Technical extraction is queued from indexed snapshot/page priority, not focus or List scrolling. PreviewMetadata saves native measurements and fingerprint-cached HDR with retry/backoff; loader hydration reads stored results. PreviewTechnicalEnrichmentTest verifies every physical version is eligible and rejects changed size/modification fingerprints, including cache-only Details reads; these and complete Video regressions passed CI 37120690556. Actual extractor format coverage, storage load and visible flicker still need Shield QA; unavailable HDR remains unknown.
+
+### UI-018 — 4. Movies and TV Shows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Filters: Genre only genres actually present; fix phantom genre entries. Genre multi-select + Done. Year becomes multi-select + Done. Streaming Service becomes persistent multi-select + Done with ticks retained on reopen and monochrome provider icons. Provider availability is populated in background. Clear Filters works.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewGenres derives options from indexed entries. PreviewPages persists separate Movie/TV genre, year and provider selections, Done and Clear. PreviewProviderFilterTest exercises multi-selection, Done, reopen, page recreation, per-kind isolation and both clearing actions; passed current-source CI 37341405225. The shared provider helper desaturates real catalogue logos without flattening opaque shapes. Actual catalogue completeness and Shield menu appearance remain physical/live QA.
+
+### UI-019 — 4. Movies and TV Shows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Movies artwork regression: after Network & Files → Scan Library, some Movies posters disappeared while titles/year and Details artwork remained; cold restart did not restore. Investigate/fix cache/binding invalidation. Latest diagnostics show repeated artwork failures and are evidence, but do not assume causality without code proof. TV did not show the same physical symptom at that time.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewCardPresenter fences asynchronous artwork callbacks by binding generation, resets failed requestedArtwork for retry and avoids accepting a prior item response after recycling. This addresses a code-supported binding/retry failure without asserting it proves the original Shield incident cause. Source/UI suite passes through CI 36337372113. Repeat scan/restart artwork regression on Shield remains required.
+
+### UI-020 — 5. Unmatched media
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Add first-class Unmatched toolbar workflow to Movies and TV. Classification is separate from metadata identity. Strong TV filename/folder patterns may classify TV; standalone title/year may classify Movie; genuinely uncertain remains Unknown Type. Movies→Unmatched shows confidently Movie unmatched + Unknown; TV→Unmatched shows confidently TV unmatched + the SAME underlying Unknown records. No duplication. Once matched, item disappears from unmatched and enters normal library.
+
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewMediaClassification supplies non-mutating Movie/TV/Unknown hints from filenames and longest matching source-folder boundaries. PreviewPages.source filters the shared snapshot.unmatched list, including the same Unknown entries in both categories without insertion/duplication. Classification regressions passed in targeted CI 36349549771. Live match/removal/refresh behaviour remains physical QA.
+
+### UI-021 — 5. Unmatched media
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Unmatched Details uses honest placeholders such as Not matched/Unavailable/Unknown and a prominent Match Metadata action. Inferred TV structure may group provisionally. Matching and More→Edit/Correct use the same matching engine.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewMoviePage supplies Match Metadata through native ACTION_SCRAP and honest unmatched placeholders. The actual-page regression checks the callback and Play/Match vertical focus route; it passed current-source CI 37341405225. Optional provisional grouping does not invent identity. Real unmatched libraries and remote appearance remain Shield QA.
+
+### UI-022 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+One continuous vertically scrolling Details page. Initial cinematic Hero; lower nav near bottom with teaser content below. DOWN from actions→lower nav→content/collapse. As user scrolls, title/logo becomes compact/sticky below global nav; hero metadata/actions scroll away. UP reverses smoothly.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewMoviePage is one ScrollView with hero/tab/content routing and a non-focusable compact rendering of the same title/logo. Compact-title reversal, focus retention and the 44dp teaser assertion pass through CI 37078654379. The corrected hero and information-panel renders were inspected at checkpoint 74; the earlier layout-time sizing defect is resolved in that evidence. Physical continuous/reverse scrolling, real logos and remote navigation remain QA.
+
+### UI-023 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Movie lower tabs: Details → Extras → More Like This. TV: Seasons & Episodes → Details → Extras → More Like This. Missing tabs disappear/reflow.
+
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewMoviePage.rebuildTabs starts with Seasons & Episodes only for TV, then Details, populated playable Extras and populated More Like This. Empty tabs are omitted rather than disabled/spaced placeholders. PreviewMoviePageTest verifies populated Extras categories and absence of empty recommendation/extra tabs; passed CI 36349549771. Live TV population/remote navigation remains physical QA.
+
+### UI-024 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+STRICT divider: selected segment is the EXISTING divider line recoloured blue, exactly same stroke width as white unselected divider; glow is optical outside only. No second underline/thicker bar. Tab text remains white.
+
+Status: **IMPLEMENTED — VISUAL/PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewToolbar draws the white divider and selected blue segment at identical y/height, with a separate low-alpha optical halo. PreviewMoviePage stores selectedSegment; its obsolete separate tabLine is GONE. Initial Details render confirms no second thick underline. Focused/unfocused pixel comparison and physical glow remain pending.
+
+### UI-025 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Hero actions: Play + LEFT stays; Play + RIGHT→More; More + LEFT→Play; More + RIGHT stays; DOWN lower nav. Dynamic Play: unwatched Play, partial movie Resume, TV Resume Sx Ex. Subtle internal progress is allowed behind readable contents; external focus remains separate. Buttons content-sized with constant gap. Streaming-only may have provider primary action and no More when no useful actions.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewMoviePage consumes Play LEFT and More RIGHT, routes Play RIGHT/More LEFT directly, and sends hero DOWN to the selected lower tab. Play/More wrap their contents with an 18dp gap. Movie Resume uses positive incomplete playback state; TvshowFragment supplies the same PreviewSeriesJourney selection used for playback, labelled Resume Sx Ex. Remote Details hides local Play and unnecessary More while exposing the available provider action. Actual hero edge/DOWN/Resume assertions and series-label selection tests passed CI 37120690556. Remote-provider launch and physical geometry remain Shield QA.
+
+### UI-026 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+TV Seasons & Episodes: stacked season rows, no dropdown. Four episode cards across. Focus is whole episode unit (artwork + title/runtime), same physical card enlargement ratio, one boundary/glow, no second artwork border. Local uses plain white HUD Play glyph on focus. Streaming-only uses monochrome/translucent provider mark and Watch/deep link. Unavailable remains visible but non-playable. Complete series discovery reconciles local first, then enabled streaming, then unavailable/unknown; no duplicate episode.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / LIVE AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewDetailsData reads cached and refreshed season packages. PreviewEpisodeChoice merges season/episode coordinates, retaining local physical versions first and showing unknown non-local episodes without duplicates. PreviewEpisodeRow measures four cards across with whole-unit focus and local playback; exact-episode provider offers are required for Watch actions. Season/series offers do not prove every episode playable. Reconciliation, invalid-coordinate and availability-honesty tests passed current-source CI 37341405225. The current provider data can leave non-local availability unknown; live exact-episode coverage and physical navigation remain unverified. Checkpoint 102 provider-mark/rebind regressions also passed through source CI 37357790177.
+
+### UI-027 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+More Like This: collapsed compact hero, no repeated heading, landscape thumbnails four across, up to three rows / max 12 but fewer when relevance is weak. Unfocused artwork+title+year. Focus whole unit with same enlargement/boundary/glow. Source mark only on focus: local plain white HUD Play; streaming monochrome/translucent preferred provider. Strong TMDB relevance first, then local reconciliation, then enabled streaming; genre fallback only. Hide tab if none.
+
+Status: **IMPLEMENTED — AUTOMATED COVERAGE / VISUAL AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewDetailsData preserves TMDb recommendation order, filters configured-country subscription providers and bounds twelve results. PreviewMoviePage reconciles local IDs first, appends local genre fallback last, lays out four across, hides empty tabs and locks horizontal edges. Shared compact-title and card-focus mechanisms are retained. Existing discovery/cache/page regressions passed CI 37341405225. Checkpoint 102 corrects provider-mark monochrome shape; populated visual and live relevance/physical review remain open.
+
+### UI-028 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Extras: collapsed hero; category rows only when content exists; no counts; four cards across; title+duration; whole-unit focus/enlarge; HUD Play glyph; LEFT/RIGHT within row, UP/DOWN categories; strict divider.
+
+Status: **IMPLEMENTED — AUTOMATED COVERAGE / VISUAL AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewMoviePage.renderExtras rejects unsupported/invalid/duplicate video IDs, creates only populated categories, four cards across, and uses PreviewLandscapeCard whole-unit focus plus row edge locks. PreviewExtraDuration reads cached published durations and requests them asynchronously on focus; unknown values remain absent. PreviewTrailer opens the existing playback path. Populated-category, published-duration and shared page regressions passed CI 37341405225. Multi-category physical routing and full-screen live playback remain QA.
+
+### UI-029 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Details information: Key Information always left. Middle Reception if available. Right = Technical for local movie/episode, Library for local TV overview, Streaming for streaming-only. Empty panels omit/reflow. Key Info includes the agreed movie/TV fields (year/dates/runtime/age/genres/studio/network/distributor/country/budget/box office/collection/filming locations/original title/tagline as applicable). Reception: awards summary, critic/audience monochrome ratings/counts and optional reliable quote. Technical: resolution/codec/HDR/fps, audio format/channels/rate, container/size, subtitles, source, human-friendly path. TV Library: season/episode availability, specials, library size/average, technical counts, storage locations. Streaming: enabled/available providers, region and reliable quality/HDR/audio/subtitles; expiry only if reliable. No "last checked" clutter.
+
+Status: **IMPLEMENTED — AUTOMATED COVERAGE / LIVE AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewMoviePage.renderDetails uses native/cached facts and selected-episode package facts, builds Key/Reception/Technical, Library or Streaming panels and omits empty panels. Unknown byte sizes produce a lower bound and suppress an invalid average. Episode ratings/dates/runtime cannot borrow series totals. Empty remote-panel, episode-package, size-accounting and native metadata regressions passed CI 37341405225. Rendered Key/Reception/Technical and remote two-panel layouts were inspected again on 5 October. Awards/quotes/distributor/locations and provider quality fields are not fabricated when the supplied metadata lacks them; their absence is not evidence of provider completeness. Physical readability and live data remain QA.
+
+### UI-030 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Cast/Crew: separate stacked rows, square/rounded portraits (not circles), portrait+name+role one focus unit, whole boundary/glow, complete cards in viewport, subtle edge fade, principal crew. Person/cast discovery is future work; do not implement person pages now.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / VISUAL AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewMoviePage builds separate cast/principal-crew rows from structured native names and enriched credits, with individual rounded portraits and whole-card focus. PreviewPeopleRail distributes integral complete-card widths and aligns focus scrolling to card boundaries with fading edges. Native names containing commas are not split; focused crew identity survives tag refresh. PreviewPeopleRailTest covers native and enriched principal cards, retained focus and awkward-width complete-card geometry, passing through CI 37078654379. Real portraits, fade/glow appearance and physical scrolling remain visual/Shield QA; no person pages were added.
+
+### UI-031 — 6. Details Page
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Streaming-only uses the same Details component/quality as local. Advanced provider deep links are IN scope: where provider/platform supports it, open the specific movie/series/episode rather than generic provider hub; implement safe fallback/logging where unsupported.
+
+Status: **IMPLEMENTED — SOURCE REVIEWED / LIVE PROVIDER QA PENDING**
+
+Code mapping / verification: PreviewRemoteDetailsActivity constructs the same PreviewMoviePage and binds remote metadata, offers and the indexed snapshot. StreamingRepository.titleLink parses title/provider offers and resolves bounded known redirects with safe-URL validation and structured outcomes. Local StreamingActions attempts provider-package title intents, generic title intents, then explicit app/watch-page fallback; the remote route opens the resolved title URL or safe watch page. Exact-episode eligibility remains constrained by UI-025. Parser/redirect/unsafe-URL coverage passed CI 37350349198; installed provider apps, platform link support and account/region behaviour still require live QA.
+
+### UI-032 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Keep/refine More as a dark/translucent rounded context stack with monochrome icons, full-row blue focus boundary/glow and white contents. Content-driven; no empty headings/groups. Remove duplicated Resume/ordinary Play/Play Local File, Full Synopsis, Add to List, Streaming Services shortcut, File Information, List Episodes and Remove Info. Metadata correction must not secretly run legacy Remove Info first.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / VISUAL AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewMoreActions filters native Movie/TV action IDs, independent of translated labels, excluding duplicate play/resume, removed information/list routes and Remove Info. PreviewMoviePage builds only groups with real actions (including its explicit Add to Row and artwork/subtitle entries); the shared choice stack supplies white content, monochrome icons and rounded focus. VideoDetailsFragment ACTION_SCRAP starts matching directly; TvshowFragment ACTION_CHANGE_INFO starts series correction directly, without invoking their separate legacy removal paths. Action namespace/filter/dynamic-state tests passed CI 37120690556. Full matching preservation is tracked separately in UI-039; actual menu appearance and native child returns remain visual/Shield QA.
+
+### UI-033 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Navigation stack: Details Hero→More→child→Back restores More child opener focus→Back restores Hero More focus.
+
+Status: **IMPLEMENTED — SOURCE AND SHARED-STACK COVERAGE / ROUTE QA PENDING**
+
+Code mapping / verification: PreviewMoviePage retains More while child callbacks run. Shared choose/read/review, Versions, artwork and keyboard windows use PreviewDialog.create, retaining the actual parent opener and semantic replacement fallback. Native credential windows call styleNative/trackNative without replacing cancel/dismiss listeners. Shared child/parent, rebuilt-opener and covered-parent tests passed CI 37350349198. These tests do not exercise every native credential window or child Activity return; the complete route matrix remains acceptance QA.
+
+### UI-034 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Watched: exactly one dynamic action. Movie/episode immediate. TV series opens scope submenu Entire Series + seasons with state/progress.
+
+Status: **IMPLEMENTED / TESTED — automated regressions** / **AWAITING PHYSICAL QA**
+
+Code mapping: PreviewMoviePage resolves the current watched action and refreshes open-menu labels. PreviewWatchedScopeDialog/TvshowFragment offer Entire Series and per-season counts, using existing DbUtils writes and Trakt integration. Shared distinct episode counts prevent duplicate versions inflating progress. Five regression tests passed in run 36249337871; real-device refresh and Trakt effects remain unverified.
+
+### UI-035 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Add to Row: permanent rows with plain white + / ✓ state, toggle immediately while menu stays open, no toast; Watch Next follows same pattern; Create New Row bottom uses shared keyboard and auto-adds title then returns ticked.
+
+Status: **IMPLEMENTED / TESTED — automated regressions / AWAITING PHYSICAL QA**
+
+Code mapping: PreviewHomeRows and PreviewDialog.updateMembership provide persistent plain white plus/check state, immediate toggles, shared keyboard creation and return focus on the newly created row. Create/toggle regression passed in run 36256002931.
+
+### UI-036 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Versions: only when 2+ physical versions. Compact horizontal rows with resolution/HDR/codec/audio/channels/size/source/location. Plain monochrome ✓ Current independent of focus. Selection updates current while menu stays; no toast; Technical updates; resume is title-level.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewVersionsDialog and PreviewVariants.details use cached facts, independent Current state, a persistent window and credential-free location display. PreviewVariants.restoreTitleResume reconstructs title position from the latest persisted file history on Preview Details loader refresh, including an explicit zero-position restart. Channel labels use measured counts without inventing speaker layouts; HDR reads current metadata or the matching technical-cache fingerprint without file probes. Picker/current-state, reload/restart-zero, channel-format and changed-fingerprint rejection tests passed through CI 37079271165. Actual native metadata completeness, menu geometry and different-duration physical playback remain Shield QA.
+
+### UI-037 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Subtitles: Choose local/downloaded with clear source/active state; Download search workflow; Subtitle Settings shortcut opens full Settings→Subtitles; no toast. Sync with HUD selection.
+
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewSubtitleChooser now uses retained native discovery/association, labels Media folder/Saved subtitle cache and active choice, honours read-only capabilities, and returns explicit selected paths. PlayerActivity applies that path via the existing user track-selection/persistence route, or waits for native subtitle metadata refresh; PreviewPlaybackMenus refreshes ticks/callbacks in place. PreviewSubtitleResults/SubtitleTransfer retain reviewed download staging, non-toast feedback and full Settings→Subtitles shortcut. Chooser, menu and transfer regressions pass through CI 36367506423. Real source permissions/download/track refresh and exact HUD return remain Shield QA.
+
+### UI-038 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Artwork: Poster/Backdrop grids; one plain white ✓ at top-right safe area, no circle/current label; focus enlargement/boundary/glow; apply immediately, remain open, propagate to surfaces.
+
+Status: **IMPLEMENTED — SOURCE AND GRID COVERAGE / CROSS-SURFACE QA PENDING**
+
+Code mapping / verification: PreviewArtworkPicker supplies one selected tick, single-flight apply, retained window and failure retention. Movie/episode routes use native PosterSaverTask/BackdropSaverTask; series uses the same picker with a worker and native ScraperImage setters. The pinned MediaLib setters update scraper image fields, and ScraperProvider emits content/video notifications; MainFragment receives refreshed PreviewLibraryLoader snapshots. Successful backdrop apply also refreshes the current Details backdrop. Picker tests passed CI 37350349198. Immediate image propagation across retained Home/library/Details and physical focus/crop remain scenario QA; no blanket cache-propagation pass is inferred.
+
+### UI-039 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Metadata: unified Find a Match with subtitle "Search by title, TMDB ID or IMDb ID" and one field accepting title, TMDB numeric ID or IMDb tt... identifier. Already matched may show Current Match IDs + Refresh Metadata; unmatched omits Current Match. Compact results + Match Preview + explicit Use This Match/Use This Episode. TV series correction changes series identity then rebuilds/reconciles episodes; episode correction under known parent with Change Series Match escape hatch. Preserve playback/watched/rows/file associations/versions. TMDB/IMDb UI identifiers are clean monochrome.
+
+Status: **IMPLEMENTED — SOURCE AND PERSISTENCE COVERAGE / LIVE WORKFLOW QA PENDING**
+
+Code mapping / verification: PreviewMatchSearch/DirectMovieLookup provide the shared field and explicit review. ManualVideoScrappingSearchFragment saves accepted metadata without Remove Info, rejects changed episode parents and treats negative persistence results as failure. ManualShowScrappingSearchFragment preserves each episode video ID/file through the provider batch, rejects failed batches and migrates Home show memberships. PreviewMatchStateTest uses the real provider/schema to verify physical IDs, paths, scraper associations, bookmarks and last-played values for two versions; membership and match tests passed CI 37350349198. The test updates both movie versions explicitly and is not evidence that one UI selection corrects every encode. End-to-end version grouping and live series/NFO failure behaviour remain acceptance review. The controlling paragraph requires playback/watched/rows/file associations/versions preservation; it does not require retaining incorrect-match artwork.
+
+### UI-040 — 7. More / contextual workflows
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Remove from Library is not a broad redesign in this pass. Existing source-context action may remain. Existing Delete remains where applicable; physical WebDAV Delete passed.
+
+Status: **IMPLEMENTED — SOURCE REVIEWED / PHYSICAL QA PENDING**
+
+Code mapping / verification: Native Delete handlers remain. PreviewNetworkWorkspace separates source removal/bookmark removal from physical media deletion; failed database removal now keeps the displayed row and prevents subsequent indexed cleanup. PreviewSourceRemovalTest passed CI 37341405225 for both failure paths. No broad deletion redesign was introduced; successful live source removal and WebDAV deletion remain physical checks.
+
+### UI-041 — 8. Playback HUD
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Do not ground-up redesign the physically approved base HUD. Upper left title/logo + TV season/episode/name; upper right current time + Ends. HUD sits low; seekbar close to controls. Seekbar has no blue container: blue played, neutral remaining, scrub dot, floating timestamp, current left/duration right. Exactly five controls: Subtitles | Audio | Play/Pause | Info | More. Unfocused no boxes; focused compact rounded blue boundary/glow; contents white; one-line labels.
+
+Status: **IMPLEMENTED — AUTOMATED AND EMULATOR COVERAGE / PHYSICAL QA PENDING**
+
+Code mapping / verification: player_controller_experimental retains exactly Subtitles, Audio, Play/Pause, Info and More with existing title/episode, clock, seekbar and timestamp bindings in PlayerController. Structural checks and CI 37341405225 passed; strict native playback CI 37338324041 verified HUD entry and technical Info return. The rendered HUD composition was reinspected on 5 October. Synthetic imagery and missing focused-state capture do not establish real Shield typography, glow or live seek appearance.
+
+### UI-042 — 8. Playback HUD
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Seeking acceleration: presses 1–3 = 10s, 4–6 = 30s, 7–9 = 1m, 10+ = 2m maximum. Reset after roughly 1–1.5s pause; direction change resets to 10s; hold accelerates; release resumes displayed position. If HUD hidden, LEFT/RIGHT reveals HUD + floating timestamp. Trick-play thumbnail is deferred.
+
+Status: **IMPLEMENTED — POLICY VERIFIED / PLAYER AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewSeekPolicy implements exact press groups, a 1250ms reset, direction reset and bounded positions. PlayerController uses that policy for Preview key-seeking, advances held keys on its existing handler, and commits the displayed position on release of the active direction. Policy boundary/reset tests passed through CI 37079271165. Actual hidden-HUD reveal, native seek completion/resume and hold/release timing remain player/physical QA; no trick-play thumbnails were added.
+
+### UI-043 — 8. Playback HUD
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Subtitle/Audio menus restore exact HUD opener focus on Back. Track changes remain open and tick updates. Add language-specific/generic icons. Replace legacy Get Subtitles Online with designed search/download workflow.
+
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewPlaybackMenus preserves the HUD opener, keeps track menus open, and refreshes selected ticks/live callbacks when native metadata replaces items. PreviewLanguageIcon supplies generic language/true-locale marks; designed subtitle search/download/chooser replace the old online shortcut route. Menu callback/restoration and language fixtures pass through CI 36367506423. Physical remote Back and native track changes remain Shield QA.
+
+### UI-044 — 8. Playback HUD
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Playback Speed/Audio Delay use same compact adjustment panel dimensions; Subtitle Delay may be taller. Human-readable values: 1.00×, 0 ms, +250 ms, −500 ms, +1.5 s. Back exact opener.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping: PreviewAdjustmentValue supplies signed human-readable delay values and two-decimal playback speed through the retained native pickers. Existing limits/callbacks are preserved. PlayerController routes Preview TVCardDialog adjustments through PreviewPlaybackMenus.showNested, which gives Audio Delay and Speed the same 330dp × 180dp bounds (clamped to available screen). Native-picker bounds/dismissal and direct HUD Speed Back restoration regressions passed through CI 37079271165. More entry retains its own parent callback. Physical Shield geometry, nested navigation and rapid Back remain acceptance checks.
+
+### UI-045 — 8. Playback HUD
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Preparing Playback: fix Movies generic background and TV generic flash. Use cached real backdrop + gradient + logo/title/minimal info + Preparing playback…; use dark neutral transition while cache resolves; generic only no-art/failure. Do not fetch internet artwork synchronously at Play time.
+
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
+
+Code mapping / verification: PreviewPlaybackLoading starts dark/neutral, uses cached backdrop and official title artwork, and follows native preparation/frame readiness. Remote image requests explicitly use Picasso OFFLINE policy; unsupported transport schemes cannot be probed by this image loader. PreviewPlaybackLoadingTest verifies offline remote/local routing and rejection, passing CI 36367506423. Real Movie/TV startup flashes and first-frame timing remain Shield QA.
+
+### UI-046 — 8. Playback HUD
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Info overlay is technical only: Video, Audio, File, Source. No poster/title/synopsis/path/filename/actions. Remove Resume/Play from Beginning/File & Technical Details from Info. Back restores HUD Info focus.
+
+Status: **IMPLEMENTED — EMULATOR VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewTechnicalInfo retains technical-only fields and invokes its owning PlayerController HUD restoration before focusing the captured Info opener. Strict native CI 37338324041 at fbcbc20d passed the real remote Info activation/Back assertion before release packaging, without the interim-known-defect exception. Current-source CI 37341405225 also passed the actual-view hidden-parent regression. Physical Shield remote/playback QA remains pending.
+
+### UI-047 — 9. Search
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Remove duplicate upper-right Search and subtitle. Keep left heading Search. Field placeholder "Search Movies and TV Shows"; field is non-focusable query display, subtle neutral/translucent boundary, no permanent blue, no X. Search opens keyboard focus immediately on T.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewSearch has one left heading, the specified non-focusable/cursorless query display, neutral surface and no clear-X control. PreviewKeyboard starts on T. The actual Search presentation fixture verifies these properties and saved keyboard focus; Preview417NavigationTest verifies empty-result edges. Both passed complete-suite CI 37113071931. The empty Search render was inspected in conformance checkpoint 69. Populated presentation and physical font/glow/routing remain Shield QA.
+
+### UI-048 — 9. Search
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Keyboard rows exactly: 1 2 3 4 5 6 7 8 9 0 / Q W E R T Y U I O P / inset A S D F G H J K L / further inset Z X C V B N M / bottom Clear | Space | Backspace. No Caps/Shift/123. Traditional stagger, subtle dark/translucent backdrop, unfocused subtle key surfaces, focused compact blue outline/glow and white character.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewKeyboard.ROWS contains the exact number/QWERTY/ASDF/ZXCV rows and Clear/Space/Backspace; shorter rows use 12dp/36dp insets. White keys use shared compact focus styling and stable semantic tags. PreviewNextTest and Preview417NavigationTest passed CI 37113071931, with actual Search rendering already inspected at conformance checkpoint 69. Physical typography, glow and rapid D-pad use remain Shield QA.
+
+### UI-049 — 9. Search
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Keyboard primary. Appropriate right-edge key RIGHT→first result when results exist; result LEFT→last keyboard key; UP from number row→top nav; no result edge stays keyboard. Results update only when query changes, not focus. Details return restores query/results/scroll/exact result focus. Preserve current successful live search and series/version routing.
+
+Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / NATIVE AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewSearch routes right-edge keyboard entry to the first result, result LEFT to the remembered key, and top-number-row UP through the shell. Query TextWatcher, not focus, schedules lookup; cancellation/generation checks reject stale results. Saved state retains query, result identity, scroll and keyboard key. The actual result adapter click/retained-window return test verifies the same focused result and one matching diagnostic restoration token; keyboard/presentation tests passed complete Video CI 37137362694. Full populated query/scroll activity recreation, rapid remote use and live series/version routing still require native/Shield QA.
+
+### UI-050 — 10. Network & Files
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Final left rail: Overview · Local Storage · Network Shares · Cloud Services · Saved Locations. Remove Advanced from Network & Files; advanced app config belongs Settings. Selecting Network & Files enters page with Overview focused. UP/DOWN one rail item; UP Overview→global Network & Files; DOWN final stays; RIGHT→first meaningful middle control; LEFT from centre→originating category. Entering page never auto-activates/expands/enters middle.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewNetworkWorkspace has exactly Overview, Local Storage, Network Shares, Cloud Services and Saved Locations. Its central routing consumes final DOWN and horizontal boundaries, enters the middle on RIGHT and returns to the originating rail on LEFT. PreviewPages now explicitly focuses Overview on initial entry/reselection and reports its top edge only while Overview is focused. The actual page/shell fixture verifies entry, category-by-category UP, middle return and Overview UP to global Network; passed complete Video CI 37137362694. Actual Shield repeats and live source binding remain physical QA.
+
+### UI-051 — 10. Network & Files
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Architecture: Left = Where am I? Middle = What can I select? Right = What is it / what can I do with it? Small contextual overlay for finite values. Full-screen transition only for a genuine workspace such as filesystem browser.
+
+Status: **IMPLEMENTED — SOURCE AND COMPONENT VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewNetworkWorkspace has permanent category, item and context panels. Focus updates source context without activating a source; finite choices use PreviewDialog and the existing anchored placement. ListingActivity/PreviewBrowserSurface supplies the filesystem workspace. Actual network semantic/routing and shared provider-browser fixtures passed CI 37341405225. Physical/live-source behaviour remains QA.
+
+### UI-052 — 10. Network & Files
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Overview keeps Scan Library and Network Scanning separate. Network Scanning right panel: Automatic scanning On/Off; Frequency; Scan when Supernova opens/returns On/Off; Sources Included; Last Scan/Result; Scan Network Sources Now. Remove Configure Network Scanning button. Frequency choices exactly 15m,30m,1h,6h,24h. Use small anchored overlay with tick for finite choices; Sources Included may use larger multi-select. Increase vertical spacing between controls.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / VISUAL AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewNetworkWorkspace separates Scan Library from Network Scanning and supplies Automatic, Frequency, On open/return, Sources Included, live status and Scan Now. Frequency values are exactly 15/30/60/360/1440 minutes. PreviewDialog.choose anchors to the current opener through PreviewMenuPlacement and shows the selected tick; actual-window anchor/tick/return coverage passed CI 37113071931. The right-panel controls use 42dp rows. Physical spacing, source-selection behaviour and actual scheduling remain visual/Shield QA; the fixture does not prove live scanning.
+
+### UI-053 — 10. Network & Files
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Scan Library live state: current phase/source, honest progress only if measurable, items processed/new/updated/elapsed; indeterminate otherwise. Network Scan also exposes live source/location, checked/new/updated, sources completed and elapsed, with unobtrusive persistence while navigating Network & Files. Cancel only if genuinely supported.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewLibraryScan, PreviewLocalScanState and PreviewScanProgress combine measured native phases/counters with explicit unknown progress. Network status remains independent of local import; source totals and terminal notifications are deduplicated, and page status reads lifecycle state rather than owning a scan. No fake cancel operation is exposed. Scan lifecycle/progress regressions passed CI 37341405225. Physical source counts, network delays and page-switch presentation remain QA.
+
+### UI-054 — 10. Network & Files
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+PHYSICAL DEFECT: Manual Scan Network Sources Now failed to discover a newly added WebDAV movie/no useful feedback, while close/relaunch scanning found it. Compare manual pipeline with successful startup/resume path and make manual action use the same reliable discovery/reconciliation semantics with start/completion/failure feedback.
+
+Status: **IMPLEMENTED — SOURCE AND AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: CustomApplication startup/resume/scheduled requests and Network Scan Now converge on PreviewLibraryScan.requestNetwork and NetworkAutoRefresh.forceRescan. Busy checks use actual network traversal; the pinned scheduler patch recognises HTTP/HTTPS WebDAV aliases. Lifecycle tests passed CI 37341405225. This resolves the verified pipeline/classification inconsistencies; the original newly-added WebDAV movie scenario still requires physical reproduction and must not be claimed passed from unit tests.
+
+### UI-055 — 10. Network & Files
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Library Sources = indexed network folders/media. Actions Browse/Open, Scan Source, Remove from Library (not delete media). Saved Locations = bookmarks, not necessarily indexed; actions Browse/Open, Add to Library, Remove Saved Location. Shared browser action Add to Saved Locations populates it. Empty state explains saving frequent folders.
+
+Status: **IMPLEMENTED — SOURCE AND COMPONENT VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewNetworkWorkspace keeps indexed ShortcutDbAdapter sources separate from ShortcutDb saved browsing bookmarks, with Browse/Scan/Remove versus Browse/Add/Remove semantics. PreviewFolderActions and ListingFragment expose saved locations independently of indexing. Empty state explains the workflow. Failed-removal regressions passed CI 37341405225; real database/source operations and retained user history remain physical QA.
+
+### UI-056 — 10. Network & Files
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Network Shares: flatten nested Library Sources→source→actions. Focusing source immediately updates right panel with friendly path/protocol and actions. No right-panel Back button; remote LEFT returns. Distinguish network connection from library source. Add Network Source establishes connection first, then browse/select folder and add to Movies/TV library. Protocols: SMB, WebDAV HTTPS, WebDAV HTTP, SFTP, FTP, FTP TLS. Do NOT add NFS unless implementation genuinely supports it. Credentials include protocol, server/address, optional port 1–65535, path, username/password, save/show password and SMB domain when needed. WebDAV(s) may allow anonymous empty user. Discovery: SMB computers/NAS and DLNA/UPnP media servers; FTP/SFTP direct, not discovery.
+
+Status: **IMPLEMENTED — SOURCE REVIEWED / PROTOCOL AND DEVICE QA PENDING**
+
+Code mapping / verification: PreviewNetworkWorkspace flattens sources into the middle list with immediate right context and LEFT return. NetworkRootFragment connects through retained SMB/SMBJ, WebDAV(S), SFTP/SSHJ, FTP and FTPS handlers, then opens ListingActivity before folder indexing. NetworkServerCredentialsDialog exposes six canonical protocols, optional port validation 1–65535, path/save/show/domain and anonymous WebDAV; SMB/UPnP discovery remains separate. Checkpoint 107 corrects friendly labels for internal webdav/webdavs/smbj/sshj aliases. Network semantic/focus tests passed CI 37350349198; real protocol/discovery/credential flows remain device QA.
+
+### UI-057 — 10. Network & Files
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Local Storage: middle storage volumes; right capacity/status/location + Browse. Shared browser is reused for Local Storage, Network Shares, Saved Locations and put.io. Three-panel model location/source→contents→context actions. Actions are capability-driven; never show destructive operations unsupported by/read-only source. Folder actions include Add Folder to Movies Library, Add Folder to TV Shows Library, Add to Saved Locations.
+
+Status: **IMPLEMENTED — SOURCE AND COMPONENT COVERAGE / DEVICE QA PENDING**
+
+Code mapping / verification: PreviewNetworkWorkspace supplies volume capacity/location/status and Browse. ListingFragment wraps its existing browser in PreviewBrowserSurface and derives context commands from visible native capabilities, with separate Movies/TV indexing and Saved Locations. The put.io browser reuses PreviewBrowserSurface and read-only actions. Existing browser/folder-action/put.io fixtures passed CI 37350349198. Real removable/read-only storage and protocol permissions remain device QA; destructive capability support is not inferred from a synthetic browser.
+
+### UI-058 — 11. Settings foundation
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+This is foundation/navigation only, NOT category-by-category settings redesign. Preserve existing settings and semantics. Three-panel shell: Left Categories → Middle Settings/options → Right contextual explanation/current value. Dark/translucent Supernova styling, white type, monochrome icons, blue focus boundary/glow.
+
+Status: **IMPLEMENTED — SOURCE AND NAVIGATION COVERAGE / SETTINGS QA PENDING**
+
+Code mapping / verification: PreviewSettings organises retained Preference objects into the fixed category rail, middle preference workspace and right explanation/current value. PreferenceGroupAdapter preserves native preference listeners, storage keys and value controls; nested navigation is handled in the workspace. Compatibility/legacy controls retain existing saved values and are not a new category redesign. Entry/child return coverage passed CI 37350349198. Exhaustive settings semantics and physical appearance remain acceptance QA.
+
+### UI-059 — 11. Settings foundation
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Fixed non-scrolling left rail with all top-level categories visible and About permanently visible at bottom. Current categories: Playback, Video, Audio, Subtitles, Library & Metadata, Home, Appearance, Streaming, Network, Integrations, Advanced, About.
+
+Status: **IMPLEMENTED — EMULATOR LAYOUT INSPECTED / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewSettings.NAMES contains the twelve specified categories in order. The non-scrolling PreviewFocusRail allocates equal weighted heights to all categories, with About last. The 1920×1080 emulator capture from CI 37137362573 shows the entire rail and About at the bottom. That run failed an obsolete Integrations smoke navigation sequence, so it is not an accepted APK; this observation establishes only the captured layout. Shield viewing-distance legibility and focus animation remain physical QA.
+
+### UI-060 — 11. Settings foundation
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Enter Settings focuses Playback in LEFT rail, never first middle setting. Focusing category NEVER expands it. Indented children do not appear on hover/focus. Explicit OK/Select or RIGHT enters category/subcategory; nested subcategories appear in middle workspace, never inserted into permanent left rail. Deterministic focus: rail UP/DOWN one category; RIGHT first appropriate middle; LEFT returns origin; middle UP/DOWN; RIGHT enters value/control when meaningful; Back reverses hierarchy; choice panel Back exact setting. No teleporting.
+
+Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / EMULATOR AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewSettings initially focuses Playback unless an explicit existing shortcut requests another category. Rail focus updates context but hides nested categories; OK/RIGHT constructs children in the middle and enters them. LEFT/Back return through retained category/child identities and restoration tokens. PreviewSettingsEntryTest verifies rail-only shortcut entry, explicit option entry and stable child return with duplicate labels; passed complete Video CI 37137362694. The obsolete smoke sequence was corrected; current-source full/native CI 37359092413 passed the explicit-entry and credential-presence smoke checks. Full physical hierarchy/rapid-Back behaviour remains QA.
+
+### UI-061 — 12. Launcher branding / app name
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Change launcher-facing display name from "Nova Preview" to "Supernova". Keep Preview/build identity inside About/version information. Do NOT change package/application ID or signing identity.
+
+Status: **IMPLEMENTED — AUTOMATED AND IDENTITY VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: prepare-preview.py retains the established application/provider conversion and sets launcher label Supernova. PreviewBuildInfo retains Preview/version/code/package/build identity and now correctly names the verified 4.1.6 baseline 094d8e8. The About correction test and identity gate passed CI 37341405225 and later source runs through 37350349198. Earlier signed native run 37338324041 verified the pinned certificate and upgrade for its source. Current-source full/native CI 37359092413 passed; physical launcher/About remains pending.
+
+### UI-062 — 12. Launcher branding / app name
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Use BRANDING/Supernova_Shield_Launcher_Master_APPROVED.png as approved artwork direction and BRANDING/Supernova_Shield_Launcher_320x180_APPROVED.png as the derived Android TV launcher banner target. Preserve high-resolution master. Ensure manifest/resource wiring uses the Android TV banner appropriately. Validate appearance on Nvidia Shield Favourite Apps row at real viewing distance.
+
+Status: **IMPLEMENTED — PACKAGED ASSET VERIFIED / PHYSICAL SHIELD QA PENDING**
+
+Code mapping / verification: preview_custom_banner.xml references supernova_shield_banner; merged manifest selects that banner. Source asset SHA-256 925dd63a8e865d9621642ec283d994af8f4061ef3f21bfd4dd2c6456f4751631 matches the authoritative derived asset exactly. The signed interim APK's res/vy.png was decoded and matched the approved 320×180 pixels exactly. The original master remains preserved in the authoritative handover archive and recovered BRANDING directory, not redesigned. Real Shield Favourite Apps legibility at viewing distance remains physical QA.
+
+### UI-063 — 12. Launcher branding / app name
+
+Source: `IMPLEMENTATION_SPEC.md`
+
+Investigate coexistence: user reports upstream Nova Video Player fails to install both from GitHub APK and Shield app store while Supernova remains installed/unaffected. Do not assume cause. Verify Supernova package identity, manifest authorities/providers and identifiers are isolated from upstream Nova. Acceptance target: Supernova and official/upstream Nova can coexist, launch and upgrade independently if upstream packaging/platform permits. Do not "fix" by changing Supernova's established package/signing identity without evidence.
+
+
+Status: **REPOSITORY INVESTIGATION COMPLETE — EXTERNAL INSTALLER / UPSTREAM EVIDENCE REQUIRED**
+
+Code mapping / verification: COEXISTENCE_INVESTIGATION.md records the verified Preview package, all eight namespaced authorities, preserved shared-user identity/max SDK and inherited task affinities. Real merged-manifest audits passed, most recently for the interim in CI 37192141281; signed interim uses the required certificate. No collision cause is asserted and no identity migration was attempted. Exact upstream APK/manifest/certificate, Shield installer failure code and installed shared-user state are still required to establish cause and test independent coexistence/upgrade. This is an external-evidence block, not the put.io OAuth dependency.
+
+### PUT-001 — Architecture
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Hybrid model. put.io supported public API/OAuth handles authentication, account/storage, browse, stable file/folder IDs, discovery/sync, search, file metadata/media info and supported file operations. Existing WebDAV remains the PRIMARY original-quality playback transport initially. Playback stack remains Supernova → AVOS/core → FFmpeg → Android/Nvidia Shield hardware. Do not describe current engine as mpv.
+
+Status: **IMPLEMENTED — LIVE ACCOUNT QA PENDING**
+
+Code mapping / verification: PutioReadClient/OAuthClient cover account/storage, stable-ID listing, cursor search and selected file/media information. PutioSnapshotReader/Sync/AssociationStore own API discovery; native bridge retains original WebDAV playback. No API streaming or transfer management. Tests passed through CI 36337372113. Production OAuth/live account use remains blocked under PUT-003.
+
+### PUT-002 — Architecture
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Provider abstraction: Library → Local / Generic Network / Cloud Provider. put.io provider owns API client, stable ID mapping, sync/account/file management. Playback resolver continues to support local/SMB/SFTP/WebDAV and put.io WebDAV original-quality transport. API direct original/HLS/MP4 may be benchmarked later as fallback/future, not primary now. Transfers/download management and playback-position sync are deferred.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: Separate putio package owns API identity/sync; ProviderDiscoveryGate marks native-owned subtrees; PutioLibraryBridge maps stable IDs to existing WebDAV native records. Generic local/network transports are retained. Source/backend/WebDAV tests passed through CI 36337372113. Physical mixed-provider playback remains QA.
+
+### PUT-003 — Authentication
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Cloud Services → Connect put.io → temporary linking/device code → large TV QR + short code + put.io link → phone sign-in/approve → Supernova polls → connected. Never collect normal put.io username/password in Supernova. QR contains link/code only, never OAuth token/credentials. Manual code fallback. Store OAuth token securely; never export/log/display it. Validate exact production endpoint/deep link during implementation. Supernova requires a registered put.io OAuth app/client.
+
+Status: **BLOCKED — PRODUCTION OAUTH CONFIGURATION**
+
+Code mapping / verification: Device-code request/poll, temporary link/code-only QR, manual fallback, timeout/cancel and encrypted Android Keystore token storage are implemented. Production registered client ID and validated linking template are intentionally empty. Parser and token-envelope tests pass; no live token was obtained and no live authorisation claim is made. Production client/link validation and subsequent real-account QA remain blocked by the acknowledged dependency.
+
+### PUT-004 — First-time association / zero-duplicate migration
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+1. Authenticate.
+2. Choose Movies folder and TV Shows folder using API browser; store stable folder IDs + display path.
+3. Save & Continue explicitly states existing library will be preserved and matching put.io files linked rather than imported again.
+4. Initial API sync selected folders; high-confidence match existing records using path/name/size and other safe signals; attach put.io IDs to existing record.
+5. API-only new items enter normal classification/index/enrichment.
+6. Ambiguous matches remain untouched and go to Needs Review: Existing Supernova item vs put.io item; Same File / Keep Separate; Finish Later.
+7. Success summary includes matched existing items and duplicates created (target zero).
+
+Status: **AWAITING PHYSICAL QA / LIVE OAUTH DEPENDENCY**
+
+Code mapping / verification: Movies/TV folder browser and explicit matching WebDAV source selection feed Save & Continue and complete-snapshot ingestion. Existing IDs are matched conservatively; new native files_scanned records invoke enrichment; ambiguous records remain Same File/Keep Separate/Finish Later. Summary retains original IDs across review steps and separates existing/new items and zero duplicate playback paths. Native schema and coordinator fixtures passed CI 36337372113. Actual Films/TV migration requires production OAuth and Shield QA.
+
+### PUT-005 — First-time association / zero-duplicate migration
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Preserve metadata, watched/resume, custom rows, artwork, versions and file associations. Provider fields include provider=put.io, put.io File ID, Parent Folder ID, Supernova Media ID, playback source existing WebDAV URI. Stable file ID survives rename/move.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: Association sidecar stores account/file/parent/folder/native media IDs and relative path; native relocation updates the scanner URI for the same canonical record. Native schema/trigger tests preserve bookmark and movie match through rename and interrupted reassignment. Tests passed CI 36337372113. Complete watched/artwork/custom-row/version preservation remains real-library QA, not proven by those fixtures alone.
+
+### PUT-006 — First-time association / zero-duplicate migration
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Once associated, discovery/index changes for those folders come from put.io API; playback remains WebDAV. Generic network scanner must not independently rediscover the same associated folder.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: ProviderDiscoveryGate and scanner share a lock; native-owned roots and descendants are excluded while ancestor scans retain their records during stale reconciliation. Activation persists exclusion before API ownership. Backend regression suite passed CI 36337372113; simultaneous physical generic/API scanning remains QA.
+
+### PUT-007 — Sync safety
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Initial complete snapshot; later additions/removals/moves/renames reconcile stable IDs. Correctly paginate large libraries. Partial/interrupted/auth-failed/rate-limited/incomplete listings MUST NEVER trigger mass deletions. Destructive reconciliation only after complete valid sync.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: SnapshotReader requires every descendant and cursor, stable counts and successful completion. Generation-fenced Sync never removes history; missing IDs are review-only. Root ancestry is checked before/after listing and exact known path suffixes support root moves. Page, coordinator and native interrupted-reassignment tests passed CI 36337372113. Large live library and rate-limit/outage scenarios remain account/Shield QA.
+
+### PUT-008 — Sync safety
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+API unavailable → indexed library remains and WebDAV playback may continue. WebDAV unavailable → API browse/sync may continue but playback source reports unavailable; no library deletion. OAuth invalid → Reconnect put.io; do not delete library. Changing selected library folder is source reassignment, not silent deletion; sync new scope and deliberately retire old association while preserving state. Disconnect removes native sync/API credential, never deletes put.io media or silently erases Supernova history. Because WebDAV is independent, explicitly ask whether associated sources revert to generic discovery or remain inactive; do not guess.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: OAuth failures route to Reconnect without deleting records. Native and WebDAV connections remain independent. Reassignment journals before URI mutation, reads a complete snapshot first and asks inactive/generic retirement; account changes and disconnect explicitly choose ownership and preserve history. Pending changes can resume safely. CI 36337372113 passed; live expiry, independent outages and reconnect still require account/Shield QA.
+
+### PUT-009 — Sync safety
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Native destructive put.io file operations, if implemented, use supported API. Do not rely on WebDAV destructive behaviour merely because a physical WebDAV delete happened to pass.
+
+Status: **IMPLEMENTED AND VERIFIED — SOURCE/REGRESSION**
+
+Code mapping / verification: No native destructive put.io operation is offered. Generic WebDAV Delete, ancestor deletion, associated-file deletion and subtitle rename/delete are guarded when API ownership overlaps. Unassociated generic sources retain their behaviour. Guarded-deletion/backend tests passed CI 36337372113.
+
+### PUT-010 — Cloud Services visual behaviour
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Blue remains focus/accent everywhere; no green status theme. Connected/Up to date may use restrained blue/neutral without focus-level glow. Provider logos may retain recognizable brand shapes but are monochrome. put.io is implemented provider. Google Drive, OneDrive, Dropbox may remain monochrome Coming soon reminders only; do not imply implemented.
+
+Status: **IMPLEMENTED — VISUAL REVIEW PENDING**
+
+Code mapping / verification: Cloud Services uses shared blue/white controls and neutral Coming soon reminders for Google Drive/OneDrive/Dropbox. No green status theme or implied integrations. Normative visual comparison remains pass 2.
+
+### PUT-011 — Cloud Services visual behaviour
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Connected put.io overview: identity/status, Storage Used, Last Sync/Up to date, Movies folder, TV Shows folder, Sync Now, Browse Files, Change Library Folders, Account/Connection, Disconnect. Avoid duplicate Disconnect actions. No transfers/download UI.
+
+Status: **IMPLEMENTED — TESTING / VISUAL REVIEW PENDING**
+
+Code mapping / verification: Account overview now displays identity/status/storage plus Movies and TV paths, ownership/sync state and last-sync age. Sync, Browse/Search, Change Library Folders, Account/Connection and one Disconnect remain available. Shared provider browser added at checkpoint 43. No transfer/download UI. New CI and normative visual review remain pending.
+
+### PUT-012 — Required QA
+
+Source: `PUTIO_ARCHITECTURE.md`
+
+Large paginated library; interrupted sync; expired auth; rename; folder move; API outage; WebDAV outage; new file; removed file; ambiguous association; reconnect; no duplicate/lost-state migration. Physical path: Connect → associate Films/TV → sync → new put.io item appears → play over WebDAV → rename/move → sync → same record.
+
+Status: **AUTOMATED COVERAGE PASSED — LIVE/PHYSICAL QA PENDING**
+
+Code mapping / verification: Policy, pagination, token, account, native schema/trigger, stable rename, incomplete snapshot, explicit review, source reassignment and interruption tests passed CI 36337372113. Required real-account Connect→associate→new item→WebDAV play→rename/move path has not been run; production OAuth configuration is required for it.
+
+### DIA-001 — Preview 4.1.6 Diagnostic Findings and Next-Version Logging Requirements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Evidence: QA_EVIDENCE/DIAGNOSTICS/Supernova-Diagnostics-1790390625048.zip. Treat all manual Report-a-Problem markers in this particular export as test/noise: the user explicitly did not intentionally use Report for defects in this report. Automatic diagnostics remain valid evidence.
+
+Status: **REVIEWED — HISTORICAL EVIDENCE RULE APPLIED**
+
+Code mapping / verification: This paragraph is an evidence interpretation rule, not an unimplemented feature. Manual markers in the named 4.1.6 report remain test/noise; no defect claim or acceptance failure in this continuation is based on them. Automatic evidence informs DIA-002 and the separate implementation requirements.
+
+### DIA-002 — Findings from latest retained report
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+- Artwork: 306 artwork requests, 67 artwork_failed, 248 artwork_ready. Failure bursts occurred; observed failure latency approximately 676–845ms with median around 704ms. This is relevant to the physical Movies-poster disappearance after scan but does not by itself prove causality.
+- Two PREVIOUS_SESSION_UNCLEAN_EXIT markers occurred around 01:38 UTC. Earlier lifecycle logs include paused→stopped→destroyed, so current clean-marker logic may produce false positives. Investigate; do not label these confirmed crashes.
+- Historical earlier-process diagnostic drop counter reached 2,287 events; latest process/export showed zero. Important events need protected retention/backpressure.
+- Two library_scan_requested events. One showed local_import toggling without captured network_active in the following window; another showed network_files growth and local/network overlap. Correlate with physical manual-scan defect.
+- One metadata_network_failed InterruptedIOException among 49 successful metadata responses: low-priority correlation, not a confirmed defect.
+- 65 completed indexed_library_load operation ends were parsed; median roughly 645ms, max roughly 3293ms. Investigate whether UI interactions trigger unnecessary full reloads contributing to List/Columns flicker or lost focus.
+- Playback retained 19 newly-started sessions plus one carried-in session; 16/19 reached player_prepared; three exited before prepared. Retained finishes had error_code 0 and were mostly user_back/service_destroyed. No repeated playback-engine crash pattern was established. Native A/V offset/timing was not exposed.
+- 916 focus transitions were retained, but generated view IDs are not semantically useful enough to diagnose focus routes.
+- No evidence of the historical CursorWindow startup crash was present in this retained report.
+
+Status: **REVIEWED — FINDINGS MAPPED / PHYSICAL FOLLOW-UP PENDING**
+
+Code mapping / verification: Artwork failures map to DIA-006/UI-020; suspected clean-exit markers to DIA-015; retention/drop pressure to DIA-004/011; scan comparability to DIA-007/UI-052–054; reload/focus to DIA-008/010 and library-return requirements; playback correlation to DIA-005/009. Historical timings/counts remain observations, not proof of causality, crashes or the absent CursorWindow failure. Physical follow-up is still required for the original reported symptoms.
+
+### DIA-003 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Manual Report a Problem creates a short unique reference (example D78C2515-1009), category and exact timestamp. Confirmation shows readable reference and a QR containing ONLY non-sensitive reference/category/time/linking data. Never include credentials, tokens, private paths or raw diagnostic payload. Provide Show Latest Reference. Export manifest indexes manual markers.
+
+Status: **IMPLEMENTED — AWAITING PHYSICAL QA**
+
+Code mapping / verification: Diagnostics.reportProblem generates a process-prefix/sequence reference, allow-listed category and exact UTC timestamp; showReference renders the strict DiagnosticReference QR and persists Show Latest Reference. DiagnosticArchive indexes manual markers. QR round-trip, arbitrary-field rejection and archive marker-index tests passed targeted CI 36349549771. Real Shield QR readability/export workflow remains physical QA.
+
+### DIA-004 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Improve multi-day retention. Separate verbose rolling stream from protected important-event/incident stream. Routine focus/heartbeat/success events rotate first; ERROR/FATAL, crashes/exceptions, failed scans, playback failures, significant artwork failures and manual-report windows survive longer. Apply backpressure/prioritisation so routine events cannot cause thousands of important events to be dropped.
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: Diagnostics IMPORTANT executor and daily protected stream separate routine pressure; seven-day age retention with daily size caps. Manual and automatic incident windows now have separate protected daily streams. Archive tests passed through run 36241111976. Long-running Shield pressure/retention validation remains pending.
+
+### DIA-005 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Add operation correlation IDs across library scans, network scans, metadata enrichment, artwork, playback, provider sync and significant navigation flows. Record trigger/source (Manual, Startup, Resume, Scheduled, Provider Sync) and explicit lifecycle stages.
+
+Status: **IMPLEMENTED — SOURCE AND SYNC REGRESSIONS VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: Scans carry owned operation/batch/trigger identity; metadata packages scope request and transport operations; ArtworkTrace carries operation/media/surface; playback uses session and lifecycle identity; Details/menu/Settings entry uses restoration tokens. Audit found put.io sync children were not scoped and cancellation lacked a terminal event. Checkpoint 106 adds sync scope, completion/incomplete/cancellation and finally termination with three regression tests. All three new sync tests passed through source CI 37357790177. Cross-process/physical correlation remains QA.
+
+### DIA-006 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Artwork failure diagnostics: safe anonymous media ID, surface (Movies Grid/Home Featured/etc.), artwork type, source/cache layer attempted, failure category/reason, elapsed time, fallback attempted/succeeded. No sensitive path/token leakage.
+
+Status: **IMPLEMENTED — SOURCE AND AUTOMATED COVERAGE / PHYSICAL QA PENDING**
+
+Code mapping / verification: ArtworkTrace/ArtworkRequest cover cards, backdrops, logos, Details rails, provider marks, portraits and the picker with safe media/surface/type/source, elapsed time, explicit unknown cache layers and fallback outcomes. Checkpoint 102 routes both Details provider-image surfaces through the same helper instead of independent white masks. Cancellation, privacy, terminal-idempotence, logo transport/payload and provider rebind tests passed CI 37350349198. Real loading/fallback and multi-day pressure remain Shield QA.
+
+### DIA-007 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Scan diagnostics: Requested→Queued→Started→source/phase→Index/Reconciliation→Metadata queued→Completed/Failed/Cancelled. Include source counts and honest progress. Make manual scan trace directly comparable to startup/resume scan.
+
+Status: **IMPLEMENTED — SOURCE AND LIFECYCLE COVERAGE / PHYSICAL QA PENDING**
+
+Code mapping / verification: PreviewLibraryScan and native backend patches trace requested/queued/start, source/batch phase, reconciliation, actual metadata enqueue outcome and one terminal operation. PreviewScanProgress deduplicates source counts; PreviewLocalScanState retains Handler-message correlation and cancelled/rejected queue outcomes. Unknown counts/triggers remain explicit. Manual/startup/resume/scheduled owned requests use the shared indexed-source scheduler; lifecycle/overlap/idempotence coverage passed CI 37350349198. Finding the same new real file through manual/startup/resume remains physical validation.
+
+### DIA-008 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Semantic focus diagnostics: stable IDs such as topnav.home/settings.category.playback, not generated LinearLayout IDs. Log input → previous focus → resulting focus → screen and whether edge input was consumed. Add focus-restoration token on entry to Details/menus/settings children and log requested/restored/fallback result on return.
+
+Status: **IMPLEMENTED — SOURCE AND AUTOMATED COVERAGE / PHYSICAL QA PENDING**
+
+Code mapping / verification: Diagnostics.semantic stores stable identities separately from functional View tags; input captures before/after focus, screen and consumed result. TopNavigation, Network context/actions, library rows, Details, keyboard and Settings bind semantic IDs; entry/restoration tokens cover retained Details, shared menus and nested Settings returns. Existing semantic/privacy/restore tests passed CI 37350349198. Native-window route completeness and rapid physical input remain QA; generated IDs are not treated as stable semantic identities.
+
+### DIA-009 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+UI rebuild/flicker telemetry: lightweight records when whole adapter/view-model/library dataset is recreated/rebound, with reason and item count. This must not itself cause performance problems.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: Diagnostics.uiRebuild records bounded per-view counts, reason, item totals and adapter recreation. Actual library/Search adapter installation and Home rail replacement report recreation; snapshot changes and Network/Details rebuilds retain distinct reasons. Adapter recreation, Details rebind and semantic-context tests passed CI 37341405225. Instrumentation records structural data, not titles/paths. Physical flicker and multi-day performance remain QA.
+
+### DIA-010 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+On important failure, capture small structured UI-state snapshot (not screenshot): page, selected tab/category, focused semantic control, grid/list mode, active filters/sort, anonymous media ID, open modal/menu. Add severity INFO/WARNING/ERROR/FATAL.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: Diagnostics.UiSnapshot captures failure-time page/category, semantic focus, grid/list mode, sort, safe filter values, numeric media ID, modal kinds/depth, activity state and playback/foreground session. Library filters use numeric years/provider IDs and a genre-selection digest rather than raw metadata. Activity pause/return restores the correct page; delayed incident serialization retains the original state/session. Actual Details/native modal, filter/privacy and delayed-session regressions passed complete-suite CI 37120075931. Remaining semantic-route reconciliation is recorded separately under DIA-008; physical incident/soak behaviour is still required.
+
+### DIA-011 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Automatic incident capture: preserve roughly 30–60 seconds before/after significant failures (uncaught exception, ANR-like stall, failed library operation, playback failure, repeated artwork-failure burst). Add burst summarisation while retaining underlying events.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PRESSURE AND PHYSICAL QA PENDING**
+
+Code mapping / verification: Failure-time immutable bounded recorder captures survive later ring rotation/clear. Incident and snapshot envelopes retain failure-time UI/playback/app-session/operation; resource samples explicitly report their later timing. Producer-time post-window routing preserves immediate context despite delayed writers and excludes events beyond sixty seconds. CI 37348732185 passed the blocked-writer, rotation/budget, repeated-burst and delayed-session regressions. Protected daily incident streams contain post-context; flight.jsonl is the latest pre-failure snapshot. Bounded routine queues can still drop post-context under sustained pressure and expose the drop count; no lossless or complete process-termination capture is claimed. Physical multi-day/pressure validation remains pending.
+
+### DIA-012 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+At major failures only, capture safe resource context: app heap/native memory, available memory/storage, thread count and foreground/background state. Avoid continuous heavy profiling.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / PHYSICAL QA PENDING**
+
+Code mapping / verification: Diagnostics.incidentContext records app/native heap, available memory/low-memory status, free app storage and thread count only during major incident processing. Failure-time foreground state is retained; resource sampling has its own UTC timestamp and monotonic delay so it is not misrepresented as instantaneous. Missing memory service data does not prevent incident capture. Structural resource and delayed-session tests passed CI 37120075931. Physical pressure and overhead remain Shield QA.
+
+### DIA-013 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Network diagnostics: provider/service, operation type, status/error category, duration, retry number and connectivity state; redact full sensitive URLs, authorization headers, passwords, tokens and sensitive query parameters. put.io OAuth secrets must never enter logs/export/QR.
+
+Status: **IMPLEMENTED — AUTOMATED VERIFIED / LIVE AND PHYSICAL QA PENDING**
+
+Code mapping / verification: PutioReadClient/OAuth, metadata read transport, title-logo transport and provider redirect paths emit fixed service/operation/outcome categories, correlation, duration, retries and connectivity. Intercepted HTTP/oversized/invalid-body/redirect/privacy regressions passed CI 37341405225. Enrichment scopes link parent operations; request URLs, headers, queries, cursors, bodies and credentials are excluded from these structured records. Live service failures and physical export remain QA.
+
+### DIA-014 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Export should include a machine-readable and human-readable summary: session duration, launches, clean/suspected unclean exits, playback sessions, scans, artwork request/failure counts, dropped-event count, manual reports and automatic incidents, each linked by timestamp/correlation ID to raw evidence.
+
+Status: **IMPLEMENTED — AUTOMATED COVERAGE PASSED / PHYSICAL QA PENDING**
+
+Code mapping / verification: DiagnosticArchive schema 3 includes linked operation, playback-session and foreground-use summaries with UTC/process/sequence references. Monotonic durations require both retained boundaries; carried-in/incomplete sessions remain explicitly unknown. Operations retain parent links and reject stage-relative or wall-clock-derived lifetime estimates. Human export includes the linked summary, scan/artwork counts, manual/incident indexes and per-process maximum drop counters. Complete/carried-in/foreground/clock-change/operation regressions passed CI 36715503044. Physical multi-day export coverage remains QA.
+
+### DIA-015 — Required diagnostic/reporting improvements
+
+Source: `DIAGNOSTICS_4.1.6_FINDINGS.md`
+
+Improve clean/unclean process detection so normal Android lifecycle destruction does not automatically become a false crash signal.
+
+
+Status: **AWAITING PHYSICAL QA**
+
+Code mapping / verification: Diagnostics marks an orderly transition to background clean, while retaining unclean-exit observations as suspected rather than proven crashes. Physical lifecycle/kill QA remains pending.
+
+### QA-001 — Build / identity
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- Recover exact repo/branch/HEAD/status before edits; document final source commit.
+- Compile/build succeeds; existing automated suite passes; add targeted tests for changed architecture.
+- Signed candidate certificate SHA-256 exactly 89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a.
+- In-place upgrade from installed 4.1.6 preserves app data/settings/library.
+- Launcher label is Supernova; About retains preview/version details.
+- Shield Favourite Apps displays approved 16:9 banner legibly.
+- Investigate official/upstream Nova install failure and package/authority coexistence without changing Supernova identity casually.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-061–063, PREFLIGHT.md and COEXISTENCE_INVESTIGATION.md; source CI 37359092502 and current-source full/native CI 37359092413 pass. Real installed 4.1.6 data and Shield banner remain physical acceptance.
+
+### QA-002 — Startup / global navigation
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- New UI/current chosen UI starts without immediate close; Home/Movies/TV open; no historical CursorWindow crash.
+- Canonical top nav exactly as specified; global blur/darken scroll treatment has no rectangular bar edge.
+- Home+LEFT remains Home. Settings+RIGHT remains Settings. No edge teleport.
+- Travelling focus boundary is smooth and never leaves two simultaneous focus indications.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-001–004 and UI-063; source navigation/startup tests and inspected shell captures are recorded. Current-source native startup passed CI 37359092413; physical rapid-input/blur remains pending.
+
+### QA-003 — Home
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- Featured cycling retains More Info focus; indicators animate; synopsis/logo/art geometry follows spec.
+- Card enlargement/glow is aligned/no clipping.
+- Recently Added is bounded; Continue Watching display cap never destroys playback state.
+- Customise Home row controls, delete confirmation, genre selector, Maximum Items and keyboard pass; toggles do not flash/rebuild whole page.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-005–009; Home/row/maximum/keyboard coverage and synthetic renders exist. Real featured artwork, clipping and customisation visual scenarios remain open.
+
+### QA-004 — Movies / TV
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- Grid terminal RIGHT stays. Top/bottom boundaries deterministic.
+- Toolbar divider focus styling correct; Unmatched present; toolbar edges locked.
+- Details→Back restores exact item/scroll/view/focus in Grid and List.
+- Filter multi-select persistence, genre correctness, provider population and Clear pass.
+- Columns changes do not flicker/rebuild; technical columns populate from cache/index.
+- Movies artwork survives library/network scan and restart; no poster bleed outside focus boundary.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-012–020; actual toolbar/list/grid edge, return/filter/cache and retained artwork regressions are recorded. Real scan/restart poster retention remains physical QA.
+
+### QA-005 — Details / More
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- Continuous Hero→lower-nav scroll/collapse/reverse works.
+- Correct Movie/TV tab sets; missing tabs reflow; divider blue segment has identical thickness.
+- TV complete series reconciliation no duplicates; local/streaming/unavailable states correct.
+- Extras/More Like This card focus and source marks correct.
+- Key/Reception/Technical|Library|Streaming panels adapt without empty boxes.
+- Cast/Crew rows render/focus correctly; no person pages introduced.
+- Streaming-only title parity and specific-title provider deep links/fallback pass.
+- More child workflows restore exact focus and preserve playback/library state.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-021–040; Details fixtures, episode reconciliation, panel/focus and persistence coverage are recorded. Live provider links, all More/native routes and metadata/NFO failure/version-grouping scenarios remain open.
+
+### QA-006 — Playback
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- Base HUD five controls/spacing remain; subtitle/audio Back restoration exact.
+- Progressive seeking increments/reset/direction/hold pass.
+- Preparing Playback uses cached real artwork when available; no generic flash; no blocking internet art fetch.
+- Info overlay technical only and Back restores Info focus.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-041–046; component tests and earlier strict native Info-return run 37338324041 passed. Current-source full/native validation passed CI 37359092413; real Shield playback/remote seeking remains pending.
+
+### QA-007 — Search
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- No duplicate heading/subtitle/X; keyboard opens on T; exact rows/buttons; deterministic keyboard↔results routing.
+- Results only update on query change; Details return restores query/result/scroll/focus.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-047–048; keyboard/retained query and exact result-return tests passed through 37350349198. Populated visual and physical input acceptance remain separate.
+
+### QA-008 — Network & Files
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- Entry focuses Overview left rail; deterministic three-panel routing; no auto-expanding category.
+- Overview scan controls/layout/frequency choices pass.
+- Manual network scan finds same new content as startup/resume path and reports live start/progress/completion/failure.
+- Library Sources vs Saved Locations semantics pass.
+- Network protocol flows support only specified protocols; connection then folder selection; no Add/Browse bounce.
+- Shared browser reused and capability-driven.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-049–057; source/component routing and corrected Network capture passed through 37350349198. Manual/startup/resume same-new-file testing and real protocols/permissions require device QA.
+
+### QA-009 — put.io
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- QR/device auth contains no secret; token storage/log redaction verified.
+- Existing WebDAV Films/TV association creates zero duplicates and preserves watched/resume/metadata/artwork/rows/versions.
+- API discovery + WebDAV playback separation verified.
+- Pagination, interruption, auth expiry, rate limit/incomplete sync cannot mass-delete.
+- Rename/move remains same record; API outage/WebDAV outage/reconnect/folder change/disconnect safe.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: PUT-001–012; association/reconciliation/token/snapshot tests cover safety conditions. Production OAuth configuration and live account are the acknowledged external dependency. No live association or outage pass is claimed.
+
+### QA-010 — Settings
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- Entry focuses Playback left rail, not first setting.
+- Left rail fixed/non-scrolling with About visible bottom.
+- Hover/focus never expands children; explicit select/right enters middle workspace; Back reverses exact hierarchy.
+- Existing setting semantics preserved.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: UI-058–060; fixed rail and explicit hierarchy/return coverage are recorded. Actual retained setting semantics across all categories and physical navigation remain acceptance QA.
+
+### QA-011 — Diagnostics
+
+Source: `QA_AND_ACCEPTANCE.md`
+
+- Manual report ref/category/time + safe QR + Show Latest Reference + export manifest.
+- Semantic focus IDs/input transitions and restoration tokens.
+- Correlation IDs for scan/playback/metadata/artwork/provider operations.
+- Important events survive pressure; routine events can rotate first; dropped counters visible.
+- Artwork failure reasons/surface/cache/fallback captured safely.
+- Automatic incidents preserve pre/post context and burst summary.
+- Export summary generated; secrets/tokens/passwords/private URLs absent.
+- Clean-exit detector does not label normal lifecycle destroy as crash.
+
+Status: **ACCEPTANCE IN PROGRESS — EVIDENCE MAPPED, NOT A PASS**
+
+Code mapping / verification: DIA-001–015; sanitisation/reference/archive/recorder and source-route coverage are recorded. Checkpoint 106 sync tests passed through CI 37357790177; multi-day pressure, physical exports and clean-exit scenarios remain pending.
+
+### SCOPE-001 — Scope / Deferred Guardrail
+
+Source: `SCOPE_AND_DEFERRED.md`
+
+IN SCOPE: global focus/navigation fixes; Home polish/customisation corrections; background metadata enrichment; Movies/TV toolbar/filter/list/grid/focus/artwork corrections; Unmatched workflow; complete approved Details/Seasons/Extras/More Like This/Details panels; refined More child workflows; advanced provider deep links with fallback; playback HUD corrections/seek acceleration/technical Info; Search cleanup/shared keyboard; Network & Files redesign and reliable scanning; shared browser; Saved Locations; native put.io API/OAuth + safe existing-library association while retaining WebDAV playback; Settings foundation/navigation shell only; expanded diagnostics/reporting; Supernova launcher rename/Shield banner; upstream Nova coexistence investigation.
+
+Status: **REVIEWED — SCOPE MAPPED; ACCEPTANCE STILL OPEN**
+
+Code mapping / verification: The UI, PUT and DIA entries map the promoted work; QA-001–011 map its acceptance. This continuation changes diagnostics, provider artwork, evidence fixtures and validation only within Preview 4.1.7. No Phase 1, next release or main merge is authorised or performed.
+
+### SCOPE-002 — Scope / Deferred Guardrail
+
+Source: `SCOPE_AND_DEFERRED.md`
+
+NOT A BROAD REDESIGN: Remove from Library. Existing source-context action remains. Existing Delete remains where applicable.
+
+Status: **REVIEWED — EXISTING SOURCE ACTION PRESERVED**
+
+Code mapping / verification: PreviewNetworkWorkspace uses NetworkScanner.removeIndexedVideos for existing Remove from Library, with failed-removal state retained; native Delete remains capability-driven. UI-055 records the correction and successful regression. No general removal redesign was introduced.
+
+### SCOPE-003 — Scope / Deferred Guardrail
+
+Source: `SCOPE_AND_DEFERRED.md`
+
+DEFERRED: person/cast discovery pages; playback trick-play thumbnails; put.io transfer/download management; put.io playback-position sync; switching primary put.io playback away from proven WebDAV without separate benchmarking; full category-by-category Settings content redesign; unsupported NFS; speculative provider capabilities; any older deferred 4.2 feature not explicitly promoted above.
+
+Status: **DEFERRED-BY-SPEC**
+
+Code mapping / verification: Excluded from the promoted implementation. Final scope review retains these deferred boundaries: no person-page navigation, trick-play generation, put.io transfer/position-sync/primary-transport replacement, unsupported NFS or broad Settings redesign was introduced.
+
+### SCOPE-004 — Scope / Deferred Guardrail
+
+Source: `SCOPE_AND_DEFERRED.md`
+
+Do not add functionality merely because an old mockup contains it.
+
+
+Status: **REVIEWED — WRITTEN AUTHORITY APPLIED**
+
+Code mapping / verification: Reference inspection is limited to named characteristics in CONFORMANCE_REVIEW.md. Canonical navigation, same-stroke divider and absent deferred person pages follow the written specification rather than generated mockup content.
+
+### VIS-001 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+Priority order: (1) written requirements in this handover; (2) specifically identified normative reference characteristic; (3) current physically approved Shield behaviour; (4) reference imagery; (5) older/historical material.
+
+Status: **REVIEWED — AUTHORITY ORDER APPLIED**
+
+Code mapping / verification: CONFORMANCE_REVIEW.md records comparisons against written requirements first, selected reference characteristics second and physical acceptance separately. Reference rendering is not substituted for current Shield evidence.
+
+### VIS-002 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+Generated mockups frequently contain an incorrect top navigation. IGNORE generated top navigation unless a written requirement explicitly says otherwise. For many mockups the top nav is intentionally outside the design target.
+
+Status: **REVIEWED — CANONICAL NAVIGATION RETAINED**
+
+Code mapping / verification: UI-001 and the inspected checkpoint-104 full-shell captures retain SUPERNOVA/Home/Movies/TV Shows/spacer/Network & Files/Search/Settings/Clock. Generated alternative navigation was not copied.
+
+### VIS-003 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+Labels:
+- 🔒 NORMATIVE — implement the stated characteristic.
+- 📎 REFERENCE — use only the stated characteristic; do not clone unrelated artifacts.
+- 🧪 QA EVIDENCE — demonstrates current behaviour/problem, NOT desired design.
+- 🚫 SUPERSEDED — do not implement.
+
+Status: **REVIEWED — EVIDENCE LABELS RESPECTED**
+
+Code mapping / verification: The named authority documents and reference contact sheet were inspected before changes. Normative traits are mapped to UI entries; QA evidence identifies symptoms, not desired design. Inadequate test captures were explicitly rejected and corrected, as recorded in CONFORMANCE_REVIEW.md.
+
+### VIS-004 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+Global language: near-black/navy surfaces, brighter white text, monochrome iconography, Supernova blue as focus/accent. No cyan text as focus state. Focus is compact blue boundary/fill where specified + restrained outward glow; only ONE active focus target at a time. Media artwork itself is not recoloured.
+
+Status: **IMPLEMENTED — COMPONENT/RENDER COVERAGE / PHYSICAL QA PENDING**
+
+Code mapping / verification: Shared PreviewDialog/PreviewFocusGlow/PreviewFocusRail and card controls implement dark surfaces, white content, blue boundaries and one active focus. Provider logos use monochrome treatment separately from media artwork. Inspected fixtures support basic composition, while real glow, legibility and transitions remain visual/Shield acceptance.
+
+### VIS-005 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+Physical Movies/TV card enlargement is the scale authority. Scale artwork+boundary+glow together. Do not zoom artwork inside a fixed box.
+
+Status: **IMPLEMENTED — SHARED CARD GEOMETRY / PHYSICAL QA PENDING**
+
+Code mapping / verification: UI-007/012 retain the baseline 1.08x whole-card enlargement with rounded artwork clipping and outward glow. Existing geometry coverage is successful; physical approved feel remains the authority and is not re-established by synthetic images.
+
+### VIS-006 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+Details selected-tab divider: the existing divider segment itself turns blue at identical stroke width. Never draw a thicker secondary underline.
+
+Status: **IMPLEMENTED — SOURCE/RENDER REVIEWED / PHYSICAL QA PENDING**
+
+Code mapping / verification: UI-023 and PreviewToolbar use the existing divider stroke with selectedSegment for Details; focus glow is separate from stroke width. Inspected Details renders show the intended composition; physical stroke/glow comparison remains QA.
+
+### VIS-007 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+Movies/TV toolbar: divider-segment focus is temporary focus only, not persistent selected-tab state.
+
+Status: **IMPLEMENTED — SOURCE/RENDER REVIEWED / PHYSICAL QA PENDING**
+
+Code mapping / verification: UI-013 and the library PreviewToolbar do not retain selectedSegment after focus leaves. The inspected Grid/List fixtures show the associated divider, not a large focus box. Physical transition appearance remains QA.
+
+### VIS-008 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+The files in VISUAL_REFERENCES/REFERENCE imported from the 24-Sep package remain references only. They are useful for Dune hero geometry, playback HUD composition, current Movies baseline and library header direction, but newer written corrections in this handover win.
+
+Status: **REVIEWED — REFERENCES USED ONLY FOR NAMED TRAITS**
+
+Code mapping / verification: CONFORMANCE_REVIEW.md documents Dune hero, HUD and library-header comparisons and their fixture limitations. Written corrections win over older imported images.
+
+### VIS-009 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+VISUAL_REFERENCES/SOURCE_ARCHIVE/Supernova_chat_images_2026-09-24.zip is a preservation archive, NOT a set of instructions. Do not bulk-implement it. Use only images explicitly identified by the written specification or implementation team after matching to the described approved design.
+
+Status: **REVIEWED — ARCHIVE PRESERVED, NOT IMPLEMENTED AS A SPEC**
+
+Code mapping / verification: The source image archive remains preservation material. No bulk implementation or new functionality was derived from it in this continuation.
+
+### VIS-010 — Visual Authority Rules
+
+Source: `VISUAL_AUTHORITY.md`
+
+Branding: BRANDING/Supernova_Shield_Launcher_Master_APPROVED.png is approved visual direction. The derived 320x180 file is the Android TV launcher banner target. Preserve the master for future replacement. The wordmark/art may be refined only for legibility during exact asset production, not redesigned.
+
+
+Status: **IMPLEMENTED — ASSET VERIFIED / PHYSICAL SHIELD QA PENDING**
+
+Code mapping / verification: UI-062 records exact approved derived-asset SHA-256 and decoded signed-interim pixel equivalence; the high-resolution master remains preserved in the handover archive. No branding redesign occurred. Final package wiring and real Favourite Apps viewing-distance appearance remain validation/physical QA.

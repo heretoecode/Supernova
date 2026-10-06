@@ -95,12 +95,12 @@ public class Preview415Test {
         prefs.edit().putBoolean("sort_ignore_articles",false).putBoolean("hide_watched",false).commit();
         assertEquals("Film",PreviewPages.titleForSort(context,entry));assertFalse(PreviewPages.hiddenByWatchedPreference(context,entry));
     }
-    @Test public void backdropFailureClearsBothArtworkGenerations(){
+    @Test public void backdropFailureRetainsDisplayedArtworkWithoutStaleCrossfade(){
         PreviewBackdrop backdrop=new PreviewBackdrop(RuntimeEnvironment.getApplication());
         android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(16,9,android.graphics.Bitmap.Config.ARGB_8888);
         backdrop.onBitmapLoaded(image,com.squareup.picasso.Picasso.LoadedFrom.MEMORY);
         backdrop.onBitmapFailed(new java.io.IOException(),null);
-        assertNull(org.robolectric.util.ReflectionHelpers.getField(backdrop,"bitmap"));
+        assertSame(image,org.robolectric.util.ReflectionHelpers.getField(backdrop,"bitmap"));
         assertNull(org.robolectric.util.ReflectionHelpers.getField(backdrop,"previous"));
     }
 }

@@ -220,6 +220,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private boolean             mDragging;
     private boolean             mSeekComplete;
     private int                 mSeekKeyDirection;
+    private final PreviewSeekPolicy mPreviewSeekPolicy = new PreviewSeekPolicy();
+    private boolean mPreviewKeySeeking;
     private int                 mBarXYIconResource = R.drawable.video_format_arrow_horizontal;
 
     private static boolean      mControlBarShowing, mSystemBarShowing, mSystemBarGone, mActionBarShowing, mVolumeBarShowing, mNavigationBarShowing, mIsNavBarOnBottom, mIsGestureAreaShowing;
@@ -353,6 +355,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void reset() {
+        mPreviewSeekPolicy.reset();mPreviewKeySeeking=false;
         mDragging = false;
         mSeekWasPlaying = false;
         mIsStopped = false;
@@ -1123,6 +1126,10 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                     break;
                 case MSG_SEEK:
                     if (log.isDebugEnabled()) log.debug("Handle: MSG_SEEK");
+                    if(mPreviewKeySeeking){
+                        if(!mIsStopped&&mSeekKeyDirection!=0){advancePreviewKeySeek();sendEmptyMessageDelayed(MSG_SEEK,300);}
+                        break;
+                    }
                     if (mNextSeek >= 0) {
                         boolean stop = false;
 
@@ -1369,11 +1376,11 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 mEndTime2.setText(endText);
         }
         if (mCurrentTime != null) {
-            mCurrentTime.setText(currentText);
+            mCurrentTime.setText(currentText);updatePreviewScrubber();
             if(mCurrentTime2!=null)
                 mCurrentTime2.setText(currentText);
         }
-        updateClock();
+        updateClock();updatePreviewScrubber();
 
         return position;
     }
@@ -1485,10 +1492,11 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
     }
 
-    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null)audio.setVisibility(a.previewHasAudio()?View.VISIBLE:View.GONE);mPauseButton.setNextFocusLeftId(a.previewHasAudio()?R.id.preview_audio:R.id.preview_subtitles);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?a.previewAudioLabel():a.previewSubtitleLabel());}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null){title.setText(a.previewTitle());a.bindPreviewTitleArtwork(title);}if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
+    private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null){audio.setVisibility(View.VISIBLE);audio.setEnabled(true);audio.setAlpha(a.previewHasAudio()?1f:.5f);}mPauseButton.setNextFocusLeftId(R.id.preview_audio);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?"Audio":"Subtitles");}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null){title.setText(a.previewTitle());a.bindPreviewTitleArtwork(title);}if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
     private void configurePreviewTransport(){
         for(int id:new int[]{R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward,R.id.preview_speed}){View v=mControllerViewLeft.findViewById(id);if(v!=null){v.setVisibility(View.GONE);v.setFocusable(false);}}
-        for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_info,R.id.preview_more}){View v=mControllerViewLeft.findViewById(id);if(v instanceof ImageButton){ImageButton button=(ImageButton)v;button.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.buttonFocus(mContext));button.setImageTintList(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{com.archos.mediacenter.video.leanback.PreviewAccent.color(mContext),0xffc6d7e4}));button.setOnFocusChangeListener((view,focused)->view.animate().scaleX(focused?1.04f:1f).scaleY(focused?1.04f:1f).alpha(focused?1f:.86f).setDuration(160).start());button.setNextFocusUpId(R.id.seek_progress);}}
+        for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_info,R.id.preview_more}){View v=mControllerViewLeft.findViewById(id);if(v instanceof ImageButton){ImageButton button=(ImageButton)v;button.setBackgroundColor(android.graphics.Color.TRANSPARENT);if(button.getParent() instanceof android.widget.LinearLayout){android.widget.LinearLayout group=(android.widget.LinearLayout)button.getParent();group.setAddStatesFromChildren(true);group.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));}button.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));button.setOnFocusChangeListener((view,focused)->updatePreviewScrubber());button.setNextFocusUpId(R.id.seek_progress);}}
+        mProgress.setBackgroundColor(android.graphics.Color.TRANSPARENT);mProgress.setOnFocusChangeListener((v,focused)->updatePreviewScrubber());
         mProgress.setNextFocusDownId(R.id.pause);mPauseButton.setNextFocusLeftId(mControllerViewLeft.findViewById(R.id.preview_audio).getVisibility()==View.VISIBLE?R.id.preview_audio:R.id.preview_subtitles);mPauseButton.setNextFocusRightId(R.id.preview_info);
         mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusRightId(R.id.preview_audio);
         mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusLeftId(R.id.preview_subtitles);
@@ -1497,6 +1505,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         mControllerViewLeft.findViewById(R.id.preview_info).setNextFocusRightId(R.id.preview_more);
         mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusLeftId(R.id.preview_info);
     }
+    private void updatePreviewScrubber(){if(!experimentalUi()||mControllerViewLeft==null||mProgress==null)return;TextView bubble=mControllerViewLeft.findViewById(R.id.preview_scrub_time);if(bubble==null)return;boolean focused=mProgress.hasFocus();bubble.setVisibility(focused?View.VISIBLE:View.INVISIBLE);if(!focused)return;bubble.setText(mCurrentTime==null?"":mCurrentTime.getText());bubble.setBackground(new com.archos.mediacenter.video.leanback.PreviewFocusGlow(mContext));bubble.measure(View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));float fraction=mProgress.getMax()>0?(float)mProgress.getProgress()/mProgress.getMax():0;float x=mProgress.getPaddingLeft()+fraction*(mProgress.getWidth()-mProgress.getPaddingLeft()-mProgress.getPaddingRight())-bubble.getMeasuredWidth()/2f;bubble.setTranslationX(Math.max(0,Math.min(x,mProgress.getWidth()-bubble.getMeasuredWidth())));}
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
             mVideoTitle.setText(title);
@@ -1516,6 +1525,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void stop() {
+        mPreviewKeySeeking=false;mPreviewSeekPolicy.reset();
         if(experimentalUi())PreviewPlaybackMenus.close();
         if (log.isDebugEnabled()) log.debug("stop");
 
@@ -1642,6 +1652,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             }
         }
 
+        if(experimentalUi()&&mSeekKeyDirection!=0&&mLastRelativePosition==-1&&Player.sPlayer.getDuration()>0){
+            mPreviewKeySeeking=true;mDragging=true;mSeekDir=way;
+            if(mNextSeek<0)mNextSeek=Player.sPlayer.getCurrentPosition();
+            advancePreviewKeySeek();updatePauseButton();
+            mHandler.sendEmptyMessageDelayed(MSG_SEEK,400);
+            return;
+        }
         if (mSeekComplete) {
             mLongSeekTime = 0;
             mDragging = longPress;
@@ -1654,6 +1671,17 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_SEEK), SEEK_LONG_INIT_DELAY);
         }
         setProgress();
+    }
+
+    private void advancePreviewKeySeek(){
+        int delta=mPreviewSeekPolicy.next(mSeekKeyDirection,android.os.SystemClock.elapsedRealtime());
+        mNextSeek=PreviewSeekPolicy.position(mNextSeek,delta,Player.sPlayer.getDuration());
+        setProgress();
+    }
+    private void commitPreviewKeySeek(){
+        if(!mPreviewKeySeeking)return;
+        mPreviewKeySeeking=false;mHandler.removeMessages(MSG_SEEK);mDragging=false;
+        if(!mIsStopped&&mNextSeek>=0){mSeekComplete=false;Player.sPlayer.seekTo(mNextSeek);updatePauseButton();setProgress();}
     }
 
     // There are two scenarios that can trigger the seekbar listener to trigger:
@@ -1739,7 +1767,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 mEndTime.setText(endText);
             }
             if (mCurrentTime != null) {
-                mCurrentTime.setText(currentText);
+                mCurrentTime.setText(currentText);updatePreviewScrubber();
             }
         }
 
@@ -2293,7 +2321,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         // Seeking may temporarily take focus away from the control bar. Recovery must not
         // depend on hasFocus(), which was precisely the state lost on the physical remote.
         if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&(keyCode==KeyEvent.KEYCODE_DPAD_UP||keyCode==KeyEvent.KEYCODE_DPAD_DOWN)){if(event.getAction()==KeyEvent.ACTION_DOWN){if(keyCode==KeyEvent.KEYCODE_DPAD_UP){mProgress.setFocusable(true);mProgress.requestFocus();}else{mPauseButton.setFocusable(true);mPauseButton.requestFocus();}}return true;}
-        if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&mControlBar.hasFocus()&&(keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_DPAD_RIGHT||keyCode==KeyEvent.KEYCODE_DPAD_CENTER||keyCode==KeyEvent.KEYCODE_ENTER)){return false;}
+        if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&mControlBar.hasFocus()&&!mPreviewKeySeeking&&(mProgress==null||!mProgress.hasFocus())&&(keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_DPAD_RIGHT||keyCode==KeyEvent.KEYCODE_DPAD_CENTER||keyCode==KeyEvent.KEYCODE_ENTER)){return false;}
         
         if (isTVMenuDisplayed) {
             if (event.getAction() == KeyEvent.ACTION_DOWN && mTVMenuAdapter != null) {
@@ -2499,6 +2527,11 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                         case KeyEvent.KEYCODE_DPAD_RIGHT:
                         case KeyEvent.KEYCODE_MEDIA_REWIND:
                         case KeyEvent.KEYCODE_DPAD_LEFT:
+                            if(mPreviewKeySeeking){
+                                int released=(keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_MEDIA_REWIND)?-1:1;
+                                if(released!=mSeekKeyDirection)return true;
+                                commitPreviewKeySeek();
+                            }
                             mSeekKeyDirection = 0;
                             if (log.isDebugEnabled()) log.debug("onKey, button up");
                             return true;

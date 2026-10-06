@@ -37,8 +37,9 @@ public final class StreamingRepository {
         @Override protected boolean removeEldestEntry(Map.Entry<String, Cached> e) { return size() > 80; }
     };
     private static class Cached {
-        final long at = System.currentTimeMillis(); final Availability value;
-        Cached(Availability value) { this.value = value; }
+        final long at; final Availability value;
+        Cached(Availability value) { this(value,System.currentTimeMillis()); }
+        Cached(Availability value,long at) { this.value=value;this.at=at; }
     }
     public static final class Provider {
         public final int id; public final String name; public final String logo;
@@ -67,31 +68,97 @@ public final class StreamingRepository {
     public static boolean allowedType(String type) {
         return "flatrate".equals(type) || "free".equals(type) || "ads".equals(type);
     }
+    /** Narrow read-only metadata gateway using the existing TMDb client and credentials. */
+    public static JSONObject metadata(Context context,String kind,long id,String section)throws Exception{
+        if(!(kind.equals("movie")||kind.equals("tv"))||id<=0||!(Arrays.asList("","videos","recommendations","credits","images","external_ids","release_dates","content_ratings").contains(section)||kind.equals("tv")&&section.matches("season/[0-9]{1,4}")))throw new IOException("Invalid metadata request");
+        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context,kind,id,section,()->api(context,kind+"/"+id+(section.isEmpty()?"":"/"+section),null));
+    }
     private static JSONObject api(Context context, String path, String country) throws Exception {
         Uri.Builder url = Uri.parse("https://api.themoviedb.org/3/" + path).buildUpon()
                 .appendQueryParameter("api_key", context.getString(com.archos.medialib.R.string.tmdb_api_key))
                 .appendQueryParameter("language", Locale.getDefault().toLanguageTag());
         if (country != null) url.appendQueryParameter("watch_region", country);
-        return new JSONObject(get(url.build().toString(), 2 * 1024 * 1024));
+        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_request");
+        long started=android.os.SystemClock.elapsedRealtime();
+        try(com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored=com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)){
+            String body=get(url.build().toString(),2*1024*1024,operation);
+            try{
+                JSONObject value=new JSONObject(body);validateMetadataResponse(path,value);
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_semantic_validated","operation_id",operation);
+                return value;
+            }catch(org.json.JSONException|IOException invalid){
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_semantic_failed","operation_id",operation,"failure_category",invalid instanceof org.json.JSONException?"invalid_json":"invalid_payload");
+                throw new IOException("Invalid metadata response",invalid);
+            }
+        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"metadata_request",started);}
+    }
+    /** A 200 transport response is not proof that a usable metadata package was returned. */
+    static void validateMetadataResponse(String path,JSONObject value)throws IOException{
+        if(value.has("success")&&!value.optBoolean("success",false))throw new IOException("Service rejected metadata request");
+        if(path.startsWith("watch/providers/")){
+            if(value.optJSONArray("results")==null)throw new IOException("Missing provider catalogue");return;
+        }
+        if(path.endsWith("/watch/providers")){
+            if(value.optJSONObject("results")==null)throw new IOException("Missing availability regions");return;
+        }
+        String[] parts=path.split("/");
+        if(parts.length<2||!parts[1].matches("[0-9]+"))throw new IOException("Invalid metadata identity");
+        if(parts.length==4&&"season".equals(parts[2])){
+            if(value.optInt("season_number",-1)!=Integer.parseInt(parts[3])||value.optJSONArray("episodes")==null)throw new IOException("Invalid season package");return;
+        }
+        String section=parts.length==2?"":parts[2];
+        // Recommendation pages carry result IDs, not a top-level source-title ID.
+        if("recommendations".equals(section)){
+            if(value.optJSONArray("results")==null)throw new IOException("Missing recommendations");return;
+        }
+        if(value.optLong("id",-1)!=Long.parseLong(parts[1]))throw new IOException("Mismatched metadata identity");
+        if(Arrays.asList("videos","release_dates","content_ratings").contains(section)&&value.optJSONArray("results")==null)throw new IOException("Missing metadata results");
+        if("credits".equals(section)&&(value.optJSONArray("cast")==null||value.optJSONArray("crew")==null))throw new IOException("Missing credit lists");
+        if("images".equals(section)&&value.optJSONArray("logos")==null&&value.optJSONArray("backdrops")==null&&value.optJSONArray("posters")==null)throw new IOException("Missing artwork lists");
     }
     private static String get(String url, int limit) throws IOException {
+        return get(url,limit,"");
+    }
+    private static String get(String url,int limit,String parentOperation)throws IOException{
+        return get(url,limit,parentOperation,HTTP);
+    }
+    static String get(String url,int limit,String parentOperation,OkHttpClient client)throws IOException{
         if (Thread.currentThread().isInterrupted()) throw new IOException("Cancelled");
-        try (Response response = HTTP.newCall(new Request.Builder().url(url)
+        long started=android.os.SystemClock.elapsedRealtime();
+        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_network");
+        String host=Uri.parse(url).getHost();
+        String service="api.themoviedb.org".equals(host)||"www.themoviedb.org".equals(host)?"tmdb":"www.youtube.com".equals(host)?"youtube":"other";
+        String kind="api.themoviedb.org".equals(host)?"metadata":"www.themoviedb.org".equals(host)?"title_links":"www.youtube.com".equals(host)?"extras_metadata":"read";
+        int status=0;String outcome="transport_failure";
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_started","operation_id",operation,"parent_operation_id",parentOperation);
+        try (Response response = client.newCall(new Request.Builder().url(url)
                 .header("User-Agent", "NOVA-Mark/2 (Android TV)").build()).execute()) {
-            if (!response.isSuccessful() || response.body() == null) throw new IOException("Availability service unavailable");
+            status=response.code();
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_response","operation_id",operation,"status",response.code(),"protocol",String.valueOf(response.protocol()));
+            if (!response.isSuccessful() || response.body() == null){outcome=response.isSuccessful()?"missing_body":"http_error";throw new IOException("Availability service unavailable");}
             // Bound both API and HTML responses rather than loading an unlimited body.
             java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
             java.io.InputStream input = response.body().byteStream();
             byte[] chunk = new byte[8192];
             int count;
             while ((count = input.read(chunk)) != -1) {
-                if (Thread.currentThread().isInterrupted()) throw new IOException("Cancelled");
-                if (buffer.size() + count > limit) throw new IOException("Response too large");
+                if (Thread.currentThread().isInterrupted()){outcome="cancelled";throw new IOException("Cancelled");}
+                if (buffer.size() + count > limit){outcome="response_too_large";throw new IOException("Response too large");}
                 buffer.write(chunk, 0, count);
             }
             byte[] data = buffer.toByteArray();
             if (data.length > limit) throw new IOException("Response too large");
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_body","operation_id",operation,"bytes",data.length);
+            outcome="transport_complete";
             return new String(data, StandardCharsets.UTF_8);
+        } catch(IOException error) {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_failed","operation_id",operation,"type",error.getClass().getSimpleName());
+            throw error;
+        } finally {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_outcome","operation_id",operation,"parent_operation_id",parentOperation,
+                    "service",service,"operation_type",kind,"status",status,"outcome",outcome,"retry_number",0,
+                    "duration_ms",android.os.SystemClock.elapsedRealtime()-started,"connectivity",com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
+            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"metadata_network",started);
         }
     }
     public static List<Provider> providers(Context context, String country) throws Exception {
@@ -124,14 +191,24 @@ public final class StreamingRepository {
             Cached c = CACHE.get(key);
             if (c != null && System.currentTimeMillis() - c.at < TTL) return c.value;
         }
+        Availability persisted=cachedAvailability(context,kind,id,country,season);
+        if(persisted!=null){synchronized(CACHE){CACHE.put(key,new Cached(persisted,prefs(context).getLong("streaming_known_at:"+key,0)));}return persisted;}
         JSONObject response = api(context, kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", null);
         Availability availability = parseAvailability(response, country);
         synchronized (CACHE) { CACHE.put(key, new Cached(availability)); }
         Set<String> knownProviders=new HashSet<>();
         for(Offer offer:availability.offers)knownProviders.add(Integer.toString(offer.provider.id));
         prefs(context).edit().putStringSet("streaming_known:"+key,knownProviders)
-            .putLong("streaming_known_at:"+key,System.currentTimeMillis()).apply();
+            .putLong("streaming_known_at:"+key,System.currentTimeMillis())
+            .putString("streaming_snapshot:"+key,new JSONObject().put("results",new JSONObject().put(country,response.getJSONObject("results").optJSONObject(country)==null?new JSONObject():response.getJSONObject("results").getJSONObject(country))).toString()).apply();
         return availability;
+    }
+    /** Disk-only availability; null means unknown/stale, not known unavailable. */
+    public static Availability cachedAvailability(Context context,String kind,long id,String country,int season){
+        String key=kind+":"+id+":"+country+":"+season;SharedPreferences preferences=prefs(context);
+        long age=System.currentTimeMillis()-preferences.getLong("streaming_known_at:"+key,0);
+        if(age<0||age>=TTL)return null;
+        try{String value=preferences.getString("streaming_snapshot:"+key,"");if(value.isEmpty())return null;JSONObject payload=new JSONObject(value);if(payload.optJSONObject("results")==null)return null;return parseAvailability(payload,country);}catch(Exception invalid){return null;}
     }
     /** Only fresh, successfully returned availability is eligible; unknown is not a match. */
     public static boolean knownOn(Context context,String kind,long id,String provider){
@@ -165,13 +242,48 @@ public final class StreamingRepository {
         return "";
     }
     public static void invalidate() { synchronized (CACHE) { CACHE.clear(); } }
+    /** Read only public duration metadata for an already authorised YouTube Extra. */
+    public static long extraDuration(String key)throws IOException{
+        if(key==null||!key.matches("[A-Za-z0-9_-]{11}"))throw new IOException("Invalid Extra identity");
+        return parseExtraDuration(get("https://www.youtube.com/watch?v="+key,2*1024*1024),key);
+    }
+    static long parseExtraDuration(String html,String key){
+        if(html==null||key==null||!key.matches("[A-Za-z0-9_-]{11}"))return 0;
+        String identity="",duration="";
+        Matcher tags=Pattern.compile("<meta\\s[^>]{0,4096}>",Pattern.CASE_INSENSITIVE).matcher(html);
+        Pattern attrs=Pattern.compile("([A-Za-z]+)\\s*=\\s*([\"'])(.*?)\\2");
+        while(tags.find()){
+            Map<String,String> values=new HashMap<>();Matcher fields=attrs.matcher(tags.group());
+            while(fields.find())values.put(fields.group(1).toLowerCase(Locale.ROOT),fields.group(3));
+            if("videoId".equals(values.get("itemprop")))identity=values.getOrDefault("content","");
+            if("duration".equals(values.get("itemprop")))duration=values.getOrDefault("content","");
+        }
+        if(!key.equals(identity))return 0;
+        Matcher iso=Pattern.compile("PT(?:(\\d{1,3})H)?(?:(\\d{1,5})M)?(?:(\\d{1,7})S)?").matcher(duration);
+        if(!iso.matches())return 0;
+        long seconds=(iso.group(1)==null?0:Long.parseLong(iso.group(1))*3600)+(iso.group(2)==null?0:Long.parseLong(iso.group(2))*60)+(iso.group(3)==null?0:Long.parseLong(iso.group(3)));
+        return seconds>0&&seconds<=86400?seconds:0;
+    }
     static boolean isTmdbWatchUrl(String url, String kind, long id) {
+        if(url==null)return false;
         Uri u = Uri.parse(url);
         if (!"https".equals(u.getScheme()) || !"www.themoviedb.org".equals(u.getHost())) return false;
         List<String> path = u.getPathSegments();
-        return path.size() == 3 && kind.equals(path.get(0))
+        return (path.size() == 3 || "tv".equals(kind)&&path.size()==5&&"season".equals(path.get(2))&&path.get(3).matches("[0-9]{1,4}")
+                || "tv".equals(kind)&&path.size()==7&&"season".equals(path.get(2))&&path.get(3).matches("[0-9]{1,4}")&&"episode".equals(path.get(4))&&path.get(5).matches("[0-9]{1,4}")) && kind.equals(path.get(0))
                 && (path.get(1).equals(Long.toString(id)) || path.get(1).startsWith(id + "-"))
-                && "watch".equals(path.get(2));
+                && "watch".equals(path.get(path.size()-1));
+    }
+    /** An API-supplied season/series offer cannot establish availability for an exact episode. */
+    public static boolean exactEpisodeAvailability(Availability availability,long showId,int season,int episode){
+        if(availability==null||!isTmdbWatchUrl(availability.watchUrl,"tv",showId))return false;
+        List<String> path=Uri.parse(availability.watchUrl).getPathSegments();
+        return path.size()==7&&Integer.toString(season).equals(path.get(3))&&Integer.toString(episode).equals(path.get(5));
+    }
+    public static String episodeLink(Context c,long showId,int season,int episode,Availability availability,int provider){
+        if(!exactEpisodeAvailability(availability,showId,season,episode))return "";
+        String link=titleLink(c,"tv",showId,country(c),availability,provider);
+        return safeWebUrl(link)?resolveTitleUrl(link):availability.watchUrl;
     }
     public static Availability parseAvailability(JSONObject root, String country) throws Exception {
         JSONObject regions = root.optJSONObject("results");
@@ -233,22 +345,34 @@ public final class StreamingRepository {
     }
     /** Resolve an affiliate redirect only when the viewer selects the offer. */
     public static String resolveTitleUrl(String url) {
+        return resolveTitleUrl(url,HTTP);
+    }
+    static String resolveTitleUrl(String url,OkHttpClient client) {
         if (!safeWebUrl(url)) return "";
         String host = Uri.parse(url).getHost();
         // Only known link redirectors need expansion; normal provider links are left intact.
         if (host == null || !(host.endsWith(".bn5x.net") || host.endsWith(".pxf.io") || host.equals("click.justwatch.com"))) return url;
-        OkHttpClient redirects = HTTP.newBuilder().followRedirects(false).followSslRedirects(false).build();
+        OkHttpClient redirects = client.newBuilder().followRedirects(false).followSslRedirects(false).build();
+        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("provider_redirect");
+        long started=android.os.SystemClock.elapsedRealtime();
         String current = url;
+        try{
         for (int i = 0; i < 5; i++) {
+            long requestStarted=android.os.SystemClock.elapsedRealtime();int status=0;String outcome="transport_failed";
             try (Response response = redirects.newCall(new Request.Builder().url(current).head().build()).execute()) {
+                status=response.code();
                 String location = response.header("Location");
-                if (response.code() < 300 || response.code() >= 400 || location == null) return current;
+                if (response.code() < 300 || response.code() >= 400 || location == null){outcome=response.isSuccessful()?"resolved":"unresolved_http";return current;}
                 okhttp3.HttpUrl next = response.request().url().resolve(location);
-                if (next == null || !safeWebUrl(next.toString())) return url;
-                current = next.toString();
+                if (next == null || !safeWebUrl(next.toString())){outcome="unsafe_redirect";return url;}
+                current = next.toString();outcome="redirect";
             } catch (Exception e) { return url; }
+            finally{com.archos.mediacenter.video.diagnostics.Diagnostics.event("resolved".equals(outcome)||"redirect".equals(outcome)?"provider_request_complete":"provider_request_failed",
+                "operation_id",operation,"provider","provider_link","operation_type","title_redirect","status",status,"outcome",outcome,"redirect_index",i,
+                "duration_ms",android.os.SystemClock.elapsedRealtime()-requestStarted,"retry_number",0,"connectivity",com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());}
         }
         return current;
+        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"provider_redirect",started);}
     }
     public static boolean safeWebUrl(String url) {
         if (url == null || url.length() > 12000) return false;

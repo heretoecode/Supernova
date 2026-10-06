@@ -198,6 +198,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
     /** The video for which we are displaying the details. This object is updated each time we have a DB update */
     private PreviewMoviePage mPreviewMovie;
+    private BaseTags mPreviewTags;
+    private ScraperImage mPreviewPosterSelection,mPreviewBackdropSelection;
     private com.archos.mediacenter.video.leanback.TopNavigation mPreviewNavigation;
     private View mNativeDetails;
     private java.util.concurrent.ExecutorService mPreviewWorker;
@@ -219,20 +221,28 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     public boolean closePreviewNativeDetails(){return false;}
     private void showPreviewVersions(){
         java.util.List<Video> variants=new java.util.ArrayList<>(mVideoList);variants.sort(com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
-        String[] labels=new String[variants.size()];int selected=0;for(int i=0;i<labels.length;i++){labels[i]=com.archos.mediacenter.video.leanback.PreviewVariants.label(variants.get(i));if(variants.get(i).getId()==mVideo.getId())selected=i;}
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"Versions",labels,selected,n->{mSelectCurrentVideo=true;mVideo=variants.get(n);fullyReloadVideo(mVideo,null,false);});
+        com.archos.mediacenter.video.leanback.PreviewVersionsDialog.show(requireActivity(),variants,mVideo,video->{
+            // Switching encode keeps the already selected title's playback position.
+            video.setAutomaticResumeMs(mVideo.getResumeMs());video.setRemoteResumeMs(mVideo.getRemoteResumeMs());
+            mSelectCurrentVideo=true;mVideo=video;fullyReloadVideo(mVideo,null,false);
+        });
     }
     private void showPreviewTools(){
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File, subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops","File information"},-1,n->{
-            if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else if(n==4)com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),mVideo.getFilenameNonCryptic(),mVideo.getFileUri()==null?"":mVideo.getFileUri().getPath());else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"Subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops","Subtitle Settings"},-1,java.util.Collections.emptySet(),false,n->{
+            if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else if(n==4)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class).putExtra("preview_settings_category","Subtitles"));else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
         });
     }
     private void showPreviewArtwork(Row sourceRow){
         ListRow row=sourceRow instanceof ListRow?(ListRow)sourceRow:null;
-        if(row==null||row.getAdapter().size()==0){Toast.makeText(requireContext(),"No artwork available",Toast.LENGTH_SHORT).show();return;}
-        android.widget.HorizontalScrollView scroll=new android.widget.HorizontalScrollView(requireContext());android.widget.LinearLayout cards=new android.widget.LinearLayout(requireContext());scroll.addView(cards);
-        android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(requireContext()).setTitle(row.getHeaderItem().getName()).setView(scroll).setNegativeButton("Close",null).create();
-        for(int i=0;i<row.getAdapter().size();i++){Object item=row.getAdapter().get(i);Presenter presenter=row.getAdapter().getPresenter(item);Presenter.ViewHolder h=presenter.onCreateViewHolder(cards);presenter.onBindViewHolder(h,item);cards.addView(h.view);h.view.setOnClickListener(v->{dialog.dismiss();getOnItemViewClickedListener().onItemClicked(h,item,null,row);});}dialog.show();com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(dialog);
+        if(row==null||row.getAdapter().size()==0){com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),"Artwork","No artwork available");return;}
+        boolean posters=sourceRow==mPostersRow;java.util.List<ScraperImage> images=new java.util.ArrayList<>();
+        for(int i=0;i<row.getAdapter().size();i++)if(row.getAdapter().get(i) instanceof ScraperImage)images.add((ScraperImage)row.getAdapter().get(i));
+        ScraperImage selected=posters?mPreviewPosterSelection:mPreviewBackdropSelection;
+        com.archos.mediacenter.video.leanback.PreviewArtworkPicker.show(requireContext(),posters?"Posters":"Backdrops",images,selected,posters,(image,done)->{
+            java.util.function.Consumer<Boolean> complete=saved->{if(saved){if(posters)mPreviewPosterSelection=image;else mPreviewBackdropSelection=image;}done.accept(saved);};
+            if(posters){mPosterSaverTask=new PosterSaverTask(getActivity(),mVideo instanceof Episode?((Episode)mVideo).getSeasonNumber():-1);mPosterSaverTask.execute(image,complete);}
+            else{mBackdropSaverTask=new BackdropSaverTask(getActivity());mBackdropSaverTask.execute(image,complete);}
+        });
     }
 
     private Video mVideo;
@@ -922,6 +932,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 DbUtils.markAsHiddenByUser(getActivity(), mVideo);
             }
             else if (action.getId() == VideoActionAdapter.ACTION_DELETE) {
+                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(requireContext(),mVideo.getFileUri())){
+                    com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),"Manage put.io file","This file is managed by put.io. Use put.io to delete it; Supernova will not send destructive operations through WebDAV.");return;
+                }
                 if (mPreviewMovie != null) {
                     com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
                             getString(R.string.confirm_delete), new String[]{getString(android.R.string.cancel), getString(R.string.delete)},
@@ -1135,6 +1148,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             mSelectCurrentVideo = true;
             if(mVideo == null)
                 mVideo = mVideoList.get(0);
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))
+                com.archos.mediacenter.video.leanback.PreviewVariants.restoreTitleResume(mVideoList,mVideo);
             if(mVideoList.size()>1){
                 int i = 0;
                 for(Video video : mVideoList) {
@@ -1894,7 +1909,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     if (log.isDebugEnabled()) log.debug("onPostExecute");
                     if(getActivity().isDestroyed())
                         return;
-                    if(mPreviewMovie!=null)mPreviewMovie.setTags(finalTags,finalTrailers,finalBackdrops);
+                    mPreviewTags=finalTags;mPreviewPosterSelection=finalTags==null?null:finalTags.getDefaultPoster();mPreviewBackdropSelection=finalTags==null?null:finalTags.getDefaultBackdrop();if(mPreviewMovie!=null)mPreviewMovie.setTags(finalTags,finalTrailers,finalBackdrops);
                     // Update the action adapter if there is a next episode
                     ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter()).setNextEpisodeStatus(mNextEpisode != null);
                     ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter()).setListEpisodesStatus(mIsTvEpisode);
@@ -2154,8 +2169,12 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         }
 
         void execute(ScraperImage poster) {
+            execute(poster,null);
+        }
+        void execute(ScraperImage poster,java.util.function.Consumer<Boolean> completed) {
             executor.execute(() -> {
                 Bitmap result = null;
+                boolean applied=false;
                 try {
                     if (isCancelled || Thread.currentThread().isInterrupted()) return;
                     if(mVideo instanceof Movie) {
@@ -2166,7 +2185,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     }
                     // Save in DB and download
                     if (poster.download(getActivity())) {
-                        poster.setAsDefault(getActivity(), mSeason);
+                        applied=poster.setAsDefault(getActivity(), mSeason);
                     }
                     // Update the bitmap
                     try {
@@ -2186,9 +2205,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 }
                 if (isCancelled) return;
                 final Bitmap finalResult = result;
+                final boolean saved=applied;
                 handler.post(() -> {
                     if (isCancelled) return;
-                    if (finalResult != null) {
+                    if (finalResult != null&&(completed==null||saved)) {
                         mPoster = finalResult;
 
                         Palette palette = Palette.from(finalResult).generate();
@@ -2220,10 +2240,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                             }
                         }
 
-                        Toast.makeText(getActivity(), R.string.leanback_poster_changed, Toast.LENGTH_SHORT).show();
+                        if(completed==null)Toast.makeText(getActivity(), R.string.leanback_poster_changed, Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
+                        if(completed==null)Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
                     }
+                    if(completed!=null)completed.accept(saved);
                 });
             });
         }
@@ -2250,26 +2271,34 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         }
 
         void execute(ScraperImage backdrop) {
+            execute(backdrop,null);
+        }
+        void execute(ScraperImage backdrop,java.util.function.Consumer<Boolean> completed) {
             executor.execute(() -> {
+                boolean applied=false;
                 try {
                     if (isCancelled || Thread.currentThread().isInterrupted()) return;
                     // Save in DB and download
-                    if (backdrop.setAsDefault(getActivity())) {
-                        backdrop.download(getActivity());
-                    }
+                    if(completed!=null){if(backdrop.download(getActivity()))applied=backdrop.setAsDefault(getActivity());}
+                    else if (backdrop.setAsDefault(getActivity())) {backdrop.download(getActivity());applied=true;}
                 } catch (Exception e) {
                     log.error("BackdropSaverTask failed", e);
                 } finally {
                     executor.shutdown();
                 }
                 if (isCancelled) return;
+                final boolean saved=applied;
                 handler.post(() -> {
                     if (isCancelled) return;
                     // Update backdrop
                     if (!mLaunchedFromPlayer) { // in player case the player is displayed in the background, not the backdrop
                         mBackdropController.replace(mVideo);
                     }
-                    Toast.makeText(getActivity(), R.string.leanback_backdrop_changed, Toast.LENGTH_SHORT).show();
+                    if(completed==null)Toast.makeText(getActivity(), R.string.leanback_backdrop_changed, Toast.LENGTH_SHORT).show();
+                    else {
+                        if(saved&&mPreviewMovie!=null){java.io.File file=backdrop.getLargeFileF();if(file!=null&&file.isFile()){mVideo.setPreviewBackdrop(Uri.fromFile(file).toString());mPreviewMovie.bind(mVideo);}}
+                        completed.accept(saved);
+                    }
                     getActivity().setResult(Activity.RESULT_OK);
                 });
             });

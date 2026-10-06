@@ -805,6 +805,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         // NetworkAutoRefresh.init requires main thread (LifecycleRegistry.addObserver)
         com.archos.mediacenter.video.leanback.PreviewAutoScanPolicy.initialise(this);
         NetworkAutoRefresh.init(this);
+        com.archos.mediacenter.video.leanback.PreviewLibraryScan.install(this);
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(previewScanPreferences);
 
         // Defer heavy initialization to a background thread to speed up cold start
@@ -968,6 +969,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                 isNetworkStateRegistered = true;
             }
             addNetworkListener();
+            previewForegroundTrigger=previewHasForegrounded?"resume":"startup";previewHasForegrounded=true;
             requestPreviewNetworkRefresh();
             com.archos.mediacenter.video.utils.MigrationBackup.resumeArtwork(this);
             launchSambaDiscovery();
@@ -1201,6 +1203,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     private long previewRefreshAt, previewRefreshRequestedWallTime;
+    private boolean previewHasForegrounded;
+    private String previewForegroundTrigger="startup";
     private final SharedPreferences.OnSharedPreferenceChangeListener previewScanPreferences=(prefs,key)->{if("auto_rescan_on_app_restart".equals(key)||NetworkAutoRefresh.AUTO_RESCAN_PERIOD.equals(key))requestPreviewNetworkRefresh();};
     private boolean previewScanOnReturn;
     private final android.os.Handler previewRefreshHandler=new android.os.Handler(android.os.Looper.getMainLooper());
@@ -1212,7 +1216,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         android.util.Log.d("SupernovaScan","foreground due-check: startup="+previewScanOnReturn+" periodMs="+period+" lastScan="+prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)+" busy="+com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive());
         boolean due=previewScanOnReturn&&NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)||period>0&&now-prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN,0)>=period;
         if(due&&(NetworkState.isLocalNetworkConnectedOrVpnMobileEnabled(CustomApplication.this)||NetworkState.isNetworkConnected(CustomApplication.this))&&!com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()&&com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()==0&&(previewRefreshAt==0||android.os.SystemClock.elapsedRealtime()-previewRefreshAt>=60000)){
-            previewRefreshAt=android.os.SystemClock.elapsedRealtime();previewRefreshRequestedWallTime=now;android.util.Log.i("SupernovaScan","Requesting configured automatic indexed-source scan");NetworkAutoRefresh.forceRescan(CustomApplication.this);
+            previewRefreshAt=android.os.SystemClock.elapsedRealtime();previewRefreshRequestedWallTime=now;android.util.Log.i("SupernovaScan","Requesting configured automatic indexed-source scan");
+            com.archos.mediacenter.video.leanback.PreviewLibraryScan.requestNetwork(CustomApplication.this,previewScanOnReturn?previewForegroundTrigger:"scheduled");
         }
         // Retry after an offline/busy launch and honour the existing periodic schedule while open.
         if(previewScanOnReturn||period>0)previewRefreshHandler.postDelayed(this,30000);

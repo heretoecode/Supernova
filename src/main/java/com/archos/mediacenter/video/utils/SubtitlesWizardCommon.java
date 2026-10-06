@@ -55,6 +55,8 @@ public class SubtitlesWizardCommon {
 
     private List<String> mAvailableFiles;
     private int mAvailableFilesCount;
+    private boolean mLoadFailed;
+    public boolean hasLoadFailure(){return mLoadFailed;}
 
     public Uri getVideoUri() {
         return mVideoUri;
@@ -108,6 +110,7 @@ public class SubtitlesWizardCommon {
 
     /** Call on a worker after prepare() on the UI thread. */
     public void loadFiles() {
+        mLoadFailed=false;
         if (mVideoPath == null) return;
         mCurrentFilesCount = buildCurrentSubtitlesFilesList(mVideoPath);
         mAvailableFilesCount = buildAvailableSubtitlesFilesList(mVideoPath);
@@ -159,6 +162,7 @@ public class SubtitlesWizardCommon {
                 mCurrentFiles.add(path);
             }
         } catch (Exception ex) {
+            mLoadFailed=true;
             log.error("buildCurrentSubtitlesFilesList error : failed to get data from SubtitleManager");
         }
         
@@ -186,6 +190,7 @@ public class SubtitlesWizardCommon {
                     mAvailableFiles.add(path);
             }
         } catch (Exception ex) {
+            mLoadFailed=true;
             log.error("buildAvailableSubtitlesFilesList error : failed to get data from SubtitleManager");
         }
         
@@ -270,12 +275,16 @@ public class SubtitlesWizardCommon {
         String newFilePath = buildSubtitlesFilename(oldFilePath);
 
         Uri oldUri = Uri.parse(oldFilePath);
+        if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),oldUri))return false;
         FileEditor oldFile = FileEditorFactory.getFileEditorForUrl(oldUri, getActivity());
         Uri newUri = Uri.parse(newFilePath);
         String newName = FileUtils.getName(newUri);
         // Rename the file
         try {
-            fileRenamed = oldFile.rename(newName);
+            synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),oldUri)||com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),newUri))return false;
+                fileRenamed = oldFile.rename(newName);
+            }
             if (log.isDebugEnabled()) log.debug("onItemClick : selected file renamed as {}", newFilePath);
         }
         catch (Exception e) {
@@ -333,9 +342,13 @@ public class SubtitlesWizardCommon {
         boolean fileDeleted = false;
         
         Uri uri = Uri.parse(path);
+        if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),uri))return false;
         FileEditor file = FileEditorFactory.getFileEditorForUrl(uri, getActivity());
         try {
-            file.delete();
+            synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),uri))return false;
+                file.delete();
+            }
             if (log.isDebugEnabled()) log.debug("deleteFile : file {} deleted", path);
         }
         catch (Exception e) {

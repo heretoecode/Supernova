@@ -256,12 +256,15 @@ public class Delete {
             public void run(){
                 if(!UriUtils.isImplementedByFileCore(fileUri)||"upnp".equals(fileUri.getScheme())) //we can't delete files on upnp
                     return;
+                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(mContext,fileUri))return;
                 List<Uri> toDelete = getAssociatedFiles(fileUri);
                 if(toDelete!=null){
                     if (log.isDebugEnabled()) log.debug("deleteAssociatedNfoFiles: counter {}", counter);
                     for(Uri uri : toDelete){
                         try {
-                            FileEditorFactory.getFileEditorForUrl(uri,mContext).delete();
+                            synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+                                if(!com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(mContext,uri))FileEditorFactory.getFileEditorForUrl(uri,mContext).delete();
+                            }
                         } catch (Exception e) {
                             log.error("deleteAssociatedNfoFiles: caught Exception", e);
                         }
@@ -342,6 +345,8 @@ public class Delete {
      * only after the physical delete succeeds. FileCore's remote null return means
      * success; its local null return means a pending system permission request. */
     private Boolean deletePhysicalFile(Context context, Uri uri) throws Exception {
+        synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+        if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(context,uri))return false;
         FileEditor editor = FileEditorFactory.getFileEditorForUrl(uri, context);
         Boolean result = editor.delete();
         if (editor instanceof LocalStorageFileEditor) {
@@ -354,6 +359,7 @@ public class Delete {
             NetworkScanner.removeVideos(context, uri);
         }
         return true;
+        }
     }
 
     private void notifyLocalDeleted(Uri uri) {
@@ -406,11 +412,14 @@ public class Delete {
         new Thread(){
             public void run() {
                 try {
+                    synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+                    if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(mContext,uri))throw new IOException("Use the provider API to manage this folder");
                     FileEditor editor = FileEditorFactory.getFileEditorForUrl(uri, mContext);
                     Boolean result = editor.delete();
                     if (result == null && editor instanceof LocalStorageFileEditor) return;
                     if (Boolean.FALSE.equals(result)) throw new IOException("Folder deletion failed");
                     deleteFolderOK(uri);
+                    }
                 } catch (Exception e) {
                     mHandler.post(() -> { if (mListener != null) mListener.onDeleteVideoFailed(uri); });
                 }

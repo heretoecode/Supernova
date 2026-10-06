@@ -44,6 +44,7 @@ public class ManualShowScrappingActivity extends FragmentActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
             Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment);
+            if(f instanceof ManualScrappingSearchFragment&&((ManualScrappingSearchFragment)f).focusPreviewSearch())return true;
             if (f instanceof SearchSupportFragment) {
                 ((SearchSupportFragment)f).startRecognition();
                 return true;

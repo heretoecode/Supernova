@@ -56,17 +56,23 @@ try:
     adb('shell', 'input', 'keyevent', '23')
     root = capture('playback-hud-runtime')
     assert any('Movie Ends' in n.get('text', '') for n in root.iter('node')), 'Preview movie end-clock wording missing'
-    info = next(n for n in root.iter('node') if n.get('resource-id', '').endswith('/preview_info'))
-    activate(info, 'File and technical details')
-    root = capture('playback-information-runtime')
-    technical = next(n for n in root.iter('node') if n.get('text', '').lower() == 'file and technical details')
-    activate(technical, 'File & Technical Details')
+    # Remote focus, not a touch click: touching a non-touch-focusable ImageButton
+    # clears keyboard focus and cannot establish the opener this check verifies.
+    assert any(n.get('resource-id', '').endswith('/pause') and n.get('focused') == 'true' for n in root.iter('node')), 'HUD did not enter on Play/Pause'
+    adb('shell', 'input', 'keyevent', '22')
+    root = capture('playback-info-focused')
+    assert any(n.get('resource-id', '').endswith('/preview_info') and n.get('focused') == 'true' for n in root.iter('node')), 'Remote RIGHT did not focus Info'
+    adb('shell', 'input', 'keyevent', '23')
     root = capture('playback-technical-runtime')
-    assert any(n.get('text') == 'File & Technical Details' for n in root.iter('node'))
+    labels = {n.get('text') for n in root.iter('node')}
+    assert {'Video', 'Audio', 'File', 'Source'} <= labels, 'Technical-only information panels missing'
+    assert not {'Resume', 'Play from Beginning', 'File and technical details', 'File & Technical Details'} & labels, 'Legacy information actions leaked into technical overlay'
     activities = adb('shell', 'dumpsys', 'activity', 'activities')
     (OUT / 'playback-technical-activities.txt').write_bytes(activities)
     assert b'mResumedActivity' in activities and b'PlayerActivity' in activities
     adb('shell', 'input', 'keyevent', '4')
+    root = capture('playback-info-return')
+    assert any(n.get('resource-id', '').endswith('/preview_info') and n.get('focused') == 'true' for n in root.iter('node')), 'Back did not restore HUD Info focus'
     adb('shell', 'pidof', PACKAGE)
 finally:
     logs = adb('logcat', '-d')

@@ -20,7 +20,7 @@ for project in ('Video', 'MediaLib'):
         if updated != original:
             path.write_text(updated)
 manifest = root / 'Video/AndroidManifest.xml'
-manifest.write_text(manifest.read_text().replace('android:label="@string/nova"', 'android:label="NOVA Preview"'))
+manifest.write_text(manifest.read_text().replace('android:label="@string/nova"', 'android:label="Supernova"'))
 if any(count == 0 for count in counts.values()):
     raise SystemExit('Expected provider authority was not found; refusing an incomplete preview conversion')
-print('Prepared separate NOVA Preview package and provider authorities:', counts)
+print('Prepared upgrade-compatible Supernova package and provider authorities:', counts)

@@ -16,14 +16,34 @@ public class PreviewTechnicalInfoTest {
     }
     @Test public void missingActiveMetadataDoesNotStartProbe(){assertTrue(PreviewTechnicalInfo.describe(null,"webdavs",0).contains("not available"));}
     @Test public void emptySnapshotHasNoNullTrackFailure(){String text=PreviewTechnicalInfo.describe(new VideoMetadata(),"webdavs",0);assertTrue(text.contains("Source: webdavs"));assertFalse(text.contains("null"));}
+    @Test public void dismissRevealsHiddenHudBeforeRestoringExactInfoOpener(){
+        org.robolectric.android.controller.ActivityController<android.app.Activity> host=Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        try{
+            android.app.Activity activity=host.get();
+            android.widget.LinearLayout hud=new android.widget.LinearLayout(activity);
+            android.widget.Button pause=new android.widget.Button(activity),info=new android.widget.Button(activity);
+            pause.setFocusableInTouchMode(true);info.setFocusableInTouchMode(true);
+            hud.addView(pause);hud.addView(info);activity.setContentView(hud);
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();info.requestFocus();assertSame(info,hud.findFocus());
+            // ShadowActivity uses an explicit field for getCurrentFocus rather
+            // than delegating to the window. Seed only the initial opener;
+            // verify the real view-tree focus after dismissal below.
+            Shadows.shadowOf(activity).setCurrentFocus(info);assertSame(info,activity.getCurrentFocus());
+            PreviewTechnicalInfo.show(activity,null,null,0,()->{hud.setVisibility(android.view.View.VISIBLE);pause.requestFocus();});
+            android.app.Dialog technical=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            hud.setVisibility(android.view.View.GONE); // The player's inactivity fade while Info is open.
+            technical.dismiss();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals(android.view.View.VISIBLE,hud.getVisibility());assertSame(info,hud.findFocus());assertFalse(pause.hasFocus());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void episodeInformationToTechnicalPanelKeepsOwningActivity(){
         org.robolectric.android.controller.ActivityController<android.app.Activity> host=Robolectric.buildActivity(android.app.Activity.class).setup();
         try{
             android.app.Activity activity=host.get();activity.setContentView(new android.widget.TextView(activity));
-            PreviewPlaybackInfo.show(activity,"Example series","Season 1 · Episode 1",null,()->{},()->PreviewTechnicalInfo.show(activity,new VideoMetadata(),android.net.Uri.parse("webdavs://example/file.mkv"),0));
-            android.app.Dialog information=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(information.isShowing());
-            android.view.View action=find(information.getWindow().getDecorView(),"File and technical details");assertNotNull(action);action.performClick();
-            android.app.Dialog technical=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(technical.isShowing());assertNotNull(find(technical.getWindow().getDecorView(),"File & Technical Details"));
+            PreviewTechnicalInfo.show(activity,new VideoMetadata(),android.net.Uri.parse("webdavs://example/file.mkv"),0);
+            android.app.Dialog technical=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(technical.isShowing());
+            for(String label:new String[]{"Video","Audio","File","Source"})assertNotNull(find(technical.getWindow().getDecorView(),label));
+            for(String label:new String[]{"File & Technical Details","file.mkv","Resume","Close"})assertNull(find(technical.getWindow().getDecorView(),label));
             assertNull(Shadows.shadowOf(activity).getNextStartedActivity());assertFalse(activity.isFinishing());technical.dismiss();
         }finally{host.pause().stop().destroy();}
     }

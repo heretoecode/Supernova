@@ -71,9 +71,18 @@ final class PreviewPlaybackLoading extends FrameLayout {
     @Override protected void onVisibilityChanged(View changed,int visibility){
         super.onVisibilityChanged(changed,visibility);
         if(artwork==null)return;
-        if(visibility==VISIBLE&&!requestedArtwork&&cachedArtwork!=null&&"file".equals(cachedArtwork.getScheme())){
-            requestedArtwork=true;Picasso.get().load(cachedArtwork).resize(1280,720).centerCrop().noFade().into(artwork);
+        if(visibility==VISIBLE&&!requestedArtwork&&cachedArtwork!=null){
+            com.squareup.picasso.RequestCreator request=cachedRequest(Picasso.get(),cachedArtwork);
+            if(request!=null){requestedArtwork=true;request.into(artwork);}
         }else if(visibility!=VISIBLE){Picasso.get().cancelRequest(artwork);requestedArtwork=false;}
+    }
+    /** A remote artwork URI may already exist in Picasso's disk cache. Never fetch it at Play time. */
+    static com.squareup.picasso.RequestCreator cachedRequest(Picasso picasso,Uri uri){
+        String scheme=uri==null?null:uri.getScheme();boolean remote="https".equals(scheme)||"http".equals(scheme);
+        if(!remote&&!"file".equals(scheme)&&!"content".equals(scheme))return null;
+        com.squareup.picasso.RequestCreator request=picasso.load(uri).resize(1280,720).centerCrop().noFade();
+        if(remote)request.networkPolicy(com.squareup.picasso.NetworkPolicy.OFFLINE);
+        return request;
     }
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();onVisibilityChanged(this,getVisibility());}
     @Override protected void onDetachedFromWindow(){generation++;Picasso.get().cancelRequest(artwork);super.onDetachedFromWindow();}

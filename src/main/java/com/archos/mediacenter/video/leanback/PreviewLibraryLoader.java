@@ -58,7 +58,9 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public int year() { return media instanceof Movie ? ((Movie)media).getYear() : media instanceof Tvshow ? ((Tvshow)media).getYear() : 0; }
     }
     public static final class Snapshot implements java.io.Serializable {
+        public final List<Entry> technical=new ArrayList<>();
         public final List<Entry> episodes=new ArrayList<>();
+        public final List<Entry> unmatched=new ArrayList<>();
         public final List<Entry> watched = new ArrayList<>();
         public final List<Entry> movies = new ArrayList<>(), shows = new ArrayList<>(), recent = new ArrayList<>(), played = new ArrayList<>(), continuingMovies = new ArrayList<>(), continuingShows = new ArrayList<>();
     }
@@ -73,10 +75,11 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 .orElseGet(()->choices.stream().filter(e->!watched((Video)e.media)).min(order).orElse(null)));
     }
     public static Snapshot build(List<Entry> videos, List<Entry> shows) {
-        Snapshot s=new Snapshot(); s.shows.addAll(shows);
+        Snapshot s=new Snapshot();s.technical.addAll(videos); s.shows.addAll(shows);
         Map<Long,List<Entry>> groups=new LinkedHashMap<>();
         for(Entry e:videos) {
             Video v=(Video)e.media;
+            if (!(v instanceof Movie) && !(v instanceof Episode)) s.unmatched.add(e);
             if(v instanceof Episode && e.show>0) {groups.computeIfAbsent(e.show,k->new ArrayList<>()).add(e);s.episodes.add(e);}
             else { s.recent.add(e); if(v instanceof Movie) { s.movies.add(e); if(!watched(v) && v.getResumeMs()>0) s.continuingMovies.add(e); } }
             if(v.getLastPlayed()>0) { s.played.add(e); if(watched(v))s.watched.add(e); }
@@ -109,6 +112,22 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         s.continuingShows.sort(Comparator.comparingLong((Entry e)->groups.get(e.show).stream().mapToLong(x->((Video)x.media).getLastPlayed()).max().orElse(0)).reversed());
         return s;
     }
+    /** Recalculate display-only series metadata after persisted legacy-file enrichment. */
+    public static void refreshTechnicalSummaries(Snapshot snapshot){
+        Map<Long,List<Entry>> episodes=new HashMap<>();
+        for(Entry entry:snapshot.episodes)episodes.computeIfAbsent(entry.show,k->new ArrayList<>()).add(entry);
+        for(Entry show:snapshot.shows){
+            Set<String> resolutions=new TreeSet<>(),audios=new TreeSet<>(),codecs=new TreeSet<>(),hdr=new TreeSet<>();
+            for(Entry entry:episodes.getOrDefault(show.show,Collections.emptyList())){
+                if(!entry.resolution.isEmpty())resolutions.add(entry.resolution);
+                if(!entry.audio.isEmpty())audios.add(entry.audio);
+                if(!entry.codec.isEmpty())codecs.add(entry.codec);
+                if(!entry.hdr.isEmpty())hdr.add(entry.hdr);
+            }
+            show.resolution=summaryValue(resolutions);show.audio=summaryValue(audios);show.codec=summaryValue(codecs);show.hdr=summaryValue(hdr);
+        }
+    }
+    private static String summaryValue(Set<String> values){return values.isEmpty()?"":values.size()==1?values.iterator().next():"Mixed";}
     private static final Object CACHE_LOCK=new Object();
     private static final java.util.concurrent.ExecutorService cacheWriter=java.util.concurrent.Executors.newSingleThreadExecutor();
     public static void warmCache(Context context){cacheWriter.execute(()->{Snapshot value=readCache(context);if(value!=null&&cached==null&&!com.archos.mediacenter.video.player.PrivateMode.isActive()){cachePrivate=false;cached=value;}});}
@@ -131,7 +150,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         s.continuingShows.sort(Comparator.comparingLong((Entry e)->e.playedAt).reversed());
     }
     @Override public Cursor loadInBackground() {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_load_begin");
+        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("indexed_library_load");
         long started=android.os.SystemClock.elapsedRealtime();
         Cursor c=null;
         loadWarning=null;
@@ -151,7 +170,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 else { String remote=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL)); if(remote!=null && (remote.startsWith("https://") || remote.startsWith("http://")))v.setPreviewBackdrop(remote); }
                 Entry entry=new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg));
                 entry.sortTitle=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_SORT_NAME));
-                entry.modified=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATE_MODIFIED));entry.bitrate=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.ARCHOS_VIDEO_BITRATE));
+                entry.modified=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATE_MODIFIED));entry.bitrate=1000L*Math.max(0,c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.ARCHOS_VIDEO_BITRATE)));
                 entry.releaseDate=c.getString(c.getColumnIndexOrThrow(v instanceof Episode?VideoStore.Video.VideoColumns.SCRAPER_S_PREMIERED:VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE));
                 if(v instanceof Episode)entry.onlineId=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID));
                 videos.add(entry);
@@ -169,13 +188,16 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                     while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId()); Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;}se.sortTitle=sc.getString(sc.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_SORT_NAME));shows.add(se); }
                 }
             }
+            PreviewMetadata.hydrate(getContext(),videos);
             Snapshot result=build(videos,shows);
+            refreshTechnicalSummaries(result);
             if(rejected==0) {
                 applyJourneys(result,videos);
                 cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=result;
                 if(!cachePrivate)cacheWriter.execute(()->writeCache(result));
             } else loadWarning="Some library records could not be read. Library data was not changed. Please export diagnostics and retry.";
             snapshot=result;
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_counts","operation_id",operation,"visited",visited,"rejected",rejected,"movies",result.movies.size(),"shows",result.shows.size(),"episodes",result.episodes.size());
             c.moveToPosition(-1); return c;
         } catch(android.os.OperationCanceledException | androidx.core.os.OperationCanceledException cancelled) {
             if(c!=null)c.close();throw cancelled;
@@ -185,6 +207,6 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             loadWarning="The library could not be read. Library data was not changed. Please export diagnostics and retry.";
             Snapshot previous=memoryCache();snapshot=previous!=null?previous:new Snapshot();
             return null;
-        }
+        } finally {com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"indexed_library_load",started);}
     }
 }

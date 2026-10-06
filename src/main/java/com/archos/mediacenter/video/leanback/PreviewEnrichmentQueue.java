@@ -1,0 +1,131 @@
+package com.archos.mediacenter.video.leanback;
+
+import android.content.*;
+import android.database.Cursor;
+import android.database.sqlite.*;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import java.util.*;
+import java.util.concurrent.*;
+
+/** Persistent priority queue. One package section per turn lets foreground work pre-empt background work. */
+public final class PreviewEnrichmentQueue {
+    public static final int FOREGROUND=0, HOME=10, CURRENT_PAGE=20, NEXT=30, BACKGROUND=40;
+    private static final ScheduledExecutorService WORK=Executors.newSingleThreadScheduledExecutor(r->new Thread(r,"SupernovaEnrichment"));
+    private static Store store;
+    private static boolean draining;
+    private static ScheduledFuture<?> retry;
+    // Worker-confined baseline: each viewport offer replaces, rather than accumulates,
+    // temporary visible priorities. Package progress remains in the persistent store.
+    private static final Map<String,Integer> pagePriorities=new HashMap<>();
+    private static final String[] SECTIONS={"","credits","images","videos","recommendations","external_ids","providers","seasons","classification"};
+    private static final long STALE=6L*60*60*1000;
+    private static Store store(Context context){if(store==null)store=new Store(context.getApplicationContext());return store;}
+    public static void enqueue(Context c,String kind,long id,int priority) {
+        if(id<=0||!(kind.equals("movie")||kind.equals("tv")))return;Context app=c.getApplicationContext();
+        WORK.execute(()->{offer(store(app).getWritableDatabase(),kind,id,priority,scope(app));start(app);});
+    }
+    public static void library(Context c,PreviewLibraryLoader.Snapshot snapshot,int tab) {
+        Context app=c.getApplicationContext();
+        WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();db.beginTransaction();try{
+            String scope=scope(app);
+            pagePriorities.clear();
+            // A previous page must not retain page priority forever. Active foreground
+            // packages keep their temporary override until their package completes.
+            db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,HOME});
+            for(PreviewLibraryLoader.Entry entry:snapshot.movies)offerPage(db,entry,tab==1?CURRENT_PAGE:BACKGROUND,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.shows)offerPage(db,entry,tab==2?CURRENT_PAGE:BACKGROUND,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.continuingMovies)offerPage(db,entry,HOME,scope);
+            for(PreviewLibraryLoader.Entry entry:snapshot.continuingShows)offerPage(db,entry,HOME,scope);
+            for(int i=0;i<Math.min(30,snapshot.recent.size());i++)offerPage(db,snapshot.recent.get(i),HOME,scope);
+            db.setTransactionSuccessful();
+        }finally{db.endTransaction();}start(app);});
+    }
+    private static void offerEntry(SQLiteDatabase db,PreviewLibraryLoader.Entry entry,int priority,String scope){
+        offer(db,entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv",entry.onlineId,priority,scope);
+    }
+    private static void offerPage(SQLiteDatabase db,PreviewLibraryLoader.Entry entry,int priority,String scope){
+        if(entry.onlineId<=0)return;
+        String kind=entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie?"movie":"tv";
+        String key=kind+":"+entry.onlineId+":"+scope;
+        pagePriorities.put(key,Math.min(priority,pagePriorities.getOrDefault(key,BACKGROUND)));
+        offer(db,kind,entry.onlineId,priority,scope);
+    }
+    /** Indexed entry onlineId is the parent series ID for episodes, never the episode ID. */
+    public static void visible(Context c,List<PreviewLibraryLoader.Entry> visible,List<PreviewLibraryLoader.Entry> next){
+        Context app=c.getApplicationContext();List<PreviewLibraryLoader.Entry> shown=new ArrayList<>(visible),following=new ArrayList<>(next);
+        WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();String scope=scope(app);db.beginTransaction();try{
+            restorePagePriorities(db,pagePriorities);
+            for(PreviewLibraryLoader.Entry entry:following)offerEntry(db,entry,NEXT,scope);
+            for(PreviewLibraryLoader.Entry entry:shown)offerEntry(db,entry,HOME,scope);
+            db.setTransactionSuccessful();
+        }finally{db.endTransaction();}start(app);});
+    }
+    static void restorePagePriorities(SQLiteDatabase db,Map<String,Integer> priorities){
+        db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,HOME});
+        for(Map.Entry<String,Integer> entry:priorities.entrySet())
+            db.execSQL("UPDATE jobs SET priority=? WHERE identity=? AND priority>=?",new Object[]{entry.getValue(),entry.getKey(),HOME});
+    }
+    private static String scope(Context app){return Locale.getDefault().toLanguageTag()+":"+StreamingRepository.country(app)+":"+StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false);}
+    private static void offer(SQLiteDatabase db,String kind,long id,int priority,String scope) {
+        if(id<=0)return;String key=kind+":"+id+":"+scope;long now=System.currentTimeMillis();
+        db.execSQL("INSERT OR IGNORE INTO jobs(identity,kind,media,priority,stage,next_at,completed_at) VALUES(?,?,?,?,0,0,0)",new Object[]{key,kind,id,priority});
+        db.execSQL("UPDATE jobs SET priority=MIN(priority,?),stage=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE stage END,season_cursor=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE season_cursor END,next_at=CASE WHEN completed_at>0 AND completed_at<? THEN 0 ELSE next_at END WHERE identity=?",new Object[]{priority,now-STALE,now-STALE,now-STALE,key});
+    }
+    private static void start(Context app){if(retry!=null){retry.cancel(false);retry=null;}if(!draining){draining=true;WORK.execute(()->drain(app));}}
+    private static void waitForRetry(Context app,SQLiteDatabase db){
+        draining=false;
+        String suffix=":"+scope(app);
+        try(Cursor pending=db.rawQuery("SELECT MIN(next_at) FROM jobs WHERE stage<? AND substr(identity,length(identity)-length(?)+1)=?",new String[]{String.valueOf(SECTIONS.length),suffix,suffix})){
+            if(pending.moveToFirst()&&!pending.isNull(0))retry=WORK.schedule(()->start(app),Math.max(250,pending.getLong(0)-System.currentTimeMillis()),TimeUnit.MILLISECONDS);
+        }
+    }
+    static Cursor nextJob(SQLiteDatabase db,String currentScope,long now){
+        String suffix=":"+currentScope;
+        return db.rawQuery("SELECT identity,kind,media,stage,season_cursor FROM jobs WHERE stage<? AND next_at<=? AND substr(identity,length(identity)-length(?)+1)=? ORDER BY priority,next_at,identity LIMIT 1",new String[]{String.valueOf(SECTIONS.length),String.valueOf(now),suffix,suffix});
+    }
+    private static void drain(Context app) {
+        SQLiteDatabase db=store(app).getWritableDatabase();String key,kind;long id;int stage,seasonCursor;
+        try(Cursor cursor=nextJob(db,scope(app),System.currentTimeMillis())){
+            if(!cursor.moveToFirst()){waitForRetry(app,db);return;}key=cursor.getString(0);kind=cursor.getString(1);id=cursor.getLong(2);stage=cursor.getInt(3);seasonCursor=cursor.getInt(4);
+        }
+        long started=android.os.SystemClock.elapsedRealtime();String operation=Diagnostics.operation("metadata_package");
+        try (Diagnostics.OperationScope ignored=Diagnostics.operationScope(operation)) {
+            if(SECTIONS[stage].equals("providers")) {
+                if(StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false))StreamingRepository.load(app,kind,id,StreamingRepository.country(app));
+            } else if(SECTIONS[stage].equals("seasons")) {
+                if(kind.equals("tv")){
+                    org.json.JSONArray seasons=StreamingRepository.metadata(app,kind,id,"").optJSONArray("seasons");
+                    if(seasons==null)throw new java.io.IOException("Incomplete series package");
+                    if(seasonCursor<seasons.length()){
+                        int number=seasons.getJSONObject(seasonCursor).getInt("season_number");
+                        if(number<0)throw new java.io.IOException("Invalid season identity");
+                        String section="season/"+number;StreamingRepository.metadata(app,kind,id,section);
+                        if(!PreviewMetadataCache.fresh(app,kind,id,section))throw new java.io.IOException("Season refresh retained stale cache");
+                        if(StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false))StreamingRepository.load(app,kind,id,StreamingRepository.country(app),number);
+                        if(!key.endsWith(":"+scope(app)))return;
+                        db.execSQL("UPDATE jobs SET season_cursor=? WHERE identity=?",new Object[]{seasonCursor+1,key});
+                        if(seasonCursor+1<seasons.length())return; // finally schedules the next pre-emptible turn.
+                    }
+                }
+            } else if(SECTIONS[stage].equals("classification")) {
+                String section=kind.equals("tv")?"content_ratings":"release_dates";
+                StreamingRepository.metadata(app,kind,id,section);
+                if(!PreviewMetadataCache.fresh(app,kind,id,section))throw new java.io.IOException("Classification refresh retained stale cache");
+            } else {
+                StreamingRepository.metadata(app,kind,id,SECTIONS[stage]);
+                if(!PreviewMetadataCache.fresh(app,kind,id,SECTIONS[stage]))throw new java.io.IOException("Metadata refresh retained stale cache");
+            }
+            if(!key.endsWith(":"+scope(app)))return;
+            db.execSQL("UPDATE jobs SET stage=?,next_at=0,completed_at=?,priority=CASE WHEN ? THEN ? ELSE priority END WHERE identity=?",new Object[]{stage+1,stage+1==SECTIONS.length?System.currentTimeMillis():0,stage+1==SECTIONS.length?1:0,BACKGROUND,key});
+            Diagnostics.event("metadata_package_stage","operation_id",operation,"media_id",key,"section",SECTIONS[stage],"complete",stage+1==SECTIONS.length);
+        }catch(Exception failure){db.execSQL("UPDATE jobs SET next_at=? WHERE identity=?",new Object[]{System.currentTimeMillis()+30*60*1000,key});Diagnostics.event("metadata_package_failed","operation_id",operation,"media_id",id,"section",SECTIONS[stage],"failure_category",failure.getClass().getSimpleName());}
+        finally{Diagnostics.finishOperation(operation,"metadata_package",started);WORK.schedule(()->drain(app),250,TimeUnit.MILLISECONDS);}
+    }
+    private static final class Store extends SQLiteOpenHelper {
+        Store(Context c){super(c,"preview-enrichment.db",null,2);}
+        public void onCreate(SQLiteDatabase db){db.execSQL("CREATE TABLE jobs(identity TEXT PRIMARY KEY,kind TEXT NOT NULL,media INTEGER NOT NULL,priority INTEGER NOT NULL,stage INTEGER NOT NULL,next_at INTEGER NOT NULL,completed_at INTEGER NOT NULL,season_cursor INTEGER NOT NULL DEFAULT 0)");}
+        public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){if(oldVersion==1&&newVersion==2)db.execSQL("ALTER TABLE jobs ADD COLUMN season_cursor INTEGER NOT NULL DEFAULT 0");else throw new IllegalStateException("Explicit enrichment migration required");}
+    }
+    private PreviewEnrichmentQueue(){}
+}

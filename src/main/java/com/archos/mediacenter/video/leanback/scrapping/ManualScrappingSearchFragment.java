@@ -80,6 +80,21 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
     private NfoTask mNfoTask;
 
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
+    private com.archos.mediacenter.video.leanback.PreviewMatchSearch previewSearch;
+    private String initialQuery="";
+    protected void setInitialQuery(String query){initialQuery=query==null?"":query;setSearchQuery(initialQuery,true);}
+    public boolean focusPreviewSearch(){if(previewSearch==null)return false;previewSearch.focusInput();return true;}
+    @Override public View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
+        View nativeView=super.onCreateView(inflater,parent,state);
+        if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
+        android.widget.FrameLayout root=new android.widget.FrameLayout(requireContext());root.addView(nativeView);nativeView.setVisibility(View.GONE);
+        previewSearch=new com.archos.mediacenter.video.leanback.PreviewMatchSearch(requireContext(),initialQuery,this::onQueryTextSubmit,this::previewMatch);
+        configurePreviewSearch(previewSearch);
+        root.addView(previewSearch,new android.widget.FrameLayout.LayoutParams(-1,-1));return root;
+    }
+    protected void configurePreviewSearch(com.archos.mediacenter.video.leanback.PreviewMatchSearch search){}
+    protected void refreshPreviewSearch(){if(previewSearch!=null)previewSearch.refresh();}
+    private void updatePreviewResults(){if(previewSearch==null)return;java.util.List<BaseTags> values=new java.util.ArrayList<>();if(mResultsAdapter!=null)for(int i=0;i<mResultsAdapter.size();i++)if(mResultsAdapter.get(i) instanceof BaseTags)values.add((BaseTags)mResultsAdapter.get(i));previewSearch.setResults(values);}
 
 
     /**
@@ -125,10 +140,26 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
             @Override
             public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 if (item instanceof BaseTags) {
-                    saveTagsAndFinish((BaseTags) item);
+                    if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))
+                        previewMatch((BaseTags)item);
+                    else saveTagsAndFinish((BaseTags) item);
                 }
             }
         });
+    }
+
+    private void previewMatch(BaseTags tags){
+        boolean episode=tags instanceof com.archos.mediascraper.EpisodeTags;
+        String title="Metadata match";
+        if(tags instanceof com.archos.mediascraper.MovieTags){
+            com.archos.mediascraper.MovieTags movie=(com.archos.mediascraper.MovieTags)tags;
+            title=movie.getTitle()+(movie.getYear()>0?" ("+movie.getYear()+")":"");
+        }else if(tags instanceof com.archos.mediascraper.ShowTags)title=((com.archos.mediascraper.ShowTags)tags).getTitle();
+        else if(episode){com.archos.mediascraper.EpisodeTags item=(com.archos.mediascraper.EpisodeTags)tags;title=item.getShowTitle()+" · S"+item.getSeason()+" E"+item.getEpisode();}
+        String plot=tags.getPlot();
+        com.archos.mediacenter.video.leanback.PreviewDialog.review(requireContext(),"Match Preview",
+                title+"\n\n"+(plot==null||plot.trim().isEmpty()?"Synopsis unavailable":plot),
+                episode?"Use This Episode":"Use This Match",()->{if(isAdded())saveTagsAndFinish(tags);});
     }
 
     @Override
@@ -170,6 +201,7 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
 
     @Override
     public void onDestroyView() {
+        previewSearch=null;
         // Unregister theme change listener
         if (mThemeChangeListener != null) {
             ThemeManager.getInstance(getActivity()).unregisterThemeChangeListener(mThemeChangeListener);
@@ -193,21 +225,19 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
 
     private boolean onQueryText(String text) {
         if (log.isDebugEnabled()) log.debug("onQueryText() {}", text);
+        // Clearing/shortening a query must invalidate every older result callback too.
+        if(mSearchTask!=null){mSearchTask.cancel();mSearchTask=null;}
+        if(mDetailsTask!=null){mDetailsTask.cancel();mDetailsTask=null;}
+        if(previewSearch!=null)previewSearch.searching();
 
-        // Makes no sens to search for one character
-        if(text.length()==0){
+        // A single positive digit is a valid TMDB ID; other one-character queries are too broad.
+        boolean tooShort=text.length()<2&&!text.matches("[1-9]");
+        if(tooShort){
             mSearchResults = null;
             updateRow();
         }
-        if (text.length()<2) {
+        if (tooShort) {
             return false;
-        }
-
-        if (mSearchTask != null) {
-            mSearchTask.cancel();
-        }
-        if (mDetailsTask != null) {
-            mDetailsTask.cancel();
         }
 
         mSearchTask = new ScraperSearchTask();
@@ -217,7 +247,7 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
 
     public void onStop(){
         super.onStop();
-        mNfoTask.cancel();
+        if (mNfoTask != null) mNfoTask.cancel();
         if (mSearchTask != null) mSearchTask.cancel();
         if (mDetailsTask != null) mDetailsTask.cancel();
     }
@@ -249,7 +279,7 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
                 }
                 if (isCancelled) return;
                 handler.post(() -> {
-                    if (isDetached()) return;
+                    if (isCancelled || isDetached() || !isAdded() || getView() == null) return;
                     updateRow();
                 });
             });
@@ -263,6 +293,8 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
 
 
     private void updateRow(){
+        if (mDetailsTask != null) { mDetailsTask.cancel(); mDetailsTask=null; }
+        mResultsAdapter=null;mOffset=0;
         if ((mSearchResults==null||mSearchResults.isEmpty())&&mNfoTags==null) {
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new EmptyViewPresenter());
             listRowAdapter.add(new EmptyView(getEmptyText()));
@@ -296,6 +328,7 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
                 mDetailsTask.execute(array);
             }
         }
+        updatePreviewResults();
     }
 
     protected abstract String getEmptyText();
@@ -325,6 +358,8 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
                     if (isCancelled || mSearchTask != this || isDetached() || !isAdded()) return;
                     mSearchResults = (finalResult != null) ? finalResult.results : null;
                     updateRow();
+                    if(previewSearch!=null&&(finalResult==null||(!finalResult.isOkay()
+                            && finalResult.status!=com.archos.mediascraper.ScrapeStatus.NOT_FOUND)))previewSearch.unavailable();
                 });
             });
         }
@@ -374,6 +409,7 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
                              */
                             if (details.mDetails != null) {
                                 mResultsAdapter.add(mResultsAdapter.size(), details.mDetails);
+                                updatePreviewResults();
                             }
                         });
                         n++;

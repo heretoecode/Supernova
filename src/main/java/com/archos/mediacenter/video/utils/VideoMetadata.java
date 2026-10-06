@@ -98,7 +98,8 @@ public class VideoMetadata implements Serializable {
             fpsScale = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_FPS_SCALE);
             s3dMode = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_S3D_MODE);
             decoder = LibAvos.MP_DECODER_ANY;
-            colorTrc = 0;
+            MediaMetadata nativeMetadata=retriever.getMediaMetadata();
+            colorTrc = nativeMetadata==null?0:getMetadataInt(nativeMetadata,IMediaPlayer.METADATA_KEY_VIDEO_TRACK+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_COLOR_TRC);
         }
 
         public final String format;

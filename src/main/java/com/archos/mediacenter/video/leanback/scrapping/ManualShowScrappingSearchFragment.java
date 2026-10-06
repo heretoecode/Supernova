@@ -86,7 +86,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
 
         // Start a search using the search suggestion. It makes it easy for the user to edit it for typo if needed
         // Allow often the second or third suggestion is the right one
-        setSearchQuery(mShowName, true);
+        setInitialQuery(mShowName);
 
         setTitle("TV show title, TMDb ID or IMDb ID / link");
     }
@@ -176,6 +176,10 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
         // Hence we need to get the ShowTags from the EpisodeTags
         if (newTags instanceof ShowTags) {
             final ShowTags newShowTags = (ShowTags)newTags;
+            if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
+                // The shared Match Preview already required explicit Use This Match.
+                mEpisodeSaveTask=new EpSaveTask();mEpisodeSaveTask.execute(newShowTags);return;
+            }
             String confirmationMessage = getString(R.string.scrap_change_confirmation, mShowName, newShowTags.getTitle());
             new AlertDialog.Builder(getActivity())
                     .setMessage(confirmationMessage)
@@ -367,6 +371,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
 
             // Update all episodes
             final long newShowId = newShow.save(mContext, 0); // second argument is not used in case of ShowTags
+            if(newShowId<=0)return null;
             newShow.setId(newShowId);
             int size = targetEpisodesList.size();
             int i = 1;
@@ -407,10 +412,13 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
                     mContext.getContentResolver().applyBatch(ScraperStore.AUTHORITY, opList);
                 } catch (RemoteException e) {
                     log.error("handleSave failed", e);
+                    return null;
                 } catch (OperationApplicationException e) {
                     log.error("handleSave failed", e);
+                    return null;
                 }
             }
+            com.archos.mediacenter.video.leanback.PreviewHomeRows.reconcileShowIdentity(mContext,mShowId,newShowId);
             TraktService.onNewVideo(mContext);
             log.info("saving in the end:" + t.step() + " thats:" + t.total());
             return newShow;

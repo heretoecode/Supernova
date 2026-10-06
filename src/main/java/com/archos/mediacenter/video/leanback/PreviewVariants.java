@@ -16,6 +16,65 @@ public final class PreviewVariants {
         String resolution=w>0&&h>0?w+" × "+h:"Resolution unavailable";
         return resolution+" · "+video.getFilenameNonCryptic();
     }
+    /** Reconstruct title-level position from persisted file history after any loader refresh.
+     * The caller supplies only physical variants of the same title; no database rows are rewritten. */
+    public static void restoreTitleResume(List<? extends Video> variants,Video selected){
+        if(selected==null||variants.size()<2)return;
+        Video latest=null;
+        for(Video candidate:variants)if(candidate.getLastPlayed()>0&&(latest==null||candidate.getLastPlayed()>latest.getLastPlayed()
+                ||candidate.getLastPlayed()==latest.getLastPlayed()&&candidate.getId()<latest.getId()))latest=candidate;
+        if(latest!=null){selected.setAutomaticResumeMs(latest.getResumeMs());if(latest.getRemoteResumeMs()>=0)selected.setRemoteResumeMs(latest.getRemoteResumeMs());}
+    }
+    /** Cached/indexed facts only: opening Versions never probes a network file. */
+    public static String details(android.content.Context context, Video video) {
+        List<String> facts = new ArrayList<>();
+        if (video.getMeasuredWidth() > 0 && video.getMeasuredHeight() > 0)
+            facts.add(video.getMeasuredWidth() + " × " + video.getMeasuredHeight());
+        String range=dynamicRange(context,video);
+        if(!range.isEmpty())facts.add(range);
+        String codec = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedVideoFormat());
+        String audio = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedBestAudioFormat());
+        if(video.getMetadata()!=null){
+            Set<String> tracks=new LinkedHashSet<>();
+            for(int n=0;n<video.getMetadata().getAudioTrackNb();n++){
+                com.archos.mediacenter.video.utils.VideoMetadata.AudioTrack track=video.getMetadata().getAudioTrack(n);
+                if(track!=null){String label=com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.audioTrack(track.format,track.channels,0);if(!label.isEmpty())tracks.add(label);}
+            }
+            if(!tracks.isEmpty())audio=android.text.TextUtils.join(" / ",tracks);
+        }
+        if (!codec.isEmpty()) facts.add(codec);
+        if (!audio.isEmpty()) facts.add(audio);
+        if (video.getSize() > 0) facts.add(android.text.format.Formatter.formatShortFileSize(context, video.getSize()));
+        return video.getFilenameNonCryptic() + (facts.isEmpty() ? "" : "\n" + android.text.TextUtils.join(" · ", facts))
+                + "\n" + safeLocation(video.getFileUri());
+    }
+    /** Never render URI user-info, query credentials or fragments in the picker. */
+    public static String dynamicRange(android.content.Context context,Video video){
+        return dynamicRange(context,video,PreviewLibraryLoader.memoryCache());
+    }
+    static String dynamicRange(android.content.Context context,Video video,PreviewLibraryLoader.Snapshot snapshot){
+        if(video.getMetadata()!=null&&video.getMetadata().getVideoTrack()!=null){
+            int transfer=video.getMetadata().getVideoTrack().colorTrc;
+            if(transfer==16)return "HDR (PQ)";
+            if(transfer==18)return "HLG";
+            if(transfer>0)return ""; // Known current metadata takes precedence over old cache.
+        }
+        if(snapshot!=null)for(Entry entry:snapshot.technical){
+            if(!(entry.media instanceof Video))continue;
+            Video indexed=(Video)entry.media;
+            if(indexed.getId()!=video.getId()||entry.bytes!=Math.max(0,video.getSize())||!Objects.equals(indexed.getFilePath(),video.getFilePath()))continue;
+            String cached=context.getSharedPreferences("preview-technical-v1",0).getString("hdr:"+PreviewMetadata.key(entry),"");
+            return "HDR (PQ)".equals(cached)||"HLG".equals(cached)?cached:"";
+        }
+        return "";
+    }
+    public static String safeLocation(android.net.Uri uri) {
+        if (uri == null) return "Location unavailable";
+        String scheme = uri.getScheme(), path = uri.getPath();
+        if (scheme == null || "file".equalsIgnoreCase(scheme)) return "Local storage · " + (path == null ? "" : path);
+        String host = uri.getHost();
+        return scheme.toUpperCase(Locale.ROOT) + " · " + (host == null ? "" : host) + (path == null ? "" : path);
+    }
     public static String logicalKey(Entry e){
         if(e.media instanceof Episode){Episode ep=(Episode)e.media;return "episode:"+e.show+":"+ep.getSeasonNumber()+":"+ep.getEpisodeNumber();}
         if(e.media instanceof Movie&&((Movie)e.media).getOnlineId()>0)return "movie:"+((Movie)e.media).getOnlineId();

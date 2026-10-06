@@ -2,7 +2,7 @@ name: Build Supernova Preview APK
 
 on:
   push:
-    branches: ['codex/apk-build-*']
+    branches: ['codex/apk-build-*', 'codex/preview-4.1.6', 'codex/preview-4.1.7']
     paths-ignore: ['docs/**', '**/*.md']
   workflow_dispatch:
     inputs:
@@ -22,11 +22,13 @@ permissions:
 
 jobs:
   build-debug-apk:
+    # Explicit validation/interim snapshots only; ordinary implementation commits keep source-only CI.
+    if: github.ref != 'refs/heads/codex/preview-4.1.7' || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[interim-shield-qa]') || contains(github.event.head_commit.message, '[full-validation]')
     name: Build isolated Preview APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      VALIDATION_MODE: ${{ inputs.validation || 'preview' }}
+      VALIDATION_MODE: ${{ contains(github.event.head_commit.message, '[full-validation]') && 'full' || inputs.validation || 'preview' }}
       APK_VARIANT: release
 
     steps:
@@ -87,6 +89,10 @@ jobs:
           git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview415.patch
           git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview415.patch
           git -C nova/MediaLib apply ../Video/.github/build/medialib-preview415.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview417.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview417.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview417-local.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview417-local.patch
 
       - name: Isolate Preview package and content providers
         run: python3 source/.github/build/prepare-preview.py nova
@@ -103,33 +109,44 @@ jobs:
             source/**/*.gradle*
             source/gradle/wrapper/gradle-wrapper.properties
 
-      - name: Retain personal development signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: nova-mark-debug-signing-v1
+      - name: Compile and test source before signed delivery gate
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew compileNoamazonDebugJavaWithJavac testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewNextTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-source-validation.log
+
+      - name: Test complete Video suite for full validation
+        if: env.VALIDATION_MODE == 'full'
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew testNoamazonDebugUnitTest -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+
+      - name: Targeted stability and library metadata checks
+        working-directory: nova/Video
+        run: |
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview411Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview412Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview413Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview414Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview415Test.*' --tests 'com.archos.mediacenter.video.utils.Preview415BridgeTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest.*' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.*' --tests 'com.archos.mediacenter.video.streaming.StreamingPreferencesTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.utils.RestoreJournalTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41RowsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewUpNextTest.*' --tests 'com.archos.mediacenter.video.player.PlaybackResumePolicyTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
+
+      - name: Check selectively ported WebDAV behaviour
+        working-directory: nova/Video
+        run: ./gradlew :FileCoreLibrary:testDebugUnitTest --tests 'com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest' -Puniversal -PmarkPreview --build-cache --no-daemon
 
       - name: Require the existing personal signing identity
         env:
           NOVA_SIGNING_KEY_BASE64: ${{ secrets.NOVA_SIGNING_KEY_BASE64 }}
         run: |
-          if [ -n "$NOVA_SIGNING_KEY_BASE64" ]; then
-            mkdir -p ~/.android
-            printf '%s' "$NOVA_SIGNING_KEY_BASE64" | base64 --decode > ~/.android/debug.keystore
-            chmod 600 ~/.android/debug.keystore
-          fi
+          set +x
+          umask 077
+          test -n "$NOVA_SIGNING_KEY_BASE64" || { echo "Protected signing secret unavailable."; exit 1; }
+          mkdir -p ~/.android
+          printf '%s' "$NOVA_SIGNING_KEY_BASE64" | base64 --decode > ~/.android/debug.keystore
+          chmod 600 ~/.android/debug.keystore
           test -s ~/.android/debug.keystore || { echo "Existing signing key unavailable; refusing to generate a different identity."; exit 1; }
           keytool -exportcert -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -file /tmp/nova-signing-certificate.der
           echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a  /tmp/nova-signing-certificate.der" | sha256sum --check
           echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a" > nova/preview-certificate-sha256.txt
-
-      - name: Test personal build changes
-        if: ${{ inputs.validation == 'full' }}
-        working-directory: nova/Video
-        run: |
-          set -o pipefail
-          chmod +x gradlew
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest' --tests 'com.archos.mediacenter.video.leanback.PreviewDiscoveryTest' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
 
       - name: Build signed development APK
         working-directory: nova/Video
@@ -140,15 +157,6 @@ jobs:
           # Preview delivery defers lint and optimisation to the full milestone run.
           if [[ "$VALIDATION_MODE" == preview ]]; then extra_args+=(-x lintNoamazonDebug); fi
           ./gradlew assembleNoamazonDebug -Puniversal -PmarkPreview "${extra_args[@]}" --build-cache --no-daemon 2>&1 | tee ../gradle-debug-build.log
-
-      - name: Targeted stability and library metadata checks
-        working-directory: nova/Video
-        run: |
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvPremiereUses64BitDateInsteadOfTruncatedTimestamp' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.resumeWinsAndCompletionAdvancesRetrospectively' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus' --tests 'com.archos.mediacenter.video.leanback.PreviewMoviePageTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview411Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview412Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview413Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview414Test.*' --tests 'com.archos.mediacenter.video.leanback.Preview415Test.*' --tests 'com.archos.mediacenter.video.utils.Preview415BridgeTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewStartupTest.*' --tests 'com.archos.mediacenter.video.diagnostics.DiagnosticsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.*' --tests 'com.archos.mediacenter.video.streaming.StreamingPreferencesTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41ProgressTest.*' --tests 'com.archos.mediacenter.video.utils.VerifiedBackupTest.*' --tests 'com.archos.mediacenter.video.utils.RestoreJournalTest.*' --tests 'com.archos.mediacenter.video.leanback.Preview41RowsTest.*' --tests 'com.archos.mediacenter.video.player.PreviewUpNextTest.*' --tests 'com.archos.mediacenter.video.player.PlaybackResumePolicyTest.*' --tests 'com.archos.mediacenter.video.leanback.PreviewPagesTest.tvStorageAggregatesLibraryFilesAndSortsUnknownLast' -Puniversal -PmarkPreview --build-cache --no-daemon
-
-      - name: Check selectively ported WebDAV behaviour
-        working-directory: nova/Video
-        run: ./gradlew :FileCoreLibrary:testDebugUnitTest --tests 'com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest' -Puniversal -PmarkPreview --build-cache --no-daemon
 
       - name: Start Android emulator for full process startup checks
         run: |
@@ -186,6 +194,11 @@ jobs:
           phase=debug
           if [[ "$VALIDATION_MODE" == preview ]]; then phase=preview; fi
           bash .github/build/check-preview-startup.sh "$apk" "$phase"
+
+      - name: Check playback and exact Info return before release
+        if: env.VALIDATION_MODE != 'preview' || !contains(github.event.head_commit.message, '[interim-known-info-return]')
+        working-directory: nova/Video
+        run: |
           python3 .github/build/check-preview-playback.py
 
       - name: Build optimised personal APK
@@ -197,6 +210,13 @@ jobs:
           extra_args=()
           if [[ "$VALIDATION_MODE" == preview ]]; then extra_args+=(-x lintNoamazonRelease); fi
           ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal -PmarkPreview "${extra_args[@]}" --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
+
+      - name: Run explicit full release lint
+        if: env.VALIDATION_MODE == 'full'
+        working-directory: nova/Video
+        run: |
+          set -o pipefail
+          ./gradlew lintNoamazonRelease -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-lint.log
 
       - name: Check signed release upgrade with Preview still enabled
         if: env.APK_VARIANT == 'release'
@@ -222,14 +242,23 @@ jobs:
             echo "Source: $GITHUB_SHA"
             echo "Mode: $VALIDATION_MODE"
             echo "APK variant: $APK_VARIANT"
+            if [[ "$APPROVED_KNOWN_DEFECT" == true ]]; then
+              echo "Preview 4.1.7 — INTERIM SHIELD QA BUILD"
+              echo "User authorised unchanged snapshot with known playback Info/Back HUD focus defect."
+              echo "Playback assertion remains enforced after APK upload; a failure is NOT a validation pass."
+              echo "Not a final release; conformance and physical Shield acceptance remain incomplete."
+            fi
             if [[ "$VALIDATION_MODE" == preview ]]; then
               echo "Passed: compile/package, quick targeted tests, pinned signature, Preview launch/reinstall; release upgrade/restart only when APK variant is release."
               echo "Deferred: broad unit suite and physical TV playback/network/library QA."
               echo "Development checkpoint; physical Shield acceptance remains user QA."
             else
-              echo "Passed: selected unit suite, lint, classic/Preview startup and signed diagnostic-to-release upgrade/restart."
+              echo "Passed: complete Video unit suite, lint, classic/Preview startup, strict playback Info return and signed diagnostic-to-release upgrade/restart."
             fi
+            echo "Validation candidate only; final release acceptance is recorded separately."
           } > nova/build-validation.txt
+        env:
+          APPROVED_KNOWN_DEFECT: ${{ env.VALIDATION_MODE == 'preview' && contains(github.event.head_commit.message, '[interim-known-info-return]') }}
 
       - name: Upload build diagnostics
         if: always()
@@ -237,6 +266,8 @@ jobs:
         with:
           name: gradle-build-log
           path: |
+            nova/gradle-lint.log
+            nova/gradle-source-validation.log
             nova/gradle-build.log
             nova/gradle-debug-build.log
             nova/build-validation.txt
@@ -259,4 +290,20 @@ jobs:
         with:
           name: nova-preview-${{ env.VALIDATION_MODE }}-apk
           path: nova/Video/build/outputs/apk/noamazon/${{ env.APK_VARIANT }}/*.apk
+          if-no-files-found: error
+
+      # Explicit user-authorised interim only: deliver the signed snapshot, then
+      # retain the real failing assertion and red job result. Final/full builds
+      # continue to enforce this check before packaging and upload.
+      - name: Record known interim playback Info-return failure
+        if: env.VALIDATION_MODE == 'preview' && contains(github.event.head_commit.message, '[interim-known-info-return]')
+        working-directory: nova/Video
+        run: python3 .github/build/check-preview-playback.py
+
+      - name: Upload authorised interim playback evidence
+        if: always() && env.VALIDATION_MODE == 'preview' && contains(github.event.head_commit.message, '[interim-known-info-return]')
+        uses: actions/upload-artifact@v4
+        with:
+          name: interim-playback-evidence
+          path: nova/startup-diagnostics/
           if-no-files-found: error

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="number" type="id"/>
+    <item name="preview_settings_return" type="id"/>
+    <item name="preview_diagnostic_semantic" type="id"/>
+    <item name="preview_track_language" type="id"/>
 </resources>

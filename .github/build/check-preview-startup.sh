@@ -140,33 +140,51 @@ def capture(name):
   time.sleep(1)
  raise AssertionError('Accessibility root unavailable after bounded retries: '+name)
 def target(root,label,activate=False):
- n=next(n for n in root.iter('node') if n.get('text')==label or n.get('content-desc')==label)
+ # Expandable Settings categories append a disclosure marker to their title.
+ n=next(n for n in root.iter('node') if n.get('text','').rstrip(' ▸▾')==label or n.get('content-desc')==label)
  x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))
- adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+ # A tap on an already-focused TV control activates it. Do not then send
+ # centre again into its newly opened child (for example a credential dialog).
+ if not (activate and n.get('focused')=='true'):
+  adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
  if activate: adb('shell','input','keyevent','23')
  time.sleep(.6)
 root=capture('settings-check')
 for category in ['Subtitles','Video','Audio','Streaming','Integrations']:
  target(root,category)
+ if category=='Integrations':
+  # 4.1.7 keeps the category rail fixed. Focus alone must not expand children;
+  # explicitly enter the middle workspace with the remote's RIGHT key.
+  focused=capture('settings-integrations-focused')
+  assert not any(n.get('text')=='OpenSubtitles' for n in focused.iter('node')), 'Integrations expanded on focus'
+  adb('shell','input','keyevent','22');time.sleep(.6)
  root=capture('settings-'+category.lower().replace(' & ','-'))
  if category=='Integrations':
   assert any('OpenSubtitles' in n.get('text','') for n in root.iter('node')), 'Integrations category lost credentials'
+  target(root,'OpenSubtitles',True);root=capture('settings-opensubtitles')
+  assert any(n.get('text')=='OpenSubtitles credentials' for n in root.iter('node')), 'OpenSubtitles credentials option missing'
 # Return to each library via the actual top navigation, then exercise the new local query.
 target(root,'Movies',True);root=capture('navigation-movies')
 assert sum(n.get('text')=='Movies' for n in root.iter('node'))>=2, 'Movies route/header desynchronised'
 target(root,'TV Shows',True);root=capture('navigation-tv')
 assert any(n.get('text')=='TV Shows' for n in root.iter('node')), 'TV library failed to open'
 target(root,'Network & Files',True);root=capture('network-files')
-target(root,'Internal Storage',True);root=capture('file-browser')
+target(root,'Local Storage');root=capture('network-local-storage')
+target(root,'Internal Storage',True);root=capture('network-storage-context')
+target(root,'Browse',True);root=capture('file-browser')
 assert any(n.get('text')=='Sources' for n in root.iter('node')), 'Native browser source rail missing'
 assert any(n.get('text')=='File Information' for n in root.iter('node')) or any(n.get('text')=='Source Options' for n in root.iter('node')), 'Native browser composition missing'
 target(root,'Search',True);root=capture('search-empty')
 assert not any('inputmethod' in n.get('package','') for n in root.iter('node')), 'System keyboard covers the compact Search layout'
 query=next(n for n in root.iter('node') if n.get('class')=='android.widget.EditText')
-x1,y1,x2,y2=map(int,re.findall(r'\d+',query.get('bounds')))
-adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','text','nova40-smoke-no-match');time.sleep(1)
-adb('shell','input','keyevent','66');time.sleep(.4)
+assert query.get('focusable')=='false', 'Search query display should not accept focus'
+assert any(n.get('text')=='T' and n.get('focused')=='true' for n in root.iter('node')), 'Search keyboard did not enter on T'
+# Type through the actual compact keyboard, not the intentionally non-focusable
+# query display. The emulator has an empty library at this point.
+for letter in 'NOVA': target(root,letter,True)
+time.sleep(1)
 root=capture('search-query')
+assert any(n.get('class')=='android.widget.EditText' and n.get('text')=='NOVA' for n in root.iter('node')), 'Keyboard did not update the query display'
 assert any(n.get('text')=='No matching library titles' for n in root.iter('node')), 'Local query failed'
 logs=adb('logcat','-d');(out/'targeted-routes-logcat.txt').write_bytes(logs)
 assert b'FATAL EXCEPTION' not in logs, 'Crash during changed-route smoke check'

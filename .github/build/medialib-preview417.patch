@@ -1,0 +1,262 @@
+diff --git a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+index b3ce9f4..2dcd079 100644
+--- a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
++++ b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+@@ -152,7 +152,8 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+             for (Uri uri : toUpdate) {
+                 String protocol = uri.getScheme();
+                 boolean webdav = "webdav".equalsIgnoreCase(protocol) || "webdavs".equalsIgnoreCase(protocol)
+-                        || "dav".equalsIgnoreCase(protocol) || "davs".equalsIgnoreCase(protocol);
++                        || "dav".equalsIgnoreCase(protocol) || "davs".equalsIgnoreCase(protocol)
++                        || "http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol);
+                 if (!NetworkState.isLocalNetworkConnectedOrVpnMobileEnabled(context) && !webdav) continue;
+                 if (!webdav && !ACTION_FORCE_RESCAN_INDEXED_FOLDERS.equals(intent.getAction()) && shouldSkipScanForInactiveServer(context, uri)) {
+                     if (log.isDebugEnabled()) log.debug("onReceive: skip scan for inactive server {}", uri);
+@@ -201,17 +202,18 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+                             appContext.sendBroadcast(refreshIntent);
+                         }, delayMs);
+                         if (!scheduled) {
++                            NetworkScannerServiceVideo.previewScanEvent(appContext,scanUri,"failed",Long.toString(scanBatchId),eligible.size(),0,0,0);
+                             // The looper is exiting and this scan will never run: release its slot
+                             // so the batch can still reach zero, and route the completion through
+                             // shared handling so that if this released slot owns the final
+                             // completion (earlier scans already succeeded) post-scan scraping still
+                             // starts instead of being silently dropped.
+                             log.warn("onReceive: failed to schedule scan for {}, releasing its batch slot", scanUri);
+-                            AutoScrapeService.handleNetworkScanCompletion(appContext,
+-                                    AutoScrapeService.completeNetworkScan(scanBatchId, false, false));
++                            NetworkScannerServiceVideo.previewFinish(appContext,scanUri,Long.toString(scanBatchId),AutoScrapeService.completeNetworkScan(scanBatchId, false, false),0,0,0);
+                             continue;
+                         }
+                         scanCount++;
++                        NetworkScannerServiceVideo.previewScanEvent(appContext,scanUri,"queued",Long.toString(scanBatchId),eligible.size(),0,0,0);
+                         if (log.isDebugEnabled()) log.debug("onReceive: queued scan for {} with delay {}ms", uri, delayMs);
+                     }
+
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index cb7fe4d..55258f8 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -338,7 +338,9 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 if (log.isDebugEnabled()) log.debug("skip scanning {}, already in queue", key);
+                 com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion =
+                         com.archos.mediascraper.AutoScrapeService.completeNetworkScan(batchId, false, false);
+-                com.archos.mediascraper.AutoScrapeService.handleNetworkScanCompletion(this, completion);
++                String batch=previewBatch(batchId);
++                previewScanEvent(this,data,"coalesced",batch,-1,0,0,0);
++                previewFinish(this,data,batch,completion,0,0,0);
+             }
+         } else if (ArchosMediaIntent.isVideoRemoveIntent(action)) {
+             Uri data = intent.getData();
+@@ -412,8 +414,9 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                     });
+                 } else {
+                     mScanRequests.remove(key);mFollowUpScans.remove(key);
+-                    com.archos.mediascraper.AutoScrapeService.handleNetworkScanCompletion(this,
+-                        com.archos.mediascraper.AutoScrapeService.completeNetworkScan(scanBatchId,false,false));
++                    String batch=previewBatch(scanBatchId);
++                    previewScanEvent(this,uri,"not_started",batch,-1,0,0,0);
++                    previewFinish(this,uri,batch,com.archos.mediascraper.AutoScrapeService.completeNetworkScan(scanBatchId,false,false),0,0,0);
+                 }
+                 break;
+             case MESSAGE_DO_UNSCAN:
+@@ -633,6 +636,34 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     }
+     private static int mFoundFiles = 0;
+     private static final String IN_FOLDER_SELECT = MediaColumns.DATA + " LIKE ?||'%'";
++    private int previewAdded, previewUpdated;
++    private String previewBatchId;
++    static String previewBatch(long batchId){return batchId==com.archos.mediascraper.AutoScrapeService.STANDALONE_SCAN_BATCH_ID?java.util.UUID.randomUUID().toString():Long.toString(batchId);}
++    static void previewFinish(android.content.Context context,Uri root,String batch,com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion,int checked,int added,int updated){
++        String outcome=com.archos.mediascraper.AutoScrapeService.handleNetworkScanCompletionWithResult(context,completion);
++        if(completion.completedBatch){
++            previewScanEvent(context,root,outcome,batch,-1,checked,added,updated);
++            previewScanEvent(context,root,completion.batchHadError||!completion.batchHadSuccess?"batch_failed":"batch_complete",batch,-1,checked,added,updated);
++        }
++    }
++    private void previewScanEvent(Uri root, String phase) {
++        previewScanEvent(this,root,phase,previewBatchId,-1,"started".equals(phase)?0:sFilesFoundCount,previewAdded,previewUpdated);
++    }
++    static void previewScanEvent(android.content.Context context,Uri root,String phase,String batch,int total,int checked,int added,int updated) {
++        try {
++            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
++            byte[] hash = digest.digest(root.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
++            StringBuilder id = new StringBuilder();
++            for (int i=0;i<12;i++) id.append(String.format(java.util.Locale.ROOT,"%02x",hash[i]));
++            Intent event = new Intent(context.getPackageName()+".SCAN_LIFECYCLE").setPackage(context.getPackageName());
++            event.putExtra("phase",phase).putExtra("source_id",id.toString()).putExtra("checked",checked)
++                .putExtra("added",added).putExtra("updated",updated).putExtra("sources_total",total)
++                .putExtra("batch_id",batch)
++                .putExtra("source_location",(root.getHost()==null?"":root.getHost())+(root.getPath()==null?"":root.getPath()));
++            context.sendBroadcast(event);
++        } catch (java.security.GeneralSecurityException | RuntimeException ignored) { /* telemetry cannot interrupt scanning */ }
++    }
++
+     private static final String SELECT_ID = BaseColumns._ID + "=?";
+     /** scans files into our db */
+     void doScan(Uri what, long batchId) {
+@@ -640,23 +671,29 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         long start = log.isDebugEnabled() ? System.currentTimeMillis() : 0;
+         boolean scanResolved = false;
+         boolean scanHadDbError = false;
++        previewAdded = 0; previewUpdated = 0;
++        previewBatchId = previewBatch(batchId);
++        previewScanEvent(what, "started");
+         try {
+-            ScanResult result = performScan(what);
+-            scanResolved = result.resolved;
+-            scanHadDbError = result.hadDbError;
++            synchronized (ProviderDiscoveryGate.LOCK) {
++                ScanResult result = performScan(what);
++                scanResolved = result.resolved;
++                scanHadDbError = result.hadDbError;
++            }
+         } finally {
+             // Always record this scan's completion, even if the scan body threw an unchecked
+             // error, so the batch counter cannot be left permanently non-zero (which would
+             // strand the batch and never start post-scan scraping). The error and success
+             // state are aggregated across the whole batch under a single lock, so the decision
+             // no longer depends on whichever thread happens to finish last.
++            previewScanEvent(what, scanResolved && !scanHadDbError ? "complete" : "failed");
+             com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion =
+                     com.archos.mediascraper.AutoScrapeService.completeNetworkScan(batchId, scanHadDbError, scanResolved);
+             if (log.isDebugEnabled()) {
+                 log.debug("doScan: completed network scan, completedBatch={}, batchHadError={}, batchHadSuccess={}",
+                         completion.completedBatch, completion.batchHadError, completion.batchHadSuccess);
+             }
+-            com.archos.mediascraper.AutoScrapeService.handleNetworkScanCompletion(this, completion);
++            previewFinish(this,what,previewBatchId,completion,sFilesFoundCount,previewAdded,previewUpdated);
+         }
+
+         if (log.isDebugEnabled()) {
+@@ -684,6 +721,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     private String mCurrentRootUri = null;
+
+     ScanResult performScan(Uri what) {
++        if (ProviderDiscoveryGate.excludes(this, what)) return new ScanResult(false, false);
+         mFoundFiles = 0;
+         sFilesFoundCount = 0;
+         sRemainingDeletes = 0;
+@@ -786,6 +824,8 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 int insertCount = bulkHandler.getInsertHandled();
+                 int updateCount = bulkHandler.getUpdatesHandled();
+                 int deleteCount = bulkHandler.getDeletesHandled();
++                previewAdded = insertCount; previewUpdated = updateCount;
++                previewScanEvent(what, traversalHadError ? "partial" : "reconciled");
+                 if (log.isDebugEnabled()) log.debug("added:{} modified:{} deleted:{}", insertCount, updateCount, deleteCount);
+
+                 int newSubs = handleSubtitles(cr);
+@@ -999,6 +1039,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+
+         @Override
+         public boolean onDirectory(MetaFile2 directory) {
++            if (mService != null && directory != null && ProviderDiscoveryGate.excludes(mService, directory.getUri())) return false;
+             // hidden directories are not scanned
+             if (ArchosMediaFile.isHiddenFile(directory)) {
+                 if (log.isDebugEnabled()) log.debug("skipping {}, .hidden!", (directory != null ? directory.getName() : "null"));
+@@ -1025,6 +1066,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+
+         @Override
+         public void onFile(MetaFile2 file) {
++            if (mService != null && file != null && ProviderDiscoveryGate.excludes(mService, file.getUri())) return;
+             mFoundFiles ++;
+             int fileType = getFileType(file);
+             if (!isValidType(fileType)) return;
+@@ -1088,6 +1130,10 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         @Override
+         public void onStop(MetaFile2 root) {
+             if (log.isDebugEnabled()) log.debug("onStop");
++            // An ancestor scan must retain provider-owned descendants even when omitted by traversal.
++            if (mService != null) for (PrescanItem item : mPrescanItemsMap.values()) {
++                if (ProviderDiscoveryGate.excludes(mService, Uri.parse(item._data))) item.needsDelete = false;
++            }
+             // Count total files that need deletion
+             int totalNeedsDelete = 0;
+             for (PrescanItem item : mPrescanItemsMap.values()) {
+diff --git a/src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java b/src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java
+new file mode 100644
+index 0000000..d696a3b
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java
+@@ -0,0 +1,34 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.net.Uri;
++import java.util.*;
++
++/** Same-process scanner/provider hand-off. Both services run in the application process. */
++public final class ProviderDiscoveryGate {
++    public static final Object LOCK=new Object();
++    private static SharedPreferences prefs(Context c){return c.getSharedPreferences("provider-discovery-ownership-v1",Context.MODE_PRIVATE);}
++    public static void exclude(Context c,String scope,Uri source){
++        if(scope==null||!scope.matches("putio(?:-retired)?:[0-9]+:[a-f0-9]+")||source==null||source.getUserInfo()!=null||source.getQuery()!=null||source.getFragment()!=null||source.getHost()==null)throw new IllegalArgumentException("Invalid provider source");
++        synchronized(LOCK){if(!prefs(c).edit().putString(scope,source.toString()).commit())throw new IllegalStateException("Unable to preserve scanner ownership");}
++    }
++    public static void release(Context c,String scope){synchronized(LOCK){if(!prefs(c).edit().remove(scope).commit())throw new IllegalStateException("Unable to restore scanner ownership");}}
++    public static boolean excludes(Context c,Uri candidate){
++        if(candidate==null)return false;
++        synchronized(LOCK){for(Object value:prefs(c).getAll().values())if(value instanceof String&&contains(Uri.parse((String)value),candidate))return true;return false;}
++    }
++    public static boolean contains(Uri root,Uri candidate){
++        if(root==null||candidate==null||root.getHost()==null||candidate.getHost()==null||!root.getHost().equalsIgnoreCase(candidate.getHost())||!scheme(root).equals(scheme(candidate))||port(root)!=port(candidate))return false;
++        List<String> a=root.getPathSegments(),b=candidate.getPathSegments();if(a.size()>b.size())return false;
++        for(int i=0;i<a.size();i++)if(!a.get(i).equals(b.get(i)))return false;
++        return true;
++    }
++    public static boolean protects(Context c,Uri candidate){
++        if(candidate==null)return false;
++        synchronized(LOCK){for(Object value:prefs(c).getAll().values())if(value instanceof String){Uri root=Uri.parse((String)value);if(contains(root,candidate)||contains(candidate,root))return true;}return false;}
++    }
++    private static String scheme(Uri uri){String s=uri.getScheme();if(s==null)return "";s=s.toLowerCase(Locale.ROOT);return s.equals("webdavs")||s.equals("davs")?"https":s.equals("webdav")||s.equals("dav")?"http":s;}
++    private static int port(Uri uri){return uri.getPort()>=0?uri.getPort():scheme(uri).equals("https")?443:scheme(uri).equals("http")?80:-1;}
++    private ProviderDiscoveryGate(){}
++}
+diff --git a/src/com/archos/mediascraper/AutoScrapeService.java b/src/com/archos/mediascraper/AutoScrapeService.java
+index 95c26f2..b9cb099 100644
+--- a/src/com/archos/mediascraper/AutoScrapeService.java
++++ b/src/com/archos/mediascraper/AutoScrapeService.java
+@@ -205,14 +205,19 @@ public class AutoScrapeService extends Service implements DefaultLifecycleObserv
+     }
+
+     public static void startServiceAfterNetworkScan(Context context) {
++        requestServiceAfterNetworkScan(context);
++    }
++
++    private static boolean requestServiceAfterNetworkScan(Context context) {
+         if (log.isDebugEnabled()) log.debug("startServiceAfterNetworkScan - forced start after network scan");
+         mContext = context.getApplicationContext();
+         Intent intent = new Intent(context, AutoScrapeService.class);
+         intent.putExtra("FORCE_AFTER_NETWORK_SCAN", true);
+         try {
+-            context.startService(intent);
++            return context.startService(intent)!=null;
+         } catch (Exception e) {
+             log.warn("startServiceAfterNetworkScan: Failed to start AutoScrapeService - timing or background restriction issue", e);
++            return false;
+         }
+     }
+
+@@ -352,13 +357,19 @@ public class AutoScrapeService extends Service implements DefaultLifecycleObserv
+      * successful index it starts the auto-scrape service.
+      */
+     public static void handleNetworkScanCompletion(Context context, NetworkScanCompletion completion) {
+-        if (!completion.completedBatch) return;
++        handleNetworkScanCompletionWithResult(context,completion);
++    }
++
++    /** Reports the actual service enqueue outcome, not just eligibility to enqueue. */
++    public static String handleNetworkScanCompletionWithResult(Context context, NetworkScanCompletion completion) {
++        if (!completion.completedBatch) return "batch_pending";
+         if (completion.batchHadError) {
+             log.warn("handleNetworkScanCompletion: skipping AutoScrapeService, a database error occurred during this scan batch");
+         } else if (completion.batchHadSuccess && isEnable(context)) {
+             if (log.isDebugEnabled()) log.debug("handleNetworkScanCompletion: batch completed successfully, starting AutoScrapeService");
+-            startServiceAfterNetworkScan(context);
++            return requestServiceAfterNetworkScan(context)?"metadata_queued":"metadata_failed";
+         }
++        return "metadata_skipped";
+     }
+
+     public void cleanup() {

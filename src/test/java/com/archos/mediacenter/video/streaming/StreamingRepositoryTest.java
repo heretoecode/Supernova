@@ -15,6 +15,92 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {
+    @Test public void metadataTransportReportsSafeServiceStatusBoundsAndParent()throws Exception{
+        android.app.Application app=org.robolectric.RuntimeEnvironment.getApplication();com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
+        try{
+            for(int code:new int[]{200,404}){
+                okhttp3.OkHttpClient client=new okhttp3.OkHttpClient.Builder().addInterceptor(chain->new okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(code).message("private-response").body(okhttp3.ResponseBody.create(okhttp3.MediaType.parse("text/plain"),"private-response-body")).build()).build();
+                try{StreamingRepository.get("https://api.themoviedb.org/3/movie/42?api_key=private-secret",4,"fixture-parent",client);fail("Bound/error response accepted");}catch(java.io.IOException expected){}
+            }
+            Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class,"FLIGHT");java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());assertFalse(evidence.contains("private"));assertFalse(evidence.contains("api_key"));assertFalse(evidence.contains("/movie/42"));
+            int outcomes=0;for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject event=new JSONObject(line);if(!"metadata_network_outcome".equals(event.optString("event")))continue;
+                outcomes++;assertEquals("tmdb",event.getString("service"));assertEquals("metadata",event.getString("operation_type"));assertEquals("fixture-parent",event.getString("parent_operation_id"));assertEquals(0,event.getInt("retry_number"));assertTrue(event.getLong("duration_ms")>=0);assertTrue(event.has("connectivity"));assertEquals(event.getInt("status")==200?"response_too_large":"http_error",event.getString("outcome"));
+            }assertEquals(2,outcomes);
+        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,false);}
+    }
+    @Test public void providerRedirectRejectsUnsafeTargetAndDoesNotLogPrivateQuery()throws Exception{
+        Application app=org.robolectric.RuntimeEnvironment.getApplication();com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
+        try{
+            okhttp3.OkHttpClient fake=new okhttp3.OkHttpClient.Builder().addInterceptor(chain->new okhttp3.Response.Builder().request(chain.request())
+                    .protocol(okhttp3.Protocol.HTTP_1_1).code(302).message("Found").header("Location","http://localhost/private")
+                    .body(okhttp3.ResponseBody.create(null,new byte[0])).build()).build();
+            String original="https://click.justwatch.com/fixture?token=fixture-private-query";
+            assertEquals(original,StreamingRepository.resolveTitleUrl(original,fake));
+            Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class,"FLIGHT");
+            java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());assertFalse(evidence.contains("fixture-private-query"));assertFalse(evidence.contains("localhost"));
+            int failures=0;for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject row=new JSONObject(line);
+                if("title_redirect".equals(row.optString("operation_type"))){failures++;assertEquals("unsafe_redirect",row.getString("outcome"));assertEquals(302,row.getInt("status"));}}
+            assertEquals(1,failures);
+        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,false);}
+    }
+    @Test public void persistedAvailabilityDistinguishesUnknownEmptyAndStale()throws Exception{
+        android.content.Context context=org.robolectric.RuntimeEnvironment.getApplication();
+        assertNull(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1));
+        StreamingRepository.prefs(context).edit().putLong("streaming_known_at:tv:987:IE:1",System.currentTimeMillis()).putString("streaming_snapshot:tv:987:IE:1","{results:{IE:{}}}").apply();
+        assertNotNull(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1));assertTrue(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1).offers.isEmpty());
+        assertNull(StreamingRepository.cachedAvailability(context,"tv",987,"US",1));
+        StreamingRepository.prefs(context).edit().putLong("streaming_known_at:tv:987:IE:1",System.currentTimeMillis()-7*60*60*1000L).apply();
+        assertNull(StreamingRepository.cachedAvailability(context,"tv",987,"IE",1));
+    }
+    @Test public void seriesAndSeasonOffersDoNotProveExactEpisodeAvailability(){
+        for(String path:new String[]{"/tv/42/watch","/tv/42/season/1/watch","/tv/43/season/1/episode/2/watch","/tv/42/season/1/episode/3/watch"})
+            assertFalse(StreamingRepository.exactEpisodeAvailability(new StreamingRepository.Availability(java.util.Collections.emptyList(),"https://www.themoviedb.org"+path),42,1,2));
+        assertTrue(StreamingRepository.exactEpisodeAvailability(new StreamingRepository.Availability(java.util.Collections.emptyList(),"https://www.themoviedb.org/tv/42/season/1/episode/2/watch"),42,1,2));
+        assertFalse(StreamingRepository.exactEpisodeAvailability(new StreamingRepository.Availability(java.util.Collections.emptyList(),"https://untrusted.example/tv/42/season/1/episode/2/watch"),42,1,2));
+    }
+    @Test public void extraDurationRequiresMatchingPublishedVideoIdentity(){
+        String identity="<meta itemprop='videoId' content='abcdefghijk'>";
+        assertEquals(135,StreamingRepository.parseExtraDuration(identity+"<meta content='PT2M15S' itemprop='duration'>","abcdefghijk"));
+        assertEquals(3661,StreamingRepository.parseExtraDuration(identity+"<meta itemprop=\"duration\" content=\"PT1H1M1S\">","abcdefghijk"));
+        assertEquals(0,StreamingRepository.parseExtraDuration(identity+"<meta itemprop='duration' content='PT2M15S'>","differentid"));
+        assertEquals(0,StreamingRepository.parseExtraDuration("<meta itemprop='duration' content='PT2M15S'>","abcdefghijk"));
+        for(String invalid:new String[]{"PT","PT0S","PT999H","P1D","unknown","-1"})assertEquals(0,StreamingRepository.parseExtraDuration(identity+"<meta itemprop='duration' content='"+invalid+"'>","abcdefghijk"));
+    }
+    @Test public void successfulTransportStillRequiresSemanticMetadata()throws Exception{
+        for(String[] invalid:new String[][]{{"movie/42","{success:false,status_code:7}"},{"movie/42","{id:43}"},{"tv/42/season/1","{season_number:2,episodes:[]}"},{"movie/42/credits","{id:42,cast:[]}"},{"movie/42/videos","{id:42}"},{"movie/42/watch/providers","{results:[]}"}}){
+            try{StreamingRepository.validateMetadataResponse(invalid[0],new JSONObject(invalid[1]));fail("Invalid package accepted: "+invalid[0]);}catch(java.io.IOException expected){}
+        }
+        StreamingRepository.validateMetadataResponse("movie/42",new JSONObject("{id:42}"));
+        StreamingRepository.validateMetadataResponse("tv/42/season/1",new JSONObject("{season_number:1,episodes:[]}"));
+        StreamingRepository.validateMetadataResponse("movie/42/videos",new JSONObject("{id:42,results:[]}"));
+        StreamingRepository.validateMetadataResponse("movie/42/recommendations",new JSONObject("{page:1,results:[],total_pages:0,total_results:0}"));
+        StreamingRepository.validateMetadataResponse("tv/42/recommendations",new JSONObject("{page:1,results:[],total_pages:0,total_results:0}"));
+        StreamingRepository.validateMetadataResponse("movie/42/watch/providers",new JSONObject("{results:{}}"));
+        StreamingRepository.validateMetadataResponse("watch/providers/tv",new JSONObject("{results:[]}"));
+    }
+    @Test public void rejectedMetadataCannotBecomeAFreshCachedPackage()throws Exception{
+        android.content.Context context=org.robolectric.RuntimeEnvironment.getApplication();
+        long id=System.nanoTime();
+        try{
+            com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context,"movie",id,"recommendations",()->{
+                JSONObject payload=new JSONObject("{page:1}");
+                StreamingRepository.validateMetadataResponse("movie/"+id+"/recommendations",payload);
+                return payload;
+            });
+            fail("Incomplete recommendations must reach the retry path");
+        }catch(java.io.IOException expected){}
+        assertFalse(com.archos.mediacenter.video.leanback.PreviewMetadataCache.fresh(context,"movie",id,"recommendations"));
+        assertNull(com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(context,"movie",id,"recommendations"));
+    }
+    @Test public void emptyOptionalListsRemainValidMetadata()throws Exception{
+        for(String section:new String[]{"videos","release_dates","content_ratings"})
+            StreamingRepository.validateMetadataResponse("movie/42/"+section,new JSONObject("{id:42,results:[]}"));
+        StreamingRepository.validateMetadataResponse("movie/42/credits",new JSONObject("{id:42,cast:[],crew:[]}"));
+        StreamingRepository.validateMetadataResponse("movie/42/images",new JSONObject("{id:42,logos:[],backdrops:[],posters:[]}"));
+        StreamingRepository.validateMetadataResponse("tv/42/season/1/watch/providers",new JSONObject("{results:{}}"));
+    }
     private static String provider(int id, String name) {
         return "{\"provider_id\":" + id + ",\"provider_name\":\"" + name + "\"}";
     }
