@@ -27,6 +27,9 @@ When landscape artwork is unavailable and only poster-shaped artwork exists, pre
 ### TV grid status — APPROVED historical behaviour
 Keep title to one line with secondary metadata. Normal shows may expose season/episode totals; an active series may expose an `Up Next · Sx Ey` state using the Supernova accent where compatible with current layout.
 
+### Home custom rows / Watch Next — HISTORICAL IMPLEMENTED BEHAVIOUR
+Preview 4.1-era records document dedicated Home row management: system rows could be reordered/hidden; custom rows could be created/renamed/deleted; Watch Next / Add to Row replaced the old placeholder model; hiding a custom row retained membership; dismissing Continue Watching preserved playback progress. Later 4.1.7 Home authority protects current row customisation and Move/Hide edge behaviour. Preserve this history when auditing/regressing Home rather than assuming custom-row behaviour was merely a future idea.
+
 ### Library view preferences — APPROVED historical behaviour
 “Remember library view preferences” means Grid/List, Filters, Sort and Order are remembered separately for Movies and TV Shows. Preserve preference semantics even if the setting's later location/name changes.
 
@@ -45,7 +48,7 @@ Treat focus as state/navigation architecture, not scattered `requestFocus` patch
 
 ### Playback seek / timing — HISTORICAL APPROVED DIRECTION, subject to current HUD authority
 - Current time plus predicted end time was approved for the top-right HUD.
-- Seeking direction included target timestamp/chapter information and favoured a thumbnail preview above the scrub position.
+- Seeking direction included target timestamp/chapter information and favoured a thumbnail preview above the scrub position. Preview 4.1.7 later explicitly deferred playback trick-play thumbnails; preserve this as historical/future design direction only unless separately promoted.
 - No primary app navigation/solid top bar during playback.
 Later physical Shield QA supersedes the old primary-control composition: the current primary controls are exactly Subtitles · Audio · Play/Pause · More.
 
