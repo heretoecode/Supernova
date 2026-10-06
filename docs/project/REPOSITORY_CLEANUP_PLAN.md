@@ -57,8 +57,15 @@ Do not equate the latest documentation commit with the source SHA used to build 
 - **NEEDS DECISION:** exact fixes-release version number.
 - **NEEDS DECISION:** when/how to promote the cleaned 4.1.7 lineage to `main`.
 - **NEEDS DECISION:** final archive/delete treatment of old branches after preservation checks.
-- **NEEDS DECISION:** disposition of the old Jules UI/mock-up PR after its unique design evidence is classified.
+- **CLOSED / PRESERVED:** Jules PR #4 is closed unmerged. Its branch is retained temporarily as historical design evidence. Its proposed signing-workflow changes conflict with the preserved signing-identity policy and must not be merged.
 - **PROPOSED:** enable GitHub Issues and use them for active bug/task tracking.
 - **PROPOSED:** use GitHub Releases as the canonical home for distributable APKs.
 
 Package ID, new signing key and fresh-install identity transition are later product work, not repository-cleanup tasks.
+
+
+## Administrative checkpoint — 6 October 2026
+
+- GitHub Releases: none currently exist. 4.1.7 Final should receive the first canonical release once the verified APK bytes are available for attachment.
+- GitHub Issues: repository feature is currently disabled. Enabling it requires repository administration capability not exposed by the current connected GitHub action set; do not pretend issues were created while it remains disabled.
+- Jules PR #4: closed unmerged after file-level inspection. The PR mixed mock-up/prototype assets with unsafe/conflicting build-signing changes (including fallback generation of a signing identity and removal of pinned certificate checks). The source branch remains available for historical evidence until later archive cleanup.
