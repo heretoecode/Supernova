@@ -1,6 +1,6 @@
 # Repository Cleanup Plan
 
-Status: **IN PROGRESS — preservation-first**
+Status: **PROMOTION COMPLETE — preservation-first follow-up remains**
 
 This record documents how the repository is being converted into durable project memory without destroying useful history.
 
@@ -55,7 +55,7 @@ Do not equate the latest documentation commit with the source SHA used to build 
 ## Open repository-administration decisions
 
 - **NEEDS DECISION:** exact fixes-release version number.
-- **NEEDS DECISION:** when/how to promote the cleaned 4.1.7 lineage to `main`.
+- **COMPLETED:** cleaned 4.1.7 lineage promoted to `main` on 6 October 2026 through PR #5.
 - **NEEDS DECISION:** final archive/delete treatment of old branches after preservation checks.
 - **CLOSED / PRESERVED:** Jules PR #4 is closed unmerged. Its branch is retained temporarily as historical design evidence. Its proposed signing-workflow changes conflict with the preserved signing-identity policy and must not be merged.
 - **PROPOSED:** enable GitHub Issues and use them for active bug/task tracking.
@@ -65,6 +65,11 @@ Package ID, new signing key and fresh-install identity transition are later prod
 
 
 ## Administrative checkpoint — 6 October 2026
+
+- Authoritative branch promotion: completed. `main` now contains the cleaned Preview 4.1.7 lineage. The frozen source for the accepted Final APK remains `7efb4195639205a6526281491af40c0dab1776b7`.
+- Repository cold-start reconstruction: passed after promotion; baseline, exact artifact provenance, fixes-only scope, protected areas and unresolved decisions were recoverable from GitHub alone.
+- CI follow-up: the legacy `build-apk.yml` on `main` still pins the older certificate `f950a2b6…177f`, while the accepted Preview 4.1.7 signing secret/certificate is `89ac087e…9a5a`. The first post-promotion `main` run failed at that stale certificate assertion. Correct the legacy workflow only after preserving the accepted Preview signing identity; do not generate or substitute a new key.
+
 
 - GitHub Releases: none currently exist. 4.1.7 Final should receive the first canonical release once the verified APK bytes are available for attachment.
 - GitHub Issues: repository feature is currently disabled. Enabling it requires repository administration capability not exposed by the current connected GitHub action set; do not pretend issues were created while it remains disabled.
