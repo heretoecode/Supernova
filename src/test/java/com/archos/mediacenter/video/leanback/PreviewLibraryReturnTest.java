@@ -37,12 +37,41 @@ public class PreviewLibraryReturnTest {
             View item=list.findViewHolderForAdapterPosition(position).itemView;assertEquals("v34",item.getTag());assertTrue(item.requestFocus());PreviewPagesTest.layout(container);
             int top=item.getTop();int first=layout.findFirstVisibleItemPosition();assertTrue(first>2);assertEquals(table?24:4,layout.getSpanSizeLookup().getSpanSize(position));
             item.performClick();assertEquals(34,opened[0]);
+            pages.suspendForChild();
             child.setVisibility(View.VISIBLE);assertTrue(child.requestFocus());assertFalse(pages.hasFocus());
             pages.setSnapshot(snapshot(true));PreviewPagesTest.layout(container);assertSame(child,container.findFocus());
-            child.setVisibility(View.GONE);pages.requestFocus();PreviewPagesTest.layout(container);
+            child.setVisibility(View.GONE);pages.resumeFromChild();host.windowFocusChanged(true);PreviewPagesTest.layout(container);
             assertNotNull(pages.findFocus());assertEquals("v34",pages.findFocus().getTag());
             View restored=list.findContainingItemView(pages.findFocus());assertEquals(top,restored.getTop());assertEquals(first,layout.findFirstVisibleItemPosition());
             assertEquals(table?24:4,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
+            pages.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_DOWN));
+            PreviewPagesTest.layout(container);assertNotEquals("v34",pages.findFocus().getTag());
+            assertNotNull(list.findContainingItemView(pages.findFocus()));
+        }finally{host.pause().stop().destroy();}
+    }
+    @Test public void homeReturnSurvivesWindowLossAndReorderedRailWithoutStealingLaterFocus() throws Exception {
+        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException missing){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try{
+            PreviewPages pages=new PreviewPages(host.get(),(h,item)->{});
+            FrameLayout container=new FrameLayout(host.get());container.addView(pages,new FrameLayout.LayoutParams(-1,-1));
+            TextView child=new TextView(host.get());child.setFocusableInTouchMode(true);child.setText("Playback stand-in");child.setVisibility(View.GONE);container.addView(child);
+            host.get().setContentView(container);pages.setDiscovery(new PreviewDiscovery());
+            Snapshot first=snapshot(false);first.continuingMovies.addAll(first.movies.subList(0,12));pages.setSnapshot(first);PreviewPagesTest.layout(container);
+            RecyclerView list=(RecyclerView)pages.getChildAt(0);GridLayoutManager layout=(GridLayoutManager)list.getLayoutManager();
+            layout.scrollToPositionWithOffset(2,90);PreviewPagesTest.layout(container);
+            View railItem=layout.findViewByPosition(2);RecyclerView rail=(RecyclerView)((android.view.ViewGroup)railItem).getChildAt(0);
+            ((androidx.recyclerview.widget.LinearLayoutManager)rail.getLayoutManager()).scrollToPositionWithOffset(7,80);PreviewPagesTest.layout(container);
+            View card=rail.findViewHolderForAdapterPosition(7).itemView;assertTrue(card.requestFocus());PreviewPagesTest.layout(container);
+            Object identity=card.getTag();
+            java.lang.reflect.Method launch=PreviewPages.class.getDeclaredMethod("beginReturn",View.class,String.class);launch.setAccessible(true);launch.invoke(pages,card,"playback");
+            pages.suspendForChild();host.windowFocusChanged(false);child.setVisibility(View.VISIBLE);child.requestFocus();
+            Snapshot refreshed=snapshot(true);refreshed.continuingMovies.addAll(first.continuingMovies);java.util.Collections.rotate(refreshed.continuingMovies,1);pages.setSnapshot(refreshed);PreviewPagesTest.layout(container);assertTrue(child.hasFocus());
+            child.setVisibility(View.GONE);pages.resumeFromChild();host.windowFocusChanged(true);PreviewPagesTest.layout(container);
+            assertNotNull(pages.findFocus());assertEquals(identity,pages.findFocus().getTag());
+            pages.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));PreviewPagesTest.layout(container);
+            assertNotEquals(identity,pages.findFocus().getTag());
+            child.setVisibility(View.VISIBLE);child.requestFocus();pages.setSnapshot(refreshed);PreviewPagesTest.layout(container);assertTrue("Ordinary refresh does not seize focus",child.hasFocus());
         }finally{host.pause().stop().destroy();}
     }
     private Snapshot snapshot(boolean updated){

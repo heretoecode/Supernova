@@ -2,7 +2,7 @@ name: Validate Supernova Preview 4.1.7 source
 
 on:
   push:
-    branches: ['codex/preview-4.1.7']
+    branches: ['codex/preview-4.1.7', 'codex/post-4.1.7-shield-fixes']
     paths-ignore: ['docs/**', '**/*.md']
   workflow_dispatch:
     inputs:

@@ -571,6 +571,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         super.onResume();
         consumePreviewNavigation();
         if (mPreviewPages != null) {
+            mPreviewPages.resumeFromChild();
             androidx.loader.content.Loader<Cursor> preview = LoaderManager.getInstance(this).getLoader(PreviewLibraryLoader.ID);
             if (preview == null) LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
             else if (mPreviewHasResumed) preview.forceLoad();
@@ -800,6 +801,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     @Override
     public void onPause() {
+        if(mPreviewPages!=null)mPreviewPages.suspendForChild();
         super.onPause();
         mOverlay.pause();
         mScannerBoxRefreshHandler.removeCallbacks(mRefreshBoxesAfterScannerQuietPeriod);
