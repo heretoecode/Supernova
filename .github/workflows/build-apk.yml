@@ -31,7 +31,7 @@ jobs:
       - name: Install NOVA build prerequisites
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget
+          sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget ffmpeg
 
       - name: Install repo tool
         run: |
@@ -60,6 +60,31 @@ jobs:
           test "$(git rev-parse HEAD)" = "$(git -C ../../source rev-parse HEAD)"
           cd ..
           repo manifest -r -o source-manifest.xml
+
+      - name: Apply bounded Preview 4.0 scan scheduling correction
+        working-directory: nova/MediaLib
+        run: git apply ../Video/.github/build/medialib-preview40.patch
+
+      - name: Apply reviewed Preview 4.1.4 backend corrections
+        run: |
+          git -C nova/native/avos apply --check ../../Video/.github/build/avos-preview414.patch
+          git -C nova/native/avos apply ../../Video/.github/build/avos-preview414.patch
+          git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview414.patch
+          git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
+
+      - name: Apply bounded Preview 4.1.5 and 4.1.7 stability corrections
+        run: |
+          git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview415.patch
+          git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview415.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview415.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview415.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview417.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview417.patch
+          git -C nova/MediaLib apply --check ../Video/.github/build/medialib-preview417-local.patch
+          git -C nova/MediaLib apply ../Video/.github/build/medialib-preview417-local.patch
+
+      - name: Preserve accepted Preview package and content-provider identity
+        run: python3 source/.github/build/prepare-preview.py nova
 
       # The pinned FileCoreLibrary declares the published NOVA jcifs-ng package,
       # including its Maven dependency metadata. Do not stage a second bare JAR.
@@ -97,14 +122,14 @@ jobs:
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' -Puniversal --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
+          ./gradlew testNoamazonDebugUnitTest --tests 'com.archos.mediacenter.video.streaming.*' --tests 'com.archos.mediacenter.video.utils.MarkChangesTest' --tests 'com.archos.mediacenter.video.leanback.TopNavigationTest' -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-tests.log
 
       - name: Build optimised personal APK
         working-directory: nova/Video
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
+          ./gradlew assembleNoamazonRelease -PmarkSigning -Puniversal -PmarkPreview --no-daemon --stacktrace 2>&1 | tee ../gradle-build.log
 
       - name: Verify APK signature and list native libraries
         run: |
