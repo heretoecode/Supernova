@@ -686,6 +686,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             public void handleOnBackPressed() {
                 log.info("Back navigation: OnBackPressedDispatcher callback, dialogId={}",
                         mShowingDialogId);
+                if(PreviewTechnicalInfo.dismiss(PlayerActivity.this))return;
                 if(previewUpNext!=null&&previewUpNext.cancelFocused())return;
                 if (mPlayerController != null && mPlayerController.handleBackPressed()) {
                     // The player controller dismisses a nested TV card before the main TV menu.
@@ -1236,6 +1237,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     protected void onStop() {
+        PreviewTechnicalInfo.clear(this);
         if(previewUpNext!=null){previewUpNext.stop();previewUpNext=null;}
         super.onStop();
         if (log.isDebugEnabled()) log.debug("onStop");
@@ -1286,6 +1288,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     protected void onDestroy() {
+        PreviewTechnicalInfo.clear(this);
         if (log.isDebugEnabled()) log.debug("onDestroy");
 
         // System-driven destruction after Home/screensaver is not an external-player exit.
@@ -1538,6 +1541,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if(PreviewTechnicalInfo.handleKey(this,event))return true;
         if(event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()>=19&&event.getKeyCode()<=23)android.util.Log.i("SupernovaTransport","Preview activity input key="+event.getKeyCode()+" controller="+(mPlayerController!=null));
         if(previewUpNext!=null&&previewUpNext.handleKey(event,()->{if(mPlayerController!=null)mPlayerController.showControlBar();}))return true;
         if(mPlayerController!=null&&mPlayerController.consumePreviewRevealKey(event))return true;
@@ -1565,6 +1569,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     // to handle touch event before on ui change
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        if(PreviewTechnicalInfo.isShowing(this))return super.dispatchTouchEvent(event);
 
         boolean handle = false;
         if(mPlayerController!=null)
