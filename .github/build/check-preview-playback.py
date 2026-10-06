@@ -4,6 +4,9 @@ Synthetic local clip only. This is not physical Shield or long-duration playback
 """
 from pathlib import Path
 import re
+import os
+import tempfile
+import zipfile
 import subprocess
 import time
 import xml.etree.ElementTree as ET
@@ -29,7 +32,15 @@ def capture(name):
         (OUT / (name + '.xml')).write_bytes(data)
         (OUT / (name + '.png')).write_bytes(adb('exec-out', 'screencap', '-p'))
         return root
-    raise AssertionError('Playback accessibility tree unavailable')
+    # API 28 phone AVD can have a focused dialog while active-window lookup is null.
+    # Retrieve that same focused app window, retaining all UI assertions below.
+    adb('shell', 'CLASSPATH=/data/local/tmp/preview-window-dump.jar', 'app_process',
+        '/system/bin', 'supernova.validation.PreviewWindowDump', PACKAGE, '/sdcard/nova-playback.xml')
+    data = adb('shell', 'cat', '/sdcard/nova-playback.xml')
+    root = ET.fromstring(data)
+    (OUT / (name + '.xml')).write_bytes(data)
+    (OUT / (name + '.png')).write_bytes(adb('exec-out', 'screencap', '-p'))
+    return root
 
 
 def activate(node, expected):
@@ -41,6 +52,22 @@ def activate(node, expected):
         adb('shell', 'input', 'keyevent', '23')
     time.sleep(.5)
 
+
+# Compile a shell-only capture helper from the SDK already used by this workflow.
+# This is test infrastructure, never part of the application APK.
+sdk = Path(os.environ['ANDROID_HOME'])
+android_jar = sorted((sdk / 'platforms').glob('*/android.jar'))[-1]
+d8 = sorted((sdk / 'build-tools').glob('*/d8'))[-1]
+with tempfile.TemporaryDirectory() as directory:
+    compiled = Path(directory)
+    subprocess.run(['javac', '-source', '8', '-target', '8', '-cp', str(android_jar),
+        '-d', directory, '.github/build/PreviewWindowDump.java'], check=True)
+    subprocess.run([str(d8), '--lib', str(android_jar), '--output', directory,
+        str(compiled / 'supernova/validation/PreviewWindowDump.class')], check=True)
+    jar = compiled / 'preview-window-dump.jar'
+    with zipfile.ZipFile(jar, 'w') as archive:
+        archive.write(compiled / 'classes.dex', 'classes.dex')
+    adb('push', str(jar), '/data/local/tmp/preview-window-dump.jar')
 
 subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-f', 'lavfi',
                 '-i', 'color=c=0x223d55:s=640x360:r=24', '-f', 'lavfi', '-i',
