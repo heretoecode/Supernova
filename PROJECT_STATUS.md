@@ -14,7 +14,7 @@
 - Version: `6.4.63-mark.4.1.7-preview` / versionCode `6040083`.
 - Physical target: NVIDIA Shield Android TV.
 
-The word "Final" here means the accepted 4.1.7 development APK. It does not mean all physical Shield QA is complete, nor does it authorise a merge to main.
+The word "Final" here means the accepted 4.1.7 development APK. It does not mean all physical Shield QA is complete. The cleaned 4.1.7 lineage was promoted to `main` on 6 October 2026; `main` is now the authoritative repository branch.
 
 ## Authoritative 4.1.7 records
 
@@ -71,6 +71,6 @@ Update GitHub with durable project knowledge from the session. Record decisions,
 
 The repository is intended to be sufficient for a new developer or AI with no ChatGPT conversation history to resume the project safely.
 
-## Repository transition note
+## Repository authority
 
-At the time this status file was introduced, `main` was behind the 4.1.7 development lineage. Repository cleanup is being performed on `project/authoritative-cleanup` first. Do not assume `main` is authoritative until the cleanup/promotion step is explicitly completed.
+The cleaned Preview 4.1.7 lineage was promoted to `main` on 6 October 2026 by PR #5. `main` is now the authoritative repository branch. The accepted 4.1.7 Final APK remains tied to the frozen application/test source commit `7efb4195639205a6526281491af40c0dab1776b7`; later `main` commits may contain documentation or repository-maintenance changes and must not be mistaken for that APK source.

@@ -90,7 +90,7 @@ jobs:
           fi
           test -s ~/.android/debug.keystore || { echo "Existing signing key unavailable; refusing to generate a different identity."; exit 1; }
           keytool -exportcert -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -file /tmp/nova-signing-certificate.der
-          echo "f950a2b660da24419315b35cd8cf598cd03587faf239b1d160c544e6c060177f  /tmp/nova-signing-certificate.der" | sha256sum --check
+          # Preserve the accepted Preview 4.1.7 signing identity used by the installed Final APK.\n          echo "89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a  /tmp/nova-signing-certificate.der" | sha256sum --check
 
       - name: Test personal build changes
         working-directory: nova/Video
@@ -112,7 +112,7 @@ jobs:
           test "${#apks[@]}" -eq 1
           build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
           "$build_tools/apksigner" verify --verbose --print-certs "${apks[0]}" | tee nova/apk-verification.log
-          grep -qi 'f950a2b660da24419315b35cd8cf598cd03587faf239b1d160c544e6c060177f' nova/apk-verification.log
+          grep -qi '89ac087ed6f989c90482d4a999f80511fe6ceee26ef1b9c37a142a9f00d39a5a' nova/apk-verification.log
           unzip -l "${apks[0]}" 'lib/*' | tee -a nova/apk-verification.log
           sha256sum "${apks[0]}" | tee nova/apk-sha256.txt
 
