@@ -1,0 +1,51 @@
+# Movies & TV — Design and Behaviour Authority
+
+Status: **APPROVED/current 4.1.7 baseline; current Shield corrections noted**
+
+## Library composition
+- Preserve the liked six-wide poster grid. The current implementation uses a 24-span grid with four spans per poster.
+- Shared card focus enlargement remains approximately 1.08×. Artwork, rounded boundary and outward glow behave as one aligned unit; artwork must not escape its rounded boundary.
+- Movies has Continue Watching (Movies only) at the top, then the library. TV mirrors the Movies layout.
+- Earlier Genre/Year/Collections browsing rows were deliberately removed from the primary Movies layout; filtering belongs in the toolbar.
+- Indexed summary may expose total/local/network counts and storage without fabricating unknown sizes.
+
+## Toolbar
+Controls sit close to the divider and visually echo Details lower navigation:
+**Filters · Sort · Order · Unmatched · List/Grid · Columns (where applicable)**.
+White icon/text; no cyan focus text and no large rounded focus box. Focus is the corresponding divider segment turning Supernova blue with restrained optical glow. Unlike Details, no blue segment persists after toolbar focus leaves.
+Edges are deterministic: first+LEFT stays; final+RIGHT stays; DOWN enters library/header. Columns+RIGHT never falls into an unrelated header.
+
+## Grid/list navigation
+- Terminal grid RIGHT stays; no wrap/jump.
+- Top-row UP goes to toolbar.
+- Bottom edge stays.
+- Horizontal row lock remains until explicit vertical movement.
+- Active row positioning should keep the focused row comfortably visible; current Shield QA requires correction here.
+- Current Shield QA also requires toolbar/control-bar vertical alignment correction.
+
+## Exact return focus
+Movies/TV → Details → Back restores exact originating media item, scroll position, view mode and visible focus. List mode restores the exact row. Never fall back to the leftmost item or top navigation when the original target is still valid.
+
+## List view
+Switching Grid/List, Columns changes and background metadata updates must not cause full flicker/rebuild. Sort is one criterion; Columns controls visibility/order. Codec, bitrate, HDR and other technical values are populated/cached by scan/background work; list focus must not trigger extraction.
+
+## Filters
+- Genre contains only genres actually present; multi-select + Done.
+- Year multi-select + Done.
+- Streaming Service persistent multi-select + Done; ticks retained; real provider icons rendered monochrome without destroying internal logo detail.
+- Provider availability is background-populated, not dependent on opening Details.
+- Clear Filters works.
+- Streaming Service filtering concerns local titles with known fresh availability; it is not a remote-catalogue browser.
+
+## Unmatched
+First-class toolbar workflow. Classification and metadata identity are separate. Movies Unmatched = confidently Movie + shared Unknown records. TV Unmatched = confidently TV + the same underlying Unknown records, without duplication. Matching removes the item from Unmatched and returns it to normal library.
+Unmatched Details uses honest Not matched/Unavailable/Unknown placeholders and a prominent Match Metadata action.
+
+## Artwork
+A historical Shield defect caused some Movies posters to disappear after Scan Library while text/Details art remained. Binding-generation fencing/retry was added, but current physical QA still requires artwork-request/failure investigation. Do not claim all artwork failures are one cause.
+
+## Current corrections
+4.1.7 Final Shield QA: vertical focused-row positioning; control-bar vertical alignment; exact Details return focus; artwork request/failure behaviour.
+
+## Evidence
+`docs/preview-4.1.7/REQUIREMENTS.md` UI-012–021; `docs/archive/root-history/NOVA_CODEX_RETURN_HANDOVER_4.1.2.md`; `docs/qa/4.1.7-final-shield-qa.md`.
