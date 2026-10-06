@@ -107,7 +107,7 @@ public class PreviewMoviePageTest {
             com.archos.mediacenter.video.browser.adapters.object.Episode episode=new com.archos.mediacenter.video.browser.adapters.object.Episode(1,1,1,1,"Pilot",1642377600000L,0,"","An episode synopsis","Example show","/episode",null,null,0,0,0,0,false,false,false,false,1,0,1920,1080,null,null,null,null,0,1,2000);
             com.archos.mediascraper.ShowTags series=new com.archos.mediascraper.ShowTags();series.setRating(9.8f);series.addGenreIfAbsent("Drama");
             com.archos.mediascraper.EpisodeTags tags=new com.archos.mediascraper.EpisodeTags(series,1,1);tags.setRuntime(45,java.util.concurrent.TimeUnit.MINUTES);page.bind(episode);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
-            assertNotNull(PreviewPagesTest.findText(page,"S1 E1"));assertNotNull(PreviewPagesTest.findText(page,"45 min"));assertNotNull(PreviewPagesTest.findText(page,"Drama"));assertNull(PreviewPagesTest.findText(page,"9.8"));
+            assertNotNull(PreviewPagesTest.findText(page,"S1 E1"));assertNotNull(PreviewPagesTest.findText(page,"45m"));assertNotNull(PreviewPagesTest.findText(page,"Drama"));assertNull(PreviewPagesTest.findText(page,"9.8"));
             tags.setRating(7.4f);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());assertNotNull(PreviewPagesTest.findText(page,"7.4"));assertNull(PreviewPagesTest.findText(page,"9.8"));PreviewPagesTest.layout(shell);PreviewPagesTest.capture(shell,"episode-details");
         }finally{host.pause().stop().destroy();}
     }
@@ -146,6 +146,9 @@ public class PreviewMoviePageTest {
             for(int frame=0;frame<8;frame++){page.computeScroll();PreviewPagesTest.layout(nav);}
             android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertTrue(visible.height()>80);
             PreviewPagesTest.capture(nav,"details-information-next");
+            page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));
+            assertSame(page.findViewWithTag("section:Details"),page.findFocus());assertTrue("Lower Up retains collapsed hero",page.getScrollY()>0);
+            page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertEquals(0,page.getScrollY());assertSame(primary,page.findFocus());
         }finally{host.pause().stop().destroy();}
     }
 }

@@ -17,6 +17,15 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewCardArtworkRetryTest {
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void artworkPixelsStayInsideRoundedBody(){
+        PreviewCardPresenter.Card card=new PreviewCardPresenter.Card(RuntimeEnvironment.getApplication(),PreviewCardPresenter.Style.CONTINUE);
+        card.image.setImageDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.RED));
+        card.measure(android.view.View.MeasureSpec.makeMeasureSpec(172,android.view.View.MeasureSpec.EXACTLY),android.view.View.MeasureSpec.makeMeasureSpec(105,android.view.View.MeasureSpec.EXACTLY));card.layout(0,0,172,105);
+        android.view.View body=card.getChildAt(0);android.graphics.Bitmap pixels=android.graphics.Bitmap.createBitmap(172,105,android.graphics.Bitmap.Config.ARGB_8888);body.draw(new android.graphics.Canvas(pixels));
+        assertNotEquals(android.graphics.Color.RED,pixels.getPixel(0,0));assertNotEquals(android.graphics.Color.RED,pixels.getPixel(171,0));
+        assertEquals(android.graphics.Color.RED,pixels.getPixel(86,8));pixels.recycle();
+    }
     @Test public void failedRebindsBackOffAndLateCallbacksCannotCompleteNewIdentity(){
         Picasso previous=ReflectionHelpers.getStaticField(Picasso.class,"singleton");Picasso loader=mock(Picasso.class);
         RequestCreator request=mock(RequestCreator.class,RETURNS_SELF);when(loader.load(any(Uri.class))).thenReturn(request);

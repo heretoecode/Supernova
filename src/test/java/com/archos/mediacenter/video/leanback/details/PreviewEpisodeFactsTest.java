@@ -30,11 +30,11 @@ public class PreviewEpisodeFactsTest {
             ReflectionHelpers.callInstanceMethod(page,"applyEnrichment",ReflectionHelpers.ClassParameter.from(PreviewDetailsData.Result.class,packageData),ReflectionHelpers.ClassParameter.from(int.class,0));
             View key=page.findViewWithTag("semantic:details.panel.key.information"),reception=page.findViewWithTag("semantic:details.panel.reception");
             assertNotNull(key);assertNotNull(reception);String facts=text(key),ratings=text(reception);
-            assertTrue(facts.contains("2022"));assertTrue(facts.contains("2022-02-03"));assertTrue(facts.contains("47 min"));assertTrue(facts.contains("Series original title"));
-            assertFalse(facts.contains("1999"));assertFalse(facts.contains("2010"));assertFalse(facts.contains("88 min"));assertFalse(facts.contains("77 min"));
+            assertTrue(facts.contains("2022"));assertTrue(facts.contains("2022-02-03"));assertTrue(facts.contains("47m"));assertTrue(facts.contains("Series original title"));
+            assertFalse(facts.contains("1999"));assertFalse(facts.contains("2010"));assertFalse(facts.contains("88m"));assertFalse(facts.contains("77m"));
             assertTrue(ratings.contains("7.2"));assertTrue(ratings.contains("123"));assertFalse(ratings.contains("9.8"));assertFalse(ratings.contains("999"));
             packageData.episodes.clear();ReflectionHelpers.callInstanceMethod(page,"applyEnrichment",ReflectionHelpers.ClassParameter.from(PreviewDetailsData.Result.class,packageData),ReflectionHelpers.ClassParameter.from(int.class,0));
-            facts=text(page.findViewWithTag("semantic:details.panel.key.information"));assertFalse(facts.contains("1999"));assertFalse(facts.contains("88 min"));
+            facts=text(page.findViewWithTag("semantic:details.panel.key.information"));assertFalse(facts.contains("1999"));assertFalse(facts.contains("88m"));
         }finally{host.pause().stop().destroy();}
     }
     private String text(View view){StringBuilder result=new StringBuilder();if(view instanceof TextView)result.append(((TextView)view).getText()).append('\n');if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)result.append(text(((ViewGroup)view).getChildAt(i)));return result.toString();}
