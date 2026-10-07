@@ -64,3 +64,27 @@ A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered d
 The same historical record explicitly rejected permanent left-sidebar primary navigation, two-line grid titles, empty Continue Watching placeholder panels, huge bright-blue list rows, grey stock Android filter/sort/order dialogs, “NEW” Settings badges, invented analytics settings, an assistant-invented launcher icon, and generated Network/Settings mock-ups that invented unsupported features.
 
 **Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
+
+
+## Next-version Details amendments — APPROVED / SUPERSEDING
+
+This section supersedes the earlier compact Information and portrait-based Cast/Crew corrective direction where they conflict.
+
+### Hero and actions
+- Reduce real loading latency for official logo/title artwork and lower content such as Extras/More Like This; do not merely hide the delay.
+- Put genre on the same hero metadata line as year/runtime/rating or season/episode information.
+- A streaming/provider action between Play/Resume and More must be D-pad focusable and match neighbouring action height, border, alignment and geometry.
+
+### Information layout
+Tier 1 is **Key Information | Technical Information | Reception**: borderless aligned columns, breathing room below navigation, subtle vertical separators, no heading icons. Reception may contain reliable awards/ratings and one short review excerpt where available and appropriate.
+
+Tier 2 sits below a subtle horizontal divider: **Cast | Crew**, two equal-width columns with one subtle vertical divider. Cast aligns with the Key Information left edge; heading baseline and first-row spacing match; no individual row separators.
+
+Cast/Crew: up to **8 Cast + 8 Crew**, text only; no portraits/images/placeholders/artwork requests; no displayed counts; no More Cast/More Crew; no carousel/arrows. Cast person is bright/bold white with character softer; Crew person bright/bold white with job softer; prioritise key creative roles.
+
+### Extras
+Each logical category (Trailers, Teasers, Featurettes, Clips, etc.) is exactly one horizontal carousel row and never wraps. Fix card/title bounds so names are not incorrectly clipped.
+
+Trailer playback uses a clean centred 16:9 video at roughly 60% of screen area over the still-visible Details page, strongly blurred/dimmed including header. No Supernova surrounding container, title, Open YouTube, Close control or full playback HUD. Respect mandatory provider/YouTube UI. Back and natural completion restore exact launching trailer-card focus. Simple OK/Play pause is optional only where technically appropriate. A quick ~150–200ms blur/dim transition is acceptable.
+
+Seasons/Episodes and other horizontal Details rows follow the shared carousel rule: one logical row, deliberate partial continuation, no accidental clipping or wrapping.
