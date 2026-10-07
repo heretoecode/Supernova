@@ -60,7 +60,7 @@ Do not use a generic Cloud Services category solely to contain put.io. put.io sh
 1. give **put.io** its own left-navigation entry; or
 2. place put.io in another semantically appropriate source/account location once that wider information architecture is designed.
 
-No final placement is approved yet. Preserve the working put.io/WebDAV distinction: account/service integration is not the same thing as generic WebDAV file transport.
+**SUPERSEDED by the later approved design:** put.io now has its own left-navigation entry for the approved future direction. Preserve the put.io/WebDAV distinction: account/service integration is not the same thing as generic WebDAV file transport.
 
 ### Library Health — approved future direction
 Promote **Library Health** from parked concept to an approved future design direction, but do not add it to the active fixes candidate.
@@ -106,7 +106,7 @@ Future Network & Files mock-ups should now accommodate:
 - Library Health
 - put.io as either its own entry or another deliberately chosen location
 
-The need for an Overview category remains open to design review. Do not retain it merely because the current implementation has one.
+**Resolved by the later approved design:** Overview is removed from the approved future left navigation.
 
 
 ## Design approval record — 7 October 2026
