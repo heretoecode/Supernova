@@ -43,6 +43,15 @@ def capture(name):
     return root
 
 
+def capture_fast(name):
+    # Transient seek feedback must be sampled without uiautomator's idle delay.
+    adb('shell','CLASSPATH=/data/local/tmp/preview-window-dump.jar','app_process',
+        '/system/bin','supernova.validation.PreviewWindowDump',PACKAGE,'/sdcard/nova-playback.xml')
+    data=adb('shell','cat','/sdcard/nova-playback.xml')
+    (OUT/(name+'.xml')).write_bytes(data)
+    (OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'))
+    return ET.fromstring(data)
+
 def activate(node, expected):
     x1, y1, x2, y2 = map(int, re.findall(r'\d+', node.get('bounds')))
     adb('shell', 'input', 'tap', str((x1 + x2) // 2), str((y1 + y2) // 2))
@@ -127,7 +136,7 @@ try:
     adb('shell','input','keyevent','19')
     adb('shell','input','keyevent','22')
     time.sleep(1)
-    preview = capture('playback-seek-frame-preview')
+    preview = capture_fast('playback-seek-frame-preview')
     assert any(n.get('resource-id','').endswith('/seek_progress') and n.get('focused')=='true' for n in preview.iter('node')), 'Seek focus lost'
     assert any(n.get('resource-id','').endswith('/preview_scrub_time') for n in preview.iter('node')), 'Seek timestamp bubble missing'
     preview_frame=frame_sample(OUT / 'playback-seek-frame-preview.png')
@@ -145,12 +154,19 @@ try:
     time.sleep(1)
     cancelled=adb('logcat','-d').decode(errors='replace')
     assert 'event=scrub_cancel' in cancelled, 'Back did not cancel seek deterministically'
-    root=capture('playback-seek-cancel-return')
+    root=capture_fast('playback-seek-cancel-return')
     assert any(n.get('resource-id','').endswith('/pause') and n.get('focused')=='true' for n in root.iter('node')), 'Cancel did not return to Play/Pause'
     adb('shell', 'input', 'keyevent', '22')
     root = capture('playback-more-focused')
     assert any(n.get('resource-id', '').endswith('/preview_more') and n.get('focused') == 'true' for n in root.iter('node')), 'Remote RIGHT did not focus More'
     assert not any(n.get('resource-id', '').endswith('/preview_info') for n in root.iter('node')), 'Info remained in primary HUD'
+    # Dedicated FF/RW feedback appears without seek-bar focus; transport stays native.
+    for key in ('90','89'):
+        adb('shell','input','keyevent',key)
+        time.sleep(.2)
+        remote=capture_fast('playback-remote-'+key)
+        assert any(n.get('resource-id','').endswith('/preview_scrub_time') for n in remote.iter('node')), 'Dedicated transport bubble missing'
+        assert not any(n.get('resource-id','').endswith('/seek_progress') and n.get('focused')=='true' for n in remote.iter('node')), 'Transport unnecessarily entered seek bar'
     adb('shell', 'input', 'keyevent', '37')  # Existing hardware I technical-information shortcut
     root = capture('playback-technical-runtime')
     labels = {n.get('text') for n in root.iter('node')}

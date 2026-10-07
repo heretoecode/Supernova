@@ -14,7 +14,7 @@ import android.net.Uri;
 final class PreviewEpisodeRow extends PreviewFocusRecycler {
     private final List<PreviewEpisodeChoice> episodes;
     private int remembered;
-    PreviewEpisodeRow(Activity activity,List<PreviewEpisodeChoice> values,long showId,StreamingRepository.Availability availability){super(activity);episodes=new ArrayList<>(values);setLayoutManager(new LinearLayoutManager(activity,HORIZONTAL,false));setItemAnimator(null);setClipChildren(false);setClipToPadding(false);setPadding(PreviewDialog.dp(activity,5),PreviewDialog.dp(activity,6),PreviewDialog.dp(activity,5),PreviewDialog.dp(activity,6));setAdapter(new RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+    PreviewEpisodeRow(Activity activity,List<PreviewEpisodeChoice> values,long showId,StreamingRepository.Availability availability){super(activity);episodes=new ArrayList<>(values);setLayoutManager(new LinearLayoutManager(activity,HORIZONTAL,false));setItemAnimator(null);setClipChildren(false);setClipToPadding(false);setPadding(PreviewDialog.dp(activity,5),PreviewDialog.dp(activity,12),PreviewDialog.dp(activity,5),PreviewDialog.dp(activity,12));setAdapter(new RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         public int getItemCount(){return episodes.size();}
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,int type){PreviewLandscapeCard card=new PreviewLandscapeCard(activity);RecyclerView.LayoutParams size=new RecyclerView.LayoutParams(cardWidth(),-1);size.rightMargin=PreviewDialog.dp(activity,12);card.setLayoutParams(size);return new RecyclerView.ViewHolder(card){};}
         public void onBindViewHolder(RecyclerView.ViewHolder holder,int position){

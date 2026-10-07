@@ -31,6 +31,13 @@ public class PreviewMoviePageTest {
             }
         }finally{host.pause().stop().destroy();}
     }
+    @Test public void seriesGenreSharesMetadataAndDoesNotAccumulateOnRefresh(){
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();try{
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);page.bindShow(new com.archos.mediacenter.video.browser.adapters.object.Tvshow(7,"Series",null,1,2,0,"/series"),()->{});
+            com.archos.mediascraper.ShowTags tags=new com.archos.mediascraper.ShowTags();tags.addGenreIfAbsent("Drama");for(int refresh=0;refresh<3;refresh++)page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
+            TextView line=(TextView)PreviewPagesTest.findText(page,"seasons");assertNotNull(line);assertTrue(line.getText().toString().contains("Drama"));assertEquals(1,line.getMaxLines());assertEquals(1,line.getText().toString().split("Drama",-1).length-1);
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void providerIsAnIntermediateDpadTargetAndMetadataRefreshKeepsItsView(){
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
             ArrayObjectAdapter actions=new ArrayObjectAdapter();var provider=new com.archos.mediacenter.video.streaming.StreamingRepository.Provider(8,"Fixture service");

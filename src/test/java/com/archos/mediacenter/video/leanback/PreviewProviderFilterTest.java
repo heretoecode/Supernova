@@ -32,14 +32,14 @@ public class PreviewProviderFilterTest {
             assertMonochrome(menu,0);assertMonochrome(menu,1);
             row(menu,0).performClick();row(menu,1).performClick();
             assertTrue(menu.isShowing());assertChecked(menu,0,true);assertChecked(menu,1,true);
-            row(menu,3).performClick();assertFalse(menu.isShowing());
+            assertNull("Live filters have no Done",menu.getWindow().getDecorView().findViewWithTag("preview-label:3"));menu.cancel();assertFalse(menu.isShowing());
             assertEquals(java.util.Set.of("8","9"),PreviewGenres.parse(prefs.getString("preview_library_1_providers","")));
             assertEquals("9",prefs.getString("preview_library_2_providers",""));
             menu=providers(pages);assertChecked(menu,0,true);assertChecked(menu,1,true);menu.dismiss();
             pages=page(host.get());pages.setTab(1);menu=providers(pages);
             assertChecked(menu,0,true);assertChecked(menu,1,true);
             row(menu,2).performClick();assertTrue(menu.isShowing());assertChecked(menu,0,false);assertChecked(menu,1,false);
-            row(menu,3).performClick();assertEquals("",prefs.getString("preview_library_1_providers","not saved"));
+            assertEquals("",prefs.getString("preview_library_1_providers","not saved"));menu.cancel();
             // Clear Filters resets the other persisted dimensions as well.
             Dialog filters=filters(pages);row(filters,3).performClick();
             assertEquals("",prefs.getString("preview_library_1_genre","not saved"));

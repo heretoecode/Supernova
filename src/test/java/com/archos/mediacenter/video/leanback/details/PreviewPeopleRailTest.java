@@ -39,7 +39,7 @@ public class PreviewPeopleRailTest {
         assertEquals("semantic:details.crew.person.2",first.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
         assertEquals("semantic:details.crew.person.3",second.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
         assertNull(page.findViewWithTag("person:Crew Other:Production Assistant"));
-        PreviewPeopleRail rail=(PreviewPeopleRail)first.getParent().getParent();assertTrue(rail.isHorizontalFadingEdgeEnabled());
+        LinearLayout people=(LinearLayout)first.getParent();assertEquals("Approved people lists are vertical text, not a carousel",LinearLayout.VERTICAL,people.getOrientation());assertEquals(2,((android.view.ViewGroup)first).getChildCount());for(int i=0;i<2;i++)assertTrue(((android.view.ViewGroup)first).getChildAt(i) instanceof android.widget.TextView);
         assertTrue(first.isFocusable());assertFalse(first.isClickable());
         page.setTags(null,java.util.Collections.emptyList(),java.util.Collections.emptyList());
         assertNotNull("A local tag refresh must retain cached individual crew",page.findViewWithTag("person:Director One:Director"));

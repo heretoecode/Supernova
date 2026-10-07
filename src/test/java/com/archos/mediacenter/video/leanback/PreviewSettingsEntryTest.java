@@ -51,6 +51,14 @@ public class PreviewSettingsEntryTest {
             }
         }
     }
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void settingsPanelsFitAndCentreWithinMeasuredNavigationTextArea()throws Exception{
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
+            android.widget.FrameLayout content=new android.widget.FrameLayout(host.get());content.setId(com.archos.mediacenter.video.R.id.settingsFragment);TopNavigation nav=new TopNavigation(host.get(),content,i->{},()->false);host.get().setContentView(nav);NestedSettings fragment=new NestedSettings();host.get().getSupportFragmentManager().beginTransaction().add(content.getId(),fragment).commitNow();PreviewPagesTest.layout(nav);
+            View panel=nav.findViewWithTag("semantic:settings.panel.categories");assertNotNull(panel);int[] at=new int[2];panel.getLocationOnScreen(at);int upper=at[1]-nav.navigationTextBottom(),lower=nav.getHeight()-at[1]-panel.getHeight();assertTrue(lower>=0);assertTrue("Settings usable-area margins "+upper+"/"+lower,Math.abs(upper-lower)<=2);PreviewPagesTest.capture(nav,"settings-corrective-panels");
+            nav.findViewWithTag("semantic:settings:category:Playback").performClick();PreviewPagesTest.layout(nav);PreviewPagesTest.capture(nav,"settings-corrective-nested-left");
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void childReturnUsesStableIdentityWhenLabelsMatch(){
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try{

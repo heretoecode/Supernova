@@ -41,12 +41,12 @@ public final class PreviewMatchSearch extends LinearLayout {
     public void unavailable(){setResults(Collections.emptyList());status.setText("Search unavailable. Please try again.");}
     public void setResults(List<BaseTags> results){
         boolean append=results.size()>=rendered.size();for(int i=0;append&&i<rendered.size();i++)append=rendered.get(i)==results.get(i);
-        if(!append){boolean focused=rows.hasFocus();rows.removeAllViews();rendered.clear();if(focused)keyboard.focusLastKey();}
+        if(!append){boolean focused=rows.hasFocus();if(focused)keyboard.focusLastKey();rows.removeAllViews();rendered.clear();}
         for(int i=rendered.size();i<results.size();i++){
             final int index=i;BaseTags tags=results.get(i);LinearLayout row=new LinearLayout(getContext());row.setOrientation(VERTICAL);row.setTag("semantic:match.result:"+i);row.setFocusable(true);row.setFocusableInTouchMode(true);row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);row.setPadding(dp(6),dp(5),dp(6),dp(5));row.setBackgroundColor(0x5506121d);row.setForeground(PreviewDialog.focus(getContext()));
-            row.setOrientation(HORIZONTAL);
+            row.setOrientation(HORIZONTAL);row.setGravity(Gravity.CENTER_VERTICAL);
             ImageView poster=new ImageView(getContext());poster.setTag("semantic:match.poster:"+i);poster.setScaleType(ImageView.ScaleType.FIT_CENTER);row.addView(poster,new LayoutParams(dp(92),dp(65)));
-            LinearLayout copy=new LinearLayout(getContext());copy.setOrientation(VERTICAL);copy.setPadding(dp(12),0,0,0);row.addView(copy,new LayoutParams(0,-2,1));
+            LinearLayout copy=new LinearLayout(getContext());copy.setOrientation(VERTICAL);copy.setPadding(dp(12),0,dp(12),0);row.addView(copy,new LayoutParams(0,-2,1));
             TextView title=text(label(tags),18);title.setMaxLines(1);title.setEllipsize(android.text.TextUtils.TruncateAt.END);copy.addView(title);
             TextView metadata=text(tags instanceof MovieTags?"Movie":tags instanceof ShowTags?"TV Series":"Episode",12);copy.addView(metadata);
             bindPoster(poster,tags);

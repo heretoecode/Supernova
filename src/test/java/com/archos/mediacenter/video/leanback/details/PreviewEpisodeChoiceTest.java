@@ -12,6 +12,14 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewEpisodeChoiceTest {
+    @Test public void carouselKeepsEpisodeTitlesAndMetadataWithinCardAndExposesContinuation(){
+        android.app.Activity activity=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException unset){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(activity.getApplicationContext()).build());}
+        List<PreviewEpisodeChoice> choices=new ArrayList<>();for(int i=1;i<=8;i++){Episode episode=mock(Episode.class);when(episode.getId()).thenReturn((long)i);when(episode.getEpisodeNumber()).thenReturn(i);when(episode.getEpisodeName()).thenReturn("A deliberately longer episode title for bounds review");when(episode.getDurationMs()).thenReturn(2700000);choices.add(new PreviewEpisodeChoice(1,i,episode,null));}
+        PreviewEpisodeRow row=new PreviewEpisodeRow(activity,choices,1,null);activity.setContentView(row);row.measure(android.view.View.MeasureSpec.makeMeasureSpec(876,android.view.View.MeasureSpec.EXACTLY),android.view.View.MeasureSpec.makeMeasureSpec(184,android.view.View.MeasureSpec.EXACTLY));row.layout(0,0,876,184);
+        PreviewLandscapeCard card=(PreviewLandscapeCard)row.findViewHolderForAdapterPosition(0).itemView;assertTrue(card.title.getBottom()<=card.getHeight());assertTrue("Metadata is not cut off below the artwork/title",card.metadata.getBottom()<=card.getHeight());
+        android.view.View continuation=row.findViewHolderForAdapterPosition(4).itemView;int exposed=876-continuation.getLeft();assertTrue("Deliberately partial continuation",exposed>0&&exposed<continuation.getWidth());activity.finish();
+    }
     @Test @SuppressWarnings({"rawtypes","unchecked"}) public void providerMarkKeepsMonochromeShapeAndLocalRebindRestoresPlay()throws Exception{
         android.app.Activity activity=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
         try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException unset){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(activity.getApplicationContext()).build());}

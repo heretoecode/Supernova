@@ -337,6 +337,7 @@ public final class PreviewPages extends FrameLayout {
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){
         if(event.getAction()==KeyEvent.ACTION_UP&&event.getKeyCode()==rowControlConsumedKey){rowControlConsumedKey=-1;return true;}
+        if(rowControlOverlay!=null&&event.getAction()==KeyEvent.ACTION_DOWN&&(event.getKeyCode()==KeyEvent.KEYCODE_BACK||event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT)){rowControlConsumedKey=event.getKeyCode();if(rowControlClose!=null)rowControlClose.run();return true;}
         if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT){
             View focus=findFocus(),item=focus==null?null:list.findContainingItemView(focus);
             int position=item==null?-1:list.getChildAdapterPosition(item);
@@ -372,13 +373,13 @@ public final class PreviewPages extends FrameLayout {
         }
         return super.dispatchKeyEvent(event);
     }
-    private View rowControlOverlay;private int rowControlConsumedKey=-1;
+    private View rowControlOverlay;private Runnable rowControlClose;private int rowControlConsumedKey=-1;
     private void showRowControls(String id,View opener){
         if(rowControlOverlay!=null)return;
         LinearLayout controls=new LinearLayout(getContext());controls.setTag("semantic:home.row.controls");controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(dp(8),dp(8),dp(8),dp(8));controls.setBackground(PreviewDialog.menuSurface(getContext()));controls.setElevation(dp(12));
         final boolean[] moving={false};TextView move=button("Move",()->{}),hide=button("Hide",()->{});move.setTag("semantic:home.row.move");hide.setTag("semantic:home.row.hide");controls.addView(move,new LinearLayout.LayoutParams(dp(92),dp(40)));controls.addView(hide,new LinearLayout.LayoutParams(dp(92),dp(40)));
         int[] cardAt=new int[2],pageAt=new int[2];opener.getLocationOnScreen(cardAt);getLocationOnScreen(pageAt);FrameLayout.LayoutParams size=new FrameLayout.LayoutParams(dp(108),dp(96));size.leftMargin=dp(8);size.topMargin=Math.max(list.getPaddingTop(),Math.min(getHeight()-dp(108),cardAt[1]-pageAt[1]));addView(controls,size);rowControlOverlay=controls;
-        Runnable close=()->{removeView(controls);rowControlOverlay=null;if(opener.isAttachedToWindow())opener.requestFocus();else{holdFocus();restoreFocus();}};
+        Runnable close=()->{if(opener.isAttachedToWindow())opener.requestFocus();removeView(controls);rowControlOverlay=null;rowControlClose=null;if(!opener.isAttachedToWindow()){holdFocus();restoreFocus();}};rowControlClose=close;
         move.setOnClickListener(v->{moving[0]=!moving[0];move.setText(moving[0]?"↕ Move":"Move");});hide.setOnClickListener(v->{PreviewHomeRows.hideRow(getContext(),id);removeView(controls);rowControlOverlay=null;render("row_hidden");holdFocus();restoreFocus();});
         for(TextView control:new TextView[]{move,hide})control.setOnKeyListener((v,key,event)->{
             if(key!=KeyEvent.KEYCODE_BACK&&key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT&&key!=KeyEvent.KEYCODE_DPAD_UP&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;
@@ -387,7 +388,7 @@ public final class PreviewPages extends FrameLayout {
             if(key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
             if(moving[0]){PreviewHomeRows.moveRow(getContext(),id,key==KeyEvent.KEYCODE_DPAD_UP?-1:1);render("row_moved");move.requestFocus();}
             else (key==KeyEvent.KEYCODE_DPAD_UP?move:hide).requestFocus();return true;
-        });move.requestFocus();
+        });move.requestFocus();controls.post(()->{if(rowControlOverlay==controls)move.requestFocus();});
     }
     /** A carousel change must not rebind the library rows below it. */
     private void renderFeatured() {

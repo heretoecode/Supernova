@@ -226,6 +226,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private int mPreviewScrubOrigin;
     private long mPreviewTransportFeedbackUntil;
     private final Runnable mPreviewFrameSeek=this::previewFrameSeek;
+    private final Runnable mPreviewTransportFeedback=this::updatePreviewScrubber;
     private void previewFrameSeek(){if(!mPreviewScrubbing||mIsStopped)return;if(!mSeekComplete){mHandler.postDelayed(mPreviewFrameSeek,80);return;}mSeekComplete=false;tracePreviewTransport("scrub_preview",-1);Player.sPlayer.seekTo(mNextSeek);}
     private int mPreviewRevealKey=-1;
     private int                 mBarXYIconResource = R.drawable.video_format_arrow_horizontal;
@@ -1551,7 +1552,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             setProgress();mHandler.removeCallbacks(mPreviewFrameSeek);mHandler.postDelayed(mPreviewFrameSeek,220);return true;
         }
         if(mPreviewScrubbing){mHandler.removeCallbacks(mPreviewFrameSeek);mPreviewScrubbing=false;mDragging=false;if(cancel)mNextSeek=mPreviewScrubOrigin;mSeekComplete=false;tracePreviewTransport(cancel?"scrub_cancel":"scrub_commit",key);Player.sPlayer.seekTo(mNextSeek);setProgress();}
-        if(cancel)mPauseButton.requestFocus();sendFadeOut(SHOW_TIMEOUT);return true;
+        if(cancel)mPauseButton.requestFocus();if(mSeekWasPlaying||Player.sPlayer.isPlaying())sendFadeOut(SHOW_TIMEOUT);else cancelFadeOut();return true;
     }
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
@@ -1726,12 +1727,14 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         int delta=mPreviewSeekPolicy.next(mSeekKeyDirection,android.os.SystemClock.elapsedRealtime());
         mNextSeek=PreviewSeekPolicy.position(mNextSeek,delta,Player.sPlayer.getDuration());
         mPreviewTransportFeedbackUntil=android.os.SystemClock.elapsedRealtime()+SHOW_TIMEOUT;
+        mHandler.removeCallbacks(mPreviewTransportFeedback);mHandler.postDelayed(mPreviewTransportFeedback,SHOW_TIMEOUT);
         setProgress();
     }
     private void commitPreviewKeySeek(){
         if(!mPreviewKeySeeking)return;
         mPreviewKeySeeking=false;mHandler.removeMessages(MSG_SEEK);mDragging=false;
         mPreviewTransportFeedbackUntil=android.os.SystemClock.elapsedRealtime()+SHOW_TIMEOUT;
+        mHandler.removeCallbacks(mPreviewTransportFeedback);mHandler.postDelayed(mPreviewTransportFeedback,SHOW_TIMEOUT);
         if(!mIsStopped&&mNextSeek>=0){mSeekComplete=false;Player.sPlayer.seekTo(mNextSeek);updatePauseButton();setProgress();}
     }
 
