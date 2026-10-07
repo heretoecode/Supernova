@@ -213,7 +213,7 @@ try:
     assert french is not None,'Real second subtitle stream was not exposed'
     def subtitle_video_sample(path):
         return subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(path),
-            '-vf','crop=iw/4:ih/4:iw*2/3:ih/8,scale=64:36','-frames:v','1','-f','rawvideo','-pix_fmt','rgb24','-'],check=True,stdout=subprocess.PIPE).stdout
+            '-vf','crop=iw/3:ih/4:iw/10:ih/6,scale=64:36','-frames:v','1','-f','rawvideo','-pix_fmt','rgb24','-'],check=True,stdout=subprocess.PIPE).stdout
     before=subtitle_video_sample(OUT/'subtitle-tracks-before.png')
     x1,y1,x2,y2=map(int,re.findall(r'\d+',french.get('bounds')))
     adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','keyevent','23');time.sleep(.4)
