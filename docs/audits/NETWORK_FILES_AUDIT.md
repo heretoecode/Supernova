@@ -107,3 +107,11 @@ Future Network & Files mock-ups should now accommodate:
 - put.io as either its own entry or another deliberately chosen location
 
 The need for an Overview category remains open to design review. Do not retain it merely because the current implementation has one.
+
+
+## Design approval record — 7 October 2026
+The Network & Files design discussion has now reached an approved future direction. The approved design is recorded in docs/design/NETWORK_FILES.md and its visual references in docs/design/VISUAL_REFERENCE_MANIFEST.md.
+
+Key resolution: vertically centred three-panel layout; structured left rail; Local Storage, Attached Storage, Network Sources, Saved Locations, put.io, Downloads and Library Health; no Overview; no Google Drive/OneDrive/Dropbox placeholders; generic WebDAV represented as a network-source protocol rather than a top-level destination; consistent submenu grammar for Network Sources, Downloads, Library Health and Unmatched Media.
+
+This remains future design authority, not permission to broaden the current fixes candidate and not physical Shield acceptance.
