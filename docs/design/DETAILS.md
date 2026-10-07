@@ -101,3 +101,6 @@ Seasons/Episodes and other horizontal Details rows follow the shared carousel ru
 - This is **approved design documentation**, not an instruction to start implementation in the current **fixes-only** corrective release. Do not modify production code or merge branches without the separate implementation handover.
 
 **Visual authority:** the most recent isolated mock-up depicting only the three top columns and two bottom text-only columns, plus the user's subsequent corrections removing “(8)” and equalising/increasing Cast/Crew row spacing. Its placeholder movie-specific values, unsupported review/awards, file-source guesses and other illustrative text are **not** new provider or data-source approvals.
+
+### Approved visual asset
+[Details information layout — approved uploaded mock-up](references/details-information-approved.png). The image is a composition reference only; the explicit final written refinements above override any image text showing cast/crew counts or pre-refinement row spacing. It does **not** authorise changes to the hero or lower navigation.
