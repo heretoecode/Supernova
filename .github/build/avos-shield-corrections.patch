@@ -226,3 +226,26 @@ index 4872e27..a27e390 100644
  	return 0;
  }
  
+diff --git a/Source/stream_video.c b/Source/stream_video.c
+index f416031..74c0bd1 100644
+--- a/Source/stream_video.c
++++ b/Source/stream_video.c
+@@ -5284,8 +5284,16 @@ int stream_seek_pos( STREAM *s, int pos, int dir, int flags )
+ 		pos = 0;
+ 		
+ 	if( !s->no_duration ) {
+-		// if we have duration, pos is the same as time!!!
+-		ret = stream_seek_time( s, pos, dir, flags );
++		// Paused scrubbing must show the selected position, not the next GOP.
++		// Decode from its preceding keyframe with the retained bounded accurate
++		// preview path; playing transport keeps its established direction policy.
++		if( stream_is_paused( s ) && s->video && s->video->valid ) {
++			int target_ts = RST_TO_TS_TIME( _stream_get_real_time( s, pos ), int );
++			ret = stream_seek_time_frame_accurate( s, pos, target_ts,
++				STREAM_SEEK_BACKWARD, flags );
++		} else {
++			ret = stream_seek_time( s, pos, dir, flags );
++		}
+ 	} else {
+ 		ret = _stream_seek_abortable( s, -1, pos, dir, flags, 0 );
+ 	}

@@ -4,6 +4,15 @@ Authority: [next-version-authority.md](next-version-authority.md), latest design
 
 This is a development register, not physical acceptance. The original physically accepted items remain regression protections; changed visual/interaction behaviour requires subsequent user Shield testing. States are separate: **IMPLEMENTED**, **AUTOMATED VALIDATED**, **RENDER/INTERACTION REVIEWED**, **SHIELD ACCEPTED**. A build/test pass cannot grant the latter. Automated and rendered evidence will be populated after the final validation gates complete.
 
+## Development disposition
+
+These dispositions describe implementation, not physical acceptance. **FIXED** means the scoped correction is implemented; **VERIFIED — NO CODE CHANGE REQUIRED** means that item’s already accepted behaviour was preserved and covered by regressions. Neither grants SHIELD ACCEPTED.
+
+- FIXED: #1–3, #6–8, #10–16, #18, #20–23, #30–32.
+- VERIFIED — NO CODE CHANGE REQUIRED: #4, #5, #9, #17, #19, #24–29, #33, #34. Source components may have changed for other approved corrections; those accepted behaviours remain protected.
+- PARTIAL: #35. Specific failed-logo negative caching and unnecessary section rebinding were corrected. Artwork reliability remains observational; no global closure is claimed from raw request counts or a synthetic test.
+- BLOCKED / NEEDS DECISION: fixes-release numbering only; retained-version candidate is authorised. No unresolved language mapping remains.
+
 ## Original 35 items
 
 Source names below resolve beneath `src/main/java/com/archos/mediacenter/video/`; AVOS patch is `.github/build/avos-shield-corrections.patch`. Tests resolve beneath `src/test/java/`. Existing accepted code was preserved where no correction was required.

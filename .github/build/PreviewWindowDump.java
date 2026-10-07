@@ -28,16 +28,19 @@ public final class PreviewWindowDump {
             info.flags |= AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS | AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS | AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
             automation.setServiceInfo(info);
             AccessibilityNodeInfo root = null;
-            for (int attempt = 0; attempt < 3 && root == null; attempt++) {
+            for (int attempt = 0; attempt < 20 && root == null; attempt++) {
+                AccessibilityNodeInfo active = automation.getRootInActiveWindow();
+                if (active != null && args[0].contentEquals(active.getPackageName())) root = active;
                 for (AccessibilityWindowInfo window : automation.getWindows()) {
-                    if (!window.isFocused()) continue;
+                    if (root != null) break;
+                    if (window.getType() != AccessibilityWindowInfo.TYPE_APPLICATION) continue;
                     AccessibilityNodeInfo candidate = window.getRoot();
                     if (candidate != null && args[0].contentEquals(candidate.getPackageName())) {
                         root = candidate;
                         break;
                     }
                 }
-                if (root == null) Thread.sleep(500);
+                if (root == null) Thread.sleep(50);
             }
             if (root == null) throw new IllegalStateException("Focused application accessibility root unavailable");
             try (FileOutputStream out = new FileOutputStream(args[1])) {
