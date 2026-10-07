@@ -67,3 +67,7 @@ Review of the real 1920×1080 native screenshots showed that a top-right subtitl
 ### Complete people-tier render evidence
 
 Extended the actual rendered Movie Details interaction fixture to supply more than eight Cast and Crew, assert both eight-row caps, shared first-row alignment and Cast-to-Key-Information left alignment, and capture the actual focused people tier. This supplements count/role/text-only tests with composition evidence; it does not grant physical acceptance or claim actual provider data/artwork delivery.
+
+### Refreshed render-fixture identity
+
+Source run 37566521878 caught an alignment-fixture reference to a detached information panel after asynchronous metadata refresh (reported x=0 versus the attached Cast x=42). The geometry assertion now resolves the current semantic panel and requires it to be attached before comparing positions. Both alignment and eight-person assertions remain enforced; production implementation is unchanged.
