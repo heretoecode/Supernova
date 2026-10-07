@@ -111,3 +111,13 @@ Never concatenate an unbounded selected-value list into the toolbar. Use **Filte
 
 ### Vertical movement
 Correct the physical Shield snapping/jumping introduced by row-centering. Keep the active row comfortably/approximately centred where possible, but movement must be smooth and deterministic and exact return restoration takes precedence.
+
+
+## Unmatched / Unscraped ownership — APPROVED 7 October 2026
+This section supersedes all earlier Unmatched toolbar/workflow wording in this document.
+
+Once the approved **Network & Files → Library Health → Unmatched Media** workflow is implemented, **remove the Unmatched / Unscraped control and workflow from both Movies and TV pages entirely**. Do not retain a hidden/conditional Movies/TV toolbar entry as a second user-facing route.
+
+Library Health becomes the single management location for unmatched/unidentified media. Movies and TV remain browsing surfaces for the normal matched library. The underlying matching machinery may be reused, but its user-facing entry belongs to Library Health. See `docs/design/NETWORK_FILES.md` and `docs/audits/UNMATCHED_MEDIA_AUDIT.md`.
+
+This is approved future design direction, not an instruction to broaden the currently active fixes candidate unless that work is explicitly promoted into implementation scope.
