@@ -13,7 +13,7 @@ import java.util.*;
 
 /** Fixed exposed-card composition from HOME §11. Neighbours are affordances, never focus peers. */
 final class PreviewFeaturedCard extends FrameLayout {
-    PreviewFeaturedCard(Context c,List<Entry> entries,int index,Runnable play,Runnable info){
+    PreviewFeaturedCard(Context c,List<Entry> entries,int index,Runnable info){
         super(c);setClipChildren(false);setClipToPadding(false);setTag("semantic:home.featured");
         if(entries.isEmpty())return;
         int current=Math.floorMod(index,entries.size());Entry entry=entries.get(current);
@@ -26,19 +26,18 @@ final class PreviewFeaturedCard extends FrameLayout {
         addView(card,new LayoutParams(-1,-1,Gravity.CENTER));card.addView(art(c,entry),new LayoutParams(-1,-1));
         View gradient=new View(c);gradient.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0xff07131f,0xf007131f,0x1007131f}));card.addView(gradient,new LayoutParams(-1,-1));
         LinearLayout copy=new LinearLayout(c);copy.setOrientation(LinearLayout.VERTICAL);copy.setPadding(dp(24),dp(22),dp(18),dp(18));card.addView(copy,new LayoutParams(-1,-1));
-        TextView title=text(PreviewPages.displayName(entry),30);title.setTag("semantic:featured.title");title.setMaxLines(2);title.setTypeface(null,android.graphics.Typeface.BOLD);copy.addView(title,new LinearLayout.LayoutParams(-1,dp(66)));OfficialTitleArtwork.bind(title,entry.media,false);
+        TextView title=text(PreviewPages.displayName(entry),30);title.setTag("semantic:featured.title");title.setMaxLines(2);title.setTypeface(null,android.graphics.Typeface.BOLD);copy.addView(title,new LinearLayout.LayoutParams(-1,dp(86)));OfficialTitleArtwork.bind(title,entry.media,false);
         List<String> metaValues=new ArrayList<>();if(entry.year()>0)metaValues.add(String.valueOf(entry.year()));
         if(entry.media instanceof Tvshow){Tvshow show=(Tvshow)entry.media;metaValues.add(show.getSeasonCount()+" seasons");}
         else if(entry.media instanceof Video){Video video=(Video)entry.media;long minutes=video.getDurationMs()/60000;if(minutes>0)metaValues.add((minutes>=60?minutes/60+"h ":"")+minutes%60+"m");if(video instanceof Movie){String rating=((Movie)video).getContentRating();if(rating!=null&&!rating.trim().isEmpty())metaValues.add(rating);}}
-        if(!entry.genres.isEmpty())metaValues.add(entry.genres.replace("|"," · "));TextView metadata=text(android.text.TextUtils.join(" · ",metaValues),12);metadata.setMaxLines(2);copy.addView(metadata,new LinearLayout.LayoutParams(-1,dp(34)));
+        if(!entry.genres.isEmpty())metaValues.add(entry.genres.replace("|"," · "));TextView metadata=text(android.text.TextUtils.join(" · ",metaValues),12);metadata.setMaxLines(2);metadata.setTag("semantic:featured.metadata");LinearLayout.LayoutParams metadataSize=new LinearLayout.LayoutParams(-1,dp(34));metadataSize.topMargin=dp(24);copy.addView(metadata,metadataSize);
         String plot=entry.media instanceof Tvshow?((Tvshow)entry.media).getPlot():entry.media instanceof Video?((Video)entry.media).getDescriptionBody():"";
-        TextView synopsis=text(plot==null?"":plot,13);synopsis.setMaxLines(3);copy.addView(synopsis,new LinearLayout.LayoutParams(-1,dp(58)));copy.addView(new View(c),new LinearLayout.LayoutParams(1,0,1));
+        TextView synopsis=text(plot==null?"":plot,13);synopsis.setMaxLines(3);synopsis.setTag("semantic:featured.synopsis");LinearLayout.LayoutParams synopsisSize=new LinearLayout.LayoutParams(-1,dp(58));synopsisSize.topMargin=dp(12);copy.addView(synopsis,synopsisSize);copy.addView(new View(c),new LinearLayout.LayoutParams(1,0,1));
         LinearLayout actions=new LinearLayout(c);actions.setClipChildren(false);copy.addView(actions,new LinearLayout.LayoutParams(-1,dp(40)));
-        TextView resume=action(entry.media instanceof Video&&((Video)entry.media).getResumeMs()>0?"Resume":"Play",play);resume.setTag("hero:play");actions.addView(resume,new LinearLayout.LayoutParams(-2,-1));
-        TextView more=action("More Info",info);more.setTag("hero:info");LinearLayout.LayoutParams gap=new LinearLayout.LayoutParams(-2,-1);gap.leftMargin=dp(12);actions.addView(more,gap);
+        TextView more=action("More Info",info);more.setTag("hero:info");actions.addView(more,new LinearLayout.LayoutParams(-2,-1));
     }
     @Override protected void onMeasure(int w,int h){
-        int width=MeasureSpec.getSize(w);for(int i=0;i<getChildCount();i++){View child=getChildAt(i);LayoutParams p=(LayoutParams)child.getLayoutParams();boolean active="semantic:featured.active".equals(child.getTag());p.width=Math.round(width*(active?.86f:.86f));p.height=active?-1:Math.max(1,MeasureSpec.getSize(h)-dp(24));p.gravity=(active?Gravity.CENTER:p.gravity|Gravity.CENTER_VERTICAL);if(!active)child.setTranslationX((p.gravity&Gravity.HORIZONTAL_GRAVITY_MASK)==Gravity.LEFT?-width*.80f:width*.80f);}
+        int width=MeasureSpec.getSize(w);for(int i=0;i<getChildCount();i++){View child=getChildAt(i);LayoutParams p=(LayoutParams)child.getLayoutParams();boolean active="semantic:featured.active".equals(child.getTag());p.width=Math.round(width*(active?.86f:.86f));p.height=-1;p.gravity=(active?Gravity.CENTER:p.gravity|Gravity.CENTER_VERTICAL);if(!active)child.setTranslationX((p.gravity&Gravity.HORIZONTAL_GRAVITY_MASK)==Gravity.LEFT?-width*.80f:width*.80f);}
         View active=findViewWithTag("semantic:featured.active");if(active instanceof ViewGroup){View copy=((ViewGroup)active).getChildAt(2);copy.getLayoutParams().width=Math.round(width*.86f*.55f);}
         super.onMeasure(w,h);
     }

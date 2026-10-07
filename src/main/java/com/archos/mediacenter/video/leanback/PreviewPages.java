@@ -81,7 +81,7 @@ public final class PreviewPages extends FrameLayout {
         if(cells.get(pos).type==RAIL){List<Entry> entries=(List<Entry>)cells.get(pos).value;for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(a.child)){a.inner=i;break;}}
         anchors[tab]=a;
         if(cells.get(pos).type==RAIL&&item instanceof ViewGroup){
-            RecyclerView rail=(RecyclerView)((ViewGroup)item).getChildAt(0);
+            RecyclerView rail=homeRail((ViewGroup)item);
             railScrollStates.put(a.cell,rail.getLayoutManager().onSaveInstanceState());
         }
     }
@@ -128,8 +128,8 @@ public final class PreviewPages extends FrameLayout {
                 if(!hasFocus()||suspended){restoringFocus=false;return;}
                 View item=layout.findViewByPosition(target);
                 if(item==null||list.hasPendingAdapterUpdates()){if(attempts++<8){list.postOnAnimation(this);return;}}
-                if(item!=null&&anchor!=null&&target<cells.size()&&cells.get(target).type==RAIL){
-                    RecyclerView rail=(RecyclerView)((ViewGroup)item).getChildAt(0);
+                if(item!=null&&anchor!=null&&target<cells.size()&&cells.get(target).type==RAIL&&tagged(item,anchor.child)==null){
+                    RecyclerView rail=homeRail((ViewGroup)item);
                     List<Entry> entries=(List<Entry>)cells.get(target).value;
                     int inner=Math.min(anchor.inner,Math.max(0,entries.size()-1));
                     for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(anchor.child)){inner=i;break;}
@@ -167,7 +167,7 @@ public final class PreviewPages extends FrameLayout {
         if(featuredMoving||featuredCandidates().size()<2)return;
         View focused=findFocus();View card=focused==null?null:list.findContainingItemView(focused);
         featuredMoving=true;
-        Runnable next=()->{for(android.view.ViewParent parent=getParent();parent!=null;parent=parent.getParent())if(parent instanceof TopNavigation){((TopNavigation)parent).setFeaturedDirection(direction);break;}featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;renderFeatured();};
+        Runnable next=()->{featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;renderFeatured();};
         if(card!=null)card.animate().translationX(-dp(18)*direction).alpha(.3f).setDuration(150).withEndAction(next).start();else next.run();
     }
     private final android.net.Uri[] lastArtwork=new android.net.Uri[4];
@@ -194,8 +194,8 @@ public final class PreviewPages extends FrameLayout {
             if(cell.value instanceof Entry)visible.add((Entry)cell.value);
             else if(cell.type==RAIL){
                 View item=list.getChildAt(n);
-                if(item instanceof ViewGroup&&((ViewGroup)item).getChildCount()>0&&((ViewGroup)item).getChildAt(0) instanceof RecyclerView)
-                    collectVisibleRail((RecyclerView)((ViewGroup)item).getChildAt(0),(List<Entry>)cell.value,visible,next);
+                if(item instanceof ViewGroup&&homeRail((ViewGroup)item)!=null)
+                    collectVisibleRail(homeRail((ViewGroup)item),(List<Entry>)cell.value,visible,next);
             }
         }
         for(int n=last+1;n<Math.min(cells.size(),last+13);n++)if(cells.get(n).value instanceof Entry)next.add((Entry)cells.get(n).value);
@@ -242,7 +242,7 @@ public final class PreviewPages extends FrameLayout {
         worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{try{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});}finally{worker.shutdown();}});}
     @Override protected void onDetachedFromWindow(){removeCallbacks(rotateFeatured);removeCallbacks(providerRefresh);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);preferences.unregisterOnSharedPreferenceChangeListener(providerSettings);super.onDetachedFromWindow();}
     private Entry featured(){List<Entry> entries=tab==1?snapshot.movies:tab==2?snapshot.shows:featuredCandidates();return entries.isEmpty()?null:entries.get(Math.floorMod(featuredIndex,entries.size()));}
-    private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==3||entry==null?null:entry.backdrop);}
+    private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==0||tab==3||entry==null?null:entry.backdrop);}
     public static String displayName(Entry e){return e.media instanceof Episode?((Episode)e.media).getShowName():e.media.getName();}
     private void open(Entry e,View v){beginReturn(v,"details");click.open(new Presenter.ViewHolder(v),e.media);}
     private void play(Entry e,View v){
@@ -275,6 +275,7 @@ public final class PreviewPages extends FrameLayout {
     }
     private java.util.function.Consumer<Boolean> scrollListener=value->{};
     private int navigationInset,utilityNavigationInset;
+    @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);if(h!=oldh)post(()->{if(tab==0&&!cells.isEmpty()&&cells.get(0).type==HERO)renderFeatured();});}
     public void setNavigationInset(int inset){navigationInset=inset;applyNavigationInset();}
     public void setUtilityNavigationInset(int inset){if(utilityNavigationInset==inset)return;utilityNavigationInset=inset;applyNavigationInset();}
     private void applyNavigationInset(){list.setPadding(dp(28),tab==3?utilityNavigationInset:dp(10)+navigationInset,dp(28),tab==3?0:dp(12));}
@@ -342,7 +343,7 @@ public final class PreviewPages extends FrameLayout {
             View focus=findFocus(),item=focus==null?null:list.findContainingItemView(focus);
             int position=item==null?-1:list.getChildAdapterPosition(item);
             if(position>=0&&cells.get(position).type==RAIL&&!cells.get(position).homeRowId.isEmpty()&&item instanceof ViewGroup){
-                View child=((ViewGroup)item).getChildAt(0);
+                View child=homeRail((ViewGroup)item);
                 if(child instanceof RecyclerView){RecyclerView rail=(RecyclerView)child;View card=rail.findContainingItemView(focus);
                     if(card!=null&&rail.getChildAdapterPosition(card)==0){showRowControls(cells.get(position).homeRowId,card);return true;}
                 }
@@ -373,15 +374,20 @@ public final class PreviewPages extends FrameLayout {
         }
         return super.dispatchKeyEvent(event);
     }
+    private RecyclerView homeRail(ViewGroup row){for(int i=0;i<row.getChildCount();i++)if(row.getChildAt(i) instanceof RecyclerView)return (RecyclerView)row.getChildAt(i);return null;}
     private View rowControlOverlay;private Runnable rowControlClose;private int rowControlConsumedKey=-1;
     private void showRowControls(String id,View opener){
         if(rowControlOverlay!=null)return;
         rememberFocus();final FocusAnchor origin=anchors[tab];
-        LinearLayout controls=new LinearLayout(getContext());controls.setTag("semantic:home.row.controls");controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(dp(8),dp(8),dp(8),dp(8));controls.setBackground(PreviewDialog.menuSurface(getContext()));controls.setElevation(dp(12));
+        LinearLayout controls=new LinearLayout(getContext());controls.setTag("semantic:home.row.controls");controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,dp(10),dp(12),dp(10));
         final boolean[] moving={false};TextView move=button("Move",()->{}),hide=button("Hide",()->{});move.setTag("semantic:home.row.move");hide.setTag("semantic:home.row.hide");controls.addView(move,new LinearLayout.LayoutParams(dp(92),dp(40)));controls.addView(hide,new LinearLayout.LayoutParams(dp(92),dp(40)));
-        int[] cardAt=new int[2],pageAt=new int[2];opener.getLocationOnScreen(cardAt);getLocationOnScreen(pageAt);FrameLayout.LayoutParams size=new FrameLayout.LayoutParams(dp(108),dp(96));size.leftMargin=dp(8);size.topMargin=Math.max(list.getPaddingTop(),Math.min(getHeight()-dp(108),cardAt[1]-pageAt[1]));addView(controls,size);rowControlOverlay=controls;
-        Runnable close=()->{View owner=list.findContainingItemView(opener);int position=owner==null?-1:list.getChildAdapterPosition(owner);boolean exact=opener.isAttachedToWindow()&&(origin==null||(position>=0&&position<cells.size()&&origin.cell.equals(cellKey(cells.get(position)))&&java.util.Objects.equals(origin.child,opener.getTag())));if(exact)opener.requestFocus();else{anchors[tab]=origin;holdFocus();}removeView(controls);rowControlOverlay=null;rowControlClose=null;if(!exact)restoreFocus();};rowControlClose=close;
-        move.setOnClickListener(v->{moving[0]=!moving[0];move.setText(moving[0]?"↕ Move":"Move");});hide.setOnClickListener(v->{PreviewHomeRows.hideRow(getContext(),id);removeView(controls);rowControlOverlay=null;rowControlClose=null;render("row_hidden");holdFocus();restoreFocus();});
+        View owner=list.findContainingItemView(opener);if(!(owner instanceof LinearLayout))return;
+        LinearLayout row=(LinearLayout)owner;RecyclerView rail=homeRail(row);if(rail==null)return;
+        LinearLayout.LayoutParams original=(LinearLayout.LayoutParams)rail.getLayoutParams();int left=rail.getPaddingLeft(),right=rail.getPaddingRight();
+        rail.setLayoutParams(new LinearLayout.LayoutParams(0,dp(125),1));rail.setPadding(dp(12),dp(10),dp(12),dp(10));row.addView(controls,0,new LinearLayout.LayoutParams(dp(108),dp(125)));rowControlOverlay=controls;
+        Runnable removeControls=()->{row.removeView(controls);rail.setLayoutParams(original);rail.setPadding(left,dp(10),right,dp(10));};
+        Runnable close=()->{View currentOwner=list.findContainingItemView(opener);int position=currentOwner==null?-1:list.getChildAdapterPosition(currentOwner);boolean exact=opener.isAttachedToWindow()&&(origin==null||(position>=0&&position<cells.size()&&origin.cell.equals(cellKey(cells.get(position)))&&java.util.Objects.equals(origin.child,opener.getTag())));if(exact)opener.requestFocus();else{anchors[tab]=origin;holdFocus();}removeControls.run();rowControlOverlay=null;rowControlClose=null;if(!exact)restoreFocus();};rowControlClose=close;
+        move.setOnClickListener(v->{moving[0]=!moving[0];move.setText(moving[0]?"↕ Move":"Move");});hide.setOnClickListener(v->{PreviewHomeRows.hideRow(getContext(),id);removeControls.run();rowControlOverlay=null;rowControlClose=null;render("row_hidden");holdFocus();restoreFocus();});
         for(TextView control:new TextView[]{move,hide})control.setOnKeyListener((v,key,event)->{
             if(key!=KeyEvent.KEYCODE_BACK&&key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT&&key!=KeyEvent.KEYCODE_DPAD_UP&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return true;
@@ -547,15 +553,15 @@ public final class PreviewPages extends FrameLayout {
             if(c.type==POSTER&&h.itemView instanceof LinearLayout){Entry e=(Entry)c.value;columns[tab].bind((LinearLayout)h.itemView,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->open(e,v));h.itemView.setOnLongClickListener(v->{contextMenu(e,v,false);return true;});return;}
             if(c.type==POSTER){Entry e=(Entry)c.value;h.presenter.bindEntry(h.card,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->open(e,v));h.itemView.setOnLongClickListener(v->{contextMenu(e,v,false);return true;});return;}
             LinearLayout v=(LinearLayout)h.itemView;
-            if(c.type==RAIL&&v.getChildCount()==1&&v.getChildAt(0) instanceof RecyclerView){RecyclerView rail=(RecyclerView)v.getChildAt(0);if(rail.getAdapter() instanceof RailAdapter){((RailAdapter)rail.getAdapter()).update((List<Entry>)c.value);return;}}
-            v.removeAllViews();v.setFocusable(false);v.setOnClickListener(null);v.setBackground(null);v.setOrientation(LinearLayout.HORIZONTAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));
+            if(c.type==RAIL&&homeRail(v)!=null){RecyclerView rail=homeRail(v);if(rail.getAdapter() instanceof RailAdapter){((RailAdapter)rail.getAdapter()).update((List<Entry>)c.value);return;}}
+            v.removeAllViews();v.setFocusable(false);v.setOnClickListener(null);v.setBackground(null);v.setOrientation(LinearLayout.HORIZONTAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));if(tab==0){v.setClipChildren(false);v.setClipToPadding(false);}
             if(c.type==HERO){Entry e=(Entry)c.value;v.setOrientation(LinearLayout.VERTICAL);v.setGravity(Gravity.TOP);v.setPadding(0,dp(10),0,dp(8));
                 v.setMinimumHeight(dp(tab==0?244:76));
                 v.setLayoutParams(new RecyclerView.LayoutParams(-1,tab==0?dp(244):android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
                 if(tab==0){
-                    int heroHeight=Math.max(dp(280),getHeight()-list.getPaddingTop()-list.getPaddingBottom()-dp(170));
+                    int heroHeight=Math.max(dp(280),getHeight()-list.getPaddingTop()-dp(110));
                     v.setMinimumHeight(heroHeight);v.setLayoutParams(new RecyclerView.LayoutParams(-1,heroHeight));v.setPadding(0,dp(12),0,dp(18));
-                    PreviewFeaturedCard featured=new PreviewFeaturedCard(getContext(),featuredCandidates(),featuredIndex,()->play(e,v),()->open(e,v));v.addView(featured,new LinearLayout.LayoutParams(-1,-1));
+                    PreviewFeaturedCard featured=new PreviewFeaturedCard(getContext(),featuredCandidates(),featuredIndex,()->open(e,v));v.addView(featured,new LinearLayout.LayoutParams(-1,-1));
                     v.animate().cancel();v.setAlpha(1f);v.setTranslationX(0);if(featuredDirection!=0){v.setTranslationX(dp(36)*featuredDirection);v.setAlpha(.5f);v.animate().translationX(0).alpha(1f).setDuration(250).start();featuredDirection=0;}
                 }else{TextView title=text(c.title,30);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title);String[] lines=PreviewLibrarySummary.describe(getContext(),snapshot,tab==2).split("\n");String[] icons={tab==2?"TV Shows":"Movies","Total Size","Local Storage","Network"};for(int line=0;line<lines.length;line++){TextView summary=text(lines[line],13);summary.setTextColor(0xffe1e9ef);summary.setPadding(0,dp(2),0,dp(2));if(line<icons.length)PreviewIcon.apply(summary,icons[line],17);v.addView(summary);}}
             }
@@ -579,7 +585,7 @@ public final class PreviewPages extends FrameLayout {
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));
                 }else{TextView title=text(c.title,tab==3&&c.title.equals("Network & files")?30:19);title.setTextColor(0xff9ed4f7);v.addView(title);}
             }
-            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setClipChildren(false);rail.setClipToPadding(false);rail.setPadding(dp(12),dp(10),dp(12),dp(10));rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(rail,"home.rail","row_bound",0,rail.getAdapter().getItemCount(),true);rail.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView row,int dx,int dy){scheduleVisibleEnrichment();}});LinearLayout.LayoutParams strip=new LinearLayout.LayoutParams(-1,dp(125));strip.rightMargin=-list.getPaddingRight();v.addView(rail,strip);android.os.Parcelable railState=railScrollStates.get(cellKey(c));if(railState!=null)rail.getLayoutManager().onRestoreInstanceState(railState);}
+            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setClipChildren(false);rail.setClipToPadding(false);rail.setPadding(list.getPaddingLeft()+dp(12),dp(10),list.getPaddingRight()+dp(12),dp(10));rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(rail,"home.rail","row_bound",0,rail.getAdapter().getItemCount(),true);rail.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView row,int dx,int dy){scheduleVisibleEnrichment();}});LinearLayout.LayoutParams strip=new LinearLayout.LayoutParams(-1,dp(125));strip.leftMargin=-list.getPaddingLeft();strip.rightMargin=-list.getPaddingRight();v.addView(rail,strip);android.os.Parcelable railState=railScrollStates.get(cellKey(c));if(railState!=null)rail.getLayoutManager().onRestoreInstanceState(railState);}
             else if(c.type==STORAGE){Box b=(Box)c.value;v.setPadding(dp(12),dp(12),dp(12),dp(12));RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,dp(76));lp.setMargins(0,0,dp(12),dp(12));v.setLayoutParams(lp);v.setBackground(PreviewDialog.surface(getContext(),false));v.setForeground(PreviewDialog.focus(getContext()));v.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);v.setFocusable(true);v.setClickable(true);
                 ImageView icon=new ImageView(getContext());icon.setImageDrawable(new StorageIcon(b.getBoxId()));v.addView(icon,new LinearLayout.LayoutParams(dp(35),dp(35)));
                 LinearLayout labels=new LinearLayout(getContext());labels.setOrientation(LinearLayout.VERTICAL);labels.setPadding(dp(12),0,0,0);
