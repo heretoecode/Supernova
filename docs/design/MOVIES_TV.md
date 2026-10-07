@@ -78,3 +78,36 @@ The same historical record explicitly rejected permanent left-sidebar primary na
 
 
 See `docs/project/HISTORY_RECONCILIATION.md` for recovered historical decisions and supersession context.
+
+
+## Next-version toolbar and filter amendments — APPROVED
+
+These rules supersede conflicting older toolbar/filter wording above.
+
+### Toolbar
+Grid: **Grid/List · Filters · Sort · Order · Unmatched (only when present)**.
+
+List: **Grid/List · Filters · Sort · Order · Columns · Unmatched (only when present)**.
+
+- Grid/List is leftmost.
+- Sort and Order remain separate.
+- Order has an explicit label, e.g. **Order: Newest First**; an icon plus value alone is insufficient.
+- Columns is List-only where applicable.
+- Unmatched is always rightmost and hidden entirely when no unmatched media exists.
+- Move the complete control row down so controls visually sit **on the divider line**, not above it.
+- Preserve separate remembered Movies and TV state.
+
+### Live filters
+A tick is the confirmation. **Remove Done** from Genre, Year and Streaming Service filter selection.
+
+Genre: **All Genres** at top, available genres in the middle; selecting/toggling immediately updates the library. Back only navigates out. All Genres clears individual genre selections immediately.
+
+Year: show only years represented in the current library; tick/untick applies immediately; keep **Clear Selection**; remove Done.
+
+Streaming Service: tick/untick applies immediately; remove Done.
+
+### Compact summary
+Never concatenate an unbounded selected-value list into the toolbar. Use **Filters** when none, **Filters: Crime** (or equivalent concise value) for one, and **Filters (N)** for multiple selections. Submenu ticks show the exact selections.
+
+### Vertical movement
+Correct the physical Shield snapping/jumping introduced by row-centering. Keep the active row comfortably/approximately centred where possible, but movement must be smooth and deterministic and exact return restoration takes precedence.
