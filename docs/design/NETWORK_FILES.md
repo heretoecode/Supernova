@@ -1,15 +1,15 @@
 # Network & Files — Design and Behaviour Authority
 
-Status: **APPROVED/current; three-panel physical correction active**
+Status: **APPROVED FUTURE DESIGN DIRECTION — reconciled 7 October 2026**
 
 ## Core model
 Three-panel mental model:
 **Left = Where am I? · Middle = What can I select? · Right = What is it / what can I do with it?**
 Use small contextual overlays for finite choices. Full-screen transition only for a genuine workspace such as the filesystem browser.
 
-Left rail exactly:
+Historical 4.1.7 left rail (SUPERSEDED by the approved 7 October direction below):
 **Overview · Local Storage · Network Shares · Cloud Services · Saved Locations**.
-Advanced does not belong here. Entry focuses Overview. Focus alone never activates/expands middle content. UP/DOWN one rail item; Overview+UP returns to global Network & Files; final+DOWN stays; RIGHT enters first meaningful middle control; LEFT from centre returns to originating category.
+Do not implement that historical list as current authority. The approved rail is **Local Storage · Attached Storage · Network Sources · Saved Locations · put.io · Downloads · Library Health**. Focus alone never activates content; D-pad movement and exact focus restoration follow the approved navigation rules below.
 
 ## Overview / scanning
 Scan Library and Network Scanning are separate.
