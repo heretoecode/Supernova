@@ -123,9 +123,11 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
             });
             return new ScrapeSearchResult(new ArrayList<>(), false, com.archos.mediascraper.ScrapeStatus.ERROR, error);
         }
-        mSearchInfo.setUserInput(text+ " S1E1");
+        mSearchInfo.setUserInput(com.archos.mediacenter.video.leanback.search.PreviewSearchText.titleKey(text)+ " S1E1");
         // search for param + " S1E1" so we get show results only, filename is ignored but has to be != null
-        return mScraper.getAllMatches(mSearchInfo);
+        ScrapeSearchResult result=mScraper.getAllMatches(mSearchInfo);
+        if(result.isOkay()&&result.results!=null)result.results.sort(java.util.Comparator.comparingInt(candidate->com.archos.mediacenter.video.leanback.search.PreviewSearchText.rank(text,candidate.getTitle())));
+        return result;
     }
 
     @Override

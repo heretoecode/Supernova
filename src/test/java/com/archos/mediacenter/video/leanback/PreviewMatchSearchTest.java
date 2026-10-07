@@ -24,7 +24,7 @@ public class PreviewMatchSearchTest {
         assertEquals("T",input.getText().toString());assertTrue(letter.hasFocus());
         letter.performClick();assertEquals("TT",input.getText().toString());assertTrue(letter.hasFocus());
         page.setResults(Collections.singletonList(movie("Example",2024)));PreviewPagesTest.layout(page);
-        android.widget.ImageView poster=page.findViewWithTag("semantic:match.poster:0");assertEquals(60,poster.getWidth());assertEquals(90,poster.getHeight());
+        android.widget.ImageView poster=page.findViewWithTag("semantic:match.poster:0");assertEquals(92,poster.getWidth());assertEquals(65,poster.getHeight());
         assertTrue(poster.getContentDescription().toString().contains("Example"));assertTrue(letter.hasFocus());
         host.finish();
     }

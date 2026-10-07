@@ -4,13 +4,19 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class PreviewLanguageIconTest {
-    @Test public void genericLanguagesNeverInventCountries(){
-        for(String value:new String[]{null,"","en","eng","English","pt","Portuguese","default","English (UK)","en-001","en-XX"})assertEquals("",PreviewLanguageIcon.country(value));
+    @Test public void unknownAndInvalidRegionsDoNotInventCountries(){
+        for(String value:new String[]{null,"","English","Portuguese","default","English (UK)","en-001","en-XX"})assertEquals("",PreviewLanguageIcon.country(value));
     }
     @Test public void genericLanguageIdentifiersAreDistinctWithoutInventingFlags(){
         assertEquals("EN",PreviewLanguageIcon.languageLabel("eng"));assertEquals("PT",PreviewLanguageIcon.languageLabel("pt"));
         assertEquals("ZH",PreviewLanguageIcon.languageLabel("zh-Hant-TW"));assertEquals("",PreviewLanguageIcon.languageLabel("English"));
         assertEquals("",PreviewLanguageIcon.languageLabel("und"));assertEquals("",PreviewLanguageIcon.languageLabel(null));
+    }
+    @Test public void approvedGenericDefaultsAreSharedAcrossIsoAliases(){
+        assertEquals("US",PreviewLanguageIcon.country("en"));assertEquals("US",PreviewLanguageIcon.country("eng"));
+        assertEquals("BR",PreviewLanguageIcon.country("pt"));assertEquals("CN",PreviewLanguageIcon.country("zh"));
+        assertEquals("ES",PreviewLanguageIcon.country("es"));assertEquals("SA",PreviewLanguageIcon.country("ar"));
+        assertEquals("FR",PreviewLanguageIcon.country("fr"));assertEquals("DE",PreviewLanguageIcon.country("de"));assertEquals("JP",PreviewLanguageIcon.country("ja"));
     }
     @Test public void explicitLocalesKeepTheirCountry(){
         assertEquals("GB",PreviewLanguageIcon.country("en-GB"));assertEquals("BR",PreviewLanguageIcon.country("pt_BR"));

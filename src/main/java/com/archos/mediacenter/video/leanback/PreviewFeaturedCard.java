@@ -1,0 +1,52 @@
+package com.archos.mediacenter.video.leanback;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Outline;
+import android.graphics.drawable.GradientDrawable;
+import android.view.*;
+import android.widget.*;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
+import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.squareup.picasso.Picasso;
+import java.util.*;
+
+/** Fixed exposed-card composition from HOME §11. Neighbours are affordances, never focus peers. */
+final class PreviewFeaturedCard extends FrameLayout {
+    PreviewFeaturedCard(Context c,List<Entry> entries,int index,Runnable play,Runnable info){
+        super(c);setClipChildren(false);setClipToPadding(false);setTag("semantic:home.featured");
+        if(entries.isEmpty())return;
+        int current=Math.floorMod(index,entries.size());Entry entry=entries.get(current);
+        for(int direction:new int[]{-1,1})if(entries.size()>1){
+            ImageView neighbour=art(c,entries.get(Math.floorMod(current+direction,entries.size())));
+            neighbour.setAlpha(.45f);neighbour.setTag(direction<0?"semantic:featured.previous":"semantic:featured.next");
+            LayoutParams size=new LayoutParams(-1,-1);size.gravity=direction<0?Gravity.LEFT:Gravity.RIGHT;addView(neighbour,size);
+        }
+        FrameLayout card=new FrameLayout(c);card.setTag("semantic:featured.active");rounded(card,c);card.setElevation(dp(8));
+        addView(card,new LayoutParams(-1,-1,Gravity.CENTER));card.addView(art(c,entry),new LayoutParams(-1,-1));
+        View gradient=new View(c);gradient.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0xff07131f,0xf007131f,0x1007131f}));card.addView(gradient,new LayoutParams(-1,-1));
+        LinearLayout copy=new LinearLayout(c);copy.setOrientation(LinearLayout.VERTICAL);copy.setPadding(dp(24),dp(22),dp(18),dp(18));card.addView(copy,new LayoutParams(-1,-1));
+        TextView title=text(PreviewPages.displayName(entry),30);title.setTag("semantic:featured.title");title.setMaxLines(2);title.setTypeface(null,android.graphics.Typeface.BOLD);copy.addView(title,new LinearLayout.LayoutParams(-1,dp(66)));OfficialTitleArtwork.bind(title,entry.media,false);
+        String meta=entry.year()>0?String.valueOf(entry.year()):"";
+        if(entry.media instanceof Tvshow){Tvshow show=(Tvshow)entry.media;meta+=" · "+show.getSeasonCount()+" seasons";}
+        else if(entry.media instanceof Video){Video video=(Video)entry.media;long minutes=video.getDurationMs()/60000;if(minutes>0)meta+=" · "+(minutes>=60?minutes/60+"h ":"")+minutes%60+"m";if(video instanceof Movie&&((Movie)video).getContentRating()!=null)meta+=" · "+((Movie)video).getContentRating();}
+        if(!entry.genres.isEmpty())meta+=" · "+entry.genres.replace("|"," · ");TextView metadata=text(meta,12);metadata.setMaxLines(2);copy.addView(metadata,new LinearLayout.LayoutParams(-1,dp(34)));
+        String plot=entry.media instanceof Tvshow?((Tvshow)entry.media).getPlot():entry.media instanceof Video?((Video)entry.media).getDescriptionBody():"";
+        TextView synopsis=text(plot==null?"":plot,13);synopsis.setMaxLines(3);copy.addView(synopsis,new LinearLayout.LayoutParams(-1,dp(58)));copy.addView(new View(c),new LinearLayout.LayoutParams(1,0,1));
+        LinearLayout actions=new LinearLayout(c);actions.setClipChildren(false);copy.addView(actions,new LinearLayout.LayoutParams(-1,dp(40)));
+        TextView resume=action(entry.media instanceof Video&&((Video)entry.media).getResumeMs()>0?"Resume":"Play",play);resume.setTag("hero:play");actions.addView(resume,new LinearLayout.LayoutParams(-2,-1));
+        TextView more=action("More Info",info);more.setTag("hero:info");LinearLayout.LayoutParams gap=new LinearLayout.LayoutParams(-2,-1);gap.leftMargin=dp(12);actions.addView(more,gap);
+    }
+    @Override protected void onMeasure(int w,int h){
+        int width=MeasureSpec.getSize(w);for(int i=0;i<getChildCount();i++){View child=getChildAt(i);LayoutParams p=(LayoutParams)child.getLayoutParams();boolean active="semantic:featured.active".equals(child.getTag());p.width=Math.round(width*(active?.86f:.86f));p.height=active?-1:Math.max(1,MeasureSpec.getSize(h)-dp(24));p.gravity=(active?Gravity.CENTER:p.gravity|Gravity.CENTER_VERTICAL);if(!active)child.setTranslationX((p.gravity&Gravity.HORIZONTAL_GRAVITY_MASK)==Gravity.LEFT?-width*.80f:width*.80f);}
+        View active=findViewWithTag("semantic:featured.active");if(active instanceof ViewGroup){View copy=((ViewGroup)active).getChildAt(2);copy.getLayoutParams().width=Math.round(width*.86f*.55f);}
+        super.onMeasure(w,h);
+    }
+    private ImageView art(Context c,Entry e){ImageView image=new ImageView(c);image.setScaleType(ImageView.ScaleType.CENTER_CROP);rounded(image,c);android.net.Uri uri=e.backdrop!=null?e.backdrop:e.media.getPosterUri();if(uri!=null)com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(image,uri,0,"home.featured","backdrop",Picasso.get().load(uri).resize(dp(960),dp(540)).centerCrop().noFade(),true);return image;}
+    private void rounded(View v,Context c){GradientDrawable bg=new GradientDrawable();bg.setColor(0xff07131f);bg.setCornerRadius(dp(12));v.setBackground(bg);v.setClipToOutline(true);}
+    private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextSize(size);t.setTextColor(Color.WHITE);t.setIncludeFontPadding(false);t.setEllipsize(android.text.TextUtils.TruncateAt.END);return t;}
+    private TextView action(String label,Runnable run){TextView t=text(label,13);t.setGravity(Gravity.CENTER);t.setPadding(dp(14),0,dp(14),0);t.setFocusable(true);t.setFocusableInTouchMode(true);t.setBackground(PreviewDialog.actionContainerFocus(getContext()));t.setOnClickListener(v->run.run());return t;}
+    @Override protected void onDetachedFromWindow(){cancel(this);super.onDetachedFromWindow();}
+    private void cancel(View v){if(v instanceof ImageView)com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel((ImageView)v);if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)cancel(((ViewGroup)v).getChildAt(i));}
+    private int dp(int n){return PreviewDialog.dp(getContext(),n);}
+}

@@ -58,7 +58,7 @@ public final class PreviewCardPresenter extends Presenter {
             };
             GradientDrawable outline = new GradientDrawable();
             outline.setColor(0xc00b1b29); outline.setCornerRadius(dp(6));
-            body.setBackground(outline); body.setClipToOutline(true);
+            body.setBackground(outline); body.setClipToOutline(false);
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
             if (style == Style.POSTER) bp.height += dp(30);
@@ -101,9 +101,9 @@ public final class PreviewCardPresenter extends Presenter {
         private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
         void updateFocus() {
             if(isFocused())com.archos.mediacenter.video.diagnostics.Diagnostics.focusedMedia(diagnosticMediaId);
-            setForeground(isFocused()?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
+            View unit=getChildAt(0);setForeground(null);unit.setForeground(isFocused()?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
-            image.setAlpha(1f);animate().scaleX(isFocused()?1.08f:1f).scaleY(isFocused()?1.08f:1f).setDuration(140).start();
+            image.setAlpha(1f);unit.animate().scaleX(isFocused()?1.08f:1f).scaleY(isFocused()?1.08f:1f).setDuration(140).start();
             title.setTextColor(isFocused()?Color.WHITE:0xffc0ccd6);
             // Poster names remain accessible without permanently covering the artwork.
             caption.setVisibility(View.VISIBLE);

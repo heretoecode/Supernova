@@ -121,8 +121,9 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
             try{ScrapeSearchResult direct=com.archos.mediacenter.video.utils.DirectMovieLookup.find(requireContext().getApplicationContext(),text,mVideo.getFileUri());if(direct!=null)return direct;}
             catch(Exception failed){return new ScrapeSearchResult(java.util.Collections.emptyList(),false,com.archos.mediascraper.ScrapeStatus.ERROR,failed);}
         }
-        mSearchInfo.setUserInput(text);
+        mSearchInfo.setUserInput(com.archos.mediacenter.video.leanback.search.PreviewSearchText.titleKey(text));
         ScrapeSearchResult result = mScraper.getAllMatches(mSearchInfo);
+        if(result.isOkay()&&result.results!=null)result.results.sort(java.util.Comparator.comparingInt(candidate->com.archos.mediacenter.video.leanback.search.PreviewSearchText.rank(text,candidate.getTitle())));
         if (result.isOkay() && result.results != null && result.results.size() > SEARCH_RESULT_MAX_ITEMS) {
             result.results.subList(SEARCH_RESULT_MAX_ITEMS, result.results.size()).clear();
         }

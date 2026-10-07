@@ -14,6 +14,8 @@ public final class PreviewKeyboard extends LinearLayout {
     private final List<List<TextView>> keys = new ArrayList<>();
     private TextView lastKey;
     private Runnable leaveDown;
+    private boolean containTop;
+    public void setContainTop(boolean value) { containTop = value; }
     public void setLeaveDown(Runnable action) { leaveDown = action; }
 
     public PreviewKeyboard(Context context, EditText input, Runnable leaveRight) {
@@ -63,7 +65,7 @@ public final class PreviewKeyboard extends LinearLayout {
                     }
                     if (code == KeyEvent.KEYCODE_DPAD_UP || code == KeyEvent.KEYCODE_DPAD_DOWN) {
                         int targetRow = r + (code == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1);
-                        if (targetRow < 0) return false; // The host owns entry into global navigation.
+                        if (targetRow < 0) return containTop; // The host owns entry into global navigation.
                         if (targetRow >= keys.size()) { if (leaveDown != null) leaveDown.run(); return true; }
                         nearest(keys.get(targetRow), v).requestFocus();
                         return true;

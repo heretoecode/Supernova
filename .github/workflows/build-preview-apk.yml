@@ -80,6 +80,8 @@ jobs:
         run: |
           git -C nova/native/avos apply --check ../../Video/.github/build/avos-preview414.patch
           git -C nova/native/avos apply ../../Video/.github/build/avos-preview414.patch
+          git -C nova/native/avos apply --check ../../Video/.github/build/avos-shield-corrections.patch
+          git -C nova/native/avos apply ../../Video/.github/build/avos-shield-corrections.patch
           git -C nova/FileCoreLibrary apply --check ../Video/.github/build/filecore-preview414.patch
           git -C nova/FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
 

@@ -1,0 +1,19 @@
+# Next corrective implementation — work in progress
+
+Starting live branch: `codex/post-4.1.7-shield-fixes`, `563c3374d6227ef290fb61c4899d9d93adb94eea`, inspected 7 October 2026. Local checkout advanced by fast-forward only; no existing work discarded. Main remains unchanged/unmerged. Accepted 4.1.7 Final and physically reviewed previous candidate keep their frozen identities.
+
+Authority: next-version-authority.md, latest surface amendments, completed audits, then compatible historical evidence. Older FIXED labels, parked Featured wording, middle-panel Integration nesting and undecided playback-menu wording are superseded by the latest consolidated authority.
+
+## Implementation checkpoints
+
+Initial checkpoint is **unvalidated implementation work**, not a candidate or acceptance claim. Changes cover modal keyboard containment without input focus detours; live library Genre/Year/Provider filters and compact summary; toolbar ordering and explicit Order; bounded animated centring; shallow header fade; fixed exposed-neighbour Featured with two actions/no pagination; complete card unit boundary/artwork scaling; two-tier Details with capped text-only people; single-row Extras; embedded trailer overlay and exact opener return; left-panel Settings nesting; balanced utility-panel fit; shared bundled national flags; forgiving title comparison/ranking; playback flat menus; coalesced paused frame seeking with explicit commit/cancel and remote timestamp feedback; parallel independent Details sections.
+
+Native subtitle investigation found an explicit backward `stream_seek_time` in pinned AVOS `Source/stream_subtitle.c:stream_set_subtitle_stream`. The corrective patch fences subtitle switch/decoder/queue state, removes playback pause/reseek, and discards buffered packets belonging to the old subtitle stream. It is applied after the retained 4.1.4 patch in both build workflows. Native compile/runtime validation is still required; do not infer frame conformance from source alone.
+
+## Decisions resolved during implementation
+
+Language defaults were explicitly selected: English→US, Portuguese→Brazil, Chinese→China, Spanish→Spain, Arabic→Saudi Arabia; other generic languages use standard likely-region data. Explicit region tags take precedence. Bundled country PNGs avoid font/glyph variation. Provenance: docs/design/LANGUAGE_FLAG_ASSETS.md. Version fields remain unchanged because numbering is still NEEDS DECISION; this does not block a candidate using the established lineage.
+
+## Pending gates
+
+Complete all scope corrections and per-requirement tests; automated source/full suites; actual rendered geometry/focus review; lint/debug/native playback/release/signature/upgrade validation; conformance register; exact source/APK/hash evidence. No next candidate has yet been produced. Only subsequent user Shield QA can confer SHIELD ACCEPTED. Existing accepted return focus, clock, action containers, lower navigation, input/posters, provider logos/Done, HUD reveal/control count/style and no debug text remain regression protections.

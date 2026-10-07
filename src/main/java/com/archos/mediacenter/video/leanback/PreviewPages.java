@@ -85,7 +85,7 @@ public final class PreviewPages extends FrameLayout {
             railScrollStates.put(a.cell,rail.getLayoutManager().onSaveInstanceState());
         }
     }
-    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);if(!restoringFocus&&!suspended)post(()->{if(focused.hasFocus()&&!restoringFocus&&!suspended){int centre=list.getPaddingTop()+(list.getHeight()-list.getPaddingTop()-list.getPaddingBottom())/2;list.scrollBy(0,(item.getTop()+item.getBottom())/2-centre);}});}}}}
+    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);if(!restoringFocus&&!suspended)post(()->{if(focused.hasFocus()&&!restoringFocus&&!suspended){int centre=list.getPaddingTop()+(list.getHeight()-list.getPaddingTop()-list.getPaddingBottom())/2;int delta=(item.getTop()+item.getBottom())/2-centre;int row=Math.max(1,item.getHeight());if(Math.abs(delta)>row/3){list.stopScroll();list.smoothScrollBy(0,Math.max(-row,Math.min(row,delta)));}}});}}}}
 
     /** A launch transaction owns return focus, independently of Android's retained View focus. */
     private void beginReturn(View opener,String destination){
@@ -168,7 +168,7 @@ public final class PreviewPages extends FrameLayout {
         View focused=findFocus();View card=focused==null?null:list.findContainingItemView(focused);
         featuredMoving=true;
         Runnable next=()->{for(android.view.ViewParent parent=getParent();parent!=null;parent=parent.getParent())if(parent instanceof TopNavigation){((TopNavigation)parent).setFeaturedDirection(direction);break;}featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;renderFeatured();};
-        if(card!=null)card.animate().translationX(-dp(18)*direction).alpha(.3f).setDuration(100).withEndAction(next).start();else next.run();
+        if(card!=null)card.animate().translationX(-dp(18)*direction).alpha(.3f).setDuration(200).withEndAction(next).start();else next.run();
     }
     private final android.net.Uri[] lastArtwork=new android.net.Uri[4];
     private final Map<String,String> featuredReasons=new HashMap<>();
@@ -343,8 +343,8 @@ public final class PreviewPages extends FrameLayout {
             }
         }
         if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT||event.getKeyCode()==KeyEvent.KEYCODE_DPAD_RIGHT)){
-            View focused=findFocus();String tag=focused==null?"":String.valueOf(focused.getTag());if(tag.equals("hero:info")||tag.equals("hero:indicators")){changeFeatured(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);return true;}}
-        if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_DOWN&&findFocus()!=null&&"hero:info".equals(findFocus().getTag())){for(int i=0;i<cells.size();i++)if(cells.get(i).type==RAIL){FocusAnchor anchor=new FocusAnchor();anchor.cell=cellKey(cells.get(i));anchor.position=i;anchors[tab]=anchor;holdFocus();restoreFocus();return true;}}
+            View focused=findFocus();String tag=focused==null?"":String.valueOf(focused.getTag());if(tag.equals("hero:info")||tag.equals("hero:play")){changeFeatured(event.getKeyCode()==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);return true;}}
+        if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_DOWN&&findFocus()!=null&&String.valueOf(findFocus().getTag()).startsWith("hero:")){for(int i=0;i<cells.size();i++)if(cells.get(i).type==RAIL){FocusAnchor anchor=new FocusAnchor();anchor.cell=cellKey(cells.get(i));anchor.position=i;anchors[tab]=anchor;holdFocus();restoreFocus();return true;}}
         if(event.getAction()==KeyEvent.ACTION_DOWN)lastInteraction=android.os.SystemClock.elapsedRealtime();
         if((tab==1||tab==2)&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_UP){
             View focused=list.findFocus(),item=focused==null?null:list.findContainingItemView(focused);
@@ -480,16 +480,24 @@ public final class PreviewPages extends FrameLayout {
             render();
         });
     }
+    static String filterSummary(String genre,String year,String provider){
+        List<String> values=new ArrayList<>();values.addAll(PreviewGenres.parse(genre));values.addAll(PreviewGenres.parse(year));values.addAll(PreviewGenres.parse(provider));
+        return values.isEmpty()?"Filters":values.size()==1?"Filters: "+(PreviewGenres.parse(provider).isEmpty()?values.get(0):"1 service"):"Filters ("+values.size()+")";
+    }
+    private boolean hasUnmatched(){
+        Map<android.net.Uri,PreviewMediaClassification.Kind> hints=PreviewMediaClassification.hints(preferences);
+        for(Entry entry:snapshot.unmatched){Video video=(Video)entry.media;PreviewMediaClassification.Kind kind=PreviewMediaClassification.classify(video.getFilenameNonCryptic(),video.getFileUri(),hints);if(kind==PreviewMediaClassification.Kind.UNKNOWN||kind==(tab==1?PreviewMediaClassification.Kind.MOVIE:PreviewMediaClassification.Kind.TV))return true;}return false;
+    }
     private void filter(){PreviewDialog.choose(getContext(),"Filters",new String[]{"Genre"+(genres[tab].isEmpty()?"":": "+genres[tab]),"Year"+(years[tab]==0?"":": "+years[tab]),"Streaming Service"+(providers[tab].isEmpty()?"":": selected"),"Clear Filters"},-1,n->{
         if(n==3){genres[tab]="";years[tab]=0;selectedYears[tab]="";providers[tab]="";render();return;}
         if(n==2){java.util.List<com.archos.mediacenter.video.streaming.StreamingRepository.Provider> selected=com.archos.mediacenter.video.streaming.StreamingRepository.selectedCatalogue(getContext());List<String> names=new ArrayList<>(),ids=new ArrayList<>();for(com.archos.mediacenter.video.streaming.StreamingRepository.Provider provider:selected){names.add(provider.name);ids.add(String.valueOf(provider.id));}android.app.Dialog menu=chooseMany("Streaming Services",names,ids,providers[tab],value->{providers[tab]=value;quietOrder.clear();render();});for(int i=0;i<selected.size();i++)com.archos.mediacenter.video.streaming.PreviewProviderIcons.bind(menu,i,selected.get(i).logo,"library.filters");return;}
-        if(n==0){Set<String> values=new TreeSet<>();for(Entry e:source())values.addAll(PreviewGenres.parse(e.genres));PreviewGenres.choose(getContext(),values,PreviewGenres.parse(genres[tab]),selected->{genres[tab]=android.text.TextUtils.join("|",selected);quietOrder.clear();render();});return;}
+        if(n==0){Set<String> values=new TreeSet<>();for(Entry e:source())values.addAll(PreviewGenres.parse(e.genres));PreviewGenres.chooseLive(getContext(),values,PreviewGenres.parse(genres[tab]),selected->{genres[tab]=android.text.TextUtils.join("|",selected);quietOrder.clear();render();});return;}
         TreeSet<String> values=new TreeSet<>(Collections.reverseOrder());for(Entry e:source())if(e.year()>0)values.add(String.valueOf(e.year()));
         List<String> options=new ArrayList<>(values);chooseMany("Year",options,options,selectedYears[tab],value->{selectedYears[tab]=value;years[tab]=0;quietOrder.clear();render();});
     });}
     private android.app.Dialog chooseMany(String title,List<String> names,List<String> values,String saved,java.util.function.Consumer<String> accept){
-        Set<String> selected=PreviewGenres.parse(saved);List<String> labels=new ArrayList<>(names);labels.add("Clear selection");labels.add("Done");Set<Integer> checks=new HashSet<>();for(int i=0;i<values.size();i++)if(selected.contains(values.get(i)))checks.add(i);
-        android.app.Dialog[] dialog={null};dialog[0]=PreviewDialog.choose(getContext(),title,labels.toArray(new String[0]),-1,checks,false,n->{if(n==values.size()+1){dialog[0].dismiss();accept.accept(android.text.TextUtils.join("|",selected));return;}if(n==values.size())selected.clear();else if(!selected.add(values.get(n)))selected.remove(values.get(n));checks.clear();for(int i=0;i<values.size();i++)if(selected.contains(values.get(i)))checks.add(i);PreviewDialog.updateChecks(dialog[0],checks);});
+        Set<String> selected=PreviewGenres.parse(saved);List<String> labels=new ArrayList<>(names);labels.add("Clear Selection");Set<Integer> checks=new HashSet<>();for(int i=0;i<values.size();i++)if(selected.contains(values.get(i)))checks.add(i);
+        android.app.Dialog[] dialog={null};dialog[0]=PreviewDialog.choose(getContext(),title,labels.toArray(new String[0]),-1,checks,false,n->{if(n==values.size())selected.clear();else if(!selected.add(values.get(n)))selected.remove(values.get(n));checks.clear();for(int i=0;i<values.size();i++)if(selected.contains(values.get(i)))checks.add(i);PreviewDialog.updateChecks(dialog[0],checks);accept.accept(android.text.TextUtils.join("|",selected));});
         return dialog[0];
     }
     private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextColor(Color.WHITE);t.setTextSize(size);return t;}
@@ -519,21 +527,11 @@ public final class PreviewPages extends FrameLayout {
             if(c.type==HERO){Entry e=(Entry)c.value;v.setOrientation(LinearLayout.VERTICAL);v.setGravity(Gravity.TOP);v.setPadding(0,dp(10),0,dp(8));
                 v.setMinimumHeight(dp(tab==0?244:76));
                 v.setLayoutParams(new RecyclerView.LayoutParams(-1,tab==0?dp(244):android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
-                if(tab==0){TextView featured=text(featuredReasons.getOrDefault(e.key(),"IN YOUR LIBRARY"),11);featured.setTextColor(PreviewAccent.color(getContext()));v.addView(featured);
-                    TextView title=text(displayName(e),30);title.setMaxLines(2);title.setIncludeFontPadding(false);title.setLineSpacing(0,.92f);title.setEllipsize(android.text.TextUtils.TruncateAt.END);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title,new LinearLayout.LayoutParams(dp(420),dp(64)));
-                    String meta=e.year()>0?String.valueOf(e.year()):"";
-                    if(e.media instanceof Video){Video video=(Video)e.media;if(video.getDurationMs()>0)meta+="   "+video.getDurationMs()/60000+" min";}
-                    if(!e.genres.isEmpty())meta+=(meta.isEmpty()?"":"   ·   ")+e.genres.replace("|"," · ");if(e.media instanceof Episode){Episode ep=(Episode)e.media;meta+="   ·   S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();}TextView metadata=text(meta,12);metadata.setGravity(Gravity.CENTER_VERTICAL);metadata.setSingleLine(true);metadata.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(metadata,new LinearLayout.LayoutParams(dp(470),dp(22)));String plot=e.media instanceof Tvshow?((Tvshow)e.media).getPlot():e.media instanceof Video?((Video)e.media).getDescriptionBody():"";
-                    TextView description=text(plot==null?"":plot,13);description.setIncludeFontPadding(false);description.setMaxLines(3);description.setEllipsize(android.text.TextUtils.TruncateAt.END);int viewport=getResources().getDisplayMetrics().widthPixels;v.addView(description,new LinearLayout.LayoutParams(OfficialTitleArtwork.synopsisWidth(title,viewport),dp(54)));
-                    OfficialTitleArtwork.bind(title,e.media,false,()->{android.view.ViewGroup.LayoutParams bounds=description.getLayoutParams();bounds.width=OfficialTitleArtwork.synopsisWidth(title,viewport);description.setLayoutParams(bounds);});
-                    LinearLayout actions=new LinearLayout(getContext());actions.setPadding(0,dp(6),0,0);
-                    TextView info=button("More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);info.setTag("hero:info");info.setOnKeyListener((view,key,event)->{if(event.getAction()==KeyEvent.ACTION_DOWN&&(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)){featuredIndex+=key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1;lastInteraction=android.os.SystemClock.elapsedRealtime();renderFeatured();return true;}return false;});info.setBackground(PreviewDialog.buttonFocus(getContext()));actions.addView(info,lp);
-                    v.animate().cancel();v.setAlpha(1f);v.setTranslationX(0);if(featuredDirection!=0){v.setTranslationX(dp(24)*featuredDirection);v.setAlpha(.3f);v.animate().translationX(0).alpha(1f).setDuration(170).start();featuredDirection=0;}View spacer=new View(getContext());v.addView(spacer,new LinearLayout.LayoutParams(1,0,1));v.addView(actions,new LinearLayout.LayoutParams(-2,dp(40)));
-                    if(featuredIndicators==null)featuredIndicators=new PreviewFeaturedIndicators(getContext());
-                    if(featuredIndicators.getParent() instanceof ViewGroup)((ViewGroup)featuredIndicators.getParent()).removeView(featuredIndicators);
-                    v.addView(featuredIndicators,new LinearLayout.LayoutParams(-1,dp(26)));
-                    featuredIndicators.setPosition(featuredCandidates().size(),featuredIndex);
-
+                if(tab==0){
+                    int heroHeight=Math.max(dp(300),getHeight()-list.getPaddingTop()-list.getPaddingBottom()-dp(145));
+                    v.setMinimumHeight(heroHeight);v.setLayoutParams(new RecyclerView.LayoutParams(-1,heroHeight));v.setPadding(0,dp(12),0,dp(18));
+                    PreviewFeaturedCard featured=new PreviewFeaturedCard(getContext(),featuredCandidates(),featuredIndex,()->play(e,v),()->open(e,v));v.addView(featured,new LinearLayout.LayoutParams(-1,-1));
+                    v.animate().cancel();v.setAlpha(1f);v.setTranslationX(0);if(featuredDirection!=0){v.setTranslationX(dp(36)*featuredDirection);v.setAlpha(.5f);v.animate().translationX(0).alpha(1f).setDuration(400).start();featuredDirection=0;}
                 }else{TextView title=text(c.title,30);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title);String[] lines=PreviewLibrarySummary.describe(getContext(),snapshot,tab==2).split("\n");String[] icons={tab==2?"TV Shows":"Movies","Total Size","Local Storage","Network"};for(int line=0;line<lines.length;line++){TextView summary=text(lines[line],13);summary.setTextColor(0xffe1e9ef);summary.setPadding(0,dp(2),0,dp(2));if(line<icons.length)PreviewIcon.apply(summary,icons[line],17);v.addView(summary);}}
             }
             else if(c.type==CUSTOMISE){v.setGravity(Gravity.CENTER);TextView custom=button("Customise Home",()->PreviewHomeRows.customise(getContext(),()->{render();}));custom.setTag("home:customise");v.addView(custom);}
@@ -544,12 +542,15 @@ public final class PreviewPages extends FrameLayout {
             else if(c.type==HEADER){
                 if(Boolean.TRUE.equals(c.value)){
                     v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(13),0,dp(18));LinearLayout controls=new PreviewToolbar(getContext());controls.setGravity(Gravity.BOTTOM);
-                    controls.addView(button("Filters"+(genres[tab].isEmpty()?"":": "+genres[tab])+(years[tab]==0?"":" · "+years[tab])+"  ▾",()->filter()));
+                    List<TextView> toolbar=new ArrayList<>();List<String> controlIds=new ArrayList<>();
+                    toolbar.add(button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();}));controlIds.add("view");
+                    toolbar.add(button(filterSummary(genres[tab],selectedYears[tab],providers[tab])+"  ▾",()->filter()));controlIds.add("filters");
+                    toolbar.add(button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()));controlIds.add("sort");
                     String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
-                    for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?0:1,n->{quietOrder.clear();ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(unmatched[tab]?"Matched":"Unmatched",()->{unmatched[tab]=!unmatched[tab];quietOrder.clear();render();}),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
-                    if(listMode[tab]){TextView chooser=button("Columns",()->columns[tab].choose(this::refreshColumns));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(chooser,lp);}
-                    String[] controlIds={"filters","sort","order","unmatched","view","columns"};
-                    for(int i=0;i<controls.getChildCount();i++){View control=controls.getChildAt(i);control.setPadding(control.getPaddingLeft(),dp(15),control.getPaddingRight(),dp(3));control.setTag("control:"+i);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds[i]);}v.addView(controls);
+                    toolbar.add(button("Order: "+order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?0:1,n->{quietOrder.clear();ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})));controlIds.add("order");
+                    if(listMode[tab]){toolbar.add(button("Columns",()->columns[tab].choose(this::refreshColumns)));controlIds.add("columns");}
+                    if(hasUnmatched()){toolbar.add(button(unmatched[tab]?"Matched":"Unmatched",()->{unmatched[tab]=!unmatched[tab];quietOrder.clear();render();}));controlIds.add("unmatched");}
+                    for(int i=0;i<toolbar.size();i++){TextView control=toolbar.get(i);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);if(i>0)lp.leftMargin=dp(8);controls.addView(control,lp);control.setPadding(dp(10),dp(18),dp(10),0);control.setIncludeFontPadding(false);control.setTag("control:"+i);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds.get(i));}v.addView(controls);
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));
                 }else{TextView title=text(c.title,tab==3&&c.title.equals("Network & files")?30:19);title.setTextColor(0xff9ed4f7);v.addView(title);}
             }
@@ -587,7 +588,7 @@ public final class PreviewPages extends FrameLayout {
 
         }
         private void networkLayout(LinearLayout container){
-            container.setOrientation(LinearLayout.HORIZONTAL);container.setGravity(Gravity.TOP);container.setClipChildren(false);container.setLayoutParams(new RecyclerView.LayoutParams(-1,Math.max(dp(360),getHeight()-dp(28))));
+            container.setOrientation(LinearLayout.HORIZONTAL);container.setGravity(Gravity.TOP);container.setClipChildren(false);container.setLayoutParams(new RecyclerView.LayoutParams(-1,Math.max(dp(240),getHeight()-list.getPaddingTop()-list.getPaddingBottom())));
             container.addView(new PreviewNetworkWorkspace(getContext(),files,librarySources,savedLocations,box->click.open(new Presenter.ViewHolder(container),box),PreviewPages.this::networkSection),new LinearLayout.LayoutParams(-1,-1));
             if(networkEntryPending)container.post(PreviewPages.this::requestNetworkEntryFocus);
         }

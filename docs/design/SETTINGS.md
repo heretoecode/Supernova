@@ -49,3 +49,10 @@ Nested Integration children belong indented in the **left panel** beneath the pa
 Use the approved **flag representation for languages** consistently rather than the current mixture of flags, globes and two-letter codes. Mapping must be deterministic and consistent across screens; do not silently change the represented language.
 
 Protect physically accepted My Providers colour logos and separated Done action.
+
+
+### Approved generic-language flag defaults — 7 October 2026
+
+Explicit regional country tags take precedence. For generic language tracks/settings, use one shared mapping across all surfaces: English → United States; Portuguese → Brazil; Chinese → China; Spanish → Spain; Arabic → Saudi Arabia. These defaults were explicitly selected during implementation clarification. They identify the UI representation, not a change to the track language or nationality. Other ambiguous language mappings require an explicit project default before country assignment.
+
+Other generic languages use the standard CLDR likely-region mapping, explicitly approved during implementation clarification. Flag assets are bundled to avoid Shield font fallback; see [LANGUAGE_FLAG_ASSETS.md](LANGUAGE_FLAG_ASSETS.md).

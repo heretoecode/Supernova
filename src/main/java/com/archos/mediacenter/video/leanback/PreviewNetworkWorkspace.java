@@ -29,7 +29,7 @@ public final class PreviewNetworkWorkspace extends LinearLayout {
             List<Shortcut> saved, Consumer<Box> browseVolume, Consumer<String> browseNetwork) {
         super(c); this.volumes = volumes; this.sources = sources; this.saved = saved;
         this.browseVolume = browseVolume; this.browseNetwork = browseNetwork;
-        setClipChildren(false); setClipToPadding(false);
+        setClipChildren(false); setClipToPadding(false);setPadding(0,dp(34),0,dp(34));
         rail = new PreviewFocusRail(c);rail.setOrientation(VERTICAL); items = column(); context = column();
         panel(rail,"semantic:network.panel.categories");
         addView(rail, new LayoutParams(0, -1, .23f));

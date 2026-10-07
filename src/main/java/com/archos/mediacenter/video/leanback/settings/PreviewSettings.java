@@ -123,7 +123,7 @@ public final class PreviewSettings {
   ViewGroup.LayoutParams original = list.getLayoutParams();
   parent.removeView(list);
   LinearLayout split = new LinearLayout(c);
-  split.setPadding(0, dp(fragment, 12), 0, dp(fragment, 8));
+  split.setPadding(0, dp(fragment, 24), 0, dp(fragment, 24));
   split.setClipChildren(false);
   LinearLayout links = new com.archos.mediacenter.video.leanback.PreviewFocusRail(c);
   links.setOrientation(LinearLayout.VERTICAL);
@@ -139,7 +139,7 @@ public final class PreviewSettings {
   LinearLayout children = new LinearLayout(c);
   children.setOrientation(LinearLayout.VERTICAL);
   children.setClipChildren(false);
-  middle.addView(children, new LinearLayout.LayoutParams(-1, -2));
+
   middle.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
   split.addView(middle, new LinearLayout.LayoutParams(0, -1, .44f));
   TextView help = new TextView(c);
@@ -208,10 +208,10 @@ public final class PreviewSettings {
      TextView child = sidebarButton(c, String.valueOf(p.getTitle()), false);
      child.setTag("semantic:settings:section:" + p.getKey());
      child.setPadding(dp(fragment,22),0,dp(fragment,10),0);
-     children.addView(child, new LinearLayout.LayoutParams(-1, dp(fragment, 40)));
+     children.addView(child, new LinearLayout.LayoutParams(-1, dp(fragment, 28)));
      Runnable openChild = () -> {
       childToken[0]=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(child,"settings.child");
-      childOpener[0] = child; children.setVisibility(View.GONE); list.setTag(child);
+      childOpener[0] = child; list.setTag(child);
       for (int n = 0; n < category.getPreferenceCount(); n++) category.getPreference(n).setVisible(category.getPreference(n) == p);
       help.setText(name+" › "+p.getTitle());
       child.setContentDescription(name+" › "+p.getTitle()); list.scrollToPosition(0); focusFirst(list);
@@ -225,6 +225,8 @@ public final class PreviewSettings {
      });
     }
     children.setVisibility(View.VISIBLE);
+    if(children.getParent() instanceof ViewGroup)((ViewGroup)children.getParent()).removeView(children);
+    links.addView(children,links.indexOfChild(button)+1,new LinearLayout.LayoutParams(-1,-2));
     if (children.getChildCount() > 0) children.getChildAt(0).requestFocus(); else focusFirst(list);
    };
    button.setOnFocusChangeListener((v, focused) -> { if (focused) { if(selectedRail[0]!=button)showCategory.run(); returnToCategory[0] = enter; } });
@@ -263,7 +265,7 @@ public final class PreviewSettings {
   };
   fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(), back);
   list.setTag(R.id.preview_settings_return, (Runnable) back::handleOnBackPressed);
-  ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, newView) -> back.setEnabled(middle.hasFocus());
+  ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, newView) -> back.setEnabled(middle.hasFocus()||children.hasFocus());
   split.getViewTreeObserver().addOnGlobalFocusChangeListener(focusListener);
   split.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
    public void onViewAttachedToWindow(View view) { }

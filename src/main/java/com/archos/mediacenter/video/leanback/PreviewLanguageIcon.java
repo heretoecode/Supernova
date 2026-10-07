@@ -7,15 +7,20 @@ import android.view.*;
 import android.widget.*;
 import java.util.*;
 
-/** A country flag only for an explicitly regional locale; never infer a country from a language. */
+/** Shared national flags with explicit regional precedence and approved CLDR defaults. */
 public final class PreviewLanguageIcon extends Drawable {
     private static final Set<String> COUNTRIES=new HashSet<>(Arrays.asList(Locale.getISOCountries()));
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final PreviewIcon neutral=new PreviewIcon("language");
     private final String flag;
     private final String label;
-    public PreviewLanguageIcon(String code){
-        String country=country(code);label=languageLabel(code);
+    private final String region;
+    private final android.content.Context context;
+    private static final android.util.LruCache<String,Bitmap> FLAGS=new android.util.LruCache<>(32);
+    public PreviewLanguageIcon(String code){this(com.archos.mediacenter.video.CustomApplication.getAppContext(),code);}
+    public PreviewLanguageIcon(android.content.Context context,String code){
+        this.context=context;
+        String country=country(code);region=country;label=languageLabel(code);
         flag=country.isEmpty()?"":new String(Character.toChars(0x1f1e6+country.charAt(0)-'A'))+new String(Character.toChars(0x1f1e6+country.charAt(1)-'A'));
         paint.setColor(Color.WHITE);paint.setTextAlign(Paint.Align.CENTER);
     }
@@ -30,23 +35,22 @@ public final class PreviewLanguageIcon extends Drawable {
         return "";
     }
     static String country(String code){
-        if(code==null||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})+"))return "";
-        Locale locale=Locale.forLanguageTag(code.replace('_','-'));
-        String country=locale.getCountry().toUpperCase(Locale.ROOT);
-        return COUNTRIES.contains(country)?country:"";
+        if(code==null||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})*"))return "";
+        Locale locale=Locale.forLanguageTag(code.replace('_','-'));String explicit=locale.getCountry().toUpperCase(Locale.ROOT);
+        if(!explicit.isEmpty())return COUNTRIES.contains(explicit)?explicit:"";
+        String language=languageLabel(code).toLowerCase(Locale.ROOT);if(language.isEmpty())return "";
+        String standard=PreviewLanguageRegions.DEFAULTS.getOrDefault(language,"");return COUNTRIES.contains(standard)?standard:"";
     }
     @Override public void draw(Canvas canvas){
         Rect bounds=getBounds();
-        // Shield/system font availability varies. Missing flag glyphs use the neutral icon,
-        // never two regional-indicator letters or an invented substitute flag.
-        if(flag.isEmpty()||android.os.Build.VERSION.SDK_INT<23||!paint.hasGlyph(flag)){
-            if(label.isEmpty()){neutral.setBounds(bounds);neutral.draw(canvas);}else{
-                paint.setTextSize(bounds.height()*.42f);paint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
-                Paint.FontMetrics metrics=paint.getFontMetrics();canvas.drawText(label,bounds.exactCenterX(),bounds.exactCenterY()-(metrics.ascent+metrics.descent)/2,paint);
-            }return;
+        if(!region.isEmpty()){
+            Bitmap bitmap=FLAGS.get(region);
+            if(bitmap==null){android.content.Context app=context;
+                if(app!=null){int id=app.getResources().getIdentifier("preview_flag_"+region.toLowerCase(Locale.ROOT),"drawable",app.getPackageName());if(id!=0){bitmap=BitmapFactory.decodeResource(app.getResources(),id);if(bitmap!=null)FLAGS.put(region,bitmap);}}}
+            if(bitmap!=null){float scale=Math.min(bounds.width()/(float)bitmap.getWidth(),bounds.height()/(float)bitmap.getHeight());float w=bitmap.getWidth()*scale,h=bitmap.getHeight()*scale;canvas.drawBitmap(bitmap,null,new RectF(bounds.exactCenterX()-w/2,bounds.exactCenterY()-h/2,bounds.exactCenterX()+w/2,bounds.exactCenterY()+h/2),paint);return;}
         }
-        paint.setTextSize(bounds.height()*.85f);Paint.FontMetrics metrics=paint.getFontMetrics();
-        canvas.drawText(flag,bounds.exactCenterX(),bounds.exactCenterY()-(metrics.ascent+metrics.descent)/2,paint);
+        // Undefined/invalid metadata has no country. Never present a different language.
+        neutral.setBounds(bounds);neutral.draw(canvas);
     }
     @Override public void setAlpha(int alpha){paint.setAlpha(alpha);neutral.setAlpha(alpha);invalidateSelf();}
     @Override public void setColorFilter(ColorFilter filter){paint.setColorFilter(filter);neutral.setColorFilter(filter);invalidateSelf();}
@@ -56,6 +60,6 @@ public final class PreviewLanguageIcon extends Drawable {
         View label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:"+index);
         if(label==null||!(label.getParent() instanceof ViewGroup))return;
         ViewGroup row=(ViewGroup)label.getParent();
-        if(row.getChildCount()>0&&row.getChildAt(0) instanceof ImageView)((ImageView)row.getChildAt(0)).setImageDrawable(new PreviewLanguageIcon(code));
+        if(row.getChildCount()>0&&row.getChildAt(0) instanceof ImageView)((ImageView)row.getChildAt(0)).setImageDrawable(new PreviewLanguageIcon(dialog.getContext(),code));
     }
 }

@@ -1,0 +1,59 @@
+diff --git a/Source/stream_parser_ffmpeg.c b/Source/stream_parser_ffmpeg.c
+index 81864fe..02e5d67 100644
+--- a/Source/stream_parser_ffmpeg.c
++++ b/Source/stream_parser_ffmpeg.c
+@@ -1763,6 +1763,12 @@ static int _get_subtitle_cdata( STREAM *s, CLEVER_BUFFER *sub_buffer, STREAM_CDA
+ 
+ 	AVPacket _packet;
+ 	AVPacket *packet = _get_packet( &ff_p->sq, &_packet );
++	// Buffered packets can belong to the previous subtitle stream. Drop only
++	// those packets; audio/video queues and demux position are untouched.
++	while( packet && packet->stream_index != s->subtitle->stream ) {
++		_dispose_packet( packet );
++		packet = _get_packet( &ff_p->sq, &_packet );
++	}
+ 	if( !packet ) {
+ 		return 1;
+ 	}
+diff --git a/Source/stream_subtitle.c b/Source/stream_subtitle.c
+index 4872e27..95d6a9c 100644
+--- a/Source/stream_subtitle.c
++++ b/Source/stream_subtitle.c
+@@ -406,15 +406,18 @@ serprintf("SsS: sub_stream > av.subs_max\n");
+ 	}
+ 	if( sub_stream == s->av.subs ) {
+ serprintf("SsS: sub_stream already set\n");	
+-//		return 0;
++		return 0;
+ 	}
+ 
+-	int was_paused = stream_pause( s );
++	// Fence only the subtitle switch; never pause/reseek the playback clock.
++	thread_state_set( &s->parser_tstate, THREAD_IDLE );
+ 
+ 	// idle threads to make sure they are at a known state
+ 	thread_state_set( &s->engine_tstate, THREAD_IDLE );
+ 	thread_state_set( &s->sub_tstate,    THREAD_IDLE );
+ 	
++	stream_parser_clear_subtitle_chunks( s );
++	s->cdata_sub.valid = 0;
+ 	// close old subtitle decoder
+ 	stream_close_sub_dec( s );
+ 
+@@ -429,14 +432,8 @@ serprintf("SsS: sub_stream already set\n");
+ 	thread_state_set( &s->engine_tstate, THREAD_RUNNING );
+ 	thread_state_set( &s->sub_tstate,    THREAD_RUNNING );
+ 
+-	stream_un_pause( s, was_paused );
+-
+-	// FIXME: there should be a better way without seek jumping
+-	int current_time = stream_get_current_time( s, NULL );
+-	if( current_time > 0 && thread_state_get( &s->parser_tstate ) != THREAD_EXIT && s->parser->seekable && s->parser->seekable( s ) ) {
+-		// reseek to current time to get internal subtitle decoder to reinitialize
+-		stream_seek_time( s, current_time - 1, STREAM_SEEK_BACKWARD, 0 );
+-	}
++	thread_state_set( &s->parser_tstate, THREAD_RUNNING );
++	// Subtitle worker opens the selected decoder lazily at the current clock.
+ 	return 0;
+ }
+ 

@@ -17,6 +17,17 @@ public final class PreviewGenres {
         List<String> names=new ArrayList<>(new TreeSet<>(options));Set<String> result=new LinkedHashSet<>(selected);List<String> labels=new ArrayList<>(names);labels.add("All genres");labels.add("Done");Set<Integer> checks=new HashSet<>();for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i);
         Dialog[] menu={null};menu[0]=PreviewDialog.choose(c,"Genres · match any selected",labels.toArray(new String[0]),-1,checks,false,n->{if(n==names.size()+1){accept.accept(result);menu[0].dismiss();return;}if(n==names.size())result.clear();else if(!result.add(names.get(n)))result.remove(names.get(n));checks.clear();for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i);PreviewDialog.updateChecks(menu[0],checks);});
     }
+    /** Library filters apply while the picker remains open; Home editor keeps its own confirmation. */
+    public static Dialog chooseLive(Context c,Collection<String> options,Set<String> selected,Consumer<Set<String>> accept){
+        List<String> names=new ArrayList<>(new TreeSet<>(options));names.add(0,"All Genres");
+        Set<String> result=new LinkedHashSet<>(selected);Set<Integer> checks=new HashSet<>();
+        if(result.isEmpty())checks.add(0);for(int i=1;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i);
+        Dialog[] menu={null};menu[0]=PreviewDialog.choose(c,"Genres",names.toArray(new String[0]),-1,checks,false,n->{
+            if(n==0)result.clear();else if(!result.add(names.get(n)))result.remove(names.get(n));
+            checks.clear();if(result.isEmpty())checks.add(0);for(int i=1;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i);
+            PreviewDialog.updateChecks(menu[0],checks);accept.accept(new LinkedHashSet<>(result));
+        });return menu[0];
+    }
     public static final class Icon extends Drawable {
         private final String kind;private final Paint paint=new Paint(3);
         public Icon(String genre){kind=genre.toLowerCase(Locale.ROOT);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.5f);paint.setStrokeCap(Paint.Cap.ROUND);paint.setStrokeJoin(Paint.Join.ROUND);paint.setColor(0xffe1e9ef);}

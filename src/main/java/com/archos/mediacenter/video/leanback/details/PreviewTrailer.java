@@ -1,38 +1,34 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.app.*;
-import android.content.*;
-import android.net.Uri;
-import android.webkit.*;
+import android.graphics.*;
 import android.view.*;
+import android.webkit.*;
 import android.widget.*;
 import com.archos.mediascraper.ScraperTrailer;
 
-/** Official embedded player, with an explicit fallback on devices without a WebView provider. */
+/** Official YouTube iframe over a bounded snapshot of Details, with exact opener restoration. */
 public final class PreviewTrailer {
     public static void show(Activity activity,ScraperTrailer trailer){
         if(!"YouTube".equals(trailer.mSite)||trailer.mVideoKey==null||!trailer.mVideoKey.matches("[A-Za-z0-9_-]{11}")){
             Toast.makeText(activity,"This trailer format is not supported",Toast.LENGTH_LONG).show();return;
         }
-        Uri fallback=Uri.parse("https://www.youtube.com/watch?v="+trailer.mVideoKey);
-        WebView web;
-        try{web=new WebView(activity);}catch(RuntimeException unavailable){
-            com.archos.mediacenter.video.leanback.PreviewDialog.choose(activity,"In-app trailers are unavailable on this device.",new String[]{"Open YouTube","Cancel"},0,n->{if(n==0)external(activity,fallback);});return;
-        }
-        web.getSettings().setMediaPlaybackRequiresUserGesture(false);web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);
-        web.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        web.setWebViewClient(new WebViewClient(){@Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){String host=r.getUrl().getHost();return host==null||!(host.equals("www.youtube.com")||host.equals("www.youtube-nocookie.com"));}});
+        final View opener=activity.getCurrentFocus();WebView web;
+        try{web=new WebView(activity);}catch(RuntimeException unavailable){Toast.makeText(activity,"In-app trailers are unavailable on this device",Toast.LENGTH_LONG).show();return;}
+        web.getSettings().setMediaPlaybackRequiresUserGesture(false);web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);web.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         Dialog dialog=com.archos.mediacenter.video.leanback.PreviewDialog.create(activity,"trailer");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        LinearLayout layout=new LinearLayout(activity);layout.setOrientation(LinearLayout.VERTICAL);layout.setBackgroundColor(0xff0b1b2a);
-        LinearLayout bar=new LinearLayout(activity);bar.setGravity(Gravity.CENTER_VERTICAL);bar.setPadding(dp(activity,16),dp(activity,6),dp(activity,16),dp(activity,6));layout.addView(bar,new LinearLayout.LayoutParams(-1,dp(activity,46)));
-        TextView title=new TextView(activity);title.setText("Official trailer · "+trailer.mName);title.setTextSize(14);title.setTextColor(0xffffffff);title.setSingleLine(true);title.setEllipsize(android.text.TextUtils.TruncateAt.END);bar.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        for(String label:new String[]{"Open YouTube","Close"}){TextView button=new TextView(activity);button.setText(label);button.setTextColor(0xffffffff);button.setTextSize(12);button.setPadding(dp(activity,12),dp(activity,8),dp(activity,12),dp(activity,8));com.archos.mediacenter.video.leanback.PreviewIcon.apply(button,label,16);button.setFocusable(true);button.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(activity));button.setOnClickListener(v->{dialog.dismiss();if(label.equals("Open YouTube"))external(activity,fallback);});bar.addView(button);}
-        web.setBackgroundColor(0xff000000);web.setLayerType(View.LAYER_TYPE_HARDWARE,null);web.setWebChromeClient(new WebChromeClient());
-        layout.addView(web,new LinearLayout.LayoutParams(-1,0,1));dialog.setContentView(layout);
-        dialog.setOnDismissListener(d->{web.stopLoading();web.loadUrl("about:blank");web.onPause();layout.removeView(web);web.destroy();});
-        dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setDimAmount(.45f);dialog.getWindow().setLayout((int)(activity.getResources().getDisplayMetrics().widthPixels*.94),(int)(activity.getResources().getDisplayMetrics().heightPixels*.92));
-        web.loadDataWithBaseURL("https://"+activity.getPackageName()+"/", "<html style='height:100%'><body style='margin:0;background:#000;height:100%;overflow:hidden'><iframe width='100%' height='100%' src='https://www.youtube.com/embed/"+trailer.mVideoKey+"?playsinline=1&autoplay=1' frameborder='0' allow='autoplay; encrypted-media; fullscreen' allowfullscreen></iframe></body></html>","text/html","UTF-8",null);
+        FrameLayout overlay=new FrameLayout(activity);overlay.setTag("semantic:trailer.overlay");
+        View source=activity.getWindow().getDecorView();int width=activity.getResources().getDisplayMetrics().widthPixels,height=activity.getResources().getDisplayMetrics().heightPixels;
+        Bitmap snapshot=Bitmap.createBitmap(Math.max(1,width/12),Math.max(1,height/12),Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(snapshot);canvas.scale(snapshot.getWidth()/(float)Math.max(1,source.getWidth()),snapshot.getHeight()/(float)Math.max(1,source.getHeight()));source.draw(canvas);
+        blur(snapshot);ImageView behind=new ImageView(activity);behind.setImageBitmap(snapshot);behind.setScaleType(ImageView.ScaleType.FIT_XY);overlay.addView(behind,new FrameLayout.LayoutParams(-1,-1));
+        View dim=new View(activity);dim.setBackgroundColor(0xb0000000);overlay.addView(dim,new FrameLayout.LayoutParams(-1,-1));
+        int videoWidth=Math.min(Math.round(width*.775f),Math.round(height*.775f*16/9));int videoHeight=Math.round(videoWidth*9/16f);
+        web.setBackgroundColor(Color.BLACK);web.setTag("semantic:trailer.video");overlay.addView(web,new FrameLayout.LayoutParams(videoWidth,videoHeight,Gravity.CENTER));dialog.setContentView(overlay);
+        web.setWebViewClient(new WebViewClient(){@Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){if("supernova".equals(request.getUrl().getScheme())&&"trailer-ended".equals(request.getUrl().getHost())){activity.runOnUiThread(dialog::dismiss);return true;}String host=request.getUrl().getHost();return host==null||!(host.equals("www.youtube.com")||host.equals("www.youtube-nocookie.com"));}});
+        dialog.setOnKeyListener((d,key,event)->{if(key==KeyEvent.KEYCODE_BACK){if(event.getAction()==KeyEvent.ACTION_UP)dialog.dismiss();return true;}return false;});
+        dialog.setOnDismissListener(d->{web.stopLoading();web.loadUrl("about:blank");web.onPause();overlay.removeView(web);web.destroy();behind.setImageDrawable(null);snapshot.recycle();if(opener!=null&&opener.isAttachedToWindow()){opener.requestFocus();opener.post(opener::requestFocus);}});
+        dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setDimAmount(0);dialog.getWindow().setLayout(-1,-1);web.requestFocus();overlay.setAlpha(0);overlay.animate().alpha(1).setDuration(180).start();
+        web.loadDataWithBaseURL("https://www.youtube-nocookie.com/","<html><body style='margin:0;background:#000;overflow:hidden'><div id='player'></div><script src='https://www.youtube.com/iframe_api'></script><script>function onYouTubeIframeAPIReady(){new YT.Player('player',{width:'100%',height:'100%',videoId:'"+trailer.mVideoKey+"',host:'https://www.youtube-nocookie.com',playerVars:{autoplay:1,playsinline:1,controls:1,rel:0},events:{onStateChange:function(e){if(e.data===0)location.href='supernova://trailer-ended';}}});}</script></body></html>","text/html","UTF-8",null);
     }
-    private static int dp(Activity a,int n){return Math.round(n*a.getResources().getDisplayMetrics().density);}
-    private static void external(Activity a,Uri uri){try{a.startActivity(new Intent(Intent.ACTION_VIEW,uri));}catch(ActivityNotFoundException e){Toast.makeText(a,"No app available to open this trailer",Toast.LENGTH_LONG).show();}}
+    private static void blur(Bitmap bitmap){int w=bitmap.getWidth(),h=bitmap.getHeight();int[] input=new int[w*h],output=new int[w*h];bitmap.getPixels(input,0,w,0,0,w,h);for(int pass=0;pass<3;pass++){for(int y=0;y<h;y++)for(int x=0;x<w;x++){int r=0,g=0,b=0,n=0;for(int dy=-2;dy<=2;dy++)for(int dx=-2;dx<=2;dx++){int colour=input[Math.max(0,Math.min(h-1,y+dy))*w+Math.max(0,Math.min(w-1,x+dx))];r+=(colour>>16)&255;g+=(colour>>8)&255;b+=colour&255;n++;}output[y*w+x]=0xff000000|((r/n)<<16)|((g/n)<<8)|(b/n);}int[] swap=input;input=output;output=swap;}bitmap.setPixels(input,0,w,0,0,w,h);}
 }

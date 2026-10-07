@@ -74,11 +74,11 @@ public class PreviewPlaybackMenusTest {
         TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_audio));when(card.previewMenu()).thenReturn(menu);
         TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
         PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_audio));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
-        View english=(View)dialog.getWindow().getDecorView().findViewWithTag("preview-label:1").getParent();english.requestFocus();
+        View english=(View)dialog.getWindow().getDecorView().findViewWithTag("preview-label:0").getParent();english.requestFocus();
         menu.clean();menu.createAndAddTVMenuItem("English",true,false).setOnClickListener(v->newClicks.incrementAndGet());menu.createAndAddTVMenuItem("French",true,true);
         PreviewPlaybackMenus.refresh(host,card);
         assertSame(dialog,org.robolectric.shadows.ShadowDialog.getLatestDialog());assertTrue(dialog.isShowing());assertTrue(english.hasFocus());
-        assertEquals(View.VISIBLE,dialog.getWindow().getDecorView().findViewWithTag("preview-check:2").getVisibility());
+        assertEquals(View.VISIBLE,dialog.getWindow().getDecorView().findViewWithTag("preview-check:1").getVisibility());
         english.performClick();assertEquals(0,oldClicks.get());assertEquals(1,newClicks.get());
     }
     @Test public void newlyDiscoveredTrackPreservesTheFocusedExistingChoice(){
@@ -86,10 +86,10 @@ public class PreviewPlaybackMenusTest {
         TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_subtitles));when(card.previewMenu()).thenReturn(menu);
         TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
         PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_subtitles));Dialog before=org.robolectric.shadows.ShadowDialog.getLatestDialog();
-        ((View)before.getWindow().getDecorView().findViewWithTag("preview-label:2").getParent()).requestFocus();
+        ((View)before.getWindow().getDecorView().findViewWithTag("preview-label:1").getParent()).requestFocus();
         menu.clean();menu.createAndAddTVMenuItem("German",true,false);menu.createAndAddTVMenuItem("English",true,true);menu.createAndAddTVMenuItem("French",true,false);
         PreviewPlaybackMenus.refresh(host,card);Dialog after=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertFalse(before.isShowing());assertTrue(after.isShowing());
-        assertTrue(((View)after.getWindow().getDecorView().findViewWithTag("preview-label:3").getParent()).hasFocus());
+        assertTrue(((View)after.getWindow().getDecorView().findViewWithTag("preview-label:2").getParent()).hasFocus());
         PreviewPlaybackMenus.back();assertFalse(after.isShowing());assertFalse(PreviewPlaybackMenus.isShowing());
     }
     @Test public void subtitleTrackUsesSharedLanguageIconWithoutChangingItsSelection(){
@@ -98,9 +98,9 @@ public class PreviewPlaybackMenusTest {
         TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_subtitles));when(card.previewMenu()).thenReturn(menu);
         TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
         PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_subtitles));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
-        View label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:1");android.view.ViewGroup row=(android.view.ViewGroup)label.getParent();
+        View label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:0");android.view.ViewGroup row=(android.view.ViewGroup)label.getParent();
         assertTrue(((android.widget.ImageView)row.getChildAt(0)).getDrawable() instanceof com.archos.mediacenter.video.leanback.PreviewLanguageIcon);
-        assertTrue(track.isChecked());assertEquals(View.VISIBLE,dialog.getWindow().getDecorView().findViewWithTag("preview-check:1").getVisibility());
+        assertTrue(track.isChecked());assertEquals(View.VISIBLE,dialog.getWindow().getDecorView().findViewWithTag("preview-check:0").getVisibility());
     }
     @Test public void audioTrackUsesItsActualLanguageOnInitialMenuDelivery(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();TVMenu menu=new TVMenu(host);
@@ -108,7 +108,7 @@ public class PreviewPlaybackMenusTest {
         TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_audio));when(card.previewMenu()).thenReturn(menu);
         TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
         PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_audio));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
-        android.view.ViewGroup row=(android.view.ViewGroup)dialog.getWindow().getDecorView().findViewWithTag("preview-label:1").getParent();
+        android.view.ViewGroup row=(android.view.ViewGroup)dialog.getWindow().getDecorView().findViewWithTag("preview-label:0").getParent();
         assertTrue(((android.widget.ImageView)row.getChildAt(0)).getDrawable() instanceof com.archos.mediacenter.video.leanback.PreviewLanguageIcon);assertTrue(track.isChecked());host.finish();
     }
     @Test public void subtitleDownloadUsesDesignedLabelAndRetainsNativeAction(){
@@ -118,7 +118,7 @@ public class PreviewPlaybackMenusTest {
         TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_subtitles));when(card.previewMenu()).thenReturn(menu);
         TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
         PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_subtitles));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
-        android.widget.TextView label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:1");assertEquals("Download Subtitles",label.getText().toString());
+        android.widget.TextView label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:0");assertEquals("Download Subtitles",label.getText().toString());
         ((View)label.getParent()).performClick();assertEquals(1,invoked.get());
     }
     @Test public void audioTrackChangeStaysOpenAndBackReturnsToHudInsteadOfMore(){
@@ -128,10 +128,10 @@ public class PreviewPlaybackMenusTest {
         TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(R.string.menu_audio));when(card.previewMenu()).thenReturn(menu);
         TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
         PreviewPlaybackMenus.show(host,adapter,host.getString(R.string.menu_audio));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
-        // A group heading precedes the two real track choices.
-        View label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:2");assertNotNull(label);((View)label.getParent()).performClick();
+        // The flat Audio menu starts directly with tracks.
+        View label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:1");assertNotNull(label);((View)label.getParent()).performClick();
         assertTrue(dialog.isShowing());assertTrue(french.isChecked());assertFalse(english.isChecked());
-        assertEquals(View.VISIBLE,dialog.getWindow().getDecorView().findViewWithTag("preview-check:2").getVisibility());
+        assertEquals(View.VISIBLE,dialog.getWindow().getDecorView().findViewWithTag("preview-check:1").getVisibility());
         assertTrue(PreviewPlaybackMenus.back());assertFalse(dialog.isShowing());assertFalse("Back must not open More",PreviewPlaybackMenus.back());assertTrue(opener.hasFocus());
     }
 }

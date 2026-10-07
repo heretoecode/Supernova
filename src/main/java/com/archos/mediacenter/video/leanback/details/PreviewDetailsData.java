@@ -71,14 +71,18 @@ final class PreviewDetailsData {
     static Result load(Context c,String kind,long id,Set<Long> localIds)throws Exception{return load(c,kind,id,localIds,value->{});}
     /** Publish independent sections before slow season/provider reconciliation finishes. */
     static Result load(Context c,String kind,long id,Set<Long> localIds,java.util.function.Consumer<Result> ready)throws Exception{
-        Result result=new Result();result.details=StreamingRepository.metadata(c,kind,id,"");publish(result,ready);
-        try{result.classification=StreamingRepository.metadata(c,kind,id,"tv".equals(kind)?"content_ratings":"release_dates");}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("classification_metadata_unavailable");}
-        publish(result,ready);
-        try{result.credits=StreamingRepository.metadata(c,kind,id,"credits");}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("credits_metadata_unavailable");}
-        publish(result,ready);
-        try{addExtras(result,StreamingRepository.metadata(c,kind,id,"videos"));result.extrasReady=true;}catch(Exception error){com.archos.mediacenter.video.diagnostics.Diagnostics.error("extras_metadata_unavailable",error);}
-        publish(result,ready);
-        JSONArray candidates;try{candidates=StreamingRepository.metadata(c,kind,id,"recommendations").optJSONArray("results");result.relatedReady=true;}catch(Exception error){com.archos.mediacenter.video.diagnostics.Diagnostics.error("recommendations_unavailable",error);candidates=null;}if(candidates==null)candidates=new JSONArray();
+        java.util.concurrent.ExecutorService sections=java.util.concurrent.Executors.newFixedThreadPool(4);
+        Map<String,java.util.concurrent.Future<JSONObject>> pending=new LinkedHashMap<>();
+        for(String section:new String[]{"","videos","recommendations","credits","tv".equals(kind)?"content_ratings":"release_dates"})pending.put(section,sections.submit(()->StreamingRepository.metadata(c,kind,id,section)));
+        Result result=new Result();JSONArray candidates=null;
+        try{
+            result.details=pending.get("").get();publish(result,ready);
+            try{addExtras(result,pending.get("videos").get());result.extrasReady=true;}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("extras_metadata_unavailable");}publish(result,ready);
+            try{candidates=pending.get("recommendations").get().optJSONArray("results");result.relatedReady=true;}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("recommendations_unavailable");}
+            try{result.credits=pending.get("credits").get();}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("credits_metadata_unavailable");}publish(result,ready);
+            try{result.classification=pending.get("tv".equals(kind)?"content_ratings":"release_dates").get();}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("classification_metadata_unavailable");}publish(result,ready);
+        }finally{sections.shutdownNow();}
+        if(candidates==null)candidates=new JSONArray();
         Set<String> configured=StreamingRepository.selected(c);String country=StreamingRepository.country(c);
         boolean providersEnabled=StreamingRepository.prefs(c).getBoolean(StreamingRepository.ENABLED,false)&&!configured.isEmpty();
         Set<Long> seen=new HashSet<>();int providerChecks=0;

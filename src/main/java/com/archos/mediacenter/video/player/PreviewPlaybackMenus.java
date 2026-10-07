@@ -57,12 +57,12 @@ final class PreviewPlaybackMenus {
   cards.sort(Comparator.comparingInt(c->audio.equals(c.previewTitle())?0:subs.equals(c.previewTitle())?1:2));
   List<String> labels=new ArrayList<>();List<Runnable> actions=new ArrayList<>();TVMenuItem speedItem=null;
   for(TVCardView card:cards){TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View v=menu.getChildAt(i);if(v instanceof TVMenuItem&&speed.equals(((TVMenuItem)v).getText())&&v.isEnabled())speedItem=(TVMenuItem)v;}}
-  labels.add("— PLAYBACK");actions.add(()->{});
+
   if(speedItem!=null){final TVMenuItem item=speedItem;labels.add("Playback Speed");actions.add(()->{restoreParent=()->root(activity,adapter);item.previewClick();});}
   for(TVCardView card:cards)if(activity.getString(R.string.pref_play_mode_title).equals(card.previewTitle())){labels.add("Play Mode");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
-  labels.add("— VIDEO");actions.add(()->{});
-  for(TVCardView card:cards){String title=card.previewTitle();if(audio.equals(title)||subs.equals(title)||activity.getString(R.string.menu_info).equals(title)||activity.getString(R.string.pref_play_mode_title).equals(title)||activity.getString(R.string.preferences).equals(title))continue;labels.add(title);actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
-  labels.add("Report a Problem");actions.add(()->com.archos.mediacenter.video.diagnostics.Diagnostics.reportProblem(activity));
+
+  for(TVCardView card:cards){String title=card.previewTitle();if(!activity.getString(R.string.pref_format_mode_title).equals(title))continue;labels.add(title);actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
+
   current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),rootFocus,Collections.emptySet(),false,n->{rootFocus=n;actions.get(n).run();});
   current.setOnCancelListener(d->close());position(activity,current,true);
  }
@@ -76,21 +76,19 @@ final class PreviewPlaybackMenus {
    View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
    if(activity.getString(R.string.preferences).equals(item.getText()))continue;
    if(audio&&activity.getString(R.string.player_pref_audio_speed_title).equals(item.getText()))continue;
-   boolean other=subtitles&&Boolean.FALSE.equals(item.getTag());if(other)hasOther=true;if(otherLanguages?!other:other)continue;
+
    if(subtitles&&!otherLanguages&&activity.getString(R.string.menu_player_settings).equals(item.getText())){settings=item;continue;}
-   if(audio||subtitles){String title=item.getText();String group="TRACK";
-    if(audio){if(title.equals(activity.getString(R.string.player_pref_audio_delay_title)))group="SYNC";else if(title.equals(activity.getString(R.string.pref_audio_filt_title))||title.equals(activity.getString(R.string.pref_audio_filt_night_mode))||title.equals(activity.getString(R.string.spatialization_capabilities)))group="ENHANCEMENTS";}
-    else if(title.equals(activity.getString(R.string.player_pref_subtitle_delay_title)))group="TIMING & APPEARANCE";
-    else if(title.equals(activity.getString(R.string.get_subtitles_online))||title.equals(activity.getString(R.string.get_subtitles_on_drive)))group="ADD SUBTITLES";
-    if(!group.equals(lastGroup)){labels.add("— "+group);actions.add(null);lastGroup=group;}
-   }
    String label=androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
    if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_online)))label="Download Subtitles";
-   if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_on_drive)))label="Choose Subtitles";
+   if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_on_drive)))continue;
+   if(subtitles&&item.getText().equals(activity.getString(R.string.player_pref_subtitle_delay_title)))label="Sync";
+   if(audio&&item.getText().equals(activity.getString(R.string.player_pref_audio_delay_title)))label="Audio Sync";
+   if(audio&&item.getText().equals(activity.getString(R.string.pref_audio_filt_title)))label="Audio Boost";
+   if(audio&&item.getText().equals(activity.getString(R.string.spatialization_capabilities)))continue;
    actions.add(item);labels.add(label+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
   }
   if(hasOther&&!otherLanguages){labels.add("— TRACK");actions.add(null);actions.add(null);labels.add("Other languages");}
-  if(settings!=null){labels.add("— TIMING & APPEARANCE");actions.add(null);actions.add(settings);labels.add("Subtitle Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
+  if(settings!=null){actions.add(settings);labels.add("Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
 
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
   dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);

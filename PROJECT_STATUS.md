@@ -87,3 +87,7 @@ The signed post-4.1.7 fixes candidate is available on `codex/post-4.1.7-shield-f
 ## Durable-record rule
 
 GitHub is the authoritative Supernova project memory. At the end of each work session, material discussion outcomes, plans, approvals/rejections/parked decisions, QA results, completed audit findings, implementation/build evidence and unresolved dependencies must be recorded here rather than left only in ChatGPT conversation history. Completed audits are indexed at `docs/audits/README.md`.
+
+### Active corrective implementation checkpoint
+
+The consolidated next pass has started on the existing fixes branch from `563c3374d6227ef290fb61c4899d9d93adb94eea`. See [implementation/validation work record](docs/qa/next-corrective-implementation.md). Work-in-progress commits are not signed candidates or physical acceptance. Language defaults were explicitly resolved and recorded in Settings design authority. Main remains unmerged.

@@ -222,6 +222,11 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private int                 mSeekKeyDirection;
     private final PreviewSeekPolicy mPreviewSeekPolicy = new PreviewSeekPolicy();
     private boolean mPreviewKeySeeking;
+    private boolean mPreviewScrubbing;
+    private int mPreviewScrubOrigin;
+    private long mPreviewTransportFeedbackUntil;
+    private final Runnable mPreviewFrameSeek=this::previewFrameSeek;
+    private void previewFrameSeek(){if(!mPreviewScrubbing||mIsStopped)return;if(!mSeekComplete){mHandler.postDelayed(mPreviewFrameSeek,80);return;}mSeekComplete=false;Player.sPlayer.seekTo(mNextSeek);}
     private int mPreviewRevealKey=-1;
     private int                 mBarXYIconResource = R.drawable.video_format_arrow_horizontal;
 
@@ -1498,7 +1503,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private void configurePreviewTransport(){
         for(int id:new int[]{R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward,R.id.preview_speed}){View v=mControllerViewLeft.findViewById(id);if(v!=null){v.setVisibility(View.GONE);v.setFocusable(false);}}
         for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_more}){View v=mControllerViewLeft.findViewById(id);if(v instanceof ImageButton){ImageButton button=(ImageButton)v;button.setBackgroundColor(android.graphics.Color.TRANSPARENT);if(button.getParent() instanceof android.widget.LinearLayout){android.widget.LinearLayout group=(android.widget.LinearLayout)button.getParent();group.setAddStatesFromChildren(true);group.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));}button.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));button.setOnFocusChangeListener((view,focused)->updatePreviewScrubber());button.setNextFocusUpId(R.id.seek_progress);}}
-        mProgress.setBackgroundColor(android.graphics.Color.TRANSPARENT);mProgress.setOnFocusChangeListener((v,focused)->updatePreviewScrubber());
+        mProgress.setBackgroundColor(android.graphics.Color.TRANSPARENT);mProgress.setOnFocusChangeListener((v,focused)->updatePreviewScrubber());mProgress.setOnKeyListener((v,key,event)->previewScrubKey(key,event));
         mProgress.setNextFocusDownId(R.id.pause);mPauseButton.setNextFocusLeftId(mControllerViewLeft.findViewById(R.id.preview_audio).getVisibility()==View.VISIBLE?R.id.preview_audio:R.id.preview_subtitles);mPauseButton.setNextFocusRightId(R.id.preview_more);
         mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusRightId(R.id.preview_audio);
         mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusLeftId(R.id.preview_subtitles);
@@ -1531,7 +1536,23 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             control.refreshDrawableState();
         }
     }
-    private void updatePreviewScrubber(){if(!experimentalUi()||mControllerViewLeft==null||mProgress==null)return;TextView bubble=mControllerViewLeft.findViewById(R.id.preview_scrub_time);if(bubble==null)return;boolean focused=mProgress.hasFocus();bubble.setVisibility(focused?View.VISIBLE:View.INVISIBLE);if(!focused)return;bubble.setText(mCurrentTime==null?"":mCurrentTime.getText());bubble.setBackground(new com.archos.mediacenter.video.leanback.PreviewFocusGlow(mContext));bubble.measure(View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));float fraction=mProgress.getMax()>0?(float)mProgress.getProgress()/mProgress.getMax():0;float x=mProgress.getPaddingLeft()+fraction*(mProgress.getWidth()-mProgress.getPaddingLeft()-mProgress.getPaddingRight())-bubble.getMeasuredWidth()/2f;bubble.setTranslationX(Math.max(0,Math.min(x,mProgress.getWidth()-bubble.getMeasuredWidth())));}
+    private void updatePreviewScrubber(){if(!experimentalUi()||mControllerViewLeft==null||mProgress==null)return;TextView bubble=mControllerViewLeft.findViewById(R.id.preview_scrub_time);if(bubble==null)return;boolean focused=mProgress.hasFocus()||mPreviewKeySeeking||mSeekKeyDirection!=0||android.os.SystemClock.elapsedRealtime()<mPreviewTransportFeedbackUntil;bubble.setVisibility(focused&&mControlBarShowing?View.VISIBLE:View.INVISIBLE);if(!focused)return;bubble.setText(mCurrentTime==null?"":mCurrentTime.getText());bubble.setBackground(new com.archos.mediacenter.video.leanback.PreviewFocusGlow(mContext));bubble.measure(View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));float fraction=mProgress.getMax()>0?(float)mProgress.getProgress()/mProgress.getMax():0;float x=mProgress.getPaddingLeft()+fraction*(mProgress.getWidth()-mProgress.getPaddingLeft()-mProgress.getPaddingRight())-bubble.getMeasuredWidth()/2f;bubble.setTranslationX(Math.max(0,Math.min(x,mProgress.getWidth()-bubble.getMeasuredWidth())));}
+    /** Paused, debounced frame seeking: one in-flight decoder seek, explicit commit/cancel. */
+    private boolean previewScrubKey(int key,KeyEvent event){
+        if(!experimentalUi()||mIsStopped)return false;
+        boolean arrow=key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT;
+        boolean commit=key==KeyEvent.KEYCODE_DPAD_CENTER||key==KeyEvent.KEYCODE_ENTER;
+        boolean cancel=key==KeyEvent.KEYCODE_BACK||key==KeyEvent.KEYCODE_DPAD_DOWN;
+        if(!arrow&&!commit&&!cancel)return false;
+        if(event.getAction()!=KeyEvent.ACTION_DOWN)return true;
+        if(arrow){
+            if(!mPreviewScrubbing){mPreviewScrubbing=true;mPreviewScrubOrigin=Player.sPlayer.getCurrentPosition();mNextSeek=mPreviewScrubOrigin;mDragging=true;mSeekWasPlaying=Player.sPlayer.isPlaying();if(mSeekWasPlaying)Player.sPlayer.pause(STATE_SEEK);mHandler.removeMessages(MSG_SHOW_PROGRESS);cancelFadeOut();}
+            mNextSeek=PreviewSeekPolicy.position(mNextSeek,mPreviewSeekPolicy.next(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1,android.os.SystemClock.elapsedRealtime()),Player.sPlayer.getDuration());
+            setProgress();mHandler.removeCallbacks(mPreviewFrameSeek);mHandler.postDelayed(mPreviewFrameSeek,220);return true;
+        }
+        if(mPreviewScrubbing){mHandler.removeCallbacks(mPreviewFrameSeek);mPreviewScrubbing=false;mDragging=false;if(cancel)mNextSeek=mPreviewScrubOrigin;mSeekComplete=false;Player.sPlayer.seekTo(mNextSeek);setProgress();}
+        if(cancel)mPauseButton.requestFocus();sendFadeOut(SHOW_TIMEOUT);return true;
+    }
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
             mVideoTitle.setText(title);
@@ -1551,7 +1572,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void stop() {
-        mPreviewKeySeeking=false;mPreviewSeekPolicy.reset();
+        mPreviewKeySeeking=false;mPreviewScrubbing=false;mPreviewSeekPolicy.reset();
         if(experimentalUi())PreviewPlaybackMenus.close();
         if (log.isDebugEnabled()) log.debug("stop");
 
@@ -1703,11 +1724,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private void advancePreviewKeySeek(){
         int delta=mPreviewSeekPolicy.next(mSeekKeyDirection,android.os.SystemClock.elapsedRealtime());
         mNextSeek=PreviewSeekPolicy.position(mNextSeek,delta,Player.sPlayer.getDuration());
+        mPreviewTransportFeedbackUntil=android.os.SystemClock.elapsedRealtime()+SHOW_TIMEOUT;
         setProgress();
     }
     private void commitPreviewKeySeek(){
         if(!mPreviewKeySeeking)return;
         mPreviewKeySeeking=false;mHandler.removeMessages(MSG_SEEK);mDragging=false;
+        mPreviewTransportFeedbackUntil=android.os.SystemClock.elapsedRealtime()+SHOW_TIMEOUT;
         if(!mIsStopped&&mNextSeek>=0){mSeekComplete=false;Player.sPlayer.seekTo(mNextSeek);updatePauseButton();setProgress();}
     }
 
