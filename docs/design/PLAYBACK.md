@@ -1,6 +1,6 @@
 # Playback, Loading Screen & HUD — Design and Behaviour Authority
 
-Status: **current HUD corrections partly APPROVED; some submenu contents NEED DECISION**
+Status: **APPROVED next-version HUD and submenu authority**
 
 ## Loading/preparation screen
 Dark/neutral cinematic loading surface. Use cached backdrop and official title/logo artwork where available without remote-network flashing. For TV show only Season • Episode and episode title; avoid clutter/badge rows. “Preparing playback…” may be used as the intentional status.
@@ -58,3 +58,20 @@ The same historical record explicitly rejected permanent left-sidebar primary na
 
 
 See `docs/project/HISTORY_RECONCILIATION.md` for older HUD concepts that are explicitly superseded by current physical-QA authority.
+
+
+## Next-version final submenu authority — APPROVED
+
+This section supersedes earlier NEEDS DECISION wording above.
+
+**Primary:** Subtitles · Audio · Play/Pause · More. Exactly four; Play/Pause dead-centre. Rebalance spacing visually if needed without adding a fifth control.
+
+**Subtitles:** Off/available tracks · Download Subtitles · Sync · Appearance. Appearance remains in the HUD so the user can see changes live. Retain Style/colour, Vertical Position, Outline subtitles, Subtitle background and Background opacity. Global defaults/provider/preferred language remain in full Settings.
+
+**Subtitle defect:** changing subtitle tracks must not visibly jump the video forward then snap back. Fix the root cause; no seek/restart/rebind/surface recreation or visible frame disturbance from a track change.
+
+**Audio:** available tracks · Audio Sync · Audio Boost · Night Mode. Persistent defaults remain in Settings.
+
+**More:** flat compact menu: Playback Speed · Play Mode · Format. Remove Report a Problem and unnecessary section headings. Format is picture/aspect presentation (Original, Full Screen, Stretch, 4:3, 16:9, etc.), not technical metadata.
+
+Physical Shield QA has accepted persistent HUD accent/focus colouring and absence of internal/debug preparation text in the tested candidate; protect both against regression.
