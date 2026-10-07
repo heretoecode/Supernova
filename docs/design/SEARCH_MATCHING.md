@@ -32,3 +32,15 @@ Manual correction must preserve playback/watched state, row membership, physical
 
 ## Evidence
 `docs/preview-4.1.7/REQUIREMENTS.md` UI-020–021, matching requirements and UI-047–049; 4.1.2 handover/audit; 4.1.7 Shield QA.
+
+
+## Next-version Search / Find a Match amendments — APPROVED
+
+### Forgiving matching
+Normalise case, punctuation/periods, apostrophes, hyphens, whitespace and leading The/A/An where sensible. Exact/near-exact results still rank highest. Examples: `OC` → **The O.C.**; `dark knight` → **The Dark Knight**; `schitts creek` → **Schitt’s Creek**. Apply equivalent UX to local Search and online Find a Match where technically possible.
+
+### Keyboard hard boundaries
+Hard edges stay on the same key with no flicker: number row + Up; Q + Left; Clear/Space/Backspace + Down. P/right edge + Right deliberately enters results when results exist. Do not transiently focus the input and then correct it.
+
+### Find a Match result presentation
+Use normal Search as visual authority for result row height, artwork slot dimensions/alignment, text start, title hierarchy, secondary metadata, synopsis treatment, vertical spacing and focus treatment. Fields may differ because the source differs.
