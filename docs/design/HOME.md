@@ -1,6 +1,6 @@
 # Home — Design and Behaviour Authority
 
-Status: **ACTIVE / mixed APPROVED + PARKED future direction**
+Status: **ACTIVE / APPROVED next-version Featured redesign + corrective work**
 
 This document preserves the recoverable Home-screen design authority. It distinguishes the **current implemented/approved 4.1.7 baseline** from a **later PARKED Featured redesign direction** discussed after that baseline. Do not silently combine them.
 
@@ -87,9 +87,9 @@ Continue Watching → Playback → Back must restore the exact originating card 
 - A subtle backdrop/shadow is acceptable.
 - Clearing Watch Next remains separate and confirmed.
 
-## 5. Later exposed-card Featured redesign — PARKED, approved design direction
+## 5. Exposed-card Featured redesign — APPROVED FOR NEXT VERSION
 
-This is **not** the current 4.1.7 hero and must not be implemented by the fixes-only release unless explicitly activated later.
+This is not the current 4.1.7 hero. **It is explicitly activated for the next version** as the release's deliberate major Home design change.
 
 The later design discussion moved Featured toward an **exposed-card carousel**, deliberately *not* a conventional horizontal poster row.
 
@@ -115,8 +115,8 @@ Historical discussion included generated/approved mock-up work for this directio
 ## 6. Supersession / conflict rules
 
 - Section 2 is the current implemented 4.1.7 baseline.
-- Section 5 is a later PARKED product/design direction.
-- The 35-item fixes-only pass may correct defects in the current baseline; it does not activate Section 5.
+- Section 5 is **APPROVED next-version implementation authority** and supersedes the parked status.
+- The completed post-4.1.7 candidate did not activate Section 5; the next implementation pass must.
 - Generated mock-ups frequently had incorrect top navigation. The written canonical navigation in Section 1 overrides any conflicting mock-up navigation.
 - Do not infer an external streaming recommendation feature from provider/local identity artwork.
 - Do not alter package/signing identity as part of Home work.
@@ -151,3 +151,14 @@ Historical ChatGPT design discussion has now been consolidated here for the late
 - Final visual comparison between that parked design and the current 4.1.7 hero.
 
 These gaps are explicit. They must not be filled by invention.
+
+
+## 10. Next-version physical-QA amendments — APPROVED
+
+- Physical Shield QA reopens Home focus enlargement, horizontal row clipping and Move/Hide despite earlier development reports.
+- Focus enlargement must scale artwork + rounded boundary + outward glow as one aligned unit; changing only image clipping or a scale property is not sufficient.
+- Horizontal Home rows follow the shared carousel rule in `docs/qa/next-version-authority.md`: deliberate partial continuation, no accidental hard clipping, no clipped focused glow.
+- LEFT at the leftmost Home-row item must expose the approved Move / Hide interaction, not the old generic context menu.
+- Reduce the top fade to a shallow transition immediately below navigation.
+- Preserve the physically accepted Continue Watching exact return-focus behaviour.
+- The Featured exposed-card redesign in section 5 is now in scope for this next version.
