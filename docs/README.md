@@ -7,7 +7,8 @@ This index separates **current authority** from **historical evidence**. If a hi
 1. `/PROJECT_STATUS.md` — current baseline, active work, constraints and session workflow.
 2. `project/DECISIONS_AND_ROADMAP.md` — durable approved/parked/future project decisions.
 3. `design/README.md` — current design authority and status rules.
-4. `qa/4.1.7-final-shield-qa.md` — current physical QA findings and bounded fixes-only scope.
+4. `qa/next-version-authority.md` — **current next-version authority**: completed physical Shield outcomes, approved implementation scope, regression protections and conformance rules.
+5. `qa/4.1.7-final-shield-qa.md` — original 35-item physical QA/fixes scope; retained as historical input to the newer next-version authority.
 5. `project/HISTORY_RECONCILIATION.md` — recovered historical decisions, superseded designs, rejections and future explorations needed to interpret older project history safely.
 
 ## Current 4.1.7 authority
@@ -40,7 +41,7 @@ The legacy `doc/` directory is inherited/upstream technical documentation. Do no
 
 ## Preview-next material
 
-`preview-next/` contains earlier forward-looking implementation/preservation work. It is **not automatically the active next-release specification**. Current scope is defined by `/PROJECT_STATUS.md` and `qa/4.1.7-final-shield-qa.md`.
+`preview-next/` contains earlier forward-looking implementation/preservation work. It is **not automatically the active next-release specification**. Current scope is defined by `/PROJECT_STATUS.md` and `qa/next-version-authority.md`.
 
 ## Build and delivery documentation
 
@@ -58,8 +59,9 @@ Existing build/delivery architecture records under `docs/` and CI material under
 
 Use **APPROVED**, **PARKED**, **REJECTED**, **SUPERSEDED**, and **NEEDS DECISION** consistently. Do not infer approval from an idea merely appearing in an old handover or discussion.
 
-## Active fixes development
+## Active next-version development
 
-- [Post-4.1.7 Shield fixes implementation and 35-item traceability](qa/post-4.1.7-fixes-implementation.md) — development branch only; accepted baseline remains 4.1.7 Final, physical acceptance pending.
+- [Next-version authority](qa/next-version-authority.md) — authoritative continuation after physical Shield QA; includes reopened failures, approved redesigns, regression protections and implementation/conformance rules.
+- [Post-4.1.7 Shield fixes implementation and 35-item traceability](qa/post-4.1.7-fixes-implementation.md) — historical development status of the tested candidate; its FIXED labels do not override later physical Shield results.
 
 - [Post-4.1.7 signed fixes candidate](qa/post-4.1.7-fixes-candidate.md): exact build source/APK hash/certificate, green workflow evidence, unresolved decisions and physical Shield validation pending. This unmerged candidate does not supersede accepted 4.1.7 Final.
