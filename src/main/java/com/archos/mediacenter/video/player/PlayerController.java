@@ -226,7 +226,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private int mPreviewScrubOrigin;
     private long mPreviewTransportFeedbackUntil;
     private final Runnable mPreviewFrameSeek=this::previewFrameSeek;
-    private void previewFrameSeek(){if(!mPreviewScrubbing||mIsStopped)return;if(!mSeekComplete){mHandler.postDelayed(mPreviewFrameSeek,80);return;}mSeekComplete=false;Player.sPlayer.seekTo(mNextSeek);}
+    private void previewFrameSeek(){if(!mPreviewScrubbing||mIsStopped)return;if(!mSeekComplete){mHandler.postDelayed(mPreviewFrameSeek,80);return;}mSeekComplete=false;tracePreviewTransport("scrub_preview",-1);Player.sPlayer.seekTo(mNextSeek);}
     private int mPreviewRevealKey=-1;
     private int                 mBarXYIconResource = R.drawable.video_format_arrow_horizontal;
 
@@ -1521,7 +1521,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if(!experimentalUi())return;
         boolean playing=Player.sPlayer!=null&&Player.sPlayer.isPlaying();
         int position=Player.sPlayer==null?-1:Player.sPlayer.getCurrentPosition();
-        android.util.Log.i("SupernovaTransport","Preview transport event="+phase+" key="+key+" playing="+playing+" position="+position);
+        android.util.Log.i("SupernovaTransport","Preview transport event="+phase+" key="+key+" playing="+playing+" position="+position+" target="+mNextSeek);
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_transport","phase",phase,"key",key,"playing",playing,"position_ms",position);
     }
     private void restorePreviewAccent(){
@@ -1550,7 +1550,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             mNextSeek=PreviewSeekPolicy.position(mNextSeek,mPreviewSeekPolicy.next(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1,android.os.SystemClock.elapsedRealtime()),Player.sPlayer.getDuration());
             setProgress();mHandler.removeCallbacks(mPreviewFrameSeek);mHandler.postDelayed(mPreviewFrameSeek,220);return true;
         }
-        if(mPreviewScrubbing){mHandler.removeCallbacks(mPreviewFrameSeek);mPreviewScrubbing=false;mDragging=false;if(cancel)mNextSeek=mPreviewScrubOrigin;mSeekComplete=false;Player.sPlayer.seekTo(mNextSeek);setProgress();}
+        if(mPreviewScrubbing){mHandler.removeCallbacks(mPreviewFrameSeek);mPreviewScrubbing=false;mDragging=false;if(cancel)mNextSeek=mPreviewScrubOrigin;mSeekComplete=false;tracePreviewTransport(cancel?"scrub_cancel":"scrub_commit",key);Player.sPlayer.seekTo(mNextSeek);setProgress();}
         if(cancel)mPauseButton.requestFocus();sendFadeOut(SHOW_TIMEOUT);return true;
     }
     public void setVideoTitle(String title) {
@@ -1623,6 +1623,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             return;
 
         mSeekComplete = true;
+        tracePreviewTransport("seek_complete",-1);
         if (mSeekComplete && !mDragging) {
             onSeekAndDraggingComplete();
         }
@@ -2934,7 +2935,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public boolean handleBackPressed() {
-        if(experimentalUi()){if(PreviewPlaybackMenus.back())return true;if(mControlBarShowing){hide();return true;}}
+        if(experimentalUi()){if(mPreviewScrubbing){previewScrubKey(KeyEvent.KEYCODE_BACK,new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK));return true;}if(PreviewPlaybackMenus.back())return true;if(mControlBarShowing){hide();return true;}}
         log.info("Back navigation: TV menu displayed={}, card dialog active={}",
                 isTVMenuDisplayed,
                 tvCardDialog != null && tvCardDialog.getVisibility() == View.VISIBLE);

@@ -61,7 +61,7 @@ final class PreviewPlaybackMenus {
   if(speedItem!=null){final TVMenuItem item=speedItem;labels.add("Playback Speed");actions.add(()->{restoreParent=()->root(activity,adapter);item.previewClick();});}
   for(TVCardView card:cards)if(activity.getString(R.string.pref_play_mode_title).equals(card.previewTitle())){labels.add("Play Mode");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
 
-  for(TVCardView card:cards){String title=card.previewTitle();if(!activity.getString(R.string.pref_format_mode_title).equals(title))continue;labels.add(title);actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
+  for(TVCardView card:cards){String title=card.previewTitle();if(!activity.getString(R.string.pref_format_mode_title).equals(title))continue;labels.add("Format");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
 
   current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),rootFocus,Collections.emptySet(),false,n->{rootFocus=n;actions.get(n).run();});
   current.setOnCancelListener(d->close());position(activity,current,true);

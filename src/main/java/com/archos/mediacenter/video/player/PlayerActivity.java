@@ -1938,6 +1938,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         tvPicker.setHourFormat(true);
         tvmenu.addTVMenuItem(tvPicker);
         final TVMenuItem saveSettingCB = tvmenu.createAndAddTVSwitchableMenuItem(getString(R.string.keep_setting), mPreferences.getInt(getString(R.string.save_delay_setting_pref_key), 0) != 0);
+        final boolean sessionOnly=mPreferences.getBoolean("try_new_ui",false);
+        if(sessionOnly){saveSettingCB.setChecked(false);saveSettingCB.setVisibility(View.GONE);}
         saveSettingCB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1977,6 +1979,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             @Override
             public void onResult(int code) {
                 mPlayerController.getTVMenuAdapter().setDiscrete(false);
+                if(sessionOnly)return;
                 if(saveSettingCB.isChecked()){
                     int delay = clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay());
                     if (log.isDebugEnabled()) log.debug("createTVAudioDelayDialog:onResult save audio delay={} in prefs", delay);
@@ -2176,7 +2179,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     @Override
                     public void onClick(View v) {
                         // TODO Auto-generated method stub
-                        PlayerService.sPlayerService.setAudioFilt(PlayerService.sPlayerService.mAudioFilt > 0 ? 0 : 3);
+                        PlayerService.sPlayerService.setAudioFilt(PlayerService.sPlayerService.mAudioFilt > 0 ? 0 : 3,!mPreferences.getBoolean("try_new_ui",false));
                         tvmi.setChecked(PlayerService.sPlayerService.mAudioFilt > 0);
                     }
                 });
@@ -2187,7 +2190,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     @Override
                     public void onClick(View v) {
                         // TODO Auto-generated method stub
-                        PlayerService.sPlayerService.setNightMode(!PlayerService.sPlayerService.mNightModeOn);
+                        PlayerService.sPlayerService.setNightMode(!PlayerService.sPlayerService.mNightModeOn,!mPreferences.getBoolean("try_new_ui",false));
                         tvmi2.setChecked(PlayerService.sPlayerService.mNightModeOn);
                     }
                 });

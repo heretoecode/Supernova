@@ -274,7 +274,10 @@ public final class PreviewPages extends FrameLayout {
         if(PreviewLibraryLoader.memoryCache()==null){java.util.concurrent.ExecutorService cacheWorker=java.util.concurrent.Executors.newSingleThreadExecutor();cacheWorker.execute(()->{try{Snapshot previous=PreviewLibraryLoader.readCache(c.getApplicationContext());post(()->{if(!loaded&&previous!=null)setSnapshot(previous);});}finally{cacheWorker.shutdown();}});}
     }
     private java.util.function.Consumer<Boolean> scrollListener=value->{};
-    public void setNavigationInset(int inset){list.setPadding(dp(28),dp(10)+inset,dp(28),dp(12));}
+    private int navigationInset,utilityNavigationInset;
+    public void setNavigationInset(int inset){navigationInset=inset;applyNavigationInset();}
+    public void setUtilityNavigationInset(int inset){if(utilityNavigationInset==inset)return;utilityNavigationInset=inset;applyNavigationInset();}
+    private void applyNavigationInset(){list.setPadding(dp(28),tab==3?utilityNavigationInset:dp(10)+navigationInset,dp(28),tab==3?0:dp(12));}
     public void setScrollListener(java.util.function.Consumer<Boolean> listener){scrollListener=listener;notifyScroll();}
     private void notifyScroll(){scrollListener.accept(list.canScrollVertically(-1));}
     public boolean atTop() {
@@ -307,7 +310,7 @@ public final class PreviewPages extends FrameLayout {
         returnPending=false;returnScroll=null;++focusGeneration;restoringFocus=false;
         rememberFocus();scrollStates[this.tab]=layout.onSaveInstanceState();
         // TopNavigation owns the single full-viewport background, including the header.
-        quietOrder.clear();switchingTab=true;this.tab=tab;setBackground(null);featuredIndex=0;render("tab_change");switchingTab=false;
+        quietOrder.clear();switchingTab=true;this.tab=tab;applyNavigationInset();setBackground(null);featuredIndex=0;render("tab_change");switchingTab=false;
         if(scrollStates[tab]!=null)layout.onRestoreInstanceState(scrollStates[tab]);else list.scrollToPosition(0);PreviewMetadata.library(getContext(),snapshot,tab);
     }
     private void requestNetworkEntryFocus(){

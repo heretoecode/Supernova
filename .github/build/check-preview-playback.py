@@ -70,7 +70,7 @@ with tempfile.TemporaryDirectory() as directory:
     adb('push', str(jar), '/data/local/tmp/preview-window-dump.jar')
 
 subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-f', 'lavfi',
-                '-i', 'color=c=0x223d55:s=640x360:r=24', '-f', 'lavfi', '-i',
+                '-i', 'testsrc2=s=640x360:r=24', '-f', 'lavfi', '-i',
                 'sine=frequency=440:sample_rate=48000', '-t', '120', '-c:v',
                 'libx264', '-preset', 'ultrafast', '-pix_fmt', 'yuv420p', '-c:a',
                 'aac', '-b:a', '64k', '/tmp/supernova-preview-smoke.mp4'], check=True)
@@ -117,6 +117,36 @@ try:
     # Remote focus, not a touch click: touching a non-touch-focusable ImageButton
     # clears keyboard focus and cannot establish the opener this check verifies.
     assert any(n.get('resource-id', '').endswith('/pause') and n.get('focused') == 'true' for n in root.iter('node')), 'HUD did not enter on Play/Pause'
+    # Real native frame feedback, not just a moving seek cursor. The testsrc2 clip
+    # changes over time; paused screenshots must differ after the selected seek.
+    def frame_sample(path):
+        return subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(path),
+            '-vf','crop=iw/3:ih/3:iw/3:ih/4,scale=64:36','-frames:v','1',
+            '-f','rawvideo','-pix_fmt','rgb24','-'],check=True,stdout=subprocess.PIPE).stdout
+    paused_frame = frame_sample(OUT / 'playback-hud-runtime.png')
+    adb('shell','input','keyevent','19')
+    adb('shell','input','keyevent','22')
+    time.sleep(1)
+    preview = capture('playback-seek-frame-preview')
+    assert any(n.get('resource-id','').endswith('/seek_progress') and n.get('focused')=='true' for n in preview.iter('node')), 'Seek focus lost'
+    assert any(n.get('resource-id','').endswith('/preview_scrub_time') for n in preview.iter('node')), 'Seek timestamp bubble missing'
+    preview_frame=frame_sample(OUT / 'playback-seek-frame-preview.png')
+    assert sum(abs(a-b) for a,b in zip(paused_frame,preview_frame))/len(paused_frame)>3, 'Native paused picture did not follow seek target'
+    seeking=adb('logcat','-d').decode(errors='replace')
+    target=re.findall(r'Preview transport event=scrub_preview .*target=(\d+)',seeking)
+    completed=re.findall(r'Preview transport event=seek_complete .*position=(\d+)',seeking)
+    assert target and completed and abs(int(target[-1])-int(completed[-1]))<2500, 'Native frame seek did not reach target'
+    adb('shell','input','keyevent','23')
+    time.sleep(1)
+    assert 'event=scrub_commit' in adb('logcat','-d').decode(errors='replace'), 'Confirmation did not commit seek'
+    adb('shell','input','keyevent','21')
+    time.sleep(1)
+    adb('shell','input','keyevent','4')
+    time.sleep(1)
+    cancelled=adb('logcat','-d').decode(errors='replace')
+    assert 'event=scrub_cancel' in cancelled, 'Back did not cancel seek deterministically'
+    root=capture('playback-seek-cancel-return')
+    assert any(n.get('resource-id','').endswith('/pause') and n.get('focused')=='true' for n in root.iter('node')), 'Cancel did not return to Play/Pause'
     adb('shell', 'input', 'keyevent', '22')
     root = capture('playback-more-focused')
     assert any(n.get('resource-id', '').endswith('/preview_more') and n.get('focused') == 'true' for n in root.iter('node')), 'Remote RIGHT did not focus More'

@@ -120,8 +120,15 @@ public final class TopNavigation extends LinearLayout {
         if(view instanceof android.widget.FrameLayout){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++)if(prepareScrollingContent(group.getChildAt(i)))return true;}
         return false;
     }
-    @Override protected void onMeasure(int width,int height){super.onMeasure(width,height);if(scrollingContent)stage.measure(View.MeasureSpec.makeMeasureSpec(getMeasuredWidth(),View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(getMeasuredHeight(),View.MeasureSpec.EXACTLY));}
-    @Override protected void onLayout(boolean changed,int left,int top,int right,int bottom){super.onLayout(changed,left,top,right,bottom);if(scrollingContent)stage.layout(0,0,getWidth(),getHeight());}
+    /** Utility panels use the actual navigation ink edge, not the bar's container edge. */
+    public int navigationTextBottom(){TextView tab=tabs[0];return (dp(52)-tab.getMeasuredHeight())/2+tab.getBaseline()+tab.getPaint().getFontMetricsInt().descent;}
+    private boolean settingsContent(){return content.getId()==com.archos.mediacenter.video.R.id.settingsFragment;}
+    @Override protected void onMeasure(int width,int height){
+        super.onMeasure(width,height);
+        if(content instanceof PreviewPages)((PreviewPages)content).setUtilityNavigationInset(navigationTextBottom());
+        if(scrollingContent||settingsContent())stage.measure(View.MeasureSpec.makeMeasureSpec(getMeasuredWidth(),View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(getMeasuredHeight()-(settingsContent()?navigationTextBottom():0),View.MeasureSpec.EXACTLY));
+    }
+    @Override protected void onLayout(boolean changed,int left,int top,int right,int bottom){super.onLayout(changed,left,top,right,bottom);if(scrollingContent)stage.layout(0,0,getWidth(),getHeight());else if(settingsContent())stage.layout(0,navigationTextBottom(),getWidth(),getHeight());}
     @Override protected int getChildDrawingOrder(int count,int position){return count==2?1-position:position;}
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key))refreshAccent();};
     private void refreshAccent(){for(TextView tab:tabs)styleTab(tab);group.refreshColour();invalidate();}

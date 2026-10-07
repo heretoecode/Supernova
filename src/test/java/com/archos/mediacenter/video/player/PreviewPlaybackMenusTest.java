@@ -32,6 +32,21 @@ public class PreviewPlaybackMenusTest {
         assertTrue(allText(tracks.getWindow().getDecorView()).contains("English"));assertFalse(allText(tracks.getWindow().getDecorView()).contains("Subtitle Settings"));
         assertFalse(allText(tracks.getWindow().getDecorView()).contains(host.getString(R.string.preferences)));host.finish();
     }
+    @Test public void approvedFirstLevelOrdersRetainTrackAndAdjustmentCallbacks(){
+        Activity host=Robolectric.buildActivity(Activity.class).setup().get();
+        for(boolean subtitles:new boolean[]{true,false}){
+            TVMenu menu=new TVMenu(host);menu.createAndAddTVMenuItem("English",true,true);
+            menu.createAndAddTVMenuItem(host.getString(subtitles?R.string.player_pref_subtitle_delay_title:R.string.pref_audio_filt_title),true,false);
+            if(subtitles){menu.createAndAddTVMenuItem(host.getString(R.string.menu_player_settings),true,false);menu.createAndAddTVMenuItem(host.getString(R.string.get_subtitles_online),true,false);}
+            else menu.createAndAddTVMenuItem(host.getString(R.string.player_pref_audio_delay_title),true,false);
+            TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(host.getString(subtitles?R.string.menu_subtitles:R.string.menu_audio));when(card.previewMenu()).thenReturn(menu);
+            TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Collections.singletonList(card));
+            PreviewPlaybackMenus.show(host,adapter,card.previewTitle());Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            String[] expected=subtitles?new String[]{"English","Download Subtitles","Sync","Appearance"}:new String[]{"English","Audio Sync","Audio Boost"};
+            for(int i=0;i<expected.length;i++)assertEquals(expected[i],((android.widget.TextView)dialog.getWindow().getDecorView().findViewWithTag("preview-label:"+i)).getText().toString());
+            PreviewPlaybackMenus.close();
+        }host.finish();
+    }
     private String allText(View view){String result=view instanceof android.widget.TextView?((android.widget.TextView)view).getText().toString()+"\n":"";if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)result+=allText(((android.view.ViewGroup)view).getChildAt(i));return result;}
     @Test public void directSpeedAdjustmentBackReturnsToExactHudOpener(){
         Activity host=Robolectric.buildActivity(TopNavigationTestHost.class).setup().visible().get();

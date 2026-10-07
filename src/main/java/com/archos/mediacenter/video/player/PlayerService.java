@@ -2871,10 +2871,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
-    public void setAudioFilt(int which) {
+    public void setAudioFilt(int which) {setAudioFilt(which,true);}
+    public void setAudioFilt(int which, boolean persist) {
         int newAudioFilt = which; // Caution here, audiofilt values must be [0,n[
         if (newAudioFilt != mAudioFilt) {
-            mPreferences.edit()
+            if(persist)mPreferences.edit()
                     .putInt(KEY_AUDIO_FILT, newAudioFilt)
                     .apply(); // commit is blocking.. avoid!
             mAudioFilt = newAudioFilt;
@@ -2882,10 +2883,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
-    public void setNightMode(boolean enable) {
+    public void setNightMode(boolean enable) {setNightMode(enable,true);}
+    public void setNightMode(boolean enable, boolean persist) {
         boolean newNightMode = enable;
         if (mNightModeOn != newNightMode) {
-            mPreferences.edit()
+            if(persist)mPreferences.edit()
                     .putBoolean(KEY_AUDIO_FILT_NIGHT, newNightMode)
                     .apply(); // commit is blocking.. avoid!
             mNightModeOn = newNightMode;

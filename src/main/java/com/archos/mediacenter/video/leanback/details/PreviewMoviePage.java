@@ -146,8 +146,9 @@ public final class PreviewMoviePage extends ScrollView {
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_UP&&matchMetadata.getVisibility()==VISIBLE){matchMetadata.requestFocus();return true;}
         if(focused==matchMetadata){if(key==KeyEvent.KEYCODE_DPAD_DOWN){play.requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;}
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
-        if(focused==play&&key==KeyEvent.KEYCODE_DPAD_RIGHT&&moreButton.getVisibility()==VISIBLE){moreButton.requestFocus();return true;}
-        if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_LEFT&&play.getVisibility()==VISIBLE){play.requestFocus();return true;}
+        if(focused==play&&key==KeyEvent.KEYCODE_DPAD_RIGHT){if(providerActions.getChildCount()>0)providerActions.getChildAt(0).requestFocus();else if(moreButton.getVisibility()==VISIBLE)moreButton.requestFocus();return true;}
+        if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_LEFT){if(providerActions.getChildCount()>0)providerActions.getChildAt(providerActions.getChildCount()-1).requestFocus();else if(play.getVisibility()==VISIBLE)play.requestFocus();return true;}
+        if(focused!=null&&inside(focused,providerActions)){if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(play.getVisibility()==VISIBLE)play.requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(moreButton.getVisibility()==VISIBLE)moreButton.requestFocus();return true;}}
         if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
         if(tag.startsWith("section:")){
             if(key==KeyEvent.KEYCODE_DPAD_UP){focusPrimary();scrollTo(0,0);return true;}

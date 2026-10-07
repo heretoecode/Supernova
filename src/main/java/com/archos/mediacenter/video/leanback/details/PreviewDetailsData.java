@@ -72,24 +72,34 @@ final class PreviewDetailsData {
     /** Publish independent sections before slow season/provider reconciliation finishes. */
     static Result load(Context c,String kind,long id,Set<Long> localIds,java.util.function.Consumer<Result> ready)throws Exception{
         java.util.concurrent.ExecutorService sections=java.util.concurrent.Executors.newFixedThreadPool(4);
-        Map<String,java.util.concurrent.Future<JSONObject>> pending=new LinkedHashMap<>();
-        for(String section:new String[]{"","videos","recommendations","credits","tv".equals(kind)?"content_ratings":"release_dates"})pending.put(section,sections.submit(()->StreamingRepository.metadata(c,kind,id,section)));
+        java.util.concurrent.CompletionService<JSONObject> completed=new java.util.concurrent.ExecutorCompletionService<>(sections);
+        Map<java.util.concurrent.Future<JSONObject>,String> pending=new HashMap<>();
+        for(String section:new String[]{"","videos","recommendations","credits","tv".equals(kind)?"content_ratings":"release_dates"})pending.put(completed.submit(()->StreamingRepository.metadata(c,kind,id,section)),section);
         Result result=new Result();JSONArray candidates=null;
         try{
-            result.details=pending.get("").get();publish(result,ready);
-            try{addExtras(result,pending.get("videos").get());result.extrasReady=true;}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("extras_metadata_unavailable");}publish(result,ready);
-            try{candidates=pending.get("recommendations").get().optJSONArray("results");result.relatedReady=true;}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("recommendations_unavailable");}
-            try{result.credits=pending.get("credits").get();}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("credits_metadata_unavailable");}publish(result,ready);
-            try{result.classification=pending.get("tv".equals(kind)?"content_ratings":"release_dates").get();}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("classification_metadata_unavailable");}publish(result,ready);
+            for(int n=0;n<5;n++){
+                java.util.concurrent.Future<JSONObject> future=completed.take();String section=pending.get(future);JSONObject data;
+                try{data=future.get();}catch(java.util.concurrent.ExecutionException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_section_unavailable","section",section);continue;}
+                if(section.isEmpty())result.details=data;
+                else if(section.equals("videos")){addExtras(result,data);result.extrasReady=true;}
+                else if(section.equals("recommendations")){
+                    candidates=data.optJSONArray("results");result.relatedReady=true;
+                    Set<Long> localSeen=new HashSet<>();
+                    if(candidates!=null)for(int i=0;i<Math.min(60,candidates.length())&&result.related.size()<12;i++){JSONObject title=candidates.optJSONObject(i);long candidate=title==null?0:title.optLong("id");if(candidate>0&&candidate!=id&&localIds.contains(candidate)&&localSeen.add(candidate))result.related.add(new Remote(title,null));}
+                }else if(section.equals("credits"))result.credits=data;
+                else result.classification=data;
+                publish(result,ready);
+            }
         }finally{sections.shutdownNow();}
+        if(result.details==null)result.details=new JSONObject();
         if(candidates==null)candidates=new JSONArray();
         Set<String> configured=StreamingRepository.selected(c);String country=StreamingRepository.country(c);
         boolean providersEnabled=StreamingRepository.prefs(c).getBoolean(StreamingRepository.ENABLED,false)&&!configured.isEmpty();
-        Set<Long> seen=new HashSet<>();int providerChecks=0;
+        Set<Long> seen=new HashSet<>();for(Remote local:result.related)seen.add(local.title.optLong("id"));int providerChecks=0;
         for(int i=0;i<Math.min(60,candidates.length())&&result.related.size()<12;i++){if(Thread.currentThread().isInterrupted())break;JSONObject title=candidates.getJSONObject(i);long candidate=title.optLong("id");if(candidate<=0||candidate==id||!seen.add(candidate))continue;
             if(localIds.contains(candidate)){result.related.add(new Remote(title,null));continue;}
             if(!providersEnabled||providerChecks++>=12)continue;
-            try{StreamingRepository.Availability availability=StreamingRepository.load(c,kind,candidate,country);List<StreamingRepository.Offer> offers=StreamingRepository.filter(availability,configured,StreamingRepository.preferred(c));if(!offers.isEmpty())result.related.add(new Remote(title,offers.get(0).provider));}catch(Exception error){com.archos.mediacenter.video.diagnostics.Diagnostics.error("discovery_availability_unavailable",error);}
+            try{StreamingRepository.Availability availability=StreamingRepository.load(c,kind,candidate,country);List<StreamingRepository.Offer> offers=StreamingRepository.filter(availability,configured,StreamingRepository.preferred(c));if(!offers.isEmpty()){result.related.add(new Remote(title,offers.get(0).provider));publish(result,ready);}}catch(Exception error){com.archos.mediacenter.video.diagnostics.Diagnostics.error("discovery_availability_unavailable",error);}
         }
         publish(result,ready);
         if("tv".equals(kind)){
