@@ -207,9 +207,9 @@ public final class PreviewMoviePage extends ScrollView {
         if(selectedBackdrop==null&&backdrops!=null&&!backdrops.isEmpty())selectedBackdrop=backdrops.get(0);
         if(selectedBackdrop!=null){java.io.File file=selectedBackdrop.getLargeFileF();Uri uri=file!=null&&file.exists()?Uri.fromFile(file):selectedBackdrop.getLargeUrl()==null?null:Uri.parse(selectedBackdrop.getLargeUrl());if(uri!=null){artwork.accept(uri);if(movie!=null)movie.setPreviewBackdrop(uri.toString());}}
         portraits.clear();cast.removeAllViews();crew.removeAllViews();LinearLayout people=cast,crewPeople=crew;
-        if(tags!=null){for(Map.Entry<String,String> person:tags.getActors().entrySet()){if(people.getChildCount()>=8)break;person(people,person.getKey(),person.getValue());}
-            if(tags.getDirectors()!=null)for(String name:tags.getDirectors())if(!safe(name).isEmpty()&&crewPeople.getChildCount()<8)person(crewPeople,name,"Director");
-            if(tags.getWriters()!=null)for(String name:tags.getWriters())if(!safe(name).isEmpty()&&crewPeople.getChildCount()<8)person(crewPeople,name,"Writer");}
+        if(tags!=null){Set<String> cachedCrew=new HashSet<>();for(Map.Entry<String,String> person:tags.getActors().entrySet()){if(people.getChildCount()>=8)break;person(people,person.getKey(),person.getValue());}
+            if(tags.getDirectors()!=null)for(String name:tags.getDirectors())if(!safe(name).isEmpty()&&crewPeople.getChildCount()<8&&cachedCrew.add(name.toLowerCase(Locale.ROOT)))person(crewPeople,name,"Director");
+            if(tags.getWriters()!=null)for(String name:tags.getWriters())if(!safe(name).isEmpty()&&crewPeople.getChildCount()<8&&cachedCrew.add(name.toLowerCase(Locale.ROOT)))person(crewPeople,name,"Writer");}
         ((View)cast.getParent()).setVisibility(people.getChildCount()==0?GONE:VISIBLE);
         ((View)crew.getParent()).setVisibility(crewPeople.getChildCount()==0?GONE:VISIBLE);
         trailer.setVisibility(GONE);renderExtras();rebuildTabs();
@@ -380,7 +380,7 @@ public final class PreviewMoviePage extends ScrollView {
             List<org.json.JSONObject> people=new ArrayList<>();for(int n=0;n<values.length();n++){org.json.JSONObject v=values.optJSONObject(n);if(v!=null)people.add(v);}
             List<String> roles=Arrays.asList("Director","Creator","Screenplay","Writer","Story","Producer","Executive Producer","Director of Photography","Original Music Composer","Editor");
             if(section.equals("crew"))people.sort(Comparator.comparingInt(v->{int rank=roles.indexOf(v.optString("job"));return rank<0?999:rank;}));
-            Set<String> seen=new HashSet<>();for(org.json.JSONObject value:people){String name=value.optString("name"),role=value.optString(section.equals("cast")?"character":"job");if(name.isEmpty()||section.equals("crew")&&!roles.contains(role)||!seen.add(name+":"+role))continue;person(target,name,role);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(target.getChildAt(target.getChildCount()-1),"details."+section+".person."+value.optLong("id"));if(target.getChildCount()==8)break;}
+            Set<String> seen=new HashSet<>();for(org.json.JSONObject value:people){String name=value.optString("name"),role=value.optString(section.equals("cast")?"character":"job");String personKey=value.optLong("id")>0?"id:"+value.optLong("id"):"name:"+name.toLowerCase(Locale.ROOT);if(name.isEmpty()||!seen.add(personKey))continue;person(target,name,role);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(target.getChildAt(target.getChildCount()-1),"details."+section+".person."+value.optLong("id"));if(target.getChildCount()==8)break;}
             ((View)target.getParent()).setVisibility(target.getChildCount()==0?GONE:VISIBLE);restoreRowFocus(target,key,y);
         }
     }

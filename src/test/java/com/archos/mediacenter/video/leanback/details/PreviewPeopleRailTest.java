@@ -20,10 +20,10 @@ public class PreviewPeopleRailTest {
         Activity activity=Robolectric.buildActivity(Activity.class).setup().visible().get();
         PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);
         com.archos.mediascraper.MovieTags tags=new com.archos.mediascraper.MovieTags();
-        tags.setDirectors(java.util.Arrays.asList("Director One","Director Two"));tags.setWriters(java.util.Collections.singletonList("Writer, Jr."));
+        tags.setDirectors(java.util.Arrays.asList("Director One","Director Two"));tags.setWriters(java.util.Arrays.asList("Director One","Writer, Jr."));
         page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
         View second=page.findViewWithTag("person:Director Two:Director");assertNotNull(second);assertNotNull(page.findViewWithTag("person:Director One:Director"));
-        assertNotNull(page.findViewWithTag("person:Writer, Jr.:Writer"));assertTrue(second.requestFocus());
+        assertNotNull(page.findViewWithTag("person:Writer, Jr.:Writer"));assertNull(page.findViewWithTag("person:Director One:Writer"));assertTrue(second.requestFocus());
         page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
         assertEquals("person:Director Two:Director",page.findFocus().getTag());
     }
@@ -38,13 +38,21 @@ public class PreviewPeopleRailTest {
         assertNotNull(first);assertNotNull(second);assertNotSame(first,second);
         assertEquals("semantic:details.crew.person.2",first.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
         assertEquals("semantic:details.crew.person.3",second.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
-        assertNull(page.findViewWithTag("person:Crew Other:Production Assistant"));
+        View other=page.findViewWithTag("person:Crew Other:Production Assistant");assertNotNull("Prioritise creative roles without discarding available remaining crew",other);assertTrue(((LinearLayout)first.getParent()).indexOfChild(first)<((LinearLayout)first.getParent()).indexOfChild(other));
         LinearLayout people=(LinearLayout)first.getParent();assertEquals("Approved people lists are vertical text, not a carousel",LinearLayout.VERTICAL,people.getOrientation());assertEquals(2,((android.view.ViewGroup)first).getChildCount());for(int i=0;i<2;i++)assertTrue(((android.view.ViewGroup)first).getChildAt(i) instanceof android.widget.TextView);
         assertTrue(first.isFocusable());assertFalse(first.isClickable());
         page.setTags(null,java.util.Collections.emptyList(),java.util.Collections.emptyList());
         assertNotNull("A local tag refresh must retain cached individual crew",page.findViewWithTag("person:Director One:Director"));
         assertNotNull(page.findViewWithTag("person:Director Two:Director"));
         assertNotNull(page.findViewWithTag("person:Actor One:Lead"));
+    }
+    @Test public void crewPrioritisesCreativeRolesAndCapsEightDistinctPeople()throws Exception{
+        Activity activity=Robolectric.buildActivity(Activity.class).setup().get();PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);
+        PreviewDetailsData.Result data=new PreviewDetailsData.Result();org.json.JSONArray crew=new org.json.JSONArray();
+        crew.put(new JSONObject().put("id",1).put("name","Director").put("job","Writer"));crew.put(new JSONObject().put("id",1).put("name","Director").put("job","Director"));
+        for(int i=2;i<=12;i++)crew.put(new JSONObject().put("id",i).put("name","Crew "+i).put("job",i==5?"Screenplay":"Other creative role"));
+        data.credits=new JSONObject().put("cast",new org.json.JSONArray()).put("crew",crew);ReflectionHelpers.setField(page,"enrichment",data);ReflectionHelpers.callInstanceMethod(page,"renderEnrichedPeople");
+        View director=page.findViewWithTag("person:Director:Director"),writer=page.findViewWithTag("person:Director:Writer");assertNotNull(director);assertNull("One person occupies one row using their highest-priority job",writer);LinearLayout people=(LinearLayout)director.getParent();assertEquals(8,people.getChildCount());assertSame(director,people.getChildAt(0));assertEquals("person:Crew 5:Screenplay",people.getChildAt(1).getTag());activity.finish();
     }
     @Test public void awkwardViewportWidthKeepsWholeCardsOnFocusScroll(){
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();

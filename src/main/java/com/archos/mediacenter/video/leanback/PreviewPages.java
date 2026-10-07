@@ -387,7 +387,7 @@ public final class PreviewPages extends FrameLayout {
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return true;
             if(key==KeyEvent.KEYCODE_BACK||key==KeyEvent.KEYCODE_DPAD_RIGHT){rowControlConsumedKey=key;close.run();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
-            if(moving[0]){PreviewHomeRows.moveRow(getContext(),id,key==KeyEvent.KEYCODE_DPAD_UP?-1:1);render("row_moved");move.requestFocus();}
+            if(moving[0]){List<String> visible=new ArrayList<>();for(Cell cell:cells)if(cell.type==RAIL&&!cell.homeRowId.isEmpty())visible.add(cell.homeRowId);PreviewHomeRows.moveVisibleRow(getContext(),id,key==KeyEvent.KEYCODE_DPAD_UP?-1:1,visible);render("row_moved");move.requestFocus();}
             else (key==KeyEvent.KEYCODE_DPAD_UP?move:hide).requestFocus();return true;
         });move.requestFocus();controls.post(()->{if(rowControlOverlay==controls)move.requestFocus();});
     }
