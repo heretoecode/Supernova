@@ -187,3 +187,55 @@ finally:
     (OUT / 'playback-runtime-logcat.txt').write_bytes(logs)
     assert b'FATAL EXCEPTION' not in logs, 'Playback/Information runtime crash'
     adb('shell', 'am', 'force-stop', PACKAGE)
+
+# Exercise the patched native internal-subtitle selection with two real streams.
+# Positive completion plus a stable paused picture does not confer Shield acceptance.
+for language in ('English','French'):
+    Path('/tmp/supernova-'+language+'.srt').write_text('1\n00:00:00,000 --> 00:02:00,000\n'+language+' synthetic subtitle\n')
+subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i','/tmp/supernova-preview-smoke.mp4',
+    '-i','/tmp/supernova-English.srt','-i','/tmp/supernova-French.srt','-map','0:v','-map','0:a','-map','1:0','-map','2:0',
+    '-c:v','copy','-c:a','copy','-c:s','srt','-metadata:s:s:0','language=eng','-metadata:s:s:1','language=fra',
+    '/tmp/supernova-preview-subtitles.mkv'],check=True)
+adb('push','/tmp/supernova-preview-subtitles.mkv','/sdcard/Download/supernova-preview-subtitles.mkv')
+adb('logcat','-c')
+adb('shell','am','start','-W','-n',PACKAGE+'/com.archos.mediacenter.video.player.PlayerActivity',
+    '-a','android.intent.action.VIEW','-d','file:///sdcard/Download/supernova-preview-subtitles.mkv','-t','video/x-matroska')
+try:
+    time.sleep(8)
+    initial=capture_fast('subtitle-playback-initial')
+    if any('Movie Ends' in n.get('text','') for n in initial.iter('node')):adb('shell','input','keyevent','4')
+    adb('shell','input','keyevent','19');time.sleep(.2);adb('shell','input','keyevent','23');time.sleep(.2)
+    paused=adb('logcat','-d').decode(errors='replace');position=re.findall(r'Preview transport event=toggle key=-1 playing=false position=(\d+)',paused)
+    assert position,'Subtitle fixture did not pause native playback'
+    adb('shell','input','keyevent','21');adb('shell','input','keyevent','21');adb('shell','input','keyevent','23');time.sleep(.3)
+    tracks=capture_fast('subtitle-tracks-before')
+    french=next((n for n in tracks.iter('node') if 'french' in n.get('text','').lower()),None)
+    assert french is not None,'Real second subtitle stream was not exposed'
+    def subtitle_video_sample(path):
+        return subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(path),
+            '-vf','crop=iw/4:ih/4:iw*2/3:ih/8,scale=64:36','-frames:v','1','-f','rawvideo','-pix_fmt','rgb24','-'],check=True,stdout=subprocess.PIPE).stdout
+    before=subtitle_video_sample(OUT/'subtitle-tracks-before.png')
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',french.get('bounds')))
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(.4)
+    capture_fast('subtitle-tracks-after')
+    after=subtitle_video_sample(OUT/'subtitle-tracks-after.png')
+    assert sum(abs(a-b) for a,b in zip(before,after))/len(before)<.5,'Subtitle switch disturbed the paused video picture'
+    selected=adb('logcat','-d').decode(errors='replace')
+    completed=re.findall(r'Preview subtitle event=selection_complete track=1 success=true playing=false position=(\d+)',selected)
+    assert completed and abs(int(completed[-1])-int(position[-1]))<500,'Subtitle switch did not complete without playback position disturbance'
+    # Resume normally and require the newly selected long-running cue, whose
+    # packet precedes the selection point. A callback alone cannot prove this.
+    adb('shell','input','keyevent','4');time.sleep(.2)
+    resumed=capture_fast('subtitle-before-resume')
+    pause=next((n for n in resumed.iter('node') if n.get('resource-id','').endswith('/pause')),None)
+    assert pause is not None,'Pause transport missing after subtitle menu return'
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',pause.get('bounds')))
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(1)
+    caption=capture_fast('subtitle-french-caption')
+    assert any('French synthetic subtitle' in n.get('text','') for n in caption.iter('node')),'Selected prefetched subtitle cue was lost'
+
+finally:
+    logs=adb('logcat','-d');(OUT/'subtitle-switch-runtime-logcat.txt').write_bytes(logs)
+    (OUT/'subtitle-switch-final-screen.png').write_bytes(adb('exec-out','screencap','-p'))
+    assert b'FATAL EXCEPTION' not in logs,'Subtitle switch crashed'
+    adb('shell','am','force-stop',PACKAGE)

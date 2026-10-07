@@ -1,10 +1,141 @@
 diff --git a/Source/stream_parser_ffmpeg.c b/Source/stream_parser_ffmpeg.c
-index 81864fe..02e5d67 100644
+index 81864fe..0de21e6 100644
 --- a/Source/stream_parser_ffmpeg.c
 +++ b/Source/stream_parser_ffmpeg.c
-@@ -1763,6 +1763,12 @@ static int _get_subtitle_cdata( STREAM *s, CLEVER_BUFFER *sub_buffer, STREAM_CDA
+@@ -159,6 +159,8 @@ typedef struct FF_PRIV
+ 	AVQueue		aq;
+ 	AVQueue		vq;
+ 	AVQueue		sq;
++	// Bounded all-track subtitle history; switching never seeks audio/video.
++	AVQueue		sub_history;
+ 	
+ 	STREAM		*s;
+ 	UINT64		size;
+@@ -971,10 +973,12 @@ DBGP serprintf("info\r\n");
+ 	LinkedList_init( &ff_p->aq.list );
+ 	LinkedList_init( &ff_p->vq.list );
+ 	LinkedList_init( &ff_p->sq.list );
++	LinkedList_init( &ff_p->sub_history.list );
+ 
+ 	pthread_mutex_init( &ff_p->aq.mutex, NULL );
+ 	pthread_mutex_init( &ff_p->vq.mutex, NULL );
+ 	pthread_mutex_init( &ff_p->sq.mutex, NULL );
++	pthread_mutex_init( &ff_p->sub_history.mutex, NULL );
+ 
+ 	// make lavf parser use this sync mode! 0 is for STREAM_SYNC_CDATA (PTS) and 1 for STREAM_SYNC_SAMPLES
+ 	//s->sync_mode = STREAM_SYNC_SAMPLES;
+@@ -1029,6 +1033,8 @@ serprintf("FFMPEG: not open!\r\n" );
+ 		_flush_packets( &ff_p->vq, "VID" );
+ 		_flush_packets( &ff_p->aq, "AUD" );
+ 		_flush_packets( &ff_p->sq, "SUB" );
++		_flush_packets( &ff_p->sub_history, "SUB_HISTORY" );
++		ff_p->subtitle = NULL;
+ 
+ 		av_dict_free(&ff_p->fmt_opts);
+ 
+@@ -1192,6 +1198,71 @@ static int _get_subtitle_time( STREAM *s, AVPacket *packet )
+ 	return RST_TO_TS_TIME(t, int);
+ }
+ 
++// Retain active/recent and prefetched cues for every known internal track.
++// Four MiB / 4096 packets bounds bitmap-subtitle memory as well as text cues.
++// Parser and subtitle workers share only this queue mutex; video/audio are untouched.
++static int _subtitle_packet_time( STREAM *s, AVPacket *packet, int duration )
++{
++	AVStream *st = ff_p->fmt->streams[packet->stream_index];
++	int64_t value = duration ? packet->duration : packet->pts;
++	if( value == AV_NOPTS_VALUE ) return -1;
++	int64_t millis = av_rescale_q( value, st->time_base, (AVRational){1,1000} );
++	return duration ? RST_TO_TS_DELTA(millis, int) : RST_TO_TS_TIME(millis - ff_p->start_time, int);
++}
++
++static int _known_subtitle_stream( STREAM *s, int stream )
++{
++	int i;
++	for( i = 0; i < s->av.subs_max; i++ )
++		if( !s->av.sub[i].ext && s->av.sub[i].valid && s->av.sub[i].stream == stream ) return 1;
++	return 0;
++}
++
++static void _remember_subtitle_packet( STREAM *s, AVPacket *packet )
++{
++	AVQueue *q = &ff_p->sub_history;
++	pthread_mutex_lock( &q->mutex );
++	PacketNode *copy = acalloc(1, sizeof(PacketNode));
++	LinkedListNode_init((LinkedListNode*)copy);
++	av_packet_ref(&copy->packet, packet);
++	LinkedList_append(&q->list, (LinkedListNode*)copy);
++	q->mem_used += sizeof(PacketNode) + copy->packet.size;
++	q->packets++;
++	if( ff_p->subtitle == s->subtitle && packet->stream_index == s->subtitle->stream ) _add_packet(&ff_p->sq, packet);
++	LinkedListNode *entry = q->list.first;
++	while( entry ) {
++		PacketNode *node = (PacketNode*)entry;
++		entry = entry->next;
++		int start = _subtitle_packet_time( s, &node->packet, 0 );
++		int duration = _subtitle_packet_time( s, &node->packet, 1 );
++		// Unknown-duration bitmap events retain one minute of decoder history.
++		int expired = start >= 0 && start + (duration > 0 ? duration : 60000) < s->video_time;
++		if( expired || q->mem_used > 4 * 1024 * 1024 || q->packets > 4096 ) {
++			LinkedList_remove( &q->list, (LinkedListNode*)node );
++			q->mem_used -= sizeof(PacketNode) + node->packet.size;
++			q->packets--;
++			_dispose_packet( &node->packet );
++			afree( node );
++		}
++	}
++	pthread_mutex_unlock( &q->mutex );
++}
++
++static void _restore_selected_subtitles( STREAM *s )
++{
++	if( ff_p->subtitle == s->subtitle ) return;
++	AVQueue *q = &ff_p->sub_history;
++	pthread_mutex_lock( &q->mutex );
++	_flush_packets( &ff_p->sq, "SUB_SWITCH" );
++	LinkedListNode *entry;
++	for( entry = q->list.first; entry; entry = entry->next ) {
++		AVPacket *packet = &((PacketNode*)entry)->packet;
++		if( packet->stream_index == s->subtitle->stream ) _add_packet( &ff_p->sq, packet );
++	}
++	ff_p->subtitle = s->subtitle;
++	pthread_mutex_unlock( &q->mutex );
++}
++
+ // ************************************************************
+ //
+ //	_parse_once
+@@ -1323,13 +1394,13 @@ DBGC4 serprintf("VIDEO      dts/pts %8lld/%8lld  %s  %02X %02X %02X %02X\r\n", G
+ 			if( timestamp )
+ 				*timestamp = use_pts ? GET_VIDEO_TS( packet.pts ) : GET_VIDEO_TS( packet.dts );
+ 		}
+-	} else if( s->subtitle->valid && stream == s->subtitle->stream ) {
++	} else if( _known_subtitle_stream( s, stream ) ) {
+ 		_rt_sub_pkts++;
+ DBGP2 serprintf("SUBTITLE   dts/pts %8lld/%8lld  ", GET_SUB_TS( packet.dts ), GET_SUB_TS( packet.pts ) );
+ DBGP2 DumpLine( packet.data, 16, 16 );
+ 		// add subtitle packet
+-		_add_packet( &ff_p->sq, &packet );
+-		if( timestamp )
++		_remember_subtitle_packet( s, &packet );
++		if( timestamp && stream == s->subtitle->stream )
+ 			*timestamp = GET_SUB_TS( packet.pts );
+ 	} else {
+ 		_rt_discard_pkts++;
+@@ -1464,6 +1535,8 @@ serprintf("FFMPEG: seek error\r\n");
+ 	_flush_packets( &ff_p->vq, "VID" );
+ 	_flush_packets( &ff_p->aq, "AUD" );
+ 	_flush_packets( &ff_p->sq, "SUB" );
++		_flush_packets( &ff_p->sub_history, "SUB_HISTORY" );
++		ff_p->subtitle = NULL;
+ 
+ 	ff_p->sleeping = 0;
+ 	
+@@ -1762,7 +1835,14 @@ static int _get_subtitle_cdata( STREAM *s, CLEVER_BUFFER *sub_buffer, STREAM_CDA
+ 	}
  
  	AVPacket _packet;
++	_restore_selected_subtitles( s );
  	AVPacket *packet = _get_packet( &ff_p->sq, &_packet );
 +	// Buffered packets can belong to the previous subtitle stream. Drop only
 +	// those packets; audio/video queues and demux position are untouched.

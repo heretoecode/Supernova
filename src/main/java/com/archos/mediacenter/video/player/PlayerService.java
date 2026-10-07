@@ -2455,6 +2455,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onSubtitleTrackSelectionCompleted(int track, boolean success) {
+        if(mPreferences!=null&&mPreferences.getBoolean("try_new_ui",false)&&mPlayer!=null)android.util.Log.i("SupernovaTransport","Preview subtitle event=selection_complete track="+track+" success="+success+" playing="+mPlayer.isPlaying()+" position="+mPlayer.getCurrentPosition());
         if (success || mVideoInfo == null || mVideoInfo.subtitleTrack != track) {
             return;
         }
