@@ -42,3 +42,6 @@
 
 ## User decision — 7 October 2026
 Trakt is **parked as a proposed new metadata/Reception provider** because free authorised developer credentials are not available on acceptable terms. No Trakt ratings, votes, reviews, UI slots, placeholders, new API integration or further credential/licensing investigation in the current plan. **TMDb alone** supplies Reception ratings/votes. Preserve inherited Nova Trakt account sign-in/scrobbling functionality unchanged; it is outside this provider decision. Revisit only on user's explicit request. This supersedes all provisional Trakt Reception proposals.
+
+## Decision — awards information parked (8 October 2026)
+The proposed Wikipedia/Wikidata awards and nominations integration is **PARKED** after exploratory research on sample Movies/TV library titles. Do not add awards, nominations, award counts, awards placeholders, Wikidata requests, scraping, or new provider work to Reception or the active fixes-only candidate. **Reception remains TMDb rating and TMDb vote count only**, as previously approved. Revisit awards solely on explicit user request. This decision supersedes the exploratory awards proposal and does not change existing Nova Trakt account/scrobbling functionality.
