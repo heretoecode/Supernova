@@ -53,3 +53,8 @@ If an original approved mock-up becomes accessible later:
 5. retain superseded images when they are useful historical evidence.
 
 Never infer an image from an opaque mock-up identifier.
+
+
+## Next-version authority
+
+For the active next implementation pass, read `../qa/next-version-authority.md` before these design files. It records the latest physical Shield outcomes and explicit supersessions. In particular: Home Featured exposed-card design is now active; Details/Cast/Crew and Extras have approved replacements; Playback submenu decisions are final; Movies/TV toolbar/live-filter behaviour is approved; Settings nesting/language rules have later amendments. Later amendment sections in individual design files override conflicting earlier wording.
