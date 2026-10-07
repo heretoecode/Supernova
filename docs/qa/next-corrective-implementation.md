@@ -63,3 +63,7 @@ Requirement-by-requirement review also corrected Crew prioritisation: creative j
 ### Native frame-sampling review
 
 Review of the real 1920×1080 native screenshots showed that a top-right subtitle-switch comparison could sample static test-pattern colour bars. Strengthened the fixture to compare the changing upper-middle diagonal region (x=width/10, y=height/6, width/3 by height/4), excluding the menu, caption, title, clock and HUD. This prevents unchanged static pixels from serving as frame-stability evidence. The native completion/position and actual-cue assertions remain mandatory. Physical single-frame/transient behaviour still requires Shield acceptance.
+
+### Complete people-tier render evidence
+
+Extended the actual rendered Movie Details interaction fixture to supply more than eight Cast and Crew, assert both eight-row caps, shared first-row alignment and Cast-to-Key-Information left alignment, and capture the actual focused people tier. This supplements count/role/text-only tests with composition evidence; it does not grant physical acceptance or claim actual provider data/artwork delivery.
