@@ -19,3 +19,9 @@ Changed production components: `PreviewFeaturedCard.java`, `PreviewPages.java`. 
 New regression suite: `PreviewHomeHotfixTest`; updated `PreviewCorrectiveAuthorityTest`; retained `PreviewLibraryReturnTest`, `PreviewCardArtworkRetryTest` and complete existing Home/navigation coverage. Local diff checks pass. Complete source/full/build/render/native/lint/upgrade/signature gates and exact replacement APK identity are pending.
 
 Physical Shield remains the authority for visual/interaction corrections. Synthetic artwork/logo renders prove bounds/hierarchy only. Do not mark H1–H5/H7 SHIELD ACCEPTED without the user's follow-up QA.
+
+## First source/render checkpoint
+
+At `b8371528a88ffb91c447e5cbf24c19783d05a544`, source run 37613261692 is SUCCESS: 148 targeted and 444 complete Video tests pass, followed by stability/library and WebDAV gates. Actual render review confirms equal Featured top/bottom boundaries, downward enlargement, only the Continue Watching heading/~60% artwork teaser, one lower More Info action and the larger fixed title-to-metadata spacing. Inline controls are actual row siblings; the edge test proves artwork is visible at x=10 beyond the old x=28 inset.
+
+Final fixture strengthening uses the actual OfficialTitleArtwork Logo foreground drawable for wide/tall/compact shapes, includes TV metadata, paints synthetic images for composition review, verifies first/middle/last focused unit scale/parent alignment and adds actual Hide/library-preservation/valid-focus coverage. These retain the approved bounds/focus assertions. Final source/build validation remains pending; the earlier signed-build run is superseded by this test-only checkpoint before candidate production.
