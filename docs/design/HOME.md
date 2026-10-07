@@ -193,3 +193,20 @@ Physical Shield review must compare the rendered Home screen against this geomet
 - enlargement that affects only artwork rather than the complete card.
 
 This section supersedes any older Home Featured dimensions/composition that conflict with it.
+
+
+## 12. Physical Shield Home hotfix amendments — 7 October 2026
+
+These amendments supersede conflicting earlier Home details for the immediate replacement candidate.
+
+- Featured becomes taller by extending downward while retaining the safe gap below top navigation.
+- Previous/next exposed Featured cards have the **same height/top/bottom geometry** as the active card.
+- Initial viewport intentionally shows only the Continue Watching heading plus roughly 55–65% (target ~60%) of that row's artwork; full cards are not required to fit.
+- Selected Featured artwork is contained inside the card; do not duplicate it as background imagery behind the carousel.
+- Horizontal Featured and normal Home rows must not be clipped at an artificial inset boundary. Continuation is clipped only at the physical screen edge.
+- Featured has one action only: **More Info**. Remove Play/Resume from Featured; playback action remains on Details.
+- Retain official title/logo treatment, but use a stable logo/title zone. Lower metadata with more breathing room, then synopsis, then More Info. Do not let variable logo aspect ratios determine the metadata baseline.
+- Normal Home row focus enlargement is physically accepted and regression-protected.
+- Move/Hide must be dedicated **inline row controls**, not a floating/context menu.
+
+See the H1–H7 acceptance requirements in `docs/qa/next-version-authority.md`.
