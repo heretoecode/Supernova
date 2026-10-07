@@ -433,3 +433,18 @@ Acceptance:
 4. Test repeated presses/steps and both directions.
 5. Confirm normal playback resumes at the committed target and HUD/bubble dismissal remains coherent.
 6. Validate on physical Shield.
+
+
+## Pre-Codex readiness note — 7 October 2026
+
+The approved Home Featured visual-reference gap is resolved by normative written reconstruction in `docs/design/HOME.md §11`; the unavailable generated PNG is not an implementation blocker.
+
+Before implementation, Codex must treat the following precedence as authoritative:
+1. this next-version authority for consolidated physical-QA scope and regression protections;
+2. latest explicit amendments in the corresponding `docs/design/` document;
+3. completed audit evidence under `docs/audits/`;
+4. historical implementation/checkpoint material only where it does not conflict with later physical QA or explicit design decisions.
+
+No visual/interaction item becomes accepted merely because code exists or an automated proxy passes. Final acceptance requires the applicable render/interaction review and physical Shield validation.
+
+The branch is ready for the consolidated next corrective implementation pass. Do not merge to main, begin the later identity/signing transition, or silently expand scope.
