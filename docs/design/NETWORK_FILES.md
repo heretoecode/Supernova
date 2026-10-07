@@ -161,3 +161,10 @@ Two 7 October 2026 generated mock-ups were approved in discussion:
 - **Network Sources / Downloads / Library Health / Unmatched Media submenu storyboard** — image generation id 2a938f81-9585-4dca-b5b1-1f4268ed4a63.
 
 These references are visual authority for composition, hierarchy, spacing and submenu grammar; written requirements remain functional authority.
+
+
+### Repository image files
+- Main approved Network & Files mock-up: [network-files-main-approved.png](references/network-files-main-approved.png)
+- Approved submenu storyboard: [network-files-submenus-approved.png](references/network-files-submenus-approved.png)
+
+These repository files are the durable visual references available to Codex. The written requirements in this document remain functional authority.
