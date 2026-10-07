@@ -1,0 +1,74 @@
+# Consolidated corrective conformance register
+
+Authority: [next-version-authority.md](next-version-authority.md), latest design amendments and completed audits. Continues `codex/post-4.1.7-shield-fixes`; main remains unmerged. Starting live branch `563c3374d6227ef290fb61c4899d9d93adb94eea`.
+
+This is a development register, not physical acceptance. The original physically accepted items remain regression protections; changed visual/interaction behaviour requires subsequent user Shield testing. States are separate: **IMPLEMENTED**, **AUTOMATED VALIDATED**, **RENDER/INTERACTION REVIEWED**, **SHIELD ACCEPTED**. A build/test pass cannot grant the latter. Automated and rendered evidence will be populated after the final validation gates complete.
+
+## Original 35 items
+
+Source names below resolve beneath `src/main/java/com/archos/mediacenter/video/`; AVOS patch is `.github/build/avos-shield-corrections.patch`. Tests resolve beneath `src/test/java/`. Existing accepted code was preserved where no correction was required.
+
+| Item | Implementation / preservation | Files/components | Regression/validation evidence | Remaining physical QA |
+|---|---|---|---|---|
+| #1 | IMPLEMENTED — Complete rounded artwork/boundary/glow unit scales together | PreviewCardPresenter | PreviewCardArtworkRetryTest; page renders; final gate pending | Focus enlargement/containment/glow on real Shield |
+| #2 | IMPLEMENTED — Deliberate partial continuation; no category wrapping; glow gutters | PreviewPages; PreviewEpisodeRow; PreviewMoviePage | PreviewPagesTest; PreviewCorrectiveAuthorityTest; Details renders; final gate pending | Scroll every Home/Details carousel to both edges |
+| #3 | IMPLEMENTED — Inline Move/Hide on LEFT; persistent reorder/visibility; exact Back opener | PreviewPages; PreviewHomeRows | PreviewCorrectiveAuthorityTest; Preview41RowsTest; final gate pending | Physical LEFT, Move Up/Down, Hide, Right/Back |
+| #4 | IMPLEMENTED — Preserve exact Continue Watching playback return | Existing deterministic anchors/child suspension in PreviewPages | Preview417NavigationTest; existing return-focus coverage; final gate pending | Regression: exact card after playback/back and refresh |
+| #5 | IMPLEMENTED — Preserve clock typography | TopNavigation; existing clock styling | Navigation/render suite; final gate pending | Regression: Shield clock typography |
+| #6 | IMPLEMENTED — Shallow navigation fade | TopNavigation | Page renders; final gate pending | Content contrast beneath header |
+| #7 | IMPLEMENTED — Bounded smooth centring; exact restoration wins | PreviewPages | PreviewLibraryReturnTest; final gate pending | Repeated vertical navigation without large snaps |
+| #8 | IMPLEMENTED — Controls at divider; approved separate Sort/Order and conditional controls | PreviewPages; PreviewToolbar | PreviewPagesTest; navigation suite; final gate pending | Grid/List toolbar alignment and edge focus |
+| #9 | IMPLEMENTED — Preserve exact item + Grid/List scroll/view state | Existing PreviewPages anchors and saved layout state | PreviewLibraryReturnTest; final gate pending | Both libraries: Details/Back after scrolling/filtering |
+| #10 | IMPLEMENTED — Independent completion-order metadata; early local related; unchanged section fencing; failed logo image retry | PreviewDetailsData; PreviewMoviePage; OfficialTitleArtwork | Metadata/cache/network tests; Details renders; final gate pending | Cold/warm/network failure real loading latency |
+| #11 | IMPLEMENTED — Genre on single main metadata line; rebuild stable base before append | PreviewMoviePage | PreviewMoviePageTest; final gate pending | Movie/episode/series metadata on Shield |
+| #12 | IMPLEMENTED — Keep permanent primary containers; provider explicit intermediate D-pad target | PreviewMoviePage; StreamingActionPresenter | PreviewMoviePageTest; final gate pending | Play → provider → More and reverse, equal heights |
+| #13 | IMPLEMENTED — Two-tier lower navigation stays collapsed until tab Up | PreviewMoviePage | PreviewMoviePageTest; final gate pending | Tier 2 → Tier 1 → tab → hero regression |
+| #14 | IMPLEMENTED — Approved borderless three-column information tier with separators | PreviewMoviePage | PreviewMoviePageTest; rendered Details; final gate pending | Column breathing room/baselines on Shield |
+| #15 | IMPLEMENTED — Text-only capped eight Cast/eight Crew; creative-role priority; no portrait requests | PreviewMoviePage | PreviewMoviePageTest; final gate pending | Available cast/crew counts, names/roles alignment |
+| #16 | IMPLEMENTED — Hard Match keyboard edges; input never focusable | PreviewMatchSearch; PreviewKeyboard | PreviewCorrectiveAuthorityTest; final gate pending | All hard boundaries/repeated remote navigation |
+| #17 | IMPLEMENTED — Preserve visible match query input | PreviewMatchSearch | Matching/render tests; final gate pending | Input visibility with active keyboard |
+| #18 | IMPLEMENTED — No transient input-focus detour; bottom edges contained; right deliberately enters results | PreviewMatchSearch; PreviewKeyboard | PreviewCorrectiveAuthorityTest; final gate pending | Typing/deletion/results entry on Shield |
+| #19 | IMPLEMENTED — Retain real result artwork with normal Search artwork geometry | PreviewMatchSearch | Matching artwork regression; final gate pending | Posters after new queries/refresh |
+| #20 | IMPLEMENTED — Shared bundled country flags; explicit country precedence; approved defaults + standard remaining mapping | PreviewLanguageIcon; PreviewLanguageRegions; flag assets | PreviewLanguageIconTest; playback/preference dialog tests; final gate pending | Every language-bearing Settings/HUD picker |
+| #21 | IMPLEMENTED — Network panels fit viewport and centre from measured navigation text edge | TopNavigation; PreviewPages; PreviewNetworkWorkspace | PreviewCorrectiveAuthorityTest; page render; final gate pending | All categories, bottom panels, Right/Left/Back |
+| #22 | IMPLEMENTED — Settings panel group centred in same text-edge usable area | TopNavigation; PreviewSettings | Settings/navigation/render suites; final gate pending | All categories with panels fully visible |
+| #23 | IMPLEMENTED — Integration children indented in left rail after explicit entry; child settings in centre | PreviewSettings | PreviewSettingsEntryTest; Settings render; final gate pending | Integration child edges and exact opener Back |
+| #24 | IMPLEMENTED — Preserve My Providers colour logos | Existing PreviewProviderIcons/preferences implementation | Provider suite/render; final gate pending | Provider colours on Shield |
+| #25 | IMPLEMENTED — Preserve separated My Providers Done | Existing provider picker | Provider suite/render; final gate pending | Footer focus/spacing |
+| #26 | IMPLEMENTED — Preserve unified hidden-HUD D-pad reveal; no transport changes | PlayerController retained reveal fence | Native playback gate; HUD navigation suite; final gate pending | All four directions without accidental seek/pause |
+| #27 | IMPLEMENTED — Preserve no primary Info | Existing four-control HUD | Native playback gate; HUD suite; final gate pending | No fifth primary control |
+| #28 | IMPLEMENTED — Preserve four primary controls and centred Play/Pause | Existing player_controller_experimental layout | HUD suite; native gate/render; final gate pending | Exact four controls, optical centre |
+| #29 | IMPLEMENTED — No application Settings links from HUD | PreviewPlaybackMenus | PreviewPlaybackMenusTest; final gate pending | All nested panels return inside HUD |
+| #30 | IMPLEMENTED — All tracks + Download/Sync/Appearance; native subtitle decoder switch without pause/reseek | PreviewPlaybackMenus; existing Appearance picker; avos-shield-corrections.patch | Menu suite; native compile/runtime gate; final gate pending | Live subtitle track changes: no frame jump; all Appearance options |
+| #31 | IMPLEMENTED — Tracks/Sync/Boost/Night; HUD adjustments session-only, preserve global defaults | PreviewPlaybackMenus; PlayerActivity; PlayerService | Menu suite; source/full/native gate; final gate pending | Audio/passthrough session adjustments and reset |
+| #32 | IMPLEMENTED — Flat Speed/Play Mode/Format; no Report Problem or section headings | PreviewPlaybackMenus | PreviewPlaybackMenusTest; final gate pending | Format actual aspect modes; nested Back |
+| #33 | IMPLEMENTED — Preserve blue focus through transitions | Retained PreviewAccent/PlayerController restoration | HUD/menu/native suites; final gate pending | All menus/binge/lifecycle transitions |
+| #34 | IMPLEMENTED — Preserve absence of preparation/debug text | Retained playback startup fences | Playback/startup/render suites; final gate pending | Network transitions and loading |
+| #35 | IMPLEMENTED — Evidenced failed-logo negative cache corrected; unchanged independent sections not rebound; existing artwork backoff/fences preserved | OfficialTitleArtwork; PreviewMoviePage; retained ArtworkRequest/CardPresenter | OfficialTitleNetworkTest; PreviewCardArtworkRetryTest; metadata suite; final gate pending | Missing art/flicker/retry/network traces; historical counts are not proof |
+
+## Consolidated additions and amendments
+
+| Requirement | Implementation | Validation / pending Shield work |
+|---|---|---|
+| HOME §11 Featured | Raised rounded 86% central card; 5–8% exposed neighbours; no indicators; real artwork + gradient; fixed title/metadata/synopsis/actions; 400ms direction transition; initial viewport reserved for one normal row | Actual geometry/render assertions plus Home screen review; user checks geometry, real artwork, actions, no second normal row |
+| Shared carousels | Home, Episodes, Extras and More Like This reserve glow space, expose continuation, retain one horizontal category | Actual rendered edge inspection; repeated focus/scroll and exact return on Shield |
+| Library live filters | All Genres first, actual library genres/years, immediate toggles/Clear, no Done; compact capped summary; separate remembered Movies/TV state | Live picker tests and complete library suite; physical ticks/filter/refocus |
+| Forgiving Search/Match | Case/punctuation/apostrophe/hyphen/whitespace/accent/article normalization; compact comparison; exact ranking; direct IDs preserved | OC/Dark Knight/Schitt’s Creek examples and direct lookup suites; live provider query ranking remains physical/network QA |
+| Match Search visual parity | Standard Search artwork slot 92×65, 72dp result row, 18sp title, secondary text, shared foreground focus and spacing | Matching artwork/keyboard suites and actual renders; user visual review |
+| Details provider action | Explicit intermediate focus between Play and More, permanent shared container, 38dp height | Actual D-pad handler and Details regression; physical provider availability/click/return |
+| Trailer overlay | Strong blurred/dimmed page including header; centred 16:9 at ~60% area; no Supernova container/title/Close/Open YouTube/HUD; supported embedded YouTube UI; end/Back exact opener | Provider/network WebView playback and completion need Shield validation; mandatory provider UI preserved |
+| Seek-bar frame feedback | Pause scrub, debounce 220ms, one in-flight native frame seek; selected timestamp maintained; confirm target, deterministic Back/Down origin cancellation | Changing synthetic native-video frames + native target/completion, commit/cancel gate; repeated small/large/boundary seeks on Shield required |
+| Dedicated REW/FF bubble | Preserve native transport; target bubble visible without entering seek bar; repeat updates; normal timeout | Player transport/native gate and HUD code review; dedicated hardware keys on all four primary controls require Shield |
+| Persistent vs session Audio | Preview HUD Boost/Night do not save prefs; Audio Sync hides persistent Keep Setting; existing full Settings defaults and classic behaviour retained | Source/menu/full suites; user session/default/passthrough behaviour |
+
+## Decisions, dependencies and boundaries
+
+Language mapping explicitly resolved: English US, Portuguese Brazil, Chinese China, Spanish Spain, Arabic Saudi Arabia; remaining generic languages use standard likely-region mapping. Explicit country tags take precedence; ISO 639-2 aliases share the same mapping. Unknown metadata is not assigned an invented country. Bundled PNG provenance and Unicode license are in `docs/design/LANGUAGE_FLAG_ASSETS.md` and `UNICODE_DATA_LICENSE.txt`.
+
+Fixes-release numbering remains NEEDS DECISION; candidate retains established `6.4.63-mark.4.1.7-preview` / `6040083`, application ID and signing identity. No new credentials/configuration were invented. Live YouTube/metadata/provider availability depends on external services; no network success or visual acceptance is claimed from compilation.
+
+No Profiles, Smart Collections, Discovery/custom pages, Library Health, identity/signing/fresh-install transition, NFS, WebDAV replacement, put.io transport/OAuth/download/sync expansion, person discovery, trick-play thumbnails, wholesale Kotlin/Compose/dependency movement, AI features, historical deletion, main merge, or subsequent release was started.
+
+## Final gates / build identity
+
+Pending final source/full-test/render/lint/native/release/signature/upgrade evidence and exact candidate identity. See [next-corrective-implementation.md](next-corrective-implementation.md) for investigation/checkpoint history. Final candidate evidence will record the exact application source separately from later documentation-only commits.

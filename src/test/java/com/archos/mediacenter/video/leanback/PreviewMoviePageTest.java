@@ -31,6 +31,16 @@ public class PreviewMoviePageTest {
             }
         }finally{host.pause().stop().destroy();}
     }
+    @Test public void providerIsAnIntermediateDpadTargetAndMetadataRefreshKeepsItsView(){
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
+            ArrayObjectAdapter actions=new ArrayObjectAdapter();var provider=new com.archos.mediacenter.video.streaming.StreamingRepository.Provider(8,"Fixture service");
+            Action offer=org.robolectric.util.ReflectionHelpers.callConstructor(com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction.class,org.robolectric.util.ReflectionHelpers.ClassParameter.from(com.archos.mediacenter.video.streaming.StreamingRepository.Provider.class,provider),org.robolectric.util.ReflectionHelpers.ClassParameter.from(Runnable.class,()->{}));actions.add(offer);
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),()->actions,a->{},()->{},uri->{});host.get().setContentView(page);
+            Movie movie=new Movie(1,"/fixture","Movie",1,"Plot",2024,7,"",null,100000,0,0,0,false,false,false,false,1,0,1920,1080,null,null,null,null,0,1,1000,0);page.bind(movie);PreviewPagesTest.layout(page);
+            View play=page.findViewWithTag("action:Play"),more=page.findViewWithTag("action:More"),service=page.findViewWithTag(offer.getId());assertNotNull(service);assertTrue(service.isFocusable());play.requestFocus();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(service,page.findFocus());page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(more,page.findFocus());page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(service,page.findFocus());
+            page.setSnapshot(new PreviewLibraryLoader.Snapshot());assertSame("Metadata does not reload unchanged provider artwork",service,page.findViewWithTag(offer.getId()));assertSame(service,page.findFocus());assertEquals(play.getHeight(),service.getHeight());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void unmatchedHeroExposesTheExistingMatchHandlerAndHonestPlaceholders()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{

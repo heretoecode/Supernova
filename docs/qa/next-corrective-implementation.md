@@ -29,3 +29,7 @@ Added actual Featured geometry/render assertions (86% active width, raised round
 ### Details tier navigation and carousel conformance
 
 The new text-only Cast/Crew tier sits below the information tier. UP from its first row deliberately enters the aligned information column, then the selected Details tab; only another UP expands the hero. The old single-tier test expected to skip the new information tier, so it now verifies the whole approved two-tier path while retaining the collapsed-hero assertions. Home rail sizing exposes a deliberately partial continuation and reserves vertical glow space; More Like This is also one horizontal category. Added an exact Network text-edge-to-viewport margin assertion and ISO 639-2 bibliographic language-alias coverage.
+
+### Release resource and provider refresh corrections
+
+Explicitly retain dynamically resolved bundled flag drawables through release resource shrinking. Unchanged provider identity/artwork now preserves its existing view/focus and only refreshes the action callback; all three hero actions use the same explicit 38dp height. Nested Settings regression asserts left-panel ancestry. Embedded trailer document explicitly fills its 16:9 WebView, avoiding HTML percentage-height ambiguity. The complete conformance register is `next-corrective-conformance.md`; it separates implementation from pending automation/render/Shield acceptance.

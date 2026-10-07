@@ -57,7 +57,7 @@ public class PreviewSettingsEntryTest {
             NestedSettings fragment=new NestedSettings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             View root=fragment.requireView();PreviewPagesTest.layout(root);
             root.findViewWithTag("semantic:settings:category:Playback").performClick();PreviewPagesTest.layout(root);
-            View second=root.findViewWithTag("semantic:settings:section:second");assertNotNull(second);second.requestFocus();second.performClick();PreviewPagesTest.layout(root);
+            View second=root.findViewWithTag("semantic:settings:section:second");assertNotNull(second);View ancestor=(View)second.getParent();while(ancestor!=null&&!"semantic:settings.panel.categories".equals(ancestor.getTag()))ancestor=ancestor.getParent() instanceof View?(View)ancestor.getParent():null;assertNotNull("Nested children belong in the left category panel",ancestor);second.requestFocus();second.performClick();PreviewPagesTest.layout(root);
             ((Runnable)fragment.getListView().getTag(com.archos.mediacenter.video.R.id.preview_settings_return)).run();PreviewPagesTest.layout(root);
             assertTrue(root.findViewWithTag("semantic:settings:section:second").hasFocus());
             assertFalse(root.findViewWithTag("semantic:settings:section:first").hasFocus());

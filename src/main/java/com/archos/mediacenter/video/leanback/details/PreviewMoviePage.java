@@ -60,7 +60,7 @@ public final class PreviewMoviePage extends ScrollView {
         plot=text("",14);plot.setMaxLines(4);plot.setLineSpacing(dp(2),1);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);LinearLayout.LayoutParams plotSize=new LinearLayout.LayoutParams(Math.min(dp(440),getResources().getDisplayMetrics().widthPixels-dp(84)),dp(88));plotSize.topMargin=dp(12);heroPage.addView(plot,plotSize);
         matchMetadata=button("Match Metadata",()->{Action match=matchingAction();if(match!=null)action.accept(match);});matchMetadata.setVisibility(GONE);heroPage.addView(matchMetadata,new LinearLayout.LayoutParams(-2,dp(38)));
         LinearLayout buttons=new LinearLayout(c);buttons.setClipChildren(false);buttons.setPadding(0,dp(12),0,dp(10));heroPage.addView(buttons);
-        trailer=button("Play Trailer",this::chooseTrailer);trailer.setVisibility(GONE);play=button("Play",this::play);buttons.addView(play);providerActions=new LinearLayout(c);providerActions.setClipChildren(false);buttons.addView(providerActions);moreButton=button("More",this::more);margin(buttons,moreButton);
+        trailer=button("Play Trailer",this::chooseTrailer);trailer.setVisibility(GONE);play=button("Play",this::play);buttons.addView(play,new LinearLayout.LayoutParams(-2,dp(38)));providerActions=new LinearLayout(c);providerActions.setClipChildren(false);buttons.addView(providerActions);moreButton=button("More",this::more);margin(buttons,moreButton);
         versions=button("Versions",()->chooseVersions.run());versions.setVisibility(GONE);
         heroPage.addView(new View(c),new LinearLayout.LayoutParams(1,0,1));tabBar=new PreviewToolbar(c);tabBar.setClipChildren(false);heroPage.addView(tabBar,new LinearLayout.LayoutParams(-1,dp(44)));tabLine=new View(c);tabLine.setBackgroundColor(0xbbffffff);tabLine.setVisibility(GONE);
         episodes=section("Episodes");cast=section("Cast");crew=section("Crew");details=section("Details");related=section("More Like This");trailers=section("Extras");
@@ -175,7 +175,7 @@ public final class PreviewMoviePage extends ScrollView {
     private TextView text(String s,int size){TextView t=new TextView(getContext());t.setText(s);t.setTextColor(Color.WHITE);t.setTextSize(size);return t;}
     private GradientDrawable bg(boolean focus){GradientDrawable d=new GradientDrawable();d.setColor(focus?0xee254964:0xcc10283b);d.setCornerRadius(dp(5));d.setStroke(dp(focus?2:1),focus?PreviewAccent.color(getContext()):0xff284b62);return d;}
     private TextView button(String s,Runnable run){TextView t=text(s,14);t.setTag("action:"+s);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(t,"details.action."+s.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+","."));PreviewIcon.apply(t,s,16);t.setGravity(Gravity.CENTER);t.setPadding(dp(14),dp(9),dp(14),dp(9));t.setFocusable(true);t.setFocusableInTouchMode(true);t.setBackground(PreviewDialog.actionContainerFocus(getContext()));t.setOnClickListener(v->run.run());return t;}
-    private void margin(LinearLayout row,View view){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(18);row.addView(view,lp);}
+    private void margin(LinearLayout row,View view){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,dp(38));lp.leftMargin=dp(18);row.addView(view,lp);}
     private LinearLayout section(String name){LinearLayout section=new LinearLayout(getContext());section.setOrientation(LinearLayout.VERTICAL);section.setPadding(0,dp(14),0,dp(8));TextView label=text(name,19);label.setTextColor(0xff9ed4f7);section.addView(label);if(name.equals("More Like This")||name.equals("Details")||name.equals("Episodes")||name.equals("Extras"))label.setVisibility(GONE);LinearLayout content=new LinearLayout(getContext());content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(10),0,0);section.addView(content);body.addView(section);return content;}
     public void bind(Video value){movie=value;title.setText(movie.getName());OfficialTitleArtwork.bind(title,value,false);plot.setText(movie.getDescriptionBody());
         if(!movie.hasScraperData()){if(safe(movie.getName()).isEmpty())title.setText(movie.getFilenameNonCryptic());plot.setText("Not matched · Synopsis unavailable");}
@@ -342,20 +342,27 @@ public final class PreviewMoviePage extends ScrollView {
         TextView content=text(value,13);content.setLineSpacing(dp(2),1);row.addView(content,new LinearLayout.LayoutParams(0,-2,.58f));panel.addView(row);
     }
     private void observeActions(){ObjectAdapter next=actions.get();if(next!=observedActions){if(observedActions!=null)observedActions.unregisterObserver(actionObserver);observedActions=next;if(next!=null)next.registerObserver(actionObserver);}renderProviders();}
+    private String providerVisualKey="";
     private void renderProviders(){
         refreshMoreRows();
         matchMetadata.setVisibility(movie!=null&&!movie.hasScraperData()&&matchingAction()!=null?VISIBLE:GONE);
         moreButton.setVisibility(remoteDetails==null?VISIBLE:GONE);
         View focused=providerActions.findFocus();Object focusKey=focused==null?null:focused.getTag();
-        for(Presenter.ViewHolder holder:providerHolders)providerPresenter.onUnbindViewHolder(holder);providerHolders.clear();providerActions.removeAllViews();if(observedActions==null){if(focused!=null)play.requestFocus();return;}
+        if(observedActions==null){clearProviderViews();if(focused!=null)play.requestFocus();return;}
         List<Action> offers=new ArrayList<>(),extraOptions=new ArrayList<>();for(int i=0;i<observedActions.size();i++){Object item=observedActions.get(i);if(item instanceof Action&&com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))offers.add((Action)item);else if(item instanceof Action&&"•••".contentEquals(((Action)item).getLabel1()))extraOptions.add((Action)item);}
         play.setVisibility(remoteDetails==null?VISIBLE:GONE);
+        String visualKey="";if(!offers.isEmpty()){com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction offer=(com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)offers.get(0);visualKey=offer.provider.id+":"+offer.provider.name+":"+offer.provider.logo;}
+        if(visualKey.equals(providerVisualKey)&&providerActions.getChildCount()==(offers.isEmpty()?0:1)){
+            if(!offers.isEmpty()){Action currentOffer=offers.get(0);providerActions.getChildAt(0).setOnClickListener(v->action.accept(currentOffer));}return;
+        }
+        clearProviderViews();providerVisualKey=visualKey;
         if(!offers.isEmpty()){
             Action offer=offers.get(0);Presenter.ViewHolder holder=providerPresenter.onCreateViewHolder(providerActions);providerPresenter.onBindViewHolder(holder,offer);holder.view.setTag(offer.getId());holder.view.setFocusable(true);holder.view.setFocusableInTouchMode(true);holder.view.setBackground(PreviewDialog.actionContainerFocus(getContext()));holder.view.setOnClickListener(v->action.accept(offer));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(160),dp(38));lp.leftMargin=dp(18);providerActions.addView(holder.view,lp);providerHolders.add(holder);
 
         }
         if(focused!=null){View replacement=focusKey==null?null:providerActions.findViewWithTag(focusKey);if(replacement!=null)replacement.requestFocus();else if(providerActions.getChildCount()>0)providerActions.getChildAt(0).requestFocus();else play.requestFocus();}
     }
+    private void clearProviderViews(){for(Presenter.ViewHolder holder:providerHolders)providerPresenter.onUnbindViewHolder(holder);providerHolders.clear();providerActions.removeAllViews();providerVisualKey="";}
     private Action matchingAction(){ObjectAdapter adapter=actions.get();if(adapter!=null)for(int i=0;i<adapter.size();i++){Object item=adapter.get(i);if(item instanceof Action&&((Action)item).getId()==VideoActionAdapter.ACTION_SCRAP)return (Action)item;}return null;}
     private void pill(String value){if(value==null||value.isEmpty())return;TextView label=text(value,10);label.setSingleLine(true);label.setPadding(dp(6),dp(3),dp(6),dp(3));GradientDrawable badge=new GradientDrawable();badge.setColor(0x50142634);badge.setCornerRadius(dp(3));badge.setStroke(dp(1),0xff648196);label.setBackground(badge);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.rightMargin=dp(6);pills.addView(label,lp);}
 
