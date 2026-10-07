@@ -377,3 +377,8 @@ Do not merge to `main` automatically.
 7. Produce a signed installable candidate APK using the existing identity/signing strategy.
 8. Record exact source commit, APK filename/hash, signing identity and validation evidence in GitHub.
 9. Stop before merge; physical Shield acceptance remains required.
+
+
+## 19. Visual-reference provenance
+
+Read `docs/design/VISUAL_REFERENCE_MANIFEST.md`. It records the audited recovery status of actual mock-up bytes and historical identifiers. Do not choose an arbitrary generated iteration when exact approval provenance is absent. Current written specifications override conflicting pixels in older images.
