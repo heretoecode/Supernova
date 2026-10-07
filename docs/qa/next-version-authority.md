@@ -448,3 +448,9 @@ Before implementation, Codex must treat the following precedence as authoritativ
 No visual/interaction item becomes accepted merely because code exists or an automated proxy passes. Final acceptance requires the applicable render/interaction review and physical Shield validation.
 
 The branch is ready for the consolidated next corrective implementation pass. Do not merge to main, begin the later identity/signing transition, or silently expand scope.
+
+## Corrective implementation candidate checkpoint — 7 October 2026
+
+The consolidated approved implementation is now delivered as a signed **Shield-test candidate**, source `b021c51dcbbe2d5679fb9015c43830713f02aa0b`; source workflow 37568094178 and full signed workflow 37568094185 are SUCCESS. See [exact APK identity/download/evidence](next-corrective-candidate.md), [all-item conformance and physical checks](next-corrective-conformance.md) and [implementation/investigation record](next-corrective-implementation.md). Later delivery-documentation commits are not APK source.
+
+This checkpoint does not revise the physical findings or confer SHIELD ACCEPTED. All corrected visual/interaction requirements and accepted regression protections require user Shield testing on the new APK. #35 remains observationally PARTIAL beyond its evidenced corrections; release numbering remains NEEDS DECISION. Language mapping is resolved in current Settings/asset authority. Main remains unmerged; next action is physical QA, not another release.

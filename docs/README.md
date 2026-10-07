@@ -64,7 +64,7 @@ Use **APPROVED**, **PARKED**, **REJECTED**, **SUPERSEDED**, and **NEEDS DECISION
 - [Next-version authority](qa/next-version-authority.md) — authoritative continuation after physical Shield QA; includes reopened failures, approved redesigns, regression protections and implementation/conformance rules.
 - [Post-4.1.7 Shield fixes implementation and 35-item traceability](qa/post-4.1.7-fixes-implementation.md) — historical development status of the tested candidate; its FIXED labels do not override later physical Shield results.
 
-- [Post-4.1.7 signed fixes candidate](qa/post-4.1.7-fixes-candidate.md): exact build source/APK hash/certificate, green workflow evidence, unresolved decisions and physical Shield validation pending. This unmerged candidate does not supersede accepted 4.1.7 Final.
+- [Previous post-4.1.7 signed fixes candidate](qa/post-4.1.7-fixes-candidate.md) — historical build at `61a1ae5`; later physical QA/design authority supersedes its implementation labels and old unresolved design wording.
 
 
 ## Audit evidence
@@ -74,3 +74,11 @@ Use **APPROVED**, **PARKED**, **REJECTED**, **SUPERSEDED**, and **NEEDS DECISION
 ## Record-keeping rule
 
 GitHub is the authoritative durable project record. Material discussion outcomes, plans, decisions, QA evidence, audit results, implementation/build evidence and unresolved dependencies must be written here rather than existing only in chat history.
+
+## Current consolidated corrective candidate
+
+- [Signed Shield-test candidate](qa/next-corrective-candidate.md) — exact source `b021c51`, APK/hash/certificate, successful complete validation and download. Physical Shield QA pending; not Final, main unmerged.
+- [All-item conformance and physical checklist](qa/next-corrective-conformance.md) — original 35 items and consolidated additions; implementation/automation/render/Shield states kept separate.
+- [Implementation and validation work record](qa/next-corrective-implementation.md) — decisions, investigations, failed gates and corrections, final evidence and limits.
+
+The primary consolidated scope remains [next-version-authority.md](qa/next-version-authority.md). Later written design amendments govern historical conflicts. Release numbering remains NEEDS DECISION; language mapping is resolved; #35 broader artwork reliability remains observationally PARTIAL. The next action is user physical Shield QA of this exact candidate, recorded in GitHub.

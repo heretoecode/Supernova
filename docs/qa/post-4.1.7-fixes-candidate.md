@@ -1,5 +1,7 @@
 # Post-4.1.7 fixes — signed validation candidate
 
+> **Historical candidate evidence at `61a1ae5`.** Subsequent physical Shield testing and [next-version authority](next-version-authority.md) supersede this record’s old scope/design-decision statuses. The current delivered candidate is [next-corrective-candidate.md](next-corrective-candidate.md). APK identity and contemporaneous validation below remain historical evidence.
+
 **Candidate only. Physical NVIDIA Shield validation and acceptance are pending. This is not Final.**
 
 ## Exact source and lineage

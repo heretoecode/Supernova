@@ -29,7 +29,7 @@ Read `docs/README.md` for the documentation map. Read these when implementation 
 
 ## Current work
 
-Physical NVIDIA Shield QA of the signed post-4.1.7 candidate is substantially complete. The candidate remains **unmerged and not physically accepted as Final**. Several items that the earlier development traceability record labelled FIXED/VERIFIED failed physical conformance, while other items passed and are now regression protections.
+Physical NVIDIA Shield QA of the previous signed post-4.1.7 candidate (`61a1ae5a21be90d185d448362c9729eb6c33cc42`) is substantially complete. That candidate remains **unmerged and not physically accepted as Final**. Several items that the earlier development traceability record labelled FIXED/VERIFIED failed physical conformance, while other items passed and are now regression protections.
 
 The authoritative next-version implementation scope is now:
 
@@ -79,15 +79,17 @@ The repository is intended to be sufficient for a new developer or AI with no Ch
 
 The cleaned Preview 4.1.7 lineage was promoted to `main` on 6 October 2026 by PR #5. `main` is now the authoritative repository branch. The accepted 4.1.7 Final APK remains tied to the frozen application/test source commit `7efb4195639205a6526281491af40c0dab1776b7`; later `main` commits may contain documentation or repository-maintenance changes and must not be mistaken for that APK source.
 
-### Post-4.1.7 fixes candidate — unmerged branch
+### Previous physically tested fixes candidate — historical evidence
 
-The signed post-4.1.7 fixes candidate is available on `codex/post-4.1.7-shield-fixes`; exact APK source is `61a1ae5a21be90d185d448362c9729eb6c33cc42`. See the [candidate identity/build/validation record](docs/qa/post-4.1.7-fixes-candidate.md) and historical [35-item development traceability](docs/qa/post-4.1.7-fixes-implementation.md). Automated/build validation was green, but subsequent physical Shield QA found multiple conformance failures. **The candidate is not Final and has not been merged into main.** The authoritative continuation is [docs/qa/next-version-authority.md](docs/qa/next-version-authority.md). Cast & Crew and final Audio/Subtitles/More design are now decided there; #35 artwork reliability remains observational; fixes-release numbering remains unresolved. Existing application ID, certificate and version fields are retained.
+The previous signed post-4.1.7 fixes candidate was built on `codex/post-4.1.7-shield-fixes`; exact APK source is `61a1ae5a21be90d185d448362c9729eb6c33cc42`. See the [candidate identity/build/validation record](docs/qa/post-4.1.7-fixes-candidate.md) and historical [35-item development traceability](docs/qa/post-4.1.7-fixes-implementation.md). Automated/build validation was green, but subsequent physical Shield QA found multiple conformance failures. **The candidate is not Final and has not been merged into main.** The authoritative continuation is [docs/qa/next-version-authority.md](docs/qa/next-version-authority.md). Cast & Crew and final Audio/Subtitles/More design are now decided there; #35 artwork reliability remains observational; fixes-release numbering remains unresolved. Existing application ID, certificate and version fields are retained.
 
 
 ## Durable-record rule
 
 GitHub is the authoritative Supernova project memory. At the end of each work session, material discussion outcomes, plans, approvals/rejections/parked decisions, QA results, completed audit findings, implementation/build evidence and unresolved dependencies must be recorded here rather than left only in ChatGPT conversation history. Completed audits are indexed at `docs/audits/README.md`.
 
-### Active corrective implementation checkpoint
+### Current consolidated corrective Shield-test candidate
 
-The consolidated next pass has started on the existing fixes branch from `563c3374d6227ef290fb61c4899d9d93adb94eea`. See [implementation/validation work record](docs/qa/next-corrective-implementation.md). Work-in-progress commits are not signed candidates or physical acceptance. Language defaults were explicitly resolved and recorded in Settings design authority. Main remains unmerged.
+The complete approved next pass is implemented and automated validated on the existing fixes branch, continued from `563c3374d6227ef290fb61c4899d9d93adb94eea`. Exact APK source: **`b021c51dcbbe2d5679fb9015c43830713f02aa0b`**; later delivery-documentation commits are not APK source. See [candidate identity/download/validation](docs/qa/next-corrective-candidate.md), [all-item conformance](docs/qa/next-corrective-conformance.md) and [implementation work record](docs/qa/next-corrective-implementation.md).
+
+Source and full signed workflows are green, including complete tests, render/focus evidence, native seek/subtitle delivery, lint, upgrade, manifest and certificate gates. Application/signing/version fields are retained; language mapping is resolved. #35 broader artwork reliability remains observationally PARTIAL; fixes-release numbering remains NEEDS DECISION. **Physical Shield QA is pending. This is not Final and no new visual/interaction item is SHIELD ACCEPTED.** Main remains unchanged/unmerged. Next action is user Shield testing of this exact candidate, recording outcomes in GitHub; do not start another release.
