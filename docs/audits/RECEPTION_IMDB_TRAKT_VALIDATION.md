@@ -45,3 +45,20 @@ Sources:
 
 ## Final decision — IMDb excluded (7 October 2026)
 **SUPERSEDES earlier conditional/approved IMDb Reception language in this document.** Do not display IMDb rating, vote count or Unknown placeholder in Reception. Do not pursue IMDb ratings integrations or further licensing/API investigations. The project requires no subscriptions and practical API quotas; no verified suitable source exists. Internal IMDb title identifiers may remain for matching and cross-references. TMDb and separately validated Trakt reception data remain distinct.
+
+## Trakt endpoint research — 7 October 2026 (superseding earlier endpoint uncertainty)
+- Documented official movie ratings: `GET /movies/{id}/ratings` and show ratings: `GET /shows/{id}/ratings`, each returning Trakt score 0–10, vote count and distribution.
+- Documented movie comments: `GET /movies/{id}/comments/{sort}`, OAuth optional, paginated, language filter. Official legacy docs also describe show comments `GET /shows/{id}/comments/{sort}`, OAuth optional. Comment records have spoiler and review flags and author metadata; a live authorised response still needs confirmation.
+- API GET allowance: 500 per 5 minutes per authenticated user or per client ID + public IP unauthenticated; honour 429 Retry-After, coalesce and cache.
+- Policy permits in-app public discovery and proportionate caching, prohibits bulk redistribution, scraping and piracy-promoting integrations. Assess Supernova's actual use against these terms.
+- **Critical new access caveat:** July–September 2026 third-party developer reports say new API app creation requires Trakt VIP. Official create-app guide does not clearly establish whether this is still enforced. Existing inherited Nova client credentials do not automatically grant permission for a new Reception use; verify ownership, scope and terms before reuse. Never borrow another app's credentials.
+- **Decision gate:** no paid subscription. Trakt Reception is feasible in API design but **NOT approved as operationally validated** until free authorised app access or permitted existing client use is demonstrated. Do not add an unverified Trakt reviews/ratings requirement to the current fixes-only release. If no qualifying access, exclude new Reception integration, preserve inherited Nova behaviour.
+- **Important:** Official Trakt rating endpoint documentation also describes `extended=all` returning external IMDb/Rotten Tomatoes/etc ratings. **Do not display or re-enable those sources**: earlier user decision explicitly excludes IMDb and other rejected ratings providers; their appearance in a Trakt response is not permission to use them.
+References:
+https://docs.trakt.tv/reference/getmoviesratings
+https://docs.trakt.tv/reference/getshowsratings
+https://docs.trakt.tv/reference/getmoviescomments
+https://developer.trakt.tv/docs/rate-limiting
+https://developer.trakt.tv/docs/api-use-policy
+https://developer.trakt.tv/docs/create-an-app
+https://github.com/euzu/tuliprox/issues/853
