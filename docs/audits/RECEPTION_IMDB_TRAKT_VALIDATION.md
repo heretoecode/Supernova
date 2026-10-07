@@ -62,3 +62,12 @@ https://developer.trakt.tv/docs/rate-limiting
 https://developer.trakt.tv/docs/api-use-policy
 https://developer.trakt.tv/docs/create-an-app
 https://github.com/euzu/tuliprox/issues/853
+
+## Focused inherited-Nova Trakt code audit — 7 October 2026
+Read-only inspection of `src/main/java/com/archos/mediacenter/video/utils/TraktDeviceAuthActivity.java`, `TraktSigninDialogPreference.java`, `build.gradle`, `settings.gradle` and the branch file tree:
+- Existing UI initiates TV device-code OAuth or phone browser-based OAuth and stores access/refresh tokens after success; this is **personal account sign-in**, not proof of a public ratings/reviews data feed.
+- Successful login deliberately sets `KEY_TRAKT_SYNC_COLLECTION=false` to avoid collection-sync limits. Preserve existing behaviour.
+- Calls to `com.archos.mediacenter.utils.trakt.Trakt` include device code generation, code/token exchange and token persistence.
+- The Trakt client class is **not in the current Supernova repository tree**. `settings.gradle` references sibling modules `FileCoreLibrary` and `MediaLib`; the missing class's actual origin, client ID and usage rights are not established by these files. Do not assert the credentials are reusable.
+- No Trakt Reception fetcher was established by this focused inspection; no runtime authenticated API call performed; no credentials exposed.
+**Result:** Existing inherited account integration confirmed; authorisation for a new login-free Reception consumer **UNVERIFIED**. Do not require end users to create API apps or sign in for public ratings; do not repurpose unknown credentials without permission. No production changes.
