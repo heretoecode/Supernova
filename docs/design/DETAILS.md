@@ -104,3 +104,6 @@ Seasons/Episodes and other horizontal Details rows follow the shared carousel ru
 
 ### Approved visual asset
 [Details information layout — approved uploaded mock-up](references/details-information-approved.png). The image is a composition reference only; the explicit final written refinements above override any image text showing cast/crew counts or pre-refinement row spacing. It does **not** authorise changes to the hero or lower navigation.
+
+## Decision — awards information parked (8 October 2026)
+The proposed Wikipedia/Wikidata awards and nominations integration is **PARKED** after exploratory research on sample Movies/TV library titles. Do not add awards, nominations, award counts, awards placeholders, Wikidata requests, scraping, or new provider work to Reception or the active fixes-only candidate. **Reception remains TMDb rating and TMDb vote count only**, as previously approved. Revisit awards solely on explicit user request. This decision supersedes the exploratory awards proposal and does not change existing Nova Trakt account/scrobbling functionality.
