@@ -382,3 +382,34 @@ Do not merge to `main` automatically.
 ## 19. Visual-reference provenance
 
 Read `docs/design/VISUAL_REFERENCE_MANIFEST.md`. It records the audited recovery status of actual mock-up bytes and historical identifiers. Do not choose an arbitrary generated iteration when exact approval provenance is absent. Current written specifications override conflicting pixels in older images.
+
+
+## Physical Shield QA addition — seek-bar scrubbing must preview the selected position (7 October 2026)
+
+Evidence: user-supplied physical Shield video `IMG_4710.mp4` (~16.5 seconds), reviewed on 7 October 2026.
+
+Observed behaviour:
+- From the primary playback HUD, pressing Up from Play/Pause or another primary HUD control correctly moves focus to the seek bar.
+- The timestamp bubble appears correctly.
+- LEFT/RIGHT changes the seek-bar cursor / timestamp bubble to an earlier or later position.
+- **The video image/playback does not follow the selected seek position while scrubbing.** Playback continues visually from the old/current position even when the seek cursor has moved substantially (example: roughly ten minutes behind).
+- This creates a mismatch between the timestamp/seek cursor and the frame the user is seeing, making TV/D-pad seeking difficult to judge.
+
+Required behaviour:
+- While the seek bar has focus, LEFT/RIGHT scrubbing must give meaningful visual feedback for the currently selected target position.
+- The displayed video frame/preview must track the seek target rather than continuing to show unrelated playback from the pre-scrub position.
+- Preserve the existing correct timestamp bubble.
+- The implementation should avoid repeatedly committing normal playback seeks in a way that causes unstable playback, excessive decoder churn or visible snapping.
+- On confirmation/commit of the seek, playback must continue from the selected target position.
+- Back/cancel behaviour must be deterministic and must not accidentally commit an unintended seek.
+- Preserve the already accepted four-button HUD, D-pad HUD reveal behaviour, styling and focus behaviour.
+
+Acceptance:
+1. Enter the seek bar from any primary HUD button.
+2. Move LEFT/RIGHT by both small and large amounts.
+3. The visual frame/preview and timestamp correspond meaningfully to the currently selected target.
+4. Commit the seek and verify playback resumes from that target without jumping back to the old position.
+5. Exercise repeated seeking and boundaries near start/end.
+6. Physical Shield validation is required; a focus/unit test alone is not sufficient.
+
+Status: **NEW PHYSICAL-QA DEFECT — REQUIRED FOR NEXT CORRECTIVE BUILD.**
