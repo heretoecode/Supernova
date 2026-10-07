@@ -65,3 +65,8 @@ The same historical record explicitly rejected permanent left-sidebar primary na
 
 
 See `docs/project/HISTORY_RECONCILIATION.md` for the older Network foundation and supersession context.
+
+
+## Next-version physical geometry — APPROVED
+
+Preserve all three-panel semantics above. Define usable vertical space from the **bottom edge of top-navigation text** to the **bottom edge of the TV/app viewport** and vertically centre the complete panel group within it, with equal remaining space above and below. Every panel bottom must remain visible. Physical Shield QA shows Network & Files needs a substantially larger downward/fit correction than Settings. Do not solve this by reverting to the classic/unstructured browser.
