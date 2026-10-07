@@ -544,3 +544,9 @@ Required:
 - Produce a signed replacement Shield-test APK using the existing identity/signing strategy.
 - **Do not merge to main.**
 - Stop after the Home hotfix candidate is built/documented so physical Shield QA can resume.
+
+### Home hotfix implementation/delivery checkpoint — 7 October 2026
+
+The narrow H1–H5/H7 implementation is delivered as a signed replacement **Shield-test candidate**, exact source `f97f62942f6b4f1a90e2e15258db452384d6b39c`. Source run 37614060979 and full signed build 37614061018 are SUCCESS. [Candidate identity/download and H1–H7 conformance](home-hotfix-candidate.md); [implementation/test/render evidence](home-hotfix-implementation.md). Later delivery-documentation commits are not APK source.
+
+This does not overwrite the physical findings or self-assign SHIELD ACCEPTED to the corrections. H6 retains the user's prior SHIELD ACCEPTED status and is regression-protected; all replacement physical QA remains the user's responsibility. Main is unmerged. Stop at the replacement APK; next action is physical Home review, then wider user Shield QA, not unrelated implementation or a later release.

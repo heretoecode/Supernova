@@ -1,5 +1,7 @@
 # Consolidated corrective pass — signed Shield-test candidate
 
+> **Subsequent physical Home QA prompted a replacement.** H6 normal-thumbnail enlargement is USER SHIELD ACCEPTED / regression-protected; H1–H5/H7 required correction. Use the [current Home-hotfix replacement](home-hotfix-candidate.md) to resume QA. Identity/validation below remains the evidence for this earlier candidate.
+
 **Candidate only. Physical NVIDIA Shield validation is pending. This is not Final; main remains unmerged.**
 
 ## Exact source and lineage

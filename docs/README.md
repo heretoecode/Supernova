@@ -75,10 +75,17 @@ Use **APPROVED**, **PARKED**, **REJECTED**, **SUPERSEDED**, and **NEEDS DECISION
 
 GitHub is the authoritative durable project record. Material discussion outcomes, plans, decisions, QA evidence, audit results, implementation/build evidence and unresolved dependencies must be written here rather than existing only in chat history.
 
-## Current consolidated corrective candidate
+## Previous consolidated corrective candidate
 
 - [Signed Shield-test candidate](qa/next-corrective-candidate.md) — exact source `b021c51`, APK/hash/certificate, successful complete validation and download. Physical Shield QA pending; not Final, main unmerged.
 - [All-item conformance and physical checklist](qa/next-corrective-conformance.md) — original 35 items and consolidated additions; implementation/automation/render/Shield states kept separate.
 - [Implementation and validation work record](qa/next-corrective-implementation.md) — decisions, investigations, failed gates and corrections, final evidence and limits.
 
 The primary consolidated scope remains [next-version-authority.md](qa/next-version-authority.md). Later written design amendments govern historical conflicts. Release numbering remains NEEDS DECISION; language mapping is resolved; #35 broader artwork reliability remains observationally PARTIAL. The next action is user physical Shield QA of this exact candidate, recorded in GitHub.
+
+## Current immediate Home-hotfix replacement
+
+- [Signed Home-hotfix candidate and H1–H7 conformance](qa/home-hotfix-candidate.md) — exact source `f97f629`, retained identity, APK/hash, green complete validation and replacement download.
+- [Home-hotfix implementation record](qa/home-hotfix-implementation.md) — narrow changes, tests, render evidence and limits.
+
+Latest Home hotfix sections in [next-version authority](qa/next-version-authority.md) and HOME §12 control this turnaround. H1–H5/H7 await user Shield validation; H6 remains USER SHIELD ACCEPTED and regression-protected. Main is unmerged; no broader QA implementation or subsequent release is included.

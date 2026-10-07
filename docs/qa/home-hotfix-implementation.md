@@ -25,3 +25,17 @@ Physical Shield remains the authority for visual/interaction corrections. Synthe
 At `b8371528a88ffb91c447e5cbf24c19783d05a544`, source run 37613261692 is SUCCESS: 148 targeted and 444 complete Video tests pass, followed by stability/library and WebDAV gates. Actual render review confirms equal Featured top/bottom boundaries, downward enlargement, only the Continue Watching heading/~60% artwork teaser, one lower More Info action and the larger fixed title-to-metadata spacing. Inline controls are actual row siblings; the edge test proves artwork is visible at x=10 beyond the old x=28 inset.
 
 Final fixture strengthening uses the actual OfficialTitleArtwork Logo foreground drawable for wide/tall/compact shapes, includes TV metadata, paints synthetic images for composition review, verifies first/middle/last focused unit scale/parent alignment and adds actual Hide/library-preservation/valid-focus coverage. These retain the approved bounds/focus assertions. Final source/build validation remains pending; the earlier signed-build run is superseded by this test-only checkpoint before candidate production.
+
+## Final source and rendered validation
+
+At `f97f62942f6b4f1a90e2e15258db452384d6b39c`, [source run 37614060979](https://github.com/heretoecode/Supernova/actions/runs/37614060979) is SUCCESS: 148 targeted tests, all 445 Video tests, 98 overlapping stability/library checks and 17 WebDAV tests pass. No skipped tests are recorded in targeted/full logs. Existing identity/privacy audits pass. Full counts are from retained Gradle logs; later stability runs overwrite Video XML.
+
+Reviewed final production-component renders `home-hotfix-initial`, `home-hotfix-logo-320/70/140`, `home-hotfix-inline-2/4`, `home-hotfix-physical-edge` and `home-hotfix-focus-position-0/5/11`. They confirm tall equal-height neighbours, safe unchanged top, only the Continue Watching heading/~60% art teaser, one lower More Info action, stable metadata position for actual official-logo drawable proportions, genuine row sibling controls, card imagery across the old inset and aligned focused artwork/boundary/glow. White logo shapes and gradient art are synthetic fixtures, not recreated historical mock-ups or proof of real provider art. Normal-thumbnail focus presentation remains the user's H6 SHIELD ACCEPTED behaviour, now regression-checked; acceptance is not silently transferred to all behaviour of the replacement APK.
+
+Final signed build, lint, runtime, release, upgrade, hash and certificate gates remain pending at this checkpoint. No wider QA issue was implemented during this Home-only pass.
+
+## Replacement candidate delivered
+
+Source `f97f62942f6b4f1a90e2e15258db452384d6b39c`; source run 37614060979 and full signed build 37614061018 are SUCCESS. Full tests, signed debug/release lint, startup, existing native playback regressions, optimized release, signed upgrade/restart, aapt identity and apksigner certificate gates pass. Replacement APK SHA-256: `11641a15d2480662b56c1eeb9da8b18200ef14a0ce22a803fa99bffa0993a243`.
+
+[Exact candidate identity/download and final H1–H7 conformance](home-hotfix-candidate.md). Later documentation commits are not APK source. H1–H5/H7 are IMPLEMENTED / AUTOMATED VALIDATED / RENDER/INTERACTION REVIEWED, awaiting user Shield validation. H6 remains USER SHIELD ACCEPTED / REGRESSION PROTECTED; no new physical acceptance is assigned. Main remains unmerged. Stop at this replacement candidate; no unrelated QA implementation or later release is started.
