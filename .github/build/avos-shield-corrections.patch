@@ -1,5 +1,17 @@
+diff --git a/Include/stream.h b/Include/stream.h
+index cc41338..549074d 100644
+--- a/Include/stream.h
++++ b/Include/stream.h
+@@ -832,6 +832,7 @@ typedef struct STREAM {
+ 	STREAM_CDATA	cdata_sub;
+ 	CLEVER_BUFFER	sub_buffer;
+ 	int		subtitle_changed;
++	unsigned int	subtitle_generation; // Track switches, including paused round trips.
+ 	
+ 	int 		error_count;
+ 	int 		video_error;
 diff --git a/Source/stream_parser_ffmpeg.c b/Source/stream_parser_ffmpeg.c
-index 81864fe..0de21e6 100644
+index 81864fe..ac46205 100644
 --- a/Source/stream_parser_ffmpeg.c
 +++ b/Source/stream_parser_ffmpeg.c
 @@ -159,6 +159,8 @@ typedef struct FF_PRIV
@@ -11,7 +23,15 @@ index 81864fe..0de21e6 100644
  	
  	STREAM		*s;
  	UINT64		size;
-@@ -971,10 +973,12 @@ DBGP serprintf("info\r\n");
+@@ -169,6 +171,7 @@ typedef struct FF_PRIV
+ 	AUDIO_PROPERTIES *audio;
+ 	VIDEO_PROPERTIES *video;
+ 	SUB_PROPERTIES 	*subtitle;
++	unsigned int	subtitle_generation;
+ 	
+ 	ID3_TAG		tag;
+ 
+@@ -971,10 +974,12 @@ DBGP serprintf("info\r\n");
  	LinkedList_init( &ff_p->aq.list );
  	LinkedList_init( &ff_p->vq.list );
  	LinkedList_init( &ff_p->sq.list );
@@ -24,16 +44,17 @@ index 81864fe..0de21e6 100644
  
  	// make lavf parser use this sync mode! 0 is for STREAM_SYNC_CDATA (PTS) and 1 for STREAM_SYNC_SAMPLES
  	//s->sync_mode = STREAM_SYNC_SAMPLES;
-@@ -1029,6 +1033,8 @@ serprintf("FFMPEG: not open!\r\n" );
+@@ -1029,6 +1034,9 @@ serprintf("FFMPEG: not open!\r\n" );
  		_flush_packets( &ff_p->vq, "VID" );
  		_flush_packets( &ff_p->aq, "AUD" );
  		_flush_packets( &ff_p->sq, "SUB" );
 +		_flush_packets( &ff_p->sub_history, "SUB_HISTORY" );
 +		ff_p->subtitle = NULL;
++		pthread_mutex_destroy(&ff_p->sub_history.mutex);
  
  		av_dict_free(&ff_p->fmt_opts);
  
-@@ -1192,6 +1198,71 @@ static int _get_subtitle_time( STREAM *s, AVPacket *packet )
+@@ -1192,6 +1200,73 @@ static int _get_subtitle_time( STREAM *s, AVPacket *packet )
  	return RST_TO_TS_TIME(t, int);
  }
  
@@ -67,7 +88,7 @@ index 81864fe..0de21e6 100644
 +	LinkedList_append(&q->list, (LinkedListNode*)copy);
 +	q->mem_used += sizeof(PacketNode) + copy->packet.size;
 +	q->packets++;
-+	if( ff_p->subtitle == s->subtitle && packet->stream_index == s->subtitle->stream ) _add_packet(&ff_p->sq, packet);
++	if( ff_p->subtitle == s->subtitle && ff_p->subtitle_generation == s->subtitle_generation && packet->stream_index == s->subtitle->stream ) _add_packet(&ff_p->sq, packet);
 +	LinkedListNode *entry = q->list.first;
 +	while( entry ) {
 +		PacketNode *node = (PacketNode*)entry;
@@ -75,7 +96,8 @@ index 81864fe..0de21e6 100644
 +		int start = _subtitle_packet_time( s, &node->packet, 0 );
 +		int duration = _subtitle_packet_time( s, &node->packet, 1 );
 +		// Unknown-duration bitmap events retain one minute of decoder history.
-+		int expired = start >= 0 && start + (duration > 0 ? duration : 60000) < s->video_time;
++		int clock = s->video_time - RST_TO_TS_DELTA(s->subtitle_offset, int);
++		int expired = start >= 0 && start + (duration > 0 ? duration : 60000) < clock;
 +		if( expired || q->mem_used > 4 * 1024 * 1024 || q->packets > 4096 ) {
 +			LinkedList_remove( &q->list, (LinkedListNode*)node );
 +			q->mem_used -= sizeof(PacketNode) + node->packet.size;
@@ -89,7 +111,7 @@ index 81864fe..0de21e6 100644
 +
 +static void _restore_selected_subtitles( STREAM *s )
 +{
-+	if( ff_p->subtitle == s->subtitle ) return;
++	if( ff_p->subtitle == s->subtitle && ff_p->subtitle_generation == s->subtitle_generation ) return;
 +	AVQueue *q = &ff_p->sub_history;
 +	pthread_mutex_lock( &q->mutex );
 +	_flush_packets( &ff_p->sq, "SUB_SWITCH" );
@@ -99,13 +121,14 @@ index 81864fe..0de21e6 100644
 +		if( packet->stream_index == s->subtitle->stream ) _add_packet( &ff_p->sq, packet );
 +	}
 +	ff_p->subtitle = s->subtitle;
++	ff_p->subtitle_generation = s->subtitle_generation;
 +	pthread_mutex_unlock( &q->mutex );
 +}
 +
  // ************************************************************
  //
  //	_parse_once
-@@ -1323,13 +1394,13 @@ DBGC4 serprintf("VIDEO      dts/pts %8lld/%8lld  %s  %02X %02X %02X %02X\r\n", G
+@@ -1323,13 +1398,13 @@ DBGC4 serprintf("VIDEO      dts/pts %8lld/%8lld  %s  %02X %02X %02X %02X\r\n", G
  			if( timestamp )
  				*timestamp = use_pts ? GET_VIDEO_TS( packet.pts ) : GET_VIDEO_TS( packet.dts );
  		}
@@ -122,7 +145,7 @@ index 81864fe..0de21e6 100644
  			*timestamp = GET_SUB_TS( packet.pts );
  	} else {
  		_rt_discard_pkts++;
-@@ -1464,6 +1535,8 @@ serprintf("FFMPEG: seek error\r\n");
+@@ -1464,6 +1539,8 @@ serprintf("FFMPEG: seek error\r\n");
  	_flush_packets( &ff_p->vq, "VID" );
  	_flush_packets( &ff_p->aq, "AUD" );
  	_flush_packets( &ff_p->sq, "SUB" );
@@ -131,7 +154,7 @@ index 81864fe..0de21e6 100644
  
  	ff_p->sleeping = 0;
  	
-@@ -1762,7 +1835,14 @@ static int _get_subtitle_cdata( STREAM *s, CLEVER_BUFFER *sub_buffer, STREAM_CDA
+@@ -1762,7 +1839,14 @@ static int _get_subtitle_cdata( STREAM *s, CLEVER_BUFFER *sub_buffer, STREAM_CDA
  	}
  
  	AVPacket _packet;
@@ -147,15 +170,23 @@ index 81864fe..0de21e6 100644
  		return 1;
  	}
 diff --git a/Source/stream_subtitle.c b/Source/stream_subtitle.c
-index 4872e27..a753307 100644
+index 4872e27..a27e390 100644
 --- a/Source/stream_subtitle.c
 +++ b/Source/stream_subtitle.c
-@@ -406,15 +406,19 @@ serprintf("SsS: sub_stream > av.subs_max\n");
+@@ -369,6 +369,7 @@ DBGS serprintf("stream_check_subtitles, has new ext subtitles\r\n");
+ 	if (s->av.subs >= s->av.subs_max)
+ 		s->av.subs = 0;
+ 	s->subtitle = s->av.sub + s->av.subs;
++	s->subtitle_generation++;
+ 
+ 	// notify the app too
+ 	s->subtitle_changed = 1;
+@@ -406,15 +407,19 @@ serprintf("SsS: sub_stream > av.subs_max\n");
  	}
  	if( sub_stream == s->av.subs ) {
  serprintf("SsS: sub_stream already set\n");	
 -//		return 0;
-+		return 0;
++		// Off can suppress a consumed active cue; refresh subtitle-only state.
  	}
  
 -	int was_paused = stream_pause( s );
@@ -172,7 +203,13 @@ index 4872e27..a753307 100644
  	// close old subtitle decoder
  	stream_close_sub_dec( s );
  
-@@ -429,14 +433,8 @@ serprintf("SsS: sub_stream already set\n");
+@@ -424,19 +429,14 @@ serprintf("SsS: sub_stream already set\n");
+ 
+ 	s->av.subs  = sub_stream;
+ 	s->subtitle = s->av.sub + s->av.subs;
++	s->subtitle_generation++;
+ 	
+ 	// run threads again
  	thread_state_set( &s->engine_tstate, THREAD_RUNNING );
  	thread_state_set( &s->sub_tstate,    THREAD_RUNNING );
  

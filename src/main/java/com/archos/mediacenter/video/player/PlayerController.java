@@ -223,6 +223,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private final PreviewSeekPolicy mPreviewSeekPolicy = new PreviewSeekPolicy();
     private boolean mPreviewKeySeeking;
     private boolean mPreviewScrubbing;
+    private boolean mPreviewScrubFinishPending;
+    private boolean mPreviewScrubFinalizing;
     private int mPreviewScrubOrigin;
     private long mPreviewTransportFeedbackUntil;
     private final Runnable mPreviewFrameSeek=this::previewFrameSeek;
@@ -1545,15 +1547,17 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         boolean commit=key==KeyEvent.KEYCODE_DPAD_CENTER||key==KeyEvent.KEYCODE_ENTER;
         boolean cancel=key==KeyEvent.KEYCODE_BACK||key==KeyEvent.KEYCODE_DPAD_DOWN;
         if(!arrow&&!commit&&!cancel)return false;
+        if(mPreviewScrubFinishPending||mPreviewScrubFinalizing)return true;
         if(event.getAction()!=KeyEvent.ACTION_DOWN)return true;
         if(arrow){
             if(!mPreviewScrubbing){mPreviewScrubbing=true;mPreviewScrubOrigin=Player.sPlayer.getCurrentPosition();mNextSeek=mPreviewScrubOrigin;mDragging=true;mSeekWasPlaying=Player.sPlayer.isPlaying();if(mSeekWasPlaying)Player.sPlayer.pause(STATE_SEEK);mHandler.removeMessages(MSG_SHOW_PROGRESS);cancelFadeOut();}
             mNextSeek=PreviewSeekPolicy.position(mNextSeek,mPreviewSeekPolicy.next(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1,android.os.SystemClock.elapsedRealtime()),Player.sPlayer.getDuration());
             setProgress();mHandler.removeCallbacks(mPreviewFrameSeek);mHandler.postDelayed(mPreviewFrameSeek,220);return true;
         }
-        if(mPreviewScrubbing){mHandler.removeCallbacks(mPreviewFrameSeek);mPreviewScrubbing=false;mDragging=false;if(cancel)mNextSeek=mPreviewScrubOrigin;mSeekComplete=false;tracePreviewTransport(cancel?"scrub_cancel":"scrub_commit",key);Player.sPlayer.seekTo(mNextSeek);setProgress();}
+        if(mPreviewScrubbing){mHandler.removeCallbacks(mPreviewFrameSeek);mPreviewScrubbing=false;if(cancel)mNextSeek=mPreviewScrubOrigin;tracePreviewTransport(cancel?"scrub_cancel":"scrub_commit",key);if(mSeekComplete)finishPreviewScrub();else mPreviewScrubFinishPending=true;setProgress();}
         if(cancel)mPauseButton.requestFocus();if(mSeekWasPlaying||Player.sPlayer.isPlaying())sendFadeOut(SHOW_TIMEOUT);else cancelFadeOut();return true;
     }
+    private void finishPreviewScrub(){mPreviewScrubFinishPending=false;mPreviewScrubFinalizing=true;mDragging=false;mSeekComplete=false;Player.sPlayer.seekTo(mNextSeek);}
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
             mVideoTitle.setText(title);
@@ -1573,7 +1577,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void stop() {
-        mPreviewKeySeeking=false;mPreviewScrubbing=false;mPreviewSeekPolicy.reset();
+        mPreviewKeySeeking=false;mPreviewScrubbing=false;mPreviewScrubFinishPending=false;mPreviewScrubFinalizing=false;mPreviewSeekPolicy.reset();
         if(experimentalUi())PreviewPlaybackMenus.close();
         if (log.isDebugEnabled()) log.debug("stop");
 
@@ -1625,6 +1629,10 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
 
         mSeekComplete = true;
         tracePreviewTransport("seek_complete",-1);
+        // Finish only after the preview decoder seek completes. Its callback
+        // must not resume playback at the old preview target before commit/cancel.
+        if(mPreviewScrubFinishPending){finishPreviewScrub();return;}
+        mPreviewScrubFinalizing=false;
         if (mSeekComplete && !mDragging) {
             onSeekAndDraggingComplete();
         }
@@ -2938,7 +2946,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public boolean handleBackPressed() {
-        if(experimentalUi()){if(mPreviewScrubbing){previewScrubKey(KeyEvent.KEYCODE_BACK,new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK));return true;}if(PreviewPlaybackMenus.back())return true;if(mControlBarShowing){hide();return true;}}
+        if(experimentalUi()){if(mPreviewScrubbing||mPreviewScrubFinishPending||mPreviewScrubFinalizing){previewScrubKey(KeyEvent.KEYCODE_BACK,new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK));return true;}if(PreviewPlaybackMenus.back())return true;if(mControlBarShowing){hide();return true;}}
         log.info("Back navigation: TV menu displayed={}, card dialog active={}",
                 isTVMenuDisplayed,
                 tvCardDialog != null && tvCardDialog.getVisibility() == View.VISIBLE);

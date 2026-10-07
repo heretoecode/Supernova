@@ -11,6 +11,24 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewTransportTest {
+    @Test public void pendingScrubCommitWaitsForPreviewCompletionWithoutPrematureResume(){
+        Player previous=Player.sPlayer;Player player=org.mockito.Mockito.mock(Player.class);Player.sPlayer=player;
+        try{
+            PlayerController controller=org.mockito.Mockito.mock(PlayerController.class,org.mockito.Mockito.CALLS_REAL_METHODS);
+            org.robolectric.util.ReflectionHelpers.setField(controller,"mContext",RuntimeEnvironment.getApplication());
+            org.robolectric.util.ReflectionHelpers.setField(controller,"mDragging",true);
+            org.robolectric.util.ReflectionHelpers.setField(controller,"mSeekComplete",false);
+            org.robolectric.util.ReflectionHelpers.setField(controller,"mPreviewScrubFinishPending",true);
+            org.robolectric.util.ReflectionHelpers.setField(controller,"mNextSeek",42000);
+            controller.onAllSeekComplete();
+            org.mockito.Mockito.verify(player).seekTo(42000);
+            org.mockito.Mockito.verify(player,org.mockito.Mockito.never()).start(org.mockito.ArgumentMatchers.anyInt());
+            assertFalse(org.robolectric.util.ReflectionHelpers.<Boolean>getField(controller,"mPreviewScrubFinishPending"));
+            assertFalse(org.robolectric.util.ReflectionHelpers.<Boolean>getField(controller,"mDragging"));
+            assertTrue(org.robolectric.util.ReflectionHelpers.<Boolean>getField(controller,"mPreviewScrubFinalizing"));
+            assertFalse("Final target still needs its own completion",org.robolectric.util.ReflectionHelpers.<Boolean>getField(controller,"mSeekComplete"));
+        }finally{Player.sPlayer=previous;}
+    }
     @Test public void fourRealHudControlsKeepPauseAtThePhysicalCentreAcrossWidths(){
         Activity host=Robolectric.buildActivity(PreviewPlaybackMenusTest.TopNavigationTestHost.class).setup().get();
         View root=LayoutInflater.from(host).inflate(R.layout.player_controller_experimental,null);

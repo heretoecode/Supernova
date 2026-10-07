@@ -376,11 +376,12 @@ public final class PreviewPages extends FrameLayout {
     private View rowControlOverlay;private Runnable rowControlClose;private int rowControlConsumedKey=-1;
     private void showRowControls(String id,View opener){
         if(rowControlOverlay!=null)return;
+        rememberFocus();final FocusAnchor origin=anchors[tab];
         LinearLayout controls=new LinearLayout(getContext());controls.setTag("semantic:home.row.controls");controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(dp(8),dp(8),dp(8),dp(8));controls.setBackground(PreviewDialog.menuSurface(getContext()));controls.setElevation(dp(12));
         final boolean[] moving={false};TextView move=button("Move",()->{}),hide=button("Hide",()->{});move.setTag("semantic:home.row.move");hide.setTag("semantic:home.row.hide");controls.addView(move,new LinearLayout.LayoutParams(dp(92),dp(40)));controls.addView(hide,new LinearLayout.LayoutParams(dp(92),dp(40)));
         int[] cardAt=new int[2],pageAt=new int[2];opener.getLocationOnScreen(cardAt);getLocationOnScreen(pageAt);FrameLayout.LayoutParams size=new FrameLayout.LayoutParams(dp(108),dp(96));size.leftMargin=dp(8);size.topMargin=Math.max(list.getPaddingTop(),Math.min(getHeight()-dp(108),cardAt[1]-pageAt[1]));addView(controls,size);rowControlOverlay=controls;
-        Runnable close=()->{if(opener.isAttachedToWindow())opener.requestFocus();removeView(controls);rowControlOverlay=null;rowControlClose=null;if(!opener.isAttachedToWindow()){holdFocus();restoreFocus();}};rowControlClose=close;
-        move.setOnClickListener(v->{moving[0]=!moving[0];move.setText(moving[0]?"↕ Move":"Move");});hide.setOnClickListener(v->{PreviewHomeRows.hideRow(getContext(),id);removeView(controls);rowControlOverlay=null;render("row_hidden");holdFocus();restoreFocus();});
+        Runnable close=()->{View owner=list.findContainingItemView(opener);int position=owner==null?-1:list.getChildAdapterPosition(owner);boolean exact=opener.isAttachedToWindow()&&(origin==null||(position>=0&&position<cells.size()&&origin.cell.equals(cellKey(cells.get(position)))&&java.util.Objects.equals(origin.child,opener.getTag())));if(exact)opener.requestFocus();else{anchors[tab]=origin;holdFocus();}removeView(controls);rowControlOverlay=null;rowControlClose=null;if(!exact)restoreFocus();};rowControlClose=close;
+        move.setOnClickListener(v->{moving[0]=!moving[0];move.setText(moving[0]?"↕ Move":"Move");});hide.setOnClickListener(v->{PreviewHomeRows.hideRow(getContext(),id);removeView(controls);rowControlOverlay=null;rowControlClose=null;render("row_hidden");holdFocus();restoreFocus();});
         for(TextView control:new TextView[]{move,hide})control.setOnKeyListener((v,key,event)->{
             if(key!=KeyEvent.KEYCODE_BACK&&key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT&&key!=KeyEvent.KEYCODE_DPAD_UP&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return true;

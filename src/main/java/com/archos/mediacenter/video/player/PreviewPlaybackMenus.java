@@ -79,6 +79,7 @@ final class PreviewPlaybackMenus {
 
    if(subtitles&&!otherLanguages&&activity.getString(R.string.menu_player_settings).equals(item.getText())){settings=item;continue;}
    String label=androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
+   if(subtitles&&label.equals(activity.getString(R.string.s_none)))label="Off";
    if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_online)))label="Download Subtitles";
    if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_on_drive)))continue;
    if(subtitles&&item.getText().equals(activity.getString(R.string.player_pref_subtitle_delay_title)))label="Sync";

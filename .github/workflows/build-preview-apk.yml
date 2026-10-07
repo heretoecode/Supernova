@@ -235,6 +235,9 @@ jobs:
           build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
           "$build_tools/apksigner" verify --verbose --print-certs "${apks[0]}" | tee nova/apk-verification.log
           grep -qi "$(cat nova/preview-certificate-sha256.txt)" nova/apk-verification.log
+          "$build_tools/aapt" dump badging "${apks[0]}" > nova/apk-badging.txt
+          grep -E "^package:|^sdkVersion:|^targetSdkVersion:|^native-code:" nova/apk-badging.txt | tee -a nova/apk-verification.log
+          grep -q "^package: name='org.courville.nova.markpreview' versionCode='6040083' versionName='6.4.63-mark.4.1.7-preview'" nova/apk-badging.txt
           unzip -l "${apks[0]}" 'lib/*' | tee -a nova/apk-verification.log
           sha256sum "${apks[0]}" | tee nova/apk-sha256.txt
 
@@ -282,6 +285,7 @@ jobs:
             nova/Video/docs/MARK-EDITION-3.md
             nova/source-manifest.xml
             nova/apk-verification.log
+            nova/apk-badging.txt
             nova/preview-certificate-sha256.txt
             nova/apk-sha256.txt
             nova/Video/build/reports/lint-results-*

@@ -75,6 +75,20 @@ public class PreviewLibraryReturnTest {
             child.setVisibility(View.VISIBLE);child.requestFocus();pages.setSnapshot(refreshed);PreviewPagesTest.layout(container);assertTrue("Ordinary refresh does not seize focus",child.hasFocus());
         }finally{host.pause().stop().destroy();}
     }
+    @Test public void inlineMoveReturnFindsTheOriginatingCardAfterRowRebinding(){
+        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException missing){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try{
+            PreviewPages pages=new PreviewPages(host.get(),(holder,item)->{});host.get().setContentView(pages);pages.setDiscovery(new PreviewDiscovery());
+            Snapshot source=snapshot(false);source.continuingMovies.addAll(source.movies.subList(0,12));source.recent.addAll(source.movies.subList(12,30));pages.setSnapshot(source);PreviewPagesTest.layout(pages);
+            RecyclerView list=(RecyclerView)pages.getChildAt(0);GridLayoutManager manager=(GridLayoutManager)list.getLayoutManager();manager.scrollToPositionWithOffset(2,90);PreviewPagesTest.layout(pages);
+            RecyclerView rail=(RecyclerView)((android.view.ViewGroup)manager.findViewByPosition(2)).getChildAt(0);View opener=rail.findViewHolderForAdapterPosition(0).itemView;assertTrue(opener.requestFocus());Object identity=opener.getTag();
+            pages.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_LEFT));PreviewPagesTest.layout(pages);View move=pages.findViewWithTag("semantic:home.row.move");assertNotNull(move);assertTrue(move.hasFocus());move.performClick();move.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_DOWN));PreviewPagesTest.layout(pages);
+            assertEquals("recent",new PreviewHomeRows(host.get()).rows.get(0).id);assertEquals("continue",new PreviewHomeRows(host.get()).rows.get(1).id);
+            pages.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));pages.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_UP,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));PreviewPagesTest.layout(pages);assertNull(pages.findViewWithTag("semantic:home.row.controls"));assertNotNull(pages.findFocus());assertEquals(identity,pages.findFocus().getTag());
+            pages.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));PreviewPagesTest.layout(pages);assertNotEquals(identity,pages.findFocus().getTag());
+        }finally{host.pause().stop().destroy();}
+    }
     private Snapshot snapshot(boolean updated){
         Snapshot result=new Snapshot();
         for(int id=1;id<=60;id++){

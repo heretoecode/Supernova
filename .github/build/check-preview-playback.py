@@ -216,7 +216,7 @@ try:
             '-vf','crop=iw/4:ih/4:iw*2/3:ih/8,scale=64:36','-frames:v','1','-f','rawvideo','-pix_fmt','rgb24','-'],check=True,stdout=subprocess.PIPE).stdout
     before=subtitle_video_sample(OUT/'subtitle-tracks-before.png')
     x1,y1,x2,y2=map(int,re.findall(r'\d+',french.get('bounds')))
-    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(.4)
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','keyevent','23');time.sleep(.4)
     capture_fast('subtitle-tracks-after')
     after=subtitle_video_sample(OUT/'subtitle-tracks-after.png')
     assert sum(abs(a-b) for a,b in zip(before,after))/len(before)<.5,'Subtitle switch disturbed the paused video picture'
@@ -226,13 +226,53 @@ try:
     # Resume normally and require the newly selected long-running cue, whose
     # packet precedes the selection point. A callback alone cannot prove this.
     adb('shell','input','keyevent','4');time.sleep(.2)
-    resumed=capture_fast('subtitle-before-resume')
-    pause=next((n for n in resumed.iter('node') if n.get('resource-id','').endswith('/pause')),None)
-    assert pause is not None,'Pause transport missing after subtitle menu return'
-    x1,y1,x2,y2=map(int,re.findall(r'\d+',pause.get('bounds')))
-    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(1)
+    adb('shell','input','keyevent','126');time.sleep(1)
     caption=capture_fast('subtitle-french-caption')
     assert any('French synthetic subtitle' in n.get('text','') for n in caption.iter('node')),'Selected prefetched subtitle cue was lost'
+    # Round-trip back to a previously consumed cue while paused. Track generation
+    # must invalidate the cached selection even if no new packet is demuxed.
+    adb('shell','input','keyevent','127');time.sleep(.2)
+    paused_again=capture_fast('subtitle-roundtrip-paused')
+    subtitles=next((n for n in paused_again.iter('node') if n.get('resource-id','').endswith('/preview_subtitles')),None)
+    assert subtitles is not None,'Subtitle HUD opener missing on paused round trip'
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',subtitles.get('bounds')))
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(.2)
+    tracks=capture_fast('subtitle-roundtrip-before')
+    english=next((n for n in tracks.iter('node') if 'english' in n.get('text','').lower()),None)
+    assert english is not None,'Original English track missing on round trip'
+    before=subtitle_video_sample(OUT/'subtitle-roundtrip-before.png')
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',english.get('bounds')))
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','keyevent','23');time.sleep(.3)
+    capture_fast('subtitle-roundtrip-after')
+    after=subtitle_video_sample(OUT/'subtitle-roundtrip-after.png')
+    assert sum(abs(a-b) for a,b in zip(before,after))/len(before)<.5,'Round-trip subtitle switch disturbed paused video'
+    adb('shell','input','keyevent','4');adb('shell','input','keyevent','126');time.sleep(1)
+    caption=capture_fast('subtitle-english-caption')
+    assert any('English synthetic subtitle' in n.get('text','') for n in caption.iter('node')),'Previously consumed subtitle cue was not restored'
+    # Off suppresses native delivery while decoding continues. Re-enabling the
+    # same selected track must replay its active cue without an audio/video seek.
+    adb('shell','input','keyevent','127');time.sleep(.2)
+    paused_again=capture_fast('subtitle-off-paused')
+    subtitles=next(n for n in paused_again.iter('node') if n.get('resource-id','').endswith('/preview_subtitles'))
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',subtitles.get('bounds')))
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(.2)
+    tracks=capture_fast('subtitle-off-tracks')
+    off=next(n for n in tracks.iter('node') if n.get('text','')=='Off')
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',off.get('bounds')))
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','keyevent','23');time.sleep(.2)
+    tracks=capture_fast('subtitle-off-selected')
+    english=next(n for n in tracks.iter('node') if 'english' in n.get('text','').lower())
+    before=subtitle_video_sample(OUT/'subtitle-off-selected.png')
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',english.get('bounds')))
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));adb('shell','input','keyevent','23');time.sleep(.3)
+    capture_fast('subtitle-reenabled')
+    after=subtitle_video_sample(OUT/'subtitle-reenabled.png')
+    assert sum(abs(a-b) for a,b in zip(before,after))/len(before)<.5,'Re-enabling subtitles disturbed paused video'
+    adb('shell','input','keyevent','4');adb('shell','input','keyevent','126');time.sleep(1)
+    caption=capture_fast('subtitle-reenabled-caption')
+    assert any('English synthetic subtitle' in n.get('text','') for n in caption.iter('node')),'Off/on lost the active cue of the same selected track'
+
+
 
 finally:
     logs=adb('logcat','-d');(OUT/'subtitle-switch-runtime-logcat.txt').write_bytes(logs)
