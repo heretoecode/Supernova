@@ -25,3 +25,6 @@ At the end of each Supernova work session, durable project knowledge belongs in 
 ## Audit programme checkpoint — 7 October 2026
 
 All audits discussed in the current foundation programme are now represented here. These are static architecture/product audits of the current fixes branch, not permission to expand the active Shield-fixes candidate and not physical acceptance. Their recommendations are future-development foundations; explicit later product decisions and physical QA remain authoritative.
+
+## Discussion disposition — 8 October 2026
+User approved `Unknown` in fixed factual metadata slots while missing/loading with in-place population on arrival; approved existing text-title fallback for missing title logos, generic poster placeholder, and restrained dark colour-tinted backdrop fallback. Library Health and Downloads functional decisions delegated to implementation judgement within approved Network & Files design. Remaining user-discussion subjects: (1) Settings ownership, organisation and legacy preferences, and (2) evidence-based legacy NOVA code cleanup policy/priority. See `docs/design/DETAILS.md` and `docs/design/NETWORK_FILES.md`. This does not alter the fixes-only candidate scope.
