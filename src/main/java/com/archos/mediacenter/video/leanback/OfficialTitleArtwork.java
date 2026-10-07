@@ -56,7 +56,7 @@ public final class OfficialTitleArtwork {
    String key=resolve.call();if(key==null)return;String language=Locale.getDefault().getLanguage();String diskKey=key.replace('/','_')+"_"+language;
    Bitmap bitmap=MEMORY.get(diskKey);File directory=new File(app.getCacheDir(),"official-title-artwork"),file=new File(directory,diskKey+".png");
    if(bitmap==null&&file.isFile()){bitmap=BitmapFactory.decodeFile(file.getPath());cacheLayer="disk";}
-   if(bitmap==null&&!cachedOnly){android.content.SharedPreferences cache=app.getSharedPreferences("preview_title_logos",0);long last=cache.getLong(diskKey,0);
+   if(bitmap==null&&!cachedOnly){android.content.SharedPreferences cache=app.getSharedPreferences("preview_title_logos_empty_v2",0);long last=cache.getLong(diskKey,0);
     cacheLayer="network";
     if(System.currentTimeMillis()-last<86400000L)return;
     android.net.Uri uri=android.net.Uri.parse("https://api.themoviedb.org/3/"+key+"/images").buildUpon().appendQueryParameter("api_key",app.getString(com.archos.medialib.R.string.tmdb_api_key)).appendQueryParameter("include_image_language",language+",en,null").build();

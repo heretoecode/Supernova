@@ -45,8 +45,9 @@ public class PreviewCorrectiveAuthorityTest {
   featured.measure(View.MeasureSpec.makeMeasureSpec(904,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(330,View.MeasureSpec.EXACTLY));featured.layout(0,0,904,330);
   View active=featured.findViewWithTag("semantic:featured.active");assertEquals(777,active.getWidth());assertEquals(330,active.getHeight());assertTrue(active.getClipToOutline());assertTrue(active.getElevation()>0);
   for(String tag:new String[]{"semantic:featured.previous","semantic:featured.next"}){View side=featured.findViewWithTag(tag);float start=side.getLeft()+side.getTranslationX(),end=start+side.getWidth();float visible=Math.max(0,Math.min(904,end)-Math.max(0,start));assertTrue("Deliberate 5–8 percent neighbour exposure",visible>=904*.05f&&visible<=904*.08f);assertFalse(side.isFocusable());}
-  assertNotNull(featured.findViewWithTag("hero:play"));assertNotNull(featured.findViewWithTag("hero:info"));PreviewPagesTest.addTestArtwork(featured);PreviewPagesTest.capture(featured,"featured-corrective-geometry");activity.finish();
+  assertNotNull(featured.findViewWithTag("hero:play"));assertNotNull(featured.findViewWithTag("hero:info"));featuredFixtureArt(featured);PreviewPagesTest.capture(featured,"featured-corrective-geometry");activity.finish();
  }
+ private void featuredFixtureArt(View view){if(view instanceof ImageView)((ImageView)view).setImageDrawable(new android.graphics.drawable.GradientDrawable(android.graphics.drawable.GradientDrawable.Orientation.TL_BR,new int[]{0xff548091,0xff244b68,0xff976e44}));else if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)featuredFixtureArt(((ViewGroup)view).getChildAt(i));}
  @Test public void rowControlsAreInlineAndBackRestoresExactOpener(){
   Activity activity=Robolectric.buildActivity(Activity.class).setup().get();PreviewPages pages=new PreviewPages(activity,(holder,item)->{});activity.setContentView(pages);PreviewPagesTest.layout(pages);
   TextView opener=new TextView(activity);opener.setFocusableInTouchMode(true);pages.addView(opener);assertTrue(opener.requestFocus());

@@ -47,6 +47,12 @@ public class PreviewPlaybackMenusTest {
             PreviewPlaybackMenus.close();
         }host.finish();
     }
+    @Test public void contextualAudioFiltersDoNotOverwriteGlobalDefaults(){
+        android.content.SharedPreferences prefs=RuntimeEnvironment.getApplication().getSharedPreferences("audio-session-test",0);prefs.edit().putInt("pref_audio_filt_int_key",1).putBoolean("pref_audio_filt_night_int_key",false).commit();
+        PlayerService service=mock(PlayerService.class,CALLS_REAL_METHODS);org.robolectric.util.ReflectionHelpers.setField(service,"mPreferences",prefs);org.robolectric.util.ReflectionHelpers.setField(service,"mPlayer",mock(Player.class));service.mAudioFilt=1;service.mNightModeOn=false;
+        service.setAudioFilt(3,false);service.setNightMode(true,false);assertEquals(3,service.mAudioFilt);assertTrue(service.mNightModeOn);assertEquals(1,prefs.getInt("pref_audio_filt_int_key",-1));assertFalse(prefs.getBoolean("pref_audio_filt_night_int_key",true));
+        service.setAudioFilt(2,true);service.setNightMode(false,true);assertEquals(2,prefs.getInt("pref_audio_filt_int_key",-1));assertFalse(prefs.getBoolean("pref_audio_filt_night_int_key",true));
+    }
     private String allText(View view){String result=view instanceof android.widget.TextView?((android.widget.TextView)view).getText().toString()+"\n":"";if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)result+=allText(((android.view.ViewGroup)view).getChildAt(i));return result;}
     @Test public void directSpeedAdjustmentBackReturnsToExactHudOpener(){
         Activity host=Robolectric.buildActivity(TopNavigationTestHost.class).setup().visible().get();

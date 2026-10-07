@@ -33,3 +33,7 @@ The new text-only Cast/Crew tier sits below the information tier. UP from its fi
 ### Release resource and provider refresh corrections
 
 Explicitly retain dynamically resolved bundled flag drawables through release resource shrinking. Unchanged provider identity/artwork now preserves its existing view/focus and only refreshes the action callback; all three hero actions use the same explicit 38dp height. Nested Settings regression asserts left-panel ancestry. Embedded trailer document explicitly fills its 16:9 WebView, avoiding HTML percentage-height ambiguity. The complete conformance register is `next-corrective-conformance.md`; it separates implementation from pending automation/render/Shield acceptance.
+
+### Validation follow-up
+
+Workflow 37561857959 caught a Featured render-fixture type mismatch; corrected the fixture to decorate actual Featured image views rather than pass them to a navigation-only helper. Added rendered-pixel enlargement/boundary evidence and persistent-vs-session Audio preference assertions. The logo negative-cache namespace is versioned to avoid inheriting older failed-image timestamps; positive bitmap caches are retained. Extended standard language data to ISO 639-3 and bibliographic aliases without a large generated Java initializer. These are corrective follow-ups, not validation acceptance claims.

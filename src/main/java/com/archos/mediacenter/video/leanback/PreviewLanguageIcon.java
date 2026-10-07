@@ -41,7 +41,7 @@ public final class PreviewLanguageIcon extends Drawable {
         if(code==null||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})*"))return "";
         Locale locale=Locale.forLanguageTag(code.replace('_','-'));String explicit=locale.getCountry().toUpperCase(Locale.ROOT);
         if(!explicit.isEmpty())return COUNTRIES.contains(explicit)?explicit:"";
-        String language=languageLabel(code).toLowerCase(Locale.ROOT);if(language.isEmpty())return "";
+        String language=languageLabel(code).toLowerCase(Locale.ROOT);if(language.isEmpty())language=code.split("[-_]")[0].toLowerCase(Locale.ROOT);
         String standard=PreviewLanguageRegions.DEFAULTS.getOrDefault(language,"");return COUNTRIES.contains(standard)?standard:"";
     }
     @Override public void draw(Canvas canvas){

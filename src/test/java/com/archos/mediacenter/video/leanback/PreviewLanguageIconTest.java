@@ -19,7 +19,7 @@ public class PreviewLanguageIconTest {
         assertEquals("FR",PreviewLanguageIcon.country("fre"));assertEquals("DE",PreviewLanguageIcon.country("ger"));assertEquals("CN",PreviewLanguageIcon.country("chi"));assertEquals("FR",PreviewLanguageIcon.country("fr"));assertEquals("DE",PreviewLanguageIcon.country("de"));assertEquals("JP",PreviewLanguageIcon.country("ja"));
     }
     @Test public void explicitLocalesKeepTheirCountry(){
-        assertEquals("GB",PreviewLanguageIcon.country("en-GB"));assertEquals("BR",PreviewLanguageIcon.country("pt_BR"));
+        assertEquals("GB",PreviewLanguageIcon.country("en-GB"));assertEquals("BR",PreviewLanguageIcon.country("pt_BR"));assertEquals("PH",PreviewLanguageIcon.country("fil"));
         assertEquals("TW",PreviewLanguageIcon.country("zh-Hant-TW"));assertEquals("US",PreviewLanguageIcon.country("en-us"));
     }
 }
