@@ -65,3 +65,12 @@ Use **APPROVED**, **PARKED**, **REJECTED**, **SUPERSEDED**, and **NEEDS DECISION
 - [Post-4.1.7 Shield fixes implementation and 35-item traceability](qa/post-4.1.7-fixes-implementation.md) — historical development status of the tested candidate; its FIXED labels do not override later physical Shield results.
 
 - [Post-4.1.7 signed fixes candidate](qa/post-4.1.7-fixes-candidate.md): exact build source/APK hash/certificate, green workflow evidence, unresolved decisions and physical Shield validation pending. This unmerged candidate does not supersede accepted 4.1.7 Final.
+
+
+## Audit evidence
+
+- [Completed audit register](audits/README.md) — durable findings, recommendations, decisions, risks and follow-up from completed Supernova audits.
+
+## Record-keeping rule
+
+GitHub is the authoritative durable project record. Material discussion outcomes, plans, decisions, QA evidence, audit results, implementation/build evidence and unresolved dependencies must be written here rather than existing only in chat history.
