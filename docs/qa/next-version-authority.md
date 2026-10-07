@@ -413,3 +413,23 @@ Acceptance:
 6. Physical Shield validation is required; a focus/unit test alone is not sufficient.
 
 Status: **NEW PHYSICAL-QA DEFECT — REQUIRED FOR NEXT CORRECTIVE BUILD.**
+
+
+### Physical remote REW/FF timestamp feedback
+
+Additional physical Shield requirement:
+- When playback HUD controls are active/visible and the user invokes rewind or fast-forward with the physical remote's dedicated transport controls, the existing rewind/fast-forward action may continue to use its current seek behaviour.
+- **The timestamp bubble must become visible while the rewind/fast-forward operation is active**, even if seek-bar focus was not entered first.
+- The timestamp shown must track the current seek target so the user can see the position they are moving to.
+- Repeated remote REW/FF presses/steps must update the bubble rather than leaving stale time.
+- After the operation completes/commits, the bubble should dismiss according to the normal HUD timeout/interaction behaviour.
+- Do not require the user to move focus to the seek bar merely to obtain timestamp feedback.
+- Preserve the existing working physical-remote rewind/fast-forward behaviour; this is a feedback/presentation correction, not a request to replace the transport mechanism.
+
+Acceptance:
+1. With focus on each primary playback HUD control, invoke physical-remote REW and FF.
+2. Confirm the transport action still works.
+3. Confirm the timestamp bubble appears immediately and tracks the seek target.
+4. Test repeated presses/steps and both directions.
+5. Confirm normal playback resumes at the committed target and HUD/bubble dismissal remains coherent.
+6. Validate on physical Shield.
