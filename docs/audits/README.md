@@ -8,9 +8,20 @@ Completed:
 - [Playback Audio](PLAYBACK_AUDIO_AUDIT.md)
 - [Playback More](PLAYBACK_MORE_AUDIT.md)
 - [Code Health / Old NOVA](CODE_HEALTH_LEGACY_NOVA_AUDIT.md)
+- [Settings](SETTINGS_AUDIT.md)
+- [Metadata and Data Fields](METADATA_DATA_FIELDS_AUDIT.md)
+- [Providers and Data Sources](PROVIDERS_DATA_SOURCES_AUDIT.md)
+- [Artwork Pipeline](ARTWORK_AUDIT.md)
+- [Unmatched / Unscraped Media](UNMATCHED_MEDIA_AUDIT.md)
+- [Network & Files](NETWORK_FILES_AUDIT.md)
 
 Audit reports preserve what was inspected, findings, decisions and remaining validation/risk. Product/design decisions derived from an audit are also carried into the appropriate `docs/design/` authority and `docs/qa/next-version-authority.md`.
 
 ## Preservation rule
 
 At the end of each Supernova work session, durable project knowledge belongs in GitHub: discussion outcomes, approved/rejected/parked decisions, QA evidence, audit findings, implementation/build evidence and unresolved dependencies. Chat history is not the authoritative project record.
+
+
+## Audit programme checkpoint — 7 October 2026
+
+All audits discussed in the current foundation programme are now represented here. These are static architecture/product audits of the current fixes branch, not permission to expand the active Shield-fixes candidate and not physical acceptance. Their recommendations are future-development foundations; explicit later product decisions and physical QA remain authoritative.
