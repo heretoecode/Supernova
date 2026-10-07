@@ -168,3 +168,6 @@ These references are visual authority for composition, hierarchy, spacing and su
 - Approved submenu storyboard: [network-files-submenus-approved.png](references/network-files-submenus-approved.png)
 
 These repository files are the durable visual references available to Codex. The written requirements in this document remain functional authority.
+
+## Delegated functional decisions — 8 October 2026
+The user delegates remaining Library Health and Downloads operational UX details to implementation judgement, within the already approved Network & Files design. Library Health should surface actionable persistent problems (including unmatched media), not transient failures recoverable automatically; retain file/watch identity through correction and avoid intrusive focus-stealing alerts. Downloads should present status, progress, destination, completion/failure, retry and cancellation as appropriate, with predictable D-pad/Back behaviour and safe handling of partial transfers; maintain separation between put.io account integration and WebDAV transport. These are future enhancement decisions, not authorisation to expand the active fixes-only candidate. Preserve the approved navigation and mockups.
