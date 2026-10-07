@@ -17,3 +17,7 @@ Language defaults were explicitly selected: English→US, Portuguese→Brazil, C
 ## Pending gates
 
 Complete all scope corrections and per-requirement tests; automated source/full suites; actual rendered geometry/focus review; lint/debug/native playback/release/signature/upgrade validation; conformance register; exact source/APK/hash evidence. No next candidate has yet been produced. Only subsequent user Shield QA can confer SHIELD ACCEPTED. Existing accepted return focus, clock, action containers, lower navigation, input/posters, provider logos/Done, HUD reveal/control count/style and no debug text remain regression protections.
+
+### Source validation checkpoint
+
+Source workflow 37560414870 compiled the first checkpoint and ran the targeted tests; three Details tests retained superseded expectations (ten cast people, old Library Information tag, and old Streaming Availability heading). Updated them to assert the new eight-person cap and Technical Information/Region while retaining empty reception, unknown file-size, lower-navigation and return-focus coverage. This is not a green validation claim. Further corrections add inline Left-edge Move/Hide, separators, matching Search row geometry, menu ordering, valid-empty-only logo negative caching, unchanged-section refresh fencing, and bounded 400ms Featured motion.

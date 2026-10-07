@@ -90,6 +90,17 @@ final class PreviewPlaybackMenus {
   if(hasOther&&!otherLanguages){labels.add("— TRACK");actions.add(null);actions.add(null);labels.add("Other languages");}
   if(settings!=null){actions.add(settings);labels.add("Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
 
+  if(subtitles||audio){
+   // Retain native callbacks, but present the approved first-level order.
+   TVMenuItem initial=selected>=0&&selected<actions.size()?actions.get(selected):null;
+   List<Integer> order=new ArrayList<>();for(int i=0;i<actions.size();i++)order.add(i);
+   order.sort(Comparator.comparingInt(i->menuOrder(labels.get(i),subtitles)));
+   List<TVMenuItem> orderedActions=new ArrayList<>();List<String> orderedLabels=new ArrayList<>();
+   for(int i:order){orderedActions.add(actions.get(i));orderedLabels.add(labels.get(i));}
+   actions.clear();actions.addAll(orderedActions);labels.clear();labels.addAll(orderedLabels);
+   checked.clear();for(int i=0;i<actions.size();i++)if(actions.get(i)!=null&&actions.get(i).isChecked())checked.add(i);
+   selected=initial==null?selected:actions.indexOf(initial);
+  }
   if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
   dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);
   current=PreviewDialog.choose(activity,otherLanguages?"Subtitles · Other languages":card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{
@@ -121,6 +132,11 @@ final class PreviewPlaybackMenus {
   card.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(maximum,View.MeasureSpec.AT_MOST));
   boolean compactAdjustment=card.findViewById(R.id.audioDelayPicker)!=null||card.findViewById(R.id.audioSpeedPicker)!=null;
   window.setLayout(width,Math.min(maximum,compactAdjustment?dp(activity,180):card.getMeasuredHeight()));position(activity,dialog,false);
+ }
+ private static int menuOrder(String label,boolean subtitles){
+  if(subtitles){if(label.startsWith("Download Subtitles"))return 1;if(label.startsWith("Sync"))return 2;if(label.startsWith("Appearance"))return 3;}
+  else{if(label.startsWith("Audio Sync"))return 1;if(label.startsWith("Audio Boost"))return 2;if(label.toLowerCase(Locale.ROOT).startsWith("night"))return 3;}
+  return 0;
  }
  private static int dp(android.app.Activity a,int n){return PreviewDialog.dp(a,n);}
  private static void compact(View view,android.app.Activity a){

@@ -46,7 +46,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
     });}
     static boolean aired(String date){return date!=null&&date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")&&date.compareTo(new java.text.SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ROOT).format(new Date()))<=0;}
     boolean focusRemote(String key){for(int i=0;i<episodes.size();i++){PreviewEpisodeChoice choice=episodes.get(i);if(key.equals("remote-episode:"+choice.season+":"+choice.number)){remembered=i;focusRemembered();return true;}}return false;}
-    private int cardWidth(){int width=getWidth()>0?getWidth():getResources().getDisplayMetrics().widthPixels-PreviewDialog.dp(getContext(),84);return Math.max(1,(width-getPaddingLeft()-getPaddingRight()-PreviewDialog.dp(getContext(),36))/4);}
+    private int cardWidth(){int width=getWidth()>0?getWidth():getResources().getDisplayMetrics().widthPixels-PreviewDialog.dp(getContext(),84);return Math.max(1,(int)((width-getPaddingLeft()-getPaddingRight()-PreviewDialog.dp(getContext(),48))/4.15f));}
     @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);View item=findContainingItemView(focused);if(item!=null){int p=getChildAdapterPosition(item);if(p>=0)remembered=p;}}
     boolean focusEpisode(long id){for(int i=0;i<episodes.size();i++)if(episodes.get(i).local!=null&&episodes.get(i).local.getId()==id){remembered=i;focusRemembered();return true;}return false;}
     void focusRemembered(){

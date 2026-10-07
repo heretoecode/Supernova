@@ -68,7 +68,7 @@ public final class PreviewMoviePage extends ScrollView {
         View detailsWrapper=(View)details.getParent();body.removeView(detailsWrapper);information.addView(detailsWrapper);
         View divider=new View(c);divider.setBackgroundColor(0x35ffffff);LinearLayout.LayoutParams dividerSize=new LinearLayout.LayoutParams(-1,dp(1));dividerSize.setMargins(0,dp(16),0,dp(16));information.addView(divider,dividerSize);
         LinearLayout peopleTier=new LinearLayout(c);peopleTier.setClipChildren(false);information.addView(peopleTier);
-        for(LinearLayout section:new LinearLayout[]{cast,crew}){View wrapper=(View)section.getParent();body.removeView(wrapper);peopleTier.addView(wrapper,new LinearLayout.LayoutParams(0,-2,1));}
+        for(LinearLayout section:new LinearLayout[]{cast,crew}){if(section==crew)addColumnDivider(peopleTier);View wrapper=(View)section.getParent();body.removeView(wrapper);peopleTier.addView(wrapper,new LinearLayout.LayoutParams(0,-2,1));}
         for(LinearLayout section:new LinearLayout[]{episodes,related,trailers}){View wrapper=(View)section.getParent();body.removeView(wrapper);lower.addView(wrapper,new FrameLayout.LayoutParams(-1,-2));}
         ((View)cast.getParent()).setVisibility(GONE);((View)crew.getParent()).setVisibility(GONE);
         rebuildTabs();
@@ -178,7 +178,11 @@ public final class PreviewMoviePage extends ScrollView {
         play.setText(movie.getResumeMs()>0&&!PreviewSeriesJourney.completed(movie)?"Resume":"Play");
         if(movie.getPreviewBackdrop()!=null)artwork.accept(movie.getPreviewBackdrop());renderDetails();requestEnrichment();
     }
-    private void renderHumanMetadata(){if(movie==null)return;
+    private void renderHumanMetadata(){if(movie==null){
+        if(show!=null)meta.setText((show.getYear()>0?show.getYear()+" · ":"")+show.getSeasonCount()+" seasons · "+show.getEpisodeCount()+" episodes");
+        else if(remoteDetails!=null)meta.setText(remoteDetails.optString("release_date",remoteDetails.optString("first_air_date")));
+        return;
+    }
         List<String> metadata=new ArrayList<>();
         if(movie instanceof Episode){Episode episode=(Episode)movie;title.setText(safe(episode.getShowName())+" — "+safe(episode.getEpisodeName()));
             if(episode.getSeasonNumber()>=0&&episode.getEpisodeNumber()>0)metadata.add("S"+episode.getSeasonNumber()+" E"+episode.getEpisodeNumber());
@@ -324,7 +328,8 @@ public final class PreviewMoviePage extends ScrollView {
         for(int n=0;n<values.length();n++){org.json.JSONObject item=values.optJSONObject(n);if(item!=null&&!item.optString(key).isEmpty())names.add(item.optString(key));}
         return android.text.TextUtils.join(", ",names);
     }
-    private LinearLayout factPanel(LinearLayout panels,String name){LinearLayout panel=new LinearLayout(getContext());panel.setTag("semantic:details.panel."+name.toLowerCase(Locale.ROOT).replace(' ','.'));panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(0),dp(20),dp(16),dp(16));panel.setBackground(null);panel.setFocusable(true);panel.setFocusableInTouchMode(true);panel.setForeground(PreviewDialog.focus(getContext()));LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,-2,1);size.rightMargin=dp(12);panels.addView(panel,size);panel.addView(text(name,18));return panel;}
+    private void addColumnDivider(LinearLayout parent){View line=new View(getContext());line.setBackgroundColor(0x35ffffff);LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(dp(1),-1);size.setMargins(dp(8),dp(20),dp(16),dp(16));parent.addView(line,size);}
+    private LinearLayout factPanel(LinearLayout panels,String name){if(panels.getChildCount()>0)addColumnDivider(panels);LinearLayout panel=new LinearLayout(getContext());panel.setTag("semantic:details.panel."+name.toLowerCase(Locale.ROOT).replace(' ','.'));panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(0),dp(20),dp(16),dp(16));panel.setBackground(null);panel.setFocusable(true);panel.setFocusableInTouchMode(true);panel.setForeground(PreviewDialog.focus(getContext()));LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,-2,1);size.rightMargin=dp(12);panels.addView(panel,size);panel.addView(text(name,18));return panel;}
     static String runtimeLabel(long minutes){return minutes<60?minutes+"m":minutes/60+"h"+(minutes%60==0?"":" "+minutes%60+"m");}
     private void fact(LinearLayout panel,String label,String value){
         if(value==null||value.trim().isEmpty())return;
@@ -342,7 +347,7 @@ public final class PreviewMoviePage extends ScrollView {
         List<Action> offers=new ArrayList<>(),extraOptions=new ArrayList<>();for(int i=0;i<observedActions.size();i++){Object item=observedActions.get(i);if(item instanceof Action&&com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))offers.add((Action)item);else if(item instanceof Action&&"•••".contentEquals(((Action)item).getLabel1()))extraOptions.add((Action)item);}
         play.setVisibility(remoteDetails==null?VISIBLE:GONE);
         if(!offers.isEmpty()){
-            Action offer=offers.get(0);Presenter.ViewHolder holder=providerPresenter.onCreateViewHolder(providerActions);providerPresenter.onBindViewHolder(holder,offer);holder.view.setTag(offer.getId());holder.view.setOnClickListener(v->action.accept(offer));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(160),dp(38));lp.leftMargin=dp(18);providerActions.addView(holder.view,lp);providerHolders.add(holder);
+            Action offer=offers.get(0);Presenter.ViewHolder holder=providerPresenter.onCreateViewHolder(providerActions);providerPresenter.onBindViewHolder(holder,offer);holder.view.setTag(offer.getId());holder.view.setFocusable(true);holder.view.setFocusableInTouchMode(true);holder.view.setBackground(PreviewDialog.actionContainerFocus(getContext()));holder.view.setOnClickListener(v->action.accept(offer));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(160),dp(38));lp.leftMargin=dp(18);providerActions.addView(holder.view,lp);providerHolders.add(holder);
 
         }
         if(focused!=null){View replacement=focusKey==null?null:providerActions.findViewWithTag(focusKey);if(replacement!=null)replacement.requestFocus();else if(providerActions.getChildCount()>0)providerActions.getChildAt(0).requestFocus();else play.requestFocus();}
@@ -500,11 +505,19 @@ public final class PreviewMoviePage extends ScrollView {
     }
     private void applyEnrichment(PreviewDetailsData.Result result,int generation){
         if(generation!=enrichmentGeneration)return;
-        enrichment=PreviewDetailsData.merge(enrichment,result);result=enrichment;renderEnrichedPeople();List<ScraperTrailer> extras=new ArrayList<>();
+        String before=sectionFingerprint(enrichment);String oldExtras=extrasFingerprint(enrichment),oldRelated=relatedFingerprint(enrichment);
+        enrichment=PreviewDetailsData.merge(enrichment,result);result=enrichment;
+        if(!before.equals(sectionFingerprint(result)))renderEnrichedPeople();List<ScraperTrailer> extras=new ArrayList<>();
         for(PreviewDetailsData.Extra e:result.extras)extras.add(new ScraperTrailer(ScraperTrailer.Type.SHOW_TRAILER,e.name,e.key,"YouTube",""));
         if(!extras.isEmpty())trailerList=extras;
-        renderDetails();renderRelated();renderExtras();renderSeasons();rebuildTabs();
+        if(!before.equals(sectionFingerprint(result)))renderDetails();
+        if(!oldRelated.equals(relatedFingerprint(result)))renderRelated();
+        if(!oldExtras.equals(extrasFingerprint(result)))renderExtras();
+        renderSeasons();rebuildTabs();
     }
+    private static String sectionFingerprint(PreviewDetailsData.Result r){return r==null?"":String.valueOf(r.details)+"|"+r.credits+"|"+r.classification;}
+    private static String extrasFingerprint(PreviewDetailsData.Result r){StringBuilder b=new StringBuilder();if(r!=null)for(PreviewDetailsData.Extra e:r.extras)b.append(e.key).append(e.name).append(e.type);return b.toString();}
+    private static String relatedFingerprint(PreviewDetailsData.Result r){StringBuilder b=new StringBuilder();if(r!=null)for(PreviewDetailsData.Remote e:r.related)b.append(e.title.toString()).append(e.provider==null?"":e.provider.id);return b.toString();}
     private void rowKeys(View card,LinearLayout row){card.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN||key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT)return false;int next=row.indexOfChild(v)+(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);if(next>=0&&next<row.getChildCount())row.getChildAt(next).requestFocus();return true;});}
     private void restoreRowFocus(ViewGroup area,Object key,int y){
         if(key==null)return;View requested=area.findViewWithTag(key),target=requested;boolean fallback=false;

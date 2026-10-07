@@ -24,7 +24,7 @@ public class PreviewMoviePageTest {
                     snapshot.episodes.add(new PreviewLibraryLoader.Entry(episode,0,7,""));
                 }
                 page.setSnapshot(snapshot);
-                View panel=page.findViewWithTag("semantic:details.panel.library.information");assertNotNull(panel);
+                View panel=page.findViewWithTag("semantic:details.panel.technical.information");assertNotNull(panel);
                 assertNotNull(PreviewPagesTest.findText(panel,"Library size"));
                 if(complete){assertNull(PreviewPagesTest.findText(panel,"≥ "));assertNotNull(PreviewPagesTest.findText(panel,"Average file size"));}
                 else{assertNotNull(PreviewPagesTest.findText(panel,"≥ "));assertNull(PreviewPagesTest.findText(panel,"Average file size"));}
@@ -79,8 +79,9 @@ public class PreviewMoviePageTest {
         try{
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);
             page.bindRemote(new org.json.JSONObject().put("title","Remote fixture").put("tagline","A real supplied tagline").put("revenue",1234),"movie",0);
-            assertNotNull(PreviewPagesTest.findText(page,"Streaming Availability"));
-            assertNull(PreviewPagesTest.findText(page,"Technical Information"));
+            assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
+            assertNotNull(PreviewPagesTest.findText(page,"Region"));
+            assertNull(PreviewPagesTest.findText(page,"Selected file"));
             View reception=PreviewPagesTest.findText(page,"Reception");assertNotNull(reception);
             assertEquals(View.GONE,((View)reception.getParent()).getVisibility());
             assertNotNull(PreviewPagesTest.findText(page,"A real supplied tagline"));
@@ -132,7 +133,7 @@ public class PreviewMoviePageTest {
             assertNotNull(PreviewPagesTest.findText(page,"SMB · server/movies/film.mkv"));assertNotNull(PreviewPagesTest.findText(page,"MKV"));
             com.archos.mediascraper.ShowTags cast=new com.archos.mediascraper.ShowTags();for(int person=1;person<=10;person++)cast.addActorIfAbsent("Fixture Person "+person,"Role "+person);page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
             android.view.ViewGroup body=(android.view.ViewGroup)page.getChildAt(0);android.view.ViewGroup hero=(android.view.ViewGroup)body.getChildAt(0);assertTrue("Hero retains its content and lower tabs",hero.getChildCount()>1);
-            assertNull(PreviewPagesTest.findText(page,"See All"));assertNotNull(PreviewPagesTest.findText(page,"Fixture Person 10"));
+            assertNull(PreviewPagesTest.findText(page,"See All"));assertNotNull(PreviewPagesTest.findText(page,"Fixture Person 8"));assertNull("Approved people tier is capped at eight",PreviewPagesTest.findText(page,"Fixture Person 9"));
             assertNull("Empty recommendations have no navigation entry",page.findViewWithTag("section:More Like This"));assertNotNull(page.findViewWithTag("section:Details"));assertNull(page.findViewWithTag("section:Extras"));
             for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
             assertTrue("Initial hero leaves at least 44dp of lower content visible",page.getPaddingTop()+hero.getBottom()<=page.getHeight()-44);

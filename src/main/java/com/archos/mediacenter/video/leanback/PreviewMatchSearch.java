@@ -43,17 +43,17 @@ public final class PreviewMatchSearch extends LinearLayout {
         boolean append=results.size()>=rendered.size();for(int i=0;append&&i<rendered.size();i++)append=rendered.get(i)==results.get(i);
         if(!append){boolean focused=rows.hasFocus();rows.removeAllViews();rendered.clear();if(focused)keyboard.focusLastKey();}
         for(int i=rendered.size();i<results.size();i++){
-            final int index=i;BaseTags tags=results.get(i);LinearLayout row=new LinearLayout(getContext());row.setOrientation(VERTICAL);row.setTag("semantic:match.result:"+i);row.setFocusable(true);row.setFocusableInTouchMode(true);row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);row.setPadding(dp(12),dp(10),dp(12),dp(10));row.setBackground(PreviewDialog.focus(getContext()));
+            final int index=i;BaseTags tags=results.get(i);LinearLayout row=new LinearLayout(getContext());row.setOrientation(VERTICAL);row.setTag("semantic:match.result:"+i);row.setFocusable(true);row.setFocusableInTouchMode(true);row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);row.setPadding(dp(6),dp(5),dp(6),dp(5));row.setBackgroundColor(0x5506121d);row.setForeground(PreviewDialog.focus(getContext()));
             row.setOrientation(HORIZONTAL);
             ImageView poster=new ImageView(getContext());poster.setTag("semantic:match.poster:"+i);poster.setScaleType(ImageView.ScaleType.FIT_CENTER);row.addView(poster,new LayoutParams(dp(92),dp(65)));
             LinearLayout copy=new LinearLayout(getContext());copy.setOrientation(VERTICAL);copy.setPadding(dp(12),0,0,0);row.addView(copy,new LayoutParams(0,-2,1));
-            TextView title=text(label(tags),18);title.setMaxLines(2);title.setEllipsize(android.text.TextUtils.TruncateAt.END);copy.addView(title);
+            TextView title=text(label(tags),18);title.setMaxLines(1);title.setEllipsize(android.text.TextUtils.TruncateAt.END);copy.addView(title);
             TextView metadata=text(tags instanceof MovieTags?"Movie":tags instanceof ShowTags?"TV Series":"Episode",12);copy.addView(metadata);
             bindPoster(poster,tags);
-            String plot=tags.getPlot();if(plot!=null&&!plot.trim().isEmpty()){TextView detail=text(plot,12);detail.setMaxLines(2);detail.setEllipsize(android.text.TextUtils.TruncateAt.END);detail.setPadding(0,dp(5),0,0);copy.addView(detail);}
+            String plot=tags.getPlot();if(plot!=null&&!plot.trim().isEmpty()){TextView detail=text(plot,12);detail.setMaxLines(1);detail.setEllipsize(android.text.TextUtils.TruncateAt.END);detail.setPadding(0,0,0,0);copy.addView(detail);}
             row.setContentDescription(label(tags));row.setOnClickListener(v->choose.accept(tags));
             row.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_LEFT){keyboard.focusLastKey();return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){int next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<rows.getChildCount())rows.getChildAt(next).requestFocus();return true;}return false;});
-            LayoutParams cell=new LayoutParams(-1,dp(100));cell.bottomMargin=dp(8);rows.addView(row,cell);rendered.add(tags);
+            LayoutParams cell=new LayoutParams(-1,dp(72));cell.bottomMargin=dp(8);rows.addView(row,cell);rendered.add(tags);
         }
         status.setText(results.isEmpty()?"No matches":"Choose a match to review");
     }
@@ -66,7 +66,7 @@ public final class PreviewMatchSearch extends LinearLayout {
         java.io.File file=poster.getLargeFileF();String url=poster.getThumbUrl();if(url==null||url.isEmpty())url=poster.getLargeUrl();
         android.net.Uri uri=file!=null&&file.isFile()?android.net.Uri.fromFile(file):url==null||url.isEmpty()?null:android.net.Uri.parse(url);
         if(uri==null)return;
-        com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(image,uri,0,"matching.results","poster",com.squareup.picasso.Picasso.get().load(uri).resize(dp(60),dp(90)).centerInside().noFade(),true);
+        com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(image,uri,0,"matching.results","poster",com.squareup.picasso.Picasso.get().load(uri).resize(dp(92),dp(65)).centerInside().noFade(),true);
         image.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){public void onViewAttachedToWindow(View v){}public void onViewDetachedFromWindow(View v){com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(image);image.removeOnAttachStateChangeListener(this);}});
     }
     public void focusInput(){keyboard.focusLastKey();}

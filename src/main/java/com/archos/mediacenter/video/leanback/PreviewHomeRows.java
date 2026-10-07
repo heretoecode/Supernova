@@ -67,6 +67,8 @@ public final class PreviewHomeRows {
 
  public static void clearWatchNext(Context c){PreviewDialog.choose(c,"Remove all titles from Watch Next?",new String[]{"Cancel","Clear"},0,n->{if(n==1){PreviewHomeRows model=new PreviewHomeRows(c);for(Row row:model.rows)if(row.id.equals("watchnext"))row.members.clear();model.save();PreviewNotice.show(c,"Watch Next cleared",false);}});}
  public static void customise(Context c,Runnable changed){new PreviewHomeRows(c).editor(changed);}
+ public static void hideRow(Context context,String id){PreviewHomeRows model=new PreviewHomeRows(context);for(Row row:model.rows)if(row.id.equals(id)){row.visible=false;model.save();return;}}
+ public static void moveRow(Context context,String id,int direction){PreviewHomeRows model=new PreviewHomeRows(context);for(int i=0;i<model.rows.size();i++)if(model.rows.get(i).id.equals(id)){int target=i+direction;if(target>=0&&target<model.rows.size()){Collections.swap(model.rows,i,target);model.save();}return;}}
  public static void rowControls(Context c,String id,Runnable changed){
   PreviewHomeRows model=new PreviewHomeRows(c);Row selected=null;
   for(Row row:model.rows)if(row.id.equals(id)){selected=row;break;}
