@@ -115,3 +115,17 @@ The Network & Files design discussion has now reached an approved future directi
 Key resolution: vertically centred three-panel layout; structured left rail; Local Storage, Attached Storage, Network Sources, Saved Locations, put.io, Downloads and Library Health; no Overview; no Google Drive/OneDrive/Dropbox placeholders; generic WebDAV represented as a network-source protocol rather than a top-level destination; consistent submenu grammar for Network Sources, Downloads, Library Health and Unmatched Media.
 
 This remains future design authority, not permission to broaden the current fixes candidate and not physical Shield acceptance.
+
+## Runtime-interface trace addendum — 8 October 2026
+Source inspected: `PreviewNetworkWorkspace.java` and legacy `NetworkRootFragment.java`. This reconstructs the current Preview workspace from its construction code, not physical Shield acceptance.
+
+- **Actual current Preview left rail:** `Overview`, `Local Storage`, `Network Shares`, `Cloud Services`, `Saved Locations`, in that order. The approved future rail (Local Storage, Attached Storage, Network Sources, Saved Locations, put.io, Downloads, Library Health) is **not** implemented by this current workspace constructor.
+- **Panels:** runtime constructor builds three columns with relative weights 23% / 45% / 32%, separate scrollable middle and right panels, and top/bottom padding. Focusing a left category rebuilds the middle and context contents; focusing an item rebuilds right-hand actions.
+- **Overview:** `Scan Library` and `Network Scanning`. The latter offers Automatic On/Off, Frequency (15/30 minutes, 1/6/24 hours), On open/return, Sources Included, and Scan Now; current period and preferences determine labels and values.
+- **Local Storage:** dynamically lists available Box entries of FOLDERS, USB, SDCARD and OTHER types. FOLDERS is displayed as Internal Storage; other entries use actual volume names. Right panel shows path, readability, free/total space, and Browse. Empty state if none.
+- **Network Shares:** lists indexed Shortcut sources, plus Add Network Source (SMB, WebDAV HTTP/HTTPS, SFTP, FTP, FTPS) and Discover Devices (SMB computers/NAS, DLNA/UPnP media servers). Each indexed source has Browse, Scan Source and confirmed Remove from Library; removal leaves media files untouched.
+- **Saved Locations:** lists saved Shortcut entries, or an empty-state message; each offers Browse, Add to Library and confirmed Remove Saved Location.
+- **Cloud Services:** one actionable put.io account/connection entry; Google Drive, OneDrive and Dropbox are inert, dimmed `Coming soon` labels. These are current implementation facts, not approved future design.
+- **Runtime dependence:** volume enumeration, indexed/saved source lists, scan period, stored preferences and available put.io account state affect displayed content. The older `NetworkRootFragment` has separate asynchronous indexed-folder, SMB-discovery, UPnP and network-shortcut rows; verify routing before conflating it with the Preview workspace.
+- **Missing from current constructor:** top-level Downloads, Library Health, separate Attached Storage and put.io navigation entries. These remain approved future requirements, not implemented or Shield-accepted here.
+- **Follow-up validation:** trace all callers/workspace launch conditions, async source list refresh, permissions/storage API differences, authentication state, focus restoration and on-device geometry before declaring exact physical visibility.
