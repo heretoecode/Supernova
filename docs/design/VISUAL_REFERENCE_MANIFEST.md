@@ -113,3 +113,22 @@ Until binary transfer into GitHub is available, Codex must:
 - treat this manifest as the visual-provenance ledger.
 
 When a verified binary is committed later, place it under `docs/design/assets/`, record its SHA-256, date/provenance and exact authoritative elements here, and link it from the relevant design document.
+
+
+## Home Featured — final approved reference resolution (7 October 2026)
+
+A final Home Featured mock-up was generated and explicitly approved during the 7 October design session. The generated image binary itself is not currently transferable into GitHub, so the project must **not** pretend an older Library image is that approved final.
+
+The exact approved composition has instead been reconstructed as normative written authority in `HOME.md §11`. That section is sufficient for implementation and is the authoritative substitute for the unavailable binary.
+
+Approved visual characteristics recorded there:
+- top navigation fully separate, with a deliberate gap before Featured;
+- substantially taller/larger Featured card, expanded downward;
+- full rounded-card boundary visible;
+- partial previous/next cards visible at the left/right edges;
+- no pagination indicators;
+- only one normal Home row visible below Featured in the initial viewport;
+- title/metadata/synopsis plus Play/Resume and More Info retained;
+- movie/artwork/content in the mock-up is illustrative, not implementation data.
+
+**Resolution:** Home Featured visual provenance is no longer an implementation blocker. Codex must use `HOME.md §11` and must not substitute an older mock-up or invent conflicting geometry. If the exact approved binary becomes transferable later, it may be archived under `docs/design/assets/` for provenance, but it must not change the already-approved written geometry without a new explicit design decision.
