@@ -82,3 +82,8 @@ The cleaned Preview 4.1.7 lineage was promoted to `main` on 6 October 2026 by PR
 ### Post-4.1.7 fixes candidate — unmerged branch
 
 The signed post-4.1.7 fixes candidate is available on `codex/post-4.1.7-shield-fixes`; exact APK source is `61a1ae5a21be90d185d448362c9729eb6c33cc42`. See the [candidate identity/build/validation record](docs/qa/post-4.1.7-fixes-candidate.md) and historical [35-item development traceability](docs/qa/post-4.1.7-fixes-implementation.md). Automated/build validation was green, but subsequent physical Shield QA found multiple conformance failures. **The candidate is not Final and has not been merged into main.** The authoritative continuation is [docs/qa/next-version-authority.md](docs/qa/next-version-authority.md). Cast & Crew and final Audio/Subtitles/More design are now decided there; #35 artwork reliability remains observational; fixes-release numbering remains unresolved. Existing application ID, certificate and version fields are retained.
+
+
+## Durable-record rule
+
+GitHub is the authoritative Supernova project memory. At the end of each work session, material discussion outcomes, plans, approvals/rejections/parked decisions, QA results, completed audit findings, implementation/build evidence and unresolved dependencies must be recorded here rather than left only in ChatGPT conversation history. Completed audits are indexed at `docs/audits/README.md`.
