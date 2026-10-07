@@ -70,3 +70,94 @@ See `docs/project/HISTORY_RECONCILIATION.md` for the older Network foundation an
 ## Next-version physical geometry — APPROVED
 
 Preserve all three-panel semantics above. Define usable vertical space from the **bottom edge of top-navigation text** to the **bottom edge of the TV/app viewport** and vertically centre the complete panel group within it, with equal remaining space above and below. Every panel bottom must remain visible. Physical Shield QA shows Network & Files needs a substantially larger downward/fit correction than Settings. Do not solve this by reverting to the classic/unstructured browser.
+
+
+## Approved Network & Files design direction — 7 October 2026
+
+Status: **APPROVED DESIGN DIRECTION / FUTURE IMPLEMENTATION**. This does not expand the active fixes candidate and is not Shield acceptance.
+
+### Main composition
+- No redesign of the global Supernova top navigation is implied by the mock-ups; Network & Files content begins beneath the existing app header.
+- Use a **three-panel TV layout**, vertically centred in the usable viewport beneath the existing top navigation. The panels must not hug the top of the screen.
+- Left = section/navigation, centre = selected section contents, right = contextual information/actions.
+- Keep the panels visually structured with restrained outlines/translucency.
+- Left navigation uses an outer panel plus thin horizontal separators between options; do not turn every entry into a heavy standalone box.
+- Current focus uses the established Supernova blue/cyan outline/fill treatment.
+- Right-panel actions should remain restrained rather than mobile/desktop-style oversized controls.
+- Exact D-pad focus restoration is required when returning from child states.
+
+### Approved left navigation
+1. Local Storage
+2. Attached Storage
+3. Network Sources
+4. Saved Locations
+5. put.io
+6. Downloads
+7. Library Health
+
+Overview is removed from the approved direction.
+USB Storage becomes the broader Attached Storage.
+Generic WebDAV is not a top-level left entry; it is a network-source protocol/type.
+put.io has its own left entry for now.
+Google Drive, OneDrive and Dropbox placeholders are removed.
+
+Downloads and Library Health may show restrained count/status badges when relevant.
+
+### Submenu/state model
+The same three-panel grammar is retained instead of inventing separate page structures.
+
+**Local / Attached Storage**
+- Centre: drives, folders and files.
+- Right: item information plus Browse/Open, Add/Remove from Library, Scan and appropriate storage actions.
+
+**Network Sources**
+- Centre: configured sources plus Add Network Source.
+- Supported source/protocol presentation may include SMB, WebDAV HTTP(S), SFTP, FTP/FTPS and DLNA/UPnP as appropriate to actual implementation.
+- Right: connection state, protocol/address, library status, last scan and Browse / Scan / Edit / Remove actions.
+- No legacy floating QuickAction/context-menu interaction as the primary UX.
+
+**Saved Locations**
+- Centre: saved browsing shortcuts.
+- Right: location details plus Browse, Add to Library and Remove Shortcut where appropriate.
+
+**put.io**
+- Centre: account/folder browsing and service state.
+- Right: relevant Browse/Play/Add to Library actions; future Download action may originate here.
+- Include coherent disconnected/sign-in/error states.
+- Keep account/service integration conceptually distinct from generic WebDAV transport.
+
+**Downloads**
+- Centre: Active / Completed / Failed states, transfer rows and progress.
+- Right: contextual transfer information/actions such as Pause/Resume when reliable, Cancel, Retry, Open/View in Folder and relevant download settings.
+- Preserve the generic WebDAV download-engine direction; put.io is an initial supported/tested source rather than a hard-coded transfer engine.
+
+**Library Health**
+- Centre: actionable issue categories and counts, initially including Unmatched Media, possible incorrect/stale matches, unavailable files/sources and source/authentication problems.
+- Right: explanation and actions for the selected category.
+- Healthy/zero-issue state should be intentionally reassuring rather than an empty panel.
+- Temporary metadata/artwork failures that Supernova can recover itself should not become user-facing health noise.
+
+**Library Health → Unmatched Media**
+- Centre: affected files with filename/path, size/date and useful inferred evidence.
+- Right: Find a Match and appropriate classification/exclusion/location actions.
+- Manual matching must reconcile catalogue metadata/artwork/provider state while preserving physical file identity and playback/watch state.
+
+### Home awareness
+When actionable Library Health items exist, Home may show a small **non-focusable** informational message telling the user that media needs attention and to review Network & Files.
+It must never enter the D-pad focus graph or alter Home row navigation.
+Network & Files / Library Health may carry restrained attention counts/dots.
+Principle: **Home informs; Network & Files diagnoses; Library Health resolves.**
+
+### Navigation rules
+- Left moves back toward the section/navigation panel.
+- Right progresses toward content/contextual actions where applicable.
+- Back reverses one logical level.
+- Returning from a child screen restores the exact launching item/focus.
+- No modal should steal focus merely because Library Health has outstanding issues.
+
+### Approved visual references
+Two 7 October 2026 generated mock-ups were approved in discussion:
+- **Main centred Network & Files layout** — image generation id ff dde75e-d0dc-44fe-8623-e6fe54b5eda1 (without the space: ffdde75e-d0dc-44fe-8623-e6fe54b5eda1).
+- **Network Sources / Downloads / Library Health / Unmatched Media submenu storyboard** — image generation id 2a938f81-9585-4dca-b5b1-1f4268ed4a63.
+
+These references are visual authority for composition, hierarchy, spacing and submenu grammar; written requirements remain functional authority.
