@@ -16,7 +16,7 @@ public class PreviewLanguageIconTest {
         assertEquals("US",PreviewLanguageIcon.country("en"));assertEquals("US",PreviewLanguageIcon.country("eng"));
         assertEquals("BR",PreviewLanguageIcon.country("pt"));assertEquals("CN",PreviewLanguageIcon.country("zh"));
         assertEquals("ES",PreviewLanguageIcon.country("es"));assertEquals("SA",PreviewLanguageIcon.country("ar"));
-        assertEquals("FR",PreviewLanguageIcon.country("fr"));assertEquals("DE",PreviewLanguageIcon.country("de"));assertEquals("JP",PreviewLanguageIcon.country("ja"));
+        assertEquals("FR",PreviewLanguageIcon.country("fre"));assertEquals("DE",PreviewLanguageIcon.country("ger"));assertEquals("CN",PreviewLanguageIcon.country("chi"));assertEquals("FR",PreviewLanguageIcon.country("fr"));assertEquals("DE",PreviewLanguageIcon.country("de"));assertEquals("JP",PreviewLanguageIcon.country("ja"));
     }
     @Test public void explicitLocalesKeepTheirCountry(){
         assertEquals("GB",PreviewLanguageIcon.country("en-GB"));assertEquals("BR",PreviewLanguageIcon.country("pt_BR"));

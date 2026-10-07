@@ -28,6 +28,9 @@ public final class PreviewLanguageIcon extends Drawable {
     static String languageLabel(String code){
         if(code==null||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})*"))return "";
         String language=code.split("[-_]")[0].toLowerCase(Locale.ROOT);
+        // ISO 639-2 bibliographic aliases occur in real media-track metadata.
+        String[] aliases={"fre:fr","ger:de","chi:zh","dut:nl","rum:ro","cze:cs","slo:sk","alb:sq","arm:hy","baq:eu","bur:my","geo:ka","gre:el","ice:is","mac:mk","mao:mi","may:ms","per:fa","tib:bo","wel:cy"};
+        for(String alias:aliases)if(alias.startsWith(language+":")){language=alias.substring(4);break;}
         for(String iso:Locale.getISOLanguages()){
             if(iso.equals(language))return iso.toUpperCase(Locale.ROOT);
             try{if(new Locale(iso).getISO3Language().equals(language))return iso.toUpperCase(Locale.ROOT);}catch(MissingResourceException unavailable){}

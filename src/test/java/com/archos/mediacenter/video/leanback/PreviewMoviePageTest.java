@@ -150,7 +150,8 @@ public class PreviewMoviePageTest {
             PreviewPagesTest.capture(nav,"details-information-next");
             View firstPerson=page.findViewWithTag("person:Fixture Person 1:Role 1");assertNotNull(firstPerson);assertTrue(firstPerson.requestFocus());page.scrollTo(0,200);
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));
-            assertSame(page.findViewWithTag("section:Details"),page.findFocus());assertTrue("Lower Up retains collapsed hero",page.getScrollY()>0);
+            assertSame("Tier 2 enters aligned Tier 1 before the navigation tab",page.findViewWithTag("semantic:details.panel.key.information"),page.findFocus());assertTrue("Lower Up retains collapsed hero",page.getScrollY()>0);
+            page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertSame(page.findViewWithTag("section:Details"),page.findFocus());assertTrue(page.getScrollY()>0);
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertEquals(0,page.getScrollY());assertSame(primary,page.findFocus());
         }finally{host.pause().stop().destroy();}
     }

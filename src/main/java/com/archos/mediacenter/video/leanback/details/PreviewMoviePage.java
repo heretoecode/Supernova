@@ -150,6 +150,9 @@ public final class PreviewMoviePage extends ScrollView {
         if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_LEFT){if(providerActions.getChildCount()>0)providerActions.getChildAt(providerActions.getChildCount()-1).requestFocus();else if(play.getVisibility()==VISIBLE)play.requestFocus();return true;}
         if(focused!=null&&inside(focused,providerActions)){if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(play.getVisibility()==VISIBLE)play.requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(moreButton.getVisibility()==VISIBLE)moreButton.requestFocus();return true;}}
         if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
+        if(key==KeyEvent.KEYCODE_DPAD_UP&&focused!=null&&(focused==cast.getChildAt(0)||focused==crew.getChildAt(0))){View target=details.findViewWithTag(inside(focused,cast)?"semantic:details.panel.key.information":"semantic:details.panel.technical.information");if(target==null||!target.isShown())target=details.findViewWithTag("semantic:details.panel.key.information");if(target!=null)target.requestFocus();return true;}
+        if(tag.startsWith("semantic:details.panel.")&&key==KeyEvent.KEYCODE_DPAD_UP){focusSectionTab();return true;}
+        if(tag.startsWith("semantic:details.panel.")&&key==KeyEvent.KEYCODE_DPAD_DOWN){LinearLayout people=tag.endsWith("key.information")?cast:crew;if(people.getChildCount()>0)people.getChildAt(0).requestFocus();return true;}
         if(tag.startsWith("section:")){
             if(key==KeyEvent.KEYCODE_DPAD_UP){focusPrimary();scrollTo(0,0);return true;}
             if(key==KeyEvent.KEYCODE_DPAD_DOWN){showSection(tag.substring(8),true);return true;}
@@ -434,7 +437,6 @@ public final class PreviewMoviePage extends ScrollView {
             if(shown.contains(entry.key())||entry.onlineId>0&&shown.contains("id:"+entry.onlineId))continue;
             addLocalRecommendation(entry);shown.add(entry.key());if(entry.onlineId>0)shown.add("id:"+entry.onlineId);
         }
-        if(related.getChildCount()>0){LinearLayout row=(LinearLayout)related.getChildAt(related.getChildCount()-1);while(row.getChildCount()<4)row.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));}
         restoreRowFocus(related,focusKey,oldY);rebuildTabs();
     }
     private void addLocalRecommendation(Entry entry){
@@ -446,8 +448,8 @@ public final class PreviewMoviePage extends ScrollView {
     }
     private void addRecommendation(PreviewLandscapeCard card){
         LinearLayout row;
-        if(landscapeCards.size()%4==0){row=new LinearLayout(getContext());row.setClipChildren(false);related.addView(row);}
-        else row=(LinearLayout)related.getChildAt(related.getChildCount()-1);
+        if(landscapeCards.isEmpty()){HorizontalScrollView carousel=new HorizontalScrollView(getContext());carousel.setClipChildren(false);carousel.setClipToPadding(false);carousel.setPadding(dp(10),dp(10),dp(10),dp(10));carousel.setHorizontalScrollBarEnabled(false);row=new LinearLayout(getContext());row.setClipChildren(false);carousel.addView(row);related.addView(carousel);}
+        else row=(LinearLayout)((HorizontalScrollView)related.getChildAt(0)).getChildAt(0);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(202),dp(160));lp.setMargins(dp(5),dp(8),dp(5),dp(8));row.addView(card,lp);landscapeCards.add(card);rowKeys(card,row);
     }
     private boolean hasPlayableExtras(){for(ScraperTrailer e:trailerList)if("YouTube".equals(e.mSite)&&e.mVideoKey!=null&&e.mVideoKey.matches("[A-Za-z0-9_-]{11}"))return true;return false;}

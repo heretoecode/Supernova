@@ -55,4 +55,13 @@ public class PreviewCorrectiveAuthorityTest {
   pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK));pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK));assertNull(pages.findViewWithTag("semantic:home.row.controls"));assertSame(opener,pages.findFocus());activity.finish();
  }
 
+ @Test public void networkPanelsAreCentredFromNavigationTextAndFitViewport(){
+  var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
+   PreviewPages pages=new PreviewPages(host.get(),(holder,item)->{});TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);host.get().setContentView(nav);pages.setDiscovery(new PreviewDiscovery());pages.setSnapshot(new PreviewLibraryLoader.Snapshot());pages.setTab(3);PreviewPagesTest.layout(nav);
+   View panel=nav.findViewWithTag("semantic:network.panel.categories");assertNotNull(panel);int[] location=new int[2];panel.getLocationOnScreen(location);
+   int upper=location[1]-nav.navigationTextBottom(),lower=nav.getHeight()-(location[1]+panel.getHeight());
+   assertTrue("All panel bottoms visible",lower>=0);assertTrue("Equal margins in usable text-to-viewport area: "+upper+"/"+lower,Math.abs(upper-lower)<=2);
+  }finally{host.pause().stop().destroy();}
+ }
+
 }
