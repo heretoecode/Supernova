@@ -162,3 +162,34 @@ These gaps are explicit. They must not be filled by invention.
 - Reduce the top fade to a shallow transition immediately below navigation.
 - Preserve the physically accepted Continue Watching exact return-focus behaviour.
 - The Featured exposed-card redesign in section 5 is now in scope for this next version.
+
+
+## 11. Approved Home Featured final visual geometry — 7 October 2026
+
+The final Home Featured mock-up approved in the design discussion is the authority for composition/geometry. Its content (Dune: Part Two artwork, copy and media items) was illustrative only.
+
+Because the generated mock-up binary is not currently transferable into this repository, the following written reconstruction is intentionally complete and **is the authoritative substitute for the image**. Codex must not block implementation waiting for the PNG or substitute an older Home mock-up.
+
+### Hard geometry/composition requirements
+- The top navigation/header remains completely separate and unobstructed.
+- The Featured carousel begins **below** the navigation with a deliberate visible gap. No part of the Featured card may slide behind or underneath the top navigation.
+- The active Featured card is substantially larger/taller than the earlier concept. Increase height **downward**, not upward into the header.
+- The active card has clearly visible rounded corners on all four sides and reads as a discrete floating card, not an extension of the header/background.
+- A narrow portion of the previous and next Featured cards remains visible at the left and right edges. These exposed neighbours are the carousel affordance.
+- **No pagination dots/page indicators** appear beneath the Featured carousel.
+- The viewport composition shows the large Featured carousel plus **only one normal Home content row beneath it**. The approved reference used Continue Watching as that row. A second row such as Popular Movies must not be visible in the same initial viewport.
+- Preserve enough vertical breathing room between Featured and the row beneath it that neither feels clipped or accidentally attached.
+- Featured retains the approved information/action composition: title, concise metadata, synopsis, Play/Resume and More Info, with cinematic artwork/gradient treatment.
+- LEFT/RIGHT moves through Featured items while preserving the exposed-neighbour carousel language.
+
+### Acceptance
+Physical Shield review must compare the rendered Home screen against this geometry, not merely verify that a Featured carousel exists. Specifically reject:
+- card intrusion beneath navigation;
+- a card that has reverted to the earlier shorter size;
+- pagination dots;
+- no exposed neighbour cards;
+- two or more ordinary Home rows visible in the initial viewport;
+- clipped rounded corners/glow;
+- enlargement that affects only artwork rather than the complete card.
+
+This section supersedes any older Home Featured dimensions/composition that conflict with it.
