@@ -71,3 +71,12 @@ Read-only inspection of `src/main/java/com/archos/mediacenter/video/utils/TraktD
 - The Trakt client class is **not in the current Supernova repository tree**. `settings.gradle` references sibling modules `FileCoreLibrary` and `MediaLib`; the missing class's actual origin, client ID and usage rights are not established by these files. Do not assert the credentials are reusable.
 - No Trakt Reception fetcher was established by this focused inspection; no runtime authenticated API call performed; no credentials exposed.
 **Result:** Existing inherited account integration confirmed; authorisation for a new login-free Reception consumer **UNVERIFIED**. Do not require end users to create API apps or sign in for public ratings; do not repurpose unknown credentials without permission. No production changes.
+
+## Registration cost/access determination — 7 October 2026
+**Conclusion: new Trakt application credentials cannot currently be verified as obtainable without VIP membership.** Trakt forum reports and developer-maintainer confirmations indicate that new app creation is currently VIP-only, with some free-account registrations revoked. Public endpoints still require an app client ID; OAuth may be optional for the end user, but that does not remove the developer-registration requirement.
+- Official app guide: https://developer.trakt.tv/docs/create-an-app (requires client ID and verified GitHub account; does not explicitly describe current VIP gating).
+- Trakt support forum (Aug 25, 2026): https://forums.trakt.tv/t/failure-to-register-an-api/116157/30 (VIP feature for now).
+- Other developer impact: https://github.com/euzu/tuliprox/issues/853 (Sep 1, 2026).
+- Official authentication: https://developer.trakt.tv/docs/authentication-oauth (public endpoints require app key).
+- Official policy: https://developer.trakt.tv/docs/api-use-policy (do not reuse other apps' credentials or circumvent restrictions; support contact for clarification).
+**Decision:** No subscription, no user-created API apps, no user sign-in for public Reception. Therefore **block new Trakt Reception integration** pending a genuinely free authorised app registration path or explicit permission from Trakt. Preserve inherited Nova Trakt account sign-in and scrobbling. Do not implement Trakt Reception or add an empty placeholder; proceed with TMDb Reception only. Revisit only if Trakt officially changes access policy or authorises a free client for Supernova.
