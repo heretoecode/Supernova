@@ -454,3 +454,93 @@ The branch is ready for the consolidated next corrective implementation pass. Do
 The consolidated approved implementation is now delivered as a signed **Shield-test candidate**, source `b021c51dcbbe2d5679fb9015c43830713f02aa0b`; source workflow 37568094178 and full signed workflow 37568094185 are SUCCESS. See [exact APK identity/download/evidence](next-corrective-candidate.md), [all-item conformance and physical checks](next-corrective-conformance.md) and [implementation/investigation record](next-corrective-implementation.md). Later delivery-documentation commits are not APK source.
 
 This checkpoint does not revise the physical findings or confer SHIELD ACCEPTED. All corrected visual/interaction requirements and accepted regression protections require user Shield testing on the new APK. #35 remains observationally PARTIAL beyond its evidenced corrections; release numbering remains NEEDS DECISION. Language mapping is resolved in current Settings/asset authority. Main remains unmerged; next action is physical QA, not another release.
+
+
+## Immediate Home hotfix turnaround — physical Shield QA (7 October 2026)
+
+This is an intentionally narrow, high-priority corrective pass requested before continuing the broader candidate QA. Implement **only the Home items below plus required regression protection**, then build a replacement Shield-test APK. Do not use this hotfix as permission to start unrelated outstanding fixes.
+
+### H1 — Featured card vertical size / viewport composition — FAIL
+Observed on physical Shield: the implemented Featured card is still too short.
+
+Required:
+- Keep the current safe top position below the top navigation; do not grow upward into the header.
+- Increase Featured height downward.
+- The exposed previous/next Featured cards must use exactly the same top and bottom boundaries / height as the active centre card. They are currently visibly shorter.
+- The initial Home viewport should show the `Continue Watching` heading plus approximately **55–65% (target ~60%)** of its artwork height as a teaser below Featured.
+- The full Continue Watching cards do not need to fit in the initial viewport.
+- No second ordinary Home row should be visible.
+- Preserve comfortable separation between Featured and Continue Watching.
+
+### H2 — Duplicate/background Featured artwork outside card — FAIL
+Observed on physical Shield: as Featured items are browsed, the selected item's artwork is rendered both inside the card and as imagery behind/outside the carousel.
+
+Required:
+- Featured artwork/backdrop must be contained/clipped to the Featured card.
+- Do not render a second copy of the selected Featured artwork as the Home background behind/below the carousel.
+- Surrounding Home area should use the normal Home background treatment.
+- Preserve the card's rounded corners and cinematic internal gradient/artwork treatment.
+
+### H3 — Horizontal edge clipping — FAIL
+Observed on physical Shield: Featured and normal Home rows are cut off at an artificial internal vertical boundary while visible screen space remains.
+
+Required:
+- Remove/invalidate the internal inset clipping boundary/mask for horizontal carousels.
+- Featured neighbour cards and normal row cards may continue naturally toward and beyond the physical screen edges.
+- Cards/focus glow/rounded boundaries are clipped only when they genuinely leave the visible display, not at an inset parent boundary.
+- Preserve deliberate partial-card continuation at screen edges.
+- Apply this to both Featured and ordinary Home horizontal rows.
+
+### H4 — Featured action simplification — APPROVED DESIGN CHANGE
+Remove `Play` / `Resume` from Featured.
+
+Featured has **one action only: More Info**.
+- LEFT/RIGHT browses previous/next Featured item.
+- OK on More Info opens the normal Details page.
+- Play/Resume remains on Details, not on Featured.
+- Do not introduce an additional focus layer merely to select between actions.
+
+### H5 — Featured information hierarchy / spacing — FAIL
+Official title/logo typography/artwork is acceptable and should be retained.
+
+Improve vertical hierarchy:
+1. stable title/logo zone;
+2. deliberate larger breathing space;
+3. metadata/sub-data lowered beneath that zone;
+4. deliberate gap;
+5. synopsis;
+6. single More Info action lower in the card.
+
+Do not position metadata directly from the raw bottom edge of arbitrary logo artwork. Logos vary greatly in proportions. Use a stable title/logo zone so metadata placement remains visually consistent across titles such as wide, tall and compact logos.
+
+The taller card from H1 provides the space needed; do not solve this by shrinking typography/content.
+
+### H6 — Normal Home thumbnail focus enlargement — SHIELD ACCEPTED / REGRESSION PROTECTED
+The previous defect where focused row artwork zoomed outside its thumbnail/card boundary is no longer observed.
+
+Preserve the current corrected behaviour:
+- artwork, rounded boundary and focus treatment remain aligned;
+- no protruding image outside the card;
+- H3 edge-clipping work must not regress this accepted focus behaviour.
+
+### H7 — Move / Hide presentation — PARTIAL IMPLEMENTATION / SHIELD FAIL
+Observed: LEFT from the first item now exposes Move/Hide, but they still appear as a floating/context-menu presentation on the left.
+
+Required:
+- LEFT from the first media item enters **dedicated Move and Hide controls inline with that row**.
+- No floating context-menu panel.
+- Controls visually belong to the row and use normal Supernova focus styling.
+- RIGHT returns naturally to the first media card.
+- UP/DOWN/BACK behaviour is deterministic and preserves sensible row/focus position.
+- Preserve H6 focus scaling.
+
+### Hotfix acceptance / process
+- Treat H1–H5 and H7 as required corrections; H6 as regression protection.
+- Validate across multiple Featured items with different logo proportions and both movie/TV metadata.
+- Validate first/middle/last horizontal positions and focused cards at screen edges.
+- Validate Move/Hide on multiple Home rows.
+- Run relevant automated/build/render/focus checks, but physical Shield QA remains final authority.
+- Record exact files changed, tests, source commit, APK filename/hash and signing/application identity in GitHub.
+- Produce a signed replacement Shield-test APK using the existing identity/signing strategy.
+- **Do not merge to main.**
+- Stop after the Home hotfix candidate is built/documented so physical Shield QA can resume.
