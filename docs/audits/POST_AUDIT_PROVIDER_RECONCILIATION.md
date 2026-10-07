@@ -20,7 +20,7 @@
 2. Precedence: playable local runtime and technical facts from native inspection; catalogue identity/title/year from matched TMDb; source-labelled independent reception values; stable fixed factual slots show Unknown when absent, optional reviews omitted.
 3. Format full release dates as British ordinal text (e.g. 10th October 2017).
 4. TMDb rating and vote count on one attributed line; preserve IMDb/TMDb IDs through rematch and playback/watch state.
-5. IMDb score/vote count: **conditional, not approved for implementation** without a lawful free source and feasible quota. Official IMDb commercial API entails subscription; personal/non-commercial bulk dataset cannot be assumed redistributable. Do not scrape or mislabel TMDb as IMDb. OMDb was floated during later discussion but was NOT previously approved; do not add it by default.
+5. **IMDb ratings are an APPROVED Reception requirement, not a rejected or removed feature.** Preserve a source-labelled IMDb rating and vote-count slot in the fixed Reception layout; display **Unknown** when genuine IMDb values cannot be retrieved. **Only the provider connection is pending technical/licensing validation:** it must be lawful, free of paid subscriptions and have practical request limits. Official IMDb commercial API entails subscription; personal/non-commercial bulk dataset cannot be assumed redistributable. Do not scrape or mislabel TMDb as IMDb. OMDb was floated during later discussion but was NOT previously approved; do not add it by default. Do not delete or silently omit the approved IMDb slot because the provider is unresolved.
 6. Trakt review: **conditional, not approved for implementation** pending exact endpoint, rights, spoiler and attribution checks. Preserve existing Nova integration, avoid forced user login for public data if authorised, omit optional review if unavailable.
 7. Artwork: role-specific fallback poster/backdrop/logo/episode still, stale-good caching, coalescing, late-response fencing, rematch invalidation, Shield QA. #35 remains PARTIAL until physical acceptance.
 8. Provider operational contract: per-provider bounded requests, caching, rate-limit/backoff, no credential leakage, offline fallback, no external-service dependency for local playback.
@@ -28,7 +28,7 @@
 
 ## Release scope and handover
 - **Current corrective release:** fixes only, as governed by `docs/qa/next-version-authority.md`; this document does not amend its scope.
-- **Future enhancement handover:** metadata field registry, Reception additions (only after provider validation), and other enhancements separately approved.
+- **Future enhancement handover:** metadata field registry, Reception layout including the approved IMDb slot (with Unknown fallback), and live IMDb retrieval only after provider validation, and other enhancements separately approved.
 - Do not reopen rejected/parked services, merge to main, change app identity/signing or claim device acceptance from code inspection.
 
 ## Audit references
