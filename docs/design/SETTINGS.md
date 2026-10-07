@@ -33,3 +33,19 @@ Shield QA requires the intended three-panel structure and nested/indented naviga
 An older 13-category foundation (General; Home & Discovery; Playback; Video & Audio; Subtitles; Library; Sources & Storage; Appearance; Trakt; Streaming; Integrations; Advanced; About) is **SUPERSEDED** by the current 12-category rail above. Do not restore it by accident. Historical “Remember library view preferences” semantics remain valid: Grid/List, Filters, Sort and Order are remembered separately for Movies and TV Shows.
 
 See `docs/project/HISTORY_RECONCILIATION.md` for the historical lineage.
+
+
+## Next-version Shield amendments — APPROVED / SUPERSEDING
+
+This section supersedes conflicting nesting/language wording above.
+
+### Outer geometry
+Define usable vertical space from the **bottom edge of top-navigation text** to the **bottom edge of the TV/app viewport**. Vertically centre the complete three-panel group within that area, leaving equal remaining space above and below. Settings needs a smaller downward correction than Network & Files.
+
+### Nested navigation
+Nested Integration children belong indented in the **left panel** beneath the parent after explicit entry. Example: **Integrations → OpenSubtitles / IntroDB / Trakt**. Selecting a child populates its settings in the centre panel. Right/Left/Back and exact opener restoration remain deterministic. This explicitly supersedes the earlier rule that nested subcategories must stay in the middle workspace.
+
+### Language
+Use the approved **flag representation for languages** consistently rather than the current mixture of flags, globes and two-letter codes. Mapping must be deterministic and consistent across screens; do not silently change the represented language.
+
+Protect physically accepted My Providers colour logos and separated Done action.
