@@ -48,3 +48,62 @@ Downloads should manage Active / Completed / Failed transfers. Starting a downlo
 
 ## Recommended next design work
 Explore three alternatives before implementation: refined three-panel; narrow rail + large content workspace; more visual source cards. Evaluate each by D-pad path length, focus predictability, information density and ability to host Downloads.
+
+
+## Product-direction update — 7 October 2026
+
+### Cloud placeholders
+Remove the Google Drive, OneDrive and Dropbox “Coming soon” placeholders from the future Network & Files design. Unsupported future services should not occupy production navigation. Additional services can be added later when they have real implementations.
+
+### put.io placement
+Do not use a generic Cloud Services category solely to contain put.io. put.io should be separated from speculative cloud placeholders. Two acceptable design explorations remain:
+1. give **put.io** its own left-navigation entry; or
+2. place put.io in another semantically appropriate source/account location once that wider information architecture is designed.
+
+No final placement is approved yet. Preserve the working put.io/WebDAV distinction: account/service integration is not the same thing as generic WebDAV file transport.
+
+### Library Health — approved future direction
+Promote **Library Health** from parked concept to an approved future design direction, but do not add it to the active fixes candidate.
+
+Library Health belongs in **Network & Files** and becomes the management location for actionable library problems. The existing Movies/TV **Unmatched / Unscraped** toolbar feature should eventually be removed from those browsing pages and its user-facing responsibility moved into Library Health.
+
+Initial Library Health problem classes should include:
+- unmatched / unidentified media;
+- possible incorrect or stale matches where confidence/evidence justifies surfacing them;
+- inaccessible/unavailable indexed files or library sources;
+- source/authentication problems requiring user action;
+- other future actionable library integrity problems.
+
+Missing artwork or temporary metadata/provider failures should not automatically be counted as user-facing health problems when Supernova can reasonably recover by retrying in the background.
+
+### Unmatched media flow
+When scanning discovers media that Supernova cannot confidently identify, record it as an actionable Library Health item. Library Health should expose enough filename/path and inferred metadata evidence for safe manual matching/correction. Resolving a match should reconcile title metadata/artwork/provider caches while preserving physical file identity and playback/watch state.
+
+### Home awareness without new focus targets
+Home may show a small **non-focusable informational status message** when actionable Library Health items exist, for example:
+
+> 2 media files need attention · Review in Network & Files
+
+This is information only:
+- it must never enter the D-pad focus graph;
+- it has no OK/click action;
+- it must not alter row navigation or focus restoration;
+- it disappears automatically when no actionable health items remain.
+
+The user navigates to Network & Files normally.
+
+### Network & Files attention state
+When actionable health items exist, Network & Files should make this obvious without stealing focus. Candidate treatments include a restrained attention dot/count on the Network & Files navigation label and a visible count/status on the Library Health entry. Opening Network & Files should expose the problem through its normal D-pad hierarchy rather than an interrupting modal.
+
+Principle: **Home informs; Network & Files diagnoses; Library Health resolves.**
+
+### Revised design candidates
+Future Network & Files mock-ups should now accommodate:
+- Local Storage
+- Network Sources
+- Saved Locations
+- Downloads
+- Library Health
+- put.io as either its own entry or another deliberately chosen location
+
+The need for an Overview category remains open to design review. Do not retain it merely because the current implementation has one.
