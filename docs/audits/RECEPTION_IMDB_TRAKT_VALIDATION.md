@@ -42,3 +42,6 @@ Sources:
 - Specify timeout, cache, offline/stale-good, source label and rematch invalidation.
 - Preserve existing Trakt functionality, Details focus and layout; test Shield with populated/missing/offline/failed data.
 - Do not merge, change signing/identity or expand the current fixes candidate on this record alone.
+
+## Final decision — IMDb excluded (7 October 2026)
+**SUPERSEDES earlier conditional/approved IMDb Reception language in this document.** Do not display IMDb rating, vote count or Unknown placeholder in Reception. Do not pursue IMDb ratings integrations or further licensing/API investigations. The project requires no subscriptions and practical API quotas; no verified suitable source exists. Internal IMDb title identifiers may remain for matching and cross-references. TMDb and separately validated Trakt reception data remain distinct.
