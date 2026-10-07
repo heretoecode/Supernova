@@ -29,13 +29,15 @@ Read `docs/README.md` for the documentation map. Read these when implementation 
 
 ## Current work
 
-The next implementation task is a **strict fixes/corrections pass based on the 4.1.7 Final Shield QA**. It is not a new feature release.
+Physical NVIDIA Shield QA of the signed post-4.1.7 candidate is substantially complete. The candidate remains **unmerged and not physically accepted as Final**. Several items that the earlier development traceability record labelled FIXED/VERIFIED failed physical conformance, while other items passed and are now regression protections.
 
-The fixes are defined in `docs/qa/4.1.7-final-shield-qa.md`. Do not silently broaden that scope.
+The authoritative next-version implementation scope is now:
 
-The version number for this fixes release is **NEEDS DECISION**.
+- **[docs/qa/next-version-authority.md](docs/qa/next-version-authority.md)** — START HERE for the complete physical-QA outcome, approved next-version work, conformance rules and exclusions.
+- Updated `docs/design/` authorities — current design/behaviour decisions.
+- `docs/qa/post-4.1.7-fixes-implementation.md` — historical development traceability for the tested candidate; its FIXED labels do **not** override later physical Shield results.
 
-Implementation is in progress on `codex/post-4.1.7-shield-fixes`, created from authoritative main `dcb0e2be008a14b7da5a86e389aeae707ffb00fc`. The [35-item development traceability record](docs/qa/post-4.1.7-fixes-implementation.md) distinguishes implementation, automated validation, unresolved decisions and pending physical Shield acceptance. This branch does not replace the accepted Final baseline.
+The next version continues from the existing `codex/post-4.1.7-shield-fixes` implementation. Do not restart, reset, discard or replace work that physically passed. The release is primarily correction/stability/polish, with the explicitly approved Home Featured exposed-card redesign and approved Details/Extras redesign included. The version number remains **NEEDS DECISION**.
 
 ## Explicit non-goals for the immediate fixes pass
 
@@ -79,4 +81,4 @@ The cleaned Preview 4.1.7 lineage was promoted to `main` on 6 October 2026 by PR
 
 ### Post-4.1.7 fixes candidate — unmerged branch
 
-The signed post-4.1.7 fixes candidate is available on `codex/post-4.1.7-shield-fixes`; exact APK source is `61a1ae5a21be90d185d448362c9729eb6c33cc42`. See the [candidate identity/build/validation record](docs/qa/post-4.1.7-fixes-candidate.md) and [all 35 development statuses](docs/qa/post-4.1.7-fixes-implementation.md). Automated/build validation is green and candidate APK production is complete. **Physical Shield validation is pending; this candidate is not Final and does not replace the accepted 4.1.7 Final baseline.** The fixes branch has not been merged into main. Cast & Crew, final Audio/Subtitles/More design and fixes-release numbering remain unresolved; #35 raw Shield-log attribution is incomplete. Existing application ID, certificate and version fields are retained.
+The signed post-4.1.7 fixes candidate is available on `codex/post-4.1.7-shield-fixes`; exact APK source is `61a1ae5a21be90d185d448362c9729eb6c33cc42`. See the [candidate identity/build/validation record](docs/qa/post-4.1.7-fixes-candidate.md) and historical [35-item development traceability](docs/qa/post-4.1.7-fixes-implementation.md). Automated/build validation was green, but subsequent physical Shield QA found multiple conformance failures. **The candidate is not Final and has not been merged into main.** The authoritative continuation is [docs/qa/next-version-authority.md](docs/qa/next-version-authority.md). Cast & Crew and final Audio/Subtitles/More design are now decided there; #35 artwork reliability remains observational; fixes-release numbering remains unresolved. Existing application ID, certificate and version fields are retained.
