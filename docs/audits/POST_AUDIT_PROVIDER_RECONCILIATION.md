@@ -39,3 +39,6 @@
 - `docs/qa/next-version-authority.md`
 
 **Reconciliation note:** Some historic provider decisions are recovered from project conversation rather than an individually verified GitHub decision record. They are preserved as historical user decisions, not independently recertified API/licence findings. No new provider approval follows from this reconciliation.
+
+## User decision — 7 October 2026
+Trakt is **parked as a proposed new metadata/Reception provider** because free authorised developer credentials are not available on acceptable terms. No Trakt ratings, votes, reviews, UI slots, placeholders, new API integration or further credential/licensing investigation in the current plan. **TMDb alone** supplies Reception ratings/votes. Preserve inherited Nova Trakt account sign-in/scrobbling functionality unchanged; it is outside this provider decision. Revisit only on user's explicit request. This supersedes all provisional Trakt Reception proposals.
