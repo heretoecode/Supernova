@@ -141,3 +141,10 @@ Approved visual characteristics recorded there:
   - Authority: Network Sources, Downloads, Library Health and Library Health → Unmatched Media state grammar.
 - The generated images deliberately omit the global top navigation. They do **not** redefine the app header.
 - Functional and D-pad behaviour authority: docs/design/NETWORK_FILES.md and docs/audits/NETWORK_FILES_AUDIT.md.
+
+
+#### Durable repository files
+- [Network & Files — approved main layout](references/network-files-main-approved.png)
+- [Network & Files — approved submenu storyboard](references/network-files-submenus-approved.png)
+
+These files supersede generation IDs as the practical visual source for Codex/repository consumers. Generation IDs remain provenance only.
