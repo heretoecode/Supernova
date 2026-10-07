@@ -132,3 +132,12 @@ Approved visual characteristics recorded there:
 - movie/artwork/content in the mock-up is illustrative, not implementation data.
 
 **Resolution:** Home Featured visual provenance is no longer an implementation blocker. Codex must use `HOME.md §11` and must not substitute an older mock-up or invent conflicting geometry. If the exact approved binary becomes transferable later, it may be archived under `docs/design/assets/` for provenance, but it must not change the already-approved written geometry without a new explicit design decision.
+
+
+### Network & Files — approved 7 October 2026
+- Main centred three-panel layout: image generation id ffdde75e-d0dc-44fe-8623-e6fe54b5eda1.
+  - Authority: vertically centred three-panel composition; structured/separated left navigation; Local Storage / Attached Storage / Network Sources / Saved Locations / put.io / Downloads / Library Health; contextual centre/right panels; restrained blue focus treatment.
+- Submenu storyboard: image generation id 2a938f81-9585-4dca-b5b1-1f4268ed4a63.
+  - Authority: Network Sources, Downloads, Library Health and Library Health → Unmatched Media state grammar.
+- The generated images deliberately omit the global top navigation. They do **not** redefine the app header.
+- Functional and D-pad behaviour authority: docs/design/NETWORK_FILES.md and docs/audits/NETWORK_FILES_AUDIT.md.
