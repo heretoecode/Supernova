@@ -44,4 +44,20 @@ User approved `Unknown` in fixed factual metadata slots while missing/loading wi
 
 ## Codex functional audit handover
 
-The authoritative, app-wide, documentation-only functional audit assignment is [APP_WIDE_FUNCTIONAL_AUDIT_HANDOVER.md](APP_WIDE_FUNCTIONAL_AUDIT_HANDOVER.md). **Not yet completed.** Codex must complete the Settings and Network & Files functional inventories first, then all remaining app workflows and the future-only NOVA cleanup candidate register, and satisfy the three review passes before declaring completion.
+The authoritative, app-wide, documentation-only functional audit assignment is [APP_WIDE_FUNCTIONAL_AUDIT_HANDOVER.md](APP_WIDE_FUNCTIONAL_AUDIT_HANDOVER.md). The original required status remains preserved in that handover. The audit result and all three review passes are linked below; current publication/evidence status is in the status record.
+
+## Complete source functional audit — 8 October 2026
+
+[Audit status and coverage](APP_WIDE_FUNCTIONAL_AUDIT_STATUS.md) records the full source-audit scope, explicit runtime/installed-state limits and publication verification. This does not upgrade historical partial audits to complete, imply Shield acceptance or authorize implementation.
+
+- [Settings row-level inventory](SETTINGS_FUNCTIONAL_INVENTORY.md)
+- [Network & Files action/state inventory](NETWORK_FILES_FUNCTIONAL_INVENTORY.md)
+- [Entire application workflows](APP_WIDE_FUNCTIONAL_INVENTORY.md)
+- [Legacy NOVA cleanup candidate register](LEGACY_NOVA_CLEANUP_CANDIDATES.md)
+- [Prioritised findings and unresolved questions](FUNCTIONAL_AUDIT_FINDINGS.md)
+- [Source/manifest/dependency register](FUNCTIONAL_AUDIT_SOURCE_REGISTER.md)
+- [Control/callback register](FUNCTIONAL_AUDIT_CONTROL_REGISTER.md)
+- [Existing tests and executed checks](FUNCTIONAL_AUDIT_TEST_REGISTER.md)
+- [Three required review passes and commit proof](FUNCTIONAL_AUDIT_REVIEW_RECORD.md)
+
+No application code, resources, tests, builds, configuration, workflows or dependencies changed; no functionality removed/hidden/disabled, APK/release/implementation PR or main merge. All dispositions are recommendations for subsequent planning approval.
