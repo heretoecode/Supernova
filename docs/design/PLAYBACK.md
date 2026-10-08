@@ -105,3 +105,7 @@ Physical Shield QA has accepted persistent HUD accent/focus colouring and absenc
 
 ### Subtitle synchronisation — approved 8 October 2026
 - User has not experienced subtitle timing/synchronisation problems. Preserve existing NOVA subtitle timing/offset controls and behaviour unchanged; no new synchronisation feature or redesign currently requested. Revisit only upon a concrete issue reported in future Shield testing. Decision/documentation only; no application code changes.
+
+### Advanced subtitles — discussion closed 8 October 2026
+- User reports no current subtitle issues and explicitly requests **no changes** to existing NOVA-derived subtitle implementation. Preserve appearance, positioning, synchronisation, language preferences, downloads, formats and playback subtitle controls as they currently function. Do not add enhancements or redesigns in current fixes-only release; revisit only when a specific observed problem is reported.
+- Decision is documentation-only, not evidence of a new code change or a guarantee that all format paths are defect-free.
