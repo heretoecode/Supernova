@@ -75,3 +75,9 @@ This section supersedes earlier NEEDS DECISION wording above.
 **More:** flat compact menu: Playback Speed · Play Mode · Format. Remove Report a Problem and unnecessary section headings. Format is picture/aspect presentation (Original, Full Screen, Stretch, 4:3, 16:9, etc.), not technical metadata.
 
 Physical Shield QA has accepted persistent HUD accent/focus colouring and absence of internal/debug preparation text in the tested candidate; protect both against regression.
+
+### Shield QA and playback behaviour decisions — 8 October 2026
+- User's physical Shield Play Mode screenshot confirms modes Single, Folder, Repeat single, Repeat folder, Binge watching; beneath is the legacy global `Skip intro/outro` toggle and raw segment timestamps. **Approved direction:** rename the playback toggle **Segment Skipping** and remove raw per-segment timestamps from user-facing Play Mode; keep timestamps in developer diagnostics.
+- **Approved direction:** Play Mode's Segment Skipping switch is a temporary current-playback-session override of the global Settings > Integrations > Segment Skipping master. Never persist its value as a global preference. Proposed scope: survives automatic next-episode advancement in the same binge session; resets at a fresh manually initiated playback session. Exact session-lifetime semantics to confirm before implementation.
+- **Approved:** Up Next disabled means current episode plays naturally, does not auto-start the next, and returns to the episode Details page when playback ends. **Proposed, pending user confirmation:** Back while Up Next countdown visible dismisses and cancels that episode's automatic transition, rather than hiding panel while countdown continues. Preserve post-credit safeguards.
+- Binge Watching and Segment Skipping are independent concepts: former controls next-episode progression; latter controls segment behaviour. No application code changes from this documentation.
