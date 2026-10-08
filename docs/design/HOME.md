@@ -239,3 +239,7 @@ User clarification following the Mr. Robot physical Shield evidence: the Feature
 - **Dynamic Genre Rule On** applies user-chosen filters to populate the row and automatically includes future matching media. **Off** stops automatic population for new media while preserving existing row membership; manual additions remain possible. Do not conflate this switch with Show/Hide.
 - The design is agreed; offer normal ascending/descending sort direction alongside the existing sort selection without reopening the core row model.
 - User explicitly wants remaining design discussions completed **before** Settings, Network & Files and the full installed-APK walkthrough; those three reviews come last.
+
+### Smart Home Row sort direction — explicitly approved 8 October 2026
+- Existing row editor permits choosing a sort field (including Date Added) but does not offer a reversible direction. **Add an independent Ascending/Descending control** for each selected sort field: Date Added newest-first/oldest-first, Title A–Z/Z–A, Year newest-first/oldest-first. Switching direction immediately reorders the row without changing membership, dynamic-rule state or Show/Hide visibility. Preserve chosen direction as part of row configuration.
+- **Reset Progress** in Continue Watching long-press menu: user approved confirmation, clearing only the selected film/episode's saved position and watched state (not entire series or file); keep Dismiss separate. Widen menu to show full labels.
