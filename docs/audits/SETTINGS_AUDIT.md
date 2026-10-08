@@ -47,3 +47,10 @@ Three concrete Library & Metadata examples confirmed in `VideoPreferencesCommon.
 - `recreate_sort_titles_prefkey`: click launches a background thread and invokes `ScraperTables.recreateSortNames(VideoDb.get(context))`. It changes library database sort names; modern sort-field dependencies require tracing before removal/hiding. Do not activate as a test.
 
 No user-facing hide decision or application modification is authorised by these preliminary findings.
+
+
+## App-wide functional investigation — source checkpoint (8 October 2026)
+
+Verified active Preview source: `src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java` (282 lines), `res/xml/preferences_video.xml` (742 lines), and `src/main/java/com/archos/mediacenter/video/utils/VideoPreferencesCommon.java` (1971 lines). Preview sidebar `NAMES` (line 59) declares **12** categories: Playback, Video, Audio, Subtitles, Library & Metadata, Home, Appearance, Streaming, Network, Integrations, Advanced, About. This is the defined sidebar inventory, **not** proof of an exact number of visible rows within any category on the user's Shield. Inherited XML preferences are dynamically moved and consolidated; some are hidden (PreviewSettings lines 84–87) and other legacy home-row controls disabled (line 97). A complete row-by-row count must include dynamic preferences, visibility, category nesting and persisted conditions. User reports approximately 6 Playback and 18 Library & Metadata options, pending reconciliation.
+
+Confirmed handlers in `VideoPreferencesCommon.java` lines 907–955: Hide Watched Videos toggles `LoaderUtils.mMustHideWatchedVideo` and closes Settings with UI-changed result; Rescrape All Collections starts `AllCollectionScrapeService`; Recreate Sort Titles calls `ScraperTables.recreateSortNames` in a worker thread. Do not test these by activating them on the user's library. Trace consumers/dependencies before proposing final dispositions. Source evidence only, no physical QA or application changes.
