@@ -48,3 +48,31 @@ Main About screen must display **only** `Based on Nova Video Player 6.4.64` (no 
 
 ### Audit status and release gate
 This is an evidence-based **inventory and gap assessment**, not yet a completed compliance certification. Existing 13-entry XML is insufficient to establish complete runtime/native attributions; transitive dependencies, source/binary licensing, FFmpeg configuration and provider terms remain to be verified against the actual release APK. Build/test-only dependencies must be distinguished from redistributed runtime code. QR codes are supplementary, not replacements for legally required licence texts and notices. No app code modified; legacy clickable links flagged for later removal only.
+
+
+## Research closeout — 8 October 2026
+**Status: repository and public-provider research complete to available evidence; binary-level licence compliance NOT certified.**
+
+### Verified provider policies
+- TMDB: https://developer.themoviedb.org/docs/faq requires approved logo and prominent About/Credits notice: “This product uses the TMDB API but is not endorsed or certified by TMDB.” Logo must not imply endorsement. QR: https://www.themoviedb.org .
+- Trakt: https://developer.trakt.tv/docs/api-use-policy requires adherence to official branding guidance, approved unmodified assets, no implied endorsement, and API access rules. Existing inherited integration only; do not reopen parked metadata features.
+- OpenSubtitles: https://forum.opensubtitles.com/t/opensubtitles-org-api-final-shutdown-notice-for-non-vip-users/5045 warns old .org API is being retired; verify whether Supernova uses .org XML-RPC or .com REST. Terms https://status.opensubtitles.com/en/tos/ . Exact API attribution remains to be established.
+- FFmpeg: https://ffmpeg.org/legal.html and https://ffmpeg.org/doxygen/trunk/md_LICENSE.html explain LGPL baseline, optional GPL/nonfree components and distribution duties. Actual shipped build flags and corresponding source remain essential; existing XML 'LGPL v2.1' is not enough.
+- NOVA: upstream pinned source declares 6.4.64. Main About wording only: **Based on Nova Video Player 6.4.64**; no revision shown to users; internal provenance retained and version updated on upstream rebase.
+
+### Final UI register requirements
+1. Main About: Supernova version, short Nova credit, Open-source licences, Credits & acknowledgements, Technical Information. No in-app updater.
+2. Approved persistent three-column layout. Licence/credit details, full offline-readable texts, notices and real scannable QR for verified official URLs in third panel. No clickable external links.
+3. Preserve and validate all existing 13 listed entries; add every actually distributed direct/transitive runtime and native dependency as required, with copyright, licence, NOTICE and source-availability obligations.
+4. Distinguish actual software libraries from external service/provider credits; list only enabled integrations, not parked ideas; TMDB approved logo and exact mandatory notice are required.
+5. Legacy clickable-link handling marked for removal in later implementation, not debugging now.
+
+### Outstanding release-specific evidence — mandatory compliance gate
+- Resolved releaseRuntimeClasspath dependency graph/SBOM for main app and external MediaLib/FileCoreLibrary modules, including transitive versions.
+- Actual final APK native .so inventory, FFmpeg/native configure flags, source provenance and binary/linking obligations.
+- Full matching licence texts and copyright/NOTICE requirements for every redistributed module, including upstream Nova/Archos changes.
+- Confirm enabled provider endpoints, OpenSubtitles API generation, terms, branding and production credentials without exposing secrets.
+- Validate final licence/credit screens, QR targets, offline text and APK distribution notices against the Foundation Release artifact.
+
+**Conclusion:** The research phase is documented; no truthful full compliance sign-off is possible until the release build and its resolved dependencies/native binaries can be inspected. Block release sign-off if evidence is missing. No application code or fixes-only branch was changed.
+
