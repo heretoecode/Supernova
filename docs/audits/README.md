@@ -41,3 +41,7 @@ User approved `Unknown` in fixed factual metadata slots while missing/loading wi
 **Future code-health value:** Cross-reference legacy NOVA functionality, shared dependencies, potential duplication and apparent dead code in a cleanup register with supporting evidence and removal risks. No code removal, deactivation, refactoring, application changes, or candidate-release scope expansion during this audit. Any UI hiding is a recommendation pending explicit approval and later implementation. Cleanup decisions require completion of the app-wide functional audit and subsequent dependency/regression validation.
 
 **Reporting standard:** Maintain per-option source references, code-established effect, current Supernova relevance, possible side effects, runtime/device uncertainty, proposed disposition, and user decision status. Save completed findings to GitHub. Do not call an inventory complete until its declared coverage has been checked; report gaps explicitly.
+
+## Codex functional audit handover
+
+The authoritative, app-wide, documentation-only functional audit assignment is [APP_WIDE_FUNCTIONAL_AUDIT_HANDOVER.md](APP_WIDE_FUNCTIONAL_AUDIT_HANDOVER.md). **Not yet completed.** Codex must complete the Settings and Network & Files functional inventories first, then all remaining app workflows and the future-only NOVA cleanup candidate register, and satisfy the three review passes before declaring completion.
