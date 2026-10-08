@@ -122,3 +122,7 @@ Proposed IntroDB UI model (NOT YET APPROVED): master Enable IntroDB; per *suppor
 - `https://introdb.app/docs/api` documents `GET /segments` (TV by IMDb ID/season/episode, movies by IMDb ID), segment submissions `intro`, `recap`, `outro`, `post-credits`, and legacy intro-only `/intro`. Read access no API key, rate-limited. Post-credits are **scenes**, not equivalent to credits skip.
 - Separately, `https://theintrodb.org` and `https://theintrodb.github.io/theintrodb-npm/types.html` describe `intro`, `recap`, `credits`, `preview` types, and `/media` using TMDb preferred/IMDb fallback. **These are different domains/API schemas; do not assume interchangeable or the same backend.** Trace which endpoint Supernova actually uses before final design, and assess marker availability/version matching.
 **Seek thumbnails:** explicitly PARKED for later discussion; no implementation now.
+
+### Up Next and segment-source audit follow-up (8 October 2026)
+- App-wide source audit confirms Up Next uses a 15-second countdown. User considers this too long; **5 seconds is proposed for review**, not yet final implementation authority. Preserve Play Now/Cancel, and coordinate the transition with IntroDB credits/outro skipping and post-credit safety.
+- Source audit confirms `IntroDbManager` merges segment data from **theintrodb.org and introdb.app**. This is source integration, not a guarantee that both services provide markers for every title. Retain distinct outro/credits modes and investigate source-specific marker coverage before implementation.
