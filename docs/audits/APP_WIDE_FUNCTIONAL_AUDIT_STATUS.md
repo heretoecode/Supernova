@@ -1,6 +1,6 @@
 # App-wide functional audit status
 
-Date: 8 October 2026. Repository `heretoecode/Supernova`; branch `codex/post-4.1.7-shield-fixes`. **REVIEW COMPLETE — documentation publication verification pending.** Do not equate this source audit with physical QA acceptance or runtime correctness.
+Date: 8 October 2026. Repository `heretoecode/Supernova`; branch `codex/post-4.1.7-shield-fixes`. **COMPLETE — source functional audit and three review passes; documented runtime/installed-state questions remain unresolved.** Do not equate this source audit with physical QA acceptance or runtime correctness.
 
 ## Baseline and authority
 
@@ -40,7 +40,7 @@ Normal Settings TV model: FEATURE_LEANBACK + TV mode + try_new_ui=true + advance
 |Legacy/non-user-facing foundations|Native adapters/fragments/classic phone/categories/collection/list/wizard/credential/editor/file operations/jobs|App supplement + Source register + Cleanup|Manifest/intent/key/schema/reflection/JNI boundaries retained; no obsolete-by-name deletion|
 |Cleanup candidates|22 UI hide/keep/move/further-trace/local-code candidates; scope/confidence/risk/removal prerequisites|Cleanup register|No whole class/service/schema deletion proven safe; no code changes|
 |Approved design/QA authority|Current HOME/DETAILS/PLAYBACK/MOVIES_TV/SEARCH/SETTINGS/NETWORK and PARKED_FUTURE; references; exact historical candidate SHAs|App comparison + findings + review pass 3|No approved decisions reopened; candidate source/Binary identities separated|
-|Review/test/publication|Three passes; code-link/key/test-name closure/static checks/docs-only diff; existing branch push|Review record + Test register|Review complete; publication verification pending|
+|Review/test/publication|Three passes; code-link/key/test-name closure/static checks/docs-only diff; existing branch push|Review record + Test register|Complete; payload committed/pushed and remote SHA verified; final record in following documentation commit|
 
 ## Deliverables and reconciled counts
 
@@ -62,4 +62,8 @@ No unassigned major subsystem remains in the coverage matrix. Remaining **Q01–
 
 Source/static checks: 431 XML parsed/static gates passed; tools unittest suite **9 passed**. No application tests, build scripts, dependencies, resources, workflows, app configuration/signing/identity/version or functionality changed. No release, implementation PR or main merge. All changes confined to Markdown in docs/audits.
 
-Publication commit: pending first audit-document commit, then final verification-record commit. Final status will be updated only after documentation commit verification; remote branch identity must be checked after push.
+Published audit payload: [`533dc533bdf5d14c030cd03251a2e51228a7b5e4`](https://github.com/heretoecode/Supernova/commit/533dc533bdf5d14c030cd03251a2e51228a7b5e4) above preserved remote authority `becd754a24c708d24044476ee78e31050cf6eb2c`. Push to the requested branch succeeded and `git ls-remote` returned that exact payload SHA. The following documentation-only commit records final certification; its reference is available in this file’s history and final user report.
+
+Final source/coverage gates are satisfied at the declared functional-domain scope: priorities, all major routes/controls/services, conservative conditional/inherited reachability, cleanup register, findings, all documentation and three review passes. 3,060 source links/path-line bounds, 43 relative document links, 101 XML/130 modeled records and existing-test-name checks passed. `git diff --check` passed; all 11 audit-authored changed files are docs/audits Markdown. `git diff baseline HEAD -- . :!docs` is empty, proving no tracked non-documentation file changed even after preserving concurrent remote design notes. Working tree clean after payload commit/push.
+
+No APK/release/workflow dispatch/implementation PR/main merge or live destructive action. Build/validation workflow push filters ignore docs/Markdown. No application code, resource, test, build script, dependency, configuration, signing, identity, version or functionality changed. Completion describes functional source discovery and evidence recording, not runtime acceptance or authorization for UI/code cleanup. Q01–Q10 remain bounded conclusions for later planning/QA; none is silently marked resolved.

@@ -30,8 +30,16 @@ Cross-checked 15 findings/10 questions and 22 cleanup candidates against priorit
 - Document source-path/line bounds, relative links, XML/dynamic key completeness and existing app test-name references: PASS: 3,060 baseline/pinned-library code links (path + line bounds), 43 relative documentation links, all 101 XML and 130 XML/dynamic modeled records; no missing app test-name references.
 - `git diff --check` and changed-path restriction: PASS on staged payload: 11 changed files, all Markdown under docs/audits; no tracked-file difference outside docs/audits; no whitespace errors. Post-commit and remote verification recorded below.
 - Baseline/source authority SHA: `2a9380abf97a89ec35d91f7c7a9b03327364634f`.
-- Audit payload commit and remote verification: pending publication.
+- Audit payload commit: [`533dc533bdf5d14c030cd03251a2e51228a7b5e4`](https://github.com/heretoecode/Supernova/commit/533dc533bdf5d14c030cd03251a2e51228a7b5e4); parent preserved `becd754a24c708d24044476ee78e31050cf6eb2c`. `git push origin HEAD:refs/heads/codex/post-4.1.7-shield-fixes` succeeded; remote refs query returned the exact payload SHA.
 
 Additional pass-3 reconciliation: normal local Search has normalized title/episode/path matching, no semantic TMDb/IMDb-column or cast/crew/studio predicate; Find a Match ID lookup is distinct. Future Search guidance/credit search and combined custom-page/Discovery concepts remain discussion only.
 
-Final publication only on codex/post-4.1.7-shield-fixes; no main merge/release/APK. Commit proof is added after payload commit; final certification commit appears immediately after it in branch history.
+Final publication only on codex/post-4.1.7-shield-fixes; no main merge/release/APK. Commit proof is added after payload commit; final certification commit appears immediately after it in branch history and is linked in the final user report. The temporary pre-rebase local payload SHA was not published; only the rebased payload reference above is authoritative.
+
+## Post-commit proof
+
+- Payload diff against parent: **11 files, all docs/audits Markdown**, 3,112 insertions / 1 changed index line; source/application state unchanged.
+- Baseline-to-payload diff outside docs: **empty**. Preserved concurrent remote design notes account for two other documentation changes relative to initial baseline; those are not audit-authored edits.
+- Post-rebase/payload validation: **PASS**, same 3,060 code links, 43 relative document links, 101 XML keys and 130 XML/dynamic modeled rows; no missing source path/line/test-name claims.
+- `git diff --check` and clean payload working tree: **PASS**. No source/tests/resources/build/workflow/dependency/signing/config/version changes; no APK/release/main merge.
+- Final certification record updates only status/review Markdown. Source audit complete; Q01–Q10 remain unresolved runtime/installed/design-disposition conclusions, not untested claims reported as passes.
