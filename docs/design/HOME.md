@@ -226,3 +226,7 @@ User clarification following the Mr. Robot physical Shield evidence: the Feature
 - User's Shield photo of *Mr. Robot* Featured hero shows strong blue/dark image treatment on the left. **Approved intent:** show sharp, clean, original-colour artwork in the hero card without inherited full-background blur. Retain a restrained dark gradient/scrim only where necessary for text and button contrast; avoid excessive blue tint.
 - Keep card geometry, neighbouring featured cards, Continue Watching row, and independent top-navigation blur unchanged. Inspect whether observed effect is actual image blur, tint, gradient, or combination before code changes; photo alone does not establish root cause.
 - Visual correction requirement only; no app implementation authorised by this note.
+
+### Continue Watching context menu — Shield QA, 8 October 2026
+- User reports long-press menu label `Dismiss from Continue Watching` is truncated after `Watchi…`. **Approved fix:** widen/adapt the menu within TV safe-area bounds so labels are fully visible without ellipsis; preserve focus and positioning.
+- **Approved direction:** add `Reset Progress` to existing Continue Watching long-press menu alongside More Info, Add to Row and Dismiss from Continue Watching. Reset Progress is a distinct action (clear selected media playback position and watched state), whereas Dismiss only hides the item from the row. Confirm scope for TV series versus selected episode and destructive confirmation rules before implementation.
