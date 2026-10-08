@@ -44,3 +44,9 @@ Hard edges stay on the same key with no flicker: number row + Up; Q + Left; Clea
 
 ### Find a Match result presentation
 Use normal Search as visual authority for result row height, artwork slot dimensions/alignment, text start, title hierarchy, secondary metadata, synopsis treatment, vertical spacing and focus treatment. Fields may differ because the source differs.
+
+
+## Future discussion — landing guidance and local-library metadata search (8 October 2026)
+**Not yet approved for implementation; no change to the current Search correction scope.** On Search entry, keep the approved left keyboard and provide concise right-side instructions with appropriate icons explaining title search normalisation (e.g. `OC` for *The O.C.*, `Terminator 2` for *The Terminator 2*) and potential TMDb/IMDb **ID-based** search. Verify identifier handling in code before promising it works. This is local-library Search, not online Discovery.
+
+Investigate and design optional local-library searches by **cast/crew** (partial name or surname; all indexed roles including actor, writer, producer, director) and **studio/production company**. Results should explain the matched credit, e.g. Spielberg — story/writer on *The Goonies* versus director on *Saving Private Ryan* where the local metadata supports those credits. Do not invent credits, assume complete provider data or open person profile pages. Genre search remains undecided; year is a filter, not a requested text query. Preserve keyboard focus and existing Search layout authority. See `docs/design/PARKED_FUTURE.md` for status.
