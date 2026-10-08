@@ -67,3 +67,6 @@ PutFlix (putflix.app) screenshot showed IMDb, TMDb and Rotten Tomatoes critic/au
 
 ### Discussion order / boundaries
 Advanced Subtitles closed. Remaining planning: Backup & Restore (ongoing compatibility audit), legacy NOVA cleanup, Performance & Diagnostics (source/diagnostic QA direction: crash/ANR/leaks/jank/focus/codec/seek/subtitles/network/indexing, privacy-safe redacted opt-in export, low overhead; no in-app diagnostic viewer approved), then **Settings, Network & Files and full installed APK walkthrough last**. Profiles, Anime, AI, Trakt reviews, seek thumbnails, Discovery, broad Library Health remain PARKED. One custom Library Page design approved but **not implementation scope**. No code changes or fixes-only expansion.
+
+## 8 October later supersession — Continue Watching
+The earlier proposed **Reset Progress** long-press action in this document is **SUPERSEDED**. Approved replacement: **Restart Episode / Restart Movie**, which immediately starts playback from 00:00. Existing Dismiss is renamed **Remove from Continue Watching Row**, preserving watch state and saved position. Details > More also gains Restart. See `docs/project/CURRENT_CHAT_DECISIONS_2026-10-08.md` for full context. These are future product decisions, not additions to the frozen fixes-only release.
