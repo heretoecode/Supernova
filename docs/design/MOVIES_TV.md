@@ -78,3 +78,6 @@ The same historical record explicitly rejected permanent left-sidebar primary na
 
 
 See `docs/project/HISTORY_RECONCILIATION.md` for recovered historical decisions and supersession context.
+
+## Later toolbar redesign — APPROVED design / NOT authorised fixes-only implementation
+**SUPERSEDES** the earlier Toolbar paragraph prescribing an underline/divider-only focus effect: controls are **always-visible subtle rounded outlined boxes** with icon + label and Supernova accent focus. Place the left cluster Filters, Sort, Order, List/Grid, Columns **below stats and above** the full-width divider; do not straddle the divider. Custom Library Page only: Edit at far right after generous spacing with the same outlined style; built-in Movies and TV pages do not show Edit. This is a later design approval, **not** evidence of a code change or permission to expand frozen fixes-only work. See `RECENT_PRODUCT_DECISIONS_2026-10-08.md`.
