@@ -233,3 +233,9 @@ User clarification following the Mr. Robot physical Shield evidence: the Feature
 
 ### Continue Watching reset progress — confirmed 8 October 2026
 - User reconfirmed **add Reset Progress to the existing long-press Continue Watching context menu**, rather than a new screen. Preserve More Info, Add to Row, Dismiss from Continue Watching; fix menu sizing so full labels display. Reset selected item's progress/watched state, distinct from merely dismissing the item. Whole-series reset is not approved as part of this request.
+
+### Smart Home Row controls — reconfirmed 8 October 2026
+- User reconfirmed that **Show/Hide** changes visibility of the *entire* Home row, not membership or rules.
+- **Dynamic Genre Rule On** applies user-chosen filters to populate the row and automatically includes future matching media. **Off** stops automatic population for new media while preserving existing row membership; manual additions remain possible. Do not conflate this switch with Show/Hide.
+- The design is agreed; offer normal ascending/descending sort direction alongside the existing sort selection without reopening the core row model.
+- User explicitly wants remaining design discussions completed **before** Settings, Network & Files and the full installed-APK walkthrough; those three reviews come last.
