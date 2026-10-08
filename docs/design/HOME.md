@@ -221,3 +221,8 @@ User clarification following the Mr. Robot physical Shield evidence: the Feature
 - User reports legacy full-background artwork blur remains applied to the new **Home Featured hero card**. **Approved visual correction:** show clean, sharp, unblurred artwork inside the hero card; retain the existing card shape, size, positioning and focus treatment. Where text needs contrast, use a restrained local gradient/scrim rather than a whole-image blur.
 - Scope **only** the Featured hero image treatment; do not remove the separate top-navigation blur on scroll or change other Home row artwork. Trace actual image transformation/blur layer before changing code and verify on Shield.
 - Design requirement only at this stage; no application code changed.
+
+### Featured hero artwork visual correction (8 October 2026)
+- User's Shield photo of *Mr. Robot* Featured hero shows strong blue/dark image treatment on the left. **Approved intent:** show sharp, clean, original-colour artwork in the hero card without inherited full-background blur. Retain a restrained dark gradient/scrim only where necessary for text and button contrast; avoid excessive blue tint.
+- Keep card geometry, neighbouring featured cards, Continue Watching row, and independent top-navigation blur unchanged. Inspect whether observed effect is actual image blur, tint, gradient, or combination before code changes; photo alone does not establish root cause.
+- Visual correction requirement only; no app implementation authorised by this note.
