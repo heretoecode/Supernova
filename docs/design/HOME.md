@@ -230,3 +230,6 @@ User clarification following the Mr. Robot physical Shield evidence: the Feature
 ### Continue Watching context menu — Shield QA, 8 October 2026
 - User reports long-press menu label `Dismiss from Continue Watching` is truncated after `Watchi…`. **Approved fix:** widen/adapt the menu within TV safe-area bounds so labels are fully visible without ellipsis; preserve focus and positioning.
 - **Approved direction:** add `Reset Progress` to existing Continue Watching long-press menu alongside More Info, Add to Row and Dismiss from Continue Watching. Reset Progress is a distinct action (clear selected media playback position and watched state), whereas Dismiss only hides the item from the row. Confirm scope for TV series versus selected episode and destructive confirmation rules before implementation.
+
+### Continue Watching reset progress — confirmed 8 October 2026
+- User reconfirmed **add Reset Progress to the existing long-press Continue Watching context menu**, rather than a new screen. Preserve More Info, Add to Row, Dismiss from Continue Watching; fix menu sizing so full labels display. Reset selected item's progress/watched state, distinct from merely dismissing the item. Whole-series reset is not approved as part of this request.
