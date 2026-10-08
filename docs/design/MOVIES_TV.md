@@ -121,3 +121,9 @@ Once the approved **Network & Files → Library Health → Unmatched Media** wor
 Library Health becomes the single management location for unmatched/unidentified media. Movies and TV remain browsing surfaces for the normal matched library. The underlying matching machinery may be reused, but its user-facing entry belongs to Library Health. See `docs/design/NETWORK_FILES.md` and `docs/audits/UNMATCHED_MEDIA_AUDIT.md`.
 
 This is approved future design direction, not an instruction to broaden the currently active fixes candidate unless that work is explicitly promoted into implementation scope.
+
+### Library toolbar visual redesign — user-approved 8 October 2026
+- Replace old floating text/underline focus treatment. Below the existing library statistics/header (count, total size, etc.) and **above** the full-width horizontal divider, place the existing toolbar actions (Filters, Sort, Order, List/Grid, Columns) as individual **always-visible outlined rectangular controls**, each with its current icon and text label. The divider remains below them and separates header/controls from the library grid/list; no labels straddling the divider.
+- Unfocused controls retain a subtle outline. Focus visibly colours the **individual control box** with the user's chosen Supernova accent colour (and legible icon/text); no underline-only focus. Preserve predictable left/right D-pad focus and accessibility. Do not invent new controls or lose existing list/grid/column behaviour.
+- Custom Library Pages use the **same** toolbar design but add an icon-and-text **Edit** control of identical visual treatment, positioned at the **far right edge** with substantial flexible gap after the left-clustered existing controls. No uniquely styled separate box for Edit. Movies/TV built-in pages do not display Edit.
+- This is approved future UI correction, not an implemented code change.
