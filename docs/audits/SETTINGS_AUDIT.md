@@ -37,3 +37,13 @@ Source inspected: `VideoSettingsFragment.java` (onCreatePreferences), `PreviewSe
 - **Presentation rule:** Sidebar initially captures each direct child preference's `isVisible()` state, then shows only the selected top-level category and its direct non-category preferences. Nested category buttons are generated only when the parent is entered; opening one changes which children are visible. Consequently raw XML alone cannot establish the displayed menu.
 - **Potential discrepancy to validate:** Scan controls are constructed under Library then explicitly hidden, with Network & Files owning operational scan controls. Do not count these as visible Settings options. The inherited classic route and other conditional preference declarations need a complete resource/entry-point trace before claiming an exhaustive option-by-option inventory.
 - **QA still needed:** runtime state for Preview toggle, installed services, device-specific preference availability, actual nested navigation and persisted legacy values. No Shield execution was performed.
+
+## User-facing functional relevance review — 8 October 2026
+Objective clarified: for each **actually displayed** setting, match exact label/order to code, identify whether modern Preview uses it, document effects and risk of activation, and recommend Keep / Rename / Move / Hide / Further trace. Hidden/legacy options should be recorded, not deleted from code as part of the active fixes-only release. Compare on-device counts (user reports approximately six Playback and eighteen Library & Metadata entries) against code-generated counts; avoid claiming an exact count until nested visibility, XML and runtime conditions are traced.
+
+Three concrete Library & Metadata examples confirmed in `VideoPreferencesCommon.java`:
+- `hide_watched`: preference-change handler writes `LoaderUtils.mMustHideWatchedVideo`, sets `ACTIVITY_RESULT_UI_MODE_CHANGED` and finishes the Settings activity. The impact on modern Preview Movies/TV loaders still requires call-site tracing. Do not assume it is inert or safely obsolete.
+- `rescrap_all_collections_prefkey`: click starts `AllCollectionScrapeService` with `INTENT_RESCRAPE_ALL_COLLECTIONS` and displays a progress toast. This is a real legacy collections rescrape operation; candidate for UI hiding pending service reachability and collection-data dependency review. Do not activate as a test.
+- `recreate_sort_titles_prefkey`: click launches a background thread and invokes `ScraperTables.recreateSortNames(VideoDb.get(context))`. It changes library database sort names; modern sort-field dependencies require tracing before removal/hiding. Do not activate as a test.
+
+No user-facing hide decision or application modification is authorised by these preliminary findings.
