@@ -20,3 +20,6 @@ Existing Diagnostic Logging toggle/export retained. OFF means no optional diagno
 
 ## Observed and unresolved
 User verified with Marshall S1E2 that existing Dismiss hides the Continue Watching card while Resume and episode progress remain. Rename action to **Remove from Continue Watching Row** and ensure full menu text is displayed, without truncation. Restart starts immediately; do not clear progress merely by opening the action. Whether a dismissed item returns after new playback remains open. Other optional hero fields need not all be present, but no backdrop or no meaningful description excludes from Featured. Do not substitute episode stills or posters.
+
+## TV launcher brand direction — later approval
+User chose **Option B: shared symbol plus SUPERNOVA wordmark** for the TV launcher banner. The future square app icon should use the **same symbol alone** to make the two recognisably related, since the icon is too small for the full wordmark. Design the symbol to work clearly at small sizes before finalising both assets. The illustrative orbit glyph is **not** an approved symbol/logo; actual symbol shape, typography and final artwork remain undecided. This supersedes the earlier open Option A versus B choice.
