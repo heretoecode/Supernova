@@ -22,3 +22,9 @@ Status: **initial repository inventory / gaps identified; NOT legal-compliance c
 
 ## Decisions and boundaries
 User approves three-panel Settings presentation and credits with QR links. Technical details behind separate entry. No in-app update mechanism. **No edits to current fixes-only app code** as part of this investigation. This document records audit findings, not legal advice or a certification of licence compliance.
+
+## Upstream NOVA version verified from pinned source — 8 October 2026
+The CI manifest pins upstream `nova-video-player/aos-Video` revision `0651a3e0b60ada996a9774ab527d7c1ef34b7503`. Reading that **exact upstream revision's** `build.gradle` confirms `versionName = '6.4.64'` and `versionCode = 6040064`. Its commit date is 13 September 2026. Therefore display **'Based on NOVA Video Player 6.4.64'** with optional source revision `0651a3e0` in Foundation About/version information. This is a verified upstream **source-declared version**, not independent confirmation of an identically sourced publicly published APK or release tag. Distinguish Supernova's own release version. Existing local Supernova build.gradle version strings are independently modified and are not the authoritative upstream source version.
+
+## User direction — legacy web-link failure deferred
+User explicitly does **not** want investigation of the existing 'No application can handle this action' error. Flag legacy clickable URL/intent handling in licences and acknowledgements for **removal/replacement during future About UI implementation**, rather than spending time debugging it now. The approved design has no clickable external links: show licence/attribution information within the third Settings panel and a **real QR code** per applicable entry pointing to its verified official site. QR links supplement, but do not replace, locally accessible legal notices and licence texts. No app code changes authorised now.
