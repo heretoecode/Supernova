@@ -1,7 +1,9 @@
-# Backup & Restore — Approved mock-ups
+# Backup & Restore — approved 16:9 mock-ups
 
-Place approved 16:9 Supernova Backup & Restore mock-ups here.
+- [Export Backup](backup-restore-export-approved.png) — approved three-panel Export layout; left expanded Backup & Restore with indented Export and Restore, centre contents and Export action, right information/privacy warning. No individual category toggles or separate destination setup fields.
+- [Restore selection and progress](backup-restore-selection-progress-approved.png) — approved visual direction; replace depicted in-app storage browser with Android system file picker as later agreed.
+- [Restore confirmation and USB reconnection](backup-restore-confirmation-reconnection-approved.png) — approved confirmation and reconnection screens. Drive names/counts, paths, dates and example progress are illustrative only.
 
-- `backup-restore-export-approved.png` — approved Export Backup screen (three-panel layout, indented Export/Restore navigation, full backup, privacy notice).
+Behaviour and security authority: [BACKUP_RESTORE.md](../../BACKUP_RESTORE.md).
 
-Design reference only; no application code changes.
+**Status:** approved design; technical audit and implementation pending. Do not add to the frozen fixes-only release without explicit approval.
