@@ -28,3 +28,23 @@ The CI manifest pins upstream `nova-video-player/aos-Video` revision `0651a3e0b6
 
 ## User direction — legacy web-link failure deferred
 User explicitly does **not** want investigation of the existing 'No application can handle this action' error. Flag legacy clickable URL/intent handling in licences and acknowledgements for **removal/replacement during future About UI implementation**, rather than spending time debugging it now. The approved design has no clickable external links: show licence/attribution information within the third Settings panel and a **real QR code** per applicable entry pointing to its verified official site. QR links supplement, but do not replace, locally accessible legal notices and licence texts. No app code changes authorised now.
+
+## User-approved display simplification
+Main About screen must display **only** `Based on Nova Video Player 6.4.64` (no upstream SHA, commit link, or source-revision label). Derive this from the pinned upstream version during release preparation and update whenever the upstream basis changes. Preserve the pinned commit internally in release provenance only. This supersedes the earlier suggestion to show an optional SHA in the UI.
+
+## Attribution reconciliation — initial matrix
+| Group | Verified presence | User-facing treatment | Remaining evidence |
+|---|---|---|---|
+| Nova Video Player / Archos Video Player CE | Repo README, upstream build manifest and source copyrights | Main About lineage line for Nova; distinct credits for upstream Nova and Archos and their contributors | Exact original copyright/NOTICE and modified-file obligations; release-specific version pin |
+| Existing 13 licence entries | `res/xml/preferences_licences.xml` | Preserve entries; third-panel locally readable licence and notice text, official project QR | Validate exact versions, SPDX IDs, native build options, transitive licences |
+| AndroidX / Google libraries | Direct Gradle dependencies | Grouped open-source software licences and applicable copyright notices; avoid 20 redundant high-level rows if grouping remains legally complete | Resolved runtime dependency graph, individual NOTICE obligations |
+| Picasso / OkHttp / Bouncy Castle / ZXing / ThreeTenABP / observablescrollview / logback / Sentry | Direct Gradle dependencies | Add entries where applicable, full licence/NOTICE text locally available | Confirm precise version and each package's actual licence at shipped revision |
+| FFmpeg, dav1d, Opus, libmysofa, OpenSSL, libyuv, Boost, libtorrent and native stack | Pinned native build/prebuilt manifest | Dedicated third-party software licences and notices, QR project sites | Packaged binaries, build flags, LGPL/GPL applicability, source distribution / relinking duties |
+| TMDb | Existing catalogue integration and tmdb-java | Distinct **service/data provider** credit, separate from tmdb-java library licence | Check current official attribution text/logo and usage terms for actual API |
+| Trakt / OpenSubtitles | Existing inherited integrations | Provider credits when functionality ships; not conflated with software libraries | Current provider branding/terms; whether account integration is enabled |
+| Streaming availability and put.io | Documented integration scope, put.io OAuth externally blocked | Attribute only actually shipped/activated service, not speculative integrations | Identify exact upstream availability data provider, brand rules, production enablement |
+| SMB, WebDAV, SFTP, FTP, DLNA/UPnP | Transport capabilities, not necessarily provider businesses | Credit actual software implementations under library licences; **do not** treat protocols as commercial providers | Resolve module-specific transitive dependency tree |
+| SkipDB, TheIntroDB, MDBList | Approved in broader roadmap, not verified in current shipped binary | Do not mark as active service partners unless actual integration is confirmed | Future release integration evidence and terms |
+
+### Audit status and release gate
+This is an evidence-based **inventory and gap assessment**, not yet a completed compliance certification. Existing 13-entry XML is insufficient to establish complete runtime/native attributions; transitive dependencies, source/binary licensing, FFmpeg configuration and provider terms remain to be verified against the actual release APK. Build/test-only dependencies must be distinguished from redistributed runtime code. QR codes are supplementary, not replacements for legally required licence texts and notices. No app code modified; legacy clickable links flagged for later removal only.
