@@ -23,3 +23,6 @@ This record closes the gap between the overnight discussion and durable GitHub p
 
 ## Verification caveat
 This reconciliation covers decisions recoverable from the conversation and prior project context. It is not a claim that every sentence of the prior long chat was independently replayed or that unmentioned discussions were verified. New information should be reconciled here and in the relevant design authority file.
+
+## Recovery addendum — 8 October
+A further read-only conversation-context reconciliation has recovered later specific approvals for custom Library Page wizard, boxed toolbar, Search alternate titles, multiple-version hero quality, Segment Skipping, version history accordion, full secret-free backup compatibility checks and candidate multi-source ratings investigation. These details were committed to [RECENT_PRODUCT_DECISIONS_2026-10-08.md](../design/RECENT_PRODUCT_DECISIONS_2026-10-08.md), with backup acceptance criteria in [BACKUP_RESTORE.md](../design/BACKUP_RESTORE.md) and toolbar supersession in [MOVIES_TV.md](../design/MOVIES_TV.md). See [CONVERSATION_RECOVERY_AUDIT_2026-10-08.md](CONVERSATION_RECOVERY_AUDIT_2026-10-08.md) for evidence limits and verification. **No current fixes-only scope change.**
