@@ -56,3 +56,7 @@ The source audit confirms current local Search does **not** search indexed studi
 
 ### Search result design accepted (8 October 2026)
 User likes the illustrated result treatment showing **the exact matched credit/role** beneath the library title (e.g., `Director: Steven Spielberg`, `Story by: Steven Spielberg`). User wants this implemented in a future authorised feature scope. Discuss additional searchable metadata: production studio/company, TV network, genres, franchise/collection; plot and themes optional due relevance; year, country/language, streaming provider better as filters. No implementation authorised by this documentation decision; source audit confirms credit/network search is not currently implemented.
+
+### Recovered search empty-state reference — 8 October 2026
+- User supplied historical Search mockup and **explicitly excluded the left-side custom keyboard**. Only right-hand guidance panel is relevant: heading `Search Supernova`, subheading `Just type what you're looking for.`, with concise capability hints `No exact formatting` (special characters optional), `Articles optional` (The/A/An), `Alternate titles` (known international variants), `Minor typos OK` (small spelling errors).
+- Treat each guidance claim as a **capability requirement subject to verification**: do not present typo tolerance, article handling or alternate-title support as implemented until confirmed by code and tests. Maintain approved local-only search and match-role annotations for cast/crew/studios/networks; no online discovery implied.
