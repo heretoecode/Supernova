@@ -41,6 +41,16 @@ if (hasProperty('bugReport')) {
 
 // Foundation opts in explicitly; no fallback to local/Preview/debug signing.
 def foundationRelease = project.hasProperty("foundationRelease")
+// Verification produces an unsigned release only; it never receives signing secrets.
+def foundationVerify = project.hasProperty("foundationVerify")
+def foundationIdentity = foundationRelease || foundationVerify
+if (foundationRelease && foundationVerify) throw new GradleException("Choose signed release or unsigned verification, never both")
+if (foundationIdentity && gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ROOT).contains("debug") }) {
+    throw new GradleException("Foundation verification and signing use release variants only")
+}
+if (foundationIdentity && (project.hasProperty("markPreview") || project.hasProperty("markSigning") || rootProject.file("keystore.properties").exists())) {
+    throw new GradleException("Foundation cannot use Preview or local signing configuration")
+}
 def foundationSigning = [:]
 if (foundationRelease) {
     if (project.hasProperty("markPreview") || project.hasProperty("markSigning") || rootProject.file("keystore.properties").exists()) {
@@ -188,8 +198,8 @@ android {
         }
     }
     defaultConfig {
-        applicationId = foundationRelease ? "app.supernova.player" : project.hasProperty("markPreview") ? "org.courville.nova.markpreview" : "org.courville.nova"
-        manifestPlaceholders = [novaLaunchTheme: project.hasProperty("markPreview") ? "@style/PreviewLaunch" : "@style/MyLeanbackTheme.Launcher", novaEntryTheme: project.hasProperty("markPreview") ? "@style/PreviewEntry" : "@style/ArchosThemeLauncher", novaIcon: project.hasProperty("markPreview") ? "@drawable/preview_custom_icon" : "@mipmap/ic_launcher", novaBanner: project.hasProperty("markPreview") ? "@drawable/preview_custom_banner" : "@drawable/nova_banner"]
+        applicationId = foundationIdentity ? "app.supernova.player" : project.hasProperty("markPreview") ? "org.courville.nova.markpreview" : "org.courville.nova"
+        manifestPlaceholders = [novaLaunchTheme: foundationIdentity ? "@style/FoundationLaunch" : project.hasProperty("markPreview") ? "@style/PreviewLaunch" : "@style/MyLeanbackTheme.Launcher", novaEntryTheme: foundationIdentity ? "@style/FoundationEntry" : project.hasProperty("markPreview") ? "@style/PreviewEntry" : "@style/ArchosThemeLauncher", novaIcon: foundationIdentity ? "@mipmap/foundation_launcher" : project.hasProperty("markPreview") ? "@drawable/preview_custom_icon" : "@mipmap/ic_launcher", novaBanner: foundationIdentity ? "@drawable/foundation_banner" : project.hasProperty("markPreview") ? "@drawable/preview_custom_banner" : "@drawable/nova_banner", novaLabel: foundationIdentity ? "Supernova" : "@string/nova"]
         generatedDensities = []
         minSdkVersion 23
         targetSdkVersion 36
@@ -197,10 +207,11 @@ android {
         // below version tracks the one from F-Droid or universal package when generated with ./gradlew -Puniversal
         // this is overridden when using split apk and normal split apk generation or oneapk amazon generation
         // amazon apk is generated with ./gradlew -Poneapk
-        versionCode = 6040083
-        versionName = project.hasProperty("markPreview") ? '6.4.63-mark.4.1.7-preview' : '6.4.63-mark.3'
+        def foundationVersion = new groovy.json.JsonSlurper().parse(file("assets/foundation/release-history.json"))
+        versionCode = foundationIdentity ? foundationVersion.current.version_code as int : 6040083
+        versionName = foundationIdentity ? foundationVersion.current.version : project.hasProperty("markPreview") ? '6.4.63-mark.4.1.7-preview' : '6.4.63-mark.3'
         def novaVersionName = versionName
-        if (! project.hasProperty("universal")) {
+        if (!foundationIdentity && ! project.hasProperty("universal")) {
             // override versionName and versionCode to get it dependent on the date
             versionName = versionName + "-" + getFormattedDate()
             // 2549909 is 20221124 last Google play release to reset counter
@@ -213,7 +224,8 @@ android {
         println("defaultConfig versionName : " + versionName)
         println("defaultConfig versionCode : " + versionCode)
         if (foundationRelease) signingConfig = signingConfigs.foundation
-        else if (keystorePropertiesFile.exists()) signingConfig = signingConfigs.release
+        else if (!foundationVerify && keystorePropertiesFile.exists()) signingConfig = signingConfigs.release
+        buildConfigField "boolean", "FOUNDATION", foundationIdentity.toString()
         if (project.hasProperty("sponsor")) {
             buildConfigField "boolean", "ENABLE_SPONSOR", "true"
         } else {
@@ -240,7 +252,7 @@ android {
         buildConfigField "String", "PREVIEW_GIT_SHA", "\"${previewSource}\""
         buildConfigField "String", "PREVIEW_BUILD_UTC", "\"${new Date().format('yyyy-MM-dd HH:mm', TimeZone.getTimeZone('UTC'))}\""
         resValue "string", "VERSION_NAME", versionName
-        resValue "string", "APP_INFO", "Nova v" + versionName + " (" + applicationId + ")"
+        resValue "string", "APP_INFO", (foundationIdentity ? "Supernova " : "Nova v") + versionName + " (" + applicationId + ")"
     }
     bundle {
         language {
@@ -292,6 +304,7 @@ android {
         println("buildTypes archivesBaseName : " + archivesNameValue)
         release {
             if (foundationRelease) signingConfig signingConfigs.foundation
+            else if (foundationVerify) signingConfig = null
             else if (project.hasProperty('markSigning')) signingConfig signingConfigs.debug
             minifyEnabled = true
             shrinkResources = true
@@ -373,6 +386,14 @@ android {
 }
 
 androidComponents {
+    beforeVariants(selector().all()) { variant ->
+        if (foundationIdentity) {
+            // Even an aggregate task must never create a debug signing key or
+            // another Foundation distribution variant accidentally.
+            variant.enable = variant.buildType == "release" && variant.productFlavors.any { it.second == "noamazon" }
+            if (variant.enable && foundationVerify) variant.enableUnitTest = true
+        }
+    }
     onVariants(selector().all()) { variant ->
         variant.outputs.forEach { output ->
             String currentName = output.outputFileName.get()
@@ -466,4 +487,21 @@ configurations.implementation {
 
 configurations.matching { it.name.toLowerCase().contains("unittest") }.configureEach {
     exclude group: 'com.github.tony19', module: 'logback-android'
+}
+
+// Release-specific inventory; invoked only in the secret-free verification path.
+tasks.register("foundationDependencyInventory") {
+    doLast {
+        if (!foundationVerify) throw new GradleException("Dependency inventory requires unsigned Foundation verification")
+        def artifacts = [configurations.noamazonReleaseRuntimeClasspath, configurations.coreLibraryDesugaring].collectMany { configuration -> configuration.incoming.artifactView {
+            componentFilter { it instanceof org.gradle.api.artifacts.component.ModuleComponentIdentifier }
+        }.artifacts.artifacts.collect { artifact ->
+            def component = artifact.id.componentIdentifier
+            [coordinate: "${component.group}:${component.module}:${component.version}",
+             file: artifact.file.absolutePath, type: artifact.file.name.tokenize('.').last(), configuration: configuration.name]
+        } }.sort { it.coordinate }
+        def destination = layout.buildDirectory.file("foundation/runtime-artifacts.json").get().asFile
+        destination.parentFile.mkdirs()
+        destination.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(artifacts))
+    }
 }

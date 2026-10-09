@@ -1,0 +1,31 @@
+# Foundation candidate review
+
+Status: source review completed to the evidence below; **release clearance withheld**. Signed APK and physical Shield acceptance do not yet exist. The latest source/asset build is still subject to final binary verification.
+
+## Pass 1 — approved scope and source integration
+
+Permanent install ID and label are separate from the retained Archos Java namespace. Pinned build-copy preparation isolates media/scraper/browser authorities, removes shared UID and replaces legacy task affinity; FileProvider uses the actual install package. Binary inspection of the first unsigned APK confirms all providers use `app.supernova.player.*`. Standard URI protocols, external plugin queries and the registered `nova.trakt` callback scheme are intentionally preserved. On TV, Trakt uses its existing device-code flow; mobile callback resolution may still be ambiguous with sibling apps installed. No new OAuth identity was invented.
+
+Approved original branding sources are unchanged. Platform exports include density/adaptive launcher variants, TV banner, static splash and bounded utility/Home base resources. Existing Home hero artwork remains. Only the two requested loading surfaces change; visibility, first-frame hand-off and scan state retain their existing semantics. Stationary concentric ring geometry and constant opposing highlight motion are implemented with lifecycle cancellation.
+
+About follows its five-section rail and centre/right workspace. Current release cannot collapse; older notes expand independently and preserve state. Licence text is local, stale asynchronous reads are ignored, QR has a quiet zone and round-trip decoding tests, and no external URL launches/updater are introduced. Existing classic/mobile About entry points use the same host. Technical details are read-only and avoid account secrets, unique device identifiers and library/network paths.
+
+Literal counter integration was traced through runtime version state and old NOVA migration comparisons. Foundation bypasses obsolete source-era migrations in its fresh namespace rather than repeatedly resetting choices/cache. NOVA/Preview branches retain their original behavior. Upstream wording is exactly “Based on Nova Video Player 6.4.64”; upstream source SHA is internal provenance, not main About text.
+
+## Pass 2 — dependency, licence and signing safety
+
+Resolved app/sibling-module graph plus core-library desugaring contains 138 external archives. Each archive/POM hash and original legal notices are retained. Grouped UI rows preserve individual coordinates/text. Runtime drift is refused before key preparation. Test/build plugins are excluded; native runtime/toolchain notices are separately conservative. Actual unsigned APK contains 88 ELF libraries over four ABIs, all matched to merged build inputs. Native source/header notices include AVOS's LGPL VideoLAN deinterlacer and MIT NEON code rather than relying on its overall Apache identity. Sentry native vendored unwinding/helper notices are retained separately.
+
+Historical inherited licence labels are corrected against exact artifacts: TMDb/Trakt libraries Apache-2.0; JUPnP CDDL-1.0; JSch BSD/ISC; OpenJDK GPL with Classpath exception. Software licences and provider acknowledgements are separate. TMDB's exact disclaimer and existing logo are used. Trakt/OpenSubtitles account/API functionality remains inherited and requires device acceptance; no production credentials are requested or changed. The OpenSubtitles registered client User-Agent retains its inherited `novavideoplayer` prefix, with the actual Foundation version; it is not silently changed without a provider/client-key review.
+
+FFmpeg's precise corresponding-source provenance is unresolved because binary version, prebuilt commit subject and pinned builder differ. An explicit n8.0.1 candidate source accepts the pinned patches, but that alone cannot certify the existing binary. A same-version rebuild or provenance evidence requires a user decision. This is a blocking gate. libmysofa's reported 1.3.3 is also present in v1.3.5's upstream package metadata, so the display/source tag are distinguished rather than inferred from commit labels.
+
+No signing key is generated or copied into the executor. Existing PKCS#12 path/permissions/masking/cleanup and Preview certificate rejection remain. Unsigned tests use no signing secrets; signed Gradle output is private temporary output and removed. Only a verified APK and public JSON are uploaded. Readiness requires named gates and no blockers; the public pin must validate exactly. Separate user readiness approval still precedes `FOUNDATION_RELEASE_READY=true` and `prepare`. Latest protected validation failed safely; no signing dispatch occurred.
+
+## Pass 3 — automated and delivery conformance
+
+All 132 retained historical APK archives and manifests were inspected (131 distinct hashes; two independently built byte-identical APKs). Retrospective labels are literal and preserve original binary metadata. Earliest-first history is the first verifiable retained lineage, with missing/deleted-history uncertainty, not an invented exhaustive release history.
+
+Latest full unsigned release Java suite: 419 tests, zero failures/errors/skips. Python tests: 28 passed. Foundation workflow actionlint passed. The first optimised unsigned release APK built with correct actual identity/version/providers and zero release lint errors. Later source/assets require the final build's binary conformance before that gate is cleared.
+
+Remaining release blockers: protected pin correction/validation and exact FFmpeg source obligations. Final signed signature/certificate/checksum verification and artifact delivery occur only after readiness and explicit approval. Shield installation/navigation/scanning/playback/About/QR/launcher acceptance is pending by the user's agreed sequence and has not been fabricated. Main and the frozen maintenance branch are untouched.

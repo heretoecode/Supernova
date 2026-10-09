@@ -1,0 +1,1378 @@
+{
+  "scope": "Actual unsigned optimised Foundation APK; all 88 native ELF hashes match merged libraries",
+  "libraries": [
+    {
+      "path": "lib/arm64-v8a/libaudiocompress.so",
+      "bytes": 5848,
+      "sha256": "5073e0a32aa24a0758dd6c993bcaad0c28ed4930057eee878afa7ef5a148aa00",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libavcodec.so",
+      "bytes": 11017120,
+      "sha256": "f1e05939f306f036a76eb8e779f5bbe6f3390cec3d59fc753b63230de418e26e",
+      "needed": [
+        "libswresample.so",
+        "libavutil.so",
+        "libm.so",
+        "libdav1d.so",
+        "libopus.so",
+        "libz.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libavfilter.so",
+      "bytes": 3959880,
+      "sha256": "cb891deaca48c8ee5bcd6cee263922fc1a9bbe110605aebb4e18e2267ecbca0f",
+      "needed": [
+        "libswscale.so",
+        "libavformat.so",
+        "libavcodec.so",
+        "libswresample.so",
+        "libavutil.so",
+        "libm.so",
+        "libmysofa.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libavformat.so",
+      "bytes": 6908680,
+      "sha256": "6ec78bea5f883208f2836bd22c1b8c45d27e596c29f9832bff12916830951553",
+      "needed": [
+        "libavcodec.so",
+        "libavutil.so",
+        "libm.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libavos.so",
+      "bytes": 1659096,
+      "sha256": "9f299dc90f2062bbe3631dfc06e6b9f5366b2814e09c267c3b9e895cc738930f",
+      "needed": [
+        "libaudiocompress.so",
+        "libsfdec.so",
+        "libdeinterlace.so",
+        "libavos_android.so",
+        "libz.so",
+        "libdl.so",
+        "libavcodec.so",
+        "libavutil.so",
+        "libavformat.so",
+        "libavfilter.so",
+        "libswscale.so",
+        "libswresample.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libavos_android.so",
+      "bytes": 10864,
+      "sha256": "8bd1e62320a8b6283884fb7ab50c566f20894ea4b7e68c423f02545264bddf93",
+      "needed": [
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libavosjni.so",
+      "bytes": 47208,
+      "sha256": "dc1b3bafb2a3c34d5cfaaa533edd39e4557f24c75490d468e3856f945ee7eb98",
+      "needed": [
+        "libnvpnativehelper.so",
+        "libavos.so",
+        "liblog.so",
+        "libandroid.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libavutil.so",
+      "bytes": 737112,
+      "sha256": "d6f4e192f6740d05c7bb55822d41b9e2022c9dd7ce73c2382f16bd4e2b6c5815",
+      "needed": [
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": "n8.0.1",
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libcputest.so",
+      "bytes": 8088,
+      "sha256": "fd2a278cbfb09fb661e97d6c0c34b506b66e404544be2f1498213da2512a8dd9",
+      "needed": [
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libdav1d.so",
+      "bytes": 925312,
+      "sha256": "770672fea19cf4a27a495e766866be748acde8cd7bc09c44117f61e42054847a",
+      "needed": [
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libdeinterlace.so",
+      "bytes": 9248,
+      "sha256": "9ede104168ba2db62b5858806250d687388d05983ec75fe6f194905af58156d7",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libfilecoreutils.so",
+      "bytes": 8976,
+      "sha256": "e983ce435e1abefc74c3b0627703fffadbad14ea6f097c9ea456196aee24865c",
+      "needed": [
+        "libnvpnativehelper.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libmysofa.so",
+      "bytes": 270720,
+      "sha256": "fd5fa560d9898c060bb01c3e0ddf5f2495dc93d395995d46f4d66ec837577265",
+      "needed": [
+        "libm.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libnvpnativehelper.so",
+      "bytes": 361568,
+      "sha256": "93ffd64cc008e2b73d60d6e6f2c729eb7819b39212ff0183398369abfd37d3e2",
+      "needed": [
+        "liblog.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libopus.so",
+      "bytes": 1965248,
+      "sha256": "561238411635d57abc06cce87d533fc90900da8753329421211ee480b49fb54c",
+      "needed": [
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": "libopus 1.6.1-9-g2d862ea1",
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libsentry-android.so",
+      "bytes": 19824,
+      "sha256": "8a8d4ac356f4927c41390166db93b9990a02a900497e85a445027dd405500ec5",
+      "needed": [
+        "liblog.so",
+        "libsentry.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libsentry.so",
+      "bytes": 800712,
+      "sha256": "18f256ec29f7a3813209657900c934524f96fb6f3b46ab8d2c7241c4ba02bd62",
+      "needed": [
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libsfdec.core.21.so",
+      "bytes": 277144,
+      "sha256": "efe27494378d8c23266ceefb1609b66cf6975edafa4e265e2d2a19fc331fed5a",
+      "needed": [
+        "libmediandk.so",
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libsfdec.so",
+      "bytes": 8296,
+      "sha256": "1c7115ff93d4a2415de1d6791f8e32fe5770e809b680585e94032aac7820d2b8",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libswresample.so",
+      "bytes": 98320,
+      "sha256": "262909297be449d9f58ea0f40b8f5ff204ccd46fe4c01b0009ad4293af5f6068",
+      "needed": [
+        "libavutil.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libswscale.so",
+      "bytes": 914880,
+      "sha256": "16ace28a47fbdae102f7c4539f303b9f74ea79212c87b97712ce4d7bf2584c64",
+      "needed": [
+        "libavutil.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/arm64-v8a/libtorrentd.so",
+      "bytes": 10821608,
+      "sha256": "8dc5276a08aa801668e25fd3bb757cbc10df83f7929e758020ed58132ec4db59",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": "2.0.14.0"
+    },
+    {
+      "path": "lib/armeabi-v7a/libaudiocompress.so",
+      "bytes": 5156,
+      "sha256": "713a391e0da348a9020c6147a57a8adf039bb4fa04eaf78f05ada61594140bdb",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libavcodec.so",
+      "bytes": 8477112,
+      "sha256": "9a17d327b83767a5101cf333c0a5f63e8358cbd55b611f7bff4299ab5e01ae93",
+      "needed": [
+        "libswresample.so",
+        "libavutil.so",
+        "libm.so",
+        "libdav1d.so",
+        "libopus.so",
+        "libz.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libavfilter.so",
+      "bytes": 2543136,
+      "sha256": "cf8a14f1247099552d51bd33229c27d881e31b621b64b1be20570da804a3caf0",
+      "needed": [
+        "libswscale.so",
+        "libavformat.so",
+        "libavcodec.so",
+        "libswresample.so",
+        "libavutil.so",
+        "libm.so",
+        "libmysofa.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libavformat.so",
+      "bytes": 4743088,
+      "sha256": "8b69ad69ae9407022ce2a1dad09f55bd9e229defbccdefc23c78082ddb6ccf73",
+      "needed": [
+        "libavcodec.so",
+        "libavutil.so",
+        "libm.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libavos.so",
+      "bytes": 1390684,
+      "sha256": "29596c717a2a943f024fbb207894de8fc355dfd01c08bd97ebca6fbc39bbb583",
+      "needed": [
+        "libaudiocompress.so",
+        "libsfdec.so",
+        "libdeinterlace.so",
+        "libavos_android.so",
+        "libz.so",
+        "libdl.so",
+        "libavcodec.so",
+        "libavutil.so",
+        "libavformat.so",
+        "libavfilter.so",
+        "libswscale.so",
+        "libswresample.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libavos_android.so",
+      "bytes": 7752,
+      "sha256": "ee336bc1f1d12c9ccad285f85d2bc8b160863a7b7c06adc9f2a1de7306233244",
+      "needed": [
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libavosjni.so",
+      "bytes": 35136,
+      "sha256": "db1bbe356810cfdc3b3efaca71fff31f956529f12cfb4fb6bbd4e5e282bf48b8",
+      "needed": [
+        "libnvpnativehelper.so",
+        "libavos.so",
+        "liblog.so",
+        "libandroid.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libavutil.so",
+      "bytes": 524248,
+      "sha256": "60600d3d959a3b7f492671392b5d50f4262cc49ce2af780976cadf17b789ef58",
+      "needed": [
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": "n8.0.1",
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libcputest.so",
+      "bytes": 7872,
+      "sha256": "3f95c1a174a605eb5d461aa3d8446f3d8ae9af0775e920936fb47f9350d81c27",
+      "needed": [
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libdav1d.so",
+      "bytes": 887464,
+      "sha256": "5f9b8181370b02ec75ccddb1e4a98fe5f87a2916fc3624116eea0c59fb24f13d",
+      "needed": [
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libdeinterlace.so",
+      "bytes": 9256,
+      "sha256": "1e442a69eb27912b47345738c008d651d09515dbdb783a3b06e67ad512bea81e",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libfilecoreutils.so",
+      "bytes": 7176,
+      "sha256": "9d80fd5e7aa3e72a1a464054f649da9c5d63ca73232d2a0f3e1505d2d120c81e",
+      "needed": [
+        "libnvpnativehelper.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libmysofa.so",
+      "bytes": 197628,
+      "sha256": "a167a9a126af1eb85c371810ebc944bc65f272213cba912b1195f82c0956200b",
+      "needed": [
+        "libm.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libnvpnativehelper.so",
+      "bytes": 223536,
+      "sha256": "d89f5faf9afc8910f018fc2b6dcfff81ff36636864b7ee7b62790a9c67817b73",
+      "needed": [
+        "liblog.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libopus.so",
+      "bytes": 1453144,
+      "sha256": "197881c8b234b605406a80afee1a0cc5b57a21307b65c028a17fa5f7acac648e",
+      "needed": [
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": "libopus 1.6.1-9-g2d862ea1",
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libsentry-android.so",
+      "bytes": 14152,
+      "sha256": "638b2b41675d86072797410be550f023b88b82d42a3d5fb181ea08ec8153a767",
+      "needed": [
+        "liblog.so",
+        "libsentry.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libsentry.so",
+      "bytes": 523780,
+      "sha256": "3711f04c9bec2ee0ed48939e3066916a7c4b4214057c8fd28991893f1374d72f",
+      "needed": [
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libsfdec.core.21.so",
+      "bytes": 167312,
+      "sha256": "98cc9263074f5a36e6e9b8317dd8fe06e4345ef2ea8606342c0e3d7fc8dfd095",
+      "needed": [
+        "libmediandk.so",
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libsfdec.so",
+      "bytes": 5992,
+      "sha256": "1a53f0ce9f9c056437b6022b0cbd92586d6530400b78b790dcaed32b1085287b",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libswresample.so",
+      "bytes": 75176,
+      "sha256": "dc237b2da5f3222a435b61941011e2ad7e93bf8b424066f063b858d1dba479fb",
+      "needed": [
+        "libavutil.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libswscale.so",
+      "bytes": 447836,
+      "sha256": "23971a70443e8fb5d4d9a407cfeeae360c8dc6f100db8df5ba3ef2fa9af4decd",
+      "needed": [
+        "libavutil.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/armeabi-v7a/libtorrentd.so",
+      "bytes": 8814148,
+      "sha256": "d897668ec92cd50d6ceda0a82b35636c7802b3fcd77226964e1bed76b6cb493b",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": "2.0.14.0"
+    },
+    {
+      "path": "lib/x86/libaudiocompress.so",
+      "bytes": 5364,
+      "sha256": "3f8c50ed0ff6632efa9c51a3671648fe12fe04982f608e1f94a24fce86de7209",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libavcodec.so",
+      "bytes": 12532860,
+      "sha256": "b7dca2e7e22302ce8de8dd6db36547321e506d0d27a7cd9df7550cc8fb39c050",
+      "needed": [
+        "libswresample.so",
+        "libavutil.so",
+        "libm.so",
+        "libdav1d.so",
+        "libopus.so",
+        "libz.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libavfilter.so",
+      "bytes": 4392960,
+      "sha256": "e2f30936b11028b8356ae7f642788e22b423f637069a13f3a3ab31ec829fd72a",
+      "needed": [
+        "libswscale.so",
+        "libavformat.so",
+        "libavcodec.so",
+        "libswresample.so",
+        "libavutil.so",
+        "libm.so",
+        "libmysofa.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libavformat.so",
+      "bytes": 5879144,
+      "sha256": "920f564baeef5efedbea65db34d72af042e3daf9a6d0ad1482a41da2fee57e24",
+      "needed": [
+        "libavcodec.so",
+        "libavutil.so",
+        "libm.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libavos.so",
+      "bytes": 1823212,
+      "sha256": "a79c2aa721da71a16dc02b88488d4d40201f8912776ea86d6b9522688d205308",
+      "needed": [
+        "libaudiocompress.so",
+        "libsfdec.so",
+        "libdeinterlace.so",
+        "libavos_android.so",
+        "libz.so",
+        "libdl.so",
+        "libavcodec.so",
+        "libavutil.so",
+        "libavformat.so",
+        "libavfilter.so",
+        "libswscale.so",
+        "libswresample.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libavos_android.so",
+      "bytes": 9184,
+      "sha256": "01f8e5cffeabe16386500384fc5a1cc8ef481e60da6fc2178c4f88013edddf59",
+      "needed": [
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libavosjni.so",
+      "bytes": 42360,
+      "sha256": "e17fc82887bbbe9f215fa2a430e72f9f6df3e58fa7ab4b8bfa32bcde0358cdd4",
+      "needed": [
+        "libnvpnativehelper.so",
+        "libavos.so",
+        "liblog.so",
+        "libandroid.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libavutil.so",
+      "bytes": 742804,
+      "sha256": "d83cadd912e7344292b7d5407a54ac7928377ec77d8af945d08ef56b9600563c",
+      "needed": [
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": "n8.0.1",
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libcputest.so",
+      "bytes": 6936,
+      "sha256": "557427b357ce2ba1b42051b135cc490fc4f481f1c42368b7cfd8af2ac9c7b0e2",
+      "needed": [
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libdav1d.so",
+      "bytes": 1305652,
+      "sha256": "d42f1abd597d4bc9f5808ac9685ae9e35e70ef5e361d57c3c86dd74af52a5b26",
+      "needed": [
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libdeinterlace.so",
+      "bytes": 9872,
+      "sha256": "b40a63550ea5322e75f30a0f4b4cae3bea00e85f71b075e891259c8e0a99a796",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libfilecoreutils.so",
+      "bytes": 7352,
+      "sha256": "df504cd06e0ef35534b79c971335fba62c9a515ac6699d5c22e7632ae9221085",
+      "needed": [
+        "libnvpnativehelper.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libmysofa.so",
+      "bytes": 215420,
+      "sha256": "a3684ecf7dcc9afcfe18c67c573570d74f7caa500cff5f4ac68f6ab72849e93d",
+      "needed": [
+        "libm.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libnvpnativehelper.so",
+      "bytes": 308624,
+      "sha256": "ef07ccd2bed63ce8a4156bd1415dc0843004aa8873d0de495483b93b28016a10",
+      "needed": [
+        "liblog.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libopus.so",
+      "bytes": 1620160,
+      "sha256": "af6560c8b9e296db3a1be2484fb8f755f8185224a1c27045063fddf0daee5911",
+      "needed": [
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": "libopus 1.6.1-9-g2d862ea1",
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libsentry-android.so",
+      "bytes": 17312,
+      "sha256": "86ecc7f8288ae5111a6ffc5dd957d7c90917bf97a3aa05075e17e8a2f68a3766",
+      "needed": [
+        "liblog.so",
+        "libsentry.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libsentry.so",
+      "bytes": 826024,
+      "sha256": "bb2f73d6b6af62de258a6d45686da7c14309f73df20ba276f0dd2da80d97b6d2",
+      "needed": [
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libsfdec.core.21.so",
+      "bytes": 233248,
+      "sha256": "0e75aa390e259ebb7ada71a1b132ca588ee67b946fb4b01b94582dcccf8c0920",
+      "needed": [
+        "libmediandk.so",
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libsfdec.so",
+      "bytes": 7892,
+      "sha256": "1034fd53ee3bd3af94f97609545d5dce87d03162be73ed997111f3199487bd50",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libswresample.so",
+      "bytes": 109808,
+      "sha256": "66da13b195b7b4307c43b5bca7948dbb142c6cdb52aba30aa78ae035ac46d6b7",
+      "needed": [
+        "libavutil.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libswscale.so",
+      "bytes": 1063520,
+      "sha256": "a376330ca4024097916a94b53c3882a678536650d6f1bd3ae8e0b6e59a33c91a",
+      "needed": [
+        "libavutil.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86/libtorrentd.so",
+      "bytes": 9772596,
+      "sha256": "0361b8bb76394206500a5b4b14950772660de6782886de13ace398ee0efa588e",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": "2.0.14.0"
+    },
+    {
+      "path": "lib/x86_64/libaudiocompress.so",
+      "bytes": 6472,
+      "sha256": "c0d5167251da46a20d632e8ae266d3eecdfb86ede5fc6c113e7e6057c47775ea",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libavcodec.so",
+      "bytes": 14508040,
+      "sha256": "3da8cdcda8f232656b7de9459f1c6fa4233fbd8c28e46168640060342c8d9fa8",
+      "needed": [
+        "libswresample.so",
+        "libavutil.so",
+        "libm.so",
+        "libdav1d.so",
+        "libopus.so",
+        "libz.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libavfilter.so",
+      "bytes": 4936736,
+      "sha256": "a4160f3797ef41c0bb0c8de73c676558d6effe48fc5669db446c883e08eeeb11",
+      "needed": [
+        "libswscale.so",
+        "libavformat.so",
+        "libavcodec.so",
+        "libswresample.so",
+        "libavutil.so",
+        "libm.so",
+        "libmysofa.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libavformat.so",
+      "bytes": 7304048,
+      "sha256": "672bc70b4769016d947ffcf4c51c5282b379f8b6beda107e48ee44c06e637117",
+      "needed": [
+        "libavcodec.so",
+        "libavutil.so",
+        "libm.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libavos.so",
+      "bytes": 1891288,
+      "sha256": "0785a4c87d9b8707ac1a2bf896bddb834180fcd71652e0daaee2be7d4bfae93c",
+      "needed": [
+        "libaudiocompress.so",
+        "libsfdec.so",
+        "libdeinterlace.so",
+        "libavos_android.so",
+        "libz.so",
+        "libdl.so",
+        "libavcodec.so",
+        "libavutil.so",
+        "libavformat.so",
+        "libavfilter.so",
+        "libswscale.so",
+        "libswresample.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libavos_android.so",
+      "bytes": 10656,
+      "sha256": "43a6ee8c4127ceddee3c1f2affa7b8b95c43609b61d577cd592cf85c645c7781",
+      "needed": [
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libavosjni.so",
+      "bytes": 45064,
+      "sha256": "e4e433a20efd493dbc4d0596bd5d14413758e52edd1c06f3894cf23cb85259ec",
+      "needed": [
+        "libnvpnativehelper.so",
+        "libavos.so",
+        "liblog.so",
+        "libandroid.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libavutil.so",
+      "bytes": 921896,
+      "sha256": "bca3f9702258819a45ff1ea46473fe1b949589e549b2084f8b7dc393eeef0a94",
+      "needed": [
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": "n8.0.1",
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libcputest.so",
+      "bytes": 8048,
+      "sha256": "45e6eb2e885eb9ab4b05695de321fb1e8d581cf6c276ee84dfdf7ffd783c5b17",
+      "needed": [
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libdav1d.so",
+      "bytes": 2568888,
+      "sha256": "759a32b0d39c31c61d7fb36196874b9fcb2caf64f265211ea05eed492b61e432",
+      "needed": [
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libdeinterlace.so",
+      "bytes": 11168,
+      "sha256": "dfeb40f991415c8998ae7587797a55d6965497eb8abef9a19a6b7c68ab3ed439",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libfilecoreutils.so",
+      "bytes": 9024,
+      "sha256": "bd4a9c669758c002a69a3a1a57927b2e6b9b7ca1a316a07b05e5797ed6c9707a",
+      "needed": [
+        "libnvpnativehelper.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libmysofa.so",
+      "bytes": 267408,
+      "sha256": "a85b3f04b52b2d8180734eeb585169ad0bbef651d9ec11c2bace61190ebb46c6",
+      "needed": [
+        "libm.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libnvpnativehelper.so",
+      "bytes": 353864,
+      "sha256": "a5271d9bab67270879fe970b2a10de0e573ee9416ae488e49d9d26bb27444c42",
+      "needed": [
+        "liblog.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libopus.so",
+      "bytes": 2015808,
+      "sha256": "4105fbeea2e6b7751d63a71edd2ba3c2a48e3adc5028ae70b06bd0375554a9a8",
+      "needed": [
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": "libopus 1.6.1-9-g2d862ea1",
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libsentry-android.so",
+      "bytes": 19280,
+      "sha256": "ceed438dd0a0d3db1154ddb4d789b889b806b02f416f07f6e0ec910ef51df58b",
+      "needed": [
+        "liblog.so",
+        "libsentry.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libsentry.so",
+      "bytes": 785432,
+      "sha256": "5abcf31bc27b17981a3ca961de4fda4c5eaed9379463f8ae34731ce1d5aeb6ea",
+      "needed": [
+        "libdl.so",
+        "liblog.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libsfdec.core.21.so",
+      "bytes": 274408,
+      "sha256": "76cac31504ca65c1e56ef291d933c730761ce48af1f72cd4371fcd6b0353be6c",
+      "needed": [
+        "libmediandk.so",
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libsfdec.so",
+      "bytes": 8280,
+      "sha256": "e25d2527fe9e0d0988a0e77a9447a61e339896090891eed5a1543615d65ecc96",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libswresample.so",
+      "bytes": 139840,
+      "sha256": "08068e27e68785b8ce70c7bb9f4abd1226a7643f57c322147457e6a6d4d7dc0e",
+      "needed": [
+        "libavutil.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libswscale.so",
+      "bytes": 1241176,
+      "sha256": "52d77f3922f1dee15ab6fb4563b8ade6af276c590766d61ffb9bcdd05ae2e905",
+      "needed": [
+        "libavutil.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "opus_version": null,
+      "libtorrent_version": null
+    },
+    {
+      "path": "lib/x86_64/libtorrentd.so",
+      "bytes": 11205408,
+      "sha256": "4dd8246df053f419e788fa71db63aecf4995651e138823cf2eebc6170a544faf",
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "ffmpeg_version": null,
+      "ffmpeg_configuration": null,
+      "opus_version": null,
+      "libtorrent_version": "2.0.14.0"
+    }
+  ],
+  "unsigned_apk_sha256": "d69875be7159b7d9004ad1b6cd690ad7813485c06169b709075f8cf5e59989f0"
+}

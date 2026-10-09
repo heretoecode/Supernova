@@ -1,0 +1,3721 @@
+{
+  "schema": 1,
+  "artifact_count": 132,
+  "unique_apk_hash_count": 131,
+  "byte_identical_pair": {
+    "artifacts": [
+      11554014904,
+      11555295258
+    ],
+    "runs": [
+      37786356224,
+      37786427122
+    ],
+    "jobs": [
+      113341997401,
+      113342242576
+    ],
+    "build_step": "Build optimised personal APK",
+    "conclusion": "success"
+  },
+  "history": [
+    {
+      "version": "0.1",
+      "kind": "Development / QA build",
+      "date": "2026-09-13",
+      "artifact_id": 10320739615,
+      "run_id": 34767741036,
+      "source_sha": "2b4c9da185dc2726218bb13dbea9cb0bff6e5d6f",
+      "artifact_name": "nova-debug-apk",
+      "archive_sha256": "070bd57ee1200f7b90ee1d91150097bb3d758b7944f7a8997e0438cb49b7fe63",
+      "source_subject": "Fetch full Video history for source overlay",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-13T16:15:46Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova-6040063-6.4.63-debug.apk",
+          "sha256": "36524e5c0653346a983e4bd9f1978a9317ded270cdb464a981c57a403bd0c397",
+          "bytes": 98403236,
+          "application_id": "org.courville.nova",
+          "version_code": 6040063,
+          "version_name": "6.4.63"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.2",
+      "kind": "Development / QA build",
+      "date": "2026-09-13",
+      "artifact_id": 10320453616,
+      "run_id": 34768107402,
+      "source_sha": "2b4c9da185dc2726218bb13dbea9cb0bff6e5d6f",
+      "artifact_name": "nova-debug-apk",
+      "archive_sha256": "5b0d70ab2ba7e928b9766d399b5bd3d3492ff759ee07904df77dac7779e5b820",
+      "source_subject": "Fetch full Video history for source overlay",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-13T16:23:08Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova-6040063-6.4.63-debug.apk",
+          "sha256": "9ea48830e3c3e216d69f64d367a2617d221a779f28ac4258a289a937bf914347",
+          "bytes": 98403236,
+          "application_id": "org.courville.nova",
+          "version_code": 6040063,
+          "version_name": "6.4.63"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.3",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10330368450,
+      "run_id": 34798293992,
+      "source_sha": "a33dffa13715db08661c2d5b33a3fb2f4d64286c",
+      "artifact_name": "nova-debug-apk",
+      "archive_sha256": "101e8e5dc1418d1689fe1975a8258d040921a78616d4ca563867a2139fd71f7a",
+      "source_subject": "Recover prebuilt checkouts by fetching exact pinned Git objects",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T02:16:48Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova-6040064-6.4.63-mark.2-debug.apk",
+          "sha256": "7c0d99fa9e913e76b32df95984df0954f88d577d7f306a2117d4515785128366",
+          "bytes": 98444321,
+          "application_id": "org.courville.nova",
+          "version_code": 6040064,
+          "version_name": "6.4.63-mark.2"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.4",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10330820813,
+      "run_id": 34798298139,
+      "source_sha": "a33dffa13715db08661c2d5b33a3fb2f4d64286c",
+      "artifact_name": "nova-debug-apk",
+      "archive_sha256": "efe77126e6b1b0b0bfebbfcbc80bd3ee26c77db7c309bec0018f9d0ad44b50df",
+      "source_subject": "Recover prebuilt checkouts by fetching exact pinned Git objects",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T02:16:55Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova-6040064-6.4.63-mark.2-debug.apk",
+          "sha256": "1ecb17384a64893ceb098995eb75020392149192fb2ba37e904a036beeabf8e4",
+          "bytes": 98444322,
+          "application_id": "org.courville.nova",
+          "version_code": 6040064,
+          "version_name": "6.4.63-mark.2"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.5",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10330781210,
+      "run_id": 34798604386,
+      "source_sha": "736e084630cd6a235bc6f7b9021f2e5757e84fda",
+      "artifact_name": "nova-debug-apk",
+      "archive_sha256": "fe42e3ef6a3df7ce805fea0892cce5b8d69330787922a47aae27928e4cc59d29",
+      "source_subject": "Verify country-specific settings and apply slate streaming dialogs",
+      "notes": [
+        "Recorded implementation checkpoint: Verify country-specific settings and apply slate streaming dialogs.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T02:21:37Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova-6040064-6.4.63-mark.2-debug.apk",
+          "sha256": "c56622ebfbc2ce663ba8a6dac5eeef12bf6008ed5a66bb30ba168dd7518e5985",
+          "bytes": 98444701,
+          "application_id": "org.courville.nova",
+          "version_code": 6040064,
+          "version_name": "6.4.63-mark.2"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.6",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10330673027,
+      "run_id": 34798600484,
+      "source_sha": "736e084630cd6a235bc6f7b9021f2e5757e84fda",
+      "artifact_name": "nova-debug-apk",
+      "archive_sha256": "e784f24095e9f3d3a4266bc85bf9b5448a4b337247d6495e753947fa065ffcf0",
+      "source_subject": "Verify country-specific settings and apply slate streaming dialogs",
+      "notes": [
+        "Recorded implementation checkpoint: Verify country-specific settings and apply slate streaming dialogs.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T02:23:21Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova-6040064-6.4.63-mark.2-debug.apk",
+          "sha256": "38e83d928caa885d0d151ccb092a60ae83a522483369af6905e51278ee065e14",
+          "bytes": 98444703,
+          "application_id": "org.courville.nova",
+          "version_code": 6040064,
+          "version_name": "6.4.63-mark.2"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.7",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10369765005,
+      "run_id": 34896697291,
+      "source_sha": "a9069c3471ca7a4b1294bb5284fdb51587a8c898",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "1c5f7168e40f08b1f85a95062472ee7d522d72e55fdfee8da384f8a65ffc4ba2",
+      "source_subject": "Record branch-scoped Preview certificate and verify APK against it",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T21:13:25Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040065-6.4.63-mark.3-preview-universal-release.apk",
+          "sha256": "cf712eae55c589a3c77ae13fba16df9413a9e6c62a7ebc8fbf2b7dbf2e6b66cf",
+          "bytes": 82184543,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040065,
+          "version_name": "6.4.63-mark.3-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.8",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10371895634,
+      "run_id": 34902950214,
+      "source_sha": "3e6d8bfedc78bcdde54801788479605221c825cb",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "8c0d42b83a9c7525ac43ccdd66106d0d98d3fba87d418b735edc932140032598",
+      "source_subject": "Repair experimental home: remove duplicate header, compact rows, slate theme and real tab sections",
+      "notes": [
+        "Recorded implementation checkpoint: Repair experimental home: remove duplicate header, compact rows, slate theme and real tab sections.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T22:21:10Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040066-6.4.63-mark.3.1-preview-universal-release.apk",
+          "sha256": "3312bd8533ec6b60bebfb3cb62c3c2f8879fa4b642ee3a8ea20d8d053bae0be6",
+          "bytes": 82184502,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040066,
+          "version_name": "6.4.63-mark.3.1-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.9",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10372185870,
+      "run_id": 34903197653,
+      "source_sha": "b3c4de16c6c48ac124521793149b4598f0eb4844",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "77f3f842d02c70a3d436b07c86a93f681faf52b6310ae359f1087bc66a7c18f8",
+      "source_subject": "Keep clock and scan status in navigation bar instead of overlapping library rows",
+      "notes": [
+        "Recorded implementation checkpoint: Keep clock and scan status in navigation bar instead of overlapping library rows.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T22:24:06Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040066-6.4.63-mark.3.1-preview-universal-release.apk",
+          "sha256": "40b2a34f5f3539e2f50c9b45f7457787b97125ec2982b7b521c7d2d2e05306a3",
+          "bytes": 82184446,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040066,
+          "version_name": "6.4.63-mark.3.1-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.10",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10372650362,
+      "run_id": 34903480683,
+      "source_sha": "04962e743eb361382bf10c08186ead835ea8450a",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "4f87a180c8f5207f6dab3c42418e36e2174a807610e3178e0ac4c6183868a606",
+      "source_subject": "Preserve visible row focus when background updates affect another tab",
+      "notes": [
+        "Recorded implementation checkpoint: Preserve visible row focus when background updates affect another tab.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T22:28:03Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040066-6.4.63-mark.3.1-preview-universal-release.apk",
+          "sha256": "916c1ae216a9a028eb56d6004a537d4dce906468fcc531e1d57961751f120a1f",
+          "bytes": 82184322,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040066,
+          "version_name": "6.4.63-mark.3.1-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.11",
+      "kind": "Development / QA build",
+      "date": "2026-09-14",
+      "artifact_id": 10374072035,
+      "run_id": 34909209525,
+      "source_sha": "a8304bd409ed1b163215ccc9b59dd0af9662fe1a",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "2594ae7add8684a232cff2f74eaf7f4bb13e5ad99ac63f9738ee7ac4ce17bb34",
+      "source_subject": "Use the named Typeface style required by release lint",
+      "notes": [
+        "Recorded implementation checkpoint: Use the named Typeface style required by release lint.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-14T23:39:45Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040067-6.4.63-mark.3.2-preview-universal-release.apk",
+          "sha256": "b55e8b77c52cc830931a01aff2c819769a137346a8ff57224ce518b085d6b945",
+          "bytes": 82190832,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040067,
+          "version_name": "6.4.63-mark.3.2-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.12",
+      "kind": "Development / QA build",
+      "date": "2026-09-15",
+      "artifact_id": 10375962847,
+      "run_id": 34915300967,
+      "source_sha": "8298b2f86cfb6385518d6f0e254100a1d2966b74",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "ea3dccbffbb0eca074d25140f9ece3f631662cf5f2efaea22ac958ef7a0da611",
+      "source_subject": "Fix remote focus and measured card layout; retain complete libraries and unmatched browsing",
+      "notes": [
+        "Recorded implementation checkpoint: Fix remote focus and measured card layout; retain complete libraries and unmatched browsing.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-15T01:06:26Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040068-6.4.63-mark.3.3-preview-universal-release.apk",
+          "sha256": "23be37b408e5ec180c3aa3dd07c5413537a2e2e3c2fad9c6e7959188a291699c",
+          "bytes": 82200491,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040068,
+          "version_name": "6.4.63-mark.3.3-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.13",
+      "kind": "Development / QA build",
+      "date": "2026-09-15",
+      "artifact_id": 10376556048,
+      "run_id": 34915440313,
+      "source_sha": "1d61c99f23f9a6493d5d475645c0615b9641364b",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "9ef86d5ee6735ba6686ddd07eb0462e6fbf95fd3c60613548ab91899a815ebd2",
+      "source_subject": "Keep poster titles and media information below the artwork",
+      "notes": [
+        "Recorded implementation checkpoint: Keep poster titles and media information below the artwork.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-15T01:08:07Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040068-6.4.63-mark.3.3-preview-universal-release.apk",
+          "sha256": "35b4790b8c25a2aad4821c99009c0fe8a9ceeaab300ca3dc20320bb3ccbd7189",
+          "bytes": 82200430,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040068,
+          "version_name": "6.4.63-mark.3.3-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.14",
+      "kind": "Development / QA build",
+      "date": "2026-09-15",
+      "artifact_id": 10378498187,
+      "run_id": 34921633636,
+      "source_sha": "f8a007062fe748e16fb058c42efde810846fe0f3",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "254a4498a0f342a95e7cf8cbb60d968d3f809eedcb9189775fb65ebc457496da",
+      "source_subject": "Pin diagnostic and release signing path; verify classic and Preview cold starts and restarts",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-15T02:47:39Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040069-6.4.63-mark.3.4-preview-universal-release.apk",
+          "sha256": "ec249d6ff6026329d67fb236abcf6384249a565ab821c45b3a53f2dd83aad94d",
+          "bytes": 82200818,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040069,
+          "version_name": "6.4.63-mark.3.4-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.15",
+      "kind": "Development / QA build",
+      "date": "2026-09-15",
+      "artifact_id": 10408032858,
+      "run_id": 34995741725,
+      "source_sha": "951b51bc4f4f4f720673887f00167ca7a6289924",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "5bcb971f9aaa1e079b30c42793faf384e368efb082f21ebfb4471462a762c811",
+      "source_subject": "Match compact browsing card density and render artwork-backed page diagnostics",
+      "notes": [
+        "Recorded implementation checkpoint: Match compact browsing card density and render artwork-backed page diagnostics.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-15T16:46:59Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040070-6.4.63-mark.3.5-preview-universal-release.apk",
+          "sha256": "40d1363a78f71aaab0580b5cab6a73b2aa14ded47a976204025fa60dafacaf79",
+          "bytes": 82216824,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040070,
+          "version_name": "6.4.63-mark.3.5-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.16",
+      "kind": "Development / QA build",
+      "date": "2026-09-15",
+      "artifact_id": 10407489739,
+      "run_id": 34995469577,
+      "source_sha": "d95f4290e3c940e92aa6a66619816fab4a425cd5",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "9fea32174f7cf144bc36a61043b7fd87c6c6606f35ca0b3d7e6ea3abc27b74a4",
+      "source_subject": "Handle movie detail Back through AndroidX navigation callback",
+      "notes": [
+        "Recorded implementation checkpoint: Handle movie detail Back through AndroidX navigation callback.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-15T16:48:27Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040070-6.4.63-mark.3.5-preview-universal-release.apk",
+          "sha256": "ef499b6b54c23718dbb645f6c7e5ff730923e15b11f445c06b3018c4f49320ee",
+          "bytes": 82216757,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040070,
+          "version_name": "6.4.63-mark.3.5-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.17",
+      "kind": "Development / QA build",
+      "date": "2026-09-15",
+      "artifact_id": 10409001373,
+      "run_id": 34997480462,
+      "source_sha": "d175a01553ed19414f783f9adbcaa0b7b42205c9",
+      "artifact_name": "nova-mark-edition-3-preview-apk",
+      "archive_sha256": "6cef2dae471c2d3930ff88d52b81f8f6be5d54beb88e45bb8dcaf604fa5dbb57",
+      "source_subject": "Prevent library heading clipping and verify a physical landscape emulator panel",
+      "notes": [
+        "Recorded implementation checkpoint: Prevent library heading clipping and verify a physical landscape emulator panel.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-15T17:04:23Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040070-6.4.63-mark.3.5-preview-universal-release.apk",
+          "sha256": "af52c417b95bf9b62be26edb071a831dc1b68b393f898fcc7b599cbea5262f79",
+          "bytes": 82216577,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040070,
+          "version_name": "6.4.63-mark.3.5-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.18",
+      "kind": "Development / QA build",
+      "date": "2026-09-16",
+      "artifact_id": 10426213257,
+      "run_id": 35043556513,
+      "source_sha": "beb1eda9785c495bffe927c8345a00071d450c48",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "9b4c678985ef61567af8ee389a7fee68d9bdbbbb994cff5e5b25760252b9fc00",
+      "source_subject": "Keep Preview validation to quick metadata and installed startup checks",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-16T01:26:03Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040071-6.4.63-mark.3.6-preview-debug.apk",
+          "sha256": "832de24b77d2d55d411b382830597c720993fe9e5fd7cf62ca0a4a245a6d5f67",
+          "bytes": 98529193,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040071,
+          "version_name": "6.4.63-mark.3.6-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.19",
+      "kind": "Development / QA build",
+      "date": "2026-09-16",
+      "artifact_id": 10450356231,
+      "run_id": 35104836910,
+      "source_sha": "c49e6ee5489145155c9b0c13d20fd4c72bb158b7",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "643769238b7cc6bb9d711f589ba96283a3c72bd0b7ae9befb4af7e14455337c9",
+      "source_subject": "Align variant launcher declarations and compact source tiles into four-column rows",
+      "notes": [
+        "Recorded implementation checkpoint: Align variant launcher declarations and compact source tiles into four-column rows.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-16T14:02:11Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040072-6.4.63-mark.3.7-preview-debug.apk",
+          "sha256": "82002f1a8bda858a008910104018f87c9159101ae1f71478a0d8ddea42c6aa6f",
+          "bytes": 98559707,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040072,
+          "version_name": "6.4.63-mark.3.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.20",
+      "kind": "Development / QA build",
+      "date": "2026-09-16",
+      "artifact_id": 10456708961,
+      "run_id": 35119232159,
+      "source_sha": "84250339b1fa86673e556596d1bfe701f8a454ec",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "52083100610e16f1e5eab78b937aba72953255908170ab198b69b8a56395cd12",
+      "source_subject": "Activate focused Settings control in minimal TV smoke check",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-16T16:10:44Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040073-6.4.63-mark.3.8-preview-debug.apk",
+          "sha256": "53d2b72f2b673da07aa4c4ce3be4e6b16baf1a235a5eb48600bf694b7ccac254",
+          "bytes": 98571574,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040073,
+          "version_name": "6.4.63-mark.3.8-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.21",
+      "kind": "Development / QA build",
+      "date": "2026-09-16",
+      "artifact_id": 10461629785,
+      "run_id": 35132218272,
+      "source_sha": "78ccc9932eb4932dc1820ebf0af699f5b1b38afc",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "0b8b8a4d84187853388e8b7c7ebe93948c2a2d807852d31e056493a539aa45a9",
+      "source_subject": "Preview 3.9 stage 1: fixed posters, compact menus, Home recency and navigation scrim",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 3.9 stage 1: fixed posters, compact menus, Home recency and navigation scrim.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-16T18:13:50Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040074-6.4.63-mark.3.9-preview-debug.apk",
+          "sha256": "c7ec355cac9f8d758e377506fb77148c33dc79ab82292bd316ed824ff18f0f33",
+          "bytes": 98574786,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040074,
+          "version_name": "6.4.63-mark.3.9-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.22",
+      "kind": "Development / QA build",
+      "date": "2026-09-16",
+      "artifact_id": 10463018432,
+      "run_id": 35134739664,
+      "source_sha": "9225eaea10b08837243ab4f582ce0e8170309d80",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "5e56499389ebe29f5bd4613a6a0fb4032208c9a777f764917b9f9a48806e96ae",
+      "source_subject": "Preview 3.9: compact Details, preserved Settings and source tiles; fix playback entry and refresh",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 3.9: compact Details, preserved Settings and source tiles; fix playback entry and refresh.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-16T18:36:01Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040074-6.4.63-mark.3.9-preview-debug.apk",
+          "sha256": "a4cacae4e6bce989f9e66b2f784fff1520b5d5d2edbff499a9ac8c861420709b",
+          "bytes": 98583135,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040074,
+          "version_name": "6.4.63-mark.3.9-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.23",
+      "kind": "Development / QA build",
+      "date": "2026-09-16",
+      "artifact_id": 10463710536,
+      "run_id": 35135961647,
+      "source_sha": "299ac580bd1a760c6ba1e676ee0c92a6e8f7549a",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "3ee6bbd5682c21fbc614e072a21b415ab20945b2146603687617b7e6bbdab856",
+      "source_subject": "Preview 3.9: reference playback HUD, compact native-action menus and first-frame hand-off",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 3.9: reference playback HUD, compact native-action menus and first-frame hand-off.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-16T18:47:10Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040074-6.4.63-mark.3.9-preview-debug.apk",
+          "sha256": "77d10a650efcf58c5ee2e14e0b4715112db029d628e5d4f5e93321f6e1f49d9f",
+          "bytes": 98591881,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040074,
+          "version_name": "6.4.63-mark.3.9-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.24",
+      "kind": "Development / QA build",
+      "date": "2026-09-16",
+      "artifact_id": 10463363297,
+      "run_id": 35137341977,
+      "source_sha": "4d879a786b7a5e05e73dcbd6c74fd84885e1e156",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "e12b37a80ea6ca26d7ad9782a0fb6f761d9d22b26e1a95c7b313e8fe2bdb1d4a",
+      "source_subject": "Preview 3.9: final playback hand-off, preserved preference values and disabled-state polish",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 3.9: final playback hand-off, preserved preference values and disabled-state polish.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-16T18:59:48Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040074-6.4.63-mark.3.9-preview-debug.apk",
+          "sha256": "6da7a4697692651ecaf923476ce1368d7db9635e1707d439b0111ed5f4b13c47",
+          "bytes": 98594250,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040074,
+          "version_name": "6.4.63-mark.3.9-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.25",
+      "kind": "Development / QA build",
+      "date": "2026-09-16",
+      "artifact_id": 10463674448,
+      "run_id": 35138100829,
+      "source_sha": "3c1e34a62c39b12c52b90e4ab7dc2618ab340bb1",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "feaf93a647f9c3aa146184ad7e4ccef6efc079f4df5692a7f9a0bb5fcbe3ef33",
+      "source_subject": "Preview 3.9: use audio and subtitle icons for track menus",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 3.9: use audio and subtitle icons for track menus.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-16T19:08:33Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040074-6.4.63-mark.3.9-preview-debug.apk",
+          "sha256": "663474c9473f2d60b7f2edc537bbeb2d075672fa1233f2ae2636723bc46bbb02",
+          "bytes": 98594372,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040074,
+          "version_name": "6.4.63-mark.3.9-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.26",
+      "kind": "Development / QA build",
+      "date": "2026-09-17",
+      "artifact_id": 10503434510,
+      "run_id": 35236171684,
+      "source_sha": "7bba1a49371c500df177c7f6cdd0fe8fbcf5dd38",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "10a9d491a83cd0d8dde0dea57d1fe124d79d6d712bd4bba6bb2714fd29d70773",
+      "source_subject": "Preview 4.0 stage 1: restore section routing, safe deletion and playback menu focus",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.0 stage 1: restore section routing, safe deletion and playback menu focus.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-17T14:56:03Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040074-6.4.63-mark.3.9-preview-debug.apk",
+          "sha256": "5d8604d2a2b24cbe627c189a73b894253507ace79bc2031c02be8812e540af5a",
+          "bytes": 98600241,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040074,
+          "version_name": "6.4.63-mark.3.9-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.27",
+      "kind": "Development / QA build",
+      "date": "2026-09-17",
+      "artifact_id": 10504662671,
+      "run_id": 35237757385,
+      "source_sha": "66063c7103c05395ee093c8c1b65da0238c4bf5c",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "f60fa9f67b9db8fd80f63a27ebd7a881863d7caa1e46a96a3eb53643d4d8719c",
+      "source_subject": "Preview 4.0 stage 2: shared storage list, episode metadata and Settings cards",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.0 stage 2: shared storage list, episode metadata and Settings cards.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-17T15:13:01Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040075-6.4.63-mark.4.0-preview-debug.apk",
+          "sha256": "6b8fa5fe40890391fb5f8a16504bc51550d533f0980f919580a13448a25d801f",
+          "bytes": 98620459,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040075,
+          "version_name": "6.4.63-mark.4.0-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.28",
+      "kind": "Development / QA build",
+      "date": "2026-09-17",
+      "artifact_id": 10509580973,
+      "run_id": 35248362010,
+      "source_sha": "345636900b577bfec90a22d117fe9b6d062b9f2b",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "ce960852099c1040c18bdb7334de8a55f41d736f2f1dac683cddd2d07d37228f",
+      "source_subject": "fix(preview): remove stale About identity and fit attribution artwork",
+      "notes": [
+        "Recorded implementation checkpoint: fix(preview): remove stale About identity and fit attribution artwork.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-17T16:57:09Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040075-6.4.63-mark.4.0-preview-universal-release.apk",
+          "sha256": "5b441c1d9c39c527ac130e46aba597ea86d0f25913206a27645488ea2515d4ad",
+          "bytes": 82282584,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040075,
+          "version_name": "6.4.63-mark.4.0-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.29",
+      "kind": "Development / QA build",
+      "date": "2026-09-19",
+      "artifact_id": 10575646403,
+      "run_id": 35414480703,
+      "source_sha": "de378b054e3ebf47cd16c8950de091b6852a7a93",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "ecbe01ba91130b9f17809c403326f837cf15d15fa2be1c83e7224f13d8c385be",
+      "source_subject": "Preview 4.1 stage 1: committed series journey, periodic resume and verified exports",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.1 stage 1: committed series journey, periodic resume and verified exports.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-19T02:10:23Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040076-6.4.63-mark.4.1-preview-debug.apk",
+          "sha256": "cd360ec3b0b574fee80acd116b6e71c99c5aca8c788d1230bdedd6e9d8498179",
+          "bytes": 98639828,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040076,
+          "version_name": "6.4.63-mark.4.1-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.30",
+      "kind": "Development / QA build",
+      "date": "2026-09-19",
+      "artifact_id": 10575443413,
+      "run_id": 35414911199,
+      "source_sha": "6de8499db06d887be0785b9a5d50742b985a1b5b",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "712de1888be140d2da5ef5d395d43461b475350b8c3bd48f2485d26ecee5ac4f",
+      "source_subject": "Preview 4.1 stage 2: configurable Home rows, Watch Next and consistent Details/Settings",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.1 stage 2: configurable Home rows, Watch Next and consistent Details/Settings.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-19T02:16:39Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040076-6.4.63-mark.4.1-preview-debug.apk",
+          "sha256": "4d51fc0b57d601e589db7f7ddcb96cc035c3c91525d9e8017d3b9f1027560118",
+          "bytes": 98655846,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040076,
+          "version_name": "6.4.63-mark.4.1-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.31",
+      "kind": "Development / QA build",
+      "date": "2026-09-19",
+      "artifact_id": 10575449353,
+      "run_id": 35415355650,
+      "source_sha": "45524006c67247ff1fb06de6e3c64d518596e9a5",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "cedba9269bbbb1ae8e6b5d9d8f9e01da62759f69b974964ae256d9326e042a48",
+      "source_subject": "Preview 4.1 stage 3: playback HUD hierarchy, Up Next and storage/backup remediation",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.1 stage 3: playback HUD hierarchy, Up Next and storage/backup remediation.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-19T02:28:28Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040076-6.4.63-mark.4.1-preview-debug.apk",
+          "sha256": "9b12568e69f8d5f38dd4af3aea831ec047638952f3a2f2b6a7804783dc03e78e",
+          "bytes": 98668457,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040076,
+          "version_name": "6.4.63-mark.4.1-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.32",
+      "kind": "Development / QA build",
+      "date": "2026-09-19",
+      "artifact_id": 10582771407,
+      "run_id": 35436554201,
+      "source_sha": "12f864a9bf56709afba069a234b22dd765f887d4",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "7ab18c9fd0e295d488b4f0e31e3039769f8fbdfaba845f5ff977b517576653dc",
+      "source_subject": "Preview 4.1: retain Details row focus and route remote input to Up Next",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.1: retain Details row focus and route remote input to Up Next.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-19T10:21:56Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040076-6.4.63-mark.4.1-preview-universal-release.apk",
+          "sha256": "2562f755bc45df913f87290dcab76ae0fd07642618b33c2a146f69312e376a15",
+          "bytes": 82305201,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040076,
+          "version_name": "6.4.63-mark.4.1-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.33",
+      "kind": "Development / QA build",
+      "date": "2026-09-19",
+      "artifact_id": 10587152757,
+      "run_id": 35451721845,
+      "source_sha": "75cfbf2fb7970912de5660a53c925c5b7ee7d67f",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "996c1df641524b2b6acc4dfa7a1c2bd0d50ca1194a3699d755431b16e2ad372d",
+      "source_subject": "Preview 4.1.1: ship current corrective notes in About",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-19T15:42:02Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040077-6.4.63-mark.4.1.1-preview-universal-release.apk",
+          "sha256": "6849af8484f04e6d4820a02a57ad01e20257ce560169fc8822dd8bb248dee07d",
+          "bytes": 82314749,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040077,
+          "version_name": "6.4.63-mark.4.1.1-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.34",
+      "kind": "Development / QA build",
+      "date": "2026-09-20",
+      "artifact_id": 10603485527,
+      "run_id": 35502487976,
+      "source_sha": "1e590e0249a63063514d8be9b30aeaff4a4b12e9",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "eb6acedc4049fa6ab34aa9c7ebfb9e88256308132acf97324959c64a6f5c6d6d",
+      "source_subject": "Preview 4.1.2: continue recovered implementation and complete corrective surfaces",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.1.2: continue recovered implementation and complete corrective surfaces.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-20T09:45:58Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040078-6.4.63-mark.4.1.2-preview-universal-release.apk",
+          "sha256": "e00098254862c492d38991fa18f428ea9b44c2a9ac69e72b085703890511c739",
+          "bytes": 82410736,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040078,
+          "version_name": "6.4.63-mark.4.1.2-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.35",
+      "kind": "Development / QA build",
+      "date": "2026-09-20",
+      "artifact_id": 10604435736,
+      "run_id": 35506060249,
+      "source_sha": "53cf382800ca0fbc3261456aaebdf4b99611241d",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "b5ea2ca0c467927ab5436590bfa07b51cfeacb22818155791862a6907377d72f",
+      "source_subject": "Fit Featured Resume label using measured content; retain smoke script executable mode",
+      "notes": [
+        "Recorded implementation checkpoint: Fit Featured Resume label using measured content; retain smoke script executable mode.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-20T11:01:56Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040078-6.4.63-mark.4.1.2-preview-universal-release.apk",
+          "sha256": "ac8755892ba52530acd2602084b56fb002b41544d4fa59460bc1af206bcb2a9c",
+          "bytes": 82411264,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040078,
+          "version_name": "6.4.63-mark.4.1.2-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.36",
+      "kind": "Development / QA build",
+      "date": "2026-09-20",
+      "artifact_id": 10610165995,
+      "run_id": 35524892265,
+      "source_sha": "a207d0d7edb64f4cc1e7b7324c2908401b5e3c2b",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "5560cb98ba30739a36fe9dc11a8276b6f0d11c083ba4b969da9b77c67467f9a3",
+      "source_subject": "Preview 4.1.3: poster-free Details, shared soft focus, source summary correction and opt-in diagnostics",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.1.3: poster-free Details, shared soft focus, source summary correction and opt-in diagnostics.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-20T17:24:15Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040079-6.4.63-mark.4.1.3-preview-universal-release.apk",
+          "sha256": "ff4938e0fc8ede5b563402119da66e1b3145c9fdbc01ffc97c4f5d0aad94489d",
+          "bytes": 82422382,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040079,
+          "version_name": "6.4.63-mark.4.1.3-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.37",
+      "kind": "Development / QA build",
+      "date": "2026-09-20",
+      "artifact_id": 10609644815,
+      "run_id": 35527330393,
+      "source_sha": "f6c864064a2d0927258994b478598320290b1596",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "3fc2a556709b57acb2087416f64b262fa8e3393ed567f73bb5baca3e47c66a5e",
+      "source_subject": "Retain exact release mapping for physical diagnostic reports",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-20T18:08:13Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040079-6.4.63-mark.4.1.3-preview-universal-release.apk",
+          "sha256": "777d1ad934eafcdd52cd03ac13ad082de0d77e3be7bf90b1a1597b979fb675bb",
+          "bytes": 82425781,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040079,
+          "version_name": "6.4.63-mark.4.1.3-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.38",
+      "kind": "Development / QA build",
+      "date": "2026-09-22",
+      "artifact_id": 10719575811,
+      "run_id": 35781936333,
+      "source_sha": "aa4337d7a3d9e51161e406f232a6531f25e70c36",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "2ad2fe219cffdf5d542960eb36f7ead0ad57e61ebcf668d7124df3a5c918acc6",
+      "source_subject": "Fix release orientation constants and retain saved protocol implementations",
+      "notes": [
+        "Recorded implementation checkpoint: Fix release orientation constants and retain saved protocol implementations.",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-22T20:57:31Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040080-6.4.63-mark.4.1.4-preview-universal-release.apk",
+          "sha256": "54edab975735a03d206dc60461a0b610beba1adbf79d9c1c9ff75c368238e4ac",
+          "bytes": 82445367,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040080,
+          "version_name": "6.4.63-mark.4.1.4-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.39",
+      "kind": "Development / QA build",
+      "date": "2026-09-23",
+      "artifact_id": 10757553236,
+      "run_id": 35875536264,
+      "source_sha": "df1ed0185742509917bb180c2c6251220c9dc4a0",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "6c91c4ea98911b8cecd972c629b82d206b6f32475b31206b4c46f533b0c96c94",
+      "source_subject": "Fix early SFTP trust initialisation and retain bounded startup failure diagnostics",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-23T14:49:58Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040081-6.4.63-mark.4.1.5-preview-universal-release.apk",
+          "sha256": "59bc8e2606728ce77932cb143c52ab9593c28651cb323d13dda02dd5953e96b7",
+          "bytes": 82449258,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040081,
+          "version_name": "6.4.63-mark.4.1.5-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.40",
+      "kind": "Development / QA build",
+      "date": "2026-09-24",
+      "artifact_id": 10786022263,
+      "run_id": 35943421872,
+      "source_sha": "6c19ebad8e8895454ffe68f6399ae39e2c27852b",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "7a7b4153e0d20b2eac4bd0beefd7712b086297bd8d35b10a07d00297dea99311",
+      "source_subject": "Disable RestrictedApi lint error and apply supporting module patches in build-apk workflow",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-24T01:42:45Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova-6040081-6.4.63-mark.3-universal-release.apk",
+          "sha256": "8ad8bd9033d032fea27f48b83be4a7922e9403df9e356dce989e614600635083",
+          "bytes": 82449120,
+          "application_id": "org.courville.nova",
+          "version_code": 6040081,
+          "version_name": "6.4.63-mark.3"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.41",
+      "kind": "Development / QA build",
+      "date": "2026-09-24",
+      "artifact_id": 10786216945,
+      "run_id": 35943705779,
+      "source_sha": "20c7a51e2feb9179caf7fd5b902e0f1ac584a70f",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "4a158e94fd3d2be0d88f7d6c194896b0f8b0a3b6d77eacf994bd204d708e7107",
+      "source_subject": "Add visual UI mockups, interactive TV prototype, and CI build fixes",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-24T01:46:30Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova-6040081-6.4.63-mark.3-universal-release.apk",
+          "sha256": "dfb3129684f8cc9605f96fc392f932f7ca615eab63afe7b9f953a8b8c4b5fca0",
+          "bytes": 82449075,
+          "application_id": "org.courville.nova",
+          "version_code": 6040081,
+          "version_name": "6.4.63-mark.3"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.42",
+      "kind": "Development / QA build",
+      "date": "2026-09-25",
+      "artifact_id": 10851567579,
+      "run_id": 36106734320,
+      "source_sha": "094d8e80938501222b4b16ed715c03937abde68f",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "6265c3c706505c49731329a54a866f47f4ba7f480690256f85648ea61482071e",
+      "source_subject": "Follow Local Storage category in Preview 4.1.6 emulator smoke check",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-09-25T07:32:49Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040082-6.4.63-mark.4.1.6-preview-universal-release.apk",
+          "sha256": "4a98c9e3a012919f93fb3544dec2fca8a79618ce8a6559a339de7a9b975aaad0",
+          "bytes": 82474220,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040082,
+          "version_name": "6.4.63-mark.4.1.6-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.43",
+      "kind": "Development / QA build",
+      "date": "2026-10-04",
+      "artifact_id": 11300170330,
+      "run_id": 37192141331,
+      "source_sha": "ff955d90d7a76d157776b07cfb116fd7c67ea924",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "8294765f4fc80e93aa006cc86d64e325efadb07c527e6b966d96fd52d15bf4c3",
+      "source_subject": "[interim-shield-qa] [interim-known-info-return] Deliver authorised frozen snapshot and retain failing playback evidence",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-04T09:38:21Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "6636e08f48406df22be046241f560f95ff8e9fd084632afebf31a7f47cd9e079",
+          "bytes": 82736779,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.44",
+      "kind": "Development / QA build",
+      "date": "2026-10-05",
+      "artifact_id": 11357982291,
+      "run_id": 37338324041,
+      "source_sha": "fbcbc20d5528d21ea0ef6d92704c7e9b6568a7b0",
+      "artifact_name": "nova-preview-preview-apk",
+      "archive_sha256": "e891dc2f47205c42f24fb94d82de07bf1c3c7cfb9db77bb2ded2a6a51cc6556e",
+      "source_subject": "[interim-shield-qa] Seed shadow initial focus and assert actual HUD focus after return",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-05T16:19:14Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "fb090af49e0209c38652689a00ba2d98be4464152a9f7b2341b6068135a7b922",
+          "bytes": 82737303,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.45",
+      "kind": "Development / QA build",
+      "date": "2026-10-05",
+      "artifact_id": 11367082061,
+      "run_id": 37359092413,
+      "source_sha": "7efb4195639205a6526281491af40c0dab1776b7",
+      "artifact_name": "nova-preview-full-apk",
+      "archive_sha256": "3fe100660e06d6021cf93442dee2f6f0aa89c404df261521b364ab39ce25c921",
+      "source_subject": "Preview 4.1.7 checkpoint 111: contain shared menu scrolling [full-validation]",
+      "notes": [
+        "Recorded implementation checkpoint: Preview 4.1.7 checkpoint 111: contain shared menu scrolling [full-validation].",
+        "Built for development / QA; installation and playback acceptance are not established by this artifact."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-05T19:13:48Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "4070ee3d259b3cf57bb10a26fbc789363cf812e8b81fe7f3101522634705681a",
+          "bytes": 82738089,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.46",
+      "kind": "Development / QA build",
+      "date": "2026-10-06",
+      "artifact_id": 11387187351,
+      "run_id": 37405161948,
+      "source_sha": "f162ce42b9f440d327f178eef2462f2654bcced7",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "968d2fc42167a7334738b5986e68a6c1dc34f8a7c2f84647ad60d450f8ae8aa3",
+      "source_subject": "Align main build composition with accepted Preview 4.1.7",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-06T02:49:10Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "86e49c6b372d57b6dea8e3be5f79092fda0d2ce2a087fdb0e69aa4a967c2d4e0",
+          "bytes": 82738040,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.47",
+      "kind": "Development / QA build",
+      "date": "2026-10-06",
+      "artifact_id": 11408046478,
+      "run_id": 37452701547,
+      "source_sha": "e83dd5b7e787e7295e4272eb495679cc2a41867e",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "7270a4ecde0c2d0faf0312ed5f93cdf4c03e2311debb63ace63393c402cfe7b6",
+      "source_subject": "Merge pull request #7 from heretoecode/project/main-build-alignment",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-06T11:00:53Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "754b9a0b6c51cc712644b5be3a7f31af8cb738d1177e52b066cc6893abd6ee45",
+          "bytes": 82738039,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.48",
+      "kind": "Development / QA build",
+      "date": "2026-10-06",
+      "artifact_id": 11410773105,
+      "run_id": 37458047989,
+      "source_sha": "e2814c4c91871ae6c9850943ceb514cac4baab54",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "bc28e9d0f09281a21c739f882e5805f274647ae1b26c7098eb2f1524d73bfd56",
+      "source_subject": "Complete design authority index",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-06T11:50:27Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "a6c5acf5f1e2c5878c6ef8e64e03f8a6cecc45b4ca6f05b452c551c39ccc5ae0",
+          "bytes": 82738083,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.49",
+      "kind": "Development / QA build",
+      "date": "2026-10-06",
+      "artifact_id": 11410403647,
+      "run_id": 37458486084,
+      "source_sha": "6f6ac866c664c35e52296242c55423aa9e46b825",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "8d976f35e5e12829e5a1c3269347a329badfb4dce6c234ce73da03e93cc7fb11",
+      "source_subject": "Merge pull request #8 from heretoecode/project/design-knowledge-preservation",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-06T11:52:07Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "22fb0498dc97d7033d868d1f6dc25d8a098f9b8c4f08b389c00857cae58ad6fe",
+          "bytes": 82738073,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.50",
+      "kind": "Development / QA build",
+      "date": "2026-10-06",
+      "artifact_id": 11412991307,
+      "run_id": 37459649995,
+      "source_sha": "67a9a3a9fe689ff81b5bbea8baa71d1ffdb15500",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "34a674d366d8dc1830817c7130b3b5300b5d5e76ff897119bfe5902b1f88cadb",
+      "source_subject": "Record superseded Network foundation",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-06T12:04:07Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "62b6a45b30afda1382306b2f6dcc1f4f4534b455dd1e84830e6f262459536a79",
+          "bytes": 82738077,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.51",
+      "kind": "Development / QA build",
+      "date": "2026-10-06",
+      "artifact_id": 11414035606,
+      "run_id": 37462169625,
+      "source_sha": "42fc5dd547d210b52988791506c9a413a6035f8f",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "cb5dc22fb2a675253b6bae47ee08330efe64b93becd3b1b624d9564bdb092c10",
+      "source_subject": "Preserve historical Home row behaviour and scope boundaries",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-06T12:26:00Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "ebb5920c2b2a6b519dd1bfed711233d81c0783513aba2defdbe116da33235575",
+          "bytes": 82738077,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.52",
+      "kind": "Development / QA build",
+      "date": "2026-10-06",
+      "artifact_id": 11413726112,
+      "run_id": 37462188393,
+      "source_sha": "dcb0e2be008a14b7da5a86e389aeae707ffb00fc",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "a756a19a2f0ca8533c56ce599b1fb994c18c8918239786bf14e930c75e18a222",
+      "source_subject": "Merge full Supernova history reconciliation",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-06T12:26:03Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "dd1be906c1fc25f16f5bd1d8d50d50394d68b485673699276db8c75192800c93",
+          "bytes": 82738029,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.53",
+      "kind": "Development / QA build",
+      "date": "2026-10-06",
+      "artifact_id": 11429587362,
+      "run_id": 37498264192,
+      "source_sha": "61a1ae5a21be90d185d448362c9729eb6c33cc42",
+      "artifact_name": "nova-preview-full-apk",
+      "archive_sha256": "5068143f66c6e402e023474843de4bd6a6cdb046c8346c540bc5bcea153e7c55",
+      "source_subject": "Render actual technical overlay in conformance fixture [full-validation]",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-06T17:04:48Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "d4364661dfbd760a3a66adf2c9e242c20fdccd2fb501e992894de326246aab8c",
+          "bytes": 82743610,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.54",
+      "kind": "Development / QA build",
+      "date": "2026-10-07",
+      "artifact_id": 11460257088,
+      "run_id": 37568094185,
+      "source_sha": "b021c51dcbbe2d5679fb9015c43830713f02aa0b",
+      "artifact_name": "nova-preview-full-apk",
+      "archive_sha256": "8bae21e4042f0f275cf436e20f18a2de8a22a38b2d239c79430617cdaace40e1",
+      "source_subject": "fix: resolve paused scrub targets through native accurate preview [full-validation]",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-07T04:04:49Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "dd468ccd9dde7287d74cc77aa786750d447b627d57a1afa179567cd438fbb89d",
+          "bytes": 82981285,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.55",
+      "kind": "Development / QA build",
+      "date": "2026-10-07",
+      "artifact_id": 11480830105,
+      "run_id": 37614061018,
+      "source_sha": "f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "artifact_name": "nova-preview-full-apk",
+      "archive_sha256": "2078a2c2ef5d6aee056b888d7a847569fdc00f148dd317564431cdb15ac7feb7",
+      "source_subject": "test: strengthen Home logo edge and Hide focus evidence [full-validation]",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-07T11:45:25Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "11641a15d2480662b56c1eeb9da8b18200ef14a0ce22a803fa99bffa0993a243",
+          "bytes": 84952208,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.56",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11552162775,
+      "run_id": 37781416221,
+      "source_sha": "b72ca70c7256407c9ab78acae738eaf0dcb8381c",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "f0af3289cc0a36cd0d80fc310897048240a1abd77847b72d1c29d9a64093c8e6",
+      "source_subject": "docs: create approved Backup & Restore mock-up folder",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:12:38Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "19cd128489536fb0b31c4d5287606b276865d13630e82e58b3c5bcdb1e72b965",
+          "bytes": 84709675,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.57",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11552262703,
+      "run_id": 37781475150,
+      "source_sha": "a342c9abef4b43a60965f5e6638617189a6dabc4",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "1aae36306f38da8d6c004725dc881bcfb4f09c24ca4f0692c7eedf6a16bf9509",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:12:57Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "10a32e2605f797702023d140b0c13ece718fca16a5dfcda293731e1c33b9fe18",
+          "bytes": 84709727,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.58",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11551994770,
+      "run_id": 37781555319,
+      "source_sha": "1d5a86a42d02b6d95d9e6509fa9b6c5f67497d27",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "24f4127a4b818e61f21ecf43a2b332a762471f736be42d1e7a1b96a1e289f971",
+      "source_subject": "docs: rename approved Backup & Restore export mock-up",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:13:45Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "706c447a759656f94d3da10ee83656e54fce06401e7976eae16e15a173bc31aa",
+          "bytes": 84709707,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.59",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11553490074,
+      "run_id": 37782212347,
+      "source_sha": "c9a818f972bd5977804d1aa37762a4539d454ae9",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "5c76604a32a8207bfe5470af7cb67582d1819d82a9293c79e8a7550dc842b493",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:16:01Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "b13f510e5302a3114b42a6cf4e4259efa70aaf206cddd846d320ab7c1606344f",
+          "bytes": 82738056,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.60",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11553073898,
+      "run_id": 37783187163,
+      "source_sha": "ab9ceb84d851993fbf0e1d2a5cd8089b31e7df92",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "5e52f1d0734fd22e787efd47dfe5afaa8958b5225d77af6ddec8b1cd11cd51d5",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:24:56Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "fcf48eee352a038a0ca93601569e100d2ebd449b3734068ecf530b69acde412c",
+          "bytes": 84709743,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.61",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11553168490,
+      "run_id": 37783370723,
+      "source_sha": "ccabf13d5e83599e283fc60bf0473b203edab638",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "03af8824a46b0c17bdbc4cafac46027f4c5e60b9b0d24069b260c8371530ba98",
+      "source_subject": "docs: name approved backup restore mock-ups",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:28:26Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "7a9d6a39d8924accd9eca3b0fc6078faf4168b91dfd0aacb36a7a69acab37987",
+          "bytes": 84709691,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.62",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11554080740,
+      "run_id": 37783535430,
+      "source_sha": "1660b53f919bfcfb781104996a4397ced6122b4d",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "0014adfeec096ccc255774cc349ba335ecef6009ba13e2e3fd4fc15f9286b8ce",
+      "source_subject": "docs: reconcile overnight Supernova decisions and approved backup designs",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:28:52Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "651e4a39235c9fd934928eed67f28bba82e21b5a2f85393524adf7b511ebbe32",
+          "bytes": 84709691,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.63",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11554343652,
+      "run_id": 37786425091,
+      "source_sha": "0d0c5a11b123ab71e5c1b29246375b4220cf1138",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "56841b1f91998994efe9eb8d71f0c6a16011c5b53c07ac9e0a99eadf7889466a",
+      "source_subject": "docs: persist October conversation recovery audit and verification limits",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:48:08Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "59a018297a9b1185d7f58b500b4bce067c3eb43b83853d21d4247baa201f27d8",
+          "bytes": 84709715,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.64",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11555046644,
+      "run_id": 37786304456,
+      "source_sha": "b5814470209aa86269926111973de830b97fef67",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "603de6f1ac9f4acd70da67fc30856fc45e33b023f3276d08ca4e9c8f0c84ce15",
+      "source_subject": "docs: recover detailed Oct 7-8 product decisions and supersessions on main",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:49:32Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "a3ad7c7c710e7f281f90aec98745ce95f9114c0e07cb085ca9ec4c6d9397dddd",
+          "bytes": 84709681,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.65",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11554014904,
+      "run_id": 37786356224,
+      "source_sha": "5bdc3654a57ebc2eed835f2a46847da7eb8597bb",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "88b043747cbbd4e71b0b62f7969dfc686acdaf5c06791ae362413a4fb1a2077f",
+      "source_subject": "docs: reconcile recovered October design and backup decisions",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases.",
+        "This independently built workflow APK is byte-identical to another retained build at the same source revision."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:50:27Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "299c46eb843586955dccca5e78d6fe350e43c68eae7251f6b790b4eba9b833ab",
+          "bytes": 84709694,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.66",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11555295258,
+      "run_id": 37786427122,
+      "source_sha": "5bdc3654a57ebc2eed835f2a46847da7eb8597bb",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "fdbddc7969fd18cec83d93841f176d0ebad8a01f843b4e70915beb352a9ef9e1",
+      "source_subject": "docs: reconcile recovered October design and backup decisions",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases.",
+        "This independently built workflow APK is byte-identical to another retained build at the same source revision."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:51:06Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "299c46eb843586955dccca5e78d6fe350e43c68eae7251f6b790b4eba9b833ab",
+          "bytes": 84709694,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.67",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11555475798,
+      "run_id": 37786346428,
+      "source_sha": "0f4e1ebe8249c5299dc5b376676a133353354d26",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "1e1072784dd1e3a03982351968a5f24627cb3c59a04e2f19c6bbaba6ae72bd69",
+      "source_subject": "docs: reconcile recovered October design and backup decisions",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T13:54:49Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "344d8b0288b91b5f4fc567eccee246150de3cfde2deac9b1098564b8d2bb98e4",
+          "bytes": 82738086,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.68",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11556567648,
+      "run_id": 37786364076,
+      "source_sha": "75984bfe2c9fb6061b5757f3b916ca3c5d958b36",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "9b5f77b2c5d2011fe4d787331c4646ed676edf71d202e18d2809a884dd72e631",
+      "source_subject": "docs: reconcile recovered October design and backup decisions",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:21:27Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "a829462df6f1df74de4fba26cfd1ace96d8c7a3a2a8a78e062d3dc238908cf0c",
+          "bytes": 84709699,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.69",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11557435565,
+      "run_id": 37791560220,
+      "source_sha": "417671745f19dda18e538f4b7f87fb1bf5a5d53c",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "498439dc12161e80c1db18616084d0510b9293cc369b64d012f8ed5b638a1d06",
+      "source_subject": "docs: record current chat decisions",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:26:18Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "e296ea066e3cbc5f45317448454348e02403fc12f7cf83ea1f536b144e037116",
+          "bytes": 82738086,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.70",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11557910040,
+      "run_id": 37791595467,
+      "source_sha": "5fc5b93f70d6dc99557cc618cbd995caecaa5750",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "1662ceff636f86258c2c47241b1d9cb53d6efc40fac3949f86dde4305ee9482f",
+      "source_subject": "docs: add Foundation, backup, diagnostics and QA clarifications",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:27:39Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "d5d8da721a743620f555a6fa979cb6e84443ba384556fb4d1f007af74bf7d78e",
+          "bytes": 84709707,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.71",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11556374936,
+      "run_id": 37791613588,
+      "source_sha": "e94d26673bc7ccda5966ff7b800f7c902b31a12a",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "8a52e2db335cbb65e85085fe19308ee94107357b6546cb5f8cc318c441b13872",
+      "source_subject": "docs: supersede Reset Progress with Restart playback actions",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:29:21Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "8fc7baa81b5361c64087ea9100ba14fc6a9da5d11ab8c9e1f13431793e7cfc09",
+          "bytes": 84709669,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.72",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11558010028,
+      "run_id": 37791868838,
+      "source_sha": "32c7f3f66264bd56cccdf97f1ea6a4ac9970c6fc",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "9122f226c19c44856a76b7f766afb5737e4b92b7c4382e8fa891e3bb33de1358",
+      "source_subject": "docs: approve shared TV banner symbol and app icon identity",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:30:33Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "a7732e0eeb3920e4582d5c6adbafb15709adac6931e108211bbc13c625870077",
+          "bytes": 84709693,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.73",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11557956196,
+      "run_id": 37792474329,
+      "source_sha": "e831f8599082d4d97b8627b78913833ff50e8482",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "2bbf42cf5d063e2fc0df8f197830adc6d49a8477f54aa4ae2f177e9dbeaddcdd",
+      "source_subject": "docs: capture Radiant Ring shared branding and loading indicator direction",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:34:53Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "ca8186c5ac57b419643e74cab5145b336f3f27c3737051dcdc246a7be7b89f6d",
+          "bytes": 84709666,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.74",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11557702194,
+      "run_id": 37792617630,
+      "source_sha": "de02fe16d0b8a2daab767abe00060a48d358906f",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "e39480dc56453fb8637dbfb8364565211557b96092d67c630278ea989544f16e",
+      "source_subject": "docs: approve trailing-glow Radiant Ring loading animation",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:37:27Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "40dd6862d4ca84879609ac4be5e2472935419e8844708d37c05e8a5183a50caa",
+          "bytes": 84709659,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.75",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11557903425,
+      "run_id": 37794136094,
+      "source_sha": "d7841c2d3f95b405aa24a294b4c51eb0a8ef3b57",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "d57bc856c93eb1e541afb5e8bc7dffb58335c48d7708a66e7cf8f29f53e5fbb9",
+      "source_subject": "docs: record uniform Space Black background and header contrast constraints",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:44:46Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "7ec28aa5f648829518926e11e0e15c1893db2a2967f9363bfc01839cd1ab7f20",
+          "bytes": 82738033,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.76",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11557604789,
+      "run_id": 37794809570,
+      "source_sha": "19367ea0a4707572e0db65d58460dd1a416556c8",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "22f3277883e7275c9a3101a8fb3bab95275228feff45fc997a7ad9b7ca6e541f",
+      "source_subject": "docs: approve shared Space Black background and existing header typography for banner",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T14:51:53Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "001f2a3f092cdaa0cb88dd683eedc26fc0513d1aa5a603c0b1b58f82120ebce0",
+          "bytes": 84709698,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.77",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11560997405,
+      "run_id": 37801134497,
+      "source_sha": "a8103da8e10318316869b211a589b281ae9bfa0b",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "969e349aa7d36051111bab4ad908fa71f34f0cc8b4de87c94a85b04edae1a152",
+      "source_subject": "docs: record approved banner icon splash compositions and typography",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T15:37:54Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "73255ff53c36ecd7df84deca283e7c00fec2d054c28ba947d8a21135c20f5c1c",
+          "bytes": 84709707,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.78",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11561108415,
+      "run_id": 37801439307,
+      "source_sha": "4c50671cde5d54b600a6c1e4a24630cb7d153a72",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "f1aa5f0d83a6c98352812b0d79cc5d3fd90a7e6f98456abdfb82d804529123b1",
+      "source_subject": "docs: approve stationary launch splash ring without artificial delay",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T15:40:59Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "0276149010082cec03532b53fe8d3c0fdc75e41b027b4508fc70dc66d1cc04f2",
+          "bytes": 84709686,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.79",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11561948666,
+      "run_id": 37804366193,
+      "source_sha": "9b83159e7c77c647b711eec4bc383a9c724ccde7",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "c37a725f1eff742892731f5b6494d11c946351dee4a5406675d9946633cedb32",
+      "source_subject": "docs: cross-reference final 8 October branding and 4K asset handover",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:00:51Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "b70307daf070155ee90ed9d451ffad70c63d3c91b0fad12068dc08dbad94e182",
+          "bytes": 84709698,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.80",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11562796987,
+      "run_id": 37804662109,
+      "source_sha": "f2b7383fa45d85645d28e23dd9bc2fce3320458c",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "088fe32a183115c632c9dd7eac12ef77c566e010ee443a37ad147709ba951298",
+      "source_subject": "assets: organise approved 4K Space Black Blend background",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:03:14Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "caf3fdff78c160c8677cc75e88d8dec4e12136ce757d6b52253f1b7cce8b3d5a",
+          "bytes": 86716547,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.81",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11563520756,
+      "run_id": 37804684416,
+      "source_sha": "10cbba882f21fdbd58e2fc57be6e8a9d23157703",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "056d1848cd3c05453a10a034fbfbfb469ba363f6e2efa22ce0b802e168c9e6cf",
+      "source_subject": "docs: link committed canonical 4K Space Black branding asset",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:04:04Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "5a75eca67c6750825407721e3f1f1b14e55bebee6f433c422866f7979b6f7fff",
+          "bytes": 86716577,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.82",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11563411363,
+      "run_id": 37804579819,
+      "source_sha": "00dbe4bc445114b007bb73f6b9f0a4d594b8f9bb",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "170404b25ad7ae7171d5bd440c239c9a78c81e6ddb2e520cf4b8665ef48e091f",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:04:13Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "0e32faf9a08e4d1e221ed93ebb901766f4fd31d42b04aa61ee2b86dab917d8fb",
+          "bytes": 86716440,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.83",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11564090212,
+      "run_id": 37806775012,
+      "source_sha": "88f6a84ed1d77c5fe0c8aba90e77ba3401f4ca8a",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "06911e69a068d3b8eee13e617f036f73ca760ce97f7fc586e185d9e86c270d6e",
+      "source_subject": "assets: rename approved double-ring app icon mockup",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:18:52Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "d4564f50af8d94e11e2863209d13c475d2ff4f776b9034fd030755f587b13a4a",
+          "bytes": 88209301,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.84",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11562749349,
+      "run_id": 37806680263,
+      "source_sha": "76ca3fb656a932fbd9004d6c35978db6363aab4d",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "8940067549a92fe99037b95d56ac365f196f82d9ccf510f2ff33d28365a731ea",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:19:14Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "fa0777377aa5375c68fbff20bd18b61c43c32a1b821ad2e736ce1afc7bf993d6",
+          "bytes": 88209267,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.85",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11562959938,
+      "run_id": 37806795932,
+      "source_sha": "13934fa9097bacf32fc1d10951c21fddef06ed82",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "23e0955e80b7714a41e92fec7cb007247c0d33f8f52357e03e98efaf5d2a41cd",
+      "source_subject": "docs: link approved double-ring app icon mockup and highlight positions",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:19:55Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "0b52bb6970e8de43bb0e7dddea04a0c90943422c78782defd6fd1875f08c0812",
+          "bytes": 88209294,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.86",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11564100702,
+      "run_id": 37807282364,
+      "source_sha": "eda62bc43a66e9dedfafa1bdb9a711d4c16403c6",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "959b16bddc820ea6d9132c279f62e211c53668c422826187f723e0ae67789b66",
+      "source_subject": "assets: name double-ring app icon final candidate",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:22:17Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "16107c54629287b40d5400d632319d07a09e2c8bfda71953da4841f93b97f31f",
+          "bytes": 89642499,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.87",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11563414812,
+      "run_id": 37807214292,
+      "source_sha": "d2f55cf6e15efee6f351247391d3ea7f34f6c773",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "3165a712cf539a401e108afb8331bb28b490dd26546cdb0cd735f580a821b66f",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:22:56Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "7f911379b500b37702eb17e9b8059a6b19a3fd1fda6a2b3f14e65dd135da4f51",
+          "bytes": 89642517,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.88",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11564026439,
+      "run_id": 37807308156,
+      "source_sha": "2ab4cf566487300b4e3fc9f294ed1ed688425357",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "4c2b7f74970a9b84ac4deb2f9534d5aeffb66db038c87c4dc4f85b6ebbc00dce",
+      "source_subject": "docs: record standalone app icon candidate and next TV banner design",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:24:22Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "d0dd06a0928b79ab675828a5f0d2a737291a06a7a85d02fe1f0a365f396391e0",
+          "bytes": 89642552,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.89",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11564805214,
+      "run_id": 37807893715,
+      "source_sha": "b8e73ac276242112c8dbab499929a470acc11ada",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "427d436818760c2edf5984902ca492d778e167cdf6c7b212e896dcacb03d377e",
+      "source_subject": "docs: approve wider spacing in centred TV banner logo lockup",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:26:38Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "a2003ca471dc412f27ac69a8c2855a3421e5cd97f1e52537f7768628362623ac",
+          "bytes": 89642512,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.90",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11564551311,
+      "run_id": 37808092601,
+      "source_sha": "bdcb66b2ffc909ff5147f725294b23a3b16effd4",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "a996cdff37bf270638303c0c8a75cfc74ca9c7c962c37827c57ac1ee12c7af22",
+      "source_subject": "docs: approve TV banner ring-to-wordmark proportions and spacing",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:30:20Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "1ec22a7a7805eed8e4e5f82ae31c5a5fc4a581b78b54bccfd10784c3a08f68e1",
+          "bytes": 89642519,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.91",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11563928709,
+      "run_id": 37808888301,
+      "source_sha": "7b803b1908b41f7b83ca0469c87313911559d3de",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "e9c5f43fb7e3ab174b825ae5ce60896ad6116127ac178bb50ed341d40bed9b3b",
+      "source_subject": "docs: approve TV banner and splash sizing, placement and spacing",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:34:54Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "cedd04748c4e860095491a7eb4cee33d3678bbb467841872497612432060b87c",
+          "bytes": 89642550,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.92",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11565661182,
+      "run_id": 37810699129,
+      "source_sha": "7dbc0f2374ad7da9f3a22797f47633d27e0d0759",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "dfbaa73300148a74486d7ffd955ff01bc547c89bff35bdfbd586411036145a47",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:49:56Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "d56714fc5c808c88537f6b8b8936811f05950a2676c0b573901f5e42056966b6",
+          "bytes": 90710266,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.93",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11565880434,
+      "run_id": 37810835137,
+      "source_sha": "d7de1a176aeb466807c5ed8b6b17c42a41ffdab2",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "7d343d79575a4c93170f773762e77d27859b90ac5fabc72e1393a595bfd4ad72",
+      "source_subject": "docs: link uploaded standalone double-ring candidate and remaining cleanup",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:50:17Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "323a153a6906c96f0b7399bedf29cab27717b129f69f5dfed1311ce51faededb",
+          "bytes": 90710199,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.94",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11565820438,
+      "run_id": 37810818491,
+      "source_sha": "699c1f50e7f3b2bba2c6a4c4cf2470df7ed35228",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "07f1f8fc154a3f1e7bfaa4552fddcf15fdfc1e7a27c74db94e2e9c63a44d450c",
+      "source_subject": "assets: rename standalone double-ring artwork candidate",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:50:29Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "350d7c3bcab6032f501e267ab453c0a82037a341f143dcfc6269e4b6dd33cab6",
+          "bytes": 90710255,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.95",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11565647279,
+      "run_id": 37811883733,
+      "source_sha": "a6ed1fca42038f0d4f4bd007d5f885ba58473368",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "a4820561fe2d0ba16dd57bbc99778fd6692fc5321e5af69ecde8db214fcfde40",
+      "source_subject": "docs: record approved cleaned ring artwork and transparency validation",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:57:28Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "1dbcd28cf71f5ab942fbe7b7a0f891e1004664595921441ce490dd818fd8b150",
+          "bytes": 92942585,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.96",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11566265709,
+      "run_id": 37811862445,
+      "source_sha": "1502a584b293b1842a78bbbfdca41477f7085512",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "19166ca9abf35a23f741dcb119437c204990d8ebbafe2e89e7b629da2d94fb17",
+      "source_subject": "assets: name approved cleaned double-ring artwork",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T16:57:53Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "db03c46d09a68cb2ed4c16f690d8c283231ab6cab7388a5ddc283a2d15fe6f01",
+          "bytes": 92942555,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.97",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11566801812,
+      "run_id": 37811760112,
+      "source_sha": "916daa95898afcb6b3ccc4469da34526323d6085",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "2015ff203012a93c51163d2ec2ec984c0f0524033e982190dfc4050537bc869b",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:11:59Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "9762da7c4463ed7839f192bc02d9959e4d292ac4a805022d34a5e80cd3a7a9ba",
+          "bytes": 92942564,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.98",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11566697314,
+      "run_id": 37813934694,
+      "source_sha": "5d50769c94776a99ce031e3353be9b78d8356724",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "fab7ed34d20cc029be71b4049acc6d87b7539e406175d9f30e1292006f09351d",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:13:48Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "6b689a701643f2872b38aaf9327f32e841757345bb9e9232b5b855880f64c111",
+          "bytes": 94525231,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.99",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11565889753,
+      "run_id": 37814049525,
+      "source_sha": "82fd16bc1f3239356360784953b94d21118a20c8",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "25845f3e6868b2c6f5f5de534153c3ec9c7c7ab1a98dc0a6041ffb8963d1cd2e",
+      "source_subject": "assets: rename approved double-ring glow reference",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:15:02Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "e7ad8ae76b003322ce59b57b5c690f227f9c41dfb33244169089c33254d9aa4d",
+          "bytes": 94525229,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.100",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11567305670,
+      "run_id": 37814066762,
+      "source_sha": "dcd93b96853c648f2c3b8fd0fa9a2634e498ac75",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "5ae4a62b7257f82f92137e9b016a4d6fee5dd5af58790174973f6d6d76c0a469",
+      "source_subject": "docs: capture approved stronger ring glow and pending cleanup",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:16:23Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "91ec0b5a2d39bda953fa2d58a53a146802afdf638ecc4363f9e559dd7f85d9e3",
+          "bytes": 94525182,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.101",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11568055085,
+      "run_id": 37815953126,
+      "source_sha": "96317ab7e2f1cf41b955dda3db197a1e8982ad9d",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "439324e655a48e290bb00eda995df576af99744998330f45cde4d5f508fbcd7d",
+      "source_subject": "Add files via upload",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:28:06Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "4465ef122835e9eb44e55ff1d64fa19bdfebf4271819ffb0c289dd8054bf908c",
+          "bytes": 96042423,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.102",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11566454782,
+      "run_id": 37816031214,
+      "source_sha": "4a25c8aa79d53f485c93b53f01bc68b523e8a6ea",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "061f55ef5152a5665c24d75bb61bdebcf41c85e077ea5410fe45ad006e85e7b9",
+      "source_subject": "assets: name final ring reference and archive superseded design iterations",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:28:44Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "29d53a2baf871ef1bdd6533f4e1fe3c1f6485651c6c482cf873ab6f878a30079",
+          "bytes": 96042473,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.103",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11567019308,
+      "run_id": 37816048132,
+      "source_sha": "3efe2edc06a4ddd4c7079b1b324ab8ec96dbf262",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "a6b792c535c587c3aba41298cdb9b345c5ca8dc5d0fb50c50787142bd4aef7d8",
+      "source_subject": "docs: link final ring visual reference and branding archive",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:30:28Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "f835397093f82b5d23224f5b3b7553bc8b4d16e64045c866383b75bc9879095b",
+          "bytes": 96042494,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.104",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11568485405,
+      "run_id": 37816842512,
+      "source_sha": "bca3efbb78062f4f95790d4c2efb4f1ef9aaf94e",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "226bdc2b0e12dc7c3867da34c44901fa2385af9d4cc583d6596ffe065d39d55c",
+      "source_subject": "docs: approve steady counter-rotating Radiant Ring loading animation",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:35:03Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "bc74134b6fc62073deacc83ac6e2ec2a997d5dfd1e79e79cc39dd4e18b1ce093",
+          "bytes": 96042446,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.105",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11567274275,
+      "run_id": 37817143983,
+      "source_sha": "450325c01845acc40d54fe6f20547e75903e00e7",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "44f8a67ba936eafe89d52c1303f79799b331c134ccade938df032590de4c4fc4",
+      "source_subject": "docs: keep Supernova updates external to About screen",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T17:39:16Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "18d86953336fbf15644e5cccf37bb93fddde3059c571019f0fb2528500e943ff",
+          "bytes": 96042498,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.106",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11578036652,
+      "run_id": 37840631092,
+      "source_sha": "5d3da76919fdcfcd31d293eab2a071d6a7ede46f",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "4c2b51a330c927834f14f6bd0a9e17c9ccb95e93db9ec1ae546904b8ccb9ca16",
+      "source_subject": "docs: capture About attribution and licence navigation requirements",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T20:43:22Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "72e63d14ab3c2a51325869de03592f35c34ca685da26fbaf176cce326f7a6db7",
+          "bytes": 96042497,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.107",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11577379188,
+      "run_id": 37840831919,
+      "source_sha": "917f736691047b813bb366cb7f9fecaf902a8042",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "41225ddc4d271aa7695a6001a32b6d8b8997da5fd06eee44df11c6dec4b033c0",
+      "source_subject": "docs: inventory attribution dependencies and licensing audit gaps",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T20:47:37Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "c045d1bd9f0794a4ba38409196a7b3b4f164c9c6d5a2a3157d7f8a457d056c11",
+          "bytes": 96042494,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.108",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11578187094,
+      "run_id": 37841155995,
+      "source_sha": "37dfa62335da446e13c21fd42807786c258d835b",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "3aeaf52695061bd121e04e9e1205a8194b5b2fa213a290a1848c8d7016d4bcb0",
+      "source_subject": "docs: verify pinned NOVA 6.4.64 source and defer legacy licence links",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T20:49:03Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "f7544daa843ba786210e8e0bd9797d3584a26e389710320c452c60a5b9bd517a",
+          "bytes": 96042478,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.109",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11577897722,
+      "run_id": 37841359889,
+      "source_sha": "9492a16f4602791ccd32ff13ec1f6bd5b758b580",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "b939f74bdcac9003c0dc0a0d6662b28269ed2edfbab9837e0430457587f033c5",
+      "source_subject": "docs: simplify upstream About line and reconcile provider credit gaps",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T20:50:02Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "82147db420adcd8c58418a8d2012a36e5cd3b3e678e570e2301f34cba0615b2c",
+          "bytes": 96042475,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.110",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11578536970,
+      "run_id": 37841571102,
+      "source_sha": "e1c2f3401e050d98f4b2760dab161c62b581f90f",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "fef3fbf0860aa5faa68684f97a29beac69a518bf4a613f682a871316f7f968c2",
+      "source_subject": "docs: close attribution research and identify mandatory release verification",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T20:51:57Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "8b105ffa98917564c08b416ce7298f200356312c1b4d605cb165ff7f2877e576",
+          "bytes": 96042447,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.111",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11578167512,
+      "run_id": 37841792303,
+      "source_sha": "26bf8b41cca3e5860b46e0e019f83fb192f41e0b",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "a221df939ba802aa9755e2e5e1c84365bb0730af035f4da06ce535a8eeeed6d0",
+      "source_subject": "docs: verify modern OpenSubtitles REST API already in Supernova",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T20:52:30Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "4d1af0de00656d09a94773b8c1e74cb76f38082a9e7f8db894b5ffbd76c6432e",
+          "bytes": 96042486,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.112",
+      "kind": "Development / QA build",
+      "date": "2026-10-08",
+      "artifact_id": 11578033099,
+      "run_id": 37842068586,
+      "source_sha": "dfb83509146e6a3601e1f55048127d467600d356",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "dec654b6835588c00f42122e69ff52eef1c560fa1b739cb388c0f66ee2aeecc6",
+      "source_subject": "docs: add Foundation Release credits ledger and binary compliance gates",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-08T20:54:17Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "d0cbd8dce7cde1ecd54f3ff7cd6b51810ef1d1745183763ab6857d39218246d0",
+          "bytes": 96042468,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.113",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11588450091,
+      "run_id": 37864724494,
+      "source_sha": "362039510d58d75ba55d62eba7e99de468c19f49",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "a422de6a82f5e581458c7ecfdd84d1d9f62280e6a14e6c3bb5c75f2bec29d2e6",
+      "source_subject": "docs: record Shield hero gradient and flicker evidence and toolbar focus intent",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T00:32:47Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "9ab32a755598a5e28300bb131fea28a47327292efd763fe9bfb81c9b66ded326",
+          "bytes": 96042480,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.114",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11588240947,
+      "run_id": 37864722540,
+      "source_sha": "9a848afd269e21a54332fe2de7b1b5e022db54b5",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "3035bee4145a1169a416dbd354c217e8e959b35584dcac5402088071afd4e9de",
+      "source_subject": "docs: record Shield hero gradient and flicker evidence and toolbar focus intent",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T00:33:48Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "102df9a1254727de49f1ce3a5682432c0e391878968c8a9eb51a0444f7acc420",
+          "bytes": 96042488,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.115",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11588315876,
+      "run_id": 37864712465,
+      "source_sha": "23117f1297eeb78e5982a56399d163fc07feaf65",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "4ff74d191d6dfe1ddcab74922840444b1207a75ba8c38022eabe4993e0650621",
+      "source_subject": "docs: record Shield hero gradient and flicker evidence and toolbar focus intent",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T00:34:28Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "8966f4414a16ca67158e37a8a96798856305c791d36f14c462029427f10a90d2",
+          "bytes": 96042490,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.116",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590296160,
+      "run_id": 37869971009,
+      "source_sha": "21d3094237bc6c9c36ede8d9e65aebf080f52155",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "f68278f7a0f82bd6677c0b7f462daf14210aaf48c0b7d3cac8b8c3fcd896f2e3",
+      "source_subject": "docs: finalise Credits and Acknowledgements and close About design",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:35:01Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "91b90f0e6525dc9e8834a3efc24860d1301c0cf6f47adffbde411a2cfd741aaf",
+          "bytes": 96042489,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.117",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590191399,
+      "run_id": 37869873663,
+      "source_sha": "f61c9edfe33c2bfad097742b47db4a8432461d00",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "e9678da8bae7f57eece0d9804f0c32c8aa2e9f635c034203e4a029fe7cd91b03",
+      "source_subject": "docs: approve About layouts and define Release Notes and Technical Information",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:35:53Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "b40e3a42aad52aaa67ee8f62fc817d1eeb52132a0da90cdcd241c19633624f5b",
+          "bytes": 96042460,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.118",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590316748,
+      "run_id": 37870252609,
+      "source_sha": "41f389866d9b6161b6e4fc6bdd9eb5f085b80061",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "d1ed52b1ecc72b04b63839ab3858ce5ca0a104f0f5fed18c28cd0c7429b6f537",
+      "source_subject": "docs: close backup compatibility and clarify diagnostics and planning scope",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:39:36Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "2047d1510c2d95ee62d57a11e82f2de1d39ca1167b82556a741381a9dd1b06ed",
+          "bytes": 96042485,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.119",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590795875,
+      "run_id": 37870276044,
+      "source_sha": "7048c5939d69ef3dc05af72f5f47a3a766e2d8ea",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "0a97ff367b09f90655d15f678de49b1fcbd62b3341104f6c6e7af01d0d723706",
+      "source_subject": "docs: audit planning consistency and mark current design decisions",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:40:43Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "3cffc6188fcaa6584db9d880f3edacd7cbbce9df31fcada162b56acf9d1fa92d",
+          "bytes": 96042497,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.120",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590096777,
+      "run_id": 37870286544,
+      "source_sha": "cd105a4672a86c6fa05cb6b5b8e9fae474cf8db4",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "d8ba16a22d3fcea6e3601e484cb512d457bc7b65340da64bab812cd762d1b820",
+      "source_subject": "docs: clarify superseded parked status for About and custom page",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:40:57Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "9f2531b77271f64320196f8ab2df952e3d960194c9688c18532106b78a930fc2",
+          "bytes": 96042493,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.121",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590576556,
+      "run_id": 37870249927,
+      "source_sha": "5486a4aff3cf13e555298c898dea92a271041bf1",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "d4c39ce5cbcc741cd95174f2d1cc3a119d370d90307bddfe98728a9cf4730aa9",
+      "source_subject": "docs: close backup compatibility and clarify diagnostics and planning scope",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:41:24Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "eb77d722098cd0d8090ece7162408e56fe90f12aeb86e91bdd76b0ac745b02bc",
+          "bytes": 96042497,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.122",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590820486,
+      "run_id": 37870557606,
+      "source_sha": "47f15c58b44e626dc25769c2e1fc22fc498972d3",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "280289506e5b4de9f0de4834edd7835553003274a41f11ab9c3e4ad2429da385",
+      "source_subject": "docs: reconcile superseded planning wording in place",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:43:07Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "ddc9895a94808b7d61869516cc790a505617be2737570cbf20179d2fd81e0c54",
+          "bytes": 96042486,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.123",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590935780,
+      "run_id": 37870549996,
+      "source_sha": "aa8271348d854b2c8d6e6ced30d4048e3e47072e",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "ddcb956c110015a857ab1be16bf68e7a396a33f006e1dcafe6750ffdda4e2524",
+      "source_subject": "docs: reconcile superseded planning wording in place",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:43:40Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "6437462c10a7fc6948f47d9e5f63c4a9a3deb2921fd6672e2071f9d9fb85d458",
+          "bytes": 96042516,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.124",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590177883,
+      "run_id": 37870553103,
+      "source_sha": "0f90fceb0dfefbbd8846faee4d5122eb61afb904",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "d3d969c01cbc2318ff6c5d4dbc948f946c8896cd7f15fa30bdee77fb2e532e1c",
+      "source_subject": "docs: reconcile superseded planning wording in place",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:45:08Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "2894a9855245a60d2be5ffc96240dd4de53ce1aaf84f9cc96c9dd89b67e7471f",
+          "bytes": 96042472,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.125",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11591010744,
+      "run_id": 37870582757,
+      "source_sha": "4ef2b35a09a2c987d7448c05901e2bb060e5fec9",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "178c002fa65058943a9f36236a1bed082158124ec5f788f18499fe2ceb58f132",
+      "source_subject": "docs: prepare technical execution handover without expanding fixes-only scope",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:45:56Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "0a071cc03813c236b454389b0d71db204a878e3b3fa3c157349aab5fc0ec9a4a",
+          "bytes": 96042480,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.126",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590702538,
+      "run_id": 37871123086,
+      "source_sha": "df79eee9123efa70ffad39c674eee403eec13bde",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "eda023791a46936e1cc988b7218e3bff09aac7fff1cb4d2ab6ded270b0caf5de",
+      "source_subject": "docs: record video-verified Advanced Diagnostics navigation defect",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:50:24Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "40ae90371aa11982940bb452c0e1c73e8f206c7165976d96497a8412a522701d",
+          "bytes": 96042432,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.127",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590253570,
+      "run_id": 37871157167,
+      "source_sha": "ff5ec9f141221d07f749364ccbc7f82c48fd0bbc",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "69280414225a6d4e105dcc2dbc872790b1aa159df108db2e18d30d3956ddd253",
+      "source_subject": "docs: establish release sequencing and isolation gates",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:51:02Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "5f6132b8ee38417e79e15a518551577cf71205628359003741a0744ea80cc774",
+          "bytes": 96042451,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.128",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11589903837,
+      "run_id": 37871165679,
+      "source_sha": "f7050de8cfe834dd0d4cb31dc1bd5fa5773d6ddf",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "29794a2de200606e0312c581eec83be4e79a7c562f74b83d1303fcd8304c9d59",
+      "source_subject": "docs: cross-reference release sequence and Advanced diagnostic QA",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:52:01Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "4cf57cfaece756ff605858e958b97330334953a1e21be76553eb5a37d97de683",
+          "bytes": 96042451,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.129",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590851408,
+      "run_id": 37871138851,
+      "source_sha": "64bd9da49b692c68c4a72802323d39fef3da16bc",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "ca5087e06d284adf76404d26ef269974b8ad60954688ad81991a15cc165ca54d",
+      "source_subject": "docs: record new Shield QA evidence without changing frozen fixes scope",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:52:08Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "f3e6db80bd8202a32466b69e880614f50360a9a0d5913684d994195cb27cf2bc",
+          "bytes": 96042488,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.130",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590554162,
+      "run_id": 37871778832,
+      "source_sha": "81dee7b8e941b48276b43743997b37b75670dc97",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "e7639d359e520c130baeb78fec8a95041f5dfd3a57298ec80d0623aed99ac02c",
+      "source_subject": "docs: approve Advanced Diagnostics navigation correction for fixes-only release",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:59:32Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "bb0b2078746fec5abd88df30a070473b17154950484b886cbfe3c9c6a732c30e",
+          "bytes": 96042503,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.131",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590977790,
+      "run_id": 37871787842,
+      "source_sha": "6521833c5451ec9f5e7e3f489c52b23c991f47e0",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "4cfdf533f24f2d6844e3b4ade2b0c77709d8973ce17fe05d626c4e50680e21f1",
+      "source_subject": "docs: reconcile user approval of Advanced Diagnostics fix",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T01:59:53Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "b7cd13397e63bd92add713cf635c0d5ab73de1f65d6097e1f1c88d4fd688afa9",
+          "bytes": 96042496,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.132",
+      "kind": "Development / QA build",
+      "date": "2026-10-09",
+      "artifact_id": 11590404488,
+      "run_id": 37871791319,
+      "source_sha": "dba5bd652bf588d94d445df72cfeec4126cb494a",
+      "artifact_name": "nova-mark-edition-3-apk",
+      "archive_sha256": "54d2ea4813d5d27075f43d96363ad04396b8b3ab0392cc75bff3737633ac4b3c",
+      "source_subject": "docs: reconcile user approval of Advanced Diagnostics fix",
+      "notes": [
+        "A development / QA APK was built from the recorded source revision.",
+        "This checkpoint contains no newly verified user-facing change; documentation/build-only commits are not feature releases."
+      ],
+      "evidence": "Downloaded archive SHA-256 matched GitHub digest; APK SHA-256 and binary manifest inspected with Android aapt2.",
+      "created_at": "2026-10-09T02:00:11Z",
+      "apks": [
+        {
+          "filename": "org.courville.nova.markpreview-6040083-6.4.63-mark.4.1.7-preview-universal-release.apk",
+          "sha256": "7c1532226adf2b84175002561e354c3132b01e38bbd931d6e8a990cdc6d68510",
+          "bytes": 96042442,
+          "application_id": "org.courville.nova.markpreview",
+          "version_code": 6040083,
+          "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    }
+  ]
+}

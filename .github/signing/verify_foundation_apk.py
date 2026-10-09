@@ -49,6 +49,7 @@ def main():
     parser.add_argument("--apksigner", required=True)
     parser.add_argument("--apkanalyzer", required=True)
     parser.add_argument("--publish", type=Path, required=True)
+    parser.add_argument("--source", type=Path, required=True)
     args = parser.parse_args()
     try:
         apks = list(args.directory.glob("*.apk"))
@@ -56,6 +57,12 @@ def main():
             raise ValueError("Expected exactly one Foundation release APK.")
         evidence = verify(apks[0], args.apksigner, args.apkanalyzer,
                           os.environ.get("SUPERNOVA_CERT_SHA256", "").replace(":", "").strip().lower())
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("foundation_conformance", args.source / ".github/build/verify-foundation.py")
+        conformance = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(conformance)
+        evidence.update(conformance.binary(apks[0], args.apkanalyzer, args.source))
+        evidence["source_commit"] = checked(["git", "-C", str(args.source), "rev-parse", "HEAD"]).strip()
         # Allowlisted artifacts only; no build/test logs, folders or signing config.
         args.publish.mkdir(exist_ok=False)
         import shutil

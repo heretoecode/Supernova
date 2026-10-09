@@ -74,3 +74,7 @@ The repository is intended to be sufficient for a new developer or AI with no Ch
 ## Repository authority
 
 The cleaned Preview 4.1.7 lineage was promoted to `main` on 6 October 2026 by PR #5. `main` is now the authoritative repository branch. The accepted 4.1.7 Final APK remains tied to the frozen application/test source commit `7efb4195639205a6526281491af40c0dab1776b7`; later `main` commits may contain documentation or repository-maintenance changes and must not be mistaken for that APK source.
+
+## Foundation implementation checkpoint — 9 October 2026
+
+Work proceeds only on `codex/foundation-release`. Permanent identity/branding/indicators/About/history/signing gates are implemented as a candidate; latest unit suite 419/419 and Python tools 28/28 pass. Unsigned APK conformance evidence exists, with final source/asset verification underway. **No signed Foundation APK exists and readiness remains false.** Latest validation still received a truncated certificate pin; FFmpeg matching-source duties need a source/rebuild decision. Physical Shield QA remains pending after delivery. See [Foundation report](docs/foundation/IMPLEMENTATION_REPORT.md), [readiness](docs/foundation/READINESS.json) and [QA](docs/foundation/QA_CHECKLIST.md). Existing maintenance branch and main are not modified by this checkpoint.

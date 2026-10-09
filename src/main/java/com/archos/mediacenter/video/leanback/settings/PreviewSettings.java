@@ -50,7 +50,7 @@ public final class PreviewSettings {
   ListPreference level=new ListPreference(fragment.requireContext());level.setKey(com.archos.mediacenter.video.diagnostics.Diagnostics.LEVEL);level.setTitle("Diagnostic detail");level.setEntries(new String[]{"Normal","QA / Soak"});level.setEntryValues(new String[]{"normal","qa"});level.setDefaultValue("normal");level.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());categories.get("Advanced").addPreference(level);
   for(String label:new String[]{"Issues Digest","Report a Problem","Show Latest Reference"}){Preference item=new Preference(fragment.requireContext());item.setKey("preview_diagnostic_"+label);item.setTitle(label);item.setOnPreferenceClickListener(p->{if(label.equals("Issues Digest"))com.archos.mediacenter.video.diagnostics.Diagnostics.showDigest(fragment.requireContext());else if(label.equals("Show Latest Reference"))com.archos.mediacenter.video.diagnostics.Diagnostics.showLatestReference(fragment.requireContext());else com.archos.mediacenter.video.diagnostics.Diagnostics.reportProblem(fragment.requireContext());return true;});categories.get("Advanced").addPreference(item);}
   Preference export=new Preference(fragment.requireContext());export.setKey("export_diagnostic_report");export.setTitle("Export Diagnostic Report");export.setSummary("Save recent logs and safe device/build information as a ZIP. Choose a destination using Android Files.");export.setOnPreferenceClickListener(p->{fragment.startActivity(new android.content.Intent(fragment.requireContext(),com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity.class));return true;});categories.get("Advanced").addPreference(export);
-  PreviewBuildInfo.install(fragment,categories.get("About"));
+  if(!com.archos.mediacenter.video.BuildConfig.FOUNDATION)PreviewBuildInfo.install(fragment,categories.get("About"));
   consolidate(fragment,root,categories);
   auditPresentation(root);
   style(root);
@@ -130,7 +130,7 @@ public final class PreviewSettings {
   links.setClipChildren(false);
   LinearLayout.LayoutParams rail = new LinearLayout.LayoutParams(0, -1, .23f);
   rail.rightMargin = dp(fragment, 12);
-  split.addView(links, rail);
+  if(com.archos.mediacenter.video.BuildConfig.FOUNDATION){ScrollView navigationScroll=new ScrollView(c);navigationScroll.setFillViewport(true);navigationScroll.setClipToPadding(false);navigationScroll.addView(links,new ScrollView.LayoutParams(-1,-2));split.addView(navigationScroll,rail);}else split.addView(links, rail);
   LinearLayout middle = new LinearLayout(c);
   middle.setOrientation(LinearLayout.VERTICAL);
   middle.setClipChildren(false);
@@ -150,6 +150,7 @@ public final class PreviewSettings {
   LinearLayout.LayoutParams helpSize = new LinearLayout.LayoutParams(0, -1, .33f);
   helpSize.leftMargin = dp(fragment, 12);
   split.addView(helpScroll, helpSize);
+  final com.archos.mediacenter.video.foundation.FoundationAboutWorkspace foundationAbout=com.archos.mediacenter.video.BuildConfig.FOUNDATION?new com.archos.mediacenter.video.foundation.FoundationAboutWorkspace(fragment,split,middle,helpScroll,links):null;
   HELP.put(activityContext(c), new java.lang.ref.WeakReference<>(help));
   parent.addView(split, index, original);
   PreferenceScreen root = fragment.getPreferenceScreen();
@@ -180,7 +181,7 @@ public final class PreviewSettings {
    TextView button = sidebarButton(c, name, false);
    button.setBackground(null);
    button.setTag("semantic:settings:category:" + name);
-   links.addView(button, new LinearLayout.LayoutParams(-1, 0, 1));
+   links.addView(button, new LinearLayout.LayoutParams(-1, com.archos.mediacenter.video.BuildConfig.FOUNDATION?dp(fragment,38):0, com.archos.mediacenter.video.BuildConfig.FOUNDATION?0:1));
    railButtons.add(button);
    Runnable showCategory = () -> {
     if(selectedRail[0]!=button){categoryToken[0]="";childToken[0]="";}
@@ -195,10 +196,12 @@ public final class PreviewSettings {
     com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("settings",name,"workspace","none","none",0);
     help.setText(name + "\n\nPress OK or Right to enter this category.");
     list.scrollToPosition(0);
+    if(foundationAbout!=null){if("About".equals(name))foundationAbout.show(button);else foundationAbout.hide();}
     com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(children,"settings.sections","category_changed",previous,children.getChildCount(),false);
    };
    Runnable enter = () -> {
     showCategory.run();
+    if(foundationAbout!=null&&"About".equals(name)){foundationAbout.enter();return;}
     if(categoryToken[0].isEmpty())categoryToken[0]=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(button,"settings.category");
     if (category != null) for (int k = 0; k < category.getPreferenceCount(); k++) {
      Preference p = category.getPreference(k);
@@ -231,6 +234,7 @@ public final class PreviewSettings {
     if (key == KeyEvent.KEYCODE_DPAD_LEFT) return true;
     int position = railButtons.indexOf(button);
     if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+     if(foundationAbout!=null&&"About".equals(name)){foundationAbout.enter();return true;}
      if (position + 1 < railButtons.size()) railButtons.get(position + 1).requestFocus();
      return true;
     }
@@ -245,6 +249,7 @@ public final class PreviewSettings {
   }
   androidx.activity.OnBackPressedCallback back = new androidx.activity.OnBackPressedCallback(false) {
    @Override public void handleOnBackPressed() {
+    if(foundationAbout!=null&&foundationAbout.handleBack())return;
     if (childOpener[0] != null && returnToCategory[0] != null) {
      View requested=childOpener[0];Object key=requested.getTag();String token=childToken[0];returnToCategory[0].run();
      View target=null;
@@ -259,7 +264,7 @@ public final class PreviewSettings {
   };
   fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(), back);
   list.setTag(R.id.preview_settings_return, (Runnable) back::handleOnBackPressed);
-  ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, newView) -> back.setEnabled(middle.hasFocus());
+  ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, newView) -> back.setEnabled(middle.hasFocus()||foundationAbout!=null&&(foundationAbout.hasFocus()||foundationAbout.navigationFocused()));
   split.getViewTreeObserver().addOnGlobalFocusChangeListener(focusListener);
   split.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
    public void onViewAttachedToWindow(View view) { }

@@ -44,7 +44,7 @@ public final class TopNavigation extends LinearLayout {
         scanStatus = new android.widget.FrameLayout(c);scanStatus.setFocusable(false);scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
         setWillNotDraw(false);
-        artwork = new PreviewBackdrop(c); setBackground(artwork);
+        artwork = new PreviewBackdrop(c); artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION); setBackground(artwork);
         bar = new LinearLayout(c); bar.setClipChildren(false);bar.setClipToPadding(false); bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(26), 0, dp(26), 0);
         bar.setBackgroundColor(Color.TRANSPARENT);
@@ -148,7 +148,7 @@ public final class TopNavigation extends LinearLayout {
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public void setFeaturedDirection(int direction){artwork.setMotionDirection(direction);}
     public boolean readyForFirstFrame(){return artwork.readyForFirstFrame();}
-    public void selectTab(int index) { if(index<0||index>=6)return;setBackground(index>=3?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3)setScrolled(false); }
+    public void selectTab(int index) { if(index<0||index>=6)return;artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION&&index==0);setBackground(index>=3?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3)setScrolled(false); }
     @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);if(scrimAnimation!=null)scrimAnimation.cancel();scrimAlpha=scrolled?255:0;navigationShade.release();artwork.release();super.onDetachedFromWindow(); }
     /** Exactly one visible scan-status owner: the landing panel or this shell. */
     public void setEmbeddedScanStatus(boolean embedded){scanStatus.setVisibility(embedded?GONE:VISIBLE);}

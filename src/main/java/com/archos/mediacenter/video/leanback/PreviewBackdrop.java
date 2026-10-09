@@ -25,6 +25,9 @@ public final class PreviewBackdrop extends Drawable implements Target {
         }return found;
     }
     private int motionDirection,pendingDirection;
+    private boolean foundationHome;
+    private PreviewUtilityBackground foundationBackground;
+    public void setFoundationHome(boolean value){foundationHome=value;if(value&&foundationBackground==null)foundationBackground=new PreviewUtilityBackground(context);invalidateSelf();}
     public void setMotionDirection(int direction){pendingDirection=Integer.signum(direction);}
     public boolean readyForFirstFrame(){return !loading;}
     public PreviewBackdrop(Context c) { context=c;density=c.getResources().getDisplayMetrics().density; }
@@ -37,7 +40,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     public void release() { if(trace!=null)trace.cancelled();handler.removeCallbacksAndMessages(null);Picasso.get().cancelRequest(this); bitmap=previous=null; uri=null; }
     @Override public void draw(Canvas canvas) {
         Rect b=getBounds(); float h=Math.min(b.height(),420*density);
-        canvas.drawColor(0xff0b1b2a);if(bitmap==null&&previous==null){android.graphics.drawable.GradientDrawable utility=PreviewAccent.utility(context);utility.setBounds(b);utility.draw(canvas);}
+        if(foundationHome){foundationBackground.setBounds(b);foundationBackground.draw(canvas);if(bitmap==null&&previous==null)return;}else canvas.drawColor(0xff0b1b2a);if(!foundationHome&&bitmap==null&&previous==null){android.graphics.drawable.GradientDrawable utility=PreviewAccent.utility(context);utility.setBounds(b);utility.draw(canvas);}
         paint.setShader(null);
         float fade=Math.min(1f,(android.os.SystemClock.uptimeMillis()-fadeStart)/180f);
         canvas.save();canvas.translate(-motionDirection*20*density*fade,0);drawImage(canvas,previous,b.width(),h,1-fade);canvas.restore();

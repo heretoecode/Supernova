@@ -98,25 +98,29 @@ jobs:
           git -C MediaLib apply ../Video/.github/build/medialib-preview417.patch
           git -C MediaLib apply ../Video/.github/build/medialib-preview417-local.patch
           # prepare-preview.py is intentionally NOT called for Foundation.
+          python3 Video/.github/build/prepare-foundation.py .
 
       - name: Require completed Foundation provider and version isolation before key preparation
         if: inputs.operation == 'prepare'
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          manifest = Path('nova/Video/AndroidManifest.xml').read_text()
-          gradle = Path('nova/Video/build.gradle').read_text()
-          legacy = ('browser.SearchProviderVideocommunity', 'com.archos.media.videocommunity',
-                    'com.archos.media.scrapercommunity', 'org.courville.nova.markpreview')
-          if any(x in manifest for x in legacy):
-              raise SystemExit('Foundation provider-authority isolation is not prepared; refusing signed build.')
-          if "'6.4.63-mark.3'" in gradle or '"Nova v"' in gradle:
-              raise SystemExit('Foundation version/branding preparation is incomplete; refusing signed build.')
-          # Sibling provider constants must agree with the prepared app manifest.
-          for path in Path('nova/MediaLib').rglob('*'):
-              if path.suffix in ('.java', '.xml') and any(x in path.read_text() for x in legacy):
-                  raise SystemExit('Foundation sibling provider contracts remain legacy; refusing signed build.')
-          PY
+          set -euo pipefail
+          python3 source/.github/build/verify-foundation.py --root nova --readiness
+
+      - name: Repeat secret-free Foundation release tests and unsigned binary conformance
+        if: inputs.operation == 'prepare'
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'ndk;29.0.14206865'
+          cd nova/Video
+          chmod +x gradlew
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease \
+            -PfoundationVerify -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4
+          python3 .github/build/verify-foundation-runtime.py \
+            --inventory build/foundation/runtime-artifacts.json --reviewed docs/foundation/RUNTIME_SBOM.json
+          mapfile -t unsigned_apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
+          test "${#unsigned_apks[@]}" -eq 1
+          python3 .github/build/verify-foundation.py --root .. --readiness \
+            --apk "${unsigned_apks[0]}" --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer"
 
       - name: Prepare verified Foundation key and build release only
         if: inputs.operation == 'prepare'
@@ -155,6 +159,7 @@ jobs:
             --directory nova/Video/build/outputs/apk/noamazon/release \
             --apksigner "$build_tools/apksigner" \
             --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+            --source nova/Video \
             --publish "$RUNNER_TEMP/supernova-foundation-publish"
 
       - name: Always remove temporary signing material

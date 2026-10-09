@@ -1,0 +1,6 @@
+{
+  "schema": 1,
+  "release_ready": false,
+  "blockers": ["Protected certificate fingerprint is still truncated in latest validation run", "Final unsigned APK/native conformance review pending", "Exact FFmpeg corresponding-source provenance pending"],
+  "gates": {"unit_tests": true, "binary_conformance": false, "native_source_compliance": false, "protected_key_validation": false, "foundation_review": false}
+}

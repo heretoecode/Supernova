@@ -1,0 +1,453 @@
+{
+  "schema": 1,
+  "components": [
+    {
+      "name": "AndroidX",
+      "version": "1.0.0, 1.0.1, 1.1.0, 1.1.0-beta02, 1.1.1, 1.10.0, 1.19.0, 1.2.0, 1.2.1, 1.3.0, 1.4.0, 1.4.1, 1.5.0, 1.6.0, 1.8.0, 1.9.0, 2.0.0, 2.11.0, 2.2.0, 2.2.1",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://developer.android.com/jetpack/androidx",
+      "text_asset": "foundation/legal/androidx.txt"
+    },
+    {
+      "name": "Bouncy Castle",
+      "version": "1.85, 1.85.2",
+      "role": "Runtime software",
+      "licence": "MIT",
+      "url": "https://www.bouncycastle.org/",
+      "text_asset": "foundation/legal/bouncy-castle.txt"
+    },
+    {
+      "name": "JUPnP",
+      "version": "3.0.5",
+      "role": "Runtime software",
+      "licence": "CDDL-1.0",
+      "url": "https://github.com/jupnp/jupnp",
+      "text_asset": "foundation/legal/jupnp.txt"
+    },
+    {
+      "name": "Jetty",
+      "version": "9.2.30.v20200428",
+      "role": "Runtime software",
+      "licence": "Apache-2.0 OR EPL-1.0",
+      "url": "https://jetty.org/",
+      "text_asset": "foundation/legal/jetty.txt"
+    },
+    {
+      "name": "Kotlin & JetBrains libraries",
+      "version": "1.7.3, 1.9.0, 2.2.21, 23.0.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://kotlinlang.org/",
+      "text_asset": "foundation/legal/kotlin-jetbrains-libraries.txt"
+    },
+    {
+      "name": "OkHttp",
+      "version": "5.5.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://square.github.io/okhttp/",
+      "text_asset": "foundation/legal/okhttp.txt"
+    },
+    {
+      "name": "OpenJDK desugared libraries",
+      "version": "2.1.5",
+      "role": "Compatibility runtime",
+      "licence": "GPL-2.0-only WITH Classpath-exception-2.0",
+      "url": "https://github.com/google/desugar_jdk_libs",
+      "text_asset": "foundation/legal/openjdk-desugared-libraries.txt"
+    },
+    {
+      "name": "OpenJDK desugaring configuration",
+      "version": "2.1.5",
+      "role": "Compatibility runtime",
+      "licence": "Apache-2.0",
+      "url": "https://r8.googlesource.com/r8",
+      "text_asset": "foundation/legal/openjdk-desugaring-configuration.txt"
+    },
+    {
+      "name": "Retrofit",
+      "version": "2.11.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/square/retrofit",
+      "text_asset": "foundation/legal/retrofit.txt"
+    },
+    {
+      "name": "Sentry",
+      "version": "0.16.2, 8.53.0",
+      "role": "Runtime software",
+      "licence": "MIT",
+      "url": "https://github.com/getsentry/sentry-java",
+      "text_asset": "foundation/legal/sentry.txt"
+    },
+    {
+      "name": "android-observablescrollview",
+      "version": "1.6.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/ksoichiro/Android-ObservableScrollView",
+      "text_asset": "foundation/legal/android-observablescrollview.txt"
+    },
+    {
+      "name": "asn-one",
+      "version": "0.6.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/hierynomus/asn-one",
+      "text_asset": "foundation/legal/asn-one.txt"
+    },
+    {
+      "name": "commons-codec",
+      "version": "1.22.1",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://commons.apache.org/proper/commons-codec/",
+      "text_asset": "foundation/legal/commons-codec.txt"
+    },
+    {
+      "name": "commons-io",
+      "version": "2.21.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://commons.apache.org/proper/commons-io/",
+      "text_asset": "foundation/legal/commons-io.txt"
+    },
+    {
+      "name": "commons-lang3",
+      "version": "3.20.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://commons.apache.org/proper/commons-lang/",
+      "text_asset": "foundation/legal/commons-lang3.txt"
+    },
+    {
+      "name": "commons-net",
+      "version": "3.13.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://commons.apache.org/proper/commons-net/",
+      "text_asset": "foundation/legal/commons-net.txt"
+    },
+    {
+      "name": "commons-text",
+      "version": "1.15.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://commons.apache.org/proper/commons-text",
+      "text_asset": "foundation/legal/commons-text.txt"
+    },
+    {
+      "name": "core",
+      "version": "3.5.3",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/zxing/zxing",
+      "text_asset": "foundation/legal/core.txt"
+    },
+    {
+      "name": "epitaph",
+      "version": "0.1.1",
+      "role": "Runtime software",
+      "licence": "MIT",
+      "url": "https://github.com/abovevacant/epitaph",
+      "text_asset": "foundation/legal/epitaph.txt"
+    },
+    {
+      "name": "error_prone_annotations",
+      "version": "2.27.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/google/error-prone",
+      "text_asset": "foundation/legal/error-prone-annotations.txt"
+    },
+    {
+      "name": "gson",
+      "version": "2.11.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/google/gson",
+      "text_asset": "foundation/legal/gson.txt"
+    },
+    {
+      "name": "httpcore5",
+      "version": "5.4.3",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://hc.apache.org/",
+      "text_asset": "foundation/legal/httpcore5.txt"
+    },
+    {
+      "name": "javax.servlet-api",
+      "version": "4.0.1",
+      "role": "Runtime software",
+      "licence": "CDDL-1.1 OR GPL-2.0-only WITH Classpath-exception-2.0",
+      "url": "https://javaee.github.io/servlet-spec/",
+      "text_asset": "foundation/legal/javax-servlet-api.txt"
+    },
+    {
+      "name": "jcifs-ng",
+      "version": "v2.1.11-nova3",
+      "role": "Runtime software",
+      "licence": "LGPL-2.1-or-later",
+      "url": "https://github.com/nova-video-player/jcifs-ng",
+      "text_asset": "foundation/legal/jcifs-ng.txt"
+    },
+    {
+      "name": "jsch-mwiede",
+      "version": "jsch-2.28.7-readahead2",
+      "role": "Runtime software",
+      "licence": "BSD-3-Clause AND ISC",
+      "url": "https://github.com/nova-video-player/jsch-mwiede",
+      "text_asset": "foundation/legal/jsch-mwiede.txt"
+    },
+    {
+      "name": "jspecify",
+      "version": "1.0.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://jspecify.dev/",
+      "text_asset": "foundation/legal/jspecify.txt"
+    },
+    {
+      "name": "listenablefuture",
+      "version": "1.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/google/guava",
+      "text_asset": "foundation/legal/listenablefuture.txt"
+    },
+    {
+      "name": "logback-android",
+      "version": "3.0.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/tony19/logback-android",
+      "text_asset": "foundation/legal/logback-android.txt"
+    },
+    {
+      "name": "material",
+      "version": "1.14.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/material-components/material-components-android",
+      "text_asset": "foundation/legal/material.txt"
+    },
+    {
+      "name": "mbassador",
+      "version": "1.3.2",
+      "role": "Runtime software",
+      "licence": "MIT",
+      "url": "https://github.com/bennidi/mbassador",
+      "text_asset": "foundation/legal/mbassador.txt"
+    },
+    {
+      "name": "okio-jvm",
+      "version": "3.18.1",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/lysine-dev/okio/",
+      "text_asset": "foundation/legal/okio-jvm.txt"
+    },
+    {
+      "name": "org.apache.oltu.oauth2.client",
+      "version": "1.0.2",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://attic.apache.org/projects/oltu.html",
+      "text_asset": "foundation/legal/org-apache-oltu-oauth2-client.txt"
+    },
+    {
+      "name": "oro",
+      "version": "2.0.8",
+      "role": "Runtime software",
+      "licence": "Apache-1.1",
+      "url": "https://attic.apache.org/projects/jakarta-oro.html",
+      "text_asset": "foundation/legal/oro.txt"
+    },
+    {
+      "name": "picasso",
+      "version": "2.8",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/square/picasso/",
+      "text_asset": "foundation/legal/picasso.txt"
+    },
+    {
+      "name": "sardine-android",
+      "version": "v0.9-nova",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/nova-video-player/sardine-android",
+      "text_asset": "foundation/legal/sardine-android.txt"
+    },
+    {
+      "name": "simple-xml",
+      "version": "2.7.1",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/ngallagher/simplexml",
+      "text_asset": "foundation/legal/simple-xml.txt"
+    },
+    {
+      "name": "slf4j-api",
+      "version": "2.0.18",
+      "role": "Runtime software",
+      "licence": "MIT",
+      "url": "https://www.slf4j.org/",
+      "text_asset": "foundation/legal/slf4j-api.txt"
+    },
+    {
+      "name": "smbj",
+      "version": "v0.15.0-nova2",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/hierynomus/smbj",
+      "text_asset": "foundation/legal/smbj.txt"
+    },
+    {
+      "name": "sshj",
+      "version": "0.40.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/hierynomus/sshj",
+      "text_asset": "foundation/legal/sshj.txt"
+    },
+    {
+      "name": "threetenabp",
+      "version": "1.4.9",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/JakeWharton/ThreeTenABP/",
+      "text_asset": "foundation/legal/threetenabp.txt"
+    },
+    {
+      "name": "threetenbp",
+      "version": "1.7.1",
+      "role": "Runtime software",
+      "licence": "BSD-3-Clause",
+      "url": "https://www.threeten.org/threetenbp",
+      "text_asset": "foundation/legal/threetenbp.txt"
+    },
+    {
+      "name": "tmdb-java",
+      "version": "2.13.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/UweTrottmann/tmdb-java",
+      "text_asset": "foundation/legal/tmdb-java.txt"
+    },
+    {
+      "name": "trakt-java",
+      "version": "6.21.0",
+      "role": "Runtime software",
+      "licence": "Apache-2.0",
+      "url": "https://github.com/UweTrottmann/trakt-java/",
+      "text_asset": "foundation/legal/trakt-java.txt"
+    },
+    {
+      "name": "NOVA / Archos and local modules",
+      "version": "Nova Video Player 6.4.64; pinned modules",
+      "licence": "Apache-2.0",
+      "role": "Upstream application, database/file modules and native player; original copyright and modified sources remain available in the public repository",
+      "url": "https://github.com/nova-video-player/aos-Video",
+      "text_asset": "foundation/legal/nova-archos-and-local-modules.txt"
+    },
+    {
+      "name": "FFmpeg",
+      "version": "n8.0.1 (actual ELF marker)",
+      "licence": "LGPL-2.1-or-later",
+      "role": "Shared media libraries",
+      "url": "https://ffmpeg.org/legal.html",
+      "text_asset": "foundation/legal/ffmpeg.txt"
+    },
+    {
+      "name": "AudioCompress",
+      "version": "3a3f9324 source",
+      "licence": "LGPL-2.1-or-later",
+      "role": "Native audio dynamics processing; exact pinned corresponding source is public",
+      "url": "https://github.com/nova-video-player/aos-audiocompress",
+      "text_asset": "foundation/legal/audiocompress.txt"
+    },
+    {
+      "name": "VideoLAN deinterlace / NEON routines",
+      "version": "2cf21c48 source",
+      "licence": "LGPL-2.1-or-later AND MIT",
+      "role": "Native deinterlacing and NEON pixel routines",
+      "url": "https://github.com/nova-video-player/aos-avos",
+      "text_asset": "foundation/legal/videolan-deinterlace-neon-routines.txt"
+    },
+    {
+      "name": "dav1d",
+      "version": "1.5.4-0-g54706fc6 (header)",
+      "licence": "BSD-2-Clause",
+      "role": "Shared AV1 decoder",
+      "url": "https://code.videolan.org/videolan/dav1d",
+      "text_asset": "foundation/legal/dav1d.txt"
+    },
+    {
+      "name": "Opus",
+      "version": "libopus 1.6.1-9-g2d862ea1 (ELF marker)",
+      "licence": "BSD-3-Clause",
+      "role": "Shared audio codec",
+      "url": "https://opus-codec.org/",
+      "text_asset": "foundation/legal/opus.txt"
+    },
+    {
+      "name": "libmysofa",
+      "version": "1.3.3 (actual exported function disassembly)",
+      "licence": "BSD-3-Clause",
+      "role": "Shared spatial-audio/SOFA processing library; prebuilt commit declares this source version",
+      "url": "https://github.com/hoene/libmysofa",
+      "text_asset": "foundation/legal/libmysofa.txt"
+    },
+    {
+      "name": "OpenSSL",
+      "version": "3.5.7 (headers / ELF)",
+      "licence": "Apache-2.0",
+      "role": "Crypto/TLS statically linked into native media/torrent components",
+      "url": "https://openssl.org/",
+      "text_asset": "foundation/legal/openssl.txt"
+    },
+    {
+      "name": "libyuv",
+      "version": "1883 (header); 65096347 source",
+      "licence": "BSD-3-Clause",
+      "role": "Pixel conversion statically linked in the native player",
+      "url": "https://chromium.googlesource.com/libyuv/libyuv/",
+      "text_asset": "foundation/legal/libyuv.txt"
+    },
+    {
+      "name": "Boost",
+      "version": "1.92.0 (embedded source paths)",
+      "licence": "BSL-1.0",
+      "role": "Header/static C++ components in torrentd",
+      "url": "https://www.boost.org/",
+      "text_asset": "foundation/legal/boost.txt"
+    },
+    {
+      "name": "libtorrent",
+      "version": "2.0.14.0 (actual ELF marker)",
+      "licence": "BSD-3-Clause",
+      "role": "Torrent engine statically linked into torrentd",
+      "url": "https://www.libtorrent.org/",
+      "text_asset": "foundation/legal/libtorrent.txt"
+    },
+    {
+      "name": "Android NDK / libc++",
+      "version": "NDK 29.0.14206865; prebuilt toolchains recorded separately",
+      "licence": "Apache-2.0 WITH LLVM-exception AND additional notices",
+      "role": "Native toolchain runtime, compiler support and cpufeatures",
+      "url": "https://developer.android.com/ndk",
+      "text_asset": "foundation/legal/android-ndk-libc.txt"
+    },
+    {
+      "name": "Sentry native bundled libraries",
+      "version": "sentry-native 0.16.2; pinned vendored sources",
+      "licence": "Apache-2.0 / BSD / MIT / public-domain alternatives; original notices below",
+      "role": "Native diagnostics unwinding and bundled helpers",
+      "url": "https://github.com/getsentry/sentry-native",
+      "text_asset": "foundation/legal/sentry-native-vendored-notices.txt"
+    }
+  ]
+}

@@ -630,6 +630,10 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     @Override
     public void onCreate() {
         super.onCreate();
+        if(BuildConfig.FOUNDATION) {
+            SharedPreferences foundationDefaults = PreferenceManager.getDefaultSharedPreferences(this);
+            if(!foundationDefaults.contains("try_new_ui")) foundationDefaults.edit().putBoolean("try_new_ui",true).apply();
+        }
         com.archos.mediacenter.video.diagnostics.Diagnostics.install(this);
 
         /*
@@ -1256,11 +1260,17 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             novaVersionCode = info.versionCode;
             novaVersionName = info.versionName;
             try {
+                if(BuildConfig.FOUNDATION) {
+                    novaVersionArray = com.archos.mediacenter.video.foundation.FoundationVersion.array(novaVersionName);
+                    novaLongVersion = "Supernova " + novaVersionName;
+                    novaShortVersion = "v" + novaVersionName;
+                } else {
                 novaVersionArray = splitVersion(novaVersionName);
                 novaLongVersion = "Nova v" + novaVersionArray[0] + "." + novaVersionArray[1] + "." + novaVersionArray[2] +
                         " (" + novaVersionArray[3] + String.format(Locale.ROOT, "%02d", novaVersionArray[4]) + String.format(Locale.ROOT, "%02d", novaVersionArray[5]) +
                         "." + String.format(Locale.ROOT, "%02d", novaVersionArray[6]) + String.format(Locale.ROOT, "%02d", novaVersionArray[7]) + ")";
                 novaShortVersion = "v" + novaVersionArray[0] + "." + novaVersionArray[1] + "." + novaVersionArray[2];
+                }
             } catch (IllegalArgumentException ie) {
                 novaVersionArray = new int[] { 0, 0, 0, 0, 0, 0, 0, 0};
                 log.error("updateVersionState: cannot split application version {}", novaVersionName);
@@ -1271,7 +1281,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             sharedPreferences.edit().putString("nova_version", novaLongVersion).apply();
             String previousVersionName = sharedPreferences.getString("current_versionName", "0.0.0");
             try {
-                novaPreviousVersionArray = splitVersion(previousVersionName);
+                novaPreviousVersionArray = BuildConfig.FOUNDATION ? (previousVersion > 0 ? com.archos.mediacenter.video.foundation.FoundationVersion.array(previousVersionName) : emptyVersionArray()) : splitVersion(previousVersionName);
             } catch (IllegalArgumentException ie) {
                 novaPreviousVersionArray = new int[] { 0, 0, 0, 0, 0, 0, 0, 0};
                 log.error("updateVersionState: cannot split application previous version {}", previousVersionName);
@@ -1427,6 +1437,9 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     private void upgradeActions(Context context) {
+        // The new install identity has no old NOVA preferences. Its 0.N counter
+        // must never run source-era NOVA migrations that reset choices/caches.
+        if(BuildConfig.FOUNDATION)return;
         log.info("upgradeActions: check for upgrade actions from version: {}.{}.{} to {}.{}.{}", novaPreviousVersionArray[0], novaPreviousVersionArray[1], novaPreviousVersionArray[2], novaVersionArray[0], novaVersionArray[1], novaVersionArray[2]);
 
         // if nova is upgraded from 6.4.22 and below disable force_passthrough and android frame timing

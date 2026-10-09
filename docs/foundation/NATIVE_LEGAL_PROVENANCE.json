@@ -1,0 +1,179 @@
+[
+  {
+    "name": "NOVA / Archos and local modules",
+    "version": "Nova Video Player 6.4.64; pinned modules",
+    "licence": "Apache-2.0",
+    "sources": [
+      {
+        "source": "native/avos@2cf21c486c7bf244c49b78d2220197a6d75396dd/LICENSE.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "source": "native/torrentd@49bd6a6aeb783fae0089e04e2e84c50112acb5c3/LICENSE.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "source": "native/libnativehelper@ab46fb536b594b25f93611ad7ef0f27b8fc24edb/NOTICE",
+        "sha256": "38751245389e1e23f73e6f5384b5cbe7fa972cc4410c5adc9c04b082a0b9561a"
+      }
+    ]
+  },
+  {
+    "name": "FFmpeg",
+    "version": "n8.0.1 (actual ELF marker)",
+    "licence": "LGPL-2.1-or-later",
+    "sources": [
+      {
+        "source": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/n8.0.1/COPYING.LGPLv2.1",
+        "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30"
+      }
+    ]
+  },
+  {
+    "name": "AudioCompress",
+    "version": "3a3f9324 source",
+    "licence": "LGPL-2.1-or-later",
+    "sources": [
+      {
+        "source": "native/audiocompress@3a3f9324d2550bd305060e1c52b803121ea09aad/COPYING",
+        "sha256": "ca0061fc1381a3ab242310e4b3f56389f28e3d460eb2fd822ed7a21c6f030532"
+      }
+    ]
+  },
+  {
+    "name": "VideoLAN deinterlace / NEON routines",
+    "version": "2cf21c48 source",
+    "licence": "LGPL-2.1-or-later AND MIT",
+    "sources": [
+      {
+        "source": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/n8.0.1/COPYING.LGPLv2.1",
+        "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30"
+      },
+      {
+        "source": "native/avos@2cf21c486c7bf244c49b78d2220197a6d75396dd/deinterlace.c",
+        "sha256": "2329a285dfaaf079d36963da8377cb9be8ee117cafdca03f14a1b0d0d641cef5"
+      },
+      {
+        "source": "native/avos@2cf21c486c7bf244c49b78d2220197a6d75396dd/neon_deinterlace.S",
+        "sha256": "5180fd69996edc00afbae3a6b1e40411d8958a54d57ee9c84aac2d91533b333b"
+      },
+      {
+        "source": "native/avos@2cf21c486c7bf244c49b78d2220197a6d75396dd/neon_yuv.S",
+        "sha256": "4fec368331b01baae29c6257758081660b821c346710c3b425c2bb984ede76a5"
+      }
+    ]
+  },
+  {
+    "name": "dav1d",
+    "version": "1.5.4-0-g54706fc6 (header)",
+    "licence": "BSD-2-Clause",
+    "sources": [
+      {
+        "source": "https://raw.githubusercontent.com/videolan/dav1d/54706fc6/COPYING",
+        "sha256": "dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5"
+      }
+    ]
+  },
+  {
+    "name": "Opus",
+    "version": "libopus 1.6.1-9-g2d862ea1 (ELF marker)",
+    "licence": "BSD-3-Clause",
+    "sources": [
+      {
+        "source": "https://raw.githubusercontent.com/xiph/opus/2d862ea1/COPYING",
+        "sha256": "01e1167d54a096d123cf6dfbbeb19587278845c6481d2d66d545669846079551"
+      }
+    ]
+  },
+  {
+    "name": "libmysofa",
+    "version": "1.3.3 (exported function disassembly; wrapper declares 1.3.5)",
+    "licence": "BSD-3-Clause",
+    "sources": [
+      {
+        "source": "https://raw.githubusercontent.com/hoene/libmysofa/v1.3.5/LICENSE",
+        "sha256": "9c8713ccc5d6d93d20c7a1cfcb876e64baf551bfbe67faa4e60d39cda9ffd023"
+      }
+    ],
+    "version_evidence": {
+      "source_tag": "v1.3.5",
+      "cpack_patch_version": 3,
+      "runtime_function": "1.3.3",
+      "source_url": "https://github.com/hoene/libmysofa/blob/v1.3.5/CMakeLists.txt"
+    }
+  },
+  {
+    "name": "OpenSSL",
+    "version": "3.5.7 (headers / ELF)",
+    "licence": "Apache-2.0",
+    "sources": [
+      {
+        "source": "https://raw.githubusercontent.com/openssl/openssl/openssl-3.5.7/LICENSE.txt",
+        "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+      }
+    ]
+  },
+  {
+    "name": "libyuv",
+    "version": "1883 (header); 65096347 source",
+    "licence": "BSD-3-Clause",
+    "sources": [
+      {
+        "source": "native/libyuv@650963473a2568eb81218f6e2703d3efaad6300e/LICENSE",
+        "sha256": "2b2cc1180c7e6988328ad2033b04b80117419db9c4c584918bbb3cfec7e9364f"
+      }
+    ]
+  },
+  {
+    "name": "Boost",
+    "version": "1.92.0 (embedded source paths)",
+    "licence": "BSL-1.0",
+    "sources": [
+      {
+        "source": "https://raw.githubusercontent.com/boostorg/boost/boost-1.92.0/LICENSE_1_0.txt",
+        "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+      }
+    ]
+  },
+  {
+    "name": "libtorrent",
+    "version": "2.0.14.0 (actual ELF marker)",
+    "licence": "BSD-3-Clause",
+    "sources": [
+      {
+        "source": "https://raw.githubusercontent.com/arvidn/libtorrent/v2.0.14/LICENSE",
+        "sha256": "34c359bb2297512ec3de21952ac668f1d981514fd63361ffdcca85294127ef6b"
+      }
+    ]
+  },
+  {
+    "name": "Android NDK / libc++",
+    "version": "NDK 29.0.14206865; prebuilt toolchains recorded separately",
+    "licence": "Apache-2.0 WITH LLVM-exception AND additional notices",
+    "sources": [
+      {
+        "source": "Android NDK 29.0.14206865/NOTICE",
+        "sha256": "faf0dc52cf6ce9ab09a04b0c074a378dd2565ee1ed9bc1179d83793bcdba012e"
+      },
+      {
+        "source": "Android NDK 29.0.14206865/NOTICE.toolchain",
+        "sha256": "789714a9076571c580cf531bdcebec776a4d889c12c3c1108adafc6e4338710a"
+      }
+    ]
+  },
+  {
+    "name": "Sentry native bundled libraries",
+    "sources": [
+      {
+        "source": "getsentry/sentry-native@0.16.2",
+        "source_archive_sha256": "09ef8eabf879cccba9903b268014a450b0f358673df57d84c52cec08fcf578b7"
+      },
+      {
+        "source": "getsentry/libunwindstack-ndk@284202fb1e42dbeba6598e26ced2e1ec404eecd1",
+        "source_archive_sha256": "0a27d91ac452e4cfab6967cc923a53d53bd49ad017b616a096d91a2382bcbace"
+      }
+    ],
+    "exported_notices": 119,
+    "notice_sha256": "d8971ed0b1419243338eabf6132361d8468d1fc505978898e91b7b4d08f6f128"
+  }
+]

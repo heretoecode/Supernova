@@ -1,0 +1,134 @@
+{
+  "method": "Unchanged approved artwork, resized/composited; Roboto Light, natural tracking",
+  "banner_ring_pixels": 72,
+  "banner_gap_pixels": 24,
+  "banner_font_pixels": 24,
+  "files": {
+    "assets/branding/Supernova_Space_Black_Blend_4K_UHD.png": {
+      "sha256": "09c25a2f1a4419f0ed0c73a1b0f664d3936ee93b12d69a9e18a960fd786c96d4",
+      "size": [
+        3840,
+        2160
+      ],
+      "mode": "RGB"
+    },
+    "assets/branding/Supernova_Double_Ring_Final_Visual_Reference.png": {
+      "sha256": "2f53abb60e1ebcc19eb7296cf64f4284b58127f622fdebf83b22d37ad13f48aa",
+      "size": [
+        1269,
+        1240
+      ],
+      "mode": "RGBA"
+    },
+    "Roboto-Light.ttf": {
+      "sha256": "028f843b1990ba46e2a1c4ef1b82729c4da9a946b0d9d8dbf59e623d1095e454"
+    },
+    "res/drawable-nodpi/foundation_adaptive_foreground.png": {
+      "sha256": "f0a3d3bd11a69d13dad1b306ea43f51d02a695bc4f12ba1b6424d030bc477528",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA"
+    },
+    "res/drawable-nodpi/foundation_banner.png": {
+      "sha256": "e5074c145ce50d4e3e4397124004b933d79f64ba88de42578805d1caa245ccaf",
+      "size": [
+        320,
+        180
+      ],
+      "mode": "RGB"
+    },
+    "res/drawable-nodpi/foundation_icon.png": {
+      "sha256": "9bcfa8bfb211039e3b5251335c96f61b4d9a51ce904895c0fcbfcfb6c93cef13",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGB"
+    },
+    "res/drawable-nodpi/foundation_icon_background.png": {
+      "sha256": "43a197b1d68c82d3bbb33b97688c5b349491cb1edec515d7d4e443b972292214",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGB"
+    },
+    "res/drawable-nodpi/foundation_ring.png": {
+      "sha256": "2f53abb60e1ebcc19eb7296cf64f4284b58127f622fdebf83b22d37ad13f48aa",
+      "size": [
+        1269,
+        1240
+      ],
+      "mode": "RGBA"
+    },
+    "res/drawable-nodpi/foundation_space_black.png": {
+      "sha256": "09c25a2f1a4419f0ed0c73a1b0f664d3936ee93b12d69a9e18a960fd786c96d4",
+      "size": [
+        3840,
+        2160
+      ],
+      "mode": "RGB"
+    },
+    "res/drawable-nodpi/foundation_splash_image.png": {
+      "sha256": "b4c2be5fd0cf294ef6da15fbc35890cb8aebf9d225714f450f852e8143c27a74",
+      "size": [
+        1920,
+        1080
+      ],
+      "mode": "RGB"
+    },
+    "res/mipmap-hdpi/foundation_launcher.png": {
+      "sha256": "dbdf61b5364d0a83dfb38bcc3bcdeb5d03d1765cc01d92c3e472855fa5956342",
+      "size": [
+        72,
+        72
+      ],
+      "mode": "RGB"
+    },
+    "res/mipmap-mdpi/foundation_launcher.png": {
+      "sha256": "21729282fa05625179ad767f52ed2b0a1e2c920ead3137dc0ac91e6d0c6668d3",
+      "size": [
+        48,
+        48
+      ],
+      "mode": "RGB"
+    },
+    "res/mipmap-xhdpi/foundation_launcher.png": {
+      "sha256": "058808467ba4e96ed82f93d525b66f83c2137a926fd3897dc3b44142946fcc89",
+      "size": [
+        96,
+        96
+      ],
+      "mode": "RGB"
+    },
+    "res/mipmap-xxhdpi/foundation_launcher.png": {
+      "sha256": "1903ba3a5cfc1eb4c38fc77485594f5b801fcbadea4ffc40636c34a094a4c3b4",
+      "size": [
+        144,
+        144
+      ],
+      "mode": "RGB"
+    },
+    "res/mipmap-xxxhdpi/foundation_launcher.png": {
+      "sha256": "3ae00cd8cf545357c7caae998c6359bca4c4c85fc47110f388f9d9edc3299104",
+      "size": [
+        192,
+        192
+      ],
+      "mode": "RGB"
+    }
+  },
+  "android12_colour_only_first_phase": {
+    "colour": "#000206",
+    "source_pixel": [
+      1920,
+      0
+    ],
+    "source_asset": "assets/branding/Supernova_Space_Black_Blend_4K_UHD.png",
+    "icon": "Static safe-area bitmap, no AnimatedVectorDrawable or animation delay"
+  },
+  "font_source": "https://github.com/googlefonts/roboto-2/blob/eaef3058ec9d4f426c013b29fae53345e1c36f67/src/hinted/Roboto-Light.ttf",
+  "font_redistributed": false
+}

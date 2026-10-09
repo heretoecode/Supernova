@@ -1,0 +1,106 @@
+[
+  {
+    "name": "NOVA / Archos and local modules",
+    "version": "Nova Video Player 6.4.64; pinned modules",
+    "licence": "Apache-2.0",
+    "role": "Upstream application, database/file modules and native player; original copyright and modified sources remain available in the public repository",
+    "url": "https://github.com/nova-video-player/aos-Video",
+    "text_asset": "foundation/legal/nova-archos-and-local-modules.txt"
+  },
+  {
+    "name": "FFmpeg",
+    "version": "n8.0.1 (actual ELF marker)",
+    "licence": "LGPL-2.1-or-later",
+    "role": "Shared media libraries",
+    "url": "https://ffmpeg.org/legal.html",
+    "text_asset": "foundation/legal/ffmpeg.txt"
+  },
+  {
+    "name": "AudioCompress",
+    "version": "3a3f9324 source",
+    "licence": "LGPL-2.1-or-later",
+    "role": "Native audio dynamics processing; exact pinned corresponding source is public",
+    "url": "https://github.com/nova-video-player/aos-audiocompress",
+    "text_asset": "foundation/legal/audiocompress.txt"
+  },
+  {
+    "name": "VideoLAN deinterlace / NEON routines",
+    "version": "2cf21c48 source",
+    "licence": "LGPL-2.1-or-later AND MIT",
+    "role": "Native deinterlacing and NEON pixel routines",
+    "url": "https://github.com/nova-video-player/aos-avos",
+    "text_asset": "foundation/legal/videolan-deinterlace-neon-routines.txt"
+  },
+  {
+    "name": "dav1d",
+    "version": "1.5.4-0-g54706fc6 (header)",
+    "licence": "BSD-2-Clause",
+    "role": "Shared AV1 decoder",
+    "url": "https://code.videolan.org/videolan/dav1d",
+    "text_asset": "foundation/legal/dav1d.txt"
+  },
+  {
+    "name": "Opus",
+    "version": "libopus 1.6.1-9-g2d862ea1 (ELF marker)",
+    "licence": "BSD-3-Clause",
+    "role": "Shared audio codec",
+    "url": "https://opus-codec.org/",
+    "text_asset": "foundation/legal/opus.txt"
+  },
+  {
+    "name": "libmysofa",
+    "version": "1.3.3 (actual exported function disassembly)",
+    "licence": "BSD-3-Clause",
+    "role": "Shared spatial-audio/SOFA processing library; prebuilt commit declares this source version",
+    "url": "https://github.com/hoene/libmysofa",
+    "text_asset": "foundation/legal/libmysofa.txt"
+  },
+  {
+    "name": "OpenSSL",
+    "version": "3.5.7 (headers / ELF)",
+    "licence": "Apache-2.0",
+    "role": "Crypto/TLS statically linked into native media/torrent components",
+    "url": "https://openssl.org/",
+    "text_asset": "foundation/legal/openssl.txt"
+  },
+  {
+    "name": "libyuv",
+    "version": "1883 (header); 65096347 source",
+    "licence": "BSD-3-Clause",
+    "role": "Pixel conversion statically linked in the native player",
+    "url": "https://chromium.googlesource.com/libyuv/libyuv/",
+    "text_asset": "foundation/legal/libyuv.txt"
+  },
+  {
+    "name": "Boost",
+    "version": "1.92.0 (embedded source paths)",
+    "licence": "BSL-1.0",
+    "role": "Header/static C++ components in torrentd",
+    "url": "https://www.boost.org/",
+    "text_asset": "foundation/legal/boost.txt"
+  },
+  {
+    "name": "libtorrent",
+    "version": "2.0.14.0 (actual ELF marker)",
+    "licence": "BSD-3-Clause",
+    "role": "Torrent engine statically linked into torrentd",
+    "url": "https://www.libtorrent.org/",
+    "text_asset": "foundation/legal/libtorrent.txt"
+  },
+  {
+    "name": "Android NDK / libc++",
+    "version": "NDK 29.0.14206865; prebuilt toolchains recorded separately",
+    "licence": "Apache-2.0 WITH LLVM-exception AND additional notices",
+    "role": "Native toolchain runtime, compiler support and cpufeatures",
+    "url": "https://developer.android.com/ndk",
+    "text_asset": "foundation/legal/android-ndk-libc.txt"
+  },
+  {
+    "name": "Sentry native bundled libraries",
+    "version": "sentry-native 0.16.2; pinned vendored sources",
+    "licence": "Apache-2.0 / BSD / MIT / public-domain alternatives; original notices below",
+    "role": "Native diagnostics unwinding and bundled helpers",
+    "url": "https://github.com/getsentry/sentry-native",
+    "text_asset": "foundation/legal/sentry-native-vendored-notices.txt"
+  }
+]

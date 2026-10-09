@@ -888,6 +888,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             return true;
         });
 
+        if(com.archos.mediacenter.video.BuildConfig.FOUNDATION)com.archos.mediacenter.video.foundation.FoundationAboutEntry.install(mPreferencesFragment);
         mSmb2 = (CheckBoxPreference) findPreference(KEY_SMB2);
         mSmbResolver = (CheckBoxPreference) findPreference(KEY_SMB_RESOLV);
         mSmbDisableTcpDiscovery = (CheckBoxPreference) findPreference(KEY_SMB_DISABLE_TCP_DISCOVERY);
