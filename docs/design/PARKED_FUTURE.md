@@ -46,3 +46,11 @@ When any parked item is activated, create/update its design authority with final
 
 ## Current strict non-goals
 The current fixes-only release must not introduce identity migration, Smart Collections, Profiles, Discovery/custom pages, broad audits, put.io transfer/sync expansion, WebDAV replacement, NFS, speculative capabilities, branding redesign or dependency-pin movement.
+
+## 9 October 2026 — later design-status corrections (supersedes older generic headings)
+- **About** is no longer an undecided design: all five About subsections and flexible three-panel layout are approved in `docs/design/ABOUT_SETTINGS.md`. **Implementation and release-specific licence verification remain outstanding**.
+- **One custom local Library Page** has an approved future five-step wizard design in `docs/design/RECENT_PRODUCT_DECISIONS_2026-10-08.md`; it is **not** approved for the current fixes-only implementation. **Discovery Page remains parked.** Earlier “all custom pages parked” wording is superseded for design status only.
+- **Branding visual decisions** are closed; see the later entries in `docs/project/CURRENT_CHAT_DECISIONS_2026-10-08.md` and approved asset references. Platform-ready production assets and app integration are separate execution tasks, not a reason to reopen visual design.
+- **Backup archive format 1.0 onward** is the sole supported compatibility baseline; no legacy NOVA or pre-1.0 Supernova import. See `docs/design/BACKUP_RESTORE.md`.
+- **Diagnostics** expansion is confirmed as future work using the existing logging toggle/export; keep all useful fault data while redacting credentials. No in-app viewer approved.
+- **Wider Settings, Network & Files and installed-APK walkthroughs are temporarily set aside at user's request.**
