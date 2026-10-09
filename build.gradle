@@ -39,6 +39,26 @@ if (hasProperty('bugReport')) {
     }
 }
 
+// Foundation opts in explicitly; no fallback to local/Preview/debug signing.
+def foundationRelease = project.hasProperty("foundationRelease")
+def foundationSigning = [:]
+if (foundationRelease) {
+    if (project.hasProperty("markPreview") || project.hasProperty("markSigning") || rootProject.file("keystore.properties").exists()) {
+        throw new GradleException("Foundation signing cannot be mixed with Preview or local keystore.properties")
+    }
+    ["SUPERNOVA_SIGNING_STORE_FILE", "SUPERNOVA_STORE_PASSWORD", "SUPERNOVA_KEY_ALIAS", "SUPERNOVA_KEY_PASSWORD"].each { name ->
+        def value = System.getenv(name)
+        if (!value) throw new GradleException("Required Foundation signing environment missing: " + name)
+        foundationSigning[name] = value
+    }
+    if (!file(foundationSigning["SUPERNOVA_SIGNING_STORE_FILE"]).isFile()) {
+        throw new GradleException("Verified Foundation PKCS#12 keystore is unavailable")
+    }
+    if (gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ROOT).contains("debug") }) {
+        throw new GradleException("Foundation signing is release-only; debug signing is not permitted")
+    }
+}
+
 def keystorePropertiesFile = rootProject.file("keystore.properties");
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
@@ -98,6 +118,17 @@ if (shouldApplyPlayPlugin) {
 android {
     namespace = 'com.archos.mediacenter.video'
     signingConfigs {
+        foundation {
+            storeType = 'pkcs12'
+            if (foundationRelease) {
+                storeFile = file(foundationSigning["SUPERNOVA_SIGNING_STORE_FILE"])
+                storePassword = foundationSigning["SUPERNOVA_STORE_PASSWORD"]
+                keyAlias = foundationSigning["SUPERNOVA_KEY_ALIAS"]
+                keyPassword = foundationSigning["SUPERNOVA_KEY_PASSWORD"]
+            }
+            enableV3Signing = true
+            enableV4Signing = true
+        }
         release {
             if (keystorePropertiesFile.exists()) {
                 storeFile = file(keystoreProperties['storeFile'])
@@ -157,7 +188,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId = project.hasProperty("markPreview") ? "org.courville.nova.markpreview" : "org.courville.nova"
+        applicationId = foundationRelease ? "app.supernova.player" : project.hasProperty("markPreview") ? "org.courville.nova.markpreview" : "org.courville.nova"
         manifestPlaceholders = [novaLaunchTheme: project.hasProperty("markPreview") ? "@style/PreviewLaunch" : "@style/MyLeanbackTheme.Launcher", novaEntryTheme: project.hasProperty("markPreview") ? "@style/PreviewEntry" : "@style/ArchosThemeLauncher", novaIcon: project.hasProperty("markPreview") ? "@drawable/preview_custom_icon" : "@mipmap/ic_launcher", novaBanner: project.hasProperty("markPreview") ? "@drawable/preview_custom_banner" : "@drawable/nova_banner"]
         generatedDensities = []
         minSdkVersion 23
@@ -181,7 +212,8 @@ android {
         println("defaultConfig archivesBaseName : " + archivesNameValue)
         println("defaultConfig versionName : " + versionName)
         println("defaultConfig versionCode : " + versionCode)
-        if (keystorePropertiesFile.exists()) signingConfig = signingConfigs.release
+        if (foundationRelease) signingConfig = signingConfigs.foundation
+        else if (keystorePropertiesFile.exists()) signingConfig = signingConfigs.release
         if (project.hasProperty("sponsor")) {
             buildConfigField "boolean", "ENABLE_SPONSOR", "true"
         } else {
@@ -259,7 +291,8 @@ android {
     buildTypes {
         println("buildTypes archivesBaseName : " + archivesNameValue)
         release {
-            if (project.hasProperty('markSigning')) signingConfig signingConfigs.debug
+            if (foundationRelease) signingConfig signingConfigs.foundation
+            else if (project.hasProperty('markSigning')) signingConfig signingConfigs.debug
             minifyEnabled = true
             shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'

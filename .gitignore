@@ -14,3 +14,9 @@ keystore.properties
 sentry.properties
 nova.json
 crowdin.yml
+
+# Foundation signing material must remain in protected Actions secrets / runner temp.
+*.p12
+*.pfx
+*.jks
+*.keystore
