@@ -17,7 +17,7 @@
 - [x] Corresponding-source/relinking recipes and archive established; four source-built ABIs passed native compatibility/regression checks before replacement.
 - [x] Protected existing-key validation succeeds with exact 64-character pin (37920686126 and 37925321456).
 - [x] Three-pass Foundation scope/design/signing review recorded; all pre-signing gates cleared; final approval/signing/device work remains open.
-- [ ] User explicitly authorises enabling readiness and protected `prepare` operation.
+- [x] User explicitly authorised protected signing for app source 11766e59 and confirmed protected readiness=true.
 - [ ] Signed APK produced, actual version/provider/resource/licence/signature/certificate/checksum verified and allowlisted artifact uploaded.
 
 ## Device checks after signed APK delivery — all pending

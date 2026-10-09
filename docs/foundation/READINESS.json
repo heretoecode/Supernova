@@ -12,9 +12,11 @@
   "verified_unsigned_source": "64e1a2ebef18941b0f2719d5dbf810c25c01985c",
   "signed_apk_produced": false,
   "physical_shield_qa": "Pending after signed APK delivery",
-  "protected_key_validation_run": "https://github.com/heretoecode/Supernova/actions/runs/37925321456",
+  "protected_key_validation_run": "https://github.com/heretoecode/Supernova/actions/runs/37935348904",
   "unsigned_ci_rehearsal_run": "https://github.com/heretoecode/Supernova/actions/runs/37929976741",
-  "status": "READY_FOR_FINAL_SIGNING_AUTHORISATION",
-  "protected_signing_enablement": "Not changed; final user approval required",
-  "evidence_index": "CI_REHEARSAL_INDEX.json"
+  "status": "AUTHORISED_BUILD_RETRY_PENDING_TOOLING_CORRECTION",
+  "protected_signing_enablement": "Enabled by user; explicit final approval received",
+  "evidence_index": "CI_REHEARSAL_INDEX.json",
+  "approved_signed_source": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+  "signing_attempt_run": "https://github.com/heretoecode/Supernova/actions/runs/37935418033"
 }

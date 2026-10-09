@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     environment: supernova-foundation-signing
+    env:
+      # Explicitly approved APK source; workflow-only fixes must not change app bytes.
+      FOUNDATION_APPROVED_SOURCE: 11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8
     defaults:
       run:
         shell: bash
@@ -88,9 +91,9 @@ jobs:
             git --git-dir=.repo/projects/native/prebuilt/opus.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-opus.git 27544063be93ee55c6ba58a2ebb32c106eb2e37b
             repo sync --no-manifest-update -c -d -j 4
           fi
-          git -C Video fetch ../../source HEAD
+          git -C Video fetch ../../source "$FOUNDATION_APPROVED_SOURCE"
           git -C Video checkout --detach FETCH_HEAD
-          test "$(git -C Video rev-parse HEAD)" = "$(git -C ../source rev-parse HEAD)"
+          test "$(git -C Video rev-parse HEAD)" = "$FOUNDATION_APPROVED_SOURCE"
           git -C MediaLib apply ../Video/.github/build/medialib-preview40.patch
           git -C native/avos apply ../../Video/.github/build/avos-preview414.patch
           git -C FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
@@ -191,7 +194,9 @@ jobs:
           SUPERNOVA_CERT_SHA256: ${{ vars.SUPERNOVA_CERT_SHA256 }}
         run: |
           set -euo pipefail
-          build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+          # Use the same explicitly installed/reviewed tools as unsigned conformance.
+          # Build Tools 37 changed certificate labels; never silently select newest.
+          build_tools="$ANDROID_HOME/build-tools/36.0.0"
           python3 source/.github/signing/verify_foundation_apk.py \
             --directory nova/Video/build/outputs/apk/noamazon/release \
             --apksigner "$build_tools/apksigner" \
