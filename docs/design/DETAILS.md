@@ -64,3 +64,5 @@ A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered d
 The same historical record explicitly rejected permanent left-sidebar primary navigation, two-line grid titles, empty Continue Watching placeholder panels, huge bright-blue list rows, grey stock Android filter/sort/order dialogs, “NEW” Settings badges, invented analytics settings, an assistant-invented launcher icon, and generated Network/Settings mock-ups that invented unsupported features.
 
 **Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
+
+**Approved Cast & Crew mock-up binary destination:** `docs/design/approved-mockups/details/cast-crew-compact-approved.png` on `main` (pending image upload; do not claim file exists yet). This is the approved text-table reference with heading counts removed and equal spacing mandated in the written spec.
