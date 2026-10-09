@@ -464,5 +464,7 @@
   "carousel_markers_absent_from_first_apk": true,
   "binary_ui_limit": "Markers prove carousel inclusion in the optimized APK; actual production view tests and rendered pixel assertions provide functional evidence. Shield GPU/timing/live-library acceptance remains pending.",
   "python_guard_tests": 36,
-  "workflow_actionlint": "PASS"
+  "workflow_actionlint": "PASS",
+  "verified_application_source": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f",
+  "tested_source_commit": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f"
 }

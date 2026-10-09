@@ -25,7 +25,7 @@ jobs:
     environment: supernova-foundation-signing
     env:
       # Explicitly approved APK source; workflow-only fixes must not change app bytes.
-      FOUNDATION_APPROVED_SOURCE: 11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8
+      FOUNDATION_APPROVED_SOURCE: cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f
     defaults:
       run:
         shell: bash

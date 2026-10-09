@@ -1,6 +1,6 @@
 # Foundation Home correction — 0.134 / 134
 
-Current status: all local implementation, regression and optimized unsigned binary checks passed; the verified application commit and protected source pin are being recorded. Corrected signed APK has **not** been produced. The user has authorised corrected delivery using the existing protected workflow. Physical Shield retest remains pending.
+Current status: all local implementation, regression and optimized unsigned binary checks passed; application source **cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f** is verified and pinned by the following workflow/documentation commit. Corrected signed APK has **not** been produced. The user has authorised corrected delivery using the existing protected workflow. Physical Shield retest remains pending.
 
 ## Investigation and bounded correction
 
@@ -44,3 +44,5 @@ Corrected APK filename will remain `Supernova-Foundation.apk` in the existing ve
 The earlier first-delivery CLI expiry was rechecked during this continuation: GitHub workflow access now succeeds and fresh dispatch is available. After all checks and commits are concrete, dispatch a new **validate**, then **prepare** run on **codex/foundation-release**. Rerunning an old run would rebuild its old pinned source. No manual dispatch, additional signing key, secret entry or routine authorisation is currently required. Existing protected reviewer prompts, if GitHub presents them, must be satisfied normally.
 
 Physical NVIDIA Shield checks: upgrade 0.133 to 0.134, validate actual Home carousel, first/middle/last artwork zoom containment during scrolling, More Info and Back focus, scan pill and Preparing Playback indicators, About/version/branding, library/network access and playback/resume/audio/subtitles. Real library/provider artwork, Shield GPU/timing and full physical acceptance are pending. Other source omissions remain deferred to the maintenance release.
+
+Verified application/source commit: [cf1211ce](https://github.com/heretoecode/Supernova/commit/cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f). The next workflow-only commit pins this exact source; it does not alter product files. The protected build must emit this source SHA in its public APK evidence.

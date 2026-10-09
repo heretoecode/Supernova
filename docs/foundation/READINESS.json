@@ -23,5 +23,7 @@
   "corrected_version_code": 134,
   "correction_evidence": "UI_CORRECTED_UNSIGNED_EVIDENCE.json",
   "canonical_product_inputs_sha256": "267ce9a39f1df4be0b4bc1f9c0516aaba574e40b4467ad09828d3fff61e2e690",
-  "source_pin_policy": "Workflow-only follow-up pins the just-created verified application commit. Earlier 11766e59 approval remains first-delivery history."
+  "source_pin_policy": "Workflow-only follow-up pins the just-created verified application commit. Earlier 11766e59 approval remains first-delivery history.",
+  "verified_application_source": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f",
+  "approved_signed_source": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f"
 }
