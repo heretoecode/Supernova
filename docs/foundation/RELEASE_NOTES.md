@@ -1,6 +1,6 @@
 # Supernova Foundation — candidate 0.133
 
-Status: implemented candidate, unsigned verification passed; native source and signing-pin gates passed; keyless cold CI rehearsal and three-pass readiness review passed; final signing approval pending; **not a signed release**. Physical Shield acceptance follows verified APK delivery. Version numbers are literal APK counters, so `0.10` follows `0.9`.
+Status: implemented candidate, unsigned verification passed; native source and signing-pin gates passed; keyless cold CI rehearsal and three-pass readiness review passed; final signing approval received; corrected-workflow retry pending; **not a signed release**. Physical Shield acceptance follows verified APK delivery. Version numbers are literal APK counters, so `0.10` follows `0.9`.
 
 - Permanent Android application identity **app.supernova.player**, app label Supernova, isolated providers/task identity, and dedicated existing Foundation PKCS#12 signing workflow.
 - Approved Space Black Blend, double-ring launcher icon (density/adaptive variants), Android TV banner, static splash and utility background. Existing Home hero imagery is preserved.

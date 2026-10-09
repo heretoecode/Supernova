@@ -1,7 +1,8 @@
 # Foundation implementation evidence
 
-Work is isolated to `codex/foundation-release`. **All pre-signing readiness gates passed; awaiting final user approval. No signed Foundation APK has been produced; protected signing remains disabled.**
+Work is isolated to `codex/foundation-release`. **Final signing was authorised and protected readiness enabled. Signed assembly completed, but final publication failed closed on a reproduced Build Tools 37 output-format mismatch. The isolated correction is committed; a fresh prepare dispatch is pending. No verified signed APK has been delivered.**
 
+- [Current authorised signing/retry status](SIGNING_BUILD_STATUS.md)
 - [Implementation report and blockers](IMPLEMENTATION_REPORT.md)
 - [Machine-readable readiness](READINESS.json)
 - [Three-pass Foundation conformance review](CONFORMANCE_REVIEW.md)

@@ -1,6 +1,6 @@
 # Foundation conformance and Shield acceptance
 
-**Status:** all pre-signing automated/source/readiness gates passed; final user signing approval, signed delivery and physical QA remain pending. Do not mark device checks passed without user evidence.
+**Status:** all pre-signing automated/source/readiness gates passed; user signing approval received; corrected-workflow retry, verified signed delivery and physical QA remain pending. Do not mark device checks passed without user evidence.
 
 ## Automated release gates
 
