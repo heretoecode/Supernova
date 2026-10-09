@@ -4,7 +4,9 @@ Date: 2026-10-09
 Status: **CONFIRMED PLANNING SELECTIONS ONLY — NO CODEX HANDOVER**
 Source: User-provided checkbox selections in main Supernova planning conversation.
 
-**Counts: 34 checked / confirmed for inclusion; 10 unticked / not yet approved by this checklist.**
+**Counts: 36 checked / confirmed for inclusion; 8 remaining unticked in the original checklist.**
+
+**Update 2026-10-10:** User additionally approved clock typography and Details metadata alignment. Separately, the exact four-button playback HUD design supersedes the prior pending top-level Info/Settings-links removal item; see linked HUD specification. This means **seven actionable decisions remain outstanding** from the checklist. Library Health was also separately promoted to 0.135 scope; see its approval document.
 
 ## Checked — confirmed for inclusion in 0.135
 
@@ -34,11 +36,13 @@ Source: User-provided checkbox selections in main Supernova planning conversatio
 - [x] Clarify Remove from Continue Watching Row action
 
 ### Settings & Navigation
+- [x] Correct top-navigation clock font and size
 - [x] Restore coloured streaming-provider icons
 - [x] Improve language flags
 - [x] Fix Open Source Licenses freezing/crashing
 
 ### Details Page
+- [x] Correct metadata alignment
 - [x] Improve Details, Extras and More Like This navigation
 - [x] Reduce delays loading related information
 - [x] Improve streaming provider buttons and logos
@@ -65,23 +69,17 @@ Source: User-provided checkbox selections in main Supernova planning conversatio
 - [ ] Make Scan Library start immediately
 - [ ] Show clear scan progress, results and history
 
-### Playback & Continue Watching
-- [ ] Remove Info and unnecessary Settings links from HUD
-
 ### Settings & Navigation
-- [ ] Correct top-navigation clock font and size
 - [ ] Implement three-panel Settings navigation
 - [ ] Correct Advanced Diagnostics navigation
 
-### Details Page
-- [ ] Correct metadata alignment
 
 ## Interpretation and guardrails
 
 - Checked means **approved planning scope**, not implemented, tested or handed to Codex.
 - Unticked means **not selected in this confirmation round**, not automatically rejected forever, and not permission to remove or regress existing functionality.
 - The five Network & Files items were all unticked. Earlier project planning had marked reliable import as a high priority; this latest explicit checklist does not approve those items. Seek a separate user decision before placing them in the final 0.135 handover.
-- The four-button HUD is checked, but the separate item “Remove Info and unnecessary Settings links from HUD” is unticked. Do not treat that independent removal item as newly approved; reconcile the design dependency with the user before implementation.
+- The later explicitly approved four-button HUD design resolves the former Info/Settings top-level button ambiguity. See the approved HUD specification; preserve underlying functions in appropriate menus.
 - “Preserve working artwork zoom and horizontal row continuation” is a **regression-protection requirement**, not an assertion those behaviours are broken.
 - Custom Library Page full creation/editing was separately approved and is confirmed here. Its authoritative specifications and two original approved images are linked below.
 - No changes to application code, APK, protected branches, signing or release state are authorised by this documentation update. Do not initiate a Codex handover until the user explicitly requests it.
@@ -94,3 +92,5 @@ Source: User-provided checkbox selections in main Supernova planning conversatio
 - [Custom Library Page creation-options mock-up](../design/approved-mockups/custom-library-page/library-creation-options-approved.png)
 - [Custom Library Page default landing-page mock-up](../design/approved-mockups/custom-library-page/default-landing-page-approved.png)
 - [Recent product decisions](../design/RECENT_PRODUCT_DECISIONS_2026-10-08.md)
+- [Approved HUD design](../design/PLAYBACK_HUD_0.135_APPROVED_2026-10-10.md)
+- [Library Health promotion](SUPERNOVA_0.135_LIBRARY_HEALTH_APPROVAL_2026-10-10.md)
