@@ -1,0 +1,175 @@
+name: Foundation signing setup and release
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'Inspect public alias, validate existing key, or build after Foundation readiness approval'
+        type: choice
+        required: true
+        default: validate
+        options: [inspect, validate, prepare]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: foundation-signing
+  cancel-in-progress: false
+
+jobs:
+  foundation:
+    if: github.ref == 'refs/heads/codex/foundation-release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: supernova-foundation-signing
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout Foundation source only
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fail closed before preparing any key or build
+        env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
+          SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
+          SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
+          SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}
+          SUPERNOVA_KEY_PASSWORD: ${{ secrets.SUPERNOVA_KEY_PASSWORD }}
+          SUPERNOVA_CERT_SHA256: ${{ vars.SUPERNOVA_CERT_SHA256 }}
+          FOUNDATION_RELEASE_READY: ${{ vars.FOUNDATION_RELEASE_READY }}
+          OPERATION: ${{ inputs.operation }}
+        run: |
+          set +x
+          set -euo pipefail
+          python3 source/.github/signing/foundation_signing.py preflight --operation "$OPERATION"
+
+      - name: Java for PKCS12 validation and Android build
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '17'
+          # Deliberately no Gradle/signing cache.
+
+      - name: Inspect public alias or validate without building an APK
+        if: inputs.operation != 'prepare'
+        env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
+          SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
+          SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
+          SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}
+          SUPERNOVA_KEY_PASSWORD: ${{ secrets.SUPERNOVA_KEY_PASSWORD }}
+          SUPERNOVA_CERT_SHA256: ${{ vars.SUPERNOVA_CERT_SHA256 }}
+          OPERATION: ${{ inputs.operation }}
+        run: |
+          set +x
+          set -euo pipefail
+          python3 source/.github/signing/foundation_signing.py "$OPERATION"
+
+      - name: Prepare existing pinned NOVA dependencies without Preview identity conversion
+        if: inputs.operation == 'prepare'
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget ffmpeg
+          sudo apt-get install -y repo
+          mkdir nova
+          cd nova
+          repo init -u https://github.com/nova-video-player/aos-AVP -b 9c5842b74ab180c99441ed23fdd5d508448388a7 -m v6_4.xml
+          cp ../source/.github/build/nova-ci.xml .repo/manifests/v6_4.xml
+          if ! repo sync --no-manifest-update -c -d -j 4; then
+            git --git-dir=.repo/projects/native/prebuilt/ffmpeg.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-ffmpeg.git 6ba0e9340cf725bede2e2f29d30c290a2ab8130e
+            git --git-dir=.repo/projects/native/prebuilt/opus.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-opus.git 27544063be93ee55c6ba58a2ebb32c106eb2e37b
+            repo sync --no-manifest-update -c -d -j 4
+          fi
+          git -C Video fetch ../../source HEAD
+          git -C Video checkout --detach FETCH_HEAD
+          test "$(git -C Video rev-parse HEAD)" = "$(git -C ../source rev-parse HEAD)"
+          git -C MediaLib apply ../Video/.github/build/medialib-preview40.patch
+          git -C native/avos apply ../../Video/.github/build/avos-preview414.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-preview415.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview415.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview417.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview417-local.patch
+          # prepare-preview.py is intentionally NOT called for Foundation.
+
+      - name: Require completed Foundation provider and version isolation before key preparation
+        if: inputs.operation == 'prepare'
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          manifest = Path('nova/Video/AndroidManifest.xml').read_text()
+          gradle = Path('nova/Video/build.gradle').read_text()
+          legacy = ('browser.SearchProviderVideocommunity', 'com.archos.media.videocommunity',
+                    'com.archos.media.scrapercommunity', 'org.courville.nova.markpreview')
+          if any(x in manifest for x in legacy):
+              raise SystemExit('Foundation provider-authority isolation is not prepared; refusing signed build.')
+          if "'6.4.63-mark.3'" in gradle or '"Nova v"' in gradle:
+              raise SystemExit('Foundation version/branding preparation is incomplete; refusing signed build.')
+          # Sibling provider constants must agree with the prepared app manifest.
+          for path in Path('nova/MediaLib').rglob('*'):
+              if path.suffix in ('.java', '.xml') and any(x in path.read_text() for x in legacy):
+                  raise SystemExit('Foundation sibling provider contracts remain legacy; refusing signed build.')
+          PY
+
+      - name: Prepare verified Foundation key and build release only
+        if: inputs.operation == 'prepare'
+        env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
+          SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
+          SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
+          SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}
+          SUPERNOVA_KEY_PASSWORD: ${{ secrets.SUPERNOVA_KEY_PASSWORD }}
+          SUPERNOVA_CERT_SHA256: ${{ vars.SUPERNOVA_CERT_SHA256 }}
+          FOUNDATION_RELEASE_READY: ${{ vars.FOUNDATION_RELEASE_READY }}
+        run: |
+          set +x
+          set -euo pipefail
+          signing_dir="$RUNNER_TEMP/supernova-foundation-signing"
+          build_log="$RUNNER_TEMP/supernova-foundation-gradle.log"
+          trap 'rm -rf -- "$signing_dir"; rm -f -- "$build_log"' EXIT
+          python3 source/.github/signing/foundation_signing.py prepare
+          export SUPERNOVA_SIGNING_STORE_FILE="$signing_dir/foundation.p12"
+          unset SUPERNOVA_P12_BASE64
+          cd nova/Video
+          chmod +x gradlew
+          if ! ./gradlew assembleNoamazonRelease -PfoundationRelease -Puniversal --no-daemon --no-build-cache --no-configuration-cache > "$build_log" 2>&1; then
+            echo 'Foundation release build failed. Raw Gradle logs are not published because signing secrets were in scope.'
+            exit 1
+          fi
+
+      - name: Verify signed package and public evidence before allowlisted upload
+        if: inputs.operation == 'prepare'
+        env:
+          SUPERNOVA_CERT_SHA256: ${{ vars.SUPERNOVA_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+          python3 source/.github/signing/verify_foundation_apk.py \
+            --directory nova/Video/build/outputs/apk/noamazon/release \
+            --apksigner "$build_tools/apksigner" \
+            --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+            --publish "$RUNNER_TEMP/supernova-foundation-publish"
+
+      - name: Always remove temporary signing material
+        if: always()
+        run: |
+          python3 source/.github/signing/foundation_signing.py cleanup
+          rm -f -- "$RUNNER_TEMP/supernova-foundation-gradle.log"
+
+      - name: Upload verified Foundation APK and public evidence only
+        if: success() && inputs.operation == 'prepare'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: supernova-foundation-release
+          path: |
+            ${{ runner.temp }}/supernova-foundation-publish/Supernova-Foundation.apk
+            ${{ runner.temp }}/supernova-foundation-publish/public-build-evidence.json
+          if-no-files-found: error
+          retention-days: 7
