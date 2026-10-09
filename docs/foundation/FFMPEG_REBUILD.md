@@ -16,7 +16,7 @@ Existing dav1d/Opus/mysofa shared libraries and OpenSSL static archives are reus
 
 Two inherited changes are preserved: the Opus configure check links libm, and pinned `atempo.patch` retains both AVOS diagnostic accessors and the output-frontier tracking. The Opus patch is rebased onto exact n8.0.1 surrounding context; its single changed line is identical in effect. Patches apply with zero fuzz. Every original source file is checked against the hashed archive after building, except the two explicitly reviewed patched files, whose exact resulting hashes are locked. No additional source fixes are included.
 
-The source release generates `8.0.1`; the old git build generated `n8.0.1`. All other public headers are byte-identical. Six libraries on each ABI have identical exported symbols (including symbol versions and both atempo accessors), SONAME dependencies and public ABI. [FFMPEG_REBUILD_REVIEWED.json](FFMPEG_REBUILD_REVIEWED.json) locks the baseline hashes/exports/dependencies and every rebuilt feature/component configuration macro. Absolute configure/data-directory paths alone are excluded from macro hashing. Runtime registries independently compare against the original binaries.
+The source release generates `8.0.1`; the old git build generated `n8.0.1`. All other public headers are byte-identical. Six libraries on each ABI have identical exported symbols (including symbol versions and both atempo accessors), SONAME dependencies and public ABI. [FFMPEG_REBUILD_REVIEWED.json](FFMPEG_REBUILD_REVIEWED.json) locks the baseline hashes/exports/dependencies and every rebuilt feature/component configuration macro. Absolute configure/data-directory paths and three source-traced host documentation/test-transfer probes (`HAVE_MAKEINFO`, `HAVE_MAKEINFO_HTML`, `HAVE_RSYNC_CONTIMEOUT`) are excluded from macro hashing. These probes appear only in configure/doc/tests Makefile logic and have no C/header/assembly library references; all runtime/component/licence macros remain strict. Runtime registries independently compare against the original binaries.
 
 ## Regression evidence and limits
 
@@ -54,3 +54,7 @@ The existing manual Foundation workflow also accepts `operation=verify` on this 
 ```sh
 gh workflow run foundation-signing.yml --ref codex/foundation-release -f operation=verify
 ```
+
+### CI host-tool difference diagnosis
+
+Cold rehearsal 37926791331 failed closed on generated macro hashes before installation. Diagnostic rehearsal 37929001285 identified only the three host documentation/rsync probes above (local 0, runner 1). A second long diagnostic run was cancelled after early configuration checks were added. Source tracing showed these probes cannot change the compiled libraries; their values are retained separately in reviewed evidence. A regression test proves host-only changes are accepted while a codec-feature change remains refused. Python tools now pass 36 tests. The complete canonical keyless run must still pass before signing approval. No runtime feature/configuration baseline was relaxed.

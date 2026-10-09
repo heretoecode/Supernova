@@ -34,6 +34,16 @@ class FoundationNativeGuardTests(unittest.TestCase):
             p.write_text('#define CONFIG_GPL 1\n')
             self.assertNotEqual(old,builder.config_digest(p))
 
+    def test_host_doc_transport_tools_do_not_mask_runtime_feature_changes(self):
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/'config.h'
+            p.write_text('#define HAVE_MAKEINFO 0\n#define HAVE_MAKEINFO_HTML 0\n#define HAVE_RSYNC_CONTIMEOUT 0\n#define CONFIG_LIBOPUS 1\n')
+            old=builder.config_digest(p)
+            p.write_text('#define HAVE_MAKEINFO 1\n#define HAVE_MAKEINFO_HTML 1\n#define HAVE_RSYNC_CONTIMEOUT 1\n#define CONFIG_LIBOPUS 1\n')
+            self.assertEqual(old,builder.config_digest(p))
+            p.write_text('#define CONFIG_LIBOPUS 0\n')
+            self.assertNotEqual(old,builder.config_digest(p))
+
     def test_extra_source_modification_refused_before_abi_check(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)/'root';work=Path(d)/'work';(root/'Video/.github/build').mkdir(parents=True);(work/'downloads').mkdir(parents=True);(work/'build/test').mkdir(parents=True)

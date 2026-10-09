@@ -3,7 +3,7 @@
   "scope": "Baseline ABI and reviewed rebuilt macro configuration; native runtime regressions recorded separately",
   "abis": {
     "arm64-v8a": {
-      "config_h_sha256": "e7527ab1b6bd39da95f474efc296eb5868a8ed6ce3770159c01aa0600ef70121",
+      "config_h_sha256": "a47150a7e042c430e5de32ad1984c6263fc93b1644c7f45c43c79a9c22928a31",
       "config_components_sha256": "4f8d8ad5f6eaac96b385e1018ddd129e45adb6cae06892c48d29d3a566c00aa6",
       "libraries": {
         "libavcodec.so": {
@@ -1529,7 +1529,6 @@
         "HAVE_INLINE_ASM_LABELS": "1",
         "HAVE_INLINE_ASM_NONLOCAL_LABELS": "1",
         "HAVE_PRAGMA_DEPRECATED": "1",
-        "HAVE_RSYNC_CONTIMEOUT": "0",
         "HAVE_SYMVER_ASM_LABEL": "1",
         "HAVE_SYMVER_GNU_ASM": "1",
         "HAVE_VFP_ARGS": "0",
@@ -1575,8 +1574,6 @@
         "HAVE_GZIP": "1",
         "HAVE_IOCTL_POSIX": "1",
         "HAVE_LIBDRM_GETFB2": "0",
-        "HAVE_MAKEINFO": "0",
-        "HAVE_MAKEINFO_HTML": "0",
         "HAVE_OPENCL_D3D11": "0",
         "HAVE_OPENCL_DRM_ARM": "0",
         "HAVE_OPENCL_DRM_BEIGNET": "0",
@@ -1944,10 +1941,15 @@
         "CONFIG_VVC_SEI": "1",
         "CONFIG_WMA_FREQS": "1",
         "CONFIG_WMV2DSP": "1"
+      },
+      "host_tool_macros": {
+        "HAVE_MAKEINFO_HTML": "0",
+        "HAVE_RSYNC_CONTIMEOUT": "0",
+        "HAVE_MAKEINFO": "0"
       }
     },
     "armeabi-v7a": {
-      "config_h_sha256": "3cdce44206e6a555f82598740ad3cf038b2c02407d76b16194c60670e058c481",
+      "config_h_sha256": "576e2dbcaf1111e91f83c2ebb1d021b4ae93701eb8357d654f2d771806cda8a5",
       "config_components_sha256": "4f8d8ad5f6eaac96b385e1018ddd129e45adb6cae06892c48d29d3a566c00aa6",
       "libraries": {
         "libavcodec.so": {
@@ -3472,7 +3474,6 @@
         "HAVE_INLINE_ASM_LABELS": "1",
         "HAVE_INLINE_ASM_NONLOCAL_LABELS": "1",
         "HAVE_PRAGMA_DEPRECATED": "1",
-        "HAVE_RSYNC_CONTIMEOUT": "0",
         "HAVE_SYMVER_ASM_LABEL": "1",
         "HAVE_SYMVER_GNU_ASM": "1",
         "HAVE_VFP_ARGS": "0",
@@ -3518,8 +3519,6 @@
         "HAVE_GZIP": "1",
         "HAVE_IOCTL_POSIX": "1",
         "HAVE_LIBDRM_GETFB2": "0",
-        "HAVE_MAKEINFO": "0",
-        "HAVE_MAKEINFO_HTML": "0",
         "HAVE_OPENCL_D3D11": "0",
         "HAVE_OPENCL_DRM_ARM": "0",
         "HAVE_OPENCL_DRM_BEIGNET": "0",
@@ -3887,10 +3886,15 @@
         "CONFIG_VVC_SEI": "1",
         "CONFIG_WMA_FREQS": "1",
         "CONFIG_WMV2DSP": "1"
+      },
+      "host_tool_macros": {
+        "HAVE_MAKEINFO_HTML": "0",
+        "HAVE_RSYNC_CONTIMEOUT": "0",
+        "HAVE_MAKEINFO": "0"
       }
     },
     "x86": {
-      "config_h_sha256": "ec076bc955bbfbd5a5dc9212cb98730d1ea2a4b1395a592116050419c5640090",
+      "config_h_sha256": "5c7c52e2eb657b306b6e72dcd8cd916ced7fbfb2013c2981d35d4a6ba604d7ed",
       "config_components_sha256": "4f8d8ad5f6eaac96b385e1018ddd129e45adb6cae06892c48d29d3a566c00aa6",
       "libraries": {
         "libavcodec.so": {
@@ -5415,7 +5419,6 @@
         "HAVE_INLINE_ASM_LABELS": "1",
         "HAVE_INLINE_ASM_NONLOCAL_LABELS": "1",
         "HAVE_PRAGMA_DEPRECATED": "1",
-        "HAVE_RSYNC_CONTIMEOUT": "0",
         "HAVE_SYMVER_ASM_LABEL": "1",
         "HAVE_SYMVER_GNU_ASM": "1",
         "HAVE_VFP_ARGS": "0",
@@ -5461,8 +5464,6 @@
         "HAVE_GZIP": "1",
         "HAVE_IOCTL_POSIX": "1",
         "HAVE_LIBDRM_GETFB2": "0",
-        "HAVE_MAKEINFO": "0",
-        "HAVE_MAKEINFO_HTML": "0",
         "HAVE_OPENCL_D3D11": "0",
         "HAVE_OPENCL_DRM_ARM": "0",
         "HAVE_OPENCL_DRM_BEIGNET": "0",
@@ -5830,10 +5831,15 @@
         "CONFIG_VVC_SEI": "1",
         "CONFIG_WMA_FREQS": "1",
         "CONFIG_WMV2DSP": "1"
+      },
+      "host_tool_macros": {
+        "HAVE_MAKEINFO_HTML": "0",
+        "HAVE_RSYNC_CONTIMEOUT": "0",
+        "HAVE_MAKEINFO": "0"
       }
     },
     "x86_64": {
-      "config_h_sha256": "85739d7311c1fb9332005de07cb71574914a7ad2626e33cc4d448e6c6588b00c",
+      "config_h_sha256": "131ff393b00b869d8ddafb999ff4efd9ef8e3a9f3bae70b47b439058ec4c4e8c",
       "config_components_sha256": "4f8d8ad5f6eaac96b385e1018ddd129e45adb6cae06892c48d29d3a566c00aa6",
       "libraries": {
         "libavcodec.so": {
@@ -7358,7 +7364,6 @@
         "HAVE_INLINE_ASM_LABELS": "1",
         "HAVE_INLINE_ASM_NONLOCAL_LABELS": "1",
         "HAVE_PRAGMA_DEPRECATED": "1",
-        "HAVE_RSYNC_CONTIMEOUT": "0",
         "HAVE_SYMVER_ASM_LABEL": "1",
         "HAVE_SYMVER_GNU_ASM": "1",
         "HAVE_VFP_ARGS": "0",
@@ -7404,8 +7409,6 @@
         "HAVE_GZIP": "1",
         "HAVE_IOCTL_POSIX": "1",
         "HAVE_LIBDRM_GETFB2": "0",
-        "HAVE_MAKEINFO": "0",
-        "HAVE_MAKEINFO_HTML": "0",
         "HAVE_OPENCL_D3D11": "0",
         "HAVE_OPENCL_DRM_ARM": "0",
         "HAVE_OPENCL_DRM_BEIGNET": "0",
@@ -7773,7 +7776,17 @@
         "CONFIG_VVC_SEI": "1",
         "CONFIG_WMA_FREQS": "1",
         "CONFIG_WMV2DSP": "1"
+      },
+      "host_tool_macros": {
+        "HAVE_MAKEINFO_HTML": "0",
+        "HAVE_RSYNC_CONTIMEOUT": "0",
+        "HAVE_MAKEINFO": "0"
       }
     }
+  },
+  "excluded_host_tool_macros": {
+    "HAVE_MAKEINFO": "configure/doc/Makefile/tests/Makefile only; no C/header/assembly library references",
+    "HAVE_MAKEINFO_HTML": "configure/doc/Makefile/tests/Makefile only; no C/header/assembly library references",
+    "HAVE_RSYNC_CONTIMEOUT": "configure/doc/Makefile/tests/Makefile only; no C/header/assembly library references"
   }
 }

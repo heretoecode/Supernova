@@ -14,6 +14,10 @@ import tarfile
 import zipfile
 
 ABIS = ['arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64']
+# Source-traced host-only documentation/test-transfer probes; no runtime references.
+HOST_TOOLS = {'HAVE_MAKEINFO', 'HAVE_MAKEINFO_HTML', 'HAVE_RSYNC_CONTIMEOUT'}
+CONFIG_METADATA = {'FFMPEG_CONFIGURATION', 'FFMPEG_DATADIR', 'AVCONV_DATADIR'}
+IGNORED_CONFIG_PREFIXES = tuple('#define ' + name + ' ' for name in HOST_TOOLS | CONFIG_METADATA)
 
 def digest(path):
     with Path(path).open('rb') as stream:
@@ -37,8 +41,8 @@ def needed(readelf, path):
     return sorted(re.findall(r'\(NEEDED\).*?\[(.*?)\]', result))
 
 def config_digest(path):
-    # Only absolute build-location metadata varies between CI and local workspaces.
-    text = '\n'.join(line for line in Path(path).read_text().splitlines() if not line.startswith(('#define FFMPEG_CONFIGURATION ', '#define FFMPEG_DATADIR ', '#define AVCONV_DATADIR ')))
+    # Only build-location metadata and source-traced host doc/test tools may vary.
+    text = '\n'.join(line for line in Path(path).read_text().splitlines() if not line.startswith(IGNORED_CONFIG_PREFIXES))
     return hashlib.sha256(text.encode()).hexdigest()
 
 
@@ -60,7 +64,7 @@ def check_configuration(directory, reviewed, abi):
         if '#define CONFIG_' + prohibited + ' 0' not in config:
             raise ValueError('Native licence configuration changed')
     if config_digest(directory / 'config.h') != reviewed[abi]['config_h_sha256']:
-        actual_macros = {line.split(None, 2)[1]: line.split(None, 2)[2] if len(line.split(None, 2)) > 2 else '' for line in config.splitlines() if line.startswith('#define ') and not line.startswith(('#define FFMPEG_CONFIGURATION ', '#define FFMPEG_DATADIR ', '#define AVCONV_DATADIR '))}
+        actual_macros = {line.split(None, 2)[1]: line.split(None, 2)[2] if len(line.split(None, 2)) > 2 else '' for line in config.splitlines() if line.startswith('#define ') and not line.startswith(IGNORED_CONFIG_PREFIXES)}
         expected_macros = reviewed[abi].get('configuration_macros', {})
         for name in sorted(set(actual_macros) | set(expected_macros)):
             if actual_macros.get(name) != expected_macros.get(name):

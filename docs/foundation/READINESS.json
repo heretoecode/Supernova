@@ -2,7 +2,7 @@
   "schema": 1,
   "release_ready": false,
   "blockers": [
-    "Canonical keyless CI rehearsal 37926791331 and final Foundation review pending"
+    "Canonical keyless CI rehearsal rerun after verified host-only metadata normalisation; final review pending"
   ],
   "gates": {
     "unit_tests": true,
