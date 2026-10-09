@@ -1,6 +1,6 @@
 # Foundation conformance and Shield acceptance
 
-**Status:** unsigned automated evidence exists; final candidate review and protected signing remain pending. Do not mark device checks passed without user evidence.
+**Status:** final unsigned automated evidence verified; native source clearance and protected signing remain pending. Do not mark device checks passed without user evidence.
 
 ## Automated release gates
 
@@ -12,10 +12,10 @@
 - [x] Resolved external release/desugaring runtime graph inventoried; full offline legal texts and original notices exported.
 - [x] Full latest unsigned unit suite 419/419 passed; About/animation/QR/runtime version/preference preservation/classic-host recreation tests passed.
 - [x] Python suite 28/28 passed; workflow actionlint passed; release lint completed with zero errors.
-- [ ] Final source/asset changes rerun through full unit tests, lint and optimised unsigned APK conformance.
+- [x] Final application source/assets at 7fae0620 rerun through full unit tests, lint and optimised unsigned APK conformance; 57 offline legal rows match source.
 - [ ] Corresponding-source/relinking obligations established for actual FFmpeg build; source decision pending.
 - [ ] Protected existing-key validation succeeds with exact 64-character public certificate pin.
-- [ ] Foundation scope/design/signing review recorded against final committed source.
+- [x] Three-pass Foundation scope/design/signing review recorded; clearance explicitly withheld for remaining gates.
 - [ ] User explicitly authorises enabling readiness and protected `prepare` operation.
 - [ ] Signed APK produced, actual version/provider/resource/licence/signature/certificate/checksum verified and allowlisted artifact uploaded.
 

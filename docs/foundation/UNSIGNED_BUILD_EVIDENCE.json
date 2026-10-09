@@ -12,22 +12,22 @@
     "app.supernova.player.SentryNdkPreloadProvider"
   ],
   "native_library_count": 88,
-  "apk_sha256": "2abbca4b9454226ab994c40de6a6a3e8aea562e0fda1de9eb4aae8c9bce65389",
-  "source_commit": "d4cd3677e1d75ced922d99104806a00e65ac332f",
+  "apk_sha256": "04cab2273fc135364932aad9dd95d2c7f4e14a0578fa3413e674c89b8e4caed5",
+  "source_commit": "7fae0620b543be1aedc63d42072d2ce8d4beae81",
   "signed": false,
-  "apk_bytes": 102258688,
+  "apk_bytes": 102261225,
   "build_result": "BUILD SUCCESSFUL",
   "unit_tests": 419,
   "unit_failures": 0,
   "unit_errors": 0,
   "unit_skips": 0,
-  "runtime_artifact_hashes_matched": 138,
-  "branding_resource_checks": true,
-  "candidate_notes": "The later libmysofa Speex notice addition requires repackaging before release clearance; this is a verified unsigned checkpoint, not the final signed deliverable.",
   "lint": {
     "errors": 0,
     "warnings": 1441
   },
+  "native_hashes_matched": 88,
+  "runtime_artifact_hashes_matched": 138,
+  "branding_resource_checks": true,
   "branding_visible_pixel_checks": [
     {
       "resource": "drawable/foundation_banner",
@@ -89,5 +89,17 @@
       "source": "res/mipmap-xxxhdpi/foundation_launcher.png",
       "visible_rgba_sha256": "a925658a0bc17389fae2f219b84f94983366cfaea2a2d9b5e102114c6caf779d"
     }
-  ]
+  ],
+  "offline_licence_entries": 57,
+  "candidate_notes": "Final unsigned packaging of committed source, including Speex notices and source/relinking notice. Signing blocked by protected pin validation and FFmpeg corresponding-source gate.",
+  "python_tests": 28,
+  "python_foundation_specific_tests": 19,
+  "workflow_actionlint": "passed",
+  "unsigned_signature_rejected": true,
+  "build_elapsed": "7m25s",
+  "gradle_fail_closed_checks": {
+    "missing_signing_environment": true,
+    "debug_variant_refused": true,
+    "preview_mix_refused": true
+  }
 }

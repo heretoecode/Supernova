@@ -1,6 +1,6 @@
 # Foundation candidate review
 
-Status: source review completed to the evidence below; **release clearance withheld**. Signed APK and physical Shield acceptance do not yet exist. The latest source/asset build is still subject to final binary verification.
+Status: source review completed to the evidence below; **release clearance withheld**. Signed APK and physical Shield acceptance do not yet exist. Final unsigned application source/assets at 7fae0620 passed binary verification.
 
 ## Pass 1 — approved scope and source integration
 
@@ -26,7 +26,7 @@ No signing key is generated or copied into the executor. Existing PKCS#12 path/p
 
 All 132 retained historical APK archives and manifests were inspected (131 distinct hashes; two independently built byte-identical APKs). Retrospective labels are literal and preserve original binary metadata. Earliest-first history is the first verifiable retained lineage, with missing/deleted-history uncertainty, not an invented exhaustive release history.
 
-Latest full unsigned release Java suite: 419 tests, zero failures/errors/skips. Python tests: 28 passed. Foundation workflow actionlint passed. The first optimised unsigned release APK built with correct actual identity/version/providers and zero release lint errors. Committed-source d4cd3677 binary conformance passed, including selected branding resources and ten decoded image pixel checks. Later legal-notice additions require renewed asset verification before that gate is cleared.
+Latest full unsigned release Java suite: 419 tests, zero failures/errors/skips. Python tests: 28 passed. Foundation workflow actionlint passed. The first optimised unsigned release APK built with correct actual identity/version/providers and zero release lint errors. Committed-source d4cd3677 and final 7fae0620 binary conformance passed, including selected branding resources and ten decoded image pixel checks. Final application source/assets at 7fae0620 passed renewed verification, including all 57 offline legal rows, 138 runtime hashes, 88 native hashes and ten decoded branding image/configuration pixel checks.
 
 Remaining release blockers: protected pin correction/validation and exact FFmpeg source obligations. Final signed signature/certificate/checksum verification and artifact delivery occur only after readiness and explicit approval. Shield installation/navigation/scanning/playback/About/QR/launcher acceptance is pending by the user's agreed sequence and has not been fabricated. Main and the frozen maintenance branch are untouched.
 

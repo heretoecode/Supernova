@@ -122,6 +122,8 @@ jobs:
           python3 .github/build/verify-foundation.py --root .. --readiness \
             --apk "${unsigned_apks[0]}" --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
             --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2"
+          # Keep the eventual signed-output directory unambiguous.
+          rm -f -- "${unsigned_apks[0]}"
 
       - name: Prepare verified Foundation key and build release only
         if: inputs.operation == 'prepare'
