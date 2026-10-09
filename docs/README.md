@@ -8,7 +8,9 @@ This index separates **current authority** from **historical evidence**. If a hi
 2. `project/DECISIONS_AND_ROADMAP.md` — durable approved/parked/future project decisions.
 3. `design/README.md` — current design authority and status rules.
 4. `qa/4.1.7-final-shield-qa.md` — current physical QA findings and bounded fixes-only scope.
-5. `project/HISTORY_RECONCILIATION.md` — recovered historical decisions, superseded designs, rejections and future explorations needed to interpret older project history safely.
+5. `project/RECENT_DISCUSSIONS_CLOSURE_REGISTER_2026-10-09.md` — recent approved, parked, superseded and genuinely pending decisions, including assignments to the remaining three walkthroughs.
+6. `project/RELEASE_SEQUENCE_2026-10-09.md` — fixes-only → Foundation → feature-release gates and scope isolation.
+7. `project/HISTORY_RECONCILIATION.md` — recovered historical decisions, superseded designs, rejections and future explorations needed to interpret older project history safely.
 
 ## Current 4.1.7 authority
 
