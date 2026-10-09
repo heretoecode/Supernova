@@ -21,9 +21,13 @@ This directory is the repository's design-memory layer. A future developer/AI mu
 - [SEARCH_MATCHING.md](SEARCH_MATCHING.md) — Search keyboard/results and Find a Match/manual correction.
 - [NETWORK_FILES.md](NETWORK_FILES.md) — three-panel model, scanning, sources, browser and protocols.
 - [SETTINGS.md](SETTINGS.md) — three-panel shell, hierarchy, providers and language presentation.
+- [ABOUT_SETTINGS.md](ABOUT_SETTINGS.md) — **approved complete About design** (five subsections); implementation and release-specific licence verification pending.
+- [BACKUP_RESTORE.md](BACKUP_RESTORE.md) — approved full backup/restore and archive-format **1.0 onward** compatibility, no legacy import; technical implementation validation pending.
 - [PLAYBACK.md](PLAYBACK.md) — loading/preparation, primary HUD, tracks, More and restoration.
 - [GLOBAL_VISUAL_SYSTEM.md](GLOBAL_VISUAL_SYSTEM.md) — typography, focus, dividers, navigation, blur/fade and language iconography.
-- [PARKED_FUTURE.md](PARKED_FUTURE.md) — future identity, Profiles, Smart Collections, Discovery, Library Health and broader audits.
+- [PARKED_FUTURE.md](PARKED_FUTURE.md) — separates approved future work from genuinely parked Profiles, Discovery, Library Health and other ideas.
+- [RECENT_PRODUCT_DECISIONS_2026-10-08.md](RECENT_PRODUCT_DECISIONS_2026-10-08.md) — approved future feature details and supersessions.
+- [../project/GITHUB_DOCUMENTATION_CHECK_2026-10-09.md](../project/GITHUB_DOCUMENTATION_CHECK_2026-10-09.md) — current documentation consistency and outstanding execution checks.
 
 ## Recovered historical design evidence
 The preservation pass reconciled current repository authority with older release/audit records and Project Library design records. Historical approved visual identifiers have been retained in relevant surface documents. Some original generated-image bytes are no longer available as a complete recoverable set; this is explicitly recorded rather than hidden.
