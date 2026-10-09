@@ -151,3 +151,13 @@ Historical ChatGPT design discussion has now been consolidated here for the late
 - Final visual comparison between that parked design and the current 4.1.7 hero.
 
 These gaps are explicit. They must not be filled by invention.
+
+## 9 October 2026 — user-supplied Shield visual evidence; later product direction (NOT fixes-only authorisation)
+
+### Featured artwork: inherited left-side gradient — requested change
+User supplied a photograph of the current Home Featured card (*MobLand*), showing a strong dark/blue fade over the left-side title, synopsis and More Info area while right-hand artwork appears clearer. User explained this is a carry-over from an older design in which backdrop art filled the whole Home background. **Requested future design:** remove the inherited heavy left-side gradient so the Featured card's actual artwork is crisp and visually consistent across its surface. Keep text legible using a separately reviewed, minimally intrusive text treatment; do not silently reinstate the same broad gradient. This is a **later explicit request** than the previously parked generic artwork-colour/blur reduction discussion. It is recorded for future design/QA; no code change approved.
+
+### Featured carousel: transient darkening/flash — observed defect
+User supplied a short Shield video of Featured carousel transitions. During transitions, cards appear momentarily darkened/translucent before the next image becomes fully visible; the effect is especially obvious between brighter and darker artwork. Record as a **separate hero-card animation/flicker issue**, not the existing playback diagnostic-text flash. Expected: smooth, stable transitions without sudden dark/opacity pulses; preserve intended carousel movement and focus. Root cause **not established** (possible image-loading, opacity/overlay or animation-layer interaction must be investigated, not presumed). Test repeatedly on Shield with contrasting bright/dark cards and record before/after evidence. Video/photo are user-supplied conversation evidence; **original binary files are not stored in GitHub by this documentation change**.
+
+**Scope:** documentation only. Current fixes-only branch remains frozen; these items are not certified fixed or scheduled into that release.
