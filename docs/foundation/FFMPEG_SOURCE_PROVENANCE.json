@@ -1,0 +1,24 @@
+{
+  "node_id": "TA_kwDOABiiStoAKGQyMmVjYzRmNmYzZmNhNzdiM2U3MWIxODY0MWNlZGRiMjU5NzNlOTc",
+  "sha": "d22ecc4f6f3fca77b3e71b18641ceddb25973e97",
+  "url": "https://api.github.com/repos/FFmpeg/FFmpeg/git/tags/d22ecc4f6f3fca77b3e71b18641ceddb25973e97",
+  "tagger": {
+    "name": "Michael Niedermayer",
+    "email": "michael@niedermayer.cc",
+    "date": "2025-11-20T02:21:13Z"
+  },
+  "object": {
+    "sha": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+    "type": "commit",
+    "url": "https://api.github.com/repos/FFmpeg/FFmpeg/git/commits/894da5ca7d742e4429ffb2af534fcda0103ef593"
+  },
+  "tag": "n8.0.1",
+  "message": "FFmpeg 8.0.1 release\n-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQTdHsno3ghcYps+GEaxjokos5SNZAUCaR57IwAKCRCxjokos5SN\nZIteAQDrxkMFkMoQazr5p2mifzsRi2JOHRaCYkuhPATxjnCdCwD+OYT3JpuKCdyW\nNV7wKdo+F8uL20iKsITW9Hm0+uUzqAo=\n=FKt0\n-----END PGP SIGNATURE-----\n",
+  "verification": {
+    "verified": true,
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQTdHsno3ghcYps+GEaxjokos5SNZAUCaR57IwAKCRCxjokos5SN\nZIteAQDrxkMFkMoQazr5p2mifzsRi2JOHRaCYkuhPATxjnCdCwD+OYT3JpuKCdyW\nNV7wKdo+F8uL20iKsITW9Hm0+uUzqAo=\n=FKt0\n-----END PGP SIGNATURE-----\n",
+    "payload": "object 894da5ca7d742e4429ffb2af534fcda0103ef593\ntype commit\ntag n8.0.1\ntagger Michael Niedermayer <michael@niedermayer.cc> 1763605273 +0100\n\nFFmpeg 8.0.1 release\n",
+    "verified_at": "2025-11-20T02:59:08Z"
+  }
+}

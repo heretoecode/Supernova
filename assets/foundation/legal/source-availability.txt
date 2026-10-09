@@ -11,7 +11,12 @@ The application source is Apache-2.0; separately licensed components retain thei
 
 LGPL components
 
-FFmpeg's existing ELF files report n8.0.1 and LGPL version 2.1 or later. Their exact corresponding-source provenance is unresolved in this unsigned candidate: the prebuilt commit subject says 8.0.3 and the pinned builder targets 9.0.1. Release signing is blocked until matching source is established or the same observed version/features are rebuilt from explicitly pinned source. Upstream candidate n8.0.1 commit: 894da5ca7d742e4429ffb2af534fcda0103ef593. Candidate source is not a certification that it produced the existing prebuilt. Pinned config_opus.patch and atempo.patch apply; exact release source mapping and build instructions must be recorded before distribution.
+FFmpeg has been rebuilt from official n8.0.1 source commit 894da5ca7d742e4429ffb2af534fcda0103ef593 (annotated signed tag object d22ecc4f6f3fca77b3e71b18641ceddb25973e97). The release archive generates the version label 8.0.1; the former prebuilt used git tag label n8.0.1. The two inherited patches are the Opus libm configure check, rebased without changing its one-line effect, and the unchanged pinned atempo.patch. All four ABIs preserve the existing configuration, public symbols, dependencies and public headers except this generated version label. Codec/protocol registries, representative decode output and runtime tempo behaviour were compared against the old binaries before replacement.
+
+Corresponding source, recipes and provenance:
+https://github.com/FFmpeg/FFmpeg/tree/894da5ca7d742e4429ffb2af534fcda0103ef593
+https://github.com/heretoecode/Supernova/tree/codex/foundation-release
+See .github/build/ffmpeg-foundation.lock.json, .github/build/ffmpeg-opus-n8.0.1.patch, .github/build/build-foundation-ffmpeg.py and docs/foundation/FFMPEG_REBUILD.md. The unchanged atempo patch is pinned by hash and the ffmpeg-android-builder revision in nova-ci.xml. The protected build produces a companion corresponding-source archive containing the patched complete FFmpeg source and actual configuration. Source downloads and the exact NDK 30.0.14904198-beta1 toolchain are pinned by SHA-256. Existing external codec/crypto libraries are retained; their sources and individual licences remain available in this catalogue and the manifest. OpenSSL static module source is openssl-3.5.7 commit 8cf17aaeb4599f8af87fefd810b5b5fee90fe69e; its complete upstream source archive URL/hash is in the lock and companion source archive metadata.
 
 AudioCompress corresponding source:
 https://github.com/nova-video-player/aos-audiocompress/tree/3a3f9324d2550bd305060e1c52b803121ea09aad
@@ -34,4 +39,4 @@ Library replacement / relinking
 
 You may modify the free-software libraries under their respective licences. For shared native libraries, rebuild the appropriate ABI and repackage your modified APK with the replaced libraries; for inlined Java code, rebuild the app from public source with the modified library. Preserve required notices and provide corresponding source as required by the library's terms. Android's installation/signature rules apply to modified APKs. The Foundation private signing key is not distributed or needed from its owner to make your own modified build. Reverse engineering for debugging such library modifications is permitted under the applicable LGPL terms.
 
-This notice records source availability and remaining evidence. It does not certify a completed release. The source correspondence gap above is deliberately a blocking release-readiness condition, not an omitted obligation or a promise that unverified sources match shipped binaries.
+This notice records corresponding library source and rebuilding/relinking information. Physical Shield acceptance and signed APK delivery are recorded separately in the release evidence; this notice does not claim those checks have occurred.

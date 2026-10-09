@@ -2,17 +2,17 @@
   "schema": 1,
   "release_ready": false,
   "blockers": [
-    "Protected environment supplied the old 63-character certificate fingerprint in validation run 37882848273; exact correction/validation pending",
-    "Exact FFmpeg corresponding-source provenance or same-version rebuild decision pending"
+    "Final unsigned Foundation app integration and conformance with verified source-built FFmpeg in progress"
   ],
   "gates": {
     "unit_tests": true,
-    "binary_conformance": true,
-    "native_source_compliance": false,
-    "protected_key_validation": false,
-    "foundation_review": true
+    "binary_conformance": false,
+    "native_source_compliance": true,
+    "protected_key_validation": true,
+    "foundation_review": false
   },
   "verified_unsigned_source": "7fae0620b543be1aedc63d42072d2ce8d4beae81",
   "signed_apk_produced": false,
-  "physical_shield_qa": "Pending after signed APK delivery"
+  "physical_shield_qa": "Pending after signed APK delivery",
+  "protected_key_validation_run": "https://github.com/heretoecode/Supernova/actions/runs/37920686126"
 }

@@ -1,0 +1,598 @@
+{
+  "schema": 1,
+  "source_tag": "n8.0.1",
+  "source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+  "original_binary_version": "n8.0.1",
+  "rebuilt_binary_version": "8.0.1",
+  "version_difference": "Generated label from release source rather than git describe; public headers otherwise identical. Same release source and ABI.",
+  "native_test_runtime": "Android API 23 bionic libraries/linker from official checksum-verified Google system images; x86_64 native, ARM64/ARM32/x86 under QEMU user emulation. No Android framework or hardware MediaCodec/Shield claim.",
+  "test_container": "Network disabled during final cross-ABI comparisons; legacy 32-bit emulator personality syscall allowed by test-container configuration. No signing material or user media present.",
+  "corpus": [
+    {
+      "file": "h264-aac.mp4",
+      "sha256": "e52be3b3c9912d90bd57907876d229f72aed5e7f2671593b051a36dd7e5644b6",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:v",
+        "libx264",
+        "-threads",
+        "1",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac"
+      ]
+    },
+    {
+      "file": "hevc.mkv",
+      "sha256": "b8bdba0b277267149557a2c5e171c2e2bd75eaae2cf5d0f222f6a46efd55f644",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-c:v",
+        "libx265",
+        "-threads",
+        "1",
+        "-x265-params",
+        "pools=none:frame-threads=1:log-level=error"
+      ]
+    },
+    {
+      "file": "av1.mkv",
+      "sha256": "5b15b28ef76a508c92d51a1e966c02f784caeef6fb17c2239a65ceef96872776",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-c:v",
+        "libaom-av1",
+        "-threads",
+        "1",
+        "-cpu-used",
+        "8",
+        "-crf",
+        "40"
+      ]
+    },
+    {
+      "file": "vp9-opus.webm",
+      "sha256": "060ceaaddb2e1bc8b8eb5d985ac84bf46c8730876ef186a1b896385dba67f31d",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:v",
+        "libvpx-vp9",
+        "-threads",
+        "1",
+        "-deadline",
+        "realtime",
+        "-cpu-used",
+        "8",
+        "-c:a",
+        "libopus"
+      ]
+    },
+    {
+      "file": "mpeg2-ac3.ts",
+      "sha256": "47d0741cd33d6ddf94a320884538c43140955ff84f9c8cfe9873525c9ce228d7",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:v",
+        "mpeg2video",
+        "-threads",
+        "1",
+        "-c:a",
+        "ac3"
+      ]
+    },
+    {
+      "file": "opus.ogg",
+      "sha256": "3fa20ba746f35f016e9aedf88d2b726b06b1b9d0f8c1f46aca03246cad0e690b",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "libopus"
+      ]
+    },
+    {
+      "file": "vorbis.ogg",
+      "sha256": "424477cbc018957ac0ccaeb8b00939c2c3b5e5f86c54e7b7991f86e0b4edfe1a",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "libvorbis"
+      ]
+    },
+    {
+      "file": "flac.flac",
+      "sha256": "e484de8787077947723ae371a4964d52a2e3b0bb4560b936949b1b2242f3e03c",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "flac"
+      ]
+    },
+    {
+      "file": "pcm.wav",
+      "sha256": "a17d312e5b39e55048fd8e9fe9395507901231799c3d3be5b1690eb2903c823b",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "pcm_s16le"
+      ]
+    },
+    {
+      "file": "mp3.mp3",
+      "sha256": "05056cc22e2cd67b43268877c9a7bcfe4c0f098381ef02ba1a05032fe69102e5",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "libmp3lame"
+      ]
+    },
+    {
+      "file": "alac.m4a",
+      "sha256": "993da68bf35a2fac620d5b586b428afad77285ccddf64cf4ced204de07537973",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "alac"
+      ]
+    },
+    {
+      "file": "eac3.eac3",
+      "sha256": "b097937c8d6c35a0f613df374a94a2a66120909dacb60148519476fb5ed8488c",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "eac3"
+      ]
+    },
+    {
+      "file": "dts.dts",
+      "sha256": "270ada6d4dbf1f0d8c2b477dc2ce484da7fdf91281e7d76288ce71cd8eba163f",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "dca",
+        "-strict",
+        "-2"
+      ]
+    },
+    {
+      "file": "ac3-51.ac3",
+      "sha256": "8905d3b42ea38319fa3191cce5c24e459cb6eba6c5e50fb8585d24c391ba64f9",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "aevalsrc=0.1*sin(997*2*PI*t)|0.1*sin(500*2*PI*t)|0.1*sin(250*2*PI*t)|0.1*sin(100*2*PI*t)|0.1*sin(750*2*PI*t)|0.1*sin(1250*2*PI*t):s=48000:d=1",
+        "-channel_layout",
+        "5.1",
+        "-c:a",
+        "ac3"
+      ]
+    }
+  ],
+  "abi_results": [
+    {
+      "abi": "arm64-v8a",
+      "registry_rows": 1372,
+      "registry_sha256": "1149bfce3f60db0aedc36f1267f3e5996184336aaf7dcd55dae061f5d7e708a8",
+      "atempo_sha256": "0d900c96b2b63529d0275ac5f00bd2553af835a77b6bfb1ccff288083a23757e",
+      "decode_cases": 16,
+      "decode_results": [
+        {
+          "file": "h264-aac.mp4",
+          "decoder": "",
+          "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48128\t8d61b122\n"
+        },
+        {
+          "file": "hevc.mkv",
+          "decoder": "",
+          "output": "decoded\t0\thevc\t12\t0\t35083577\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "vp9-opus.webm",
+          "decoder": "",
+          "output": "decoded\t0\tvp9\t12\t0\t78e9199b\ndecoded\t1\topus\t51\t48000\tf44d943e\n"
+        },
+        {
+          "file": "mpeg2-ac3.ts",
+          "decoder": "",
+          "output": "decoded\t0\tmpeg2video\t12\t0\t29f3117b\ndecoded\t1\tac3\t32\t49152\tf77e3a3a\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "",
+          "output": "decoded\t0\topus\t51\t48000\tf44d943e\n"
+        },
+        {
+          "file": "vorbis.ogg",
+          "decoder": "",
+          "output": "decoded\t0\tvorbis\t48\t47872\t7a9118c3\n"
+        },
+        {
+          "file": "flac.flac",
+          "decoder": "",
+          "output": "decoded\t0\tflac\t11\t48000\tdb3de663\n"
+        },
+        {
+          "file": "pcm.wav",
+          "decoder": "",
+          "output": "decoded\t0\tpcm_s16le\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "mp3.mp3",
+          "decoder": "",
+          "output": "decoded\t0\tmp3float\t43\t48000\t4d0eb5dd\n"
+        },
+        {
+          "file": "alac.m4a",
+          "decoder": "",
+          "output": "decoded\t0\talac\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "eac3.eac3",
+          "decoder": "",
+          "output": "decoded\t0\teac3\t32\t49152\tfdaf7bec\n"
+        },
+        {
+          "file": "dts.dts",
+          "decoder": "",
+          "output": "decoded\t0\tdca\t94\t48128\t5e685007\n"
+        },
+        {
+          "file": "ac3-51.ac3",
+          "decoder": "",
+          "output": "decoded\t0\tac3\t32\t49152\t321f4db5\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "libdav1d",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "libopus",
+          "output": "decoded\t0\tlibopus\t51\t48000\t8e91f830\n"
+        }
+      ],
+      "baseline_version": "version\tn8.0.1",
+      "candidate_version": "version\t8.0.1",
+      "all_comparisons_passed": true
+    },
+    {
+      "abi": "armeabi-v7a",
+      "registry_rows": 1372,
+      "registry_sha256": "1149bfce3f60db0aedc36f1267f3e5996184336aaf7dcd55dae061f5d7e708a8",
+      "atempo_sha256": "6174ed485cdd1728f87044a296ae7584f2735b79595c8057762d4859d926d887",
+      "decode_cases": 16,
+      "decode_results": [
+        {
+          "file": "h264-aac.mp4",
+          "decoder": "",
+          "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48128\t41868aeb\n"
+        },
+        {
+          "file": "hevc.mkv",
+          "decoder": "",
+          "output": "decoded\t0\thevc\t12\t0\t35083577\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "vp9-opus.webm",
+          "decoder": "",
+          "output": "decoded\t0\tvp9\t12\t0\t78e9199b\ndecoded\t1\topus\t51\t48000\t597a5e65\n"
+        },
+        {
+          "file": "mpeg2-ac3.ts",
+          "decoder": "",
+          "output": "decoded\t0\tmpeg2video\t12\t0\t29f3117b\ndecoded\t1\tac3\t32\t49152\t7eb0f036\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "",
+          "output": "decoded\t0\topus\t51\t48000\t597a5e65\n"
+        },
+        {
+          "file": "vorbis.ogg",
+          "decoder": "",
+          "output": "decoded\t0\tvorbis\t48\t47872\t23dfe130\n"
+        },
+        {
+          "file": "flac.flac",
+          "decoder": "",
+          "output": "decoded\t0\tflac\t11\t48000\tdb3de663\n"
+        },
+        {
+          "file": "pcm.wav",
+          "decoder": "",
+          "output": "decoded\t0\tpcm_s16le\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "mp3.mp3",
+          "decoder": "",
+          "output": "decoded\t0\tmp3float\t43\t48000\td86cabb8\n"
+        },
+        {
+          "file": "alac.m4a",
+          "decoder": "",
+          "output": "decoded\t0\talac\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "eac3.eac3",
+          "decoder": "",
+          "output": "decoded\t0\teac3\t32\t49152\taae53ae8\n"
+        },
+        {
+          "file": "dts.dts",
+          "decoder": "",
+          "output": "decoded\t0\tdca\t94\t48128\tf5516181\n"
+        },
+        {
+          "file": "ac3-51.ac3",
+          "decoder": "",
+          "output": "decoded\t0\tac3\t32\t49152\t2a883887\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "libdav1d",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "libopus",
+          "output": "decoded\t0\tlibopus\t51\t48000\t5567f830\n"
+        }
+      ],
+      "baseline_version": "version\tn8.0.1",
+      "candidate_version": "version\t8.0.1",
+      "all_comparisons_passed": true
+    },
+    {
+      "abi": "x86",
+      "registry_rows": 1372,
+      "registry_sha256": "1149bfce3f60db0aedc36f1267f3e5996184336aaf7dcd55dae061f5d7e708a8",
+      "atempo_sha256": "6174ed485cdd1728f87044a296ae7584f2735b79595c8057762d4859d926d887",
+      "decode_cases": 16,
+      "decode_results": [
+        {
+          "file": "h264-aac.mp4",
+          "decoder": "",
+          "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48128\t0cea89f9\n"
+        },
+        {
+          "file": "hevc.mkv",
+          "decoder": "",
+          "output": "decoded\t0\thevc\t12\t0\t35083577\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "vp9-opus.webm",
+          "decoder": "",
+          "output": "decoded\t0\tvp9\t12\t0\t78e9199b\ndecoded\t1\topus\t51\t48000\t597a5e65\n"
+        },
+        {
+          "file": "mpeg2-ac3.ts",
+          "decoder": "",
+          "output": "decoded\t0\tmpeg2video\t12\t0\t29f3117b\ndecoded\t1\tac3\t32\t49152\t7eb0f036\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "",
+          "output": "decoded\t0\topus\t51\t48000\t597a5e65\n"
+        },
+        {
+          "file": "vorbis.ogg",
+          "decoder": "",
+          "output": "decoded\t0\tvorbis\t48\t47872\t23dfe130\n"
+        },
+        {
+          "file": "flac.flac",
+          "decoder": "",
+          "output": "decoded\t0\tflac\t11\t48000\tdb3de663\n"
+        },
+        {
+          "file": "pcm.wav",
+          "decoder": "",
+          "output": "decoded\t0\tpcm_s16le\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "mp3.mp3",
+          "decoder": "",
+          "output": "decoded\t0\tmp3float\t43\t48000\td86cabb8\n"
+        },
+        {
+          "file": "alac.m4a",
+          "decoder": "",
+          "output": "decoded\t0\talac\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "eac3.eac3",
+          "decoder": "",
+          "output": "decoded\t0\teac3\t32\t49152\taae53ae8\n"
+        },
+        {
+          "file": "dts.dts",
+          "decoder": "",
+          "output": "decoded\t0\tdca\t94\t48128\tf5516181\n"
+        },
+        {
+          "file": "ac3-51.ac3",
+          "decoder": "",
+          "output": "decoded\t0\tac3\t32\t49152\t2a883887\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "libdav1d",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "libopus",
+          "output": "decoded\t0\tlibopus\t51\t48000\tf719f830\n"
+        }
+      ],
+      "baseline_version": "version\tn8.0.1",
+      "candidate_version": "version\t8.0.1",
+      "all_comparisons_passed": true
+    },
+    {
+      "abi": "x86_64",
+      "registry_rows": 1372,
+      "registry_sha256": "1149bfce3f60db0aedc36f1267f3e5996184336aaf7dcd55dae061f5d7e708a8",
+      "atempo_sha256": "6174ed485cdd1728f87044a296ae7584f2735b79595c8057762d4859d926d887",
+      "decode_cases": 16,
+      "decode_results": [
+        {
+          "file": "h264-aac.mp4",
+          "decoder": "",
+          "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48128\td69a80d5\n"
+        },
+        {
+          "file": "hevc.mkv",
+          "decoder": "",
+          "output": "decoded\t0\thevc\t12\t0\t35083577\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "vp9-opus.webm",
+          "decoder": "",
+          "output": "decoded\t0\tvp9\t12\t0\t78e9199b\ndecoded\t1\topus\t51\t48000\tec7b9c8a\n"
+        },
+        {
+          "file": "mpeg2-ac3.ts",
+          "decoder": "",
+          "output": "decoded\t0\tmpeg2video\t12\t0\t29f3117b\ndecoded\t1\tac3\t32\t49152\t8d93ec1f\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "",
+          "output": "decoded\t0\topus\t51\t48000\tec7b9c8a\n"
+        },
+        {
+          "file": "vorbis.ogg",
+          "decoder": "",
+          "output": "decoded\t0\tvorbis\t48\t47872\t1591dbfb\n"
+        },
+        {
+          "file": "flac.flac",
+          "decoder": "",
+          "output": "decoded\t0\tflac\t11\t48000\tdb3de663\n"
+        },
+        {
+          "file": "pcm.wav",
+          "decoder": "",
+          "output": "decoded\t0\tpcm_s16le\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "mp3.mp3",
+          "decoder": "",
+          "output": "decoded\t0\tmp3float\t43\t48000\td2ff6b75\n"
+        },
+        {
+          "file": "alac.m4a",
+          "decoder": "",
+          "output": "decoded\t0\talac\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "eac3.eac3",
+          "decoder": "",
+          "output": "decoded\t0\teac3\t32\t49152\t1b7a2f3d\n"
+        },
+        {
+          "file": "dts.dts",
+          "decoder": "",
+          "output": "decoded\t0\tdca\t94\t48128\t6fc262ea\n"
+        },
+        {
+          "file": "ac3-51.ac3",
+          "decoder": "",
+          "output": "decoded\t0\tac3\t32\t49152\tfc32acd6\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "libdav1d",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "libopus",
+          "output": "decoded\t0\tlibopus\t51\t48000\tf719f830\n"
+        }
+      ],
+      "baseline_version": "version\tn8.0.1",
+      "candidate_version": "version\t8.0.1",
+      "all_comparisons_passed": true
+    }
+  ],
+  "total_decode_cases": 64,
+  "physical_shield_qa": "pending after signed APK delivery",
+  "portable_harness": "tools/verify_foundation_native_runtime.py",
+  "guard_tests": 35
+}

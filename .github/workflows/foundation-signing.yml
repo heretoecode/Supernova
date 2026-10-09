@@ -21,7 +21,7 @@ jobs:
   foundation:
     if: github.ref == 'refs/heads/codex/foundation-release'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     environment: supernova-foundation-signing
     defaults:
       run:
@@ -106,6 +106,17 @@ jobs:
           set -euo pipefail
           python3 source/.github/build/verify-foundation.py --root nova --readiness
 
+      - name: Rebuild and compare pinned LGPL FFmpeg before replacing dependency binaries
+        if: inputs.operation == 'prepare'
+        run: |
+          set -euo pipefail
+          native_workspace="$RUNNER_TEMP/supernova-foundation-ffmpeg"
+          python3 source/.github/build/build-foundation-ffmpeg.py --root nova --workspace "$native_workspace"
+          python3 source/tools/verify_foundation_native_runtime.py --root nova --workspace "$native_workspace" \
+            --test-workspace "$RUNNER_TEMP/supernova-foundation-native-tests"
+          python3 source/.github/build/build-foundation-ffmpeg.py --root nova --workspace "$native_workspace" \
+            --verify-existing --install --source-bundle
+
       - name: Repeat secret-free Foundation release tests and unsigned binary conformance
         if: inputs.operation == 'prepare'
         run: |
@@ -122,6 +133,8 @@ jobs:
           python3 .github/build/verify-foundation.py --root .. --readiness \
             --apk "${unsigned_apks[0]}" --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
             --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2"
+          python3 .github/build/verify-foundation-native-apk.py --apk "${unsigned_apks[0]}" \
+            --evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json"
           # Keep the eventual signed-output directory unambiguous.
           rm -f -- "${unsigned_apks[0]}"
 
@@ -164,6 +177,7 @@ jobs:
             --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
             --source nova/Video \
             --aapt2 "$build_tools/aapt2" \
+            --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
             --publish "$RUNNER_TEMP/supernova-foundation-publish"
 
       - name: Always remove temporary signing material
@@ -182,3 +196,15 @@ jobs:
             ${{ runner.temp }}/supernova-foundation-publish/public-build-evidence.json
           if-no-files-found: error
           retention-days: 7
+
+      - name: Upload corresponding FFmpeg source and public native evidence
+        if: success() && inputs.operation == 'prepare'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: supernova-foundation-ffmpeg-source
+          path: |
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/Supernova-Foundation-FFmpeg-Source.tar.xz
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/verified-native-build.json
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
+          if-no-files-found: error
+          retention-days: 30

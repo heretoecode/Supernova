@@ -9,7 +9,7 @@
   },
   {
     "name": "FFmpeg",
-    "version": "n8.0.1 (actual ELF marker)",
+    "version": "8.0.1; rebuilt from verified n8.0.1 source",
     "licence": "LGPL-2.1-or-later",
     "role": "Shared media libraries",
     "url": "https://ffmpeg.org/legal.html",
@@ -89,7 +89,7 @@
   },
   {
     "name": "Android NDK / libc++",
-    "version": "NDK 29.0.14206865; prebuilt toolchains recorded separately",
+    "version": "NDK 29.0.14206865 and FFmpeg toolchain 30.0.14904198-beta1",
     "licence": "Apache-2.0 WITH LLVM-exception AND additional notices",
     "role": "Native toolchain runtime, compiler support and cpufeatures",
     "url": "https://developer.android.com/ndk",

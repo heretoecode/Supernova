@@ -51,6 +51,7 @@ def main():
     parser.add_argument("--publish", type=Path, required=True)
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--aapt2", required=True)
+    parser.add_argument("--native-evidence", type=Path, required=True)
     args = parser.parse_args()
     try:
         apks = list(args.directory.glob("*.apk"))
@@ -63,6 +64,12 @@ def main():
         conformance = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(conformance)
         evidence.update(conformance.binary(apks[0], args.apkanalyzer, args.source, args.aapt2))
+        native_spec = importlib.util.spec_from_file_location("foundation_native_apk", args.source / ".github/build/verify-foundation-native-apk.py")
+        native_conformance = importlib.util.module_from_spec(native_spec)
+        native_spec.loader.exec_module(native_conformance)
+        evidence["verified_rebuilt_ffmpeg_libraries"] = native_conformance.verify(apks[0], args.native_evidence)
+        evidence["ffmpeg_source_commit"] = json.loads(args.native_evidence.read_text())["source_commit"]
+        evidence["native_build_evidence_sha256"] = hashlib.sha256(args.native_evidence.read_bytes()).hexdigest()
         evidence["source_commit"] = checked(["git", "-C", str(args.source), "rev-parse", "HEAD"]).strip()
         # Allowlisted artifacts only; no build/test logs, folders or signing config.
         args.publish.mkdir(exist_ok=False)

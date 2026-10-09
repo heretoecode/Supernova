@@ -1,0 +1,11 @@
+--- a/configure
++++ b/configure
+@@ -7128,7 +7128,7 @@
+                                   require libopenvino c_api/ie_c_api.h ie_c_api_version -linference_engine_c_api; } }
+ enabled libopus           && {
+     enabled libopus_decoder && {
+-        require_pkg_config libopus opus opus_multistream.h opus_multistream_decoder_create
++        require_pkg_config libopus opus opus_multistream.h opus_multistream_decoder_create "$libm_extralibs"
+     }
+     enabled libopus_encoder && {
+         require_pkg_config libopus opus opus_multistream.h opus_multistream_surround_encoder_create

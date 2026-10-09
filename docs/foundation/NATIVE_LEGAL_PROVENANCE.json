@@ -20,14 +20,17 @@
   },
   {
     "name": "FFmpeg",
-    "version": "n8.0.1 (actual ELF marker)",
+    "version": "8.0.1; rebuilt n8.0.1 source",
     "licence": "LGPL-2.1-or-later",
     "sources": [
       {
         "source": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/n8.0.1/COPYING.LGPLv2.1",
         "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30"
       }
-    ]
+    ],
+    "source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+    "rebuild_lock": ".github/build/ffmpeg-foundation.lock.json",
+    "regression_evidence": "docs/foundation/FFMPEG_NATIVE_REGRESSION.json"
   },
   {
     "name": "AudioCompress",
@@ -166,7 +169,7 @@
   },
   {
     "name": "Android NDK / libc++",
-    "version": "NDK 29.0.14206865; prebuilt toolchains recorded separately",
+    "version": "NDK 29.0.14206865 and FFmpeg 30.0.14904198-beta1",
     "licence": "Apache-2.0 WITH LLVM-exception AND additional notices",
     "sources": [
       {
@@ -176,6 +179,14 @@
       {
         "source": "Android NDK 29.0.14206865/NOTICE.toolchain",
         "sha256": "789714a9076571c580cf531bdcebec776a4d889c12c3c1108adafc6e4338710a"
+      },
+      {
+        "source": "Android NDK 30.0.14904198-beta1/NOTICE",
+        "sha256": "1fb885261708f3a4b446777fd3ef1386e34185035063395660163f8acfa1fb3a"
+      },
+      {
+        "source": "Android NDK 30.0.14904198-beta1/NOTICE.toolchain",
+        "sha256": "81980bdf6c8c909b5b4b331d7b5878748a4294044a8e56f53547300b13c61b28"
       }
     ]
   },

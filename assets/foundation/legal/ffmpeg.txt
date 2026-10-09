@@ -1,5 +1,5 @@
 FFmpeg
-n8.0.1 (actual ELF marker)
+8.0.1; rebuilt from verified n8.0.1 source
 Shared media libraries. FFmpeg is free software; you may modify and redistribute it under LGPL 2.1 or later. No GPL/nonfree/version3 flag was found in the packaged configuration. See bundled source-availability notice.
 
 https://raw.githubusercontent.com/FFmpeg/FFmpeg/n8.0.1/COPYING.LGPLv2.1
