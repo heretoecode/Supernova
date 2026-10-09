@@ -29,6 +29,9 @@ This directory is the repository's design-memory layer. A future developer/AI mu
 - [RECENT_PRODUCT_DECISIONS_2026-10-08.md](RECENT_PRODUCT_DECISIONS_2026-10-08.md) — approved future feature details and supersessions.
 - [../project/GITHUB_DOCUMENTATION_CHECK_2026-10-09.md](../project/GITHUB_DOCUMENTATION_CHECK_2026-10-09.md) — current documentation consistency and outstanding execution checks.
 
+## Latest recent-discussion closure register
+`docs/project/RECENT_DISCUSSIONS_CLOSURE_REGISTER_2026-10-09.md` classifies recovered 7–9 October topics as approved, parked, superseded, engineering/QA or assigned to the three remaining walkthroughs. It explicitly flags unresolved compact Cast & Crew and playback submenu/More details for the installed-APK walkthrough rather than inventing approvals.
+
 ## Recovered historical design evidence
 The preservation pass reconciled current repository authority with older release/audit records and Project Library design records. Historical approved visual identifiers have been retained in relevant surface documents. Some original generated-image bytes are no longer available as a complete recoverable set; this is explicitly recorded rather than hidden.
 
