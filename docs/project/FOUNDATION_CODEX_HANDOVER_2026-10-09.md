@@ -45,3 +45,6 @@ This supersedes earlier fixes-first sequencing. Single-user Shield deployment; e
 5. Ask user only for genuinely missing information or secure secret provisioning. User retains the `.p12` and password.
 
 **Do not claim completed, signed or tested until there is actual evidence.**
+
+## Additional approved versioning requirement — 9 October
+Read current `docs/project/RELEASE_SEQUENCE_2026-10-09.md`: retrospectively map first-ever Supernova APK to `0.1` and each subsequent actual APK to `0.2`, `0.3`, ... `0.10` etc. Preserve these as literal release-counter strings, not decimals/SemVer. Foundation continues the sequence, not `0.1.0`. Reconstruct history from source/release notes/build artifacts as far as verifiable. Populate the **already approved About → Release Notes UI** with accurate per-version headings and matching factual changes; do not invent missing notes or rewrite original APK binaries. Keep Android internal versionCode distinct. This is included in Foundation implementation scope; do not ask user to redesign About.
