@@ -54,6 +54,23 @@ def elf_identity(readelf, path):
         raise ValueError('Native SONAME or 16 KiB ELF alignment is incorrect')
     return (header[4], struct.unpack('<H', header[18:20])[0], soname.group(1))
 
+def check_configuration(directory, reviewed, abi):
+    config = (directory / 'config.h').read_text()
+    for prohibited in ['GPL', 'GPLV3', 'LGPLV3', 'NONFREE']:
+        if '#define CONFIG_' + prohibited + ' 0' not in config:
+            raise ValueError('Native licence configuration changed')
+    if config_digest(directory / 'config.h') != reviewed[abi]['config_h_sha256']:
+        actual_macros = {line.split(None, 2)[1]: line.split(None, 2)[2] if len(line.split(None, 2)) > 2 else '' for line in config.splitlines() if line.startswith('#define ') and not line.startswith(('#define FFMPEG_CONFIGURATION ', '#define FFMPEG_DATADIR ', '#define AVCONV_DATADIR '))}
+        expected_macros = reviewed[abi].get('configuration_macros', {})
+        for name in sorted(set(actual_macros) | set(expected_macros)):
+            if actual_macros.get(name) != expected_macros.get(name):
+                print('Native configuration mismatch:', abi, name, 'reviewed=', expected_macros.get(name), 'actual=', actual_macros.get(name), flush=True)
+        raise ValueError('Compiled native feature configuration differs from reviewed candidate')
+    components = digest(directory / 'config_components.h')
+    if components != reviewed[abi]['config_components_sha256']:
+        raise ValueError('Native component availability differs from reviewed candidate')
+    return components
+
 def check_candidate(root, workspace, reviewed):
     """Compare public ABI, headers, dependencies and all compiled configuration macros."""
     tc = workspace / 'toolchain/android-ndk-r30-beta1/toolchains/llvm/prebuilt/linux-x86_64/bin'
@@ -72,23 +89,10 @@ def check_candidate(root, workspace, reviewed):
     for abi in ABIS:
         old = root / 'native/prebuilt/ffmpeg' / ('dist-full-' + abi)
         new = workspace / 'candidate' / ('dist-full-' + abi)
-        config = (workspace / 'build' / abi / 'config.h').read_text()
         for name, expected in original_files.items():
             if digest(workspace / 'build' / abi / name) != expected:
                 raise ValueError('FFmpeg corresponding source differs beyond the two reviewed patches')
-        for prohibited in ['GPL', 'GPLV3', 'LGPLV3', 'NONFREE']:
-            if '#define CONFIG_' + prohibited + ' 0' not in config:
-                raise ValueError('Native licence configuration changed')
-        if config_digest(workspace / 'build' / abi / 'config.h') != reviewed[abi]['config_h_sha256']:
-            actual_macros = {line.split(None, 2)[1]: line.split(None, 2)[2] if len(line.split(None, 2)) > 2 else '' for line in config.splitlines() if line.startswith('#define ') and not line.startswith(('#define FFMPEG_CONFIGURATION ', '#define FFMPEG_DATADIR ', '#define AVCONV_DATADIR '))}
-            expected_macros = reviewed[abi].get('configuration_macros', {})
-            for name in sorted(set(actual_macros) | set(expected_macros)):
-                if actual_macros.get(name) != expected_macros.get(name):
-                    print('Native configuration mismatch:', abi, name, 'reviewed=', expected_macros.get(name), 'actual=', actual_macros.get(name), flush=True)
-            raise ValueError('Compiled native feature configuration differs from reviewed candidate')
-        components = digest(workspace / 'build' / abi / 'config_components.h')
-        if components != reviewed[abi]['config_components_sha256']:
-            raise ValueError('Native component availability differs from reviewed candidate')
+        components = check_configuration(workspace / 'build' / abi, reviewed, abi)
         entries = []
         for old_file in sorted((old / 'lib').glob('*.so')):
             new_file = new / 'lib' / old_file.name
@@ -165,6 +169,7 @@ def build(root, workspace, video, jobs):
         print('Building pinned FFmpeg n8.0.1 candidate:', abi, flush=True)
         with (workspace / (abi + '.log')).open('w') as log:
             subprocess.run([str(target / 'configure'), *options], cwd=target, env=env, check=True, stdout=log, stderr=subprocess.STDOUT)
+            check_configuration(target, json.loads((video / 'docs/foundation/FFMPEG_REBUILD_REVIEWED.json').read_text())['abis'], abi)
             subprocess.run(['make', '-j' + str(jobs), 'install'], cwd=target, env=env, check=True, stdout=log, stderr=subprocess.STDOUT)
         (workspace / ('configure-' + abi + '.json')).write_text(json.dumps(options, indent=2) + '\n')
 
