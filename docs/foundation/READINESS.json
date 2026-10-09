@@ -9,14 +9,19 @@
     "protected_key_validation": true,
     "foundation_review": true
   },
-  "verified_unsigned_source": "64e1a2ebef18941b0f2719d5dbf810c25c01985c",
   "signed_apk_produced": false,
-  "physical_shield_qa": "Pending after signed APK delivery",
+  "physical_shield_qa": "First 0.133 installation reported successful, with carousel/focus regressions. Corrected 0.134 device acceptance pending.",
   "protected_key_validation_run": "https://github.com/heretoecode/Supernova/actions/runs/37935348904",
   "unsigned_ci_rehearsal_run": "https://github.com/heretoecode/Supernova/actions/runs/37929976741",
-  "status": "AUTHORISED_BUILD_RETRY_PENDING_TOOLING_CORRECTION",
-  "protected_signing_enablement": "Enabled by user; explicit final approval received",
+  "status": "CORRECTED_UI_READY_FOR_AUTHORISED_PROTECTED_BUILD",
+  "protected_signing_enablement": "Existing user-enabled environment preserved; user authorises corrected signed delivery.",
   "evidence_index": "CI_REHEARSAL_INDEX.json",
-  "approved_signed_source": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
-  "signing_attempt_run": "https://github.com/heretoecode/Supernova/actions/runs/37935418033"
+  "signing_attempt_run": "https://github.com/heretoecode/Supernova/actions/runs/37935418033",
+  "first_signed_run": "https://github.com/heretoecode/Supernova/actions/runs/37942503242",
+  "first_signed_apk_produced": true,
+  "corrected_version": "0.134",
+  "corrected_version_code": 134,
+  "correction_evidence": "UI_CORRECTED_UNSIGNED_EVIDENCE.json",
+  "canonical_product_inputs_sha256": "267ce9a39f1df4be0b4bc1f9c0516aaba574e40b4467ad09828d3fff61e2e690",
+  "source_pin_policy": "Workflow-only follow-up pins the just-created verified application commit. Earlier 11766e59 approval remains first-delivery history."
 }

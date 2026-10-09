@@ -153,5 +153,10 @@ public final class PreviewDialog {
  public static int dp(Context c,int v){return Math.round(v*c.getResources().getDisplayMetrics().density);}
  public static StateListDrawable focus(Context c){return new PreviewContentFocus(c);}
  public static StateListDrawable buttonFocus(Context c){return focus(c);}
+ public static StateListDrawable actionContainerFocus(Context c){
+  StateListDrawable states=new StateListDrawable();
+  android.graphics.drawable.LayerDrawable focused=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{surface(c,false),new PreviewFocusGlow(c)});
+  states.addState(new int[]{android.R.attr.state_focused},focused);states.addState(new int[]{},surface(c,false));return states;
+ }
  public static GradientDrawable surface(Context c,boolean f){GradientDrawable g=new GradientDrawable();g.setColor(f?PreviewAccent.alpha(c,70):0xef0b1b29);g.setCornerRadius(dp(c,6));g.setStroke(dp(c,1),f?PreviewAccent.color(c):0x50426a80);return g;}
 }

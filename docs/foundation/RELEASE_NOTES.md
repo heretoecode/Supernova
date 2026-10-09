@@ -1,15 +1,15 @@
-# Supernova Foundation — candidate 0.133
+# Supernova Foundation correction — candidate 0.134
 
-Status: implemented candidate, unsigned verification passed; native source and signing-pin gates passed; keyless cold CI rehearsal and three-pass readiness review passed; final signing approval received; corrected-workflow retry pending; **not a signed release**. Physical Shield acceptance follows verified APK delivery. Version numbers are literal APK counters, so `0.10` follows `0.9`.
+The first signed Foundation 0.133 was installed successfully; Shield testing revealed missing approved Home carousel and artwork focus containment. This correction restores those behaviours from verified Preview corrective source f97f6294 while preserving all Foundation work. Corrected signing/delivery is pending; physical validation follows that APK.
 
-- Permanent Android application identity **app.supernova.player**, app label Supernova, isolated providers/task identity, and dedicated existing Foundation PKCS#12 signing workflow.
-- Approved Space Black Blend, double-ring launcher icon (density/adaptive variants), Android TV banner, static splash and utility background. Existing Home hero imagery is preserved.
-- Animated double-ring highlights in Preparing Playback and the existing Home scan information pill; concentric rings stay still and highlights move in opposite directions while the existing operation is active.
-- About includes App Information, Release Notes, offline Open-source Licences, Credits & Acknowledgements with official-site QR codes, and read-only Technical Information. No in-app update checker or external-link launch.
-- Retrospective `0.1`–`0.132` build history reconstructed from downloaded APK archives, actual manifests, hashes and source checkpoints. Development/QA builds are distinguished from feature/public releases. Historical APK binaries are untouched; gaps are disclosed.
-- FFmpeg media libraries rebuilt from verified n8.0.1 source with existing features and four-ABI support; corresponding source and full notices are available.
-- Runtime version reporting uses the literal counter without re-running obsolete NOVA version migrations against the new install identity.
+- Home uses a bounded active hero card with equal-height previous/next neighbours, fixed title/logo and metadata positions, and one More Info action. Left/right cycles the existing selection; More Info keeps the existing Details action.
+- Row artwork is clipped to the rounded body; artwork, captions and focus highlight scale together. Home rail clearance matches the accepted composition.
+- Foundation always selects the approved interface, including restored false legacy UI preferences, without exposing Try New UI or resetting other choices.
+- Identity `app.supernova.player`, protected existing PKCS#12 signing, approved icon/banner/splash/Space Black Blend, both double-ring indicators, About/licences, dependency/provider integration and source-verified FFmpeg remain intact.
+- Literal actual-build history now records independently verified first Foundation 0.133; the corrected candidate continues as **0.134 / versionCode 134**. All prior 132 entries are preserved exactly.
 
-This candidate is based on the existing interface/playback/library/network implementation and verified upstream source version Nova Video Player 6.4.64. It does not include the frozen maintenance release, custom Library Page or broader Settings/Network & Files redesign. Existing UI defects and optional integration limitations remain subject to the later fixes-only release and device QA.
+Other maintenance-lineage omissions are recorded in [the register](PREVIEW_OMISSION_REGISTER.json) and remain deferred. No unrelated feature, onboarding or import work is included. See [correction evidence and physical checks](FOUNDATION_UI_CORRECTION.md).
 
-The certificate pin and native corresponding-source checks passed. Signing still requires complete CI conformance and separate final user authorisation. See [implementation report](IMPLEMENTATION_REPORT.md), [readiness gates](READINESS.json) and [QA checklist](QA_CHECKLIST.md).
+## First Foundation 0.133 — delivered
+
+Permanent identity and signing; approved branding and animated loading indicators; approved About, credits, technical information and full offline licences; reconstructed 0.1–0.132 history; exact-source four-ABI media libraries. Signed source 11766e59; verified delivery run 37942503242. Physical installation passed according to the user; carousel/focus regressions led to this correction. No broader physical acceptance is claimed.

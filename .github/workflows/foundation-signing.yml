@@ -149,17 +149,17 @@ jobs:
             --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2"
           python3 .github/build/verify-foundation-native-apk.py --apk "${unsigned_apks[0]}" \
             --evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json"
+          # Check the complete reviewed suite and record binary proof before either operation.
+          python3 -m unittest discover -s tools -p 'test_*.py'
+          python3 .github/build/record-foundation-conformance.py --root .. --apk "${unsigned_apks[0]}" \
+            --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+            --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2" \
+            --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" \
+            --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
+            --output "$RUNNER_TEMP/supernova-foundation-conformance.json"
           # Keep the eventual signed-output directory unambiguous.
           if [ "$OPERATION" = 'prepare' ]; then
             rm -f -- "${unsigned_apks[0]}"
-          else
-            python3 -m unittest discover -s tools -p 'test_*.py'
-            python3 .github/build/record-foundation-conformance.py --root .. --apk "${unsigned_apks[0]}" \
-              --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
-              --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2" \
-              --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" \
-              --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
-              --output "$RUNNER_TEMP/supernova-foundation-conformance.json"
           fi
 
       - name: Prepare verified Foundation key and build release only

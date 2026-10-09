@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "baseline": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+  "method": "Restored only original PreviewPages and PreviewCardPresenter in disposable prepared build; identical real-view regression tests executed. Canonical worktree was not reverted.",
+  "results": [
+    {
+      "test": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest.homeViewportHasEqualNeighboursSixtyPercentTeaserAndNoBackgroundDuplicate",
+      "status": "FAIL",
+      "message": "java.lang.AssertionError"
+    },
+    {
+      "test": "com.archos.mediacenter.video.leanback.presenter.FoundationCardContainmentTest.focusedArtworkAndBoundaryEnlargeTogetherInRenderedPixels",
+      "status": "PASS",
+      "message": "Baseline shared-scale pixel test alone does not detect the rounded-corner regression."
+    },
+    {
+      "test": "com.archos.mediacenter.video.leanback.presenter.FoundationCardContainmentTest.artworkPixelsStayInsideRoundedBody",
+      "status": "FAIL",
+      "message": "java.lang.AssertionError: Values should be different. Actual: -65536"
+    }
+  ],
+  "interpretation": "Missing carousel and rounded-child clipping assertions fail on original implementations. The older outer-card scale can satisfy a simple aligned-boundary pixel assertion; combined child mask, structural unit and first/middle/last tests are required."
+}

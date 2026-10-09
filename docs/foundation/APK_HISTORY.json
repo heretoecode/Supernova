@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "artifact_count": 132,
-  "unique_apk_hash_count": 131,
+  "artifact_count": 133,
+  "unique_apk_hash_count": 132,
   "byte_identical_pair": {
     "artifacts": [
       11554014904,
@@ -3713,6 +3713,38 @@
           "application_id": "org.courville.nova.markpreview",
           "version_code": 6040083,
           "version_name": "6.4.63-mark.4.1.7-preview"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.133",
+      "kind": "Foundation",
+      "date": "2026-10-09",
+      "artifact_id": 11623935933,
+      "run_id": 37942503242,
+      "source_sha": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "workflow_sha": "06014d7d3eb82b4264c15bab84d0fc5a92660e37",
+      "artifact_name": "supernova-foundation-release",
+      "archive_sha256": "bc76813b2716b76e4d8120fc250b1eafc0c9abad46f189b3ce4f91eaf3fda728",
+      "source_subject": "Record successful cold CI and clear Foundation pre-signing readiness for user approval",
+      "notes": [
+        "Permanent Supernova identity and dedicated release signing.",
+        "Approved Space Black Blend, launcher branding and double-ring loading indicators.",
+        "About now includes build history, credits, technical information and locally readable licences.",
+        "Media libraries rebuilt from verified source with the existing codecs and features.",
+        "Installed successfully on NVIDIA Shield; physical testing revealed missing Home carousel and artwork focus containment, addressed in the next correction."
+      ],
+      "evidence": "Downloaded Actions archive digest verified; APK manifest, signature, certificate, native libraries and branding independently verified. Physical installation reported by user.",
+      "created_at": "2026-10-09T14:40:54Z",
+      "apks": [
+        {
+          "filename": "Supernova-Foundation.apk",
+          "sha256": "0f20d7db872abeeb2edbcb65d4e24ea0454ec7fbe948397ebaee54bd60d14e9f",
+          "bytes": 102167440,
+          "application_id": "app.supernova.player",
+          "version_code": 133,
+          "version_name": "0.133"
         }
       ],
       "archive_digest_verified": true

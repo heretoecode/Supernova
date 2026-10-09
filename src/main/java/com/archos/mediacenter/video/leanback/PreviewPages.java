@@ -131,8 +131,8 @@ public final class PreviewPages extends FrameLayout {
         if(featuredMoving||featuredCandidates().size()<2)return;
         View focused=findFocus();View card=focused==null?null:list.findContainingItemView(focused);
         featuredMoving=true;
-        Runnable next=()->{for(android.view.ViewParent parent=getParent();parent!=null;parent=parent.getParent())if(parent instanceof TopNavigation){((TopNavigation)parent).setFeaturedDirection(direction);break;}featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;renderFeatured();};
-        if(card!=null)card.animate().translationX(-dp(18)*direction).alpha(.3f).setDuration(100).withEndAction(next).start();else next.run();
+        Runnable next=()->{featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;renderFeatured();};
+        if(card!=null)card.animate().translationX(-dp(18)*direction).alpha(.3f).setDuration(150).withEndAction(next).start();else next.run();
     }
     private final android.net.Uri[] lastArtwork=new android.net.Uri[4];
     private final Map<String,String> featuredReasons=new HashMap<>();
@@ -206,7 +206,7 @@ public final class PreviewPages extends FrameLayout {
         worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{try{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});}finally{worker.shutdown();}});}
     @Override protected void onDetachedFromWindow(){removeCallbacks(rotateFeatured);removeCallbacks(providerRefresh);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);preferences.unregisterOnSharedPreferenceChangeListener(providerSettings);super.onDetachedFromWindow();}
     private Entry featured(){List<Entry> entries=tab==1?snapshot.movies:tab==2?snapshot.shows:featuredCandidates();return entries.isEmpty()?null:entries.get(Math.floorMod(featuredIndex,entries.size()));}
-    private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==3||entry==null?null:entry.backdrop);}
+    private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==0||tab==3||entry==null?null:entry.backdrop);}
     public static String displayName(Entry e){return e.media instanceof Episode?((Episode)e.media).getShowName():e.media.getName();}
     private void open(Entry e,View v){rememberFocus();if(anchors[tab]!=null)anchors[tab].token=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(v,"details");click.open(new Presenter.ViewHolder(v),e.media);}
     private void play(Entry e,View v){
@@ -237,6 +237,7 @@ public final class PreviewPages extends FrameLayout {
         if(PreviewLibraryLoader.memoryCache()==null){java.util.concurrent.ExecutorService cacheWorker=java.util.concurrent.Executors.newSingleThreadExecutor();cacheWorker.execute(()->{try{Snapshot previous=PreviewLibraryLoader.readCache(c.getApplicationContext());post(()->{if(!loaded&&previous!=null)setSnapshot(previous);});}finally{cacheWorker.shutdown();}});}
     }
     private java.util.function.Consumer<Boolean> scrollListener=value->{};
+    @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);if(h!=oldh)post(()->{if(tab==0&&!cells.isEmpty()&&cells.get(0).type==HERO)renderFeatured();});}
     public void setNavigationInset(int inset){list.setPadding(dp(28),dp(10)+inset,dp(28),dp(12));}
     public void setScrollListener(java.util.function.Consumer<Boolean> listener){scrollListener=listener;notifyScroll();}
     private void notifyScroll(){scrollListener.accept(list.canScrollVertically(-1));}
@@ -477,25 +478,15 @@ public final class PreviewPages extends FrameLayout {
             if(c.type==POSTER){Entry e=(Entry)c.value;h.presenter.bindEntry(h.card,e);h.itemView.setTag(e.key());h.itemView.setOnClickListener(v->open(e,v));h.itemView.setOnLongClickListener(v->{contextMenu(e,v,false);return true;});return;}
             LinearLayout v=(LinearLayout)h.itemView;
             if(c.type==RAIL&&v.getChildCount()==1&&v.getChildAt(0) instanceof RecyclerView){RecyclerView rail=(RecyclerView)v.getChildAt(0);if(rail.getAdapter() instanceof RailAdapter){((RailAdapter)rail.getAdapter()).update((List<Entry>)c.value);return;}}
-            v.removeAllViews();v.setFocusable(false);v.setOnClickListener(null);v.setBackground(null);v.setOrientation(LinearLayout.HORIZONTAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));
+            v.removeAllViews();v.setFocusable(false);v.setOnClickListener(null);v.setBackground(null);v.setOrientation(LinearLayout.HORIZONTAL);v.setPadding(0,dp(6),0,dp(6));v.setLayoutParams(new RecyclerView.LayoutParams(-1,-2));if(tab==0){v.setClipChildren(false);v.setClipToPadding(false);}
             if(c.type==HERO){Entry e=(Entry)c.value;v.setOrientation(LinearLayout.VERTICAL);v.setGravity(Gravity.TOP);v.setPadding(0,dp(10),0,dp(8));
                 v.setMinimumHeight(dp(tab==0?244:76));
                 v.setLayoutParams(new RecyclerView.LayoutParams(-1,tab==0?dp(244):android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
-                if(tab==0){TextView featured=text(featuredReasons.getOrDefault(e.key(),"IN YOUR LIBRARY"),11);featured.setTextColor(PreviewAccent.color(getContext()));v.addView(featured);
-                    TextView title=text(displayName(e),30);title.setMaxLines(2);title.setIncludeFontPadding(false);title.setLineSpacing(0,.92f);title.setEllipsize(android.text.TextUtils.TruncateAt.END);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title,new LinearLayout.LayoutParams(dp(420),dp(64)));
-                    String meta=e.year()>0?String.valueOf(e.year()):"";
-                    if(e.media instanceof Video){Video video=(Video)e.media;if(video.getDurationMs()>0)meta+="   "+video.getDurationMs()/60000+" min";}
-                    if(!e.genres.isEmpty())meta+=(meta.isEmpty()?"":"   ·   ")+e.genres.replace("|"," · ");if(e.media instanceof Episode){Episode ep=(Episode)e.media;meta+="   ·   S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();}TextView metadata=text(meta,12);metadata.setGravity(Gravity.CENTER_VERTICAL);metadata.setSingleLine(true);metadata.setEllipsize(android.text.TextUtils.TruncateAt.END);v.addView(metadata,new LinearLayout.LayoutParams(dp(470),dp(22)));String plot=e.media instanceof Tvshow?((Tvshow)e.media).getPlot():e.media instanceof Video?((Video)e.media).getDescriptionBody():"";
-                    TextView description=text(plot==null?"":plot,13);description.setIncludeFontPadding(false);description.setMaxLines(3);description.setEllipsize(android.text.TextUtils.TruncateAt.END);int viewport=getResources().getDisplayMetrics().widthPixels;v.addView(description,new LinearLayout.LayoutParams(OfficialTitleArtwork.synopsisWidth(title,viewport),dp(54)));
-                    OfficialTitleArtwork.bind(title,e.media,false,()->{android.view.ViewGroup.LayoutParams bounds=description.getLayoutParams();bounds.width=OfficialTitleArtwork.synopsisWidth(title,viewport);description.setLayoutParams(bounds);});
-                    LinearLayout actions=new LinearLayout(getContext());actions.setPadding(0,dp(6),0,0);
-                    TextView info=button("More Info",()->open(e,v));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);info.setTag("hero:info");info.setOnKeyListener((view,key,event)->{if(event.getAction()==KeyEvent.ACTION_DOWN&&(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)){featuredIndex+=key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1;lastInteraction=android.os.SystemClock.elapsedRealtime();renderFeatured();return true;}return false;});info.setBackground(PreviewDialog.buttonFocus(getContext()));actions.addView(info,lp);
-                    v.animate().cancel();v.setAlpha(1f);v.setTranslationX(0);if(featuredDirection!=0){v.setTranslationX(dp(24)*featuredDirection);v.setAlpha(.3f);v.animate().translationX(0).alpha(1f).setDuration(170).start();featuredDirection=0;}View spacer=new View(getContext());v.addView(spacer,new LinearLayout.LayoutParams(1,0,1));v.addView(actions,new LinearLayout.LayoutParams(-2,dp(40)));
-                    if(featuredIndicators==null)featuredIndicators=new PreviewFeaturedIndicators(getContext());
-                    if(featuredIndicators.getParent() instanceof ViewGroup)((ViewGroup)featuredIndicators.getParent()).removeView(featuredIndicators);
-                    v.addView(featuredIndicators,new LinearLayout.LayoutParams(-1,dp(26)));
-                    featuredIndicators.setPosition(featuredCandidates().size(),featuredIndex);
-
+                if(tab==0){
+                    int heroHeight=Math.max(dp(280),getHeight()-list.getPaddingTop()-dp(110));
+                    v.setMinimumHeight(heroHeight);v.setLayoutParams(new RecyclerView.LayoutParams(-1,heroHeight));v.setPadding(0,dp(12),0,dp(18));
+                    PreviewFeaturedCard featured=new PreviewFeaturedCard(getContext(),featuredCandidates(),featuredIndex,()->open(e,v));v.addView(featured,new LinearLayout.LayoutParams(-1,-1));
+                    v.animate().cancel();v.setAlpha(1f);v.setTranslationX(0);if(featuredDirection!=0){v.setTranslationX(dp(36)*featuredDirection);v.setAlpha(.5f);v.animate().translationX(0).alpha(1f).setDuration(250).start();featuredDirection=0;}
                 }else{TextView title=text(c.title,30);title.setTypeface(null,android.graphics.Typeface.BOLD);v.addView(title);String[] lines=PreviewLibrarySummary.describe(getContext(),snapshot,tab==2).split("\n");String[] icons={tab==2?"TV Shows":"Movies","Total Size","Local Storage","Network"};for(int line=0;line<lines.length;line++){TextView summary=text(lines[line],13);summary.setTextColor(0xffe1e9ef);summary.setPadding(0,dp(2),0,dp(2));if(line<icons.length)PreviewIcon.apply(summary,icons[line],17);v.addView(summary);}}
             }
             else if(c.type==CUSTOMISE){v.setGravity(Gravity.CENTER);TextView custom=button("Customise Home",()->PreviewHomeRows.customise(getContext(),()->{render();}));custom.setTag("home:customise");v.addView(custom);}
@@ -515,7 +506,7 @@ public final class PreviewPages extends FrameLayout {
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));
                 }else{TextView title=text(c.title,tab==3&&c.title.equals("Network & files")?30:19);title.setTextColor(0xff9ed4f7);v.addView(title);}
             }
-            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setClipChildren(false);rail.setClipToPadding(false);rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(rail,"home.rail","row_bound",0,rail.getAdapter().getItemCount(),true);rail.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView row,int dx,int dy){scheduleVisibleEnrichment();}});v.addView(rail,new LinearLayout.LayoutParams(-1,dp(105)));}
+            else if(c.type==RAIL){v.setPadding(0,0,0,dp(10));RecyclerView rail=new FocusRecycler(getContext(),true);rail.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false));rail.setClipChildren(false);rail.setClipToPadding(false);rail.setPadding(list.getPaddingLeft(),dp(10),list.getPaddingRight(),dp(10));rail.setItemAnimator(null);rail.setAdapter(new RailAdapter((List<Entry>)c.value,"Continue Watching".equals(c.title)));com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(rail,"home.rail","row_bound",0,rail.getAdapter().getItemCount(),true);rail.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView row,int dx,int dy){scheduleVisibleEnrichment();}});RecyclerView.LayoutParams rowSize=new RecyclerView.LayoutParams(-1,-2);rowSize.leftMargin=-list.getPaddingLeft();rowSize.rightMargin=-list.getPaddingRight();v.setLayoutParams(rowSize);v.addView(rail,new LinearLayout.LayoutParams(-1,dp(125)));}
             else if(c.type==STORAGE){Box b=(Box)c.value;v.setPadding(dp(12),dp(12),dp(12),dp(12));RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(-1,dp(76));lp.setMargins(0,0,dp(12),dp(12));v.setLayoutParams(lp);v.setBackground(PreviewDialog.surface(getContext(),false));v.setForeground(PreviewDialog.focus(getContext()));v.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);v.setFocusable(true);v.setClickable(true);
                 ImageView icon=new ImageView(getContext());icon.setImageDrawable(new StorageIcon(b.getBoxId()));v.addView(icon,new LinearLayout.LayoutParams(dp(35),dp(35)));
                 LinearLayout labels=new LinearLayout(getContext());labels.setOrientation(LinearLayout.VERTICAL);labels.setPadding(dp(12),0,0,0);

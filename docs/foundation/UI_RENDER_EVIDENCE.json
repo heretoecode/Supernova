@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "viewport": "960x540 logical mdpi; direct card fixtures also tested",
+  "images": [
+    {
+      "file": "docs/foundation/ui-evidence/foundation-home-initial.png",
+      "sha256": "1c8b604ccf95e484248907e1925f57922f8d86e0e4e2d1c417c5672bdd301e53",
+      "kind": "Robolectric native-graphics actual production views with synthetic artwork; not a Shield photograph"
+    },
+    {
+      "file": "docs/foundation/ui-evidence/foundation-home-focus-position-0.png",
+      "sha256": "781855580a18170633b528da5195866be7467f72bfb9ff254f560111481480c8",
+      "kind": "Robolectric native-graphics actual production views with synthetic artwork; not a Shield photograph"
+    },
+    {
+      "file": "docs/foundation/ui-evidence/foundation-home-focus-position-5.png",
+      "sha256": "51977cf0ae8d7e742af0b67f396eccffd841d78aeb181775b70edb2b1b312d94",
+      "kind": "Robolectric native-graphics actual production views with synthetic artwork; not a Shield photograph"
+    },
+    {
+      "file": "docs/foundation/ui-evidence/foundation-home-focus-position-11.png",
+      "sha256": "0049a8c59723b2a1b9109affc1b2a5e7de1cbb5789011fdfc819e1bbbab1734a",
+      "kind": "Robolectric native-graphics actual production views with synthetic artwork; not a Shield photograph"
+    },
+    {
+      "file": "docs/foundation/ui-evidence/focused-card-unit.png",
+      "sha256": "27bf79490a6609e7643ed597838a57c4d3ce9fb5725d322a5807aa767f120470",
+      "kind": "Robolectric native-graphics actual production views with synthetic artwork; not a Shield photograph"
+    },
+    {
+      "file": "docs/foundation/ui-evidence/foundation-home-logo-320.png",
+      "sha256": "16d470089829e59cb202fb71581b91f7ddbd6e48d85bc547514680f001c53f13",
+      "kind": "Robolectric native-graphics actual production views with synthetic artwork; not a Shield photograph"
+    },
+    {
+      "file": "docs/foundation/ui-evidence/foundation-home-logo-70.png",
+      "sha256": "c560de680f3508890b1924955d44f2676574ab316f25eebf12e5732168d2b386",
+      "kind": "Robolectric native-graphics actual production views with synthetic artwork; not a Shield photograph"
+    },
+    {
+      "file": "docs/foundation/ui-evidence/foundation-home-logo-140.png",
+      "sha256": "6d06f0938ba22e75a081ab061eca811946305fcb3f6525ce41fd346fea3634e6",
+      "kind": "Robolectric native-graphics actual production views with synthetic artwork; not a Shield photograph"
+    }
+  ]
+}

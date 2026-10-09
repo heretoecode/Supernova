@@ -1,4 +1,10 @@
-# Foundation authorised signing build — status
+# Foundation signing delivery and correction status
+
+First signed Foundation 0.133 / 133 succeeded in [37942503242](https://github.com/heretoecode/Supernova/actions/runs/37942503242) using workflow 06014d7d and application 11766e59. APK `Supernova-Foundation.apk`, SHA-256 `0f20d7db872abeeb2edbcb65d4e24ea0454ec7fbe948397ebaee54bd60d14e9f`, expected existing certificate verified independently. User reports successful installation and two Home regressions. See [first binary evidence](FIRST_SIGNED_APK_VERIFICATION.json) and [correction status](FOUNDATION_UI_CORRECTION.md).
+
+The following retry notes are historical, superseded by that successful delivery. The existing key, secrets, protected environment and signing safeguards are preserved. The user authorises corrected signed delivery; after final checks, the corrected source pin must replace 11766e59. A fresh dispatch is required because rerunning the previous workflow snapshot would rebuild old application source.
+
+## Historical first-signing retry
 
 User explicitly approved signed APK source **11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8** and confirmed enabling protected FOUNDATION_RELEASE_READY=true. Fresh existing-key validation [37935348904](https://github.com/heretoecode/Supernova/actions/runs/37935348904) succeeded on that commit with public certificate SHA-256 **79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e**.
 

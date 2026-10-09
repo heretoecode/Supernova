@@ -37,7 +37,7 @@ def main():
     suites=[ET.parse(file).getroot() for file in (build/'test-results/testNoamazonReleaseUnitTest').glob('TEST-*.xml')]
     for name,attribute in [('unit_tests','tests'),('unit_failures','failures'),('unit_errors','errors'),('unit_skips','skipped')]:
         evidence[name]=sum(int(suite.get(attribute,0)) for suite in suites)
-    if evidence['unit_tests']!=419 or any(evidence[name] for name in ['unit_failures','unit_errors','unit_skips']):
+    if evidence['unit_tests']!=429 or any(evidence[name] for name in ['unit_failures','unit_errors','unit_skips']):
         raise ValueError('Complete reviewed Foundation unit suite must pass without skips')
     issues=ET.parse(build/'reports/lint-results-noamazonRelease.xml').getroot().findall('issue')
     evidence['lint']={'errors':sum(issue.get('severity') in ['Error','Fatal'] for issue in issues),'warnings':sum(issue.get('severity')=='Warning' for issue in issues)}

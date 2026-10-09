@@ -630,10 +630,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     @Override
     public void onCreate() {
         super.onCreate();
-        if(BuildConfig.FOUNDATION) {
-            SharedPreferences foundationDefaults = PreferenceManager.getDefaultSharedPreferences(this);
-            if(!foundationDefaults.contains("try_new_ui")) foundationDefaults.edit().putBoolean("try_new_ui",true).apply();
-        }
+        com.archos.mediacenter.video.foundation.FoundationUiPolicy.apply(this);
         com.archos.mediacenter.video.diagnostics.Diagnostics.install(this);
 
         /*

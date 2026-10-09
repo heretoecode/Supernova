@@ -27,7 +27,7 @@ public class FoundationApplicationIdentityTest {
         assertEquals("Supernova "+BuildConfig.VERSION_NAME,CustomApplication.getNovaLongVersion());
         assertEquals("v"+BuildConfig.VERSION_NAME,CustomApplication.getNovaShortVersion());
         assertEquals(BuildConfig.VERSION_CODE,CustomApplication.getNovaVersionCode());
-        assertEquals(133,CustomApplication.getNovaVersionArray()[1]);
+        assertEquals(BuildConfig.VERSION_CODE,CustomApplication.getNovaVersionArray()[1]);
     }
     @Test public void foundationCounterDoesNotRunLegacyPreferenceResetMigrations() throws Exception {
         org.junit.Assume.assumeTrue(BuildConfig.FOUNDATION);
@@ -36,5 +36,29 @@ public class FoundationApplicationIdentityTest {
         java.util.Map<String,?> before=preferences.getAll();
         java.lang.reflect.Method migrate=CustomApplication.class.getDeclaredMethod("upgradeActions",Context.class);migrate.setAccessible(true);migrate.invoke(new CustomApplication(),context);
         assertEquals(before,preferences.getAll());
+    }
+    @Test public void restoredFalseUiPreferenceUsesApprovedFoundationUiWithoutResettingUserChoices() {
+        org.junit.Assume.assumeTrue(BuildConfig.FOUNDATION);
+        SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
+        p.edit().putBoolean("try_new_ui",false).putBoolean("force_audio_passthrough",true).putString("streaming_country","GB").commit();
+        FoundationUiPolicy.apply(RuntimeEnvironment.getApplication());
+        assertTrue(p.getBoolean("try_new_ui",false));assertTrue(p.getBoolean("force_audio_passthrough",false));assertEquals("GB",p.getString("streaming_country",""));
+        java.util.Map<String,?> before=p.getAll();FoundationUiPolicy.apply(RuntimeEnvironment.getApplication());assertEquals(before,p.getAll());
+    }
+    @Test public void freshFoundationUiPreferenceIsEnabled() {
+        org.junit.Assume.assumeTrue(BuildConfig.FOUNDATION);
+        SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());p.edit().remove("try_new_ui").commit();
+        FoundationUiPolicy.apply(RuntimeEnvironment.getApplication());assertTrue(p.getBoolean("try_new_ui",false));
+    }
+    @Test public void foundationSettingsOrganisationDoesNotExposeObsoleteUiToggle() {
+        org.junit.Assume.assumeTrue(BuildConfig.FOUNDATION);
+        var host=org.robolectric.Robolectric.buildActivity(androidx.fragment.app.FragmentActivity.class).setup();
+        try {
+            FoundationAboutTest.Prefs fragment=new FoundationAboutTest.Prefs();host.get().getSupportFragmentManager().beginTransaction().add(fragment,"preferences").commitNow();
+            androidx.preference.SwitchPreferenceCompat toggle=new androidx.preference.SwitchPreferenceCompat(host.get());toggle.setKey("try_new_ui");toggle.setTitle("Try New UI");fragment.getPreferenceScreen().addPreference(toggle);
+            com.archos.mediacenter.video.leanback.settings.PreviewSettings.organise(fragment);
+            androidx.preference.Preference hidden=fragment.findPreference("try_new_ui");
+            assertNotNull(hidden);assertFalse(hidden.isEnabled());assertFalse(hidden.isSelectable());assertFalse(hidden.getParent().isVisible());
+        } finally {host.pause().stop().destroy();}
     }
 }

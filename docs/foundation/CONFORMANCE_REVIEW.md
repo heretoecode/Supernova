@@ -1,6 +1,6 @@
 # Foundation candidate review
 
-Status: **all pre-signing readiness gates passed; ready for final user signing authorisation**. Three review passes below were refreshed against source 64e1a2eb and successful cold CI run 37929976741. No signed APK exists. Protected readiness enablement and signing dispatch remain prohibited until explicit user approval; physical Shield acceptance follows delivery.
+Current status: first signed 0.133 delivered and installed, with two user-reported Home regressions. Corrected 0.134 passes 429 unit tests; final optimized binary proof passed with 138 runtime hashes, 88 native libraries, 24 source-rebuilt FFmpeg libraries and ten visible branding exports. [Current correction report](FOUNDATION_UI_CORRECTION.md) contains the three refreshed review passes and separates automated evidence from physical Shield acceptance. The review below retains initial Foundation evidence; old pre-signing/retry checkpoints are historical.
 
 ## Pass 1 — approved scope and source integration
 
@@ -51,3 +51,7 @@ All five named machine-readable pre-signing gates are now true and blockers are 
 ## Authorised signing continuation
 
 User approval for app source 11766e59 was received, protected readiness=true accepted, and fresh key validation succeeded. Prepare attempt 2 passed every native/application gate and signed assembly; final publication failed closed on Build Tools 37 certificate-label parsing. Workflow-only correction [4a3d741e](https://github.com/heretoecode/Supernova/commit/4a3d741e37af185576f27fef7588accae1f16518) pins tested 36.0.0 and explicitly preserves approved APK source 11766e59. Actionlint and all 36 guard tests passed. See [current signing status](SIGNING_BUILD_STATUS.md). A new prepare dispatch is pending because the CLI credential expired and connected tools cannot dispatch; no additional signing approval is required. No verified signed APK was delivered; physical QA remains pending.
+
+## Refreshed correction review
+
+See [FOUNDATION_UI_CORRECTION.md](FOUNDATION_UI_CORRECTION.md) for current source selection/scope, functional/rendered regression and Foundation-preservation/signing review. The source pin must move from 11766e59 to the verified correction commit. Native source/configuration, existing key/certificate and permanent identity remain unchanged. No physical restoration claim is inferred from successful compilation.

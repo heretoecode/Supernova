@@ -1,6 +1,6 @@
 # Foundation conformance and Shield acceptance
 
-**Status:** all pre-signing automated/source/readiness gates passed; user signing approval received; corrected-workflow retry, verified signed delivery and physical QA remain pending. Do not mark device checks passed without user evidence.
+**Current status:** first signed 0.133 installed successfully according to the user; two Home regressions reported. Targeted corrected 0.134 is undergoing final release validation; signed correction and physical retest remain pending. Historical automated checks below describe initial Foundation preparation. Current evidence: [correction report](FOUNDATION_UI_CORRECTION.md).
 
 ## Automated release gates
 
@@ -35,3 +35,15 @@
 11. Configure explicit playback/network preferences, force-stop and relaunch. Confirm the `0.N` identity does not cause old NOVA migration resets or image-cache deletion. Check optional Trakt/OpenSubtitles integrations with existing accounts; production account acceptance has not been simulated.
 
 Record device model, Android version, APK SHA-256, source commit, exact steps, expected/actual behavior and screenshots/video where relevant. Physical QA is pending by agreement and cannot be reported as completed by automation.
+
+## Corrected Foundation Shield retest — pending
+
+- [ ] Install corrected 0.134 over Foundation 0.133, preserving library/preferences; Legacy remains separately installed.
+- [ ] Confirm app.supernova.player, 0.134 / 134 and permanent branding/About history.
+- [ ] Home shows local hero cards with neighbouring cards, no full-screen duplicate artwork; wide/tall/missing title logos remain readable.
+- [ ] Remote left/right cycles and retains More Info focus; More Info opens the selected item; Back returns to usable Home focus.
+- [ ] Focus first/middle/last cards in each Home row: artwork stays inside rounded highlighted frame throughout zoom and scrolling; no clipped edges or focus jumps.
+- [ ] Movies/TV rows, Network & Files and Settings remain usable; Try New UI is unavailable.
+- [ ] Library scan status pill and Preparing Playback retain animated double-ring indicators only during loading; playback/resume/audio/subtitles still behave as expected.
+
+Automated synthetic render checks establish production view geometry and pixel containment, not physical Shield acceptance or live provider artwork success.

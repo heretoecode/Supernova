@@ -1,6 +1,14 @@
 # Foundation implementation and APK delivery
 
-**All pre-signing readiness gates passed; awaiting final user approval. No Foundation APK has been signed or delivered. Protected `FOUNDATION_RELEASE_READY` has not been changed.** Existing work is preserved on `codex/foundation-release` only.
+## Current continuation — reported Shield regressions
+
+First signed Foundation **0.133 / 133** was delivered by [run 37942503242](https://github.com/heretoecode/Supernova/actions/runs/37942503242), source **11766e59**. Its downloaded APK was independently verified and the user reports successful Shield installation, followed by missing carousel and artwork focus-containment regressions. The earlier signing-retry status below is historical.
+
+[Read-only investigation](FOUNDATION_UI_REGRESSION_INVESTIGATION.md) establishes an older source baseline, not a build variant silently excluding a present carousel. [Correction and validation](FOUNDATION_UI_CORRECTION.md) records the bounded port from f97f6294, actual-view/pixel tests, preservation checks and pending corrected signed delivery. [Omission register](PREVIEW_OMISSION_REGISTER.json) tracks other maintenance differences without claiming physical failures. Current candidate **0.134 / 134** preserves Foundation identity, signing, branding, native source and About work. Only `codex/foundation-release` is changed.
+
+## Historical initial preparation record
+
+The following sections retain the original 0.133 preparation evidence and chronology; current readiness and delivery status are above and in [READINESS.json](READINESS.json).
 
 ## Preflight
 
