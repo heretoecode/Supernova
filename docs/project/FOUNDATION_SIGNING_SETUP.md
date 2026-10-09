@@ -1,6 +1,6 @@
 # Foundation signing setup
 
-**Status: signing implementation prepared; user secrets not provisioned or tested; no APK built or signed.** Work is on `codex/foundation-release` only. The approved permanent application ID is **`app.supernova.player`**. The existing user-owned `.p12` must be used; no replacement key was created. This document covers signing preparation, not completion of the Foundation Release.
+**Current status: existing protected key validation and all Foundation pre-signing readiness checks passed; awaiting final user approval. No signed Foundation APK exists.** Work remains isolated to `codex/foundation-release`; approved permanent identity is `app.supernova.player`. Earlier sections retain the original signing-preparation findings chronologically; the latest checkpoints below supersede those initial blockers.
 
 ## Authority and investigation
 
@@ -142,3 +142,9 @@ The Foundation workflow now prepares isolated sibling providers, requires explic
 After the user corrected the exact protected environment variable, validation [37920686126](https://github.com/heretoecode/Supernova/actions/runs/37920686126) succeeded on source 6f2045b2. The full public certificate SHA-256 was accepted. No credentials were requested/exposed and no APK was signed. Readiness enablement/protected `prepare` still requires the user's separate final approval after Foundation conformance. The authorised exact-source FFmpeg rebuild and portable native/byte-verification gates are documented in [FFMPEG_REBUILD.md](../foundation/FFMPEG_REBUILD.md); the existing key, Preview signing and branch/environment restrictions remain.
 
 `operation=verify` is a keyless CI conformance rehearsal added on the isolated Foundation branch. It skips all signing-secret steps, rebuilds/tests native sources, produces an unsigned APK privately on the runner, and uploads public conformance JSON only. It cannot produce the signed deliverable or enable readiness. `prepare` remains the separately approved protected signing operation.
+
+## Final readiness and approval checkpoint — 9 October 2026
+
+Cold keyless CI [37929976741](https://github.com/heretoecode/Supernova/actions/runs/37929976741) passed at 64e1a2eb, including exact-source FFmpeg native regressions and full application conformance. [Final three-pass review](../foundation/CONFORMANCE_REVIEW.md) and [readiness evidence](../foundation/READINESS.json) clear every pre-signing gate. Existing protected validation 37925321456 succeeded with the complete certificate pin. The historical truncated-pin/source blockers above are resolved; no new key is required.
+
+The protected environment variable has **not** been enabled and prepare has **not** been dispatched. Per the authoritative handover, explicit final user authorisation is required first. The integration cannot manage environment variables (HTTP 403), so after approving, on iPhone use repository Settings → Environments → supernova-foundation-signing → Environment variables → add/edit FOUNDATION_RELEASE_READY to true. Keep existing signing secrets and certificate pin unchanged. Then the existing protected prepare workflow repeats native/application readiness checks before any signed build and validates the actual signature/package/resources/native bytes before artifact publication. Release delivery remains unfinished until that signed APK succeeds and is verified; physical Shield checks remain pending afterwards.

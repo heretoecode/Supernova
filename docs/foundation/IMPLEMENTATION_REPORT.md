@@ -1,6 +1,6 @@
 # Foundation implementation and APK delivery
 
-**In progress. No Foundation APK has been signed or delivered. `FOUNDATION_RELEASE_READY` has not been changed.** Authorised Foundation source starts at `56864849`; signing implementation and all later handover commits are retained. Work is confined to `codex/foundation-release`.
+**All pre-signing readiness gates passed; awaiting final user approval. No Foundation APK has been signed or delivered. Protected `FOUNDATION_RELEASE_READY` has not been changed.** Existing work is preserved on `codex/foundation-release` only.
 
 ## Preflight
 
@@ -105,3 +105,9 @@ Fresh protected validation [37925321456](https://github.com/heretoecode/Supernov
 ### Canonical CI configuration diagnosis
 
 Rehearsal 37926791331 failed safely before native installation because its configuration hash differed. Diagnostic run 37929001285 traced the difference to `HAVE_MAKEINFO`, `HAVE_MAKEINFO_HTML` and `HAVE_RSYNC_CONTIMEOUT` only. These are host documentation/test-transport checks, with no runtime library source references; docs/program generation remains disabled by the preserved configuration. They are recorded separately, and only those three host probes are normalised alongside absolute build-path metadata. Runtime/component/licence/ABI/source/byte guards remain unchanged. An additional regression test confirms changed codec availability still fails; full Python suite **36 passed**. Run 37928486785 was cancelled to replace slow post-build diagnosis with an early fail-closed configure check. Canonical CI conformance remains pending; readiness stays false and signing has not run.
+
+## Final cold CI and approval checkpoint
+
+Canonical keyless rehearsal [37929976741](https://github.com/heretoecode/Supernova/actions/runs/37929976741) succeeded at source **64e1a2ebef18941b0f2719d5dbf810c25c01985c**. The actual unsigned APK is **app.supernova.player / 0.133 / code 133**, **101989237 bytes**, SHA-256 **3886c5a606fa2a960e0562deedbe4efaaaff7d41614842f23e80e2adeaf5e4b3**. All 419 application tests and 36 Python tests passed; lint zero errors / 1,441 inherited warnings. Full runtime, packaged native, source-built FFmpeg, assets/licences and binary/resource checks passed. All 64 old/candidate native decode comparisons, registries and tempo state passed on the fresh CI source build. Public artifact ZIP digest and individual proof files were independently checked and are retained in [CI_REHEARSAL_INDEX.json](CI_REHEARSAL_INDEX.json). Earlier failed/cancelled rehearsals remain historical diagnostic evidence, superseded by this successful run.
+
+The final [three-pass review](CONFORMANCE_REVIEW.md) clears all pre-signing gates; [READINESS.json](READINESS.json) now records that evidence. This does not alter protected GitHub readiness or authorise signing. Final user approval and then public environment variable enablement are required before dispatching prepare; integration environment-variable management returns 403, so that enablement requires the user in GitHub UI. No secrets are requested. Signed APK delivery and Shield acceptance remain pending. Main remains fca6417180fc1a680d8aac00d6cc9ea0b5c23985; frozen fixes branch remains e24af182a569238f459887d0d197cbb64c4e736c.

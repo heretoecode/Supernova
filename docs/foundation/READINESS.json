@@ -1,19 +1,20 @@
 {
   "schema": 1,
-  "release_ready": false,
-  "blockers": [
-    "Canonical keyless CI rehearsal rerun after verified host-only metadata normalisation; final review pending"
-  ],
+  "release_ready": true,
+  "blockers": [],
   "gates": {
     "unit_tests": true,
     "binary_conformance": true,
     "native_source_compliance": true,
     "protected_key_validation": true,
-    "foundation_review": false
+    "foundation_review": true
   },
-  "verified_unsigned_source": "70f62c28c9361e451bbb996c49b43a28cb435087",
+  "verified_unsigned_source": "64e1a2ebef18941b0f2719d5dbf810c25c01985c",
   "signed_apk_produced": false,
   "physical_shield_qa": "Pending after signed APK delivery",
   "protected_key_validation_run": "https://github.com/heretoecode/Supernova/actions/runs/37925321456",
-  "unsigned_ci_rehearsal_run": "https://github.com/heretoecode/Supernova/actions/runs/37926791331"
+  "unsigned_ci_rehearsal_run": "https://github.com/heretoecode/Supernova/actions/runs/37929976741",
+  "status": "READY_FOR_FINAL_SIGNING_AUTHORISATION",
+  "protected_signing_enablement": "Not changed; final user approval required",
+  "evidence_index": "CI_REHEARSAL_INDEX.json"
 }

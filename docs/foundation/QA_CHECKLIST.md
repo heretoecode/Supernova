@@ -1,6 +1,6 @@
 # Foundation conformance and Shield acceptance
 
-**Status:** final unsigned automated evidence verified; native source clearance and protected signing remain pending. Do not mark device checks passed without user evidence.
+**Status:** all pre-signing automated/source/readiness gates passed; final user signing approval, signed delivery and physical QA remain pending. Do not mark device checks passed without user evidence.
 
 ## Automated release gates
 
@@ -11,12 +11,12 @@
 - [x] First unsigned APK's 88 native hashes compared against build inputs, all four ABIs inspected.
 - [x] Resolved external release/desugaring runtime graph inventoried; full offline legal texts and original notices exported.
 - [x] Full latest unsigned unit suite 419/419 passed; About/animation/QR/runtime version/preference preservation/classic-host recreation tests passed.
-- [x] Python suite 28/28 passed; workflow actionlint passed; release lint completed with zero errors.
+- [x] Python suite 36/36 passed; workflow actionlint passed; release lint completed with zero errors.
 - [x] Final application source/assets at 70f62c28 with verified source-built FFmpeg rerun through full unit tests, lint and optimised unsigned APK conformance; 57 offline legal rows match source.
-- [ ] Canonical keyless cold CI rehearsal passes; final review clearance recorded.
+- [x] Canonical keyless cold CI rehearsal 37929976741 passes at 64e1a2eb; public evidence hashes checked and final review clearance recorded.
 - [x] Corresponding-source/relinking recipes and archive established; four source-built ABIs passed native compatibility/regression checks before replacement.
 - [x] Protected existing-key validation succeeds with exact 64-character pin (37920686126 and 37925321456).
-- [x] Three-pass Foundation scope/design/signing review recorded; clearance explicitly withheld for remaining gates.
+- [x] Three-pass Foundation scope/design/signing review recorded; all pre-signing gates cleared; final approval/signing/device work remains open.
 - [ ] User explicitly authorises enabling readiness and protected `prepare` operation.
 - [ ] Signed APK produced, actual version/provider/resource/licence/signature/certificate/checksum verified and allowlisted artifact uploaded.
 

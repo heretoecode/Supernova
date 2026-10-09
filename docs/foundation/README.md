@@ -1,6 +1,6 @@
 # Foundation implementation evidence
 
-Work is isolated to `codex/foundation-release`. **No signed Foundation APK has been produced; readiness remains false.**
+Work is isolated to `codex/foundation-release`. **All pre-signing readiness gates passed; awaiting final user approval. No signed Foundation APK has been produced; protected signing remains disabled.**
 
 - [Implementation report and blockers](IMPLEMENTATION_REPORT.md)
 - [Machine-readable readiness](READINESS.json)
@@ -10,7 +10,8 @@ Work is isolated to `codex/foundation-release`. **No signed Foundation APK has b
 - [Historical APK hashes, manifests and sources](APK_HISTORY.json)
 - [Branding export hashes/dimensions](BRANDING_EXPORTS.json)
 - [Resolved runtime/desugaring SBOM and legal provenance](RUNTIME_SBOM.json)
-- [Committed-source unsigned APK evidence](UNSIGNED_BUILD_EVIDENCE.json)
+- [Canonical cold CI proof index](CI_REHEARSAL_INDEX.json)
+- [Committed-source local unsigned APK evidence](UNSIGNED_BUILD_EVIDENCE.json)
 - [Actual unsigned native ELF inventory](NATIVE_BINARY_INVENTORY.json)
 - [Native legal/source evidence](NATIVE_LEGAL_PROVENANCE.json)
 - [Verified FFmpeg source rebuild and recipes](FFMPEG_REBUILD.md)
