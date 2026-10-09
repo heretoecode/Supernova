@@ -1,5 +1,5 @@
 {
-  "scope": "Actual unsigned optimised Foundation APK; all 88 native ELF hashes match merged libraries",
+  "scope": "Actual unsigned Foundation APK at source 70f62c28; 88 native hashes match compiled packaging inputs; 24 FFmpeg libraries match verified source-built candidates",
   "libraries": [
     {
       "path": "lib/arm64-v8a/libaudiocompress.so",
@@ -17,8 +17,8 @@
     },
     {
       "path": "lib/arm64-v8a/libavcodec.so",
-      "bytes": 11017120,
-      "sha256": "f1e05939f306f036a76eb8e779f5bbe6f3390cec3d59fc753b63230de418e26e",
+      "bytes": 11017168,
+      "sha256": "36caa41cb9bddda091501ae897a5b158c061ec11dca51a7c87b00af187bdd347",
       "needed": [
         "libswresample.so",
         "libavutil.so",
@@ -29,14 +29,14 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/arm64-v8a/libavfilter.so",
-      "bytes": 3959880,
-      "sha256": "cb891deaca48c8ee5bcd6cee263922fc1a9bbe110605aebb4e18e2267ecbca0f",
+      "bytes": 3959944,
+      "sha256": "6817231944ceed1d0a59d3e8c675ba74e5ff5bf027d127b5bd359ac33bc241d4",
       "needed": [
         "libswscale.so",
         "libavformat.so",
@@ -48,14 +48,14 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/arm64-v8a/libavformat.so",
       "bytes": 6908680,
-      "sha256": "6ec78bea5f883208f2836bd22c1b8c45d27e596c29f9832bff12916830951553",
+      "sha256": "c17ff4f0c4a91184fd7c445a74055e071d80693031350e165b823926065e3d8c",
       "needed": [
         "libavcodec.so",
         "libavutil.so",
@@ -65,7 +65,7 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -130,14 +130,14 @@
     },
     {
       "path": "lib/arm64-v8a/libavutil.so",
-      "bytes": 737112,
-      "sha256": "d6f4e192f6740d05c7bb55822d41b9e2022c9dd7ce73c2382f16bd4e2b6c5815",
+      "bytes": 737176,
+      "sha256": "03c7ca849e165425b834f7d34ba9e92c382b9823b076046e8639f6b5b8330411",
       "needed": [
         "libm.so",
         "libc.so"
       ],
-      "ffmpeg_version": "n8.0.1",
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_version": "8.0.1 (rebuilt n8.0.1 source)",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -304,29 +304,29 @@
     },
     {
       "path": "lib/arm64-v8a/libswresample.so",
-      "bytes": 98320,
-      "sha256": "262909297be449d9f58ea0f40b8f5ff204ccd46fe4c01b0009ad4293af5f6068",
+      "bytes": 98368,
+      "sha256": "7b50a84c981930da56e0e6215471e9b97dc0de1913ab878c2afb1dece5972b31",
       "needed": [
         "libavutil.so",
         "libm.so",
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/arm64-v8a/libswscale.so",
-      "bytes": 914880,
-      "sha256": "16ace28a47fbdae102f7c4539f303b9f74ea79212c87b97712ce4d7bf2584c64",
+      "bytes": 914928,
+      "sha256": "5535e54f130deeb6c20f85258533f2c0a22a49d617a6e986fa98388698b11f42",
       "needed": [
         "libavutil.so",
         "libm.so",
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm64 --extra-cflags=' -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -360,8 +360,8 @@
     },
     {
       "path": "lib/armeabi-v7a/libavcodec.so",
-      "bytes": 8477112,
-      "sha256": "9a17d327b83767a5101cf333c0a5f63e8358cbd55b611f7bff4299ab5e01ae93",
+      "bytes": 8477176,
+      "sha256": "11c1d3f8d5dc2b0452e770af1f7cb4959ef3b4807fa78f5f7e5926dc0b545d6f",
       "needed": [
         "libswresample.so",
         "libavutil.so",
@@ -372,14 +372,14 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/armeabi-v7a/libavfilter.so",
-      "bytes": 2543136,
-      "sha256": "cf8a14f1247099552d51bd33229c27d881e31b621b64b1be20570da804a3caf0",
+      "bytes": 2543184,
+      "sha256": "08cea6f587c540f72f9acc117b5a4407d57c0c3e1e0874b0bc19f801f8dc48d8",
       "needed": [
         "libswscale.so",
         "libavformat.so",
@@ -391,14 +391,14 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/armeabi-v7a/libavformat.so",
       "bytes": 4743088,
-      "sha256": "8b69ad69ae9407022ce2a1dad09f55bd9e229defbccdefc23c78082ddb6ccf73",
+      "sha256": "18f7e8fdf6597dddd43f5d9e2ce3b8cd03764e09fc35ddcdf5f00c8d344522ac",
       "needed": [
         "libavcodec.so",
         "libavutil.so",
@@ -408,7 +408,7 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -473,14 +473,14 @@
     },
     {
       "path": "lib/armeabi-v7a/libavutil.so",
-      "bytes": 524248,
-      "sha256": "60600d3d959a3b7f492671392b5d50f4262cc49ce2af780976cadf17b789ef58",
+      "bytes": 524312,
+      "sha256": "f680beea3197fc87040971d9ad9f0b6e7529f69bf3a54a0a4cff7aedc7fbfe1e",
       "needed": [
         "libm.so",
         "libc.so"
       ],
-      "ffmpeg_version": "n8.0.1",
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_version": "8.0.1 (rebuilt n8.0.1 source)",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -647,29 +647,29 @@
     },
     {
       "path": "lib/armeabi-v7a/libswresample.so",
-      "bytes": 75176,
-      "sha256": "dc237b2da5f3222a435b61941011e2ad7e93bf8b424066f063b858d1dba479fb",
+      "bytes": 75224,
+      "sha256": "cbc1e296d60890a99ef97c8eeb6261de39364429a425563cd40d342d4aecd34f",
       "needed": [
         "libavutil.so",
         "libm.so",
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/armeabi-v7a/libswscale.so",
-      "bytes": 447836,
-      "sha256": "23971a70443e8fb5d4d9a407cfeeae360c8dc6f100db8df5ba3ef2fa9af4decd",
+      "bytes": 447900,
+      "sha256": "171015afc89d329f6d0cb95c4f853bb3491b3dac12002d37b4020c2630b8b5ef",
       "needed": [
         "libavutil.so",
         "libm.so",
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=arm --extra-cflags='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-march=armv7-a -Wl,--fix-cortex-a8,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -703,8 +703,8 @@
     },
     {
       "path": "lib/x86/libavcodec.so",
-      "bytes": 12532860,
-      "sha256": "b7dca2e7e22302ce8de8dd6db36547321e506d0d27a7cd9df7550cc8fb39c050",
+      "bytes": 12532908,
+      "sha256": "7de39fec7046551801a70a3ad42e012809812e97ed8be35e27899bf6f62a0226",
       "needed": [
         "libswresample.so",
         "libavutil.so",
@@ -715,14 +715,14 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/x86/libavfilter.so",
-      "bytes": 4392960,
-      "sha256": "e2f30936b11028b8356ae7f642788e22b423f637069a13f3a3ab31ec829fd72a",
+      "bytes": 4393024,
+      "sha256": "b2c134467f5e50e5aa5b3786f0d19cb331a114183efd5d023b307dd284363363",
       "needed": [
         "libswscale.so",
         "libavformat.so",
@@ -734,14 +734,14 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/x86/libavformat.so",
       "bytes": 5879144,
-      "sha256": "920f564baeef5efedbea65db34d72af042e3daf9a6d0ad1482a41da2fee57e24",
+      "sha256": "efc2b3e47be4274005239348300a1e962f665b5519bb9757171479561b462600",
       "needed": [
         "libavcodec.so",
         "libavutil.so",
@@ -751,7 +751,7 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -816,14 +816,14 @@
     },
     {
       "path": "lib/x86/libavutil.so",
-      "bytes": 742804,
-      "sha256": "d83cadd912e7344292b7d5407a54ac7928377ec77d8af945d08ef56b9600563c",
+      "bytes": 742852,
+      "sha256": "b3d7dc1163cb4fdda09832af996cfd004deed2c7b5dce83746736febcf308b7f",
       "needed": [
         "libm.so",
         "libc.so"
       ],
-      "ffmpeg_version": "n8.0.1",
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_version": "8.0.1 (rebuilt n8.0.1 source)",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -990,29 +990,29 @@
     },
     {
       "path": "lib/x86/libswresample.so",
-      "bytes": 109808,
-      "sha256": "66da13b195b7b4307c43b5bca7948dbb142c6cdb52aba30aa78ae035ac46d6b7",
+      "bytes": 109872,
+      "sha256": "669fefa5c0a85a474b2a2c39cd0690e54c4e6f885564ecafa47c4f717fc481bc",
       "needed": [
         "libavutil.so",
         "libm.so",
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/x86/libswscale.so",
-      "bytes": 1063520,
-      "sha256": "a376330ca4024097916a94b53c3882a678536650d6f1bd3ae8e0b6e59a33c91a",
+      "bytes": 1063584,
+      "sha256": "0c9b1cf55f0b659714f89c4ca949900a86dfb7ed652dae89413f6b9cbdbaf624",
       "needed": [
         "libavutil.so",
         "libm.so",
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86 --disable-asm --extra-cflags='-march=i686 -mtune=i686 -mssse3 -mfpmath=sse -m32 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -1046,8 +1046,8 @@
     },
     {
       "path": "lib/x86_64/libavcodec.so",
-      "bytes": 14508040,
-      "sha256": "3da8cdcda8f232656b7de9459f1c6fa4233fbd8c28e46168640060342c8d9fa8",
+      "bytes": 14508104,
+      "sha256": "ce378f6ee082463f38e1671081f7769fd3d72bcb08bf25fae22cd699cd3aef9a",
       "needed": [
         "libswresample.so",
         "libavutil.so",
@@ -1058,14 +1058,14 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/x86_64/libavfilter.so",
       "bytes": 4936736,
-      "sha256": "a4160f3797ef41c0bb0c8de73c676558d6effe48fc5669db446c883e08eeeb11",
+      "sha256": "9d418411c2104ca7caeaa5d7454160f52c61d1b820919c83bae586b611a095f8",
       "needed": [
         "libswscale.so",
         "libavformat.so",
@@ -1077,14 +1077,14 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/x86_64/libavformat.so",
       "bytes": 7304048,
-      "sha256": "672bc70b4769016d947ffcf4c51c5282b379f8b6beda107e48ee44c06e637117",
+      "sha256": "1d2ca3296ce95f2d4247fc1d783f17f3f3688b32a1c39c3ecfbe6725383b012e",
       "needed": [
         "libavcodec.so",
         "libavutil.so",
@@ -1094,7 +1094,7 @@
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -1159,14 +1159,14 @@
     },
     {
       "path": "lib/x86_64/libavutil.so",
-      "bytes": 921896,
-      "sha256": "bca3f9702258819a45ff1ea46473fe1b949589e549b2084f8b7dc393eeef0a94",
+      "bytes": 921960,
+      "sha256": "b46a029e6bb78ffd5fe8403ffc865a77341a09c691e655310ef8eac1f21dc71d",
       "needed": [
         "libm.so",
         "libc.so"
       ],
-      "ffmpeg_version": "n8.0.1",
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_version": "8.0.1 (rebuilt n8.0.1 source)",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -1333,29 +1333,29 @@
     },
     {
       "path": "lib/x86_64/libswresample.so",
-      "bytes": 139840,
-      "sha256": "08068e27e68785b8ce70c7bb9f4abd1226a7643f57c322147457e6a6d4d7dc0e",
+      "bytes": 139872,
+      "sha256": "02272f1f8a2100887c711168f7580d3cc171fd9767b297804389b019990fa1f0",
       "needed": [
         "libavutil.so",
         "libm.so",
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
     {
       "path": "lib/x86_64/libswscale.so",
-      "bytes": 1241176,
-      "sha256": "52d77f3922f1dee15ab6fb4563b8ade6af276c590766d61ffb9bcdd05ae2e905",
+      "bytes": 1241304,
+      "sha256": "c042c2bb648a55dacff91c70770ddd9484ae739e51877a8c3f914609171cbb86",
       "needed": [
         "libavutil.so",
         "libm.so",
         "libc.so"
       ],
       "ffmpeg_version": null,
-      "ffmpeg_configuration": "--cross-prefix=<upstream-build-path> --cc=<upstream-build-path> --nm=<upstream-build-path> --ar=<upstream-build-path> --ranlib=<upstream-build-path> --strip=<upstream-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<upstream-build-path> --sysinclude=<upstream-build-path> --enable-cross-compile --target-os=android --prefix=<upstream-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> -I<upstream-build-path> --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> -L<upstream-build-path> --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
+      "ffmpeg_configuration": "--cross-prefix=<foundation-build-path> --cc=<foundation-build-path> --nm=<foundation-build-path> --ar=<foundation-build-path> --ranlib=<foundation-build-path> --strip=<foundation-build-path> --pkg-config=pkg-config --pkg-config-flags=--static --sysroot=<foundation-build-path> --sysinclude=<foundation-build-path> --enable-cross-compile --target-os=android --prefix=<foundation-build-path> --arch=x86_64 --extra-cflags='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64 -fPIC -fPIE -DPIC -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path> -I<foundation-build-path>' --extra-ldflags='-Wl,-z,max-page-size=16384 -fPIE -pie -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path> -L<foundation-build-path>' --enable-shared --disable-static --disable-symver --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-programs --enable-swresample --enable-swscale --disable-bzlib --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --enable-demuxers --enable-parsers --enable-muxer=spdif --disable-encoders --enable-encoder=ac3 --enable-decoders --disable-v4l2-m2m --enable-libdav1d --enable-libopus --disable-vulkan --enable-openssl --enable-libmysofa",
       "opus_version": null,
       "libtorrent_version": null
     },
@@ -1375,5 +1375,5 @@
     }
   ],
   "unsigned_apk_sha256": "2abbca4b9454226ab994c40de6a6a3e8aea562e0fda1de9eb4aae8c9bce65389",
-  "source_commit": "d4cd3677e1d75ced922d99104806a00e65ac332f"
+  "source_commit": "70f62c28c9361e451bbb996c49b43a28cb435087"
 }

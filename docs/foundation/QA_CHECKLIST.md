@@ -12,9 +12,10 @@
 - [x] Resolved external release/desugaring runtime graph inventoried; full offline legal texts and original notices exported.
 - [x] Full latest unsigned unit suite 419/419 passed; About/animation/QR/runtime version/preference preservation/classic-host recreation tests passed.
 - [x] Python suite 28/28 passed; workflow actionlint passed; release lint completed with zero errors.
-- [x] Final application source/assets at 7fae0620 rerun through full unit tests, lint and optimised unsigned APK conformance; 57 offline legal rows match source.
-- [ ] Corresponding-source/relinking obligations established for actual FFmpeg build; source decision pending.
-- [ ] Protected existing-key validation succeeds with exact 64-character public certificate pin.
+- [x] Final application source/assets at 70f62c28 with verified source-built FFmpeg rerun through full unit tests, lint and optimised unsigned APK conformance; 57 offline legal rows match source.
+- [ ] Canonical keyless cold CI rehearsal passes; final review clearance recorded.
+- [x] Corresponding-source/relinking recipes and archive established; four source-built ABIs passed native compatibility/regression checks before replacement.
+- [x] Protected existing-key validation succeeds with exact 64-character pin (37920686126 and 37925321456).
 - [x] Three-pass Foundation scope/design/signing review recorded; clearance explicitly withheld for remaining gates.
 - [ ] User explicitly authorises enabling readiness and protected `prepare` operation.
 - [ ] Signed APK produced, actual version/provider/resource/licence/signature/certificate/checksum verified and allowlisted artifact uploaded.

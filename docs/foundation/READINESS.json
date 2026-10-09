@@ -2,17 +2,18 @@
   "schema": 1,
   "release_ready": false,
   "blockers": [
-    "Final unsigned Foundation app integration and conformance with verified source-built FFmpeg in progress"
+    "Canonical keyless CI rehearsal 37926791331 and final Foundation review pending"
   ],
   "gates": {
     "unit_tests": true,
-    "binary_conformance": false,
+    "binary_conformance": true,
     "native_source_compliance": true,
     "protected_key_validation": true,
     "foundation_review": false
   },
-  "verified_unsigned_source": "7fae0620b543be1aedc63d42072d2ce8d4beae81",
+  "verified_unsigned_source": "70f62c28c9361e451bbb996c49b43a28cb435087",
   "signed_apk_produced": false,
   "physical_shield_qa": "Pending after signed APK delivery",
-  "protected_key_validation_run": "https://github.com/heretoecode/Supernova/actions/runs/37920686126"
+  "protected_key_validation_run": "https://github.com/heretoecode/Supernova/actions/runs/37925321456",
+  "unsigned_ci_rehearsal_run": "https://github.com/heretoecode/Supernova/actions/runs/37926791331"
 }
