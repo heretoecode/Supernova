@@ -12,7 +12,7 @@ Session workflow:
 - At session end, update GitHub with durable decisions, issues, QA evidence and state changes.
 - Do not store raw conversation transcripts as project authority.
 
-## APPROVED — future identity transition, but not now
+## APPROVED — Foundation Release identity, outside fixes-only scope
 
 After a stable baseline, the intended future direction is a clean Supernova identity:
 - fresh install;
@@ -23,7 +23,7 @@ After a stable baseline, the intended future direction is a clean Supernova iden
 - no requirement for upgrade compatibility from the old app;
 - old and new builds should ideally coexist temporarily for Shield testing.
 
-The exact implementation/signing mechanism is **NEEDS DECISION**. This work is explicitly outside the immediate post-4.1.7 fixes release.
+The branding appearance, ring/icon/banner/splash composition and fresh-install direction are **approved**; do not reopen visual design. Actual package/signing implementation, custody validation, platform-ready asset exports and build verification remain **execution tasks** for an authorised Foundation Release, outside the immediate post-4.1.7 fixes release.
 
 ## PARKED — broader audits
 
@@ -46,7 +46,7 @@ After the stable corrective baseline, the following broader audits remain parked
 - Library Health — **PARKED**
 - Profiles — **PARKED**
 - Smart Collections — **NEEDS DECISION**, not current scope
-- Optional fourth/custom library page — future work; editable/reconfigurable direction retained, not current scope
+- One custom local Library Page — **APPROVED future design**, five-step wizard and editing safeguards; not current fixes-only implementation
 - Discovery Page — **PARKED**
 
 ## PARKED / NEEDS DECISION — architecture and AI exploration
