@@ -46,3 +46,11 @@ For your own modified library build, start from the supplied source and recipes,
 ## Source availability
 
 The protected workflow prepares `Supernova-Foundation-FFmpeg-Source.tar.xz`: complete patched FFmpeg source, both patches, source lock, build recipe, pinned module manifest, exact four-ABI configuration and provenance. A separate allowlisted source artifact accompanies the verified APK; source URLs, immutable commits and all patch/recipe files remain available in the repository after Actions artifacts expire. Existing static OpenSSL 3.5.7 source commit **8cf17aaeb4599f8af87fefd810b5b5fee90fe69e**, archive URL/hash and build provenance remain explicit in the lock/companion metadata; OpenSSL binaries are unchanged. Original source licences/full notices are retained, including both NDK versions. This records actual source availability and verification, not a legal certification or device acceptance claim.
+
+## Keyless CI rehearsal
+
+The existing manual Foundation workflow also accepts `operation=verify` on this branch. It runs the exact pinned dependency preparation, canonical source rebuild, four-ABI native regressions, unsigned app unit/lint/assembly and actual APK checks. Signing-secret preflight/inspection/preparation/signing steps do not execute for this mode; readiness is not enabled. It uploads public conformance/native evidence only, **no APK or private material**. This permits checking the complete CI path before the separate signing approval. The `prepare` mode retains protected secret, public pin, branch and readiness checks. No workflow registration/merge on main is required; dispatch against the existing registered workflow and this branch:
+
+```sh
+gh workflow run foundation-signing.yml --ref codex/foundation-release -f operation=verify
+```

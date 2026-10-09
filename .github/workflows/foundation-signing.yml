@@ -8,7 +8,7 @@ on:
         type: choice
         required: true
         default: validate
-        options: [inspect, validate, prepare]
+        options: [inspect, validate, verify, prepare]
 
 permissions:
   contents: read
@@ -34,7 +34,8 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Fail closed before preparing any key or build
+      - name: Fail closed before preparing any key or signed build
+        if: inputs.operation != 'verify'
         env:
           ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
           SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
@@ -57,7 +58,7 @@ jobs:
           # Deliberately no Gradle/signing cache.
 
       - name: Inspect public alias or validate without building an APK
-        if: inputs.operation != 'prepare'
+        if: inputs.operation == 'inspect' || inputs.operation == 'validate'
         env:
           ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
           SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
@@ -72,7 +73,7 @@ jobs:
           python3 source/.github/signing/foundation_signing.py "$OPERATION"
 
       - name: Prepare existing pinned NOVA dependencies without Preview identity conversion
-        if: inputs.operation == 'prepare'
+        if: inputs.operation == 'prepare' || inputs.operation == 'verify'
         run: |
           set -euo pipefail
           sudo apt-get update
@@ -101,13 +102,19 @@ jobs:
           python3 Video/.github/build/prepare-foundation.py .
 
       - name: Require completed Foundation provider and version isolation before key preparation
-        if: inputs.operation == 'prepare'
+        if: inputs.operation == 'prepare' || inputs.operation == 'verify'
+        env:
+          OPERATION: ${{ inputs.operation }}
         run: |
           set -euo pipefail
-          python3 source/.github/build/verify-foundation.py --root nova --readiness
+          if [ "$OPERATION" = 'prepare' ]; then
+            python3 source/.github/build/verify-foundation.py --root nova --readiness
+          else
+            python3 source/.github/build/verify-foundation.py --root nova
+          fi
 
       - name: Rebuild and compare pinned LGPL FFmpeg before replacing dependency binaries
-        if: inputs.operation == 'prepare'
+        if: inputs.operation == 'prepare' || inputs.operation == 'verify'
         run: |
           set -euo pipefail
           native_workspace="$RUNNER_TEMP/supernova-foundation-ffmpeg"
@@ -118,7 +125,9 @@ jobs:
             --verify-existing --install --source-bundle
 
       - name: Repeat secret-free Foundation release tests and unsigned binary conformance
-        if: inputs.operation == 'prepare'
+        if: inputs.operation == 'prepare' || inputs.operation == 'verify'
+        env:
+          OPERATION: ${{ inputs.operation }}
         run: |
           set -euo pipefail
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'ndk;29.0.14206865'
@@ -130,13 +139,25 @@ jobs:
             --inventory build/foundation/runtime-artifacts.json --reviewed docs/foundation/RUNTIME_SBOM.json
           mapfile -t unsigned_apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
           test "${#unsigned_apks[@]}" -eq 1
-          python3 .github/build/verify-foundation.py --root .. --readiness \
+          readiness_args=()
+          if [ "$OPERATION" = 'prepare' ]; then readiness_args+=(--readiness); fi
+          python3 .github/build/verify-foundation.py --root .. "${readiness_args[@]}" \
             --apk "${unsigned_apks[0]}" --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
             --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2"
           python3 .github/build/verify-foundation-native-apk.py --apk "${unsigned_apks[0]}" \
             --evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json"
           # Keep the eventual signed-output directory unambiguous.
-          rm -f -- "${unsigned_apks[0]}"
+          if [ "$OPERATION" = 'prepare' ]; then
+            rm -f -- "${unsigned_apks[0]}"
+          else
+            python3 -m unittest discover -s tools -p 'test_*.py'
+            python3 .github/build/record-foundation-conformance.py --root .. --apk "${unsigned_apks[0]}" \
+              --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+              --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2" \
+              --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" \
+              --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
+              --output "$RUNNER_TEMP/supernova-foundation-conformance.json"
+          fi
 
       - name: Prepare verified Foundation key and build release only
         if: inputs.operation == 'prepare'
@@ -204,6 +225,18 @@ jobs:
           name: supernova-foundation-ffmpeg-source
           path: |
             ${{ runner.temp }}/supernova-foundation-ffmpeg/Supernova-Foundation-FFmpeg-Source.tar.xz
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/verified-native-build.json
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload public unsigned conformance evidence only
+        if: success() && inputs.operation == 'verify'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: supernova-foundation-unsigned-conformance
+          path: |
+            ${{ runner.temp }}/supernova-foundation-conformance.json
             ${{ runner.temp }}/supernova-foundation-ffmpeg/verified-native-build.json
             ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
           if-no-files-found: error

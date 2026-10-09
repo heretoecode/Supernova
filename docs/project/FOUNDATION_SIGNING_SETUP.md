@@ -140,3 +140,5 @@ The Foundation workflow now prepares isolated sibling providers, requires explic
 ### Certificate pin validation resolved
 
 After the user corrected the exact protected environment variable, validation [37920686126](https://github.com/heretoecode/Supernova/actions/runs/37920686126) succeeded on source 6f2045b2. The full public certificate SHA-256 was accepted. No credentials were requested/exposed and no APK was signed. Readiness enablement/protected `prepare` still requires the user's separate final approval after Foundation conformance. The authorised exact-source FFmpeg rebuild and portable native/byte-verification gates are documented in [FFMPEG_REBUILD.md](../foundation/FFMPEG_REBUILD.md); the existing key, Preview signing and branch/environment restrictions remain.
+
+`operation=verify` is a keyless CI conformance rehearsal added on the isolated Foundation branch. It skips all signing-secret steps, rebuilds/tests native sources, produces an unsigned APK privately on the runner, and uploads public conformance JSON only. It cannot produce the signed deliverable or enable readiness. `prepare` remains the separately approved protected signing operation.
