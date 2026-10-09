@@ -105,6 +105,9 @@ def verify(mode, keystore, env):
             raise SigningError("No private-key entry found in PKCS#12 keystore.")
         return entries
     fingerprint = normalize_fingerprint(result.stdout.strip(), required=True)
+    # Java has now proved key/password/certificate match. This certificate hash
+    # is public, and remains observable even when a copied public pin is invalid.
+    print("Verified Foundation public certificate SHA-256: " + fingerprint)
     expected = normalize_fingerprint(env.get("SUPERNOVA_CERT_SHA256", ""))
     if expected and fingerprint != expected:
         raise SigningError("Certificate does not match SUPERNOVA_CERT_SHA256. Refusing different identity.")
