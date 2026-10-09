@@ -22,5 +22,8 @@
 
 **Implementation boundary:** `main` documentation may record approved design; **do not modify `codex/post-4.1.7-shield-fixes`**, merge, rename/sign or expand release scope without separate authorisation. “Approved design” ≠ “implemented” ≠ “physically verified”.
 
+## 9 October follow-up — reconciliation completed in place
+The older headings in `docs/design/PARKED_FUTURE.md` and `docs/project/DECISIONS_AND_ROADMAP.md` were subsequently corrected in place on `main`; `docs/design/README.md` now links the approved About/Backup authorities. The current discussion-closure audit is `docs/project/RECENT_DISCUSSIONS_CLOSURE_REGISTER_2026-10-09.md`. Historical observations above remain preserved as audit history, **not current warnings that those headings are still stale**. This is not a certification of inaccessible chat messages or missing historical binary mock-ups.
+
 ## Audit conclusion
 The main design decisions inspected are captured and identifiable. The remaining substantive issues are **execution/validation**, not new design choices: backup secret exclusion and full-state restore, comprehensive diagnostic instrumentation, production branding exports, release-specific licence compliance, and future implementation of approved features. This audit is **targeted rather than exhaustive** and cannot certify that every historical discussion/mock-up exists on GitHub.
