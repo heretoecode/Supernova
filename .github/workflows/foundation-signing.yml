@@ -36,6 +36,7 @@ jobs:
 
       - name: Fail closed before preparing any key or build
         env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
           SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
           SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
           SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}
@@ -58,6 +59,7 @@ jobs:
       - name: Inspect public alias or validate without building an APK
         if: inputs.operation != 'prepare'
         env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
           SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
           SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
           SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}
@@ -119,6 +121,7 @@ jobs:
       - name: Prepare verified Foundation key and build release only
         if: inputs.operation == 'prepare'
         env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
           SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
           SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
           SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}

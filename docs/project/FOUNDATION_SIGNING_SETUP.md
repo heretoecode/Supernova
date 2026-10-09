@@ -92,7 +92,7 @@ After choosing the alias, enter the remaining two secrets. Once registered, run 
 
 ## Testing and current limits
 
-Safe automated tests: `python3 -m unittest discover -s tools -p 'test_*.py'`. The added [Foundation tests](../../tools/test_foundation_signing.py) cover each missing secret before file creation, strict/wrapped Base64, readiness and certificate guards, file permissions, special-character password preservation, no credential arguments, raw-error suppression, success/failure cleanup, temporary path export, symlink refusal, escaped public aliases, and APK publication gates.
+Safe automated tests: `python3 -m unittest discover -s tools -p 'test_*.py'` — **20 tests passed (11 added Foundation tests, 9 existing tests)**. The added [Foundation tests](../../tools/test_foundation_signing.py) cover each missing secret before file creation, strict/wrapped Base64, readiness and certificate guards, file permissions, special-character password preservation, no credential arguments, raw-error suppression, success/failure cleanup, temporary path export, symlink refusal, escaped public aliases, and APK publication gates.
 
 Real Java verifier negative tests load corrupt bytes and **empty PKCS#12/JKS containers**, with correct/incorrect dummy passwords. Empty containers contain no keys or certificates; no signing key was generated. Positive plumbing/APK-tool responses are mocked. **The user's real PKCS#12, a successful private-key check, Android Gradle build, actual APK signature, iPhone execution, and Shield installation have not been tested.** There was no workflow dispatch or release publication.
 
@@ -108,7 +108,13 @@ Workflow syntax/expression checks use checksum-verified official **actionlint v1
 
 ## Commit references
 
-Starting Foundation revision: [`cd194455`](https://github.com/heretoecode/Supernova/commit/cd1944554cd7f724b4d5cf045033069de379d968). Implementation and final verification commits are recorded below once committed. The fixes-only branch and main are not targets of any push in this task.
+Starting Foundation revision: [`cd194455`](https://github.com/heretoecode/Supernova/commit/cd1944554cd7f724b4d5cf045033069de379d968).
+
+- Concurrent authorised handover updates were retained: [`062404b7`](https://github.com/heretoecode/Supernova/commit/062404b7) and [`80395981`](https://github.com/heretoecode/Supernova/commit/80395981bedef1d07204cbd62ce145df931f9e6a). Their literal release-counter/About history requirement and double-ring playback/Home scan indicators remain part of later Foundation implementation, not this signing-only task.
+- Signing implementation, initial guide and tests: [`a777e520`](https://github.com/heretoecode/Supernova/commit/a777e520607633ac4b06d050f7a84fef6a56ecd3).
+- Final guide, test results and explicit Actions-step-debug guard: the subsequent commit containing this section; its immutable SHA is available in [this file's branch history](https://github.com/heretoecode/Supernova/commits/codex/foundation-release/docs/project/FOUNDATION_SIGNING_SETUP.md).
+
+Implementation status: prepared and locally checked; real-key validation and all signed-release evidence remain pending. Only `codex/foundation-release` is pushed. Main and the fixes-only branch were not modified by this work; other contributors' concurrent main changes were observed and left alone.
 
 ## References checked
 
