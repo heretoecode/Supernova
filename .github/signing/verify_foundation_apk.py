@@ -50,6 +50,7 @@ def main():
     parser.add_argument("--apkanalyzer", required=True)
     parser.add_argument("--publish", type=Path, required=True)
     parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--aapt2", required=True)
     args = parser.parse_args()
     try:
         apks = list(args.directory.glob("*.apk"))
@@ -61,7 +62,7 @@ def main():
         spec = importlib.util.spec_from_file_location("foundation_conformance", args.source / ".github/build/verify-foundation.py")
         conformance = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(conformance)
-        evidence.update(conformance.binary(apks[0], args.apkanalyzer, args.source))
+        evidence.update(conformance.binary(apks[0], args.apkanalyzer, args.source, args.aapt2))
         evidence["source_commit"] = checked(["git", "-C", str(args.source), "rev-parse", "HEAD"]).strip()
         # Allowlisted artifacts only; no build/test logs, folders or signing config.
         args.publish.mkdir(exist_ok=False)

@@ -1,0 +1,37 @@
+Foundation source availability and library modification
+
+Supernova is derived from NOVA Video Player / Archos Video Player Community Edition. Modified application source, build inputs and patches are available at:
+https://github.com/heretoecode/Supernova
+Branch: codex/foundation-release
+Pinned sibling/native revisions: .github/build/nova-ci.xml
+Foundation-only provider preparation: .github/build/prepare-foundation.py
+Inherited dependency patches: .github/build/*.patch
+
+The application source is Apache-2.0; separately licensed components retain their own terms and full notices in this catalogue. Do not interpret the application's licence as replacing LGPL/GPL/BSD/MIT/native component licences.
+
+LGPL components
+
+FFmpeg's existing ELF files report n8.0.1 and LGPL version 2.1 or later. Their exact corresponding-source provenance is unresolved in this unsigned candidate: the prebuilt commit subject says 8.0.3 and the pinned builder targets 9.0.1. Release signing is blocked until matching source is established or the same observed version/features are rebuilt from explicitly pinned source. Upstream candidate n8.0.1 commit: 894da5ca7d742e4429ffb2af534fcda0103ef593. Candidate source is not a certification that it produced the existing prebuilt. Pinned config_opus.patch and atempo.patch apply; exact release source mapping and build instructions must be recorded before distribution.
+
+AudioCompress corresponding source:
+https://github.com/nova-video-player/aos-audiocompress/tree/3a3f9324d2550bd305060e1c52b803121ea09aad
+
+VideoLAN deinterlacing / NEON code is retained within the pinned AVOS source:
+https://github.com/nova-video-player/aos-avos/tree/2cf21c486c7bf244c49b78d2220197a6d75396dd
+Original per-file licences and copyright notices are included separately.
+
+jcifs-ng source:
+https://github.com/nova-video-player/jcifs-ng/tree/v2.1.11-nova3
+The complete public app/module sources and build scripts permit rebuilding/relinking with modified library code; LGPL conditions still apply to modified library distribution.
+
+OpenJDK compatibility code
+
+The actual desugar_jdk_libs 2.1.5 runtime is GPL-2.0 with the Classpath exception; its compatibility configuration is separately Apache-2.0. Matching release-preparation source:
+https://github.com/google/desugar_jdk_libs/tree/73170c345e6a762fc6a1f0301bb15218850023ef
+Full GPL, Classpath, additional licence information and assembly exception are bundled in its own catalogue entry. The Classpath exception does not remove the library's own source/licence obligations.
+
+Library replacement / relinking
+
+You may modify the free-software libraries under their respective licences. For shared native libraries, rebuild the appropriate ABI and repackage your modified APK with the replaced libraries; for inlined Java code, rebuild the app from public source with the modified library. Preserve required notices and provide corresponding source as required by the library's terms. Android's installation/signature rules apply to modified APKs. The Foundation private signing key is not distributed or needed from its owner to make your own modified build. Reverse engineering for debugging such library modifications is permitted under the applicable LGPL terms.
+
+This notice records source availability and remaining evidence. It does not certify a completed release. The source correspondence gap above is deliberately a blocking release-readiness condition, not an omitted obligation or a promise that unverified sources match shipped binaries.

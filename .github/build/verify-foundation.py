@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import struct
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -43,7 +44,7 @@ def sources(root, ready=False):
             raise ValueError('Foundation readiness evidence contains unresolved gates')
     return history['current']
 
-def binary(apk, analyzer, video):
+def binary(apk, analyzer, video, aapt2=None):
     def inspect(part):
         result=subprocess.run([analyzer,'manifest',part,str(apk)],capture_output=True,text=True,check=True,timeout=120)
         return result.stdout.strip()
@@ -52,6 +53,9 @@ def binary(apk, analyzer, video):
     if inspect('application-id') != APP or inspect('version-name') != version['version'] or int(inspect('version-code')) != version['version_code']:
         raise ValueError('Actual APK identity/version differs from approved Foundation source')
     manifest_text=inspect('print');manifest=ET.fromstring(manifest_text)
+    application=manifest.find('application')
+    if application is None or application.get(ANDROID+'label') != 'Supernova':
+        raise ValueError('Actual APK label is not Supernova')
     if any(x in manifest_text for x in LEGACY) or any(ANDROID+x in manifest.attrib for x in ('sharedUserId','sharedUserMaxSdkVersion')):
         raise ValueError('Actual APK manifest isolation failed')
     authorities=[p.get(ANDROID+'authorities','') for p in manifest.iter('provider')]
@@ -70,6 +74,32 @@ def binary(apk, analyzer, video):
         native=[n for n in names if n.startswith('lib/') and n.endswith('.so')]
         if not native or {n.split('/')[1] for n in native} != {'arm64-v8a','armeabi-v7a','x86','x86_64'}:
             raise ValueError('Universal APK is missing approved native ABIs')
+        if aapt2:
+            table=subprocess.run([aapt2,'dump','resources',str(apk)],capture_output=True,text=True,check=True,timeout=120).stdout
+            def resource(name):
+                match=re.search(r'^    resource (0x[0-9a-f]+) '+re.escape(name)+r'\n(.*?)(?=^    resource |\Z)',table,re.M|re.S)
+                if not match:raise ValueError('Required Foundation resource absent from APK')
+                return match.group(1),match.group(2)
+            def image_dimensions(name,expected):
+                _,values=resource(name)
+                for config,width,height in expected:
+                    match=re.search(r'\('+re.escape(config)+r'\) \(file\) (\S+) type=PNG',values)
+                    if not match:raise ValueError('Foundation image configuration missing')
+                    header=archive.read(match.group(1))[:24]
+                    if header[:8] != b'\x89PNG\r\n\x1a\n' or struct.unpack('>II',header[16:24])!=(width,height):
+                        raise ValueError('Foundation image dimensions differ from approved export')
+            icon,icon_values=resource('mipmap/foundation_launcher');banner,_=resource('drawable/foundation_banner')
+            if application.get(ANDROID+'icon') not in ('@ref/'+icon,'@'+icon,'@mipmap/foundation_launcher') or application.get(ANDROID+'banner') not in ('@ref/'+banner,'@'+banner,'@drawable/foundation_banner'):
+                raise ValueError('Actual APK does not select approved Foundation launcher branding')
+            image_dimensions('mipmap/foundation_launcher',[(d,s,s)for d,s in [('mdpi',48),('hdpi',72),('xhdpi',96),('xxhdpi',144),('xxxhdpi',192)]])
+            if '(anydpi-v26)' not in icon_values:raise ValueError('Adaptive Foundation launcher icon missing')
+            image_dimensions('drawable/foundation_banner',[('nodpi',320,180)])
+            image_dimensions('drawable/foundation_splash_image',[('nodpi',1920,1080)])
+            image_dimensions('drawable/foundation_adaptive_foreground',[('nodpi',1024,1024)])
+            for theme in ['style/FoundationEntry','style/FoundationLaunch']:
+                _,values=resource(theme)
+                if '@drawable/foundation_splash' not in values or '@drawable/foundation_adaptive_foreground' not in values or '#ff000206' not in values:
+                    raise ValueError('Foundation static splash integration is incomplete')
     return {'application_id':APP,'version_name':version['version'],'version_code':version['version_code'],
             'provider_authorities':authorities,'native_library_count':len(native),
             'apk_sha256':hashlib.sha256(apk.read_bytes()).hexdigest()}
@@ -80,12 +110,13 @@ if __name__=='__main__':
     parser.add_argument('--readiness',action='store_true')
     parser.add_argument('--apk',type=Path)
     parser.add_argument('--apkanalyzer')
+    parser.add_argument('--aapt2')
     args=parser.parse_args()
     try:
         sources(args.root,args.readiness)
         if args.apk:
-            if not args.apkanalyzer:raise ValueError('Android APK analyzer required')
-            print(json.dumps(binary(args.apk,args.apkanalyzer,args.root/'Video'),indent=2))
+            if not args.apkanalyzer or not args.aapt2:raise ValueError('Android APK and resource analyzers required')
+            print(json.dumps(binary(args.apk,args.apkanalyzer,args.root/'Video',args.aapt2),indent=2))
         else:print('Foundation source conformance passed')
     except (ValueError,OSError,KeyError,ET.ParseError,subprocess.SubprocessError,zipfile.BadZipFile):
         raise SystemExit('Foundation conformance failed; release refused. Inspect secret-free readiness evidence.')

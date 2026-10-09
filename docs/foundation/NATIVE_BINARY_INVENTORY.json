@@ -1374,5 +1374,6 @@
       "libtorrent_version": "2.0.14.0"
     }
   ],
-  "unsigned_apk_sha256": "d69875be7159b7d9004ad1b6cd690ad7813485c06169b709075f8cf5e59989f0"
+  "unsigned_apk_sha256": "2abbca4b9454226ab994c40de6a6a3e8aea562e0fda1de9eb4aae8c9bce65389",
+  "source_commit": "d4cd3677e1d75ced922d99104806a00e65ac332f"
 }

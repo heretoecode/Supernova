@@ -20,7 +20,7 @@ class FoundationConformanceTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name)
         self.video=self.root/'Video';(self.video/'assets/foundation/legal').mkdir(parents=True);(self.root/'MediaLib').mkdir()
         (self.video/'docs/foundation').mkdir(parents=True)
-        self.manifest='<manifest xmlns:android="http://schemas.android.com/apk/res/android"><application>'+''.join('<provider android:authorities="app.supernova.player.'+suffix+'"/>' for suffix in ['media','scraper','browser','provider'])+'</application></manifest>'
+        self.manifest='<manifest xmlns:android="http://schemas.android.com/apk/res/android"><application android:label="Supernova">'+''.join('<provider android:authorities="app.supernova.player.'+suffix+'"/>' for suffix in ['media','scraper','browser','provider'])+'</application></manifest>'
         (self.video/'AndroidManifest.xml').write_text(self.manifest)
         (self.video/'assets/foundation/release-history.json').write_text(json.dumps({'current':{'version':'0.2','version_code':2},'history':[{'version':'0.1','archive_digest_verified':True,'apks':[{'sha256':'a'*64}]}]}))
         (self.video/'assets/foundation/licences.json').write_text(json.dumps({'components':[{'text_asset':'foundation/legal/notice.txt','url':'https://example.org/'}]}))

@@ -100,7 +100,25 @@
       "cpack_patch_version": 3,
       "runtime_function": "1.3.3",
       "source_url": "https://github.com/hoene/libmysofa/blob/v1.3.5/CMakeLists.txt"
-    }
+    },
+    "vendored_notices": [
+      {
+        "url": "https://raw.githubusercontent.com/hoene/libmysofa/v1.3.5/src/resampler/arch.h",
+        "source_sha256": "5e0e48b294e8a25884c39e6290199cd0df2e9ff5962347b8b738a0c7b0dc155e"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/hoene/libmysofa/v1.3.5/src/resampler/speex_resampler.c",
+        "source_sha256": "1952bea036eff35fbd757a9c273ce0d26ebb3481b9bde3209811ed3d3ea8255a"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/hoene/libmysofa/v1.3.5/src/resampler/speex_resampler.h",
+        "source_sha256": "ced479f7a027e2601c2c0ec129ba280d56e0021b0aa65f2e6f51e767efb3c622"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/hoene/libmysofa/v1.3.5/src/resampler/stack_alloc.h",
+        "source_sha256": "ff8acaf32db44c102238278f7d394899e4701e4a1a822938a6f134253eaf2707"
+      }
+    ]
   },
   {
     "name": "OpenSSL",

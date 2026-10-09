@@ -32,7 +32,7 @@ public class FoundationApplicationIdentityTest {
     @Test public void foundationCounterDoesNotRunLegacyPreferenceResetMigrations() throws Exception {
         org.junit.Assume.assumeTrue(BuildConfig.FOUNDATION);
         Context context=RuntimeEnvironment.getApplication();SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context);
-        preferences.edit().putBoolean("force_audio_passthrough",true).putBoolean("enable_dynamic_audio_delay",false).putBoolean("playback_speed",false).putBoolean("smbj",true).commit();
+        preferences.edit().putBoolean("force_audio_passthrough",true).putBoolean("enable_dynamic_audio_delay",false).putBoolean("playback_speed",false).putBoolean(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_SMBJ,true).commit();
         java.util.Map<String,?> before=preferences.getAll();
         java.lang.reflect.Method migrate=CustomApplication.class.getDeclaredMethod("upgradeActions",Context.class);migrate.setAccessible(true);migrate.invoke(new CustomApplication(),context);
         assertEquals(before,preferences.getAll());

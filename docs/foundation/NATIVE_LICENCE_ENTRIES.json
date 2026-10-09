@@ -102,5 +102,13 @@
     "role": "Native diagnostics unwinding and bundled helpers",
     "url": "https://github.com/getsentry/sentry-native",
     "text_asset": "foundation/legal/sentry-native-vendored-notices.txt"
+  },
+  {
+    "name": "Source availability & library modification",
+    "version": "Foundation candidate 0.133",
+    "licence": "Component-specific terms; LGPL/GPL source and modification information",
+    "role": "Source availability and relinking notice",
+    "url": "https://github.com/heretoecode/Supernova",
+    "text_asset": "foundation/legal/source-availability.txt"
   }
 ]

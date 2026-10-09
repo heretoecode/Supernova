@@ -1,0 +1,93 @@
+{
+  "application_id": "app.supernova.player",
+  "version_name": "0.133",
+  "version_code": 133,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "apk_sha256": "2abbca4b9454226ab994c40de6a6a3e8aea562e0fda1de9eb4aae8c9bce65389",
+  "source_commit": "d4cd3677e1d75ced922d99104806a00e65ac332f",
+  "signed": false,
+  "apk_bytes": 102258688,
+  "build_result": "BUILD SUCCESSFUL",
+  "unit_tests": 419,
+  "unit_failures": 0,
+  "unit_errors": 0,
+  "unit_skips": 0,
+  "runtime_artifact_hashes_matched": 138,
+  "branding_resource_checks": true,
+  "candidate_notes": "The later libmysofa Speex notice addition requires repackaging before release clearance; this is a verified unsigned checkpoint, not the final signed deliverable.",
+  "lint": {
+    "errors": 0,
+    "warnings": 1441
+  },
+  "branding_visible_pixel_checks": [
+    {
+      "resource": "drawable/foundation_banner",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_banner.png",
+      "visible_rgba_sha256": "a2118c0dc20e92a922f684f06019c3bdd1319337aee504079a7cab22fabf7909"
+    },
+    {
+      "resource": "drawable/foundation_splash_image",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_splash_image.png",
+      "visible_rgba_sha256": "68c5c91db10c5f325fc47df92397692ee0d0f592326f42d97337d8bf376f3500"
+    },
+    {
+      "resource": "drawable/foundation_ring",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_ring.png",
+      "visible_rgba_sha256": "f679eb5aef0cc498ac60eb5ceae19a19754b5880373aad84da13e0690f7ee7e9"
+    },
+    {
+      "resource": "drawable/foundation_space_black",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_space_black.png",
+      "visible_rgba_sha256": "678fd0ea0a3129b39adec42f299a8492d1e336b11d29d3a3255147a071b35ed3"
+    },
+    {
+      "resource": "drawable/foundation_adaptive_foreground",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_adaptive_foreground.png",
+      "visible_rgba_sha256": "164464621e41a94127908bfa6045d55af9d480993fba17359c87f3fd391acc7f"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "mdpi",
+      "source": "res/mipmap-mdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "1c6d44f7ac5cb1aa363e5725523c65fc4acc36187895fbd26e3d860509086153"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "hdpi",
+      "source": "res/mipmap-hdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "56048dd30c85eaef050d49a6d1a6995b75484fed6f8052f3a41faf9deda15cec"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "xhdpi",
+      "source": "res/mipmap-xhdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "b457acca1ce26c540dbec56562063c58329a36cd693639a42d75bbb1a7fe8b58"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "xxhdpi",
+      "source": "res/mipmap-xxhdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "bf987f75b09d23ae300e7227fe7623996f08ce8c93c11b3e3a9ed2c45144a97f"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "xxxhdpi",
+      "source": "res/mipmap-xxxhdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "a925658a0bc17389fae2f219b84f94983366cfaea2a2d9b5e102114c6caf779d"
+    }
+  ]
+}

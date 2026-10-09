@@ -1,6 +1,19 @@
 {
   "schema": 1,
   "release_ready": false,
-  "blockers": ["Protected certificate fingerprint is still truncated in latest validation run", "Final unsigned APK/native conformance review pending", "Exact FFmpeg corresponding-source provenance pending"],
-  "gates": {"unit_tests": true, "binary_conformance": false, "native_source_compliance": false, "protected_key_validation": false, "foundation_review": false}
+  "blockers": [
+    "Protected environment supplied the old 63-character certificate fingerprint in validation run 37882848273; exact correction/validation pending",
+    "Exact FFmpeg corresponding-source provenance or same-version rebuild decision pending",
+    "Latest offline notice additions require final unsigned repackaging verification"
+  ],
+  "gates": {
+    "unit_tests": true,
+    "binary_conformance": false,
+    "native_source_compliance": false,
+    "protected_key_validation": false,
+    "foundation_review": true
+  },
+  "verified_unsigned_source": "d4cd3677e1d75ced922d99104806a00e65ac332f",
+  "signed_apk_produced": false,
+  "physical_shield_qa": "Pending after signed APK delivery"
 }
