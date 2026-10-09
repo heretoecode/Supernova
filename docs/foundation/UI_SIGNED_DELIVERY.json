@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "status": "Signed correction delivered; physical Shield acceptance pending",
+  "application_commit": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f",
+  "workflow_commit": "4448f67c2b7399a36bcee6e8580ace6f2cd91ab1",
+  "branch": "codex/foundation-release",
+  "workflow_run_id": 37961864830,
+  "workflow_run": "https://github.com/heretoecode/Supernova/actions/runs/37961864830",
+  "apk_filename": "Supernova-Foundation.apk",
+  "application_id": "app.supernova.player",
+  "version_name": "0.134",
+  "version_code": 134,
+  "apk_bytes": 102170099,
+  "apk_sha256": "8d159d9ffc70d5ffbe335c0caa280fdf742909911581c85d55865d906ff58e29",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "signature_verified": true,
+  "apk_artifact": {
+    "id": 11632643927,
+    "node_id": "MDg6QXJ0aWZhY3QxMTYzMjY0MzkyNw==",
+    "name": "supernova-foundation-release",
+    "size_in_bytes": 97674425,
+    "url": "https://api.github.com/repos/heretoecode/Supernova/actions/artifacts/11632643927",
+    "archive_download_url": "https://api.github.com/repos/heretoecode/Supernova/actions/artifacts/11632643927/zip",
+    "expired": false,
+    "digest": "sha256:d4d8d8a599a20e68955593421568c52180e9ec50ceb3922c21db21ab3ce05738",
+    "created_at": "2026-10-09T17:12:54Z",
+    "updated_at": "2026-10-09T17:12:54Z",
+    "expires_at": "2026-10-16T17:12:51Z",
+    "workflow_run": {
+      "id": 37961864830,
+      "repository_id": 1363201637,
+      "head_repository_id": 1363201637,
+      "head_branch": "codex/foundation-release",
+      "head_sha": "4448f67c2b7399a36bcee6e8580ace6f2cd91ab1"
+    }
+  },
+  "apk_download": "https://github.com/heretoecode/Supernova/actions/runs/37961864830/artifacts/11632643927",
+  "corresponding_source_artifact": {
+    "id": 11632468897,
+    "node_id": "MDg6QXJ0aWZhY3QxMTYzMjQ2ODg5Nw==",
+    "name": "supernova-foundation-ffmpeg-source",
+    "size_in_bytes": 11169687,
+    "url": "https://api.github.com/repos/heretoecode/Supernova/actions/artifacts/11632468897",
+    "archive_download_url": "https://api.github.com/repos/heretoecode/Supernova/actions/artifacts/11632468897/zip",
+    "expired": false,
+    "digest": "sha256:8be6adac8c07b8a2b90b7d4b8df31fe812fa57c74b4777f92750da7d6f477e9c",
+    "created_at": "2026-10-09T17:12:56Z",
+    "updated_at": "2026-10-09T17:12:56Z",
+    "expires_at": "2026-11-08T17:12:55Z",
+    "workflow_run": {
+      "id": 37961864830,
+      "repository_id": 1363201637,
+      "head_repository_id": 1363201637,
+      "head_branch": "codex/foundation-release",
+      "head_sha": "4448f67c2b7399a36bcee6e8580ace6f2cd91ab1"
+    }
+  },
+  "corresponding_source_download": "https://github.com/heretoecode/Supernova/actions/runs/37961864830/artifacts/11632468897",
+  "ci_unit_tests": 429,
+  "ci_python_guard_tests": 36,
+  "native_decode_comparisons": 64,
+  "native_libraries_byte_identical_to_first_signed": 88,
+  "physical_shield_qa": "Pending corrected 0.134 install/upgrade and carousel/card focus/playback checks",
+  "verification_file": "UI_CORRECTED_SIGNED_APK_VERIFICATION.json",
+  "source_implementation_commit": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f",
+  "source_pin_commit": "4448f67c2b7399a36bcee6e8580ace6f2cd91ab1",
+  "earlier_evidence_commits": [
+    "8ca0f760",
+    "995dd461"
+  ],
+  "branch_isolation": {
+    "main_unchanged": "fca6417180fc1a680d8aac00d6cc9ea0b5c23985",
+    "fixes_only_unchanged": "e24af182a569238f459887d0d197cbb64c4e736c",
+    "verified_after_signed_delivery": true,
+    "no_merge": true
+  }
+}

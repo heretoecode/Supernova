@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "artifact_count": 133,
-  "unique_apk_hash_count": 132,
+  "artifact_count": 134,
+  "unique_apk_hash_count": 133,
   "byte_identical_pair": {
     "artifacts": [
       11554014904,
@@ -3745,6 +3745,37 @@
           "application_id": "app.supernova.player",
           "version_code": 133,
           "version_name": "0.133"
+        }
+      ],
+      "archive_digest_verified": true
+    },
+    {
+      "version": "0.134",
+      "kind": "Foundation correction",
+      "date": "2026-10-09",
+      "artifact_id": 11632643927,
+      "run_id": 37961864830,
+      "source_sha": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f",
+      "workflow_sha": "4448f67c2b7399a36bcee6e8580ace6f2cd91ab1",
+      "artifact_name": "supernova-foundation-release",
+      "archive_sha256": "d4d8d8a599a20e68955593421568c52180e9ec50ceb3922c21db21ab3ce05738",
+      "source_subject": "Restore approved Foundation Home carousel and contained artwork focus with regression evidence",
+      "notes": [
+        "Restores the approved Home hero-card carousel and More Info action from the verified corrective Preview implementation.",
+        "Keeps focused row artwork and its highlighted boundary together inside the rounded card body.",
+        "Always selects the approved Supernova interface in Foundation, including restored preferences.",
+        "Preserves permanent identity, protected signing, approved branding and loading indicators, About/licences and source-verified media libraries."
+      ],
+      "evidence": "Archive digest and downloaded signed APK independently verified; production-view regression tests, native-graphics assertions, full cold CI and exact source comparison passed. Physical Shield acceptance pending.",
+      "created_at": "2026-10-09T17:12:54Z",
+      "apks": [
+        {
+          "filename": "Supernova-Foundation.apk",
+          "sha256": "8d159d9ffc70d5ffbe335c0caa280fdf742909911581c85d55865d906ff58e29",
+          "bytes": 102170099,
+          "application_id": "app.supernova.player",
+          "version_code": 134,
+          "version_name": "0.134"
         }
       ],
       "archive_digest_verified": true

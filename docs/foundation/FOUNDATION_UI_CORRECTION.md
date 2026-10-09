@@ -1,6 +1,6 @@
 # Foundation Home correction — 0.134 / 134
 
-Current status: all local implementation, regression and optimized unsigned binary checks passed; application source **cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f** is verified and pinned by the following workflow/documentation commit. Corrected signed APK has **not** been produced. The user has authorised corrected delivery using the existing protected workflow. Physical Shield retest remains pending.
+Current status: **signed correction 0.134 / 134 produced and independently verified**. [Download verified APK (Actions artifact ZIP)](https://github.com/heretoecode/Supernova/actions/runs/37961864830/artifacts/11632643927). Final application source **cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f**; protected workflow revision **4448f67c2b7399a36bcee6e8580ace6f2cd91ab1**. Physical Shield acceptance remains pending; do not treat automated evidence as a device test.
 
 ## Investigation and bounded correction
 
@@ -39,14 +39,26 @@ The complete release command `foundationDependencyInventory testNoamazonReleaseU
 
 ## Delivery and device limitations
 
-Corrected APK filename will remain `Supernova-Foundation.apk` in the existing verified-APK artifact. Exact source/workflow commit, final signed APK checksum, certificate verification and artifact URL will be recorded after the protected build succeeds. The first APK is independently verified in [FIRST_SIGNED_APK_VERIFICATION.json](FIRST_SIGNED_APK_VERIFICATION.json); its link is not substituted for the corrected delivery.
+Corrected APK `Supernova-Foundation.apk` is published in the existing verified-APK artifact. Exact source/workflow commits, final checksum, certificate verification and download URL are recorded in [UI_SIGNED_DELIVERY.json](UI_SIGNED_DELIVERY.json) and the final verification section below. The first APK is independently verified in [FIRST_SIGNED_APK_VERIFICATION.json](FIRST_SIGNED_APK_VERIFICATION.json); its link is not substituted for the corrected delivery.
 
 The earlier first-delivery CLI expiry was rechecked during this continuation: GitHub workflow access now succeeds and fresh dispatch is available. After all checks and commits are concrete, dispatch a new **validate**, then **prepare** run on **codex/foundation-release**. Rerunning an old run would rebuild its old pinned source. No manual dispatch, additional signing key, secret entry or routine authorisation is currently required. Existing protected reviewer prompts, if GitHub presents them, must be satisfied normally.
 
 Physical NVIDIA Shield checks: upgrade 0.133 to 0.134, validate actual Home carousel, first/middle/last artwork zoom containment during scrolling, More Info and Back focus, scan pill and Preparing Playback indicators, About/version/branding, library/network access and playback/resume/audio/subtitles. Real library/provider artwork, Shield GPU/timing and full physical acceptance are pending. Other source omissions remain deferred to the maintenance release.
 
-Verified application/source commit: [cf1211ce](https://github.com/heretoecode/Supernova/commit/cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f). The next workflow-only commit pins this exact source; it does not alter product files. The protected build must emit this source SHA in its public APK evidence.
+Verified application/source commit: [cf1211ce](https://github.com/heretoecode/Supernova/commit/cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f). Workflow-only commit 4448f67c pins this exact source without altering product files. The completed protected build emitted this source SHA in its public APK evidence.
 
-## Protected execution checkpoint
+## Historical protected execution checkpoint (superseded by final delivery)
 
 Workflow pin/documentation commit [4448f67c](https://github.com/heretoecode/Supernova/commit/4448f67c2b7399a36bcee6e8580ace6f2cd91ab1) follows verified application [cf1211ce](https://github.com/heretoecode/Supernova/commit/cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f) without product changes. Fresh [validate 37961683385](https://github.com/heretoecode/Supernova/actions/runs/37961683385) succeeded and independently emitted the unchanged public certificate `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`; see [UI_SIGNING_VALIDATION.json](UI_SIGNING_VALIDATION.json). User-authorised fresh [prepare 37961864830](https://github.com/heretoecode/Supernova/actions/runs/37961864830) is in progress. Signed correction is not yet claimed; actual published binary will be independently downloaded and verified. Main/fixes-only remote refs remain fca64171 / e24af182.
+
+## Final signed delivery — verified
+
+- Run: [37961864830](https://github.com/heretoecode/Supernova/actions/runs/37961864830), conclusion success.
+- APK: **Supernova-Foundation.apk**, **app.supernova.player**, **0.134 / versionCode 134**, 102170099 bytes; non-debuggable, not testOnly, isolated providers, no shared UID.
+- APK SHA-256: `8d159d9ffc70d5ffbe335c0caa280fdf742909911581c85d55865d906ff58e29`. Artifact ZIP digest: `d4d8d8a599a20e68955593421568c52180e9ec50ceb3922c21db21ab3ce05738`.
+- Signature: one signer, Android v1/v2/v3 verified; existing certificate SHA-256 `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`, matching fresh validation and first Foundation APK. No key rotation or credentials exposed.
+- Independent downloaded-artifact checks: CI public evidence exactly reproduced; ZIP integrity, package/version, source commit, provider/asset conformance, ten approved visible branding exports, 57 offline licence entries, 24 rebuilt FFmpeg libraries and all 88 native libraries. **All 88 native library byte hashes are identical to the first signed Foundation APK.** New carousel markers are present in this optimized signed APK and were absent from 0.133.
+- Cold CI: **429 application tests**, **36 Python guard tests**, **64 four-ABI native decode comparisons** passed, alongside registry/tempo/configuration/licensing checks and lint/conformance. [CI results](UI_CORRECTED_CI_RESULTS.json), [native runtime evidence](UI_CORRECTED_NATIVE_RUNTIME.json), [native build evidence](UI_CORRECTED_NATIVE_BUILD.json), [independent signed verification](UI_CORRECTED_SIGNED_APK_VERIFICATION.json), [delivery index](UI_SIGNED_DELIVERY.json).
+- APK artifact: [11632643927](https://github.com/heretoecode/Supernova/actions/runs/37961864830/artifacts/11632643927), expires 2026-10-16T17:12:51Z. Corresponding FFmpeg source: [11632468897](https://github.com/heretoecode/Supernova/actions/runs/37961864830/artifacts/11632468897), expires 2026-11-08T17:12:55Z. Download while retained; original sources remain pinned/documented. No GitHub release or main merge was created.
+
+The chronological in-progress checkpoint above is superseded by this delivery. The signed source remains cf1211ce; subsequent commits only record the pin/evidence/status. Exact installed Legacy APK provenance remains unconfirmed. Other source-confirmed maintenance omissions are registered and deferred; no broad parity or physical Shield restoration is claimed. Use the corrected-device checklist in [QA_CHECKLIST.md](QA_CHECKLIST.md).

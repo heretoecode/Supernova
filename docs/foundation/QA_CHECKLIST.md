@@ -1,6 +1,6 @@
 # Foundation conformance and Shield acceptance
 
-**Current status:** first signed 0.133 installed successfully according to the user; two Home regressions reported. Targeted corrected 0.134 is undergoing final release validation; signed correction and physical retest remain pending. Historical automated checks below describe initial Foundation preparation. Current evidence: [correction report](FOUNDATION_UI_CORRECTION.md).
+**Current status:** first signed 0.133 installed successfully according to the user; two Home regressions reported. Targeted corrected 0.134 signed delivery and independent verification passed; physical retest remains pending. Historical automated checks below describe initial Foundation preparation. Current evidence: [correction report](FOUNDATION_UI_CORRECTION.md).
 
 ## Automated release gates
 
@@ -47,3 +47,14 @@ Record device model, Android version, APK SHA-256, source commit, exact steps, e
 - [ ] Library scan status pill and Preparing Playback retain animated double-ring indicators only during loading; playback/resume/audio/subtitles still behave as expected.
 
 Automated synthetic render checks establish production view geometry and pixel containment, not physical Shield acceptance or live provider artwork success.
+
+## Corrected automated/delivery checks — passed
+
+- [x] Bounded source port compared with verified f97f6294; unrelated changes deferred.
+- [x] 429 application tests and 36 Python guard tests pass in local and fresh CI checks.
+- [x] Native source/configuration/licensing, registries/tempo and 64 four-ABI decode comparisons pass.
+- [x] Actual signed 0.134 / 134 APK independently verifies package, signature, unchanged certificate, checksum, assets/providers, native bytes and carousel inclusion.
+- [x] All 88 native library hashes match the first signed Foundation APK.
+- [x] Verified APK and corresponding source artifacts are published; evidence and release notes committed.
+
+[Signed delivery details](UI_SIGNED_DELIVERY.json). Device boxes above remain unchecked.

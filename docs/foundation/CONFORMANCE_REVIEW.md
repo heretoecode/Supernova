@@ -1,5 +1,8 @@
 # Foundation candidate review
 
+**Latest delivery:** corrected signed Foundation **0.134 / 134** succeeded in [37961864830](https://github.com/heretoecode/Supernova/actions/runs/37961864830) and passed independent downloaded-APK verification. [Download APK](https://github.com/heretoecode/Supernova/actions/runs/37961864830/artifacts/11632643927); [exact commits, checksum and verification](UI_SIGNED_DELIVERY.json). Application source cf1211ce; protected workflow 4448f67c. Physical Shield UI/playback acceptance remains pending; earlier preparation/build-in-progress statements below are historical.
+
+
 Current status: first signed 0.133 delivered and installed, with two user-reported Home regressions. Corrected 0.134 passes 429 unit tests; final optimized binary proof passed with 138 runtime hashes, 88 native libraries, 24 source-rebuilt FFmpeg libraries and ten visible branding exports. [Current correction report](FOUNDATION_UI_CORRECTION.md) contains the three refreshed review passes and separates automated evidence from physical Shield acceptance. The review below retains initial Foundation evidence; old pre-signing/retry checkpoints are historical.
 
 ## Pass 1 — approved scope and source integration
@@ -54,4 +57,4 @@ User approval for app source 11766e59 was received, protected readiness=true acc
 
 ## Refreshed correction review
 
-See [FOUNDATION_UI_CORRECTION.md](FOUNDATION_UI_CORRECTION.md) for current source selection/scope, functional/rendered regression and Foundation-preservation/signing review. The source pin must move from 11766e59 to the verified correction commit. Native source/configuration, existing key/certificate and permanent identity remain unchanged. No physical restoration claim is inferred from successful compilation.
+See [FOUNDATION_UI_CORRECTION.md](FOUNDATION_UI_CORRECTION.md) for current source selection/scope, functional/rendered regression and Foundation-preservation/signing review. The source pin moved from 11766e59 to verified correction cf1211ce in workflow commit 4448f67c; completed prepare and independent downloaded-APK checks confirmed that exact source. Native source/configuration, existing key/certificate and permanent identity remain unchanged. No physical restoration claim is inferred from successful compilation.

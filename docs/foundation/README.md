@@ -1,6 +1,10 @@
 # Foundation implementation evidence
 
-Work remains isolated to `codex/foundation-release`. First signed Foundation **0.133 / 133** was delivered, independently verified and installed successfully on NVIDIA Shield. Physical testing reported two Home regressions caused by the older source baseline. Targeted correction **0.134 / 134** passes all local regression and unsigned conformance checks; its authorised protected build is next, and its signed APK has not yet been produced.
+Work remains isolated to `codex/foundation-release`. **Corrected signed Foundation 0.134 / 134 is produced and independently verified.** [Download APK artifact ZIP](https://github.com/heretoecode/Supernova/actions/runs/37961864830/artifacts/11632643927). Source **cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f**, protected run [37961864830](https://github.com/heretoecode/Supernova/actions/runs/37961864830). First 0.133 installed successfully but revealed two Home source regressions; the targeted correction is backed by actual-view/pixel tests, source/binary comparisons and full cold CI. **Corrected Shield installation/playback and UI acceptance remain pending.**
+
+- [Final signed delivery index and checksums](UI_SIGNED_DELIVERY.json)
+- [Independent downloaded APK verification](UI_CORRECTED_SIGNED_APK_VERIFICATION.json)
+- [Cold CI test evidence](UI_CORRECTED_CI_RESULTS.json)
 
 - [Regression investigation and commit/file evidence](FOUNDATION_UI_REGRESSION_INVESTIGATION.md)
 - [Targeted correction, regression tests and delivery status](FOUNDATION_UI_CORRECTION.md)

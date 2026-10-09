@@ -1,10 +1,13 @@
 # Foundation implementation and APK delivery
 
+**Latest delivery:** corrected signed Foundation **0.134 / 134** succeeded in [37961864830](https://github.com/heretoecode/Supernova/actions/runs/37961864830) and passed independent downloaded-APK verification. [Download APK](https://github.com/heretoecode/Supernova/actions/runs/37961864830/artifacts/11632643927); [exact commits, checksum and verification](UI_SIGNED_DELIVERY.json). Application source cf1211ce; protected workflow 4448f67c. Physical Shield UI/playback acceptance remains pending; earlier preparation/build-in-progress statements below are historical.
+
+
 ## Current continuation — reported Shield regressions
 
 First signed Foundation **0.133 / 133** was delivered by [run 37942503242](https://github.com/heretoecode/Supernova/actions/runs/37942503242), source **11766e59**. Its downloaded APK was independently verified and the user reports successful Shield installation, followed by missing carousel and artwork focus-containment regressions. The earlier signing-retry status below is historical.
 
-[Read-only investigation](FOUNDATION_UI_REGRESSION_INVESTIGATION.md) establishes an older source baseline, not a build variant silently excluding a present carousel. [Correction and validation](FOUNDATION_UI_CORRECTION.md) records the bounded port from f97f6294, actual-view/pixel tests, preservation checks and pending corrected signed delivery. [Omission register](PREVIEW_OMISSION_REGISTER.json) tracks other maintenance differences without claiming physical failures. Current candidate **0.134 / 134** preserves Foundation identity, signing, branding, native source and About work. Only `codex/foundation-release` is changed.
+[Read-only investigation](FOUNDATION_UI_REGRESSION_INVESTIGATION.md) establishes an older source baseline, not a build variant silently excluding a present carousel. [Correction and validation](FOUNDATION_UI_CORRECTION.md) records the bounded port from f97f6294, actual-view/pixel tests, preservation checks and independently verified corrected signed delivery. [Omission register](PREVIEW_OMISSION_REGISTER.json) tracks other maintenance differences without claiming physical failures. Delivered correction **0.134 / 134** preserves Foundation identity, signing, branding, native source and About work. Only `codex/foundation-release` is changed.
 
 ## Historical initial preparation record
 
