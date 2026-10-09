@@ -4,7 +4,7 @@ This record closes the gap between the overnight discussion and durable GitHub p
 
 ## Newly documented
 - Backup & Restore: see [design/BACKUP_RESTORE.md](../design/BACKUP_RESTORE.md) and three approved 16:9 mock-ups under [design/approved-mockups/backup-restore/](../design/approved-mockups/backup-restore/).
-- Smart Home Rows, Up Next/Binge Watching, watched threshold, Reset Progress, Multiple Versions, Advanced Subtitles and release-history presentation: see [design/RECENT_PRODUCT_DECISIONS_2026-10-08.md](../design/RECENT_PRODUCT_DECISIONS_2026-10-08.md).
+- Smart Home Rows, Up Next/Binge Watching, watched threshold, historically proposed Reset Progress (**superseded by Restart Episode/Movie**), Multiple Versions, Advanced Subtitles and release-history presentation: see [design/RECENT_PRODUCT_DECISIONS_2026-10-08.md](../design/RECENT_PRODUCT_DECISIONS_2026-10-08.md).
 
 ## Existing authoritative areas retained
 - Home and focus fixes: [design/HOME.md](../design/HOME.md)
