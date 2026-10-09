@@ -80,6 +80,11 @@ def check_candidate(root, workspace, reviewed):
             if '#define CONFIG_' + prohibited + ' 0' not in config:
                 raise ValueError('Native licence configuration changed')
         if config_digest(workspace / 'build' / abi / 'config.h') != reviewed[abi]['config_h_sha256']:
+            actual_macros = {line.split(None, 2)[1]: line.split(None, 2)[2] if len(line.split(None, 2)) > 2 else '' for line in config.splitlines() if line.startswith('#define ') and not line.startswith(('#define FFMPEG_CONFIGURATION ', '#define FFMPEG_DATADIR ', '#define AVCONV_DATADIR '))}
+            expected_macros = reviewed[abi].get('configuration_macros', {})
+            for name in sorted(set(actual_macros) | set(expected_macros)):
+                if actual_macros.get(name) != expected_macros.get(name):
+                    print('Native configuration mismatch:', abi, name, 'reviewed=', expected_macros.get(name), 'actual=', actual_macros.get(name), flush=True)
             raise ValueError('Compiled native feature configuration differs from reviewed candidate')
         components = digest(workspace / 'build' / abi / 'config_components.h')
         if components != reviewed[abi]['config_components_sha256']:
