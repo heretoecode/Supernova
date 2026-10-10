@@ -15,6 +15,8 @@ public final class PreviewFocusRail extends LinearLayout {
     private final RectF current = new RectF();
     private ValueAnimator movement;
     private boolean visible;
+    private boolean underline;
+    public void useUnderline(){underline=true;moveTo(findFocus());invalidate();}
     private final ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, next) -> moveTo(next);
 
     public PreviewFocusRail(Context context) {
@@ -40,6 +42,10 @@ public final class PreviewFocusRail extends LinearLayout {
         next.getDrawingRect(bounds);
         offsetDescendantRectToMyCoords(next, bounds);
         RectF destination = new RectF(bounds);
+        if(underline){
+            destination.left+=next.getPaddingLeft();destination.right-=next.getPaddingRight();
+            destination.top=destination.bottom-2*getResources().getDisplayMetrics().density;
+        }
         if (!visible || current.isEmpty()) {
             current.set(destination);
             visible = true;
@@ -65,7 +71,7 @@ public final class PreviewFocusRail extends LinearLayout {
         if (visible) {
             boundary.setBounds(Math.round(current.left), Math.round(current.top),
                     Math.round(current.right), Math.round(current.bottom));
-            boundary.draw(canvas);
+            if(underline){android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);paint.setColor(PreviewAccent.color(getContext()));canvas.drawRoundRect(current,getResources().getDisplayMetrics().density,getResources().getDisplayMetrics().density,paint);}else boundary.draw(canvas);
         }
     }
 

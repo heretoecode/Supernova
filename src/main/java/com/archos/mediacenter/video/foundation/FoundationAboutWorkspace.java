@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
 
 /** About alone uses the approved five-child rail and flexible centre/right panels. */
 public final class FoundationAboutWorkspace extends LinearLayout {
-    public static final String[] SECTIONS = {"App Information", "Release Notes", "Open-source Licences", "Credits & Acknowledgements", "Technical Information"};
+    public static final String[] SECTIONS = {"Release Notes", "Open-source Licences", "Credits & Acknowledgements", "Technical Information"};
     private final View normalMiddle, normalHelp;
     private final LinearLayout rail;
     private final List<TextView> navigation = new ArrayList<>();
@@ -50,9 +50,11 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private final ScrollView catalogue, details;
     private final LinearLayout catalogueBody, detailsBody;
     private TextView parentButton, selectedNavigation;
-    private String section = SECTIONS[0];
+    private String section = "About";
     private int selectedIndex, requestGeneration;
     private ExecutorService reader;
+    private boolean licencesOpened;
+    private final Map<String,String> legalCache = new java.util.LinkedHashMap<String,String>() { protected boolean removeEldestEntry(Map.Entry<String,String> entry) { return size()>4; } };
 
     public FoundationAboutWorkspace(PreferenceFragmentCompat fragment, LinearLayout split,
                                     View middle, View help, LinearLayout links) {
@@ -92,10 +94,9 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         }
         for(TextView child:navigation)child.setVisibility(VISIBLE);
         normalMiddle.setVisibility(GONE);normalHelp.setVisibility(GONE);setVisibility(VISIBLE);
-        if(selectedNavigation==null)selectedNavigation=navigation.get(0);
-        select(section,selectedNavigation);
+        select("About",parentButton);
     }
-    public void hide(){for(TextView child:navigation)child.setVisibility(GONE);setVisibility(GONE);normalMiddle.setVisibility(VISIBLE);normalHelp.setVisibility(VISIBLE);}
+    public void hide(){requestGeneration++;licencesOpened=false;for(TextView child:navigation)child.setVisibility(GONE);setVisibility(GONE);normalMiddle.setVisibility(VISIBLE);normalHelp.setVisibility(VISIBLE);}
     public void collapseNavigation(){for(TextView child:navigation)child.setVisibility(GONE);}
     public void enterContent(){enterContentInternal();}
     public void enter(){if(selectedNavigation!=null)selectedNavigation.requestFocus();}
@@ -109,21 +110,21 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     }
     private void select(String name,TextView child){
         if(selectedNavigation!=null)selectedNavigation.setTextColor(Color.WHITE);
-        selectedNavigation=child; child.setTextColor(PreviewAccent.color(getContext()));
+        selectedNavigation=child; child.setTextColor(Color.WHITE);
         if(name.equals(section)&&catalogueBody.getChildCount()>0)return;
         section=name;selectedIndex=selections.getOrDefault(name,0);requestGeneration++;
-        catalogueBody.removeAllViews();detailsBody.removeAllViews();rows.clear();rowSelections.clear();
+        catalogueBody.removeAllViews();detailsBody.removeAllViews();detailsBody.setGravity(Gravity.TOP);detailsBody.setPadding(0,0,0,0);((LayoutParams)details.getLayoutParams()).weight=.56f;rows.clear();rowSelections.clear();
         catalogue.setVisibility(VISIBLE);details.setVisibility(VISIBLE);
         try {
-            if(name.equals(SECTIONS[0]))appInformation();
-            else if(name.equals(SECTIONS[1]))releases();
-            else if(name.equals(SECTIONS[2]))licences();
-            else if(name.equals(SECTIONS[3]))credits();
+            if(name.equals("About"))appInformation();
+            else if(name.equals(SECTIONS[0]))releases();
+            else if(name.equals(SECTIONS[1])) { licencesOpened=false; showDetails("Open-source Licences", "Press OK to open the locally bundled software licences and notices.", null, null); }
+            else if(name.equals(SECTIONS[2]))credits();
             else technical();
         } catch(Exception unavailable){showDetails("Information unavailable","This build could not read the bundled information.",null,null);}
         if(!rows.isEmpty()){selectedIndex=Math.min(selectedIndex,rows.size()-1);rowSelections.get(selectedIndex).run();}
     }
-    private void enterContentInternal(){if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
+    private void enterContentInternal(){if(section.equals(SECTIONS[1])&&!licencesOpened){licencesOpened=true;loadLicences();return;}if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
     private void focusSelectedRow(){if(!rows.isEmpty())rows.get(Math.min(selectedIndex,rows.size()-1)).requestFocus();else selectedNavigation.requestFocus();}
     private TextView row(String label,Runnable select,Runnable activate){
         final int index=rows.size();TextView row=text(label,14);row.setPadding(dp(10),dp(10),dp(8),dp(10));
@@ -167,29 +168,50 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         String details=notes+(current?"":"\n\nRetrospective build label; the original APK's embedded version was not changed.");
         TextView row=row(label+"\n"+date,()->showDetails(version,details,null,null),null);
         final String heading=label+"\n"+date;
-        if(current){expanded.add(version);row.setText(heading+"\n"+notes);}
+        if(current){expanded.add(version);row.setText(heading);}
         else {
             row.setText("▸ "+heading);
             row.setOnClickListener(v->{selectedIndex=rows.indexOf(row);selections.put(section,selectedIndex);showDetails(version,details,null,null);
                 if(expanded.contains(version))expanded.remove(version);else expanded.add(version);
-                row.setText((expanded.contains(version)?"▾ ":"▸ ")+heading+(expanded.contains(version)?"\n"+notes:""));});
-            if(expanded.contains(version))row.setText("▾ "+heading+"\n"+notes);
+                row.setText((expanded.contains(version)?"▾ ":"▸ ")+heading);});
+            if(expanded.contains(version))row.setText("▾ "+heading);
         }
     }
     private String notes(JSONArray notes){StringBuilder out=new StringBuilder();if(notes!=null)for(int i=0;i<notes.length();i++)out.append("• ").append(notes.optString(i)).append('\n');return out.toString().trim();}
-    private void licences() throws Exception {
-        JSONArray components=readJson("foundation/licences.json").getJSONArray("components");
-        for(int i=0;i<components.length();i++){
-            JSONObject component=components.getJSONObject(i);String name=component.getString("name"),version=component.optString("version","Version unavailable");
-            row(name+"\n"+component.optString("role","Software component"),()->{
-                showDetails(name+" · "+version,component.optString("licence")+"\n\nLoading locally bundled licence and notices…",component.optString("url"),null);
-                final int generation=++requestGeneration;
-                if(reader==null||reader.isShutdown())reader=Executors.newSingleThreadExecutor();
-                reader.execute(()->{String legal;try{legal=readText(component.getString("text_asset"));}catch(Exception unavailable){legal="Bundled licence text unavailable. This is a build-conformance failure.";}
-                    final String body=component.optString("licence")+"\n\n"+legal;
-                    post(()->{if(generation==requestGeneration&&isAttachedToWindow())showDetails(name+" · "+version,body,component.optString("url"),null);});});
-            },null);
-        }
+    private ExecutorService reader() {
+        if(reader==null||reader.isShutdown())reader=new java.util.concurrent.ThreadPoolExecutor(1,1,0,java.util.concurrent.TimeUnit.SECONDS,
+            new java.util.concurrent.ArrayBlockingQueue<>(2),r->{Thread t=new Thread(r,"SupernovaLegalReader");t.setDaemon(true);return t;},new java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy());
+        return reader;
+    }
+    private void loadLicences() {
+        final int generation=++requestGeneration;
+        showDetails("Open-source Licences","Loading locally bundled catalogue…",null,null);
+        reader().execute(()->{
+            try {
+                JSONArray components=readJson("foundation/licences.json").getJSONArray("components");
+                post(()->{
+                    if(generation!=requestGeneration||!isAttachedToWindow()||!section.equals(SECTIONS[1]))return;
+                    catalogueBody.removeAllViews();rows.clear();rowSelections.clear();
+                    for(int i=0;i<components.length();i++){
+                        JSONObject component=components.optJSONObject(i);if(component==null)continue;
+                        String name=component.optString("name"),version=component.optString("version","Version unavailable");
+                        row(name+"\n"+component.optString("role","Software component"),()->loadLegal(component,name+" · "+version),null);
+                    }
+                    if(!rows.isEmpty())focusSelectedRow();
+                });
+            } catch(Exception error){post(()->{if(generation==requestGeneration)showDetails("Information unavailable","This build could not read the bundled licence catalogue.",null,null);});}
+        });
+    }
+    private void loadLegal(JSONObject component,String name) {
+        final int generation=++requestGeneration;String asset=component.optString("text_asset");
+        String cached=legalCache.get(asset);
+        if(cached!=null){showDetails(name,cached,component.optString("url"),null);return;}
+        showDetails(name,component.optString("licence")+"\n\nLoading locally bundled licence and notices…",null,null);
+        reader().execute(()->{
+            String legal;try{legal=readText(asset);}catch(Exception unavailable){legal="Bundled licence text unavailable. This is a build-conformance failure.";}
+            final String body=component.optString("licence")+"\n\n"+legal;
+            post(()->{if(generation==requestGeneration&&isAttachedToWindow()){legalCache.put(asset,body);showDetails(name,body,component.optString("url"),null);}});
+        });
     }
     private void credits() throws Exception {
         JSONArray entries=readJson("foundation/credits.json").getJSONArray("entries");String previous="";
@@ -223,7 +245,9 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             if(id!=0){ImageView image=new ImageView(getContext());image.setImageResource(id);image.setContentDescription("TMDB");detailsBody.addView(image,new LayoutParams(dp(160),dp(48)));}
         }
         if(url!=null&&!url.isEmpty()){
-            Bitmap bitmap=qr(url);if(bitmap!=null){ImageView image=new ImageView(getContext());image.setImageBitmap(bitmap);image.setContentDescription("QR code for the official "+heading+" website");detailsBody.addView(image,new LayoutParams(dp(124),dp(124)));}
+            ImageView image=new ImageView(getContext());image.setContentDescription("QR code for the official "+heading+" website");detailsBody.addView(image,new LayoutParams(dp(124),dp(124)));
+            final int generation=requestGeneration;
+            reader().execute(()->{Bitmap bitmap=qr(url);post(()->{if(generation==requestGeneration&&image.getParent()==detailsBody&&isAttachedToWindow())image.setImageBitmap(bitmap);else if(bitmap!=null)bitmap.recycle();});});
         }
         TextView text=text(body,14);if(section.equals(SECTIONS[1]))com.archos.mediacenter.video.leanback.PreviewIcon.apply(text,"info",16);text.setFocusable(true);text.setPadding(0,dp(12),0,0);detailsBody.addView(text);
         View.OnKeyListener keys=(v,key,event)->{

@@ -142,9 +142,9 @@ public final class PreviewPages extends FrameLayout {
         if(entry.media instanceof Video&&LibraryHealth.state(getContext(),(Video)entry.media)!=LibraryHealth.State.AVAILABLE)return false;
         boolean matched=entry.media instanceof Movie||entry.media instanceof Episode||entry.media instanceof Tvshow;
         boolean art=entry.backdrop!=null||entry.media.getPosterUri()!=null;
-        return matched&&art;
+        return matched&&art&&entry.heroEligible;
     }
-    private List<Entry> featuredCandidates(){List<List<Entry>> sources=new ArrayList<>();featuredReasons.clear();if(preferences==null||preferences.getBoolean("preview_featured_recent",true))sources.add(snapshot.recent);else sources.add(Collections.emptyList());sources.add(preferences!=null&&preferences.getBoolean("preview_featured_trending",true)?discovery.matches(snapshot,true):Collections.emptyList());sources.add(preferences!=null&&preferences.getBoolean("preview_featured_popular",true)?discovery.matches(snapshot,false):Collections.emptyList());List<Entry> result=new ArrayList<>();Set<String> seen=new HashSet<>();String[] reasons={"RECENTLY ADDED","TRENDING ON TRAKT · IN YOUR LIBRARY","POPULAR ON TRAKT · IN YOUR LIBRARY"};for(int i=0;i<12;i++)for(int n=0;n<sources.size();n++){List<Entry> source=sources.get(n);if(i<source.size()){Entry e=source.get(i);if(eligibleFeatured(e)&&seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),reasons[n]);}}}if(result.isEmpty()){List<Entry> local=new ArrayList<>(snapshot.movies);local.addAll(snapshot.shows);for(Entry e:local)if(eligibleFeatured(e)&&seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),"IN YOUR LIBRARY");if(result.size()==8)break;}}return result.subList(0,Math.min(8,result.size()));}
+    private List<Entry> featuredCandidates(){List<List<Entry>> sources=new ArrayList<>();featuredReasons.clear();if(preferences==null||preferences.getBoolean("preview_featured_recent",true))sources.add(snapshot.featured);else sources.add(Collections.emptyList());sources.add(preferences!=null&&preferences.getBoolean("preview_featured_trending",true)?discovery.matches(snapshot,true):Collections.emptyList());sources.add(preferences!=null&&preferences.getBoolean("preview_featured_popular",true)?discovery.matches(snapshot,false):Collections.emptyList());List<Entry> result=new ArrayList<>();Set<String> seen=new HashSet<>();String[] reasons={"Recently Added","TRENDING ON TRAKT · IN YOUR LIBRARY","POPULAR ON TRAKT · IN YOUR LIBRARY"};for(int i=0;i<12;i++)for(int n=0;n<sources.size();n++){List<Entry> source=sources.get(n);if(i<source.size()){Entry e=source.get(i);if(eligibleFeatured(e)&&seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),e.heroSequential?e.secondary:reasons[n]);}}}if(result.isEmpty()){List<Entry> local=new ArrayList<>(snapshot.movies);local.addAll(snapshot.shows);for(Entry e:local)if(eligibleFeatured(e)&&seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),"IN YOUR LIBRARY");if(result.size()==8)break;}}return result.subList(0,Math.min(8,result.size()));}
     private final PreviewLibraryColumns[] columns=new PreviewLibraryColumns[3];
     private long lastInteraction;
     private final Runnable rotateFeatured=new Runnable(){public void run(){
@@ -376,10 +376,10 @@ public final class PreviewPages extends FrameLayout {
                 switch(row.id){case "continue":entries=new ArrayList<>(continuing.subList(0,Math.min(30,continuing.size())));break;case "recent":for(Entry e:snapshot.recent)if(!continuingKeys.contains(e.key())&&entries.size()<50)entries.add(e);break;case "trending":entries=discovery.matches(snapshot,true);break;case "popular":entries=discovery.matches(snapshot,false);break;case "watched":entries=snapshot.watched;break;case "similar":Entry seed=snapshot.played.isEmpty()?null:snapshot.played.get(0);if(seed!=null){entries=PreviewDiscovery.similar(seed,snapshot);name="Because You Watched "+displayName(seed);}break;default:entries=home.members(row,snapshot);}
                 int before=cells.size();rail(name,entries);if(cells.size()>before)cells.get(cells.size()-1).homeRowId=row.id;
             }
-            if(loaded&&emptyHome()) {
+            if(loaded&&(emptyHome()||!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))) {
                 homeBuilding=PreviewLibraryScan.building();
                 if(!sourcesLoaded&&!sourcesLoading)loadSources();
-                header(homeBuilding?"Building Your Library":"Welcome to Supernova",false);cells.add(new Cell(NETWORK,"Add media to your library",null));
+                header(homeBuilding?"Building Your Library":"Build Your Library",false);cells.add(new Cell(NETWORK,"Add media to your library",null));
             } else if(loaded)cells.add(new Cell(CUSTOMISE,"Customise Home",null));
         } else if(tab==1||tab==2) {
             cells.add(new Cell(HERO,tab==1?"Movies":"TV Shows",featured()));
@@ -525,8 +525,8 @@ public final class PreviewPages extends FrameLayout {
                 if(Boolean.TRUE.equals(c.value)){
                     v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(13),0,dp(18));LinearLayout controls=new PreviewToolbar(getContext(),true);
                     controls.addView(button("Filters"+(genres[tab].isEmpty()?"":": "+genres[tab])+(years[tab]==0?"":" · "+years[tab])+"  ▾",()->filter()));
-                    String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest ranked first":"Highest ranked first"):(ascending[tab]?"Oldest first":"Newest first");
-                    for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order+"  ▾",()->PreviewDialog.choose(getContext(),"Order",new String[]{"Ascending","Descending"},(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?0:1,n->{quietOrder.clear();ascending[tab]=n==0;columns[tab].setAscending(n==0);render();})),button(listMode[tab]?"Grid view":"List view",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
+                    String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest Ranked First":"Highest Ranked First"):(ascending[tab]?"Oldest First":"Newest First");
+                    for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order,()->{quietOrder.clear();boolean value=!(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending);ascending[tab]=value;columns[tab].setAscending(value);render();}),button(listMode[tab]?"Grid View":"List View",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
                     if(listMode[tab]){TextView chooser=button("Columns",()->columns[tab].choose(this::refreshColumns));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(chooser,lp);}
                     String[] controlIds={"filters","sort","order","view","columns"};
                     for(int i=0;i<controls.getChildCount();i++){View control=controls.getChildAt(i);control.setTag("control:"+i);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds[i]);}v.addView(controls);
@@ -574,7 +574,7 @@ public final class PreviewPages extends FrameLayout {
             if(sharedBrowser.getParent() instanceof ViewGroup)((ViewGroup)sharedBrowser.getParent()).removeView(sharedBrowser);
             int browserHeight=tab==0?Math.max(dp(260),(int)((getHeight()-dp(28))*.65f)):Math.max(dp(360),getHeight()-dp(28));
             container.setLayoutParams(new RecyclerView.LayoutParams(-1,browserHeight));
-            container.addView(sharedBrowser,new LinearLayout.LayoutParams(-1,-1));
+            sharedBrowser.browser().onboarding(tab==0);sharedBrowser.update(files,librarySources,savedLocations,PreviewPages.this::networkSection);container.addView(sharedBrowser,new LinearLayout.LayoutParams(-1,-1));
             if(networkEntryPending)container.post(PreviewPages.this::requestNetworkEntryFocus);
         }
         private void setNetworkBack(View view,Runnable back){if(view.isFocusable())view.setOnKeyListener((v,key,event)->{if(key==KeyEvent.KEYCODE_DPAD_LEFT&&event.getAction()==KeyEvent.ACTION_DOWN){back.run();return true;}return false;});if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)setNetworkBack(((ViewGroup)view).getChildAt(i),back);}

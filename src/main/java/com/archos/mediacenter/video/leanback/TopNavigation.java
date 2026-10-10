@@ -52,7 +52,7 @@ public final class TopNavigation extends LinearLayout {
         TextView brand = new TextView(c);
         brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(Color.WHITE);
         brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(136), -1));
-        group = new PreviewFocusRail(c);group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
+        group = new PreviewFocusRail(c);group.useUnderline();group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
         bar.addView(group, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search", customLabel(c)};
         for (int i = 0; i < labels.length; i++) {
@@ -66,7 +66,7 @@ public final class TopNavigation extends LinearLayout {
             tab.setPadding(dp(7), dp(6), dp(7), dp(6));
             styleTab(tab);
             tab.setOnClickListener(v -> {if(index==6&&getContext() instanceof CustomLibraryActivity)return;requestBrowserExit(content, () -> {
-                if(index==6){if(getContext() instanceof CustomLibraryActivity)return;Runnable open=()->getContext().startActivity(new android.content.Intent(getContext(),CustomLibraryActivity.class));if(CustomLibraryPage.load(getContext())==null)PreviewDialog.choose(getContext(),"Create a New Page",new String[]{"Library Page"},0,n->open.run());else open.run();return;}
+                if(index==6){if(getContext() instanceof CustomLibraryActivity)return;Runnable open=()->getContext().startActivity(new android.content.Intent(getContext(),CustomLibraryActivity.class));open.run();return;}
                 selectTab(index);
                 navigate.accept(index);
             });});
@@ -101,7 +101,7 @@ public final class TopNavigation extends LinearLayout {
         group.removeView(tabs[5]);group.addView(tabs[5],group.indexOfChild(tabs[4]),new LayoutParams(-2,dp(36)));
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(64), dp(46)));
-        android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19);clock.setTextColor(Color.WHITE);clock.setGravity(Gravity.CENTER);status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19);clock.setTextColor(Color.WHITE);clock.setGravity(Gravity.CENTER_VERTICAL|Gravity.END);clock.setIncludeFontPadding(tabs[0].getIncludeFontPadding());clock.setPadding(0,dp(6),0,dp(6));status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
         updateCustomPage();selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
         stage=new android.widget.FrameLayout(c);
@@ -138,7 +138,7 @@ public final class TopNavigation extends LinearLayout {
         value=value&&(selectedIndex>=0&&selectedIndex<=2||selectedIndex==6);
         if(scrolled==value)return;scrolled=value;
         if(scrimAnimation!=null)scrimAnimation.cancel();
-        scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?255:0);scrimAnimation.setDuration(180);
+        scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?255:0);scrimAnimation.setDuration(220);
         scrimAnimation.addUpdateListener(animation->{scrimAlpha=(int)animation.getAnimatedValue();invalidate();});scrimAnimation.start();
     }
     @Override protected boolean drawChild(android.graphics.Canvas canvas,View child,long time){
@@ -149,7 +149,7 @@ public final class TopNavigation extends LinearLayout {
     public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
     public void setFeaturedDirection(int direction){artwork.setMotionDirection(direction);}
     public boolean readyForFirstFrame(){return artwork.readyForFirstFrame();}
-    public void selectTab(int index) { if(index<0||index>=7)return;selectedIndex=index;artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION&&index==0);setBackground(index>=3&&index<=5?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);if(index>=3&&index<=5)setScrolled(false); }
+    public void selectTab(int index) { if(index<0||index>=7)return;selectedIndex=index;artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION&&index==0);setBackground(index>=3&&index<=5?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);for(TextView t:tabs)t.setAlpha(t==selected?1f:.78f);if(index>=3&&index<=5)setScrolled(false); }
     @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);if(scrimAnimation!=null)scrimAnimation.cancel();scrimAlpha=scrolled?255:0;navigationShade.release();artwork.release();super.onDetachedFromWindow(); }
     /** Exactly one visible scan-status owner: the landing panel or this shell. */
     public void setEmbeddedScanStatus(boolean embedded){scanStatus.setVisibility(embedded?GONE:VISIBLE);}
@@ -163,7 +163,7 @@ public final class TopNavigation extends LinearLayout {
         return null;
     }
     private static String customLabel(Context c){CustomLibraryPage page=CustomLibraryPage.load(c);return page==null?"+":page.name;}
-    public void updateCustomPage(){CustomLibraryPage page=CustomLibraryPage.load(getContext());PreviewIcon.apply(tabs[6],page==null?"plus":page.icon,22);tabs[6].setText(page==null?"":page.name);tabs[6].setContentDescription(CustomLibraryPage.load(getContext())==null?"Create a New Page":customLabel(getContext()));}
+    public void updateCustomPage(){CustomLibraryPage page=CustomLibraryPage.load(getContext());PreviewIcon.apply(tabs[6],page==null?"plus":"",22);if(page!=null)tabs[6].setCompoundDrawables(null,null,null,null);tabs[6].setText(page==null?"":page.name);tabs[6].setContentDescription(CustomLibraryPage.load(getContext())==null?"Create a New Page":customLabel(getContext()));}
     private static PageExitGuard editor(View view){if(!view.isShown())return null;if(view instanceof PageExitGuard)return (PageExitGuard)view;if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++){PageExitGuard found=editor(group.getChildAt(i));if(found!=null)return found;}}return null;}
     private static void requestBrowserExit(View content,Runnable action){
         PageExitGuard guard=editor(content);if(guard!=null){guard.requestExit(action);return;}

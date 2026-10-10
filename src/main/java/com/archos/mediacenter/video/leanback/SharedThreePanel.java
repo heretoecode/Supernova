@@ -26,6 +26,12 @@ public class SharedThreePanel extends LinearLayout {
         addPanel(right, .38f, false);
     }
 
+    public void widths(float left,float centre,float right) {
+        float[] widths={left,centre,right};
+        for(int i=0;i<Math.min(3,getChildCount());i++){LayoutParams size=(LayoutParams)getChildAt(i).getLayoutParams();size.weight=widths[i];getChildAt(i).setLayoutParams(size);}
+    }
+    public static void heading(LinearLayout column,String title) { column.addView(text(column.getContext(),title,21)); divider(column); }
+    public static void divider(LinearLayout column) { View line=new View(column.getContext());line.setBackgroundColor(0x447f8996);LayoutParams size=new LayoutParams(-1,dp(column.getContext(),1));size.topMargin=dp(column.getContext(),8);size.bottomMargin=dp(column.getContext(),10);column.addView(line,size); }
     private void addPanel(View view, float weight, boolean gap) {
         decorate(view);
         LayoutParams size = new LayoutParams(0, LayoutParams.MATCH_PARENT, weight);
@@ -77,7 +83,7 @@ public class SharedThreePanel extends LinearLayout {
             GradientDrawable shape = new GradientDrawable();
             shape.setColor(focused ? 0x603b4857 : 0x303b4857);
             shape.setCornerRadius(dp(context, radius));
-            shape.setStroke(dp(context, 1), focused ? Color.WHITE : 0x887f8996);
+            shape.setStroke(dp(context, 1), focused ? PreviewAccent.color(context) : 0x887f8996);
             states.addState(focused ? new int[]{android.R.attr.state_focused} : new int[]{}, shape);
         }
         return states;
@@ -87,7 +93,7 @@ public class SharedThreePanel extends LinearLayout {
         GradientDrawable focused = new GradientDrawable();
         focused.setColor(0x263b4857);
         focused.setCornerRadius(dp(context, 10));
-        focused.setStroke(dp(context, 1), Color.WHITE);
+        focused.setStroke(dp(context, 1), PreviewAccent.color(context));
         StateListDrawable states = new StateListDrawable();
         states.addState(new int[]{android.R.attr.state_focused}, focused);
         GradientDrawable normal = new GradientDrawable();

@@ -226,6 +226,7 @@ android {
         if (foundationRelease) signingConfig = signingConfigs.foundation
         else if (!foundationVerify && keystorePropertiesFile.exists()) signingConfig = signingConfigs.release
         buildConfigField "boolean", "FOUNDATION", foundationIdentity.toString()
+        buildConfigField "boolean", "DEVELOPMENT_DIAGNOSTICS", project.hasProperty("supernovaQa").toString()
         if (project.hasProperty("sponsor")) {
             buildConfigField "boolean", "ENABLE_SPONSOR", "true"
         } else {

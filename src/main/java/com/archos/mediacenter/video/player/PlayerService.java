@@ -1220,7 +1220,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 if (log.isDebugEnabled()) log.debug("saveVideoStateIfReady: source={} position={} completed={}",
                         mPlaybackSession.selectedSource, resumePosition, mPlaybackSession.completed);
                 if (mVideoInfo != null && !PrivateMode.isActive()) {
-                    mVideoInfo.resume = resumePosition;
+                    mVideoInfo.resume = com.archos.mediacenter.video.leanback.ViewingHistory.resumeEnabled(this) ? resumePosition : 0;
                     int duration = mPlayer==null?0:mPlayer.getDuration();
                     if (duration > 0)
                         mVideoInfo.duration = duration;
@@ -1236,7 +1236,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     // saving seconds since the Unix epoch (January 1, 1970, 00:00:00 UTC) and this value is in UTC
                     // traktResume is set to -resume unless synced
                     mVideoInfo.lastTimePlayed = utcSeconds;
-                    com.archos.mediacenter.video.leanback.PreviewSeriesJourney.record(this,mVideoInfo,mPlaybackSession.completed,mPlaybackSession.viewedMs);
+                    if(com.archos.mediacenter.video.leanback.ViewingHistory.tracking(this)) com.archos.mediacenter.video.leanback.PreviewSeriesJourney.record(this,mVideoInfo,mPlaybackSession.completed,mPlaybackSession.viewedMs);
+                    com.archos.mediacenter.video.leanback.ViewingHistory.record(this,mVideoInfo,mPlaybackSession.completed);
                     log.info("saveVideoStateIfReady: save bookmark at {} for videoId {}", mVideoInfo.lastTimePlayed, mVideoInfo.id);
                     mIndexHelper.writeVideoInfo(mVideoInfo, !periodic && mNetworkBookmarksEnabled);
                     com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_submitted","position_ms",resumePosition,"duration_ms",mPlayer==null?-1:mPlayer.getDuration(),"buffered_ms",mPlayer==null?-1:mPlayer.getBufferPosition(),"audio_track",mVideoInfo.audioTrack,"subtitle_track",mVideoInfo.subtitleTrack,"passthrough",mPreferences.getString("force_audio_passthrough_multiple","0"),"refresh_hz",Player.getRefreshRate(),"speed",mAudioSpeed,"audio_delay",mAudioDelay,"source",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mStreamingUri),"periodic",periodic,"network_bookmark",!periodic&&mNetworkBookmarksEnabled);

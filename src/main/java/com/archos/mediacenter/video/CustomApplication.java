@@ -815,6 +815,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         updateVersionState(appContext);
         new Thread("nova-deferred-init") {
             public void run() {
+                com.archos.mediaprovider.video.SupernovaLibraryPolicy.initialiseSetup(appContext);
                 Trakt.initApiKeys(appContext);
                 launchSambaDiscovery();
                 if (openSubtitlesApiHelper == null) openSubtitlesApiHelper = OpenSubtitlesApiHelper.getInstance();
@@ -918,6 +919,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     private void launchSambaDiscovery() {
+        if(BuildConfig.FOUNDATION&&!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(this))return;
         if (networkState.hasLocalConnection()) {
             if (log.isDebugEnabled()) log.debug("launchSambaDiscovery: local connection, launching samba discovery");
             // samba discovery should not be running at this stage, but better safe than sorry
@@ -1223,7 +1225,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         // Retry after an offline/busy launch and honour the existing periodic schedule while open.
         if(previewScanOnReturn||period>0)previewRefreshHandler.postDelayed(this,30000);
     }};
-    private void requestPreviewNetworkRefresh(){if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))return;previewScanOnReturn=NetworkAutoRefresh.autoRescanAtStart(this);previewRefreshRequestedWallTime=0;previewRefreshHandler.removeCallbacks(previewRefresh);previewRefreshHandler.postDelayed(previewRefresh,1500);}
+    private void requestPreviewNetworkRefresh(){if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(this))return;if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))return;previewScanOnReturn=NetworkAutoRefresh.autoRescanAtStart(this);previewRefreshRequestedWallTime=0;previewRefreshHandler.removeCallbacks(previewRefresh);previewRefreshHandler.postDelayed(previewRefresh,1500);}
 
     private void addNetworkListener() {
         if (networkState == null) networkState = NetworkState.instance(mContext);
