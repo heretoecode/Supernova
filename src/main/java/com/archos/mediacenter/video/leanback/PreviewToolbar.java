@@ -21,11 +21,11 @@ public final class PreviewToolbar extends LinearLayout {
         super.onViewAdded(child);
         child.setBackground(boxed && child.isFocusable() ? SharedThreePanel.control(getContext(), 10) : null);
         if (boxed && child instanceof android.widget.TextView) {
-            ((android.widget.TextView)child).setTextSize(17);
+            ((android.widget.TextView)child).setTextSize(14);
             ((android.widget.TextView)child).setSingleLine(true);
             ((android.widget.TextView)child).setEllipsize(android.text.TextUtils.TruncateAt.END);
             ((android.widget.TextView)child).setMaxWidth(PreviewDialog.dp(getContext(), 220));
-            child.setMinimumHeight(PreviewDialog.dp(getContext(), 48));
+            child.setMinimumHeight(PreviewDialog.dp(getContext(), 40));
         }
         child.setOnFocusChangeListener((v, focused) -> invalidate());
         child.setOnKeyListener((v, key, event) -> {

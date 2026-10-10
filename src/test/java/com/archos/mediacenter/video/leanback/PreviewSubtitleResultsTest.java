@@ -13,6 +13,8 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewSubtitleResultsTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test public void evenSingleResultNeedsExplicitDownloadAndBackPreservesSelection(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();OpenSubtitlesSearchResult result=new OpenSubtitlesSearchResult("42","Example.en.srt","English");result.setMoviehashMatch(true);
         AtomicReference<OpenSubtitlesSearchResult> downloaded=new AtomicReference<>();Dialog parent=PreviewSubtitleResults.show(host,Collections.singletonList(result),downloaded::set);

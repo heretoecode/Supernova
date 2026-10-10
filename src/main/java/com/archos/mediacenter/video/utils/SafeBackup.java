@@ -24,7 +24,7 @@ public final class SafeBackup {
         return file;
     }
     static boolean allowed(String name) {
-        return name.equals("media.db") || name.equals("shortcuts_db")
+        return name.equals("supernova-viewing-history.db") || name.equals("media.db") || name.equals("shortcuts_db")
             || name.equals("shortcuts2_db") || name.equals("putio-associations.db") || name.equals("manifest.json") || name.equals("RESTORE_INSTRUCTIONS.txt") || name.equals("db_version.txt") || name.equals("settings.json") || name.equals("named_preferences.json")
             || name.startsWith("scraper_posters/") || name.startsWith("scraper_backdrops/") || name.startsWith("scraper_pictures/");
     }
@@ -63,6 +63,7 @@ public final class SafeBackup {
             if(!new File(stage,"RESTORE_INSTRUCTIONS.txt").isFile())throw new IOException("Backup instructions are missing");
             int version = Integer.parseInt(read(new File(stage,"db_version.txt")).trim());
             if (version != VideoOpenHelper.getDatabaseVersion()) throw new IOException("Backup database version is incompatible");
+            File history=new File(stage,com.archos.mediacenter.video.leanback.ViewingHistory.DATABASE);if(history.isFile())com.archos.mediacenter.video.leanback.ViewingHistory.validate(history);
             File media = new File(stage,"media.db");
             if (!media.isFile()) throw new IOException("Backup has no media database");
             try (SQLiteDatabase db = SQLiteDatabase.openDatabase(media.getPath(), null, SQLiteDatabase.OPEN_READONLY);
@@ -114,7 +115,8 @@ public final class SafeBackup {
         }
     }
     public static void restore(Context c, File stage) throws Exception {
-        try(RestoreJournal.Guard guard=RestoreJournal.acquire(c)){synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){restoreLocked(c,stage);}}
+        com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
+        try(RestoreJournal.Guard guard=RestoreJournal.acquire(c)){synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){synchronized(com.archos.mediacenter.video.leanback.ViewingHistory.LOCK){restoreLocked(c,stage);}}}
     }
     private static void restoreLocked(Context c, File stage) throws Exception {
         RestoreJournal.recoverLocked(c);
@@ -122,7 +124,7 @@ public final class SafeBackup {
         String token=UUID.randomUUID().toString();
         List<Swap> swaps=new ArrayList<>();
         try {
-            for(String name:new String[]{"media.db","credentials_db","shortcuts_db","shortcuts2_db","putio-associations.db"}) {
+            for(String name:new String[]{"supernova-viewing-history.db","media.db","credentials_db","shortcuts_db","shortcuts2_db","putio-associations.db"}) {
                 File dest=c.getDatabasePath(name);
                 swaps.add(new Swap(dest,new File(stage,name),token));
                 swaps.add(new Swap(new File(dest+"-wal"),null,token));

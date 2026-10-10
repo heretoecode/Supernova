@@ -16,6 +16,8 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewArtworkPickerTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Before public void images(){try{Picasso.get();}catch(IllegalStateException e){Picasso.setSingletonInstance(new Picasso.Builder(RuntimeEnvironment.getApplication()).build());}}
     @Test public void failedSaveKeepsOldCheckAndSuccessfulSaveKeepsGridOpen(){
         org.robolectric.android.controller.ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();

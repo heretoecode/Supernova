@@ -1,0 +1,148 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "2c315580483e1086435ac72ae9809e005435da5c4bb72a3538468c7d1eb86e3c",
+  "version_name": "0.136",
+  "version_code": 136,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "source_commit": "00bb55e6082ecf4081f2e8e524e83b2bb75b2f13",
+  "signed_qa_run_id": 38093972688,
+  "signed": true,
+  "apk_bytes": 102248688,
+  "signature_verified": true,
+  "apk_zip_crc_verified": true,
+  "original_ci_payload_parity_verified": true,
+  "unit_tests": 514,
+  "unit_failures": 0,
+  "unit_errors": 0,
+  "unit_skips": 0,
+  "lint": {
+    "errors": 0,
+    "warnings": 1494
+  },
+  "runtime_artifact_hashes_matched": 138,
+  "rebuilt_ffmpeg_libraries_matched": 24,
+  "native_hashes_matched": 88,
+  "signed_upgrade_verified": false,
+  "physical_shield_verified": false,
+  "schema": 1,
+  "qa_only": true,
+  "final_release_published": false,
+  "branch": "codex/supernova-next-refinement-2026-10-10",
+  "application_checkpoint": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
+  "run_id": 38093972688,
+  "run_url": "https://github.com/heretoecode/Supernova/actions/runs/38093972688",
+  "conclusion": "success",
+  "artifact_verification_run_id": 38095825877,
+  "artifact_verification_run_url": "https://github.com/heretoecode/Supernova/actions/runs/38095825877",
+  "artifact_verification_workflow_source": "016329263ce1bdabf8fd9ccda975a20013124643",
+  "verification_location": "GitHub Actions: original signed build and independent read-only verification of its uploaded APK",
+  "signed_artifact": {
+    "id": 11685453791,
+    "name": "supernova-0136-signed-qa",
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38093972688/artifacts/11685453791",
+    "size_in_bytes": 97752788,
+    "archive_digest_reported_by_github": "sha256:29c3c1c9cfdf24a7b7791e6cba1a874b54afef016d1fd2b19e578ba5af08f570",
+    "expires_at": "2026-10-24T23:39:32Z",
+    "archive_digest_verified_locally": false
+  },
+  "corresponding_ffmpeg_source_artifact": {
+    "id": 11685668489,
+    "name": "supernova-0136-qa-ffmpeg-source",
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38093972688/artifacts/11685668489",
+    "size_in_bytes": 11169693,
+    "archive_digest_reported_by_github": "sha256:bf84843f1b97e63682d56e1ab5da139df0d4871578dd453441129c672e272283",
+    "expires_at": "2026-11-09T23:39:36Z",
+    "archive_digest_verified_locally": false
+  },
+  "public_receipt_artifact": {
+    "id": 11684939481,
+    "name": "supernova-0136-qa-verification-receipt",
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38095825877/artifacts/11684939481",
+    "size_in_bytes": 736,
+    "archive_digest_reported_by_github": "sha256:9c1cf4a0f1ee76aa8e9245b06cfddafdbbcaab764289a5b570ad83a716cf554d",
+    "expires_at": "2026-11-09T23:40:44Z",
+    "archive_digest_verified_locally": false
+  },
+  "certificate_matches_0135_reference": true,
+  "package_certificate_version_upgrade_compatible": true,
+  "new_signing_key_created": false,
+  "pr_merged": false,
+  "signing_environment_branch_admitted": true,
+  "signing_material_cleanup_step": "success",
+  "independent_downloaded_apk_verified_locally": false,
+  "workspace_download_limitation": "Proxy denied the GitHub artifact blob host with HTTP 403; no proxy/access restriction bypassed. Actual uploaded APK was independently signature/manifest/resource/ZIP/hash verified by the read-only GitHub Actions job.",
+  "signed_build_log_sha256": "530fc0da505ec586b63d3b319a8929f82aa80a407d9ad9e02079dac05b471493",
+  "artifact_verification_log_sha256": "48a4e53b5a36d832df6462617284f3ae12768181484df0f33e9a35be082ece55",
+  "workflow_step_results": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Checkout the exact QA source",
+      "conclusion": "success"
+    },
+    {
+      "name": "Java for PKCS12 validation and Android build",
+      "conclusion": "success"
+    },
+    {
+      "name": "Prepare existing pinned NOVA dependencies without Preview identity conversion",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify 0.136 provider and historical identity isolation",
+      "conclusion": "success"
+    },
+    {
+      "name": "Rebuild and compare pinned LGPL FFmpeg before replacing dependency binaries",
+      "conclusion": "success"
+    },
+    {
+      "name": "Repeat secret-free Foundation release tests and unsigned binary conformance",
+      "conclusion": "success"
+    },
+    {
+      "name": "Sign the exact tested APK with the existing upgrade certificate",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify the signed QA artifact and tested payload parity",
+      "conclusion": "success"
+    },
+    {
+      "name": "Always remove temporary signing material and secret-scope logs",
+      "conclusion": "success"
+    },
+    {
+      "name": "Upload signed QA APK and public evidence only",
+      "conclusion": "success"
+    },
+    {
+      "name": "Upload corresponding FFmpeg source and public native evidence",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Java for PKCS12 validation and Android build",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Checkout the exact QA source",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ]
+}

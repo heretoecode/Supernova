@@ -211,7 +211,7 @@ public class MediaLibraryBackupService extends Service {
     }
 
     private void addPrivateDatabaseToZip(java.util.zip.ZipOutputStream zip,File original,String name)throws IOException{
-        File clean=BackupPrivacy.database(original,getCacheDir());try{addFileToZip(zip,clean,name);}finally{clean.delete();}
+        File clean=BackupPrivacy.database(original,getCacheDir());try{BackupPrivacy.applyViewingSelection(this,clean);addFileToZip(zip,clean,name);}finally{clean.delete();}
     }
     private String exportMediaLibrary() throws IOException {
         java.util.Set<String> reproducible=MigrationBackup.reproducibleFiles(this);
@@ -254,11 +254,13 @@ public class MediaLibraryBackupService extends Service {
             zos.putNextEntry(new ZipEntry("manifest.json"));zos.write(BackupFormat.manifest().getBytes(java.nio.charset.StandardCharsets.UTF_8));zos.closeEntry();
             zos.putNextEntry(new ZipEntry("RESTORE_INSTRUCTIONS.txt"));zos.write(BackupFormat.instructions().getBytes(java.nio.charset.StandardCharsets.UTF_8));zos.closeEntry();
             try {
-                byte[] settings = SettingsBackup.encodePortable(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this),false)
+                byte[] settings = BackupPrivacy.selectedSettings(this,SettingsBackup.encodePortable(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this),false))
                     .getBytes(java.nio.charset.StandardCharsets.UTF_8);
                 zos.putNextEntry(new ZipEntry("settings.json")); zos.write(settings); zos.closeEntry();
                 zos.putNextEntry(new ZipEntry("named_preferences.json"));zos.write(MigrationBackup.settings(this).getBytes(java.nio.charset.StandardCharsets.UTF_8));zos.closeEntry();
             } catch (org.json.JSONException e) { throw new IOException("Could not export settings", e); }
+            File historyFile=new File(getCacheDir(),"history-export-"+java.util.UUID.randomUUID());
+            try{com.archos.mediacenter.video.leanback.ViewingHistory.export(this,historyFile);zos.putNextEntry(new ZipEntry(com.archos.mediacenter.video.leanback.ViewingHistory.DATABASE));try(java.io.InputStream history=new java.io.FileInputStream(historyFile)){byte[] bytes=new byte[65536];int count;while((count=history.read(bytes))!=-1)zos.write(bytes,0,count);}zos.closeEntry();}finally{historyFile.delete();}
             // Export database version first
             int dbVersion = VideoOpenHelper.getDatabaseVersion();
             if (log.isDebugEnabled()) log.debug("exportMediaLibrary: adding database version={}", dbVersion);

@@ -45,7 +45,7 @@ public class Video extends Base implements Serializable {
     final long mId;
     final String mFilePath;
     private final boolean mIsTraktLibrary;
-    private final long mLastTimePlayed;
+    private long mLastTimePlayed;
     private final int mCalculatedWidth;
     private final int  mCalculatedHeight;
     private final String mAudioFormat;
@@ -68,7 +68,7 @@ public class Video extends Base implements Serializable {
 
     final int mVideo3dMode; // one of ARCHOS_STEREO_2D, ARCHOS_STEREO_3D_UNKNOWN, ARCHOS_STEREO_3D_SBS, ARCHOS_STEREO_3D_TB, ARCHOS_STEREO_3D_ANAGLYPH
     final int mGuessedDefinition; // one of ARCHOS_DEFINITION_UNKNOWN, ARCHOS_DEFINITION_720P, ARCHOS_DEFINITION_1080P
-    final boolean mIsTraktSeen;
+    boolean mIsTraktSeen;
     final boolean mIsUserHidden;
 
     /** Optional metadata obtained by actually reading/decoding the file */
@@ -169,6 +169,7 @@ public class Video extends Base implements Serializable {
     public long getSize(){return mSize;}
 
     public void setResumeMs(int resumeMs) { mResumeMs = resumeMs; }
+    public void applyIdentityHistory(boolean completed,long played,int position){mIsTraktSeen=completed;mLastTimePlayed=played;mResumeMs=position;}
     public void setAutomaticResumeMs(int resumeMs) {
         mAutomaticResumeMs = resumeMs > 0 ? resumeMs : null;
         mResumeMs = resumeMs;

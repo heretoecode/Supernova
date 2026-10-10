@@ -31,6 +31,12 @@ public final class PreviewLibrarySummary {
             +(known<files.size()?"\nIndexed sizes only; some file sizes are unknown":"")
             +(television&&!Collections.disjoint(local,network)?"\nShows spanning sources appear in both source counts":"");
     }
+    public static String describe(Context context,Snapshot snapshot,List<Entry> selected){
+        Snapshot filtered=new Snapshot();Set<Long> shows=new HashSet<>();for(Entry entry:selected){if(entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow){filtered.shows.add(entry);shows.add(entry.show);}else if(entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)filtered.movies.add(entry);}
+        for(Entry episode:snapshot.episodes)if(shows.contains(episode.show))filtered.episodes.add(episode);
+        if(filtered.shows.isEmpty())return describe(context,filtered,false);if(filtered.movies.isEmpty())return describe(context,filtered,true);
+        return describe(context,filtered,false)+"\n\n"+describe(context,filtered,true);
+    }
     private static String size(Context c,long bytes,boolean partial){return (partial?"≥ ":"")+Formatter.formatShortFileSize(c,bytes);}
     private PreviewLibrarySummary(){}
 }

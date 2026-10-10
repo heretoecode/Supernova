@@ -14,6 +14,11 @@ public final class PreviewKeyboard extends LinearLayout {
     private final List<List<TextView>> keys = new ArrayList<>();
     private TextView lastKey;
     private Runnable leaveDown;
+    private boolean caps=true;
+    private Runnable confirm, cancel;
+    public void setActions(Runnable select,Runnable dismiss){confirm=select;cancel=dismiss;}
+    public boolean capsLocked(){return caps;}
+    private void toggleCaps(){caps=!caps;for(int r=1;r<ROWS.length;r++)for(TextView key:keys.get(r)){String value=key.getTag().toString().substring("semantic:keyboard:".length());key.setText(caps?value:value.toLowerCase(java.util.Locale.ROOT));}keys.get(4).get(0).setText("Caps: "+(caps?"On":"Off"));keys.get(4).get(0).setContentDescription("Caps Lock "+(caps?"On":"Off"));}
     public void setLeaveDown(Runnable action) { leaveDown = action; }
 
     public PreviewKeyboard(Context context, EditText input, Runnable leaveRight) {
@@ -21,7 +26,7 @@ public final class PreviewKeyboard extends LinearLayout {
         setOrientation(VERTICAL);
         setClipChildren(false);
         setClipToPadding(false);
-        for (int rowIndex = 0; rowIndex <= ROWS.length; rowIndex++) {
+        for (int rowIndex = 0; rowIndex <= ROWS.length+1; rowIndex++) {
             final int r = rowIndex;
             LinearLayout row = new LinearLayout(context);
             row.setClipChildren(false);
@@ -34,14 +39,17 @@ public final class PreviewKeyboard extends LinearLayout {
             addView(row, lp);
             List<TextView> rowKeys = new ArrayList<>();
             keys.add(rowKeys);
-            String[] labels = r == 4 ? new String[]{"Clear", "Space", "Backspace"} : ROWS[r].split("");
+            String[] labels = r == 4 ? new String[]{"Caps Lock", "Clear", "Space"} : r == 5 ? new String[]{"Backspace", "Select", "Cancel"} : ROWS[r].split("");
             for (String label : labels) {
                 if (label.isEmpty()) continue;
                 final int col = rowKeys.size();
                 TextView key = key(label, () -> {
-                    if (r != 4) replace(input, label);
-                    else if (col == 0) input.setText("");
-                    else if (col == 1) replace(input, " ");
+                    if (r < 4) replace(input, caps?label:label.toLowerCase(java.util.Locale.ROOT));
+                    else if(label.equals("Caps Lock")) toggleCaps();
+                    else if(label.equals("Clear")) input.setText("");
+                    else if(label.equals("Space")) replace(input," ");
+                    else if(label.equals("Select")){if(confirm!=null)confirm.run();else if(leaveRight!=null)leaveRight.run();}
+                    else if(label.equals("Cancel")){if(cancel!=null)cancel.run();}
                     else {
                         int start = selection(input), end = Math.max(start, input.getSelectionEnd());
                         if (start != end) input.getText().delete(start, end);
@@ -49,6 +57,8 @@ public final class PreviewKeyboard extends LinearLayout {
                     }
                 });
                 key.setTag("semantic:keyboard:" + label);
+                if(r>=4){key.setBackground(SharedThreePanel.control(context,20));key.setTextSize(12);key.setPadding(dp(6),0,dp(6),0);key.setGravity(Gravity.CENTER);PreviewIcon.apply(key,label,14);if(label.equals("Caps Lock")){key.setText("Caps: On");key.setContentDescription("Caps Lock On");}}
+                LayoutParams keySize=new LayoutParams(0,-1,1);keySize.leftMargin=dp(2);keySize.rightMargin=dp(2);
                 key.setOnFocusChangeListener((v, focused) -> { if (focused) lastKey = (TextView) v; });
                 key.setOnKeyListener((v, code, event) -> {
                     if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
@@ -71,7 +81,7 @@ public final class PreviewKeyboard extends LinearLayout {
                     return false;
                 });
                 rowKeys.add(key);
-                row.addView(key, new LayoutParams(0, -1, 1));
+                row.addView(key,keySize);
             }
         }
         lastKey = keys.get(1).get(4); // T, as specified for first entry.
@@ -106,7 +116,7 @@ public final class PreviewKeyboard extends LinearLayout {
         key.setText(label); key.setTextColor(Color.WHITE); key.setTextSize(14);
         key.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         key.setGravity(Gravity.CENTER); key.setFocusable(true); key.setFocusableInTouchMode(true); key.setId(View.generateViewId());
-        key.setBackground(PreviewDialog.focus(getContext()));
+        key.setBackground(SharedThreePanel.control(getContext(),6));
         key.setOnClickListener(v -> action.run());
         return key;
     }

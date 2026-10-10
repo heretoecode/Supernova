@@ -8,6 +8,8 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewHomeMaximumTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     @Config(qualifiers="w960dp-h540dp-land-mdpi") public void invalidExactValueKeepsSharedKeyboardOpen()throws Exception{
         androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().setInTouchMode(false);

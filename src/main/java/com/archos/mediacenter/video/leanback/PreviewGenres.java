@@ -14,8 +14,17 @@ public final class PreviewGenres {
     public static boolean matches(String genres,Set<String> selected){if(selected.isEmpty())return true;Set<String> values=parse(genres);for(String genre:selected)for(String value:values)if(value.equalsIgnoreCase(genre))return true;return false;}
     public static boolean known(String label){return Arrays.asList(NAMES).contains(label);}
     public static void choose(Context c,Collection<String> options,Set<String> selected,Consumer<Set<String>> accept){
-        List<String> names=new ArrayList<>(new TreeSet<>(options));Set<String> result=new LinkedHashSet<>(selected);List<String> labels=new ArrayList<>(names);labels.add("All genres");labels.add("Done");Set<Integer> checks=new HashSet<>();for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i);
-        Dialog[] menu={null};menu[0]=PreviewDialog.choose(c,"Genres · match any selected",labels.toArray(new String[0]),-1,checks,false,n->{if(n==names.size()+1){accept.accept(result);menu[0].dismiss();return;}if(n==names.size())result.clear();else if(!result.add(names.get(n)))result.remove(names.get(n));checks.clear();for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i);PreviewDialog.updateChecks(menu[0],checks);});
+        List<String> names=new ArrayList<>(new TreeSet<>(options));Set<String> result=new LinkedHashSet<>(selected);
+        List<String> labels=new ArrayList<>();labels.add("All Genres");labels.addAll(names);
+        Set<Integer> checks=new HashSet<>();if(result.isEmpty())checks.add(0);for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i+1);
+        Dialog[] menu={null};menu[0]=PreviewDialog.choose(c,"Genres · Match Any Selected",labels.toArray(new String[0]),-1,checks,false,n->{
+            if(n==0)result.clear();else if(!result.add(names.get(n-1)))result.remove(names.get(n-1));
+            checks.clear();if(result.isEmpty())checks.add(0);for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i+1);
+            PreviewDialog.updateChecks(menu[0],checks);accept.accept(new LinkedHashSet<>(result));
+        });
+        android.view.View label=menu[0].getWindow().getDecorView().findViewWithTag("preview-label:0");
+        if(label!=null&&label.getParent() instanceof android.view.View&&((android.view.View)label.getParent()).getParent() instanceof android.widget.LinearLayout){android.widget.LinearLayout rows=(android.widget.LinearLayout)((android.view.View)label.getParent()).getParent();android.view.View divider=new android.view.View(c);divider.setBackgroundColor(0x557f8996);rows.addView(divider,1,new android.widget.LinearLayout.LayoutParams(-1,PreviewDialog.dp(c,1)));}
+
     }
     public static final class Icon extends Drawable {
         private final String kind;private final Paint paint=new Paint(3);

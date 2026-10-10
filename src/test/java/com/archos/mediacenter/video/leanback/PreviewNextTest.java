@@ -13,12 +13,14 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewNextTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test public void keyboardHasPermanentNumbersAndDeletesWholeCodePoints() {
         Application app=RuntimeEnvironment.getApplication();
         EditText input=new EditText(app);
         PreviewKeyboard keyboard=new PreviewKeyboard(app,input,()->{});
         assertArrayEquals(new String[]{"1234567890","QWERTYUIOP","ASDFGHJKL","ZXCVBNM"},PreviewKeyboard.ROWS);
-        assertEquals(5,keyboard.getChildCount());
+        assertEquals(6,keyboard.getChildCount());
         PreviewPagesTest.findText(keyboard,"1").performClick();
         assertEquals("1",input.getText().toString());
         input.setText("A😀");input.setSelection(input.length());
@@ -27,6 +29,9 @@ public class PreviewNextTest {
         input.setSelection(0,input.length());
         PreviewPagesTest.findText(keyboard,"Q").performClick();
         assertEquals("Q",input.getText().toString());
+    }
+    @Test public void keyboardCapsClearSelectAndCancelUseSharedActions(){
+        var app=RuntimeEnvironment.getApplication();EditText input=new EditText(app);PreviewKeyboard keyboard=new PreviewKeyboard(app,input,null);int[] actions={0,0};keyboard.setActions(()->actions[0]++,()->actions[1]++);keyboard.findViewWithTag("semantic:keyboard:Caps Lock").performClick();assertFalse(keyboard.capsLocked());keyboard.findViewWithTag("semantic:keyboard:A").performClick();assertEquals("a",input.getText().toString());keyboard.findViewWithTag("semantic:keyboard:Clear").performClick();assertEquals("",input.getText().toString());keyboard.findViewWithTag("semantic:keyboard:Select").performClick();keyboard.findViewWithTag("semantic:keyboard:Cancel").performClick();assertArrayEquals(new int[]{1,1},actions);
     }
     @Test public void audioSortStateSurvivesColumnModelRecreation() {
         Application app=RuntimeEnvironment.getApplication();

@@ -20,6 +20,8 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class SupernovaNetworkAvailabilityTest {
+ @org.junit.Before public void confirmedSelectionFixture(){androidx.preference.PreferenceManager.getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication()).edit().putBoolean("supernova_onboarding_complete",true).commit();}
+
  @Test @SuppressWarnings({"rawtypes","unchecked"}) public void scannerAvailabilityUsesTheNativeMediaIdAndReconnectionClearsIt()throws Exception {
   Application app=RuntimeEnvironment.getApplication();VideoOpenHelper helper=new VideoOpenHelper(app);SQLiteDatabase database=helper.getWritableDatabase();
   long scannedId=77,mediaId=scannedId+ArchosMediaCommon.SCANNED_ID_OFFSET;String path="smb://nas/Movies/film.mkv";

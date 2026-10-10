@@ -8,6 +8,8 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewProviderRefreshTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test public void refreshOnlyForActiveKindCountryAndTitleScope(){
         assertTrue(PreviewPages.providerCacheAffectsPage("streaming_known_at:movie:42:IE:-1",1,"IE",true));
         assertTrue(PreviewPages.providerCacheAffectsPage("streaming_known_at:tv:42:IE:-1",2,"IE",true));

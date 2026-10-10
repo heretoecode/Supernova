@@ -35,7 +35,7 @@ public final class FoundationAboutActivity extends FragmentActivity {
             TextView about=new TextView(requireContext());about.setText("About");about.setTextSize(20);about.setTextColor(android.graphics.Color.WHITE);about.setGravity(Gravity.CENTER_VERTICAL);about.setFocusable(true);about.setBackground(PreviewDialog.focus(requireContext()));rail.addView(about,new LinearLayout.LayoutParams(-1,dp(48)));
             workspace=new FoundationAboutWorkspace(requireContext(),split,middle,help,rail);workspace.show(about);
             about.setOnClickListener(v->workspace.enter());about.setOnKeyListener((v,key,event)->{if(event.getAction()==KeyEvent.ACTION_DOWN&&(key==KeyEvent.KEYCODE_DPAD_RIGHT||key==KeyEvent.KEYCODE_DPAD_DOWN)){workspace.enter();return true;}return false;});
-            split.post(()->workspace.openSection(requireActivity().getIntent().getIntExtra("section",0)));
+            split.post(()->{if(requireActivity().getIntent().hasExtra("section"))workspace.openSection(requireActivity().getIntent().getIntExtra("section",0));else about.requestFocus();});
             return split;
         }
         @Override public void onViewCreated(View view,Bundle saved){

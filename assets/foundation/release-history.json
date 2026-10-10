@@ -4,23 +4,48 @@
   "history_limitations": [
     "All 133 retained APK artifact archives and binary manifests were inspected; this cannot recover deleted artifacts or unrecorded builds.",
     "The earliest retained APK is the first verifiable Supernova-lineage build, not independently proven to be the first APK ever created.",
-    "Retrospective labels are literal counters, distinct from historical embedded versions. Source checkpoint notes describe verified code changes; they are not physical-device acceptance claims."
+    "Retrospective labels are literal counters, distinct from historical embedded versions. Source checkpoint notes describe verified code changes; they are not physical-device acceptance claims.",
+    "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.135",
-    "version_code": 135,
-    "kind": "Development / QA — unreleased",
+    "version": "0.136",
+    "version_code": 136,
+    "kind": "Provisional refinement QA \u2014 unreleased",
     "notes": [
-      "Shared three-panel Settings and Network & Files, plus one compact Home and TV file browser with complete breadcrumbs and persisted controls.",
-      "Staged recursive library selection and exclusions, atomic Apply & Scan, and five-category Library Health that retains unavailable records and viewing progress.",
-      "Home native import/artwork/row/focus refinements, typed Movies/TV Continue Watching and boxed controls, local indexed Search, compact Details/Cast/Crew and one five-step custom Library Page.",
-      "Four-action playback HUD, immediate Restart, five-second Up Next, real viewed-coverage threshold and persisted manual versions with native technical badges.",
-      "Safe segment policies with verified movie outro/post-credit boundaries; existing subtitle/audio controls and scan engine retained.",
-      "Nonsecret format 1.0 backup instructions, staged validation/rollback and reauthentication; bounded redacted diagnostics and coloured My Providers.",
-      "Development QA candidate: physical Shield playback/navigation/storage and signed 0.134 upgrade validation remain required before final release."
+      "Refined Home heroes, navigation, shared library controls and live genre choices.",
+      "Embedded custom Library Page creation and focused editing with a retained live preview.",
+      "Two-area Search and one shared keyboard with immediate results.",
+      "Integrated network connections and Library Health, staged local-only onboarding.",
+      "Structured Settings with independent integrations and immediately grouped providers.",
+      "Retained identity viewing history and independent playback-position backup choices.",
+      "Enhanced local crash, focus and sustained performance diagnostics enabled for QA.",
+      "Details and Playback/HUD retain their existing interface. Physical SHIELD acceptance is pending."
     ]
   },
   "history": [
+    {
+      "version": "0.135",
+      "version_code": 135,
+      "kind": "Development / QA \u2014 unreleased",
+      "notes": [
+        "Shared three-panel Settings and Network & Files, plus one compact Home and TV file browser with complete breadcrumbs and persisted controls.",
+        "Staged recursive library selection and exclusions, atomic Apply & Scan, and five-category Library Health that retains unavailable records and viewing progress.",
+        "Home native import/artwork/row/focus refinements, typed Movies/TV Continue Watching and boxed controls, local indexed Search, compact Details/Cast/Crew and one five-step custom Library Page.",
+        "Four-action playback HUD, immediate Restart, five-second Up Next, real viewed-coverage threshold and persisted manual versions with native technical badges.",
+        "Safe segment policies with verified movie outro/post-credit boundaries; existing subtitle/audio controls and scan engine retained.",
+        "Nonsecret format 1.0 backup instructions, staged validation/rollback and reauthentication; bounded redacted diagnostics and coloured My Providers.",
+        "Development QA candidate: physical Shield playback/navigation/storage and signed 0.134 upgrade validation remain required before final release."
+      ],
+      "date": "2026-10-10",
+      "source_sha": "cfc2ca2376fb77f79a85a3a5e45333d38b9689e7",
+      "run_id": 38043018820,
+      "artifact_id": 11667311650,
+      "archive_sha256": "8db243c753051e5ba1860a548ac2c1c1caf474834bf7fa7039b1775fcc797ab1",
+      "archive_digest_verified": false,
+      "recorded_ci_verification": "docs/0.135/SIGNED_QA_VERIFICATION.json",
+      "evidence": "Exact-source signing, signature and payload parity verified in Actions; artifact download denied by network policy. No freshly verified signed APK digest claimed.",
+      "apks": []
+    },
     {
       "version": "0.134",
       "version_code": 134,

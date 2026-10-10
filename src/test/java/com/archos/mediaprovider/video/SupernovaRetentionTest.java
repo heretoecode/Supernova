@@ -14,6 +14,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class SupernovaRetentionTest {
+ @org.junit.Before public void confirmedSelectionFixture(){androidx.preference.PreferenceManager.getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication()).edit().putBoolean("supernova_onboarding_complete",true).commit();}
+
  @Test public void missingPrimaryFileReconciliationRetainsStableRecordAndNeverDeletes()throws Exception{
   Context c=RuntimeEnvironment.getApplication();assertTrue(SupernovaLibraryPolicy.retainsRecords(c));File folder=new File(c.getCacheDir(),"mounted-fixture");folder.mkdirs();String path=new File(folder,"missing.mkv").getPath();ContentResolver resolver=mock(ContentResolver.class);
   Class<?> identityClass=Class.forName("com.archos.mediaprovider.video.VideoStoreImportImpl$ImportIdentity");Constructor<?> constructor=identityClass.getDeclaredConstructors()[0];constructor.setAccessible(true);Object identity=constructor.newInstance(77L,path,"Missing",1000L,10L);

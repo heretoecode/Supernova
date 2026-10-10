@@ -17,6 +17,8 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class SharedDirectoryPickerTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
  @Test public void nativeDownloadPickerUsesSharedBrowserAndPreservesResultPath()throws Exception {
   Application app=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().putBoolean("try_new_ui",true).commit();
   File folder=new File(app.getFilesDir(),"download-destination");assertTrue(folder.mkdirs());

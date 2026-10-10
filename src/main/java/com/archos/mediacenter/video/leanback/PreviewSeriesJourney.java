@@ -51,7 +51,7 @@ public final class PreviewSeriesJourney {
         if(season<0){
             // One-time migration of 4.0 progress, excluding files merely sampled in 4.1.
             Entry seed=episodes.stream().filter(e->resumable((Video)e.media)&&!p.getBoolean("preview_journey41:attempt:"+((Video)e.media).getId(),false)).max(Comparator.comparingLong(e->((Video)e.media).getLastPlayed())).orElse(null);
-            if(seed==null)seed=episodes.stream().filter(e->completed((Video)e.media)).max(Comparator.comparingLong((Entry e)->((Video)e.media).getLastPlayed()).thenComparing(ORDER)).orElse(null);
+            if(seed==null&&!p.getBoolean("supernova_history_migrated",false))seed=episodes.stream().filter(e->completed((Video)e.media)).max(Comparator.comparingLong((Entry e)->((Video)e.media).getLastPlayed()).thenComparing(ORDER)).orElse(null);
             if(seed!=null){Episode ep=(Episode)seed.media;season=ep.getSeasonNumber();number=ep.getEpisodeNumber();complete=completed(ep);time=ep.getLastPlayed();}
         }
         boolean started=season>=0;Entry selected=null;

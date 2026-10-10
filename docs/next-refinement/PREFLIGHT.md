@@ -1,0 +1,15 @@
+# Next refinement preflight — 2026-10-10
+
+Authorised by the next-release execution brief and user instruction. All three required documents read completely before source changes. The register has 45 entries; later approval #45 supersedes historical workflow holds. Latest topic decisions apply.
+
+Baseline: signed QA source cfc2ca2376fb77f79a85a3a5e45333d38b9689e7; branch tip 42ff29e7 adds delivery evidence only (nine documentation files, no application/build changes). New branch codex/supernova-next-refinement-2026-10-10 starts at that tip. main is still an older application lineage and is not the base. Package app.supernova.player; existing certificate SHA-256 79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e preserved. No final release number approved; use a clearly provisional QA identifier when build identity requires it.
+
+[Requirement-by-requirement work/acceptance/verification map](requirements.json) covers all 45 entries and all approved workstreams. No requirement is complete at preflight. Existing browser/scan/backup/carousel engines and library/card components will be reused; infrastructure-only changes touching deferred Details/Playback must be explained and regression-tested.
+
+Read-only audit found browser seedLegacyRoots adds every enumerated drive while policy is unconfigured; local import policy must fail closed on first install but conservatively preserve existing 0.135 inventory on upgrade. The About navigation focus eagerly loads the licences catalogue and generates QR details; this is a code risk, not a proven explanation of the recorded SHIELD process death. Settings child visibility is mutated on category changes and not fully restored on return; deterministic category focus/content synchronisation is needed. Source selection currently prompts between unrelated drives; staging must span the workflow.
+
+Infrastructure: empty execution workspace; repository cloned read-only before isolated branch creation. JDK 21 is available; pinned sibling modules and Android SDK/build tools need provisioning. GitHub CLI authentication is usable. Protected signing environment currently permits only codex/foundation-release and codex/supernova-0.135; the new branch is not admitted. No local signing secret is configured or requested. Preserve the original signing workflow/key and use fail-closed exact-source verification for the next QA workflow.
+
+External limits: registered put.io client/redirect configuration remains unprovided; do not invent OAuth success. Original latest walkthrough/mock-up binaries are not verified committed; authoritative text is sufficient for implementation, with physical visual acceptance pending. No SHIELD/ADB is connected. Actual installed update/data retention, remote focus, licence reproduction, HDR/audio/subtitles and sustained hardware soak remain pending user QA.
+
+Details and Playback/HUD redesign/features are excluded. No merge to main, replacement identity/key, user data reset or physical media deletion is authorised.

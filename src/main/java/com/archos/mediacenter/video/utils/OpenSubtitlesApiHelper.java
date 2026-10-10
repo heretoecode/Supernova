@@ -175,7 +175,9 @@ public class OpenSubtitlesApiHelper {
         authTokenValid = false;
     }
 
+    private static boolean integrationEnabled(){android.content.Context c=com.archos.mediacenter.video.CustomApplication.getAppContext();return c==null||androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_integration_opensubtitles",true);}
     public static boolean login(String openSubtitlesApiKey, String u, String p) throws IOException {
+        if(!integrationEnabled())return false;
         username = u;
         password = p;
         apiKey = openSubtitlesApiKey;
@@ -364,6 +366,7 @@ public class OpenSubtitlesApiHelper {
     }
 
     public static ArrayList<OpenSubtitlesSearchResult> searchSubtitle(OpenSubtitlesQueryParams fileInfo, String languages) throws IOException {
+        if(!integrationEnabled())return new ArrayList<>();
         // Note: only the first result page is queried because it is assumed that it should be enough with order_by criteria
         // input: languages is a comma separated list of languages (e.g. "en,fr")
         // output: an arrayList of OpenSubtitlesSearchResult for each subtitle found
@@ -479,6 +482,7 @@ public class OpenSubtitlesApiHelper {
     }
 
     public static String getDownloadSubtitleLink(String file_id) throws IOException {
+        if(!integrationEnabled())return null;
         if (log.isDebugEnabled()) log.debug("getDownloadSubtitleLink: file_id={}", file_id);
         // do not attempt to download subtitle if quota is 0 and we are not past reset time
         if (remainingDownloads <= 0 && !isCurrentTimeAfterResetTime()) {

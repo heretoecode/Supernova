@@ -49,13 +49,16 @@ public final class PreviewLibraryScan {
     }
     public static synchronized void request(Context context){
         install(context);Context app=context.getApplicationContext();
-        LinkedHashSet<String> roots=new LinkedHashSet<>();roots.add(Environment.getExternalStorageDirectory().getAbsolutePath());ExtStorageManager storage=ExtStorageManager.getExtStorageManager();if(storage.hasExtStorage()){roots.addAll(storage.getExtSdcards());roots.addAll(storage.getExtUsbStorages());roots.addAll(storage.getExtOtherStorages());}
+        if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(app))return;
+        LinkedHashSet<String> roots=new LinkedHashSet<>();
+        for(String root:androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).getStringSet("supernova_library_roots",Collections.emptySet())){android.net.Uri uri=android.net.Uri.parse(root);if("file".equals(uri.getScheme())&&uri.getPath()!=null)roots.add(uri.getPath());}
         MediaScannerConnection.scanFile(app,roots.toArray(new String[0]),null,null);
         requestNetwork(app);
     }
     public static synchronized void requestNetwork(Context context){requestNetwork(context,"manual");}
     public static synchronized void requestNetwork(Context context,String requestedTrigger){
         install(context);
+        if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(context))return;
         String origin=Arrays.asList("manual","startup","resume","scheduled").contains(requestedTrigger)?requestedTrigger:"unknown";
         com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler.request(context,origin);
         // Do not confuse metadata/import activity with an active network traversal.

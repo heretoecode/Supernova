@@ -90,8 +90,9 @@ public class Overlay {
             com.archos.mediacenter.video.leanback.TopNavigation nav = previewNav;
             View clock = mOverlayRoot.findViewById(R.id.clock);
             ((ViewGroup)clock.getParent()).removeView(clock);
-            clock.setPadding(0, 0, 0, 0);
-            ((android.widget.TextView)clock).setGravity(android.view.Gravity.CENTER);
+            int clockPadding=Math.round(6*mContext.getResources().getDisplayMetrics().density);clock.setPadding(0,clockPadding,0,clockPadding);
+            ((android.widget.TextView)clock).setTextSize(19);((android.widget.TextView)clock).setIncludeFontPadding(true);
+            ((android.widget.TextView)clock).setGravity(android.view.Gravity.CENTER_VERTICAL|android.view.Gravity.END);
             ((android.widget.TextView)clock).setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));
             View fallbackClock=nav.getStatusContainer().findViewWithTag("preview-default-clock");if(fallbackClock!=null)nav.getStatusContainer().removeView(fallbackClock);
             nav.getStatusContainer().addView(clock, new android.widget.FrameLayout.LayoutParams(-1, -1));

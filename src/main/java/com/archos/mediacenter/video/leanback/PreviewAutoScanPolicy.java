@@ -10,7 +10,7 @@ import com.archos.mediaprovider.video.NetworkScannerUtil;
 public final class PreviewAutoScanPolicy {
  public static void initialise(Context c){
   SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(c);
-  if(!p.getBoolean("try_new_ui",false))return;
+  if(!p.getBoolean("try_new_ui",false)||!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(c))return;
   SharedPreferences.Editor e=p.edit();
   if(!p.contains("auto_rescan_on_app_restart"))e.putBoolean("auto_rescan_on_app_restart",true);
   // An absent period previously meant no foreground polling and no scheduled job.
