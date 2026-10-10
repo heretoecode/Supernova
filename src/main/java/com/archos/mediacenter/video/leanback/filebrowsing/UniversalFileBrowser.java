@@ -81,7 +81,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         panels = new SharedThreePanel(c);
         ScrollView leftScroll = new ScrollView(c); leftScroll.addView(left);
         contextScroll = new ScrollView(c); contextScroll.setFillViewport(true); contextScroll.addView(right);
-        panels.panels(leftScroll, centre, contextScroll);panels.widths(.28f,.44f,.28f); addView(panels, new LayoutParams(-1,-1));
+        panels.panels(leftScroll, centre, contextScroll);panels.widths(.31f,.42f,.27f); addView(panels, new LayoutParams(-1,-1));
         SharedThreePanel.heading(left,"Locations");
         overview = location("Overview", this::showOverview); leftAnchor = overview;
         overview.setTag("semantic:network.category.overview");
@@ -216,7 +216,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         location("Discover Devices",this::discoverDevices);
         location("Cloud Services",this::cloud);
         location("Network Scanning",this::scanControls);
-        healthParent=location("Library Health  ›",()->health(-1));healthParent.setTag("semantic:network.category.library_health");healthParent.setOnClickListener(v->toggleHealth());for(int n=0;n<LibraryHealthPanel.NAMES.length;n++){final int category=n;TextView child=location(LibraryHealthPanel.NAMES[n],()->health(category));child.setPadding(dp(24),0,dp(8),0);child.setVisibility(healthExpanded?VISIBLE:GONE);child.setTag("semantic:network.health."+n);healthChildren.add(child);}
+        healthParent=location("Library Health  ›",()->health(-1));healthParent.setTag("semantic:network.category.library_health");healthParent.setOnClickListener(v->toggleHealth());for(int n=0;n<LibraryHealthPanel.NAMES.length;n++){final int category=n;TextView child=location(n==2?"Missing Metadata":LibraryHealthPanel.NAMES[n],()->health(category));child.setPadding(dp(24),0,dp(8),0);child.setVisibility(healthExpanded?VISIBLE:GONE);child.setTag("semantic:network.health."+n);healthChildren.add(child);}
         if(!saved.isEmpty()) left.addView(SharedThreePanel.text(getContext(),"Saved Locations",20));
         for(Shortcut source:saved) {TextView row=location(source.getName(),()->changeSource(source.getUri()));row.setTag("semantic:network.item.saved."+source.getId());}
         if(leftAnchor!=null&&leftAnchor.getParent()==null){View restored=anchorTag==null?null:left.findViewWithTag(anchorTag);leftAnchor=restored==null?overview:restored;if(leftFocused)leftAnchor.requestFocus();}
@@ -256,7 +256,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(current!=null&&selection.changed()) { // Category changes leave the browser section.
             requestExit(()->{current=null;showOverview();}); return;
         }
-        toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);panels.widths(.28f,.44f,.28f);remember(); current=null; stopListing(); indexed.clear(); files.clear(); items.removeAllViews(); crumbs.removeAllViews();
+        toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);panels.widths(.31f,.42f,.27f);remember(); current=null; stopListing(); indexed.clear(); files.clear(); items.removeAllViews(); crumbs.removeAllViews();
         facts.setVisibility(GONE);heading.setText("Overview"); information.setText("Choose a storage device, network share or saved location.\n\nLibrary changes remain unsaved until Save Changes & Scan. Scans continue in the background.");
         status.setText(PreviewLibraryScan.libraryStatus(getContext())); actions.removeAllViews();
         if(directoryChoice!=null){heading.setText("Choose a Folder");information.setText("Browse local storage and choose a writable folder. This changes the download destination and keeps your library unchanged.");status.setText("");return;}
@@ -271,7 +271,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(closed||uri==null)return;if(onboarding&&!"file".equalsIgnoreCase(uri.getScheme())){status.setText("Choose local folders during initial setup.");return;}configurationActive=true;
         if(current!=null&&current.equals(uri)&&!listingFailed)return;
         stopDiscovery();centreScrolling(false);remember(); current=uri; selectedFile=null; selectedUri=null; indexed.clear();
-        toolbar.setVisibility(onboarding?GONE:VISIBLE);breadcrumbScroll.setVisibility(VISIBLE);panels.widths(.28f,.44f,.28f);locationChanged.accept(uri); breadcrumbs(); showInformation(uri,null); reload();
+        toolbar.setVisibility(onboarding?GONE:VISIBLE);breadcrumbScroll.setVisibility(VISIBLE);panels.widths(.31f,.42f,.27f);locationChanged.accept(uri); breadcrumbs(); showInformation(uri,null); reload();
     }
     private void remember() {
         if(current==null)return;

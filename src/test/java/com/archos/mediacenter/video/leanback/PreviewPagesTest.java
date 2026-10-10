@@ -76,7 +76,7 @@ public class PreviewPagesTest {
                 if(tab==3)org.robolectric.util.ReflectionHelpers.setField(pages,"sourcesLoading",true);
                 assertTrue(tabControl.performClick());
                 for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
-                if(tab==3){assertNotNull(nav.findViewWithTag("semantic:network.category.overview"));assertNotNull(findText(nav,"Scan Library"));}
+                if(tab==3){assertNotNull(nav.findViewWithTag("semantic:network.category.overview"));assertNotNull(findText(nav,"Scan Library"));TextView addSource=(TextView)findText(nav,"Add Network Source");assertNotNull(addSource);assertEquals("Network category labels remain fully readable",0,addSource.getLayout().getEllipsisCount(0));}
                 decorateCards(nav);if(tab!=3)addTestArtwork(nav);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(210));
                 android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));
                 java.io.File file=new java.io.File("build/reports/preview-ui/page-"+tab+".png");file.getParentFile().mkdirs();try(java.io.FileOutputStream out=new java.io.FileOutputStream(file)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out);}

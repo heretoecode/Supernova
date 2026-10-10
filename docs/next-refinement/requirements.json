@@ -484,7 +484,7 @@
           "verification": "D-pad repeated navigation, ancestor/scroll restoration, All Files sync, multi-drive Save/Discard, existing scanner/no offline purge tests"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED EXCEPT EXTERNALLY BLOCKED PUT.IO OAUTH / AUTOMATED VALIDATION IN PROGRESS",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -498,7 +498,8 @@
         "test_result": "No complete passing release run yet; see PROGRESS.md",
         "binary_result": "Exact-source next build pending; signing access blocked",
         "physical_result": "Not performed"
-      }
+      },
+      "external_dependency": "Production put.io OAuth requires actual registered client/redirect configuration and validation; no success claimed."
     },
     {
       "id": 22,
@@ -637,7 +638,10 @@
           "FoundationHomeRegressionTest",
           "ViewingHistoryTest",
           "BackupCycleTest",
-          "Preview41ProgressTest"
+          "Preview41ProgressTest",
+          "FoundationHomeRegressionTest",
+          "PreviewHomeVisualTest",
+          "OfficialTitleNetworkTest"
         ],
         "test_result": "No complete passing release run yet; see PROGRESS.md",
         "binary_result": "Exact-source next build pending; signing access blocked",
