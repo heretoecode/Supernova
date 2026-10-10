@@ -15,6 +15,23 @@ import static org.junit.Assert.*;
 public class PreviewMoviePageTest {
  @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
  @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+    @Test public void deferredDetailsPeopleKeepWhiteFocusWhileBrowserUsesAccent(){
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try{
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});
+            android.widget.LinearLayout people=new android.widget.LinearLayout(host.get());
+            org.robolectric.util.ReflectionHelpers.callInstanceMethod(page,"person",
+                org.robolectric.util.ReflectionHelpers.ClassParameter.from(android.widget.LinearLayout.class,people),
+                org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class,"Actor"),
+                org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class,"Role"));
+            android.graphics.drawable.Drawable details=people.getChildAt(0).getBackground();details.setState(new int[]{android.R.attr.state_focused});
+            assertEquals("Deferred Details appearance remains the 0.135 white outline",android.graphics.Color.WHITE,
+                Shadows.shadowOf((android.graphics.drawable.GradientDrawable)details.getCurrent()).getStrokeColor());
+            var browser=new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
+            android.graphics.drawable.Drawable navigation=browser.findViewWithTag("semantic:network.category.overview").getBackground();navigation.setState(new int[]{android.R.attr.state_focused});
+            assertEquals(PreviewAccent.color(host.get()),Shadows.shadowOf((android.graphics.drawable.GradientDrawable)navigation.getCurrent()).getStrokeColor());
+        }finally{host.pause().stop().destroy();}
+    }
     @Test public void seriesInformationDoesNotCountUnknownFileSizesAsZero(){
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{

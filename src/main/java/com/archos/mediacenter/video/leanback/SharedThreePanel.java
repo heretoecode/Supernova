@@ -76,6 +76,11 @@ public class SharedThreePanel extends LinearLayout {
         return row;
     }
 
+    /** Refinement screens opt in; deferred Details/Playback retain the legacy focus factory. */
+    public static TextView accentAction(Context context,String label,Runnable action){
+        TextView row=action(context,label,action);row.setBackground(accentFocus(context));return row;
+    }
+
     /** Permanent inset control surface; row actions retain their separate focus-only outline. */
     public static void rowSeparator(View row){
         android.graphics.drawable.Drawable line=new android.graphics.drawable.Drawable(){
@@ -97,11 +102,13 @@ public class SharedThreePanel extends LinearLayout {
         return states;
     }
 
-    public static StateListDrawable focus(Context context) {
+    public static StateListDrawable focus(Context context) { return focus(context,Color.WHITE); }
+    public static StateListDrawable accentFocus(Context context) { return focus(context,PreviewAccent.color(context)); }
+    private static StateListDrawable focus(Context context,int strokeColor) {
         GradientDrawable focused = new GradientDrawable();
         focused.setColor(0x263b4857);
         focused.setCornerRadius(dp(context, 10));
-        focused.setStroke(dp(context, 1), PreviewAccent.color(context));
+        focused.setStroke(dp(context, 1), strokeColor);
         StateListDrawable states = new StateListDrawable();
         states.addState(new int[]{android.R.attr.state_focused}, focused);
         GradientDrawable normal = new GradientDrawable();

@@ -10,7 +10,7 @@ import sys
 import foundation_signing as key
 
 CERTIFICATE = '79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e'
-MINIMUM_TESTS = 512
+MINIMUM_TESTS = 513
 
 
 def gate(evidence, apk, source):

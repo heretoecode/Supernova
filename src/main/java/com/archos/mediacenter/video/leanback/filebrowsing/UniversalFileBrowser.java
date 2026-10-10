@@ -87,7 +87,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         overview.setTag("semantic:network.category.overview");
         TextView listMode = action("List / Grid", this::toggleGrid);listMode.setTag("browser.view");
         TextView sort = action("Sort", this::chooseSort);
-        androidx.appcompat.widget.SwitchCompat all=new androidx.appcompat.widget.SwitchCompat(c);all.setShowText(false);all.setTextOn("ON");all.setTextOff("OFF");all.setText("All Files");all.setTextColor(-1);all.setFocusable(true);all.setFocusableInTouchMode(true);all.setBackground(SharedThreePanel.focus(c));all.setChecked(prefs.getBoolean(ALL_FILES,false));all.setThumbTintList(android.content.res.ColorStateList.valueOf(-1));all.setTrackTintList(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{PreviewAccent.color(c),0xff59616b}));all.setOnCheckedChangeListener((button,checked)->prefs.edit().putBoolean(ALL_FILES,checked).apply());
+        androidx.appcompat.widget.SwitchCompat all=new androidx.appcompat.widget.SwitchCompat(c);all.setShowText(false);all.setTextOn("ON");all.setTextOff("OFF");all.setText("All Files");all.setTextColor(-1);all.setFocusable(true);all.setFocusableInTouchMode(true);all.setBackground(SharedThreePanel.accentFocus(c));all.setChecked(prefs.getBoolean(ALL_FILES,false));all.setThumbTintList(android.content.res.ColorStateList.valueOf(-1));all.setTrackTintList(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{PreviewAccent.color(c),0xff59616b}));all.setOnCheckedChangeListener((button,checked)->prefs.edit().putBoolean(ALL_FILES,checked).apply());
         all.setTag("browser.all_files");
         for(TextView button : new TextView[]{listMode,sort,all}) {
             button.setTextSize(14); button.setGravity(android.view.Gravity.CENTER);
@@ -104,7 +104,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         fileList=new PreviewFocusRecycler(c);fileLayout=new GridLayoutManager(c,prefs.getBoolean(GRID,false)?2:1);fileList.setLayoutManager(fileLayout);fileList.setAdapter(fileAdapter);fileList.setItemAnimator(null);fileList.setClipToPadding(false); centre.addView(itemScroll,new LayoutParams(-1,0,1));
         SharedThreePanel.heading(right,"Information");heading = SharedThreePanel.text(c,"Overview",21); right.addView(heading);SharedThreePanel.divider(right);
         poster=new ImageView(c);poster.setScaleType(ImageView.ScaleType.FIT_CENTER);poster.setVisibility(GONE);right.addView(poster,new LayoutParams(-1,dp(120)));
-        facts=column();String[] labels={"Name","Type","Address","Library status"};for(int i=0;i<labels.length;i++){LinearLayout row=new LinearLayout(c);row.setGravity(android.view.Gravity.TOP);TextView label=SharedThreePanel.text(c,labels[i],16);label.setTextColor(0xffb7bdc6);row.addView(label,new LayoutParams(dp(92),-2));factValues[i]=SharedThreePanel.text(c,"",16);ScrollView value=new ScrollView(c);if(i==2){addressScroll=value;value.setTag("semantic:network.address");value.setBackground(SharedThreePanel.focus(c));value.setFocusableInTouchMode(true);}value.setFocusable(i==2);value.setFocusableInTouchMode(i==2);value.addView(factValues[i]);row.addView(value,new LayoutParams(0,dp(i==2?60:36),1));facts.addView(row,new LayoutParams(-1,-2));}facts.setVisibility(GONE);right.addView(facts,new LayoutParams(-1,-2));
+        facts=column();String[] labels={"Name","Type","Address","Library status"};for(int i=0;i<labels.length;i++){LinearLayout row=new LinearLayout(c);row.setGravity(android.view.Gravity.TOP);TextView label=SharedThreePanel.text(c,labels[i],16);label.setTextColor(0xffb7bdc6);row.addView(label,new LayoutParams(dp(92),-2));factValues[i]=SharedThreePanel.text(c,"",16);ScrollView value=new ScrollView(c);if(i==2){addressScroll=value;value.setTag("semantic:network.address");value.setBackground(SharedThreePanel.accentFocus(c));value.setFocusableInTouchMode(true);}value.setFocusable(i==2);value.setFocusableInTouchMode(i==2);value.addView(factValues[i]);row.addView(value,new LayoutParams(0,dp(i==2?60:36),1));facts.addView(row,new LayoutParams(-1,-2));}facts.setVisibility(GONE);right.addView(facts,new LayoutParams(-1,-2));
         information = SharedThreePanel.text(c,"",16);
         informationScroll = new ScrollView(c) {
             @Override protected void onSizeChanged(int width,int height,int oldWidth,int oldHeight){super.onSizeChanged(width,height,oldWidth,oldHeight);setClipBounds(new android.graphics.Rect(0,0,width,height));}
@@ -113,7 +113,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             }
         };
         informationScroll.setFocusable(true); informationScroll.setFocusableInTouchMode(true);
-        informationScroll.setBackground(SharedThreePanel.focus(c)); informationScroll.setOnFocusChangeListener((view,focused)->{if(focused)revealContext(view);}); informationScroll.addView(information);
+        informationScroll.setBackground(SharedThreePanel.accentFocus(c)); informationScroll.setOnFocusChangeListener((view,focused)->{if(focused)revealContext(view);}); informationScroll.addView(information);
         information.addTextChangedListener(new android.text.TextWatcher() {
             public void beforeTextChanged(CharSequence text,int start,int count,int after) {}
             public void onTextChanged(CharSequence text,int start,int before,int count) {}
@@ -145,7 +145,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
     private void scanControls(){
         requestExit(()->{
-            toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);remember();current=null;stopListing();items.removeAllViews();crumbs.removeAllViews();scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(true);scanOverview.setFocusableInTouchMode(true);scanOverview.setBackground(SharedThreePanel.focus(getContext()));items.addView(scanOverview);
+            toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);remember();current=null;stopListing();items.removeAllViews();crumbs.removeAllViews();scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(true);scanOverview.setFocusableInTouchMode(true);scanOverview.setBackground(SharedThreePanel.accentFocus(getContext()));items.addView(scanOverview);
             facts.setVisibility(GONE);heading.setText("Network Scanning");information.setText("Automatic checks use the existing scanner. Scans continue when you leave this page.");actions.removeAllViews();
             int period=com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(getContext());
             addAction("Automatic: "+(period>0?"On":"Off"),()->{if(period>0)prefs.edit().putInt("preview_scan_frequency",period).apply();com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(getContext(),0,period>0?0:prefs.getInt("preview_scan_frequency",3600000),true);scanControls();actions.getChildAt(0).requestFocus();});
@@ -263,7 +263,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         addAction("Scan Library",()->PreviewLibraryScan.request(getContext()));
         addAction("Network Scanning",this::scanControls);
         addAction("Library Health",()->health(-1));
-        scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(true);scanOverview.setFocusableInTouchMode(true);scanOverview.setBackground(SharedThreePanel.focus(getContext()));items.addView(scanOverview,new LayoutParams(-1,-2));
+        scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(true);scanOverview.setFocusableInTouchMode(true);scanOverview.setBackground(SharedThreePanel.accentFocus(getContext()));items.addView(scanOverview,new LayoutParams(-1,-2));
         items.addView(SharedThreePanel.text(getContext(),"Select a location to browse its files and folders.",16));
     }
 
@@ -437,7 +437,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private ListingEngine.SortOrder sortOrder(){return new ListingEngine.SortOrder[]{ListingEngine.SortOrder.SORT_BY_NAME_ASC,ListingEngine.SortOrder.SORT_BY_NAME_DESC,ListingEngine.SortOrder.SORT_BY_DATE_ASC,ListingEngine.SortOrder.SORT_BY_DATE_DESC,ListingEngine.SortOrder.SORT_BY_SIZE_ASC,ListingEngine.SortOrder.SORT_BY_SIZE_DESC}[Math.max(0,Math.min(5,prefs.getInt(SORT,0)))];}
     private void refreshControls(){TextView view=toolbar.findViewWithTag("browser.view");view.setText(prefs.getBoolean(GRID,false)?"List View":"Grid View");androidx.appcompat.widget.SwitchCompat all=toolbar.findViewWithTag("browser.all_files");all.setChecked(prefs.getBoolean(ALL_FILES,false));}
     private final SharedPreferences.OnSharedPreferenceChangeListener changes=(preferences,key)->{if(ALL_FILES.equals(key)||SORT.equals(key)){refreshControls();remember();reload();}else if(GRID.equals(key)){refreshControls();renderItems();}};
-    private TextView action(String label,Runnable run){return SharedThreePanel.action(getContext(),label,run);}
+    private TextView action(String label,Runnable run){return SharedThreePanel.accentAction(getContext(),label,run);}
     private void revealContext(View target) {
         contextScroll.post(()->{
             if(!target.hasFocus())return;
