@@ -755,7 +755,7 @@
       "requirement": "Discard/Keep Editing/Apply & Scan, focus trap and exact restoration",
       "authority": "Shared framework",
       "existing": "UniversalFileBrowser review; PreviewDialog",
-      "change": "Discard, keep draft or apply; default Keep Editing and restore the original opener.",
+      "change": "Discard, keep draft or apply; default Keep Editing and restore the original opener. Capture the root-window opener so a top-nav exit review restores that exact button.",
       "validation": "Cancel/edit/apply paths and index-only explanation",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
@@ -1029,14 +1029,18 @@
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java",
         "src/test/java/com/archos/mediaprovider/video/PreviewMatchStateTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/SupernovaWorkspaceUiTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java",
         "src/test/java/com/archos/mediaprovider/video/PreviewMatchStateTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
       "acceptance_remaining": "DB snapshot before/after offline USB/NAS and missing files; verify on the latest complete candidate and physical Shield where device behaviour is involved."
     },
@@ -1055,14 +1059,18 @@
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java",
         "src/test/java/com/archos/mediaprovider/video/PreviewMatchStateTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/SupernovaWorkspaceUiTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java",
         "src/test/java/com/archos/mediaprovider/video/PreviewMatchStateTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
       "acceptance_remaining": "Reliable/ambiguous reconnection and stored progress; verify on the latest complete candidate and physical Shield where device behaviour is involved."
     },
@@ -1081,14 +1089,18 @@
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java",
         "src/test/java/com/archos/mediaprovider/video/PreviewMatchStateTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/SupernovaWorkspaceUiTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java",
         "src/test/java/com/archos/mediaprovider/video/PreviewMatchStateTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
       "acceptance_remaining": "Backend deletion audit and scanner integration tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
     },
@@ -2550,7 +2562,9 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderFilterTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLanguageIconTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/utils/BackupPrivacyTest.java",
@@ -2561,7 +2575,9 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderFilterTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLanguageIconTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
+        "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
       "acceptance_remaining": "Missing/ambiguous sources and stable media IDs; verify on the latest complete candidate and physical Shield where device behaviour is involved."
     },

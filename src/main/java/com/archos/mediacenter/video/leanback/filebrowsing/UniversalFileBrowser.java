@@ -365,7 +365,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     public void requestExit(Runnable leave) {
         if(!selection.changed()){leave.run();return;}
         Dialog dialog=PreviewDialog.create(getContext(),"review");
-        View opener=findFocus();boolean[] leaving={false};dialog.setOnDismissListener(ignored->{if(!leaving[0]){if(opener!=null&&opener.isAttachedToWindow())opener.requestFocus();else if(centreAnchor!=null&&centreAnchor.isAttachedToWindow())centreAnchor.requestFocus();else if(leftAnchor!=null)leftAnchor.requestFocus();}});
+        View opener=getRootView().findFocus();boolean[] leaving={false};dialog.setOnDismissListener(ignored->{if(!leaving[0]){if(opener!=null&&opener.isAttachedToWindow())opener.requestFocus();else if(centreAnchor!=null&&centreAnchor.isAttachedToWindow())centreAnchor.requestFocus();else if(leftAnchor!=null)leftAnchor.requestFocus();}});
         LinearLayout panel=column();panel.setPadding(dp(24),dp(20),dp(24),dp(20));SharedThreePanel.decorate(panel);
         panel.addView(SharedThreePanel.text(getContext(),"Unsaved library changes",22));
         ScrollView scroll=new ScrollView(getContext());TextView description=SharedThreePanel.text(getContext(),reviewText(),16);scroll.addView(description);panel.addView(scroll,new LayoutParams(-1,0,1));

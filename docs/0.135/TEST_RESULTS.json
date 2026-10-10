@@ -56,5 +56,23 @@
     "tests": 49,
     "failures": 0,
     "elapsed_seconds": 15.042
+  },
+  "follow_up_checkpoint32": {
+    "compiled_application_commit": "3d88a6faacdc18a8db45a272c3433d2dfb405707",
+    "tests": 485,
+    "classes": 125,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "lint": {
+      "Fatal": 0,
+      "Error": 0,
+      "Warning": 1465
+    },
+    "elapsed": "10m 59s",
+    "native_build_omitted": true,
+    "apk_built": false,
+    "gradle_log_sha256": "365b7bf341b9c50d0b02bc23d44169c9c06e542e29fb3aaa0310d24dc4304ac8",
+    "notes": "Final audit guards and top-navigation opener restoration were added after test compilation; this run is not their validation. Lint ran against the working tree including the pending native Java guard."
   }
 }

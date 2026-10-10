@@ -257,7 +257,7 @@ index 3866593..74a252c 100644
      public static final int METADATA_KEY_AUDIO_TRACK = 20000;
      public static final int METADATA_KEY_AUDIO_TRACK_NAME = 0;
 diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
-index 55258f8..487088a 100644
+index 55258f8..299b779 100644
 --- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 +++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 @@ -1003,7 +1003,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
@@ -289,7 +289,7 @@ index 55258f8..487088a 100644
              if ((existingItem) != null) {
                  // file was already scanned, it does not need to be deleted
                  existingItem.needsDelete = false;
-+                SupernovaLibraryPolicy.availability(mService,existingItem._id,file.getUri(),false);
++                SupernovaLibraryPolicy.availability(mService,existingItem._id + ArchosMediaCommon.SCANNED_ID_OFFSET,file.getUri(),false);
                  if (log.isTraceEnabled()) log.trace("FileVisitListener.onFile: File isn't new:{}", file.getName());
                  // check if it is untouched or needs an update
                  long knownDate = existingItem.date_modified;
@@ -300,7 +300,7 @@ index 55258f8..487088a 100644
 +            if(SupernovaLibraryPolicy.retainsRecords(mService)) {
 +                for(PrescanItem item:mPrescanItemsMap.values()) {
 +                    if(item.needsDelete&&!mHadListingError&&!SupernovaLibraryPolicy.excluded(mService,Uri.parse(item._data)))
-+                        SupernovaLibraryPolicy.availability(mService,item._id,Uri.parse(item._data),true);
++                        SupernovaLibraryPolicy.availability(mService,item._id + ArchosMediaCommon.SCANNED_ID_OFFSET,Uri.parse(item._data),true);
 +                    item.needsDelete=false;
 +                }
 +                if(root!=null){if(!mHadListingError)SupernovaLibraryPolicy.sourceAvailable(mService,root.getUri(),true);else if(mUnknownListingError||failedDirectories.contains(SupernovaLibraryPolicy.canonical(root.getUri())))SupernovaLibraryPolicy.sourceAvailable(mService,root.getUri(),false);}
@@ -409,7 +409,7 @@ index 0000000..260f2b2
 + private SupernovaViewingPolicy(){}
 +}
 diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
-index bfb19e7..a9d529d 100644
+index bfb19e7..315c186 100644
 --- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
 +++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
 @@ -672,6 +672,21 @@ public class VideoStoreImportImpl {
@@ -442,7 +442,23 @@ index bfb19e7..a9d529d 100644
                  Job job = new Job(path, id, blacklist);
                  if (log.isDebugEnabled()) log.debug("handleScanCursor: scanning {}", job.mPath);
                  // update property with current file
-@@ -1703,6 +1719,7 @@ public class VideoStoreImportImpl {
+@@ -1648,6 +1664,15 @@ public class VideoStoreImportImpl {
+      * drive is still reconnecting.
+      */
+     private void updateVolumeHiddenStates(String existingFiles) {
++        if (SupernovaLibraryPolicy.retainsRecords(mContext) && remoteProjectionHasStorageId()) {
++            // Older Android's storage-ID path must retain visible library records too.
++            // Reconciliation records availability separately; volume_hidden would remove
++            // these stable IDs and their Continue Watching entries from the native view.
++            ContentValues visible = new ContentValues();
++            visible.put("volume_hidden", 0);
++            mCr.update(VideoStoreInternal.FILES_IMPORT, visible, "volume_hidden != 0", null);
++            return;
++        }
+         purgeExpiredHiddenFiles(mCr, mContext);
+ 
+         if (!remoteProjectionHasStorageId()) {
+@@ -1703,6 +1728,7 @@ public class VideoStoreImportImpl {
      }
  
      static void purgeExpiredHiddenFiles(ContentResolver cr, Context context) {
@@ -450,7 +466,7 @@ index bfb19e7..a9d529d 100644
          long cutoff = System.currentTimeMillis() / 1000 - HIDDEN_FILES_RETENTION_SECONDS;
          String selection = "volume_hidden > 0 AND volume_hidden < ?";
          String[] args = new String[]{String.valueOf(cutoff)};
-@@ -1923,6 +1940,14 @@ public class VideoStoreImportImpl {
+@@ -1923,6 +1949,14 @@ public class VideoStoreImportImpl {
  
          long now = System.currentTimeMillis() / 1000;
  
