@@ -1080,7 +1080,12 @@
   "native_ci": {
     "run_id": 38090668342,
     "url": "https://github.com/heretoecode/Supernova/actions/runs/38090668342",
-    "status": "IN PROGRESS"
+    "status": "PASS",
+    "source_commit": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
+    "evidence": "CI_VERIFICATION.json",
+    "artifact_id": 11684074076,
+    "artifact_url": "https://github.com/heretoecode/Supernova/actions/runs/38090668342/artifacts/11684074076",
+    "artifact_download": "HTTP 403; run log and metadata retrieved"
   },
   "signing": "BLOCKED: environment exact-branch admission denied HTTP 403",
   "lint": {

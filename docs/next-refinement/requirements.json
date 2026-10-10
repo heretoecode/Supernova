@@ -13,7 +13,7 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -21,8 +21,8 @@
           "PreviewNavigationShadeTest",
           "PreviewCompactTitleTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -53,7 +53,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -61,8 +61,8 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -93,7 +93,7 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -101,8 +101,8 @@
           "PreviewNavigationShadeTest",
           "PreviewCompactTitleTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -133,7 +133,7 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -141,8 +141,8 @@
           "PreviewNavigationShadeTest",
           "PreviewCompactTitleTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -173,7 +173,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -182,8 +182,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -219,7 +219,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -228,8 +228,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -265,7 +265,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -274,8 +274,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -311,7 +311,7 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -319,8 +319,8 @@
           "PreviewProviderFilterTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -351,7 +351,7 @@
           "verification": "Create/reorder/rename/delete/show/hide/rule tests, Back persistence and focus"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -359,8 +359,8 @@
           "PreviewHomeVisualTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -391,7 +391,7 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -399,8 +399,8 @@
           "PreviewProviderFilterTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -431,7 +431,7 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -439,8 +439,8 @@
           "PreviewProviderFilterTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -471,7 +471,7 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -481,8 +481,8 @@
           "PreviewMatchReviewTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -523,7 +523,7 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -533,8 +533,8 @@
           "PreviewMatchReviewTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -575,7 +575,7 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -585,8 +585,8 @@
           "PreviewMatchReviewTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -627,7 +627,7 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -637,8 +637,8 @@
           "PreviewMatchReviewTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -679,7 +679,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -687,8 +687,8 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -719,7 +719,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -727,8 +727,8 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -759,7 +759,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -767,8 +767,8 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -799,7 +799,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -807,8 +807,8 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -839,7 +839,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -847,8 +847,8 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -879,7 +879,7 @@
           "verification": "D-pad repeated navigation, ancestor/scroll restoration, All Files sync, multi-drive Save/Discard, existing scanner/no offline purge tests"
         }
       ],
-      "status": "IMPLEMENTED EXCEPT EXTERNALLY BLOCKED PUT.IO OAUTH / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL PENDING",
+      "status": "IMPLEMENTED EXCEPT EXTERNALLY BLOCKED PUT.IO OAUTH / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -890,8 +890,8 @@
           "SupernovaRetentionTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -942,8 +942,8 @@
       "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
       "validation_evidence": {
         "planned_test_classes": [],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": []
       }
@@ -958,7 +958,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -967,8 +967,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1004,7 +1004,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1013,8 +1013,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1050,7 +1050,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1059,8 +1059,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1096,7 +1096,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1105,8 +1105,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1147,7 +1147,7 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1159,8 +1159,8 @@
           "PreviewHomeVisualTest",
           "OfficialTitleNetworkTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1211,7 +1211,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1220,8 +1220,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1257,7 +1257,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1266,8 +1266,8 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1303,7 +1303,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1313,8 +1313,8 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1355,7 +1355,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1365,8 +1365,8 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1407,7 +1407,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1417,8 +1417,8 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1459,7 +1459,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1469,8 +1469,8 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1511,7 +1511,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1521,8 +1521,8 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1563,7 +1563,7 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1571,8 +1571,8 @@
           "PreviewLibraryCompositionTest",
           "PreviewScanLifecycleTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1603,7 +1603,7 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1611,8 +1611,8 @@
           "PreviewLibraryCompositionTest",
           "PreviewScanLifecycleTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1648,7 +1648,7 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1660,8 +1660,8 @@
           "SupernovaWorkspaceUiTest",
           "SetupPolicyTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1717,7 +1717,7 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1729,8 +1729,8 @@
           "SupernovaWorkspaceUiTest",
           "SetupPolicyTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1781,7 +1781,7 @@
           "verification": "Shared layout/render and focus tests; SHIELD no truncation at normal/accessibility scale"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1789,8 +1789,8 @@
           "PreviewProviderFilterTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1821,7 +1821,7 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1831,8 +1831,8 @@
           "DiagnosticFlightRecorderTest",
           "DiagnosticReferenceTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1873,7 +1873,7 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1883,8 +1883,8 @@
           "DiagnosticFlightRecorderTest",
           "DiagnosticReferenceTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1925,7 +1925,7 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1935,8 +1935,8 @@
           "DiagnosticFlightRecorderTest",
           "DiagnosticReferenceTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1977,7 +1977,7 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1987,8 +1987,8 @@
           "DiagnosticFlightRecorderTest",
           "DiagnosticReferenceTest"
         ],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -2033,8 +2033,8 @@
       "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
       "validation_evidence": {
         "planned_test_classes": [],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": []
       }
@@ -2053,8 +2053,8 @@
       "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
       "validation_evidence": {
         "planned_test_classes": [],
-        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
-        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
         "physical_result": "Not performed",
         "test_classes_verified": []
       }
@@ -2062,5 +2062,6 @@
   ],
   "decision_precedence": "Execution brief and latest topic approvals including register #27 and #45 supersede earlier provisional design/workflow holds. Details and Playback/HUD redesign/features excluded.",
   "verified_application_checkpoint": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
-  "automated_results": "TEST_RESULTS.json"
+  "automated_results": "TEST_RESULTS.json",
+  "native_ci_evidence": "CI_VERIFICATION.json"
 }

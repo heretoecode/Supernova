@@ -4,17 +4,17 @@
   "provisional_version": "0.136",
   "gates": {
     "unit_tests": true,
-    "binary_conformance": false,
-    "native_source_compliance": false,
+    "binary_conformance": true,
+    "native_source_compliance": true,
     "protected_key_validation": false,
     "foundation_review": true
   },
   "blockers": [
-    "Exact-source native APK conformance CI 38090668342 still in progress",
     "Signing environment does not admit the exact branch; API change returned 403"
   ],
   "physical_shield_acceptance": "PENDING USER QA",
   "putio_oauth": "EXTERNALLY BLOCKED: registered client/redirect configuration unavailable",
   "foundation_review_basis": "Source boundary/identity/style review and automated regressions; physical acceptance not performed",
-  "verified_application_checkpoint": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05"
+  "verified_application_checkpoint": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
+  "native_ci_verification": "CI_VERIFICATION.json"
 }
