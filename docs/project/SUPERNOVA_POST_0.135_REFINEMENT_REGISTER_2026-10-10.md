@@ -38,3 +38,26 @@ Source: User's first on-device review of installed 0.135 APK on NVIDIA Shield TV
 - Onboarding observations: user will return with details.
 - Additional custom Library Page feedback: user will return with details.
 - Additional post-install issues: append as reported.
+
+## 5. Hero carousel: gradient persists on off-centre cards — confirmed bug
+**Observed:** The centred hero card correctly has the old gradient removed, but partially visible neighbouring/teaser hero cards still show it. The gradient disappears when that same card becomes centred. User provided screenshot.
+**Required:** Apply the approved gradient-free artwork treatment uniformly to every carousel item at every position and during movement. Avoid distinct rendering paths for centred and off-centre cards. **Preserve the now-correct left/right carousel animation.**
+
+## 6. Hero carousel: remove Play action — approved correction
+**Observed:** Both Play and More Info buttons render, but Play cannot be focused; only More Info is reachable.
+**Required:** Hero cards are promotional/discovery surfaces, not direct playback entry points. Remove Play button entirely, including layout reservation and stale focus/accessibility handlers. Retain a single **More Info** action that opens Details, where playback decisions are made.
+
+## 7. Hero carousel: More Info control styling — approved refinement
+**Observed:** More Info currently has a solid blue fill, unlike the preferred outlined translucent controls on Movies page.
+**Required:** Restyle More Info as a rounded, sensibly sized translucent/neutral outlined control with readable text. No solid accent-colour fill at rest. On focus, outline takes user's chosen accent colour. Preserve clear focus indication and remote usability. An icon is optional only if consistent with the approved control system; do not invent one just for this button.
+
+## 8. Shared boxed-action / option control foundation — user-approved design direction
+**Reference:** Movies page Filters / Sort controls in user-provided screenshot. Establish a reusable design rule for appropriate interactive boxed controls across Home, Movies, TV Shows, Settings, Network & Files, Search and Details:
+- Monochrome icon at left **where a control has an icon**, label to right, consistent typography and gaps.
+- Sensibly sized rounded translucent box with neutral visible outline in unfocused state.
+- Focused state changes outline to user's selected accent colour; avoid solid accent fill.
+- Consistent padding, radii, minimum target size and D-pad focus affordance.
+- Apply to boxed actions and option controls, **not** indiscriminately to nav labels, artwork cards or every Settings row. Preserve each screen's approved layout.
+- Reconcile this with the existing three-panel shared foundation; avoid parallel divergent styles.
+**Evidence:** Two user photographs show hero action controls and Movies-page boxed option controls. Photos remain in planning conversation; not embedded in repository.
+
