@@ -26,3 +26,14 @@ Inline welcome message explaining empty library, user free to explore, use compa
 
 ## Reference and acceptance
 Visual reference: settings-subtitles-three-panel-no-top-nav.png in this folder (illustrative sample content, not exact page schema). Acceptance requires TV D-pad focus matrix, pixel/layout consistency, no truncation/flicker, Home and Network browser behavioural parity, tests of deep breadcrumbs, missing drives, staged selections, exclusions, scan preservation and every audited old browser entry point. Implement only after reading master 0.135 handover and source audit.
+## Post-0.135 shared three-panel visual foundation refinement (approved 2026-10-10; next release only)
+**Applicability:** All Supernova screens using the approved three-panel foundation, including Settings, Network & Files and Custom Library Page wizard. This is a shared styling and hierarchy rule, **not** permission to apply three panels to Search or unrelated screens. Existing page-specific functionality, navigation and panel proportions remain authoritative unless separately changed.
+
+- Each panel's **non-focusable title/header** has consistent top padding, typographic weight and a subtle horizontal separator beneath it; it must be visually distinct from selectable rows.
+- Section headings and their controls have consistent vertical rhythm, grouping and indentation. Avoid unstructured, floating lines of text.
+- Appropriate boxed actions use the approved global **translucent, outlined, rounded control** style with a monochrome icon to the left of the label where appropriate, compact sensible padding, and user's accent-colour focus outline. Do not put boxes around all text or every row.
+- Keep accessible Shield D-pad focus, clear active states, readable contrast, no truncated labels, and coherent spacing.
+- Confirmation dialogs use compact centred layouts with clear title/icon, subtle title/body divider, legible explanation and centred action buttons with monochrome icons. Destructive actions default focus to Cancel.
+- The **Custom Library Page edit wizard** is a special presentation of the existing three-panel wizard: centred floating overlay with soft shadow above the blurred/dimmed underlying custom library; underlying page not interactive. The **first-use wizard** remains embedded below the introduction on its dedicated landing page. Do not generalise this edit overlay to all three-panel screens.
+- Preserve the established shared Supernova background where full-page wizard/screens require it; do not allow distracting raw library artwork to undermine legibility.
+- Keep all 0.135 foundation/browser behaviour and protections intact; these are future refinement rules, not retroactive 0.135 implementation claims.
