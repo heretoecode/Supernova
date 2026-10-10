@@ -99,3 +99,25 @@ Source: User's first on-device review of installed 0.135 APK on NVIDIA Shield TV
 
 ## Home-page review checkpoint
 User stated the Home page review is **complete for now** (2026-10-10). This does not imply any fix has been implemented or verified; the recorded Home refinements are ready for the eventual consolidated next-version Codex handover. User may report further issues later.
+
+## 10. Shared library pages (Movies, TV Shows, Custom Library Page) — review complete for now
+**Evidence:** User's ~56-second on-device video and previous Movies screenshot. Video shows Filters, genre/year menus, controls, grid and list view. Source video remains in planning chat, not embedded here.
+
+### Required refinements (apply to all library pages via shared design)
+- **Compact outlined controls:** Filters, Sort, Order, List/Grid, Columns etc. currently have oversized boxes. Reduce horizontal/vertical padding and tune widths to content, while retaining accessible D-pad targets, readable text, monochrome icons and the approved translucent outlined style. Do not shrink text merely to reduce box size.
+- **Accent-coloured focus:** Currently focused outlines are white; use the user's selected accent colour for focus on these boxed controls, consistent with the global boxed-control foundation. Maintain sufficient contrast.
+- **Summary spacing:** On library pages, reposition show/movie count, total size, and local/network storage summary a little lower so the summary block sits more evenly between the page heading and the boxed controls. Preserve all metrics and responsive layout.
+- **Genre picker heading:** Standardise the wording/capitalisation for the Genre heading and “Match Any Selected” mode. Prefer consistent title case rather than arbitrary mixed casing; confirm final copy with UI design.
+- **All Genres reset:** Move to top of genre list, visibly separated from individual genres. This clears genre selections, not a genre entry.
+- **Immediate genre updates:** Toggle ticks and apply/save filters immediately; remove bottom Done action. Back simply exits without discarding current selections. Avoid unnecessary full rescans; ensure UI and results stay in sync.
+- **Order toggle:** Replace Ascending/Descending popup with a single direct button. Each OK/Select press toggles Ascending ↔ Descending, with matching label and directional icon updated immediately; preserve sort mode and focus.
+
+### Confirmed working; preserve
+- Poster-grid boundary navigation: Down/Right at final item do not move into nonexistent items; Up/Left go to valid adjacent items.
+- Back from a title's Details restores focus to that title.
+- Filters menu overall layout and Sort mode selection are satisfactory.
+- Current List/Grid and Columns behaviour is not targeted for change.
+- These are **shared** changes across Movies, TV Shows and custom Library Page, not independent one-off screen implementations.
+
+### Review checkpoint
+User considers default Movies/TV library page review complete for now. More custom Library Page-specific feedback may follow separately. No coding is authorised merely by this record.
