@@ -31,6 +31,18 @@ public class ViewingHistoryTest {
   var record=ViewingHistory.read(context).get("tmdb:tv:123:1:2");assertFalse(record.completed);assertFalse(record.started);assertEquals(5000,record.position);assertTrue(ViewingHistory.read(context).get("tmdb:tv:123:1:1").completed);
   next.resume=-2;ViewingHistory.record(context,next,true);ViewingHistory.awaitWrites();record=ViewingHistory.read(context).get("tmdb:tv:123:1:2");assertFalse(record.completed);assertEquals(0,record.position);
  }
+ @Test public void unmatchedIdentityJoinsExactFileRepresentationsButNeverMergesDifferentQueryItems()throws Exception{
+  String local=ViewingHistory.identity(false,null,-1,-1,"/storage/Movies/unmatched.mkv");
+  assertEquals(local,ViewingHistory.identity(false,null,-1,-1,"file:///storage/Movies/unmatched.mkv"));
+  assertEquals(ViewingHistory.identity(false,null,-1,-1,"/storage/a?cut#name.mkv"),ViewingHistory.identity(false,null,-1,-1,Uri.fromFile(new java.io.File("/storage/a?cut#name.mkv")).toString()));
+  String first=ViewingHistory.identity(false,null,-1,-1,"https://user:password@nas/play?id=1&token=old&signature=old");
+  assertEquals(first,ViewingHistory.identity(false,null,-1,-1,"https://nas/play?id=1&token=new&signature=new"));
+  assertNotEquals(first,ViewingHistory.identity(false,null,-1,-1,"https://nas/play?id=2&token=new"));
+  assertNull("Relative locations cannot safely identify media",ViewingHistory.identity(false,null,-1,-1,"unmatched.mkv"));
+  VideoDbInfo info=new VideoDbInfo(Uri.parse("file:///storage/Movies/unmatched.mkv"));info.duration=100000;info.resume=12345;info.lastTimePlayed=100;
+  ViewingHistory.record(context,info,false);ViewingHistory.awaitWrites();
+  assertEquals("Playback URI progress is found by the indexed absolute path",12345,ViewingHistory.read(context).get(local).position);
+ }
  @Test public void completedIdentityDoesNotDisappearWhenReplayedOrSourceUnavailable()throws Exception{
   var info=episode(1);info.resume=-2;ViewingHistory.record(context,info,true);ViewingHistory.awaitWrites();info.resume=3000;info.lastTimePlayed=200;ViewingHistory.record(context,info,false);ViewingHistory.awaitWrites();assertTrue(ViewingHistory.read(context).get("tmdb:tv:123:1:1").completed);assertEquals(100,ViewingHistory.read(context).get("tmdb:tv:123:1:1").completedAt);
  }

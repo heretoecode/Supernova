@@ -33,7 +33,20 @@ public final class ViewingHistory {
         if(provider!=null&&provider.matches("[1-9][0-9]*"))return episode&&season>=0&&number>0?"tmdb:tv:"+provider+":"+season+":"+number:episode?null:"tmdb:movie:"+provider;
         // No weak title/year guesses. Unmatched files retain a private exact-location fingerprint.
         if(path==null||path.isEmpty())return null;
-        try{android.net.Uri uri=android.net.Uri.parse(path);String safe=uri.buildUpon().encodedAuthority(uri.getHost()==null?"":uri.getHost()+(uri.getPort()>0?":"+uri.getPort():"")).clearQuery().fragment(null).build().toString();byte[] digest=java.security.MessageDigest.getInstance("SHA-256").digest(safe.getBytes(java.nio.charset.StandardCharsets.UTF_8));StringBuilder key=new StringBuilder("file:");for(byte b:digest)key.append(String.format(java.util.Locale.ROOT,"%02x",b&255));return key.toString();}catch(Exception unavailable){return null;}
+        try{
+            android.net.Uri uri=android.net.Uri.parse(path);
+            if(uri.getScheme()==null){if(!path.startsWith("/"))return null;uri=android.net.Uri.fromFile(new java.io.File(path));}
+            String query=uri.getEncodedQuery();
+            if("file".equalsIgnoreCase(uri.getScheme())&&(uri.getHost()==null||uri.getHost().isEmpty()))uri=android.net.Uri.fromFile(new java.io.File(uri.getPath()));
+            android.net.Uri.Builder safe=uri.buildUpon().clearQuery().fragment(null);
+            if(uri.getHost()!=null)safe.encodedAuthority(uri.getHost()+(uri.getPort()>0?":"+uri.getPort():""));
+            // Preserve media-selecting query pairs; stripping every query would merge different items.
+            if(query!=null){java.util.List<String> pairs=new java.util.ArrayList<>();for(String pair:query.split("&",-1)){
+                String name=android.net.Uri.decode(pair.split("=",2)[0]);
+                if(!com.archos.mediacenter.video.utils.BackupPrivacy.secretKey(name)&&!name.matches("(?i)(auth|sig|signature|.*signature.*)"))pairs.add(pair);
+            }if(!pairs.isEmpty())safe.encodedQuery(android.text.TextUtils.join("&",pairs));}
+            byte[] digest=java.security.MessageDigest.getInstance("SHA-256").digest(safe.build().toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));StringBuilder key=new StringBuilder("file:");for(byte b:digest)key.append(String.format(java.util.Locale.ROOT,"%02x",b&255));return key.toString();
+        }catch(Exception unavailable){return null;}
     }
     public static String identity(PreviewLibraryLoader.Entry e){if(!(e.media instanceof Video))return null;Video v=(Video)e.media;Episode ep=v instanceof Episode?(Episode)v:null;return identity(ep!=null,e.onlineId>0?String.valueOf(e.onlineId):null,ep==null?-1:ep.getSeasonNumber(),ep==null?-1:ep.getEpisodeNumber(),v.getFilePath());}
     public static final class Record implements java.io.Serializable {
