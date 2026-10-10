@@ -26,6 +26,12 @@ public class SharedThreePanel extends LinearLayout {
         addPanel(right, .38f, false);
     }
 
+    public void widths(float left,float centre,float right) {
+        float[] widths={left,centre,right};
+        for(int i=0;i<Math.min(3,getChildCount());i++){LayoutParams size=(LayoutParams)getChildAt(i).getLayoutParams();size.weight=widths[i];getChildAt(i).setLayoutParams(size);}
+    }
+    public static void heading(LinearLayout column,String title) { column.addView(text(column.getContext(),title,21)); divider(column); }
+    public static void divider(LinearLayout column) { View line=new View(column.getContext());line.setBackgroundColor(0x447f8996);LayoutParams size=new LayoutParams(-1,dp(column.getContext(),1));size.topMargin=dp(column.getContext(),8);size.bottomMargin=dp(column.getContext(),10);column.addView(line,size); }
     private void addPanel(View view, float weight, boolean gap) {
         decorate(view);
         LayoutParams size = new LayoutParams(0, LayoutParams.MATCH_PARENT, weight);
@@ -70,24 +76,39 @@ public class SharedThreePanel extends LinearLayout {
         return row;
     }
 
+    /** Refinement screens opt in; deferred Details/Playback retain the legacy focus factory. */
+    public static TextView accentAction(Context context,String label,Runnable action){
+        TextView row=action(context,label,action);row.setBackground(accentFocus(context));return row;
+    }
+
     /** Permanent inset control surface; row actions retain their separate focus-only outline. */
+    public static void rowSeparator(View row){
+        android.graphics.drawable.Drawable line=new android.graphics.drawable.Drawable(){
+            private final android.graphics.Paint paint=new android.graphics.Paint();
+            public void draw(android.graphics.Canvas canvas){paint.setColor(0x337f8996);paint.setStrokeWidth(dp(row.getContext(),1));canvas.drawLine(dp(row.getContext(),8),getBounds().bottom-1,getBounds().right-dp(row.getContext(),8),getBounds().bottom-1,paint);}
+            public void setAlpha(int alpha){}public void setColorFilter(android.graphics.ColorFilter filter){}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
+        };
+        android.graphics.drawable.Drawable existing=row.getForeground();row.setForeground(existing==null?line:new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{existing,line}));
+    }
     public static StateListDrawable control(Context context, int radius) {
         StateListDrawable states = new StateListDrawable();
         for (boolean focused : new boolean[]{true, false}) {
             GradientDrawable shape = new GradientDrawable();
             shape.setColor(focused ? 0x603b4857 : 0x303b4857);
             shape.setCornerRadius(dp(context, radius));
-            shape.setStroke(dp(context, 1), focused ? Color.WHITE : 0x887f8996);
+            shape.setStroke(dp(context, 1), focused ? PreviewAccent.color(context) : 0x887f8996);
             states.addState(focused ? new int[]{android.R.attr.state_focused} : new int[]{}, shape);
         }
         return states;
     }
 
-    public static StateListDrawable focus(Context context) {
+    public static StateListDrawable focus(Context context) { return focus(context,Color.WHITE); }
+    public static StateListDrawable accentFocus(Context context) { return focus(context,PreviewAccent.color(context)); }
+    private static StateListDrawable focus(Context context,int strokeColor) {
         GradientDrawable focused = new GradientDrawable();
         focused.setColor(0x263b4857);
         focused.setCornerRadius(dp(context, 10));
-        focused.setStroke(dp(context, 1), Color.WHITE);
+        focused.setStroke(dp(context, 1), strokeColor);
         StateListDrawable states = new StateListDrawable();
         states.addState(new int[]{android.R.attr.state_focused}, focused);
         GradientDrawable normal = new GradientDrawable();

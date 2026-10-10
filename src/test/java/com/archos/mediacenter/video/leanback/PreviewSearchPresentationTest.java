@@ -13,6 +13,8 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewSearchPresentationTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) @SuppressWarnings({"rawtypes","unchecked"}) public void actualResultClickRetainsDiagnosticEntryTokenUntilWindowReturns()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(host.get(),true);
@@ -22,7 +24,7 @@ public class PreviewSearchPresentationTest {
             var video=new com.archos.mediacenter.video.browser.adapters.object.Movie(1234,"/private-search-file","Private search result",0,"",2024,0,"",null,1000,0,0,0,false,false,false,false,0,0,1920,1080,null,null,null,null,0,1,1000,0);
             Class<?> result=Class.forName(PreviewSearch.class.getName()+"$Result");var constructor=result.getDeclaredConstructor(com.archos.mediacenter.video.browser.adapters.object.Video.class,String.class);constructor.setAccessible(true);
             java.util.List items=org.robolectric.util.ReflectionHelpers.getField(search,"items");items.add(constructor.newInstance(video,""));
-            androidx.recyclerview.widget.RecyclerView results=org.robolectric.util.ReflectionHelpers.getField(search,"results");results.getAdapter().notifyDataSetChanged();PreviewPagesTest.layout(shell);
+            androidx.recyclerview.widget.RecyclerView results=org.robolectric.util.ReflectionHelpers.getField(search,"results");results.setVisibility(View.VISIBLE);results.getAdapter().notifyDataSetChanged();PreviewPagesTest.layout(shell);
             View opener=results.findViewHolderForAdapterPosition(0).itemView;assertTrue(opener.requestFocus());opener.performClick();assertNotNull(Shadows.shadowOf(host.get()).getNextStartedActivity());
             search.onWindowFocusChanged(false);search.onWindowFocusChanged(true);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();search.onWindowFocusChanged(true);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             assertSame(opener,search.findFocus());PreviewPagesTest.layout(shell);PreviewPagesTest.capture(shell,"search-populated-return-focused");
@@ -37,7 +39,7 @@ public class PreviewSearchPresentationTest {
         try{
             PreviewSearch search=new PreviewSearch(host.get(),0,null);TopNavigation nav=new TopNavigation(host.get(),search,n->{},search::atTop);host.get().setContentView(nav);PreviewPagesTest.layout(nav);search.focusQuery();
             assertTrue(search.findViewWithTag("semantic:keyboard:T").hasFocus());EditText query=findQuery(search);assertNotNull(query);assertFalse(query.isFocusable());assertFalse(query.isCursorVisible());assertEquals("Search Movies and TV Shows",query.getHint().toString());
-            assertNull(PreviewPagesTest.findText(search,"Caps"));assertNull(PreviewPagesTest.findText(search,"Shift"));
+            assertNotNull(PreviewPagesTest.findText(search,"Caps"));assertNull(PreviewPagesTest.findText(search,"Shift"));
             PreviewPagesTest.capture(nav,"search-empty-next");
         }finally{host.pause().stop().destroy();}
     }

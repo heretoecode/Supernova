@@ -16,6 +16,8 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewSubtitleChooserTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     static final String PATH="file:///media/example.en.srt";
     static class Backend implements PreviewSubtitleChooser.Backend {
         List<PreviewSubtitleChooser.Entry> files=new ArrayList<>(Collections.singletonList(entry(true,true)));

@@ -1,0 +1,2067 @@
+{
+  "schema": 1,
+  "baseline": "cfc2ca2376fb77f79a85a3a5e45333d38b9689e7",
+  "branch_base": "42ff29e7",
+  "requirements": [
+    {
+      "id": 1,
+      "requirement": "Clock typography mismatch \u2014 confirmed recurring bug",
+      "workstreams": [
+        {
+          "source": "TopNavigation, PreviewFocusRail, PreviewNavigationShade",
+          "acceptance": "Shared clock type/baseline; 220ms shade; content-width animated accent underline; nav changes on OK",
+          "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "TopNavigationTest",
+          "PreviewNavigationShadeTest",
+          "PreviewCompactTitleTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.TopNavigationTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest",
+            "tests": 1,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "requirement": "Custom Library Page: remove icon choice \u2014 user-approved tweak",
+      "workstreams": [
+        {
+          "source": "CustomLibraryActivity, CustomLibraryPage, PreviewPages, PreviewCardPresenter",
+          "acceptance": "Text-only one-page landing; shared filtered summary/cards/controls; one five-step embedded/overlay wizard; immediate picker changes; persistent actions; exact panel/back/exit focus; safe centred dialogs",
+          "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "requirement": "Top-navigation blur abrupt pop-in \u2014 confirmed refinement",
+      "workstreams": [
+        {
+          "source": "TopNavigation, PreviewFocusRail, PreviewNavigationShade",
+          "acceptance": "Shared clock type/baseline; 220ms shade; content-width animated accent underline; nav changes on OK",
+          "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "TopNavigationTest",
+          "PreviewNavigationShadeTest",
+          "PreviewCompactTitleTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.TopNavigationTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest",
+            "tests": 1,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "requirement": "Navigation focus: accent-colour animated underline \u2014 proposed design awaiting final sign-off",
+      "workstreams": [
+        {
+          "source": "TopNavigation, PreviewFocusRail, PreviewNavigationShade",
+          "acceptance": "Shared clock type/baseline; 220ms shade; content-width animated accent underline; nav changes on OK",
+          "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "TopNavigationTest",
+          "PreviewNavigationShadeTest",
+          "PreviewCompactTitleTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.TopNavigationTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest",
+            "tests": 1,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "requirement": "Hero carousel: gradient persists on off-centre cards \u2014 confirmed bug",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "requirement": "Hero carousel: remove Play action \u2014 approved correction",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "requirement": "Hero carousel: More Info control styling \u2014 approved refinement",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "requirement": "Shared boxed-action / option control foundation \u2014 user-approved design direction",
+      "workstreams": [
+        {
+          "source": "SharedThreePanel, PreviewToolbar, PreviewPages, PreviewGenres, PreviewLibrarySummary",
+          "acceptance": "Compact outlined accent controls; lower summary; immediate genre reset at top; direct direction toggle; Title Case; shared library presentation",
+          "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewPagesTest",
+          "PreviewProviderFilterTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "requirement": "Customize Home \u2014 structure, controls and genre workflow (approved for next refinement handover)",
+      "workstreams": [
+        {
+          "source": "PreviewHomeRows, PreviewGenres",
+          "acceptance": "Heading/divider; Create New Row at top; direct adjacent actions; immediate rule/genre persistence; visibility independent of dynamic membership",
+          "verification": "Create/reorder/rename/delete/show/hide/rule tests, Back persistence and focus"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "Preview41RowsTest",
+          "PreviewHomeVisualTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41RowsTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeVisualTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "requirement": "Shared library pages (Movies, TV Shows, Custom Library Page) \u2014 review complete for now",
+      "workstreams": [
+        {
+          "source": "SharedThreePanel, PreviewToolbar, PreviewPages, PreviewGenres, PreviewLibrarySummary",
+          "acceptance": "Compact outlined accent controls; lower summary; immediate genre reset at top; direct direction toggle; Title Case; shared library presentation",
+          "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewPagesTest",
+          "PreviewProviderFilterTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "requirement": "Shared control labels \u2014 consistent title case",
+      "workstreams": [
+        {
+          "source": "SharedThreePanel, PreviewToolbar, PreviewPages, PreviewGenres, PreviewLibrarySummary",
+          "acceptance": "Compact outlined accent controls; lower summary; immediate genre reset at top; direct direction toggle; Title Case; shared library presentation",
+          "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewPagesTest",
+          "PreviewProviderFilterTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "requirement": "Search page \u2014 restore intended non-three-panel design (confirmed 0.135 regression)",
+      "workstreams": [
+        {
+          "source": "PreviewSearch, PreviewKeyboard, PreviewTextInput, keyboard call-site audit",
+          "acceptance": "Two-area Search; guidance replaced by results; shared Search-baseline keyboard with subtle keys and six icon pills/Caps state; remove duplicate clear X",
+          "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNextTest",
+          "PreviewSearchPresentationTest",
+          "PreviewMatchSearchTest",
+          "PreviewMatchReviewTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "requirement": "Single global on-screen keyboard design \u2014 app-wide requirement",
+      "workstreams": [
+        {
+          "source": "PreviewSearch, PreviewKeyboard, PreviewTextInput, keyboard call-site audit",
+          "acceptance": "Two-area Search; guidance replaced by results; shared Search-baseline keyboard with subtle keys and six icon pills/Caps state; remove duplicate clear X",
+          "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNextTest",
+          "PreviewSearchPresentationTest",
+          "PreviewMatchSearchTest",
+          "PreviewMatchReviewTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "requirement": "Global keyboard baseline and action row \u2014 clarification",
+      "workstreams": [
+        {
+          "source": "PreviewSearch, PreviewKeyboard, PreviewTextInput, keyboard call-site audit",
+          "acceptance": "Two-area Search; guidance replaced by results; shared Search-baseline keyboard with subtle keys and six icon pills/Caps state; remove duplicate clear X",
+          "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNextTest",
+          "PreviewSearchPresentationTest",
+          "PreviewMatchSearchTest",
+          "PreviewMatchReviewTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "requirement": "APPROVED global keyboard visual design \u2014 2026-10-10",
+      "workstreams": [
+        {
+          "source": "PreviewSearch, PreviewKeyboard, PreviewTextInput, keyboard call-site audit",
+          "acceptance": "Two-area Search; guidance replaced by results; shared Search-baseline keyboard with subtle keys and six icon pills/Caps state; remove duplicate clear X",
+          "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNextTest",
+          "PreviewSearchPresentationTest",
+          "PreviewMatchSearchTest",
+          "PreviewMatchReviewTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "requirement": "Custom Library Page \u2014 first-use landing with embedded wizard (approved direction)",
+      "workstreams": [
+        {
+          "source": "CustomLibraryActivity, CustomLibraryPage, PreviewPages, PreviewCardPresenter",
+          "acceptance": "Text-only one-page landing; shared filtered summary/cards/controls; one five-step embedded/overlay wizard; immediate picker changes; persistent actions; exact panel/back/exit focus; safe centred dialogs",
+          "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "requirement": "Populated Custom Library Page must reuse default library presentation \u2014 confirmed regression",
+      "workstreams": [
+        {
+          "source": "CustomLibraryActivity, CustomLibraryPage, PreviewPages, PreviewCardPresenter",
+          "acceptance": "Text-only one-page landing; shared filtered summary/cards/controls; one five-step embedded/overlay wizard; immediate picker changes; persistent actions; exact panel/back/exit focus; safe centred dialogs",
+          "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "requirement": "Custom Library Page wizard \u2014 approved editing overlay, five-step refinements, and deletion dialog (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "CustomLibraryActivity, CustomLibraryPage, PreviewPages, PreviewCardPresenter",
+          "acceptance": "Text-only one-page landing; shared filtered summary/cards/controls; one five-step embedded/overlay wizard; immediate picker changes; persistent actions; exact panel/back/exit focus; safe centred dialogs",
+          "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "requirement": "Custom Library wizard Step 3 \u2014 compact fit, focus and persistent navigation",
+      "workstreams": [
+        {
+          "source": "CustomLibraryActivity, CustomLibraryPage, PreviewPages, PreviewCardPresenter",
+          "acceptance": "Text-only one-page landing; shared filtered summary/cards/controls; one five-step embedded/overlay wizard; immediate picker changes; persistent actions; exact panel/back/exit focus; safe centred dialogs",
+          "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "requirement": "Custom Library wizard D-pad focus, Back behaviour, unsaved changes and parent-page restoration (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "CustomLibraryActivity, CustomLibraryPage, PreviewPages, PreviewCardPresenter",
+          "acceptance": "Text-only one-page landing; shared filtered summary/cards/controls; one five-step embedded/overlay wizard; immediate picker changes; persistent actions; exact panel/back/exit focus; safe centred dialogs",
+          "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "requirement": "Network & Files \u2014 Shield walkthrough refinement (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "UniversalFileBrowser, BrowserSelection, LibraryHealth, source controllers",
+          "acceptance": "Stable panel routing/insets; dynamic flat onboarding drives; normal nested local/health; conditional toolbar/24-46-30 browser widths; staged multi-drive transaction; inline source/health/cloud controls; OAuth remains externally gated",
+          "verification": "D-pad repeated navigation, ancestor/scroll restoration, All Files sync, multi-drive Save/Discard, existing scanner/no offline purge tests"
+        }
+      ],
+      "status": "IMPLEMENTED EXCEPT EXTERNALLY BLOCKED PUT.IO OAUTH / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNetworkSemanticsTest",
+          "PreviewProviderBrowserTest",
+          "BrowserSelectionTest",
+          "ShortcutTransactionTest",
+          "SupernovaRetentionTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderBrowserTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.ShortcutTransactionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediaprovider.video.SupernovaRetentionTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      },
+      "external_dependency": "Production put.io OAuth requires actual registered client/redirect configuration and validation; no success claimed."
+    },
+    {
+      "id": 22,
+      "requirement": "Walkthrough coverage and outstanding work (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "Execution documentation",
+          "acceptance": "Latest approvals applied; Details and Playback/HUD deferred; no main merge or historical branch rewrite",
+          "verification": "Scope diff and conformance review"
+        }
+      ],
+      "status": "SCOPE CONFORMANCE RECORDED / DEFERRED DETAILS APPEARANCE REGRESSION PASSED",
+      "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
+      "validation_evidence": {
+        "planned_test_classes": [],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": []
+      }
+    },
+    {
+      "id": 23,
+      "requirement": "Home hero carousel \u2014 TV series versus newly arrived episode eligibility (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "requirement": "Persistent watch history, backups, privacy setting and hero fallback (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "requirement": "Clarification \u2014 independent resume tracking and hero-to-Continue-Watching lifecycle (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "requirement": "Hero-card text contrast and tagline-versus-synopsis design review (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 27,
+      "requirement": "Final approvals \u2014 single-line hero tagline fallback and animated navigation underline (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewLibraryLoader, OfficialTitleArtwork",
+          "acceptance": "Actual tagline, otherwise one-line ellipsised synopsis; no fabricated copy or marquee; omit empty copy; preserve official artwork and validate local contrast on device",
+          "verification": "FoundationHomeRegressionTest, PreviewHomeVisualTest, OfficialTitleNetworkTest; physical bright/mixed/dark SHIELD imagery pending"
+        },
+        {
+          "source": "TopNavigation, PreviewFocusRail, PreviewNavigationShade",
+          "acceptance": "Shared clock type/baseline; 220ms shade; content-width animated accent underline; nav changes on OK",
+          "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest",
+          "FoundationHomeRegressionTest",
+          "PreviewHomeVisualTest",
+          "OfficialTitleNetworkTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeVisualTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.OfficialTitleNetworkTest",
+            "tests": 1,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 28,
+      "requirement": "Approved watch-history retention, configurable backup selection and deferred contrast QA (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 29,
+      "requirement": "Hero carousel ranking \u2014 next available episodes take priority (approved 2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
+          "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
+          "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "requirement": "Settings QA \u2014 Open Source focus crash and diagnostic export (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewSettings, FoundationAboutWorkspace, PreviewPreferenceDialogs",
+          "acceptance": "Licences load on explicit OK asynchronously/cancellable; responsive structured panels/native choices; category/content sync; integrations preserve auth on disable; grouped providers immediately persist and transfer focus; bounded panel edges",
+          "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 31,
+      "requirement": "Timestamped reproduction \u2014 Open Source Licences freeze/crash (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewSettings, FoundationAboutWorkspace, PreviewPreferenceDialogs",
+          "acceptance": "Licences load on explicit OK asynchronously/cancellable; responsive structured panels/native choices; category/content sync; integrations preserve auth on disable; grouped providers immediately persist and transfer focus; bounded panel edges",
+          "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "requirement": "Settings comprehensive Shield walkthrough \u2014 responsive panels, native controls, nested navigation (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewSettings, FoundationAboutWorkspace, PreviewPreferenceDialogs",
+          "acceptance": "Licences load on explicit OK asynchronously/cancellable; responsive structured panels/native choices; category/content sync; integrations preserve auth on disable; grouped providers immediately persist and transfer focus; bounded panel edges",
+          "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 33,
+      "requirement": "Settings walkthrough final sign-off \u2014 My Providers and D-pad focus (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewSettings, FoundationAboutWorkspace, PreviewPreferenceDialogs",
+          "acceptance": "Licences load on explicit OK asynchronously/cancellable; responsive structured panels/native choices; category/content sync; integrations preserve auth on disable; grouped providers immediately persist and transfer focus; bounded panel edges",
+          "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 34,
+      "requirement": "Screenshot-confirmed foundational Settings panel hierarchy (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "PreviewSettings, FoundationAboutWorkspace, PreviewPreferenceDialogs",
+          "acceptance": "Licences load on explicit OK asynchronously/cancellable; responsive structured panels/native choices; category/content sync; integrations preserve auth on disable; grouped providers immediately persist and transfer focus; bounded panel edges",
+          "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 35,
+      "requirement": "First-run onboarding QA \u2014 local-only shared browser and no preselection scanning (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "CustomApplication, UniversalFileBrowser, PreviewPages, SupernovaLibraryPolicy dependency patch",
+          "acceptance": "No import/metadata/network scan before confirmed roots; explicit setup completion; local-only chooser guidance/checkboxes; multi-drive staging; scan configured roots once on Save/Finish",
+          "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SetupPolicyTest",
+          "PreviewLibraryCompositionTest",
+          "PreviewScanLifecycleTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewScanLifecycleTest",
+            "tests": 11,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 36,
+      "requirement": "First-run Build Your Library introductory guidance (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "CustomApplication, UniversalFileBrowser, PreviewPages, SupernovaLibraryPolicy dependency patch",
+          "acceptance": "No import/metadata/network scan before confirmed roots; explicit setup completion; local-only chooser guidance/checkboxes; multi-drive staging; scan configured roots once on Save/Finish",
+          "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SetupPolicyTest",
+          "PreviewLibraryCompositionTest",
+          "PreviewScanLifecycleTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewScanLifecycleTest",
+            "tests": 11,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 37,
+      "requirement": "Multi-drive configuration transaction and confirmed pre-onboarding scan (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "UniversalFileBrowser, BrowserSelection, LibraryHealth, source controllers",
+          "acceptance": "Stable panel routing/insets; dynamic flat onboarding drives; normal nested local/health; conditional toolbar/24-46-30 browser widths; staged multi-drive transaction; inline source/health/cloud controls; OAuth remains externally gated",
+          "verification": "D-pad repeated navigation, ancestor/scroll restoration, All Files sync, multi-drive Save/Discard, existing scanner/no offline purge tests"
+        },
+        {
+          "source": "CustomApplication, UniversalFileBrowser, PreviewPages, SupernovaLibraryPolicy dependency patch",
+          "acceptance": "No import/metadata/network scan before confirmed roots; explicit setup completion; local-only chooser guidance/checkboxes; multi-drive staging; scan configured roots once on Save/Finish",
+          "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNetworkSemanticsTest",
+          "PreviewProviderBrowserTest",
+          "BrowserSelectionTest",
+          "ShortcutTransactionTest",
+          "SupernovaRetentionTest",
+          "SupernovaWorkspaceUiTest",
+          "SetupPolicyTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderBrowserTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.ShortcutTransactionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediaprovider.video.SupernovaRetentionTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 38,
+      "requirement": "Onboarding browser space usage \u2014 flat local device navigation (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "UniversalFileBrowser, BrowserSelection, LibraryHealth, source controllers",
+          "acceptance": "Stable panel routing/insets; dynamic flat onboarding drives; normal nested local/health; conditional toolbar/24-46-30 browser widths; staged multi-drive transaction; inline source/health/cloud controls; OAuth remains externally gated",
+          "verification": "D-pad repeated navigation, ancestor/scroll restoration, All Files sync, multi-drive Save/Discard, existing scanner/no offline purge tests"
+        },
+        {
+          "source": "CustomApplication, UniversalFileBrowser, PreviewPages, SupernovaLibraryPolicy dependency patch",
+          "acceptance": "No import/metadata/network scan before confirmed roots; explicit setup completion; local-only chooser guidance/checkboxes; multi-drive staging; scan configured roots once on Save/Finish",
+          "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNetworkSemanticsTest",
+          "PreviewProviderBrowserTest",
+          "BrowserSelectionTest",
+          "ShortcutTransactionTest",
+          "SupernovaRetentionTest",
+          "SupernovaWorkspaceUiTest",
+          "SetupPolicyTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderBrowserTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.ShortcutTransactionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediaprovider.video.SupernovaRetentionTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 39,
+      "requirement": "Approved three-panel foundation from Build Your Library mock-up (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "SharedThreePanel, browser, settings, wizard",
+          "acceptance": "Non-focusable headers/dividers, navigation chevrons, row separators; labelled Information; checkbox/switch/choice semantics; adaptive/merged panels",
+          "verification": "Shared layout/render and focus tests; SHIELD no truncation at normal/accessibility scale"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewPagesTest",
+          "PreviewProviderFilterTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 40,
+      "requirement": "Diagnostic ZIP audit \u2014 export succeeds but contains no event evidence (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "Diagnostics, DiagnosticFlightRecorder, DiagnosticExportActivity, build.gradle",
+          "acceptance": "QA/development default ON/manual override; public OFF; bounded persistent crash/breadcrumb/exit/stall evidence; sustained aggregate trends; suspected focus/geometry instrumentation; private collision-safe dated export",
+          "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "DiagnosticsRefinementTest",
+          "DiagnosticsTest",
+          "DiagnosticArchiveTest",
+          "DiagnosticFlightRecorderTest",
+          "DiagnosticReferenceTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+            "tests": 18,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+            "tests": 9,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 41,
+      "requirement": "Second diagnostic export \u2014 confirmed Open-source Licences focus then unclean exit (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "Diagnostics, DiagnosticFlightRecorder, DiagnosticExportActivity, build.gradle",
+          "acceptance": "QA/development default ON/manual override; public OFF; bounded persistent crash/breadcrumb/exit/stall evidence; sustained aggregate trends; suspected focus/geometry instrumentation; private collision-safe dated export",
+          "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "DiagnosticsRefinementTest",
+          "DiagnosticsTest",
+          "DiagnosticArchiveTest",
+          "DiagnosticFlightRecorderTest",
+          "DiagnosticReferenceTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+            "tests": 18,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+            "tests": 9,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 42,
+      "requirement": "Approved direction: developer diagnostics, defaults and focus/performance monitoring (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "Diagnostics, DiagnosticFlightRecorder, DiagnosticExportActivity, build.gradle",
+          "acceptance": "QA/development default ON/manual override; public OFF; bounded persistent crash/breadcrumb/exit/stall evidence; sustained aggregate trends; suspected focus/geometry instrumentation; private collision-safe dated export",
+          "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "DiagnosticsRefinementTest",
+          "DiagnosticsTest",
+          "DiagnosticArchiveTest",
+          "DiagnosticFlightRecorderTest",
+          "DiagnosticReferenceTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+            "tests": 18,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+            "tests": 9,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 43,
+      "requirement": "Next release scope confirmation \u2014 enhanced diagnostics approved (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "Diagnostics, DiagnosticFlightRecorder, DiagnosticExportActivity, build.gradle",
+          "acceptance": "QA/development default ON/manual override; public OFF; bounded persistent crash/breadcrumb/exit/stall evidence; sustained aggregate trends; suspected focus/geometry instrumentation; private collision-safe dated export",
+          "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
+        }
+      ],
+      "status": "IMPLEMENTED / LOCAL AND NATIVE CI VERIFIED / PHYSICAL ACCEPTANCE PENDING",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "DiagnosticsRefinementTest",
+          "DiagnosticsTest",
+          "DiagnosticArchiveTest",
+          "DiagnosticFlightRecorderTest",
+          "DiagnosticReferenceTest"
+        ],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+            "tests": 18,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+            "tests": 9,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": 44,
+      "requirement": "Next-release documentation readiness and deferred walkthroughs (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "Execution documentation",
+          "acceptance": "Latest approvals applied; Details and Playback/HUD deferred; no main merge or historical branch rewrite",
+          "verification": "Scope diff and conformance review"
+        }
+      ],
+      "status": "SCOPE CONFORMANCE RECORDED / DEFERRED DETAILS APPEARANCE REGRESSION PASSED",
+      "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
+      "validation_evidence": {
+        "planned_test_classes": [],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": []
+      }
+    },
+    {
+      "id": 45,
+      "requirement": "User authorised Codex implementation start \u2014 Details/HUD reserved for later release (2026-10-10)",
+      "workstreams": [
+        {
+          "source": "Execution documentation",
+          "acceptance": "Latest approvals applied; Details and Playback/HUD deferred; no main merge or historical branch rewrite",
+          "verification": "Scope diff and conformance review"
+        }
+      ],
+      "status": "SCOPE CONFORMANCE RECORDED / DEFERRED DETAILS APPEARANCE REGRESSION PASSED",
+      "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
+      "validation_evidence": {
+        "planned_test_classes": [],
+        "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
+        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "physical_result": "Not performed",
+        "test_classes_verified": []
+      }
+    }
+  ],
+  "decision_precedence": "Execution brief and latest topic approvals including register #27 and #45 supersede earlier provisional design/workflow holds. Details and Playback/HUD redesign/features excluded.",
+  "verified_application_checkpoint": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
+  "automated_results": "TEST_RESULTS.json",
+  "native_ci_evidence": "CI_VERIFICATION.json"
+}

@@ -24,6 +24,7 @@ final class PutioSync {
         int newlyImported(){int count=0;for(PutioReconciliation.Change change:plan.changes)if(change.mediaId>0&&!initialMediaIds.contains(change.mediaId))count++;return count;}
     }
     static Review fetch(Context context,PutioReadClient client,long account,long folder,Uri source)throws Exception {
+        if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_putio_enabled",true))throw new IllegalStateException("put.io integration disabled");
         List<String> rootPath=PutioRootLocation.readPath(context,client,folder);
         Uri currentSource=PutioRootLocation.target(context,account,folder,source,rootPath);
         if(!source.equals(currentSource)){

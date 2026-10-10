@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
 @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewSearchNativeIndexTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test public void originalTitleCastAndStudioComeFromTheNativeIndex()throws Exception {
         Application app=RuntimeEnvironment.getApplication();
         DbHolder database=new DbHolder(new VideoOpenHelper(app));

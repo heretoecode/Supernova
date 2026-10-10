@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "source_commit": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
+  "run_id": 38090668342,
+  "url": "https://github.com/heretoecode/Supernova/actions/runs/38090668342",
+  "conclusion": "success",
+  "job_completed_at": "2026-10-10T22:45:10Z",
+  "evidence_basis": "GitHub completed run/step metadata and downloaded job log; artifact bytes could not be retrieved in this environment (HTTP 403). This record is not a copy of the artifact conformance JSON.",
+  "downloaded_job_log_sha256": "70280edde7a811df77601925f2158be2af958b53a80cba92a119c6d337648b1e",
+  "java_log_results": {
+    "tests": 514,
+    "classes": 132,
+    "passed": 514,
+    "failed_or_skipped_log_entries": 0,
+    "complete_zero_failure_error_skip_gate_passed": true
+  },
+  "python_tests": 58,
+  "android_build_result": "BUILD SUCCESSFUL",
+  "android_build_elapsed": "16m39s",
+  "binary": {
+    "application_id": "app.supernova.player",
+    "version_name": "0.136",
+    "version_code": 136,
+    "provider_authorities": [
+      "app.supernova.player.browser",
+      "app.supernova.player.provider",
+      "app.supernova.player.media;app.supernova.player.scraper",
+      "app.supernova.player.leanback.search.VideoSearchProvider",
+      "app.supernova.player.androidx-startup",
+      "app.supernova.player.com.squareup.picasso",
+      "app.supernova.player.SentryNdkPreloadProvider"
+    ],
+    "native_library_count": 88,
+    "apk_sha256": "32e3a138df8311e6e3afc3a84befa60610c0846bef37f2c787b94cc529f47293"
+  },
+  "binary_signed": false,
+  "release_lint_zero_error_gate_passed_in_ci": true,
+  "ci_lint_warning_count": null,
+  "ci_lint_warning_count_note": "Not independently read: lint XML artifact download denied. Local lint reports 1494 warnings.",
+  "reviewed_runtime_artifact_hashes_matched": 138,
+  "rebuilt_ffmpeg_libraries_matched": 24,
+  "native_decode_comparisons": 64,
+  "native_abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86",
+    "x86_64"
+  ],
+  "native_registry_tempo_decode_comparisons": "PASS",
+  "packaged_compiled_native_hash_parity_gate": "PASS IN CI",
+  "source_provider_branding_legal_identity_conformance": "PASS IN CI",
+  "artifact": {
+    "id": 11684074076,
+    "name": "supernova-0136-unsigned-evidence",
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38090668342/artifacts/11684074076",
+    "bytes": 5189309,
+    "digest_reported_by_github": "sha256:6e87fecf80b12c5ac43a6ac38a23e0976bb568013a1c71dd541644f0409065b4",
+    "archive_digest_locally_verified": false,
+    "download_status": "HTTP 403 Forbidden",
+    "contains_signed_apk": false,
+    "retention_days": 14
+  },
+  "signed_apk": null,
+  "signed_upgrade": "NOT PERFORMED",
+  "physical_shield": "NOT PERFORMED"
+}

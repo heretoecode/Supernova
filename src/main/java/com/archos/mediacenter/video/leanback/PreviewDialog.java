@@ -149,6 +149,14 @@ public final class PreviewDialog {
   View view=dialog.getWindow().getDecorView().findViewWithTag("preview-label:"+index);
   if(view instanceof TextView){((TextView)view).setText(label);((View)view.getParent()).setContentDescription(label);}
  }
+ public static Dialog confirmPageDelete(Context c,String title,String message,Runnable action){
+  Dialog dialog=create(c,"confirmation");LinearLayout panel=new LinearLayout(c);panel.setOrientation(LinearLayout.VERTICAL);SharedThreePanel.decorate(panel);
+  TextView heading=SharedThreePanel.text(c,title,22);PreviewIcon.apply(heading,"warning",24);panel.addView(heading);SharedThreePanel.divider(panel);
+  panel.addView(SharedThreePanel.text(c,message,16),new LinearLayout.LayoutParams(-1,0,1));LinearLayout buttons=new LinearLayout(c);panel.addView(buttons);
+  TextView cancel=SharedThreePanel.accentAction(c,"Cancel",dialog::dismiss),remove=SharedThreePanel.accentAction(c,"Delete",()->{dialog.dismiss();action.run();});
+  cancel.setBackground(SharedThreePanel.control(c,12));remove.setBackground(SharedThreePanel.control(c,12));remove.setTextColor(0xffffa5a5);buttons.addView(cancel,new LinearLayout.LayoutParams(0,dp(c,48),1));LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,dp(c,48),1);size.leftMargin=dp(c,12);buttons.addView(remove,size);
+  dialog.setContentView(panel);dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setGravity(Gravity.CENTER);dialog.getWindow().setDimAmount(.45f);dialog.getWindow().setLayout(Math.min(dp(c,520),c.getResources().getDisplayMetrics().widthPixels-dp(c,64)),Math.min(dp(c,280),c.getResources().getDisplayMetrics().heightPixels-dp(c,64)));cancel.requestFocus();return dialog;
+ }
  public static Dialog confirmDelete(Context c,String title,String message,Runnable action){android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(c).setTitle(title).setMessage(message).setIcon(android.R.drawable.ic_dialog_alert).setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->action.run()).create();dialog.setOnShowListener(d->{styleNative(dialog);dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(0xffffa5a5);dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).requestFocus();});dialog.show();return dialog;}
  public static int dp(Context c,int v){return Math.round(v*c.getResources().getDisplayMetrics().density);}
  public static StateListDrawable focus(Context c){return new PreviewContentFocus(c);}

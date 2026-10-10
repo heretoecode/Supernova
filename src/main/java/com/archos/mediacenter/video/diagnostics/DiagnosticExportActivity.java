@@ -11,7 +11,7 @@ public final class DiagnosticExportActivity extends Activity {
         super.onCreate(state);
         if(state!=null)return;
         Intent create=new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
-            .setType("application/zip").putExtra(Intent.EXTRA_TITLE,"Supernova-Diagnostics-"+System.currentTimeMillis()+".zip");
+            .setType("application/zip").putExtra(Intent.EXTRA_TITLE,"Supernova Diagnostics - "+new java.text.SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS",java.util.Locale.ROOT).format(new java.util.Date())+".zip");
         try{startActivityForResult(create,1);}catch(android.content.ActivityNotFoundException unavailable){Toast.makeText(this,"No document picker is installed. Install or enable a file manager with document support.",Toast.LENGTH_LONG).show();finish();}
     }
     @Override protected void onActivityResult(int request,int result,Intent data){

@@ -11,6 +11,8 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class Preview41ProgressTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     Application context;PreviewPagesTest fixture=new PreviewPagesTest();
     @Before public void setup(){context=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();}
     Entry episode(int n,int resume,boolean watched,long time){Entry e=fixture.episode(n,resume,watched,time,n);e.onlineId=7;return e;}

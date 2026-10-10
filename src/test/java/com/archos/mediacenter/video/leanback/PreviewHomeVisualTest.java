@@ -16,20 +16,22 @@ import static org.junit.Assert.*;
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class PreviewHomeVisualTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Before public void remoteInputMode(){androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().setInTouchMode(false);}
-    @Test public void genreHeaderAndDoneRemainVisibleWhenMiddleScrolls()throws Exception{
+    @Test public void genreHeaderRemainsVisibleAndChoicesPersistWithoutDone()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             PreviewGenres.choose(host.get(),Arrays.asList(PreviewGenres.NAMES),new HashSet<>(Arrays.asList("Drama","Science Fiction")),values->{});
             Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();View root=measure(dialog);
-            View heading=PreviewPagesTest.findText(root,"Genres · match any selected");
-            View done=(View)PreviewPagesTest.findText(root,"Done").getParent();
+            View heading=PreviewPagesTest.findText(root,"Genres · Match Any Selected");
+            assertNull(PreviewPagesTest.findText(root,"Done"));View done=(View)PreviewPagesTest.findText(root,"Western").getParent();
             PreviewPagesTest.capture(root,"home-genres-initial");
-            Rect headerBefore=bounds(root,heading),footerBefore=bounds(root,done);
+            Rect headerBefore=bounds(root,heading);
             android.graphics.Bitmap headingBefore=renderRegion(root,heading);
             ScrollView scroll=findScroll(root);assertNotNull(scroll);assertTrue(scroll.getChildAt(0).getHeight()>scroll.getHeight());
             scroll.fullScroll(View.FOCUS_DOWN);done.requestFocus();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();root=measure(dialog);
-            assertTrue(done.hasFocus());assertEquals(headerBefore,bounds(root,heading));assertEquals(footerBefore,bounds(root,done));
+            assertTrue(done.hasFocus());assertEquals(headerBefore,bounds(root,heading));bounds(root,done);
             assertTrue("Scrolling rows must not paint over the fixed heading",headingBefore.sameAs(renderRegion(root,heading)));
             PreviewPagesTest.capture(root,"home-genres-footer-focused");dialog.dismiss();
         }finally{host.pause().stop().destroy();}
