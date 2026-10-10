@@ -425,3 +425,12 @@ Reviewed/refinement requirements recorded in this register for: **Home**, **Movi
 - Empty-library **Build Your Library** onboarding uses the **shared foundational file/folder browser**, but **NOT the entire Network & Files page**. Simplify first-run left navigation to local storage devices/folders only; omit Library Health, Network Scanning, Cloud Services, Discover Devices, Add Network Source, Network Shares and other unrelated management functions. These remain available in normal Network & Files later. Avoid copying unrelated Overview/status screens into onboarding.
 - Reuse common file-browser component, consistent visuals, selected-folder affordances and correct D-pad focus. Video demonstrates inherited left/centre focus problems; fix at shared browser layer and regression-test both onboarding and Network & Files. Preserve breadcrumb/navigation and avoid accidental library scan on mere focus.
 - Video captures navigation to Network & Files/Overview, local-storage selection and Library Health after clearing data; do not mistake that full-page view for approved first-run setup. Further onboarding walkthrough may supply additional details.
+
+## 36. First-run Build Your Library introductory guidance (2026-10-10)
+**User-approved direction for next refinement; no code changes yet.**
+- Retain heading **Build Your Library**, but add concise, readable explanatory text immediately above the simplified local-storage chooser. Explain that users can start by selecting local folders containing movies/TV shows, and that broader network/cloud media options are available in **Network & Files**.
+- Suggested user-facing copy:
+  **Build Your Library**
+  “Get started by choosing the folders containing your movies and TV shows from your local storage devices.”
+  “Want to add media from your network or cloud services? Visit Network & Files for more options.”
+- Use existing Supernova typography, comfortable TV-distance line lengths and clear hierarchy; avoid unnecessary popup, extra wizard step or overexplaining internal shared-browser implementation. Ensure the wording reflects actual available options and the chooser remains prominent.
