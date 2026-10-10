@@ -10,18 +10,19 @@
       "existing": "FoundationUiPolicy; AndroidManifest.xml; build.gradle",
       "change": "Retain app.supernova.player and existing key; bump literal version to 0.135/135.",
       "validation": "Manifest/package/certificate comparison and actual signed upgrade",
-      "status": "UNSIGNED BINARY IDENTITY VERIFIED at 85f1822c \u2014 signed certificate/installed upgrade pending",
+      "status": "SIGNED BINARY IDENTITY/CERTIFICATE VERIFIED in CI at cfc2ca23 \u2014 installed Shield upgrade pending",
       "evidence": [
         "docs/0.135/IMPLEMENTATION_NOTES.md",
         "docs/0.135/TEST_RESULTS.json",
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationApplicationIdentityTest.java",
-        "src/test/java/com/archos/mediacenter/video/foundation/FoundationVersionTest.java"
+        "src/test/java/com/archos/mediacenter/video/foundation/FoundationVersionTest.java",
+        "docs/0.135/SIGNED_QA_VERIFICATION.json"
       ],
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationApplicationIdentityTest.java",
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationVersionTest.java"
       ],
-      "acceptance_remaining": "Manifest/package/certificate comparison and actual signed upgrade; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "acceptance_remaining": "Actual signed 0.134 to 0.135 upgrade on the physical Shield, preserving library/settings/playback state. Certificate/package/version compatibility passed in CI; a fresh local artifact verification was blocked.",
       "implementation_paths": [
         "src/main/java/com/archos/mediacenter/video/foundation/FoundationUiPolicy.java",
         "AndroidManifest.xml",
@@ -52,6 +53,17 @@
         "run_id": 38034702010,
         "conclusion": "success",
         "signed_or_physical_acceptance_claimed": false
+      },
+      "recorded_signed_qa_validation": {
+        "source_commit": "cfc2ca2376fb77f79a85a3a5e45333d38b9689e7",
+        "run_id": 38043018820,
+        "run_url": "https://github.com/heretoecode/Supernova/actions/runs/38043018820",
+        "signature_verified_in_ci": true,
+        "certificate_sha256_verified_in_ci": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+        "baseline_package_certificate_version_upgrade_compatible": true,
+        "independent_downloaded_apk_verified_locally": false,
+        "physical_shield_verified": false,
+        "signed_upgrade_verified": false
       }
     },
     {
@@ -7370,5 +7382,6 @@
     }
   ],
   "checkpoint": "CP-04",
-  "release_ready": false
+  "release_ready": false,
+  "signed_qa_checkpoint": "CP-14 / run 38043018820 at cfc2ca23"
 }
