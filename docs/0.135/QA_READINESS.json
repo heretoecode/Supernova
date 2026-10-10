@@ -7,14 +7,14 @@
   "gates": {
     "identity_source": true,
     "first_native_unsigned_conformance": true,
-    "latest_candidate_full_conformance": false,
+    "latest_candidate_full_conformance": true,
     "existing_certificate_signed_qa": false,
     "physical_shield": false,
     "signed_0134_upgrade": false,
-    "final_release_approved": false
+    "final_release_approved": false,
+    "latest_local_java_lint_python": true
   },
   "blockers": [
-    "Latest follow-up candidate requires complete Java/lint/Python and pinned native CI results.",
     "GitHub environment supernova-foundation-signing permits only codex/foundation-release; administrator must add codex/supernova-0.135 before the new QA job can use existing secrets.",
     "No physical NVIDIA Shield or connected representative storage/display/media is available in this environment.",
     "Signed 0.134 to 0.135 upgrade, real playback/subtitles/HDR/audio and hardware focus/animation/storage checks remain required.",
@@ -26,5 +26,8 @@
     "Credentialed provider coverage or quotas",
     "Frame-only HDR10+ metadata coverage or complete Dolby Vision hardware compatibility",
     "A reproduced root cause for an unspecified incomplete-import report"
-  ]
+  ],
+  "application_checkpoint": "85f1822c50f49bf8dd3a8bfcb23b9f495058b07b",
+  "latest_native_run": 38034702010,
+  "unsigned_apk_ci_sha256": "ebf5726dff2c717fd31b8164394f3b2f7feeeda98a897362c887a0208e3b9d4a"
 }
