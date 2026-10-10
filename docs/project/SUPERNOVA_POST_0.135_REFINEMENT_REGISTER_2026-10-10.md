@@ -151,3 +151,21 @@ User considers default Movies/TV library page review complete for now. More cust
 **User decision:** The existing **Search-page keyboard** is the most refined keyboard and should serve as the **visual and interaction baseline** for the global shared keyboard described in item 13. The Home > Customize Home > Rename keyboard currently offers Select and Cancel in addition to Clear, Space and Backspace.
 
 **Required:** Preserve Search keyboard's established key layout and styling as the baseline; standardise a bottom action area supporting **Caps Lock**, **Clear**, **Space**, **Backspace**, **Select**, and **Cancel**. Caps Lock should be visible and consistently available in all keyboard contexts, switching uppercase/lowercase with clear state feedback. Where context calls for it, Select confirms text and Cancel dismisses without applying unconfirmed edits. For live-search contexts, results must continue updating as text is entered without requiring Select to trigger searching. Maintain consistent D-pad navigation and screen-appropriate confirmation/cancellation semantics without visual fragmentation. Validate across Search, Home row rename and other app keyboard entry points.
+
+## 15. APPROVED global keyboard visual design — 2026-10-10
+**Decision:** User approved the latest keyboard mockup's **understated key styling** and **compact pill-shaped bottom action controls with monochrome icons LEFT of their text labels**. This is the definitive shared keyboard visual direction for the next refinement release, superseding earlier provisional keyboard illustrations.
+
+### Approved design
+- Use the current Search keyboard as the starting point for the global keyboard component, preserving its existing QWERTY/number key layout, input position, and D-pad navigation.
+- Individual keys have **very subtle translucent backgrounds**, soft thin neutral outlines and gently rounded corners; avoid heavy rigid boxed/grid appearance.
+- Focused key uses the user's chosen accent-colour outline with clear but restrained emphasis (mockup cyan is illustrative only).
+- Bottom action controls are **compact horizontal pills**, not square tiles. Each has a monochrome icon **to the left** of its text label, with consistent alignment, subtle translucent background, restrained neutral border, and accent-coloured focus.
+- Standard actions: **Caps Lock**, **Clear**, **Space**, **Backspace**, **Select**, **Cancel**. Caps Lock toggles case and visibly indicates state. Keep context-specific Select/Cancel semantics, including live Search updates without mandatory Select.
+- **Remove the X/clear icon from inside the Search text field**; it duplicates the **Clear** action below. Clicking/focusing the text field should not erase the query. Do not create two clear mechanisms.
+- Apply the same keyboard design globally across Search, Customize Home row rename, metadata editing and other Supernova on-screen keyboard contexts, with only necessary context-specific behaviours.
+- The Search page itself remains a **non-three-panel layout**: keyboard left, unboxed search guidance with monochrome icons right until results replace that guidance. The visual mockup is reference for the keyboard, **not approval of any extra panels or unrelated Search changes**.
+
+### Evidence and acceptance
+- Latest approved concept was generated and reviewed in the planning conversation; the illustration itself is not embedded in GitHub. The specification above is the authoritative text reference.
+- Verify on Shield: readable keys, sensible focus sizes, remote movement, focus restoration, uppercase/lowercase, action row and absence of duplicate Search clear X.
+- **Status: DESIGN APPROVED; implementation deferred until explicit next-release Codex handover.**
