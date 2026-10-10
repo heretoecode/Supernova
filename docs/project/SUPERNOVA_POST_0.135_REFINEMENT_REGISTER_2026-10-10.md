@@ -1,4 +1,7 @@
 # Supernova — Post-0.135 Refinement Register
+
+> **CURRENT SCOPE AUTHORITY — 2026-10-10:** All user-approved changes documented in this register (items #1–#43) and the linked shared three-panel design foundation are **earmarked for the next Supernova refinement release**, except where expressly superseded, rejected, conditional, or awaiting review. **Details page and Playback screen/HUD walkthroughs remain outstanding and are NOT approved redesign scope.** Historical wording below such as “proposed,” “pending onboarding review,” or “awaiting final sign-off” may have been superseded by later numbered decisions; apply the latest explicit user decision for each topic. This is a GitHub documentation/readiness update **only**, not a Codex handover or permission to implement. Visual mock-up assets are not confirmed present in the repository; descriptive design specifications are preserved here.
+
 Date: 2026-10-10
 Status: Captured for NEXT refinement release; **not an instruction to implement now**
 Source: User's first on-device review of installed 0.135 APK on NVIDIA Shield TV.
@@ -485,3 +488,10 @@ The user approved the shared visual hierarchy, including left chevrons and divid
 - Automatic **suspected** D-pad focus/navigation anomalies, focus restoration, geometry/clipping and observable layout issues; preserve visual QA for non-machine-detectable styling.
 - Validate on NVIDIA SHIELD with reproduction of the Open-source Licences crash and sustained real-world usage.
 **No Codex handover, implementation, build, branch changes or release start authorised by this documentation update.** Item Details and Playback HUD redesign remain parked; the already-observed Open Source Licences crash is separately tracked.
+
+## 44. Next-release documentation readiness and deferred walkthroughs (2026-10-10)
+**User confirmation:** Earmark all today's approved UI, behaviour, onboarding, diagnostics and shared framework requirements for the **next version**. The register and `docs/design/shared-three-panel-framework/SHARED_FRAMEWORK_BROWSER_0.135.md` are the GitHub source of truth for later Codex reading. Do not begin handover preparation, coding, builds or release activity yet.
+- Covered: Home/hero and header, Movies/TV pages, custom library page, Search, Network & Files (detailed Overview QA remains deferred pending focus repair), Settings and Open Source Licences crash, first-run Build Your Library/onboarding and scan gating, shared three-panel styling, diagnostics #40–#43.
+- **Explicitly pending user walkthrough:** item Details page; playback screen and playback HUD. Do not infer new fixes/redesigns for either, do not mark them reviewed. Their review will be documented later, before final scope closure.
+- Existing earlier text proposing designs is superseded wherever a later entry records approval (e.g. nav underline and onboarding). Treat this statement as a scope clarification, not blanket approval of genuinely unresolved options.
+- GitHub text documentation is ready to consult; **original image/video/mock-up binary assets are not verified to be checked into GitHub**. Any final handover should reconcile these references later, when the user requests it.
