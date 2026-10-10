@@ -6,11 +6,12 @@
     "unit_tests": true,
     "binary_conformance": true,
     "native_source_compliance": true,
-    "protected_key_validation": false,
+    "protected_key_validation": true,
     "foundation_review": true
   },
   "blockers": [
-    "Signed QA build/signature/payload verification run 38093972688 in progress"
+    "Physical SHIELD and signed 0.135 upgrade acceptance remain pending",
+    "Production put.io OAuth registered client/redirect configuration and end-to-end validation remain unavailable"
   ],
   "physical_shield_acceptance": "PENDING USER QA",
   "putio_oauth": "EXTERNALLY BLOCKED: registered client/redirect configuration unavailable",
@@ -18,5 +19,9 @@
   "verified_application_checkpoint": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
   "native_ci_verification": "CI_VERIFICATION.json",
   "signing_environment_branch_admitted": true,
-  "signed_qa_run": 38093972688
+  "signed_qa_run": 38093972688,
+  "qa_apk_ready": true,
+  "signed_qa_evidence": "SIGNED_QA_VERIFICATION.json",
+  "signed_qa_apk_sha256": "2c315580483e1086435ac72ae9809e005435da5c4bb72a3538468c7d1eb86e3c",
+  "signed_qa_blockers": []
 }

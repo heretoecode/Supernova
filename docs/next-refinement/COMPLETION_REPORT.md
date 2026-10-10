@@ -2,7 +2,7 @@
 
 Authoritative map: [requirements.json](requirements.json). Code checkpoint: `92900e4647d1ea614d2ef8f0e1dad9fb736e3e05`. All rows follow the latest approvals; historical tentative headings do not override #27/#28/#29/#39/#43/#45.
 
-Current verification: **514/514 tests across 132 classes**, 0 failures/errors/skips; release lint 0 errors / 1494 warnings; Python 58/58; prepared-source conformance PASS. Exact-source native APK conformance PASS: 88 native libraries, 24 rebuilt FFmpeg matches, 138 runtime artifact hashes and four-ABI 64 decode comparisons. No hardware results or signed APK claimed.
+Current verification: **514/514 tests across 132 classes**, 0 failures/errors/skips; release lint 0 errors / 1494 warnings; Python 58/58; prepared-source conformance PASS. Exact-source native APK conformance PASS: 88 native libraries, 24 rebuilt FFmpeg matches, 138 runtime artifact hashes and four-ABI 64 decode comparisons. Signed QA APK produced and independently reverified in CI; physical acceptance remains pending.
 
 | ID | Requirement | Implementation / acceptance status |
 |---|---|---|
@@ -58,10 +58,12 @@ Original package/signing pin and user data are preserved in source. Legacy Detai
 
 ## Outstanding dependencies
 
-- Exact new branch admission to protected environment `supernova-foundation-signing`: attempted API update returned HTTP 403. No key replacement or signing bypass.
+- Signing resolved: the user admitted the exact branch; signed QA and independent uploaded-artifact checks passed with the existing certificate. See [signed QA verification](SIGNED_QA_VERIFICATION.json).
 - Production put.io OAuth: actual registered client/redirect configuration and end-to-end validation unavailable.
 - Physical acceptance: see [SHIELD QA checklist](SHIELD_QA.md), including signed 0.135 upgrade/data retention, D-pad/contrast/licence reproduction and sustained diagnostics/native playback.
 
 See [progress](PROGRESS.md), [release notes](RELEASE_NOTES.md) and [QA readiness](QA_READINESS.json). Machine-readable local evidence: [TEST_RESULTS.json](TEST_RESULTS.json). Native evidence and retrieval limits are recorded below.
 
 Native verification: [CI_VERIFICATION.json](CI_VERIFICATION.json), [successful run](https://github.com/heretoecode/Supernova/actions/runs/38090668342) and [public evidence artifact](https://github.com/heretoecode/Supernova/actions/runs/38090668342/artifacts/11684074076). Artifact download returned HTTP 403 here; the completed GitHub log was retrieved. No signed APK is contained in that artifact.
+
+Signed QA delivery: [APK ZIP](https://github.com/heretoecode/Supernova/actions/runs/38093972688/artifacts/11685453791), [APK SHA-256](Supernova-0.136-Refinement-QA.apk.sha256), [verification](SIGNED_QA_VERIFICATION.json) and [corresponding FFmpeg source](https://github.com/heretoecode/Supernova/actions/runs/38093972688/artifacts/11685668489). Build source: `00bb55e6082ecf4081f2e8e524e83b2bb75b2f13`; later changes affect workflow/reporting only. Original certificate and higher version code preserve Android package-level upgrade compatibility with recorded 0.135; actual device upgrade has not been performed.

@@ -1,26 +1,31 @@
-# Next refinement delivery checkpoint
+# Supernova 0.136 signed QA delivery
 
-Development branch: `codex/supernova-next-refinement-2026-10-10`. Draft PR: [#10](https://github.com/heretoecode/Supernova/pull/10), targeting the 0.135 branch. Main and earlier development branches are unchanged.
+[Download signed QA APK ZIP](https://github.com/heretoecode/Supernova/actions/runs/38093972688/artifacts/11685453791). Extract `Supernova-0.136-Refinement-QA.apk`; the ZIP also contains original public QA evidence. Artifact expires 2026-10-24T23:39:32Z. [Corresponding FFmpeg source/native proof](https://github.com/heretoecode/Supernova/actions/runs/38093972688/artifacts/11685668489).
 
-Application source commit: `92900e4647d1ea614d2ef8f0e1dad9fb736e3e05`. Later commits contain documentation only. Provisional QA version: 0.136 / versionCode 136; package: `app.supernova.player`. Details and Playback/HUD redesigns/features remain deferred; approved shared infrastructure changes are documented in the conformance review.
+APK SHA-256 (not the ZIP archive digest):
 
-## APK location and signing blocker
+```
+2c315580483e1086435ac72ae9809e005435da5c4bb72a3538468c7d1eb86e3c
+```
 
-**No signed QA APK has been produced.** The existing protected environment `supernova-foundation-signing` admits only `codex/foundation-release` and `codex/supernova-0.135`. Adding this exact development branch through the API returned HTTP 403. The final policy recheck still excludes it. The existing signing identity is retained; no replacement key or bypass was used.
+[Checksum file](Supernova-0.136-Refinement-QA.apk.sha256) · [Complete signed verification](SIGNED_QA_VERIFICATION.json).
 
-The repository administrator must add the exact branch `codex/supernova-next-refinement-2026-10-10` in Repository Settings → Environments → `supernova-foundation-signing` → Deployment branches and tags. After admission, the prepared `next-refinement-qa.yml` workflow can repeat all gates and produce `Supernova-0.136-Refinement-QA.apk` using the existing certificate, with signed/unsigned payload parity and accompanying FFmpeg source evidence. This has not been dispatched or validated as signed delivery.
+## Verified identity and provenance
 
-## Verified results
+- Package: `app.supernova.player`; version: `0.136`; versionCode: `136`.
+- Original 0.135 certificate SHA-256: `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`.
+- Build commit: `00bb55e6082ecf4081f2e8e524e83b2bb75b2f13`; application checkpoint: `92900e4647d1ea614d2ef8f0e1dad9fb736e3e05`. Subsequent commits contain workflow/reporting changes only.
+- [Signed QA run](https://github.com/heretoecode/Supernova/actions/runs/38093972688): clean build, original signing identity, tested unsigned payload parity, package/version/resources, ZIP integrity and secret-material cleanup PASS.
+- [Independent uploaded-APK verification](https://github.com/heretoecode/Supernova/actions/runs/38095825877): actual artifact signature, package/version/resources, ZIP integrity, build provenance and APK hash against original public evidence PASS. This read-only job has no signing environment/key access and does not rebuild/sign the application.
 
-- Local: 514/514 tests across 132 classes; zero failures/errors/skips; release lint zero errors / 1,494 warnings; 58/58 Python tests; prepared-source conformance and patch/diff checks PASS. Local dependency NDK tasks were excluded.
-- Exact-source [native CI](https://github.com/heretoecode/Supernova/actions/runs/38090668342): clean Android build, 514/514 tests across 132 classes, 58 Python tests and zero-error release lint gate PASS. CI lint warning count was not independently retrieved.
-- Native/binary gates: original package/provider identity, provisional version, branding/legal resources, 138 reviewed runtime artifact hashes, 88 compiled/packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI registries/tempo and 64 decode comparisons PASS.
-- Unsigned tested APK SHA-256 from CI: `32e3a138df8311e6e3afc3a84befa60610c0846bef37f2c787b94cc529f47293`. This is not a signed APK hash or an installation deliverable.
+All 514 tests across 132 classes passed without failures/errors/skips, all 58 Python tests passed, and release lint passed with zero errors / 1,494 warnings. Native/runtime gates passed: 138 reviewed runtime artifact hashes, 88 compiled/packaged native libraries, 24 rebuilt FFmpeg matches and four-ABI registries/tempo/64 decode comparisons.
 
-[Public CI evidence artifact](https://github.com/heretoecode/Supernova/actions/runs/38090668342/artifacts/11684074076) (14-day retention) contains test, native, lint, conformance and UI evidence; **it contains no APK**. Downloading the archive here returned HTTP 403; the run log and metadata were retrieved. See [CI verification](CI_VERIFICATION.json) for the observed proof and retrieval limits.
+The user admitted `codex/supernova-next-refinement-2026-10-10` to the existing `supernova-foundation-signing` environment. No replacement signing credentials were created. [Draft PR #10](https://github.com/heretoecode/Supernova/pull/10) remains open and unmerged; main is unchanged. This is provisional QA, not a published final release.
 
-## Reports and remaining acceptance
+The workspace proxy still denies the GitHub artifact blob host. Verification was performed on the actual uploaded APK in GitHub Actions; no access restriction was bypassed. ZIP archive digests in API metadata are not independently verified locally.
 
-[Release notes](RELEASE_NOTES.md), [all 45 requirements](COMPLETION_REPORT.md), [machine-readable requirements](requirements.json), [test results](TEST_RESULTS.json), [conformance review](CONFORMANCE_REVIEW.md), [QA gates](QA_READINESS.json), [SHIELD checklist](SHIELD_QA.md) and [progress](PROGRESS.md).
+## Remaining acceptance
 
-Outstanding: protected signing admission; actual registered put.io OAuth client/redirect configuration and end-to-end validation; signed 0.135 upgrade/data retention; physical SHIELD visual/focus/contrast/network/licence reproduction, representative hardware playback and sustained diagnostics soak. The original licence process-death cause remains unproven. Release readiness remains false, and the draft PR is neither merged nor published as a final release.
+Matching package/certificate and a higher version code preserve Android package-level upgrade compatibility with recorded 0.135. An actual install over the user's device/data has not been performed. Physical SHIELD focus/contrast/network/licence reproduction, representative playback and diagnostics soak remain pending; the original licence process-death cause remains unproven. Production put.io OAuth requires actual registered client/redirect configuration and end-to-end validation.
+
+[Release notes](RELEASE_NOTES.md) · [All 45 requirements](COMPLETION_REPORT.md) · [Test results](TEST_RESULTS.json) · [Conformance review](CONFORMANCE_REVIEW.md) · [SHIELD checklist](SHIELD_QA.md) · [QA readiness](QA_READINESS.json) · [Progress](PROGRESS.md).

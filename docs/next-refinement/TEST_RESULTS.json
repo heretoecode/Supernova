@@ -1087,12 +1087,25 @@
     "artifact_url": "https://github.com/heretoecode/Supernova/actions/runs/38090668342/artifacts/11684074076",
     "artifact_download": "HTTP 403; run log and metadata retrieved"
   },
-  "signing": "BLOCKED: environment exact-branch admission denied HTTP 403",
+  "signing": "PASS: original 0.135 certificate, package/version and tested unsigned payload parity verified; uploaded APK independently reverified in CI",
   "lint": {
     "errors": 0,
     "warnings": 1494,
     "xml_sha256": "3e1809e508aca599e05c72cb3bd564ecceb8fe9c63acb2056e4b90eca2c7d74f"
   },
   "local_build_result": "BUILD SUCCESSFUL",
-  "local_build_elapsed": "7m42s"
+  "local_build_elapsed": "7m42s",
+  "signed_qa": {
+    "run_id": 38093972688,
+    "source_commit": "00bb55e6082ecf4081f2e8e524e83b2bb75b2f13",
+    "artifact_verification_run_id": 38095825877,
+    "evidence": "SIGNED_QA_VERIFICATION.json",
+    "apk_sha256": "2c315580483e1086435ac72ae9809e005435da5c4bb72a3538468c7d1eb86e3c",
+    "artifact_url": "https://github.com/heretoecode/Supernova/actions/runs/38093972688/artifacts/11685453791",
+    "unit_tests": 514,
+    "lint": {
+      "errors": 0,
+      "warnings": 1494
+    }
+  }
 }

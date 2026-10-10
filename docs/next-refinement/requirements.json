@@ -22,7 +22,7 @@
           "PreviewCompactTitleTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -62,7 +62,7 @@
           "Preview413Test"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -102,7 +102,7 @@
           "PreviewCompactTitleTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -142,7 +142,7 @@
           "PreviewCompactTitleTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -183,7 +183,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -229,7 +229,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -275,7 +275,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -320,7 +320,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -360,7 +360,7 @@
           "PreviewHomeMaximumTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -400,7 +400,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -440,7 +440,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -482,7 +482,7 @@
           "PreviewHomeMaximumTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -534,7 +534,7 @@
           "PreviewHomeMaximumTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -586,7 +586,7 @@
           "PreviewHomeMaximumTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -638,7 +638,7 @@
           "PreviewHomeMaximumTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -688,7 +688,7 @@
           "Preview413Test"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -728,7 +728,7 @@
           "Preview413Test"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -768,7 +768,7 @@
           "Preview413Test"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -808,7 +808,7 @@
           "Preview413Test"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -848,7 +848,7 @@
           "Preview413Test"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -891,7 +891,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -943,7 +943,7 @@
       "validation_evidence": {
         "planned_test_classes": [],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": []
       }
@@ -968,7 +968,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1014,7 +1014,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1060,7 +1060,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1106,7 +1106,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1160,7 +1160,7 @@
           "OfficialTitleNetworkTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1221,7 +1221,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1267,7 +1267,7 @@
           "Preview41ProgressTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1314,7 +1314,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1366,7 +1366,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1418,7 +1418,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1470,7 +1470,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1522,7 +1522,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1572,7 +1572,7 @@
           "PreviewScanLifecycleTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1612,7 +1612,7 @@
           "PreviewScanLifecycleTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1661,7 +1661,7 @@
           "SetupPolicyTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1730,7 +1730,7 @@
           "SetupPolicyTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1790,7 +1790,7 @@
           "SupernovaWorkspaceUiTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1832,7 +1832,7 @@
           "DiagnosticReferenceTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1884,7 +1884,7 @@
           "DiagnosticReferenceTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1936,7 +1936,7 @@
           "DiagnosticReferenceTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -1988,7 +1988,7 @@
           "DiagnosticReferenceTest"
         ],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": [
           {
@@ -2034,7 +2034,7 @@
       "validation_evidence": {
         "planned_test_classes": [],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": []
       }
@@ -2054,7 +2054,7 @@
       "validation_evidence": {
         "planned_test_classes": [],
         "test_result": "PASS: local and exact-source native CI each passed 514 tests / 132 classes without failures/errors/skips; release lint zero-error gate passed.",
-        "binary_result": "PASS: CI 38090668342, provisional 0.136/code136, 88 packaged native libraries, 24 rebuilt FFmpeg matches, four-ABI 64 decode comparisons. See CI_VERIFICATION.json. Signed QA blocked by environment branch policy.",
+        "binary_result": "PASS: unsigned CI 38090668342 and signed QA 38093972688; original certificate, package/version, tested payload parity and uploaded APK signature/hash reverified in receipt run 38095825877. See SIGNED_QA_VERIFICATION.json. Physical acceptance remains pending.",
         "physical_result": "Not performed",
         "test_classes_verified": []
       }
@@ -2063,5 +2063,6 @@
   "decision_precedence": "Execution brief and latest topic approvals including register #27 and #45 supersede earlier provisional design/workflow holds. Details and Playback/HUD redesign/features excluded.",
   "verified_application_checkpoint": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
   "automated_results": "TEST_RESULTS.json",
-  "native_ci_evidence": "CI_VERIFICATION.json"
+  "native_ci_evidence": "CI_VERIFICATION.json",
+  "signed_qa_evidence": "SIGNED_QA_VERIFICATION.json"
 }
