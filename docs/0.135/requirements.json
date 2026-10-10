@@ -1,0 +1,967 @@
+{
+  "schema": 1,
+  "authority_commit": "eb9dfd1d1df86bd6949a3124e92dc72b463b700f",
+  "base_commit": "788071ee878d2e7d70e9c78b90b9010edccfd113",
+  "items": [
+    {
+      "id": "G-001",
+      "requirement": "Preserve Foundation package, certificate, branding and 0.134 upgrade state",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Manifest/package/certificate comparison and actual signed upgrade",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-002",
+      "requirement": "Isolated branch; preserve historical/active development; no main merge or final release",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Remote refs and branch ancestry",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-003",
+      "requirement": "Shared 24/38/38 geometry, 16dp gaps, 20\u201324dp padding, 14\u201318dp corners and subtle depth",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Actual view geometry/render comparison",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-004",
+      "requirement": "Typography 20\u201322sp headings, 17\u201319sp labels, 15\u201316sp descriptions and 20\u201324dp icons",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "View properties, TV-distance Shield review",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-005",
+      "requirement": "White row outline, no panel glow, stable label/value/status alignment",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Actual focused/unfocused render, no content jumps",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-006",
+      "requirement": "Utility navigation shade disabled only on Settings, Network & Files, Search",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Page allowlist tests, Home/Movies/TV retain shade",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-007",
+      "requirement": "Top nav changes pages on OK only and clock shares font/size",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "D-pad key dispatch and TextClock properties",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-008",
+      "requirement": "Settings auto-load category, expand on OK, one expanded parent, all parents accessible",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Advanced/About expansion, exact focus and scroll tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-009",
+      "requirement": "Centre/right deterministic focus, remembered rail/item, no empty-panel focus",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Three-panel focus matrix incl toolbar edges",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-010",
+      "requirement": "About integrated structure; current notes visible, older multiple expansions; no fabricated history",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Foundation history comparison and long-text/QR tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-011",
+      "requirement": "Open-source licences locally readable, scrollable, no browser dependency or crash",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Packaged notices and actual licences view interaction",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "G-012",
+      "requirement": "Advanced introduction; Diagnostics peer accessible with working export",
+      "authority": "Master + Shared framework",
+      "existing": "TopNavigation; PreviewDialog; PreviewSettings; PreviewNetworkWorkspace; FoundationAboutWorkspace",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Reach all diagnostic controls and return from system picker",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-001",
+      "requirement": "One universal browser reused on full Network & Files and compact Home",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Same production view class/behaviour parity",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-002",
+      "requirement": "Audit every legacy entry point and document justified exceptions",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Exhaustive manifest and callsite inventory",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-003",
+      "requirement": "Home footprint starts at 65%, same type/icons/targets; fewer visible rows",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Home/full render geometry and Shield usability",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-004",
+      "requirement": "Left Overview, devices, network, saved, source/scan/health context with icons",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Focus Overview, Up to nav, expandable sources on OK",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-005",
+      "requirement": "List/Grid persisted with selection/scroll retained",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Toggle both ways at deep folder and retained item",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-006",
+      "requirement": "Existing Sort choices in compact popup, stable focus",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Each name/date/size sort plus restored opener",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-007",
+      "requirement": "All Files persisted two-way with Library & Metadata setting",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Toggle Settings/browser, supported video filter, folders always",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-008",
+      "requirement": "Single-line focus-scrollable complete breadcrumb carousel",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Deep paths, every ancestor, no ellipsis/wrap, OK navigation",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-009",
+      "requirement": "Folder OK opens without redundant right Open; Back follows ancestry first",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Enter/Back and previous folder item/scroll restoration",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-010",
+      "requirement": "Fixed Name/Type/Address/Library status and real async technical data",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Indexed/unindexed, long paths, absent fields honest",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-011",
+      "requirement": "Capability-specific Add/Save/Exclude/Remove in right panel",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Local/USB/network/read-only provider action checks",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-012",
+      "requirement": "No Source Options popup, bottom remote legend, unindexed View Details or spinner",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Actual view inventory and genuine loading ring",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-013",
+      "requirement": "Stage recursive parent includes with automatic Movie/TV recognition; no classification dialog",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Mixed tree import with mature existing scanner",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-014",
+      "requirement": "Child file/folder exclusion persists; parent remains monitored even all children excluded",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Future nonexcluded descendant scan, exclusion boundary tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-015",
+      "requirement": "Avoid nested duplicate sources",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Parent/child add and sibling/root identity tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-016",
+      "requirement": "Shadowed Added/Excluded/Removed review on actual exit only",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Back ancestry/panel changes no prompt; nav/section exit prompt",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-017",
+      "requirement": "Discard/Keep Editing/Apply & Scan, focus trap and exact restoration",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Cancel/edit/apply paths and index-only explanation",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-018",
+      "requirement": "Apply uses existing scanner once; pending during scan no overlapping jobs",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Busy/coalescing/cancel/background/errors regressions",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-019",
+      "requirement": "Explicit Scan Library starts promptly without arbitrary delay",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Scheduler request timing and real lifecycle events",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-020",
+      "requirement": "Scan Overview fixed fields and relative last completed, reserved progress",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Idle/queued/scanning/failure state renders",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "B-021",
+      "requirement": "Investigate confirmed incomplete imports from evidence",
+      "authority": "Shared framework",
+      "existing": "PreviewBrowserSurface; ListingActivity/ListingFragment; PreviewNetworkWorkspace; protocol subclasses; PutioBrowserActivity",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Baseline import tests, root-cause records; no invented defect",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "L-001",
+      "requirement": "Home discreet health notice; Network & Files summary and three-panel resolver",
+      "authority": "Library Health + Shared framework",
+      "existing": "PreviewLibraryLoader; PreviewMatchReview; PreviewNetworkWorkspace; MediaLib NetworkScannerServiceVideo/VideoStoreImportImpl",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Cross-page counts and nonblocking notice",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "L-002",
+      "requirement": "Unmatched, Incorrect Matches, Missing Metadata/Artwork, Unavailable, Source Problems",
+      "authority": "Library Health + Shared framework",
+      "existing": "PreviewLibraryLoader; PreviewMatchReview; PreviewNetworkWorkspace; MediaLib NetworkScannerServiceVideo/VideoStoreImportImpl",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Category fixtures and real available evidence only",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "L-003",
+      "requirement": "Filename/source/match status/candidates/Find a Match and healthy empty state",
+      "authority": "Library Health + Shared framework",
+      "existing": "PreviewLibraryLoader; PreviewMatchReview; PreviewNetworkWorkspace; MediaLib NetworkScannerServiceVideo/VideoStoreImportImpl",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Correcting preserves IDs/state/files and focus",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "L-004",
+      "requirement": "Ignore in-progress/unscanned media when reporting unmatched",
+      "authority": "Library Health + Shared framework",
+      "existing": "PreviewLibraryLoader; PreviewMatchReview; PreviewNetworkWorkspace; MediaLib NetworkScannerServiceVideo/VideoStoreImportImpl",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Scan lifecycle fixtures",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "L-005",
+      "requirement": "Offline/missing retains records, metadata, art, Continue Watching, watched/resume",
+      "authority": "Library Health + Shared framework",
+      "existing": "PreviewLibraryLoader; PreviewMatchReview; PreviewNetworkWorkspace; MediaLib NetworkScannerServiceVideo/VideoStoreImportImpl",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "DB snapshot before/after offline USB/NAS and missing files",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "L-006",
+      "requirement": "Distinguish source offline vs missing file, reconnect reliable IDs without rebuild",
+      "authority": "Library Health + Shared framework",
+      "existing": "PreviewLibraryLoader; PreviewMatchReview; PreviewNetworkWorkspace; MediaLib NetworkScannerServiceVideo/VideoStoreImportImpl",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Reliable/ambiguous reconnection and stored progress",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "L-007",
+      "requirement": "No automatic purge or physical deletion, source removal explicit index-only",
+      "authority": "Library Health + Shared framework",
+      "existing": "PreviewLibraryLoader; PreviewMatchReview; PreviewNetworkWorkspace; MediaLib NetworkScannerServiceVideo/VideoStoreImportImpl",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Backend deletion audit and scanner integration tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-001",
+      "requirement": "One-time empty welcome, explore freely, inline compact browser, no forced modal/Skip",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "First launch, first successful media and later empty library",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-002",
+      "requirement": "Building Your Library and hide Customise until imported media",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Empty/busy/populated state tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-003",
+      "requirement": "Hero transitions no dim/flash, keep established carousel",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Bright/dark fixture render and Shield animation review",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-004",
+      "requirement": "Remove heavy artwork gradient; only local text contrast, subtle hero edge/shadow",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Pixel comparison and TV legibility",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-005",
+      "requirement": "Contained focus zoom, row continuation and unclipped edges",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "First/middle/last poster rendering and scroll",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-006",
+      "requirement": "Return from Details/playback to exact Home card and immediate D-pad",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Stable item anchor with background updates",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-007",
+      "requirement": "Move/Hide controls, visibility independent from membership",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Hide/unhide/reorder retains members",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-008",
+      "requirement": "Dynamic genre ON future matches; OFF freezes members and manual adds remain",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Toggle/snapshot/new item/manual tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-009",
+      "requirement": "Reversible Date Added/Title/Year sorting",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Asc/desc persisted, retained members",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-010",
+      "requirement": "Done separated by divider and breathing room",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Customisation dialog render/focus",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "H-011",
+      "requirement": "Featured accessible matched backdrop with synopsis fallback; partial Resume",
+      "authority": "Master + Expanded scope",
+      "existing": "PreviewPages; PreviewFeaturedCard; PreviewHomeRows; PreviewCardPresenter; PreviewStartupSurface",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Missing art/description/offline exclusion and correct action",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "M-001",
+      "requirement": "Symmetrical Movies/TV; movie-only Continue Watching on Movies",
+      "authority": "Master + Movies/TV + Recent decisions",
+      "existing": "PreviewPages; PreviewLibraryLoader; PreviewFocusRecycler; PreviewSeriesJourney",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Mixed movie/series snapshot routing",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "M-002",
+      "requirement": "TV Recently Added next-to-watch with multiple new episodes",
+      "authority": "Master + Movies/TV + Recent decisions",
+      "existing": "PreviewPages; PreviewLibraryLoader; PreviewFocusRecycler; PreviewSeriesJourney",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Journey/version duplicates and watched episodes",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "M-003",
+      "requirement": "Boxed Filters/Sort/Order/View/Columns above divider, custom Edit far right only",
+      "authority": "Master + Movies/TV + Recent decisions",
+      "existing": "PreviewPages; PreviewLibraryLoader; PreviewFocusRecycler; PreviewSeriesJourney",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Actual toolbar geometry and built-in absence of Edit",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "M-004",
+      "requirement": "Toolbar deterministic LR/Down/Up and exact Details return",
+      "authority": "Master + Movies/TV + Recent decisions",
+      "existing": "PreviewPages; PreviewLibraryLoader; PreviewFocusRecycler; PreviewSeriesJourney",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Grid/List D-pad and state/scroll restoration",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "M-005",
+      "requirement": "Vertically centred focused poster row; preserve zoom/partial adjacent carousel",
+      "authority": "Master + Movies/TV + Recent decisions",
+      "existing": "PreviewPages; PreviewLibraryLoader; PreviewFocusRecycler; PreviewSeriesJourney",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Focus first/middle/last rows and rendered viewport",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "M-006",
+      "requirement": "Filter/divider alignment; real filters remembered independently",
+      "authority": "Master + Movies/TV + Recent decisions",
+      "existing": "PreviewPages; PreviewLibraryLoader; PreviewFocusRecycler; PreviewSeriesJourney",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Genre/year/provider multi-select Done/Clear and persistence",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "S-001",
+      "requirement": "Local-only three-panel Search guidance and existing keyboard",
+      "authority": "Master + Search matching + Search mockup",
+      "existing": "PreviewSearch; PreviewSearchText; PreviewKeyboard; MediaLib metadata",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "No network discovery; mockup alignment; initial T focus",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "S-002",
+      "requirement": "Punctuation/articles optional, minor typos sensible ranking",
+      "authority": "Master + Search matching + Search mockup",
+      "existing": "PreviewSearch; PreviewSearchText; PreviewKeyboard; MediaLib metadata",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Unicode/punctuation/article/typo positive and false-positive tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "S-003",
+      "requirement": "Indexed title/filename/episode and cast/crew/studio/network role",
+      "authority": "Master + Search matching + Search mockup",
+      "existing": "PreviewSearch; PreviewSearchText; PreviewKeyboard; MediaLib metadata",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Known indexed fixtures; explain match role",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "S-004",
+      "requirement": "Original/alternate title real indexing and Details display only if supported",
+      "authority": "Master + Search matching + Search mockup",
+      "existing": "PreviewSearch; PreviewSearchText; PreviewKeyboard; MediaLib metadata",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "TMDb source audit, locale dedup and honest guidance",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "S-005",
+      "requirement": "Details return query/results/scroll/exact keyboard-result edge focus",
+      "authority": "Master + Search matching + Search mockup",
+      "existing": "PreviewSearch; PreviewSearchText; PreviewKeyboard; MediaLib metadata",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Empty/results/update/cancel generations and return tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "D-001",
+      "requirement": "Year/runtime/rating metadata aligned; permanent primary action boxes",
+      "authority": "Master + Details + expanded mockup",
+      "existing": "VideoDetailsFragment; PreviewDetailsFacts; PreviewMoreActions; PreviewPeopleRail; scrapping PreviewMatchFragment",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Real metadata row/action geometry",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "D-002",
+      "requirement": "Provider logos/icons, region and supported season availability, no rent/buy",
+      "authority": "Master + Details + expanded mockup",
+      "existing": "VideoDetailsFragment; PreviewDetailsFacts; PreviewMoreActions; PreviewPeopleRail; scrapping PreviewMatchFragment",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Actual provider response fixtures and enabled integrations",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "D-003",
+      "requirement": "Faster Extras/More Like This/Cast with async/cache continuity",
+      "authority": "Master + Details + expanded mockup",
+      "existing": "VideoDetailsFragment; PreviewDetailsFacts; PreviewMoreActions; PreviewPeopleRail; scrapping PreviewMatchFragment",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Timing evidence, no main-thread network or repeated focus load",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "D-004",
+      "requirement": "Details/Extras/More Like This focus and exact return",
+      "authority": "Master + Details + expanded mockup",
+      "existing": "VideoDetailsFragment; PreviewDetailsFacts; PreviewMoreActions; PreviewPeopleRail; scrapping PreviewMatchFragment",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Conditional tab routes and nested Details back",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "D-005",
+      "requirement": "Expanded information with compact Cast/Crew text tables, no counts/person pages",
+      "authority": "Master + Details + expanded mockup",
+      "existing": "VideoDetailsFragment; PreviewDetailsFacts; PreviewMoreActions; PreviewPeopleRail; scrapping PreviewMatchFragment",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Approved mockup, equal rows and real facts",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "D-006",
+      "requirement": "Find a Match visible input, typing retains keyboard, posters render",
+      "authority": "Master + Details + expanded mockup",
+      "existing": "VideoDetailsFragment; PreviewDetailsFacts; PreviewMoreActions; PreviewPeopleRail; scrapping PreviewMatchFragment",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Match correction preserves state/versions and explicit chosen identity",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-001",
+      "requirement": "Exactly Subtitles/Audio/centred Play-Pause/More pills; no top Info/Settings",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "HUD view inventory, key navigation and technical info retained",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-002",
+      "requirement": "D-pad directions reveal seek bar, remove Up-to-More",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Hidden/visible HUD directional tests, Back dismiss then exit",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-003",
+      "requirement": "Preserve HUD theme/colour; diagnostic flash only fix if reproducible",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Recreation/accent tests and Shield playback",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-004",
+      "requirement": "Preserve NOVA subtitle appearance/position/sync/download/languages/formats",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Subtitle menu/track regressions, labels/locale flags",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-005",
+      "requirement": "Restart Movie/Episode immediate 00:00 incl Details More",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Intent/service one-shot start with preserved stored state until play",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-006",
+      "requirement": "Remove from Continue Watching Row affects membership only",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Resume/watched DB comparison",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-007",
+      "requirement": "Up Next 5s + Play Now, inherited modes and safe postcredits/no duplicate advance",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Pause/end/race/seek/mode/postcredits fixtures",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-008",
+      "requirement": "90% real viewing or reliable natural end; seek-to-end never watched",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Playback viewing accounting and completion tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-009",
+      "requirement": "Compatible quality ranking, actual file badge, persisted manual Versions (N)",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "All entry routes, unsupported codec/HDR and file removal",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-010",
+      "requirement": "Intro/Recap/Outro/Credits/Preview policies and 5s prompt/session override",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Real supported segments, uncertain/postcredits not skipped",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "P-011",
+      "requirement": "Investigate real IntroDB API/capabilities/rights, no fabricated integration",
+      "authority": "Master + HUD + Recent decisions + Playback",
+      "existing": "PlayerService; PlayerActivity; PreviewUpNext; PreviewPlaybackMenus; PreviewVariants; PreviewVersionsDialog",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Source/endpoints/provider evidence and unavailable fallback",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "C-001",
+      "requirement": "One custom slot after fixed Home/Movies/TV; Create New Page",
+      "authority": "Master + Custom Library approval/mockups",
+      "existing": "TopNavigation; PreviewPages; no existing custom-page model/wizard",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Empty/occupied navigation, no second page/reordering/Discovery",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "C-002",
+      "requirement": "Five-step Page Details/Content Type/Filters/Display/Review; no exclusions step",
+      "authority": "Master + Custom Library approval/mockups",
+      "existing": "TopNavigation; PreviewPages; no existing custom-page model/wizard",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Wizard traversal, retained Back entries and live preview",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "C-003",
+      "requirement": "Name/icon/movie-TV-Both/reliable filters incl genre Any-All",
+      "authority": "Master + Custom Library approval/mockups",
+      "existing": "TopNavigation; PreviewPages; no existing custom-page model/wizard",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Input validation and known metadata availability",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "C-004",
+      "requirement": "Prefilled Edit/rename at far right; Delete confirmation retains media",
+      "authority": "Master + Custom Library approval/mockups",
+      "existing": "TopNavigation; PreviewPages; no existing custom-page model/wizard",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Persistence and DB/media invariance",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "C-005",
+      "requirement": "Unsaved Save/Discard/Continue Editing, unchanged no prompt",
+      "authority": "Master + Custom Library approval/mockups",
+      "existing": "TopNavigation; PreviewPages; no existing custom-page model/wizard",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Create/edit draft exit and validation failure focus",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-001",
+      "requirement": "Backup full implemented nonsecret state, archive format 1.0+ and embedded guide",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Feature-by-feature export/restore archive manifest",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-002",
+      "requirement": "Exclude credential DB, secret prefs/URIs and indirect database copies",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Planted secret archive inspection, reject secret-bearing imports",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-003",
+      "requirement": "Before picker privacy warning; Android picker destination/filename",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "TV export flow and actual warning",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-004",
+      "requirement": "Validate/confirm filename/date/version/categories before replacing",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Invalid/zero/traversal/oversize/version/CRC tests, existing state unchanged",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-005",
+      "requirement": "Staging/journal/rollback; supported migrations; reauthentication",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Injected restore failures and DB/prefs rollback",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-006",
+      "requirement": "Retain metadata associations/versions/watch/resume/rows/views/custom page/source identities",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Full nonsecret-state round trip",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-007",
+      "requirement": "Missing/relocated USB cautious matching, offline retain, artwork background IDs",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Missing/ambiguous sources and stable media IDs",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-008",
+      "requirement": "Diagnostic OFF Keep/Delete/Cancel stops optional capture; retained export",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Capture race/cancel/delete/prefs and bounded log tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-009",
+      "requirement": "Expand useful crash/ANR/memory/player/focus/UI/network/scan/subtitle/performance diagnostics",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Actual events, optional-off zero sampling and bounded overhead",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-010",
+      "requirement": "Strict credential redaction, no invented telemetry/viewer/upload",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Planted username/token/key/header/URI test corpus",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-011",
+      "requirement": "Metadata/source reliability, artwork/cache/fallback/provider/alternate-title audit",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Existing configured APIs/licensing/quota and known failure tests",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    },
+    {
+      "id": "A-012",
+      "requirement": "Coloured My Providers logos and locale-only language flags",
+      "authority": "Master + Backup + Expanded scope",
+      "existing": "MediaLibraryBackupService; SettingsBackup; MigrationBackup; SafeBackup; VerifiedBackup; RestoreJournal; Diagnostics",
+      "change": "Audit implementation against approval; implement gaps, preserve working behaviour.",
+      "validation": "Selector rendering/in-place tick and locale cases",
+      "status": "AUDITED \u2014 implementation/validation pending",
+      "evidence": []
+    }
+  ]
+}
