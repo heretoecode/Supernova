@@ -237,3 +237,13 @@ User considers default Movies/TV library page review complete for now. More cust
 Test first-use creation, edit overlay size/blur/dim/focus trap and dismissal, direct Content Type selection, genre updates, flags, removed icon/collections, Review formatting, Preview count/list, Save Page, Cancel/Delete safety, and preservation of existing data and D-pad behaviour on Shield.
 
 **Status:** All changes above user-approved as design/requirements; implementation only after explicit Codex handover. Shared foundation refinements are additionally documented in the three-panel foundation specification.
+
+## 19. Custom Library wizard Step 3 — compact fit, focus and persistent navigation
+**Evidence:** Three user photos of Filters step show tall vertical gaps, centre-panel scrolling with header disappearing, and Previous/Next/Delete Page below fold.
+
+**Approved intent:** Fit all Step 3 filter controls in the centre panel **when comfortably possible** without reducing readability or eliminating reasonable spacing. First reclaim space by removing Collections and the redundant Delete Page action (already approved in item 18); then tune vertical gaps, grouping and row padding. Do **not** force a no-scroll layout at the expense of text size, remote targets or accessibility. Allow scrolling when genuinely necessary (e.g. smaller viewport, accessibility scaling or longer translated labels).
+- Keep wizard **Previous/Next navigation accessible**, ideally outside the independently scrolling filter options region rather than disappearing below the fold.
+- Apply shared panel-heading rule to non-focusable **Filters** heading: consistent typography, top inset, divider and separation from first actionable Genres row. Preserve initial D-pad focus on Genres and intuitive scrolling/focus restoration.
+- Delete Page must appear **only on Page Details** (item 18), never on Filters.
+- Test on Shield at normal scaling and with long text/accessibility settings; no clipped options, no lost focus or offscreen primary actions.
+**Status:** User-confirmed refinement; for next Codex handover only.
