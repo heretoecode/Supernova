@@ -187,3 +187,20 @@ User considers default Movies/TV library page review complete for now. More cust
 - Preserve the current one-custom-page scope. Do not introduce multiple pages or a new Discovery section.
 
 **Validation:** First use, wizard entry, completion, edit, delete/recreate, Back/focus, no redundant context menu, no Discovery messaging. No application code change authorised by this planning entry.
+
+## 17. Populated Custom Library Page must reuse default library presentation — confirmed regression
+**Evidence:** User's ~25-second Shield video of newly created populated Custom Library Page, reuploaded and reviewed in planning chat. Video itself is not embedded in repository. Existing Movies/TV Shows pages are the authoritative design and behaviour reference; no new grid mockup required.
+
+**Core rule:** Custom Library Page is another configured instance of the same library UI as Movies and TV Shows, not a separately styled screen. Only user-defined page title, filtered content and custom-only Edit action should differ. Prefer shared components and styles over parallel duplicated implementations.
+
+**Required fixes:**
+- Show page title (e.g. Documentaries) with the **same library summary block and layout** as default pages: item count, total size, storage breakdown (local/network/WebDAV as applicable). Calculate these metrics from the **actual filtered items on this page**, not the full library; support mixed movies/TV and sensible labels.
+- Match exact vertical spacing between title, statistics and library control row. Inherit previously approved summary-position refinement.
+- Match default-page poster grid spacing, column alignment, card dimensions and clipping/partial visibility conventions.
+- Focused and unfocused posters must retain the same rounded corners; remove square-corner focus enlargement, irregular zoom or artwork protrusion. Reuse default-page focus zoom, outline, sizing, z-order and visibility, with user's accent colour as appropriate.
+- Match existing D-pad movement and boundary behaviour, plus restoration to the same focused item after returning from Details.
+- Inherit shared Filters, Sort, Order, List/Grid and Columns controls and all already recorded library refinements (compact translucent boxes, accent-coloured focus, direct sort-order toggle, genre reset/instant updates, title-case labels). Preserve custom-only **Edit** control in its approved position.
+- Preserve working five-step creation wizard, Edit and Delete Page functionality; do not change the previously agreed first-use landing with embedded wizard.
+- Verify visual/behaviour parity on Shield against actual Movies and TV Shows screens. Do not consider superficially similar styling sufficient; changes to shared library components should carry across all three.
+
+**Status:** Approved correction for future refinement handover. No code changes authorised by documentation alone.
