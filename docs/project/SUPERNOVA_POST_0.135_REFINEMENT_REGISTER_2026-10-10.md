@@ -125,3 +125,24 @@ User considers default Movies/TV library page review complete for now. More cust
 ## 11. Shared control labels — consistent title case
 **Observed:** Some library controls inconsistently capitalise their multi-word labels, e.g. “Newest first”, “Oldest first”, “List view”, “Grid view”.
 **Required:** Use consistent **Title Case** for these UI control labels: **Newest First**, **Oldest First**, **List View**, **Grid View**. Apply across Movies, TV Shows and custom Library Pages, and audit comparable multi-word action/control labels app-wide for consistency (without blindly title-casing sentences, descriptions, metadata or user-created names). Preserve existing toggling, focus and view behaviour. This is a wording refinement, not a feature change.
+
+## 12. Search page — restore intended non-three-panel design (confirmed 0.135 regression)
+**Evidence:** User photo of 0.135 Search shows three oversized blue panels: keyboard left, empty results centre, guidance right. This three-panel foundation was intended for Settings and Network & Files, **not Search**.
+**Required:**
+- Remove three-panel framing from Search and restore previously approved simpler layout: keyboard on left; right-hand content area has unboxed guidance when there are no search results.
+- Guidance is plain text with appropriately subtle **monochrome icons** illustrating search features (movies/TV/episodes/filenames, punctuation/original titles, minor typos, people/studios where supported). No oversized boxed guidance panel.
+- When matching search results appear, **replace/hide guidance in that same right-hand area**, rather than showing results in a narrow centre panel; make good use of available width.
+- Preserve existing search matching capabilities and D-pad navigation. No search-speed optimisation requested at this time.
+- Keep Search excluded from scroll-dependent header blur, consistent with earlier design decisions.
+- This is restoration/refinement, not a new three-panel Search redesign.
+
+## 13. Single global on-screen keyboard design — app-wide requirement
+**Observed:** Inconsistent keyboard design across Search, Customize Home row renaming and other text-entry screens.
+**Required:** Implement/use **one shared keyboard component and visual foundation** across all Supernova screens requiring on-screen text entry. Changes to that keyboard should propagate globally; do not create per-screen divergent keyboards.
+- Consistent key arrangement, typography, spacing, containers, selected/focused appearance, D-pad focus, editing and focus restoration.
+- Retain Clear, Space, Backspace, Select and Cancel where relevant; add previously approved **Caps Lock** control with clearly indicated uppercase/lowercase state.
+- Allow screen-specific configuration (prompt, initial text, valid characters, etc.) without altering global keyboard design.
+- Verify Search, row rename, metadata search/edit and other existing keyboard entry points on Shield. Avoid breaking platform/system keyboard integrations where required.
+- Shared keyboard requirement supersedes any interpretation of item 9 as a Home-only keyboard tweak.
+
+**Status:** User confirmed Search layout concept and app-wide keyboard consistency; saved for next refinement handover, not authorised for immediate coding.
