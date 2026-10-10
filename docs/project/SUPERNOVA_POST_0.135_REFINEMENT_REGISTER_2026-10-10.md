@@ -169,3 +169,21 @@ User considers default Movies/TV library page review complete for now. More cust
 - Latest approved concept was generated and reviewed in the planning conversation; the illustration itself is not embedded in GitHub. The specification above is the authoritative text reference.
 - Verify on Shield: readable keys, sensible focus sizes, remote movement, focus restoration, uppercase/lowercase, action row and absence of duplicate Search clear X.
 - **Status: DESIGN APPROVED; implementation deferred until explicit next-release Codex handover.**
+
+## 16. Custom Library Page — first-use landing with embedded wizard (approved direction)
+**Observed in 0.135:** Clicking '+' in top navigation opens an unnecessary “Create a New Page” context menu containing a single “Library Page” option, then the existing three-panel five-step wizard. The wizard foundation works. User confirms existing Edit control on created custom page reopens wizard, and Delete Page works.
+
+**Required first-use flow:**
+- When **no custom Library Page exists**, clicking top-navigation **+** opens a dedicated **first-use landing page directly**, without the intermediary context menu or separate Create button.
+- The landing page presents a **brief, clear introduction** describing the purpose of a custom Library Page and personalised filters, with the **existing five-step creation wizard embedded directly below the introduction** and ready to use.
+- Keep introduction compact so it does not crowd or shrink the wizard. Preserve the wizard's established three-panel layout, steps, filtering and D-pad functionality.
+- **Do not mention Discovery / Coming Soon anywhere on the landing page.** Discovery is parked for future discussion only, not a promised upcoming feature.
+- Retain prior approved removal of icon selection; page title is text-only.
+
+**After creation:**
+- First-use landing no longer appears; the created custom Library Page is shown normally in the shared library layout.
+- Existing **Edit** button beside Filters/Sort etc. reopens the five-step wizard; preserve.
+- Existing Delete Page works; preserve. After deletion, return to first-use state so '+' leads to the introduction plus embedded wizard again.
+- Preserve the current one-custom-page scope. Do not introduce multiple pages or a new Discovery section.
+
+**Validation:** First use, wizard entry, completion, edit, delete/recreate, Back/focus, no redundant context menu, no Discovery messaging. No application code change authorised by this planning entry.
