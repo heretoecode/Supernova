@@ -13,7 +13,7 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -21,9 +21,26 @@
           "PreviewNavigationShadeTest",
           "PreviewCompactTitleTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.TopNavigationTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest",
+            "tests": 1,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -36,7 +53,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -44,9 +61,26 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -59,7 +93,7 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -67,9 +101,26 @@
           "PreviewNavigationShadeTest",
           "PreviewCompactTitleTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.TopNavigationTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest",
+            "tests": 1,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -82,7 +133,7 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -90,9 +141,26 @@
           "PreviewNavigationShadeTest",
           "PreviewCompactTitleTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.TopNavigationTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest",
+            "tests": 1,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -105,7 +173,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -114,9 +182,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -129,7 +219,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -138,9 +228,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -153,7 +265,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -162,9 +274,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -177,7 +311,7 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -185,9 +319,26 @@
           "PreviewProviderFilterTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -200,7 +351,7 @@
           "verification": "Create/reorder/rename/delete/show/hide/rule tests, Back persistence and focus"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -208,9 +359,26 @@
           "PreviewHomeVisualTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41RowsTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeVisualTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -223,7 +391,7 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -231,9 +399,26 @@
           "PreviewProviderFilterTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -246,7 +431,7 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -254,9 +439,26 @@
           "PreviewProviderFilterTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -269,7 +471,7 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -279,9 +481,36 @@
           "PreviewMatchReviewTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -294,7 +523,7 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -304,9 +533,36 @@
           "PreviewMatchReviewTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -319,7 +575,7 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -329,9 +585,36 @@
           "PreviewMatchReviewTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -344,7 +627,7 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -354,9 +637,36 @@
           "PreviewMatchReviewTest",
           "PreviewHomeMaximumTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -369,7 +679,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -377,9 +687,26 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -392,7 +719,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -400,9 +727,26 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -415,7 +759,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -423,9 +767,26 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -438,7 +799,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -446,9 +807,26 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -461,7 +839,7 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -469,9 +847,26 @@
           "CustomLibraryPageTest",
           "Preview413Test"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+            "tests": 2,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -484,7 +879,7 @@
           "verification": "D-pad repeated navigation, ancestor/scroll restoration, All Files sync, multi-drive Save/Discard, existing scanner/no offline purge tests"
         }
       ],
-      "status": "IMPLEMENTED EXCEPT EXTERNALLY BLOCKED PUT.IO OAUTH / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED EXCEPT EXTERNALLY BLOCKED PUT.IO OAUTH / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -495,9 +890,41 @@
           "SupernovaRetentionTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderBrowserTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.ShortcutTransactionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediaprovider.video.SupernovaRetentionTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       },
       "external_dependency": "Production put.io OAuth requires actual registered client/redirect configuration and validation; no success claimed."
     },
@@ -511,13 +938,14 @@
           "verification": "Scope diff and conformance review"
         }
       ],
-      "status": "SCOPE AND WORKFLOW RECORDED / CONFORMANCE REVIEW IN PROGRESS",
+      "status": "SCOPE CONFORMANCE RECORDED / DEFERRED DETAILS APPEARANCE REGRESSION PASSED",
       "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
       "validation_evidence": {
         "planned_test_classes": [],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": []
       }
     },
     {
@@ -530,7 +958,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -539,9 +967,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -554,7 +1004,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -563,9 +1013,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -578,7 +1050,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -587,9 +1059,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -602,7 +1096,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -611,9 +1105,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -631,7 +1147,7 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -643,9 +1159,46 @@
           "PreviewHomeVisualTest",
           "OfficialTitleNetworkTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewHomeVisualTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.OfficialTitleNetworkTest",
+            "tests": 1,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -658,7 +1211,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -667,9 +1220,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -682,7 +1257,7 @@
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -691,9 +1266,31 @@
           "BackupCycleTest",
           "Preview41ProgressTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+            "tests": 5,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -706,7 +1303,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -716,9 +1313,36 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -731,7 +1355,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -741,9 +1365,36 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -756,7 +1407,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -766,9 +1417,36 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -781,7 +1459,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -791,9 +1469,36 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -806,7 +1511,7 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -816,9 +1521,36 @@
           "PreviewSettingsEntryTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -831,7 +1563,7 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -839,9 +1571,26 @@
           "PreviewLibraryCompositionTest",
           "PreviewScanLifecycleTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewScanLifecycleTest",
+            "tests": 11,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -854,7 +1603,7 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -862,9 +1611,26 @@
           "PreviewLibraryCompositionTest",
           "PreviewScanLifecycleTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewScanLifecycleTest",
+            "tests": 11,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -882,7 +1648,7 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -894,9 +1660,46 @@
           "SupernovaWorkspaceUiTest",
           "SetupPolicyTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderBrowserTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.ShortcutTransactionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediaprovider.video.SupernovaRetentionTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -914,7 +1717,7 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -926,9 +1729,46 @@
           "SupernovaWorkspaceUiTest",
           "SetupPolicyTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+            "tests": 5,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderBrowserTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.filebrowsing.ShortcutTransactionTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediaprovider.video.SupernovaRetentionTest",
+            "tests": 4,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -941,7 +1781,7 @@
           "verification": "Shared layout/render and focus tests; SHIELD no truncation at normal/accessibility scale"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -949,9 +1789,26 @@
           "PreviewProviderFilterTest",
           "SupernovaWorkspaceUiTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+            "tests": 6,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+            "tests": 1,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+            "tests": 8,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -964,7 +1821,7 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -974,9 +1831,36 @@
           "DiagnosticFlightRecorderTest",
           "DiagnosticReferenceTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+            "tests": 18,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+            "tests": 9,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -989,7 +1873,7 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -999,9 +1883,36 @@
           "DiagnosticFlightRecorderTest",
           "DiagnosticReferenceTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+            "tests": 18,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+            "tests": 9,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -1014,7 +1925,7 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1024,9 +1935,36 @@
           "DiagnosticFlightRecorderTest",
           "DiagnosticReferenceTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+            "tests": 18,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+            "tests": 9,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -1039,7 +1977,7 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "status": "IMPLEMENTED / LOCAL AUTOMATION VERIFIED / NATIVE AND PHYSICAL ACCEPTANCE PENDING",
       "physical_qa": "PENDING USER SHIELD QA",
       "validation_evidence": {
         "planned_test_classes": [
@@ -1049,9 +1987,36 @@
           "DiagnosticFlightRecorderTest",
           "DiagnosticReferenceTest"
         ],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": [
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+            "tests": 3,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+            "tests": 18,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+            "tests": 9,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+            "tests": 2,
+            "result": "PASS"
+          },
+          {
+            "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+            "tests": 3,
+            "result": "PASS"
+          }
+        ]
       }
     },
     {
@@ -1064,13 +2029,14 @@
           "verification": "Scope diff and conformance review"
         }
       ],
-      "status": "SCOPE AND WORKFLOW RECORDED / CONFORMANCE REVIEW IN PROGRESS",
+      "status": "SCOPE CONFORMANCE RECORDED / DEFERRED DETAILS APPEARANCE REGRESSION PASSED",
       "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
       "validation_evidence": {
         "planned_test_classes": [],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": []
       }
     },
     {
@@ -1083,15 +2049,18 @@
           "verification": "Scope diff and conformance review"
         }
       ],
-      "status": "SCOPE AND WORKFLOW RECORDED / CONFORMANCE REVIEW IN PROGRESS",
+      "status": "SCOPE CONFORMANCE RECORDED / DEFERRED DETAILS APPEARANCE REGRESSION PASSED",
       "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
       "validation_evidence": {
         "planned_test_classes": [],
-        "test_result": "No complete passing release run yet; see PROGRESS.md",
-        "binary_result": "Exact-source next build pending; signing access blocked",
-        "physical_result": "Not performed"
+        "test_result": "LOCAL PASS: complete 514 tests / 132 classes, zero failures/errors/skips; release lint zero errors. Native exact-source APK conformance still in progress.",
+        "binary_result": "PENDING exact-source native CI 38090668342; signed QA blocked by environment branch policy",
+        "physical_result": "Not performed",
+        "test_classes_verified": []
       }
     }
   ],
-  "decision_precedence": "Execution brief and latest topic approvals including register #27 and #45 supersede earlier provisional design/workflow holds. Details and Playback/HUD redesign/features excluded."
+  "decision_precedence": "Execution brief and latest topic approvals including register #27 and #45 supersede earlier provisional design/workflow holds. Details and Playback/HUD redesign/features excluded.",
+  "verified_application_checkpoint": "92900e4647d1ea614d2ef8f0e1dad9fb736e3e05",
+  "automated_results": "TEST_RESULTS.json"
 }
