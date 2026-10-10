@@ -150,7 +150,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             int period=com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(getContext());
             addAction("Automatic: "+(period>0?"On":"Off"),()->{if(period>0)prefs.edit().putInt("preview_scan_frequency",period).apply();com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(getContext(),0,period>0?0:prefs.getInt("preview_scan_frequency",3600000),true);scanControls();actions.getChildAt(0).requestFocus();});
             addAction("Frequency: "+Math.max(15,(period>0?period:prefs.getInt("preview_scan_frequency",3600000))/60000)+" minutes",()->PreviewDialog.choose(getContext(),"Frequency",new String[]{"15 minutes","30 minutes","1 hour","6 hours","24 hours"},Arrays.asList(900000,1800000,3600000,21600000,86400000).indexOf(period>0?period:prefs.getInt("preview_scan_frequency",3600000)),n->{int value=new int[]{900000,1800000,3600000,21600000,86400000}[n];prefs.edit().putInt("preview_scan_frequency",value).apply();if(period>0)com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(getContext(),0,value,true);scanControls();actions.getChildAt(1).requestFocus();}));
-            addAction("On open / return: "+(prefs.getBoolean("auto_rescan_on_app_restart",true)?"On":"Off"),()->{prefs.edit().putBoolean("auto_rescan_on_app_restart",!prefs.getBoolean("auto_rescan_on_app_restart",true)).apply();scanControls();actions.getChildAt(2).requestFocus();});
+            addAction("On Open / Return: "+(prefs.getBoolean("auto_rescan_on_app_restart",true)?"On":"Off"),()->{prefs.edit().putBoolean("auto_rescan_on_app_restart",!prefs.getBoolean("auto_rescan_on_app_restart",true)).apply();scanControls();actions.getChildAt(2).requestFocus();});
             addAction("Sources Included",()->PreviewNetworkScanning.sources(getContext()));addAction("Scan Now",()->PreviewLibraryScan.requestNetwork(getContext()));
         });
     }
@@ -382,7 +382,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(onboarding&&folder&&file!=null)addAction("Browse Folder",()->open(uri));
         if(selection.included(uri))addAction(selection.roots.contains(BrowserSelection.canonical(uri))?"Remove from Library":"Exclude from Library",()->{if(selection.roots.contains(BrowserSelection.canonical(uri)))selection.remove(uri);else selection.exclude(uri);fileAdapter.notifyDataSetChanged();showInformation(uri,file);});
         else addAction("Add to Library",()->{selection.include(uri);fileAdapter.notifyDataSetChanged();showInformation(uri,file);});
-        if(selection.exclusions.contains(BrowserSelection.canonical(uri)))addAction("Restore inclusion",()->{selection.restore(uri);showInformation(uri,file);});
+        if(selection.exclusions.contains(BrowserSelection.canonical(uri)))addAction("Restore Inclusion",()->{selection.restore(uri);showInformation(uri,file);});
         if(folder&&!onboarding)addAction("Save Location",()->PreviewFolderActions.save(getContext(),uri,file==null?String.valueOf(uri.getLastPathSegment()):file.getName()));
         if(savedSources.containsKey(BrowserSelection.canonical(uri)))addAction("Remove Saved Location",()->PreviewDialog.choose(getContext(),"Remove saved location? Library records and media files are kept.",new String[]{"Cancel","Remove"},0,n->{if(n!=1)return;int removed;
             try{removed=com.archos.mediacenter.video.browser.ShortcutDb.STATIC.removeShortcut(getContext(),uri);}catch(RuntimeException failure){removed=0;}
