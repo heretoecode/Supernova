@@ -348,3 +348,10 @@ Reviewed/refinement requirements recorded in this register for: **Home**, **Movi
 - Store stable media identifiers and episode numbers for history, and resume timestamps/position as appropriate; versioned restore should handle unmatched/ambiguous IDs conservatively.
 - Hero text/logo readability contrast work remains in next release scope; **do not request user visual validation before implementation**. Validate on Shield only once Codex has produced the updated APK, comparing bright American Horror Story and dark Daredevil examples. Exact contrast technique remains implementation-level design judgment subject to QA.
 - Next-episode hero ranking recommendation remains a proposal unless explicitly approved; put.io OAuth still has external configuration dependency.
+
+## 29. Hero carousel ranking — next available episodes take priority (approved 2026-10-10)
+**User-approved for next refinement release; not yet implemented. Supersedes pending ranking decision in items 24 and 28.**
+- Newly available **next-to-watch episodes** whose eligibility is established by reliable retained watch history rank **ahead of ordinary whole-series recommendations** in the Home hero carousel.
+- Preserve some carousel variety: don't let a large batch of qualifying next episodes permanently crowd out movies and unstarted series. Codex may implement reasonable deterministic ranking/deduplication and must test multi-show imports and carousel capacity.
+- An eligible next episode remains promotable while **unstarted**; once playback starts, remove episode promotion and place it in Continue Watching with resumable position. Completed episodes are not promoted. With watch-history tracking disabled or unavailable, don't label a newly imported episode “next to watch”; it may still qualify as newly added content per prior rules.
+- Preserve approved metadata order, official artwork, one-line tagline/synopsis fallback, More Info action and text contrast requirements.
