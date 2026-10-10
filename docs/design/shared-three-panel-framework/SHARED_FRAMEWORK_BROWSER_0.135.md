@@ -37,3 +37,9 @@ Visual reference: settings-subtitles-three-panel-no-top-nav.png in this folder (
 - The **Custom Library Page edit wizard** is a special presentation of the existing three-panel wizard: centred floating overlay with soft shadow above the blurred/dimmed underlying custom library; underlying page not interactive. The **first-use wizard** remains embedded below the introduction on its dedicated landing page. Do not generalise this edit overlay to all three-panel screens.
 - Preserve the established shared Supernova background where full-page wizard/screens require it; do not allow distracting raw library artwork to undermine legibility.
 - Keep all 0.135 foundation/browser behaviour and protections intact; these are future refinement rules, not retroactive 0.135 implementation claims.
+
+### Three-panel option-list sizing and scroll behaviour (approved follow-up)
+- On each three-panel screen, use the available panel height efficiently: avoid excessive vertical gaps or unnecessary scrolling when options can fit **comfortably** with legible type, sufficient D-pad targets and clear section separation.
+- Prefer a stable non-focusable header and visible primary Previous/Next actions while the **option list itself** scrolls only when needed. Never force content to fit by shrinking fonts or touch/focus targets below usable sizes.
+- Preserve correct initial focus on the first actionable row below the header (e.g. Genres on wizard Filters), stable focus as the list scrolls and predictable Back navigation.
+- The Custom Library wizard Filters step is the immediate example; removal of Collections and step-wide Delete Page should reclaim space. Apply the principle app-wide only where it fits existing navigation and screen structure.
