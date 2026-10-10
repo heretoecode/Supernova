@@ -18,10 +18,20 @@ import static org.junit.Assert.*;
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class FoundationHomeRegressionTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
  @org.junit.Before public void configuredLibraryFixture(){androidx.preference.PreferenceManager.getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication()).edit().putBoolean("supernova_onboarding_complete",true).commit();}
 
  private Snapshot source(){Snapshot s=new Snapshot();for(int id=1;id<=24;id++){Movie m=new Movie(id,"/fixture/"+id,"Film "+id,id,"A family discovers an unexpected path through a changing world.",2024,7,"12",null,100000,0,0,0,false,false,false,false,id,id,1920,1080,null,null,null,null,0,1,1000,0);s.movies.add(new Entry(m,id,0,"Drama"));}s.continuingMovies.addAll(s.movies.subList(0,12));s.recent.addAll(s.movies.subList(12,24));for(Entry e:s.recent){e.heroEligible=true;s.featured.add(e);}for(Entry e:s.recent)e.backdrop=android.net.Uri.parse("file:///fixture/backdrop"+e.key());return s;}
  private void init(){try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException e){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}}
+ @Test public void reliableNextEpisodesPrecedeOrdinaryHeroRecommendations()throws Exception{
+  var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+  try{PreviewPages pages=new PreviewPages(host.get(),(h,item)->{});host.get().setContentView(pages);Snapshot snapshot=source();
+   Entry next=new Entry(new PreviewPagesTest().episode(4,0,false,0,200).media,200,123,"Drama");next.heroEligible=true;next.heroSequential=true;next.secondary="Next Episode · S1 E4";next.backdrop=android.net.Uri.parse("file:///fixture/next");
+   Entry another=new Entry(new PreviewPagesTest().episode(2,0,false,0,199).media,199,456,"Drama");another.heroEligible=true;another.heroSequential=true;another.secondary="Next Episode · S1 E2";another.backdrop=android.net.Uri.parse("file:///fixture/another");snapshot.featured.add(next);snapshot.featured.add(another);pages.setSnapshot(snapshot);
+   java.util.List<Entry> candidates=org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages,"featuredCandidates");assertSame(next,candidates.get(0));assertSame(another,candidates.get(1));assertFalse(candidates.get(2).heroSequential);assertEquals(8,candidates.size());
+  }finally{host.pause().stop().destroy();}
+ }
  @Test public void homeViewportHasEqualNeighboursSixtyPercentTeaserAndNoBackgroundDuplicate()throws Exception{
   init();var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
    PreviewPages pages=new PreviewPages(host.get(),(h,item)->{});TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);host.get().setContentView(nav);java.util.List<android.net.Uri> background=new java.util.ArrayList<>();pages.setArtworkListener(background::add);pages.setDiscovery(new PreviewDiscovery());Snapshot s=source();for(Entry e:s.recent)e.backdrop=android.net.Uri.parse("file:///fixture/backdrop"+e.key());pages.setSnapshot(s);for(int i=0;i<8;i++)PreviewPagesTest.layout(nav);

@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "release_ready": false,
+  "provisional_version": "0.136",
+  "gates": {
+    "unit_tests": false,
+    "binary_conformance": false,
+    "native_source_compliance": false,
+    "protected_key_validation": false,
+    "foundation_review": false
+  },
+  "blockers": [
+    "Fresh complete automated suite and exact-source native APK conformance still in progress",
+    "Signing environment does not admit the exact branch; API change returned 403"
+  ],
+  "physical_shield_acceptance": "PENDING USER QA",
+  "putio_oauth": "EXTERNALLY BLOCKED: registered client/redirect configuration unavailable"
+}

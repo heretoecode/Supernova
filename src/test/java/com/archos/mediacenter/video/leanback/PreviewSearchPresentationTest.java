@@ -13,6 +13,8 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewSearchPresentationTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) @SuppressWarnings({"rawtypes","unchecked"}) public void actualResultClickRetainsDiagnosticEntryTokenUntilWindowReturns()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(host.get(),true);

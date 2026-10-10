@@ -15,6 +15,8 @@ import static org.junit.Assert.*;
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class SupernovaWorkspaceUiTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
  @Test public void panelsKeepApprovedGeometryAndFocusOutline()throws Exception{
   var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
   try{SharedThreePanel panels=new SharedThreePanel(host.get());TextView left=SharedThreePanel.action(host.get(),"Subtitles",()->{});TextView middle=SharedThreePanel.action(host.get(),"Subtitle size",()->{});TextView right=SharedThreePanel.text(host.get(),"Choose your subtitle appearance",16);panels.panels(left,middle,right);host.get().setContentView(panels);PreviewPagesTest.layout(panels);

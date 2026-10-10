@@ -29,7 +29,7 @@ final class PreviewFeaturedCard extends FrameLayout {
         TextView title=text(PreviewPages.displayName(entry),30);title.setTag("semantic:featured.title");title.setMaxLines(2);title.setTypeface(null,android.graphics.Typeface.BOLD);copy.addView(title,new LinearLayout.LayoutParams(-1,dp(86)));OfficialTitleArtwork.bind(title,entry.media,false);
         List<String> metaValues=new ArrayList<>();if(entry.year()>0)metaValues.add(String.valueOf(entry.year()));
         if(!entry.genres.isEmpty())metaValues.add(entry.genres.replace("|",", "));
-        if(entry.media instanceof Tvshow){Tvshow show=(Tvshow)entry.media;metaValues.add(entry.seasons+" seasons");}
+        if(entry.media instanceof Tvshow){Tvshow show=(Tvshow)entry.media;if(entry.seasons>0)metaValues.add(entry.seasons+(entry.seasons==1?" season":" seasons"));}
         else if(entry.media instanceof Video){Video video=(Video)entry.media;long minutes=video.getDurationMs()/60000;if(minutes>0)metaValues.add((minutes>=60?minutes/60+"h ":"")+minutes%60+"m");}
         TextView metadata=text(android.text.TextUtils.join(" · ",metaValues),12);metadata.setMaxLines(2);metadata.setTag("semantic:featured.metadata");LinearLayout.LayoutParams metadataSize=new LinearLayout.LayoutParams(-1,dp(34));metadataSize.topMargin=dp(24);copy.addView(metadata,metadataSize);
         String plot=entry.media instanceof Tvshow?((Tvshow)entry.media).getPlot():entry.media instanceof Video?((Video)entry.media).getDescriptionBody():"";

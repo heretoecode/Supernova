@@ -13,8 +13,18 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "TopNavigationTest",
+          "PreviewNavigationShadeTest",
+          "PreviewCompactTitleTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 2,
@@ -26,8 +36,18 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 3,
@@ -39,8 +59,18 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "TopNavigationTest",
+          "PreviewNavigationShadeTest",
+          "PreviewCompactTitleTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 4,
@@ -52,47 +82,90 @@
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "TopNavigationTest",
+          "PreviewNavigationShadeTest",
+          "PreviewCompactTitleTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 5,
       "requirement": "Hero carousel: gradient persists on off-centre cards \u2014 confirmed bug",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 6,
       "requirement": "Hero carousel: remove Play action \u2014 approved correction",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 7,
       "requirement": "Hero carousel: More Info control styling \u2014 approved refinement",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 8,
@@ -104,8 +177,18 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewPagesTest",
+          "PreviewProviderFilterTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 9,
@@ -117,8 +200,18 @@
           "verification": "Create/reorder/rename/delete/show/hide/rule tests, Back persistence and focus"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "Preview41RowsTest",
+          "PreviewHomeVisualTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 10,
@@ -130,8 +223,18 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewPagesTest",
+          "PreviewProviderFilterTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 11,
@@ -143,8 +246,18 @@
           "verification": "Library control/filter/focus boundary/Details return regression tests and visual parity"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewPagesTest",
+          "PreviewProviderFilterTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 12,
@@ -156,8 +269,20 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNextTest",
+          "PreviewSearchPresentationTest",
+          "PreviewMatchSearchTest",
+          "PreviewMatchReviewTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 13,
@@ -169,8 +294,20 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNextTest",
+          "PreviewSearchPresentationTest",
+          "PreviewMatchSearchTest",
+          "PreviewMatchReviewTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 14,
@@ -182,8 +319,20 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNextTest",
+          "PreviewSearchPresentationTest",
+          "PreviewMatchSearchTest",
+          "PreviewMatchReviewTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 15,
@@ -195,8 +344,20 @@
           "verification": "Editing/Caps/unicode/confirm/cancel/live-search and entry-point focus tests"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNextTest",
+          "PreviewSearchPresentationTest",
+          "PreviewMatchSearchTest",
+          "PreviewMatchReviewTest",
+          "PreviewHomeMaximumTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 16,
@@ -208,8 +369,18 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 17,
@@ -221,8 +392,18 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 18,
@@ -234,8 +415,18 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 19,
@@ -247,8 +438,18 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 20,
@@ -260,8 +461,18 @@
           "verification": "Creation/edit/delete/recreation tests, data retention, filtered metrics and D-pad traversal; SHIELD overlay/zoom QA"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SupernovaWorkspaceUiTest",
+          "CustomLibraryPageTest",
+          "Preview413Test"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 21,
@@ -273,8 +484,21 @@
           "verification": "D-pad repeated navigation, ancestor/scroll restoration, All Files sync, multi-drive Save/Discard, existing scanner/no offline purge tests"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNetworkSemanticsTest",
+          "PreviewProviderBrowserTest",
+          "BrowserSelectionTest",
+          "ShortcutTransactionTest",
+          "SupernovaRetentionTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 22,
@@ -286,99 +510,187 @@
           "verification": "Scope diff and conformance review"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "SCOPE AND WORKFLOW RECORDED / CONFORMANCE REVIEW IN PROGRESS",
+      "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
+      "validation_evidence": {
+        "planned_test_classes": [],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 23,
       "requirement": "Home hero carousel \u2014 TV series versus newly arrived episode eligibility (2026-10-10)",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 24,
       "requirement": "Persistent watch history, backups, privacy setting and hero fallback (2026-10-10)",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 25,
       "requirement": "Clarification \u2014 independent resume tracking and hero-to-Continue-Watching lifecycle (2026-10-10)",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 26,
       "requirement": "Hero-card text contrast and tagline-versus-synopsis design review (2026-10-10)",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 27,
       "requirement": "Final approvals \u2014 single-line hero tagline fallback and animated navigation underline (2026-10-10)",
       "workstreams": [
         {
+          "source": "PreviewFeaturedCard, PreviewLibraryLoader, OfficialTitleArtwork",
+          "acceptance": "Actual tagline, otherwise one-line ellipsised synopsis; no fabricated copy or marquee; omit empty copy; preserve official artwork and validate local contrast on device",
+          "verification": "FoundationHomeRegressionTest, PreviewHomeVisualTest, OfficialTitleNetworkTest; physical bright/mixed/dark SHIELD imagery pending"
+        },
+        {
           "source": "TopNavigation, PreviewFocusRail, PreviewNavigationShade",
           "acceptance": "Shared clock type/baseline; 220ms shade; content-width animated accent underline; nav changes on OK",
           "verification": "Navigation render and D-pad tests; SHIELD clock/transition screenshots"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 28,
       "requirement": "Approved watch-history retention, configurable backup selection and deferred contrast QA (2026-10-10)",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 29,
       "requirement": "Hero carousel ranking \u2014 next available episodes take priority (approved 2026-10-10)",
       "workstreams": [
         {
-          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, watch-history store, MediaLibraryBackupService",
+          "source": "PreviewFeaturedCard, PreviewPages, PreviewLibraryLoader, ViewingHistory, HeroEligibility, SafeBackup, BackupPrivacy, MediaLibraryBackupService",
           "acceptance": "Gradient-free all cards; More Info only; one-line real tagline/fallback and local contrast; retained identity history; independent resume; default backup category checks; sequential next episodes priority/variety and hero-to-CW lifecycle",
           "verification": "Hero eligibility matrices, deleted-file identity/history, tracking controls, backup/restore and actual view tests; SHIELD bright/dark artwork"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationHomeRegressionTest",
+          "ViewingHistoryTest",
+          "BackupCycleTest",
+          "Preview41ProgressTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 30,
@@ -390,8 +702,20 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 31,
@@ -403,8 +727,20 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 32,
@@ -416,8 +752,20 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 33,
@@ -429,8 +777,20 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 34,
@@ -442,8 +802,20 @@
           "verification": "Resting licence focus, open/move/repeat tests; settings choice semantics/persistence and rail boundary tests; SHIELD original crash path"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "FoundationAboutTest",
+          "FoundationAboutActivityTest",
+          "InlinePreferenceChoicesTest",
+          "PreviewSettingsEntryTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 35,
@@ -455,8 +827,18 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SetupPolicyTest",
+          "PreviewLibraryCompositionTest",
+          "PreviewScanLifecycleTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 36,
@@ -468,8 +850,18 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "SetupPolicyTest",
+          "PreviewLibraryCompositionTest",
+          "PreviewScanLifecycleTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 37,
@@ -486,8 +878,22 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNetworkSemanticsTest",
+          "PreviewProviderBrowserTest",
+          "BrowserSelectionTest",
+          "ShortcutTransactionTest",
+          "SupernovaRetentionTest",
+          "SupernovaWorkspaceUiTest",
+          "SetupPolicyTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 38,
@@ -504,8 +910,22 @@
           "verification": "Fresh prefs with attached drives and waiting/restart; confirmed-only import policy integration; upgrade migration keeps existing roots; SHIELD fresh-data test"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewNetworkSemanticsTest",
+          "PreviewProviderBrowserTest",
+          "BrowserSelectionTest",
+          "ShortcutTransactionTest",
+          "SupernovaRetentionTest",
+          "SupernovaWorkspaceUiTest",
+          "SetupPolicyTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 39,
@@ -517,8 +937,18 @@
           "verification": "Shared layout/render and focus tests; SHIELD no truncation at normal/accessibility scale"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "PreviewPagesTest",
+          "PreviewProviderFilterTest",
+          "SupernovaWorkspaceUiTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 40,
@@ -530,8 +960,20 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "DiagnosticsRefinementTest",
+          "DiagnosticsTest",
+          "DiagnosticArchiveTest",
+          "DiagnosticFlightRecorderTest",
+          "DiagnosticReferenceTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 41,
@@ -543,8 +985,20 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "DiagnosticsRefinementTest",
+          "DiagnosticsTest",
+          "DiagnosticArchiveTest",
+          "DiagnosticFlightRecorderTest",
+          "DiagnosticReferenceTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 42,
@@ -556,8 +1010,20 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "DiagnosticsRefinementTest",
+          "DiagnosticsTest",
+          "DiagnosticArchiveTest",
+          "DiagnosticFlightRecorderTest",
+          "DiagnosticReferenceTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 43,
@@ -569,8 +1035,20 @@
           "verification": "Fresh-data build default/override, restart/crash/export/redaction/retention/watchdog/focus tests; controlled soak trends and SHIELD OS crash correlation"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "IMPLEMENTED / AUTOMATED VALIDATION IN PROGRESS",
+      "physical_qa": "PENDING USER SHIELD QA",
+      "validation_evidence": {
+        "planned_test_classes": [
+          "DiagnosticsRefinementTest",
+          "DiagnosticsTest",
+          "DiagnosticArchiveTest",
+          "DiagnosticFlightRecorderTest",
+          "DiagnosticReferenceTest"
+        ],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 44,
@@ -582,8 +1060,14 @@
           "verification": "Scope diff and conformance review"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "SCOPE AND WORKFLOW RECORDED / CONFORMANCE REVIEW IN PROGRESS",
+      "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
+      "validation_evidence": {
+        "planned_test_classes": [],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     },
     {
       "id": 45,
@@ -595,8 +1079,15 @@
           "verification": "Scope diff and conformance review"
         }
       ],
-      "status": "NOT IMPLEMENTED / NOT VALIDATED",
-      "physical_qa": "PENDING USER SHIELD QA"
+      "status": "SCOPE AND WORKFLOW RECORDED / CONFORMANCE REVIEW IN PROGRESS",
+      "physical_qa": "NOT APPLICABLE (physical acceptance remains pending for implementation)",
+      "validation_evidence": {
+        "planned_test_classes": [],
+        "test_result": "No complete passing release run yet; see PROGRESS.md",
+        "binary_result": "Exact-source next build pending; signing access blocked",
+        "physical_result": "Not performed"
+      }
     }
-  ]
+  ],
+  "decision_precedence": "Execution brief and latest topic approvals including register #27 and #45 supersede earlier provisional design/workflow holds. Details and Playback/HUD redesign/features excluded."
 }

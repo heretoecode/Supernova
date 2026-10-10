@@ -62,8 +62,47 @@ public final class ViewingHistory {
         }catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_history_write_failed",failure);}});
     }
     /** Existing history migrates once per identity; turning tracking off never erases it. Worker only. */
-    public static Map<String,Record> reconcile(Context c,List<PreviewLibraryLoader.Entry> entries){Map<String,Record> records=read(c);if(PrivateMode.isActive())return records;android.content.SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(c);boolean migrate=!prefs.getBoolean("supernova_history_migrated",false);for(PreviewLibraryLoader.Entry e:entries){Video v=(Video)e.media;String key=identity(e);Record previous=records.get(key);if(migrate&&tracking(c)&&previous==null&&(v.getLastPlayed()>0||PreviewSeriesJourney.completed(v)))write(c,key,PreviewSeriesJourney.completed(v),true,v.getResumeMs(),v.getDurationMs(),v.getLastPlayed(),true,true);else if(previous!=null){int position=resumeEnabled(c)?previous.position:0;v.applyIdentityHistory(previous.completed,previous.played,position);e.playedAt=previous.played;}}prefs.edit().putBoolean("supernova_history_migrated",true).commit();return read(c);}
-    public static void clear(Context c,Runnable done){Context app=c.getApplicationContext();WRITER.execute(()->{synchronized(LOCK){try(Store helper=new Store(app)){helper.getWritableDatabase().execSQL("UPDATE history SET completed=0, started=0, played=0, completed_at=0, position=CASE WHEN position<0 THEN 0 ELSE position END");android.content.SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(app);android.content.SharedPreferences.Editor edit=p.edit().putBoolean("supernova_history_migrated",true);for(String key:p.getAll().keySet())if(key.startsWith("preview_journey41:"))edit.remove(key);edit.commit();}}new android.os.Handler(android.os.Looper.getMainLooper()).post(done);});}
+    public static Map<String,Record> reconcile(Context c,List<PreviewLibraryLoader.Entry> entries){
+        Map<String,Record> records=read(c);
+        if(PrivateMode.isActive())return records;
+        android.content.SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(c);
+        boolean migrate=!prefs.getBoolean("supernova_history_migrated",false);
+        boolean cleared=prefs.getBoolean("supernova_history_cleared",false);
+        for(PreviewLibraryLoader.Entry e:entries){
+            Video v=(Video)e.media;String key=identity(e);Record previous=records.get(key);
+            if(migrate&&tracking(c)&&previous==null&&(v.getLastPlayed()>0||PreviewSeriesJourney.completed(v)))
+                write(c,key,PreviewSeriesJourney.completed(v),true,v.getResumeMs(),v.getDurationMs(),v.getLastPlayed(),true,true);
+            else if(previous!=null){
+                v.applyIdentityHistory(previous.completed,previous.played,resumeEnabled(c)?previous.position:0);
+                e.playedAt=previous.played;
+            }else if(cleared){
+                // Clear also applies to legacy/offline identities not yet migrated. Positive resume is independent.
+                int position=Math.max(0,v.getResumeMs());
+                v.applyIdentityHistory(false,0,resumeEnabled(c)?position:0);e.playedAt=0;
+            }
+        }
+        prefs.edit().putBoolean("supernova_history_migrated",true).commit();return read(c);
+    }
+    public static void clear(Context c,Runnable done){
+        Context app=c.getApplicationContext();
+        WRITER.execute(()->{
+            try{
+                // Update the existing local watched view too, without clearing positive resume or syncing remote accounts.
+                android.net.Uri media=com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI;
+                ContentValues state=new ContentValues();state.put(com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.ARCHOS_TRAKT_SEEN,0);state.put(com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED,0);
+                app.getContentResolver().update(media,state,null,null);
+                ContentValues ended=new ContentValues();ended.put(com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.BOOKMARK,0);
+                app.getContentResolver().update(media,ended,com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.BOOKMARK+"<0",null);
+                synchronized(LOCK){try(Store helper=new Store(app)){
+                helper.getWritableDatabase().execSQL("UPDATE history SET completed=0, started=0, played=0, completed_at=0, position=CASE WHEN position<0 THEN 0 ELSE position END");
+                android.content.SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(app);
+                android.content.SharedPreferences.Editor edit=p.edit().putBoolean("supernova_history_migrated",true).putBoolean("supernova_history_cleared",true);
+                for(String key:p.getAll().keySet())if(key.startsWith("preview_journey41:"))edit.remove(key);
+                if(!edit.commit())throw new IllegalStateException("History preferences could not be saved");
+            }}PreviewLibraryLoader.invalidateHistoryCache(app);new android.os.Handler(android.os.Looper.getMainLooper()).post(done);
+            }catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("history_clear_failed",failure);new android.os.Handler(android.os.Looper.getMainLooper()).post(()->android.widget.Toast.makeText(app,"History could not be cleared. Please retry or export diagnostics.",android.widget.Toast.LENGTH_LONG).show());}
+        });
+    }
     public static void export(Context c,java.io.File destination)throws java.io.IOException{awaitWrites();synchronized(LOCK){try(Store helper=new Store(c)){SQLiteDatabase db=helper.getWritableDatabase();try(Cursor checkpoint=db.rawQuery("PRAGMA wal_checkpoint(FULL)",null)){if(!checkpoint.moveToFirst()||checkpoint.getInt(0)!=0)throw new java.io.IOException("Viewing history is busy");}try(java.io.InputStream in=new java.io.FileInputStream(c.getDatabasePath(DATABASE));java.io.OutputStream out=new java.io.FileOutputStream(destination)){byte[] bytes=new byte[65536];int n;while((n=in.read(bytes))!=-1)out.write(bytes,0,n);}}try(SQLiteDatabase copy=SQLiteDatabase.openDatabase(destination.getPath(),null,SQLiteDatabase.OPEN_READWRITE)){android.content.SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(c);boolean history=p.getBoolean("supernova_backup_history",true),resume=p.getBoolean("supernova_backup_resume",true);if(!history)copy.execSQL("UPDATE history SET completed=0,started=0,played=0,completed_at=0,position=CASE WHEN position<0 THEN 0 ELSE position END");if(!resume)copy.execSQL("UPDATE history SET position=0");if(!history)copy.execSQL("DELETE FROM history WHERE position<=0");copy.execSQL("VACUUM");}}}
     public static void validate(java.io.File file)throws java.io.IOException {
         try(SQLiteDatabase db=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READONLY);
@@ -71,6 +110,9 @@ public final class ViewingHistory {
             if(db.getVersion()!=1||!check.moveToFirst()||!"ok".equals(check.getString(0)))throw new java.io.IOException("Unsupported or damaged viewing history");
             try(Cursor tables=db.rawQuery("SELECT name,type FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",null)) {
                 while(tables.moveToNext())if(!tables.getString(1).equals("table")||!Set.of("history","android_metadata").contains(tables.getString(0)))throw new java.io.IOException("Unexpected history database objects");
+            }
+            try(Cursor metadata=db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='android_metadata'",null)){
+                if(metadata.moveToFirst()){try(Cursor schema=db.rawQuery("PRAGMA table_info(android_metadata)",null)){if(schema.getCount()!=1||!schema.moveToFirst()||!"locale".equals(schema.getString(1)))throw new java.io.IOException("Unexpected history metadata");}try(Cursor locale=db.rawQuery("SELECT locale FROM android_metadata",null)){while(locale.moveToNext())if(locale.isNull(0)||!locale.getString(0).matches("[A-Za-z0-9_-]{1,40}"))throw new java.io.IOException("Invalid history locale");}}
             }
             Set<String> columns=new HashSet<>();
             try(Cursor schema=db.rawQuery("PRAGMA table_info(history)",null)){while(schema.moveToNext())columns.add(schema.getString(1));}

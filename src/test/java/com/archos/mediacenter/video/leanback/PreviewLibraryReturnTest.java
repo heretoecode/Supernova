@@ -19,6 +19,8 @@ import static org.junit.Assert.*;
 @RunWith(org.robolectric.RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewLibraryReturnTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test public void gridReturnRetainsExactItemAndScrolledPositionAfterRefresh(){checkReturn(false);}
     @Test public void listReturnRetainsExactRowAndViewModeAfterRefresh(){checkReturn(true);}
 

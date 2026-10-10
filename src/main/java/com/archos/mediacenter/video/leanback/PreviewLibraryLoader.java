@@ -56,7 +56,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public String key() { return media instanceof Episode ? "s"+show : media instanceof Tvshow ? "s"+((Tvshow)media).getTvshowId() : "v"+((Video)media).getId(); }
         private void writeObject(java.io.ObjectOutputStream out)throws java.io.IOException{out.defaultWriteObject();out.writeObject(backdrop==null?null:backdrop.toString());}
         private void readObject(java.io.ObjectInputStream in)throws java.io.IOException,ClassNotFoundException{in.defaultReadObject();String uri=(String)in.readObject();backdrop=uri==null?null:android.net.Uri.parse(uri);}
-        public int year() { if(media instanceof Episode&&((Episode)media).getEpisodeDate()>0){java.util.Calendar date=java.util.Calendar.getInstance();date.setTimeInMillis(((Episode)media).getEpisodeDate());return date.get(java.util.Calendar.YEAR);}if(media instanceof Movie)return ((Movie)media).getYear();if(media instanceof Tvshow)return ((Tvshow)media).getYear();try{return Integer.parseInt(releaseDate.substring(0,4));}catch(Exception unavailable){return 0;} }
+        public int year() { if(media instanceof Episode&&((Episode)media).getEpisodeDate()>0){java.util.Calendar date=java.util.Calendar.getInstance();date.setTimeInMillis(((Episode)media).getEpisodeDate());return date.get(java.util.Calendar.YEAR);}if(media instanceof Episode)return 0;if(media instanceof Movie)return ((Movie)media).getYear();if(media instanceof Tvshow)return ((Tvshow)media).getYear();try{return Integer.parseInt(releaseDate.substring(0,4));}catch(Exception unavailable){return 0;} }
     }
     public static final class Snapshot implements java.io.Serializable {
         public final List<Entry> featured=new ArrayList<>();
@@ -111,6 +111,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         Set<String> watchedSeen=new HashSet<>();s.watched.removeIf(e->!watchedSeen.add(e.key()));
         Set<String> seen=new HashSet<>(); s.played.removeIf(e->!seen.add(e.key()));
         s.continuingMovies.sort(Comparator.comparingLong((Entry e)->((Video)e.media).getLastPlayed()).reversed());
+        s.shows.removeIf(e->!groups.containsKey(e.show));
         s.continuingShows.sort(Comparator.comparingLong((Entry e)->groups.get(e.show).stream().mapToLong(x->((Video)x.media).getLastPlayed()).max().orElse(0)).reversed());
         return s;
     }
@@ -132,12 +133,16 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     private static String summaryValue(Set<String> values){return values.isEmpty()?"":values.size()==1?values.iterator().next():"Mixed";}
     private static final Object CACHE_LOCK=new Object();
     private static final java.util.concurrent.ExecutorService cacheWriter=java.util.concurrent.Executors.newSingleThreadExecutor();
-    public static void warmCache(Context context){cacheWriter.execute(()->{Snapshot value=readCache(context);if(value!=null&&cached==null&&!com.archos.mediacenter.video.player.PrivateMode.isActive()){cachePrivate=false;cached=value;}});}
+    public static void warmCache(Context context){cacheWriter.execute(()->{synchronized(CACHE_LOCK){Snapshot value=readCache(context);if(value!=null&&cached==null&&!com.archos.mediacenter.video.player.PrivateMode.isActive()){cachePrivate=false;cached=value;}}});}
     public static volatile Snapshot cached;
     private static boolean cachePrivate;
     public static Snapshot memoryCache(){return cachePrivate==com.archos.mediacenter.video.player.PrivateMode.isActive()?cached:null;}
     public static Snapshot readCache(Context c){if(memoryCache()!=null)return memoryCache();if(com.archos.mediacenter.video.player.PrivateMode.isActive())return null;try(java.io.ObjectInputStream in=new java.io.ObjectInputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(new java.io.File(c.getCacheDir(),"preview-library-v42"))))){Snapshot s=(Snapshot)in.readObject();for(List<Entry> list:java.util.Arrays.asList(s.movies,s.shows,s.recent,s.played,s.watched,s.continuingMovies,s.continuingShows,s.episodes))for(Entry e:list)if(e.media instanceof Video)e.backdrop=((Video)e.media).getPreviewBackdrop();return s;}catch(Exception unavailable){return null;}}
-    private void writeCache(Snapshot value){if(com.archos.mediacenter.video.player.PrivateMode.isActive())return;synchronized(CACHE_LOCK){writeCacheLocked(value);}}
+    private void writeCache(Snapshot value){if(com.archos.mediacenter.video.player.PrivateMode.isActive())return;synchronized(CACHE_LOCK){if(value==cached)writeCacheLocked(value);}}
+    public static void invalidateHistoryCache(Context context){
+        synchronized(CACHE_LOCK){cached=null;new android.util.AtomicFile(new java.io.File(context.getCacheDir(),"preview-library-v42")).delete();}
+        context.getContentResolver().notifyChange(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,null);
+    }
     private void writeCacheLocked(Snapshot value){android.util.AtomicFile file=new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(),"preview-library-v42"));java.io.FileOutputStream stream=null;try{stream=file.startWrite();java.io.ObjectOutputStream out=new java.io.ObjectOutputStream(stream);out.writeObject(value);out.flush();file.finishWrite(stream);}catch(Exception failure){if(stream!=null)file.failWrite(stream);android.util.Log.d("NovaPreview","Snapshot cache unavailable",failure);}}
 
     private void applyJourneys(Snapshot s,List<Entry> videos){
@@ -155,7 +160,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         boolean tracking=ViewingHistory.tracking(getContext());
         Set<Long> startedShows=new HashSet<>();Map<Long,Set<String>> completed=new HashMap<>();Map<Long,Long> times=new HashMap<>();
         for(Entry show:s.shows)if(tracking&&show.onlineId>0){String prefix="tmdb:tv:"+show.onlineId+":";for(Map.Entry<String,ViewingHistory.Record> record:history.entrySet())if(record.getKey().startsWith(prefix)){ViewingHistory.Record value=record.getValue();if(value.started||value.completed||value.position>0)startedShows.add(show.show);if(value.completed){completed.computeIfAbsent(show.show,k->new HashSet<>()).add(record.getKey().substring(prefix.length()));times.put(show.show,Math.max(times.getOrDefault(show.show,0L),value.completedAt));}}}
-        for(Entry movie:s.movies){Video video=(Video)movie.media;ViewingHistory.Record record=history.get(ViewingHistory.identity(movie));movie.heroEligible=HeroEligibility.unstarted(tracking&&record!=null&&record.completed,tracking&&record!=null&&record.started,video.getResumeMs());if(movie.heroEligible)s.featured.add(movie);}
+        for(Entry movie:s.movies){Video video=(Video)movie.media;ViewingHistory.Record record=history.get(ViewingHistory.identity(movie));movie.heroEligible=HeroEligibility.unstarted(record!=null&&record.completed,record!=null&&record.started,video.getResumeMs());if(movie.heroEligible)s.featured.add(movie);}
         for(Entry show:s.shows){show.heroEligible=tracking?!startedShows.contains(show.show)&&s.episodes.stream().noneMatch(e->e.show==show.show&&((Video)e.media).getResumeMs()>0):s.episodes.stream().noneMatch(e->e.show==show.show&&((Video)e.media).getResumeMs()>0);if(show.heroEligible)s.featured.add(show);}
         if(tracking)for(Entry entry:PreviewVariants.logicalChoices(s.episodes)){Episode episode=(Episode)entry.media;ViewingHistory.Record record=history.get(ViewingHistory.identity(entry));if(!HeroEligibility.unstarted(record!=null&&record.completed,record!=null&&record.started,episode.getResumeMs()))continue;
             if(HeroEligibility.sequential(episode.getSeasonNumber(),episode.getEpisodeNumber(),completed.getOrDefault(entry.show,Collections.emptySet()),entry.added,times.getOrDefault(entry.show,0L))){entry.heroEligible=true;entry.heroSequential=true;entry.secondary="Next Episode · S"+episode.getSeasonNumber()+" E"+episode.getEpisodeNumber();s.featured.add(entry);}

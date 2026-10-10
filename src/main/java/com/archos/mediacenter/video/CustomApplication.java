@@ -815,7 +815,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         updateVersionState(appContext);
         new Thread("nova-deferred-init") {
             public void run() {
-                com.archos.mediaprovider.video.SupernovaLibraryPolicy.initialiseSetup(appContext);
+                try { com.archos.mediaprovider.video.SupernovaLibraryPolicy.initialiseSetup(appContext); }
+                catch (RuntimeException unavailable) { com.archos.mediacenter.video.diagnostics.Diagnostics.error("setup_migration_deferred", unavailable); }
                 Trakt.initApiKeys(appContext);
                 launchSambaDiscovery();
                 if (openSubtitlesApiHelper == null) openSubtitlesApiHelper = OpenSubtitlesApiHelper.getInstance();

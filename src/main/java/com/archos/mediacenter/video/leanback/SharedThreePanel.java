@@ -77,6 +77,14 @@ public class SharedThreePanel extends LinearLayout {
     }
 
     /** Permanent inset control surface; row actions retain their separate focus-only outline. */
+    public static void rowSeparator(View row){
+        android.graphics.drawable.Drawable line=new android.graphics.drawable.Drawable(){
+            private final android.graphics.Paint paint=new android.graphics.Paint();
+            public void draw(android.graphics.Canvas canvas){paint.setColor(0x337f8996);paint.setStrokeWidth(dp(row.getContext(),1));canvas.drawLine(dp(row.getContext(),8),getBounds().bottom-1,getBounds().right-dp(row.getContext(),8),getBounds().bottom-1,paint);}
+            public void setAlpha(int alpha){}public void setColorFilter(android.graphics.ColorFilter filter){}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
+        };
+        android.graphics.drawable.Drawable existing=row.getForeground();row.setForeground(existing==null?line:new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{existing,line}));
+    }
     public static StateListDrawable control(Context context, int radius) {
         StateListDrawable states = new StateListDrawable();
         for (boolean focused : new boolean[]{true, false}) {

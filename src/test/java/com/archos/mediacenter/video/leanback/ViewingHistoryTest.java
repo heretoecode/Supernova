@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class ViewingHistoryTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
  private Context context;
  @Before public void setup()throws Exception{context=RuntimeEnvironment.getApplication();ViewingHistory.awaitWrites();context.deleteDatabase(ViewingHistory.DATABASE);PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();}
  private VideoDbInfo episode(int number){VideoDbInfo info=new VideoDbInfo(Uri.parse("smb://private-nas/Show/ep"+number));info.isShow=true;info.scraperShowId="123";info.scraperSeasonNr=1;info.scraperEpisodeNr=number;info.duration=100000;info.resume=5000;info.lastTimePlayed=100;return info;}
@@ -30,11 +32,20 @@ public class ViewingHistoryTest {
   next.resume=-2;ViewingHistory.record(context,next,true);ViewingHistory.awaitWrites();record=ViewingHistory.read(context).get("tmdb:tv:123:1:2");assertFalse(record.completed);assertEquals(0,record.position);
  }
  @Test public void completedIdentityDoesNotDisappearWhenReplayedOrSourceUnavailable()throws Exception{
-  var info=episode(1);info.resume=-2;ViewingHistory.record(context,info,true);ViewingHistory.awaitWrites();info.resume=3000;ViewingHistory.record(context,info,false);ViewingHistory.awaitWrites();assertTrue(ViewingHistory.read(context).get("tmdb:tv:123:1:1").completed);
+  var info=episode(1);info.resume=-2;ViewingHistory.record(context,info,true);ViewingHistory.awaitWrites();info.resume=3000;info.lastTimePlayed=200;ViewingHistory.record(context,info,false);ViewingHistory.awaitWrites();assertTrue(ViewingHistory.read(context).get("tmdb:tv:123:1:1").completed);assertEquals(100,ViewingHistory.read(context).get("tmdb:tv:123:1:1").completedAt);
  }
  @Test public void disablingBothTrackersWritesNothingAndReenablingDoesNotInferPastCompletion()throws Exception{
   var prefs=PreferenceManager.getDefaultSharedPreferences(context);prefs.edit().putBoolean(ViewingHistory.TRACK,false).putBoolean(ViewingHistory.RESUME,false).commit();ViewingHistory.record(context,episode(1),true);ViewingHistory.awaitWrites();assertTrue(ViewingHistory.read(context).isEmpty());
   var legacy=new PreviewPagesTest().episode(1,-2,true,100,1);legacy.onlineId=123;ViewingHistory.reconcile(context,List.of(legacy));prefs.edit().putBoolean(ViewingHistory.TRACK,true).commit();ViewingHistory.reconcile(context,List.of(legacy));assertTrue(ViewingHistory.read(context).isEmpty());
+ }
+ @Test public void clearBeforeMigrationRemovesLegacyCompletionButKeepsUnfinishedResume()throws Exception{
+  ViewingHistory.clear(context,()->{});ViewingHistory.awaitWrites();
+  var fixture=new PreviewPagesTest();var watched=fixture.episode(1,-2,true,100,1);watched.onlineId=123;
+  var unfinished=fixture.episode(2,5000,false,100,1);unfinished.onlineId=123;
+  ViewingHistory.reconcile(context,List.of(watched,unfinished));
+  assertFalse(PreviewSeriesJourney.completed((com.archos.mediacenter.video.browser.adapters.object.Video)watched.media));
+  assertEquals(0,watched.playedAt);assertEquals(5000,((com.archos.mediacenter.video.browser.adapters.object.Video)unfinished.media).getResumeMs());
+  assertTrue(ViewingHistory.read(context).isEmpty());
  }
  @Test public void backupSelectionsAreIndependentOfTrackingAndNeverModifyLiveData()throws Exception{
   var watched=episode(1);watched.resume=-2;ViewingHistory.record(context,watched,true);ViewingHistory.record(context,episode(2),false);ViewingHistory.awaitWrites();var prefs=PreferenceManager.getDefaultSharedPreferences(context);prefs.edit().putBoolean(ViewingHistory.TRACK,false).commit();

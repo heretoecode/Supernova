@@ -80,10 +80,10 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         if(navigation.isEmpty()) for(int index=0;index<SECTIONS.length;index++) {
             final String name=SECTIONS[index]; final int position=index;
             TextView child=text(name,18); child.setPadding(dp(24),0,dp(6),0);child.setGravity(Gravity.CENTER_VERTICAL);
-            child.setFocusable(true);child.setTag("semantic:settings:about:"+name);child.setBackground(PreviewDialog.focus(getContext()));
+            child.setFocusable(true);child.setTag("semantic:settings:about:"+name);child.setBackground(PreviewDialog.focus(getContext()));com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(child);
             rail.addView(child,new LayoutParams(-1,dp(44)));navigation.add(child);
             child.setOnFocusChangeListener((v,focused)->{if(focused)select(name,child);});
-            child.setOnClickListener(v->{select(name,child);enterContentInternal();});
+            child.setOnClickListener(v->{child.requestFocus();select(name,child);enterContentInternal();});
             child.setOnKeyListener((v,key,event)->{
                 if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
                 if(key==KeyEvent.KEYCODE_DPAD_RIGHT){enterContentInternal(false);return true;}
@@ -101,7 +101,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     public void collapseNavigation(){for(TextView child:navigation)child.setVisibility(GONE);}
     public void enterContent(){enterContentInternal();}
     public void enter(){if(selectedNavigation==parentButton&&!navigation.isEmpty())navigation.get(0).requestFocus();else if(selectedNavigation!=null)selectedNavigation.requestFocus();}
-    public void openSection(int index){if(index>=0&&index<navigation.size()){select(SECTIONS[index],navigation.get(index));navigation.get(index).requestFocus();}}
+    public void openSection(int index){if(index>=0&&index<navigation.size()){navigation.get(index).requestFocus();select(SECTIONS[index],navigation.get(index));}}
     public boolean navigationFocused(){for(TextView v:navigation)if(v.hasFocus())return true;return false;}
     public boolean handleBack(){
         if(details.hasFocus()){focusSelectedRow();return true;}
@@ -112,7 +112,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private void select(String name,TextView child){
         if(selectedNavigation!=null)selectedNavigation.setTextColor(Color.WHITE);
         selectedNavigation=child; child.setTextColor(Color.WHITE);
-        if(name.equals(section)&&catalogueBody.getChildCount()>0)return;
+        if(name.equals(section)&&(catalogueBody.getChildCount()>0||detailsBody.getChildCount()>0))return;
         section=name;selectedIndex=selections.getOrDefault(name,0);requestGeneration++;
         catalogueBody.removeAllViews();detailsBody.removeAllViews();detailsBody.setGravity(Gravity.TOP);detailsBody.setPadding(0,0,0,0);((LayoutParams)details.getLayoutParams()).weight=.56f;rows.clear();rowSelections.clear();
         catalogue.setVisibility(VISIBLE);details.setVisibility(VISIBLE);
@@ -276,7 +276,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private String readText(String asset) throws Exception {
         if(!asset.startsWith("foundation/")||asset.contains(".."))throw new IllegalArgumentException();
         try(InputStream in=getContext().getAssets().open(asset);ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
-            byte[] buffer=new byte[4096];int n;while((n=in.read(buffer))!=-1)bytes.write(buffer,0,n);return bytes.toString(StandardCharsets.UTF_8.name());
+            byte[] buffer=new byte[4096];int n;while((n=in.read(buffer))!=-1){if(bytes.size()+n>1024*1024)throw new java.io.IOException("Bundled information exceeds the reader limit");bytes.write(buffer,0,n);}return bytes.toString(StandardCharsets.UTF_8.name());
         }
     }
     @Override protected void onDetachedFromWindow(){requestGeneration++;if(reader!=null)reader.shutdownNow();super.onDetachedFromWindow();}

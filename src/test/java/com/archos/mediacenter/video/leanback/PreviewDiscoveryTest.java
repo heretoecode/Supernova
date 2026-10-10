@@ -11,6 +11,8 @@ import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewDiscoveryTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     private Entry movie(long id,String title,String date){Movie movie=new Movie(id,"/film"+id,title,id,"Plot",2024,7,"",null,100000,0,0,0,false,false,false,false,id,0,1920,1080,null,null,null,null,0,1,1000,0);Entry e=new Entry(movie,id,0,"Drama");e.releaseDate=date;return e;}
     @Test public void chartsMatchIdsNotNamesAndKeepFilmShowNamespacesSeparate() throws Exception {
         PreviewDiscovery charts=new PreviewDiscovery();PreviewDiscovery.parse(new JSONArray("[{\"movie\":{\"ids\":{\"tmdb\":12}}},{\"movie\":{\"ids\":{\"tmdb\":99}}}]"),"movie",charts.trending,0);

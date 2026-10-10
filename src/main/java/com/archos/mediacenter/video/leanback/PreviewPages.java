@@ -144,7 +144,27 @@ public final class PreviewPages extends FrameLayout {
         boolean art=entry.backdrop!=null||entry.media.getPosterUri()!=null;
         return matched&&art&&entry.heroEligible;
     }
-    private List<Entry> featuredCandidates(){List<List<Entry>> sources=new ArrayList<>();featuredReasons.clear();if(preferences==null||preferences.getBoolean("preview_featured_recent",true))sources.add(snapshot.featured);else sources.add(Collections.emptyList());sources.add(preferences!=null&&preferences.getBoolean("preview_featured_trending",true)?discovery.matches(snapshot,true):Collections.emptyList());sources.add(preferences!=null&&preferences.getBoolean("preview_featured_popular",true)?discovery.matches(snapshot,false):Collections.emptyList());List<Entry> result=new ArrayList<>();Set<String> seen=new HashSet<>();String[] reasons={"Recently Added","TRENDING ON TRAKT · IN YOUR LIBRARY","POPULAR ON TRAKT · IN YOUR LIBRARY"};for(int i=0;i<12;i++)for(int n=0;n<sources.size();n++){List<Entry> source=sources.get(n);if(i<source.size()){Entry e=source.get(i);if(eligibleFeatured(e)&&seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),e.heroSequential?e.secondary:reasons[n]);}}}if(result.isEmpty()){List<Entry> local=new ArrayList<>(snapshot.movies);local.addAll(snapshot.shows);for(Entry e:local)if(eligibleFeatured(e)&&seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),"IN YOUR LIBRARY");if(result.size()==8)break;}}return result.subList(0,Math.min(8,result.size()));}
+    private List<Entry> featuredCandidates(){
+        List<List<Entry>> sources=new ArrayList<>();featuredReasons.clear();
+        sources.add(preferences==null||preferences.getBoolean("preview_featured_recent",true)?snapshot.featured:Collections.emptyList());
+        sources.add(preferences!=null&&preferences.getBoolean("preview_featured_trending",true)?discovery.matches(snapshot,true):Collections.emptyList());
+        sources.add(preferences!=null&&preferences.getBoolean("preview_featured_popular",true)?discovery.matches(snapshot,false):Collections.emptyList());
+        List<Entry> result=new ArrayList<>();Set<String> seen=new HashSet<>();
+        // Every reliably established next episode precedes ordinary recommendations.
+        for(List<Entry> source:sources)for(Entry e:source)if(e.heroSequential&&eligibleFeatured(e)&&seen.add(e.key())){
+            result.add(e);featuredReasons.put(e.key(),e.secondary);
+        }
+        String[] reasons={"Recently Added","TRENDING ON TRAKT · IN YOUR LIBRARY","POPULAR ON TRAKT · IN YOUR LIBRARY"};
+        for(int i=0;i<12;i++)for(int n=0;n<sources.size();n++){
+            List<Entry> source=sources.get(n);
+            if(i<source.size()){Entry e=source.get(i);if(eligibleFeatured(e)&&seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),reasons[n]);}}
+        }
+        if(result.isEmpty()){
+            List<Entry> local=new ArrayList<>(snapshot.movies);local.addAll(snapshot.shows);
+            for(Entry e:local)if(eligibleFeatured(e)&&seen.add(e.key())){result.add(e);featuredReasons.put(e.key(),"IN YOUR LIBRARY");if(result.size()==8)break;}
+        }
+        return result.subList(0,Math.min(8,result.size()));
+    }
     private final PreviewLibraryColumns[] columns=new PreviewLibraryColumns[3];
     private long lastInteraction;
     private final Runnable rotateFeatured=new Runnable(){public void run(){
@@ -157,7 +177,7 @@ public final class PreviewPages extends FrameLayout {
     private Runnable ready=()->{};
     private final Runnable prioritiseVisible=this::prioritiseVisibleEntries;
     private void prioritiseVisibleEntries(){
-        if(!loaded||!isAttachedToWindow()||tab==3)return;
+        if(!loaded||!isAttachedToWindow()||tab==3||!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))return;
         List<Entry> visible=new ArrayList<>(),next=new ArrayList<>();int last=-1;
         for(int n=0;n<list.getChildCount();n++){
             int position=list.getChildAdapterPosition(list.getChildAt(n));
@@ -296,7 +316,7 @@ public final class PreviewPages extends FrameLayout {
     public void setSnapshot(Snapshot s) { if(s==null)return;
         quietOrder.clear();if(loaded&&(tab==1||tab==2))for(Cell cell:cells)if(cell.type==POSTER)quietOrder.put(((Entry)cell.value).key(),quietOrder.size());
         if(loaded&&tab==0){String featuredKey=featured()==null?null:featured().key();if(featuredKey!=null)for(int i=0;i<Math.min(5,s.recent.size());i++)if(s.recent.get(i).key().equals(featuredKey)){featuredIndex=i;break;}}
-        snapshot=s;loaded=true;render("indexed_snapshot");PreviewEnrichmentQueue.library(getContext(),s,tab);PreviewMetadata.library(getContext(),s,tab);post(ready);postDelayed(this::requestDiscovery,750);
+        snapshot=s;loaded=true;render("indexed_snapshot");if(com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext())){PreviewEnrichmentQueue.library(getContext(),s,tab);PreviewMetadata.library(getContext(),s,tab);postDelayed(this::requestDiscovery,750);}post(ready);
     }
     private static void keepOrder(List<Entry> old,List<Entry> current){Map<String,Integer> rank=new HashMap<>();for(Entry e:old)rank.put(e.key(),rank.size());current.sort(Comparator.comparingInt(e->rank.getOrDefault(e.key(),Integer.MAX_VALUE)));}
     public void setFiles(List<Box> f) {

@@ -16,6 +16,8 @@ import static org.junit.Assert.*;
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class PreviewHomeVisualTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Before public void remoteInputMode(){androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().setInTouchMode(false);}
     @Test public void genreHeaderRemainsVisibleAndChoicesPersistWithoutDone()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();

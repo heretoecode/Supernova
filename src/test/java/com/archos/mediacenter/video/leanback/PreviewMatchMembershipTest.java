@@ -12,6 +12,8 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewMatchMembershipTest {
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test public void createRowAddsTitleAndReturnsToSelectedMembershipWithoutClosingParent(){
         android.app.Activity host=Robolectric.buildActivity(android.app.Activity.class).setup().get();
         PreferenceManager.getDefaultSharedPreferences(host).edit().clear().commit();

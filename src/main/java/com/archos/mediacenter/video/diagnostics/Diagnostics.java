@@ -113,7 +113,7 @@ public final class Diagnostics {
         }
         Thread.UncaughtExceptionHandler previous=Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((thread,error)->{
-            try{if(enabled){String line=record("uncaught_exception","thread",thread.getName(),"trace",trace(error));FLIGHT.add(android.os.SystemClock.elapsedRealtime(),line);write(line,playback);writeImportant(line);freeze("uncaught_exception");}}
+            try{if(enabled){System.err.println("Supernova uncaught exception: "+trace(error));String line=record("uncaught_exception","thread",thread.getName(),"trace",trace(error));FLIGHT.add(android.os.SystemClock.elapsedRealtime(),line);write(line,playback);writeImportant(line);freeze("uncaught_exception");}}
             finally{if(previous!=null)previous.uncaughtException(thread,error);
                 else {android.os.Process.killProcess(android.os.Process.myPid());System.exit(10);}}
         });
