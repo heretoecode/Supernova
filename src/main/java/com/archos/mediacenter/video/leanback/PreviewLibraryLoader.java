@@ -15,7 +15,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     public volatile String loadWarning;
     private final AllTvshowsLoader showsQuery;
     public PreviewLibraryLoader(Context context) {
-        super(context);
+        super(context);PreviewVariants.initialize(context);
         // CursorLoader creates a Handler: construct on the same main thread as this loader.
         showsQuery = new AllTvshowsLoader(context) {
             @Override public String getSelection() {
@@ -31,13 +31,13 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             VideoStore.Video.VideoColumns.DATE_ADDED, VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID,
             VideoStore.Video.VideoColumns.DATE_MODIFIED, VideoStore.Video.VideoColumns.ARCHOS_VIDEO_BITRATE,
             VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE, VideoStore.Video.VideoColumns.SCRAPER_S_PREMIERED, VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID,
-            VideoStore.Video.VideoColumns.SCRAPER_M_GENRES, VideoStore.Video.VideoColumns.SCRAPER_S_GENRES});
+            VideoStore.Video.VideoColumns.SCRAPER_M_GENRES, VideoStore.Video.VideoColumns.SCRAPER_S_GENRES, VideoStore.Video.VideoColumns.SCRAPER_ORIGINAL_LANGUAGE, VideoStore.Video.VideoColumns.SCRAPER_STUDIOS, "m_coll_name"});
     }
     public static final class Entry implements java.io.Serializable {
         public final Base media;
         public final long added, show;
         public final String genres;
-        public String secondary="";public boolean active;public long playedAt;
+        public String language="",studio="",collection="";public String secondary="";public boolean active;public long playedAt;
         public String sortTitle="";public String releaseDate=""; public long onlineId; public transient android.net.Uri backdrop;
         public long bytes, runtime, modified, bitrate;
         public int episodes, seasons, knownSizes, files;
@@ -149,6 +149,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         }
         s.continuingShows.sort(Comparator.comparingLong((Entry e)->e.playedAt).reversed());
     }
+    private static String cell(Cursor cursor,String column){int index=cursor.getColumnIndex(column);return index<0||cursor.isNull(index)?"":cursor.getString(index);}
     @Override public Cursor loadInBackground() {
         String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("indexed_library_load");
         long started=android.os.SystemClock.elapsedRealtime();
@@ -165,10 +166,11 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             int mg=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_M_GENRES), sg=c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_GENRES);
             int visited=0, rejected=0, expected=c.getCount();
             while(c.moveToNext()) { visited++; try { Video v=(Video)mapper.bind(c);
+                if(com.archos.mediaprovider.video.SupernovaLibraryPolicy.excluded(getContext(),v.getFileUri()))continue;
                 String backdrop=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_FILE));
                 if(backdrop!=null && !backdrop.isEmpty()) v.setPreviewBackdrop(android.net.Uri.fromFile(new java.io.File(backdrop)).toString());
                 else { String remote=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL)); if(remote!=null && (remote.startsWith("https://") || remote.startsWith("http://")))v.setPreviewBackdrop(remote); }
-                Entry entry=new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg));
+                Entry entry=new Entry(v,c.getLong(added),c.getLong(show),c.getString(v instanceof Episode?sg:mg));entry.language=cell(c,VideoStore.Video.VideoColumns.SCRAPER_ORIGINAL_LANGUAGE);entry.studio=cell(c,VideoStore.Video.VideoColumns.SCRAPER_STUDIOS);entry.collection=cell(c,"m_coll_name");
                 entry.sortTitle=c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_SORT_NAME));
                 entry.modified=c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATE_MODIFIED));entry.bitrate=1000L*Math.max(0,c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.ARCHOS_VIDEO_BITRATE)));
                 entry.releaseDate=c.getString(c.getColumnIndexOrThrow(v instanceof Episode?VideoStore.Video.VideoColumns.SCRAPER_S_PREMIERED:VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE));
@@ -185,7 +187,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             try(Cursor sc=getContext().getContentResolver().query(loader.getUri(),loader.getProjection(),loader.getSelection(),loader.getSelectionArgs(),loader.getSortOrder())) {
                 if(sc!=null) { TvshowCursorMapper sm=new TvshowCursorMapper(); sm.bindColumns(sc);
                     Map<Long,Entry> byShow=new HashMap<>(); for(Entry e:videos) if(e.show>0) { Entry old=byShow.get(e.show); if(old==null||old.added<e.added) byShow.put(e.show,e); }
-                    while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId()); Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;}se.sortTitle=sc.getString(sc.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_SORT_NAME));shows.add(se); }
+                    while(sc.moveToNext()) { Tvshow tv=(Tvshow)sm.bind(sc); Entry e=byShow.get(tv.getTvshowId());if(e==null&&androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("supernova_library_policy_initialized",false))continue; Entry se=new Entry(tv,e==null?0:e.added,tv.getTvshowId(),e==null?"":e.genres);if(e!=null){se.backdrop=e.backdrop;se.onlineId=e.onlineId;se.releaseDate=e.releaseDate;se.language=e.language;se.studio=e.studio;}se.sortTitle=sc.getString(sc.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_SORT_NAME));shows.add(se); }
                 }
             }
             PreviewMetadata.hydrate(getContext(),videos);

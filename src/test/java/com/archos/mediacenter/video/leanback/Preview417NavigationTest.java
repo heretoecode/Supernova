@@ -44,7 +44,7 @@ public class Preview417NavigationTest {
         LinearLayout bar = (LinearLayout) shell.getChildAt(0);
         LinearLayout rail = (LinearLayout) bar.getChildAt(1);
         assertTrue(rail instanceof PreviewFocusRail);
-        View home = rail.getChildAt(0), settings = rail.getChildAt(6), search = rail.getChildAt(5);
+        View home = rail.getChildAt(0), settings = shell.findViewWithTag("semantic:topnav.settings"), search = shell.findViewWithTag("semantic:topnav.search");
         home.requestFocus(); shell.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
         assertSame(home, shell.findFocus());
         settings.requestFocus(); shell.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));

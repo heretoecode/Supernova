@@ -344,15 +344,10 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         });
         backupSource = preferencesFragment.registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
             if (uri == null) return;
-            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
-                .setTitle("Restore SUPERNOVA backup")
-                .setMessage("Replace the library and restore saved settings? A recovery backup will be kept first.")
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton("Restore", (dialog, which) -> {
-                    Intent intent = new Intent(MediaLibraryBackupService.ACTION_IMPORT, null, getActivity(), MediaLibraryBackupService.class);
-                    intent.putExtra(MediaLibraryBackupService.EXTRA_IMPORT_FILE, uri.toString());
-                    getContext().startService(intent);
-                }).show();
+            BackupReview.show(getActivity(),uri,path->{
+                Intent intent=new Intent(MediaLibraryBackupService.ACTION_IMPORT,null,getActivity(),MediaLibraryBackupService.class);
+                intent.putExtra(MediaLibraryBackupService.EXTRA_IMPORT_FILE,path);getContext().startService(intent);
+            });
         });
         mFolderPickerLauncher = preferencesFragment.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -1016,9 +1011,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         });
 
         Preference exportLibraryPreference = findPreference(getString(R.string.media_library_export_prefkey));
-        exportLibraryPreference.setSummary("Settings, saved credentials, sources, rows and viewing history. Downloaded artwork is re-fetched after restore. Keep this archive private.");
+        exportLibraryPreference.setSummary("Settings, sources, rows and viewing history. Credentials are excluded. This unencrypted archive contains private library data.");
         exportLibraryPreference.setOnPreferenceClickListener(preference -> {
-            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This archive is not password-encrypted and contains recoverable network passwords and account tokens. Anyone with the archive may access those accounts. Store it somewhere private. Android storage permissions may need to be granted again on a new device.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
+            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This backup is unencrypted. It may expose filenames and paths, library and viewing history, settings, and source names and addresses. Passwords, tokens and login credentials are excluded. Keep it private. Reconnect protected shares and services after restore. Android storage permissions may need to be granted again.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
 
             try { backupDestination.launch("nova-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT).format(new java.util.Date()) + ".zip.in-progress"); }
             catch (android.content.ActivityNotFoundException missing) {

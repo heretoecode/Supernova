@@ -13,6 +13,7 @@
 // limitations under the License.
 
 package com.archos.mediacenter.video.player;
+import com.archos.mediacenter.video.BuildConfig;
 
 import java.util.Locale;
 
@@ -2223,7 +2224,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     // mode tile is first built. This adds (or updates) the summary line inside the Play mode
     // menu once the segments become available; safe to call repeatedly (e.g. on each menu show).
     public void refreshPlayModeIntroSummary() {
-        if (mPlayModeTVMenu == null) return;
+        if (mPlayModeTVMenu == null||BuildConfig.FOUNDATION) return;
         IntroSegments segments = (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
         String summary = (segments != null) ? segments.toSummaryString(PlayerService.introLabels(this), getString(R.string.introdb_segment_end)) : null;
         if (summary == null) return;
@@ -2419,13 +2420,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
             tvmPlayMode.createAndAddSeparator();
             final TVMenuItem tvmAutoSkip = tvmPlayMode.createAndAddTVSwitchableMenuItem(
-                    getResources().getString(R.string.pref_introdb_autoskip_title),
-                    mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED));
+                    BuildConfig.FOUNDATION?"Segment Skipping (this session)":getResources().getString(R.string.pref_introdb_autoskip_title),
+                    BuildConfig.FOUNDATION?PlayerService.sPlayerService.segmentSkippingEnabled():mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED));
             tvmAutoSkip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean enabled = !mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED);
-                    mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, enabled).apply();
+                    boolean enabled=BuildConfig.FOUNDATION?!PlayerService.sPlayerService.segmentSkippingEnabled():!mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED);
+                    if(BuildConfig.FOUNDATION)PlayerService.sPlayerService.segmentOverride(enabled);else mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, enabled).apply();
                     tvmAutoSkip.setChecked(enabled);
                 }
             });
@@ -2763,20 +2764,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 }
 
                 Switch tb = new Switch(mContext);
-                tb.setText(R.string.pref_introdb_autoskip_title);
+                if(BuildConfig.FOUNDATION)tb.setText("Segment Skipping (this session)");else tb.setText(R.string.pref_introdb_autoskip_title);
                 tb.setPadding(pad, pad, pad, pad);
-                tb.setChecked(mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED));
+                tb.setChecked(BuildConfig.FOUNDATION?PlayerService.sPlayerService.segmentSkippingEnabled():mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED));
                 tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, isChecked).apply();
+                        if(BuildConfig.FOUNDATION)PlayerService.sPlayerService.segmentOverride(isChecked);else mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, isChecked).apply();
                     }
                 });
                 content.addView(tb);
 
                 IntroSegments introSegmentsPhone = (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
                 String introSummaryPhone = (introSegmentsPhone != null) ? introSegmentsPhone.toSummaryString(PlayerService.introLabels(this), getString(R.string.introdb_segment_end)) : null;
-                if (introSummaryPhone != null) {
+                if (introSummaryPhone != null&&!BuildConfig.FOUNDATION) {
                     TextView footer = new TextView(mContext);
                     footer.setText(introSummaryPhone);
                     footer.setEnabled(false);

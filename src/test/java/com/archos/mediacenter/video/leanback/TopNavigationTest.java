@@ -136,7 +136,7 @@ public class TopNavigationTest {
             TextView movies = (TextView)group.getChildAt(1); movies.performClick();
             assertTrue(movies.isSelected());
             assertFalse(group.getChildAt(0).isSelected());
-            assertEquals("Search", group.getChildAt(5).getContentDescription());
+            assertEquals("Search", root.findViewWithTag("semantic:topnav.search").getContentDescription());
         } finally {host.pause().stop().destroy();}
     }
 

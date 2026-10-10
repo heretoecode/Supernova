@@ -101,7 +101,7 @@ public class PlayUtils implements IndexHelper.Listener {
      * @param playlistId
      */
     static public void startVideo(final Context context,
-                                  final Video video,
+                                  final Video requested,
                                   final int resume,
                                   final boolean legacyPlayer,
                                   final int resumePosition, //in case we already have resume position. Will only be used by external players
@@ -109,6 +109,8 @@ public class PlayUtils implements IndexHelper.Listener {
                                   final long playlistId)
                                     {
 
+        final Video video=com.archos.mediacenter.video.BuildConfig.FOUNDATION&&requested!=null?com.archos.mediacenter.video.leanback.PreviewVariants.resolve(context,requested):requested;
+        if(com.archos.mediacenter.video.BuildConfig.FOUNDATION&&video!=null){com.archos.mediacenter.video.leanback.LibraryHealth.State state=com.archos.mediacenter.video.leanback.LibraryHealth.state(context,video);if(state!=com.archos.mediacenter.video.leanback.LibraryHealth.State.AVAILABLE){com.archos.mediacenter.video.leanback.PreviewDialog.read(context,com.archos.mediacenter.video.leanback.LibraryHealth.message(state),"Reconnect the source and scan to check this item again. Your library, watched state and playback progress are retained.");return;}}
         final PlayUtils playUtils = new PlayUtils();
         if (video == null) {
             log.warn("startVideo: video is null!");

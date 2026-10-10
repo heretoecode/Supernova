@@ -267,11 +267,15 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         }
         if(mPrefs.getBoolean("try_new_ui",false)){
             previewSurface=new PreviewBrowserSurface(requireActivity(),v,mUri,getTitleView(),this::previewOptions);
+            previewSurface.credentials(this::onCredentialRequired,uri->mUri=uri);
             setOnItemViewSelectedListener((holder,item,rowHolder,row)->{if(previewSurface!=null)previewSurface.focusItem(item,()->{if(getOnItemViewClickedListener()!=null)getOnItemViewClickedListener().onItemClicked(holder,item,rowHolder,row);});});
             return previewSurface;
         }
         return v;
     }
+
+    public boolean browserBack(Runnable leave){return previewSurface!=null&&previewSurface.browser().back(leave);}
+    public void browserExit(Runnable leave){if(previewSurface!=null)previewSurface.browser().requestExit(leave);else leave.run();}
 
     private void previewOptions(){
         int[] ids={R.id.title_orb,R.id.title_orb2,R.id.title_orb3,R.id.title_orb4,R.id.title_orb5};
@@ -519,6 +523,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     }
 
     protected void startListing(Uri uri) {
+        if(previewSurface!=null){mUri=uri;previewSurface.open(uri);return;}
         if (log.isDebugEnabled()) log.debug("startListing {}", uri);
         // abort previous engine (in theory not needed)
         if (mListingEngine!=null) {

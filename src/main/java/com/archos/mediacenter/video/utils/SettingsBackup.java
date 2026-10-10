@@ -3,10 +3,13 @@ import android.content.SharedPreferences;
 import org.json.*;
 import java.util.*;
 public final class SettingsBackup {
-    public static String encode(SharedPreferences prefs) throws JSONException {
+    public static String encodePortable(SharedPreferences prefs,boolean named) throws JSONException {return encode(prefs,true,named);}
+    public static String encode(SharedPreferences prefs) throws JSONException {return encode(prefs,false,false);}
+    private static String encode(SharedPreferences prefs,boolean portable,boolean named) throws JSONException {
         JSONObject root = new JSONObject();
         for (Map.Entry<String,?> entry : prefs.getAll().entrySet()) {
-            Object v = entry.getValue(); JSONObject item = new JSONObject();
+            if(portable&&((named&&BackupPrivacy.secretKey(entry.getKey()))||(!named&&!BackupPrivacy.setting(entry.getKey()))))continue;
+            Object v = portable?BackupPrivacy.clean(entry.getValue()):entry.getValue(); JSONObject item = new JSONObject();
             String type = v instanceof Boolean ? "boolean" : v instanceof Integer ? "int" : v instanceof Long ? "long"
                 : v instanceof Float ? "float" : v instanceof Set ? "set" : "string";
             item.put("type", type);
@@ -14,6 +17,12 @@ public final class SettingsBackup {
             root.put(entry.getKey(),item);
         }
         return root.toString();
+    }
+    public static SharedPreferences.Editor decodePortable(SharedPreferences prefs,String json,boolean named)throws JSONException{
+        JSONObject root=new JSONObject(json);for(Iterator<String> keys=root.keys();keys.hasNext();){String key=keys.next();if(named?BackupPrivacy.secretKey(key):!BackupPrivacy.setting(key))throw new JSONException("Unsupported portable setting");JSONObject item=root.getJSONObject(key);Object value=item.get("value");
+            if(value instanceof String&&!value.equals(BackupPrivacy.cleanText((String)value)))throw new JSONException("Secret-bearing location rejected");
+            if(value instanceof JSONArray){JSONArray array=(JSONArray)value;for(int i=0;i<array.length();i++)if(!array.getString(i).equals(BackupPrivacy.cleanText(array.getString(i))))throw new JSONException("Secret-bearing location rejected");}
+        }return decode(prefs,json);
     }
     public static SharedPreferences.Editor decode(SharedPreferences prefs, String json) throws JSONException {
         JSONObject root = new JSONObject(json);

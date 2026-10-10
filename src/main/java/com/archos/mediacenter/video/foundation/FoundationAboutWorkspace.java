@@ -76,14 +76,14 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         parentButton=aboutButton;
         if(navigation.isEmpty()) for(int index=0;index<SECTIONS.length;index++) {
             final String name=SECTIONS[index]; final int position=index;
-            TextView child=text(name,13); child.setPadding(dp(24),0,dp(6),0);child.setGravity(Gravity.CENTER_VERTICAL);
+            TextView child=text(name,18); child.setPadding(dp(24),0,dp(6),0);child.setGravity(Gravity.CENTER_VERTICAL);
             child.setFocusable(true);child.setTag("semantic:settings:about:"+name);child.setBackground(PreviewDialog.focus(getContext()));
-            rail.addView(child,new LayoutParams(-1,dp(38)));navigation.add(child);
+            rail.addView(child,new LayoutParams(-1,dp(44)));navigation.add(child);
             child.setOnFocusChangeListener((v,focused)->{if(focused)select(name,child);});
-            child.setOnClickListener(v->{select(name,child);enterContent();});
+            child.setOnClickListener(v->{select(name,child);enterContentInternal();});
             child.setOnKeyListener((v,key,event)->{
                 if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
-                if(key==KeyEvent.KEYCODE_DPAD_RIGHT){enterContent();return true;}
+                if(key==KeyEvent.KEYCODE_DPAD_RIGHT){enterContentInternal();return true;}
                 if(key==KeyEvent.KEYCODE_DPAD_LEFT){parentButton.requestFocus();return true;}
                 if(key==KeyEvent.KEYCODE_DPAD_UP){(position==0?parentButton:navigation.get(position-1)).requestFocus();return true;}
                 if(key==KeyEvent.KEYCODE_DPAD_DOWN){if(position+1<navigation.size())navigation.get(position+1).requestFocus();return true;}
@@ -96,6 +96,8 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         select(section,selectedNavigation);
     }
     public void hide(){for(TextView child:navigation)child.setVisibility(GONE);setVisibility(GONE);normalMiddle.setVisibility(VISIBLE);normalHelp.setVisibility(VISIBLE);}
+    public void collapseNavigation(){for(TextView child:navigation)child.setVisibility(GONE);}
+    public void enterContent(){enterContentInternal();}
     public void enter(){if(selectedNavigation!=null)selectedNavigation.requestFocus();}
     public void openSection(int index){if(index>=0&&index<navigation.size()){select(SECTIONS[index],navigation.get(index));navigation.get(index).requestFocus();}}
     public boolean navigationFocused(){for(TextView v:navigation)if(v.hasFocus())return true;return false;}
@@ -121,7 +123,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         } catch(Exception unavailable){showDetails("Information unavailable","This build could not read the bundled information.",null,null);}
         if(!rows.isEmpty()){selectedIndex=Math.min(selectedIndex,rows.size()-1);rowSelections.get(selectedIndex).run();}
     }
-    private void enterContent(){if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
+    private void enterContentInternal(){if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
     private void focusSelectedRow(){if(!rows.isEmpty())rows.get(Math.min(selectedIndex,rows.size()-1)).requestFocus();else selectedNavigation.requestFocus();}
     private TextView row(String label,Runnable select,Runnable activate){
         final int index=rows.size();TextView row=text(label,14);row.setPadding(dp(10),dp(10),dp(8),dp(10));

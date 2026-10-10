@@ -182,7 +182,15 @@ public final class Diagnostics {
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
-        enabled=value;mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default","off");
+        synchronized(LOCK){enabled=value;}mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default","off");
+    }
+    public static void disable(Context c,boolean deleteSaved){
+        setEnabled(c,false);
+        if(deleteSaved)synchronized(LOCK){removeLogs(directory());activeIncident=null;incidentCounts.clear();}
+    }
+    private static void removeLogs(File file){File[] children=file.listFiles();if(children!=null)for(File child:children)removeLogs(child);file.delete();}
+    public static void chooseDisable(Context c,java.util.function.Consumer<Boolean> changed){
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(c,"Turn diagnostic logging off?",new String[]{"Cancel","Keep saved logs","Delete saved logs"},0,n->{if(n==0)return;disable(c,n==2);changed.accept(false);});
     }
     public static void beginPlayback(android.net.Uri source){
         playback=UUID.randomUUID().toString();event("playback_begin","source",sourceType(source));
@@ -220,6 +228,7 @@ public final class Diagnostics {
     }
     private static void writeImportant(String line){
         synchronized(LOCK){try{
+            if(!enabled)return;
             File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs())return;
             java.text.SimpleDateFormat day=new java.text.SimpleDateFormat("yyyyMMdd",Locale.ROOT);day.setTimeZone(TimeZone.getTimeZone("UTC"));
             append(dir,"important-"+day.format(new Date())+".jsonl",3,line.getBytes(StandardCharsets.UTF_8));
@@ -261,6 +270,7 @@ public final class Diagnostics {
                 "dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_evicted",flight.evicted,
                 "post_window_until_elapsed_ms",state.elapsed+60000,"captured_elapsed_ms",flight.elapsed,"writer_delay_ms",Math.max(0,android.os.SystemClock.elapsedRealtime()-flight.elapsed));
         synchronized(LOCK){try{
+            if(!enabled)return;
             File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs()){WRITE_ERRORS.incrementAndGet();return;}
             activeIncident=incidentFile(manual,state.utc);
             // Append protected copies instead of replacing the previous incident window.
@@ -372,7 +382,7 @@ public final class Diagnostics {
     }
     private static void write(String line,String session){
         if(context==null||line.isEmpty())return;
-        synchronized(LOCK){try{File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs()){WRITE_ERRORS.incrementAndGet();return;}
+        synchronized(LOCK){try{if(!enabled)return;File dir=directory();if(!dir.isDirectory()&&!dir.mkdirs()){WRITE_ERRORS.incrementAndGet();return;}
             byte[] bytes=line.getBytes(StandardCharsets.UTF_8);append(dir,"events.jsonl",ROTATIONS,bytes);
             if(!session.isEmpty())append(dir,"playback.jsonl",1,bytes);
         }catch(Exception ignored){WRITE_ERRORS.incrementAndGet();/* Instrumentation must not affect playback or storage operations. */}}

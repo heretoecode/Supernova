@@ -1,0 +1,39 @@
+# 0.135 implementation checkpoint
+
+Development branch: `codex/supernova-0.135`, Foundation ancestry. This is a development checkpoint, not a release or a completed conformance claim. Main and the protected 0.134 signing workflow remain unchanged.
+
+## Shared browser and foundation
+
+`SharedThreePanel` owns 24/38/38 usable widths, 16dp gaps, 20dp padding, 16dp corners, neutral depth and white row focus. Settings, universal storage browsing, custom-page editing and Library Health use it. Search retains its keyboard-specific panel proportions. Top navigation retains the existing brand and has one custom-page slot immediately after TV Shows; focus changes do not change pages.
+
+`UniversalFileBrowser` uses the existing FileCore ListingEngineFactoryWithUpnp, credential hosts and indexed VideosInFolderLoader. It owns list/grid, sort, All Files preferences, complete breadcrumbs, panel transitions and staged inclusion/exclusion. Home embeds the same instance class at 65% page height; Network & Files uses the full page. Legacy ListingFragment hosts adapt their native authentication/error routes instead of starting a second listing engine. Source management enters the shared browser. FolderPicker's Foundation presentation uses a directory-selection capability with its original result extra, local/writable filtering and no library actions.
+
+The put.io provider activity uses the same panel/focus shell with its native API item adapter. Its account association/reassignment chooser is retained because it chooses provider account/folder identities and scanner ownership, rather than a FileCore storage path. Android document/subtitle/artwork/export/import pickers remain system pickers for capability grants. Classic phone/tablet UI remains a compatibility presentation; no working picker result contract is removed. The original 49-file audit is retained in BROWSER_CALLSITES.md; these are deliberate domain-specific exceptions, not additional TV library browsers.
+
+Library root and shortcut changes use a SQLite transaction and preference commit. Failure retains original source IDs, names and staged edits. Inventory refresh does not undo a staged removal. Before first policy activation, existing indexed local paths seed roots, including disconnected Android removable volumes. Absolute native paths and file URIs use the same canonical form. No file deletion is performed.
+
+## Integrity, playback and matching
+
+The MediaLib patch changes successful network/local reconciliation to availability marking for the Foundation identity, preserving records, IDs, metadata and viewing history. Partial directory failures record source problems; they do not automatically classify an entire reachable source as offline. Existing conservative USB identity matching, scan scheduler, cancellation and metadata engine remain in use. Library Health presents five issue groups, ignores importing media, and delegates accepted matches to the existing native metadata persistence. A saved correction clears the incorrect-match flag.
+
+Playback uses distinct played intervals for the 90% threshold; seeks cannot manufacture viewed duration. The HUD has four actions with Pause physically centred. Up Next appears in the final five seconds, without a visible Cancel action, and relies on inherited natural-end progression. Segment policies require concrete safe boundaries before the file end; unclassified previews play normally. The existing IntroDB integration is retained without new credentials or claimed provider coverage.
+
+Manual version choices persist by logical movie/episode identity and resolve across library/playback entry routes. Availability, measured dimensions and native PQ/HLG/Dolby Vision/HDR10+ fields are used. The new AVOS/MediaLib bridge preserves the raw container Dolby Vision profile and verified HDR10+ coded side data independently of decoder selection; the background retriever now uses its own correct transfer-characteristic key. Older technical caches are invalidated. HDR10+ frame-only SEI coverage, Dolby Vision profile compatibility and physical Shield output still require native/fixture/hardware validation. No filename-derived badge is substituted.
+
+## Other implementation
+
+Home keeps the original carousel and return-focus machinery, removes inherited heavy artwork gradients, freezes dynamic row membership when turned off, keeps manual additions and separates Done. Movie/TV unmatched toolbar duplicates are removed in favour of Library Health. Details uses compact Cast/Crew text rows, selected-file badges and its existing asynchronous/cache paths. Search adds punctuation/article/typo matching and actual indexed cast/crew/studio/original-title data, with guidance limited to supported local data. Custom Library Page is one persisted five-step draft/editor, with protected exit, prefilled editing, independent column preferences and reliable indexed language/studio/collection filters. Country filtering is not offered because a reliable local country index has not been established.
+
+My Providers keeps catalogue colours; action/availability marks retain their existing monochrome treatment. Language flags retain locale-aware fallback. Existing local open-source notices and Foundation About implementation remain in use. Diagnostics OFF offers Keep/Delete/Cancel while retaining bounded capture/redaction.
+
+## Backup audit and fixes
+
+Format 1.0 includes a manifest and required RESTORE_INSTRUCTIONS.txt. Export filters nonsecret settings, source/view/row/custom-page/version/segment state and sanitises private database copies, including URI user information and query credentials, then VACUUMs the copies. Raw credentials are retained only in the private recovery journal for rollback. Credentials DB is excluded from portable archives and cleared on successful restore. The live databases are not sanitised during export.
+
+Restore stages and validates the private snapshot before showing filename/date/version/categories; confirmation imports that exact staged copy. Restore repeats validation, uses the durable journal and preserves the library on failure. Existing provider associations and scanner ownership are included as nonsecret source state. Secrets and obsolete UI identity preferences are excluded; protected services require sign-in again. Tests must cover the actual service export/stage/restore path, not only ZIP structure.
+
+## Validation limits
+
+Local Java tests use SDK 37/JDK 17 and skip only dependency `ndkBuild` tasks because the native workspace is absent. This proves Java/resource/test compilation only, **not an APK build**. The new secret-free conformance workflow builds the complete pinned native workspace, LGPL source bundle, native regressions, unit tests, lint and unsigned APK, then compares identity, native hashes and runtime inventory. No result has been claimed for that workflow yet. Signing is not supplied locally, and the existing protected workflow is pinned to 0.134. No new QA APK is currently available.
+
+Physical Shield D-pad, playback/subtitles/HDR/audio, mounted/network storage, permissions, animations and signed 0.134 upgrade testing remain outstanding. Historical signed APK evidence comes from the preserved repository verification record; a fresh artifact download was blocked by the execution environment's artifact host policy. No fresh binary digest verification is claimed.

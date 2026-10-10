@@ -24,8 +24,8 @@ public final class SafeBackup {
         return file;
     }
     static boolean allowed(String name) {
-        return name.equals("media.db") || name.equals("credentials_db") || name.equals("shortcuts_db")
-            || name.equals("shortcuts2_db") || name.equals("db_version.txt") || name.equals("settings.json") || name.equals("named_preferences.json")
+        return name.equals("media.db") || name.equals("shortcuts_db")
+            || name.equals("shortcuts2_db") || name.equals("putio-associations.db") || name.equals("manifest.json") || name.equals("RESTORE_INSTRUCTIONS.txt") || name.equals("db_version.txt") || name.equals("settings.json") || name.equals("named_preferences.json")
             || name.startsWith("scraper_posters/") || name.startsWith("scraper_backdrops/") || name.startsWith("scraper_pictures/");
     }
     public static File stage(Context c, InputStream input) throws Exception {
@@ -53,6 +53,14 @@ public final class SafeBackup {
                     }
                 }
             }
+            validateStage(c,stage);
+            return stage;
+        } catch (Exception error) { remove(stage); throw error; }
+    }
+    public static void validateStage(Context c,File stage)throws Exception {
+        File parent=stage.getCanonicalFile().getParentFile();if(!parent.equals(c.getCacheDir().getCanonicalFile())||!stage.getName().matches("restore-[a-f0-9-]{36}"))throw new IOException("Invalid restore staging location");
+            BackupFormat.validate(read(new File(stage,"manifest.json")));
+            if(!new File(stage,"RESTORE_INSTRUCTIONS.txt").isFile())throw new IOException("Backup instructions are missing");
             int version = Integer.parseInt(read(new File(stage,"db_version.txt")).trim());
             if (version != VideoOpenHelper.getDatabaseVersion()) throw new IOException("Backup database version is incompatible");
             File media = new File(stage,"media.db");
@@ -61,11 +69,12 @@ public final class SafeBackup {
                  Cursor check = db.rawQuery("PRAGMA quick_check", null)) {
                 if (db.getVersion() != version || !check.moveToFirst() || !"ok".equals(check.getString(0))) throw new IOException("Backup database is damaged");
             }
+            File associations=new File(stage,"putio-associations.db");if(associations.isFile())try(SQLiteDatabase db=SQLiteDatabase.openDatabase(associations.getPath(),null,SQLiteDatabase.OPEN_READONLY);Cursor check=db.rawQuery("PRAGMA quick_check",null)){if(db.getVersion()!=2||!check.moveToFirst()||!"ok".equals(check.getString(0)))throw new IOException("Unsupported provider association database");}
             File settings = new File(stage,"settings.json");
-            if(settings.isFile()) SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c), read(settings));
+            if(settings.isFile()) SettingsBackup.decodePortable(PreferenceManager.getDefaultSharedPreferences(c),read(settings),false);
             File named=new File(stage,"named_preferences.json");if(named.isFile())MigrationBackup.validateSettings(c,read(named));
-            return stage;
-        } catch (Exception error) { remove(stage); throw error; }
+            if(!new File(stage,"settings.json").isFile())throw new IOException("Backup settings are missing");
+            for(String database:new String[]{"media.db","shortcuts_db","shortcuts2_db","putio-associations.db"}){File file=new File(stage,database);if(file.isFile())BackupPrivacy.validateDatabase(file);}
     }
     static String read(File file) throws IOException {
         try (InputStream in = new FileInputStream(file); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -105,14 +114,15 @@ public final class SafeBackup {
         }
     }
     public static void restore(Context c, File stage) throws Exception {
-        try(RestoreJournal.Guard guard=RestoreJournal.acquire(c)){restoreLocked(c,stage);}
+        try(RestoreJournal.Guard guard=RestoreJournal.acquire(c)){synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){restoreLocked(c,stage);}}
     }
     private static void restoreLocked(Context c, File stage) throws Exception {
         RestoreJournal.recoverLocked(c);
+        validateStage(c,stage);
         String token=UUID.randomUUID().toString();
         List<Swap> swaps=new ArrayList<>();
         try {
-            for(String name:new String[]{"media.db","credentials_db","shortcuts_db","shortcuts2_db"}) {
+            for(String name:new String[]{"media.db","credentials_db","shortcuts_db","shortcuts2_db","putio-associations.db"}) {
                 File dest=c.getDatabasePath(name);
                 swaps.add(new Swap(dest,new File(stage,name),token));
                 swaps.add(new Swap(new File(dest+"-wal"),null,token));
@@ -122,6 +132,7 @@ public final class SafeBackup {
             swaps.add(new Swap(MediaScraper.getBackdropDirectory(c),new File(stage,"scraper_backdrops"),token));
             swaps.add(new Swap(MediaScraper.getPictureDirectory(c),new File(stage,"scraper_pictures"),token));
             File named=new File(stage,"named_preferences.json");Map<String,String> restoredNamed=named.isFile()?MigrationBackup.validateSettings(c,read(named)):Collections.emptyMap();Map<String,String> originalNamed=new LinkedHashMap<>();for(String name:restoredNamed.keySet())originalNamed.put(name,SettingsBackup.encode(c.getSharedPreferences(name,0)));
+            originalNamed.put("opensubtitles_credentials",SettingsBackup.encode(c.getSharedPreferences("opensubtitles_credentials",0)));
             String originalSettings=SettingsBackup.encode(PreferenceManager.getDefaultSharedPreferences(c));
             DbHolder holder=VideoDb.getHolder(c);
             holder.lockExclusive();
@@ -133,10 +144,12 @@ public final class SafeBackup {
                 org.json.JSONObject journal=RestoreJournal.prepare(c,recoveryFiles,originalSettings,recoveryNamed);
                 try {
                     for(Swap swap:swaps) swap.apply();
-                    for(Map.Entry<String,String> entry:restoredNamed.entrySet())if(!SettingsBackup.decode(c.getSharedPreferences(entry.getKey(),0),entry.getValue()).commit())throw new IOException("Cannot restore account configuration");
+                    for(Map.Entry<String,String> entry:restoredNamed.entrySet())if(!SettingsBackup.decodePortable(c.getSharedPreferences(entry.getKey(),0),entry.getValue(),true).commit())throw new IOException("Cannot restore account configuration");
                     File settings=new File(stage,"settings.json");
-                    if(settings.isFile()&&!SettingsBackup.decode(PreferenceManager.getDefaultSharedPreferences(c),read(settings)).commit())
+                    if(settings.isFile()&&!SettingsBackup.decodePortable(PreferenceManager.getDefaultSharedPreferences(c),read(settings),false).commit())
                         throw new IOException("Cannot save restored settings");
+                    if(!c.getSharedPreferences("opensubtitles_credentials",0).edit().clear().commit())throw new IOException("Cannot clear obsolete credentials");
+                    if("app.supernova.player".equals(c.getPackageName()))PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean("try_new_ui",true).commit();
                     RestoreJournal.commit(c,journal);
                 } catch(Exception error) {
                     try { RestoreJournal.recoverLocked(c); } catch(Exception recovery) { error.addSuppressed(recovery); }

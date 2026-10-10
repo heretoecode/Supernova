@@ -12,6 +12,7 @@ import java.util.*;
 public final class PreviewLibraryScan {
     private static long requestedAt;
     private static boolean installed;
+    private static boolean selectionScanPending;
     private static boolean operationEnded=true;
     private static String operation = "", phase = "", trigger="unknown",sourceLocation="",sourceId="";
     private static long checked, added, updated, completed;
@@ -67,6 +68,13 @@ public final class PreviewLibraryScan {
         final String request=operation;
         MAIN.postDelayed(()->{synchronized(PreviewLibraryScan.class){if(request.equals(operation)&&phase.equals("queued")){phase="not_started";Diagnostics.event("scan_not_started","operation_id",operation,"scheduler_error",NetworkAutoRefresh.getLastError(context));finishOperation("not_started");}}},15000);
     }
+    public static synchronized void requestAfterChanges(Context c){
+        Context app=c.getApplicationContext();
+        if(!NetworkScannerServiceVideo.isScannerAlive()&&com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()==0){request(app);return;}
+        if(selectionScanPending)return;selectionScanPending=true;
+        MAIN.postDelayed(new Runnable(){public void run(){synchronized(PreviewLibraryScan.class){if(!selectionScanPending)return;if(NetworkScannerServiceVideo.isScannerAlive()||com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()>0){MAIN.postDelayed(this,500);return;}selectionScanPending=false;request(app);}}},500);
+    }
+    public static synchronized void cancelPendingSelectionScan(){selectionScanPending=false;}
     private static void finishOperation(String reason){
         if(operationEnded||operation.isEmpty())return;operationEnded=true;
         Diagnostics.event("scan_operation_terminal","operation_id",operation,"reason",reason);
@@ -93,6 +101,16 @@ public final class PreviewLibraryScan {
         if(phase.equals("not_started"))return "The requested scan has not started. Check the source selection and connectivity.";
         android.content.SharedPreferences prefs=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);String result=prefs.getString("preview_scan_result","");
         return result.isEmpty()?PreviewNetworkScanning.lastResult(c):result;
+    }
+    public static synchronized String overview(Context c){
+        long last=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getLong("preview_scan_result_time",0);
+        String ago=last==0?"Not yet completed":android.text.format.DateUtils.getRelativeTimeSpanString(last,System.currentTimeMillis(),android.text.format.DateUtils.MINUTE_IN_MILLIS).toString();
+        boolean busy=NetworkScannerServiceVideo.isScannerAlive();
+        return "Scan Overview\n\nStatus: "+(busy?"Scanning":phase.equals("queued")?"Requested":phase.equals("failed")||phase.equals("batch_failed")?"Source problems":"Idle")
+            +"\nCurrent source: "+(sourceLocation.isEmpty()?"—":sourceLocation)
+            +"\nFiles checked: "+(busy&&phase.equals("started")?progress.liveChecked(sourceId,NetworkScannerServiceVideo.getFilesFoundCount()):checked)
+            +"\nNew files: "+added+"\nUpdated files: "+updated+"\nSources completed: "+completed+(sourcesTotal>=0?" / "+sourcesTotal:"")
+            +"\nSource problems: "+progress.total(4)+"\nLast completed: "+ago+"\n\n"+libraryStatus(c);
     }
     private PreviewLibraryScan(){}
 }

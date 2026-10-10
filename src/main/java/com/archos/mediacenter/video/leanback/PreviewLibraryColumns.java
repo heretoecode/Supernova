@@ -31,7 +31,8 @@ public final class PreviewLibraryColumns {
  private final Set<Column> shown=EnumSet.noneOf(Column.class);
  public Column sortColumn;
  public boolean ascending=true;
- public PreviewLibraryColumns(Context c,boolean tv){context=c;this.tv=tv;prefs=PreferenceManager.getDefaultSharedPreferences(c);prefix="preview_columns_"+(tv?"tv_":"movies_");reset(false);
+ public PreviewLibraryColumns(Context c,boolean tv){this(c,tv,tv?"tv_":"movies_");}
+ public PreviewLibraryColumns(Context c,boolean tv,String namespace){context=c;this.tv=tv;prefs=PreferenceManager.getDefaultSharedPreferences(c);prefix="preview_columns_"+namespace;reset(false);
   if(prefs.getBoolean("remember_library_views",true)){
    List<Column> saved=parse(prefs.getString(prefix+"order",""));if(!saved.isEmpty()){order.clear();order.addAll(saved);for(Column col:available())if(!order.contains(col))order.add(col);}
    String visible=prefs.getString(prefix+"shown",null);if(visible!=null){shown.clear();shown.addAll(parse(visible));shown.add(Column.TITLE);}

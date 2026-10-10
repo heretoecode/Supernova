@@ -37,19 +37,21 @@ public class PreviewNextTest {
         assertEquals(PreviewLibraryColumns.Column.AUDIO,restored.sortColumn);
         assertFalse(restored.ascending);
     }
-    @Test public void hudHasExactlyFiveVisibleControlGroups() {
+    @Test public void hudHasFourGroupsWithPlayPauseGeometricallyCentred() {
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             View hud=LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental,null);
             ViewGroup transport=hud.findViewById(R.id.preview_transport);
-            assertEquals(5,transport.getChildCount());
-            int[] ids={R.id.preview_subtitles,R.id.preview_audio,R.id.pause,R.id.preview_info,R.id.preview_more};
+            assertEquals(4,transport.getChildCount());
+            int[] ids={R.id.preview_subtitles,R.id.preview_audio,R.id.pause,R.id.preview_more};
             for(int i=0;i<ids.length;i++) {
                 View button=hud.findViewById(ids[i]);
                 assertEquals(View.VISIBLE,button.getVisibility());
                 assertSame(transport.getChildAt(i),button.getParent());
             }
-            for(int id:new int[]{R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward})
+            android.widget.RelativeLayout.LayoutParams pause=(android.widget.RelativeLayout.LayoutParams)((View)hud.findViewById(R.id.pause).getParent()).getLayoutParams();
+            assertEquals(android.widget.RelativeLayout.TRUE,pause.getRule(android.widget.RelativeLayout.CENTER_HORIZONTAL));
+            for(int id:new int[]{R.id.preview_info,R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward})
                 assertEquals(View.GONE,hud.findViewById(id).getVisibility());
         } finally {host.pause().stop().destroy();}
     }

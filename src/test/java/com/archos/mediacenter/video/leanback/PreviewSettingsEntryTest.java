@@ -32,7 +32,7 @@ public class PreviewSettingsEntryTest {
             host.get().getIntent().putExtra("preview_settings_category","Subtitles");Settings fragment=new Settings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             View root=fragment.requireView();PreviewPagesTest.layout(root);View subtitles=root.findViewWithTag("semantic:settings:category:Subtitles");
             assertTrue(subtitles.hasFocus());assertFalse(fragment.getListView().hasFocus());assertFalse(host.get().getIntent().hasExtra("preview_settings_category"));
-            assertTrue(subtitles.getParent() instanceof PreviewFocusRail);assertNull(subtitles.getBackground());
+            assertTrue(subtitles.getParent() instanceof android.widget.LinearLayout);assertNotNull(subtitles.getBackground());
             assertFalse(((SwitchPreferenceCompat)fragment.findPreference("Subtitles-option")).isChecked());
             subtitles.performClick();PreviewPagesTest.layout(root);assertTrue(fragment.getListView().hasFocus());
             // ViewRoot dispatches an unhandled DPAD key through focusSearch; a direct child

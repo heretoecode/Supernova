@@ -93,10 +93,28 @@ public class FolderPicker extends FragmentActivity {
      * This extra is a String (the full path).
      */
     public static final String EXTRA_SELECTED_FOLDER = "EXTRA_SELECTED_FOLDER";
+    private com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser sharedBrowser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        boolean shared=androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false);
+        if(shared)setTheme(R.style.MyLeanbackTheme);
         super.onCreate(savedInstanceState);
+        if(shared){
+            sharedBrowser=new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(this);
+            sharedBrowser.directoryPicker(uri->{setResult(RESULT_OK,new Intent().putExtra(EXTRA_SELECTED_FOLDER,uri.getPath()));finish();});
+            java.util.List<com.archos.mediacenter.video.leanback.adapter.object.Box> volumes=new ArrayList<>();
+            ExtStorageManager storage=ExtStorageManager.getExtStorageManager();
+            java.util.Set<String> paths=new java.util.LinkedHashSet<>();paths.addAll(storage.getExtSdcards());paths.addAll(storage.getExtUsbStorages());paths.addAll(storage.getExtOtherStorages());
+            for(String path:paths)volumes.add(new com.archos.mediacenter.video.leanback.adapter.object.Box(com.archos.mediacenter.video.leanback.adapter.object.Box.ID.OTHER,new java.io.File(path).getName(),0,path));
+            sharedBrowser.locations(volumes,java.util.Collections.emptyList(),java.util.Collections.emptyList(),ignored->{});setContentView(sharedBrowser);
+            String restored=savedInstanceState==null?null:savedInstanceState.getString("shared_directory");String selected=getIntent().getStringExtra(EXTRA_CURRENT_SELECTION);
+            String path=restored!=null?Uri.parse(restored).getPath():selected==null?null:Uri.parse(selected).getPath();
+            java.io.File start=path==null||path.isEmpty()?Environment.getExternalStorageDirectory():restored!=null?new java.io.File(path):new java.io.File(path).getParentFile();
+            sharedBrowser.open(Uri.fromFile(start==null?Environment.getExternalStorageDirectory():start));
+            getOnBackPressedDispatcher().addCallback(this,new androidx.activity.OnBackPressedCallback(true){public void handleOnBackPressed(){sharedBrowser.back(()->{setResult(RESULT_CANCELED);finish();});}});
+            return;
+        }
 
         if (savedInstanceState == null) {
             FolderPickerDialogFragment df = new FolderPickerDialogFragment();
@@ -116,6 +134,8 @@ public class FolderPicker extends FragmentActivity {
             df.show(getSupportFragmentManager(), FolderPickerDialogFragment.FRAGMENT_TAG);
         }
     }
+    @Override protected void onSaveInstanceState(Bundle state){if(sharedBrowser!=null&&sharedBrowser.location()!=null)state.putString("shared_directory",sharedBrowser.location().toString());super.onSaveInstanceState(state);}
+    @Override protected void onDestroy(){if(sharedBrowser!=null)sharedBrowser.close();super.onDestroy();}
 
     static private boolean isOneOfTheRootStorageItems(Uri uri) {
         ExtStorageManager storageManager = ExtStorageManager.getExtStorageManager();

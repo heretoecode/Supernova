@@ -11,11 +11,26 @@ import org.json.*;
 public final class PreviewHomeRows {
  public static final String[] SYSTEM={"continue","watchnext","recent","trending","popular","watched","similar"};
  private static final String[] LABELS={"Continue Watching","Watch Next","Recently Added","Trending on Trakt — In Your Library","Popular on Trakt — In Your Library","Recently Watched","Because You Watched"};
- public static final class Row {public String id,name;public boolean visible=true,dynamic=false,movies=true,tv=true;public String genreRule="",sort="added";public int maximum=0;public final Set<String> members=new LinkedHashSet<>();Row(String id,String name){this.id=id;this.name=name;}public boolean custom(){return id.startsWith("custom:");}}
+ public static final class Row {public String id,name;public boolean visible=true,dynamic=false,movies=true,tv=true;public String genreRule="",sort="added";public int maximum=0;public boolean descending=true;public final Set<String> members=new LinkedHashSet<>(),calculated=new LinkedHashSet<>();Row(String id,String name){this.id=id;this.name=name;}public boolean custom(){return id.startsWith("custom:");}}
  private final Context context;private final SharedPreferences prefs;public final List<Row> rows=new ArrayList<>();
- public PreviewHomeRows(Context c){context=c;prefs=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);try{JSONArray data=new JSONArray(prefs.getString("preview_home_rows41","[]"));for(int i=0;i<data.length();i++){JSONObject o=data.getJSONObject(i);Row r=new Row(o.getString("id"),o.getString("name"));r.visible=o.optBoolean("visible",true);r.dynamic=o.optBoolean("dynamic",false);r.movies=o.optBoolean("movies",true);r.tv=o.optBoolean("tv",true);if(!r.movies&&!r.tv)r.movies=true;r.genreRule=o.optString("genres","");r.sort=o.optString("sort","added");r.maximum=Math.max(0,o.optInt("maximum",0));JSONArray members=o.optJSONArray("members");if(members!=null)for(int j=0;j<members.length();j++)r.members.add(members.getString(j));rows.add(r);}}catch(JSONException ignored){}for(int i=0;i<SYSTEM.length;i++){final String id=SYSTEM[i];if(rows.stream().noneMatch(r->r.id.equals(id)))rows.add(new Row(id,LABELS[i]));}}
- private void save(){JSONArray data=new JSONArray();try{for(Row r:rows)data.put(new JSONObject().put("id",r.id).put("name",r.name).put("visible",r.visible).put("members",new JSONArray(r.members)).put("dynamic",r.dynamic).put("movies",r.movies).put("tv",r.tv).put("genres",r.genreRule).put("sort",r.sort).put("maximum",r.maximum));prefs.edit().putString("preview_home_rows41",data.toString()).apply();}catch(JSONException error){throw new IllegalStateException(error);}}
- public List<Entry> members(Row row,Snapshot snapshot){List<Entry> result=new ArrayList<>();if(row.dynamic){List<Entry> source=new ArrayList<>();if(row.movies)source.addAll(snapshot.movies);if(row.tv)source.addAll(snapshot.shows);Set<String> genres=PreviewGenres.parse(row.genreRule);for(Entry e:source)if(PreviewGenres.matches(e.genres,genres))result.add(e);Comparator<Entry> order=row.sort.equals("title")?Comparator.comparing((Entry e)->PreviewPages.titleForSort(context,e),String.CASE_INSENSITIVE_ORDER):row.sort.equals("year")?Comparator.comparingInt(Entry::year).reversed():Comparator.comparingLong((Entry e)->e.added).reversed();result.sort(order.thenComparing(PreviewPages::displayName,String.CASE_INSENSITIVE_ORDER));if(row.maximum>0&&result.size()>row.maximum)return new ArrayList<>(result.subList(0,row.maximum));return result;}for(String key:row.members){for(Entry e:snapshot.movies)if(e.key().equals(key)){result.add(e);break;}for(Entry e:snapshot.shows)if(e.key().equals(key)){result.add(e);break;}}return result;}
+ public PreviewHomeRows(Context c){context=c;prefs=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);try{JSONArray data=new JSONArray(prefs.getString("preview_home_rows41","[]"));for(int i=0;i<data.length();i++){JSONObject o=data.getJSONObject(i);Row r=new Row(o.getString("id"),o.getString("name"));r.visible=o.optBoolean("visible",true);r.dynamic=o.optBoolean("dynamic",false);r.movies=o.optBoolean("movies",true);r.tv=o.optBoolean("tv",true);if(!r.movies&&!r.tv)r.movies=true;r.genreRule=o.optString("genres","");r.sort=o.optString("sort","added");r.descending=o.optBoolean("descending",!r.sort.equals("title"));JSONArray calculated=o.optJSONArray("calculated");if(calculated!=null)for(int j=0;j<calculated.length();j++)r.calculated.add(calculated.getString(j));r.maximum=Math.max(0,o.optInt("maximum",0));JSONArray members=o.optJSONArray("members");if(members!=null)for(int j=0;j<members.length();j++)r.members.add(members.getString(j));rows.add(r);}}catch(JSONException ignored){}for(int i=0;i<SYSTEM.length;i++){final String id=SYSTEM[i];if(rows.stream().noneMatch(r->r.id.equals(id)))rows.add(new Row(id,LABELS[i]));}}
+ private void save(){JSONArray data=new JSONArray();try{for(Row r:rows)data.put(new JSONObject().put("id",r.id).put("name",r.name).put("visible",r.visible).put("members",new JSONArray(r.members)).put("dynamic",r.dynamic).put("movies",r.movies).put("tv",r.tv).put("genres",r.genreRule).put("sort",r.sort).put("descending",r.descending).put("calculated",new JSONArray(r.calculated)).put("maximum",r.maximum));prefs.edit().putString("preview_home_rows41",data.toString()).apply();}catch(JSONException error){throw new IllegalStateException(error);}}
+ public List<Entry> members(Row row,Snapshot snapshot){
+  Map<String,Entry> available=new LinkedHashMap<>();for(Entry entry:snapshot.movies)available.put(entry.key(),entry);for(Entry entry:snapshot.shows)available.put(entry.key(),entry);
+  LinkedHashSet<String> keys=new LinkedHashSet<>(row.members);
+  if(row.dynamic){Set<String> genres=PreviewGenres.parse(row.genreRule);Set<String> calculated=new LinkedHashSet<>();
+   for(Entry entry:available.values())if((entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow?row.tv:row.movies)&&PreviewGenres.matches(entry.genres,genres))calculated.add(entry.key());
+   if(!row.calculated.equals(calculated)){row.calculated.clear();row.calculated.addAll(calculated);save();}keys.addAll(calculated);
+  }
+  List<Entry> result=new ArrayList<>();for(String key:keys)if(available.containsKey(key))result.add(available.get(key));
+  Comparator<Entry> order=row.sort.equals("title")?Comparator.comparing((Entry e)->PreviewPages.titleForSort(context,e),String.CASE_INSENSITIVE_ORDER):row.sort.equals("year")?Comparator.comparingInt(Entry::year):Comparator.comparingLong((Entry e)->e.added);
+  if(row.descending)order=order.reversed();result.sort(order.thenComparing(PreviewPages::displayName,String.CASE_INSENSITIVE_ORDER));
+  return row.maximum>0&&result.size()>row.maximum?new ArrayList<>(result.subList(0,row.maximum)):result;
+ }
+ public void setDynamic(Row row,boolean dynamic,Snapshot snapshot){
+  if(row.dynamic&&!dynamic){if(snapshot!=null)members(row,snapshot);row.members.addAll(row.calculated);}
+  row.dynamic=dynamic;save();
+ }
  public void supersedeWatchNext(Set<String> continuing){boolean changed=false;for(Row row:rows)if(row.id.equals("watchnext"))changed|=row.members.removeAll(continuing);if(changed)save();}
  public boolean dismissed(Entry e){return prefs.contains("preview_cw_dismiss:"+e.key())&&e.playedAt<=prefs.getLong("preview_cw_dismiss:"+e.key(),0);}
  public void dismiss(Entry e){prefs.edit().putLong("preview_cw_dismiss:"+e.key(),e.playedAt).apply();}
@@ -41,7 +56,7 @@ public final class PreviewHomeRows {
  }
  private void membership(Entry entry,Runnable changed,String focusRow) {
   List<Row> choices = new ArrayList<>();
-  for (Row row : rows) if (row.custom() && !row.dynamic || row.id.equals("watchnext")) choices.add(row);
+  for (Row row : rows) if (row.custom() || row.id.equals("watchnext")) choices.add(row);
   List<String> labels = new ArrayList<>(); Set<Integer> checks = new HashSet<>();
   for (Row row : choices) { if (row.members.contains(entry.key())) checks.add(labels.size()); labels.add(row.name); }
   labels.add("Create New Row…");int selected=-1;
@@ -84,16 +99,17 @@ public final class PreviewHomeRows {
    "Dynamic genre rule: "+(row.dynamic?"On":"Off"),
    "Genres: "+(row.genreRule.isEmpty()?"All":row.genreRule.replace("|",", ")),
    "Movies: "+(row.movies?"On":"Off"),"TV Shows: "+(row.tv?"On":"Off"),
-   "Sort: "+row.sort,"Maximum items: "+(row.maximum==0?"No Limit":row.maximum),"Done"}[n];
-  String[] labels=new String[7];for(int i=0;i<labels.length;i++)labels[i]=label.apply(i);
-  Runnable refresh=()->{save();for(int i=0;i<6;i++)PreviewDialog.updateLabel(menu[0],i,label.apply(i));};
+   "Sort: "+row.sort,"Maximum items: "+(row.maximum==0?"No Limit":row.maximum),"Direction: "+(row.descending?"Descending":"Ascending"),"Done"}[n];
+  String[] labels=new String[8];for(int i=0;i<labels.length;i++)labels[i]=label.apply(i);
+  Runnable refresh=()->{save();for(int i=0;i<7;i++)PreviewDialog.updateLabel(menu[0],i,label.apply(i));};
   menu[0]=PreviewDialog.choose(context,row.name,labels,-1,Collections.emptySet(),false,n->{
-   if(n==6){menu[0].dismiss();changed.run();return;}
-   if(n==0)row.dynamic=!row.dynamic;
+   if(n==7){menu[0].dismiss();changed.run();return;}
+   if(n==0)setDynamic(row,!row.dynamic,PreviewLibraryLoader.memoryCache());
+   if(n==6)row.descending=!row.descending;
    if(n==1){Set<String> values=new TreeSet<>();Snapshot snapshot=PreviewLibraryLoader.memoryCache();if(snapshot!=null){for(Entry e:snapshot.movies)values.addAll(PreviewGenres.parse(e.genres));for(Entry e:snapshot.shows)values.addAll(PreviewGenres.parse(e.genres));}PreviewGenres.choose(context,values,PreviewGenres.parse(row.genreRule),selected->{row.genreRule=android.text.TextUtils.join("|",selected);row.dynamic=true;refresh.run();});return;}
    if(n==2&&(!row.movies||row.tv))row.movies=!row.movies;
    if(n==3&&(!row.tv||row.movies))row.tv=!row.tv;
-   if(n==4){PreviewDialog.choose(context,"Row sort",new String[]{"Date Added","Title","Year"},Arrays.asList("added","title","year").indexOf(row.sort),i->{row.sort=new String[]{"added","title","year"}[i];refresh.run();});return;}
+   if(n==4){PreviewDialog.choose(context,"Row sort",new String[]{"Date Added","Title","Year"},Arrays.asList("added","title","year").indexOf(row.sort),i->{row.sort=new String[]{"added","title","year"}[i];row.descending=!row.sort.equals("title");refresh.run();});return;}
    if(n==5){int[] limits={0,10,20,30,40,50,75,100};String[] options={"No Limit","10","20","30","40","50","75","100","Select…"};int selected=-1;for(int i=0;i<limits.length;i++)if(limits[i]==row.maximum)selected=i;PreviewDialog.choose(context,"Maximum items",options,selected,i->{
     if(i<limits.length){row.maximum=limits[i];refresh.run();return;}
     PreviewTextInput.showValidated(context,"Maximum items",row.maximum==0?"":String.valueOf(row.maximum),10,

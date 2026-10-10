@@ -39,7 +39,11 @@ public class PreviewPeopleRailTest {
         assertEquals("semantic:details.crew.person.2",first.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
         assertEquals("semantic:details.crew.person.3",second.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
         assertNull(page.findViewWithTag("person:Crew Other:Production Assistant"));
-        PreviewPeopleRail rail=(PreviewPeopleRail)first.getParent().getParent();assertTrue(rail.isHorizontalFadingEdgeEnabled());
+        assertTrue(first.getParent() instanceof LinearLayout);
+        assertEquals(LinearLayout.VERTICAL,((LinearLayout)first.getParent()).getOrientation());
+        assertTrue(first instanceof LinearLayout);assertEquals(2,((LinearLayout)first).getChildCount());
+        assertTrue(((LinearLayout)first).getChildAt(0) instanceof android.widget.TextView);
+        assertTrue(((LinearLayout)first).getChildAt(1) instanceof android.widget.TextView);
         assertTrue(first.isFocusable());assertFalse(first.isClickable());
         page.setTags(null,java.util.Collections.emptyList(),java.util.Collections.emptyList());
         assertNotNull("A local tag refresh must retain cached individual crew",page.findViewWithTag("person:Director One:Director"));

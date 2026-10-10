@@ -173,6 +173,7 @@ public final class PreviewCardPresenter extends Presenter {
     public void bindEntry(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){Card card=(Card)holder.view;card.preferredArtwork=entry.backdrop;try{onBindViewHolder(holder,entry.media);bindSecondary(holder,entry);}finally{card.preferredArtwork=null;}}
     public static void bindSecondary(ViewHolder holder,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry){
         Card c=(Card)holder.view;
+        if(entry.media instanceof Video){com.archos.mediacenter.video.leanback.LibraryHealth.State state=com.archos.mediacenter.video.leanback.LibraryHealth.state(c.getContext(),(Video)entry.media);if(state!=com.archos.mediacenter.video.leanback.LibraryHealth.State.AVAILABLE){c.subtitle.setText(com.archos.mediacenter.video.leanback.LibraryHealth.message(state));c.subtitle.setVisibility(View.VISIBLE);c.setContentDescription(c.title.getText()+", "+c.subtitle.getText());return;}}
         if(entry.secondary!=null&&!entry.secondary.isEmpty()){
             c.subtitle.setText(entry.secondary);c.subtitle.setVisibility(View.VISIBLE);c.subtitle.setTextColor(0xffd6e2ec);
             c.setContentDescription(c.title.getText()+", "+entry.secondary);

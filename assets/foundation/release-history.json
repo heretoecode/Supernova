@@ -7,17 +7,50 @@
     "Retrospective labels are literal counters, distinct from historical embedded versions. Source checkpoint notes describe verified code changes; they are not physical-device acceptance claims."
   ],
   "current": {
-    "version": "0.134",
-    "version_code": 134,
-    "kind": "Foundation correction",
+    "version": "0.135",
+    "version_code": 135,
+    "kind": "Development / QA \u2014 unreleased",
     "notes": [
-      "Restores the approved Home hero-card carousel and More Info action from the verified corrective Preview implementation.",
-      "Keeps focused row artwork and its highlighted boundary together inside the rounded card body.",
-      "Always selects the approved Supernova interface in Foundation, including restored preferences.",
-      "Preserves permanent identity, protected signing, approved branding and loading indicators, About/licences and source-verified media libraries."
+      "Shared Settings panels and a single file browser across Home and Network & Files.",
+      "Review library selections before scanning; unavailable storage retains library and viewing history.",
+      "Create and edit one custom library page with a live indexed-media preview.",
+      "Updated playback controls, segment skipping and viewing coverage.",
+      "Portable backups exclude authentication data and validate before restore."
     ]
   },
   "history": [
+    {
+      "version": "0.134",
+      "version_code": 134,
+      "kind": "Signed Foundation correction",
+      "notes": [
+        "Restores the approved Home hero-card carousel and More Info action from the verified corrective Preview implementation.",
+        "Keeps focused row artwork and its highlighted boundary together inside the rounded card body.",
+        "Always selects the approved Supernova interface in Foundation, including restored preferences.",
+        "Preserves permanent identity, protected signing, approved branding and loading indicators, About/licences and source-verified media libraries."
+      ],
+      "date": "2026-10-09",
+      "artifact_id": 11632643927,
+      "run_id": 37961864830,
+      "source_sha": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f",
+      "workflow_sha": "4448f67c2b7399a36bcee6e8580ace6f2cd91ab1",
+      "artifact_name": "supernova-foundation-release",
+      "archive_sha256": "d4d8d8a599a20e68955593421568c52180e9ec50ceb3922c21db21ab3ce05738",
+      "archive_digest_verified": false,
+      "recorded_binary_verification": "docs/foundation/UI_CORRECTED_SIGNED_APK_VERIFICATION.json",
+      "apks": [
+        {
+          "filename": "Supernova-Foundation.apk",
+          "sha256": "8d159d9ffc70d5ffbe335c0caa280fdf742909911581c85d55865d906ff58e29",
+          "bytes": 102170099,
+          "application_id": "app.supernova.player",
+          "version_name": "0.134",
+          "version_code": 134
+        }
+      ],
+      "evidence": "Previously recorded signed APK signature, package, CRC and source verification. Archive digest is recorded Actions metadata; no fresh archive download claimed.",
+      "created_at": "2026-10-09T17:12:54Z"
+    },
     {
       "version": "0.133",
       "kind": "Foundation",

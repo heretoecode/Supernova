@@ -1,0 +1,310 @@
+diff --git a/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java b/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
+index 8115e95..2c86ba1 100644
+--- a/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
++++ b/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
+@@ -385,6 +385,16 @@ public enum ShortcutDbAdapter {
+         } finally { close(); }
+     }
+ 
++    /** Root changes and preference commit form one user transaction; database failure rolls back stable IDs. */
++    public synchronized boolean applySupernovaRoots(Context context,java.util.List<String> added,java.util.List<String> removed,java.util.function.BooleanSupplier savePreferences){
++        open(context);mDb.beginTransaction();try{
++            java.util.Map<String,Long> roots=new java.util.HashMap<>();try(Cursor cursor=mDb.query(mDatabaseTable,SHORTCUT_COLS,null,null,null,null,null)){while(cursor.moveToNext())roots.put(com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(Uri.parse(cursor.getString(1))),cursor.getLong(0));}
++            for(String root:removed){if(root.startsWith("file:"))continue;Long id=roots.get(root);if(id==null||mDb.delete(mDatabaseTable,KEY_ROWID+"=?",new String[]{String.valueOf(id)})!=1)return false;roots.remove(root);}
++            for(String root:added){if(root.startsWith("file:")||roots.containsKey(root))continue;Uri uri=Uri.parse(root);ContentValues row=new ContentValues();row.put(KEY_PATH,root);row.put(KEY_NAME,uri.getLastPathSegment()==null?uri.getHost():uri.getLastPathSegment());row.put(KEY_RESCAN,1);if(mDb.insertOrThrow(mDatabaseTable,null,row)<0)return false;}
++            if(!savePreferences.getAsBoolean())return false;mDb.setTransactionSuccessful();return true;
++        }finally{mDb.endTransaction();close();}
++    }
++
+     public List<Shortcut> cursorToShortcutList(Cursor cursor){
+         List<Shortcut>shortcuts = new ArrayList<>();
+         if(cursor.getCount()>0){
+diff --git a/src/com/archos/mediacenter/utils/trakt/TraktService.java b/src/com/archos/mediacenter/utils/trakt/TraktService.java
+index 0e6a05e..f8a0721 100644
+--- a/src/com/archos/mediacenter/utils/trakt/TraktService.java
++++ b/src/com/archos/mediacenter/utils/trakt/TraktService.java
+@@ -246,7 +246,7 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+                         if (videoInfo == null && videoID >= 0)
+                             videoInfo = VideoDbInfo.fromId(getContentResolver(), videoID);
+                         if (videoInfo != null) {
+-                            if (Trakt.shouldMarkAsSeen(progress)) {
++                            if (Trakt.shouldMarkAsSeen(progress)&&com.archos.mediaprovider.video.SupernovaViewingPolicy.eligible(TraktService.this,videoInfo.id)) {
+                                 traktAction = Trakt.ACTION_SEEN;
+                                 // get last activity before doing some activity on trakt
+                                 result = mTrakt.getLastActivity();
+@@ -255,7 +255,7 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+                             if (result == null || result.status != Trakt.Status.ERROR_NETWORK) {
+ 
+                                 final float finalProgress = progress >= 0 ? progress : -progress;
+-                                result = mTrakt.postWatchingStop(videoInfo, finalProgress);
++                                result = com.archos.mediaprovider.video.SupernovaViewingPolicy.eligible(TraktService.this,videoInfo.id)?mTrakt.postWatchingStop(videoInfo,finalProgress):mTrakt.postWatchingPause(videoInfo,finalProgress);
+                                 if (videoInfo.traktResume < 0 && (result.status == Trakt.Status.SUCCESS || result.status == Trakt.Status.SUCCESS_ALREADY)) {
+                                     // videoinf.traktresume can be negative, positive value means sync ok
+                                     videoInfo.traktResume = Math.abs(videoInfo.traktResume);
+@@ -275,7 +275,7 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+                         if (videoInfo == null && videoID >= 0)
+                             videoInfo = VideoDbInfo.fromId(getContentResolver(), videoID);
+                         if (videoInfo != null) {
+-                            if (Trakt.shouldMarkAsSeen(progress)) {
++                            if (Trakt.shouldMarkAsSeen(progress)&&com.archos.mediaprovider.video.SupernovaViewingPolicy.eligible(TraktService.this,videoInfo.id)) {
+                                 traktAction = Trakt.ACTION_SEEN;
+                                 // get last activity before doing some activity on trakt
+                                 result = mTrakt.getLastActivity();
+@@ -651,7 +651,7 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+                             if (log.isDebugEnabled()) log.debug("syncPlaybackStatus: db->trakt {}{}", videoInfo.scraperTitle, (videoInfo.isShow ? ", s" + videoInfo.scraperSeasonNr + "e" + videoInfo.scraperEpisodeNr : ""));
+                             ContentValues values = new ContentValues();
+                             Trakt.Result result;
+-                            if (Trakt.shouldMarkAsSeen(Math.abs(videoInfo.traktResume))) {
++                            if (Trakt.shouldMarkAsSeen(Math.abs(videoInfo.traktResume))&&com.archos.mediaprovider.video.SupernovaViewingPolicy.eligible(TraktService.this,videoInfo.id)) {
+                                 result = mTrakt.markAs(Trakt.ACTION_SEEN, videoInfo);
+                                 if (result.status == Trakt.Status.SUCCESS || result.status == Trakt.Status.SUCCESS_ALREADY) {
+                                     videoInfo.traktSeen = 1;
+@@ -940,7 +940,7 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+                             Trakt.Result result;
+                             
+                             // PRESERVED ORIGINAL LOGIC: Check if should mark as seen or just update progress
+-                            if (Trakt.shouldMarkAsSeen(Math.abs(videoInfo.traktResume))) {
++                            if (Trakt.shouldMarkAsSeen(Math.abs(videoInfo.traktResume))&&com.archos.mediaprovider.video.SupernovaViewingPolicy.eligible(TraktService.this,videoInfo.id)) {
+                                 result = mTrakt.markAs(Trakt.ACTION_SEEN, videoInfo);
+                                 if (result.status == Trakt.Status.SUCCESS || result.status == Trakt.Status.SUCCESS_ALREADY) {
+                                     videoInfo.traktSeen = 1;
+diff --git a/src/com/archos/medialib/IMediaMetadataRetriever.java b/src/com/archos/medialib/IMediaMetadataRetriever.java
+index 8f17f51..9fa4099 100644
+--- a/src/com/archos/medialib/IMediaMetadataRetriever.java
++++ b/src/com/archos/medialib/IMediaMetadataRetriever.java
+@@ -421,7 +421,10 @@ public interface IMediaMetadataRetriever {
+     public static final int METADATA_KEY_VIDEO_TRACK_S3D_MODE       = 10;
+     public static final int METADATA_KEY_VIDEO_TRACK_FPS_RATE       = 11;
+     public static final int METADATA_KEY_VIDEO_TRACK_FPS_SCALE      = 12;
+-    public static final int METADATA_KEY_VIDEO_TRACK_MAX            = 13;
++    public static final int METADATA_KEY_VIDEO_TRACK_COLOR_TRC = 13;
++    public static final int METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE = 14;
++    public static final int METADATA_KEY_VIDEO_TRACK_HDR10_PLUS = 15;
++    public static final int METADATA_KEY_VIDEO_TRACK_MAX = 16;
+ 
+     public static final int METADATA_KEY_AUDIO_TRACK_NAME           = 0;
+     public static final int METADATA_KEY_AUDIO_TRACK_FORMAT         = 1;
+diff --git a/src/com/archos/medialib/IMediaPlayer.java b/src/com/archos/medialib/IMediaPlayer.java
+index 3866593..33426aa 100644
+--- a/src/com/archos/medialib/IMediaPlayer.java
++++ b/src/com/archos/medialib/IMediaPlayer.java
+@@ -365,7 +365,9 @@ public interface IMediaPlayer {
+     public static final int METADATA_KEY_VIDEO_TRACK_FPS_RATE = 12;
+     public static final int METADATA_KEY_VIDEO_TRACK_FPS_SCALE = 13;
+     public static final int METADATA_KEY_VIDEO_TRACK_COLOR_TRC = 14;
+-    public static final int METADATA_KEY_VIDEO_TRACK_MAX = 15;
++    public static final int METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE = 15;
++    public static final int METADATA_KEY_VIDEO_TRACK_HDR10_PLUS = 16;
++    public static final int METADATA_KEY_VIDEO_TRACK_MAX = 17;
+ 
+     public static final int METADATA_KEY_AUDIO_TRACK = 20000;
+     public static final int METADATA_KEY_AUDIO_TRACK_NAME = 0;
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index 55258f8..487088a 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -1003,7 +1003,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             mService = service;
+         }
+ 
+-        private boolean mHadListingError;
++        private boolean mHadListingError;private boolean mUnknownListingError;private final java.util.Set<String> failedDirectories=new java.util.HashSet<>();
+ 
+         public List<MetaFile2> getLastPlayedDbs() {
+             return mLastPlayedDbs;
+@@ -1039,6 +1039,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+ 
+         @Override
+         public boolean onDirectory(MetaFile2 directory) {
++            if(directory!=null&&SupernovaLibraryPolicy.excluded(mService,directory.getUri()))return false;
+             if (mService != null && directory != null && ProviderDiscoveryGate.excludes(mService, directory.getUri())) return false;
+             // hidden directories are not scanned
+             if (ArchosMediaFile.isHiddenFile(directory)) {
+@@ -1066,6 +1067,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+ 
+         @Override
+         public void onFile(MetaFile2 file) {
++            if(file!=null&&SupernovaLibraryPolicy.excluded(mService,file.getUri()))return;
+             if (mService != null && file != null && ProviderDiscoveryGate.excludes(mService, file.getUri())) return;
+             mFoundFiles ++;
+             int fileType = getFileType(file);
+@@ -1102,6 +1104,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             if ((existingItem) != null) {
+                 // file was already scanned, it does not need to be deleted
+                 existingItem.needsDelete = false;
++                SupernovaLibraryPolicy.availability(mService,existingItem._id,file.getUri(),false);
+                 if (log.isTraceEnabled()) log.trace("FileVisitListener.onFile: File isn't new:{}", file.getName());
+                 // check if it is untouched or needs an update
+                 long knownDate = existingItem.date_modified;
+@@ -1134,6 +1137,14 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             if (mService != null) for (PrescanItem item : mPrescanItemsMap.values()) {
+                 if (ProviderDiscoveryGate.excludes(mService, Uri.parse(item._data))) item.needsDelete = false;
+             }
++            if(SupernovaLibraryPolicy.retainsRecords(mService)) {
++                for(PrescanItem item:mPrescanItemsMap.values()) {
++                    if(item.needsDelete&&!mHadListingError&&!SupernovaLibraryPolicy.excluded(mService,Uri.parse(item._data)))
++                        SupernovaLibraryPolicy.availability(mService,item._id,Uri.parse(item._data),true);
++                    item.needsDelete=false;
++                }
++                if(root!=null){if(!mHadListingError)SupernovaLibraryPolicy.sourceAvailable(mService,root.getUri(),true);else if(mUnknownListingError||failedDirectories.contains(SupernovaLibraryPolicy.canonical(root.getUri())))SupernovaLibraryPolicy.sourceAvailable(mService,root.getUri(),false);}
++            }
+             // Count total files that need deletion
+             int totalNeedsDelete = 0;
+             for (PrescanItem item : mPrescanItemsMap.values()) {
+@@ -1186,6 +1197,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         @Override
+         public void onListingError(MetaFile2 directory, Exception exception) {
+             mHadListingError = true;
++            if(directory!=null){failedDirectories.add(SupernovaLibraryPolicy.canonical(directory.getUri()));SupernovaLibraryPolicy.sourceProblem(mService,directory.getUri());}else mUnknownListingError=true;
+             if (directory == null) {
+                 return;
+             }
+diff --git a/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java b/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
+new file mode 100644
+index 0000000..e41d5cf
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
+@@ -0,0 +1,67 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.net.Uri;
++import androidx.preference.PreferenceManager;
++import java.util.*;
++
++/** Foundation policy only: storage failures never imply destructive library reconciliation. */
++public final class SupernovaLibraryPolicy {
++    public static final String HEALTH="supernova_library_health_v1";
++    public static boolean retainsRecords(Context c){return c!=null&&"app.supernova.player".equals(c.getPackageName());}
++    public static String canonical(Uri uri){
++        List<String> segments=new ArrayList<>();for(String segment:uri.getPathSegments()){
++            if(segment.equals(".")||segment.isEmpty())continue;
++            if(segment.equals("..")){if(!segments.isEmpty())segments.remove(segments.size()-1);}else segments.add(segment);
++        }
++        String path="/"+android.text.TextUtils.join("/",segments);
++        Uri.Builder builder=uri.buildUpon().scheme(uri.getScheme()==null?"file":uri.getScheme().toLowerCase(Locale.ROOT)).clearQuery().fragment(null).path(path);
++        if(uri.getScheme()==null||"file".equalsIgnoreCase(uri.getScheme()))builder.encodedAuthority("");
++        if(uri.getHost()!=null)builder.encodedAuthority(uri.getHost().toLowerCase(Locale.ROOT)+(uri.getPort()<0?"":":"+uri.getPort()));
++        return builder.build().toString();
++    }
++    public static boolean contains(String parent,String child){return parent.equals(child)||child.startsWith(parent.endsWith("/")?parent:parent+"/");}
++    /** Includes offline removable volumes already represented by the installed library. */
++    public static Set<Uri> historicalLocalRoots(Context context){
++        Set<Uri> roots=new LinkedHashSet<>();
++        try(android.database.Cursor cursor=context.getContentResolver().query(VideoStoreInternal.FILES_IMPORT,new String[]{VideoStore.MediaColumns.DATA},"_data LIKE '/%' OR _data LIKE 'file:%'",null,null)){
++            if(cursor==null)throw new IllegalStateException("Existing library locations could not be read");
++            while(cursor.moveToNext()){String location=cursor.getString(0);if(location!=null)roots.add(localRoot(Uri.parse(location)));}
++        }
++        return roots;
++    }
++    public static Uri localRoot(Uri location){
++        List<String> path=location.getPathSegments();int length=0;
++        if(path.size()>=2&&path.get(0).equals("storage"))length=path.get(1).equals("emulated")&&path.size()>=3?3:2;
++        else if(path.size()>=3&&path.get(0).equals("mnt")&&(path.get(1).equals("media_rw")||path.get(1).equals("expand")))length=3;
++        else if(!path.isEmpty()&&path.get(0).equals("sdcard"))length=1;
++        else length=Math.max(0,path.size()-1);
++        return Uri.parse("file:///").buildUpon().path("/"+android.text.TextUtils.join("/",path.subList(0,length))).build();
++    }
++    public static boolean excluded(Context c,Uri uri){
++        if(!retainsRecords(c)||uri==null)return false;
++        SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(c);String key=canonical(uri);
++        for(String excluded:p.getStringSet("supernova_library_exclusions",Collections.emptySet()))if(contains(excluded,key))return true;
++        if(p.getBoolean("supernova_library_policy_initialized",false)){
++            for(String root:p.getStringSet("supernova_library_roots",Collections.emptySet()))if(contains(root,key))return false;
++            return true;
++        }
++        return false;
++    }
++    public static void availability(Context c,long id,Uri uri,boolean missing){
++        if(!retainsRecords(c))return;
++        SharedPreferences.Editor editor=c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).edit();
++        if(!missing&&!c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).contains("media:"+id))return;
++        if(missing)editor.putString("media:"+id,canonical(uri));else editor.remove("media:"+id);
++        editor.apply();
++    }
++    public static void sourceAvailable(Context c,Uri root,boolean available){
++        if(!retainsRecords(c)||root==null)return;
++        SharedPreferences.Editor editor=c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).edit();
++        if(available){for(String key:c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).getAll().keySet())if(key.startsWith("offline:")&&contains(canonical(root),key.substring(8))||key.startsWith("problem:")&&contains(canonical(root),key.substring(8)))editor.remove(key);}else editor.putLong("offline:"+canonical(root),System.currentTimeMillis());
++        editor.apply();
++    }
++    public static void sourceProblem(Context c,Uri uri){if(retainsRecords(c)&&uri!=null)c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).edit().putLong("problem:"+canonical(uri),System.currentTimeMillis()).apply();}
++    private SupernovaLibraryPolicy(){}
++}
+diff --git a/src/com/archos/mediaprovider/video/SupernovaViewingPolicy.java b/src/com/archos/mediaprovider/video/SupernovaViewingPolicy.java
+new file mode 100644
+index 0000000..260f2b2
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/SupernovaViewingPolicy.java
+@@ -0,0 +1,13 @@
++package com.archos.mediaprovider.video;
++import android.content.Context;
++import android.content.SharedPreferences;
++import androidx.preference.PreferenceManager;
++/** New-session real viewing gate; historical explicit watched records remain authoritative. */
++public final class SupernovaViewingPolicy {
++ public static boolean eligible(Context c,long id){
++  if(!SupernovaLibraryPolicy.retainsRecords(c))return true;
++  SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(c);String key="supernova_viewed_eligible:"+id;
++  return !prefs.contains(key)||prefs.getBoolean(key,false);
++ }
++ private SupernovaViewingPolicy(){}
++}
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+index bfb19e7..a9d529d 100644
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -672,6 +672,21 @@ public class VideoStoreImportImpl {
+             ReconciliationSnapshot snapshot, LocalReconciliationResult result,
+             Set<Long> remappedSourceIds, Context context) {
+         if (mIsImportInterrupted) return;
++        if(SupernovaLibraryPolicy.retainsRecords(context)) {
++            for(ImportIdentity identity:snapshot.importedById.values()) {
++                if(remappedSourceIds.contains(identity.id))continue;
++                StorageLocation location=snapshot.importedLocations.get(identity.id);
++                boolean present=new File(identity.path).exists();
++                if(location!=null&&new File(location.path).canRead()){
++                    SupernovaLibraryPolicy.availability(context,identity.id,Uri.fromFile(new File(identity.path)),!present);
++                    SupernovaLibraryPolicy.sourceAvailable(context,Uri.fromFile(new File(location.path)),true);
++                }
++                // Disconnected removable storage is recorded as offline, never as confirmed missing.
++                else if(location!=null&&!present)
++                    SupernovaLibraryPolicy.sourceAvailable(context,Uri.fromFile(new File(location.path)),false);
++            }
++            return;
++        }
+         List<ImportIdentity> missingList = new ArrayList<>();
+         for (ImportIdentity identity : snapshot.importedById.values()) {
+             StorageLocation location = snapshot.importedLocations.get(identity.id);
+@@ -975,6 +990,7 @@ public class VideoStoreImportImpl {
+                 if (context instanceof VideoStoreImportService) {
+                     ((VideoStoreImportService) context).updateScanNotification(remaining, path);
+                 }
++                if(SupernovaLibraryPolicy.excluded(context,Uri.parse(path)))continue;
+                 Job job = new Job(path, id, blacklist);
+                 if (log.isDebugEnabled()) log.debug("handleScanCursor: scanning {}", job.mPath);
+                 // update property with current file
+@@ -1703,6 +1719,7 @@ public class VideoStoreImportImpl {
+     }
+ 
+     static void purgeExpiredHiddenFiles(ContentResolver cr, Context context) {
++        if(SupernovaLibraryPolicy.retainsRecords(context))return;
+         long cutoff = System.currentTimeMillis() / 1000 - HIDDEN_FILES_RETENTION_SECONDS;
+         String selection = "volume_hidden > 0 AND volume_hidden < ?";
+         String[] args = new String[]{String.valueOf(cutoff)};
+@@ -1923,6 +1940,14 @@ public class VideoStoreImportImpl {
+ 
+         long now = System.currentTimeMillis() / 1000;
+ 
++        if(SupernovaLibraryPolicy.retainsRecords(mContext)) {
++            for(String path:unmountedVolumePaths)SupernovaLibraryPolicy.sourceAvailable(mContext,Uri.fromFile(new File(path)),false);
++            for(String path:mountedVolumePaths)SupernovaLibraryPolicy.sourceAvailable(mContext,Uri.fromFile(new File(path)),true);
++            // Upgrade: previously hidden rows become available to library UI even while offline.
++            ContentValues visible=new ContentValues();visible.put("volume_hidden",0);
++            mCr.update(VideoStoreInternal.FILES_IMPORT,visible,"volume_hidden != 0",null);
++            return;
++        }
+         // Hide files from unmounted volumes
+         if (!unmountedVolumePaths.isEmpty()) {
+             hideFilesFromVolumes(unmountedVolumePaths, now);

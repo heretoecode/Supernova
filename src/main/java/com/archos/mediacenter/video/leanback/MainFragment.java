@@ -409,6 +409,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         }
     }
 
+    public boolean browserBack(Runnable leave){return mPreviewPages!=null&&mPreviewPages.browserBack(leave);}
     public boolean focusTopNavigation() {
         return mNavigation != null && mNavigation.focusNavigation();
     }

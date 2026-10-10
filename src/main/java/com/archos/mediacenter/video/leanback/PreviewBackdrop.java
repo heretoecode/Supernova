@@ -37,7 +37,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
         if(trace!=null)trace.cancelled();trace=next==null?null:new com.archos.mediacenter.video.diagnostics.ArtworkTrace(indexedMedia(next),com.archos.mediacenter.video.diagnostics.Diagnostics.artworkSurface(),"backdrop",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(next));
         pending=()->{if(next==null){previous=bitmap;bitmap=null;fadeStart=android.os.SystemClock.uptimeMillis();invalidateSelf();}else Picasso.get().load(next).resize(1600,900).centerInside().noFade().into(this);};pending.run();
     }
-    public void release() { if(trace!=null)trace.cancelled();handler.removeCallbacksAndMessages(null);Picasso.get().cancelRequest(this); bitmap=previous=null; uri=null; }
+    public void release() { if(trace!=null)trace.cancelled();handler.removeCallbacksAndMessages(null);if(uri!=null)Picasso.get().cancelRequest(this); bitmap=previous=null; uri=null; }
     @Override public void draw(Canvas canvas) {
         Rect b=getBounds(); float h=Math.min(b.height(),420*density);
         if(foundationHome){foundationBackground.setBounds(b);foundationBackground.draw(canvas);if(bitmap==null&&previous==null)return;}else canvas.drawColor(0xff0b1b2a);if(!foundationHome&&bitmap==null&&previous==null){android.graphics.drawable.GradientDrawable utility=PreviewAccent.utility(context);utility.setBounds(b);utility.draw(canvas);}

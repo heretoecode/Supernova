@@ -13,6 +13,7 @@
 // limitations under the License.
 
 package com.archos.mediacenter.video.leanback.filebrowsing;
+import com.archos.mediacenter.video.R;
 
 import static com.archos.filecorelibrary.smbj.SmbjUtils.isSMBjEnabled;
 import static com.archos.filecorelibrary.sshj.SshjUtils.isSSHjEnabled;
@@ -205,6 +206,8 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
 
             @Override
             public void handleOnBackPressed() {
+                Fragment active=getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if(active instanceof ListingFragment&&((ListingFragment)active).browserBack(ListingActivity.this::finish)){mBackStartedAt=0;return;}
                 long pressDuration = mBackStartedAt == 0
                         ? 0 : SystemClock.elapsedRealtime() - mBackStartedAt;
                 mBackStartedAt = 0;
@@ -249,7 +252,8 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
         // Quit file browsing on BACK long press
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             MultiBackHintManager.getInstance(this).onBackLongPressed();
-            finish();
+            Fragment active=getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if(active instanceof ListingFragment)((ListingFragment)active).browserExit(this::finish);else finish();
             return true;
         }
         else return super.onKeyLongPress(keyCode, event);

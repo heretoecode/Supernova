@@ -367,6 +367,10 @@ android {
             includeAndroidResources = true
         }
         unitTests.all {
+            // Native graphics and SQLite loaders keep process state across Robolectric sandboxes.
+            // Isolate classes so rendering and real database tests cannot contaminate each other.
+            forkEvery = 1
+            maxParallelForks = 2
             testLogging {
                 events "passed", "skipped", "failed", "standardOut", "standardError"
                 outputs.upToDateWhen {false}

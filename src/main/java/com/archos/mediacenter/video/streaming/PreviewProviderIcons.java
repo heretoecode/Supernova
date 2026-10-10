@@ -20,13 +20,14 @@ public final class PreviewProviderIcons {
   ImageView icon=(ImageView)child;
   bind(icon,path,0,"library.filters".equals(surface)?"library.filters":"provider.choice");
  }
- /** Shared monochrome treatment also used by focus-only Details provider marks. */
+ /** My Providers uses the catalogue's colours; action and availability marks remain monochrome. */
  public static void bind(ImageView icon,String path,long media,String surface){
   com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(icon);
   // Desaturate rather than replacing every opaque pixel with white: catalogue
   // logos can have opaque backgrounds whose internal brand shape must survive.
-  android.graphics.ColorMatrix monochrome=new android.graphics.ColorMatrix();monochrome.setSaturation(0);
-  icon.setColorFilter(new android.graphics.ColorMatrixColorFilter(monochrome));
+  if("provider.choice".equals(surface))icon.clearColorFilter();
+  else {android.graphics.ColorMatrix monochrome=new android.graphics.ColorMatrix();monochrome.setSaturation(0);
+   icon.setColorFilter(new android.graphics.ColorMatrixColorFilter(monochrome));}
   android.graphics.drawable.Drawable fallback=new com.archos.mediacenter.video.leanback.PreviewIcon("streaming");
   icon.setImageDrawable(fallback);
   if(path==null||!path.matches("/[A-Za-z0-9._-]+"))return;

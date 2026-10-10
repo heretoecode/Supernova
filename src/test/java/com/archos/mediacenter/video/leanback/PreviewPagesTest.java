@@ -78,9 +78,9 @@ public class PreviewPagesTest {
                 java.io.File file=new java.io.File("build/reports/preview-ui/page-"+tab+".png");file.getParentFile().mkdirs();try(java.io.FileOutputStream out=new java.io.FileOutputStream(file)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out);}
             }
             pages.setTab(1);nav.selectTab(1);layout(nav);android.view.View listButton=findText(nav,"List view");assertNotNull(listButton);listButton.performClick();layout(nav);decorateCards(nav);capture(nav,"library-list");
-            View columnsControl=nav.findViewWithTag("control:5");assertNotNull(columnsControl);assertEquals("semantic:library.toolbar.columns",columnsControl.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
+            View columnsControl=nav.findViewWithTag("control:4");assertNotNull(columnsControl);assertEquals("semantic:library.toolbar.columns",columnsControl.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
             assertTrue(columnsControl.requestFocus());nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(columnsControl,nav.findFocus());
-            for(int control=0;control<6;control++){
+            for(int control=0;control<5;control++){
                 View opener=nav.findViewWithTag("control:"+control);assertNotNull(opener);assertTrue(opener.requestFocus());
                 View below=opener.focusSearch(View.FOCUS_DOWN);assertNotNull("Toolbar DOWN target "+control,below);
                 assertTrue("Toolbar DOWN must enter a header, not "+below.getTag()+" (touch mode="+nav.isInTouchMode()+")",String.valueOf(below.getTag()).startsWith("column:"));

@@ -54,7 +54,7 @@ public final class PreviewMoviePage extends ScrollView {
         setFillViewport(true);setSmoothScrollingEnabled(false);setClipToPadding(false);setClipChildren(false);body=new LinearLayout(c);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(dp(42),0,dp(42),dp(24));body.setClipChildren(false);addView(body);
         heroPage=new LinearLayout(c);heroPage.setOrientation(LinearLayout.VERTICAL);heroPage.setPadding(0,dp(34),0,0);heroPage.setClipChildren(false);body.addView(heroPage,new LinearLayout.LayoutParams(-1,dp(488)));
         title=text("",34);title.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));title.setMaxLines(2);title.setGravity(Gravity.CENTER_VERTICAL);title.setEllipsize(android.text.TextUtils.TruncateAt.END);heroPage.addView(title,new LinearLayout.LayoutParams(dp(420),dp(86)));
-        meta=text("",13);meta.setPadding(0,dp(10),0,dp(4));heroPage.addView(meta);
+        meta=text("",18);meta.setPadding(0,dp(10),0,dp(4));heroPage.addView(meta);
         context=text("",13);context.setTextColor(0xffe1e9ef);context.setMaxLines(1);context.setEllipsize(android.text.TextUtils.TruncateAt.END);heroPage.addView(context);
         pills=new LinearLayout(c);pills.setVisibility(GONE);heroPage.addView(pills);
         plot=text("",14);plot.setMaxLines(4);plot.setLineSpacing(dp(2),1);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);LinearLayout.LayoutParams plotSize=new LinearLayout.LayoutParams(Math.min(dp(440),getResources().getDisplayMetrics().widthPixels-dp(84)),dp(88));plotSize.topMargin=dp(12);heroPage.addView(plot,plotSize);
@@ -136,15 +136,17 @@ public final class PreviewMoviePage extends ScrollView {
 
     public boolean atTop(){View focused=findFocus();return getScrollY()==0&&focused!=null&&inside(focused,heroPage)&&!inside(focused,tabBar);}
     public void focusPrimary(){if(play.getVisibility()==VISIBLE)play.requestFocus();else if(trailer.getVisibility()==VISIBLE)trailer.requestFocus();else if(!providerActions.requestFocus()&&!sectionTabs.isEmpty())sectionTabs.get(0).requestFocus();}
-    public void setVersions(int count,Runnable choose){chooseVersions=choose;versions.setText("Versions ("+count+")");versionCount=count;versions.setVisibility(GONE);}
+    public void setVersions(int count,Runnable choose){chooseVersions=choose;versions.setText("Versions ("+count+")");versionCount=count;versions.setVisibility(count>1&&movie!=null?VISIBLE:GONE);}
     @Override public boolean dispatchKeyEvent(KeyEvent event){
         if(event.getAction()!=KeyEvent.ACTION_DOWN)return super.dispatchKeyEvent(event);
         View focused=findFocus();int key=event.getKeyCode();String tag=focused==null?"":String.valueOf(focused.getTag());
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_UP&&matchMetadata.getVisibility()==VISIBLE){matchMetadata.requestFocus();return true;}
         if(focused==matchMetadata){if(key==KeyEvent.KEYCODE_DPAD_DOWN){play.requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;}
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
-        if(focused==play&&key==KeyEvent.KEYCODE_DPAD_RIGHT&&moreButton.getVisibility()==VISIBLE){moreButton.requestFocus();return true;}
-        if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_LEFT&&play.getVisibility()==VISIBLE){play.requestFocus();return true;}
+        if(focused==play&&key==KeyEvent.KEYCODE_DPAD_RIGHT){if(versions.getVisibility()==VISIBLE)versions.requestFocus();else moreButton.requestFocus();return true;}
+        if(focused==versions&&key==KeyEvent.KEYCODE_DPAD_LEFT){play.requestFocus();return true;}
+        if(focused==versions&&key==KeyEvent.KEYCODE_DPAD_RIGHT){moreButton.requestFocus();return true;}
+        if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_LEFT&&play.getVisibility()==VISIBLE){if(versions.getVisibility()==VISIBLE)versions.requestFocus();else play.requestFocus();return true;}
         if(focused==moreButton&&key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
         if(tag.startsWith("section:")){
             if(key==KeyEvent.KEYCODE_DPAD_UP){focusPrimary();scrollTo(0,0);return true;}
@@ -187,14 +189,16 @@ public final class PreviewMoviePage extends ScrollView {
         if(minutes>0)metadata.add(minutes+" min");
         String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;
         if(certificate!=null&&!certificate.isEmpty())metadata.add(certificate);
+        if(movie instanceof Movie&&((Movie)movie).getRating()>0)metadata.add(String.format(java.util.Locale.ROOT,"%.1f",((Movie)movie).getRating()));else if(movie instanceof Episode&&((Episode)movie).getEpisodeRating()>0)metadata.add(String.format(java.util.Locale.ROOT,"%.1f",((Episode)movie).getEpisodeRating()));
+        String selectedFile=PreviewVariants.fileBadge(getContext(),movie);if(!selectedFile.isEmpty())metadata.add(selectedFile);
         meta.setText((movie instanceof Episode?safe(((Episode)movie).getEpisodeName())+"\n":"")+android.text.TextUtils.join("  ·  ",metadata));meta.setVisibility(metadata.isEmpty()?GONE:VISIBLE);
     }
     public void setTags(BaseTags value,List<ScraperTrailer> videos,List<ScraperImage> backdrops){View oldCast=cast.findFocus(),oldCrew=crew.findFocus();Object castKey=oldCast==null?null:oldCast.getTag(),crewKey=oldCrew==null?null:oldCrew.getTag();int oldY=getScrollY();tags=value;trailerList=videos==null?Collections.emptyList():videos;
         ScraperImage selectedBackdrop=tags==null?null:tags.getDefaultBackdrop();
         if(selectedBackdrop==null&&backdrops!=null&&!backdrops.isEmpty())selectedBackdrop=backdrops.get(0);
         if(selectedBackdrop!=null){java.io.File file=selectedBackdrop.getLargeFileF();Uri uri=file!=null&&file.exists()?Uri.fromFile(file):selectedBackdrop.getLargeUrl()==null?null:Uri.parse(selectedBackdrop.getLargeUrl());if(uri!=null){artwork.accept(uri);if(movie!=null)movie.setPreviewBackdrop(uri.toString());}}
-        portraits.clear();cast.removeAllViews();HorizontalScrollView scroll=new PreviewPeopleRail(getContext());LinearLayout people=new LinearLayout(getContext());scroll.addView(people);cast.addView(scroll);
-        crew.removeAllViews();HorizontalScrollView crewScroll=new PreviewPeopleRail(getContext());LinearLayout crewPeople=new LinearLayout(getContext());crewScroll.addView(crewPeople);crew.addView(crewScroll);
+        portraits.clear();cast.removeAllViews();LinearLayout people=new LinearLayout(getContext());people.setOrientation(LinearLayout.VERTICAL);cast.addView(people);
+        crew.removeAllViews();LinearLayout crewPeople=new LinearLayout(getContext());crewPeople.setOrientation(LinearLayout.VERTICAL);crew.addView(crewPeople);
         if(tags!=null){for(Map.Entry<String,String> person:tags.getActors().entrySet()){person(people,person.getKey(),person.getValue());}
             if(tags.getDirectors()!=null)for(String name:tags.getDirectors())if(!safe(name).isEmpty())person(crewPeople,name,"Director");
             if(tags.getWriters()!=null)for(String name:tags.getWriters())if(!safe(name).isEmpty())person(crewPeople,name,"Writer");}
@@ -341,22 +345,19 @@ public final class PreviewMoviePage extends ScrollView {
     private Action matchingAction(){ObjectAdapter adapter=actions.get();if(adapter!=null)for(int i=0;i<adapter.size();i++){Object item=adapter.get(i);if(item instanceof Action&&((Action)item).getId()==VideoActionAdapter.ACTION_SCRAP)return (Action)item;}return null;}
     private void pill(String value){if(value==null||value.isEmpty())return;TextView label=text(value,10);label.setSingleLine(true);label.setPadding(dp(6),dp(3),dp(6),dp(3));GradientDrawable badge=new GradientDrawable();badge.setColor(0x50142634);badge.setCornerRadius(dp(3));badge.setStroke(dp(1),0xff648196);label.setBackground(badge);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.rightMargin=dp(6);pills.addView(label,lp);}
 
-    private void person(LinearLayout people,String name,String role){
-        LinearLayout card=new LinearLayout(getContext());card.setOrientation(android.widget.LinearLayout.VERTICAL);card.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);card.setBackgroundColor(Color.TRANSPARENT);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(dp(4),dp(4),dp(4),dp(4));
-        // The existing scraper stores names/roles but no portrait URLs. Use the real Nova asset.
-        ImageView portrait=new androidx.appcompat.widget.AppCompatImageView(getContext()){@Override protected void onDetachedFromWindow(){com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(this);super.onDetachedFromWindow();}};portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);portraits.put(name,portrait);portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);portrait.setClipToOutline(true);portrait.setOutlineProvider(new ViewOutlineProvider(){@Override public void getOutline(View view,android.graphics.Outline outline){outline.setRoundRect(0,0,view.getWidth(),view.getHeight(),dp(4));}});card.addView(portrait,new LinearLayout.LayoutParams(dp(52),dp(52)));
-        LinearLayout words=new LinearLayout(getContext());words.setOrientation(android.widget.LinearLayout.VERTICAL);words.setGravity(Gravity.CENTER_HORIZONTAL);words.setPadding(0,dp(6),0,0);card.addView(words,new LinearLayout.LayoutParams(-1,-2));
-        TextView label=text(name,11);label.setGravity(Gravity.CENTER);label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);words.addView(label,new LinearLayout.LayoutParams(-1,dp(28)));TextView detail=text(role==null?"":role,9);detail.setGravity(Gravity.CENTER);detail.setMaxLines(1);detail.setTextColor(0xffa4b6c7);words.addView(detail);card.setContentDescription(name+" "+safe(role));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(96),dp(108));lp.rightMargin=dp(10);people.addView(card,lp);card.setTag("person:"+name+":"+safe(role));rowKeys(card,people);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(card,"details.people.slot."+(people.getChildCount()-1));
-        card.setForeground(PreviewDialog.focus(getContext()));card.setOnFocusChangeListener((v,f)->v.animate().scaleX(f?1.08f:1f).scaleY(f?1.08f:1f).setDuration(140).start());
+    private void person(LinearLayout row,String name,String role){
+        LinearLayout line=new LinearLayout(getContext());line.setPadding(dp(12),dp(6),dp(12),dp(6));line.setFocusable(true);line.setTag("person:"+name+":"+role);line.setBackground(SharedThreePanel.focus(getContext()));
+        TextView person=SharedThreePanel.text(getContext(),name,16),credit=SharedThreePanel.text(getContext(),role,16);credit.setTextColor(0xffa4b6c7);
+        line.addView(person,new LinearLayout.LayoutParams(0,-2,.5f));line.addView(credit,new LinearLayout.LayoutParams(0,-2,.5f));row.addView(line,new LinearLayout.LayoutParams(-1,-2));
     }
+
     private void renderEnrichedPeople(){
         if(enrichment==null||enrichment.credits==null)return;
         for(String section:new String[]{"cast","crew"}){
             org.json.JSONArray values=enrichment.credits.optJSONArray(section);if(values==null)continue;
             LinearLayout target=section.equals("cast")?cast:crew;
             View focused=target.findFocus();Object focusKey=focused==null?null:focused.getTag();int y=getScrollY();
-            LinearLayout people=new LinearLayout(getContext());Set<String> seen=new HashSet<>();
+            LinearLayout people=new LinearLayout(getContext());people.setOrientation(LinearLayout.VERTICAL);Set<String> seen=new HashSet<>();
             for(int n=0;n<values.length();n++){
                 org.json.JSONObject value=values.optJSONObject(n);if(value==null)continue;
                 String name=value.optString("name"),role=value.optString(section.equals("cast")?"character":"job");
@@ -368,7 +369,7 @@ public final class PreviewMoviePage extends ScrollView {
                 ImageView portrait=portraits.get(name);String path=value.optString("profile_path");
                 if(portrait!=null&&path.matches("/[A-Za-z0-9._-]+")){Uri uri=Uri.parse("https://image.tmdb.org/t/p/w185"+path);com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(portrait,uri,diagnosticMedia(),"details."+section,"portrait",com.squareup.picasso.Picasso.get().load(uri).fit().centerCrop().placeholder(com.archos.mediacenter.video.R.drawable.preview_person).error(com.archos.mediacenter.video.R.drawable.preview_person),true);}
             }
-            target.removeAllViews();PreviewPeopleRail rail=new PreviewPeopleRail(getContext());rail.addView(people);target.addView(rail);
+            target.removeAllViews();target.addView(people);
             ((View)target.getParent()).setVisibility(people.getChildCount()==0?GONE:VISIBLE);restoreRowFocus(target,focusKey,y);
         }
     }
@@ -554,7 +555,9 @@ public final class PreviewMoviePage extends ScrollView {
     private void more(){ObjectAdapter adapter=actions.get();if(adapter==null)return;
         moreRows.clear();
         List<String> labels=new ArrayList<>();List<Runnable> commands=new ArrayList<>();Map<Integer,String> logos=new HashMap<>();
-        if(versionCount>1){labels.add("Versions ("+versionCount+")");commands.add(chooseVersions);}
+        if(movie!=null&&getContext() instanceof Activity){labels.add(movie instanceof Episode?"Restart Episode":"Restart Movie");commands.add(()->com.archos.mediacenter.video.utils.PlayUtils.startVideo((Activity)getContext(),movie,com.archos.mediacenter.video.player.PlayerActivity.RESUME_NO,false,-1,null,-1));}
+
+        if(movie!=null&&movie.hasScraperData()){labels.add("Report Incorrect Match");commands.add(()->{getContext().getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0).edit().putBoolean("incorrect:"+movie.getId(),true).apply();getContext().startActivity(new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.LibraryHealthActivity.class));});}
         String[] groups={"Playback & Navigation","Library","Streaming Services","Files & Media"};
         for(int group=0;group<groups.length;group++){
             List<Action> section=new ArrayList<>();for(int i=0;i<adapter.size();i++){Object value=adapter.get(i);if(!(value instanceof Action))continue;Action a=(Action)value;

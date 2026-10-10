@@ -50,25 +50,17 @@ public class PreviewNetworkSemanticsTest {
                     List.of(new Box(Box.ID.USB,"Private volume",0,"/private-volume")),
                     List.of(source),List.of(source),box->{},kind->{});
             host.get().setContentView(workspace);
-            LinearLayout items=ReflectionHelpers.getField(workspace,"items"),context=ReflectionHelpers.getField(workspace,"context");
-            assertEquals("semantic:network.item.scan_library",identity(items.getChildAt(0)));
-            assertEquals("semantic:network.action.scan_library",identity(context.getChildAt(2)));
-            assertTrue(items.getChildAt(1).getTag() instanceof Runnable);
-            ((Runnable)items.getChildAt(1).getTag()).run();
-            assertEquals("semantic:network.action.automatic",identity(context.getChildAt(1)));
-            assertEquals("semantic:network.action.frequency",identity(context.getChildAt(2)));
-            assertEquals("semantic:network.action.on_return",identity(context.getChildAt(3)));
-            var show=PreviewNetworkWorkspace.class.getDeclaredMethod("show",String.class);show.setAccessible(true);
-            show.invoke(workspace,"Network Shares");
-            assertEquals("semantic:network.item.source.72",identity(items.getChildAt(0)));
-            assertEquals("semantic:network.action.browse",identity(context.getChildAt(2)));
-            assertEquals("semantic:network.action.scan_source",identity(context.getChildAt(3)));
-            show.invoke(workspace,"Saved Locations");
-            assertEquals("semantic:network.item.saved.72",identity(items.getChildAt(0)));
-            assertEquals("semantic:network.action.add_library",identity(context.getChildAt(3)));
-            show.invoke(workspace,"Local Storage");
-            assertEquals("semantic:network.item.volume.usb.0",identity(items.getChildAt(0)));
-            assertEquals("semantic:network.action.browse",identity(context.getChildAt(2)));
+            var browser=workspace.browser();
+            View sourceRow=workspace.findViewWithTag("semantic:network.item.source.72");assertNotNull(sourceRow);
+            PreviewPagesTest.layout(workspace);sourceRow.requestFocus();
+            LinearLayout actions=ReflectionHelpers.getField(browser,"actions");
+            assertNotNull(PreviewPagesTest.findText(actions,"Remove from Library"));
+            PreviewPagesTest.findText(actions,"Remove from Library").performClick();
+            assertTrue(browser.selections().changed());assertFalse(browser.selections().included(source.getUri()));
+            assertNotNull("A library selection never hides a browsing source",workspace.findViewWithTag("semantic:network.item.source.72"));
+            assertNotNull(workspace.findViewWithTag("semantic:network.item.saved.72"));
+            for(int i=0;i<actions.getChildCount();i++)assertFalse(String.valueOf(identity(actions.getChildAt(i))).contains("private"));
+
         } finally {host.pause().stop().destroy();}
     }
     private static Object identity(View view){return view.getTag(R.id.preview_diagnostic_semantic);}

@@ -210,15 +210,18 @@ public class MediaLibraryBackupService extends Service {
         mThread.start();
     }
 
+    private void addPrivateDatabaseToZip(java.util.zip.ZipOutputStream zip,File original,String name)throws IOException{
+        File clean=BackupPrivacy.database(original,getCacheDir());try{addFileToZip(zip,clean,name);}finally{clean.delete();}
+    }
     private String exportMediaLibrary() throws IOException {
         java.util.Set<String> reproducible=MigrationBackup.reproducibleFiles(this);
         DbHolder holder = VideoDb.getHolder(this);
         holder.get(); // Ensure even an empty library has its schema before snapshotting.
-        holder.lockExclusive();
-        try {
-            holder.close();
-            return exportLockedLibrary(reproducible);
-        } finally { holder.unlockExclusive(); }
+        synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
+            holder.lockExclusive();
+            try {holder.close();return exportLockedLibrary(reproducible);}
+            finally {holder.unlockExclusive();}
+        }
     }
 
     private String exportLockedLibrary(java.util.Set<String> reproducible) throws IOException {
@@ -248,8 +251,10 @@ public class MediaLibraryBackupService extends Service {
         if (log.isDebugEnabled()) log.debug("exportMediaLibrary: creating new backup file: {}", zipFile.getAbsolutePath());
 
         VerifiedBackup.write(zipFile, zos -> {
+            zos.putNextEntry(new ZipEntry("manifest.json"));zos.write(BackupFormat.manifest().getBytes(java.nio.charset.StandardCharsets.UTF_8));zos.closeEntry();
+            zos.putNextEntry(new ZipEntry("RESTORE_INSTRUCTIONS.txt"));zos.write(BackupFormat.instructions().getBytes(java.nio.charset.StandardCharsets.UTF_8));zos.closeEntry();
             try {
-                byte[] settings = SettingsBackup.encode(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this))
+                byte[] settings = SettingsBackup.encodePortable(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this),false)
                     .getBytes(java.nio.charset.StandardCharsets.UTF_8);
                 zos.putNextEntry(new ZipEntry("settings.json")); zos.write(settings); zos.closeEntry();
                 zos.putNextEntry(new ZipEntry("named_preferences.json"));zos.write(MigrationBackup.settings(this).getBytes(java.nio.charset.StandardCharsets.UTF_8));zos.closeEntry();
@@ -263,25 +268,16 @@ public class MediaLibraryBackupService extends Service {
             File dbFile = getDatabasePath(DATABASE_NAME);
             if (dbFile.exists()) {
                 if (log.isDebugEnabled()) log.debug("exportMediaLibrary: exporting media database");
-                addFileToZip(zos, dbFile, DATABASE_NAME);
+                addPrivateDatabaseToZip(zos,dbFile,DATABASE_NAME);
             } else {
                 throw new IOException("Media database is unavailable; backup was not created");
-            }
-
-            // Export credentials database (SMB/FTP/SFTP/WebDAV credentials)
-            File credentialsDbFile = getDatabasePath(CREDENTIALS_DB_NAME);
-            if (credentialsDbFile.exists()) {
-                if (log.isDebugEnabled()) log.debug("exportMediaLibrary: exporting credentials database");
-                addFileToZip(zos, credentialsDbFile, CREDENTIALS_DB_NAME);
-            } else {
-                if (log.isDebugEnabled()) log.debug("exportMediaLibrary: credentials database not found (no saved credentials)");
             }
 
             // Export shortcuts database (network shortcuts/bookmarks)
             File shortcutsDbFile = getDatabasePath(SHORTCUTS_DB_NAME);
             if (shortcutsDbFile.exists()) {
                 if (log.isDebugEnabled()) log.debug("exportMediaLibrary: exporting shortcuts database");
-                addFileToZip(zos, shortcutsDbFile, SHORTCUTS_DB_NAME);
+                addPrivateDatabaseToZip(zos,shortcutsDbFile,SHORTCUTS_DB_NAME);
             } else {
                 if (log.isDebugEnabled()) log.debug("exportMediaLibrary: shortcuts database not found (no saved shortcuts)");
             }
@@ -290,10 +286,12 @@ public class MediaLibraryBackupService extends Service {
             File shortcuts2DbFile = getDatabasePath(SHORTCUTS2_DB_NAME);
             if (shortcuts2DbFile.exists()) {
                 if (log.isDebugEnabled()) log.debug("exportMediaLibrary: exporting shortcuts2 database");
-                addFileToZip(zos, shortcuts2DbFile, SHORTCUTS2_DB_NAME);
+                addPrivateDatabaseToZip(zos,shortcuts2DbFile,SHORTCUTS2_DB_NAME);
             } else {
                 if (log.isDebugEnabled()) log.debug("exportMediaLibrary: shortcuts2 database not found (no saved shortcuts)");
             }
+
+            File associations=getDatabasePath("putio-associations.db");if(associations.isFile())addPrivateDatabaseToZip(zos,associations,"putio-associations.db");
 
             // Export poster directory
             File posterDir = MediaScraper.getPosterDirectory(this);
@@ -316,11 +314,13 @@ public class MediaLibraryBackupService extends Service {
 
     private void importMediaLibrary(String path) throws Exception {
         if(path==null||path.isEmpty()) throw new IOException("Select a backup file");
-        java.io.InputStream input = path.startsWith("content:")
-            ? getContentResolver().openInputStream(android.net.Uri.parse(path)) : new FileInputStream(path);
-        if(input==null) throw new IOException("Backup unavailable");
         File stage;
-        try(java.io.InputStream in=input) { stage=SafeBackup.stage(this,in); }
+        if(path.startsWith("supernova-stage:")){
+            String token=path.substring("supernova-stage:".length());if(!token.matches("restore-[a-f0-9-]{36}"))throw new IOException("Invalid restore reference");stage=new File(getCacheDir(),token);SafeBackup.validateStage(this,stage);
+        }else{
+            java.io.InputStream input=path.startsWith("content:")?getContentResolver().openInputStream(android.net.Uri.parse(path)):new FileInputStream(path);
+            if(input==null)throw new IOException("Backup unavailable");try(java.io.InputStream in=input){stage=SafeBackup.stage(this,in);}
+        }
         try {
             // Keep a complete, dated recovery archive before changing any live data.
             exportMediaLibrary();
@@ -331,7 +331,7 @@ public class MediaLibraryBackupService extends Service {
 
     private void flushDatabaseWAL() {
         try {
-            for(String database:new String[]{DATABASE_NAME,CREDENTIALS_DB_NAME,SHORTCUTS_DB_NAME,SHORTCUTS2_DB_NAME}){File dbFile = getDatabasePath(database);
+            for(String database:new String[]{DATABASE_NAME,CREDENTIALS_DB_NAME,SHORTCUTS_DB_NAME,SHORTCUTS2_DB_NAME,"putio-associations.db"}){File dbFile = getDatabasePath(database);
             if (dbFile.exists()) {
                 if (log.isDebugEnabled()) log.debug("flushDatabaseWAL: opening database for WAL checkpoint");
                 try(SQLiteDatabase db = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null,

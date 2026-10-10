@@ -84,6 +84,8 @@ public class VideoMetadata implements Serializable {
             s3dMode = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_S3D);
             decoder = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DECODER);
             colorTrc = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_COLOR_TRC);
+            dolbyVisionProfile=getMetadataInt(data,gapKey+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE);
+            hdr10Plus=getMetadataInt(data,gapKey+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_HDR10_PLUS)>0;
         }
         
         VideoTrack(IMediaMetadataRetriever retriever) {
@@ -98,8 +100,9 @@ public class VideoMetadata implements Serializable {
             fpsScale = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_FPS_SCALE);
             s3dMode = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_S3D_MODE);
             decoder = LibAvos.MP_DECODER_ANY;
-            MediaMetadata nativeMetadata=retriever.getMediaMetadata();
-            colorTrc = nativeMetadata==null?0:getMetadataInt(nativeMetadata,IMediaPlayer.METADATA_KEY_VIDEO_TRACK+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_COLOR_TRC);
+            colorTrc=getMetadataRetrieverInt(retriever,gapKey+IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_COLOR_TRC);
+            dolbyVisionProfile=getMetadataRetrieverInt(retriever,gapKey+IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE);
+            hdr10Plus=getMetadataRetrieverInt(retriever,gapKey+IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_HDR10_PLUS)>0;
         }
 
         public final String format;
@@ -113,6 +116,9 @@ public class VideoMetadata implements Serializable {
         public final int s3dMode;
         public final int decoder;
         public final int colorTrc; // AVCOL_TRC_* (e.g. 16=SMPTE2084/PQ, 18=HLG)
+        public final int dolbyVisionProfile;
+        public final boolean hdr10Plus;
+        public String dynamicRange(){return dolbyVisionProfile>0?"Dolby Vision":hdr10Plus?"HDR10+":colorTrc==16?"HDR (PQ)":colorTrc==18?"HLG":"";}
     }
 
     public static class AudioTrack implements Serializable {

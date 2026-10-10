@@ -282,6 +282,8 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
     static void persistAcceptedMatch(android.content.Context context,BaseTags tags,long videoId)throws IOException{
         if(tags.save(context,videoId)<0)throw new IOException("Metadata persistence failed");
+        context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0)
+                .edit().remove("incorrect:"+videoId).apply();
     }
 
     private static MovieTags buildNewMovieTags(String movieTitle) {

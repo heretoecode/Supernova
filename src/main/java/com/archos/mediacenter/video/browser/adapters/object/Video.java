@@ -31,6 +31,9 @@ import java.io.Serializable;
  * Created by vapillon on 10/04/15.
  */
 public class Video extends Base implements Serializable {
+    private String previewDynamicRange="";
+    public String getPreviewDynamicRange(){return previewDynamicRange==null?"":previewDynamicRange;}
+    public void setPreviewDynamicRange(String range){previewDynamicRange=range;}
 
     private final static String TAG = "Video";
     private final static boolean DBG = false;

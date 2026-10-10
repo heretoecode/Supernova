@@ -1,0 +1,2 @@
+# Patch context intentionally preserves whitespace from pinned upstream sources.
+.github/build/*-supernova135.patch -whitespace

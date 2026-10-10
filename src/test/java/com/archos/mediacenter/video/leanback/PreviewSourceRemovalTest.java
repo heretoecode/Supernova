@@ -31,15 +31,17 @@ public class PreviewSourceRemovalTest {
             PreviewNetworkWorkspace workspace=new PreviewNetworkWorkspace(host.get(),java.util.Collections.emptyList(),
                 bookmark?new java.util.ArrayList<>():rows,bookmark?rows:new java.util.ArrayList<>(),box->{},kind->{});
             host.get().setContentView(workspace);
-            var show=PreviewNetworkWorkspace.class.getDeclaredMethod("show",String.class);show.setAccessible(true);show.invoke(workspace,bookmark?"Saved Locations":"Network Shares");
-            LinearLayout context=ReflectionHelpers.getField(workspace,"context"),items=ReflectionHelpers.getField(workspace,"items");
-            context.getChildAt(4).performClick();
-            android.app.Dialog confirm=ShadowDialog.getLatestDialog();
-            View label=confirm.getWindow().getDecorView().findViewWithTag("preview-label:1");assertNotNull(label);((View)label.getParent()).performClick();
-            android.app.Dialog error=ShadowDialog.getLatestDialog();assertNotSame(confirm,error);assertTrue(error.isShowing());
-            assertEquals(1,rows.size());assertSame(source,rows.get(0));
-            assertEquals("semantic:network.item."+(bookmark?"saved.":"source.")+source.getId(),items.getChildAt(0).getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
-            error.dismiss();
+            PreviewPagesTest.layout(workspace);
+            View sourceRow=workspace.findViewWithTag("semantic:network.item."+(bookmark?"saved.":"source.")+source.getId());assertNotNull(sourceRow);sourceRow.requestFocus();
+            var browser=workspace.browser();
+            if(bookmark){assertFalse(browser.selections().changed());PreviewPagesTest.findText(browser,"Remove Saved Location").performClick();android.app.Dialog confirm=ShadowDialog.getLatestDialog();View label=confirm.getWindow().getDecorView().findViewWithTag("preview-label:1");((View)label.getParent()).performClick();android.app.Dialog error=ShadowDialog.getLatestDialog();assertNotSame(confirm,error);assertTrue(error.isShowing());assertFalse(browser.selections().changed());error.dismiss();}
+            else {
+                PreviewPagesTest.findText(browser,"Remove from Library").performClick();assertTrue(browser.selections().changed());
+                PreviewPagesTest.findText(browser,"Apply & Scan").performClick();android.app.Dialog error=ShadowDialog.getLatestDialog();assertTrue(error.isShowing());
+                assertTrue("An unconfirmed commit remains editable",browser.selections().changed());error.dismiss();
+            }
+            assertEquals(1,rows.size());assertSame(source,rows.get(0));assertNotNull(workspace.findViewWithTag("semantic:network.item."+(bookmark?"saved.":"source.")+source.getId()));browser.close();
+
         }finally{host.pause().stop().destroy();}
     }
 }

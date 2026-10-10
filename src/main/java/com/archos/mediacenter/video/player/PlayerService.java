@@ -56,6 +56,8 @@ import com.archos.mediacenter.filecoreextension.UriUtils;
 import com.archos.mediacenter.filecoreextension.upnp2.StreamUriFinder;
 import com.archos.mediacenter.utils.ISO639codes;
 import com.archos.mediacenter.utils.introdb.IntroDbManager;
+import com.archos.mediacenter.video.BuildConfig;
+import android.os.SystemClock;
 import com.archos.mediacenter.utils.introdb.IntroDbQueryParams;
 import com.archos.mediacenter.utils.introdb.IntroSegments;
 import com.archos.mediacenter.utils.trakt.Trakt;
@@ -203,6 +205,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         private boolean completed;
         private boolean startPositionApplied;
         private long viewedMs, sampleTime;
+        private PlaybackViewingCoverage coverage=new PlaybackViewingCoverage();private long coverageId=-1;
         private int samplePosition=-1;
         private boolean seeking, hasPlayed, failed;
 
@@ -216,7 +219,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             lastKnownPositionMs = LAST_POSITION_UNKNOWN;
             completed = false;
             startPositionApplied = false;
-            viewedMs=0;sampleTime=0;samplePosition=-1;seeking=false;hasPlayed=false;failed=false;
+            coverage=new PlaybackViewingCoverage();coverageId=-1;viewedMs=0;sampleTime=0;samplePosition=-1;seeking=false;hasPlayed=false;failed=false;
         }
 
         private void setCandidate(ResumeSource source, int positionMs) {
@@ -602,7 +605,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mHideSubtitles = mPreferences.getBoolean(KEY_HIDE_SUBTITLES, false);
         mPlayMode = mPreferences.getInt(KEY_PLAY_MODE, PLAYMODE_SINGLE);
         // Any start clears the binge-transition flag; onCompletion re-sets it when auto-advancing.
-        mArrivedViaBingeTransition = false;
+        mArrivedViaBingeTransition = false;mSegmentOverride=null;mSegmentPrompt=null;
         mResume = intent.getIntExtra(RESUME, RESUME_NO);
         if (log.isDebugEnabled()) log.debug("PlayerService.onStart: read mResume={} from intent", mResume);
 
@@ -1188,8 +1191,19 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private void sampleJourneyTime(){
         if(mPlayer==null||!mPlaybackSession.startPositionApplied)return;
         long now=android.os.SystemClock.elapsedRealtime();int position=captureCurrentPosition(false);
+        if(mVideoInfo!=null&&mVideoInfo.id>=0&&!PrivateMode.isActive()&&mPlaybackSession.coverageId!=mVideoInfo.id){
+            mPlaybackSession.coverageId=mVideoInfo.id;mPlaybackSession.coverage=PlaybackViewingCoverage.decode(mPreferences.getString("supernova_viewed_ranges:"+mVideoInfo.id,"[]"));
+            mPreferences.edit().putBoolean("supernova_viewed_eligible:"+mVideoInfo.id,mPlaybackSession.coverage.eligible(getEffectiveDurationMs())).apply();
+        }
         if(mPlayerState==PlayerState.PLAYING&&!mPlaybackSession.seeking&&mPlaybackSession.sampleTime>0){long elapsed=now-mPlaybackSession.sampleTime;long advanced=(long)position-mPlaybackSession.samplePosition;
-            if(elapsed>0&&elapsed<=5000&&advanced>0&&advanced<=elapsed*8+1000)mPlaybackSession.viewedMs+=elapsed;
+            if(elapsed>0&&elapsed<=5000&&advanced>0&&advanced<=elapsed*8+1000){
+                mPlaybackSession.viewedMs+=elapsed;
+                if(mVideoInfo!=null&&!PrivateMode.isActive()){
+                    if(mPlaybackSession.coverageId!=mVideoInfo.id){mPlaybackSession.coverageId=mVideoInfo.id;mPlaybackSession.coverage=PlaybackViewingCoverage.decode(mPreferences.getString("supernova_viewed_ranges:"+mVideoInfo.id,"[]"));}
+                    mPlaybackSession.coverage.add(mPlaybackSession.samplePosition,position);
+                    mPreferences.edit().putString("supernova_viewed_ranges:"+mVideoInfo.id,mPlaybackSession.coverage.encode()).putBoolean("supernova_viewed_eligible:"+mVideoInfo.id,mPlaybackSession.coverage.eligible(getEffectiveDurationMs())).apply();
+                }
+            }
         }
         mPlaybackSession.sampleTime=now;mPlaybackSession.samplePosition=position;
     }
@@ -1368,6 +1382,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
+    private boolean realViewingEligible(){sampleJourneyTime();return mPlaybackSession.coverage.eligible(getEffectiveDurationMs());}
     private void stopTrakt() {
         if (log.isDebugEnabled()) log.debug("stopTrakt");
         if (mTraktClient != null) {
@@ -1395,7 +1410,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 }
                 if (log.isDebugEnabled()) log.debug("stopTrakt: progress negative not doing anything, progress={}", progress);
                 mTraktWatching = false;
-            } else if (!mTraktError && Trakt.shouldMarkAsSeen(getPlayerProgress())) {
+            } else if (!mTraktError && realViewingEligible() && Trakt.shouldMarkAsSeen(getPlayerProgress())) {
                 if (log.isDebugEnabled()) log.debug("stopTrakt: Trakt.ACTION_SEEN");
                 mTraktClient.markAs(mVideoInfo, Trakt.ACTION_SEEN);
             } else {
@@ -1406,7 +1421,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         else {
             if (log.isDebugEnabled()) log.debug("stopTrakt: mTraktClient == null, not sending watchStop");
             if (mVideoInfo != null) {
-                if (mVideoInfo.id >= 0 && Trakt.shouldMarkAsSeen(getPlayerProgress()) && !PrivateMode.isActive()) {
+                if (mVideoInfo.id >= 0 && realViewingEligible() && Trakt.shouldMarkAsSeen(getPlayerProgress()) && !PrivateMode.isActive()) {
                     if (log.isDebugEnabled()) log.debug("stopTrakt: marking video {} as seen in VideoStore", mVideoInfo.id);
                     final ContentValues cv = new ContentValues(1);
                     cv.put(VideoStore.Video.VideoColumns.ARCHOS_TRAKT_SEEN, Trakt.TRAKT_DB_MARKED);
@@ -1497,6 +1512,13 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private Runnable mAutoSkipTask;
     // end (ms) of the last segment we auto-skipped, so we don't fight a user who seeks back into it
     private long mLastAutoSkippedEndMs = -1;
+    private Boolean mSegmentOverride;private SegmentPrompt mSegmentPrompt;
+    public static final class SegmentPrompt {public final IntroSegments.Type type;public final long target,expires;SegmentPrompt(IntroSegments.Type type,long target){this.type=type;this.target=target;expires=SystemClock.elapsedRealtime()+5000;}}
+    public boolean segmentSkippingEnabled(){return mSegmentOverride!=null?mSegmentOverride:mPreferences.getBoolean(SegmentSkippingPolicy.MASTER,true);}
+    public void segmentOverride(boolean enabled){mSegmentOverride=enabled;mSegmentPrompt=null;if(enabled)fetchIntroDbIfNeeded();}
+    public SegmentPrompt segmentPrompt(){return mSegmentPrompt!=null&&SystemClock.elapsedRealtime()<mSegmentPrompt.expires?mSegmentPrompt:null;}
+    public void skipPrompt(){SegmentPrompt prompt=segmentPrompt();if(prompt!=null&&Player.sPlayer!=null&&isSafeAutoSkipTarget(prompt.target,Player.sPlayer.getDuration())){Player.sPlayer.seekTo((int)prompt.target);mSegmentPrompt=null;}}
+
     // true when the current episode was reached by auto-advancing from the previous one (binge),
     // not by the user manually starting it. Recap auto-skip only fires when this is set.
     private boolean mArrivedViaBingeTransition = false;
@@ -1715,7 +1737,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
      */
     private void fetchIntroDbIfNeeded() {
         if (mVideoInfo == null) return;
-        if (!mPreferences.getBoolean(KEY_INTRODB_ENABLED, DEFAULT_INTRODB_ENABLED)) return;
+        if (BuildConfig.FOUNDATION?!segmentSkippingEnabled():!mPreferences.getBoolean(KEY_INTRODB_ENABLED, DEFAULT_INTRODB_ENABLED)) return;
         if (!mVideoInfo.isScraped) {
             if (log.isDebugEnabled()) log.debug("fetchIntroDbIfNeeded: not scraped, skipping");
             return;
@@ -1811,6 +1833,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             log.debug("autoSkipIfNeeded: tick pos={} playing={} pref={}",
                     position, playing, mPreferences.getBoolean(KEY_INTRODB_ENABLED, DEFAULT_INTRODB_ENABLED));
         if (mPlayer == null || Player.sPlayer == null || !mPlayer.isPlaying()) return;
+        if(BuildConfig.FOUNDATION){applySegmentPolicies(segments,position,Player.sPlayer.getDuration());return;}
         boolean introEnabled = mPreferences.getBoolean(KEY_INTRODB_ENABLED, DEFAULT_INTRODB_ENABLED);
         if (!introEnabled) return;
         // Recap has no separate toggle: it is additionally skipped only while actually
@@ -1839,6 +1862,15 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         showAutoSkipToast(skip.type);
     }
 
+    private void applySegmentPolicies(IntroSegments segments,int position,int duration){
+        if(!segmentSkippingEnabled()||position<0||!java.util.Objects.equals(mUri,mIntroDbFetchedUri))return;
+        for(IntroSegments.Type type:IntroSegments.Type.values())for(IntroSegments.Segment segment:segments.get(type)){
+            if(!segment.contains(position)||!SegmentSkippingPolicy.safe(type,segment,position,duration)||segment.endMs==mLastAutoSkippedEndMs)continue;
+            SegmentSkippingPolicy.Mode mode=SegmentSkippingPolicy.mode(mPreferences,type);
+            if(mode==SegmentSkippingPolicy.Mode.PROMPT){mLastAutoSkippedEndMs=segment.endMs;mSegmentPrompt=new SegmentPrompt(type,segment.endMs);return;}
+            if(SegmentSkippingPolicy.auto(mode,type,mPlayMode==PLAYMODE_BINGE&&mArrivedViaBingeTransition)){mLastAutoSkippedEndMs=segment.endMs;Player.sPlayer.seekTo(segment.endMs.intValue());showAutoSkipToast(type);return;}
+        }
+    }
     public static boolean isSafeAutoSkipTarget(long targetMs, int duration) {
         return targetMs >= 0 && targetMs <= Integer.MAX_VALUE && duration > 0
                 && targetMs < duration - AUTO_SKIP_END_MARGIN_MS;
@@ -1906,7 +1938,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
      */
     @Override
     public void onCompletion() { advancePlayback(true); }
+    private boolean advancing;
     private void advancePlayback(boolean completed) {
+        if(advancing||completed&&(mPlayerState==PlayerState.STOPPED||mPlayerState==PlayerState.PREPARING))return;advancing=true;try {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_transition","completed",completed,"failed",mPlaybackSession.failed,"next_available",mNextUri!=null,"position_ms",mPlaybackSession.lastKnownPositionMs);
         log.info("Playback transition completed={} lastPosition={} duration={} state={} failed={} next={}",completed,mPlaybackSession.lastKnownPositionMs,mVideoInfo==null?0:mVideoInfo.duration,mPlayerState,mPlaybackSession.failed,mNextUri!=null);
         if(completed&&mPlaybackSession.failed){log.warn("Ignoring completion following a playback error; preserving the resume checkpoint");return;}
@@ -1916,7 +1950,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
             updateNowPlayingState();
         }
-        mPlaybackSession.completed = completed;
+        mPlaybackSession.completed = completed && realViewingEligible();
         if (mNextUri != null) {
             if (log.isDebugEnabled()) log.debug("onCompletion: we have a new video {}", mNextUri);
             stopAndSaveVideoState();
@@ -1940,7 +1974,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             mNextVideoId = -1;
             // Repeat-single legitimately starts the same URI, but it is still a new playback.
             mPlaybackSession.reset(null, null);
-            onStart(mIntent);
+            Boolean segmentOverride=mSegmentOverride;onStart(mIntent);mSegmentOverride=segmentOverride;
             // onStart() cleared the flag; mark that this episode was auto-advanced into, so recap
             // auto-skip may apply (it additionally requires PLAYMODE_BINGE).
             mArrivedViaBingeTransition = true;
@@ -1950,6 +1984,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 mPlayerFrontend.onEnd();
             }
         }
+        }finally{advancing=false;}
     }
 
     public com.archos.mediacenter.video.browser.adapters.object.Episode previewAdjacentEpisode(int direction){

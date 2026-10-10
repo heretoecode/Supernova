@@ -62,8 +62,7 @@ final class PreviewPlaybackMenus {
   for(TVCardView card:cards)if(activity.getString(R.string.pref_play_mode_title).equals(card.previewTitle())){labels.add("Play Mode");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
   labels.add("— VIDEO");actions.add(()->{});
   for(TVCardView card:cards){String title=card.previewTitle();if(audio.equals(title)||subs.equals(title)||activity.getString(R.string.menu_info).equals(title)||activity.getString(R.string.pref_play_mode_title).equals(title)||activity.getString(R.string.preferences).equals(title))continue;labels.add(title);actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
-  labels.add("— SUPERNOVA");actions.add(()->{});
-  for(TVCardView card:cards)if(activity.getString(R.string.preferences).equals(card.previewTitle())){labels.add("Supernova Settings");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
+  labels.add("Technical Information");actions.add(()->((PlayerActivity)activity).showVideoInfos());
   labels.add("Report a Problem");actions.add(()->com.archos.mediacenter.video.diagnostics.Diagnostics.reportProblem(activity));
   current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),rootFocus,Collections.emptySet(),false,n->{rootFocus=n;actions.get(n).run();});
   current.setOnCancelListener(d->close());position(activity,current,true);

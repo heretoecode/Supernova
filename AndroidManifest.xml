@@ -1765,6 +1765,8 @@
             android:name="com.archos.mediacenter.video.leanback.wizard.SubtitlesWizardActivity"
             android:theme="@style/MyLeanbackTheme.Wizard" />
 
+        <activity android:name="com.archos.mediacenter.video.leanback.LibraryHealthActivity" android:exported="false" android:theme="@style/MyLeanbackTheme" />
+        <activity android:name="com.archos.mediacenter.video.leanback.CustomLibraryActivity" android:exported="false" android:theme="@style/MyLeanbackTheme" />
         <activity
             android:name="com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity"
             android:theme="@style/MyLeanbackTheme.Preferences" />

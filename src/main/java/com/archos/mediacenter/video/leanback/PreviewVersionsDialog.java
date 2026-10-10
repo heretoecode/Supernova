@@ -49,7 +49,7 @@ public final class PreviewVersionsDialog {
             if (video.getId() == current.getId()) initial = i;
             row.setContentDescription(facts.getText() + (marker.getVisibility() == View.VISIBLE ? ", Current" : ""));
             row.setOnClickListener(v -> {
-                select.accept(video);
+                PreviewVariants.remember(activity,video);select.accept(video);
                 for (int n = 0; n < markers.length; n++) {
                     markers[n].setVisibility(n == index ? View.VISIBLE : View.INVISIBLE);
                     choices[n].setContentDescription(PreviewVariants.details(activity, versions.get(n)) + (n == index ? ", Current" : ""));
