@@ -19,6 +19,161 @@ index 8115e95..2c86ba1 100644
      public List<Shortcut> cursorToShortcutList(Cursor cursor){
          List<Shortcut>shortcuts = new ArrayList<>();
          if(cursor.getCount()>0){
+diff --git a/src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java b/src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java
+index 4cb8f0d..6a546e5 100644
+--- a/src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java
++++ b/src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java
+@@ -36,7 +36,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
+ // introdb.app api helper, see https://introdb.app/docs/api.
+ // GET-only (no api key required for /segments). Sibling of IntroDbApiHelper
+ // (theintrodb.org); same MyTmdb debug trick (shared disk cache + trace logging).
+-// Reads are imdb_id + season + episode, so this provider is TV-only for lookups.
++// TV reads use IMDb + season + episode; movies use IMDb + is_movie=true.
+ public class IntroDbAppApiHelper {
+ 
+     private static final Logger log = LoggerFactory.getLogger(IntroDbAppApiHelper.class);
+@@ -106,8 +106,11 @@ public class IntroDbAppApiHelper {
+ 
+         HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl + "segments").newBuilder();
+         urlBuilder.addQueryParameter("imdb_id", params.getImdbId());
+-        urlBuilder.addQueryParameter("season", String.valueOf(params.getSeason()));
+-        urlBuilder.addQueryParameter("episode", String.valueOf(params.getEpisode()));
++        if (params.isMovie()) urlBuilder.addQueryParameter("is_movie", "true");
++        else {
++            urlBuilder.addQueryParameter("season", String.valueOf(params.getSeason()));
++            urlBuilder.addQueryParameter("episode", String.valueOf(params.getEpisode()));
++        }
+         String url = urlBuilder.build().toString();
+ 
+         Request request = new Request.Builder()
+@@ -138,7 +141,7 @@ public class IntroDbAppApiHelper {
+         return null;
+     }
+ 
+-    private static IntroDbAppResult parseSegments(JSONObject json) {
++    static IntroDbAppResult parseSegments(JSONObject json) {
+         IntroDbAppResult result = new IntroDbAppResult();
+         result.setImdbId(json.optString("imdb_id", null));
+         if (json.has("season") && !json.isNull("season")) result.setSeason(json.optInt("season"));
+@@ -146,6 +149,7 @@ public class IntroDbAppApiHelper {
+         result.setIntro(parseSegment(json.optJSONObject("intro")));
+         result.setRecap(parseSegment(json.optJSONObject("recap")));
+         result.setOutro(parseSegment(json.optJSONObject("outro")));
++        result.setPostCredits(parseSegment(json.optJSONObject("post_credits")));
+         return result;
+     }
+ 
+diff --git a/src/com/archos/mediacenter/utils/introdb/IntroDbAppQueryParams.java b/src/com/archos/mediacenter/utils/introdb/IntroDbAppQueryParams.java
+index f441906..ac06954 100644
+--- a/src/com/archos/mediacenter/utils/introdb/IntroDbAppQueryParams.java
++++ b/src/com/archos/mediacenter/utils/introdb/IntroDbAppQueryParams.java
+@@ -15,16 +15,18 @@
+ package com.archos.mediacenter.utils.introdb;
+ 
+ // Input parameters for an introdb.app GET /segments query.
+-// See https://introdb.app/docs/api. Reads are keyed on imdb_id + season + episode
+-// (all required); this provider is effectively TV-only for lookups.
++// See https://introdb.app/docs/api and /docs/movies. Movie reads use IMDb only.
+ public class IntroDbAppQueryParams {
+     private String imdbId;
+     private Integer season;
+     private Integer episode;
++    private boolean movie;
+ 
+     public IntroDbAppQueryParams() {
+     }
+ 
++    public void setMovie(boolean movie) { this.movie = movie; }
++    public boolean isMovie() { return movie; }
+     public void setImdbId(String imdbId) { this.imdbId = imdbId; }
+     public void setSeason(Integer season) { this.season = season; }
+     public void setEpisode(Integer episode) { this.episode = episode; }
+@@ -33,9 +35,9 @@ public class IntroDbAppQueryParams {
+     public Integer getSeason() { return season; }
+     public Integer getEpisode() { return episode; }
+ 
+-    // imdb_id + season + episode are all required by the /segments endpoint.
++    // TV reads require a real season/episode; movies omit both.
+     public boolean isValid() {
+-        return imdbId != null && !imdbId.isEmpty() && season != null && episode != null;
++        return imdbId != null && imdbId.matches("tt[0-9]+") && (movie || season != null && season > 0 && episode != null && episode > 0);
+     }
+ 
+     @Override
+diff --git a/src/com/archos/mediacenter/utils/introdb/IntroDbAppResult.java b/src/com/archos/mediacenter/utils/introdb/IntroDbAppResult.java
+index f540408..e5681db 100644
+--- a/src/com/archos/mediacenter/utils/introdb/IntroDbAppResult.java
++++ b/src/com/archos/mediacenter/utils/introdb/IntroDbAppResult.java
+@@ -51,12 +51,15 @@ public class IntroDbAppResult {
+     private Segment intro;
+     private Segment recap;
+     private Segment outro;
++    private Segment postCredits;
+ 
+     public void setImdbId(String imdbId) { this.imdbId = imdbId; }
+     public void setSeason(Integer season) { this.season = season; }
+     public void setEpisode(Integer episode) { this.episode = episode; }
+     public void setIntro(Segment intro) { this.intro = intro; }
+     public void setRecap(Segment recap) { this.recap = recap; }
++    public void setPostCredits(Segment postCredits) { this.postCredits = postCredits; }
++    public Segment getPostCredits() { return postCredits; }
+     public void setOutro(Segment outro) { this.outro = outro; }
+ 
+     public String getImdbId() { return imdbId; }
+@@ -64,7 +67,15 @@ public class IntroDbAppResult {
+     public Integer getEpisode() { return episode; }
+     public Segment getIntro() { return intro; }
+     public Segment getRecap() { return recap; }
+-    public Segment getOutro() { return outro; }
++    public Segment getOutro() { return protectedOutro(outro, postCredits); }
++
++    static Segment protectedOutro(Segment outro, Segment scene) {
++        if (outro == null || scene == null || scene.startMs >= outro.endMs) return outro;
++        // Never jump past the beginning of a reported post-credit scene. Overlapping
++        // or contradictory markers are unusable rather than a reason to skip it.
++        if (scene.startMs <= outro.startMs) return null;
++        return new Segment(outro.startMs, scene.startMs, outro.confidence, outro.submissionCount);
++    }
+ 
+     public boolean hasAnySegment() {
+         return intro != null || recap != null || outro != null;
+diff --git a/src/com/archos/mediacenter/utils/introdb/IntroDbManager.java b/src/com/archos/mediacenter/utils/introdb/IntroDbManager.java
+index 4aeb88d..4b79627 100644
+--- a/src/com/archos/mediacenter/utils/introdb/IntroDbManager.java
++++ b/src/com/archos/mediacenter/utils/introdb/IntroDbManager.java
+@@ -62,8 +62,10 @@ public class IntroDbManager {
+         // introdb.app (preferred for intro/recap, sole source for outro)
+         boolean appIntro = false, appRecap = false;
+         if (app != null) {
+-            appIntro = addAppSegment(out, IntroSegments.Type.INTRO, app.getIntro());
+-            appRecap = addAppSegment(out, IntroSegments.Type.RECAP, app.getRecap());
++            if (query.isShow()) {
++                appIntro = addAppSegment(out, IntroSegments.Type.INTRO, app.getIntro());
++                appRecap = addAppSegment(out, IntroSegments.Type.RECAP, app.getRecap());
++            }
+             addAppSegment(out, IntroSegments.Type.OUTRO, app.getOutro());
+         }
+ 
+@@ -81,16 +83,16 @@ public class IntroDbManager {
+     }
+ 
+     private static IntroDbAppResult fetchApp(IntroDbQueryParams q) {
+-        if (!q.isShow()) return null;
+-        if (q.getImdbId() == null || q.getImdbId().isEmpty()) {
++                if (q.getImdbId() == null || q.getImdbId().isEmpty()) {
+             if (log.isDebugEnabled()) log.debug("fetchApp: no imdb id, skipping introdb.app");
+             return null;
+         }
+-        if (q.getSeason() == null || q.getSeason() <= 0 || q.getEpisode() == null || q.getEpisode() <= 0) {
++        if (q.isShow() && (q.getSeason() == null || q.getSeason() <= 0 || q.getEpisode() == null || q.getEpisode() <= 0)) {
+             if (log.isDebugEnabled()) log.debug("fetchApp: missing season/episode, skipping introdb.app");
+             return null;
+         }
+         IntroDbAppQueryParams p = new IntroDbAppQueryParams();
++        p.setMovie(!q.isShow());
+         p.setImdbId(q.getImdbId());
+         p.setSeason(q.getSeason());
+         p.setEpisode(q.getEpisode());
 diff --git a/src/com/archos/mediacenter/utils/trakt/TraktService.java b/src/com/archos/mediacenter/utils/trakt/TraktService.java
 index 0e6a05e..f8a0721 100644
 --- a/src/com/archos/mediacenter/utils/trakt/TraktService.java
@@ -69,33 +224,35 @@ index 0e6a05e..f8a0721 100644
                                  if (result.status == Trakt.Status.SUCCESS || result.status == Trakt.Status.SUCCESS_ALREADY) {
                                      videoInfo.traktSeen = 1;
 diff --git a/src/com/archos/medialib/IMediaMetadataRetriever.java b/src/com/archos/medialib/IMediaMetadataRetriever.java
-index 8f17f51..9fa4099 100644
+index 8f17f51..b6c82a3 100644
 --- a/src/com/archos/medialib/IMediaMetadataRetriever.java
 +++ b/src/com/archos/medialib/IMediaMetadataRetriever.java
-@@ -421,7 +421,10 @@ public interface IMediaMetadataRetriever {
+@@ -421,7 +421,11 @@ public interface IMediaMetadataRetriever {
      public static final int METADATA_KEY_VIDEO_TRACK_S3D_MODE       = 10;
      public static final int METADATA_KEY_VIDEO_TRACK_FPS_RATE       = 11;
      public static final int METADATA_KEY_VIDEO_TRACK_FPS_SCALE      = 12;
 -    public static final int METADATA_KEY_VIDEO_TRACK_MAX            = 13;
 +    public static final int METADATA_KEY_VIDEO_TRACK_COLOR_TRC = 13;
 +    public static final int METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE = 14;
++    public static final int METADATA_KEY_VIDEO_TRACK_DOVI_COMPAT = 16;
 +    public static final int METADATA_KEY_VIDEO_TRACK_HDR10_PLUS = 15;
-+    public static final int METADATA_KEY_VIDEO_TRACK_MAX = 16;
++    public static final int METADATA_KEY_VIDEO_TRACK_MAX = 17;
  
      public static final int METADATA_KEY_AUDIO_TRACK_NAME           = 0;
      public static final int METADATA_KEY_AUDIO_TRACK_FORMAT         = 1;
 diff --git a/src/com/archos/medialib/IMediaPlayer.java b/src/com/archos/medialib/IMediaPlayer.java
-index 3866593..33426aa 100644
+index 3866593..74a252c 100644
 --- a/src/com/archos/medialib/IMediaPlayer.java
 +++ b/src/com/archos/medialib/IMediaPlayer.java
-@@ -365,7 +365,9 @@ public interface IMediaPlayer {
+@@ -365,7 +365,10 @@ public interface IMediaPlayer {
      public static final int METADATA_KEY_VIDEO_TRACK_FPS_RATE = 12;
      public static final int METADATA_KEY_VIDEO_TRACK_FPS_SCALE = 13;
      public static final int METADATA_KEY_VIDEO_TRACK_COLOR_TRC = 14;
 -    public static final int METADATA_KEY_VIDEO_TRACK_MAX = 15;
 +    public static final int METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE = 15;
++    public static final int METADATA_KEY_VIDEO_TRACK_DOVI_COMPAT = 17;
 +    public static final int METADATA_KEY_VIDEO_TRACK_HDR10_PLUS = 16;
-+    public static final int METADATA_KEY_VIDEO_TRACK_MAX = 17;
++    public static final int METADATA_KEY_VIDEO_TRACK_MAX = 18;
  
      public static final int METADATA_KEY_AUDIO_TRACK = 20000;
      public static final int METADATA_KEY_AUDIO_TRACK_NAME = 0;

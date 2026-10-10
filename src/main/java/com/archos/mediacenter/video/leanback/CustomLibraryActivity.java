@@ -16,21 +16,27 @@ public final class CustomLibraryActivity extends LeanbackActivity {
  @Override public void onCreate(Bundle state){super.onCreate(state);workspace=new Workspace();navigation=new TopNavigation(this,workspace,this::navigate,()->workspace.atTop());navigation.selectTab(6);setContentView(navigation);
   getOnBackPressedDispatcher().addCallback(this,new androidx.activity.OnBackPressedCallback(true){public void handleOnBackPressed(){workspace.back();}});
   Snapshot cache=PreviewLibraryLoader.memoryCache();if(cache!=null)workspace.snapshot=cache;
-  if(state!=null){CustomLibraryPage draft=CustomLibraryPage.decode(state.getString("draft","{}"));if(draft!=null)workspace.draft=draft;workspace.editing=state.getBoolean("editing");workspace.step=state.getInt("step");workspace.original=state.getString("original",workspace.original);}
+  if(state!=null){CustomLibraryPage draft=CustomLibraryPage.decode(state.getString("draft","{}"));if(draft!=null)workspace.draft=draft;workspace.editing=state.getBoolean("editing");workspace.step=state.getInt("step");workspace.original=state.getString("original",workspace.original);workspace.restoreFocus=state.getString("focus","");workspace.restoreScroll=state.getParcelable("scroll");}
   workspace.render();PreviewLibraryLoader loader=new PreviewLibraryLoader(this);worker.execute(()->{try(Cursor cursor=loader.loadInBackground()){Snapshot library=loader.snapshot;runOnUiThread(()->{if(!closed){workspace.snapshot=library;workspace.preview();if(!workspace.editing)workspace.render();}});}catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("custom_library_load",failure);}});
  }
  private void navigate(int index){if(index==6)return;if(index==4)startActivity(new Intent(this,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));else if(index==5)startActivity(new Intent(this,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));else{startActivity(new Intent(this,MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));finish();}}
- @Override protected void onSaveInstanceState(Bundle state){state.putString("draft",workspace.draft.encode());state.putString("original",workspace.original);state.putBoolean("editing",workspace.editing);state.putInt("step",workspace.step);super.onSaveInstanceState(state);}
+ @Override protected void onSaveInstanceState(Bundle state){workspace.rememberFocus();state.putString("focus",workspace.restoreFocus);state.putParcelable("scroll",workspace.restoreScroll);state.putString("draft",workspace.draft.encode());state.putString("original",workspace.original);state.putBoolean("editing",workspace.editing);state.putInt("step",workspace.step);super.onSaveInstanceState(state);}
  @Override protected void onDestroy(){closed=true;worker.shutdownNow();super.onDestroy();}
  private final class Workspace extends LinearLayout implements PageExitGuard {
-  final String[] steps={"Page Details","Content Type","Filters","Display Options","Review"};CustomLibraryPage draft;String original;boolean editing;int step;Snapshot snapshot=new Snapshot();LinearLayout options;TextView preview;RecyclerView grid;PreviewLibraryColumns columns;String restoreFocus="";android.os.Parcelable restoreScroll;
-  Workspace(){super(CustomLibraryActivity.this);setOrientation(VERTICAL);setPadding(dp(24),dp(14),dp(24),dp(16));CustomLibraryPage saved=CustomLibraryPage.load(getContext());editing=saved==null;draft=saved==null?new CustomLibraryPage():CustomLibraryPage.decode(saved.encode());original=draft.encode();}
+  final String[] steps={"Page Details","Content Type","Filters","Display Options","Review"};CustomLibraryPage draft;String original;boolean editing;int step;Snapshot snapshot=new Snapshot();LinearLayout options;TextView preview;RecyclerView grid;PreviewLibraryColumns columns;String restoreFocus="";android.os.Parcelable restoreScroll;String pendingFocus;LinearLayout wizardRail;ScrollView wizardPreview;View wizardCentreAnchor;
+  Workspace(){super(CustomLibraryActivity.this);setOrientation(VERTICAL);setPadding(dp(24),dp(14),dp(24),dp(16));CustomLibraryPage saved=CustomLibraryPage.load(getContext());editing=saved==null;draft=saved==null?new CustomLibraryPage():CustomLibraryPage.decode(saved.encode());original=draft.encode();getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus,newFocus)->{
+   if(editing||navigation==null||newFocus==null)return;View target=newFocus;
+   while(target!=this&&!(target.getTag() instanceof String)&&target.getParent() instanceof View)target=(View)target.getParent();
+   if(!(target.getTag() instanceof String))return;
+   for(Entry entry:draft.entries(snapshot))if(entry.key().equals(target.getTag())){navigation.setArtwork(entry.backdrop);navigation.setScrolled(grid!=null&&grid.canScrollVertically(-1));break;}
+  });}
   boolean atTop(){return editing?step==0&&findFocus()!=null&&"wizard.step.0".equals(findFocus().getTag()):grid==null||!grid.canScrollVertically(-1);}
   TextView action(String label,Runnable run){return SharedThreePanel.action(getContext(),label,run);}
   void row(String label,Runnable run){TextView row=action(label,run);row.setTag("wizard.option."+step+"."+options.getChildCount());options.addView(row,new LayoutParams(-1,dp(50)));}
   LinearLayout column(){LinearLayout view=new LinearLayout(getContext());view.setOrientation(VERTICAL);return view;}
-  void render(){View focused=findFocus();if(focused!=null&&focused.getTag() instanceof String)restoreFocus=(String)focused.getTag();if(grid!=null&&grid.getLayoutManager()!=null)restoreScroll=grid.getLayoutManager().onSaveInstanceState();removeAllViews();if(!editing){library();return;}
-   SharedThreePanel panels=new SharedThreePanel(getContext());LinearLayout left=column();options=column();LinearLayout right=column();ScrollView centreScroll=new ScrollView(getContext()),rightScroll=new ScrollView(getContext());centreScroll.addView(options);rightScroll.addView(right);panels.panels(left,centreScroll,rightScroll);addView(panels,new LayoutParams(-1,-1));
+  void rememberFocus(){View focused=findFocus();if(focused!=null&&focused.getTag() instanceof String)restoreFocus=(String)focused.getTag();if(grid!=null&&grid.getLayoutManager()!=null)restoreScroll=grid.getLayoutManager().onSaveInstanceState();}
+  void render(){rememberFocus();if(pendingFocus!=null){restoreFocus=pendingFocus;pendingFocus=null;}removeAllViews();if(!editing){library();return;}
+   SharedThreePanel panels=new SharedThreePanel(getContext());LinearLayout left=column();options=column();LinearLayout right=column();ScrollView centreScroll=new ScrollView(getContext()),rightScroll=new ScrollView(getContext());centreScroll.addView(options);rightScroll.addView(right);wizardRail=left;wizardPreview=rightScroll;rightScroll.setFocusable(true);panels.panels(left,centreScroll,rightScroll);addView(panels,new LayoutParams(-1,-1));
    left.addView(SharedThreePanel.text(getContext(),"Library Page",22));for(int n=0;n<steps.length;n++){final int position=n;TextView entry=action((n+1)+". "+steps[n],()->{step=position;render();});entry.setTag("wizard.step."+n);left.addView(entry,new LayoutParams(-1,dp(50)));}
    options.addView(SharedThreePanel.text(getContext(),steps[step],22));
    switch(step){case 0:row("Name: "+draft.name,()->PreviewTextInput.show(getContext(),"Page name",draft.name,40,value->{draft.name=value;render();}));row("Icon: "+draft.icon,()->choose("Page icon",new String[]{"Library","Movies","TV Shows","Documentaries"},n->draft.icon=new String[]{"Library","Movies","TV Shows","Documentaries"}[n]));break;
@@ -55,12 +61,12 @@ public final class CustomLibraryActivity extends LeanbackActivity {
    row(title+": "+(selected.isEmpty()?"All":selected),()->choose(title,labels,n->changed.accept(choices.get(n))));
   }
   void preview(){if(preview==null)return;List<Entry> entries=draft.entries(snapshot);StringBuilder text=new StringBuilder(draft.name).append("\n\n").append(entries.size()).append(" matching titles\n");for(int i=0;i<Math.min(20,entries.size());i++)text.append("\n").append(PreviewPages.displayName(entries.get(i)));preview.setText(text);}
-  void save(){String validation=draft.validation();if(validation!=null){PreviewDialog.read(getContext(),"Review page settings",validation);return;}if(!draft.save(getContext())){PreviewDialog.read(getContext(),"Page not saved","Keep editing and retry.");return;}original=draft.encode();editing=false;navigation.updateCustomPage();render();}
+  void save(){String validation=draft.validation();if(validation!=null){PreviewDialog.read(getContext(),"Review page settings",validation);return;}if(!draft.save(getContext())){PreviewDialog.read(getContext(),"Page not saved","Keep editing and retry.");return;}original=draft.encode();editing=false;pendingFocus="custom.control.filters";navigation.updateCustomPage();render();}
   @Override public void requestExit(Runnable leave){if(!editing||draft.encode().equals(original)){leave.run();return;}PreviewDialog.choose(getContext(),"Unsaved page changes",new String[]{"Save Page","Discard Changes","Continue Editing"},2,n->{if(n==0){String validation=draft.validation();if(validation!=null){PreviewDialog.read(getContext(),"Review page settings",validation);return;}if(draft.save(getContext())){original=draft.encode();editing=false;navigation.updateCustomPage();leave.run();}else PreviewDialog.read(getContext(),"Page not saved","Keep editing and retry.");}else if(n==1){CustomLibraryPage saved=CustomLibraryPage.load(getContext());if(saved!=null)draft=saved;leave.run();}});}
   void back(){if(editing&&step>0){step--;render();return;}requestExit(CustomLibraryActivity.this::finish);}
   void persistDisplay(){if(!draft.save(getContext())){PreviewDialog.read(getContext(),"Page not saved","Retry after returning to the page.");return;}render();}
   void control(LinearLayout controls,String key,String label,Runnable action){TextView button=action(label,action);button.setTag("custom.control."+key);LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(-2,dp(46));size.leftMargin=dp(8);controls.addView(button,size);}
-  void edit(int selected){editing=true;step=selected;original=draft.encode();restoreFocus="wizard.step."+step;render();}
+  void edit(int selected){editing=true;step=selected;original=draft.encode();pendingFocus="wizard.step."+step;render();}
   void library(){options=null;preview=null;boolean list=draft.view.equals("list");if(columns==null)columns=new PreviewLibraryColumns(getContext(),true,"custom_");
    LinearLayout controls=new PreviewToolbar(getContext());controls.setGravity(Gravity.CENTER_VERTICAL);addView(controls,new LayoutParams(-1,-2));
    control(controls,"filters","Filters",()->edit(2));
@@ -81,7 +87,24 @@ public final class CustomLibraryActivity extends LeanbackActivity {
    if(restoreScroll!=null)grid.getLayoutManager().onRestoreInstanceState(restoreScroll);
    int position=-1;for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(restoreFocus))position=i;
    if(position>=0){final int target=position;grid.scrollToPosition(target);grid.post(()->{RecyclerView.ViewHolder row=grid.findViewHolderForAdapterPosition(target);if(row!=null)row.itemView.requestFocus();});}
-   else controls.post(()->{View button=findViewWithTag(restoreFocus);if(button!=null)button.requestFocus();});
+   else controls.post(()->{View button=findViewWithTag(restoreFocus);if(button==null)button=findViewWithTag("custom.control.filters");if(button!=null)button.requestFocus();});
+  }
+  @Override public boolean dispatchKeyEvent(KeyEvent event){
+   if(editing&&event.getAction()==KeyEvent.ACTION_DOWN){int key=event.getKeyCode();View focused=findFocus();
+    if(wizardRail!=null&&wizardRail.hasFocus()){
+     if(key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
+     if(key==KeyEvent.KEYCODE_DPAD_RIGHT){for(int n=0;n<options.getChildCount();n++)if(options.getChildAt(n).isFocusable()){options.getChildAt(n).requestFocus();break;}return true;}
+     if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){int position=wizardRail.indexOfChild(focused),next=position+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=1&&next<wizardRail.getChildCount())wizardRail.getChildAt(next).requestFocus();return true;}
+    }else if(options!=null&&options.hasFocus()){
+     wizardCentreAnchor=focused;
+     if(key==KeyEvent.KEYCODE_DPAD_LEFT){View rail=findViewWithTag("wizard.step."+step);if(rail!=null)rail.requestFocus();return true;}
+     if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(wizardPreview.canScrollVertically(1)||wizardPreview.canScrollVertically(-1))wizardPreview.requestFocus();return true;}
+     if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){View next=FocusFinder.getInstance().findNextFocus(options,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused)next.requestFocus();return true;}
+    }else if(wizardPreview!=null&&wizardPreview.hasFocus()){
+     if(key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
+     if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(wizardCentreAnchor!=null)wizardCentreAnchor.requestFocus();return true;}
+    }
+   }return super.dispatchKeyEvent(event);
   }
   class Card extends RecyclerView.ViewHolder{final Presenter.ViewHolder nativeHolder;final boolean table;Card(Presenter.ViewHolder holder,boolean table){super(holder.view);nativeHolder=holder;this.table=table;}}
   int dp(int n){return SharedThreePanel.dp(getContext(),n);}

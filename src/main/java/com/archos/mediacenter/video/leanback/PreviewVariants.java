@@ -8,29 +8,36 @@ import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 /** Real indexed measurements only; unknown measurements sort after known values. */
 public final class PreviewVariants {
     private static volatile android.content.Context policyContext;
-    public static void initialize(android.content.Context context){policyContext=context.getApplicationContext();}
+    private static volatile PlaybackCompatibility compatibility;
+    public static synchronized void initialize(android.content.Context context){android.content.Context app=context.getApplicationContext();if(policyContext!=app||compatibility==null){policyContext=app;compatibility=PlaybackCompatibility.read(app);}}
     public static final Comparator<Video> BEST_FIRST=Comparator.comparingInt(PreviewVariants::availabilityRank)
-        .thenComparingInt(video->rangeCompatible(measuredRange(video))?0:1)
+        .thenComparingInt(video->compatibility==null||compatibility.compatible(video)?0:1)
         .thenComparing(Comparator.comparingLong(PreviewVariants::quality).reversed())
         .thenComparing(Comparator.comparingLong((Video v)->v.getDurationMs()>0?Math.max(0,v.getSize())/v.getDurationMs():0).reversed()).thenComparingLong(Video::getId);
     private static int availabilityRank(Video video){android.content.Context c=policyContext;return c!=null&&LibraryHealth.state(c,video)!=LibraryHealth.State.AVAILABLE?1:0;}
     private static long quality(Video video){
         long pixels=(long)Math.max(0,video.getMeasuredWidth())*Math.max(0,video.getMeasuredHeight());int transfer=video.getMetadata()!=null&&video.getMetadata().getVideoTrack()!=null?video.getMetadata().getVideoTrack().colorTrc:0;
         long resolution=video.getMeasuredWidth()>=3840||video.getMeasuredHeight()>=2160?5:video.getMeasuredWidth()>=1728||video.getMeasuredHeight()>=1040?4:video.getMeasuredWidth()>=1200||video.getMeasuredHeight()>=720?3:pixels>0?2:0;
-        String range=measuredRange(video);long bonus=range.equals("Dolby Vision")||range.equals("HDR10+")?2:range.equals("HDR (PQ)")||range.equals("HLG")?1:0;return (resolution*3+bonus)*100000000L+pixels;
+        String range=measuredRange(video);long bonus=compatibility==null?(range.equals("Dolby Vision")||range.equals("HDR10+")?2:range.equals("HDR (PQ)")||range.equals("HLG")?1:0):compatibility.hdrBonus(video,range);return (resolution*3+bonus)*100000000L+pixels;
     }
     private static String measuredRange(Video video){return video.getMetadata()!=null&&video.getMetadata().getVideoTrack()!=null?video.getMetadata().getVideoTrack().dynamicRange():video.getPreviewDynamicRange();}
-    private static boolean rangeCompatible(String range){
-        if(range.isEmpty())return true;android.content.Context context=policyContext;if(context==null||android.os.Build.VERSION.SDK_INT<24)return true;
-        int wanted=range.equals("Dolby Vision")?android.view.Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION:range.equals("HDR10+")?android.view.Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS:range.equals("HLG")?android.view.Display.HdrCapabilities.HDR_TYPE_HLG:android.view.Display.HdrCapabilities.HDR_TYPE_HDR10;
-        try{android.view.Display display=((android.view.WindowManager)context.getSystemService(android.content.Context.WINDOW_SERVICE)).getDefaultDisplay();if(display==null)return true;boolean displaySupports=false;for(int supported:display.getHdrCapabilities().getSupportedHdrTypes())if(supported==wanted)displaySupports=true;if(!displaySupports)return false;
-            if(range.equals("Dolby Vision")){for(android.media.MediaCodecInfo codec:new android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS).getCodecInfos())if(!codec.isEncoder())for(String type:codec.getSupportedTypes())if("video/dolby-vision".equals(type))return true;return false;}return true;
-        }catch(RuntimeException unavailable){return true;}
-    }
     public static String choiceKey(Video video){if(video instanceof Movie&&((Movie)video).getOnlineId()>0)return "movie:"+((Movie)video).getOnlineId();if(video instanceof Episode&&((Episode)video).getOnlineId()>0)return "episode:"+((Episode)video).getOnlineId()+":"+((Episode)video).getSeasonNumber()+":"+((Episode)video).getEpisodeNumber();return "file:"+video.getFilePath();}
     public static void remember(android.content.Context context,Video video){initialize(context);androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().putString("preview_version_choice:"+choiceKey(video),video.getId()+"|"+com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(video.getFileUri())).apply();}
     private static boolean manuallySelected(Video video){android.content.Context context=policyContext;if(context==null||availabilityRank(video)>0)return false;String selection=androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("preview_version_choice:"+choiceKey(video),"");return selection.equals(video.getId()+"|"+com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(video.getFileUri()));}
-    public static Video resolve(android.content.Context context,Video requested){initialize(context);PreviewLibraryLoader.Snapshot snapshot=PreviewLibraryLoader.memoryCache();if(snapshot==null)return requested;List<Video> variants=new ArrayList<>();for(Entry entry:snapshot.technical)if(entry.media instanceof Video&&choiceKey((Video)entry.media).equals(choiceKey(requested)))variants.add((Video)entry.media);if(variants.isEmpty())return requested;Video chosen=variants.stream().filter(PreviewVariants::manuallySelected).findFirst().orElseGet(()->Collections.min(variants,BEST_FIRST));restoreTitleResume(variants,chosen);return chosen;}
+    public static Video resolve(android.content.Context context,Video requested){initialize(context);PreviewLibraryLoader.Snapshot snapshot=PreviewLibraryLoader.memoryCache();if(snapshot==null)return requested;List<Video> variants=new ArrayList<>();for(Entry entry:snapshot.technical)if(entry.media instanceof Video&&choiceKey((Video)entry.media).equals(choiceKey(requested)))variants.add((Video)entry.media);if(variants.isEmpty())return requested;return choose(context,variants);}
+    /** Same persisted selection policy for native Details lists and snapshot entry routes. */
+    public static Video choose(android.content.Context context,List<? extends Video> variants){
+        initialize(context);if(variants.isEmpty())return null;
+        PreviewLibraryLoader.Snapshot snapshot=PreviewLibraryLoader.memoryCache();
+        if(snapshot!=null)for(Video video:variants)for(Entry entry:snapshot.technical){
+            if(!(entry.media instanceof Video))continue;Video measured=(Video)entry.media;
+            if(video.getId()==measured.getId()&&video.getSize()==entry.bytes&&Objects.equals(video.getFilePath(),measured.getFilePath())){
+                if(measured.getMetadata()!=null)video.setMetadata(measured.getMetadata());
+                video.setPreviewDynamicRange(measured.getPreviewDynamicRange());video.setPreviewDolbyVision(measured.getPreviewDolbyVisionProfile(),measured.getPreviewDolbyVisionCompatibility());break;
+            }
+        }
+        Video chosen=null;for(Video candidate:variants)if(manuallySelected(candidate)){chosen=candidate;break;}if(chosen==null)chosen=Collections.min(variants,BEST_FIRST);restoreTitleResume(variants,chosen);return chosen;
+    }
     public static String label(Video video){
         int w=video.getMeasuredWidth(),h=video.getMeasuredHeight();
         String resolution=w>0&&h>0?w+" × "+h:"Resolution unavailable";

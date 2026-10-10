@@ -37,8 +37,9 @@ public class DynamicRangeMetadataTest {
         VideoMetadata metadata=new VideoMetadata();
         metadata.setData(parcelMetadata(Map.of(IMediaPlayer.METADATA_KEY_NB_VIDEO_TRACK,1,
             base+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_COLOR_TRC,16,
-            base+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE,8)));
-        assertEquals(8,metadata.getVideoTrack().dolbyVisionProfile);
+            base+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE,8,
+            base+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DOVI_COMPAT,1)));
+        assertEquals(8,metadata.getVideoTrack().dolbyVisionProfile);assertEquals(1,metadata.getVideoTrack().dolbyVisionCompatibility);
         assertEquals("Dolby Vision",metadata.getVideoTrack().dynamicRange());
     }
     @Test public void backgroundRetrieverUsesItsOwnKeysAndRetainsHdr10Plus() {

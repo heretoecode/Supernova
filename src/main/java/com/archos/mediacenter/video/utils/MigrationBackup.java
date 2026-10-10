@@ -15,11 +15,11 @@ public final class MigrationBackup {
  private static final Set<String> CACHES=new HashSet<>(Arrays.asList("preview_people","preview_tv_trailers","preview_discovery","preview_title_logos","player","sftp_host_trust","provider-discovery-ownership-v1","preview-technical-v1"));
  public static String settings(Context c)throws JSONException{
   JSONObject result=new JSONObject();File folder=new File(c.getApplicationInfo().dataDir,"shared_prefs");File[] files=folder.listFiles();
-  if(files!=null)for(File file:files){String name=file.getName();if(!name.endsWith(".xml"))continue;name=name.substring(0,name.length()-4);if(!name.matches("[A-Za-z0-9_.-]+")||!BackupPrivacy.named(name)||name.equals(c.getPackageName()+"_preferences"))continue;result.put(name,new JSONObject(SettingsBackup.encodePortable(c.getSharedPreferences(name,0),true)));}
+  if(files!=null)for(File file:files){String name=file.getName();if(!name.endsWith(".xml"))continue;name=name.substring(0,name.length()-4);if(!name.matches("[A-Za-z0-9_.-]+")||!BackupPrivacy.named(name)||name.equals(c.getPackageName()+"_preferences"))continue;result.put(name,new JSONObject(SettingsBackup.encodePortable(c.getSharedPreferences(name,0),name)));}
   return result.toString();
  }
  public static Map<String,String> validateSettings(Context c,String json)throws JSONException{
-  Map<String,String> result=new LinkedHashMap<>();JSONObject root=new JSONObject(json);Iterator<String> names=root.keys();while(names.hasNext()){String name=names.next();if(!name.matches("[A-Za-z0-9_.-]+")||!BackupPrivacy.named(name))throw new JSONException("Unsupported preference file");String data=root.getJSONObject(name).toString();SettingsBackup.decodePortable(c.getSharedPreferences(name,0),data,true);result.put(name,data);}return result;
+  Map<String,String> result=new LinkedHashMap<>();JSONObject root=new JSONObject(json);Iterator<String> names=root.keys();while(names.hasNext()){String name=names.next();if(!name.matches("[A-Za-z0-9_.-]+")||!BackupPrivacy.named(name))throw new JSONException("Unsupported preference file");String data=root.getJSONObject(name).toString();SettingsBackup.decodePortable(c.getSharedPreferences(name,0),data,name);result.put(name,data);}return result;
  }
  /** Gather before taking the media-database snapshot lock, to avoid provider re-entry deadlocks. */
  public static Set<String> reproducibleFiles(Context c)throws IOException{

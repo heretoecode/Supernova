@@ -37,4 +37,25 @@ public class SupernovaWorkspaceUiTest {
  @Test public void myProvidersKeepsColourWhileActionMarksStayMonochrome(){
   ImageView icon=new ImageView(RuntimeEnvironment.getApplication());PreviewProviderIcons.bind(icon,null,0,"provider.choice");assertNull(icon.getColorFilter());assertNotNull(icon.getDrawable());PreviewProviderIcons.bind(icon,null,0,"details.related");assertNotNull(icon.getColorFilter());
  }
+ @Test public void settingsExpansionKeepsParentThenDownEntersChildAndRightEntersOptions()throws Exception{
+  var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+  try{host.get().setTheme(com.archos.mediacenter.video.R.style.MyLeanbackTheme);PreviewSettingsEntryTest.NestedSettings settings=new PreviewSettingsEntryTest.NestedSettings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,settings).commitNow();View root=settings.requireView();PreviewPagesTest.layout(root);
+   View playback=root.findViewWithTag("semantic:settings:category:Playback");playback.requestFocus();playback.performClick();PreviewPagesTest.layout(root);assertSame(playback,root.findFocus());assertNotNull(root.findViewWithTag("semantic:settings:section:first"));assertNotNull(root.findViewWithTag("semantic:settings:category:About"));
+   root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));View child=root.findViewWithTag("semantic:settings:section:first");assertSame(child,root.findFocus());
+   root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));PreviewPagesTest.layout(root);assertTrue(settings.getListView().hasFocus());PreviewPagesTest.capture(root,"0135-settings-expanded");
+  }finally{host.pause().stop().destroy();}
+ }
+ @Test public void libraryHealthEmptyStateAndSourceOnlyProblemAreDistinct()throws Exception{
+  Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
+  var host=Robolectric.buildActivity(LibraryHealthActivity.class).setup().visible();
+  try{LibraryHealthActivity.Workspace workspace=host.get().new Workspace();host.get().setContentView(workspace);workspace.update(new PreviewLibraryLoader.Snapshot());PreviewPagesTest.layout(workspace);assertNotNull(PreviewPagesTest.findText(workspace,"Your library is healthy\n\nNo issues need your attention."));assertEquals(5,workspace.categoryRows.size());PreviewPagesTest.capture(workspace,"0135-library-health-empty");
+   host.get().getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0).edit().putLong("offline:smb://nas/Movies",42).commit();workspace.update(new PreviewLibraryLoader.Snapshot());PreviewPagesTest.layout(workspace);assertNull(PreviewPagesTest.findText(workspace,"Your library is healthy\n\nNo issues need your attention."));workspace.categoryRows.get(4).requestFocus();workspace.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertTrue(workspace.issues.hasFocus());workspace.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertEquals("Scan Library",((TextView)workspace.findFocus()).getText().toString());workspace.update(new PreviewLibraryLoader.Snapshot());assertEquals("Scan Library",((TextView)workspace.findFocus()).getText().toString());workspace.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertTrue(workspace.issues.hasFocus());PreviewPagesTest.layout(workspace);PreviewPagesTest.capture(workspace,"0135-library-health-source-problem");
+  }finally{host.pause().stop().destroy();}
+ }
+ @Test public void customWizardKeepsDeterministicEdgesAndCentreRestoration()throws Exception{
+  Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
+  var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();
+  try{View root=host.get().getWindow().getDecorView();PreviewPagesTest.layout(root);View step=root.findViewWithTag("wizard.step.0");step.requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));View option=root.findFocus();assertEquals("wizard.option.0.1",option.getTag());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(option,root.findFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(step,root.findFocus());
+  }finally{host.pause().stop().destroy();}
+ }
 }

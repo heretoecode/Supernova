@@ -150,8 +150,19 @@ public final class UniversalFileBrowser extends LinearLayout {
         suppliedDock=dock;current=uri;
         if(dock.getParent() instanceof ViewGroup)((ViewGroup)dock.getParent()).removeView(dock);
         centre.removeView(itemScroll);centre.addView(dock,new LayoutParams(-1,0,1));
-        toolbar.setVisibility(GONE);breadcrumbs();
+        toolbar.setVisibility(GONE);crumbs.removeAllViews();
         TextView provider=location(uri.getHost()==null?"Provider":uri.getHost(),()->{});provider.setOnClickListener(view->dock.requestFocus());leftAnchor=provider;
+    }
+    /** API-backed ancestry uses the same carousel, with provider callbacks rather than a transport engine. */
+    public void providerPath(List<String> labels,List<Runnable> navigate) {
+        if(suppliedDock==null||labels.size()!=navigate.size())throw new IllegalArgumentException("Provider ancestry mismatch");
+        crumbs.removeAllViews();
+        for(int n=0;n<labels.size();n++){
+            TextView segment=action(labels.get(n),navigate.get(n));segment.setSingleLine(true);segment.setTag("provider.crumb."+n);
+            crumbs.addView(segment,new LayoutParams(-2,dp(48)));
+            if(n<labels.size()-1)crumbs.addView(SharedThreePanel.text(getContext()," › ",18));
+        }
+        breadcrumbScroll.post(()->breadcrumbScroll.fullScroll(FOCUS_RIGHT));
     }
     public void focusVideo(Video video){
         facts.setVisibility(GONE);heading.setText(video.getName());information.setText(video.getFilenameNonCryptic());

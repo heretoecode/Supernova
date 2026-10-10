@@ -128,6 +128,10 @@ public final class SafeBackup {
                 swaps.add(new Swap(new File(dest+"-wal"),null,token));
                 swaps.add(new Swap(new File(dest+"-shm"),null,token));
             }
+            // Device-local provider authentication is not portable. Include removal in the
+            // same durable journal so a failed restore brings the existing envelope back.
+            File providerToken=new File(c.getNoBackupFilesDir(),"putio-oauth-v1.bin");
+            swaps.add(new Swap(providerToken,null,token));swaps.add(new Swap(new File(providerToken+".bak"),null,token));
             swaps.add(new Swap(MediaScraper.getPosterDirectory(c),new File(stage,"scraper_posters"),token));
             swaps.add(new Swap(MediaScraper.getBackdropDirectory(c),new File(stage,"scraper_backdrops"),token));
             swaps.add(new Swap(MediaScraper.getPictureDirectory(c),new File(stage,"scraper_pictures"),token));
@@ -144,7 +148,7 @@ public final class SafeBackup {
                 org.json.JSONObject journal=RestoreJournal.prepare(c,recoveryFiles,originalSettings,recoveryNamed);
                 try {
                     for(Swap swap:swaps) swap.apply();
-                    for(Map.Entry<String,String> entry:restoredNamed.entrySet())if(!SettingsBackup.decodePortable(c.getSharedPreferences(entry.getKey(),0),entry.getValue(),true).commit())throw new IOException("Cannot restore account configuration");
+                    for(Map.Entry<String,String> entry:restoredNamed.entrySet())if(!SettingsBackup.decodePortable(c.getSharedPreferences(entry.getKey(),0),entry.getValue(),entry.getKey()).commit())throw new IOException("Cannot restore account configuration");
                     File settings=new File(stage,"settings.json");
                     if(settings.isFile()&&!SettingsBackup.decodePortable(PreferenceManager.getDefaultSharedPreferences(c),read(settings),false).commit())
                         throw new IOException("Cannot save restored settings");

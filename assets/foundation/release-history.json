@@ -11,11 +11,13 @@
     "version_code": 135,
     "kind": "Development / QA \u2014 unreleased",
     "notes": [
-      "Shared Settings panels and a single file browser across Home and Network & Files.",
-      "Review library selections before scanning; unavailable storage retains library and viewing history.",
-      "Create and edit one custom library page with a live indexed-media preview.",
-      "Updated playback controls, segment skipping and viewing coverage.",
-      "Portable backups exclude authentication data and validate before restore."
+      "Shared three-panel Settings and Network & Files, plus one compact Home and TV file browser with complete breadcrumbs and persisted controls.",
+      "Staged recursive library selection and exclusions, atomic Apply & Scan, and five-category Library Health that retains unavailable records and viewing progress.",
+      "Home row/artwork/focus refinements, symmetric Movies/TV controls, local indexed Search, compact Details/Cast/Crew and one five-step custom Library Page.",
+      "Four-action playback HUD, immediate Restart, five-second Up Next, real viewed-coverage threshold and persisted manual versions with native technical badges.",
+      "Safe segment policies with verified movie outro/post-credit boundaries; existing subtitle/audio controls and scan engine retained.",
+      "Nonsecret format 1.0 backup instructions, staged validation/rollback and reauthentication; bounded redacted diagnostics and coloured My Providers.",
+      "Development QA candidate: physical Shield playback/navigation/storage and signed 0.134 upgrade validation remain required before final release."
     ]
   },
   "history": [

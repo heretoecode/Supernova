@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "release_ready": false,
+  "qa_candidate": true,
+  "branch": "codex/supernova-0.135",
+  "signed_qa_workflow": ".github/workflows/supernova135-qa.yml",
+  "gates": {
+    "identity_source": true,
+    "first_native_unsigned_conformance": true,
+    "latest_candidate_full_conformance": false,
+    "existing_certificate_signed_qa": false,
+    "physical_shield": false,
+    "signed_0134_upgrade": false,
+    "final_release_approved": false
+  },
+  "blockers": [
+    "Latest follow-up candidate requires complete Java/lint/Python and pinned native CI results.",
+    "GitHub environment supernova-foundation-signing permits only codex/foundation-release; administrator must add codex/supernova-0.135 before the new QA job can use existing secrets.",
+    "No physical NVIDIA Shield or connected representative storage/display/media is available in this environment.",
+    "Signed 0.134 to 0.135 upgrade, real playback/subtitles/HDR/audio and hardware focus/animation/storage checks remain required.",
+    "Final release and main merge require the user's approval."
+  ],
+  "not_claimed": [
+    "New signing credentials or assets",
+    "Fresh binary digest verification of the blocked historical artifact download",
+    "Credentialed provider coverage or quotas",
+    "Frame-only HDR10+ metadata coverage or complete Dolby Vision hardware compatibility",
+    "A reproduced root cause for an unspecified incomplete-import report"
+  ]
+}

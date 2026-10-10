@@ -1,0 +1,60 @@
+{
+  "checkpoint": "CP-06",
+  "application_checkpoint": "1039278b564a91b0b6dd63b02456c454259372da",
+  "java_command": "testNoamazonReleaseUnitTest lintNoamazonRelease -PfoundationVerify -Puniversal -x :MediaLib:ndkBuild -x :FileCoreLibrary:ndkBuild --no-daemon --max-workers=4",
+  "tests": {
+    "tests": 469,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classes": 120,
+  "build_result": "BUILD SUCCESSFUL",
+  "elapsed": "11m 3s",
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 1466
+  },
+  "gradle_log_sha256": "3bcf0cedae79be8b685bacd337c157c7bcbcb14c6cc8ac6f9b77b288b5e37f92",
+  "native_build_omitted": true,
+  "apk_built": false,
+  "signing_performed": false,
+  "physical_shield_tests_performed": false,
+  "python_checkpoint11": {
+    "passed": 36,
+    "elapsed_seconds": 4.728
+  },
+  "targeted_checkpoint15": {
+    "tests": 17,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "remote_native_run": {
+    "id": 38028207604,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38028207604",
+    "state_at_checkpoint": "completed",
+    "successful_build_claimed": true,
+    "conclusion": "success",
+    "source_commit": "1039278b564a91b0b6dd63b02456c454259372da",
+    "unsigned_apk_built": true,
+    "signed_apk_built": false,
+    "java_tests": 469,
+    "python_tests": 36,
+    "gradle_elapsed": "15m 25s",
+    "full_native_build": true,
+    "evidence_artifact": {
+      "id": 11661188596,
+      "name": "supernova-0135-unsigned-evidence",
+      "api_digest": "sha256:97ee7b58ceeaa29ab4a7bc818f3fa6eb736742d6ad5f3fed361ac73e8a11fa4e",
+      "bytes": 4440631,
+      "fresh_artifact_digest_verified_locally": false
+    }
+  },
+  "follow_up_python_checkpoint28": {
+    "tests": 49,
+    "failures": 0,
+    "elapsed_seconds": 15.042
+  }
+}

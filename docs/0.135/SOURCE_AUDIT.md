@@ -1,0 +1,22 @@
+# 0.135 metadata and segment source audit
+
+Audit performed 2026-10-10. Existing integrations remain the source of metadata; no API credentials, new ratings provider, remote discovery index or user-account data was invented. Public sample HTTP requests below used provider documentation examples, not the user's library or credentials.
+
+## Native index and artwork
+
+The pinned MediaLib schema supplies original_title_movie/original_title_show, formatted movie/show/episode people, studios and language fields. Search reads these actual tables and views; details shows supported original names. Alternative translations are not presented as a separately complete alias catalogue. Country filtering is omitted from the custom page because a reliable native country index has not been demonstrated. Language, studio and collection filters use existing indexed fields. The real provider/SQLite search integration test must pass before the original-title requirement is counted as automatically checked.
+
+TMDb ingestion, locale/title selection (`TmdbTitleLanguage`), existing image URLs, matching persistence, provider-region catalogue and caches are retained. The implementation adds no speculative ratings aggregation and no new provider-key or quota assumptions. Existing `PreviewMoviePage` cache/asynchronous artwork paths, cache fingerprint invalidation and bounded diagnostic artwork trace remain in use. Original source/licence notices remain packaged offline. Credentialed production TMDb/provider/Trakt/OpenSubtitles availability and quotas cannot be established without the user's configured accounts and representative media; physical QA remains explicit. Source-code and mocked/provider-contract tests do not establish a current account entitlement or service SLA.
+
+File badges use native technical metadata rather than filename hints. The AVOS bridge exports raw Dolby Vision source profile, verified base-layer compatibility and HDR10+ coded side data; decoder and display capability checks use Android's real APIs. The correct retriever transfer key is independently tested. Frame-only HDR10+ SEI and physical Shield/display/audio negotiation remain unverified. Profile-8 base-layer HDR10/HLG fallback is used only for the corresponding verified compatibility IDs.
+
+## IntroDB feasibility and rights
+
+- [introdb.app API documentation](https://introdb.app/docs/api): HTTP 200; specifies TV IMDb/season/episode and movie IMDb plus `is_movie=true`. GET segments requires no new API key in this documented contract.
+- [introdb.app movie documentation](https://introdb.app/docs/movies): HTTP 200; retrieved document SHA-256 `a5dc9006efd784ff7ddfaa8aadc2963ed64c01a75329afbb44ae7b87c537c236`.
+- [introdb.app terms](https://introdb.app/docs/terms): HTTP 200; SHA-256 `67816e9d58673c35dbc0a28c46744f03dacc8ce39a9aff47a0766d5f2d97a7a1`. Published terms permit media-player/personal/commercial reasonable use, prohibit bulk/resale abuse, and appreciate attribution without making it mandatory. This is the observed documentation, not a claim of a commercial account agreement.
+- Public documented movie sample `tt0371746`, `is_movie=true`: HTTP 200; 565 bytes, SHA-256 `c5522e1ce5128e5aed380abf898c89dc2787ad8cbf39e857930e069330ea98ef`. Fields include `intro`, `recap`, `outro`, `post_credits`. Reported boundaries can contradict one another; no actual file alignment is asserted.
+- Public documented TV sample `tt0903747`, S1E1: HTTP 200; 281 bytes, SHA-256 `6beb1d86648d983ee0066bc9c2ee448287f39cd88b134ddfa09d0f134b8f8ffa`. Intro/recap were null and outro was present; this proves sample response shape, not complete coverage.
+- The inherited `theintrodb.org` documentation/terms returned HTTP 403 in this execution environment. Its existing adapter is retained; current access, terms and coverage are unverified. No substitute credentials or undocumented endpoint were added.
+
+The app adapter now queries movies with verified IMDb identifiers and parses post-credit boundaries. Movie contribution is restricted to the approved outro behaviour. A valid post-credit scene trims a skip before the scene; contradictory/overlapping bounds fall back to playback. Smart/Prompt/Auto policies require concrete confidence and safe endpoints; uncertain Preview segments play normally. No claim is made that a provider detects every segment or supplies every library title. `IntroDbMovieContractTest` exercises actual adapter parsing and protection; `SegmentSkippingPolicyTest` covers policy decisions.

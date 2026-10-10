@@ -44,4 +44,17 @@ public class BackupPrivacyTest {
   ByteArrayOutputStream archive=new ByteArrayOutputStream();try(ZipOutputStream zip=new ZipOutputStream(archive)){zip.putNextEntry(new ZipEntry("credentials_db"));zip.write("planted".getBytes(StandardCharsets.UTF_8));zip.closeEntry();}
   try{SafeBackup.stage(c,new ByteArrayInputStream(archive.toByteArray()));fail();}catch(Exception expected){}assertArrayEquals(new byte[]{42},Files.readAllBytes(live.toPath()));live.delete();
  }
+ @Test public void portableSourceSchemasRejectUnknownSecretContainersAndRetainPolicyFlag()throws Exception{
+  Context c=RuntimeEnvironment.getApplication();SharedPreferences source=c.getSharedPreferences("named-schema-test",0);
+  source.edit().putString("opaque_account_blob","planted-secret").putString("name:10:20","Film folder").putString("root:10:20:source","https://user:planted-secret@webdav.put.io/Films").commit();
+  String data=SettingsBackup.encodePortable(source,"putio-library-selection-v1");assertFalse(data.contains("planted"));assertFalse(data.contains("opaque_account_blob"));assertTrue(data.contains("Film folder"));
+  String hostile=SettingsBackup.encode(source);try{SettingsBackup.decodePortable(source,hostile,"putio-library-selection-v1");fail();}catch(JSONException expected){}
+  assertTrue(BackupPrivacy.setting("supernova_library_policy_initialized"));assertFalse(BackupPrivacy.setting("preview_source_kind:smb://user:password@nas/Films"));
+ }
+ @Test public void embeddedAuthenticationFieldsAreRemovedFromPortableStructuredSettings()throws Exception{
+  Context c=RuntimeEnvironment.getApplication();SharedPreferences source=c.getSharedPreferences("structured-privacy-test",0);
+  source.edit().putString("preview_home_rows41","[{\"name\":\"Saved row\",\"access_token\":\"planted-token\",\"nested\":{\"password\":\"planted-password\"}}]").commit();
+  String portable=SettingsBackup.encodePortable(source,false);assertTrue(portable.contains("Saved row"));assertFalse(portable.contains("planted"));
+  try{SettingsBackup.decodePortable(source,SettingsBackup.encode(source),false);fail();}catch(JSONException expected){}
+ }
 }

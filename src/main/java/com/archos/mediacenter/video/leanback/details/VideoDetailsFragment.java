@@ -1138,10 +1138,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     mVideo = video;
                 }
             }while (cursor.moveToNext());
-            if(!mSelectCurrentVideo&&PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
                 Video history=mVideo;
                 Collections.sort(mVideoList,com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
-                mVideo=mVideoList.get(0);
+                mVideo=com.archos.mediacenter.video.leanback.PreviewVariants.choose(requireContext(),mVideoList);
                 if(history!=null&&history.getResumeMs()>0){mVideo.setAutomaticResumeMs(history.getResumeMs());mVideo.setRemoteResumeMs(history.getRemoteResumeMs());}
             }else Collections.sort(mVideoList, new SortByFavoriteSources(oldVideoList));
 

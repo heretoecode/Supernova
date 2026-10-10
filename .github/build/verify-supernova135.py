@@ -17,7 +17,7 @@ LEGACY = ('browser.SearchProviderVideocommunity', 'com.archos.media.videocommuni
 def verified_baseline_record(video, entry):
     if entry.get('version')!='0.134' or entry.get('recorded_binary_verification')!='docs/foundation/UI_CORRECTED_SIGNED_APK_VERIFICATION.json':return False
     proof=json.loads((video/entry['recorded_binary_verification']).read_text())
-    return proof.get('signature_verified') is True and proof.get('apk_zip_crc_verified') is True and proof.get('application_id')=='app.supernova.player' and proof.get('version_code')==134 and proof.get('version_name')=='0.134' and proof.get('certificate_sha256')=='79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e' and len(entry.get('apks',[]))==1 and entry['apks'][0]['sha256']==proof.get('apk_sha256') and entry.get('source_sha')==proof.get('source_commit')
+    return proof.get('apk_sha256')=='8d159d9ffc70d5ffbe335c0caa280fdf742909911581c85d55865d906ff58e29' and proof.get('source_commit')=='cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f' and proof.get('signature_verified') is True and proof.get('apk_zip_crc_verified') is True and proof.get('application_id')=='app.supernova.player' and proof.get('version_code')==134 and proof.get('version_name')=='0.134' and proof.get('certificate_sha256')=='79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e' and len(entry.get('apks',[]))==1 and entry['apks'][0]['sha256']==proof.get('apk_sha256') and entry.get('source_sha')==proof.get('source_commit')
 
 def sources(root, ready=False):
     video = root / 'Video'
@@ -33,7 +33,7 @@ def sources(root, ready=False):
     if [x['version'] for x in reversed(history['history'])] != expected or history['current']['version'] != f'0.{len(expected)+1}' or history['current']['version_code'] != len(expected)+1:
         raise ValueError('Literal Foundation version counter is inconsistent')
     for entry in history['history']:
-        if not (entry.get('archive_digest_verified') or verified_baseline_record(video,entry)) or not entry.get('apks') or not all(re.fullmatch('[0-9a-f]{64}',a['sha256']) for a in entry['apks']):
+        if not (entry.get('archive_digest_verified') is True or verified_baseline_record(video,entry)) or not entry.get('apks') or not all(re.fullmatch('[0-9a-f]{64}',a['sha256']) for a in entry['apks']):
             raise ValueError('Historical APK binary evidence is incomplete')
     licences=json.loads((video/'assets/foundation/licences.json').read_text())
     for entry in licences['components']:

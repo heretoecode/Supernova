@@ -188,6 +188,7 @@ public final class BackupPrivacy {
             "subtitles_hide_default",
             "supernova_library_policy_initialized",
             "supernova_library_roots",
+            "supernova_library_policy_initialized",
             "supernova_library_exclusions",
             "supernova_browser_grid",
             "supernova_browser_sort",
@@ -218,14 +219,35 @@ public final class BackupPrivacy {
             "version"));
     private static final Set<String> NAMED=new HashSet<>(Arrays.asList("putio-library-selection-v1","provider-discovery-ownership-v1","supernova_library_health_v1"));
     public static boolean named(String name){return NAMED.contains(name);}
+    public static boolean namedSetting(String name,String key){
+        if(secretKey(key)||!key.equals(cleanText(key)))return false;
+        if("putio-library-selection-v1".equals(name))return key.equals("account")||key.matches("(name|kind|sync|status):[0-9]+:[0-9]+")||key.matches("root:[0-9]+:[0-9]+:(source|path)");
+        if("provider-discovery-ownership-v1".equals(name))return key.matches("putio(?:-retired)?:[0-9]+:[a-f0-9]+");
+        if("supernova_library_health_v1".equals(name))return key.matches("(media|incorrect):[0-9]+")||key.startsWith("offline:")||key.startsWith("problem:");
+        return false;
+    }
     public static boolean secretKey(String key){return key.toLowerCase(Locale.ROOT).matches(".*(password|passwd|credential|token|cookie|authorization|secret|session|api.?key|access.?key).* ".trim());}
     public static boolean setting(String key){
-        if(secretKey(key)||Arrays.asList("try_new_ui","uimode","uimode_leanback","theme","username","user_id","account","account_status","trakt_signin","network_bookmarks").contains(key))return false;
+        if(!key.equals(cleanText(key))||secretKey(key)||Arrays.asList("try_new_ui","uimode","uimode_leanback","theme","username","user_id","account","account_status","trakt_signin","network_bookmarks").contains(key))return false;
         return CHOICES.contains(key)||key.matches("streaming_(providers|preferred)_[A-Z]{2}")||key.startsWith("preview_columns_")||key.startsWith("preview_source_kind:")||key.startsWith("preview_cw_dismiss:")||key.startsWith("preview_version_choice:")||key.startsWith("preview_library_")||key.startsWith("supernova_custom_library_")||key.startsWith("preview_journey41:")||key.startsWith("supernova_viewed_")||key.startsWith("supernova_segment_");
     }
     public static Object clean(Object value){
-        if(value instanceof Set){Set<String> result=new LinkedHashSet<>();for(Object item:(Set<?>)value)result.add(cleanText(String.valueOf(item)));return result;}
-        return value instanceof String?cleanText((String)value):value;
+        if(value instanceof Set){Set<String> result=new LinkedHashSet<>();for(Object item:(Set<?>)value)result.add((String)clean(String.valueOf(item)));return result;}
+        if(!(value instanceof String))return value;
+        String text=(String)value,safe=cleanText(text);
+        try {
+            Object json=text.trim().startsWith("{")?new org.json.JSONObject(safe):text.trim().startsWith("[")?new org.json.JSONArray(safe):null;
+            if(json!=null&&cleanJson(json))return json.toString();
+        }catch(org.json.JSONException plainText){/* Ordinary labels are not JSON documents. */}
+        return safe;
+    }
+    private static boolean cleanJson(Object json)throws org.json.JSONException {
+        boolean changed=false;
+        if(json instanceof org.json.JSONObject){org.json.JSONObject object=(org.json.JSONObject)json;List<String> remove=new ArrayList<>();
+            for(Iterator<String> keys=object.keys();keys.hasNext();){String key=keys.next();if(secretKey(key)||!key.equals(cleanText(key)))remove.add(key);else changed|=cleanJson(object.get(key));}
+            for(String key:remove)object.remove(key);changed|=!remove.isEmpty();
+        }else if(json instanceof org.json.JSONArray){org.json.JSONArray array=(org.json.JSONArray)json;for(int n=0;n<array.length();n++)changed|=cleanJson(array.get(n));}
+        return changed;
     }
     public static String cleanText(String value){
         if(value==null)return null;

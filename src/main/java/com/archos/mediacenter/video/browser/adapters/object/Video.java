@@ -32,6 +32,10 @@ import java.io.Serializable;
  */
 public class Video extends Base implements Serializable {
     private String previewDynamicRange="";
+    private int previewDolbyVisionProfile,previewDolbyVisionCompatibility;
+    public int getPreviewDolbyVisionProfile(){return previewDolbyVisionProfile;}
+    public int getPreviewDolbyVisionCompatibility(){return previewDolbyVisionCompatibility;}
+    public void setPreviewDolbyVision(int profile,int compatibility){previewDolbyVisionProfile=profile;previewDolbyVisionCompatibility=compatibility;}
     public String getPreviewDynamicRange(){return previewDynamicRange==null?"":previewDynamicRange;}
     public void setPreviewDynamicRange(String range){previewDynamicRange=range;}
 

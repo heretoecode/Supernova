@@ -12,29 +12,31 @@ index b08f7b9..4062536 100644
  
      // for color metadata (values from FFmpeg AVCOL_* enums)
 diff --git a/Source/avos_mp.c b/Source/avos_mp.c
-index ba912d8..f3d85f2 100644
+index ba912d8..afe4c0e 100644
 --- a/Source/avos_mp.c
 +++ b/Source/avos_mp.c
-@@ -297,6 +297,8 @@ int avos_mp_fillmetadata(avos_mp_t *mp, int type, uint64_t size, ID3_TAG *id3_ta
+@@ -297,6 +297,9 @@ int avos_mp_fillmetadata(avos_mp_t *mp, int type, uint64_t size, ID3_TAG *id3_ta
  		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_S3DMODE, videop->stereo_mode);
  		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_DECODER, decoder);
  		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_COLOR_TRC, videop->color_trc);
 +		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_DOVI_PROFILE, videop->dv_source_profile);
 +		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_HDR10_PLUS, videop->hdr10_plus);
++        ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_DOVI_COMPAT, videop->dv_bl_signal_compatibility_id);
  	}
  	if (av && type == TYPE_AUD)
  		av->as_max = 1;
 diff --git a/Source/avos_mr.c b/Source/avos_mr.c
-index 7a92c14..1539c01 100644
+index 7a92c14..5937897 100644
 --- a/Source/avos_mr.c
 +++ b/Source/avos_mr.c
-@@ -252,6 +252,9 @@ static int avos_mr_fillmetadata(avos_mr_t *mr)
+@@ -252,6 +252,10 @@ static int avos_mr_fillmetadata(avos_mr_t *mr)
  			ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_FPS_SCALE, videop->scale);
  
  		ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_S3D_MODE, videop->stereo_mode);
 +		ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_COLOR_TRC, videop->color_trc);
 +		ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_DOVI_PROFILE, videop->dv_source_profile);
 +		ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_HDR10_PLUS, videop->hdr10_plus);
++        ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_DOVI_COMPAT, videop->dv_bl_signal_compatibility_id);
  	}
  	if (mr->type == TYPE_AUD)
  		av->as_max = 1;
@@ -57,25 +59,26 @@ index 73e54ae..5eabc83 100644
  				switch( video->format ) {
  				case VIDEO_FORMAT_MPEG:
 diff --git a/public/avos_mp_metadata.h b/public/avos_mp_metadata.h
-index 08c45dd..6d4dc70 100644
+index 08c45dd..8765e9a 100644
 --- a/public/avos_mp_metadata.h
 +++ b/public/avos_mp_metadata.h
-@@ -88,7 +88,9 @@ enum {
+@@ -88,7 +88,10 @@ enum {
  	AVOS_MP_METADATA_VIDEO_TRACK_FPS_RATE		= 12,
  	AVOS_MP_METADATA_VIDEO_TRACK_FPS_SCALE		= 13,
  	AVOS_MP_METADATA_VIDEO_TRACK_COLOR_TRC		= 14,
 -	AVOS_MP_METADATA_VIDEO_TRACK_MAX		= 15,
 +	AVOS_MP_METADATA_VIDEO_TRACK_DOVI_PROFILE = 15,
 +	AVOS_MP_METADATA_VIDEO_TRACK_HDR10_PLUS = 16,
-+	AVOS_MP_METADATA_VIDEO_TRACK_MAX = 17,
++    AVOS_MP_METADATA_VIDEO_TRACK_DOVI_COMPAT = 17,
++	AVOS_MP_METADATA_VIDEO_TRACK_MAX = 18,
  
  	AVOS_MP_METADATA_AUDIO_TRACK			= 20000,
  	// handle multiple audio track attributes:
 diff --git a/public/avos_mr_metadata.h b/public/avos_mr_metadata.h
-index 04f5fa5..39e3e90 100644
+index 04f5fa5..7619b20 100644
 --- a/public/avos_mr_metadata.h
 +++ b/public/avos_mr_metadata.h
-@@ -79,7 +79,10 @@ enum {
+@@ -79,7 +79,11 @@ enum {
  	AVOS_MR_METADATA_VIDEO_TRACK_S3D_MODE		= 10,
  	AVOS_MR_METADATA_VIDEO_TRACK_FPS_RATE		= 11,
  	AVOS_MR_METADATA_VIDEO_TRACK_FPS_SCALE		= 12,
@@ -83,7 +86,8 @@ index 04f5fa5..39e3e90 100644
 +	AVOS_MR_METADATA_VIDEO_TRACK_COLOR_TRC = 13,
 +	AVOS_MR_METADATA_VIDEO_TRACK_DOVI_PROFILE = 14,
 +	AVOS_MR_METADATA_VIDEO_TRACK_HDR10_PLUS = 15,
-+	AVOS_MR_METADATA_VIDEO_TRACK_MAX = 16,
++    AVOS_MR_METADATA_VIDEO_TRACK_DOVI_COMPAT = 16,
++	AVOS_MR_METADATA_VIDEO_TRACK_MAX = 17,
  };
  
  enum {

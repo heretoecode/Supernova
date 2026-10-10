@@ -1,19 +1,17 @@
-name: Supernova 0.135 unsigned conformance
+name: Supernova 0.135 signed QA
 on:
-  push:
-    branches: [codex/supernova-0.135]
-    paths-ignore: ['docs/**', '**/*.md']
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: supernova-0135-conformance-${{ github.ref }}
-  cancel-in-progress: true
+  group: supernova-0135-signing
+  cancel-in-progress: false
 jobs:
-  conformance:
+  qa:
     if: github.ref == 'refs/heads/codex/supernova-0.135'
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    environment: supernova-foundation-signing
     env:
       SUPERNOVA_QA_SOURCE: ${{ github.sha }}
     defaults:
@@ -103,17 +101,70 @@ jobs:
             --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" \
             --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
             --output "$RUNNER_TEMP/supernova-foundation-conformance.json"
-      - name: Upload public unsigned conformance and UI evidence
+      - name: Sign the exact tested APK with the existing upgrade certificate
+        env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
+          SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
+          SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
+          SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}
+          SUPERNOVA_KEY_PASSWORD: ${{ secrets.SUPERNOVA_KEY_PASSWORD }}
+          SUPERNOVA_CERT_SHA256: 79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e
+        run: |
+          set +x
+          set -euo pipefail
+          signing_dir="$RUNNER_TEMP/supernova-foundation-signing"
+          signing_log="$RUNNER_TEMP/supernova-0135-signing.log"
+          trap 'rm -rf -- "$signing_dir"; rm -f -- "$signing_log"' EXIT
+          mapfile -t unsigned_apks < <(find nova/Video/build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
+          test "${#unsigned_apks[@]}" -eq 1
+          unsigned_apk="${unsigned_apks[0]}"
+          python3 source/.github/signing/supernova135_qa_signing.py \
+            --evidence "$RUNNER_TEMP/supernova-foundation-conformance.json" --apk "$unsigned_apk"
+          unset SUPERNOVA_P12_BASE64
+          build_tools="$ANDROID_HOME/build-tools/36.0.0"
+          "$build_tools/zipalign" -c -P 16 4 "$unsigned_apk"
+          if ! "$build_tools/apksigner" sign --ks "$signing_dir/foundation.p12" --ks-type PKCS12 \
+            --ks-pass env:SUPERNOVA_STORE_PASSWORD --ks-key-alias "$SUPERNOVA_KEY_ALIAS" \
+            --key-pass env:SUPERNOVA_KEY_PASSWORD --out "$RUNNER_TEMP/supernova-0135-qa.apk" \
+            "$unsigned_apk" > "$signing_log" 2>&1; then
+            echo 'QA signing failed; secret-scope diagnostics are withheld.'
+            exit 1
+          fi
+      - name: Verify the signed QA artifact and tested payload parity
+        run: |
+          set -euo pipefail
+          mapfile -t unsigned_apks < <(find nova/Video/build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
+          test "${#unsigned_apks[@]}" -eq 1
+          build_tools="$ANDROID_HOME/build-tools/36.0.0"
+          python3 source/.github/signing/verify_supernova135_qa_apk.py \
+            --apk "$RUNNER_TEMP/supernova-0135-qa.apk" --unsigned "${unsigned_apks[0]}" \
+            --evidence "$RUNNER_TEMP/supernova-foundation-conformance.json" \
+            --source nova/Video --apksigner "$build_tools/apksigner" \
+            --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" --aapt2 "$build_tools/aapt2" \
+            --publish "$RUNNER_TEMP/supernova-0135-qa-publish"
+      - name: Always remove temporary signing material and secret-scope logs
         if: always()
+        run: |
+          python3 source/.github/signing/foundation_signing.py cleanup
+          rm -f -- "$RUNNER_TEMP/supernova-0135-signing.log"
+      - name: Upload signed QA APK and public evidence only
+        if: success()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: supernova-0135-unsigned-evidence
+          name: supernova-0135-signed-qa
           path: |
-            ${{ runner.temp }}/supernova-foundation-conformance.json
+            ${{ runner.temp }}/supernova-0135-qa-publish/Supernova-0.135-QA.apk
+            ${{ runner.temp }}/supernova-0135-qa-publish/public-qa-evidence.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload corresponding FFmpeg source and public native evidence
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0135-qa-ffmpeg-source
+          path: |
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/Supernova-Foundation-FFmpeg-Source.tar.xz
             ${{ runner.temp }}/supernova-foundation-ffmpeg/verified-native-build.json
             ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
-            nova/Video/build/reports/preview-ui/*.png
-            nova/Video/build/test-results/testNoamazonReleaseUnitTest/*.xml
-            nova/Video/build/reports/lint-results-noamazonRelease.xml
-          if-no-files-found: warn
-          retention-days: 14
+          if-no-files-found: error
+          retention-days: 30
