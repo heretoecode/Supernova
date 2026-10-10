@@ -141,6 +141,7 @@ public class PreviewScanLifecycleTest {
     @Test public void metadataQueueDistinguishesAcceptedNullAndRestrictedStarts(){
         Context context=mock(Context.class);when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());
         when(context.getPackageName()).thenReturn(RuntimeEnvironment.getApplication().getPackageName());
+        var app=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().putBoolean("supernova_onboarding_complete",true).commit();when(context.getSharedPreferences(anyString(),anyInt())).thenAnswer(call->app.getSharedPreferences(call.getArgument(0),call.getArgument(1)));
         when(context.startService(any(Intent.class))).thenReturn(new ComponentName("test","Metadata"));
         assertTrue(enqueue(context));
         when(context.startService(any(Intent.class))).thenReturn(null);assertFalse(enqueue(context));

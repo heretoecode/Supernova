@@ -21,3 +21,6 @@ Physical SHIELD QA, upgrade installation, remote focus/visual conformance and so
 - Validation so far: compilation passed at the previous checkpoint; 49 existing Python guard tests passed. Targeted run executed 28 tests: 25 passed, three remaining UI expectations/focus defects subsequently corrected but not yet revalidated. Initial broad run: 458 executed, 27 failures, three skips and worker exit; not a passing result. JDK 21 is now installed to run supported SDK tests; complete rerun pending.
 - New history/hero, keyboard, explicit licence and provider persistence/focus tests added. No physical SHIELD or upgrade acceptance claimed.
 - Existing signed 0.135 artifact download again returned Forbidden. Historical CI verification is preserved honestly without inventing a signed APK hash.
+
+## Signing access blocker
+GitHub rejected adding the exact new branch to environment `supernova-foundation-signing` with HTTP 403 `Resource not accessible by integration`. The user has been asked to add this exact branch in Repository Settings → Environments → Deployment branches and tags. Existing keys/policies are preserved; no replacement key or historical-branch signing bypass. Secret-free unsigned native/binary conformance continues separately.

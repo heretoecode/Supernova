@@ -69,7 +69,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         com.archos.mediacenter.video.leanback.SharedThreePanel.decorate(catalogue);com.archos.mediacenter.video.leanback.SharedThreePanel.decorate(details);
         addView(catalogue,new LayoutParams(0,-1,.44f));
         LayoutParams right=new LayoutParams(0,-1,.56f); right.leftMargin=dp(20); addView(details,right);
-        split.addView(this,new LayoutParams(0,-1,.77f));
+        split.addView(this,new LayoutParams(0,-1,.72f));
     }
     private LinearLayout column(){LinearLayout v=new LinearLayout(getContext());v.setOrientation(VERTICAL);return v;}
     private ScrollView scroll(LinearLayout body){ScrollView v=new ScrollView(getContext());v.setFillViewport(false);v.setClipToPadding(false);v.addView(body,new ScrollView.LayoutParams(-1,-2));return v;}
@@ -100,7 +100,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     public void hide(){requestGeneration++;licencesOpened=false;for(TextView child:navigation)child.setVisibility(GONE);setVisibility(GONE);normalMiddle.setVisibility(VISIBLE);normalHelp.setVisibility(VISIBLE);}
     public void collapseNavigation(){for(TextView child:navigation)child.setVisibility(GONE);}
     public void enterContent(){enterContentInternal();}
-    public void enter(){if(selectedNavigation!=null)selectedNavigation.requestFocus();}
+    public void enter(){if(selectedNavigation==parentButton&&!navigation.isEmpty())navigation.get(0).requestFocus();else if(selectedNavigation!=null)selectedNavigation.requestFocus();}
     public void openSection(int index){if(index>=0&&index<navigation.size()){select(SECTIONS[index],navigation.get(index));navigation.get(index).requestFocus();}}
     public boolean navigationFocused(){for(TextView v:navigation)if(v.hasFocus())return true;return false;}
     public boolean handleBack(){

@@ -16,12 +16,14 @@ public final class PreviewGenres {
     public static void choose(Context c,Collection<String> options,Set<String> selected,Consumer<Set<String>> accept){
         List<String> names=new ArrayList<>(new TreeSet<>(options));Set<String> result=new LinkedHashSet<>(selected);
         List<String> labels=new ArrayList<>();labels.add("All Genres");labels.addAll(names);
-        Set<Integer> checks=new HashSet<>();for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i+1);
+        Set<Integer> checks=new HashSet<>();if(result.isEmpty())checks.add(0);for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i+1);
         Dialog[] menu={null};menu[0]=PreviewDialog.choose(c,"Genres · Match Any Selected",labels.toArray(new String[0]),-1,checks,false,n->{
             if(n==0)result.clear();else if(!result.add(names.get(n-1)))result.remove(names.get(n-1));
-            checks.clear();for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i+1);
+            checks.clear();if(result.isEmpty())checks.add(0);for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i+1);
             PreviewDialog.updateChecks(menu[0],checks);accept.accept(new LinkedHashSet<>(result));
         });
+        android.view.View label=menu[0].getWindow().getDecorView().findViewWithTag("preview-label:0");
+        if(label!=null&&label.getParent() instanceof android.view.View&&((android.view.View)label.getParent()).getParent() instanceof android.widget.LinearLayout){android.widget.LinearLayout rows=(android.widget.LinearLayout)((android.view.View)label.getParent()).getParent();android.view.View divider=new android.view.View(c);divider.setBackgroundColor(0x557f8996);rows.addView(divider,1,new android.widget.LinearLayout.LayoutParams(-1,PreviewDialog.dp(c,1)));}
 
     }
     public static final class Icon extends Drawable {

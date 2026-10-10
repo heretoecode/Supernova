@@ -67,7 +67,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private View suppliedDock;
     private Consumer<Uri> directoryChoice;
     private boolean legacyRootsReady,legacyRootsLoading;
-    private boolean onboarding;
+    private boolean onboarding,configurationActive;
     private SharedThreePanel panels;private TextView localParent,healthParent;private final List<TextView> localChildren=new ArrayList<>(),healthChildren=new ArrayList<>();private boolean localExpanded,healthExpanded;private LibraryHealthPanel healthPanel;private com.archos.filecorelibrary.samba.SambaDiscovery discovery;private com.archos.filecorelibrary.samba.SambaDiscovery.Listener discoveryListener;private com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager.Listener upnpListener;private final LinkedHashMap<String,String> discovered=new LinkedHashMap<>();private final String[] connection=new String[]{"","","/","","",""};private int protocol;private boolean savePassword=true,showPassword;private final List<Shortcut> shares=new ArrayList<>();private ScrollView inlineScroll;private com.archos.mediacenter.video.streaming.putio.PutioAccountController putioController;
     public void onboarding(boolean value){if(onboarding==value)return;onboarding=value;sourceFingerprint="";if(value){overview.setVisibility(GONE);((TextView)left.getChildAt(0)).setText("Local Storage");}else{overview.setVisibility(VISIBLE);((TextView)left.getChildAt(0)).setText("Locations");}}
 
@@ -245,7 +245,10 @@ public final class UniversalFileBrowser extends LinearLayout {
     private TextView location(String name,Runnable show) {
         TextView row=action(name,show); locations.add(row); left.addView(row,new LayoutParams(-1,dp(50)));
         PreviewIcon.apply(row,"storage",22);
-        row.setSingleLine(true);row.setEllipsize(android.text.TextUtils.TruncateAt.END);row.setOnFocusChangeListener((v,focused)->{if(focused){leftAnchor=row;centreAnchor=null;show.run();}});
+        row.setSingleLine(true);row.setEllipsize(android.text.TextUtils.TruncateAt.END);row.setOnFocusChangeListener((v,focused)->{if(focused){
+            String tag=String.valueOf(row.getTag());boolean folderNavigation=tag.startsWith("storage:")||tag.equals("semantic:network.category.local_storage");
+            if(!onboarding&&configurationActive&&selection.changed()&&!folderNavigation&&leftAnchor!=row){View previous=leftAnchor;if(previous!=null)previous.requestFocus();requestExit(()->{configurationActive=false;remember();current=null;row.requestFocus();});return;}
+            leftAnchor=row;centreAnchor=null;show.run();}});
         return row;
     }
     private void showOverview() {
@@ -264,7 +267,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
 
     public void open(Uri uri) {
-        if(closed||uri==null)return;
+        if(closed||uri==null)return;configurationActive=true;
         if(current!=null&&current.equals(uri)&&!listingFailed)return;
         stopDiscovery();centreScrolling(false);remember(); current=uri; selectedFile=null; selectedUri=null; indexed.clear();
         toolbar.setVisibility(onboarding?GONE:VISIBLE);breadcrumbScroll.setVisibility(VISIBLE);panels.widths(.24f,.46f,.30f);locationChanged.accept(uri); breadcrumbs(); showInformation(uri,null); reload();
@@ -397,8 +400,8 @@ public final class UniversalFileBrowser extends LinearLayout {
         panel.addView(SharedThreePanel.text(getContext(),"Unsaved library changes",22));
         ScrollView scroll=new ScrollView(getContext());TextView description=SharedThreePanel.text(getContext(),reviewText(),16);scroll.addView(description);panel.addView(scroll,new LayoutParams(-1,0,1));
         panel.addView(action("Discard Changes",()->{selection.discard();leaving[0]=true;dialog.dismiss();leave.run();}));
-        TextView keep=action("Keep Editing",dialog::dismiss);panel.addView(keep);
-        panel.addView(action("Apply & Scan",()->apply(()->{leaving[0]=true;dialog.dismiss();leave.run();})));
+        TextView keep=action("Continue Editing",dialog::dismiss);panel.addView(keep);
+        panel.addView(action("Save Changes & Scan",()->apply(()->{leaving[0]=true;dialog.dismiss();leave.run();})));
         dialog.setContentView(panel);dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.getWindow().setDimAmount(.35f);dialog.getWindow().setLayout(Math.min(dp(720),getResources().getDisplayMetrics().widthPixels-dp(64)),Math.min(dp(440),getResources().getDisplayMetrics().heightPixels-dp(64)));keep.requestFocus();
     }
@@ -455,7 +458,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             if(onboarding&&key==KeyEvent.KEYCODE_DPAD_RIGHT&&selectedFile!=null&&selectedFile.isDirectory()){activate(selectedFile);return true;}
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){View next=android.view.FocusFinder.getInstance().findNextFocus(centre,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused)next.requestFocus();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT) {
-                ViewGroup horizontal=toolbar.hasFocus()?toolbar:crumbs.hasFocus()?crumbs:suppliedDock instanceof ViewGroup?(ViewGroup)suppliedDock:fileList;
+                ViewGroup horizontal=toolbar.hasFocus()?toolbar:crumbs.hasFocus()?crumbs:suppliedDock instanceof ViewGroup?(ViewGroup)suppliedDock:fileList.hasFocus()?fileList:centre;
                 View next=android.view.FocusFinder.getInstance().findNextFocus(horizontal,focused,key==KeyEvent.KEYCODE_DPAD_LEFT?FOCUS_LEFT:FOCUS_RIGHT);
                 if(next!=null&&next!=focused){int[] a=new int[2],b=new int[2];focused.getLocationInWindow(a);next.getLocationInWindow(b);if(key==KeyEvent.KEYCODE_DPAD_LEFT?b[0]<a[0]:b[0]>a[0]){next.requestFocus();return true;}}
                 if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(leftAnchor!=null)leftAnchor.requestFocus();}
