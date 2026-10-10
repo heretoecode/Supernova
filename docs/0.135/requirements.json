@@ -24,7 +24,7 @@
       "acceptance_remaining": "Manifest/package/certificate comparison and actual signed upgrade; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
       "implementation_paths": [
         "src/main/java/com/archos/mediacenter/video/foundation/FoundationUiPolicy.java",
-        "src/main/AndroidManifest.xml",
+        "AndroidManifest.xml",
         "build.gradle"
       ]
     },
@@ -357,7 +357,7 @@
       "requirement": "Home footprint starts at 65%, same type/icons/targets; fewer visible rows",
       "authority": "Shared framework",
       "existing": "PreviewPages empty-library browser layout; MainFragment",
-      "change": "Use 65% height with the same shared typography and controls.",
+      "change": "Use 65% height with the same shared typography and controls. Right context/actions scroll at compact height; full targets remain visible with unchanged text and target sizes.",
       "validation": "Home/full render geometry and Shield usability",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
@@ -604,7 +604,7 @@
       "requirement": "Fixed Name/Type/Address/Library status and real async technical data",
       "authority": "Shared framework",
       "existing": "UniversalFileBrowser.showInformation/loadIndexed; PreviewMetadata",
-      "change": "Use fixed facts and asynchronous indexed/native technical enrichment.",
+      "change": "Use fixed facts and asynchronous indexed/native technical enrichment. Bound long context to a D-pad scrollable reading area and prevent blank text from taking focus.",
       "validation": "Indexed/unindexed, long paths, absent fields honest",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
@@ -1001,7 +1001,7 @@
       "existing": "AUDIT.md; scanner regression tests",
       "change": "Preserve the scanner; no reproducible user import failure has been supplied for causal diagnosis.",
       "validation": "Baseline import tests, root-cause records; no invented defect",
-      "status": "AUDIT / VALIDATION IN PROGRESS \u2014 no unsupported provider or unproven importing fix claimed",
+      "status": "SOURCE AUDITED \u2014 preserved scanner/retention regressions; unspecified import failure not reproduced",
       "evidence": [
         "docs/0.135/IMPLEMENTATION_NOTES.md",
         "docs/0.135/TEST_RESULTS.json",
@@ -1291,8 +1291,8 @@
       "id": "H-002",
       "requirement": "Building Your Library and hide Customise until imported media",
       "authority": "Master + Expanded scope",
-      "existing": "PreviewPages import-state rows; MainFragment",
-      "change": "Show Building Your Library and hide Customise until media is indexed.",
+      "existing": "PreviewPages empty/import state; PreviewLibraryScan.building; MainFragment",
+      "change": "Read native ImportState/network/scrape flags for Building Your Library while empty; keep Customise hidden until media is indexed. Heading updates retain the exact browser focus.",
       "validation": "Empty/busy/populated state tests",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
@@ -1305,7 +1305,8 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewBackdropTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewFeaturedIndicatorsTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java",
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryCompositionTest.java"
       ],
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/FoundationHomeRegressionTest.java",
@@ -1315,12 +1316,14 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewBackdropTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewFeaturedIndicatorsTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java",
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryCompositionTest.java"
       ],
       "acceptance_remaining": "Empty/busy/populated state tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
       "implementation_paths": [
         "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
-        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java"
+        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java"
       ]
     },
     {

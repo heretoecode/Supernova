@@ -108,5 +108,46 @@
     "tests": 49,
     "failures": 0,
     "elapsed_seconds": 14.878
+  },
+  "full_local_checkpoint41": {
+    "compiled_application_commit": "4214232a991b9d5d0af2aa7c2d5ae6c8a43125b2",
+    "tests": 488,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 128,
+    "lint": {
+      "Fatal": 0,
+      "Error": 0,
+      "Warning": 1465
+    },
+    "elapsed": "11m 29s",
+    "native_build_omitted": true,
+    "apk_built": false,
+    "gradle_log_sha256": "a224bc2090d1af61d3e1490fc7620ea20cfab061ff53aab09c63a8a613778fcf",
+    "notes": "Complete compiled Java suite before the final TV completion-filter and compact context-scrolling fixes. Lint read the working tree including the TV filter; context scrolling was added after lint analysis. These fixes require targeted/native validation."
+  },
+  "python_checkpoint42": {
+    "source_commit": "1f7ad9bf5bcb7c313a6ae13863e4a1ec012c2c65",
+    "tests": 49,
+    "failures": 0,
+    "elapsed_seconds": 18.532
+  },
+  "targeted_checkpoint48": {
+    "tests": 40,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 10,
+    "elapsed": "2m 50s",
+    "native_build_omitted": true,
+    "source": "1f7ad9bf plus final compact browser context/first import working tree",
+    "gradle_log_sha256": "0fd93b44bb171fc1cf0de25991b40093b48743ee1b59739d113996bb0b306781"
+  },
+  "python_checkpoint46": {
+    "tests": 13,
+    "failures": 0,
+    "elapsed_seconds": 0.045,
+    "scope": "QA/conformance tooling after minimum count 490; final count 491 will be validated by complete suite/native workflow"
   }
 }

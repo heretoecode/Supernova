@@ -5,6 +5,7 @@ import android.media.MediaScannerConnection;
 import android.os.*;
 import com.archos.filecorelibrary.ExtStorageManager;
 import com.archos.mediaprovider.video.*;
+import com.archos.mediaprovider.ImportState;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.util.*;
 
@@ -79,6 +80,10 @@ public final class PreviewLibraryScan {
         if(operationEnded||operation.isEmpty())return;operationEnded=true;
         Diagnostics.event("scan_operation_terminal","operation_id",operation,"reason",reason);
         Diagnostics.finishOperation(operation,"library_scan",requestedAt);
+    }
+    public static boolean building() {
+        return ImportState.VIDEO.isInitialImport()||ImportState.VIDEO.isRegularImport()
+            ||NetworkScannerReceiver.isScannerWorking()||LoaderUtils.getScrapeInProgress();
     }
     public static String libraryStatus(Context c){
         String nativeState=PreviewLocalScanState.status(c);

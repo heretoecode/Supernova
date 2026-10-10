@@ -29,6 +29,19 @@ public class SupernovaWorkspaceUiTest {
    browser.selections().exclude(Uri.parse("file:///Movies/another-private"));View home=shell.findViewWithTag("semantic:topnav.home");assertTrue(home.requestFocus());home.performClick();review=ShadowDialog.getLatestDialog();assertTrue(review.isShowing());assertEquals(-1,navigated[0]);PreviewPagesTest.findText(review.getWindow().getDecorView(),"Keep Editing").performClick();assertSame("Top-nav exit review restores its exact opener",home,shell.findFocus());assertTrue(browser.selections().changed());home.performClick();review=ShadowDialog.getLatestDialog();PreviewPagesTest.findText(review.getWindow().getDecorView(),"Discard Changes").performClick();assertEquals(0,navigated[0]);assertFalse(browser.selections().changed());
   }finally{host.pause().stop().destroy();}
  }
+ @Test public void compactBrowserScrollsEveryContextActionIntoViewAndReadsLongInformation()throws Exception{
+  var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+  try{UniversalFileBrowser browser=new UniversalFileBrowser(host.get());FrameLayout container=new FrameLayout(host.get());container.addView(browser,new FrameLayout.LayoutParams(-1,300));host.get().setContentView(container);
+   Runnable compact=()->{PreviewPagesTest.layout(container);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(300));PreviewPagesTest.layout(container);};
+   compact.run();View first=PreviewPagesTest.findText(browser,"Scan Library");assertTrue(first.requestFocus());compact.run();
+   for(String label:new String[]{"Network Scanning","Library Health"}){
+    browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));compact.run();View action=PreviewPagesTest.findText(browser,label);assertSame("Focus moves to "+label,action,browser.findFocus());android.graphics.Rect visible=new android.graphics.Rect();assertTrue(label+" is visible after compact scrolling",action.getGlobalVisibleRect(visible));assertEquals("The full target remains visible in compact Home",action.getHeight(),visible.height());
+   }
+   first.requestFocus();browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));compact.run();assertTrue(browser.findFocus() instanceof ScrollView);
+   ScrollView info=(ScrollView)browser.findFocus();((TextView)info.getChildAt(0)).setText("Library information\n".repeat(30));compact.run();browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertTrue(info.getScrollY()>0);assertSame(info,browser.findFocus());
+   info.scrollTo(0,100000);browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(first,browser.findFocus());compact.run();PreviewPagesTest.capture(browser,"0135-compact-context-scrolled");((TextView)info.getChildAt(0)).setText("");assertFalse("Empty context does not become a focus target",info.isFocusable());
+  }finally{host.pause().stop().destroy();}
+ }
  @Test public void fiveStepEditorSavesOnePageAndReopensPrefilled()throws Exception{
   Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
   var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();

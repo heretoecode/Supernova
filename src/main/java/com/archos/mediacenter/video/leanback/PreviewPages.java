@@ -208,11 +208,18 @@ public final class PreviewPages extends FrameLayout {
             removeCallbacks(providerRefresh);postDelayed(providerRefresh,500);
         }
     };
+    private boolean homeBuilding;
+    private boolean emptyHome(){return snapshot.movies.isEmpty()&&snapshot.shows.isEmpty()&&snapshot.recent.isEmpty();}
+    private final Runnable importRefresh=new Runnable(){public void run(){
+        if(!isAttachedToWindow()||!loaded||!emptyHome())return;
+        if(tab==0&&PreviewLibraryScan.building()!=homeBuilding)render("first_import_state_changed");
+        else postDelayed(this,1000);
+    }};
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener homeSettings=(prefs,key)->{if(key!=null&&(key.startsWith("preview_featured_")||key.equals("preview_home_rows41")||key.equals("preview_accent41")||key.equals("hide_watched")||key.equals("sort_ignore_articles")))post(()->{if(isAttachedToWindow()){if(key.equals("hide_watched")||key.equals("sort_ignore_articles"))quietOrder.clear();render("home_settings_changed");}});};
-    @Override protected void onAttachedToWindow(){super.onAttachedToWindow();if(tab==3||loaded&&snapshot.technical.isEmpty())loadSources();preferences.registerOnSharedPreferenceChangeListener(homeSettings);preferences.registerOnSharedPreferenceChangeListener(providerSettings);requestDiscovery();lastInteraction=android.os.SystemClock.elapsedRealtime();postDelayed(rotateFeatured,30000);}
+    @Override protected void onAttachedToWindow(){super.onAttachedToWindow();if(tab==3||loaded&&snapshot.technical.isEmpty())loadSources();preferences.registerOnSharedPreferenceChangeListener(homeSettings);preferences.registerOnSharedPreferenceChangeListener(providerSettings);requestDiscovery();lastInteraction=android.os.SystemClock.elapsedRealtime();postDelayed(rotateFeatured,30000);post(importRefresh);}
     private void requestDiscovery(){if(requestedDiscovery||!isAttachedToWindow()||snapshot.movies.isEmpty()&&snapshot.shows.isEmpty())return;requestedDiscovery=true;
         worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{try{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});}finally{worker.shutdown();}});}
-    @Override protected void onDetachedFromWindow(){sourceGeneration++;sourcesLoading=false;removeCallbacks(rotateFeatured);removeCallbacks(providerRefresh);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);preferences.unregisterOnSharedPreferenceChangeListener(providerSettings);super.onDetachedFromWindow();}
+    @Override protected void onDetachedFromWindow(){sourceGeneration++;sourcesLoading=false;removeCallbacks(rotateFeatured);removeCallbacks(providerRefresh);removeCallbacks(importRefresh);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);preferences.unregisterOnSharedPreferenceChangeListener(providerSettings);super.onDetachedFromWindow();}
     private Entry featured(){List<Entry> entries=tab==1?snapshot.movies:tab==2?snapshot.shows:featuredCandidates();return entries.isEmpty()?null:entries.get(Math.floorMod(featuredIndex,entries.size()));}
     private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==0||tab==3||entry==null?null:entry.backdrop);}
     public static String displayName(Entry e){return e.media instanceof Episode?((Episode)e.media).getShowName():e.media.getName();}
@@ -369,9 +376,10 @@ public final class PreviewPages extends FrameLayout {
                 switch(row.id){case "continue":entries=new ArrayList<>(continuing.subList(0,Math.min(30,continuing.size())));break;case "recent":for(Entry e:snapshot.recent)if(!continuingKeys.contains(e.key())&&entries.size()<50)entries.add(e);break;case "trending":entries=discovery.matches(snapshot,true);break;case "popular":entries=discovery.matches(snapshot,false);break;case "watched":entries=snapshot.watched;break;case "similar":Entry seed=snapshot.played.isEmpty()?null:snapshot.played.get(0);if(seed!=null){entries=PreviewDiscovery.similar(seed,snapshot);name="Because You Watched "+displayName(seed);}break;default:entries=home.members(row,snapshot);}
                 int before=cells.size();rail(name,entries);if(cells.size()>before)cells.get(cells.size()-1).homeRowId=row.id;
             }
-            if(loaded&&snapshot.movies.isEmpty()&&snapshot.shows.isEmpty()&&snapshot.recent.isEmpty()) {
+            if(loaded&&emptyHome()) {
+                homeBuilding=PreviewLibraryScan.building();
                 if(!sourcesLoaded&&!sourcesLoading)loadSources();
-                header("Welcome to Supernova",false);cells.add(new Cell(NETWORK,"Add media to your library",null));
+                header(homeBuilding?"Building Your Library":"Welcome to Supernova",false);cells.add(new Cell(NETWORK,"Add media to your library",null));
             } else if(loaded)cells.add(new Cell(CUSTOMISE,"Customise Home",null));
         } else if(tab==1||tab==2) {
             cells.add(new Cell(HERO,tab==1?"Movies":"TV Shows",featured()));
@@ -401,6 +409,7 @@ public final class PreviewPages extends FrameLayout {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("home_page_render","reason",reason,"tab",tab,"previous_cells",previous.size(),"cells",cells.size(),"inserted",changes[0],"removed",changes[1],"moved",changes[2],"rebound",changes[3],"adapter_recreated",false,"elapsed_ms",android.os.SystemClock.elapsedRealtime()-started);
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list,tab==0?"home.rows":tab==1?"movies.library":tab==2?"tv.library":"network.page",reason,previous.size(),cells.size(),false);
         if(state!=null)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();list.post(this::notifyScroll);scheduleVisibleEnrichment();
+        removeCallbacks(importRefresh);if(loaded&&emptyHome()&&isAttachedToWindow())postDelayed(importRefresh,1000);
     }
     private static String entrySignature(Entry e){return e.key()+"|"+displayName(e)+"|"+e.backdrop+"|"+e.media.getPosterUri()+"|"+e.secondary+"|"+e.active+"|"+e.bytes+"|"+e.runtime+"|"+e.year()+"|"+e.resolution+"|"+e.audio+"|"+e.codec+"|"+e.hdr+"|"+(e.media instanceof Video?((Video)e.media).getResumeMs():0);}
     private String signature(Cell c){String base=tab+":"+c.title+":"+c.type+":"+(tab>0&&tab<3?listMode[tab]+":"+sorts[tab]+":"+ascending[tab]+":"+genres[tab]+":"+selectedYears[tab]+":"+unmatched[tab]+":"+providers[tab]+":"+columns[tab].sortColumn+":"+columns[tab].ascending+":"+columns[tab].visible():"");if(c.value instanceof Entry)base+=entrySignature((Entry)c.value);else if(c.type==RAIL){StringBuilder rail=new StringBuilder(base);for(Entry e:(List<Entry>)c.value)rail.append(entrySignature(e));base=rail.toString();}else base+=String.valueOf(c.value);if(c.type==HERO&&tab>0)base+=PreviewLibrarySummary.describe(getContext(),snapshot,tab==2);if(c.type==NETWORK_PANEL||c.type==NETWORK){StringBuilder sources=new StringBuilder(base);for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:librarySources)sources.append(source.getName()).append(source.getUri());for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:savedLocations)sources.append(source.getName()).append(source.getUri());base=sources.append(files).toString();}return base;}

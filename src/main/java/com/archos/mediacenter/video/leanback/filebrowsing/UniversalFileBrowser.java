@@ -41,7 +41,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private final SharedPreferences prefs;
     private final BrowserSelection selection;
     private final LinearLayout left, centre, right, toolbar, crumbs, items, actions;
-    private final FrameLayout itemScroll;private final ScrollView informationScroll;
+    private final FrameLayout itemScroll;private final ScrollView informationScroll, contextScroll;
     private final PreviewFocusRecycler fileList;private final GridLayoutManager fileLayout;private final FileAdapter fileAdapter=new FileAdapter();
     private final Map<String,int[]> listPositions=new HashMap<>();private String sourceFingerprint="";
     private final HorizontalScrollView breadcrumbScroll;
@@ -77,7 +77,8 @@ public final class UniversalFileBrowser extends LinearLayout {
         left = column(); centre = column(); right = column(); toolbar = new LinearLayout(c);
         SharedThreePanel panels = new SharedThreePanel(c);
         ScrollView leftScroll = new ScrollView(c); leftScroll.addView(left);
-        panels.panels(leftScroll, centre, right); addView(panels, new LayoutParams(-1,-1));
+        contextScroll = new ScrollView(c); contextScroll.setFillViewport(true); contextScroll.addView(right);
+        panels.panels(leftScroll, centre, contextScroll); addView(panels, new LayoutParams(-1,-1));
         left.addView(SharedThreePanel.text(c,"Locations",21));
         overview = location("Overview", this::showOverview); leftAnchor = overview;
         overview.setTag("semantic:network.category.overview");
@@ -102,8 +103,22 @@ public final class UniversalFileBrowser extends LinearLayout {
         poster=new ImageView(c);poster.setScaleType(ImageView.ScaleType.FIT_CENTER);poster.setVisibility(GONE);right.addView(poster,new LayoutParams(-1,dp(120)));
         facts=column();String[] labels={"Name","Type","Address","Library status"};for(int i=0;i<labels.length;i++){LinearLayout row=new LinearLayout(c);row.setGravity(android.view.Gravity.TOP);TextView label=SharedThreePanel.text(c,labels[i],16);label.setTextColor(0xffb7bdc6);row.addView(label,new LayoutParams(dp(92),-2));factValues[i]=SharedThreePanel.text(c,"",16);ScrollView value=new ScrollView(c);value.setFocusable(false);value.setFocusableInTouchMode(false);value.addView(factValues[i]);row.addView(value,new LayoutParams(0,dp(i==2?60:36),1));facts.addView(row,new LayoutParams(-1,-2));}facts.setVisibility(GONE);right.addView(facts,new LayoutParams(-1,-2));
         information = SharedThreePanel.text(c,"",16);
-        informationScroll = new ScrollView(c); informationScroll.setFocusable(false);informationScroll.setFocusableInTouchMode(false);informationScroll.addView(information);
-        right.addView(informationScroll,new LayoutParams(-1,0,1));
+        informationScroll = new ScrollView(c) {
+            @Override protected void onMeasure(int width, int height) {
+                super.onMeasure(width, MeasureSpec.makeMeasureSpec(dp(144), MeasureSpec.AT_MOST));
+            }
+        };
+        informationScroll.setFocusable(true); informationScroll.setFocusableInTouchMode(true);
+        informationScroll.setBackground(SharedThreePanel.focus(c)); informationScroll.setOnFocusChangeListener((view,focused)->{if(focused)revealContext(view);}); informationScroll.addView(information);
+        information.addTextChangedListener(new android.text.TextWatcher() {
+            public void beforeTextChanged(CharSequence text,int start,int count,int after) {}
+            public void onTextChanged(CharSequence text,int start,int before,int count) {}
+            public void afterTextChanged(android.text.Editable text) {
+                boolean readable=!text.toString().trim().isEmpty();
+                informationScroll.setFocusable(readable); informationScroll.setFocusableInTouchMode(readable);
+            }
+        });
+        right.addView(informationScroll,new LayoutParams(-1,-2));
         actions = column();ScrollView actionScroll=new ScrollView(c);actionScroll.addView(actions);right.addView(actionScroll,new LayoutParams(-1,0,1));
         refreshControls(); showOverview();
     }
@@ -335,7 +350,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             String audio=com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedBestAudioFormat());if(!audio.isEmpty())body.append("\n\nAudio\n").append(audio);
         }
         if(video!=null&&video.getDurationMs()>0)body.append("\n\nDuration\n").append(video.getDurationMs()/60000).append(" min");
-        information.setText(body);informationScroll.scrollTo(0,0);
+        information.setText(body);informationScroll.scrollTo(0,0);if(actionIndex<0)contextScroll.scrollTo(0,0);
         if(directoryChoice!=null){
             boolean writable="file".equals(uri.getScheme())&&new java.io.File(uri.getPath()).isDirectory()&&new java.io.File(uri.getPath()).canWrite();
             if(writable)addAction("Choose This Folder",()->{java.io.File chosen=new java.io.File(uri.getPath());if(chosen.isDirectory()&&chosen.canWrite())directoryChoice.accept(uri);});
@@ -393,7 +408,18 @@ public final class UniversalFileBrowser extends LinearLayout {
     private void refreshControls(){TextView view=toolbar.findViewWithTag("browser.view");view.setText(prefs.getBoolean(GRID,false)?"List View":"Grid View");androidx.appcompat.widget.SwitchCompat all=toolbar.findViewWithTag("browser.all_files");all.setChecked(prefs.getBoolean(ALL_FILES,false));}
     private final SharedPreferences.OnSharedPreferenceChangeListener changes=(preferences,key)->{if(ALL_FILES.equals(key)||SORT.equals(key)){refreshControls();remember();reload();}else if(GRID.equals(key)){refreshControls();renderItems();}};
     private TextView action(String label,Runnable run){return SharedThreePanel.action(getContext(),label,run);}
-    private void addAction(String label,Runnable run){TextView row=action(label,run);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(row,"network.action."+label.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+","_"));PreviewIcon.apply(row,label.contains("Library")?"Library":label.contains("Scan")?"refresh":"settings",22);actions.addView(row,new LayoutParams(-1,dp(50)));}
+    private void revealContext(View target) {
+        contextScroll.post(()->{
+            if(!target.hasFocus())return;
+            int[] control=new int[2], viewport=new int[2];
+            target.getLocationInWindow(control);contextScroll.getLocationInWindow(viewport);
+            int top=viewport[1]+contextScroll.getPaddingTop();
+            int bottom=viewport[1]+contextScroll.getHeight()-contextScroll.getPaddingBottom();
+            int delta=control[1]<top?control[1]-top:control[1]+target.getHeight()>bottom?control[1]+target.getHeight()-bottom:0;
+            contextScroll.scrollBy(0,delta);
+        });
+    }
+    private void addAction(String label,Runnable run){TextView row=action(label,run);row.setOnFocusChangeListener((view,focused)->{if(focused)revealContext(view);});com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(row,"network.action."+label.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+","_"));PreviewIcon.apply(row,label.contains("Library")?"Library":label.contains("Scan")?"refresh":"settings",22);actions.addView(row,new LayoutParams(-1,dp(50)));}
     private LinearLayout column(){LinearLayout layout=new LinearLayout(getContext());layout.setOrientation(VERTICAL);layout.setClipChildren(false);return layout;}
     private int dp(int value){return SharedThreePanel.dp(getContext(),value);}
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();readHistoricalRoots();scanHandler.post(scanRefresh);prefs.registerOnSharedPreferenceChangeListener(changes);if(current!=null&&suppliedDock==null)reload();}
@@ -420,7 +446,18 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(right.hasFocus()) {
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(centreAnchor==null||!centreAnchor.requestFocus())toolbar.getChildAt(0).requestFocus();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
-            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){int index=actions.indexOfChild(focused),next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<actions.getChildCount())actions.getChildAt(next).requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){
+                if(informationScroll.hasFocus()) {
+                    int direction=key==KeyEvent.KEYCODE_DPAD_UP?-1:1;
+                    if(informationScroll.canScrollVertically(direction))informationScroll.scrollBy(0,direction*dp(60));
+                    else if(direction>0&&actions.getChildCount()>0)actions.getChildAt(0).requestFocus();
+                    return true;
+                }
+                int index=actions.indexOfChild(focused),next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);
+                if(next>=0&&next<actions.getChildCount())actions.getChildAt(next).requestFocus();
+                else if(index==0&&key==KeyEvent.KEYCODE_DPAD_UP&&information.getText().length()>0)informationScroll.requestFocus();
+                return true;
+            }
         }
         return super.dispatchKeyEvent(event);
     }
