@@ -61,3 +61,41 @@ Source: User's first on-device review of installed 0.135 APK on NVIDIA Shield TV
 - Reconcile this with the existing three-panel shared foundation; avoid parallel divergent styles.
 **Evidence:** Two user photographs show hero action controls and Movies-page boxed option controls. Photos remain in planning conversation; not embedded in repository.
 
+
+## 9. Customize Home — structure, controls and genre workflow (approved for next refinement handover)
+**Evidence:** User supplied ~55-second video walkthrough of the Customize Home menu and described the interaction in detail. Media is in the planning conversation, not embedded here.
+
+### Confirmed working behaviour to preserve
+- Turning **Dynamic Genre Rule** off **no longer hides the row**; this regression is fixed. Rule enablement and row visibility must remain independent.
+- Existing row reorder interaction is satisfactory: preserve.
+- New Ascending/Descending direction control is satisfactory: preserve.
+- Genre checklist tick indicators are liked: preserve.
+
+### Main Customize Home view
+- Add clear hierarchy: heading **Customize Home**, subtle divider beneath heading, and separately styled guidance text (“Select to edit”, “Up/down to reorder”) distinct from focusable options.
+- Move **Create New Row** from bottom of list to a prominent location at top, under heading/instructions, so it remains discoverable with long row lists.
+- Improve legibility and consistency of **Shown / Hidden** row status (exact visual presentation to be refined with existing shared control design).
+- Remove redundant first-level **More** context menu. Selecting a row should expose **Rename**, **Genre Rule & Contents**, and **Delete Row** directly in an organised inline/adjacent action area for that row, rather than forcing an extra popup. Keep D-pad usability and avoid cramming buttons into the title. Rename opens keyboard; Delete requires appropriate safeguard/confirmation. Genre Rule & Contents remains the relevant secondary configuration panel. Precise inline arrangement may be validated with a mockup before coding.
+
+### Genre Rule & Contents
+- Consistent title casing for **Dynamic Genre Rule** (avoid “Dynamic genre rule” inconsistency).
+- Remove bottom **Done** action. Apply/save changes as users make them; pressing Back simply navigates out without discarding changes. Refresh affected Home row promptly, but avoid unnecessary full-library rescans for each selection.
+- Keep existing direction selector and distinct row visibility setting; changing genre rule must not hide row.
+
+### Genre picker
+- Keep multi-select checklist with immediate visible tick state.
+- Remove bottom **Done** confirmation. Pressing Back exits while retaining selections.
+- Move **All Genres** reset to the very top, separated by divider/spacing from actual genre entries. It resets genre selections; it must not be mistaken for a selectable genre.
+- Preserve selection state consistently when returning to the picker and Home configuration.
+
+### App-wide on-screen keyboard
+- Improve structure/hierarchy of keyboard and action strip throughout the app, not only Home rename.
+- Add an accessible **Caps Lock** toggle with clearly visible on/off state, supporting uppercase and lowercase.
+- Retain Clear, Space, Backspace, Select and Cancel. Maintain D-pad focus, editing reliability and existing functionality.
+
+### Validation
+- Test creation, reorder, rename, delete, hide/show, genre-rule enable/disable independence, immediate changes, genre reset, Back behaviour, direction, keyboard case toggle and focus restoration on Shield.
+- Preserve established styling and existing functional behaviours.
+
+## Home-page review checkpoint
+User stated the Home page review is **complete for now** (2026-10-10). This does not imply any fix has been implemented or verified; the recorded Home refinements are ready for the eventual consolidated next-version Codex handover. User may report further issues later.
