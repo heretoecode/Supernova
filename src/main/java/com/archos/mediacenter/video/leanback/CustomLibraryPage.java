@@ -19,7 +19,7 @@ public final class CustomLibraryPage {
  public List<Entry> entries(Snapshot snapshot){
   List<Entry> source=new ArrayList<>(),result=new ArrayList<>();if(!type.equals("tv"))source.addAll(snapshot.movies);if(!type.equals("movies"))source.addAll(snapshot.shows);
   for(Entry entry:source){Set<String> available=PreviewGenres.parse(entry.genres);boolean match=genres.isEmpty()||(allGenres?available.containsAll(genres):genres.stream().anyMatch(available::contains));if(!match||year>0&&entry.year()!=year||!language.isEmpty()&&!language.equals(entry.language)||!studio.isEmpty()&&!PreviewGenres.parse(entry.studio).contains(studio)||!collection.isEmpty()&&!collection.equals(entry.collection))continue;
-   boolean seen=entry.media instanceof Video?((Video)entry.media).isWatched():snapshot.watched.stream().anyMatch(item->item.key().equals(entry.key()));boolean progress=entry.media instanceof Video&&((Video)entry.media).getResumeMs()>0||snapshot.continuingShows.stream().anyMatch(item->item.key().equals(entry.key()));
+   boolean seen=entry.media instanceof Video?((Video)entry.media).isWatched():entry.media instanceof Tvshow&&((Tvshow)entry.media).getEpisodeCount()>0&&((Tvshow)entry.media).isWatched();boolean progress=entry.media instanceof Video&&((Video)entry.media).getResumeMs()>0||snapshot.continuingShows.stream().anyMatch(item->item.key().equals(entry.key()));
    if(watched.equals("watched")&&!seen||watched.equals("unwatched")&&seen||watched.equals("progress")&&!progress)continue;
    double actual=entry.media instanceof Movie?((Movie)entry.media).getRating():entry.media instanceof Tvshow?((Tvshow)entry.media).getRating():0;if(rating>0&&(actual<=0||actual<rating))continue;result.add(entry);
   }

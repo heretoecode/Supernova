@@ -2616,7 +2616,7 @@
       "requirement": "Name/icon/movie-TV-Both/reliable filters incl genre Any-All",
       "authority": "Master + Custom Library approval/mockups",
       "existing": "CustomLibraryPage; PreviewLibraryLoader filters",
-      "change": "Validate name/icon/content and use reliable indexed genre/language/studio/collection filters.",
+      "change": "Validate name/icon/content and use reliable indexed genre/language/studio/collection filters. TV watched state requires completion of its indexed episodes; one completed episode does not complete the whole series, and zero episodes does not count as watched.",
       "validation": "Input validation and known metadata availability",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
