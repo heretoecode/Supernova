@@ -14,6 +14,8 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewPagesTest {
+ @org.junit.Before public void configuredLibraryFixture(){androidx.preference.PreferenceManager.getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication()).edit().putBoolean("supernova_onboarding_complete",true).commit();}
+
     Entry episode(int number,int resume,boolean watched,long played,long added) {
         return new Entry(new Episode(number,number,1,number,"Episode "+number,0,0,"","","Example show","/test/"+number,null,null,100000,resume,0,0,watched,false,false,false,1,played,1920,1080,null,null,null,null,0,1,1000),added,7,"Drama");
     }
@@ -77,7 +79,7 @@ public class PreviewPagesTest {
                 android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));
                 java.io.File file=new java.io.File("build/reports/preview-ui/page-"+tab+".png");file.getParentFile().mkdirs();try(java.io.FileOutputStream out=new java.io.FileOutputStream(file)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out);}
             }
-            pages.setTab(1);nav.selectTab(1);layout(nav);android.view.View listButton=findText(nav,"List view");assertNotNull(listButton);listButton.performClick();layout(nav);decorateCards(nav);capture(nav,"library-list");
+            pages.setTab(1);nav.selectTab(1);layout(nav);android.view.View listButton=findText(nav,"List View");assertNotNull(listButton);listButton.performClick();layout(nav);decorateCards(nav);capture(nav,"library-list");
             View columnsControl=nav.findViewWithTag("control:4");assertNotNull(columnsControl);assertEquals("semantic:library.toolbar.columns",columnsControl.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
             assertTrue(columnsControl.requestFocus());nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(columnsControl,nav.findFocus());
             for(int control=0;control<5;control++){

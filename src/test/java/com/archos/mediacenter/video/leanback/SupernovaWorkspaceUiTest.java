@@ -69,7 +69,7 @@ public class SupernovaWorkspaceUiTest {
  @Test public void customWizardKeepsDeterministicEdgesAndCentreRestoration()throws Exception{
   Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
   var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();
-  try{View root=host.get().getWindow().getDecorView();PreviewPagesTest.layout(root);View step=root.findViewWithTag("wizard.step.0");step.requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));View option=root.findFocus();assertEquals("wizard.option.0.1",option.getTag());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(option,root.findFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(step,root.findFocus());
+  try{View root=host.get().getWindow().getDecorView();PreviewPagesTest.layout(root);View step=root.findViewWithTag("wizard.step.0");step.requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));View option=root.findFocus();assertTrue(((TextView)option).getText().toString().startsWith("Name:"));root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertTrue(root.findFocus() instanceof ScrollView);root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(option,root.findFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(step,root.findFocus());
   }finally{host.pause().stop().destroy();}
  }
 }

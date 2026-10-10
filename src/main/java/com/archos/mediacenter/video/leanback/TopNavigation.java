@@ -136,6 +136,7 @@ public final class TopNavigation extends LinearLayout {
     private boolean scrolled;private android.animation.ValueAnimator scrimAnimation;private int scrimAlpha;
     public void setScrolled(boolean value){
         value=value&&(selectedIndex>=0&&selectedIndex<=2||selectedIndex==6);
+        if(value&&selectedIndex>=3&&selectedIndex<=5)value=false;
         if(scrolled==value)return;scrolled=value;
         if(scrimAnimation!=null)scrimAnimation.cancel();
         scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?255:0);scrimAnimation.setDuration(220);

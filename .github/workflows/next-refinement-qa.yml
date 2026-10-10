@@ -1,0 +1,175 @@
+name: Supernova 0.136 signed QA
+on:
+  # Register this branch-owned workflow without running its protected signing job.
+  push:
+    branches: [codex/supernova-next-refinement-2026-10-10]
+    paths: [.github/workflows/next-refinement-qa.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: supernova-0136-signing
+  cancel-in-progress: false
+jobs:
+  qa:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/supernova-next-refinement-2026-10-10'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: supernova-foundation-signing
+    env:
+      SUPERNOVA_QA_SOURCE: ${{ github.sha }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout the exact QA source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Java for PKCS12 validation and Android build
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          # Deliberately no Gradle/signing cache.
+
+      - name: Prepare existing pinned NOVA dependencies without Preview identity conversion
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget ffmpeg python3-yaml
+          sudo apt-get install -y repo
+          mkdir nova
+          cd nova
+          repo init -u https://github.com/nova-video-player/aos-AVP -b 9c5842b74ab180c99441ed23fdd5d508448388a7 -m v6_4.xml
+          cp ../source/.github/build/nova-ci.xml .repo/manifests/v6_4.xml
+          if ! repo sync --no-manifest-update -c -d -j 4; then
+            git --git-dir=.repo/projects/native/prebuilt/ffmpeg.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-ffmpeg.git 6ba0e9340cf725bede2e2f29d30c290a2ab8130e
+            git --git-dir=.repo/projects/native/prebuilt/opus.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-opus.git 27544063be93ee55c6ba58a2ebb32c106eb2e37b
+            repo sync --no-manifest-update -c -d -j 4
+          fi
+          git -C Video fetch ../../source "$SUPERNOVA_QA_SOURCE"
+          git -C Video checkout --detach FETCH_HEAD
+          test "$(git -C Video rev-parse HEAD)" = "$SUPERNOVA_QA_SOURCE"
+          git -C MediaLib apply ../Video/.github/build/medialib-preview40.patch
+          git -C native/avos apply ../../Video/.github/build/avos-preview414.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-preview415.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview415.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview417.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview417-local.patch
+          git -C native/avos apply ../../Video/.github/build/avos-supernova135.patch
+          # prepare-preview.py is intentionally NOT called for Foundation.
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova135.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-next-refinement.patch
+          python3 Video/.github/build/prepare-foundation.py .
+
+      - name: Verify 0.136 provider and historical identity isolation
+        run: python3 source/.github/build/verify-next-refinement.py --root nova
+
+      - name: Rebuild and compare pinned LGPL FFmpeg before replacing dependency binaries
+        run: |
+          set -euo pipefail
+          native_workspace="$RUNNER_TEMP/supernova-foundation-ffmpeg"
+          python3 source/.github/build/build-foundation-ffmpeg.py --root nova --workspace "$native_workspace"
+          python3 source/tools/verify_foundation_native_runtime.py --root nova --workspace "$native_workspace" \
+            --test-workspace "$RUNNER_TEMP/supernova-foundation-native-tests"
+          python3 source/.github/build/build-foundation-ffmpeg.py --root nova --workspace "$native_workspace" \
+            --verify-existing --install --source-bundle
+
+      - name: Repeat secret-free Foundation release tests and unsigned binary conformance
+        env:
+          OPERATION: verify
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'ndk;29.0.14206865'
+          cd nova/Video
+          chmod +x gradlew
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease \
+            -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4
+          python3 .github/build/verify-foundation-runtime.py \
+            --inventory build/foundation/runtime-artifacts.json --reviewed docs/foundation/RUNTIME_SBOM.json
+          mapfile -t unsigned_apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
+          test "${#unsigned_apks[@]}" -eq 1
+          python3 .github/build/verify-next-refinement.py --root .. \
+            --apk "${unsigned_apks[0]}" --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+            --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2"
+          python3 .github/build/verify-foundation-native-apk.py --apk "${unsigned_apks[0]}" \
+            --evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json"
+          # Check the complete reviewed suite and record binary proof before either operation.
+          python3 -m unittest discover -s tools -p 'test_*.py'
+          python3 .github/build/record-next-refinement-conformance.py --root .. --apk "${unsigned_apks[0]}" \
+            --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+            --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2" \
+            --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" \
+            --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
+            --output "$RUNNER_TEMP/supernova-foundation-conformance.json"
+      - name: Sign the exact tested APK with the existing upgrade certificate
+        env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
+          SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
+          SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
+          SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}
+          SUPERNOVA_KEY_PASSWORD: ${{ secrets.SUPERNOVA_KEY_PASSWORD }}
+          SUPERNOVA_CERT_SHA256: 79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e
+        run: |
+          set +x
+          set -euo pipefail
+          signing_dir="$RUNNER_TEMP/supernova-foundation-signing"
+          signing_log="$RUNNER_TEMP/supernova-0136-signing.log"
+          trap 'rm -rf -- "$signing_dir"; rm -f -- "$signing_log"' EXIT
+          mapfile -t unsigned_apks < <(find nova/Video/build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
+          test "${#unsigned_apks[@]}" -eq 1
+          unsigned_apk="${unsigned_apks[0]}"
+          python3 source/.github/signing/next_refinement_qa_signing.py \
+            --evidence "$RUNNER_TEMP/supernova-foundation-conformance.json" --apk "$unsigned_apk"
+          unset SUPERNOVA_P12_BASE64
+          build_tools="$ANDROID_HOME/build-tools/36.0.0"
+          "$build_tools/zipalign" -c -P 16 4 "$unsigned_apk"
+          if ! "$build_tools/apksigner" sign --ks "$signing_dir/foundation.p12" --ks-type PKCS12 \
+            --ks-pass env:SUPERNOVA_STORE_PASSWORD --ks-key-alias "$SUPERNOVA_KEY_ALIAS" \
+            --key-pass env:SUPERNOVA_KEY_PASSWORD --out "$RUNNER_TEMP/supernova-0136-qa.apk" \
+            "$unsigned_apk" > "$signing_log" 2>&1; then
+            echo 'QA signing failed; secret-scope diagnostics are withheld.'
+            exit 1
+          fi
+      - name: Verify the signed QA artifact and tested payload parity
+        run: |
+          set -euo pipefail
+          mapfile -t unsigned_apks < <(find nova/Video/build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
+          test "${#unsigned_apks[@]}" -eq 1
+          build_tools="$ANDROID_HOME/build-tools/36.0.0"
+          python3 source/.github/signing/verify_next_refinement_qa_apk.py \
+            --apk "$RUNNER_TEMP/supernova-0136-qa.apk" --unsigned "${unsigned_apks[0]}" \
+            --evidence "$RUNNER_TEMP/supernova-foundation-conformance.json" \
+            --source nova/Video --apksigner "$build_tools/apksigner" \
+            --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" --aapt2 "$build_tools/aapt2" \
+            --publish "$RUNNER_TEMP/supernova-0136-qa-publish"
+      - name: Always remove temporary signing material and secret-scope logs
+        if: always()
+        run: |
+          python3 source/.github/signing/foundation_signing.py cleanup
+          rm -f -- "$RUNNER_TEMP/supernova-0136-signing.log"
+      - name: Upload signed QA APK and public evidence only
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0136-signed-qa
+          path: |
+            ${{ runner.temp }}/supernova-0136-qa-publish/Supernova-0.136-Refinement-QA.apk
+            ${{ runner.temp }}/supernova-0136-qa-publish/public-qa-evidence.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload corresponding FFmpeg source and public native evidence
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0136-qa-ffmpeg-source
+          path: |
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/Supernova-Foundation-FFmpeg-Source.tar.xz
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/verified-native-build.json
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
+          if-no-files-found: error
+          retention-days: 30

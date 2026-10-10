@@ -22,7 +22,7 @@ public final class PreviewDiscovery {
         }
     }
     public static PreviewDiscovery load(Context context) {
-        PreviewDiscovery out=new PreviewDiscovery();
+        PreviewDiscovery out=new PreviewDiscovery();if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_integration_trakt",true)||!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(context))return out;
         android.content.SharedPreferences cache=context.getSharedPreferences("preview_discovery",Context.MODE_PRIVATE);
         String raw=cache.getString("charts",null);
         if(raw==null||System.currentTimeMillis()-cache.getLong("time",0)>TTL){

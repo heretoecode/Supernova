@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/** About alone uses the approved five-child rail and flexible centre/right panels. */
+/** About alone uses the approved four-child rail and flexible centre/right panels. */
 public final class FoundationAboutWorkspace extends LinearLayout {
     public static final String[] SECTIONS = {"Release Notes", "Open-source Licences", "Credits & Acknowledgements", "Technical Information"};
     private final View normalMiddle, normalHelp;
@@ -66,6 +66,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         setOrientation(HORIZONTAL); setVisibility(GONE); setPadding(dp(12),0,0,0);
         catalogueBody=column(); detailsBody=column();
         catalogue=scroll(catalogueBody); details=scroll(detailsBody);
+        com.archos.mediacenter.video.leanback.SharedThreePanel.decorate(catalogue);com.archos.mediacenter.video.leanback.SharedThreePanel.decorate(details);
         addView(catalogue,new LayoutParams(0,-1,.44f));
         LayoutParams right=new LayoutParams(0,-1,.56f); right.leftMargin=dp(20); addView(details,right);
         split.addView(this,new LayoutParams(0,-1,.77f));
@@ -85,7 +86,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             child.setOnClickListener(v->{select(name,child);enterContentInternal();});
             child.setOnKeyListener((v,key,event)->{
                 if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
-                if(key==KeyEvent.KEYCODE_DPAD_RIGHT){enterContentInternal();return true;}
+                if(key==KeyEvent.KEYCODE_DPAD_RIGHT){enterContentInternal(false);return true;}
                 if(key==KeyEvent.KEYCODE_DPAD_LEFT){parentButton.requestFocus();return true;}
                 if(key==KeyEvent.KEYCODE_DPAD_UP){(position==0?parentButton:navigation.get(position-1)).requestFocus();return true;}
                 if(key==KeyEvent.KEYCODE_DPAD_DOWN){if(position+1<navigation.size())navigation.get(position+1).requestFocus();return true;}
@@ -124,7 +125,8 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         } catch(Exception unavailable){showDetails("Information unavailable","This build could not read the bundled information.",null,null);}
         if(!rows.isEmpty()){selectedIndex=Math.min(selectedIndex,rows.size()-1);rowSelections.get(selectedIndex).run();}
     }
-    private void enterContentInternal(){if(section.equals(SECTIONS[1])&&!licencesOpened){licencesOpened=true;loadLicences();return;}if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
+    private void enterContentInternal(){enterContentInternal(true);}
+    private void enterContentInternal(boolean confirmed){if(section.equals(SECTIONS[1])&&!licencesOpened&&confirmed){licencesOpened=true;loadLicences();return;}if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
     private void focusSelectedRow(){if(!rows.isEmpty())rows.get(Math.min(selectedIndex,rows.size()-1)).requestFocus();else selectedNavigation.requestFocus();}
     private TextView row(String label,Runnable select,Runnable activate){
         final int index=rows.size();TextView row=text(label,14);row.setPadding(dp(10),dp(10),dp(8),dp(10));
@@ -137,8 +139,10 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){selectedNavigation.requestFocus();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(detailsBody.getChildCount()>0)detailsBody.getChildAt(0).requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){int next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<rows.size())rows.get(next).requestFocus();return true;}
             return false;
         });
+        com.archos.mediacenter.video.leanback.SharedThreePanel.divider(catalogueBody);
         return row;
     }
     private void appInformation(){
@@ -191,7 +195,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                 JSONArray components=readJson("foundation/licences.json").getJSONArray("components");
                 post(()->{
                     if(generation!=requestGeneration||!isAttachedToWindow()||!section.equals(SECTIONS[1]))return;
-                    catalogueBody.removeAllViews();rows.clear();rowSelections.clear();
+                    catalogueBody.removeAllViews();com.archos.mediacenter.video.leanback.SharedThreePanel.heading(catalogueBody,"Components");rows.clear();rowSelections.clear();
                     for(int i=0;i<components.length();i++){
                         JSONObject component=components.optJSONObject(i);if(component==null)continue;
                         String name=component.optString("name"),version=component.optString("version","Version unavailable");

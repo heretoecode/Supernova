@@ -130,6 +130,7 @@ public final class Diagnostics {
                     long now=android.os.SystemClock.elapsedRealtime();
                     if(!enabled||now-focusAt<100)return;focusAt=now;
                     event("focus","screen",a.getClass().getSimpleName(),"from",viewId(old),"to",viewId(next));
+                    if(next!=null)next.postDelayed(()->inspectFocusGeometry(next),250);
                 };
                 FOCUS.put(a,listener);a.getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(listener);
             }
@@ -143,6 +144,7 @@ public final class Diagnostics {
     }
     private static String viewId(View view){
         if(view==null)return "none";
+        for(View ancestor=view;ancestor!=null;ancestor=ancestor.getParent() instanceof View?(View)ancestor.getParent():null){Object mark=ancestor.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic);if("semantic:private.credential".equals(mark))return "semantic:private.credential";}
         Object semantic=view.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic);
         if(!(semantic instanceof String))semantic=view.getTag();
         if(semantic instanceof String&&((String)semantic).matches("semantic:[A-Za-z0-9 _:.-]{1,100}"))return (String)semantic;
@@ -191,6 +193,16 @@ public final class Diagnostics {
         if(!visible||bounds.width()<=0||bounds.height()<=0)event("focus_anomaly_suspected","kind","offscreen_focus","screen",uiScreen,"target",viewId(next));
         if(previous==next&&!consumed&&key!=android.view.KeyEvent.KEYCODE_DPAD_CENTER){if(++unhandledNavigation==4)event("focus_anomaly_suspected","kind","repeated_unhandled_navigation","screen",uiScreen,"target",viewId(next));}else unhandledNavigation=0;
     }
+    static void inspectFocusGeometry(View target){
+        if(!enabled||!target.isAttachedToWindow()||!target.hasFocus()||target.getWidth()==0||target.getHeight()==0)return;
+        android.graphics.Rect visible=new android.graphics.Rect();if(!target.getGlobalVisibleRect(visible))return;
+        // Sample after focus scrolling settles. Small rounding and deliberate card zoom are ignored.
+        if(visible.width()<target.getWidth()*.75f||visible.height()<target.getHeight()*.75f)
+            event("focus_anomaly_suspected","kind","focused_control_clipped","target",viewId(target),"visible_width",visible.width(),"visible_height",visible.height(),"control_width",target.getWidth(),"control_height",target.getHeight(),"evidence","geometry_heuristic");
+        View header=target.getRootView().findViewWithTag("semantic:topnav.home");
+        if(header!=null&&!viewId(target).startsWith("semantic:topnav.")){android.graphics.Rect navigation=new android.graphics.Rect();if(header.getGlobalVisibleRect(navigation)&&visible.top<navigation.bottom&&visible.bottom>navigation.top)
+            event("focus_anomaly_suspected","kind","navigation_overlap","target",viewId(target),"evidence","geometry_heuristic");}
+    }
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
@@ -219,7 +231,7 @@ public final class Diagnostics {
         try{String line=record(event,fields),session=playback;long now=android.os.SystemClock.elapsedRealtime();FLIGHT.add(now,line);if(COVERAGE.size()<256)COVERAGE.add(event);
             boolean detail=event.startsWith("focus")||event.startsWith("artwork_")||event.equals("home_page_render");
             if(!detail&&!event.startsWith("checkpoint")&&!event.equals("scanner_state")){lastOperation=safe(event);if(sessionState!=null)sessionState.edit().putString("last_operation",lastOperation).apply();}
-            boolean anomaly=event.contains("error")||event.contains("failed")||event.contains("exception")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected");
+            boolean anomaly=event.contains("error")||event.contains("failed")||event.contains("exception")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.equals("focus_anomaly_suspected");
             UiSnapshot failureState=anomaly?new UiSnapshot():null;
             DiagnosticFlightRecorder.Capture failureFlight=anomaly?FLIGHT.capture(now):null;
             if(anomaly&&(event.equals("manual_problem_marker")||now>=captureUntil)){
@@ -231,11 +243,11 @@ public final class Diagnostics {
             WORK.execute(()->{if(!enabled)return;if(qa||!detail)write(line,session);if(postTarget!=null)appendPostFlight(postTarget,line);});
         }catch(RuntimeException ignored){DROPPED.incrementAndGet();}
     }
-    static boolean important(String event){return event.contains("failed")||event.contains("error")||event.contains("exception")||event.contains("UNCLEAN")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.startsWith("session_")||event.startsWith("app_session_")||event.equals("startup")||event.equals("playback_begin")||event.equals("playback_end")||event.equals("scan_started")||event.equals("scan_complete")||event.equals("scan_partial")||event.equals("incident_capture");}
+    static boolean important(String event){return event.contains("failed")||event.contains("error")||event.contains("exception")||event.contains("UNCLEAN")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.equals("focus_anomaly_suspected")||event.startsWith("session_")||event.startsWith("app_session_")||event.equals("startup")||event.equals("playback_begin")||event.equals("playback_end")||event.equals("scan_started")||event.equals("scan_complete")||event.equals("scan_partial")||event.equals("incident_capture");}
     static String severity(String event){
         if(event.equals("uncaught_exception"))return "FATAL";
         if(event.contains("failed")||event.contains("error")||event.contains("exception"))return "ERROR";
-        if(event.contains("UNCLEAN")||event.equals("main_thread_stall_suspected")||event.equals("scan_partial")||event.contains("retry"))return "WARNING";
+        if(event.contains("UNCLEAN")||event.equals("main_thread_stall_suspected")||event.equals("focus_anomaly_suspected")||event.equals("scan_partial")||event.contains("retry"))return "WARNING";
         return "INFO";
     }
     private static void writeImportant(String line){

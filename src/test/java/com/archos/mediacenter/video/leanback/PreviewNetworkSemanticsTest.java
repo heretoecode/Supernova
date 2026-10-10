@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
 @RunWith(org.robolectric.RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class PreviewNetworkSemanticsTest {
+ @org.junit.Before public void configuredLibraryFixture(){androidx.preference.PreferenceManager.getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication()).edit().putBoolean("supernova_onboarding_complete",true).commit();}
+
     @Test @Config(qualifiers="w960dp-h540dp-land-mdpi") public void actualPageUpTraversesCategoriesBeforeReturningToGlobalNavigation(){
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
@@ -51,6 +53,7 @@ public class PreviewNetworkSemanticsTest {
                     List.of(source),List.of(source),box->{},kind->{});
             host.get().setContentView(workspace);
             var browser=workspace.browser();
+            workspace.findViewWithTag("semantic:network.category.network_shares").requestFocus();
             View sourceRow=workspace.findViewWithTag("semantic:network.item.source.72");assertNotNull(sourceRow);
             PreviewPagesTest.layout(workspace);sourceRow.requestFocus();
             LinearLayout actions=ReflectionHelpers.getField(browser,"actions");

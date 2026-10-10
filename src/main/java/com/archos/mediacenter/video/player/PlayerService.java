@@ -559,7 +559,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             }
         };
 
-        if (Trakt.isTraktV2Enabled(this, mPreferences) && !PrivateMode.isActive()) {
+        if (Trakt.isTraktV2Enabled(this, mPreferences) && com.archos.mediacenter.video.leanback.ViewingHistory.tracking(this) && !PrivateMode.isActive()) {
             mTraktClient = new TraktService.Client(this, mTraktListener, false);
         }
 
@@ -1220,7 +1220,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 if (log.isDebugEnabled()) log.debug("saveVideoStateIfReady: source={} position={} completed={}",
                         mPlaybackSession.selectedSource, resumePosition, mPlaybackSession.completed);
                 if (mVideoInfo != null && !PrivateMode.isActive()) {
-                    mVideoInfo.resume = com.archos.mediacenter.video.leanback.ViewingHistory.resumeEnabled(this) ? resumePosition : 0;
+                    mVideoInfo.resume = com.archos.mediacenter.video.leanback.ViewingHistory.resumeEnabled(this) && (com.archos.mediacenter.video.leanback.ViewingHistory.tracking(this)||!mPlaybackSession.completed) ? resumePosition : 0;
                     int duration = mPlayer==null?0:mPlayer.getDuration();
                     if (duration > 0)
                         mVideoInfo.duration = duration;
@@ -1422,7 +1422,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         else {
             if (log.isDebugEnabled()) log.debug("stopTrakt: mTraktClient == null, not sending watchStop");
             if (mVideoInfo != null) {
-                if (mVideoInfo.id >= 0 && realViewingEligible() && Trakt.shouldMarkAsSeen(getPlayerProgress()) && !PrivateMode.isActive()) {
+                if (mVideoInfo.id >= 0 && com.archos.mediacenter.video.leanback.ViewingHistory.tracking(this) && realViewingEligible() && Trakt.shouldMarkAsSeen(getPlayerProgress()) && !PrivateMode.isActive()) {
                     if (log.isDebugEnabled()) log.debug("stopTrakt: marking video {} as seen in VideoStore", mVideoInfo.id);
                     final ContentValues cv = new ContentValues(1);
                     cv.put(VideoStore.Video.VideoColumns.ARCHOS_TRAKT_SEEN, Trakt.TRAKT_DB_MARKED);

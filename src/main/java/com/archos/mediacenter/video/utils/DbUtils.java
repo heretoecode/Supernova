@@ -75,6 +75,7 @@ public class DbUtils {
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values,
                 VideoStore.Video.VideoColumns._ID + " =?",
                 new String[]{Long.toString(video.getId())});
+        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,"_id=?",new String[]{Long.toString(video.getId())},values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, video);
@@ -102,6 +103,7 @@ public class DbUtils {
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values,
                 VideoStore.Video.VideoColumns._ID + " =?",
                 new String[]{Long.toString(video.getId())});
+        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,"_id=?",new String[]{Long.toString(video.getId())},values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, video);
@@ -191,6 +193,7 @@ public class DbUtils {
         final String[] selectionArgs = new String[]{Long.toString(season.getShowId()), Integer.toString(season.getSeasonNumber())};
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, selectionArgs);
+        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, season);
@@ -219,6 +222,7 @@ public class DbUtils {
         final String[] selectionArgs = new String[]{Long.toString(season.getShowId()), Integer.toString(season.getSeasonNumber())};
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, selectionArgs);
+        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, season);
@@ -250,6 +254,7 @@ public class DbUtils {
         final String[] selectionArgs = new String[]{Long.toString(collection.getCollectionId())};
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, selectionArgs);
+        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, collection);
@@ -279,6 +284,7 @@ public class DbUtils {
         final String[] selectionArgs = new String[]{Long.toString(collection.getCollectionId())};
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, selectionArgs);
+        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, collection);
@@ -368,6 +374,7 @@ public class DbUtils {
         values.put(VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED, 0);
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, null, null);
+        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,null,null,false);
 
         if (traktSync) {
             syncTrakt(context);

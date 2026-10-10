@@ -8,6 +8,7 @@ import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.details.*;
 import java.util.*;
+import com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity;
 
 /** Library Health uses its host browser's centre and Information panels; no second shell. */
 public final class LibraryHealthPanel {
@@ -15,7 +16,7 @@ public final class LibraryHealthPanel {
     private final Context context;private final LinearLayout centre,right;private final Snapshot snapshot;
     public LibraryHealthPanel(Context c,LinearLayout middle,LinearLayout information,Snapshot s){context=c;centre=middle;right=information;snapshot=s==null?new Snapshot():s;}
     private TextView action(String label,Runnable run){return SharedThreePanel.action(context,label,run);}
-    private void information(String title,String text){right.removeAllViews();SharedThreePanel.heading(right,"Information");right.addView(SharedThreePanel.text(context,title,20));SharedThreePanel.divider(right);right.addView(SharedThreePanel.text(context,text,15));}
+    private void information(String title,String text){right.removeAllViews();SharedThreePanel.heading(right,title);SharedThreePanel.divider(right);right.addView(SharedThreePanel.text(context,text,15));}
     public void show(int category){centre.removeAllViews();SharedThreePanel.heading(centre,category<0?"Library Health":NAMES[category]);
         if(category<0){centre.addView(SharedThreePanel.text(context,LibraryHealth.needsAttention(context,snapshot)?"Your library has issues to review.":"Your library is healthy",18));centre.addView(SharedThreePanel.text(context,"Expand Library Health to review identification, metadata, availability and source issues. Importing and identification in progress are excluded from warnings.",15));information("Library Health",LibraryHealth.report(context));return;}
         android.content.SharedPreferences health=context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0);

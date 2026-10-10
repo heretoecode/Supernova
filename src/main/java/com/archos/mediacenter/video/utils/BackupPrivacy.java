@@ -192,6 +192,7 @@ public final class BackupPrivacy {
             "supernova_library_exclusions",
             "supernova_browser_grid",
             "supernova_browser_sort",
+            "supernova_onboarding_complete", "supernova_history_migrated", "supernova_track_viewing_history", "supernova_save_resume", "supernova_backup_history", "supernova_backup_resume", "supernova_putio_enabled", "supernova_integration_trakt", "supernova_integration_opensubtitles",
             "text_asset",
             "time",
             "title",
@@ -286,6 +287,8 @@ public final class BackupPrivacy {
             }
         }catch(RuntimeException error){throw new IOException("Backup database cannot be validated",error);}
     }
+    public static String selectedSettings(android.content.Context context,String json)throws org.json.JSONException{org.json.JSONObject data=new org.json.JSONObject(json);android.content.SharedPreferences p=androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);boolean history=p.getBoolean("supernova_backup_history",true),resume=p.getBoolean("supernova_backup_resume",true);List<String> remove=new ArrayList<>();for(Iterator<String> keys=data.keys();keys.hasNext();){String key=keys.next();if(!history&&(key.startsWith("preview_journey41:")||key.startsWith("supernova_viewed_")||key.equals("PREFERENCE_LAST_TIME_VIDEO_PLAYED_UTC")||key.startsWith("preview_cw_dismiss:")))remove.add(key);}for(String key:remove)data.remove(key);return data.toString();}
+    public static void applyViewingSelection(android.content.Context context,File copy)throws IOException{android.content.SharedPreferences p=androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);boolean history=p.getBoolean("supernova_backup_history",true),resume=p.getBoolean("supernova_backup_resume",true);if(history&&resume)return;try(SQLiteDatabase db=SQLiteDatabase.openDatabase(copy.getPath(),null,SQLiteDatabase.OPEN_READWRITE)){List<String> tables=new ArrayList<>();try(Cursor rows=db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",null)){while(rows.moveToNext())tables.add(rows.getString(0));}for(String table:tables){try(Cursor columns=db.rawQuery("PRAGMA table_info("+quote(table)+")",null)){while(columns.moveToNext()){String name=columns.getString(1);if(!history&&(name.equals("Archos_traktSeen")||name.equals("Archos_lastTimePlayed"))||!resume&&(name.equals("bookmark")||name.equals("Archos_bookmark")||name.equals("Archos_traktResume")))db.execSQL("UPDATE "+quote(table)+" SET "+quote(name)+"=0");else if(!history&&name.equals("bookmark"))db.execSQL("UPDATE "+quote(table)+" SET "+quote(name)+"=0 WHERE "+quote(name)+"<0");}}}db.execSQL("VACUUM");}catch(RuntimeException failure){throw new IOException("Could not apply viewing-data backup choices",failure);}}
     private static String quote(String identifier){return "\""+identifier.replace("\"","\"\"")+"\"";}
     private BackupPrivacy(){}
 }

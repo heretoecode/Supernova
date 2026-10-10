@@ -20,7 +20,7 @@ public class FoundationAboutTest {
     public static class Prefs extends PreferenceFragmentCompat {
         @Override public void onCreatePreferences(Bundle saved,String key){setPreferenceScreen(getPreferenceManager().createPreferenceScreen(requireContext()));}
     }
-    @Test public void fiveChildrenExpandInRailAndNormalPanelsRestore(){
+    @Test public void fourChildrenExpandInRailAndNormalPanelsRestore(){
         FragmentActivity activity=Robolectric.buildActivity(FragmentActivity.class).setup().get();
         Prefs prefs=new Prefs();activity.getSupportFragmentManager().beginTransaction().add(prefs,"test").commitNow();
         LinearLayout split=new LinearLayout(activity),rail=new LinearLayout(activity),middle=new LinearLayout(activity),help=new LinearLayout(activity);
@@ -28,10 +28,10 @@ public class FoundationAboutTest {
         TextView about=new TextView(activity);about.setText("About");about.setFocusable(true);rail.addView(about);
         FoundationAboutWorkspace workspace=new FoundationAboutWorkspace(prefs,split,middle,help,rail);
         workspace.show(about);
-        assertEquals(6,rail.getChildCount());assertEquals(View.GONE,middle.getVisibility());assertEquals(View.GONE,help.getVisibility());
+        assertEquals(5,rail.getChildCount());assertEquals(View.GONE,middle.getVisibility());assertEquals(View.GONE,help.getVisibility());
         for(int i=0;i<FoundationAboutWorkspace.SECTIONS.length;i++)assertEquals(FoundationAboutWorkspace.SECTIONS[i],((TextView)rail.getChildAt(i+1)).getText().toString());
         workspace.hide();assertEquals(View.VISIBLE,middle.getVisibility());assertEquals(View.VISIBLE,help.getVisibility());
-        workspace.show(about);assertEquals("Children must not be duplicated",6,rail.getChildCount());
+        workspace.show(about);assertEquals("Children must not be duplicated",5,rail.getChildCount());
     }
     @Test public void appInformationUsesActualVersionAndRequiredLineageWithoutUpdateButton(){
         FragmentActivity activity=Robolectric.buildActivity(FragmentActivity.class).setup().get();
@@ -51,15 +51,15 @@ public class FoundationAboutTest {
         split.addView(rail);split.addView(middle);split.addView(help);activity.setContentView(split);
         TextView about=new TextView(activity);about.setFocusable(true);rail.addView(about);
         FoundationAboutWorkspace workspace=new FoundationAboutWorkspace(prefs,split,middle,help,rail);workspace.show(about);
-        rail.getChildAt(2).requestFocus();
+        rail.getChildAt(1).requestFocus();
         java.lang.reflect.Field field=FoundationAboutWorkspace.class.getDeclaredField("rows");field.setAccessible(true);
         java.util.List<TextView> rows=(java.util.List<TextView>)field.get(workspace);
         assertTrue(rows.size()>10);String current=rows.get(0).getText().toString();rows.get(0).performClick();assertEquals(current,rows.get(0).getText().toString());
         TextView older=rows.get(1),second=rows.get(2);assertTrue(older.getText().toString().startsWith("▸"));older.performClick();second.performClick();
         assertTrue(older.getText().toString().startsWith("▾"));assertTrue(second.getText().toString().startsWith("▾"));
-        rail.getChildAt(1).requestFocus();rail.getChildAt(2).requestFocus();rows=(java.util.List<TextView>)field.get(workspace);
+        rail.getChildAt(3).requestFocus();rail.getChildAt(1).requestFocus();rows=(java.util.List<TextView>)field.get(workspace);
         assertTrue(rows.get(1).getText().toString().startsWith("▾"));assertTrue(rows.get(2).getText().toString().startsWith("▾"));
-        rows.get(1).requestFocus();assertTrue(workspace.handleBack());assertTrue(rail.getChildAt(2).hasFocus());assertTrue(workspace.handleBack());assertTrue(about.hasFocus());
+        rows.get(1).requestFocus();assertTrue(workspace.handleBack());assertTrue(rail.getChildAt(1).hasFocus());assertTrue(workspace.handleBack());assertTrue(about.hasFocus());
     }
     @Test public void officialQrRoundTripsAndRejectsNonPublicUrls() throws Exception {
         FragmentActivity activity=Robolectric.buildActivity(FragmentActivity.class).setup().get();
@@ -71,6 +71,15 @@ public class FoundationAboutTest {
         com.google.zxing.BinaryBitmap encoded=new com.google.zxing.BinaryBitmap(new com.google.zxing.common.HybridBinarizer(new com.google.zxing.RGBLuminanceSource(bitmap.getWidth(),bitmap.getHeight(),pixels)));
         assertEquals(expected,new com.google.zxing.MultiFormatReader().decode(encoded).getText());
         assertNull(qr.invoke(workspace,"https://example.com/?token=private"));assertNull(qr.invoke(workspace,"https://user@example.com/"));assertNull(qr.invoke(workspace,"http://example.com/"));
+    }
+    @Test public void licenceFocusAndRightNeverReadCatalogueUntilExplicitOk() throws Exception {
+        var host=Robolectric.buildActivity(FragmentActivity.class).setup().visible();try{
+            var activity=host.get();LinearLayout split=new LinearLayout(activity),rail=new LinearLayout(activity),middle=new LinearLayout(activity),help=new LinearLayout(activity);split.addView(rail);split.addView(middle);split.addView(help);activity.setContentView(split);TextView about=new TextView(activity);about.setFocusable(true);rail.addView(about);
+            var workspace=new FoundationAboutWorkspace(activity,split,middle,help,rail);workspace.show(about);workspace.openSection(1);android.widget.TextView licence=(android.widget.TextView)rail.getChildAt(2);
+            java.lang.reflect.Field reader=FoundationAboutWorkspace.class.getDeclaredField("reader");reader.setAccessible(true);assertNull(reader.get(workspace));assertTrue(allText(workspace).contains("Press OK"));
+            licence.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));assertNull(reader.get(workspace));licence.performClick();assertNotNull(reader.get(workspace));
+            java.util.concurrent.ExecutorService io=(java.util.concurrent.ExecutorService)reader.get(workspace);io.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertTrue(allText(workspace).contains("Components"));workspace.hide();workspace.show(about);workspace.openSection(1);assertTrue(allText(workspace).contains("Press OK"));
+        }finally{host.pause().stop().destroy();}
     }
     private String allText(View view){StringBuilder result=new StringBuilder();if(view instanceof TextView)result.append(((TextView)view).getText());if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++)result.append(allText(group.getChildAt(i)));}return result.toString();}
 }
