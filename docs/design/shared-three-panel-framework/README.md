@@ -1,15 +1,11 @@
-# Shared Three-Panel Framework — Mockups
+# Shared Three-Panel Framework — 0.135
 
-This folder is reserved for visual references for the proposed shared Settings and Network & Files three-panel framework.
+**Approved for 0.135 Codex handover; not implemented.**
 
-## Status
+Read the [authoritative foundation and universal browser specification](SHARED_FRAMEWORK_BROWSER_0.135.md), together with the [master release handover](../../project/SUPERNOVA_0.135_CODEX_MASTER_HANDOVER_2026-10-10.md).
 
-**Planning / not implemented.** The framework specification is still under discussion. This folder does not approve implementation or change release scope.
+## Visual reference
+[Settings/Subtitles three-panel mockup](settings-subtitles-three-panel-no-top-nav.png). The mockup demonstrates panel styling and spacing; sample content, starfield and navigation labels are illustrative. It omits top navigation for mockup purposes only: the real app keeps the top navigation.
 
-## Upload mockup
-
-Upload the approved reference image to this folder using GitHub's **Add file → Upload files**. Suggested filename: `settings-subtitles-three-panel-no-top-nav.png`.
-
-The reference image is a visual example only: its sample Settings values, navigation categories, starfield/background treatment, and subtitle preview are illustrative, not individually approved requirements. The top navigation bar must not be part of this mockup.
-
-When the shared framework specification is finalised, store it alongside the mockup in this folder and explicitly link the two. No application code should be changed merely by adding this folder or image.
+## Key principles
+Settings and Network & Files share the same three-panel design foundation. All appropriate file/folder browser entry points use one reusable browser implementation, including full-page Network & Files and compact (~65% footprint) first-launch Home. Provisional typography/spacing values, focus rules, staged library changes, scan preservation and missing-media rules are in the linked spec. Validate on Shield. No code changes are made by documentation commits.
