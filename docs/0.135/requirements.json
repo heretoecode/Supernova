@@ -7,7 +7,7 @@
       "id": "G-001",
       "requirement": "Preserve Foundation package, certificate, branding and 0.134 upgrade state",
       "authority": "Master + Shared framework",
-      "existing": "FoundationIdentity; AndroidManifest.xml; build.gradle",
+      "existing": "FoundationUiPolicy; AndroidManifest.xml; build.gradle",
       "change": "Retain app.supernova.player and existing key; bump literal version to 0.135/135.",
       "validation": "Manifest/package/certificate comparison and actual signed upgrade",
       "status": "UNSIGNED BINARY IDENTITY VERIFIED at 1039278 \u2014 latest signed certificate/upgrade pending",
@@ -21,7 +21,12 @@
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationApplicationIdentityTest.java",
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationVersionTest.java"
       ],
-      "acceptance_remaining": "Manifest/package/certificate comparison and actual signed upgrade; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Manifest/package/certificate comparison and actual signed upgrade; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/foundation/FoundationUiPolicy.java",
+        "src/main/AndroidManifest.xml",
+        "build.gradle"
+      ]
     },
     {
       "id": "G-002",
@@ -37,7 +42,8 @@
         "docs/0.135/TEST_RESULTS.json"
       ],
       "automated_coverage": [],
-      "acceptance_remaining": "Remote refs and branch ancestry; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Remote refs and branch ancestry; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": []
     },
     {
       "id": "G-003",
@@ -55,7 +61,10 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/SupernovaWorkspaceUiTest.java"
       ],
-      "acceptance_remaining": "Actual view geometry/render comparison; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Actual view geometry/render comparison; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/SharedThreePanel.java"
+      ]
     },
     {
       "id": "G-004",
@@ -73,7 +82,11 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/SupernovaWorkspaceUiTest.java"
       ],
-      "acceptance_remaining": "View properties, TV-distance Shield review; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "View properties, TV-distance Shield review; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/SharedThreePanel.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewIcon.java"
+      ]
     },
     {
       "id": "G-005",
@@ -91,7 +104,11 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/SupernovaWorkspaceUiTest.java"
       ],
-      "acceptance_remaining": "Actual focused/unfocused render, no content jumps; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Actual focused/unfocused render, no content jumps; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/SharedThreePanel.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java"
+      ]
     },
     {
       "id": "G-006",
@@ -109,7 +126,10 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewNavigationShadeTest.java"
       ],
-      "acceptance_remaining": "Page allowlist tests, Home/Movies/TV retain shade; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Page allowlist tests, Home/Movies/TV retain shade; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java"
+      ]
     },
     {
       "id": "G-007",
@@ -127,14 +147,17 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java"
       ],
-      "acceptance_remaining": "D-pad key dispatch and TextClock properties; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "D-pad key dispatch and TextClock properties; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java"
+      ]
     },
     {
       "id": "G-008",
       "requirement": "Settings auto-load category, expand on OK, one expanded parent, all parents accessible",
       "authority": "Master + Shared framework",
       "existing": "PreviewSettings nested-category adapter",
-      "change": "Auto-load category on focus; expand one parent on OK while preserving parent focus.",
+      "change": "Auto-load category on focus; expand one parent on OK while preserving parent focus. Animate category expansion/collapse together over 220ms; retain readable parent nodes in the scrollable rail.",
       "validation": "Advanced/About expansion, exact focus and scroll tests",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
@@ -147,7 +170,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/SupernovaWorkspaceUiTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSettingsEntryTest.java"
       ],
-      "acceptance_remaining": "Advanced/About expansion, exact focus and scroll tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Advanced/About expansion, exact focus and scroll tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java"
+      ]
     },
     {
       "id": "G-009",
@@ -179,7 +205,12 @@
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationAboutActivityTest.java",
         "src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java"
       ],
-      "acceptance_remaining": "Three-panel focus matrix incl toolbar edges; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Three-panel focus matrix incl toolbar edges; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java"
+      ]
     },
     {
       "id": "G-010",
@@ -197,7 +228,10 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationAboutTest.java"
       ],
-      "acceptance_remaining": "Foundation history comparison and long-text/QR tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Foundation history comparison and long-text/QR tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java"
+      ]
     },
     {
       "id": "G-011",
@@ -215,7 +249,10 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationAboutActivityTest.java"
       ],
-      "acceptance_remaining": "Packaged notices and actual licences view interaction; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Packaged notices and actual licences view interaction; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java"
+      ]
     },
     {
       "id": "G-012",
@@ -247,7 +284,10 @@
         "src/test/java/com/archos/mediacenter/video/foundation/FoundationAboutActivityTest.java",
         "src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java"
       ],
-      "acceptance_remaining": "Reach all diagnostic controls and return from system picker; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Reach all diagnostic controls and return from system picker; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java"
+      ]
     },
     {
       "id": "B-001",
@@ -279,7 +319,12 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Same production view class/behaviour parity; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Same production view class/behaviour parity; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkWorkspace.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java"
+      ]
     },
     {
       "id": "B-002",
@@ -300,13 +345,18 @@
         "src/test/java/com/archos/mediacenter/video/leanback/SharedDirectoryPickerTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderBrowserTest.java"
       ],
-      "acceptance_remaining": "Exhaustive manifest and callsite inventory; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Exhaustive manifest and callsite inventory; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/ListingFragment.java",
+        "src/main/java/com/archos/mediacenter/video/utils/FolderPicker.java",
+        "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioBrowserActivity.java"
+      ]
     },
     {
       "id": "B-003",
       "requirement": "Home footprint starts at 65%, same type/icons/targets; fewer visible rows",
       "authority": "Shared framework",
-      "existing": "MainFragment empty-library browser layout",
+      "existing": "PreviewPages empty-library browser layout; MainFragment",
       "change": "Use 65% height with the same shared typography and controls.",
       "validation": "Home/full render geometry and Shield usability",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -332,7 +382,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Home/full render geometry and Shield usability; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Home/full render geometry and Shield usability; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java"
+      ]
     },
     {
       "id": "B-004",
@@ -364,7 +418,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Focus Overview, Up to nav, expandable sources on OK; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Focus Overview, Up to nav, expandable sources on OK; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java"
+      ]
     },
     {
       "id": "B-005",
@@ -396,7 +453,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Toggle both ways at deep folder and retained item; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Toggle both ways at deep folder and retained item; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java"
+      ]
     },
     {
       "id": "B-006",
@@ -428,7 +488,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Each name/date/size sort plus restored opener; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Each name/date/size sort plus restored opener; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java"
+      ]
     },
     {
       "id": "B-007",
@@ -460,7 +523,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Toggle Settings/browser, supported video filter, folders always; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Toggle Settings/browser, supported video filter, folders always; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java"
+      ]
     },
     {
       "id": "B-008",
@@ -492,7 +559,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Deep paths, every ancestor, no ellipsis/wrap, OK navigation; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Deep paths, every ancestor, no ellipsis/wrap, OK navigation; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java"
+      ]
     },
     {
       "id": "B-009",
@@ -524,7 +594,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Enter/Back and previous folder item/scroll restoration; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Enter/Back and previous folder item/scroll restoration; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java"
+      ]
     },
     {
       "id": "B-010",
@@ -556,7 +629,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Indexed/unindexed, long paths, absent fields honest; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Indexed/unindexed, long paths, absent fields honest; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java"
+      ]
     },
     {
       "id": "B-011",
@@ -588,7 +665,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Local/USB/network/read-only provider action checks; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Local/USB/network/read-only provider action checks; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java"
+      ]
     },
     {
       "id": "B-012",
@@ -620,7 +700,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Actual view inventory and genuine loading ring; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Actual view inventory and genuine loading ring; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/ListingFragment.java"
+      ]
     },
     {
       "id": "B-013",
@@ -652,7 +736,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Mixed tree import with mature existing scanner; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Mixed tree import with mature existing scanner; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/BrowserSelection.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java)"
+      ]
     },
     {
       "id": "B-014",
@@ -684,7 +772,12 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Future nonexcluded descendant scan, exclusion boundary tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Future nonexcluded descendant scan, exclusion boundary tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/BrowserSelection.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java)",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/VideoStoreImportImpl.java)"
+      ]
     },
     {
       "id": "B-015",
@@ -716,7 +809,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Parent/child add and sibling/root identity tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Parent/child add and sibling/root identity tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/BrowserSelection.java"
+      ]
     },
     {
       "id": "B-016",
@@ -748,7 +844,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Back ancestry/panel changes no prompt; nav/section exit prompt; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Back ancestry/panel changes no prompt; nav/section exit prompt; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java"
+      ]
     },
     {
       "id": "B-017",
@@ -780,7 +879,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Cancel/edit/apply paths and index-only explanation; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Cancel/edit/apply paths and index-only explanation; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java"
+      ]
     },
     {
       "id": "B-018",
@@ -812,7 +915,12 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Busy/coalescing/cancel/background/errors regressions; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Busy/coalescing/cancel/background/errors regressions; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediacenter/utils/ShortcutDbAdapter.java)",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java"
+      ]
     },
     {
       "id": "B-019",
@@ -844,7 +952,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Scheduler request timing and real lifecycle events; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Scheduler request timing and real lifecycle events; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/NetworkScannerUtil.java)"
+      ]
     },
     {
       "id": "B-020",
@@ -876,7 +988,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Idle/queued/scanning/failure state renders; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Idle/queued/scanning/failure state renders; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewScanProgress.java"
+      ]
     },
     {
       "id": "B-021",
@@ -908,7 +1024,8 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaRetentionTest.java"
       ],
-      "acceptance_remaining": "Baseline import tests, root-cause records; no invented defect; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Baseline import tests, root-cause records; no invented defect; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": []
     },
     {
       "id": "L-001",
@@ -934,7 +1051,13 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
       ],
-      "acceptance_remaining": "Cross-page counts and nonblocking notice; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Cross-page counts and nonblocking notice; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkWorkspace.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java"
+      ]
     },
     {
       "id": "L-002",
@@ -960,7 +1083,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
       ],
-      "acceptance_remaining": "Category fixtures and real available evidence only; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Category fixtures and real available evidence only; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java"
+      ]
     },
     {
       "id": "L-003",
@@ -986,7 +1112,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
       ],
-      "acceptance_remaining": "Correcting preserves IDs/state/files and focus; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Correcting preserves IDs/state/files and focus; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingActivity.java"
+      ]
     },
     {
       "id": "L-004",
@@ -1012,7 +1142,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java"
       ],
-      "acceptance_remaining": "Scan lifecycle fixtures; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Scan lifecycle fixtures; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java"
+      ]
     },
     {
       "id": "L-005",
@@ -1042,7 +1175,12 @@
         "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
-      "acceptance_remaining": "DB snapshot before/after offline USB/NAS and missing files; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "DB snapshot before/after offline USB/NAS and missing files; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java)",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java)",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/VideoStoreImportImpl.java)"
+      ]
     },
     {
       "id": "L-006",
@@ -1072,13 +1210,16 @@
         "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
-      "acceptance_remaining": "Reliable/ambiguous reconnection and stored progress; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Reliable/ambiguous reconnection and stored progress; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java)"
+      ]
     },
     {
       "id": "L-007",
       "requirement": "No automatic purge or physical deletion, source removal explicit index-only",
       "authority": "Library Health + Shared framework",
-      "existing": "SupernovaLibraryPolicy; PreviewSourceRemoval",
+      "existing": "SupernovaLibraryPolicy; UniversalFileBrowser; BrowserSelection; ShortcutDbAdapter",
       "change": "Disable automatic Foundation purge; explicit source removal remains index-only.",
       "validation": "Backend deletion audit and scanner integration tests",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1102,13 +1243,19 @@
         "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
-      "acceptance_remaining": "Backend deletion audit and scanner integration tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Backend deletion audit and scanner integration tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java)",
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/BrowserSelection.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediacenter/utils/ShortcutDbAdapter.java)"
+      ]
     },
     {
       "id": "H-001",
       "requirement": "One-time empty welcome, explore freely, inline compact browser, no forced modal/Skip",
       "authority": "Master + Expanded scope",
-      "existing": "MainFragment empty-library state",
+      "existing": "PreviewPages empty-library state; MainFragment",
       "change": "Inline welcome/browser and freely accessible navigation without forced modal.",
       "validation": "First launch, first successful media and later empty library",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1134,13 +1281,17 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "First launch, first successful media and later empty library; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "First launch, first successful media and later empty library; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java"
+      ]
     },
     {
       "id": "H-002",
       "requirement": "Building Your Library and hide Customise until imported media",
       "authority": "Master + Expanded scope",
-      "existing": "MainFragment import-state rows",
+      "existing": "PreviewPages import-state rows; MainFragment",
       "change": "Show Building Your Library and hide Customise until media is indexed.",
       "validation": "Empty/busy/populated state tests",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1166,7 +1317,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Empty/busy/populated state tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Empty/busy/populated state tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java"
+      ]
     },
     {
       "id": "H-003",
@@ -1198,13 +1353,17 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Bright/dark fixture render and Shield animation review; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Bright/dark fixture render and Shield animation review; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewBackdrop.java",
+        "src/test/java/com/archos/mediacenter/video/leanback/FoundationHomeRegressionTest.java"
+      ]
     },
     {
       "id": "H-004",
       "requirement": "Remove heavy artwork gradient; only local text contrast, subtle hero edge/shadow",
       "authority": "Master + Expanded scope",
-      "existing": "PreviewBackdrop; MainFragment hero",
+      "existing": "PreviewBackdrop; PreviewPages hero; MainFragment",
       "change": "Remove heavy inherited artwork gradients; retain readable text and neutral edge depth.",
       "validation": "Pixel comparison and TV legibility",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1230,7 +1389,12 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Pixel comparison and TV legibility; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Pixel comparison and TV legibility; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewBackdrop.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java"
+      ]
     },
     {
       "id": "H-005",
@@ -1262,7 +1426,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "First/middle/last poster rendering and scroll; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "First/middle/last poster rendering and scroll; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java"
+      ]
     },
     {
       "id": "H-006",
@@ -1294,13 +1461,16 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Stable item anchor with background updates; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Stable item anchor with background updates; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java"
+      ]
     },
     {
       "id": "H-007",
       "requirement": "Move/Hide controls, visibility independent from membership",
       "authority": "Master + Expanded scope",
-      "existing": "PreviewHomeRows; PreviewHomeRows",
+      "existing": "PreviewHomeRows",
       "change": "Keep Move/Hide visibility separate from row membership.",
       "validation": "Hide/unhide/reorder retains members",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1326,7 +1496,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Hide/unhide/reorder retains members; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Hide/unhide/reorder retains members; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java"
+      ]
     },
     {
       "id": "H-008",
@@ -1358,7 +1531,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Toggle/snapshot/new item/manual tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Toggle/snapshot/new item/manual tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java"
+      ]
     },
     {
       "id": "H-009",
@@ -1390,7 +1566,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Asc/desc persisted, retained members; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Asc/desc persisted, retained members; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java"
+      ]
     },
     {
       "id": "H-010",
@@ -1422,7 +1601,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Customisation dialog render/focus; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Customisation dialog render/focus; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java"
+      ]
     },
     {
       "id": "H-011",
@@ -1454,14 +1636,19 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java"
       ],
-      "acceptance_remaining": "Missing art/description/offline exclusion and correct action; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Missing art/description/offline exclusion and correct action; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedCard.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewVariants.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java"
+      ]
     },
     {
       "id": "M-001",
       "requirement": "Symmetrical Movies/TV; movie-only Continue Watching on Movies",
       "authority": "Master + Movies/TV + Recent decisions",
-      "existing": "PreviewMoviePage; PreviewPages library; PreviewHomeRows",
-      "change": "Keep page symmetry and restrict Movies Continue Watching to movies.",
+      "existing": "PreviewPages.render; PreviewLibraryLoader; PreviewHomeRows",
+      "change": "Render typed Continue Watching above both libraries; Movies contains movies only and TV contains episodes/series. Omit empty rows and preserve dismissal membership.",
       "validation": "Mixed movie/series snapshot routing",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
@@ -1472,7 +1659,8 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview41ProgressTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java",
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryCompositionTest.java"
       ],
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java",
@@ -1480,15 +1668,21 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryReturnTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview41ProgressTest.java",
-        "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java"
+        "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java",
+        "src/test/java/com/archos/mediacenter/video/leanback/PreviewLibraryCompositionTest.java"
       ],
-      "acceptance_remaining": "Mixed movie/series snapshot routing; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Mixed movie/series snapshot routing; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java"
+      ]
     },
     {
       "id": "M-002",
       "requirement": "TV Recently Added next-to-watch with multiple new episodes",
       "authority": "Master + Movies/TV + Recent decisions",
-      "existing": "PreviewPages library recent rows; PreviewLibraryLoader nextEpisode",
+      "existing": "PreviewPages library recent rows; PreviewLibraryLoader.next",
       "change": "Represent the next unwatched episode when several recent episodes belong to one show.",
       "validation": "Journey/version duplicates and watched episodes",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1510,14 +1704,18 @@
         "src/test/java/com/archos/mediacenter/video/leanback/Preview41ProgressTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java"
       ],
-      "acceptance_remaining": "Journey/version duplicates and watched episodes; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Journey/version duplicates and watched episodes; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryLoader.java"
+      ]
     },
     {
       "id": "M-003",
       "requirement": "Boxed Filters/Sort/Order/View/Columns above divider, custom Edit far right only",
       "authority": "Master + Movies/TV + Recent decisions",
       "existing": "PreviewToolbar; PreviewPages library; CustomLibraryActivity",
-      "change": "Box native toolbar controls; place Edit last only on the custom page.",
+      "change": "Apply permanent outlined library control boxes above a separate divider; use the same boxes on custom-page controls and retain Edit at the far right.",
       "validation": "Actual toolbar geometry and built-in absence of Edit",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
@@ -1538,14 +1736,19 @@
         "src/test/java/com/archos/mediacenter/video/leanback/Preview41ProgressTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java"
       ],
-      "acceptance_remaining": "Actual toolbar geometry and built-in absence of Edit; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Actual toolbar geometry and built-in absence of Edit; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java"
+      ]
     },
     {
       "id": "M-004",
       "requirement": "Toolbar deterministic LR/Down/Up and exact Details return",
       "authority": "Master + Movies/TV + Recent decisions",
       "existing": "PreviewToolbar; PreviewPages library; PreviewPages return-state",
-      "change": "Keep deterministic toolbar edges and exact media return focus.",
+      "change": "Keep deterministic toolbar edges and exact media return focus. Skip nonfocusable/hidden/disabled spacer controls during left/right traversal.",
       "validation": "Grid/List D-pad and state/scroll restoration",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
       "evidence": [
@@ -1566,7 +1769,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/Preview41ProgressTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java"
       ],
-      "acceptance_remaining": "Grid/List D-pad and state/scroll restoration; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Grid/List D-pad and state/scroll restoration; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java"
+      ]
     },
     {
       "id": "M-005",
@@ -1594,7 +1801,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/Preview41ProgressTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java"
       ],
-      "acceptance_remaining": "Focus first/middle/last rows and rendered viewport; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Focus first/middle/last rows and rendered viewport; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java"
+      ]
     },
     {
       "id": "M-006",
@@ -1622,7 +1833,13 @@
         "src/test/java/com/archos/mediacenter/video/leanback/Preview41ProgressTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview411Test.java"
       ],
-      "acceptance_remaining": "Genre/year/provider multi-select Done/Clear and persistence; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Genre/year/provider multi-select Done/Clear and persistence; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryColumns.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java"
+      ]
     },
     {
       "id": "S-001",
@@ -1646,7 +1863,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSearchPresentationTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java"
       ],
-      "acceptance_remaining": "No network discovery; mockup alignment; initial T focus; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "No network discovery; mockup alignment; initial T focus; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java"
+      ]
     },
     {
       "id": "S-002",
@@ -1664,7 +1885,10 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/search/PreviewSearchTextTest.java"
       ],
-      "acceptance_remaining": "Unicode/punctuation/article/typo positive and false-positive tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Unicode/punctuation/article/typo positive and false-positive tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearchText.java"
+      ]
     },
     {
       "id": "S-003",
@@ -1682,7 +1906,10 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSearchNativeIndexTest.java"
       ],
-      "acceptance_remaining": "Known indexed fixtures; explain match role; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Known indexed fixtures; explain match role; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java"
+      ]
     },
     {
       "id": "S-004",
@@ -1702,7 +1929,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSearchNativeIndexTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsFactsTest.java"
       ],
-      "acceptance_remaining": "TMDb source audit, locale dedup and honest guidance; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "TMDb source audit, locale dedup and honest guidance; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsFacts.java"
+      ]
     },
     {
       "id": "S-005",
@@ -1726,7 +1957,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewSearchPresentationTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java"
       ],
-      "acceptance_remaining": "Empty/results/update/cancel generations and return tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Empty/results/update/cancel generations and return tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java"
+      ]
     },
     {
       "id": "D-001",
@@ -1756,13 +1990,17 @@
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewMoreActionsTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java"
       ],
-      "acceptance_remaining": "Real metadata row/action geometry; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Real metadata row/action geometry; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsFacts.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java"
+      ]
     },
     {
       "id": "D-002",
       "requirement": "Provider logos/icons, region and supported season availability, no rent/buy",
       "authority": "Master + Details + expanded mockup",
-      "existing": "PreviewProviderIcons; StreamingProviders",
+      "existing": "PreviewProviderIcons; StreamingRepository",
       "change": "Preserve real provider/region and supported season availability; exclude rent/buy offers.",
       "validation": "Actual provider response fixtures and enabled integrations",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1786,7 +2024,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewMoreActionsTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java"
       ],
-      "acceptance_remaining": "Actual provider response fixtures and enabled integrations; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Actual provider response fixtures and enabled integrations; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/streaming/PreviewProviderIcons.java",
+        "src/main/java/com/archos/mediacenter/video/streaming/StreamingRepository.java"
+      ]
     },
     {
       "id": "D-003",
@@ -1816,7 +2058,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewMoreActionsTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java"
       ],
-      "acceptance_remaining": "Timing evidence, no main-thread network or repeated focus load; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Timing evidence, no main-thread network or repeated focus load; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java"
+      ]
     },
     {
       "id": "D-004",
@@ -1846,7 +2092,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewMoreActionsTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java"
       ],
-      "acceptance_remaining": "Conditional tab routes and nested Details back; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Conditional tab routes and nested Details back; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java"
+      ]
     },
     {
       "id": "D-005",
@@ -1876,13 +2125,17 @@
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewMoreActionsTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java"
       ],
-      "acceptance_remaining": "Approved mockup, equal rows and real facts; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Approved mockup, equal rows and real facts; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewPeople.java"
+      ]
     },
     {
       "id": "D-006",
       "requirement": "Find a Match visible input, typing retains keyboard, posters render",
       "authority": "Master + Details + expanded mockup",
-      "existing": "PreviewMatchFragment; ManualVideoScrappingActivity",
+      "existing": "ManualVideoScrappingSearchFragment; PreviewMatchSearch; ManualVideoScrappingActivity",
       "change": "Retain visible match query, keyboard focus and poster-bearing native candidates.",
       "validation": "Match correction preserves state/versions and explicit chosen identity",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1906,13 +2159,18 @@
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewMoreActionsTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java"
       ],
-      "acceptance_remaining": "Match correction preserves state/versions and explicit chosen identity; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Match correction preserves state/versions and explicit chosen identity; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingSearchFragment.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewMatchSearch.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingActivity.java"
+      ]
     },
     {
       "id": "P-001",
       "requirement": "Exactly Subtitles/Audio/centred Play-Pause/More pills; no top Info/Settings",
       "authority": "Master + HUD + Recent decisions + Playback",
-      "existing": "VideoPlayerActivity HUD",
+      "existing": "PlayerController; PlayerActivity HUD",
       "change": "Expose exactly Subtitles, Audio, centred Pause and More.",
       "validation": "HUD view inventory, key navigation and technical info retained",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1942,13 +2200,17 @@
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java",
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "HUD view inventory, key navigation and technical info retained; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "HUD view inventory, key navigation and technical info retained; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/player/PlayerController.java",
+        "src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java"
+      ]
     },
     {
       "id": "P-002",
       "requirement": "D-pad directions reveal seek bar, remove Up-to-More",
       "authority": "Master + HUD + Recent decisions + Playback",
-      "existing": "VideoPlayerActivity key dispatch",
+      "existing": "PlayerController; PlayerActivity key dispatch",
       "change": "Reveal seeking with directions and remove the Up-to-More shortcut.",
       "validation": "Hidden/visible HUD directional tests, Back dismiss then exit",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -1978,13 +2240,17 @@
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java",
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "Hidden/visible HUD directional tests, Back dismiss then exit; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Hidden/visible HUD directional tests, Back dismiss then exit; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/player/PlayerController.java",
+        "src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java"
+      ]
     },
     {
       "id": "P-003",
       "requirement": "Preserve HUD theme/colour; diagnostic flash only fix if reproducible",
       "authority": "Master + HUD + Recent decisions + Playback",
-      "existing": "VideoPlayerActivity; diagnostics overlay",
+      "existing": "PlayerController; PlayerActivity; diagnostics overlay",
       "change": "Preserve colour; no reproducible hardware diagnostic flash is claimed fixed.",
       "validation": "Recreation/accent tests and Shield playback",
       "status": "THEME PRESERVED \u2014 hardware diagnostic flash not reproduced; physical verification pending",
@@ -2014,7 +2280,11 @@
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java",
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "Recreation/accent tests and Shield playback; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Recreation/accent tests and Shield playback; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/player/PlayerController.java",
+        "src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java"
+      ]
     },
     {
       "id": "P-004",
@@ -2050,7 +2320,10 @@
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java",
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "Subtitle menu/track regressions, labels/locale flags; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Subtitle menu/track regressions, labels/locale flags; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java"
+      ]
     },
     {
       "id": "P-005",
@@ -2086,7 +2359,12 @@
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java",
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "Intent/service one-shot start with preserved stored state until play; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Intent/service one-shot start with preserved stored state until play; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/utils/PlayUtils.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoreActions.java",
+        "src/main/java/com/archos/mediacenter/video/player/PlaybackResumePolicy.java"
+      ]
     },
     {
       "id": "P-006",
@@ -2122,13 +2400,16 @@
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java",
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "Resume/watched DB comparison; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Resume/watched DB comparison; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java"
+      ]
     },
     {
       "id": "P-007",
       "requirement": "Up Next 5s + Play Now, inherited modes and safe postcredits/no duplicate advance",
       "authority": "Master + HUD + Recent decisions + Playback",
-      "existing": "VideoPlayerActivity Up Next; IntroDbManager",
+      "existing": "PlayerController; PlayerActivity Up Next; IntroDbManager",
       "change": "Use five-second Play Now prompt and preserve natural-end progression/post-credit boundaries.",
       "validation": "Pause/end/race/seek/mode/postcredits fixtures",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -2158,7 +2439,12 @@
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java",
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "Pause/end/race/seek/mode/postcredits fixtures; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Pause/end/race/seek/mode/postcredits fixtures; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/player/PlayerController.java",
+        "src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediacenter/utils/introdb/IntroDbManager.java)"
+      ]
     },
     {
       "id": "P-008",
@@ -2176,7 +2462,12 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/video/player/PlaybackViewingCoverageTest.java"
       ],
-      "acceptance_remaining": "Playback viewing accounting and completion tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Playback viewing accounting and completion tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/player/PlaybackViewingCoverage.java",
+        "src/main/java/com/archos/mediacenter/video/player/PlayerService.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediacenter/utils/trakt/TraktService.java)"
+      ]
     },
     {
       "id": "P-009",
@@ -2198,7 +2489,13 @@
         "src/test/java/com/archos/mediacenter/video/leanback/VersionPreferenceTest.java",
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java"
       ],
-      "acceptance_remaining": "All entry routes, unsupported codec/HDR and file removal; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "All entry routes, unsupported codec/HDR and file removal; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewVariants.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PlaybackCompatibility.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsFragment.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java"
+      ]
     },
     {
       "id": "P-010",
@@ -2234,7 +2531,11 @@
         "src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java",
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "Real supported segments, uncertain/postcredits not skipped; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Real supported segments, uncertain/postcredits not skipped; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/player/SegmentSkippingPolicy.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediacenter/utils/introdb/IntroDbManager.java)"
+      ]
     },
     {
       "id": "P-011",
@@ -2253,7 +2554,10 @@
       "automated_coverage": [
         "src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java"
       ],
-      "acceptance_remaining": "Source/endpoints/provider evidence and unavailable fallback; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Source/endpoints/provider evidence and unavailable fallback; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java)"
+      ]
     },
     {
       "id": "C-001",
@@ -2275,7 +2579,12 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java"
       ],
-      "acceptance_remaining": "Empty/occupied navigation, no second page/reordering/Discovery; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Empty/occupied navigation, no second page/reordering/Discovery; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryPage.java"
+      ]
     },
     {
       "id": "C-002",
@@ -2297,7 +2606,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java"
       ],
-      "acceptance_remaining": "Wizard traversal, retained Back entries and live preview; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Wizard traversal, retained Back entries and live preview; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java"
+      ]
     },
     {
       "id": "C-003",
@@ -2319,7 +2631,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java"
       ],
-      "acceptance_remaining": "Input validation and known metadata availability; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Input validation and known metadata availability; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryPage.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryLoader.java"
+      ]
     },
     {
       "id": "C-004",
@@ -2341,7 +2657,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java"
       ],
-      "acceptance_remaining": "Persistence and DB/media invariance; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Persistence and DB/media invariance; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryPage.java"
+      ]
     },
     {
       "id": "C-005",
@@ -2363,7 +2683,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java"
       ],
-      "acceptance_remaining": "Create/edit draft exit and validation failure focus; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Create/edit draft exit and validation failure focus; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java"
+      ]
     },
     {
       "id": "A-001",
@@ -2397,7 +2720,12 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "Feature-by-feature export/restore archive manifest; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Feature-by-feature export/restore archive manifest; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/utils/MediaLibraryBackupService.java",
+        "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+        "src/main/java/com/archos/mediacenter/video/utils/MigrationBackup.java"
+      ]
     },
     {
       "id": "A-002",
@@ -2417,13 +2745,17 @@
         "src/test/java/com/archos/mediacenter/video/utils/BackupPrivacyTest.java",
         "src/test/java/com/archos/mediacenter/video/utils/BackupCycleTest.java"
       ],
-      "acceptance_remaining": "Planted secret archive inspection, reject secret-bearing imports; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Planted secret archive inspection, reject secret-bearing imports; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/utils/BackupPrivacy.java",
+        "src/main/java/com/archos/mediacenter/video/utils/SettingsBackup.java"
+      ]
     },
     {
       "id": "A-003",
       "requirement": "Before picker privacy warning; Android picker destination/filename",
       "authority": "Master + Backup + Expanded scope",
-      "existing": "PreviewBackup; BackupMediaLibraryPreference",
+      "existing": "VideoPreferencesCommon; BackupReview",
       "change": "Show privacy notice before Android destination/file picker.",
       "validation": "TV export flow and actual warning",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -2451,13 +2783,17 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "TV export flow and actual warning; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "TV export flow and actual warning; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/utils/VideoPreferencesCommon.java",
+        "src/main/java/com/archos/mediacenter/video/utils/BackupReview.java"
+      ]
     },
     {
       "id": "A-004",
       "requirement": "Validate/confirm filename/date/version/categories before replacing",
       "authority": "Master + Backup + Expanded scope",
-      "existing": "SafeBackup.stage; PreviewBackup restore confirmation",
+      "existing": "SafeBackup.stage; BackupReview restore confirmation",
       "change": "Show staged filename/date/version/categories and validate before replacement.",
       "validation": "Invalid/zero/traversal/oversize/version/CRC tests, existing state unchanged",
       "status": "IMPLEMENTED \u2014 automated regression evidence recorded; final acceptance pending",
@@ -2485,7 +2821,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "Invalid/zero/traversal/oversize/version/CRC tests, existing state unchanged; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Invalid/zero/traversal/oversize/version/CRC tests, existing state unchanged; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+        "src/main/java/com/archos/mediacenter/video/utils/BackupReview.java"
+      ]
     },
     {
       "id": "A-005",
@@ -2507,7 +2847,11 @@
         "src/test/java/com/archos/mediacenter/video/utils/BackupStageRevalidationTest.java",
         "src/test/java/com/archos/mediacenter/video/utils/VerifiedBackupTest.java"
       ],
-      "acceptance_remaining": "Injected restore failures and DB/prefs rollback; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Injected restore failures and DB/prefs rollback; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+        "src/main/java/com/archos/mediacenter/video/utils/SettingsBackup.java"
+      ]
     },
     {
       "id": "A-006",
@@ -2541,7 +2885,12 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "Full nonsecret-state round trip; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Full nonsecret-state round trip; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/utils/MigrationBackup.java",
+        "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java",
+        "src/main/java/com/archos/mediacenter/video/utils/SettingsBackup.java"
+      ]
     },
     {
       "id": "A-007",
@@ -2579,7 +2928,11 @@
         "src/test/java/com/archos/mediaprovider/video/SupernovaLegacyVolumeVisibilityTest.java",
         "src/test/java/com/archos/mediaprovider/video/SupernovaNetworkAvailabilityTest.java"
       ],
-      "acceptance_remaining": "Missing/ambiguous sources and stable media IDs; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Missing/ambiguous sources and stable media IDs; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/VideoStoreImportImpl.java)",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java)"
+      ]
     },
     {
       "id": "A-008",
@@ -2613,7 +2966,10 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "Capture race/cancel/delete/prefs and bounded log tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Capture race/cancel/delete/prefs and bounded log tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java"
+      ]
     },
     {
       "id": "A-009",
@@ -2647,7 +3003,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "Actual events, optional-off zero sampling and bounded overhead; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Actual events, optional-off zero sampling and bounded overhead; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+        "src/main/java/com/archos/mediacenter/video/diagnostics/ArtworkTrace.java"
+      ]
     },
     {
       "id": "A-010",
@@ -2681,7 +3041,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "Planted username/token/key/header/URI test corpus; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Planted username/token/key/header/URI test corpus; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+        "src/main/java/com/archos/mediacenter/video/utils/BackupPrivacy.java"
+      ]
     },
     {
       "id": "A-011",
@@ -2716,7 +3080,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "Existing configured APIs/licensing/quota and known failure tests; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Existing configured APIs/licensing/quota and known failure tests; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+        ".github/build/medialib-supernova135.patch (src/com/archos/mediascraper/themoviedb3/TmdbTitleLanguage.java)"
+      ]
     },
     {
       "id": "A-012",
@@ -2750,7 +3118,11 @@
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
         "src/test/java/com/archos/mediacenter/video/leanback/PreviewProviderRefreshTest.java"
       ],
-      "acceptance_remaining": "Selector rendering/in-place tick and locale cases; verify on the latest complete candidate and physical Shield where device behaviour is involved."
+      "acceptance_remaining": "Selector rendering/in-place tick and locale cases; verify on the latest complete candidate and physical Shield where device behaviour is involved.",
+      "implementation_paths": [
+        "src/main/java/com/archos/mediacenter/video/streaming/PreviewProviderIcons.java",
+        "src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageIcon.java"
+      ]
     }
   ],
   "checkpoint": "CP-04",

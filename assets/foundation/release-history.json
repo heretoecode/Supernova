@@ -9,7 +9,7 @@
   "current": {
     "version": "0.135",
     "version_code": 135,
-    "kind": "Development / QA \u2014 unreleased",
+    "kind": "Development / QA — unreleased",
     "notes": [
       "Shared three-panel Settings and Network & Files, plus one compact Home and TV file browser with complete breadcrumbs and persisted controls.",
       "Staged recursive library selection and exclusions, atomic Apply & Scan, and five-category Library Health that retains unavailable records and viewing progress.",

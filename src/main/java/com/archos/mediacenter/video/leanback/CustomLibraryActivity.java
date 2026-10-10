@@ -68,7 +68,7 @@ public final class CustomLibraryActivity extends LeanbackActivity {
   void control(LinearLayout controls,String key,String label,Runnable action){TextView button=action(label,action);button.setTag("custom.control."+key);LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(-2,dp(46));size.leftMargin=dp(8);controls.addView(button,size);}
   void edit(int selected){editing=true;step=selected;original=draft.encode();pendingFocus="wizard.step."+step;render();}
   void library(){options=null;preview=null;boolean list=draft.view.equals("list");if(columns==null)columns=new PreviewLibraryColumns(getContext(),true,"custom_");
-   LinearLayout controls=new PreviewToolbar(getContext());controls.setGravity(Gravity.CENTER_VERTICAL);addView(controls,new LayoutParams(-1,-2));
+   LinearLayout controls=new PreviewToolbar(getContext(),true);controls.setGravity(Gravity.CENTER_VERTICAL);addView(controls,new LayoutParams(-1,-2));
    control(controls,"filters","Filters",()->edit(2));
    control(controls,"sort","Sort",()->PreviewDialog.choose(getContext(),"Sort",new String[]{"Title","Year","Date Added"},Arrays.asList("title","year","added").indexOf(draft.sort),n->{draft.sort=new String[]{"title","year","added"}[n];columns.clearSort();persistDisplay();}));
    control(controls,"order",draft.descending?"Descending":"Ascending",()->{draft.descending=!draft.descending;columns.setAscending(!draft.descending);persistDisplay();});

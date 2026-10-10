@@ -70,6 +70,19 @@ public class SharedThreePanel extends LinearLayout {
         return row;
     }
 
+    /** Permanent inset control surface; row actions retain their separate focus-only outline. */
+    public static StateListDrawable control(Context context, int radius) {
+        StateListDrawable states = new StateListDrawable();
+        for (boolean focused : new boolean[]{true, false}) {
+            GradientDrawable shape = new GradientDrawable();
+            shape.setColor(focused ? 0x603b4857 : 0x303b4857);
+            shape.setCornerRadius(dp(context, radius));
+            shape.setStroke(dp(context, 1), focused ? Color.WHITE : 0x887f8996);
+            states.addState(focused ? new int[]{android.R.attr.state_focused} : new int[]{}, shape);
+        }
+        return states;
+    }
+
     public static StateListDrawable focus(Context context) {
         GradientDrawable focused = new GradientDrawable();
         focused.setColor(0x263b4857);

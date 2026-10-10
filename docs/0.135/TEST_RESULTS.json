@@ -74,5 +74,39 @@
     "apk_built": false,
     "gradle_log_sha256": "365b7bf341b9c50d0b02bc23d44169c9c06e542e29fb3aaa0310d24dc4304ac8",
     "notes": "Final audit guards and top-navigation opener restoration were added after test compilation; this run is not their validation. Lint ran against the working tree including the pending native Java guard."
+  },
+  "focused_checkpoint36": {
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed": "2m 5s",
+    "source": "ae34c2e plus pending Settings transition",
+    "native_build_omitted": true
+  },
+  "focused_checkpoint37": {
+    "tests": 17,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed": "2m 21s",
+    "source": "ae34c2e plus boxed controls/Settings transition; before Continue Watching change",
+    "native_build_omitted": true,
+    "gradle_log_sha256": "ffdfdf0f999cc38f05070d96e8b3d9379242551393f20aac206275247a6ed785"
+  },
+  "focused_checkpoint39": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed": "1m 56s",
+    "native_build_omitted": true,
+    "source": "final boxed controls and Movies/TV Continue Watching working tree",
+    "gradle_log_sha256": "6c0851f6d8de1af6084f8e1d3bc711c0278dc574dcf19c8c26d5d5c409660766"
+  },
+  "python_checkpoint40": {
+    "tests": 49,
+    "failures": 0,
+    "elapsed_seconds": 14.878
   }
 }

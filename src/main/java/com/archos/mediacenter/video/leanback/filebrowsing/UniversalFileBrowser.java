@@ -87,7 +87,9 @@ public final class UniversalFileBrowser extends LinearLayout {
         all.setTag("browser.all_files");
         for(TextView button : new TextView[]{listMode,sort,all}) {
             button.setTextSize(17); button.setGravity(android.view.Gravity.CENTER);
-            toolbar.addView(button,new LayoutParams(0,dp(50),1));
+            button.setBackground(SharedThreePanel.control(c,25));
+            LayoutParams size=new LayoutParams(0,dp(50),1);size.leftMargin=dp(3);size.rightMargin=dp(3);
+            toolbar.addView(button,size);
         }
         centre.addView(toolbar,new LayoutParams(-1,-2));
         crumbs = new LinearLayout(c); breadcrumbScroll = new HorizontalScrollView(c);

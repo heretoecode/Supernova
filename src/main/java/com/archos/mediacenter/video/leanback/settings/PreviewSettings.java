@@ -157,6 +157,12 @@ public final class PreviewSettings {
     if(about!=null){if("About".equals(name)){about.show(button);if(expanded[0]!=button)about.collapseNavigation();}else about.hide();}
    };
    Runnable toggle=()->{
+    android.transition.TransitionManager.endTransitions(links);
+    android.transition.TransitionSet transition=new android.transition.TransitionSet()
+      .setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER)
+      .addTransition(new android.transition.ChangeBounds()).addTransition(new android.transition.Fade());
+    transition.setDuration(220);
+    android.transition.TransitionManager.beginDelayedTransition(links,transition);
     if(expanded[0]==button){collapse.run();button.requestFocus();return;}collapse.run();expanded[0]=button;
     if(about!=null&&"About".equals(name)){about.show(button);button.requestFocus();return;}
     int childIndex=links.indexOfChild(button)+1;
