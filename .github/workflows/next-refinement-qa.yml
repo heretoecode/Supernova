@@ -5,6 +5,12 @@ on:
     branches: [codex/supernova-next-refinement-2026-10-10]
     paths: [.github/workflows/next-refinement-qa.yml]
   workflow_dispatch:
+    inputs:
+      public_receipt_run:
+        description: 'Optional successful signed QA run to reverify its public APK artifact without rebuilding or signing'
+        type: string
+        required: false
+        default: ''
 permissions:
   contents: read
 concurrency:
@@ -12,7 +18,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   qa:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/supernova-next-refinement-2026-10-10'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/supernova-next-refinement-2026-10-10' && inputs.public_receipt_run == ''
     runs-on: ubuntu-latest
     timeout-minutes: 120
     environment: supernova-foundation-signing
@@ -171,5 +177,97 @@ jobs:
             ${{ runner.temp }}/supernova-foundation-ffmpeg/Supernova-Foundation-FFmpeg-Source.tar.xz
             ${{ runner.temp }}/supernova-foundation-ffmpeg/verified-native-build.json
             ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
+          if-no-files-found: error
+          retention-days: 30
+  public-receipt:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/supernova-next-refinement-2026-10-10' && inputs.public_receipt_run != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Require a successful signed QA run from this exact branch
+        id: upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QA_RUN_ID: ${{ inputs.public_receipt_run }}
+          QA_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          run_id = os.environ['QA_RUN_ID']
+          if not re.fullmatch(r'[1-9][0-9]*', run_id):
+              raise SystemExit('A numeric signed QA run ID is required.')
+          result = subprocess.run(['gh', 'api', 'repos/' + os.environ['QA_REPOSITORY'] + '/actions/runs/' + run_id], capture_output=True, text=True)
+          if result.returncode:
+              raise SystemExit('Upstream run metadata could not be verified.')
+          run = json.loads(result.stdout)
+          if run['workflow_id'] != 380815425 or run['conclusion'] != 'success' or run['event'] != 'workflow_dispatch' or run['head_branch'] != 'codex/supernova-next-refinement-2026-10-10' or not re.fullmatch(r'[0-9a-f]{40}', run['head_sha']):
+              raise SystemExit('Only a successful branch-owned signed QA run is accepted.')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('source_sha=' + run['head_sha'] + '\nrun_id=' + run_id + '\n')
+          PY
+      - name: Checkout the exact published APK source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ steps.upstream.outputs.source_sha }}
+          path: Video
+          persist-credentials: false
+      - name: Download only the signed QA artifact from the verified run
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: supernova-0136-signed-qa
+          path: qa-artifact
+          run-id: ${{ steps.upstream.outputs.run_id }}
+          github-token: ${{ github.token }}
+      - name: Java for public signature and manifest verification
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Reverify actual APK and publish only public receipt fields
+        env:
+          QA_SOURCE: ${{ steps.upstream.outputs.source_sha }}
+          QA_RUN_ID: ${{ steps.upstream.outputs.run_id }}
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'build-tools;36.0.0'
+          python3 - <<'PY'
+          import importlib.util, json, os, sys, zipfile
+          from pathlib import Path
+          source = Path('Video').resolve()
+          sys.path.insert(0, str(source / '.github/signing'))
+          from verify_foundation_apk import verify
+          apk = Path('qa-artifact/Supernova-0.136-Refinement-QA.apk')
+          proof = json.loads(Path('qa-artifact/public-qa-evidence.json').read_text())
+          certificate = '79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e'
+          tools = Path(os.environ['ANDROID_HOME']) / 'build-tools/36.0.0'
+          analyzer = Path(os.environ['ANDROID_HOME']) / 'cmdline-tools/latest/bin/apkanalyzer'
+          receipt = verify(apk, str(tools / 'apksigner'), str(analyzer), certificate)
+          spec = importlib.util.spec_from_file_location('qa_conformance', source / '.github/build/verify-next-refinement.py')
+          conformance = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(conformance)
+          receipt.update(conformance.binary(apk, str(analyzer), source, str(tools / 'aapt2')))
+          with zipfile.ZipFile(apk) as archive:
+              if archive.testzip() is not None or len(archive.namelist()) != len(set(archive.namelist())):
+                  raise SystemExit('APK ZIP integrity verification failed.')
+          expected = {'application_id': 'app.supernova.player', 'version_name': '0.136', 'version_code': 136, 'certificate_sha256': certificate, 'source_commit': os.environ['QA_SOURCE'], 'signed': True, 'qa_only': True, 'payload_matches_tested_unsigned': True}
+          if any(proof.get(key) != value for key, value in expected.items()) or any(proof.get(key) != value for key, value in receipt.items()):
+              raise SystemExit('Published APK differs from its exact-source signed evidence.')
+          unsigned = proof['unsigned_conformance']
+          if unsigned['source_commit'] != os.environ['QA_SOURCE'] or unsigned['unit_tests'] < 514 or any(unsigned[key] != 0 for key in ['unit_failures', 'unit_errors', 'unit_skips']) or unsigned['lint']['errors'] != 0:
+              raise SystemExit('Complete passing unsigned conformance evidence required.')
+          receipt.update(source_commit=os.environ['QA_SOURCE'], signed_qa_run_id=int(os.environ['QA_RUN_ID']), signed=True, apk_bytes=apk.stat().st_size, signature_verified=True, apk_zip_crc_verified=True, original_ci_payload_parity_verified=True, unit_tests=unsigned['unit_tests'], unit_failures=unsigned['unit_failures'], unit_errors=unsigned['unit_errors'], unit_skips=unsigned['unit_skips'], lint=unsigned['lint'], runtime_artifact_hashes_matched=unsigned['runtime_artifact_hashes_matched'], rebuilt_ffmpeg_libraries_matched=unsigned['rebuilt_ffmpeg_libraries_matched'], native_hashes_matched=unsigned['native_hashes_matched'], signed_upgrade_verified=False, physical_shield_verified=False)
+          Path('public-qa-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          print('PUBLIC_QA_RECEIPT_BEGIN')
+          print(json.dumps(receipt, indent=2))
+          print('PUBLIC_QA_RECEIPT_END')
+          PY
+      - name: Upload public verification receipt only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0136-qa-verification-receipt
+          path: public-qa-receipt.json
           if-no-files-found: error
           retention-days: 30
