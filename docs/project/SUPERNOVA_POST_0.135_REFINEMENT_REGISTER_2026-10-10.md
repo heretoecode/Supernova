@@ -204,3 +204,36 @@ User considers default Movies/TV library page review complete for now. More cust
 - Verify visual/behaviour parity on Shield against actual Movies and TV Shows screens. Do not consider superficially similar styling sufficient; changes to shared library components should carry across all three.
 
 **Status:** Approved correction for future refinement handover. No code changes authorised by documentation alone.
+
+## 18. Custom Library Page wizard — approved editing overlay, five-step refinements, and deletion dialog (2026-10-10)
+**Evidence:** User's ~1-minute walkthrough and photographs of the existing wizard, Live Preview, Review and Delete confirmation, reviewed in planning conversation. The media is not embedded in GitHub.
+
+### First creation versus subsequent editing
+- **First use, no custom page:** retain approved dedicated landing page with concise introduction and the existing five-step wizard directly below (item 16); no intermediary context menu.
+- **Editing an existing page:** change the library control label from ambiguous **Edit** to a clear title such as **Edit Library** (final wording may be harmonised with other controls); add a monochrome icon at left. Open the five-step wizard as a **centred, floating three-panel overlay above the existing custom library page**. The library remains visible but is softly blurred/dimmed, giving the wizard depth through subtle shadow and separation. Underlying page is noninteractive while overlay is open. Preserve legibility, focus and usable panel proportions; avoid an edge-to-edge full-screen takeover. This background treatment is specific to edit mode; do not show the underlying library artwork directly through wizard panels in a distracting way.
+- Preserve functional creation/editing, filters, preview, save, delete and navigation. Do not implement a second wizard.
+
+### Wizard foundation / step-specific changes (approved)
+- **Left panel:** non-focusable **Library Page** header elevated and separated from the five navigable steps by a subtle divider. Consistent typography, spacing and focus.
+- **Page Details:** retain name and remove **Icon** choice everywhere (text-only navigation). Keep the step name **Page Details** for now. Place **Delete Page** only here, at bottom of centre panel in a clearly separated caution/destructive area, not on all five steps. No Delete Page on Content Type, Filters, Display Options or Review.
+- **Content Type:** remove Movies/TV Shows/Both popup; expose all three choices directly as selectable controls in centre panel.
+- **Filters / Genres:** remove Done; genre changes persist immediately, Back closes without reverting; **All Genres** reset at top separated from real genres; heading uses consistent Title Case such as **Genres · Match Any Selected**.
+- **Filters / Original Language:** show established global language flag icons alongside language names, using the app-wide flag system.
+- **Filters / Collections:** remove Collections option entirely from this wizard.
+- **Display Options:** preserve existing functionality; apply shared section structure and remove redundant Delete Page.
+- **Review:** replace unstructured raw lines (e.g. “both · grid”, “title · Ascending”) with labelled, spaced summary rows/sections for page name, content type, layout, sort field and direction; retain Save Page and Previous navigation.
+- **Right Live Preview:** keep existing working list and matching-title count for this release; improve heading divider, count hierarchy, spacing and readability. Richer poster preview is not required now.
+- **All option pickers:** eliminate redundant Done confirmations where selection can apply immediately; Back should navigate out without discarding changes. **Do not remove Save Page**, which finalises creation/edited-page configuration; distinguish immediate picker selection from committing the overall wizard.
+
+### Approved compact Delete Page confirmation
+- A **narrower, centred modal** with monochrome warning icon and heading **Delete This Page?**, subtle divider below heading, and explanatory copy: only this custom page is deleted; library media, watched state and playback progress remain.
+- **Cancel** and **Delete** actions centred below copy, each with monochrome icon left of label and the shared outlined/translucent styling. Cancel gets initial D-pad focus. Delete requires explicit confirmation; no destructive default.
+- Keep the existing confirmed-working deletion semantics.
+
+### Wizard backdrop
+- Use Supernova's established standard background treatment already approved for Settings/Network & Files/etc. for the first-use wizard. For edit mode, the custom library remains behind a **blurred/dimmed overlay**, rather than displaying unfiltered hero artwork through the wizard. Avoid abrupt blur pop-in or excessive visual noise.
+
+### Validation
+Test first-use creation, edit overlay size/blur/dim/focus trap and dismissal, direct Content Type selection, genre updates, flags, removed icon/collections, Review formatting, Preview count/list, Save Page, Cancel/Delete safety, and preservation of existing data and D-pad behaviour on Shield.
+
+**Status:** All changes above user-approved as design/requirements; implementation only after explicit Codex handover. Shared foundation refinements are additionally documented in the three-panel foundation specification.
