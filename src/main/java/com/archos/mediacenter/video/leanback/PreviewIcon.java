@@ -24,6 +24,7 @@ public final class PreviewIcon extends Drawable {
   else if(kind.equals("search")){c.drawCircle(10,10,6,p);line(c,15,15,21,21);}
   else if(kind.equals("cog")){c.drawCircle(12,12,7,p);c.drawCircle(12,12,3,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,12,2,12,5);c.restore();}}
   else if(kind.equals("folder")){line(c,2,7,2,4,9,4,12,7,22,7,22,20,2,20,2,7);}
+  else if(kind.equals("files")||kind.equals("file")){line(c,5,2,15,2,20,7,20,22,5,22,5,2);line(c,15,2,15,7,20,7);line(c,9,12,16,12);line(c,9,17,16,17);}
   else if(kind.equals("video-file")){line(c,5,2,15,2,20,7,20,22,5,22,5,2);line(c,15,2,15,7,20,7);line(c,9,11,16,15,9,19,9,11);}
   else if(kind.contains("movie")||kind.equals("film")){c.drawRect(3,3,21,21,p);line(c,7,3,7,21);line(c,17,3,17,21);for(int y=7;y<21;y+=5){line(c,3,y,7,y);line(c,17,y,21,y);}}
   else if(kind.contains("tv")||kind.contains("video")){c.drawRoundRect(2,4,22,18,2,2,p);line(c,8,22,16,22);line(c,12,18,12,22);}

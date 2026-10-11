@@ -76,7 +76,7 @@ public final class PreviewDialog {
   decor.addOnAttachStateChangeListener(observer);if(decor.isAttachedToWindow())observer.onViewAttachedToWindow(decor);
  }
  private static void styleNativeChildren(View view,Context c){
-  if(view instanceof TextView){TextView text=(TextView)view;if(!(view instanceof EditText)){text.setTextColor(0xffd6e5ef);text.setTextSize(Math.min(15,text.getTextSize()/c.getResources().getDisplayMetrics().scaledDensity));}if(view instanceof Button){TvButton.style(text,false);text.setSingleLine(false);}}
+  if(view instanceof TextView){TextView text=(TextView)view;if(!(view instanceof EditText)){text.setTextColor(0xffd6e5ef);int title=c.getResources().getIdentifier("alertTitle","id","android");boolean heading=view.getId()==androidx.appcompat.R.id.alertTitle||title!=0&&view.getId()==title;text.setTextSize(heading?24:16);}if(view instanceof Button){TvButton.style(text,false);text.setSingleLine(false);}}
   if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)styleNativeChildren(((ViewGroup)view).getChildAt(i),c);
  }
  public static Dialog read(Context c,String title,String body){

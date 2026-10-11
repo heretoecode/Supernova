@@ -258,7 +258,7 @@ jobs:
           if any(proof.get(key) != value for key, value in expected.items()) or any(proof.get(key) != value for key, value in receipt.items()):
               raise SystemExit('Published APK differs from its exact-source signed evidence.')
           unsigned = proof['unsigned_conformance']
-          if unsigned['source_commit'] != os.environ['QA_SOURCE'] or unsigned['unit_tests'] < 527 or any(unsigned[key] != 0 for key in ['unit_failures', 'unit_errors', 'unit_skips']) or unsigned['lint']['errors'] != 0:
+          if unsigned['source_commit'] != os.environ['QA_SOURCE'] or unsigned['unit_tests'] < 528 or any(unsigned[key] != 0 for key in ['unit_failures', 'unit_errors', 'unit_skips']) or unsigned['lint']['errors'] != 0:
               raise SystemExit('Complete passing unsigned conformance evidence required.')
           receipt.update(source_commit=os.environ['QA_SOURCE'], signed_qa_run_id=int(os.environ['QA_RUN_ID']), signed=True, apk_bytes=apk.stat().st_size, signature_verified=True, apk_zip_crc_verified=True, original_ci_payload_parity_verified=True, unit_tests=unsigned['unit_tests'], unit_failures=unsigned['unit_failures'], unit_errors=unsigned['unit_errors'], unit_skips=unsigned['unit_skips'], lint=unsigned['lint'], runtime_artifact_hashes_matched=unsigned['runtime_artifact_hashes_matched'], rebuilt_ffmpeg_libraries_matched=unsigned['rebuilt_ffmpeg_libraries_matched'], native_hashes_matched=unsigned['native_hashes_matched'], signed_upgrade_verified=False, physical_shield_verified=False)
           Path('public-qa-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
