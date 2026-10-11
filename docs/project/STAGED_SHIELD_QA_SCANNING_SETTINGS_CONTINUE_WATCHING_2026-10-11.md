@@ -32,6 +32,19 @@ User confirms the existing selector represents two levels (basic/simple versus m
 
 Before changes, inspect the actual existing diagnostic modes, defaults, config persistence and export pipeline; user recalls a term like "salt" but is unsure of its meaning. **Do not confuse cryptographic salt/anonymisation with logging verbosity**: preserve privacy-preserving salting, token/credential redaction, safe handling of filesystem paths and other sensitive data. Maximum diagnostics means maximum safe and useful detail, not secrets or uncontrolled collection. Ensure logging is bounded (retention/rotation/storage), non-blocking, and avoids measurable performance degradation on Shield, especially during scanning. Preserve user-visible export action and verify a fresh-install build produces an informative report without requiring Settings access. This is the approved current Supernova default, not merely a temporary QA toggle. If public distribution is planned later, separately review disclosure and diagnostics policy without reintroducing a selector now.
 
+## P2 — Network & Files “All Files” toggle does nothing
+**Reproduction:** On physical Shield, open Network & Files → Local Storage → select an external backup drive. Grid/List View works and Sort works, but activating **All Files** appears to have no effect.
+
+**Approved intended semantics:** This is a **browser visibility toggle**, unrelated to folder inclusion or scanning.
+- **All Files ON:** show all files and navigable folders in the selected folder, including unsupported files.
+- **All Files OFF:** show supported video files and navigable folders; hide unsupported non-video files. Preserve folder visibility so nested supported content remains reachable.
+- Toggle must update the current directory listing immediately, indicate ON/OFF clearly, and preserve current path, stable focus and sensible scroll restoration when the focused item disappears.
+- Reuse shared button icons, title casing, background, curvature, padding and focus rules.
+- Do not add/remove library sources, trigger scanning, modify files or change sort/grid state when toggling.
+- Check supported video detection against actual app-supported formats (not filename assumptions alone); cover extension case, hidden files, folders, subtitles, image/document files and unsupported formats.
+- Audit applicable internal/external storage browser surfaces and network locations where the same shared browser is used. Verify no regression in functioning Sort and Grid/List buttons.
+- Determine whether the defect is missing click handler, stale filter state, failure to refresh adapter, or an incorrect source-specific query; capture evidence before fixing.
+
 ## QA / handover guardrails
 - Prioritise crash and functional indexing/refresh defects ahead of cosmetic polishing; avoid guessing root causes or claiming completion from source inspection alone.
 - Collect reproduction logs, relevant counters, screenshots and real Shield acceptance results.
