@@ -63,7 +63,9 @@ def update_html(t, version, notes):
         print("HTML already includes this version; no duplicate entry")
         return
     if MARKER not in old:
-        raise RuntimeError("Changelog missing release insertion marker; no destructive overwrite")
+        if "</body>" not in old:
+            raise RuntimeError("Changelog missing insertion point; refusing overwrite")
+        old = old.replace("</body>", MARKER + "\\n</body>", 1)
     section = f'<section id="{section_id}"><h2>Supernova {escape(version)}</h2><pre style="white-space:pre-wrap;font:inherit">{escape(notes)}</pre></section>\n'
     updated = old.replace(MARKER, MARKER + "\n" + section, 1).encode("utf-8")
     http(f"{API}/upload/drive/v3/files/{HTML_ID}?uploadType=media&fields=id,name,size",
