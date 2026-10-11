@@ -9,8 +9,22 @@ The user explicitly approved the **first-launch Welcome to Supernova** dialog sh
 
 Use a shared dialog component and design tokens for consistent structure across the app. Avoid applying a centred brand/icon layout indiscriminately to destructive confirmations or high-density choice lists; variants may omit branding and use different button layout while preserving typography, colour, focus and spacing.
 
+## Responsive scaling policy (approved principle; ratios provisional)
+
+**The design must retain its relative composition at different usable TV viewport sizes.** Fixed dp/sp baselines below are reference values at the design viewport, **not universal fixed dimensions**. Determine usable safe-area dimensions in Android logical dp after system insets/overscan, not raw physical 1080p/4K pixel counts. A 1080p and 4K display with the same logical viewport should look the same proportionally; do not blindly double dimensions at 4K.
+
+- Welcome/information panel: target approximately **35–40% of usable logical viewport width**, bounded by sensible min/max dp for legibility and no overflow; use the available width/height together when the display is unusually narrow or scaled.
+- Panel height: **content-driven**, capped at approximately **80% of safe viewport height**; scroll body content only when unavoidable and keep action buttons reachable.
+- Horizontal padding: approximately **7–8% of actual panel width**, clamped to comfortable dp minimum/maximum; vertical padding, icon, gaps, radii and button sizes derive from a coherent bounded scale so their relative hierarchy stays recognisable.
+- Type sizes: preserve the **brand < title > body** hierarchy using a bounded responsive type scale, respect Android fontScale/accessibility preferences, and never reduce text below legible minimums just to fit a fixed composition. Do not force a single uniform percentage scale that causes tiny text or huge controls.
+- Focus targets: enforce Android TV D-pad target minimums and safe spacing regardless of proportional calculations; prevent cropped glow and focus movement outside viewport.
+- Dialog stays centred within **safe content bounds**. On unusually small logical viewports, prioritise readability, no clipping, and navigability over exact geometric ratios.
+- Centralise sizing in shared responsive design tokens; no screen-specific hardcoded pixel multipliers. Validate screenshots at representative 720p, 1080p and 4K output modes, different display scaling/font settings and overscan. Test both **normalised geometry** (dialog width/viewport width, padding/dialog width, icon/dialog width, action widths) and absolute readability.
+
+**Provisional ratios are calibration targets, not measured pixel-perfect approval.** Compare to the approved welcome design on actual Shield screenshots and adjust globally rather than patching individual screens.
+
 ## Baseline design tokens (dp/sp; tune against Shield 1080p and 4K screenshots)
-- Width: **420dp preferred** for a welcome/information dialog; max width 90% of safe viewport, responsive to TV overscan and large text. Never clip.
+- Width: **420dp reference only** at the baseline design viewport; use the responsive width policy above, with a 90%-of-safe-viewport hard ceiling. Never clip.
 - Panel: deep navy opaque background, cool-blue 1dp low-contrast border, **16dp** corner radius, restrained shadow.
 - Padding: **32dp** left/right, **28dp** top/bottom; use a vertical content stack.
 - Supernova app icon: **56dp square**, centred; preserve actual icon aspect ratio.
