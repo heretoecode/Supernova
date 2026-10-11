@@ -27,3 +27,8 @@ User wants to **revisit first-run onboarding / welcome Home** before the next Co
 
 ## Process
 Continue collecting 0.137 QA observations; do not launch Codex or modify active PR #12 solely from this note. Revisit onboarding during the next handover preparation.
+
+## Follow-up clarification — restart regression and investigation sequence
+User confirms that on **0.136** the Continue Watching row eventually reappeared after fully closing and restarting the app. On **0.137**, multiple full restarts **do not** restore the row, even though the media has a resume state. User recalls that the wide Library Health banner and disappearance of Continue Watching arrived in the same release; this is their recollection, not independently verified commit history.
+
+**User's explicit priority:** remove the Library Health banner completely from Home **first**, including any layout slot/conditional row, then assess whether Continue Watching returns. Codex may separately inspect the banner's relationship to row composition and the Continue Watching data/visibility pipeline. Do not pre-emptively attribute causality or bundle a speculative unrelated redesign. Compare behaviour with and without the banner, and preserve evidence of any remaining failure. Do not wait for a full Home redesign to remove it.
