@@ -399,7 +399,8 @@ public final class PreviewPages extends FrameLayout {
                 int before=cells.size();rail(name,entries);if(cells.size()>before)cells.get(cells.size()-1).homeRowId=row.id;
             }
             boolean recentPresent=false;for(Cell cell:cells)if("recent".equals(cell.homeRowId))recentPresent=true;
-            if(!recentPresent&&(snapshot.recent.isEmpty()||!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))){header("Recently Added",false);cells.add(new Cell(PLACEHOLDERS,"Recently Added",HomePlaceholder.Kind.RECENT));}
+            boolean recentVisible=home.rows.stream().anyMatch(row->row.id.equals("recent")&&row.visible);
+            if(recentVisible&&!recentPresent&&(snapshot.recent.isEmpty()||!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))){header("Recently Added",false);cells.add(new Cell(PLACEHOLDERS,"Recently Added",HomePlaceholder.Kind.RECENT));}
             if(loaded&&!emptyHome()&&com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))cells.add(new Cell(CUSTOMISE,"Customise Home",null));
         } else if(tab==1||tab==2) {
             cells.add(new Cell(HERO,tab==1?"Movies":"TV Shows",featured()));
@@ -510,7 +511,7 @@ public final class PreviewPages extends FrameLayout {
     }
     private View cardAnchor(){View view=findFocus();return view==null?this:view;}
     private void openNetwork(){View parent=this;while(parent.getParent() instanceof View){parent=(View)parent.getParent();if(parent instanceof TopNavigation){((TopNavigation)parent).selectTab(3);break;}}setTab(3);}
-    private void placeholderInfo(){PreviewDialog.message(getContext(),"No Media Details Yet","Your movies and TV shows will appear here once you've added folders to your library.",false,new String[]{"Network & Files","Continue Browsing"},0,n->{if(n==0)openNetwork();});}
+    private void placeholderInfo(){boolean firstRun=!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext())||emptyHome();PreviewDialog.message(getContext(),firstRun?"No Media Details Yet":"No Details for This Placeholder",firstRun?"Your movies and TV shows will appear here once you've added folders to your library.":"No media is attached to this placeholder. Browse your library or add more folders in Network & Files.",false,new String[]{"Network & Files","Continue Browsing"},0,n->{if(n==0)openNetwork();});}
     private void showWelcome(){if(tab!=0||!isAttachedToWindow()||preferences.getBoolean("supernova_welcome_dismissed",false)||com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))return;android.app.Dialog dialog=PreviewDialog.message(getContext(),"Welcome to Supernova","Add movies and TV shows from local storage, external drives or network shares. Supernova will only begin scanning once you've selected and confirmed your folders.",true,new String[]{"Network & Files","Explore Supernova"},0,n->{preferences.edit().putBoolean("supernova_welcome_dismissed",true).apply();if(n==0)openNetwork();});dialog.setOnCancelListener(d->preferences.edit().putBoolean("supernova_welcome_dismissed",true).apply());}
     private int libraryColumns(){return TvLayout.gridColumns(getContext());}
     private TextView button(String name,Runnable action){return TvButton.create(getContext(),name,()->{quietOrder.clear();action.run();},false);}

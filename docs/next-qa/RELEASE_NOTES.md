@@ -12,7 +12,7 @@ Development/QA only. Not merged or a public release. Based on PR #10; isolated i
 
 ## First run and interface
 
-- Normal production Home uses UI-only hero and Recently Added skeletons while no confirmed media exists. No fake media IDs, playback, metadata or Continue Watching placeholders. Welcome uses the real icon, persists explicit dismissal and links to the existing Network & Files flow without starting a scan.
+- Normal production Home uses UI-only hero and Recently Added skeletons while no confirmed media exists. Recently Added respects its saved Hidden preference. No fake media IDs, playback, metadata or Continue Watching placeholders. Welcome uses the real icon, persists explicit dismissal and links to the existing Network & Files flow without starting a scan.
 - Shared logical layout dimensions, adaptive poster grids and scrollable navigation/toolbars/panes keep remote actions reachable. Information/confirmation dialogs use bounded width, scrolling content and safe initial focus; child dialogs restore their opener.
 - Page Name has a centred heading, hint and caret. The shared keyboard starts at T and has Caps/Space/Backspace plus Clear/Done/Cancel. Done commits only the field; Cancel rolls back; enlarged input can scroll safely.
 - Wizard Step 1 Up reaches navigation; Review Right reaches Save. Dirty exit defaults to Continue Editing; Save validates and opens the custom page, Discard returns Home. Custom libraries share the actual toolbar/card family, icons and whole-card focus effect, with Edit at the right.
