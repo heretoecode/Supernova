@@ -17,13 +17,15 @@ Keep next version focused on interface consistency, navigation reliability and f
 - Test initial load, automatic and D-pad transitions, rapid reversal, wraparound, cold cache, warm cache, missing artwork/metadata and storage/network delays. Profile frame pacing rather than relying only on subjective appearance.
 
 ## 2. Hero More Info readability
-Keep existing design/placement and focused state. Darken **unfocused** More Info background slightly for readability on light hero artwork. If helpful, use subtle white-text shadow/drop shadow, ensuring contrast on bright/dark backgrounds. Verify focus state remains visibly distinct.
+Keep existing design/placement and focused state. Apply the new **global button design standard** (see SUPERNOVA_GLOBAL_BUTTON_DESIGN_STANDARD_2026-10-11.md) to More Info; darken its unfocused background slightly for readability on light hero artwork. If helpful, use subtle white-text shadow/drop shadow, ensuring contrast on bright/dark backgrounds. Verify focus state remains visibly distinct.
 
 ## 3. Tagline typography
 User likes tagline replacing description. Change **tagline only** to a restrained, contemporary handwritten-feel font (not calligraphy, feather-pen/script flourish). Preserve title and metadata typography. Check licence, font availability and on-device readability; validate via screenshot before accepting final style. No font file distribution required.
 
 ## 4. Continue Watching missing / incorrect Home membership
 **Reproduction:** User played `Vigil` season 2 episode 1; progress is persisted and visibly displayed on its Recently Added card, but **Continue Watching row is absent**. Customize Home shows Continue Watching as `Show` although row is not rendered; toggling Hidden then Show does not restore row.
+
+**Investigation order (user clarification):** First trace why the Continue Watching row is absent despite persisted progress. Do not initially treat progress shown in Recently Added as a proven independent defect or assume it is an intentional fallback. Determine actual data/row eligibility and rendering behaviour, fix root cause, then reassess cross-row membership against user expectations before applying deduplication changes. Record evidence and regression tests.
 
 **Required behaviour:**
 - Incomplete played items with valid resume progress are eligible for Continue Watching using the app's documented completion/eligibility rules.
