@@ -38,7 +38,7 @@ public class PreviewSearchPresentationTest {
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             PreviewSearch search=new PreviewSearch(host.get(),0,null);TopNavigation nav=new TopNavigation(host.get(),search,n->{},search::atTop);host.get().setContentView(nav);PreviewPagesTest.layout(nav);search.focusQuery();
-            assertTrue(search.findViewWithTag("semantic:keyboard:T").hasFocus());EditText query=findQuery(search);assertNotNull(query);assertFalse(query.isFocusable());assertFalse(query.isCursorVisible());assertEquals("Search Movies and TV Shows",query.getHint().toString());
+            assertTrue(search.findViewWithTag("semantic:keyboard:T").hasFocus());EditText query=findQuery(search);assertNotNull(query);assertTrue(query.getFocusables(android.view.View.FOCUS_DOWN).isEmpty());assertTrue(query.isCursorVisible());assertEquals("Search Movies and TV Shows",query.getHint().toString());
             assertNotNull(PreviewPagesTest.findText(search,"Caps"));assertNull(PreviewPagesTest.findText(search,"Shift"));
             PreviewPagesTest.capture(nav,"search-empty-next");
         }finally{host.pause().stop().destroy();}

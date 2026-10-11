@@ -22,13 +22,13 @@ public class PreviewHomeMaximumTest {
                     value->accepted.set(PreviewHomeRows.parseMaximum(value)));
             android.app.Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
             android.view.View root=dialog.getWindow().getDecorView();
-            PreviewPagesTest.findText(root,"Select").performClick();
+            PreviewPagesTest.findText(root,"Done").performClick();
             assertTrue(dialog.isShowing());assertEquals(-1,accepted.get());
             android.widget.EditText input=findInput(root);assertNotNull(input);assertNotNull(input.getError());input.setText("37");
             PreviewHomeVisualTest.measure(dialog);
-            android.view.View select=PreviewPagesTest.findText(root,"Select");select.requestFocus();
+            android.view.View select=PreviewPagesTest.findText(root,"Done");select.requestFocus();
             assertTrue(select.hasFocus());PreviewPagesTest.capture(PreviewHomeVisualTest.measure(dialog),"home-maximum-keyboard-focused");
-            PreviewPagesTest.findText(root,"Select").performClick();
+            PreviewPagesTest.findText(root,"Done").performClick();
             assertEquals(37,accepted.get());assertFalse(dialog.isShowing());
         }finally{controller.pause().stop().destroy();}
     }

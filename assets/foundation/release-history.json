@@ -8,21 +8,40 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.136",
-    "version_code": 136,
-    "kind": "Provisional refinement QA \u2014 unreleased",
+    "version": "0.137",
+    "version_code": 137,
+    "kind": "Development / QA \u2014 unreleased",
     "notes": [
-      "Refined Home heroes, navigation, shared library controls and live genre choices.",
-      "Embedded custom Library Page creation and focused editing with a retained live preview.",
-      "Two-area Search and one shared keyboard with immediate results.",
-      "Integrated network connections and Library Health, staged local-only onboarding.",
-      "Structured Settings with independent integrations and immediately grouped providers.",
-      "Retained identity viewing history and independent playback-position backup choices.",
-      "Enhanced local crash, focus and sustained performance diagnostics enabled for QA.",
-      "Details and Playback/HUD retain their existing interface. Physical SHIELD acceptance is pending."
+      "Settings category and remote-navigation reliability; excluded-row import paging and All Files filtering.",
+      "Playback history refresh and Home-only Continue Watching.",
+      "Production Home placeholders, welcome and shared responsive dialog/button/keyboard tokens.",
+      "Custom wizard exit protection and shared library controls; bounded three-card hero preparation.",
+      "Existing package, signing certificate, library records and playback engine preserved. Physical NVIDIA Shield acceptance pending."
     ]
   },
   "history": [
+    {
+      "version": "0.136",
+      "version_code": 136,
+      "kind": "Provisional refinement QA \u2014 unreleased",
+      "notes": [
+        "Refined Home heroes, navigation, shared library controls and live genre choices.",
+        "Embedded custom Library Page creation and focused editing with a retained live preview.",
+        "Two-area Search and one shared keyboard with immediate results.",
+        "Integrated network connections and Library Health, staged local-only onboarding.",
+        "Structured Settings with independent integrations and immediately grouped providers.",
+        "Retained identity viewing history and independent playback-position backup choices.",
+        "Enhanced local crash, focus and sustained performance diagnostics enabled for QA.",
+        "Details and Playback/HUD retain their existing interface. Physical SHIELD acceptance is pending."
+      ],
+      "date": "2026-10-11",
+      "source_sha": "00bb55e6082ecf4081f2e8e524e83b2bb75b2f13",
+      "run_id": 38093972688,
+      "artifact_id": 11685453791,
+      "recorded_ci_verification": "docs/next-refinement/SIGNED_QA_VERIFICATION.json",
+      "archive_digest_verified": false,
+      "apks": []
+    },
     {
       "version": "0.135",
       "version_code": 135,

@@ -13,7 +13,12 @@ public final class PreviewIcon extends Drawable {
   else if(kind.equals("caps lock")){line(c,4,13,12,4,20,13,16,13,16,17,8,17,8,13,4,13);c.drawRect(8,20,16,22,p);}
   else if(kind.equals("space")){line(c,4,10,4,17,20,17,20,10);}
   else if(kind.equals("backspace")){line(c,9,5,22,5,22,19,9,19,2,12,9,5);line(c,12,9,18,15);line(c,18,9,12,15);}
-  else if(kind.equals("select")){line(c,5,12,10,17,20,6);}
+  else if(kind.equals("select")||kind.equals("done")){line(c,5,12,10,17,20,6);}
+  else if(kind.startsWith("edit")||kind.startsWith("rename")){line(c,4,16,16,4,20,8,8,20,4,20,4,16);line(c,14,6,18,10);}
+  else if(kind.equals("save")){line(c,3,3,18,3,21,6,21,21,3,21,3,3);c.drawRect(7,3,16,9,p);c.drawRect(7,14,17,21,p);}
+  else if(kind.equals("copy")){c.drawRoundRect(8,8,21,21,2,2,p);line(c,16,5,16,3,3,3,3,16,5,16);}
+  else if(kind.equals("discard")){line(c,5,7,6,21,18,21,19,7);line(c,3,5,21,5);line(c,9,5,9,2,15,2,15,5);}
+  else if(kind.startsWith("explore")||kind.startsWith("continue")){line(c,3,12,21,12);line(c,14,5,21,12,14,19);}
   else if(kind.equals("cancel")){line(c,6,6,18,18);line(c,18,6,6,18);}
   else if(kind.equals("language")){c.drawCircle(12,12,9,p);c.drawOval(7,3,17,21,p);line(c,3,12,21,12);line(c,5,7,19,7);line(c,5,17,19,17);}
   else if(kind.equals("search")){c.drawCircle(10,10,6,p);line(c,15,15,21,21);}

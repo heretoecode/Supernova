@@ -43,7 +43,7 @@ public final class TopNavigation extends LinearLayout {
         super(c);
         this.content = content; this.firstRow = firstRow;
         scanStatus = new android.widget.FrameLayout(c);scanStatus.setFocusable(false);scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
-        setOrientation(VERTICAL);
+        setOrientation(VERTICAL);TvLayout.applyInsets(this);
         setWillNotDraw(false);
         artwork = new PreviewBackdrop(c); artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION); setBackground(artwork);
         bar = new LinearLayout(c); bar.setClipChildren(false);bar.setClipToPadding(false); bar.setGravity(Gravity.CENTER_VERTICAL);
@@ -53,7 +53,8 @@ public final class TopNavigation extends LinearLayout {
         brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(Color.WHITE);
         brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(136), -1));
         group = new PreviewFocusRail(c);group.useUnderline();group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
-        bar.addView(group, new LayoutParams(0, -1, 1));
+        if(TvLayout.width(c)<900){android.widget.HorizontalScrollView rail=new android.widget.HorizontalScrollView(c);rail.setHorizontalScrollBarEnabled(false);rail.setFillViewport(true);rail.setClipToPadding(false);rail.addView(group,new android.widget.FrameLayout.LayoutParams(-2,-1));bar.addView(rail,new LayoutParams(0,-1,1));}
+        else bar.addView(group, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search", customLabel(c)};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
@@ -156,7 +157,7 @@ public final class TopNavigation extends LinearLayout {
     public void setEmbeddedScanStatus(boolean embedded){scanStatus.setVisibility(embedded?GONE:VISIBLE);}
     public android.widget.FrameLayout getScanContainer() { return scanStatus; }
     public android.widget.FrameLayout getStatusContainer() { return status; }
-    private int dp(int n) { return (int)(n * getResources().getDisplayMetrics().density + .5f); }
+    private int dp(int n) { return TvLayout.dimension(getContext(),n); }
     private static com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser visibleBrowser(View view){
         if(!view.isShown())return null;
         if(view instanceof com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)return (com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)view;

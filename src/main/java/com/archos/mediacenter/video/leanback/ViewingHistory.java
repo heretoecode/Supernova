@@ -64,7 +64,12 @@ public final class ViewingHistory {
             db.insertWithOnConflict("history",null,values,SQLiteDatabase.CONFLICT_REPLACE);
         }}
     }
-    public static void record(Context c,VideoDbInfo info,boolean complete){if(PrivateMode.isActive())return;Context app=c.getApplicationContext();String key=identity(info.isShow,info.isShow?info.scraperShowId:info.scraperMovieId,info.scraperSeasonNr,info.scraperEpisodeNr,info.uri==null?null:info.uri.toString());int position=!tracking(c)&&complete?0:info.resume,duration=info.duration;long played=Math.max(0,info.lastTimePlayed);boolean track=tracking(c),resume=resumeEnabled(c);WRITER.execute(()->{try{write(app,key,complete,true,position,duration,played,track,resume);}catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("history_write_failed",failure);}});}
+    public static void record(Context c,VideoDbInfo info,boolean complete){if(PrivateMode.isActive())return;Context app=c.getApplicationContext();String key=identity(info.isShow,info.isShow?info.scraperShowId:info.scraperMovieId,info.scraperSeasonNr,info.scraperEpisodeNr,info.uri==null?null:info.uri.toString());int position=!tracking(c)&&complete?0:info.resume,duration=info.duration;long played=Math.max(0,info.lastTimePlayed);boolean track=tracking(c),resume=resumeEnabled(c);WRITER.execute(()->{try{write(app,key,complete,true,position,duration,played,track,resume);notifyChanged(app);}catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("history_write_failed",failure);}});}
+    /** Publish only after the durable writer commits, closing the player-return race. */
+    private static void notifyChanged(Context app){
+        PreviewLibraryLoader.invalidateHistoryCache(app);
+        app.sendBroadcast(new android.content.Intent(app.getPackageName()+".VIEWING_STATE_CHANGED").setPackage(app.getPackageName()));
+    }
     /** Existing explicit watched/unwatched commands update the same identity, including bulk scopes. */
     public static void manualChange(Context c,String where,String[] arguments,boolean complete){
         if(PrivateMode.isActive())return;Context app=c.getApplicationContext();
@@ -72,6 +77,7 @@ public final class ViewingHistory {
             if(rows==null)return;while(rows.moveToNext()){VideoDbInfo info=VideoDbInfo.fromCursor(rows,false);String key=identity(info.isShow,info.isShow?info.scraperShowId:info.scraperMovieId,info.scraperSeasonNr,info.scraperEpisodeNr,info.uri==null?null:info.uri.toString());if(key==null)continue;
                 synchronized(LOCK){try(Store helper=new Store(app)){ContentValues record=new ContentValues();record.put("identity",key);record.put("completed",complete);record.put("started",complete);record.put("position",complete?-2:0);record.put("duration",Math.max(0,info.duration));record.put("played",complete?System.currentTimeMillis()/1000L:0);record.put("completed_at",complete?System.currentTimeMillis()/1000L:0);helper.getWritableDatabase().insertWithOnConflict("history",null,record,SQLiteDatabase.CONFLICT_REPLACE);}}
             }
+            notifyChanged(app);
         }catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_history_write_failed",failure);}});
     }
     /** Existing history migrates once per identity; turning tracking off never erases it. Worker only. */
@@ -112,7 +118,7 @@ public final class ViewingHistory {
                 android.content.SharedPreferences.Editor edit=p.edit().putBoolean("supernova_history_migrated",true).putBoolean("supernova_history_cleared",true);
                 for(String key:p.getAll().keySet())if(key.startsWith("preview_journey41:"))edit.remove(key);
                 if(!edit.commit())throw new IllegalStateException("History preferences could not be saved");
-            }}PreviewLibraryLoader.invalidateHistoryCache(app);new android.os.Handler(android.os.Looper.getMainLooper()).post(done);
+            }}notifyChanged(app);new android.os.Handler(android.os.Looper.getMainLooper()).post(done);
             }catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("history_clear_failed",failure);new android.os.Handler(android.os.Looper.getMainLooper()).post(()->android.widget.Toast.makeText(app,"History could not be cleared. Please retry or export diagnostics.",android.widget.Toast.LENGTH_LONG).show());}
         });
     }

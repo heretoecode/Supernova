@@ -17,15 +17,18 @@ public final class PreviewToolbar extends LinearLayout {
         super(context); this.boxed = boxed; setClipChildren(false); setClipToPadding(false);
         setPadding(0, 0, 0, PreviewDialog.dp(context, 3));
     }
+    public static View viewport(PreviewToolbar toolbar){
+        Context c=toolbar.getContext();android.widget.HorizontalScrollView viewport=new android.widget.HorizontalScrollView(c);viewport.setHorizontalScrollBarEnabled(false);viewport.setFillViewport(true);viewport.setClipToPadding(false);toolbar.setMinimumWidth(TvLayout.safeWidth(c));viewport.addView(toolbar,new android.widget.FrameLayout.LayoutParams(-2,-2));return viewport;
+    }
     @Override public void onViewAdded(View child) {
         super.onViewAdded(child);
         child.setBackground(boxed && child.isFocusable() ? SharedThreePanel.control(getContext(), 10) : null);
         if (boxed && child instanceof android.widget.TextView) {
-            ((android.widget.TextView)child).setTextSize(14);
+            TvButton.style((android.widget.TextView)child,true);
             ((android.widget.TextView)child).setSingleLine(true);
             ((android.widget.TextView)child).setEllipsize(android.text.TextUtils.TruncateAt.END);
             ((android.widget.TextView)child).setMaxWidth(PreviewDialog.dp(getContext(), 220));
-            child.setMinimumHeight(PreviewDialog.dp(getContext(), 40));
+            child.setMinimumHeight(TvLayout.dimension(getContext(), 49));
         }
         child.setOnFocusChangeListener((v, focused) -> invalidate());
         child.setOnKeyListener((v, key, event) -> {

@@ -17,6 +17,8 @@ public final class PreviewDialog {
  }
  public static Dialog create(Context context,String kind){
   Context owner=owner(context);View opener=anchor(context);
+  androidx.lifecycle.Lifecycle lifetime=owner instanceof androidx.lifecycle.LifecycleOwner?((androidx.lifecycle.LifecycleOwner)owner).getLifecycle():null;
+  androidx.lifecycle.LifecycleEventObserver[] cleanup={null};
   String restorationToken=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(opener,"dialog");
   java.lang.ref.WeakReference<View> previous=new java.lang.ref.WeakReference<>(opener);
   java.lang.ref.WeakReference<View> previousRoot=new java.lang.ref.WeakReference<>(opener==null?null:opener.getRootView());
@@ -24,6 +26,7 @@ public final class PreviewDialog {
   Dialog dialog=new Dialog(context){
    @Override protected void onStart(){super.onStart();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.computeIfAbsent(owner,k->new java.util.ArrayList<>());windows.removeIf(reference->reference.get()==null||reference.get()==this);windows.add(new java.lang.ref.WeakReference<>(this));modalState(windows);}
    @Override public void dismiss(){
+    if(lifetime!=null&&cleanup[0]!=null){lifetime.removeObserver(cleanup[0]);cleanup[0]=null;}
     boolean showing=isShowing();super.dismiss();java.util.List<java.lang.ref.WeakReference<Dialog>> windows=WINDOWS.get(owner);if(windows!=null){windows.removeIf(reference->reference.get()==null||reference.get()==this);if(windows.isEmpty())WINDOWS.remove(owner);}
     modalState(windows);
     if(!showing)return;View root=previousRoot.get(),requested=previous.get(),target=requested;boolean fallback=false;
@@ -36,6 +39,7 @@ public final class PreviewDialog {
     boolean restored=target!=null&&target.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(restorationToken,requested,target,fallback,restored);
    }
   };
+  if(lifetime!=null){cleanup[0]=(source,event)->{if(event==androidx.lifecycle.Lifecycle.Event.ON_DESTROY)dialog.dismiss();};lifetime.addObserver(cleanup[0]);}
   KINDS.put(dialog,java.util.Arrays.asList("dialog","choice","reader","review","artwork_picker","trailer").contains(kind)?kind:"dialog");return dialog;
  }
  private static void modalState(java.util.List<java.lang.ref.WeakReference<Dialog>> windows){java.util.List<String> kinds=new java.util.ArrayList<>();if(windows!=null)for(java.lang.ref.WeakReference<Dialog> reference:windows){Dialog dialog=reference.get();if(dialog!=null)kinds.add(KINDS.getOrDefault(dialog,"dialog"));}com.archos.mediacenter.video.diagnostics.Diagnostics.modalState(kinds.size(),android.text.TextUtils.join(",",kinds));}
@@ -44,9 +48,9 @@ public final class PreviewDialog {
  /** Presentation only for retained credential/artwork dialogs; original listeners and inputs remain. */
  public static void styleNative(Dialog dialog){
   Context c=dialog.getContext();if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui",false))return;
-  Window window=dialog.getWindow();if(window==null)return;window.setBackgroundDrawable(surface(c,false));window.setDimAmount(.35f);
+  Window window=dialog.getWindow();if(window==null)return;window.setBackgroundDrawable(dialogSurface(c));window.setDimAmount(.45f);
   trackNative(dialog);
-  window.setLayout(Math.min(dp(c,560),c.getResources().getDisplayMetrics().widthPixels-dp(c,64)),WindowManager.LayoutParams.WRAP_CONTENT);
+  window.setLayout(TvLayout.dialogWidth(c),WindowManager.LayoutParams.WRAP_CONTENT);
   styleNativeChildren(window.getDecorView(),c);
  }
  /** Observe retained native windows without replacing their cancel/dismiss/action listeners. */
@@ -72,7 +76,7 @@ public final class PreviewDialog {
   decor.addOnAttachStateChangeListener(observer);if(decor.isAttachedToWindow())observer.onViewAttachedToWindow(decor);
  }
  private static void styleNativeChildren(View view,Context c){
-  if(view instanceof TextView){TextView text=(TextView)view;if(!(view instanceof EditText)){text.setTextColor(0xffd6e5ef);text.setTextSize(Math.min(15,text.getTextSize()/c.getResources().getDisplayMetrics().scaledDensity));}if(view instanceof Button){view.setBackground(focus(c));view.setMinimumHeight(dp(c,36));}}
+  if(view instanceof TextView){TextView text=(TextView)view;if(!(view instanceof EditText)){text.setTextColor(0xffd6e5ef);text.setTextSize(Math.min(15,text.getTextSize()/c.getResources().getDisplayMetrics().scaledDensity));}if(view instanceof Button){TvButton.style(text,false);text.setSingleLine(false);}}
   if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)styleNativeChildren(((ViewGroup)view).getChildAt(i),c);
  }
  public static Dialog read(Context c,String title,String body){
@@ -85,15 +89,15 @@ public final class PreviewDialog {
   return readInternal(c,title,body,null,confirmation,accepted);
  }
  private static Dialog readInternal(Context c,String title,String body,android.graphics.Bitmap referenceImage,String confirmation,Runnable accepted){
-  Dialog dialog=create(c,accepted==null?"reader":"review");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(surface(c,false));
-  TextView heading=new TextView(c);heading.setText(title);heading.setTextSize(20);heading.setTextColor(Color.WHITE);panel.addView(heading);
-  ScrollView scroll=new ScrollView(c);TextView text=new TextView(c);text.setText(body);text.setTextColor(0xffd2e1ed);text.setTextSize(13);text.setPadding(0,dp(c,14),0,dp(c,14));View content=text;
+  Dialog dialog=create(c,accepted==null?"reader":"review");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(dialogSurface(c));
+  TextView heading=new TextView(c);heading.setText(title);heading.setTextSize(24);heading.setTextColor(Color.WHITE);panel.addView(heading);
+  ScrollView scroll=new ScrollView(c);TextView text=new TextView(c);text.setText(body);text.setTextColor(0xffd2e1ed);text.setTextSize(16);text.setPadding(0,dp(c,14),0,dp(c,14));View content=text;
   if(referenceImage!=null){LinearLayout reference=new LinearLayout(c);reference.setGravity(Gravity.CENTER_VERTICAL);reference.addView(text,new LinearLayout.LayoutParams(0,-2,1));ImageView image=new ImageView(c);image.setImageBitmap(referenceImage);image.setScaleType(ImageView.ScaleType.FIT_CENTER);image.setContentDescription("QR containing only report reference, category and timestamp");LinearLayout.LayoutParams picture=new LinearLayout.LayoutParams(dp(c,180),dp(c,180));picture.setMargins(dp(c,16),dp(c,12),0,dp(c,12));reference.addView(image,picture);content=reference;}
   scroll.addView(content);scroll.setFocusable(true);panel.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
   LinearLayout actions=new LinearLayout(c);String[] actionLabels=confirmation==null?new String[]{"Close","Copy"}:new String[]{"Back",confirmation};
-  for(int index=0;index<actionLabels.length;index++){final int action=index;String label=actionLabels[index];TextView button=new TextView(c);button.setText(label);button.setTextSize(13);button.setTextColor(Color.WHITE);button.setGravity(Gravity.CENTER);button.setFocusable(true);button.setBackground(focus(c));button.setOnClickListener(v->{if(action==0)dialog.dismiss();else if(accepted!=null){if(dialog.isShowing()){dialog.dismiss();accepted.run();}}else{android.content.ClipboardManager clipboard=(android.content.ClipboardManager)c.getSystemService(Context.CLIPBOARD_SERVICE);if(clipboard!=null)clipboard.setPrimaryClip(android.content.ClipData.newPlainText(title,body));Toast.makeText(c,"Copied",Toast.LENGTH_SHORT).show();}});actions.addView(button,new LinearLayout.LayoutParams(dp(c,confirmation==null?90:180),dp(c,38)));}panel.addView(actions);
+  for(int index=0;index<actionLabels.length;index++){final int action=index;String label=actionLabels[index];TextView button=TvButton.create(c,label,()->{},false);button.setSingleLine(false);button.setOnClickListener(v->{if(action==0)dialog.dismiss();else if(accepted!=null){if(dialog.isShowing()){dialog.dismiss();accepted.run();}}else{android.content.ClipboardManager clipboard=(android.content.ClipboardManager)c.getSystemService(Context.CLIPBOARD_SERVICE);if(clipboard!=null)clipboard.setPrimaryClip(android.content.ClipData.newPlainText(title,body));Toast.makeText(c,"Copied",Toast.LENGTH_SHORT).show();}});LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,-2,1);if(index>0)size.leftMargin=dp(c,10);actions.addView(button,size);}panel.addView(actions);
   dialog.setContentView(panel);dialog.show();Window w=dialog.getWindow();w.setBackgroundDrawableResource(android.R.color.transparent);w.setDimAmount(.35f);
-  int width=Math.min(dp(c,720),c.getResources().getDisplayMetrics().widthPixels-dp(c,56)),maximum=Math.min(dp(c,360),c.getResources().getDisplayMetrics().heightPixels-dp(c,64));int inner=View.MeasureSpec.makeMeasureSpec(width-dp(c,40),View.MeasureSpec.EXACTLY),natural=View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);heading.measure(inner,natural);content.measure(inner,natural);actions.measure(inner,natural);int chrome=dp(c,32)+heading.getMeasuredHeight()+actions.getMeasuredHeight(),contentHeight=Math.min(content.getMeasuredHeight(),Math.max(dp(c,40),maximum-chrome));scroll.setLayoutParams(new LinearLayout.LayoutParams(-1,contentHeight));w.setLayout(width,chrome+contentHeight);scroll.requestFocus();return dialog;
+  int width=TvLayout.dialogWidth(c),maximum=Math.min(dp(c,360),Math.round(TvLayout.safeHeight(c)*.8f));int inner=View.MeasureSpec.makeMeasureSpec(width-dp(c,40),View.MeasureSpec.EXACTLY),natural=View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);heading.measure(inner,natural);content.measure(inner,natural);actions.measure(inner,natural);int chrome=dp(c,32)+heading.getMeasuredHeight()+actions.getMeasuredHeight(),contentHeight=Math.min(content.getMeasuredHeight(),Math.max(dp(c,40),maximum-chrome));scroll.setLayoutParams(new LinearLayout.LayoutParams(-1,contentHeight));w.setLayout(width,chrome+contentHeight);if(accepted==null)scroll.requestFocus();else actions.getChildAt(0).requestFocus();return dialog;
  }
  public static Dialog choose(Context c,String title,String[] labels,int selected,IntConsumer action){
   return choose(c,title,labels,selected,selected<0?java.util.Collections.emptySet():java.util.Collections.singleton(selected),action);
@@ -150,15 +154,29 @@ public final class PreviewDialog {
   if(view instanceof TextView){((TextView)view).setText(label);((View)view.getParent()).setContentDescription(label);}
  }
  public static Dialog confirmPageDelete(Context c,String title,String message,Runnable action){
-  Dialog dialog=create(c,"confirmation");LinearLayout panel=new LinearLayout(c);panel.setOrientation(LinearLayout.VERTICAL);SharedThreePanel.decorate(panel);
-  TextView heading=SharedThreePanel.text(c,title,22);PreviewIcon.apply(heading,"warning",24);panel.addView(heading);SharedThreePanel.divider(panel);
-  panel.addView(SharedThreePanel.text(c,message,16),new LinearLayout.LayoutParams(-1,0,1));LinearLayout buttons=new LinearLayout(c);panel.addView(buttons);
-  TextView cancel=SharedThreePanel.accentAction(c,"Cancel",dialog::dismiss),remove=SharedThreePanel.accentAction(c,"Delete",()->{dialog.dismiss();action.run();});
-  cancel.setBackground(SharedThreePanel.control(c,12));remove.setBackground(SharedThreePanel.control(c,12));remove.setTextColor(0xffffa5a5);buttons.addView(cancel,new LinearLayout.LayoutParams(0,dp(c,48),1));LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,dp(c,48),1);size.leftMargin=dp(c,12);buttons.addView(remove,size);
-  dialog.setContentView(panel);dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setGravity(Gravity.CENTER);dialog.getWindow().setDimAmount(.45f);dialog.getWindow().setLayout(Math.min(dp(c,520),c.getResources().getDisplayMetrics().widthPixels-dp(c,64)),Math.min(dp(c,280),c.getResources().getDisplayMetrics().heightPixels-dp(c,64)));cancel.requestFocus();return dialog;
+  Dialog dialog=message(c,title,message,false,new String[]{"Cancel","Delete"},0,index->{if(index==1)action.run();});
+  TextView remove=dialog.findViewById(android.R.id.content).findViewWithTag("semantic:dialog.action.1");if(remove!=null)remove.setTextColor(0xffffa5a5);return dialog;
  }
  public static Dialog confirmDelete(Context c,String title,String message,Runnable action){android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(c).setTitle(title).setMessage(message).setIcon(android.R.drawable.ic_dialog_alert).setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->action.run()).create();dialog.setOnShowListener(d->{styleNative(dialog);dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(0xffffa5a5);dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).requestFocus();});dialog.show();return dialog;}
- public static int dp(Context c,int v){return Math.round(v*c.getResources().getDisplayMetrics().density);}
+ /** Content-driven, centred information/welcome/confirmation variant. Choices retain their menu. */
+ public static Dialog message(Context c,String title,String body,boolean welcome,String[] labels,int initial,IntConsumer action){
+  Dialog dialog=create(c,"dialog");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+  int width=TvLayout.dialogWidth(c),padding=Math.max(dp(c,20),Math.min(dp(c,32),Math.round(width*.075f)));
+  LinearLayout panel=new LinearLayout(c);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(padding,dp(c,24),padding,dp(c,24));
+  GradientDrawable background=surface(c,false);background.setColor(0xff0b1b29);background.setCornerRadius(dp(c,16));panel.setBackground(background);
+  ScrollView scroll=new ScrollView(c);scroll.setFocusable(true);LinearLayout content=new LinearLayout(c);content.setOrientation(LinearLayout.VERTICAL);scroll.addView(content);panel.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
+  if(welcome){ImageView icon=new ImageView(c);icon.setImageResource(com.archos.mediacenter.video.R.drawable.foundation_icon);icon.setContentDescription("Supernova");LinearLayout.LayoutParams image=new LinearLayout.LayoutParams(dp(c,56),dp(c,56));image.gravity=Gravity.CENTER;content.addView(icon,image);TextView brand=SharedThreePanel.text(c,"SUPERNOVA",14);brand.setLetterSpacing(.06f);brand.setGravity(Gravity.CENTER);brand.setPadding(0,dp(c,12),0,dp(c,8));content.addView(brand);}
+  TextView heading=SharedThreePanel.text(c,title,24);heading.setTypeface(null,android.graphics.Typeface.BOLD);heading.setGravity(Gravity.CENTER);content.addView(heading);
+  TextView copy=SharedThreePanel.text(c,body,16);copy.setTextColor(0xffc7d8e5);copy.setGravity(Gravity.CENTER);copy.setPadding(0,dp(c,16),0,dp(c,20));copy.setLineSpacing(dp(c,4),1);content.addView(copy);
+  LinearLayout actions=new LinearLayout(c);actions.setOrientation(LinearLayout.VERTICAL);panel.addView(actions);View selected=null;
+  for(int i=0;i<labels.length;i++){final int index=i;TextView button=TvButton.create(c,labels[i],()->{dialog.dismiss();action.accept(index);},false);button.setSingleLine(false);button.setMinHeight(dp(c,48));com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(button,"dialog.action."+i);button.setTag("semantic:dialog.action."+i);LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(-1,-2);size.topMargin=i==0?0:dp(c,10);actions.addView(button,size);if(i==initial)selected=button;}
+  dialog.setContentView(panel);dialog.show();Window window=dialog.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);window.setGravity(Gravity.CENTER);window.setDimAmount(.45f);window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+  if(android.os.Build.VERSION.SDK_INT>=31){window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);WindowManager.LayoutParams attributes=window.getAttributes();attributes.setBlurBehindRadius(dp(c,6));window.setAttributes(attributes);}
+  int exact=View.MeasureSpec.makeMeasureSpec(width-2*padding,View.MeasureSpec.EXACTLY),free=View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);actions.measure(exact,free);content.measure(exact,free);
+  int chrome=2*dp(c,24)+actions.getMeasuredHeight();int available=Math.max(dp(c,32),Math.round(TvLayout.safeHeight(c)*.8f)-chrome);int bodyHeight=Math.min(content.getMeasuredHeight(),available);scroll.setLayoutParams(new LinearLayout.LayoutParams(-1,bodyHeight));window.setLayout(width,chrome+bodyHeight);if(selected!=null)selected.requestFocus();return dialog;
+ }
+ public static GradientDrawable dialogSurface(Context c){GradientDrawable background=surface(c,false);background.setColor(0xff0b1b29);background.setCornerRadius(dp(c,16));return background;}
+ public static int dp(Context c,int v){return TvLayout.dimension(c,v);}
  public static StateListDrawable focus(Context c){return new PreviewContentFocus(c);}
  public static StateListDrawable buttonFocus(Context c){return focus(c);}
  public static StateListDrawable actionContainerFocus(Context c){

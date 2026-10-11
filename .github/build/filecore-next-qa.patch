@@ -1,0 +1,10 @@
+--- a/src/com/archos/filecorelibrary/ListingEngine.java
++++ b/src/com/archos/filecorelibrary/ListingEngine.java
+@@ -207,6 +207,6 @@
+     protected boolean keepDirectory(String filename) {
+         // don't keep a hidden directory
+-        if (filename.startsWith(".")) {
++        if (filename.startsWith(".") && !mKeepHiddenFiles) {
+             return false;
+         }
+         // don't keep a weird directory

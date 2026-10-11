@@ -24,13 +24,19 @@ public final class OfficialTitleArtwork {
  private static final Map<TextView,String> BOUND=new WeakHashMap<>();
  private static final Map<TextView,Boolean> READY=new WeakHashMap<>();
  private static final Map<TextView,com.archos.mediacenter.video.diagnostics.ArtworkTrace> TRACES=new WeakHashMap<>();
- private static final android.util.LruCache<String,Bitmap> ALIASES=new android.util.LruCache<>(12);
+ private static final android.util.LruCache<String,Bitmap> ALIASES=new android.util.LruCache<String,Bitmap>(8*1024*1024){@Override protected int sizeOf(String key,Bitmap image){return image.getAllocationByteCount();}};
  public static boolean readyForFirstFrame(TextView view){return !Boolean.FALSE.equals(READY.get(view));}
+ private static final android.util.LruCache<String,Long> PREFETCHED=new android.util.LruCache<>(24);
+ public static void prefetch(Context c,Base media){String identity=identity(media);Long requested=PREFETCHED.get(identity);if(requested!=null&&android.os.SystemClock.elapsedRealtime()-requested<60000)return;PREFETCHED.put(identity,android.os.SystemClock.elapsedRealtime());bind(new TextView(c),media,false);}
+ private static String identity(Base media){return media instanceof Tvshow?"show-local:"+((Tvshow)media).getTvshowId():media instanceof Video?"video-local:"+((Video)media).getId():media.getName();}
+ /** Freeze typography at transition time; a late network logo never replaces visible text. */
+ public static int cachedRevision(Base media){Bitmap image=ALIASES.get(identity(media)+":"+Locale.getDefault().getLanguage());return image==null?0:image.getGenerationId();}
+ public static void bindStable(TextView view,Base media){clear(view);Bitmap bitmap=ALIASES.get(identity(media)+":"+Locale.getDefault().getLanguage());if(bitmap!=null){view.setForeground(new Logo(bitmap,true));view.setTextColor(Color.TRANSPARENT);}READY.put(view,true);}
  public static void bindRemote(TextView view,String kind,long id){
   if(id<=0||!("movie".equals(kind)||"tv".equals(kind))){clear(view);return;}
   String key=kind+"/"+id;request(view,key,false,()->key,null);
  }
- private static final android.util.LruCache<String,Bitmap> MEMORY=new android.util.LruCache<>(12);
+ private static final android.util.LruCache<String,Bitmap> MEMORY=new android.util.LruCache<String,Bitmap>(8*1024*1024){@Override protected int sizeOf(String key,Bitmap image){return image.getAllocationByteCount();}};
  public static void bind(TextView view,Base media,boolean cachedOnly){
   bind(view,media,cachedOnly,null);
  }
@@ -65,10 +71,11 @@ public final class OfficialTitleArtwork {
     String path=select(result.optJSONArray("logos"),language);cache.edit().putLong(diskKey,System.currentTimeMillis()).apply();
     if(!path.isEmpty()){byte[] bytes=download("https://image.tmdb.org/t/p/w500"+path,4*1024*1024,trace.operationId(),"logo_image");BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);if(options.outWidth<=0||options.outHeight<=0||options.outWidth>4096||options.outHeight>4096)throw new IOException("Invalid artwork dimensions");bitmap=BitmapFactory.decodeByteArray(bytes,0,bytes.length);if(bitmap==null)throw new IOException("Invalid artwork bitmap");if(bitmap!=null){directory.mkdirs();android.util.AtomicFile atomic=new android.util.AtomicFile(file);FileOutputStream out=null;try{out=atomic.startWrite();out.write(bytes);atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);}}}
    }
-   if(bitmap==null)return;bitmap=visibleArtwork(bitmap);MEMORY.put(diskKey,bitmap);ALIASES.put(alias,bitmap);final Bitmap ready=bitmap;final String origin=cacheLayer;TextView target=weak.get();if(target!=null)submitted=target.post(()->{TextView current=weak.get();if(current==null||!identity.equals(BOUND.get(current))){trace.cancelled();return;}current.setForeground(new Logo(ready,"semantic:featured.title".equals(current.getTag())));current.setTextColor(Color.TRANSPARENT);trace.ready(origin);if(changed!=null)changed.run();});
+   if(bitmap==null)return;trimDisk(directory);bitmap=visibleArtwork(bitmap);MEMORY.put(diskKey,bitmap);ALIASES.put(alias,bitmap);final Bitmap ready=bitmap;final String origin=cacheLayer;TextView target=weak.get();if(target!=null)submitted=target.post(()->{TextView current=weak.get();if(current==null||!identity.equals(BOUND.get(current))){trace.cancelled();return;}current.setForeground(new Logo(ready,"semantic:featured.title".equals(current.getTag())));current.setTextColor(Color.TRANSPARENT);trace.ready(origin);if(changed!=null)changed.run();});
   }catch(Exception unavailable){trace.failed(unavailable.getClass().getSimpleName(),true);}
   finally{if(!submitted)trace.fallback("no_cached_or_available_logo");TextView target=weak.get();if(target!=null)target.post(()->{TextView current=weak.get();if(current!=null&&identity.equals(BOUND.get(current)))READY.put(current,true);});}});
  }
+ private static void trimDisk(File directory){File[] files=directory.listFiles((dir,name)->name.endsWith(".png"));if(files==null)return;Arrays.sort(files,Comparator.comparingLong(File::lastModified).reversed());long bytes=0;for(int i=0;i<files.length;i++){bytes+=files[i].length();if(i>=64||bytes>32L*1024*1024)files[i].delete();}}
  static int synopsisWidth(int viewportWidth,float visibleLogoWidth){return Math.round(Math.max(viewportWidth*.25f,Math.min(viewportWidth*.32f,visibleLogoWidth*.9f)));}
  public static int synopsisWidth(TextView title,int viewportWidth){
   int width=title.getWidth()>0?title.getWidth():title.getLayoutParams().width,height=title.getHeight()>0?title.getHeight():title.getLayoutParams().height;
