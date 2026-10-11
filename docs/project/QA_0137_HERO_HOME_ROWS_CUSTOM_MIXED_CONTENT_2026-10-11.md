@@ -36,3 +36,12 @@ Expected: combined eligible Movies **and** TV Shows in one row when both toggles
 
 ## Evidence and validation protocol
 Request user screenshots/photos for hero focus outline and poster fade; short video if fade changes with focus/scroll or if custom row behaviour is easier to show in action. User's original captures stay out of GitHub/Codex handovers unless expressly authorised. Written issue reports should specify steps, actual vs expected behaviour, preservation constraints, and physical Shield validation needs.
+
+## Follow-up: supplied visual evidence and global Home row policy
+User supplied two original QA photographs in conversation (not to be shared with Codex or added to GitHub without explicit consent): first shows Father Ted hero with focused More Info but no full-card outline; second shows Watch Next, Trending on Trakt and Popular on Trakt artwork, with user reporting a fade/washed-out look. The photograph alone cannot establish a software opacity effect; audit unintended dimming/overlays while preserving legible text and focus.
+
+**Updated global rule (supersedes earlier four-row cap list):** Supernova-managed, automatically populated Home rows should display a maximum of **15** items, including **Continue Watching**, **Recently Added**, **Trending on Trakt**, **Popular on Trakt**, and **Because You Watched**. This is a displayed-item cap; apply efficiently when feasible without promising unmeasured performance gains. **Watch Next is manually managed by the user: do not impose the 15-item cap.** Custom user-created rows keep their user-configured maximum (e.g. 30), not a forced 15. For future automatic rows, use 15 as the default unless explicitly designed otherwise.
+
+**Copy latitude:** user authorises natural, friendly naming of the existing Home rows, including leaving clear names unchanged. Proposed copy: Continue Watching; Watch Next; Recently Added; Trending on Trakt · In Your Library; Popular on Trakt · In Your Library; Because You Watched. The centred-dot qualifier conveys that Trakt-ranked items are filtered to titles present in the user's library. Confirm row semantics in code before changing labels. The earlier suggested “and in your library” wording is not mandatory.
+
+No original user images/videos to Codex/GitHub. No implementation authorised.
