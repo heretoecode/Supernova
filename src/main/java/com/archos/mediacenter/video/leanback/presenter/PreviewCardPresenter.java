@@ -97,7 +97,7 @@ public final class PreviewCardPresenter extends Presenter {
             if(style==Style.POSTER){int w=getChildAt(0).getLayoutParams().width;int poster=Math.round(w*1.5f);getChildAt(0).getLayoutParams().height=poster+dp(30);image.getLayoutParams().height=poster;}
             super.onMeasure(widthSpec,heightSpec);
         }
-        private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
+        private int dp(int n) { return com.archos.mediacenter.video.leanback.PreviewDialog.dp(getContext(),n); }
         void updateFocus() {
             if(isFocused())com.archos.mediacenter.video.diagnostics.Diagnostics.focusedMedia(diagnosticMediaId);
             View unit=getChildAt(0);

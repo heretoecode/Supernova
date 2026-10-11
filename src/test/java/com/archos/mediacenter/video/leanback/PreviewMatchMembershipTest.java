@@ -24,7 +24,7 @@ public class PreviewMatchMembershipTest {
         assertTrue(((android.view.View)watch.getParent()).getContentDescription().toString().endsWith("not selected"));
         ((android.view.View)PreviewPagesTest.findText(root,"Create New Row").getParent()).performClick();
         android.app.Dialog keyboard=org.robolectric.shadows.ShadowDialog.getLatestDialog();android.widget.EditText input=findInput(keyboard.getWindow().getDecorView());assertNotNull(input);input.setText("My favourites");
-        PreviewPagesTest.findText(keyboard.getWindow().getDecorView(),"Select").performClick();
+        PreviewPagesTest.findText(keyboard.getWindow().getDecorView(),"Done").performClick();
         android.app.Dialog returned=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertNotSame(original,returned);assertTrue(returned.isShowing());assertFalse(keyboard.isShowing());
         android.view.View added=(android.view.View)PreviewPagesTest.findText(returned.getWindow().getDecorView(),"My favourites").getParent();
         assertTrue(added.getContentDescription().toString().endsWith(", selected"));assertTrue(added.hasFocus());

@@ -489,6 +489,9 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             LoaderManager.getInstance(this).initLoader(LOADER_ID_NON_SCRAPED_VIDEOS_COUNT, null, this);
             LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
             mPreviewHasResumed = false;
+            viewingReceiverContext=requireContext().getApplicationContext();
+            androidx.core.content.ContextCompat.registerReceiver(viewingReceiverContext,viewingReceiver,
+                new android.content.IntentFilter(viewingReceiverContext.getPackageName()+".VIEWING_STATE_CHANGED"),androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
             return; // Preview uses one worker snapshot and the unmatched count, not hidden classic row queries.
         }
         // init the loaders after the rows are loaded to populate
@@ -535,6 +538,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     @Override
     public void onDestroyView() {
+        if(viewingReceiverContext!=null){viewingReceiverContext.unregisterReceiver(viewingReceiver);viewingReceiverContext=null;}
         mPreviewPages = null;
         if (log.isDebugEnabled()) log.debug("onDestroyView");
         mRowsSelectionHandler.removeCallbacks(mClearRowPendingSelection);
@@ -559,6 +563,14 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         super.onDestroyView();
     }
 
+    private Context viewingReceiverContext;
+    private final BroadcastReceiver viewingReceiver = new BroadcastReceiver() {
+        @Override public void onReceive(Context context,Intent intent){
+            if(mPreviewPages==null||!isAdded())return;
+            androidx.loader.content.Loader<Cursor> loader=LoaderManager.getInstance(MainFragment.this).getLoader(PreviewLibraryLoader.ID);
+            if(loader!=null)loader.onContentChanged();
+        }
+    };
     private boolean mPreviewHasResumed;
 
     private boolean hasLocaleChanged() {

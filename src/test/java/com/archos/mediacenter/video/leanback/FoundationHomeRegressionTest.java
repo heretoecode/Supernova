@@ -62,7 +62,7 @@ public class FoundationHomeRegressionTest {
  }
  @Test public void emptyHomeRemainsNavigableAndMovieArtworkStillUsesLibraryBackdrop() {
   init();var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
-   PreviewPages pages=new PreviewPages(host.get(),(h,item)->{});host.get().setContentView(pages);pages.setDiscovery(new PreviewDiscovery());java.util.List<android.net.Uri> artwork=new java.util.ArrayList<>();pages.setArtworkListener(artwork::add);pages.setSnapshot(new Snapshot());PreviewPagesTest.layout(pages);assertNull(pages.findViewWithTag("semantic:featured.active"));assertTrue(artwork.stream().allMatch(java.util.Objects::isNull));
+   PreviewPages pages=new PreviewPages(host.get(),(h,item)->{});host.get().setContentView(pages);pages.setDiscovery(new PreviewDiscovery());java.util.List<android.net.Uri> artwork=new java.util.ArrayList<>();pages.setArtworkListener(artwork::add);pages.setSnapshot(new Snapshot());PreviewPagesTest.layout(pages);assertNotNull(pages.findViewWithTag("semantic:featured.active"));assertTrue(artwork.stream().allMatch(java.util.Objects::isNull));
    Snapshot source=source();source.movies.get(0).backdrop=android.net.Uri.parse("https://example.invalid/movie.jpg");pages.setSnapshot(source);PreviewPagesTest.layout(pages);pages.setTab(1);PreviewPagesTest.layout(pages);assertEquals(source.movies.get(0).backdrop,artwork.get(artwork.size()-1));pages.setTab(0);for(int i=0;i<5;i++)PreviewPagesTest.layout(pages);assertNull(artwork.get(artwork.size()-1));assertNotNull(pages.findViewWithTag("semantic:featured.active"));
   }finally{host.pause().stop().destroy();}
  }

@@ -1,0 +1,20 @@
+package com.archos.mediacenter.video.leanback;
+import android.view.*;
+import androidx.preference.PreferenceManager;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.robolectric.*;
+import org.robolectric.annotation.*;
+import org.robolectric.util.ReflectionHelpers;
+import static org.junit.Assert.*;
+@RunWith(RobolectricTestRunner.class) @Config(application=com.archos.mediacenter.video.CustomApplication.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi") @GraphicsMode(GraphicsMode.Mode.NATIVE)
+public class NextQaWizardTest {
+ @Before public void offline(){Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");PreviewAsyncFixtures.offlineTransport();PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).putBoolean("supernova_onboarding_complete",true).remove(CustomLibraryPage.KEY).commit();}
+ @After public void drain() throws Exception {PreviewAsyncFixtures.drain();}
+ @Test public void firstStepUpReachesNavigationAndReviewRightReachesSave() throws Exception {
+  var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{View root=host.get().findViewById(android.R.id.content);PreviewPagesTest.layout(root);View first=root.findViewWithTag("wizard.step.0");assertNotNull(first);first.requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertSame(root.findViewWithTag("semantic:topnav.custom"),root.findFocus());View review=root.findViewWithTag("wizard.step.4");review.requestFocus();PreviewPagesTest.layout(root);review=root.findViewWithTag("wizard.step.4");review.requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(PreviewPagesTest.findText(root,"Save Page"),root.findFocus());PreviewPagesTest.capture(root,"next-qa-wizard-review-save");}finally{host.pause().stop().destroy();}
+ }
+ @Test public void dirtyExitStartsSafelyAndSaveShowsCustomLibraryWithEditAtRight() throws Exception {
+  var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{View root=host.get().findViewById(android.R.id.content);PreviewPagesTest.layout(root);Object workspace=ReflectionHelpers.getField(host.get(),"workspace");CustomLibraryPage draft=ReflectionHelpers.getField(workspace,"draft");draft.name="QA Films";root.findViewWithTag("wizard.step.0").requestFocus();((PageExitGuard)workspace).requestExit(()->fail("Saving must show the custom page"));android.app.Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();View decor=dialog.getWindow().getDecorView();assertSame(PreviewPagesTest.findText(decor,"Continue Editing"),decor.findFocus());PreviewPagesTest.findText(decor,"Save Page").performClick();PreviewPagesTest.layout(root);assertEquals("QA Films",CustomLibraryPage.load(host.get()).name);View edit=root.findViewWithTag("custom.control.edit");assertNotNull(edit);View filters=root.findViewWithTag("custom.control.filters");assertTrue(edit.getLeft()>filters.getRight());assertNotNull(((android.widget.TextView)edit).getCompoundDrawables()[0]);}finally{host.pause().stop().destroy();}
+ }
+}

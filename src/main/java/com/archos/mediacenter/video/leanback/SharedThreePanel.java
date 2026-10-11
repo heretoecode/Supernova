@@ -25,6 +25,11 @@ public class SharedThreePanel extends LinearLayout {
         addPanel(centre, .38f, true);
         addPanel(right, .38f, false);
     }
+    /** On narrow logical TVs retain usable pane widths and reveal panes with remote focus. */
+    public static View viewport(SharedThreePanel panels){
+        Context c=panels.getContext();if(TvLayout.width(c)>=780)return panels;
+        android.widget.HorizontalScrollView viewport=new android.widget.HorizontalScrollView(c);viewport.setHorizontalScrollBarEnabled(false);viewport.setFillViewport(false);viewport.setClipChildren(false);viewport.setClipToPadding(false);viewport.addView(panels,new android.widget.FrameLayout.LayoutParams(TvLayout.px(c,900),-1));return viewport;
+    }
 
     public void widths(float left,float centre,float right) {
         float[] widths={left,centre,right};
@@ -94,8 +99,8 @@ public class SharedThreePanel extends LinearLayout {
         StateListDrawable states = new StateListDrawable();
         for (boolean focused : new boolean[]{true, false}) {
             GradientDrawable shape = new GradientDrawable();
-            shape.setColor(focused ? 0x603b4857 : 0x303b4857);
-            shape.setCornerRadius(dp(context, radius));
+            shape.setColor(focused ? 0xe0203b50 : 0xc80b1b29);
+            shape.setCornerRadius(dp(context, Math.max(10,Math.min(12,radius))));
             shape.setStroke(dp(context, 1), focused ? PreviewAccent.color(context) : 0x887f8996);
             states.addState(focused ? new int[]{android.R.attr.state_focused} : new int[]{}, shape);
         }

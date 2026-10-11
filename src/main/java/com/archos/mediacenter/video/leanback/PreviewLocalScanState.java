@@ -10,7 +10,7 @@ final class PreviewLocalScanState {
     private static String summary="";
     private static final java.util.Map<String,State> active=new java.util.LinkedHashMap<>();
     private static final java.util.LinkedHashSet<String> ended=new java.util.LinkedHashSet<>();
-    private static final class State {final String operation=Diagnostics.operation("local_import");final long started=android.os.SystemClock.elapsedRealtime();}
+    private static final class State {final String operation=Diagnostics.operation("local_import");final long started=android.os.SystemClock.elapsedRealtime();long lastProgress=started;}
     static synchronized void accept(Context context,Intent intent){
         String id=intent.getStringExtra("batch_id"),phase=intent.getStringExtra("phase"),mode=intent.getStringExtra("mode");
         if(id==null||!id.matches("[A-Za-z0-9-]{1,100}")||!Arrays.asList("full","incremental").contains(mode)
@@ -19,6 +19,7 @@ final class PreviewLocalScanState {
             if(active.size()>=32){String oldest=active.keySet().iterator().next();State stale=active.remove(oldest);Diagnostics.event("scan_trace_evicted","operation_id",stale.operation,"batch_id",oldest);}
             state=new State();active.put(id,state);
         }
+        state.lastProgress=android.os.SystemClock.elapsedRealtime();
         long checked=Math.max(0,intent.getLongExtra("checked",0)),added=Math.max(0,intent.getLongExtra("added",0)),updated=Math.max(0,intent.getLongExtra("updated",0)),elapsed=Math.max(0,intent.getLongExtra("elapsed_ms",0));
         boolean known=intent.getBooleanExtra("counts_known",false);
         String trigger=intent.getStringExtra("trigger");if(!Arrays.asList("startup","resume","content_change","android_scan").contains(trigger))trigger="native_import";
@@ -30,6 +31,6 @@ final class PreviewLocalScanState {
             Diagnostics.finishOperation(state.operation,"local_import",state.started);active.remove(id);ended.add(id);if(ended.size()>64)ended.remove(ended.iterator().next());
         }
     }
-    static synchronized String status(Context context){return summary.isEmpty()?androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("preview_local_scan_result",""):summary;}
+    static synchronized String status(Context context){if(!active.isEmpty()){long latest=0;for(State state:active.values())latest=Math.max(latest,state.lastProgress);long idle=(android.os.SystemClock.elapsedRealtime()-latest)/1000;if(idle>=30)return summary+"\nWaiting For Native Importer · Last Progress "+idle+" Seconds Ago";}return summary.isEmpty()?androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("preview_local_scan_result",""):summary;}
     private PreviewLocalScanState(){}
 }

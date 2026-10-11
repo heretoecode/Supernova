@@ -58,7 +58,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private MetaFile2 selectedFile;
     private View leftAnchor, centreAnchor;
     private ListingEngine engine;
-    private int generation;
+    private int generation,listingRenderGeneration;
     private boolean closed, listingFailed;private TextView scanOverview;private final android.os.Handler scanHandler=new android.os.Handler(android.os.Looper.getMainLooper());
     private final Runnable scanRefresh=new Runnable(){public void run(){if(scanOverview!=null&&isAttachedToWindow())scanOverview.setText(PreviewLibraryScan.overview(getContext()));if(isAttachedToWindow())scanHandler.postDelayed(this,1000);}};
     private Consumer<String> networkAction = ignored -> {};
@@ -81,7 +81,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         panels = new SharedThreePanel(c);
         ScrollView leftScroll = new ScrollView(c); leftScroll.addView(left);
         contextScroll = new ScrollView(c); contextScroll.setFillViewport(true); contextScroll.addView(right);
-        panels.panels(leftScroll, centre, contextScroll);panels.widths(.31f,.42f,.27f); addView(panels, new LayoutParams(-1,-1));
+        panels.panels(leftScroll, centre, contextScroll);panels.widths(.31f,.42f,.27f); addView(SharedThreePanel.viewport(panels), new LayoutParams(-1,-1));
         SharedThreePanel.heading(left,"Locations");
         overview = location("Overview", this::showOverview); leftAnchor = overview;
         overview.setTag("semantic:network.category.overview");
@@ -90,9 +90,9 @@ public final class UniversalFileBrowser extends LinearLayout {
         androidx.appcompat.widget.SwitchCompat all=new androidx.appcompat.widget.SwitchCompat(c);all.setShowText(false);all.setTextOn("ON");all.setTextOff("OFF");all.setText("All Files");all.setTextColor(-1);all.setFocusable(true);all.setFocusableInTouchMode(true);all.setBackground(SharedThreePanel.accentFocus(c));all.setChecked(prefs.getBoolean(ALL_FILES,false));all.setThumbTintList(android.content.res.ColorStateList.valueOf(-1));all.setTrackTintList(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{PreviewAccent.color(c),0xff59616b}));all.setOnCheckedChangeListener((button,checked)->prefs.edit().putBoolean(ALL_FILES,checked).apply());
         all.setTag("browser.all_files");
         for(TextView button : new TextView[]{listMode,sort,all}) {
-            button.setTextSize(14); button.setGravity(android.view.Gravity.CENTER);
-            button.setBackground(SharedThreePanel.control(c,25));
-            LayoutParams size=new LayoutParams(0,dp(40),1);size.leftMargin=dp(3);size.rightMargin=dp(3);
+            TvButton.style(button,false);button.setSingleLine(false);button.setMaxLines(2);button.setPadding(dp(6),dp(6),dp(6),dp(6));
+            if(button==all)button.setCompoundDrawables(null,null,null,null); // White switch thumb carries its state icon.
+            LayoutParams size=new LayoutParams(0,-2,1);size.leftMargin=dp(3);size.rightMargin=dp(3);
             toolbar.addView(button,size);
         }
         centre.addView(toolbar,new LayoutParams(-1,-2));
@@ -284,7 +284,9 @@ public final class UniversalFileBrowser extends LinearLayout {
         status.setText("Loading…");loading.setVisibility(VISIBLE);
         try {
             engine=ListingEngineFactoryWithUpnp.getListingEngineForUrl(getContext(),target);
-            if(!VideoPreferencesCommon.PreferenceHelper.shouldDisplayAllFiles(getContext()))engine.setFilter(VideoUtils.getVideoFilterMimeTypes(),null);
+            boolean showAll=prefs.getBoolean(ALL_FILES,false);
+            engine.setKeepHiddenFiles(showAll);
+            engine.setFilter(showAll?null:VideoUtils.getVideoFilterMimeTypes(),null);
             engine.setSortOrder(sortOrder()); engine.setListingTimeOut(30000);
             engine.setListener(new ListingEngine.Listener() {
                 private boolean valid(){return !closed&&token==generation&&target.equals(current);}
@@ -316,7 +318,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         connection[2]=target.getPath()==null?"/":target.getPath();connection[3]="";connection[4]="";connection[5]="";showPassword=false;
         connectionForm();focusCentre();
     }
-    private void stopListing(){loading.setVisibility(INVISIBLE);generation++;if(engine!=null){engine.setListener(null);engine.abort();engine=null;}}
+    private void stopListing(){loading.setVisibility(INVISIBLE);generation++;listingRenderGeneration++;fileList.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);if(engine!=null){engine.setListener(null);engine.abort();engine=null;}}
 
     public static List<Uri> ancestors(Uri uri) {
         List<Uri> result=new ArrayList<>();
@@ -338,11 +340,28 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
     private void renderItems() {
         if(current==null)return;
-        boolean hadFocus=items.hasFocus();String identity=selectedUri==null?rememberedItems.get(current.toString()):selectedUri.toString();
+        boolean hadFocus=items.hasFocus();View previous=fileList.findFocus();View oldRow=previous==null?null:fileList.findContainingItemView(previous);int previousPosition=oldRow==null?0:Math.max(0,fileList.getChildAdapterPosition(oldRow));String identity=selectedUri==null?rememberedItems.get(current.toString()):selectedUri.toString();
         if(fileList.getParent()!=items){if(fileList.getParent() instanceof ViewGroup)((ViewGroup)fileList.getParent()).removeView(fileList);items.removeAllViews();items.addView(fileList,new LayoutParams(-1,-1));}
-        fileLayout.setSpanCount(prefs.getBoolean(GRID,false)?2:1);fileAdapter.notifyDataSetChanged();
+        final int renderRequest=++listingRenderGeneration;
+        // RecyclerView may seek focus outside a removed row while rebinding. A location
+        // focus callback would then clear this same adapter in the middle of its layout.
+        fileList.setDescendantFocusability(hadFocus?FOCUS_BLOCK_DESCENDANTS:FOCUS_AFTER_DESCENDANTS);
+        if(hadFocus)fileList.requestFocus();
+        fileLayout.setSpanCount(prefs.getBoolean(GRID,false)?2:1);com.archos.mediacenter.video.diagnostics.Diagnostics.event("browser_listing_render","items",files.size(),"all_files",prefs.getBoolean(ALL_FILES,false),"grid",prefs.getBoolean(GRID,false),"generation",generation,"restore_focus",hadFocus);fileAdapter.notifyDataSetChanged();
         int[] position=listPositions.get(current.toString());if(position!=null)fileLayout.scrollToPositionWithOffset(position[0],position[1]);
-        if(hadFocus&&identity!=null){for(int i=0;i<files.size();i++)if(identity.equals(files.get(i).getUri().toString())){final int target=i;fileList.post(()->{RecyclerView.ViewHolder row=fileList.findViewHolderForAdapterPosition(target);if(row!=null){centreAnchor=row.itemView;row.itemView.requestFocus();}else{fileList.scrollToPosition(target);fileList.post(()->{RecyclerView.ViewHolder visible=fileList.findViewHolderForAdapterPosition(target);if(visible!=null){centreAnchor=visible.itemView;visible.itemView.requestFocus();}});}});break;}}
+        if(hadFocus){int selected=-1;for(int i=0;i<files.size();i++)if(identity!=null&&identity.equals(files.get(i).getUri().toString())){selected=i;break;}
+            final int token=generation,target=selected>=0?selected:Math.min(previousPosition,files.size()-1);
+            fileList.post(new Runnable(){int tries;public void run(){
+                if(renderRequest!=listingRenderGeneration)return;
+                if(!isAttachedToWindow()||token!=generation||!fileList.hasFocus()){fileList.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);return;}
+                if(target<0||target>=files.size()){fileList.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);centreAnchor=null;selectedFile=null;selectedUri=current;showInformation(current,null);focusCentre();return;}
+                RecyclerView.ViewHolder row=fileList.findViewHolderForAdapterPosition(target);
+                if(row!=null&&row.itemView.isShown()){fileList.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);centreAnchor=row.itemView;row.itemView.requestFocus();MetaFile2 file=files.get(target);selectedUri=file.getUri();selectedFile=file;showInformation(selectedUri,file);}
+                else if(tries++<8){fileList.scrollToPosition(target);fileList.postOnAnimation(this);}
+                else{fileList.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);centreAnchor=null;focusCentre();}
+            }});
+        }
+
         if(files.isEmpty()&&!listingFailed)status.setText("No matching files or folders");
     }
     private TextView fileRow(){TextView row=action("",()->{});SharedThreePanel.rowSeparator(row);return row;}
@@ -426,7 +445,10 @@ public final class UniversalFileBrowser extends LinearLayout {
         requestExit(leave);return true;
     }
     private void focusCentre(){
-        if(centreAnchor!=null&&centreAnchor.isShown()&&centreAnchor.requestFocus())return;
+        if(centreAnchor!=null&&centreAnchor.isAttachedToWindow()&&centreAnchor.isShown()){
+            View row=fileList.findContainingItemView(centreAnchor);int position=row==null?-1:fileList.getChildAdapterPosition(row);
+            if((row==null||position>=0&&position<files.size()&&files.get(position).getUri().toString().equals(row.getTag()))&&centreAnchor.requestFocus())return;
+        }
         if(toolbar.getVisibility()==VISIBLE){toolbar.getChildAt(0).requestFocus();return;}
         for(int n=0;n<items.getChildCount();n++){View item=items.getChildAt(n);if(item.isShown()&&item.isFocusable()&&item.requestFocus())return;}
         if(current!=null&&fileAdapter.getItemCount()>0){fileList.post(()->{RecyclerView.ViewHolder first=fileList.findViewHolderForAdapterPosition(0);if(first!=null)first.itemView.requestFocus();});return;}
@@ -435,7 +457,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private void toggleGrid(){remember();prefs.edit().putBoolean(GRID,!prefs.getBoolean(GRID,false)).apply();}
     private void chooseSort(){PreviewDialog.choose(getContext(),"Sort",new String[]{"Name ↑","Name ↓","Date ↑","Date ↓","Size ↑","Size ↓"},prefs.getInt(SORT,0),n->prefs.edit().putInt(SORT,n).apply());}
     private ListingEngine.SortOrder sortOrder(){return new ListingEngine.SortOrder[]{ListingEngine.SortOrder.SORT_BY_NAME_ASC,ListingEngine.SortOrder.SORT_BY_NAME_DESC,ListingEngine.SortOrder.SORT_BY_DATE_ASC,ListingEngine.SortOrder.SORT_BY_DATE_DESC,ListingEngine.SortOrder.SORT_BY_SIZE_ASC,ListingEngine.SortOrder.SORT_BY_SIZE_DESC}[Math.max(0,Math.min(5,prefs.getInt(SORT,0)))];}
-    private void refreshControls(){TextView view=toolbar.findViewWithTag("browser.view");view.setText(prefs.getBoolean(GRID,false)?"List View":"Grid View");androidx.appcompat.widget.SwitchCompat all=toolbar.findViewWithTag("browser.all_files");all.setChecked(prefs.getBoolean(ALL_FILES,false));}
+    private void refreshControls(){TextView view=toolbar.findViewWithTag("browser.view");view.setText(prefs.getBoolean(GRID,false)?"List View":"Grid View");PreviewIcon.apply(view,view.getText().toString(),16);androidx.appcompat.widget.SwitchCompat all=toolbar.findViewWithTag("browser.all_files");all.setChecked(prefs.getBoolean(ALL_FILES,false));all.setText("All Files: "+(all.isChecked()?"On":"Off"));all.setContentDescription("All Files "+(all.isChecked()?"On":"Off"));}
     private final SharedPreferences.OnSharedPreferenceChangeListener changes=(preferences,key)->{if(ALL_FILES.equals(key)||SORT.equals(key)){refreshControls();remember();reload();}else if(GRID.equals(key)){refreshControls();renderItems();}};
     private TextView action(String label,Runnable run){return SharedThreePanel.accentAction(getContext(),label,run);}
     private void revealContext(View target) {
@@ -466,8 +488,15 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(centre.hasFocus()) {
             centreAnchor=focused;
             if(onboarding&&fileList.hasFocus()&&key==KeyEvent.KEYCODE_DPAD_RIGHT&&selectedFile!=null&&selectedFile.isDirectory()){activate(selectedFile);return true;}
-            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){View next=android.view.FocusFinder.getInstance().findNextFocus(centre,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused)next.requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){
+                if(fileList.hasFocus()){
+                    View item=fileList.findContainingItemView(focused);int position=item==null?-1:fileList.getChildAdapterPosition(item);
+                    if(key==KeyEvent.KEYCODE_DPAD_DOWN||position>=fileLayout.getSpanCount())return fileList.dispatchKeyEvent(event);
+                    if(breadcrumbScroll.getVisibility()==VISIBLE&&crumbs.getChildCount()>0){crumbs.getChildAt(crumbs.getChildCount()-1).requestFocus();return true;}
+                }
+                View next=android.view.FocusFinder.getInstance().findNextFocus(centre,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused)next.requestFocus();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT) {
+                if(fileList.hasFocus()&&fileLayout.getSpanCount()>1){View item=fileList.findContainingItemView(focused);int position=item==null?-1:fileList.getChildAdapterPosition(item),next=position+(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);if(position>=0&&next>=0&&next<files.size()&&position/fileLayout.getSpanCount()==next/fileLayout.getSpanCount())return fileList.dispatchKeyEvent(event);}
                 ViewGroup horizontal=toolbar.hasFocus()?toolbar:crumbs.hasFocus()?crumbs:suppliedDock instanceof ViewGroup?(ViewGroup)suppliedDock:fileList.hasFocus()?fileList:centre;
                 View next=android.view.FocusFinder.getInstance().findNextFocus(horizontal,focused,key==KeyEvent.KEYCODE_DPAD_LEFT?FOCUS_LEFT:FOCUS_RIGHT);
                 if(next!=null&&next!=focused){int[] a=new int[2],b=new int[2];focused.getLocationInWindow(a);next.getLocationInWindow(b);if(key==KeyEvent.KEYCODE_DPAD_LEFT?b[0]<a[0]:b[0]>a[0]){next.requestFocus();return true;}}
@@ -476,7 +505,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             }
         }
         if(right.hasFocus()) {
-            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(centreAnchor==null||!centreAnchor.requestFocus())focusCentre();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(centreAnchor==null||!centreAnchor.isAttachedToWindow()||!centreAnchor.isShown()||!centreAnchor.requestFocus())focusCentre();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){
                 if(addressScroll.hasFocus()){int direction=key==KeyEvent.KEYCODE_DPAD_UP?-1:1;if(addressScroll.canScrollVertically(direction))addressScroll.scrollBy(0,direction*dp(48));else if(direction>0){if(information.getText().length()>0)informationScroll.requestFocus();else if(actions.getChildCount()>0)actions.getChildAt(0).requestFocus();}return true;}
