@@ -1,0 +1,84 @@
+name: Publish verified Supernova QA release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Exact APK version, e.g. 0.136'
+        required: true
+        type: string
+      source_run_id:
+        description: 'Successful signed APK GitHub Actions run ID'
+        required: true
+        type: string
+      expected_sha256:
+        description: 'Verified APK SHA-256 from signed build evidence'
+        required: true
+        type: string
+      source_commit:
+        description: 'Exact source commit SHA of signed build'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: supernova-release-publishing
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare signed APK from original CI artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          RUN_ID: ${{ inputs.source_run_id }}
+          EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+          SOURCE_COMMIT: ${{ inputs.source_commit }}
+        run: |
+          set -euo pipefail
+          [[ "$VERSION" =~ ^[0-9]+(\.[0-9]+)+$ ]] || exit 1
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]] || exit 1
+          [[ "$EXPECTED_SHA256" =~ ^[0-9a-fA-F]{64}$ ]] || exit 1
+          [[ "$SOURCE_COMMIT" =~ ^[0-9a-fA-F]{40}$ ]] || exit 1
+          gh run view "$RUN_ID" --json headSha,conclusion --jq '.headSha+" "+.conclusion' > run-state.txt
+          read -r SHA CONCLUSION < run-state.txt
+          test "$SHA" = "$SOURCE_COMMIT"
+          test "$CONCLUSION" = success
+          mkdir -p build-delivery
+          gh run download "$RUN_ID" --dir build-delivery
+          mapfile -t apks < <(find build-delivery -type f -name '*.apk')
+          test "${#apks[@]}" -eq 1
+          cp "${apks[0]}" "Supernova_${VERSION}.apk"
+          echo "${EXPECTED_SHA256}  Supernova_${VERSION}.apk" | sha256sum --check -
+          test -f "release-notes/${VERSION}.md"
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to overwrite"; exit 1
+          fi
+      - name: Publish direct GitHub APK prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          SOURCE_COMMIT: ${{ inputs.source_commit }}
+        run: |
+          gh release create "v${VERSION}" "Supernova_${VERSION}.apk" \
+            --target "$SOURCE_COMMIT" --title "Supernova ${VERSION} (QA)" \
+            --notes-file "release-notes/${VERSION}.md" --prerelease
+      - name: Upload APK and update existing Drive HTML
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          VERSION: ${{ inputs.version }}
+          EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+        run: |
+          python3 scripts/publish_release_drive.py \
+            --apk "Supernova_${VERSION}.apk" \
+            --version "$VERSION" \
+            --notes "release-notes/${VERSION}.md" \
+            --sha256 "$EXPECTED_SHA256"
