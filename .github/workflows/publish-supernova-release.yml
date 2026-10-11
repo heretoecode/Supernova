@@ -57,7 +57,6 @@ jobs:
           cp "${apks[0]}" "Supernova_${VERSION}.apk"
           echo "${EXPECTED_SHA256}  Supernova_${VERSION}.apk" | sha256sum --check -
           test -f "release-notes/${VERSION}.md"
-          git cat-file -e "${SOURCE_COMMIT}^{commit}"
           if gh release view "v${VERSION}" >/dev/null 2>&1; then
             echo "Release already exists; refusing to overwrite"; exit 1
           fi
