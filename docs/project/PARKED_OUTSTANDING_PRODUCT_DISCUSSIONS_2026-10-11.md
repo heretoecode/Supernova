@@ -113,3 +113,7 @@ Then address put.io/Trakt/OpenSubtitles/TMDB and List View as appropriate, follo
 When the user wants to resume, open this register and the current GitHub status/roadmap and Codex refinement requirements. Verify which current-release items actually shipped; **subtract implemented and assigned work** before proposing anything new. Start with the user's chosen topic, discuss options and mockups, then explicitly record decisions as Approved / Parked / Needs discussion. Do not promote an idea to approved scope or send it to Codex without explicit permission.
 
 **Final state:** all items above preserved for future discussion. This register itself is documentation only; no code, builds, signing, release identity, PR or active branch changed.
+
+
+## Additional parked operational setup — release publishing (2026-10-11)
+The user paused **Google Cloud OAuth / GitHub Releases + Google Drive automated APK publishing** at **Step 3 (Google Auth Platform)**. Google Cloud project creation and Google Drive API enablement were user-confirmed; OAuth consent, credentials, GitHub Actions environment, PR #11 review/merge and end-to-end automation are outstanding. Manual `Supernova_0.136.apk` upload to Drive succeeded. Full handover: [PARKED_GOOGLE_DRIVE_RELEASE_PUBLISHER_SETUP_2026-10-11.md](PARKED_GOOGLE_DRIVE_RELEASE_PUBLISHER_SETUP_2026-10-11.md). This is a paused operational workflow, not permission to modify the active Codex branch.
