@@ -26,6 +26,14 @@ Use one shared system for app-owned buttons across Home hero actions, Movies, TV
 - Preserve existing accent focus style, clear focused/unfocused differentiation, and enough space for D-pad focus scale/outline.
 - Where necessary use a restrained text shadow for contrast, not as substitute for accessible backgrounds.
 
+## Approved proportional size-family rule (user clarification)
+- Use a **shared base button design with proportional size variants**, not independently styled button families.
+- **Standard action buttons** (e.g. Home hero More Info) remain comparatively compact.
+- **Functional library toolbar buttons** (Filter, Sort, Ascending, List View, etc.) are intentionally larger and more substantial; use the **same functional variant** on built-in Movies, TV Shows and custom library pages.
+- As the overall button box increases, scale its **height, horizontal/vertical padding, icon dimensions, icon-to-label gap, text size, corner radius and focus expansion clearance together according to shared ratios**, so the complete component feels like the same design at a different size. Preserve consistent alignment and shape.
+- These are **bounded proportional tokens**, not unconstrained multiplication: enforce legibility, fontScale/accessibility, TV safe areas, reasonable icon sizing, minimum focus target and label fit. Allow width to be content-driven; do not demand equal widths or distort text.
+- Provisional dp values in this document describe a base size only; the final scale ratios and variant sizes must be calibrated on real Shield screenshots. Avoid treating the example 20% increase as an approved exact scale factor.
+
 ## Interaction and QA
 - Audit every app-owned button and shared component to avoid missed screens.
 - Check icon meaning, label casing, text truncation, padding, spacing, corners, touch/focus targets, D-pad order, disabled and destructive semantics.
