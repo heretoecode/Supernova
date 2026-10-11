@@ -1,7 +1,7 @@
 # Staged custom library page wizard QA and UX changes
 
 **Date:** 2026-10-11
-**Status:** User-reported Shield findings, design proposals for next-version handover; NOT an implementation authorisation.
+**Status:** User-approved focus corrections and keyboard control layout/label; remaining exit confirmation design staged for next-version handover. NOT an implementation authorisation.
 
 ## Observed defects
 - Custom page wizard launched from Home `+`, with five left-hand steps.
@@ -17,7 +17,7 @@
 - Avoid an unnecessary D-pad focus stop on the input display; keep editing, caret, insertion/deletion, validation and accessibility working. Test whether accessibility requires an editable semantic field even if not separately D-pad focusable.
 - Reduce pill/button dimensions and icon-to-label spacing using global bounded responsive tokens; retain readable text and adequate focus targets.
 - Keep alphanumeric key grid and its correct D-pad behaviour, including initial T focus.
-- Suggested six-action layout (requires final QA): first row **Caps | Space | Backspace**, second row **Clear | Select | Cancel**. Space visually centred on keyboard. Keep action labels unambiguous and sensible directional movement.
+- Suggested six-action layout (requires final QA): first row **Caps | Space | Backspace**, second row **Clear | Done | Cancel**. Space visually centred on keyboard. User approved this six-action arrangement. Rename the current keyboard **Select** action to **Done**, since it accepts the typed name and closes the keyboard; it must NOT save the entire library page. **Done** commits the edit and returns focus to Page Name in the wizard; **Cancel** dismisses keyboard edits and restores the field's pre-edit value; **Clear** empties the current edit buffer without closing the keyboard. Space, Backspace and Caps retain their standard functions. Keep action labels unambiguous and sensible directional movement.
 
 ## Exit confirmation proposal
 - On Back with **unsaved changes**, open a centred **Unsaved Changes** dialog using global dialog design tokens and subtle blurred/dimmed background; **not a context menu**.
