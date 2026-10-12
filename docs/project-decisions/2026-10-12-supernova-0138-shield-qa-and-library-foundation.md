@@ -299,3 +299,12 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - Retain the existing dynamic-row feature under bottommost label **Automatically include new matching media**; user flagged missing 'dynamic genre row option' and this must be clarified against existing feature semantics rather than assumed equivalent or silently omitted.
 - Genre pop-out must include clear explanatory text: counts come from indexed library and can change as scan discovers titles; show scanning progress/status only when actual scan active. Differentiate unknown/not yet scanned from confirmed zero, keep counts stable width and selections possible before indexing. No permanent fictitious scanning status.
 - Latest mockup remains unapproved visual draft. No implementation authorised.
+
+
+## 2026-10-12 — Customise Home near-final owner feedback
+- Owner sees no substantive issues in latest mockup and accepts its visual direction, subject to details below. Keep the meaningful monochrome Sci-Fi icon beside editor heading.
+- Genre scanning status, only when an actual scan runs, should reuse the **already standardised/implemented Supernova spinning loading icon/animation**, not a bespoke spinner. Verify existing component in source.
+- Row Name field is one focus target: OK opens the app-standard keyboard as its own visually anchored panel beneath the field, with existing D-pad navigation. Verify actual keyboard placement and whether live text callbacks are supported before implementation claims.
+- Newly created row's empty name field shows nonselectable, nonpersistent placeholder text such as 'Enter a name for your row…'. Placeholder must not become saved name. Distinguish a transient draft from a committed row and audit live-edit persistence/Back cancellation so an abandoned nameless row is not left behind.
+- Add an explicit **Create Row** button to left Home-row list; proposed placement at bottom after existing rows, scrollable and D-pad focusable, using monochrome plus icon and Menu Foundation styling. Placement is recommendation pending owner approval.
+- No Save/Apply/Done buttons for normal live row editing. Do not begin app coding without owner authorisation.
