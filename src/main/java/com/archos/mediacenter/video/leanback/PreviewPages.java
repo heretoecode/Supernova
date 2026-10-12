@@ -318,7 +318,7 @@ public final class PreviewPages extends FrameLayout {
     public void setSnapshot(Snapshot s) { if(s==null)return;
         quietOrder.clear();
         if(loaded&&tab==0){String featuredKey=featured()==null?null:featured().key();if(featuredKey!=null)for(int i=0;i<Math.min(5,s.recent.size());i++)if(s.recent.get(i).key().equals(featuredKey)){featuredIndex=i;break;}}
-        snapshot=s;loaded=true;render("indexed_snapshot");if(com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext())){PreviewEnrichmentQueue.library(getContext(),s,tab);PreviewMetadata.library(getContext(),s,tab);postDelayed(this::requestDiscovery,750);}post(ready);
+        snapshot=s;loaded=true;if(tab==0)com.archos.mediacenter.video.utils.SubtitleDiscovery.home(getContext(),s);render("indexed_snapshot");if(com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext())){PreviewEnrichmentQueue.library(getContext(),s,tab);PreviewMetadata.library(getContext(),s,tab);postDelayed(this::requestDiscovery,750);}post(ready);
     }
     private static void keepOrder(List<Entry> old,List<Entry> current){Map<String,Integer> rank=new HashMap<>();for(Entry e:old)rank.put(e.key(),rank.size());current.sort(Comparator.comparingInt(e->rank.getOrDefault(e.key(),Integer.MAX_VALUE)));}
     public void setFiles(List<Box> f) {
@@ -511,6 +511,7 @@ public final class PreviewPages extends FrameLayout {
     private final Runnable warmHeroes=()->{if(!isAttachedToWindow()||tab!=0)return;heroWarmAt=android.os.SystemClock.elapsedRealtime();List<Entry> catalogue=featuredCandidates();for(int i=0;i<Math.min(8,catalogue.size());i++){Entry candidate=catalogue.get(Math.floorMod(featuredIndex+i,catalogue.size()));OfficialTitleArtwork.prefetch(getContext(),candidate.media);android.net.Uri uri=candidate.backdrop!=null?candidate.backdrop:candidate.media.getPosterUri();if(uri!=null){com.squareup.picasso.RequestCreator request=com.squareup.picasso.Picasso.get().load(uri).resize(dp(960),dp(540));if(candidate.backdrop!=null)request.centerCrop();else request.centerInside();request.fetch();}}};
     private final java.util.LinkedHashMap<String,PreviewFeaturedCard> heroWindow=new java.util.LinkedHashMap<>();
     private PreviewFeaturedCard preparedHero(Entry e,View opener){
+        com.archos.mediacenter.video.utils.SubtitleDiscovery.hero(getContext(),e,snapshot);
         long preparedAt=android.os.SystemClock.elapsedRealtime();if(preparedAt-heroWarmAt>30000){removeCallbacks(warmHeroes);postDelayed(warmHeroes,500);}List<Entry> entries=featuredCandidates();if(e==null)return new PreviewFeaturedCard(getContext(),java.util.Collections.emptyList(),0,this::placeholderInfo,this::placeholderInfo);
         String activeKey=null;java.util.Set<String> keep=new java.util.HashSet<>();int current=Math.floorMod(featuredIndex,entries.size());
         for(int offset:new int[]{0,-1,1}){int index=Math.floorMod(current+offset,entries.size());Entry candidate=entries.get(index);String key=entrySignature(candidate)+"|logo:"+OfficialTitleArtwork.cachedRevision(candidate.media);if(offset==0)activeKey=key;keep.add(key);OfficialTitleArtwork.prefetch(getContext(),candidate.media);

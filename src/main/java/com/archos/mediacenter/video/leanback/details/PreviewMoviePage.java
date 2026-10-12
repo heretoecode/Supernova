@@ -175,7 +175,7 @@ public final class PreviewMoviePage extends ScrollView {
     private TextView button(String s,Runnable run){TextView t=TvButton.create(getContext(),s,run,false);t.setTag("action:"+s);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(t,"details.action."+s.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+","."));PreviewIcon.apply(t,s,16);t.setGravity(Gravity.CENTER);t.setPadding(dp(14),dp(9),dp(14),dp(9));t.setFocusable(true);t.setFocusableInTouchMode(true);t.setBackground(SharedThreePanel.control(getContext(),10));t.setOnClickListener(v->run.run());return t;}
     private void margin(LinearLayout row,View view){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(18);row.addView(view,lp);}
     private LinearLayout section(String name){LinearLayout section=new LinearLayout(getContext());section.setOrientation(LinearLayout.VERTICAL);section.setPadding(0,dp(10),0,dp(8));TextView label=text(name,16);label.setTextColor(0xff9ed4f7);section.addView(label);if(name.equals("More Like This")||name.equals("Details")||name.equals("Episodes")||name.equals("Extras"))label.setVisibility(GONE);LinearLayout content=new LinearLayout(getContext());content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(6),0,0);section.addView(content);body.addView(section);return content;}
-    public void bind(Video value){movie=value;title.setText(movie.getName());OfficialTitleArtwork.bind(title,value,false);plot.setText(movie.getDescriptionBody());
+    public void bind(Video value){movie=value;com.archos.mediacenter.video.utils.SubtitleDiscovery.details(getContext(),value,snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache());title.setText(movie.getName());OfficialTitleArtwork.bind(title,value,false);plot.setText(movie.getDescriptionBody());
         if(!movie.hasScraperData()){if(safe(movie.getName()).isEmpty())title.setText(movie.getFilenameNonCryptic());plot.setText("Not matched · Synopsis unavailable");}
         play.setText(movie.getResumeMs()>0&&!PreviewSeriesJourney.completed(movie)?"Resume":"Play");
         if(movie.getPreviewBackdrop()!=null)cardArtwork(movie.getPreviewBackdrop());renderDetails();requestEnrichment();
@@ -190,7 +190,7 @@ public final class PreviewMoviePage extends ScrollView {
         long minutes=movie.getDurationMs()/60000;
         if(minutes<=0&&movie instanceof Episode&&tags instanceof EpisodeTags)minutes=tags.getRuntime(java.util.concurrent.TimeUnit.MINUTES);
         if(minutes>0)metadata.add(minutes+" min");
-        String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;
+        String certificate=movie instanceof Movie?((Movie)movie).getContentRating():null;
         if(certificate!=null&&!certificate.isEmpty())metadata.add(certificate);
         if(movie instanceof Movie&&((Movie)movie).getRating()>0)metadata.add(String.format(java.util.Locale.ROOT,"%.1f",((Movie)movie).getRating()));else if(movie instanceof Episode&&((Episode)movie).getEpisodeRating()>0)metadata.add(String.format(java.util.Locale.ROOT,"%.1f",((Episode)movie).getEpisodeRating()));
         String selectedFile=PreviewVariants.fileBadge(getContext(),movie);if(!selectedFile.isEmpty())metadata.add(selectedFile);
@@ -241,7 +241,7 @@ public final class PreviewMoviePage extends ScrollView {
         if(runtime<=0){org.json.JSONObject runtimeFacts=selectedEpisode!=null?episodeFacts:enriched;if(runtimeFacts!=null)runtime=runtimeFacts.optLong("runtime");}
         if(runtime>0&&(movie!=null||"movie".equals(remoteKind)))fact(key,"Runtime",SharedMetadata.runtime(runtime));
         
-        String certificate=movie instanceof Movie?((Movie)movie).getContentRating():movie instanceof Episode?((Episode)movie).getContentRating():null;
+        String certificate=movie instanceof Movie?((Movie)movie).getContentRating():null;
         if(selectedEpisode==null&&safe(certificate).isEmpty()&&enrichment!=null)certificate=PreviewDetailsFacts.certificate(enrichment.classification,StreamingRepository.country(getContext()));
         fact(key,"Age rating",certificate);fact(key,"Genres",genre);
         String studios=tags instanceof MovieTags?((MovieTags)tags).getStudiosFormatted():tags instanceof ShowTags?((ShowTags)tags).getStudiosFormatted():tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null?((EpisodeTags)tags).getShowTags().getStudiosFormatted():"";
@@ -322,7 +322,7 @@ public final class PreviewMoviePage extends ScrollView {
         ((View)details.getParent()).setVisibility(VISIBLE);
         SharedMetadata.Facts summary=new SharedMetadata.Facts();summary.certificate=selectedEpisode==null?safe(certificate):"";summary.year=year>0?String.valueOf(year):"";summary.genres=safe(genre);summary.rating=rating;
         org.json.JSONObject votesSource=selectedEpisode==null?enriched:episodeFacts;summary.votes=votesSource==null?0:votesSource.optLong("vote_count");
-        if(show!=null||"tv".equals(remoteKind)){Snapshot library=snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache();Entry local=null;if(library!=null&&show!=null)for(Entry e:library.shows)if(e.show==show.getTvshowId())local=e;int seasonCount=local!=null?local.seasons:enriched==null?0:enriched.optInt("number_of_seasons"),episodeCount=local!=null?local.episodes:enriched==null?0:enriched.optInt("number_of_episodes");summary.context=SharedMetadata.join(SharedMetadata.count(seasonCount,"Season"),SharedMetadata.count(episodeCount,"Episode"));}
+        if(show!=null||"tv".equals(remoteKind)){Snapshot library=snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache();Entry local=null;if(library!=null&&show!=null)for(Entry e:library.shows)if(e.show==show.getTvshowId())local=e;int seasonCount=local!=null?local.seasons:enriched==null?(show==null?0:show.getSeasonCount()):enriched.optInt("number_of_seasons"),episodeCount=local!=null?local.episodes:enriched==null?(show==null?0:show.getEpisodeCount()):enriched.optInt("number_of_episodes");summary.context=SharedMetadata.join(SharedMetadata.count(seasonCount,"Season"),SharedMetadata.count(episodeCount,"Episode"));}
         else summary.context=SharedMetadata.runtime(runtime);
         if(movie!=null)summary.technical.addAll(SharedMetadata.technical(getContext(),movie));SharedMetadata.bind(meta,pills,summary,5);
         restoreRowFocus(details,focusKey,oldY);
@@ -362,9 +362,8 @@ public final class PreviewMoviePage extends ScrollView {
     private void pill(String value){if(value==null||value.isEmpty())return;TextView label=text(value,10);label.setSingleLine(true);label.setPadding(dp(6),dp(3),dp(6),dp(3));GradientDrawable badge=new GradientDrawable();badge.setColor(0x50142634);badge.setCornerRadius(dp(3));badge.setStroke(dp(1),0xff648196);label.setBackground(badge);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.rightMargin=dp(6);pills.addView(label,lp);}
 
     private void person(LinearLayout row,String name,String role){
-        LinearLayout line=new LinearLayout(getContext());line.setOrientation(LinearLayout.VERTICAL);line.setPadding(0,dp(4),0,dp(4));line.setFocusable(false);line.setTag("person:"+name+":"+role);line.setBackground(null);
-        TextView person=SharedThreePanel.text(getContext(),name,14),credit=SharedThreePanel.text(getContext(),role,12);credit.setTextColor(0xffa4b6c7);
-        person.setSingleLine(true);person.setEllipsize(android.text.TextUtils.TruncateAt.END);credit.setSingleLine(true);credit.setEllipsize(android.text.TextUtils.TruncateAt.END);line.addView(person,new LinearLayout.LayoutParams(-1,-2));line.addView(credit,new LinearLayout.LayoutParams(-1,-2));line.setContentDescription(name+", "+role);row.addView(line,new LinearLayout.LayoutParams(-1,-2));
+        LinearLayout line=new LinearLayout(getContext());line.setPadding(0,dp(4),0,dp(4));line.setFocusable(false);line.setTag("person:"+name+":"+role);line.setContentDescription(name+", "+role);
+        TextView person=SharedThreePanel.text(getContext(),"",14);android.text.SpannableStringBuilder copy=new android.text.SpannableStringBuilder(name);if(role!=null&&!role.isEmpty()){int start=copy.length();copy.append(" · ").append(role);copy.setSpan(new android.text.style.ForegroundColorSpan(0xffa4b6c7),start,copy.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);copy.setSpan(new android.text.style.RelativeSizeSpan(.86f),start,copy.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);}person.setText(copy);person.setSingleLine(true);person.setEllipsize(android.text.TextUtils.TruncateAt.END);line.addView(person,new LinearLayout.LayoutParams(-1,-2));row.addView(line,new LinearLayout.LayoutParams(-1,-2));
     }
 
     private void renderEnrichedPeople(){
@@ -390,7 +389,7 @@ public final class PreviewMoviePage extends ScrollView {
         }
     }
     private void allPeople(){if(tags==null)return;StringBuilder people=new StringBuilder();if(!safe(tags.getDirectorsFormatted()).isEmpty())people.append("Director · ").append(tags.getDirectorsFormatted()).append("\n\n");if(!safe(tags.getWritersFormatted()).isEmpty())people.append("Writers · ").append(tags.getWritersFormatted()).append("\n\n");for(Map.Entry<String,String> person:tags.getActors().entrySet())people.append(person.getKey()).append(safe(person.getValue()).isEmpty()?"":" · "+person.getValue()).append('\n');PreviewDialog.read(getContext(),"Cast & Crew",people.toString());}
-    public void bindShow(Tvshow value,Runnable playAction){show=value;showPlay=playAction;OfficialTitleArtwork.bind(title,value,false);title.setText(value.getName());plot.setText(value.getPlot());rebuildTabs();meta.setText((value.getYear()>0?value.getYear()+" · ":"")+value.getSeasonCount()+(value.getSeasonCount()==1?" season":" seasons")+" · "+value.getEpisodeCount()+(value.getEpisodeCount()==1?" episode":" episodes"));renderDetails();}
+    public void bindShow(Tvshow value,Runnable playAction){show=value;com.archos.mediacenter.video.utils.SubtitleDiscovery.details(getContext(),value,snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache());showPlay=playAction;OfficialTitleArtwork.bind(title,value,false);title.setText(value.getName());plot.setText(value.getPlot());rebuildTabs();meta.setText((value.getYear()>0?value.getYear()+" · ":"")+value.getSeasonCount()+(value.getSeasonCount()==1?" season":" seasons")+" · "+value.getEpisodeCount()+(value.getEpisodeCount()==1?" episode":" episodes"));renderDetails();}
     public void setSeason(int number,List<Episode> values){seasons.put(number,new ArrayList<>(values));renderSeasons();}
     private void renderSeasons(){
         View focused=findFocus();Object key=focused==null?null:focused.getTag();int y=getScrollY();

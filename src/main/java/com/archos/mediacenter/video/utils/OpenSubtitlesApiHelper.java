@@ -82,6 +82,7 @@ public class OpenSubtitlesApiHelper {
     private static int LAST_QUERY_RESULT = RESULT_CODE_OK;
     private static String LAST_QUERY_MESSAGE = "";
 
+    private static volatile long discoveryBlockedUntil;
     private static OkHttpClient httpClient;
     private static String baseUrl;
     private static String apiKey;
@@ -113,7 +114,7 @@ public class OpenSubtitlesApiHelper {
                     .addInterceptor(logging)
                     .build();
         } else {
-            httpClient = new OkHttpClient();
+            httpClient = new OkHttpClient.Builder().connectTimeout(5,java.util.concurrent.TimeUnit.SECONDS).readTimeout(10,java.util.concurrent.TimeUnit.SECONDS).callTimeout(15,java.util.concurrent.TimeUnit.SECONDS).build();
         }
         setBaseUrl(API_BASE_URL);
     }
@@ -176,7 +177,7 @@ public class OpenSubtitlesApiHelper {
     }
 
     private static boolean integrationEnabled(){android.content.Context c=com.archos.mediacenter.video.CustomApplication.getAppContext();return c==null||androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_integration_opensubtitles",true);}
-    public static boolean login(String openSubtitlesApiKey, String u, String p) throws IOException {
+    public static synchronized boolean login(String openSubtitlesApiKey, String u, String p) throws IOException {
         if(!integrationEnabled())return false;
         username = u;
         password = p;
@@ -247,7 +248,7 @@ public class OpenSubtitlesApiHelper {
         return false;
     }
 
-    public static void logout() throws IOException {
+    public static synchronized void logout() throws IOException {
         if (authenticated) {
             try {
                 Request.Builder requestBuilder = new Request.Builder()
@@ -277,12 +278,19 @@ public class OpenSubtitlesApiHelper {
         authToken = null;
     }
 
+    public static synchronized void initializeDiscovery(String key){if(apiKey==null||apiKey.isEmpty())apiKey=key;}
+    public static synchronized long discoveryBlockedUntil(){return discoveryBlockedUntil;}
+    public static synchronized void cachedDiscoverySucceeded(){LAST_QUERY_RESULT=RESULT_CODE_OK;LAST_QUERY_MESSAGE="Cached subtitle search";}
     private static int parseResponse(Response response) {
         if (response == null) {
             log.warn("parseResponse: response is null");
             return RESULT_CODE_SERVER_ISSUE;
         }
         int status = response.code();
+        long now=System.currentTimeMillis(),retry=SubtitleDiscoveryPolicy.retryAfter(response.header("Retry-After"),now);
+        if(status==429)discoveryBlockedUntil=Math.max(discoveryBlockedUntil,Math.max(retry,now+60000));
+        String remaining=response.header("ratelimit-remaining",response.header("X-RateLimit-Remaining"));String reset=response.header("ratelimit-reset",response.header("X-RateLimit-Reset"));
+        if("0".equals(remaining)){long until=SubtitleDiscoveryPolicy.retryAfter(reset,now);try{long seconds=Long.parseLong(reset);if(seconds>now/1000)until=seconds*1000;}catch(Exception invalid){}discoveryBlockedUntil=Math.max(discoveryBlockedUntil,Math.max(until,now+60000));}
         LAST_QUERY_MESSAGE = response.message();
         if (status != 200) log.warn("parseResult: status={}, message={}", status, LAST_QUERY_MESSAGE);
         else if (log.isTraceEnabled()) log.trace("parseResult: status={}, message={}", status, LAST_QUERY_MESSAGE);
@@ -365,7 +373,7 @@ public class OpenSubtitlesApiHelper {
         return LAST_QUERY_RESULT;
     }
 
-    public static ArrayList<OpenSubtitlesSearchResult> searchSubtitle(OpenSubtitlesQueryParams fileInfo, String languages) throws IOException {
+    public static synchronized ArrayList<OpenSubtitlesSearchResult> searchSubtitle(OpenSubtitlesQueryParams fileInfo, String languages) throws IOException {
         if(!integrationEnabled())return new ArrayList<>();
         // Note: only the first result page is queried because it is assumed that it should be enough with order_by criteria
         // input: languages is a comma separated list of languages (e.g. "en,fr")
@@ -425,7 +433,7 @@ public class OpenSubtitlesApiHelper {
                             subtitleResult.setId(subtitleInfo.optString("id", ""));
                             if (subtitleInfo.has("attributes")) {
                                 JSONObject subtitleAttribute = subtitleInfo.getJSONObject("attributes");
-                                subtitleResult.setLanguage(subtitleAttribute.optString("language", ""));
+                                subtitleResult.setLanguage(subtitleAttribute.optString("language", ""));if(subtitleAttribute.has("hearing_impaired"))subtitleResult.setHearingImpaired(subtitleAttribute.optBoolean("hearing_impaired"));
                                 subtitleResult.setMoviehashMatch(subtitleAttribute.optBoolean("moviehash_match", false));
                                 if (subtitleAttribute.has("features")) {
                                     if (log.isDebugEnabled()) log.debug("searchSubtitle: it has features");
@@ -481,7 +489,7 @@ public class OpenSubtitlesApiHelper {
         return null;
     }
 
-    public static String getDownloadSubtitleLink(String file_id) throws IOException {
+    public static synchronized String getDownloadSubtitleLink(String file_id) throws IOException {
         if(!integrationEnabled())return null;
         if (log.isDebugEnabled()) log.debug("getDownloadSubtitleLink: file_id={}", file_id);
         // do not attempt to download subtitle if quota is 0 and we are not past reset time

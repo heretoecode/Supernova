@@ -69,7 +69,7 @@ public final class SharedMetadata {
         VideoMetadata data=video.getMetadata();boolean subtitles=false,sdh=false,ad=false;
         if(data!=null){for(int n=0;n<data.getSubtitleTrackNb();n++){VideoMetadata.SubtitleTrack track=data.getSubtitleTrack(n);if(track!=null){subtitles=true;sdh|=(track.disposition&128)!=0;}}
             for(int n=0;n<data.getAudioTrackNb();n++){VideoMetadata.AudioTrack track=data.getAudioTrack(n);if(track!=null)ad|=(track.disposition&256)!=0;}}
-        if(subtitles)badges.add(sdh?"SDH":"Subtitles");if(ad)badges.add("AD");return badges;
+        if(subtitles)badges.add(sdh?"SDH":"Subtitles");if(ad)badges.add("AD");for(String local:com.archos.mediacenter.video.utils.SubtitleDiscovery.localBadges(c,video))if(!badges.contains(local)&&!(local.equals("Subtitles")&&badges.contains("SDH")))badges.add(local);return badges;
     }
     public static String certificate(JSONObject data,String country){
         JSONArray regions=data==null?null:data.optJSONArray("results");if(regions==null)return "";

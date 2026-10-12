@@ -17,7 +17,7 @@ public class Supernova138HomeTest {
     Application app; PreviewPagesTest fixture=new PreviewPagesTest();
     @Before public void before(){app=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().clear().putBoolean("supernova_history_migrated",true).putBoolean("supernova_onboarding_complete",true).putBoolean("supernova_welcome_dismissed",true).commit();PreviewAsyncFixtures.offlineTransport();}
     @After public void after()throws Exception{PreviewAsyncFixtures.drain();}
-    Entry episode(int season,int number,int resume,boolean watched,long time){Entry e=new Entry(new Episode(number+season*100,7,season,number,"Episode",0,0,"","","Series","/TV/ep.mkv",null,null,1800000,resume,0,time,watched,false,false,false,1,100,1920,1080,null,null,null,null,0,1,1000),1,7,"Drama");e.onlineId=7;return e;}
+    Entry episode(int season,int number,int resume,boolean watched,long time){Entry e=new Entry(new Episode(number+season*100,7,season,number,"Episode",0,0,"","","Series","/TV/ep.mkv",null,null,1800000,resume,0,0,watched,false,false,false,1,time,1920,1080,null,null,null,null,0,1,1000),1,7,"Drama");e.onlineId=7;return e;}
     void complete(int season,int number){VideoDbInfo info=new VideoDbInfo();info.id=number+season*100;info.isShow=true;info.scraperShowId="7";info.scraperSeasonNr=season;info.scraperEpisodeNr=number;info.duration=1800000;info.lastTimePlayed=100;PreviewSeriesJourney.record(app,info,true,1800000);}
     @Test public void committedNextEpisodeAndSeasonAppearWithoutStartingThem(){
         Entry end=episode(1,10,-2,true,100),next=episode(2,2,0,false,0),later=episode(3,1,0,false,0);complete(1,10);

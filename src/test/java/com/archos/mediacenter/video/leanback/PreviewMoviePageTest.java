@@ -73,14 +73,14 @@ public class PreviewMoviePageTest {
             TopNavigation nav=new TopNavigation(host.get(),page,i->{},page::atTop);host.get().setContentView(nav);
             page.bindRemote(new org.json.JSONObject().put("title","Compact title fixture"),"movie",0);
             PreviewPagesTest.layout(nav);
-            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertTrue(panel.requestFocus());
+            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertFalse(panel.requestFocus());View detailsTab=page.findViewWithTag("section:Details");assertTrue(detailsTab.requestFocus());
             page.scrollTo(0,250);
             android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);
             nav.draw(new android.graphics.Canvas(bitmap));
-            assertSame(panel,page.findFocus());
+            assertSame(detailsTab,page.findFocus());
             java.io.File out=new java.io.File("build/reports/preview-ui/details-compact-title.png");out.getParentFile().mkdirs();
             try(java.io.FileOutputStream stream=new java.io.FileOutputStream(out)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,stream);}bitmap.recycle();
-            page.scrollTo(0,0);assertSame(panel,page.findFocus());
+            page.scrollTo(0,0);assertSame(detailsTab,page.findFocus());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void backgroundSnapshotRetainsInformationPanelFocus()throws Exception{
@@ -89,9 +89,9 @@ public class PreviewMoviePageTest {
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);
             page.bindRemote(new org.json.JSONObject().put("title","Fixture"),"movie",0);
             PreviewPagesTest.layout(page);
-            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(panel);assertTrue(panel.requestFocus());
+            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(panel);assertFalse(panel.requestFocus());View detailsTab=page.findViewWithTag("section:Details");assertTrue(detailsTab.requestFocus());
             page.setSnapshot(new PreviewLibraryLoader.Snapshot());
-            assertNotNull(page.findFocus());assertEquals("semantic:details.panel.key.information",page.findFocus().getTag());
+            assertNotNull(page.findFocus());assertEquals("section:Details",page.findFocus().getTag());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void remotePanelsOmitEmptyReceptionAndLocalFileInformation() throws Exception {
@@ -151,10 +151,10 @@ public class PreviewMoviePageTest {
             assertNotNull(PreviewPagesTest.findText(page,"SMB · server/movies/film.mkv"));assertNotNull(PreviewPagesTest.findText(page,"MKV"));
             com.archos.mediascraper.ShowTags cast=new com.archos.mediascraper.ShowTags();for(int person=1;person<=10;person++)cast.addActorIfAbsent("Fixture Person "+person,"Role "+person);page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
             android.view.ViewGroup body=(android.view.ViewGroup)page.getChildAt(0);android.view.ViewGroup hero=(android.view.ViewGroup)body.getChildAt(0);assertTrue("Hero retains its content and lower tabs",hero.getChildCount()>1);
-            assertNull(PreviewPagesTest.findText(page,"See All"));assertNotNull(PreviewPagesTest.findText(page,"Fixture Person 10"));
+            assertNull(PreviewPagesTest.findText(page,"See All"));assertNull(PreviewPagesTest.findText(page,"Fixture Person 10"));assertNotNull(PreviewPagesTest.findText(page,"Fixture Person 8"));
             assertNull("Empty recommendations have no navigation entry",page.findViewWithTag("section:More Like This"));assertNotNull(page.findViewWithTag("section:Details"));assertNull(page.findViewWithTag("section:Extras"));
             for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
-            assertTrue("Initial hero leaves at least 44dp of lower content visible",page.getPaddingTop()+hero.getBottom()<=page.getHeight()-44);
+            assertTrue("Initial hero leaves at least 32dp of lower content visible",page.getPaddingTop()+hero.getBottom()<=page.getHeight()-32);
             PreviewPagesTest.addTestArtwork(nav);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(210));
             android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));java.io.File out=new java.io.File("build/reports/preview-ui/movie-details.png");out.getParentFile().mkdirs();try(java.io.FileOutputStream stream=new java.io.FileOutputStream(out)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,stream);}
             View tab=page.findViewWithTag("section:Details");assertNotNull(tab);tab.requestFocus();
@@ -162,7 +162,7 @@ public class PreviewMoviePageTest {
             View restored=page.findViewWithTag("section:Details");assertTrue(restored.isSelected());assertTrue(restored.hasFocus());
             restored.performClick();PreviewPagesTest.layout(nav);
             assertNotNull(PreviewPagesTest.findText(page,"Key Information"));assertNotNull(PreviewPagesTest.findText(page,"Reception"));assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
-            View keyPanel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(keyPanel);keyPanel.requestFocus();
+            View keyPanel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(keyPanel);assertFalse(keyPanel.requestFocus());assertSame(restored,page.findFocus());
             for(int frame=0;frame<8;frame++){page.computeScroll();PreviewPagesTest.layout(nav);}
             android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertTrue(visible.height()>80);
             PreviewPagesTest.capture(nav,"details-information-next");

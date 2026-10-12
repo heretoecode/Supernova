@@ -1,0 +1,33 @@
+package com.archos.mediacenter.video.utils;
+
+import android.app.Application;
+import android.net.Uri;
+import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.robolectric.*;
+import org.robolectric.annotation.Config;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import static org.junit.Assert.*;
+
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
+public class SubtitleDiscoveryTest {
+    Application app;AtomicInteger requests;
+    @Before public void before(){app=RuntimeEnvironment.getApplication();requests=new AtomicInteger();app.getSharedPreferences("supernova-subtitle-discovery-v1",0).edit().clear().commit();androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().clear().commit();SubtitleDiscovery.setProviderForTests((c,q,l)->{requests.incrementAndGet();OpenSubtitlesApiHelper.cachedDiscoverySucceeded();return new ArrayList<>(Arrays.asList(new OpenSubtitlesSearchResult("12","subtitle.srt",l)));});}
+    OpenSubtitlesQueryParams query(){OpenSubtitlesQueryParams q=new OpenSubtitlesQueryParams();q.setTmdbId("7");q.setIsShow(true);q.setSeasonNumber(1);q.setEpisodeNumber(2);return q;}
+    @Test public void cacheSurvivesNewRequestAndReimportIdentityButSeparatesLanguages()throws Exception{OpenSubtitlesQueryParams q=query();assertEquals(1,SubtitleDiscovery.manual(app,q,"en").size());OpenSubtitlesQueryParams reimport=query();assertEquals(1,SubtitleDiscovery.manual(app,reimport,"en").size());assertEquals(1,requests.get());assertEquals(1,SubtitleDiscovery.manual(app,reimport,"fr").size());assertEquals(2,requests.get());}
+    @Test public void genuineNegativeResultsCacheAndExpireWithoutCachingFailures()throws Exception{
+        SubtitleDiscovery.setProviderForTests((c,q,l)->{requests.incrementAndGet();OpenSubtitlesApiHelper.cachedDiscoverySucceeded();return new ArrayList<>();});assertTrue(SubtitleDiscovery.manual(app,query(),"en").isEmpty());assertTrue(SubtitleDiscovery.manual(app,query(),"en").isEmpty());assertEquals(1,requests.get());
+        String key=SubtitleDiscovery.key(query(),"en");app.getSharedPreferences("supernova-subtitle-discovery-v1",0).edit().remove("cache:"+key).commit();assertTrue(SubtitleDiscovery.manual(app,query(),"en").isEmpty());assertEquals(2,requests.get());
+        app.getSharedPreferences("supernova-subtitle-discovery-v1",0).edit().remove("cache:"+key).commit();SubtitleDiscovery.setProviderForTests((c,q,l)->{requests.incrementAndGet();throw new java.io.IOException("429 fixture");});try{SubtitleDiscovery.manual(app,query(),"en");fail();}catch(java.io.IOException expected){}try{SubtitleDiscovery.manual(app,query(),"en");fail();}catch(java.io.IOException expected){}assertEquals(3,requests.get());assertFalse(app.getSharedPreferences("supernova-subtitle-discovery-v1",0).contains("cache:"+key));
+    }
+    @Test public void providerPauseSurvivesProcessStateAndManualCannotIgnoreIt(){app.getSharedPreferences("supernova-subtitle-discovery-v1",0).edit().putLong("provider_until",System.currentTimeMillis()+3600000).commit();try{SubtitleDiscovery.manual(app,query(),"en");fail();}catch(java.io.IOException expected){}assertEquals(0,requests.get());}
+    @Test public void queueDeduplicatesAndPromotesManualAbovePlaybackAndSpeculation(){SubtitleDiscoveryPolicy.Queue queue=new SubtitleDiscoveryPolicy.Queue();queue.offer("season",query(),"en",5);queue.offer("hero",query(),"en",4);queue.offer("playback",query(),"en",1);queue.offer("season",query(),"en",0);assertEquals(3,queue.size());assertEquals("season",queue.take().key);assertEquals("playback",queue.take().key);queue.clearSpeculation();assertNull(queue.take());}
+    Entry episode(int season,int number,boolean watched){return new Entry(new Episode(number+season*100,7,season,number,"Episode",0,0,"","","Series","/s/ep"+number,null,null,100000,0,0,0,watched,false,false,false,1,0,1920,1080,null,null,null,null,0,1,1000),0,7,"");}
+    @Test public void playbackPreparesOnlyRemainingAvailableCurrentSeasonEpisodes(){Entry playing=episode(1,2,false),first=episode(1,1,false),gap=episode(1,4,false),done=episode(1,5,true),nextSeason=episode(2,1,false),laterSeason=episode(2,2,false);assertEquals(Arrays.asList(gap),SubtitleDiscoveryPolicy.remainingSeason(playing,Arrays.asList(laterSeason,nextSeason,done,gap,first)));assertEquals(Arrays.asList(laterSeason),SubtitleDiscoveryPolicy.remainingSeason(nextSeason,Arrays.asList(laterSeason,nextSeason,gap)));}
+    @Test public void retryAfterSecondsAndHttpDateAndExponentialBackoffAreHonoured(){long now=java.time.Instant.parse("2026-10-12T00:00:00Z").toEpochMilli();assertEquals(now+120000,SubtitleDiscoveryPolicy.retryAfter("120",now));assertEquals(now+60000,SubtitleDiscoveryPolicy.retryAfter("Mon, 12 Oct 2026 00:01:00 GMT",now));assertEquals(now+600000,SubtitleDiscoveryPolicy.backoff(now,1,now+600000));assertTrue(SubtitleDiscoveryPolicy.backoff(now,2,0)>SubtitleDiscoveryPolicy.backoff(now,1,0));}
+    @Test public void localSidecarIsVerifiedWithoutCallingProviderAndLanguageIsNotGuessed()throws Exception{java.io.File folder=new java.io.File(app.getCacheDir(),"sidecars");folder.mkdirs();java.io.File file=new java.io.File(folder,"Film.mkv");java.nio.file.Files.write(file.toPath(),new byte[]{1});java.nio.file.Files.write(new java.io.File(folder,"Film.en.srt").toPath(),"1\n00:00:01,000 --> 00:00:02,000\nHello\n".getBytes(java.nio.charset.StandardCharsets.UTF_8));Video video=new NonIndexedVideo(Uri.fromFile(file),Uri.fromFile(file),"Film",null);SubtitleDiscovery.recordLocal(app,video,null);assertTrue(SubtitleDiscovery.localMatches(app,video,"en"));assertFalse(SubtitleDiscovery.localMatches(app,video,"fr"));assertEquals(Arrays.asList("Subtitles"),SubtitleDiscovery.localBadges(app,video));assertEquals(0,requests.get());}
+    @Test public void importingAndOptingOutCannotStartProviderRequests(){SubtitleDiscovery.offer(app,episode(1,1,false),SubtitleDiscoveryPolicy.PLAYBACK);SubtitleDiscovery.home(app,new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot());assertEquals(0,requests.get());}
+}
