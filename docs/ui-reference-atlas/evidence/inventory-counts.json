@@ -1,0 +1,29 @@
+{
+  "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "java_files_scanned": 769,
+  "ui_owners": 316,
+  "display_sites": 1782,
+  "focus_branches": 437,
+  "manifest_entries": 78,
+  "preference_declarations": 130,
+  "layout_text_sites": 178,
+  "english_resources": 973,
+  "per_area": {
+    "10-inherited-conditional": 725,
+    "08-playback-subtitles": 250,
+    "05-network-health": 264,
+    "02-libraries": 99,
+    "07-diagnostics-backup": 27,
+    "06-settings-about": 123,
+    "01-home-navigation": 29,
+    "09-shared-focus": 29,
+    "04-search-keyboard": 44,
+    "03-details": 192
+  },
+  "limits": [
+    "Syntactic display-site extraction is not semantic reachability proof",
+    "Android/dependency generated/dynamic labels can require runtime data",
+    "English resource set only",
+    "Method hints can refer to surrounding rather than lambda method"
+  ]
+}

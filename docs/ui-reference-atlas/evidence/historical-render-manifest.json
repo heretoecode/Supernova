@@ -1,0 +1,188 @@
+[
+  {
+    "id": "CH-B-137-HIST-1",
+    "area": "customise-home",
+    "state": "Editor reordered/hidden upper viewport",
+    "category": "B \u2014 historical Android native/test render",
+    "source_branch": "codex/supernova-0.137-qa-2026-10-11",
+    "source_commit": "68caa2c0ac3c42073b8ed2168995c2316625b29a",
+    "audit_commit": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
+    "render_method": "Existing unchanged Robolectric API28 native View capture; historical audit and source/test equivalence retained",
+    "date": "2026-10-11 (CI); retrieved 2026-10-12",
+    "resolution": [
+      700,
+      350
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi",
+    "fixture": "Watch Next moved before Continue Watching and Hidden; media membership fixture, Watch Next focused",
+    "source_references": [
+      {
+        "source_url": "https://github.com/heretoecode/Supernova/blob/68caa2c0ac3c42073b8ed2168995c2316625b29a/src/test/java/com/archos/mediacenter/video/leanback/Preview41RowsTest.java",
+        "method_or_token": "customise"
+      }
+    ],
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38109927407",
+    "artifact_id": 11691549941,
+    "sha256": "3604dd596ecf7b4ac72def2a79e8d3f20e5312806ea6e8fdbcbf895ff8de77f2",
+    "md5": "3334b6ce63a88fa41cf81969ddd08584",
+    "file_link": "https://drive.google.com/file/d/1Wo3EKt_15pRtQEoiQVuHYbzrwodomATB/view",
+    "drive_id": "1Wo3EKt_15pRtQEoiQVuHYbzrwodomATB",
+    "known_deviations": "Watch Next moved before Continue Watching and Hidden; media membership fixture, Watch Next focused; historical0.137 labels/keyboard geometry; not current0.138/Shield",
+    "preservation": "Original Drive file referenced, not replaced, renamed or reuploaded"
+  },
+  {
+    "id": "CH-B-137-HIST-2",
+    "area": "customise-home",
+    "state": "Genre top focus and checks",
+    "category": "B \u2014 historical Android native/test render",
+    "source_branch": "codex/supernova-0.137-qa-2026-10-11",
+    "source_commit": "68caa2c0ac3c42073b8ed2168995c2316625b29a",
+    "audit_commit": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
+    "render_method": "Existing unchanged Robolectric API28 native View capture; historical audit and source/test equivalence retained",
+    "date": "2026-10-11 (CI); retrieved 2026-10-12",
+    "resolution": [
+      240,
+      492
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi",
+    "fixture": "Fixed27-entry PreviewGenres.NAMES, Drama and Science Fiction checked; All Genres focus, callback no-op",
+    "source_references": [
+      {
+        "source_url": "https://github.com/heretoecode/Supernova/blob/68caa2c0ac3c42073b8ed2168995c2316625b29a/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeVisualTest.java",
+        "method_or_token": "genreHeaderRemainsVisibleAndChoicesPersistWithoutDone"
+      }
+    ],
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38109927407",
+    "artifact_id": 11691549941,
+    "sha256": "4facc017d5f8ae93512d4c1a727003f39f8a56d5ff6e1966e0ab302653c1435d",
+    "md5": "85155382a2248caa59dc44db303990e8",
+    "file_link": "https://drive.google.com/file/d/1lkHPy2PVKVtv-MG7TJsbbRIC5hnJy5Vy/view",
+    "drive_id": "1lkHPy2PVKVtv-MG7TJsbbRIC5hnJy5Vy",
+    "known_deviations": "Fixed27-entry PreviewGenres.NAMES, Drama and Science Fiction checked; All Genres focus, callback no-op; historical0.137 labels/keyboard geometry; not current0.138/Shield",
+    "preservation": "Original Drive file referenced, not replaced, renamed or reuploaded"
+  },
+  {
+    "id": "CH-B-137-HIST-3",
+    "area": "customise-home",
+    "state": "Genre scrolled bottom focus",
+    "category": "B \u2014 historical Android native/test render",
+    "source_branch": "codex/supernova-0.137-qa-2026-10-11",
+    "source_commit": "68caa2c0ac3c42073b8ed2168995c2316625b29a",
+    "audit_commit": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
+    "render_method": "Existing unchanged Robolectric API28 native View capture; historical audit and source/test equivalence retained",
+    "date": "2026-10-11 (CI); retrieved 2026-10-12",
+    "resolution": [
+      240,
+      492
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi",
+    "fixture": "Same fixed vocabulary, Western focus after fullScroll; no footer/Done",
+    "source_references": [
+      {
+        "source_url": "https://github.com/heretoecode/Supernova/blob/68caa2c0ac3c42073b8ed2168995c2316625b29a/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeVisualTest.java",
+        "method_or_token": "genreHeaderRemainsVisibleAndChoicesPersistWithoutDone"
+      }
+    ],
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38109927407",
+    "artifact_id": 11691549941,
+    "sha256": "b863d9b4cf7379be99596d5186d8f8fab5ed170d5bc220bb5659b31fdfb955f7",
+    "md5": "95216a6a278b628e4eb62cb1f82c6321",
+    "file_link": "https://drive.google.com/file/d/1wuHcssl8_piT5alhjb30X3pas3eVbTms/view",
+    "drive_id": "1wuHcssl8_piT5alhjb30X3pas3eVbTms",
+    "known_deviations": "Same fixed vocabulary, Western focus after fullScroll; no footer/Done; historical0.137 labels/keyboard geometry; not current0.138/Shield",
+    "preservation": "Original Drive file referenced, not replaced, renamed or reuploaded"
+  },
+  {
+    "id": "CH-B-137-HIST-4",
+    "area": "customise-home",
+    "state": "Delete confirmation Cancel focus",
+    "category": "B \u2014 historical Android native/test render",
+    "source_branch": "codex/supernova-0.137-qa-2026-10-11",
+    "source_commit": "68caa2c0ac3c42073b8ed2168995c2316625b29a",
+    "audit_commit": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
+    "render_method": "Existing unchanged Robolectric API28 native View capture; historical audit and source/test equivalence retained",
+    "date": "2026-10-11 (CI); retrieved 2026-10-12",
+    "resolution": [
+      362,
+      159
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi",
+    "fixture": "Test literal Delete row? (lowercase r), production Delete Row?; native AlertDialog Cancel focus",
+    "source_references": [
+      {
+        "source_url": "https://github.com/heretoecode/Supernova/blob/68caa2c0ac3c42073b8ed2168995c2316625b29a/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeVisualTest.java",
+        "method_or_token": "deleteConfirmationKeepsBothButtonsInsideWindow"
+      }
+    ],
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38109927407",
+    "artifact_id": 11691549941,
+    "sha256": "925d6699a85e7a315bf7e88a54dffdda5d519734b1120534304aa1f77a9d2cd2",
+    "md5": "82fc60894dd45c21c72c36f84436fe56",
+    "file_link": "https://drive.google.com/file/d/1ZcZOfgHjAgNkKNZYj9ojlPz_z_bvseys/view",
+    "drive_id": "1ZcZOfgHjAgNkKNZYj9ojlPz_z_bvseys",
+    "known_deviations": "Test literal Delete row? (lowercase r), production Delete Row?; native AlertDialog Cancel focus; historical0.137 labels/keyboard geometry; not current0.138/Shield",
+    "preservation": "Original Drive file referenced, not replaced, renamed or reuploaded"
+  },
+  {
+    "id": "CH-B-137-HIST-5",
+    "area": "customise-home",
+    "state": "Delete confirmation Delete focus",
+    "category": "B \u2014 historical Android native/test render",
+    "source_branch": "codex/supernova-0.137-qa-2026-10-11",
+    "source_commit": "68caa2c0ac3c42073b8ed2168995c2316625b29a",
+    "audit_commit": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
+    "render_method": "Existing unchanged Robolectric API28 native View capture; historical audit and source/test equivalence retained",
+    "date": "2026-10-11 (CI); retrieved 2026-10-12",
+    "resolution": [
+      362,
+      159
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi",
+    "fixture": "Same test title casing, Delete focus pink-red button",
+    "source_references": [
+      {
+        "source_url": "https://github.com/heretoecode/Supernova/blob/68caa2c0ac3c42073b8ed2168995c2316625b29a/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeVisualTest.java",
+        "method_or_token": "deleteConfirmationKeepsBothButtonsInsideWindow"
+      }
+    ],
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38109927407",
+    "artifact_id": 11691549941,
+    "sha256": "85dcd19f5dab0ca895b802d4c5e256104e9d81bc13a7c5f3d2c139906792f6b0",
+    "md5": "bcd5cc076356fb80b6550af1ac23462f",
+    "file_link": "https://drive.google.com/file/d/1gJN-TfqBMUSpOJofMmFZLEz9L9Zmw51y/view",
+    "drive_id": "1gJN-TfqBMUSpOJofMmFZLEz9L9Zmw51y",
+    "known_deviations": "Same test title casing, Delete focus pink-red button; historical0.137 labels/keyboard geometry; not current0.138/Shield",
+    "preservation": "Original Drive file referenced, not replaced, renamed or reuploaded"
+  },
+  {
+    "id": "CH-B-137-HIST-6",
+    "area": "customise-home",
+    "state": "Maximum value37 Done focus after invalid attempt",
+    "category": "B \u2014 historical Android native/test render",
+    "source_branch": "codex/supernova-0.137-qa-2026-10-11",
+    "source_commit": "68caa2c0ac3c42073b8ed2168995c2316625b29a",
+    "audit_commit": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
+    "render_method": "Existing unchanged Robolectric API28 native View capture; historical audit and source/test equivalence retained",
+    "date": "2026-10-11 (CI); retrieved 2026-10-12",
+    "resolution": [
+      560,
+      362
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi",
+    "fixture": "Input initiallybad, validation text Enter a whole number (shorter than production); then value37, Done focus, stale error indicator",
+    "source_references": [
+      {
+        "source_url": "https://github.com/heretoecode/Supernova/blob/68caa2c0ac3c42073b8ed2168995c2316625b29a/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java",
+        "method_or_token": "invalidExactValueKeepsSharedKeyboardOpen"
+      }
+    ],
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38109927407",
+    "artifact_id": 11691549941,
+    "sha256": "e46dbfa2535444daf2d08e2783bda32fe22b37e83cbea2cf0929342340399378",
+    "md5": "1129ef4a033b6608502569ed210a8f8b",
+    "file_link": "https://drive.google.com/file/d/15sYReQDj6kdoUmy7cUO37bAeZhla81oL/view",
+    "drive_id": "15sYReQDj6kdoUmy7cUO37bAeZhla81oL",
+    "known_deviations": "Input initiallybad, validation text Enter a whole number (shorter than production); then value37, Done focus, stale error indicator; historical0.137 labels/keyboard geometry; not current0.138/Shield",
+    "preservation": "Original Drive file referenced, not replaced, renamed or reuploaded"
+  }
+]

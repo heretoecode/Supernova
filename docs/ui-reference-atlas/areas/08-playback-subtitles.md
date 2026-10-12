@@ -1,0 +1,33 @@
+# 08 — Preparing Playback, HUD, More, audio, subtitles and external playback
+
+Source baseline: signed 0.138 `b3504c2c4b1725f3070416d14b63e53ae1db3d74`. Evidence below is **VERIFIED static source** unless expressly attributed to native CI evidence or **UNKNOWN**. No device-navigation test was run. Stable IDs describe surfaces; generated SITE/FOCUS IDs identify exact source lines.
+
+| ID | Surface / ordered labels / conditional UI | Actions and focus |
+|---|---|---|
+| PLAY-001 | Preparing Playback | PlayerActivity preparation overlay uses real cached artwork/title/tagline only; absent tagline remains absent. Preparing/buffering/error/cancel/retry conditional; first-output acknowledgement differs from measured Shield frame time |
+| PLAY-002 | Playback HUD | Secondary `Subtitles`, `Audio`, `More`; primary seek/current/duration and transport Play/Pause/skip actions; compact bordered clock/context end estimate. Titles/episode label/times from actual metadata/test fixture. XML IDs/descriptions catalogued |
+| PLAY-003 | Seek/auto-hide/control state | PlayerController/PlayerControlsRelativeLayout own local seek focus, preview/current updates, duration, hide/paused/preparing branches; D-pad action→seek must not escape menu. No physical seek latency/HDR/passthrough certification |
+| PLAY-004 | `More` root | Group `PLAYBACK`: enabled `Playback Speed`, `Play Mode`; `VIDEO`: applicable cards excluding separate Audio/Subtitles/Info/PlayMode/Settings, then `Technical Information`, `Report a Problem`. Exact native cards depend on adapter/stream. Group rows nonfocusable |
+| PLAY-005 | Audio | Visible native tracks in source order, currently checked track focus. Group `TRACK`; `SYNC` audio delay; `ENHANCEMENTS` filters/night mode/spatialization as available. Playback speed moved to More. Data-derived language/codec names not fabricated |
+| PLAY-006 | Subtitles | `TRACK` including none/applicable language tracks; `Other languages` → `Subtitles · Other languages`; `TIMING & APPEARANCE`, `ADD SUBTITLES`; renamed `Download Subtitles`, `Choose Subtitles`, deferred `Subtitle Appearance`, final `Subtitle Settings` | Checked track and focus independent. Unavailable suffix ` — unavailable` disables; Subtitle Settings deep-link current Settings category. Provider/cache result is not local subtitle availability |
+| PLAY-007 | Delay / speed / display / play mode / brightness | Native TVMenu/TVCardDialog/pickers kept; current compact nested host330 scaled width, delay/speed compact180 scaled height. Existing slider/picker ranges/resources and source methods in catalogue; route/backend can disable controls |
+| PLAY-008 | Technical Information reader | PreviewTechnicalInfo real video/audio/file/source facts; credentials/private URL omitted per source. Native fixture is empty VideoMetadata + webdavs example, not actual decoder output |
+| PLAY-009 | Manual subtitle search/download | SubtitlesWizard/PreviewSubtitleChooser/Results/Discovery/Downloader. Real chosen languages/account/provider cache/backoff; results require live or controlled fixture. Failure/offline/download selection text in exact source appendix. Private mode/integration disabled gates discovery |
+| PLAY-010 | End/error/external/floating/PiP | Player activity/service, external result listener/service, FloatingPlayerActivity/Service and Android PiP; local end/resume checkpoint/history independent from external-provider app. Platform permissions/player selection dialogs external where specified |
+
+Menus preserve original action handlers: PreviewPlaybackMenus refresh replaces stale native menu objects/ticks, keeps semantic track focus when shape changes, Back rebuilds parent or restores HUD origin. Root remembers focus index. Nested native pickers invoke existing handleBackPressed; close restores origin only if attached. Delay/speed settings are persisted by the native handlers, tracks/session controls depend on playback metadata; source extraction records their exact keys/defaults/options. Firmware capability, every backend state, live track errors, actual auto-hide timing and remote-key repetition are UNKNOWN without runtime fixtures.
+
+Existing 0.138 [HUD native image](https://github.com/heretoecode/Supernova/blob/16a60cb11a5dd20ebe374873db360e32b617d7b0/docs/0.138/ui/0138-playback-hud.png) has labelled fixture duration/end time and verifies real transport layout. Older generic `playback-more` test capture contains a manually supplied four-item menu; **it is not** proof of the current production More root. On-demand requests must invoke the actual controller/menu builder.
+
+## Source owners and exact option appendix
+
+- [PlayerActivity.class](https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java#L173)
+- [PlayerController.class](https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PlayerController.java#L93)
+- [PlayerControlsRelativeLayout.class](https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PlayerControlsRelativeLayout.java#L23)
+- [PreviewPlaybackMenus.private static void root](https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java#L54)
+- [PreviewPlaybackMenus.private static void select](https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java#L70)
+- [PreviewTechnicalInfo.class](https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PreviewTechnicalInfo.java#L9)
+- [SubtitleSettingsDialog.class](https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/SubtitleSettingsDialog.java#L46)
+- [SubtitleDiscovery.class](https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SubtitleDiscovery.java#L13)
+
+[Every matched display/choice expression in this area](../evidence/08-playback-subtitles-source-options.md) · [Full display sites](../evidence/display-sites.tsv) · [Focus branches](../evidence/focus-branches.tsv). Supplementary cross-area owners, including inherited utilities, appear in the full catalogue. Literal extraction does not establish visibility.

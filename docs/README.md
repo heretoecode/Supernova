@@ -59,3 +59,7 @@ Existing build/delivery architecture records under `docs/` and CI material under
 ## Status vocabulary
 
 Use **APPROVED**, **PARKED**, **REJECTED**, **SUPERSEDED**, and **NEEDS DECISION** consistently. Do not infer approval from an idea merely appearing in an old handover or discussion.
+
+## UI Reference Atlas — 2026-10-12
+
+[Master atlas/index](ui-reference-atlas/README.md) · [Drive master](https://drive.google.com/file/d/1iQvaP8w2C8Oe31Bb_tAUsR8dC8uOoRFS/view?usp=drivesdk). Source inventories and both priority packages are delivered; full acceptance remains incomplete as documented. No application changes.

@@ -1,0 +1,12 @@
+surface_id	states	images	evidence_kind	remaining_gap
+CH-001	Main editor upper/built-in, Shown/Hidden/reorder	CH-B-138-EDITOR; CH-C-EDITOR-TOP	B+C	Custom focused actions/newly hidden custom state illustrated selectively; huge rows/text/physical restore unknown
+CH-001	Custom row / all five controls / active movement	CH-C-EDITOR-CUSTOM-ROW; CH-C-EDITOR-MOVEMENT	C	No native custom-row/movement render in retrieved artifacts
+CH-002	Rename prefilled / create blank / empty-name error	CH-C-RENAME; CH-C-CREATE; CH-C-CREATE-ERROR	C	Native setError bubble omitted; key/caps alternate states not all captured
+CH-003	Seven root options and individual focus	CH-C-RULE-FOCUS-0; CH-C-RULE-FOCUS-1; CH-C-RULE-FOCUS-2; CH-C-RULE-FOCUS-3; CH-C-RULE-FOCUS-4; CH-C-RULE-FOCUS-5; CH-C-RULE-FOCUS-6; CH-C-RULE-CHANGED	C	Both toggles/type protection/freeze behavior source verified; Cartesian combinations not exhaustively rendered
+CH-004	Genre choices/checks/top/bottom/empty cache	CH-B-138-GENRES-TOP; CH-B-138-GENRES-BOTTOM; CH-C-GENRES-EMPTY; CH-C-GENRES-FIXTURE	B+C	Native fixture fixed vocabulary/no-op callback, actual user/cache genre list unknown
+CH-005	Sort Date Added / Title / Year selection	CH-C-SORT-0; CH-C-SORT-1; CH-C-SORT-2	C	No native sort child render
+CH-006	All9 max options/default/preset/custom nonpreset	CH-C-MAX-PRESETS; CH-C-MAX-SELECT; CH-C-MAX-CUSTOM	C	Every option present; not every intermediate numeric preset separately focused
+CH-006	Numeric input37/overflow error/Done focus	CH-B-138-MAX-INPUT; CH-C-MAX-INPUT; CH-C-MAX-ERROR	B+C	Native test short error differs; production validation text source-derived; blank/max/zero boundaries source-only
+CH-007	Cancel/Delete focus and production title casing	CH-B-138-DELETE-CANCEL; CH-B-138-DELETE-DELETE; CH-C-DELETE-CANCEL; CH-C-DELETE-DELETE	B+C	B test lower-case row; C production title, native framework alert geometry/icon omitted
+CH-008	Membership plus/check/custom/hidden/Create	CH-C-MEMBERSHIP	C	Native membership absent; creation return-to-new-row source-only
+HOME-006	Move/Hide and Move row to allpositions	CH-C-MOVE-HIDE; CH-C-MOVE-TO	C	Many row positions/long-label scroll source-only, no physical navigation execution
