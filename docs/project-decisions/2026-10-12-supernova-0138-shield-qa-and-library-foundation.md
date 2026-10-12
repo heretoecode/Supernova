@@ -146,3 +146,10 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 
 ### Status and next steps
 **STATUS: PARKED / NO IMPLEMENTATION AUTHORISED.** Preserve current production UI. Return to statistics only on owner request; compare to genuine Shield layout, settle exact labels and TV/custom variants, controls and D-pad routes, then explicitly approve. Continue other 0.138 QA / 0.139 planning in the meantime.
+
+
+## 2026-10-12 Customise Home owner decision — remove Libraries filter
+- Owner explicitly **rejects the proposed Libraries/source-library selector** in custom Home row configuration. Supernova already tags media by type; the **Movies / TV / Both** content-type choices together with **Genres** are sufficient to scope row content. The intended result is inclusion of matching indexed items across local and network libraries without an extra source-selection burden.
+- Proposed custom-row editor fields: direct rename from main editor (for custom rows), inline mutually exclusive **Movies / TV / Both** buttons, Genres selector, compact Sort By and Maximum Items controls (latter two side by side). No Libraries field under Additional Filters or elsewhere in the new custom-row editor.
+- Preserve functional sorting, limit, genre filtering and type matching. Before future implementation, audit existing library membership/source filtering, persistence and legacy custom-row configurations; choose safe migration/default semantics so removing the selector does not silently omit media or break old saved rows. Distinguish content-type classification from storage-source selection.
+- Owner prefers direct buttons, minimal click-throughs, smooth D-pad row reordering and a clearly bounded editor overlay. Exact UI still under design; **no code changes authorised**.
