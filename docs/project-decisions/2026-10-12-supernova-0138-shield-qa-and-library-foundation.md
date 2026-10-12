@@ -240,3 +240,10 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - Codex must not infer undocumented appearance or substitute legacy widgets by convenience. If mockups conflict with written contracts, or a detail is unspecified, flag for owner decision rather than guess. Source-derived feasibility findings must be separated from design approval.
 - Require screenshot-based implementation comparison and TV D-pad QA at multiple sizes/densities; enforce focus and typography invariants. Existing approved constraints: independent focus row-body/eye, no text recolouring, eye/eye-off monochrome, genre-specific monochrome icons, compact Sort By / Direction / Maximum Items controls, default 15, Direction single-press toggle, dynamic include label last.
 - Design/documentation only. No app source changes, merges or builds authorised by this directive.
+
+
+## 2026-10-12 — Shield Android TV home-screen channels: investigate replacement
+- Owner reports Shield Customise Your Home Screen > Supernova currently lists five channels: Recently Added, Recently Played, All Movies, All TV Shows, All Animation Movies. Owner suspects these are legacy NOVA-era offerings, especially All Animation Movies; this is a hypothesis, not source-verified.
+- Preferred direction to investigate: publish Supernova Continue Watching, Recently Added, and optionally user-selected Custom Home rows as launcher channels. Consider a per-custom-row 'Show on Shield Home Screen' option independent of visibility within Supernova Home; proposal only, not yet implementation-approved.
+- Read-only source audit required: channel registration and IDs, API compatibility, item membership, artwork, deep links/resume, refresh triggers, launcher layout/order limitations, and safe retirement/migration of legacy channels. Do not assume redundancy without evidence.
+- Separate parked investigation/design track; no channel removal, app source changes or builds authorised.
