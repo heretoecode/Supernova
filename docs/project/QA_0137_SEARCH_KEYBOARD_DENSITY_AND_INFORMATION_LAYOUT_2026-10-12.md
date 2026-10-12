@@ -18,3 +18,7 @@
 - User photo IMG_4899.jpeg attached in conversation; **do not upload original image to GitHub/Codex without explicit permission**.
 - Validate 16:9 TV, overscan, font scaling, long placeholders, focus/typing, caps/backspace/space and action keys, text clipping, readability.
 - User has approved complete prior 0.138 work scope; this is an additional design observation, not evidence of an implemented fix.
+
+## User-approved right panel refinement
+
+User approves left-aligned headings/descriptions, aligned icons and subtle separators. **Each of the five headings must have its own distinct, semantically appropriate monochrome icon**, consistently sized, aligned and stroked: Your Library (library/media icon), Flexible Formatting (formatting/list icon), Original Titles (globe/language icon), Minor Typos (spelling/search icon), People & Studios (**two-person icon**, not generic information symbol). No colourful mismatched icons or repeated generic info icons. This is approved for the next-version handover.
