@@ -26,6 +26,7 @@ public final class SubtitleDiscoveryPolicy {
         for(Entry entry:PreviewVariants.logicalChoices(source))if(entry.media instanceof Episode){Episode episode=(Episode)entry.media;if(entry.show==playing.show&&episode.getSeasonNumber()==selected.getSeasonNumber()&&episode.getEpisodeNumber()>selected.getEpisodeNumber()&&!PreviewSeriesJourney.completed(episode)&&LibraryHealth.state(context,episode)==LibraryHealth.State.AVAILABLE)season.add(entry);}
         season.sort(Comparator.comparingInt(e->((Episode)e.media).getEpisodeNumber()));return season;
     }
+    public static String intentScope(Entry playing){return playing.media instanceof Episode?playing.show+":"+((Episode)playing.media).getSeasonNumber():"movie:"+PreviewVariants.choiceKey((Video)playing.media);}
     public static long retryAfter(String value,long now){
         if(value==null)return 0;try{return now+Math.max(0,Long.parseLong(value.trim()))*1000;}catch(NumberFormatException date){try{return ZonedDateTime.parse(value,DateTimeFormatter.RFC_1123_DATE_TIME).toInstant().toEpochMilli();}catch(Exception invalid){return 0;}}
     }
