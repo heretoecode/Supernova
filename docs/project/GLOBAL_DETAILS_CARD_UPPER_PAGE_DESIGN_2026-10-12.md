@@ -31,3 +31,7 @@
 - Decide exact internal vertical placement and typography scales, highlight intensity, responsive behaviour, focus traversal from actions to lower tabs.
 - Lower details section redesign remains a separate next topic.
 - Do not change active branch or start Codex implementation without explicit authorisation.
+
+## Approved refinement — lower tab labels integrated with divider
+
+User clarifies the lower tabs **Details, Extras, More Like This** should sit directly on the existing horizontal divider line, rather than floating above it with a separate gap. **Keep the divider at its current vertical position** in the provisional layout; move the tab labels down to meet/integrate with that line. Use the recovered vertical space to enlarge the Details Card proportionately, preserving comfortable spacing between card and tabs. Keep the tabs visible in the initial viewport. The selected tab may visually connect to/interrupt the line with an understated active underline; precise tab styling remains subject to visual review. This supersedes earlier illustration where labels sat above a detached line. The upper-card direction is otherwise considered settled in principle; actual TV measurements and visual QA remain necessary.
