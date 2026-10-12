@@ -1,5 +1,5 @@
 {
-  "checked_utc": "2026-10-12T12:44:56.530973+00:00",
+  "checked_utc": "2026-10-12T12:45:35.397294+00:00",
   "source": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
   "source_worktree_status": "",
   "report_word_counts": {
@@ -43,6 +43,13 @@
     }
   },
   "scope": "Static/documentation checks only. Runtime/every-option/portability/security work incomplete as listed in report15.",
-  "publication_status": "draft PR to be recorded after final push",
-  "checks_pass": true
+  "publication_status": "Published draft PR #15; this final receipt is committed on the documentation branch",
+  "checks_pass": true,
+  "draft_pr": "https://github.com/heretoecode/Supernova/pull/15",
+  "documentation_head_before_receipt": "a3a257678974546dd95bcefb064de55e1516a084",
+  "evidence_files": 43,
+  "committed_diff_paths": 60,
+  "committed_scope_outside_docs": [],
+  "other_branch_changes": [],
+  "remote_all_branches_unchanged_except_new_docs": true
 }
