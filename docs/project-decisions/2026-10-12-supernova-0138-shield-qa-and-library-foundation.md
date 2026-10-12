@@ -62,3 +62,13 @@ Date: 2026-10-12. Status: owner-reported runtime observations and owner-approved
 - Preserve predictable D-pad focus and three-panel navigation, scrolling and Back. Determine initial component selection and right-pane content from source/current behaviour before implementation; do not invent.
 - **Defer detailed final design until Codex completes the full UI inventory/reference atlas**, then conduct a full walkthrough of this Settings subsection with all entries and focus states.
 - This is a provisional **0.139 candidate**, not authorisation to code; maintain current 0.138 owner-confirmed no-crash status.
+
+
+## 2026-10-12 Shield walkthrough — Details, Extras, return-focus
+- Playback Hub remains **BLOCKED** by existing playback launch failure; do not infer its UI passes/fails. Defer Settings and Network & Files detailed reviews until UI Atlas ready.
+- **Details hero/details card:** owner sees new card, but its contents are vertically compressed; Resume button should move lower. Allow more width and height, adjust internal spacing while preserving existing approved style. No dimensions approved yet.
+- **Details-to-tabs transition:** scrolling down from full Details page to tabs feels insufficiently smooth. Owner may provide video; avoid assuming exact animation defect without footage.
+- **Extras tab:** three trailer thumbnails visible, imagery appears cropped. Request screenshots only when actively reviewing; investigate image scale/crop from source and evidence.
+- **Extras focus zoom:** gaps between trailer items exist at rest but disappear around focused middle item when zoom applied. Preserve visible breathing room, prevent unintended overlaps. **Owner-approved Home page row spacing, zoom, animation, sizing and D-pad behaviour are the shared foundation contract for equivalent rows across app**, including Extras; document intentional differences. Verify against actual approved Home row rather than blindly copying current defects.
+- **HIGH PRIORITY focus restoration:** Shield repro TV Shows > Tulsa King poster > Details > Back: poster focus not restored; Left/Right/Up no response; Down moves focus to Home top navigation. Expected Back restores focus to the exact prior TV show poster with immediately functioning D-pad, without resetting grid scroll. Investigate shared return-focus restoration across Movies, TV Shows and custom Libraries and different Details exits; owner only confirmed TV Shows/Tulsa King repro.
+- These are **0.139 candidates**, pending consolidated approval. No application edits authorised by this note.
