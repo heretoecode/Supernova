@@ -1,0 +1,187 @@
+{
+  "status": "PROPOSED fixed specification; media not generated/acquired here",
+  "private_media": "none collected",
+  "hash_policy": "populate immutable SHA256/ffprobe JSON/source rights before baseline; no TBD hash treated as proof",
+  "items": [
+    {
+      "id": "M01",
+      "container": "MKV",
+      "video": "H264 1080p SDR 23.976",
+      "audio": "AAC stereo",
+      "subtitles": "none",
+      "specification": "120s; closed GOP2s; burn frame counter",
+      "purpose": "baseline decoder/startup/seek",
+      "sha256": null
+    },
+    {
+      "id": "M02",
+      "container": "MP4",
+      "video": "H264 1080p SDR 25",
+      "audio": "AAC stereo",
+      "subtitles": "mov_text",
+      "specification": "120s; GOP1s; nonzero edit-list variant",
+      "purpose": "MP4 timing/captions",
+      "sha256": null
+    },
+    {
+      "id": "M03",
+      "container": "MKV",
+      "video": "HEVC Main10 4K HDR10 23.976",
+      "audio": "AC3 5.1",
+      "subtitles": "SRT external",
+      "specification": "120s; GOP2s; documented HDR mastering metadata",
+      "purpose": "HDR/refresh/sidecars",
+      "sha256": null
+    },
+    {
+      "id": "M04",
+      "container": "MKV",
+      "video": "HEVC Main10 4K SDR 59.94",
+      "audio": "EAC3 5.1",
+      "subtitles": "ASS embedded",
+      "specification": "120s; high-motion and subtitle font fixture",
+      "purpose": "throughput/render/refresh",
+      "sha256": null
+    },
+    {
+      "id": "M05",
+      "container": "MKV",
+      "video": "HEVC 4K HDR10+",
+      "audio": "EAC3",
+      "subtitles": "none",
+      "specification": "lawfully licensed fixed sample; metadata verified",
+      "purpose": "dynamic HDR facts/output",
+      "sha256": null
+    },
+    {
+      "id": "M06",
+      "container": "MP4/MKV",
+      "video": "Dolby Vision profiles5/7/8 variants",
+      "audio": "EAC3/TrueHD",
+      "subtitles": "PGS",
+      "specification": "licensed fixed samples; no synthetic DV claim",
+      "purpose": "DV fallback/device/native enums",
+      "sha256": null
+    },
+    {
+      "id": "M07",
+      "container": "MKV",
+      "video": "H264 1080p",
+      "audio": "TrueHD incl Atmos-labelled reference",
+      "subtitles": "PGS",
+      "specification": "10min queue/seek stress; authorized sample",
+      "purpose": "small-packet saturation/PCM/pass-through",
+      "sha256": null
+    },
+    {
+      "id": "M08",
+      "container": "MKV",
+      "video": "H264 1080p",
+      "audio": "DTS/DTS-HD MA",
+      "subtitles": "VobSub",
+      "specification": "2min fixed sample, track names not diagnostics",
+      "purpose": "carrier/core fallback/bitmap ownership",
+      "sha256": null
+    },
+    {
+      "id": "M09",
+      "container": "MKV",
+      "video": "AV1 1080p and 4K 10bit",
+      "audio": "Opus 5.1",
+      "subtitles": "SRT embedded",
+      "specification": "120s; same imagery/versioned encoder",
+      "purpose": "dav1d/hardware/software fallback",
+      "sha256": null
+    },
+    {
+      "id": "M10",
+      "container": "WebM",
+      "video": "VP9 profile0/profile2",
+      "audio": "Opus stereo",
+      "subtitles": "WebVTT",
+      "specification": "120s",
+      "purpose": "alternative demux/codec/subtitles",
+      "sha256": null
+    },
+    {
+      "id": "M11",
+      "container": "AVI",
+      "video": "MPEG4 ASP 720p",
+      "audio": "MP3",
+      "subtitles": "SRT external UTF8",
+      "specification": "120s",
+      "purpose": "legacy codec/container",
+      "sha256": null
+    },
+    {
+      "id": "M12",
+      "container": "MPEG-TS",
+      "video": "H264/HEVC",
+      "audio": "AC3/AAC",
+      "subtitles": "DVB/teletext sample",
+      "specification": "discontinuity + late stream header variants",
+      "purpose": "transport recovery/probe",
+      "sha256": null
+    },
+    {
+      "id": "M13",
+      "container": "MKV",
+      "video": "HEVC/H264 VFR",
+      "audio": "FLAC multichannel/PCM",
+      "subtitles": "ASS/SRT",
+      "specification": "120s; sparse video with audio gap variants",
+      "purpose": "timestamp/sync/pause/speed",
+      "sha256": null
+    },
+    {
+      "id": "M14",
+      "container": "MP4",
+      "video": "H264 B-frame tail",
+      "audio": "none",
+      "subtitles": "none",
+      "specification": "20s no audio, delayed last frames",
+      "purpose": "focus-free video/EOF draining",
+      "sha256": null
+    },
+    {
+      "id": "M15",
+      "container": "MKV",
+      "video": "multiple video if supported",
+      "audio": "two audio languages",
+      "subtitles": "multiple SDH/forced/text/bitmap",
+      "specification": "120s; known cue timing plus clear packet",
+      "purpose": "track switching/timing dispositions",
+      "sha256": null
+    },
+    {
+      "id": "M16",
+      "container": "sidecars",
+      "video": "same asM01",
+      "audio": "same asM01",
+      "subtitles": "UTF16/legacy codepage/SRT/ASS/WebVTT",
+      "specification": "exact cues at 0/10/60s and duration boundaries",
+      "purpose": "encoding/colon text/delay/paused replay",
+      "sha256": null
+    },
+    {
+      "id": "M17",
+      "container": "damaged variants",
+      "video": "truncated/invalid NAL/oversize extradata",
+      "audio": "malformed",
+      "subtitles": "malformed subtitle",
+      "specification": "derived from synthetic licensed corpus with recorded mutation",
+      "purpose": "error/bounds/fd ownership",
+      "sha256": null
+    },
+    {
+      "id": "M18",
+      "container": "large MKV",
+      "video": "high-bitrate HEVC long file >4GiB",
+      "audio": "TrueHD/EAC3",
+      "subtitles": "PGS",
+      "specification": "known duration, sparse/real file distinguished; \u22651h stress",
+      "purpose": "64-bit seek/network buffer/long session",
+      "sha256": null
+    }
+  ]
+}

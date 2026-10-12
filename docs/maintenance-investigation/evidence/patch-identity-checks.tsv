@@ -1,0 +1,13 @@
+module	patch	patch_id	identical_upstream_patch	limitation
+MediaLib	medialib-preview40.patch	4285ba75710929b8d5ca14b5dad8831fb70c5a9d		No match does not prove fix absent; patches may bundle/adapt changes
+MediaLib	medialib-preview415.patch	707980e848bf345c785d996f9bf6271a3bc21959		No match does not prove fix absent; patches may bundle/adapt changes
+MediaLib	medialib-preview417.patch	c9daab83ebe45c25301ba99250d89041840e1370		No match does not prove fix absent; patches may bundle/adapt changes
+MediaLib	medialib-preview417-local.patch	cbfd10208f0d5ad41db42211db92c57f83a6595c		No match does not prove fix absent; patches may bundle/adapt changes
+MediaLib	medialib-supernova135.patch	94534b1441a4747a2ff84ce474dac914cde644d4		No match does not prove fix absent; patches may bundle/adapt changes
+MediaLib	medialib-next-refinement.patch	3cf43e14d6e284fcf30e6c97e11ded13a8a5bb39		No match does not prove fix absent; patches may bundle/adapt changes
+MediaLib	medialib-next-qa.patch			No match does not prove fix absent; patches may bundle/adapt changes
+FileCoreLibrary	filecore-preview414.patch	e93610efbb1039b83cad39a9d8cbf558441639e9		No match does not prove fix absent; patches may bundle/adapt changes
+FileCoreLibrary	filecore-preview415.patch	670e3867f430d239d173759dfd833707c6f7f3ad		No match does not prove fix absent; patches may bundle/adapt changes
+FileCoreLibrary	filecore-next-qa.patch			No match does not prove fix absent; patches may bundle/adapt changes
+AVOS	avos-preview414.patch	4f7c43db24fffe7e567a71c7a61d5f020ac824ae		No match does not prove fix absent; patches may bundle/adapt changes
+AVOS	avos-supernova135.patch	2dcae1af02c85e563f3c4a9bba5bf041abf26b3f		No match does not prove fix absent; patches may bundle/adapt changes

@@ -1,0 +1,102 @@
+{
+  "source": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/894da5ca7d742e4429ffb2af534fcda0103ef593/libavformat/tls.h",
+  "sha256": "d7ce8aee5569540266dba3dc29dc4aa6d9534a51a525b27d4535716ecd646e66",
+  "tls_options": [
+    {
+      "line": 91,
+      "text": "{\"tls_verify\", \"Verify the peer certificate\",         offsetof(pstruct, options_field . verify),    AV_OPT_TYPE_INT, { .i64 = TLS_VERIFY_DEFAULT }, 0, 1, .flags = TLS_OPTFL }, \\"
+    }
+  ],
+  "default_definition": [
+    {
+      "line": 83,
+      "text": "#define TLS_VERIFY_DEFAULT 0"
+    },
+    {
+      "line": 85,
+      "text": "#define TLS_VERIFY_DEFAULT 1"
+    },
+    {
+      "line": 91,
+      "text": "    {\"tls_verify\", \"Verify the peer certificate\",         offsetof(pstruct, options_field . verify),    AV_OPT_TYPE_INT, { .i64 = TLS_VERIFY_DEFAULT }, 0, 1, .flags = TLS_OPTFL }, \\"
+    }
+  ],
+  "default_definition_context": [
+    {
+      "line": 77,
+      "text": "    int mtu;"
+    },
+    {
+      "line": 78,
+      "text": "} TLSShared;"
+    },
+    {
+      "line": 79,
+      "text": ""
+    },
+    {
+      "line": 80,
+      "text": "#define TLS_OPTFL (AV_OPT_FLAG_DECODING_PARAM | AV_OPT_FLAG_ENCODING_PARAM)"
+    },
+    {
+      "line": 81,
+      "text": ""
+    },
+    {
+      "line": 82,
+      "text": "#if FF_API_NO_DEFAULT_TLS_VERIFY"
+    },
+    {
+      "line": 83,
+      "text": "#define TLS_VERIFY_DEFAULT 0"
+    },
+    {
+      "line": 84,
+      "text": "#else"
+    },
+    {
+      "line": 85,
+      "text": "#define TLS_VERIFY_DEFAULT 1"
+    },
+    {
+      "line": 86,
+      "text": "#endif"
+    },
+    {
+      "line": 87,
+      "text": ""
+    }
+  ],
+  "version_macro_definition": [
+    {
+      "file": "version_major.h",
+      "line": 32,
+      "text": "#define LIBAVFORMAT_VERSION_MAJOR  62"
+    },
+    {
+      "file": "version_major.h",
+      "line": 44,
+      "text": "#define FF_API_COMPUTE_PKT_FIELDS2      (LIBAVFORMAT_VERSION_MAJOR < 63)"
+    },
+    {
+      "file": "version_major.h",
+      "line": 46,
+      "text": "#define FF_API_INTERNAL_TIMING          (LIBAVFORMAT_VERSION_MAJOR < 63)"
+    },
+    {
+      "file": "version_major.h",
+      "line": 48,
+      "text": "#define FF_API_NO_DEFAULT_TLS_VERIFY    (LIBAVFORMAT_VERSION_MAJOR < 63)"
+    },
+    {
+      "file": "version.h",
+      "line": 37,
+      "text": "#define LIBAVFORMAT_VERSION_INT AV_VERSION_INT(LIBAVFORMAT_VERSION_MAJOR, \\"
+    },
+    {
+      "file": "version.h",
+      "line": 40,
+      "text": "#define LIBAVFORMAT_VERSION     AV_VERSION(LIBAVFORMAT_VERSION_MAJOR,   \\"
+    }
+  ]
+}

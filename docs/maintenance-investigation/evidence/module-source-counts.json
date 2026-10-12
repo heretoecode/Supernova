@@ -1,0 +1,26 @@
+[
+  {
+    "module": "Video",
+    "production_source_files": 771,
+    "tracked_files": 2250,
+    "revision": "b3504c2c4b1725f3070416d14b63e53ae1db3d74"
+  },
+  {
+    "module": "MediaLib",
+    "production_source_files": 269,
+    "tracked_files": 527,
+    "revision": "5758074049bc153ac4967b4ecd21886469270076"
+  },
+  {
+    "module": "FileCoreLibrary",
+    "production_source_files": 100,
+    "tracked_files": 224,
+    "revision": "c4b760c55102c72d45f68b0d16999fc1f4f013a7"
+  },
+  {
+    "module": "AVOS",
+    "production_source_files": 729,
+    "tracked_files": 784,
+    "revision": "2cf21c486c7bf244c49b78d2220197a6d75396dd"
+  }
+]

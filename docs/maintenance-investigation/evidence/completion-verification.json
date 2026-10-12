@@ -1,0 +1,55 @@
+{
+  "checked_utc": "2026-10-12T12:45:35.397294+00:00",
+  "source": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "source_worktree_status": "",
+  "report_word_counts": {
+    "README.md": 348,
+    "00_EXECUTIVE_SUMMARY.md": 675,
+    "01_SOURCE_BASELINE_AND_GIT_HISTORY.md": 489,
+    "02_CODEBASE_ARCHITECTURE.md": 1169,
+    "03_UPSTREAM_NOVA_DIVERGENCE.md": 853,
+    "04_UPSTREAM_CHANGE_LEDGER.md": 3948,
+    "05_PLAYBACK_AND_DIAGNOSTICS.md": 1649,
+    "06_NETWORK_AND_FILES.md": 852,
+    "07_LIBRARIES_AND_METADATA.md": 868,
+    "08_SETTINGS_BACKUP_AND_DATA.md": 1032,
+    "09_UI_ATLAS_AND_NAVIGATION.md": 1456,
+    "10_DESIGN_SYSTEM_AND_SHARED_COMPONENTS.md": 917,
+    "11_DEPENDENCIES_SECURITY_AND_LICENSING.md": 1296,
+    "12_CLEANUP_AND_OPTIMISATION_REGISTER.md": 1103,
+    "13_REGRESSION_AND_BENCHMARK_PLAN.md": 1004,
+    "14_MAINTENANCE_IMPLEMENTATION_ROADMAP.md": 811,
+    "15_OPEN_QUESTIONS_AND_UNVERIFIED_ITEMS.md": 810
+  },
+  "source_references_checked": 111,
+  "source_reference_failures": [],
+  "relative_link_failures": [],
+  "non_documentation_changes": [],
+  "protected_refs": {
+    "refs/heads/codex/supernova-0.137-qa-2026-10-11": {
+      "start": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
+      "current": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
+      "unchanged": true
+    },
+    "refs/heads/codex/supernova-0.138-qa-2026-10-12": {
+      "start": "16a60cb11a5dd20ebe374873db360e32b617d7b0",
+      "current": "16a60cb11a5dd20ebe374873db360e32b617d7b0",
+      "unchanged": true
+    },
+    "refs/heads/main": {
+      "start": "75d9f012fa4f65869eef5d972ad4725df504bd9c",
+      "current": "75d9f012fa4f65869eef5d972ad4725df504bd9c",
+      "unchanged": true
+    }
+  },
+  "scope": "Static/documentation checks only. Runtime/every-option/portability/security work incomplete as listed in report15.",
+  "publication_status": "Published draft PR #15; this final receipt is committed on the documentation branch",
+  "checks_pass": true,
+  "draft_pr": "https://github.com/heretoecode/Supernova/pull/15",
+  "documentation_head_before_receipt": "a3a257678974546dd95bcefb064de55e1516a084",
+  "evidence_files": 43,
+  "committed_diff_paths": 60,
+  "committed_scope_outside_docs": [],
+  "other_branch_changes": [],
+  "remote_all_branches_unchanged_except_new_docs": true
+}

@@ -1,0 +1,8 @@
+{
+  "scope": "tracked source bytes, not APK or installed sizes",
+  "bytes": {
+    "assets": 15857232,
+    "res": 9858740
+  },
+  "identical_byte_groups": 9
+}

@@ -1,0 +1,1244 @@
+
+src/com/archos/mediaprovider/video/NetworkAutoRefresh.java SHA256 719c3fd4bf5c8ac7dd4bdb96153d795167b82a992fab636b91a9b7fab1b30bea
+58: public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLifecycleObserver {
+60:     private static final Logger log = LoggerFactory.getLogger(NetworkAutoRefresh.class);
+66:     private static final AtomicBoolean sRescanInProgress = new AtomicBoolean(false);
+69:     public static final String ACTION_RESCAN_INDEXED_FOLDERS = "com.archos.mediaprovider.video.NetworkAutoRefresh";
+70:     public static final String ACTION_FORCE_RESCAN_INDEXED_FOLDERS = "com.archos.mediaprovider.video.NetworkAutoRefresh_force";
+74:     public static final String AUTO_RESCAN_STARTING_TIME_PREF = "auto_rescan_starting_time";
+75:     public static final String AUTO_RESCAN_PERIOD = "auto_rescan_period";
+76:     public static final String AUTO_RESCAN_LAST_SCAN = "auto_rescan_last_scan";
+77:     public static final String AUTO_RESCAN_ERROR = "auto_rescan_error";
+78:     public static final int AUTO_RESCAN_ERROR_UNABLE_TO_REACH_HOST = -1;
+79:     public static final int AUTO_RESCAN_ERROR_NO_WIFI = -2;
+82:     public void onReceive(Context context, Intent intent) {
+108:     private void handleRescan(Context context, Intent intent) {
+120:     private void doRescan(Context context, Intent intent) {
+237:     private static boolean shouldSkipScanForInactiveServer(Context context, Uri uri) {
+283:     public static void init(Application application) {
+288:     public static void forceRescan(Context context){
+296:     public static int getLastError(Context context){
+299:     public static boolean autoRescanAtStart(Context context) {
+302:     public static void setAutoRescanAtStart(Context context, boolean autoRescanAtStart) {
+306:     public static int getRescanPeriod(Context context) {
+311:     public void onStart(@NonNull LifecycleOwner owner) {
+320:     public void onStop(@NonNull LifecycleOwner owner) {
+
+src/com/archos/mediacenter/utils/ShortcutDbAdapter.java SHA256 57ed4c6474d6724ef4b773024780c7df1a7560de42267d6f5abcfb926787a71f
+34: public enum ShortcutDbAdapter {
+42:     private static final int DATABASE_VERSION = 5;
+44:     public static final String KEY_PATH = "path";
+45:     public static final String KEY_IPPATH = "ippath";
+46:     public static final String KEY_FRIENDLY_URI= "friendly_url";
+48:     public static final String KEY_RESCAN= "rescan";
+50:     public static final String KEY_NAME = "name";
+51:     public static final String KEY_ROWID = "_id";
+77:     public boolean isDbOpen() {
+81:     public boolean isHimselfOrAncestorShortcut(Context context, String path) {
+123:     public static class Shortcut implements Serializable{
+130:         public String getUri() {
+133:         public String getName() {
+136:         public boolean getRescan() {
+140:         public Long getID() {
+143:         public void setID(Long id) {
+146:         public String getFriendlyUri() {
+149:         public Shortcut(String name, String uri, String friendlyUri){
+159:         public Shortcut(String name, String uri){
+164:         public boolean equals(Object o) {
+175:         public int hashCode() {
+186:     private void open(Context ct) throws SQLException {
+196:     public void close() {
+209:     public Cursor queryAllShortcuts(Context context) {
+218:     public List<Uri> getRescanUris(Context context) {
+236:             Log.w(TAG, "getRescanUris: failed", e);
+244:     public List<Uri> getIndexedUris(Context context) {
+260:             Log.w(TAG, "getIndexedUris: failed", e);
+268:     public int numberOfShortcuts(Context context) {
+284:     public boolean addShortcut(Context context, Shortcut shortcut) {
+304:     public boolean deleteShortcut(Context context, long shortcutId) {
+317:     public long isShortcut(Context context, String path) {
+336:     public boolean deleteShortcut(Context context, String uri) {
+348:     public Cursor getAllShortcuts(Context context, String where, String [] whereArgs) {
+352:                 Log.e(TAG, "getAllShortcuts: Database is closed or null!");
+365:             Log.w(TAG, "getAllShortcuts: Exception occurred", e);
+370:     public void setRescanShortcut(Context context, boolean toRescan, String shortcutName) {
+379:     public void setRescanShortcutById(Context context, boolean toRescan, long shortcutId) {
+389:     public synchronized boolean applySupernovaRoots(Context context,java.util.List<String> added,java.util.List<String> removed,java.util.function.BooleanSupplier savePreferences){
+398:     public List<Shortcut> cursorToShortcutList(Cursor cursor){
+408:     private Shortcut cursorToShortcut(Cursor cursor){
+424:             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+428:         public void onCreate(SQLiteDatabase db) {
+429:             if (DBG) Log.d(TAG, "onCreate: creating db " + DATABASE_VIDEO_TABLE);
+435:         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+436:             Log.d(TAG, "onUpgrade: upgrading database from version " + oldVersion + " to " + newVersion);
+437:             if (oldVersion < 2) {
+440:             if (oldVersion < 3) {
+443:             if (oldVersion < 4) {
+446:             if (oldVersion < 5) {
+
+src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java SHA256 66e0ede52c214ae7be88f62ba9a2562bd97c1abdc768885aacea22c4e37a7447
+86: public class NetworkScannerServiceVideo extends Service implements Handler.Callback, DefaultLifecycleObserver {
+98:     private static final Logger log = LoggerFactory.getLogger(NetworkScannerServiceVideo.class);
+108:     public static final String RECORD_ON_FAIL_PREFERENCE = "record_on_fail_preference_extra";
+109:     public static final String RECORD_END_OF_SCAN_PREFERENCE = "record_on_end_preference_extra";
+111:     public static final String EXTRA_SCAN_BATCH_ID = "scan_batch_id_extra";
+115:     private final Object mDummy = new Object();
+116:     private final ConcurrentHashMap<String, Object> mScanRequests = new ConcurrentHashMap<String, Object>(4, 0.75f, 2);
+117:     private final ConcurrentHashMap<String, Object> mUnScanRequests = new ConcurrentHashMap<String, Object>(4, 0.75f, 2);
+137:     private final java.util.concurrent.ExecutorService mScanExecutor=java.util.concurrent.Executors.newSingleThreadExecutor();
+138:     private final java.util.Set<String> mFollowUpScans=ConcurrentHashMap.newKeySet();
+141:     public static int getFilesFoundCount() {
+145:     public static int getRemainingDeletesCount() {
+149:     public static boolean isDeleting() {
+153:     public static boolean startIfHandles(Context context, Intent broadcast) {
+187:     private static void copyStringExtraIfPresent(Intent source, Intent dest, String key) {
+194:     public static boolean willBeScanned(Uri uri){ //returns whether or not a video will be scanned by NetworkScannerServiceVideo
+197:     private static boolean isSmbUri(Uri uri) {
+202:     public NetworkScannerServiceVideo() {
+206:     private static  List<ScannerListener> sListener = new ArrayList<>();
+208:     public interface ScannerListener {
+209:         public void onScannerStateChanged();
+211:     public static boolean isScannerAlive() {
+214:     public synchronized static void addListener(ScannerListener listener) {
+218:     public synchronized static void removeListener(ScannerListener listener) {
+221:     public synchronized static void notifyListeners() {
+234:     protected void finalize() throws Throwable {
+241:     public void onCreate() {
+291:     public void onDestroy() {
+300:     public int onStartCommand(Intent intent, int flags, int startId) {
+363:     public IBinder onBind(Intent intent) {
+371:     public boolean handleMessage(Message msg) {
+453:     private void doRemoveFiles(Uri data, boolean indexedRootRemoved) {
+489:     private void removeServerIfOrphaned(ContentResolver cr, Uri removedRoot) {
+524:     private static boolean hasRootOnSameEndpoint(Uri removedRoot, List<Uri> roots) {
+531:     private static boolean sameNetworkEndpoint(Uri first, Uri second) {
+540:     private static int effectivePort(Uri uri) {
+551:     private static RemovalSelection buildRemovalSelection(Uri removedRoot, List<Uri> remainingRoots) {
+576:     private static boolean isSameOrDescendant(String path, String root) {
+580:     private static String trimTrailingSlash(String value) {
+587:     private static String escapeLike(String value) {
+591:     private static String unscanRequestKey(Uri uri, boolean indexedRootRemoved) {
+608:         public DeleteString() { /* empty */ }
+610:         private final StringBuilder mStringBuilder = new StringBuilder();
+611:         private final ArrayList<Long> mIds = new ArrayList<>();
+615:         public void add(long id) {
+626:         public String toString() {
+630:         public int getCount() {
+634:         public List<Long> getIds() {
+650:     private void previewScanEvent(Uri root, String phase) {
+679:             synchronized (ProviderDiscoveryGate.LOCK) {
+792:                         if (log.isTraceEnabled()) log.trace("doScan: prescan item._data {}", item._data);
+842:                 if (log.isTraceEnabled()) log.trace("doScan: added:{} modified:{} deleted:{} listed files {}", insertCount, updateCount, deleteCount, mFoundFiles);
+890:     public static String[] formatNotificationBody(String rootUriStr, String currentPathStr) {
+986:         private final List<MetaFile2> mLastPlayedDbs = new ArrayList<MetaFile2>();
+995:         public FileVisitListener(Blacklist blacklist, HashMap<String, PrescanItem> prescanItemsMap,
+1007:         private boolean mHadListingError;private boolean mUnknownListingError;private final java.util.Set<String> failedDirectories=new java.util.HashSet<>();
+1009:         public List<MetaFile2> getLastPlayedDbs() {
+1013:         public boolean hadListingError() {
+1019:         public String getLastNotifiedDirectory() {
+1024:         public void onStart(MetaFile2 root) {
+1032:         public boolean onFilesList(List<MetaFile2> files){
+1042:         public boolean onDirectory(MetaFile2 directory) {
+1070:         public void onFile(MetaFile2 file) {
+1090:             if (log.isTraceEnabled()) log.trace("FileVisitListener.onFile: File {}", file.getUri().toString());
+1104:             if (log.isTraceEnabled()) log.trace("FileVisitListener.onFile: existingItem {}", existingItem);
+1109:                 if (log.isTraceEnabled()) log.trace("FileVisitListener.onFile: File isn't new:{}", file.getName());
+1121:                 if (log.isTraceEnabled()) log.trace("FileVisitListener.onFile: File is new, serverId={}, {}", mServerId, file.getUri().toString());
+1125:             else if (log.isTraceEnabled()) log.trace("FileVisitListener.onFile: File already scanned {}", file.getName());
+1130:         public void onOtherType(MetaFile2 file) {
+1135:         public void onStop(MetaFile2 root) {
+1199:         public void onListingError(MetaFile2 directory, Exception exception) {
+1222:         private static boolean isValidType(int fileType) {
+1228:         private static int getFileType(MetaFile2 f) {
+1236:         private static int getStorageId(String path) {
+1259:         public static int getStorageId(int index) {
+1281:         public BulkOperationHandler(boolean nfoScanEnabled, Context context) {
+1288:         public void addUpdate(FileScanInfo update, long fileId) {
+1301:         public int executeDelete(DeleteString deletes) {
+1318:         public void addInsert(FileScanInfo insert, long serverId) {
+1325:         public void executePending() {
+1333:         public int getInsertHandled() {
+1336:         public int getUpdatesHandled() {
+1339:         public int getDeletesHandled() {
+1348:         public SubtitleInfo(long id, String accessPath, long size) {
+1355:         public final String nameNoExt;
+1361:         public boolean matchesVideo(String videoNameNoExt) {
+1366:         private String getLang(String videoNameNoExt) {
+1381:         public ContentValues getForVideo(long video_id, String videoNameNoExt) {
+1401:     private static final String SEL_VIDS_N_SUBS = "bucket_id IN ( SELECT bucket_id FROM files WHERE media_type = 5 )" +
+1403:     private static final String SEL_NEW_VIDS_N_SUBS = SEL_VIDS_N_SUBS + " AND _id NOT IN (SELECT file_id FROM subtitles)";
+1405:     private static int handleSubtitles(ContentResolver cr) {
+1466:     private static void handleSubtitleBucket(List<Pair<String, Long>> videos,
+1488:     public static String extractSmbServer(Uri uri) {
+1518:     private long getLightIndexServerId (String server) {
+1558:         public static String[] PROJECTION = new String[] {
+1565:         public final long _id;
+1566:         public String _data;
+1567:         public final long date_modified;
+1568:         public final String unique_id;
+1570:         public boolean needsDelete = true;
+1572:         public PrescanItem(Cursor c) {
+1589:         public String _data;
+1590:         public String _display_name;
+1591:         public long _size;
+1592:         public String mime_type;
+1593:         public long date_added;
+1594:         public long date_modified;
+1595:         public String title;
+1596:         public int bucket_id;
+1597:         public String bucket_display_name;
+1598:         public int format;
+1599:         public long parent;
+1600:         public int media_type;
+1601:         public long storage_id;
+1602:         public int video_stereo;
+1603:         public int video_definition;
+1604:         public String videoFormat;
+1605:         public String audioFormat;
+1606:         public String unique_id;
+1611:         public FileScanInfo(MetaFile2 f, long storageId) {
+1666:         public ContentValues toContentValues() {
+1694:     private int handleNfoFiles(List<NfoParser.NfoFile> nfoFiles) {
+1717:     private static boolean hasScraperInfo(Uri video, ContentResolver cr) {
+1732:     private boolean isHandlerThreadAlive() {
+1736:     public void cleanup() {
+1769:     public void onStop(LifecycleOwner owner) {
+1785:     public void onStart(LifecycleOwner owner) {
+
+src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java SHA256 50d89e9ca6105cdfd140a4a77c6d08fda0dd05cd6020f74cd3c9bbc169906f3c
+9: public final class ProviderDiscoveryGate {
+10:     public static final Object LOCK=new Object();
+11:     private static SharedPreferences prefs(Context c){return c.getSharedPreferences("provider-discovery-ownership-v1",Context.MODE_PRIVATE);}
+12:     public static void exclude(Context c,String scope,Uri source){
+14:         synchronized(LOCK){if(!prefs(c).edit().putString(scope,source.toString()).commit())throw new IllegalStateException("Unable to preserve scanner ownership");}
+16:     public static void release(Context c,String scope){synchronized(LOCK){if(!prefs(c).edit().remove(scope).commit())throw new IllegalStateException("Unable to restore scanner ownership");}}
+17:     public static boolean excludes(Context c,Uri candidate){
+19:         synchronized(LOCK){for(Object value:prefs(c).getAll().values())if(value instanceof String&&contains(Uri.parse((String)value),candidate))return true;return false;}
+21:     public static boolean contains(Uri root,Uri candidate){
+27:     public static boolean protects(Context c,Uri candidate){
+29:         synchronized(LOCK){for(Object value:prefs(c).getAll().values())if(value instanceof String){Uri root=Uri.parse((String)value);if(contains(root,candidate)||contains(candidate,root))return true;}return false;}
+31:     private static String scheme(Uri uri){String s=uri.getScheme();if(s==null)return "";s=s.toLowerCase(Locale.ROOT);return s.equals("webdavs")||s.equals("davs")?"https":s.equals("webdav")||s.equals("dav")?"http":s;}
+32:     private static int port(Uri uri){return uri.getPort()>=0?uri.getPort():scheme(uri).equals("https")?443:scheme(uri).equals("http")?80:-1;}
+33:     private ProviderDiscoveryGate(){}
+
+src/com/archos/mediascraper/AutoScrapeService.java SHA256 e4e7085d9e43f5f8918d58b5e2b2a06b649aba701211bbab347572981855f47a
+76: public class AutoScrapeService extends Service implements DefaultLifecycleObserver {
+77:     public static final String EXPORT_EVERYTHING = "export_everything";
+78:     public static final String RESCAN_EVERYTHING = "rescan_everything";
+79:     public static final String RESCAN_MOVIES = "rescan_movies";
+80:     public static final String RESCAN_COLLECTIONS = "rescan_collections";
+81:     public static final String RESCAN_ONLY_DESC_NOT_FOUND = "rescan_only_desc_not_found";
+102:     private static final Logger log = LoggerFactory.getLogger(AutoScrapeService.class);
+104:     public static final String PREFERENCE_LAST_TIME_VIDEO_SCRAPED_UTC = "last_time_video_scraped_utc";
+112:     private static final AtomicInteger sNumberOfFilesRemainingToExport = new AtomicInteger(0);
+115:     public static String KEY_ENABLE_AUTO_SCRAP ="enable_auto_scrap_key";
+116:     public static String KEY_SCRAPE_FROM_DB ="scrape_from_database_key";
+131:     private static final AtomicReference<Thread> sScrapeWorker = new AtomicReference<>();
+135:     private static Handler mHandler = new Handler(Looper.getMainLooper());
+165:     public static final long STANDALONE_SCAN_BATCH_ID = 0L;
+168:     private static final Object networkScanLock = new Object();
+171:     private static final Object observerRefreshLock = new Object();
+173:     private static final AtomicBoolean sPendingIdleCheck = new AtomicBoolean(false);
+179:     public static int getNumberOfFilesRemainingToProcess() {
+184:     public static boolean isNfoExportInProgress() {
+189:     public static int getNumberOfFilesRemainingToExport() {
+193:     private static void decrementNfoExportRemaining() {
+197:     public static void startService(Context context) {
+201:     public static boolean requestService(Context context) {
+213:     public static void startServiceAfterNetworkScan(Context context) {
+217:     private static boolean requestServiceAfterNetworkScan(Context context) {
+244:     public static long startNetworkScanBatch(int memberCount) {
+245:         synchronized (networkScanLock) {
+267:     public static void resetNetworkScanCount() {
+268:         synchronized (networkScanLock) {
+281:     public static class NetworkScanCompletion {
+283:         public final boolean completedBatch;
+285:         public final boolean batchHadError;
+287:         public final boolean batchHadSuccess;
+311:     public static NetworkScanCompletion completeNetworkScan(long batchId, boolean hadError, boolean resolvedSuccessfully) {
+312:         synchronized (networkScanLock) {
+352:     public static int getNetworkScanCount() {
+353:         synchronized (networkScanLock) {
+366:     public static void handleNetworkScanCompletion(Context context, NetworkScanCompletion completion) {
+371:     public static String handleNetworkScanCompletionWithResult(Context context, NetworkScanCompletion completion) {
+382:     public void cleanup() {
+405:     public AutoScrapeService() {
+410:     public void onCreate() {
+438:     public int onStartCommand(Intent intent, int flags, int startId) {
+528:     protected void startExporting() {
+535:                 public void run() {
+583:                                 if (log.isTraceEnabled()) log.trace("startExporting: {} fileUri {}", movieID, fileUri);
+590:                                 if (log.isTraceEnabled()) log.trace("startExporting: Skipping UPnP file: {}", fileUri);
+598:                             if (log.isTraceEnabled()) log.trace("startExporting: Base tag created, exporting {}", fileUri);
+636:     public void onDestroy() {
+646:     public static void registerObserver(Context context) {
+654:     private static void registerObserverInternal(final Context appContext) {
+657:             public void onChange(boolean selfChange) {
+663:                             if (log.isTraceEnabled()) {
+674:                         } else if (log.isTraceEnabled()) {
+705:                         if (log.isTraceEnabled()) log.trace("registerObserver.onChange: idle, skip count refresh due to throttle");
+721:     private static boolean shouldRefreshProgressCount() {
+723:         synchronized (observerRefreshLock) {
+732:     private static int getPendingNotScrapedCount(Context context) {
+745:     public static boolean isEnable(Context context) {
+749:     public class AutoScraperBinder extends Binder {
+750:         public AutoScrapeService getService(){
+755:     public IBinder onBind(Intent intent) {
+759:     protected void startScraping(final boolean rescrapAlreadySearched, final boolean onlyNotFound) {
+766:                 public int mNetworkOrScrapErrors; //when errors equals to number of files to scrap, stop looping.
+771:                 public void run() {
+917:                                         if (log.isTraceEnabled()) log.trace("startScraping: found NFO");
+921:                                             if (log.isTraceEnabled()) log.trace("startScraping: NFO ID != -1 {}", ID);
+942:                                             if (log.isTraceEnabled()) log.trace("startScraping: NFO tags.save ID={}", ID);
+954:                                             if (log.isTraceEnabled()) log.trace("startScraping: oh oh NFO ID = -1 ");
+969:                                             if (log.isTraceEnabled()) log.trace("startScraping: NFO saved but no usable poster, keeping NFO data authoritative for {}", fileUri);
+971:                                         if (log.isTraceEnabled()) log.trace("startScraping: NFO found, notScaped {}, noScrapeError {} for {}", notScraped, noScrapeError, fileUri);
+977:                                     if (log.isTraceEnabled()) log.trace("startScraping: NFO NOT found");
+980:                                     if (log.isTraceEnabled()) log.trace("startScraping: rescraping all");
+1001:                                         if (log.isTraceEnabled()) log.trace("startScraping: rescraping episode for tvId {}, season {}, episode {}", videoID, season, episode);
+1013:                                         if (log.isTraceEnabled()) log.trace("startScraping: rescraping movie {}", videoID);
+1019:                                         if (log.isTraceEnabled()) log.trace("startScraping: searching online " + title);
+1027:                                         if (log.isTraceEnabled()) log.trace("startScraping: {} {}", ((result.tag != null) ? result.tag.getTitle() : null), ((result.tag != null) ? result.tag.getOnlineId() : null));
+1057:                                         if (log.isTraceEnabled()) log.trace("startScraping: online result.tag.save ID={}", ID);
+1069:                                             if (log.isTraceEnabled() && result.tag.getTitle() != null)
+1077:                                                         if (log.isTraceEnabled()) log.trace("startScraping: exporting NFO");
+1083:                                                 if (log.isTraceEnabled()) log.trace("startScraping: online info, notScaped {}, noScrapeError {} for {}", notScraped, noScrapeError, fileUri);
+1102:                                         if (log.isTraceEnabled()) log.trace("startScraping: file {} not scraped among {}", fileUri, sNumberOfFilesNotScraped);
+1127:                                     if (log.isTraceEnabled()) log.trace("startScraping: file {} not scraped without error -> mark it as not to be scraped again", fileUri);
+1185:                             public void run() {
+1331:     private String getWhereClause(int scrapStatusParam) {
+1352:     private Cursor getFileListCursor(int scrapStatusParam, String sortOrder, Integer offset, Integer limit) {
+1365:     private Cursor getFileListCursorAfterId(int scrapStatusParam, long afterId, int limit) {
+1374:     private long getNextIdAfter(int scrapStatusParam, long afterId) {
+1393:     public void onStop(LifecycleOwner owner) {
+1401:     public void onStart(LifecycleOwner owner) {
+1412:     private void saveDirtyState(boolean dirtyState) {
+1419:     private boolean isDirtyState() {
+
+src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java SHA256 bf3075fd0e8b534f30451c04574bf5a829853f60f3c8d999ee17031074bffd6f
+9: public final class PreviewLocalImportTrace {
+10:     private static final ThreadLocal<PreviewLocalImportTrace> CURRENT=new ThreadLocal<>();
+11:     private static final java.util.Map<android.os.Message,PreviewLocalImportTrace> QUEUED=new java.util.IdentityHashMap<>();
+15:     private final String batch=UUID.randomUUID().toString(),mode;
+16:     private final long started=SystemClock.elapsedRealtime();
+19:     private PreviewLocalImportTrace(Context context,boolean full){this.context=context;mode=full?"full":"incremental";}
+20:     public static void begin(Context context,boolean full){
+21:         PreviewLocalImportTrace trace=CURRENT.get();if(trace==null)trace=new PreviewLocalImportTrace(context,full);CURRENT.set(trace);trace.emit("started");
+23:     public static synchronized void queued(Context context,android.os.Handler owner,android.os.Message message,boolean full){
+24:         PreviewLocalImportTrace trace=new PreviewLocalImportTrace(context,full);trace.owner=owner;
+28:     public static synchronized void starting(android.os.Message message){PreviewLocalImportTrace trace=QUEUED.remove(message);if(trace!=null)CURRENT.set(trace);}
+29:     public static synchronized void rejected(android.os.Message message){PreviewLocalImportTrace trace=QUEUED.remove(message);if(trace!=null)trace.emit("cancelled");}
+30:     public static synchronized void cancelQueued(android.os.Handler owner){
+31:         java.util.Iterator<PreviewLocalImportTrace> iterator=QUEUED.values().iterator();while(iterator.hasNext()){PreviewLocalImportTrace trace=iterator.next();if(trace.owner==owner){iterator.remove();trace.emit("cancelled");}}
+33:     public static void checked(){PreviewLocalImportTrace t=CURRENT.get();if(t!=null){t.checked++;long now=SystemClock.elapsedRealtime();if(now-t.lastProgress>=1000){t.lastProgress=now;t.emit("indexing");}}}
+34:     public static void reconciled(int added,int updated){PreviewLocalImportTrace t=CURRENT.get();if(t!=null){t.added=Math.max(0,added);t.updated=Math.max(0,updated);t.countsKnown=added>=0&&updated>=0;t.emit("reconciled");}}
+35:     public static void problem(){PreviewLocalImportTrace t=CURRENT.get();if(t!=null)t.partial=true;}
+36:     public static void phase(String phase){PreviewLocalImportTrace t=CURRENT.get();if(t!=null&&java.util.Arrays.asList("metadata_queued","metadata_failed","metadata_skipped").contains(phase)){if("metadata_failed".equals(phase))t.partial=true;t.emit(phase);}}
+37:     public static void finish(boolean returned,boolean interrupted){
+38:         PreviewLocalImportTrace t=CURRENT.get();if(t==null)return;
+41:     private void emit(String phase){
+47:     private PreviewLocalImportTrace(){throw new AssertionError();}
+
+src/com/archos/mediaprovider/video/VideoStoreImportImpl.java SHA256 4097109e4d0c7b5fa90e88628eb0ec67f49932cc49450f79179a2c410728a7f4
+73: public class VideoStoreImportImpl {
+74:     private static final Logger log = LoggerFactory.getLogger(VideoStoreImportImpl.class);
+95:     public VideoStoreImportImpl(Context context) {
+116:     public void destroy() {
+122:     private void ensureSdCardPath() {
+135:     public void doFullImport() {
+171:             PreviewLocalImportTrace.reconciled(copy, reconciliation.updated);
+179:             PreviewLocalImportTrace.problem();
+188:     public void doIncrementalImport() {
+221:             PreviewLocalImportTrace.reconciled(copy, reconciliation.updated);
+228:             PreviewLocalImportTrace.problem();
+321:         public boolean equals(Object object) {
+329:         public int hashCode() {
+334:     private List<StorageLocation> getMountedStorageLocations() {
+397:     private static void loadStorageSnapshot(ContentResolver cr, StorageLocation location,
+417:             PreviewLocalImportTrace.problem();
+427:     private static void loadImportedIdentityPages(ContentResolver cr, StorageLocation location,
+468:                 PreviewLocalImportTrace.problem();
+478:     private static void loadMediaStoreIdentityPages(ContentResolver cr, StorageLocation location,
+519:                 PreviewLocalImportTrace.problem();
+529:     private static Cursor queryIdentityPage(ContentResolver cr, Uri uri, String[] projection,
+570:     private static void reconcileStableIds(ContentResolver cr, ReconciliationSnapshot snapshot,
+579:                 PreviewLocalImportTrace.problem();
+609:                 PreviewLocalImportTrace.problem();
+616:     private static void reconcileChangedIds(ContentResolver cr, ReconciliationSnapshot snapshot,
+663:                     PreviewLocalImportTrace.problem();
+671:     private static void removeMissingPrimaryRows(ContentResolver cr,
+762:     private static ImportIdentity readImportIdentity(Cursor cursor) {
+771:     private static String getCursorString(Cursor cursor, String column) {
+776:     private static long getCursorLong(Cursor cursor, String column) {
+781:     private static MediaStoreIdentity readMediaStoreIdentity(Cursor cursor,
+798:     private static long getLong(ContentValues values, String key) {
+803:     private static String normalizeDisplayName(String displayName, String path) {
+809:     private static <T> void addToBucket(Map<IdentityKey, List<T>> buckets,
+819:     private static MediaStoreIdentity uniqueDestination(ImportIdentity source,
+836:     private static boolean modifiedTimesMatch(long first, long second) {
+854:     private static boolean isDisposableDestination(ContentResolver cr, long id, String path) {
+862:             PreviewLocalImportTrace.problem();
+948:     private void handleScanCursor(Cursor c, ContentResolver cr, Context context, Blacklist blacklist) {
+952:         if (c == null) PreviewLocalImportTrace.problem();
+972:                 PreviewLocalImportTrace.checked();
+985:                     PreviewLocalImportTrace.problem();
+1001:                     PreviewLocalImportTrace.problem();
+1007:                     PreviewLocalImportTrace.problem();
+1014:                         PreviewLocalImportTrace.problem();
+1065:             PreviewLocalImportTrace.problem();
+1071:                 PreviewLocalImportTrace.problem();
+1085:         public Job(String path, String id, Blacklist blacklist) {
+1114:         public final Uri mPath;
+1115:         public final String mId;
+1116:         public final MediaFileType mMft;
+1117:         public final int mMediaType;
+1118:         public final boolean mRetrieve;
+1119:         public final String mMimeType;
+1123:     public void doRemove(Uri what) {
+1140:     public void doScan(Uri what) {
+1166:     private static final String DIRECTORY_NEEDS_SCAN = "scan_state < (select date_modified from files as files_parent where files_parent._id = files.parent)";
+1167:     private static final String WHERE_UNSCANNED = "scan_state >= 0 AND ("
+1173:     private void doScan(ContentResolver cr, Context context, Blacklist blacklist) {
+1206:                     PreviewLocalImportTrace.problem();
+1218:                 PreviewLocalImportTrace.problem();
+1229:     private MediaMetadata getMetadata(String path) throws RemoteException, InterruptedException, MediaRetrieverServiceClient.ServiceManagementException {
+1237:     private ContentValues fromRetrieverService(Job job, String timeString) throws InterruptedException, MediaRetrieverServiceClient.ServiceManagementException {
+1297:     private static void extract(ContentValues target, MediaMetadata metadata,
+1303:     private static void extract(ContentValues target, MediaMetadata metadata,
+1317:     private static boolean isNumberOtherThanZero(String input) {
+1326:     private static long parseLong(String input, long fallback) {
+1334:     private static String getDefaultTitle(String path) {
+1382:     private static final Set<Integer> sLastVisibleStorageIds = new HashSet<>();
+1385:     private static synchronized void resetVisibleStorageIds() {
+1389:     private static synchronized void recordVisibleStorageId(Integer storageId) {
+1395:     private static synchronized Set<Integer> getVisibleStorageIdsSnapshot() {
+1399:     private static synchronized boolean remoteProjectionHasStorageId() {
+1403:     private static synchronized void disableRemoteStorageIdTracking() {
+1409:     private static int copySnapshotData(ContentResolver cr, ReconciliationSnapshot snapshot,
+1431:     private static int copyData(ContentResolver cr, String minId) {
+1460:             PreviewLocalImportTrace.problem();
+1529:                             if (log.isTraceEnabled()) log.trace("copyData: processing cursor number={}/{}, {}", cursor_count, numberOfRows, DatabaseUtils.dumpCurrentRowToString(allFiles));
+1543:                                     if (log.isTraceEnabled()) log.trace("copyData: _data={} -> storageId={}", data, storageId);
+1573:     private static final String[] MAX_LOCAL_PROJ = new String[] { "max(local_id)" };
+1574:     private static String getMaxLocalId (ContentResolver cr) {
+1589:     private static final String[] COUNT_PROJ = new String[] { "count(*)" };
+1590:     private static int getLocalCount (ContentResolver cr) {
+1607:                     PreviewLocalImportTrace.problem();
+1621:     private static final String[] MAX_ID_PROJ = new String[] { "max(_id)" };
+1623:     private static String getMaxId(ContentResolver cr) {
+1659:                     PreviewLocalImportTrace.problem();
+1678:     private void updateVolumeHiddenStates(String existingFiles) {
+1768:                     PreviewLocalImportTrace.problem();
+1805:     private static List<Long> queryIds(ContentResolver cr, String selection, String[] args) {
+1823:     private static String queryStoragePath(ContentResolver cr, String selection, String[] args) {
+1845:     private static int deleteMatchingInBatches(ContentResolver cr, String selection, String[] args) {
+1853:                 PreviewLocalImportTrace.problem();
+1862:     private static int countRows(ContentResolver cr, String selection, String[] args) {
+1872:     private Set<Integer> getMountedReadableStorageIds() {
+1888:     private void collectMountedStorageIds(List<String> paths, Set<Integer> target, ExtStorageManager storageManager) {
+1901:     private boolean isMountedReadable(String state) {
+1905:     private String buildStorageIdSelection(Set<Integer> storageIds) {
+1928:     private void updateVolumeHiddenStatesByPath(String existingFiles) {
+2001:     private void hideFilesFromVolumes(List<String> volumePaths, long timestamp) {
+2028:         // existingFiles are left untouched here and handled by verifyAndHideDeletedFiles below.
+2044:     private void checkDatabaseForUnmountedVolumes(List<String> mountedVolumePaths, List<String> unmountedVolumePaths) {
+2107:             PreviewLocalImportTrace.problem();
+2114:     private void hideDeletedFilesFromMountedVolumes(List<String> volumePaths, String existingFiles, long timestamp) {
+2126:         // For mounted volumes, verify files truly don't exist before hiding them
+2128:         verifyAndHideDeletedFiles(mCr, where.toString(), timestamp, "hideDeletedFilesFromMountedVolumes");
+2134:     private void hideDeletedFilesFromRecentlyMountedVolumes(List<String> volumePaths, String existingFiles, long timestamp) {
+2146:         // For recently mounted volumes, verify files truly don't exist before hiding
+2148:         verifyAndHideDeletedFiles(mCr, where.toString(), timestamp, "hideDeletedFilesFromRecentlyMountedVolumes");
+2154:     static void verifyAndHideDeletedFiles(ContentResolver cr, String whereClause, long timestamp, String logTag) {
+2203:             PreviewLocalImportTrace.problem();
+2204:             log.error("verifyAndHideDeletedFiles: error verifying files", e);
+2218:     private void checkVolumeStatesWithRecentMount(List<String> volumePaths, List<String> allMountedVolumes,
+2240:     private boolean wasVolumeRecentlyHidden(String volumePath) {
+2266:     private static String getRemoteIdList(ContentResolver cr) {
+2315:                     PreviewLocalImportTrace.problem();
+2334:         if (log.isTraceEnabled()) log.trace("getRemoteIdList: ids of files visible {}", result);
+2339:     public static boolean isNoMediaPath(Uri uri) {
+2374:     public static boolean isNoMediaPath(String path) {
+2408:     private static boolean isNoMediaFile(String path) {
+2452:     public void interruptImport() {
+
+src/com/archos/mediaprovider/video/VideoStoreImportService.java SHA256 62a00591f3abf21cfffdc1d7afb08d402a58a67024bc70142e9a4a148050e5a6
+71: public class VideoStoreImportService extends Service implements Handler.Callback, DefaultLifecycleObserver {
+72:     private static final Logger log = LoggerFactory.getLogger(VideoStoreImportService.class);
+89:     protected Handler mHandler;
+96:     protected VolumeState mVolumeState;
+97:     protected VolumeState.Observer mVolumeStateObserver;
+115:     public VideoStoreImportService() {
+120:     public static boolean startIfHandles(Context context, Intent broadcast) {
+149:     private Notification createNotification() {
+169:     public void updateScanNotification(int count, String path) {
+178:     public void updateDeleteNotification(int count, String path) {
+188:     public void onCreate() {
+202:             @Override public boolean sendMessageAtTime(Message message,long time) {
+204:                 if(importing)PreviewLocalImportTrace.queued(VideoStoreImportService.this,this,message,message.what==MESSAGE_IMPORT_FULL);
+206:                 if(importing&&!accepted)PreviewLocalImportTrace.rejected(message);
+255:     public void onDestroy() {
+268:     protected static boolean importOk() {
+274:     public int onStartCommand(Intent intent, int flags, int startId) {
+323:                 if (log.isTraceEnabled()) log.trace("onStartCommand: ImportState.VIDEO.setAndroidScanning(false)");
+329:                 if (log.isTraceEnabled()) log.trace("onStartCommand: ImportState.VIDEO.setAndroidScanning(true)");
+369:     public static void startService(Context context) {
+394:     public static void stopService(Context context) {
+403:     public IBinder onBind(Intent intent) {
+408:     public boolean onUnbind(Intent intent) {
+422:     public boolean handleMessage(Message msg) {
+423:         if(msg.what==MESSAGE_IMPORT_FULL||msg.what==MESSAGE_IMPORT_INCR)PreviewLocalImportTrace.starting(msg);
+511:     private void doImport(boolean fullMode) {
+513:         PreviewLocalImportTrace.begin(this, fullMode);
+520:             PreviewLocalImportTrace.finish(returned, previewImportAttempted && VideoStoreImportImpl.previewImportInterrupted());
+524:     private void doImportTracked(boolean fullMode) {
+527:             PreviewLocalImportTrace.problem();
+533:             PreviewLocalImportTrace.problem();
+559:             PreviewLocalImportTrace.phase(com.archos.mediascraper.AutoScrapeService.requestService(this) ? "metadata_queued" : "metadata_failed");
+561:             PreviewLocalImportTrace.phase("metadata_skipped");
+565:     private void processDeleteFileAndVobCallback() {
+585:             PreviewLocalImportTrace.problem();
+620:                     PreviewLocalImportTrace.problem();
+627:             PreviewLocalImportTrace.problem();
+633:             PreviewLocalImportTrace.problem();
+645:             PreviewLocalImportTrace.problem();
+676:                         if (log.isTraceEnabled()) log.trace("processDeleteFileAndVobCallback: delete_files {} path {} count {}", id, path, count);
+689:                             PreviewLocalImportTrace.problem();
+698:                             PreviewLocalImportTrace.problem();
+705:                     PreviewLocalImportTrace.problem();
+736:                     if (log.isTraceEnabled()) log.trace("processDeleteFileAndVobCallback: vob_insert {} path {}", id, path);
+746:                         PreviewLocalImportTrace.problem();
+752:                 PreviewLocalImportTrace.problem();
+763:     private void handleVolumeMounted(int storageId) {
+804:     protected static void removeAllMessages(Handler handler) {
+813:         PreviewLocalImportTrace.cancelQueued(handler);
+819:         public ContentChangeObserver(Handler handler) {
+824:         public void onChange(boolean selfChange) {
+842:         public LoggingConnection() {
+844:         public void onServiceConnected(ComponentName name, IBinder service) {
+847:         public void onServiceDisconnected(ComponentName name) {
+853:     private void initializeScraperData() {
+859:     public void onStop(LifecycleOwner owner) {
+868:     private void cleanup() {
+882:             PreviewLocalImportTrace.cancelQueued(mHandler);
+908:     public void onStart(@NonNull LifecycleOwner owner) {
+
+src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java SHA256 2a7a6f5b9d9c7432c6485fc6f58c46d38a66379bbf2595ab69783a174ac92423
+40: public class IntroDbAppApiHelper {
+42:     private static final Logger log = LoggerFactory.getLogger(IntroDbAppApiHelper.class);
+50:     public static final int RESULT_CODE_OK = 200;
+51:     public static final int RESULT_CODE_BAD_REQUEST = 400;
+52:     public static final int RESULT_CODE_NOT_FOUND = 404;
+53:     public static final int RESULT_CODE_TOO_MANY_REQUESTS = 429;
+54:     public static final int RESULT_CODE_SERVER_ISSUE = 500;
+62:     private IntroDbAppApiHelper(Cache cache) {
+66:             if (log.isTraceEnabled()) builder.addInterceptor(new ScraperCache.isCacheResponding());
+68:         if (log.isTraceEnabled()) {
+79:     public static void init(Context context) {
+80:         synchronized (IntroDbAppApiHelper.class) {
+85:     public static IntroDbAppApiHelper getInstance() {
+87:             synchronized (IntroDbAppApiHelper.class) {
+94:     public static int getLastQueryResult() { return LAST_QUERY_RESULT; }
+95:     public static String getLastQueryMessage() { return LAST_QUERY_MESSAGE; }
+98:     public static IntroDbAppResult getSegments(IntroDbAppQueryParams params) throws IOException {
+156:     private static IntroDbAppResult.Segment parseSegment(JSONObject segment) {
+169:     private static int parseResponse(Response response) {
+178:         else if (log.isTraceEnabled()) log.trace("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
+
+src/com/archos/mediacenter/utils/introdb/IntroDbAppQueryParams.java SHA256 33622d5e1aa98823e384d8f1faa4a865213a83fd2a50c9ab77e88dbcc913770e
+19: public class IntroDbAppQueryParams {
+25:     public IntroDbAppQueryParams() {
+28:     public void setMovie(boolean movie) { this.movie = movie; }
+29:     public boolean isMovie() { return movie; }
+30:     public void setImdbId(String imdbId) { this.imdbId = imdbId; }
+31:     public void setSeason(Integer season) { this.season = season; }
+32:     public void setEpisode(Integer episode) { this.episode = episode; }
+34:     public String getImdbId() { return imdbId; }
+35:     public Integer getSeason() { return season; }
+36:     public Integer getEpisode() { return episode; }
+39:     public boolean isValid() {
+44:     public String toString() {
+
+src/com/archos/mediacenter/utils/introdb/IntroDbAppResult.java SHA256 b5912d89a5904d17de0854503521ed4a2558d51f14b3cc6dc3a7bab8bfa71bba
+20: public class IntroDbAppResult {
+23:     public static class Segment {
+24:         public final long startMs;
+25:         public final long endMs;
+26:         public final double confidence;
+27:         public final int submissionCount;
+29:         public Segment(long startMs, long endMs, double confidence, int submissionCount) {
+36:         public boolean contains(long positionMs) {
+41:         public String toString() {
+56:     public void setImdbId(String imdbId) { this.imdbId = imdbId; }
+57:     public void setSeason(Integer season) { this.season = season; }
+58:     public void setEpisode(Integer episode) { this.episode = episode; }
+59:     public void setIntro(Segment intro) { this.intro = intro; }
+60:     public void setRecap(Segment recap) { this.recap = recap; }
+61:     public void setPostCredits(Segment postCredits) { this.postCredits = postCredits; }
+62:     public Segment getPostCredits() { return postCredits; }
+63:     public void setOutro(Segment outro) { this.outro = outro; }
+65:     public String getImdbId() { return imdbId; }
+66:     public Integer getSeason() { return season; }
+67:     public Integer getEpisode() { return episode; }
+68:     public Segment getIntro() { return intro; }
+69:     public Segment getRecap() { return recap; }
+70:     public Segment getOutro() { return protectedOutro(outro, postCredits); }
+80:     public boolean hasAnySegment() {
+85:     public String toString() {
+
+src/com/archos/mediacenter/utils/introdb/IntroDbManager.java SHA256 629742f814e806c25aa951c21a90d8c0b6eb02ef8757567309c81d38c90a094c
+34: public class IntroDbManager {
+36:     private static final Logger log = LoggerFactory.getLogger(IntroDbManager.class);
+38:     public static final String SOURCE_APP = "introdb.app";
+39:     public static final String SOURCE_ORG = "theintrodb.org";
+41:     private IntroDbManager() {
+45:     public static void init(Context context) {
+53:     public static IntroSegments fetch(IntroDbQueryParams query) {
+85:     private static IntroDbAppResult fetchApp(IntroDbQueryParams q) {
+107:     private static IntroDbResult fetchOrg(IntroDbQueryParams q) {
+120:     private static boolean addAppSegment(IntroSegments out, IntroSegments.Type type, IntroDbAppResult.Segment s) {
+126:     private static void addOrgSegments(IntroSegments out, IntroSegments.Type type, List<IntroDbResult.Segment> list) {
+
+src/com/archos/mediacenter/utils/trakt/TraktService.java SHA256 d582d1fba45ae9e63969d9715300eb1d200d825c35cb4ba6cc5b1b9820379f2f
+79: public class TraktService extends Service implements DefaultLifecycleObserver {
+81:     private static final Logger log = LoggerFactory.getLogger(TraktService.class);
+92:     private final IBinder mBinder = new TraktBinder();
+122:     public static final int FLAG_SYNC_AUTO =                0x001;
+123:     public static final int FLAG_SYNC_LAST_ACTIVITY_VETO =  0x002;
+124:     public static final int FLAG_SYNC_MOVIES =              0x004;
+125:     public static final int FLAG_SYNC_SHOWS =               0x008;
+126:     public static final int FLAG_SYNC_TO_DB_WATCHED =       0x010; // need to resync watched status from trakt to db
+127:     public static final int FLAG_SYNC_TO_DB_COLLECTION =    0x020;
+128:     public static final int FLAG_SYNC_TO_TRAKT_WATCHED =    0x040;
+129:     public static final int FLAG_SYNC_TO_TRAKT_COLLECTION = 0x080;
+130:     public static final int FLAG_SYNC_NOW =                 0x100;
+131:     public static final int FLAG_SYNC_PROGRESS =            0x200; // need to sync resume points
+132:     public static final int FLAG_SYNC_TO_DB = FLAG_SYNC_TO_DB_WATCHED | FLAG_SYNC_TO_DB_COLLECTION;
+133:     public static final int FLAG_SYNC_TO_TRAKT = FLAG_SYNC_TO_TRAKT_WATCHED | FLAG_SYNC_TO_TRAKT_COLLECTION;
+134:     public static final int FLAG_SYNC_FULL = FLAG_SYNC_TO_DB | FLAG_SYNC_TO_TRAKT | FLAG_SYNC_MOVIES | FLAG_SYNC_SHOWS;
+138:     public static final String PREFERENCE_TRAKT_LAST_ACTIVITY = "trakt_last_activity";
+139:     public static final String PREFERENCE_TRACK_LAST_ACTIVITY_MOVIE = "trakt_last_activity_movie";
+140:     public static final String PREFERENCE_TRAKT_LAST_ACTIVITY_MOVIE_WATCHED = "trakt_last_activity_movie_watched";
+141:     public static final String PREFERENCE_TRAKT_LAST_ACTIVITY_MOVIE_PAUSED = "trakt_last_activity_movie_paused";
+142:     public static final String PREFERENCE_TRAKT_LAST_ACTIVITY_EPISODE = "trakt_last_activity_episode";
+143:     public static final String PREFERENCE_TRAKT_LAST_ACTIVITY_EPISODE_WATCHED = "trakt_last_activity_episode_watched";
+144:     public static final String PREFERENCE_TRAKT_LAST_ACTIVITY_EPISODE_PAUSED = "trakt_last_activity_episode_paused";
+145:     public static final String PREFERENCE_TRAKT_LAST_ACTIVITY_LIST = "trakt_last_activity_list";
+146:     public static final String PREFERENCE_TRAKT_LAST_ACTIVITY_TIME_CHECKED_UTC = "trakt_last_activity_time_checked_utc";
+147:     public static final String PREFERENCE_TRAKT_LAST_TIME_SYNC_TO_DB_WATCHED = "trakt_last_time_sync_to_db_watched";
+148:     public static final String PREFERENCE_TRAKT_LAST_TIME_SYNC_TO_DB_PROGRESS = "trakt_last_time_sync_to_db_progress";
+149:     public static final String PREFERENCE_TRAKT_LAST_TIME_SYNC_WATCHED = "trakt_last_time_sync_watched";
+150:     public static final String PREFERENCE_TRAKT_LAST_TIME_SYNC_PROGRESS = "trakt_last_time_sync_progress";
+151:     public static final String PREFERENCE_TRAKT_LAST_TIME_SYNC_LIST = "trakt_last_time_sync_list";
+152:     public static final String PREFERENCE_TRAKT_LAST_TIME_SYNC_TO_DB_LIST = "trakt_last_time_sync_to_db_list";
+153:     public static final String PREFERENCE_TRAKT_FIRST_SYNC_DONE = "trakt_first_sync_done";
+155:     public static final String PREFERENCE_TRAKT_LAST_SYNC_STATUS = "trakt_last_sync_status";
+156:     public static final int SYNC_STATUS_SUCCESS = 0;
+157:     public static final int SYNC_STATUS_ERROR_NETWORK = 1;
+158:     public static final int SYNC_STATUS_ERROR_AUTH = 2;
+159:     public static final int SYNC_STATUS_ERROR_ACCOUNT_LOCKED = 3;
+161:     public static final String PREFERENCE_TRAKT_SKIPPED_NO_DURATION = "trakt_skipped_no_duration";
+163:     public static final String PREFERENCE_TRAKT_SKIPPED_NO_METADATA = "trakt_skipped_no_metadata";
+169:     public class TraktBinder extends Binder {
+177:         public TraktHandler(Looper looper, Context context) {
+182:         public boolean hasOtherMessagesPending(int what) {
+191:         public void handleMessage(Message msg) {
+409:     private static boolean needSendCache(Context context) {
+421:     private void saveTraktStatus(VideoDbInfo videoInfo, String action) {
+466:     private static String getVideoToMarkSelection(String library, int scraperType, boolean toMark) {
+489:         public InBuilder(String inSelection) {
+493:         public void addParam(String arg) {
+500:         public void addParam(int arg) {
+503:         public String get() {
+513:     private Trakt.Result wipe() {
+524:     private Trakt.Result wipeCollection() {
+532:     private static ContentValues getValuesMarkAs(String library, boolean mark) {
+554:     private int seedLocalWatchedAsSynced() {
+566:     private Trakt.Status syncFlushEpisodeList(String library, TraktAPI.EpisodeListParam param,
+610:     private Trakt.Status syncPlaybackStatusLegacy(){
+765:     private Trakt.Status syncPlaybackStatusHybrid() {
+820:     private long getMaxPausedAtSeconds(java.util.List<PlaybackResponse> videos) {
+837:     private static boolean remoteResumeWins(PlaybackResponse remote, VideoDbInfo local) {
+852:     private static boolean isSameTraktVideo(PlaybackResponse remote, VideoDbInfo local) {
+864:     private static boolean shouldUpdateLastPlayed(PlaybackResponse remote, VideoDbInfo local,
+875:     private static boolean shouldImportRemoteResume(PlaybackResponse remote, VideoDbInfo local,
+883:     private Trakt.Status syncResumePointsToTrakt(java.util.List<PlaybackResponse> traktVideos) {
+979:     private Trakt.Status syncWatchedStatusToTrakt(java.util.List<HistoryEntry> traktWatched) {
+988:     private Trakt.Status syncWatchedStatusToDb(java.util.List<HistoryEntry> traktWatched) {
+1061:     private Trakt.Status syncWatchedStatusToDb(){
+1142:     private Trakt.Status syncResumePointsToDb(java.util.List<PlaybackResponse> traktVideos) {
+1234:     private Trakt.Status syncResumePointsToDb(){
+1324:     private Trakt.Status syncMoviesToDb(String library) {
+1340:                         if (log.isTraceEnabled()) log.trace("syncMoviesToDb: marking {}", movie.movie.title);
+1358:     private Trakt.Status syncShowsToDb(String library) {
+1380:                                 if (log.isTraceEnabled()) log.trace("syncShowsToDb: marking {} s{}e{}", show.show.title, season.number, episode.number);
+1399:     private Trakt.Status syncMoviesToTrakt(String library, boolean toMark) {
+1471:     private Trakt.Status syncShowsToTrakt(String library, boolean toMark) {
+1538:     private static long getCurrentTraktTime() {
+1567:     // TODO verify resume checked when playing a video or network resume time (thus no sync on trakt)
+1571:     private int getFlagsFromTraktLastActivity(Trakt.Result result, long movieTime, long showTime) {
+1624:     private int getFlagsFromTraktLastActivity(Trakt.Result result) {
+1630:     private Trakt.Result handleSyncStatus(Status status, int flag, String details) {
+1678:     private Trakt.Result sync(int flag) {
+1837:     private void syncLists() {
+2048:     private void showToast(final CharSequence text) {
+2053:                 public void run() {
+2066:     public void onCreate() {
+2079:     public IBinder onBind(Intent intent) {
+2084:     public void onDestroy() {
+2090:     private void cleanup() {
+2115:     public int onStartCommand(Intent intent, int flags, int startId) {
+2121:                 public void propertyChange(PropertyChangeEvent evt) {
+2146:     public static class Client {
+2152:         public interface Listener {
+2156:         public Client(Context context, Listener listener, boolean notify) {
+2163:                     public boolean handleMessage(Message msg) {
+2178:         private Intent prepareIntent(String action, VideoDbInfo videoInfo, float progress, String traktAction) {
+2194:         private Intent prepareIntent(String action, long videoID, float progress, String traktAction){
+2210:         private void startService(Intent intent, boolean checkForeground) {
+2220:         public void watching(long videoID, float progress) {
+2225:         public void watchingStop(long videoID, float progress) {
+2232:         public void watchingPause(long videoID, float progress) {
+2237:         public void watching(VideoDbInfo videoInfo, float progress) {
+2242:         public void watchingStop(VideoDbInfo videoInfo, float progress) {
+2249:         public void watchingPause(VideoDbInfo videoInfo, float progress) {
+2254:         public void markAs(VideoDbInfo videoInfo, String traktAction) {
+2259:         public void wipe() {
+2264:         public void wipeCollection() {
+2269:         public void fullSync() {
+2275:         public void sync(int flag) {
+2282:         public void forcePush() {
+2288:         public void forcePull() {
+2295:     public static void sync(Context context, int flag) {
+2302:     public static void onNewVideo(Context context) {
+2311:     public static void syncAtStart(Context context) {
+2316:     private void addListener() {
+2325:     private void removeListener() {
+2335:     public void onStop(LifecycleOwner owner) {
+2344:     public void onStart(LifecycleOwner owner) {
+
+src/com/archos/medialib/IMediaMetadataRetriever.java SHA256 71ece5f8917ba425828298160baf0fb11e6c544c5519b4463924af2987bd9575
+26: public interface IMediaMetadataRetriever {
+28:     public static final int TYPE_AVOS = 0;
+29:     public static final int TYPE_ANDROID = 1;
+30:     public int getType();
+40:     public void setDataSource(String path) throws IllegalArgumentException;
+51:     public void setDataSource(String uri,  Map<String, String> headers)
+67:     public void setDataSource(FileDescriptor fd, long offset, long length)
+79:     public void setDataSource(FileDescriptor fd)
+92:     public void setDataSource(Context context, Uri uri)
+106:     public String extractMetadata(int keyCode);
+108:     public MediaMetadata getMediaMetadata();
+139:     public Bitmap getFrameAtTime(long timeUs, int option);
+161:     public Bitmap getFrameAtTime(long timeUs);
+177:     public Bitmap getFrameAtTime();
+187:     public byte[] getEmbeddedPicture();
+194:     public void release() throws IOException;
+212:     public static final int OPTION_PREVIOUS_SYNC    = MediaMetadataRetriever.OPTION_PREVIOUS_SYNC;
+220:     public static final int OPTION_NEXT_SYNC        = MediaMetadataRetriever.OPTION_NEXT_SYNC;
+228:     public static final int OPTION_CLOSEST_SYNC     = MediaMetadataRetriever.OPTION_CLOSEST_SYNC;
+236:     public static final int OPTION_CLOSEST          = MediaMetadataRetriever.OPTION_CLOSEST;
+246:     public static final int METADATA_KEY_CD_TRACK_NUMBER = MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER;
+251:     public static final int METADATA_KEY_ALBUM           = MediaMetadataRetriever.METADATA_KEY_ALBUM;
+256:     public static final int METADATA_KEY_ARTIST          = MediaMetadataRetriever.METADATA_KEY_ARTIST;
+261:     public static final int METADATA_KEY_AUTHOR          = MediaMetadataRetriever.METADATA_KEY_AUTHOR;
+266:     public static final int METADATA_KEY_COMPOSER        = MediaMetadataRetriever.METADATA_KEY_COMPOSER;
+271:     public static final int METADATA_KEY_DATE            = MediaMetadataRetriever.METADATA_KEY_DATE;
+276:     public static final int METADATA_KEY_GENRE           = MediaMetadataRetriever.METADATA_KEY_GENRE;
+280:     public static final int METADATA_KEY_TITLE           = MediaMetadataRetriever.METADATA_KEY_TITLE;
+285:     public static final int METADATA_KEY_YEAR            = MediaMetadataRetriever.METADATA_KEY_YEAR;
+289:     public static final int METADATA_KEY_DURATION        = MediaMetadataRetriever.METADATA_KEY_DURATION;
+294:     public static final int METADATA_KEY_NUM_TRACKS      = MediaMetadataRetriever.METADATA_KEY_NUM_TRACKS;
+299:     public static final int METADATA_KEY_WRITER          = MediaMetadataRetriever.METADATA_KEY_WRITER;
+305:     public static final int METADATA_KEY_MIMETYPE        = MediaMetadataRetriever.METADATA_KEY_MIMETYPE;
+310:     public static final int METADATA_KEY_ALBUMARTIST     = MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST;
+315:     public static final int METADATA_KEY_DISC_NUMBER     = MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER;
+319:     public static final int METADATA_KEY_COMPILATION     = MediaMetadataRetriever.METADATA_KEY_COMPILATION;
+323:     public static final int METADATA_KEY_HAS_AUDIO       = MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO;
+327:     public static final int METADATA_KEY_HAS_VIDEO       = MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO;
+331:     public static final int METADATA_KEY_VIDEO_WIDTH     = MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH;
+335:     public static final int METADATA_KEY_VIDEO_HEIGHT    = MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT;
+339:     public static final int METADATA_KEY_BITRATE         = MediaMetadataRetriever.METADATA_KEY_BITRATE;
+346:     public static final int METADATA_KEY_TIMED_TEXT_LANGUAGES      = 21 /*MediaMetadataRetriever.METADATA_KEY_TIMED_TEXT_LANGUAGES*/;
+351:     public static final int METADATA_KEY_IS_DRM          = 22 /*MediaMetadataRetriever.METADATA_KEY_IS_DRM*/;
+358:     public static final int METADATA_KEY_LOCATION        = MediaMetadataRetriever.METADATA_KEY_LOCATION;
+365:     public static final int METADATA_KEY_SAMPLE_RATE     = 24;
+369:     public static final int METADATA_KEY_NUMBER_OF_CHANNELS = 25;
+373:     public static final int METADATA_KEY_AUDIO_WAVE_CODEC = 26;
+377:     public static final int METADATA_KEY_AUDIO_BITRATE = 27;
+381:     public static final int METADATA_KEY_VIDEO_FOURCC_CODEC = 28;
+385:     public static final int METADATA_KEY_VIDEO_BITRATE = 29;
+389:     public static final int METADATA_KEY_FRAMES_PER_THOUSAND_SECONDS = 30;
+393:     public static final int METADATA_KEY_ENCODING_PROFILE = 31;
+397:     public static final int METADATA_KEY_FILE_SIZE = 32;
+399:     public static final int METADATA_KEY_NB_VIDEO_TRACK     = 9000;
+401:     public static final int METADATA_KEY_NB_AUDIO_TRACK     = 9001;
+403:     public static final int METADATA_KEY_NB_SUBTITLE_TRACK  = 9002;
+405:     public static final int METADATA_KEY_VIDEO_TRACK        = 10000;
+407:     public static final int METADATA_KEY_AUDIO_TRACK        = 20000;
+409:     public static final int METADATA_KEY_SUBTITLE_TRACK     = 30000;
+411:     public static final int METADATA_KEY_VIDEO_TRACK_FORMAT         = 0;
+412:     public static final int METADATA_KEY_VIDEO_TRACK_WIDTH          = 1;
+413:     public static final int METADATA_KEY_VIDEO_TRACK_HEIGHT         = 2;
+414:     public static final int METADATA_KEY_VIDEO_TRACK_ASPECT_N       = 3;
+415:     public static final int METADATA_KEY_VIDEO_TRACK_ASPECT_D       = 4;
+416:     public static final int METADATA_KEY_VIDEO_TRACK_PIXEL_FORMAT   = 5;
+417:     public static final int METADATA_KEY_VIDEO_TRACK_PROFILE        = 6;
+418:     public static final int METADATA_KEY_VIDEO_TRACK_LEVEL          = 7;
+419:     public static final int METADATA_KEY_VIDEO_TRACK_BIT_RATE       = 8;
+420:     public static final int METADATA_KEY_VIDEO_TRACK_FPS            = 9;
+421:     public static final int METADATA_KEY_VIDEO_TRACK_S3D_MODE       = 10;
+422:     public static final int METADATA_KEY_VIDEO_TRACK_FPS_RATE       = 11;
+423:     public static final int METADATA_KEY_VIDEO_TRACK_FPS_SCALE      = 12;
+424:     public static final int METADATA_KEY_VIDEO_TRACK_COLOR_TRC = 13;
+425:     public static final int METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE = 14;
+426:     public static final int METADATA_KEY_VIDEO_TRACK_DOVI_COMPAT = 16;
+427:     public static final int METADATA_KEY_VIDEO_TRACK_HDR10_PLUS = 15;
+428:     public static final int METADATA_KEY_VIDEO_TRACK_MAX = 17;
+430:     public static final int METADATA_KEY_AUDIO_TRACK_NAME           = 0;
+431:     public static final int METADATA_KEY_AUDIO_TRACK_FORMAT         = 1;
+432:     public static final int METADATA_KEY_AUDIO_TRACK_BIT_RATE       = 2;
+433:     public static final int METADATA_KEY_AUDIO_TRACK_SAMPLE_RATE    = 3;
+434:     public static final int METADATA_KEY_AUDIO_TRACK_CHANNELS       = 4;
+435:     public static final int METADATA_KEY_AUDIO_TRACK_VBR            = 5;
+436:     public static final int METADATA_KEY_AUDIO_TRACK_SUPPORTED      = 6;
+437:     public static final int METADATA_KEY_AUDIO_TRACK_LANGUAGE       = 7;
+438:     public static final int METADATA_KEY_AUDIO_TRACK_DISPOSITION    = 8;
+439:     public static final int METADATA_KEY_AUDIO_TRACK_MAX            = 9;
+441:     public static final int METADATA_KEY_SUBTITLE_TRACK_NAME        = 0;
+442:     public static final int METADATA_KEY_SUBTITLE_TRACK_PATH        = 1;
+443:     public static final int METADATA_KEY_SUBTITLE_TRACK_IS_GFX      = 2;
+444:     public static final int METADATA_KEY_SUBTITLE_TRACK_FORMAT      = 3;
+445:     public static final int METADATA_KEY_SUBTITLE_TRACK_LANGUAGE    = 4;
+446:     public static final int METADATA_KEY_SUBTITLE_TRACK_DISPOSITION = 5;
+447:     public static final int METADATA_KEY_SUBTITLE_TRACK_MAX         = 6;
+
+src/com/archos/medialib/IMediaPlayer.java SHA256 4c62435554292094d85b487e4a4cdb7e2cc37ad9ef0eefaa67a0ff96b354cfd4
+29: public interface IMediaPlayer {
+31:     public static final boolean METADATA_UPDATE_ONLY = true;
+33:     public static final boolean METADATA_ALL = false;
+35:     public static final boolean APPLY_METADATA_FILTER = true;
+37:     public static final boolean BYPASS_METADATA_FILTER = false;
+39:     public static final int TYPE_AVOS = 0;
+40:     public static final int TYPE_ANDROID = 1;
+41:     public int getType();
+43:     public void setDisplay(SurfaceHolder sh);
+45:     public void setSurface(Surface surface);
+47:     public void setDataSource(Context context, Uri uri) throws IOException, IllegalArgumentException,
+50:     public void setDataSource(Context context, Uri uri, Map<String, String> headers)throws IOException, IllegalArgumentException,
+53:     public void setDataSource(String path) throws IOException, IllegalArgumentException,
+56:     public void setDataSource2(String path, Map<String, String> headers) throws IOException,
+59:     public void setDataSource(FileDescriptor fd) throws IOException, IllegalArgumentException,
+62:     public void setDataSource(FileDescriptor fd, long offset, long length) throws IOException,
+65:     public void prepare() throws IOException, IllegalStateException;
+67:     public void prepareAsync() throws IllegalStateException;
+69:     public void start() throws IllegalStateException;
+71:     public void stop() throws IllegalStateException;
+73:     public void pause() throws IllegalStateException;
+75:     public void setWakeMode(Context context, int mode);
+77:     public void setScreenOnWhilePlaying(boolean screenOn);
+79:     public boolean isPlaying();
+81:     public void seekTo(int msec) throws IllegalStateException;
+83:     public boolean setStartTime(int msec);
+85:     public int getCurrentPosition();
+87:     public int getDuration();
+89:     public MediaMetadata getMediaMetadata(final boolean update_only, final boolean apply_filter);
+91:     public void release();
+93:     public void reset();
+95:     public void setAudioStreamType(int streamtype);
+97:     public void setLooping(boolean looping);
+99:     public boolean isLooping();
+101:     public void setVolume(float leftVolume, float rightVolume);
+103:     public boolean setAudioTrack(int stream) throws IllegalStateException;
+105:     public void refreshAudioOutput() throws IllegalStateException;
+107:     public void checkSubtitles() throws IllegalStateException;
+109:     public boolean setSubtitleTrack(int stream) throws IllegalStateException;
+111:     public void setSubtitleDelay(int delay) throws IllegalStateException;
+113:     public void setSubtitleRatio(int n, int d) throws IllegalStateException;
+115:     public void setAudioFilter(int n, int nightOn) throws IllegalStateException;
+117:     public void setAvDelay(int delay) throws IllegalStateException;
+119:     public void setAvSpeed(float speed) throws IllegalStateException;
+121:     public void setNextTrack(String path) throws IllegalStateException;
+123:     public void setOnPreparedListener(OnPreparedListener listener);
+124:     public void setOnCompletionListener(OnCompletionListener listener);
+125:     public void setOnInfoListener(OnInfoListener listener);
+126:     public void setOnErrorListener(OnErrorListener listener);
+127:     public void setOnBufferingUpdateListener(OnBufferingUpdateListener listener);
+128:     public void setOnRelativePositionUpdateListener(OnRelativePositionUpdateListener listener);
+129:     public void setOnSeekCompleteListener(OnSeekCompleteListener listener);
+130:     public void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener);
+131:     public void setOnSubtitleListener(OnSubtitleListener listener);
+132:     public void setOnNextTrackListener(OnNextTrackListener listener);
+133:     public int  getAudioSessionId();
+138:     public interface OnPreparedListener {
+139:         public void onPrepared(IMediaPlayer mp);
+142:     public interface OnCompletionListener {
+143:         public void onCompletion(IMediaPlayer mp);
+146:     public interface OnInfoListener {
+147:         public boolean onInfo(IMediaPlayer mp, int what, int extra);
+150:     public interface OnErrorListener {
+151:         public boolean onError(IMediaPlayer mp, int errorCode, int errorQualCode, String msg);
+154:     public interface OnBufferingUpdateListener {
+155:         public void onBufferingUpdate(IMediaPlayer mp, int percent);
+158:     public interface OnRelativePositionUpdateListener {
+159:         public void onRelativePositionUpdate(IMediaPlayer mp, int permil);
+162:     public interface OnSeekCompleteListener {
+163:         public void onSeekComplete(IMediaPlayer mp);
+164:         public void onAllSeekComplete(IMediaPlayer mp);
+167:     public interface OnVideoSizeChangedListener {
+168:         public void onVideoSizeChanged(IMediaPlayer mp, int width, int height);
+169:         public void onVideoAspectChanged(IMediaPlayer mp, double aspect);
+172:     public interface OnSubtitleListener  {
+173:         public void onSubtitle(IMediaPlayer mp, Subtitle subtitle);
+176:     public interface OnNextTrackListener {
+177:         public void onNextTrack(IMediaPlayer mp);
+182:     public static final int MEDIA_ERROR_UNKNOWN = MediaPlayer.MEDIA_ERROR_UNKNOWN;
+184:     public static final int MEDIA_ERROR_SERVER_DIED = MediaPlayer.MEDIA_ERROR_SERVER_DIED;
+186:     public static final int MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK = MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK;
+190:     public static final int MEDIA_INFO_UNKNOWN = MediaPlayer.MEDIA_INFO_UNKNOWN;
+192:     public static final int MEDIA_INFO_VIDEO_TRACK_LAGGING = MediaPlayer.MEDIA_INFO_VIDEO_TRACK_LAGGING;
+194:     public static final int MEDIA_INFO_BUFFERING_START = MediaPlayer.MEDIA_INFO_BUFFERING_START;
+196:     public static final int MEDIA_INFO_BUFFERING_END = MediaPlayer.MEDIA_INFO_BUFFERING_END;
+198:     public static final int MEDIA_INFO_BAD_INTERLEAVING = MediaPlayer.MEDIA_INFO_BAD_INTERLEAVING;
+200:     public static final int MEDIA_INFO_NOT_SEEKABLE = MediaPlayer.MEDIA_INFO_NOT_SEEKABLE;
+202:     public static final int MEDIA_INFO_METADATA_UPDATE = MediaPlayer.MEDIA_INFO_METADATA_UPDATE;
+205:     public static final int MEDIA_INFO_AUDIO_SPEED_APPLIED = 803;
+208:     public static final int MEDIA_INFO_AUDIO_TRACK_APPLIED = 10001;
+209:     public static final int MEDIA_INFO_AUDIO_TRACK_FAILED = 10002;
+210:     public static final int MEDIA_INFO_SUBTITLE_TRACK_APPLIED = 10003;
+211:     public static final int MEDIA_INFO_SUBTITLE_TRACK_FAILED = 10004;
+215:     public static final int MEDIA_ERROR_VE_NO_ERROR = 1000;
+217:     public static final int MEDIA_ERROR_VE_FILE_ERROR = 1001;
+219:     public static final int MEDIA_ERROR_VE_ERROR = 1002;
+221:     public static final int MEDIA_ERROR_VE_CONNECTION_ERROR = 1003;
+223:     public static final int MEDIA_ERROR_VE_USER_ABORT = 1004;
+225:     public static final int MEDIA_ERROR_VE_VIDEO_NOT_SUPPORTED = 1005;
+227:     public static final int MEDIA_ERROR_VE_AUDIO_NOT_SUPPORTED = 1006;
+229:     public static final int MEDIA_ERROR_VE_VIDEO_NOT_ALLOWED = 1007;
+231:     public static final int MEDIA_ERROR_VE_AUDIO_NOT_ALLOWED = 1008;
+233:     public static final int MEDIA_ERROR_VE_TOO_BIG_FOR_STREAM = 1009;
+235:     public static final int MEDIA_ERROR_VE_TOO_BIG_FOR_CODEC = 1010;
+237:     public static final int MEDIA_ERROR_VE_NOT_INTERLEAVED = 1011;
+239:     public static final int MEDIA_ERROR_VE_CRYPTED = 1012;
+241:     public static final int MEDIA_ERROR_VE_MAX = 1012;
+245:     public static final int MEDIA_ERROR_VEQ_NONE = 1000;
+247:     public static final int MEDIA_ERROR_VEQ_MPG4_UNSUPPORTED = 1001;
+249:     public static final int MEDIA_ERROR_VEQ_PROFILE_AND_LEVEL_UNSUPPORTED = 1002;
+251:     public static final int MEDIA_ERROR_VEQ_AUDIO_PROFILE_AND_LEVEL_UNSUPPORTED = 1003;
+253:     public static final int MEDIA_ERROR_VEQ_INTERLACED_NOT_SUPPORTED = 1004;
+255:     public static final int MEDIA_ERROR_VEQ_SEE_DESCRIPTION = 1005;
+257:     public static final int MEDIA_ERROR_VEQ_MAX = 1005;
+266:     public static final int METADATA_KEY_PAUSE_AVAILABLE         = 1; // Boolean
+270:     public static final int METADATA_KEY_SEEK_BACKWARD_AVAILABLE = 2; // Boolean
+274:     public static final int METADATA_KEY_SEEK_FORWARD_AVAILABLE  = 3; // Boolean
+278:     public static final int METADATA_KEY_SEEK_AVAILABLE          = 4; // Boolean
+282:     public static final int METADATA_KEY_TITLE                   = 5; // String
+284:     public static final int METADATA_KEY_COMMENT                 = 6; // String
+286:     public static final int METADATA_KEY_COPYRIGHT               = 7; // String
+288:     public static final int METADATA_KEY_ALBUM                   = 8; // String
+290:     public static final int METADATA_KEY_ARTIST                  = 9; // String
+292:     public static final int METADATA_KEY_AUTHOR                  = 10; // String
+294:     public static final int METADATA_KEY_COMPOSER                = 11; // String
+296:     public static final int METADATA_KEY_GENRE                   = 12; // String
+298:     public static final int METADATA_KEY_DATE                    = 13; // Date
+300:     public static final int METADATA_KEY_DURATION                = 14; // Integer(millisec)
+302:     public static final int METADATA_KEY_CD_TRACK_NUM            = 15; // Integer 1-based
+304:     public static final int METADATA_KEY_CD_TRACK_MAX            = 16; // Integer
+306:     public static final int METADATA_KEY_RATING                  = 17; // String
+308:     public static final int METADATA_KEY_ALBUM_ART               = 18; // byte[]
+310:     public static final int METADATA_KEY_VIDEO_FRAME             = 19; // Bitmap
+312:     public static final int METADATA_KEY_BIT_RATE                = 20; // Integer, Aggregate rate of
+315:     public static final int METADATA_KEY_AUDIO_BIT_RATE          = 21; // Integer, bps
+317:     public static final int METADATA_KEY_VIDEO_BIT_RATE          = 22; // Integer, bps
+319:     public static final int METADATA_KEY_AUDIO_SAMPLE_RATE       = 23; // Integer, Hz
+321:     public static final int METADATA_KEY_VIDEO_FRAME_RATE        = 24; // Integer, Hz
+325:     public static final int METADATA_KEY_MIME_TYPE               = 25; // String
+327:     public static final int METADATA_KEY_AUDIO_CODEC             = 26; // String
+329:     public static final int METADATA_KEY_VIDEO_CODEC             = 27; // String
+331:     public static final int METADATA_KEY_VIDEO_HEIGHT            = 28; // Integer
+333:     public static final int METADATA_KEY_VIDEO_WIDTH             = 29; // Integer
+335:     public static final int METADATA_KEY_NUM_TRACKS              = 30; // Integer
+337:     public static final int METADATA_KEY_DRM_CRIPPLED            = 31; // Boolean
+340:     public static final int METADATA_ANY = 0;
+341:     public static final int METADATA_FIRST_CUSTOM = 8192;
+344:     public static final int METADATA_KEY_FILE_SIZE               = 8200; // Integer64
+345:     public static final int METADATA_KEY_CURRENT_AUDIO_TRACK     = 8201; // Integer
+346:     public static final int METADATA_KEY_CURRENT_SUBTITLE_TRACK  = 8202; // Integer
+348:     public static final int METADATA_KEY_NB_VIDEO_TRACK = 9000;
+349:     public static final int METADATA_KEY_NB_AUDIO_TRACK = 9001;
+350:     public static final int METADATA_KEY_NB_SUBTITLE_TRACK = 9002;
+352:     public static final int METADATA_KEY_VIDEO_TRACK = 10000;
+353:     public static final int METADATA_KEY_VIDEO_TRACK_FORMAT = 0;
+354:     public static final int METADATA_KEY_VIDEO_TRACK_WIDTH = 1;
+355:     public static final int METADATA_KEY_VIDEO_TRACK_HEIGHT = 2;
+356:     public static final int METADATA_KEY_VIDEO_TRACK_ASPECT_N = 3;
+357:     public static final int METADATA_KEY_VIDEO_TRACK_ASPECT_D = 4;
+358:     public static final int METADATA_KEY_VIDEO_TRACK_PIXEL_FORMAT = 5;
+359:     public static final int METADATA_KEY_VIDEO_TRACK_PROFILE = 6;
+360:     public static final int METADATA_KEY_VIDEO_TRACK_LEVEL = 7;
+361:     public static final int METADATA_KEY_VIDEO_TRACK_BIT_RATE = 8;
+362:     public static final int METADATA_KEY_VIDEO_TRACK_FPS = 9;
+363:     public static final int METADATA_KEY_VIDEO_TRACK_S3D = 10;
+364:     public static final int METADATA_KEY_VIDEO_TRACK_DECODER = 11;
+365:     public static final int METADATA_KEY_VIDEO_TRACK_FPS_RATE = 12;
+366:     public static final int METADATA_KEY_VIDEO_TRACK_FPS_SCALE = 13;
+367:     public static final int METADATA_KEY_VIDEO_TRACK_COLOR_TRC = 14;
+368:     public static final int METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE = 15;
+369:     public static final int METADATA_KEY_VIDEO_TRACK_DOVI_COMPAT = 17;
+370:     public static final int METADATA_KEY_VIDEO_TRACK_HDR10_PLUS = 16;
+371:     public static final int METADATA_KEY_VIDEO_TRACK_MAX = 18;
+373:     public static final int METADATA_KEY_AUDIO_TRACK = 20000;
+374:     public static final int METADATA_KEY_AUDIO_TRACK_NAME = 0;
+375:     public static final int METADATA_KEY_AUDIO_TRACK_FORMAT = 1;
+376:     public static final int METADATA_KEY_AUDIO_TRACK_BIT_RATE = 2;
+377:     public static final int METADATA_KEY_AUDIO_TRACK_SAMPLE_RATE = 3;
+378:     public static final int METADATA_KEY_AUDIO_TRACK_CHANNELS = 4;
+379:     public static final int METADATA_KEY_AUDIO_TRACK_VBR = 5;
+380:     public static final int METADATA_KEY_AUDIO_TRACK_SUPPORTED = 6;
+381:     public static final int METADATA_KEY_AUDIO_TRACK_LANGUAGE = 7;
+382:     public static final int METADATA_KEY_AUDIO_TRACK_DISPOSITION = 8;
+383:     public static final int METADATA_KEY_AUDIO_TRACK_MAX = 9;
+385:     public static final int METADATA_KEY_SUBTITLE_TRACK = 30000;
+386:     public static final int METADATA_KEY_SUBTITLE_TRACK_NAME = 0;
+387:     public static final int METADATA_KEY_SUBTITLE_TRACK_PATH = 1;
+388:     public static final int METADATA_KEY_SUBTITLE_TRACK_IS_GFX = 2;
+389:     public static final int METADATA_KEY_SUBTITLE_TRACK_FORMAT = 3;
+390:     public static final int METADATA_KEY_SUBTITLE_TRACK_LANGUAGE = 4;
+391:     public static final int METADATA_KEY_SUBTITLE_TRACK_DISPOSITION = 5;
+392:     public static final int METADATA_KEY_SUBTITLE_TRACK_MAX = 6;
+
+src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java SHA256 922e6390992f6d82f9fa09172784f0f0ce55c305d37b776c318470bf6b647684
+10: public final class SupernovaLibraryPolicy {
+11:     public static final String HEALTH="supernova_library_health_v1";
+12:     public static boolean retainsRecords(Context c){return c!=null&&"app.supernova.player".equals(c.getPackageName());}
+13:     public static boolean configured(Context c){return !retainsRecords(c)||PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_onboarding_complete",false);}
+15:     public static void initialiseSetup(Context context){
+29:     public static String canonical(Uri uri){
+40:     public static boolean contains(String parent,String child){return parent.equals(child)||child.startsWith(parent.endsWith("/")?parent:parent+"/");}
+42:     public static Set<Uri> historicalLocalRoots(Context context){
+50:     public static Uri localRoot(Uri location){
+58:     public static boolean excluded(Context c,Uri uri){
+69:     public static void availability(Context c,long id,Uri uri,boolean missing){
+76:     public static void sourceAvailable(Context c,Uri root,boolean available){
+82:     public static void sourceProblem(Context c,Uri uri){if(retainsRecords(c)&&uri!=null)c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).edit().putLong("problem:"+canonical(uri),System.currentTimeMillis()).apply();}
+83:     private SupernovaLibraryPolicy(){}
+
+src/com/archos/mediaprovider/video/SupernovaViewingPolicy.java SHA256 54dc376c25896c451c8a7e7afdae2ab2ef2ed7b9c03777a53b2db99c05556dd0
+6: public final class SupernovaViewingPolicy {
+7:  public static boolean eligible(Context c,long id){
+12:  private SupernovaViewingPolicy(){}
+
+src/com/archos/mediacenter/utils/trakt/Trakt.java SHA256 9dfd48134fdeb66736d3db05276c84a33b71722724728e95ddf69f6cbbbbaea2
+78: public class Trakt {
+79:     private static final Logger log = LoggerFactory.getLogger(Trakt.class);
+81:     public static final long ASK_RELOG_FREQUENCY = 1000 * 60 * 60 * 6; // every 6 hours
+82:     public static long sLastTraktRefreshToken = 0; //will be set by activities, representing last time a user has been asked to log again in trakt;
+83:     public static final String TRAKT_ISSUE_REFRESH_TOKEN = "TRAKT_ISSUE_REFRESH_TOKEN";
+86:     public static final int SCROBBLE_THRESHOLD = 90;
+88:     public static final float RESUME_THRESHOLD_PERCENT = 1.0f;
+90:     public static final int RESUME_THRESHOLD_MS = 30000;
+92:     public static final int PLAYBACK_HISTORY_SIZE = 200;
+99:     public static final String ACTION_LIBRARY = "library";
+100:     public static final String ACTION_UNLIBRARY = "unlibrary";
+101:     public static final String ACTION_SEEN = "seen";
+102:     public static final String ACTION_UNSEEN = "unseen";
+103:     public static final String ACTIONS[] = new String[]{ACTION_LIBRARY, ACTION_UNLIBRARY, ACTION_SEEN, ACTION_UNSEEN};
+105:     public static final String LIBRARY_COLLECTION = "collection";
+106:     public static final String LIBRARY_WATCHED = "watched";
+107:     public static final String LIBRARIES[] = new String[]{LIBRARY_COLLECTION, LIBRARY_WATCHED};
+109:     public static final String KEY_TRAKT_USER = "trakt_user";
+110:     public static final String KEY_TRAKT_SHA1 = "trakt_sha1";
+111:     public static final String KEY_TRAKT_ACCESS_TOKEN = "trakt_access_token";
+112:     public static final String KEY_TRAKT_LIVE_SCROBBLING = "trakt_live_scrobbling";
+120:     public static final int TRAKT_DB_MARKED = 1;
+121:     public static final int TRAKT_DB_UNMARK = 2;
+123:     public static final int WATCHING_DELAY_MS = 600000; // 10 min
+140:         public MyTraktV2(String apiKey) {
+144:         public MyTraktV2(String apiKey, String clientSecret, String redirectUri) {
+149:         protected void setOkHttpClientDefaults(OkHttpClient.Builder builder) {
+151:             if (log.isTraceEnabled()) {
+161:     public static void initApiKeys(Context context){
+166:     static public String getAction(String library) {
+174:     static public String getAction(String library, boolean toMark) {
+187:         public void notify(Result result) {
+188:             synchronized (this) {
+194:         public Result waitResult() {
+195:             synchronized (this) {
+207:     public static class Result {
+208:         public final Status status;
+209:         public final Object obj;
+210:         public final ObjectType objType;
+212:         public static enum ObjectType  {
+223:         public Result(Status status, Object obj, ObjectType objType) {
+228:         public static Result get(Status status) {
+231:         public static Result getSuccess() {
+234:         public static Result getError() {
+237:         public static Result getErrorNetwork() {
+240:         public static Result getAsync() {
+244:     public static enum Status {
+254:     public interface Listener {
+255:         public void onResult(Result result);
+258:     private static MyTraktV2 getTraktV2() {
+264:     public Trakt(Context context) {
+279:     public void setListener(Listener listener) {
+282:     public static OAuthClientRequest getAuthorizationRequest(SharedPreferences pref) throws OAuthSystemException{
+287:     public static OAuthClientRequest getAuthorizationRequestWithState(SharedPreferences pref, String state) throws OAuthSystemException {
+291:     public static OAuthClientRequest getAuthorizationRequestWithState(String state) throws OAuthSystemException {
+300:     public static class accessToken {
+301:         public String access_token;
+302:         public String refresh_token;
+306:     public static class deviceCode {
+307:         public String device_code;
+308:         public String user_code;
+309:         public String verification_url;
+310:         public int expires_in;
+311:         public int interval;
+314:     public static class InvalidDeviceCodeResponseError extends Exception {
+317:     private static boolean isBlank(String value) {
+321:     public static accessToken getAccessToken(String code) throws AccountLockedError, ForbiddenError, ServiceUnavailableError {
+356:     public static deviceCode generateDeviceCode() throws AccountLockedError, ForbiddenError, ServiceUnavailableError, InvalidDeviceCodeResponseError {
+398:     public static accessToken exchangeDeviceCodeForAccessToken(String deviceCode) throws AccountLockedError, ForbiddenError, ServiceUnavailableError {
+423:     private Result handleRet(CallbackLock lock, Exception error, Object object, Result.ObjectType objectType) {
+463:     public static String getDateFormat(long currentTimeSecond) { // return UTC/GMT time from epoch seconds
+475:     public Result markAs(final String action, final SyncItems param, final boolean isShow, final int trial){
+492:     public Result markAs(final String action, SyncItems param, boolean isShow) {
+496:     public Result markAs(final String action, VideoDbInfo videoInfo) {
+527:     public Result removeFromLibrary(VideoDbInfo videoInfo) {
+531:     public Result markAsSeen(VideoDbInfo videoInfo) {
+535:     public Result markAsUnseen(VideoDbInfo videoInfo) {
+539:     private void cleanWatching() {
+543:     private AuthParam fillParam(VideoDbInfo videoInfo) {
+558:     public Result postWatchingStop(final VideoDbInfo videoInfo, float progress) {
+562:     public Result postWatchingPause(final VideoDbInfo videoInfo, float progress) {
+566:     public Result postWatching(VideoDbInfo videoInfo, float progress){
+570:     public Result postWatching(final String action,final VideoDbInfo videoInfo, final float progress, final int trial) {
+658:     public static void setRefreshToken(SharedPreferences sharedPreferences, String refreshToken) {
+669:     private String getRefreshTokenFromPreferences(SharedPreferences defaultSharedPreferences) {
+673:     private boolean refreshAccessToken() {
+709:     public Result getAllShows(String library) {
+713:     private Result getAllShows(String library, int trial){
+733:     public Result getPlaybackStatus(int trial){
+790:     public Result getWatchedStatus(int trial){
+846:     public Result getPlaybackStatus() {
+854:     public Result getPlaybackStatusFullHistory() {
+869:     public Result getWatchedStatusFullHistory() {
+883:     public Result getWatchedStatus() {
+887:     public Result getAllMovies(String library, boolean sync) {
+891:     public static class AuthentificationError extends Exception{};
+892:     public static class AccountLockedError extends Exception{};
+893:     public static class ForbiddenError extends Exception{};
+894:     public static class ServiceUnavailableError extends Exception{};
+896:     public <T> T exec(retrofit2.Call<T> call) {
+900:     public <T> T exec(retrofit2.Call<T> call, int remaining) {
+942:     public Result getAllMovies(final String library, int trial) {
+962:     public Result getLastActivity(int trial) {
+971:     public Result addList(int trial, String title) {
+983:     public Result deleteList(int trial, String id) {
+998:     public Result getLists(int trial) {
+1006:     public Result getListContent(int trial, int listId) {
+1022:     public Result removeVideoFromList(int trial, int listId, ListEntry onlineItem) {
+1043:     public Result addVideoToList(int trial, int listId, VideoStore.VideoList.VideoItem videoItem) {
+1071:     public Result getLastActivity() {
+1075:     public static String getXmlName(String action) {
+1079:     public static String getUserFromPreferences(SharedPreferences pref) {
+1083:     public static String getSha1FromPreferences(SharedPreferences pref) {
+1087:     public static void setLoginPreferences(SharedPreferences pref, String user, String sha1) {
+1099:     public static void setAccessToken(SharedPreferences pref, String accessToken) {
+1109:     public static String getAccessTokenFromPreferences(SharedPreferences pref) {
+1113:     public static boolean isTraktV1Enabled(Context context, SharedPreferences pref) {
+1117:     public static boolean isTraktV2Enabled(Context context, SharedPreferences pref) {
+1121:     public static boolean isLiveScrobblingEnabled(SharedPreferences pref) {
+1125:     public static int getFlagSyncPreference(SharedPreferences preferences) {
+1129:     public static boolean getSyncPlaybackPreference(SharedPreferences preferences) {
+1134:     public static long getLastTimeWatchedSync(SharedPreferences preferences) {
+1138:     public static void setLastTimeWatchedSync(SharedPreferences preferences, long utcSeconds) {
+1145:     private static final ThreadLocal<Long> lastPushedWatchedTime = new ThreadLocal<>();
+1147:     public static void resetLastPushedWatchedTime() {
+1151:     public static void updateLastPushedWatchedTime(long utcSeconds) {
+1158:     public static long getLastPushedWatchedTime() {
+1163:     public static boolean isAccountLocked(SharedPreferences preferences) {
+1167:     public static void setAccountLocked(SharedPreferences preferences, boolean locked) {
+1173:     public static boolean isFirstSyncDone(SharedPreferences preferences) {
+1177:     public static void setFirstSyncDone(SharedPreferences preferences, boolean done) {
+1187:     public static void disableTraktOnAccountLock(Context context, SharedPreferences preferences) {
+1201:     public static void clearTraktSyncState(Editor editor) {
+1224:     public static void setFlagSyncPreference(SharedPreferences preferences, int flag) {
+1233:     public static long getLastTimeShowWatched(SharedPreferences preferences) {
+1237:     public static void setLastTimeShowWatched(SharedPreferences preferences, long time) {
+1243:     public static long getLastTimeMovieWatched(SharedPreferences preferences) {
+1247:     public static void setLastTimeMovieWatched(SharedPreferences preferences, long time) {
+1253:     public static boolean getSyncCollection(SharedPreferences preferences) {
+1257:     public static void wipePreferences(SharedPreferences pref, boolean userChanged) {
+1273:     public static boolean shouldMarkAsSeen(float progress) {
+
+src/com/archos/mediaprovider/video/VideoProvider.java SHA256 4eab2222fddb0154287fa60043ff6df125494fdc8ba0466aff1ff5f155dd88bd
+92: public class VideoProvider extends ContentProvider implements DefaultLifecycleObserver {
+93:     private static final Logger log = LoggerFactory.getLogger(VideoProvider.class);
+121:     private static final ThreadLocal<Boolean> sIsImportThread = new ThreadLocal<>();
+122:     private static final AtomicLong sLastContentNotifyMs = new AtomicLong(0);
+130:     public static void setImportInProgress(boolean inProgress) {
+140:     private void notifyAllContentUri() {
+164:     public static final String PREFERENCE_CREATE_REMOTE_THUMBS = "pref_create_remote_thumbs";
+166:     public VideoProvider() { }
+169:     public boolean onCreate() {
+188:             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+206:                 public void propertyChange(PropertyChangeEvent evt) {
+208:                         if (log.isTraceEnabled()) log.trace("NetworkState for {} changed:{} -> {}", evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+218:             private static final int HDD_MEDIAPROVIDER_DELAY = (HDD_MEDIAPROVIDER_TIMEOUT + 2) * 1000;
+221:             public void handleMessage(Message msg) {
+223:                     synchronized (mMediaThumbQueue) {
+245:                             //    synchronized (mMediaThumbQueue) {
+267:                             synchronized (mCurrentThumbRequest) {
+280:     public Cursor query(Uri uri, String[] projectionIn, String selection, String[] selectionArgs,
+286:     public Cursor query(Uri uri, String[] projectionIn, String selection, String[] selectionArgs,
+394:     private static String[] combine(List<String> prepend, String[] userArgs) {
+416:     public String getType(Uri url) {
+452:     public Uri insert(Uri uri, ContentValues values) {
+527:     public ParcelFileDescriptor openFile(Uri uri, String mode)
+552:     private static ContentValues ensureFile(ContentValues initialValues,
+570:     private static boolean ensureFileExists(String path) {
+600:     private static String generateFileName(String preferredExtension, String directoryName) {
+607:     public int delete(Uri uri, String selection, String[] selectionArgs) {
+658:     public int update(Uri uri, ContentValues initialValues, String userWhere,
+750:         public void writeDataToPipe(ParcelFileDescriptor output, Uri uri, String mimeType, Bundle opts, byte[] args) {
+766:     private static void valuesRemove(ContentValues cv, String what) {
+794:         public GetTableAndWhereOutParameter() { /* empty */ }
+795:         public String table;
+796:         public String where;
+802:         protected GetTableAndWhereOutParameter initialValue() {
+807:     private static void getTableAndWhere(Uri uri, int match, String userWhere,
+863:     protected volatile MediaThumbRequest mCurrentThumbRequest = null;
+864:     protected final PriorityQueue<MediaThumbRequest> mMediaThumbQueue =
+868:     private boolean queryThumbnail(SQLiteQueryBuilder qb, Uri uri, String table,
+909:             synchronized (mMediaThumbQueue) {
+912:                     synchronized (mCurrentThumbRequest) {
+919:                         synchronized (mtq) {
+941:     private boolean waitForThumbnailReady(Uri origUri) {
+989:             synchronized (req) {
+1029:     private static boolean matchThumbRequest(MediaThumbRequest req, int pid, long id, long gid,
+1039:     private boolean hasThumbnailEntry(long videoId) {
+1060:     private MediaThumbRequest requestMediaThumbnail(String path, long id, Uri uri, int priority) {
+1061:         synchronized (mMediaThumbQueue) {
+1082:     private boolean hasPendingThumbRequest(String path, long id) {
+1094:     private boolean sameThumbRequest(MediaThumbRequest request, String path, long id) {
+1148:     public int bulkInsert(Uri uri, ContentValues[] values) {
+1202:     public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations)
+1254:     public static class MediaThumbRequest {
+1281:         private static final Random sRandom = new Random();
+1285:                 public int compare(MediaThumbRequest r1, MediaThumbRequest r2) {
+1392:         public static Bitmap createVideoThumbnail(Context ctx, String filePath, int kind) {
+1403:             public Result(){ }
+1404:             public void setBitmap(Bitmap bm){
+1408:         public static Bitmap createVideoThumbnail_(final Context ctx, final String filePath, int kind) {
+1415:                         public void run(){
+1432:                     e.printStackTrace();
+1441:                     public void run() {
+1469:                 e.printStackTrace();
+1499:     protected void handleForeGround(boolean foreground) {
+1515:             if (log.isTraceEnabled()) log.trace("handleForeGround: app now in BackGround");
+1526:     private void addNetworkListener() {
+1529:             if (log.isTraceEnabled()) log.trace("addNetworkListener: networkState.addPropertyChangeListener");
+1535:     private void removeNetworkListener() {
+1538:             if (log.isTraceEnabled()) log.trace("removeListener: networkState.removePropertyChangeListener");
+1545:     public void onStop(LifecycleOwner owner) {
+1553:     public void onStart(LifecycleOwner owner) {

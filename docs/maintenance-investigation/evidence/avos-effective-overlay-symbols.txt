@@ -1,0 +1,41 @@
+
+Include/audio_interface.h SHA256 35b1be9e9fb3ad2fa6adcb46747734ee69b30993114b43ba57cfd9247654a631
+
+Include/stream.h SHA256 2d4c194fc6b29b5597eeeb15b9c20f57374e2b4b205237968a5b8ff9490c255b
+
+Source/audio_interface.c SHA256 488498e0b6ae8d85a89b93bea25598e26c78d63410a6a8f30cc2cab37921d1b3
+
+Source/audio_interface_audiotrack_java.c SHA256 5679a445164b319275ac1d0a1e07c7f05eb9ed88ab33e9d91b42eee714f25c6c
+1886: 			// frontier. These counters are protected by the same mutex and the
+
+Source/codec_sfdec2.c SHA256 93be61c95a0c7bd9de59411505377aef0f0fc3eec749a2952fbf0a617443e8ff
+
+Source/stream.c SHA256 8017405a46a307c90a1b493f52607af2d2b9f22ecb9b8b8e1fec779d0503d7d0
+
+Source/stream_audio.c SHA256 6a3535ef3a5bc5482ed4ac6aba2185de844ea90ea402754715b22a4135442f63
+515: //	to ensure sink properties are properly synchronized with the source.
+2725: 					// A completed compressed unit and its public clock advance form one
+
+Source/stream_parser_ffmpeg.c SHA256 06f348d70aab4c7b0f98c6afd8916344accc45ceee0a53dfd584ed1b7bbdad2f
+
+Source/stream_sync.c SHA256 c487e1b143d2239af59f95927a276dfc09c440e9a3c66dffd79af0c2358dd793
+139: 	 * private mutex between this check and put_time().
+
+Source/stream_video.c SHA256 fec0679889e4208107dc4c99233d7d0b85e313dc5c0a1f6a610467a9760e1371
+
+doc/android_frame_timing.md SHA256 1c439d18b112e37ed3680019eccde8eca2023b6ade7a49800474c881a0d7f4da
+
+doc/delay_estimation.md SHA256 5a682f647a47fa6471edbdf94127b3d96ef7ca03a2e4eba73d2cdf6a85302fee
+
+doc/sync_anchoring_rules.md SHA256 477382b8f2ffd19d537a44bba2c9dc4465ea54a0900ea5d794acaffceecbbf1f
+
+Include/av.h SHA256 3441bd3e6c00b779a804986f1d723b35db2f34b0510fd758c67dc39e3429f834
+799: 	// These fields must be synchronized with IMAGE
+
+Source/avos_mp.c SHA256 fe34df115de65700236940fe3584e6edf2a9856b465521c075895408d33ddf74
+
+Source/avos_mr.c SHA256 fd7943a46494ce92dad8eac2c6df47a88929a1e4426cb9b086539c6297ace66b
+
+public/avos_mp_metadata.h SHA256 c54506227f7e60d9add507efdf877572b4e963ca0dc2cadb3e283f68cc35bdcf
+
+public/avos_mr_metadata.h SHA256 637b6cc2ba31153a543bcb0a0254e1c86cdfb6eb004e391021acad40d2403a0b

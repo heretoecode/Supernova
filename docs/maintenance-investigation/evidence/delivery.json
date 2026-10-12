@@ -1,0 +1,13 @@
+{
+  "branch": "docs/maintenance-investigation-2026-10",
+  "draft_pr": "https://github.com/heretoecode/Supernova/pull/15",
+  "base": "docs/nova-upstream-deep-audit-2026-10-11",
+  "investigated_source": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "video_common_baseline": "f53a1fc055d1d550a2edad4992bf82f9d12a7872",
+  "upstream_latest_release": "v6.5.5",
+  "upstream_avp_release_commit": "eacf19d5ff8de2e250f77a639dfe9c12429ed076",
+  "upstream_video_compared_head": "e394eda85058d076c1b85adf7b64a788068d2c8a",
+  "index": "https://github.com/heretoecode/Supernova/blob/docs/maintenance-investigation-2026-10/docs/maintenance-investigation/README.md",
+  "implementation_performed": false,
+  "runtime_portability_security_completion": "INCOMPLETE items in report15; no release readiness claim"
+}

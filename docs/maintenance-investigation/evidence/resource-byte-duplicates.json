@@ -1,0 +1,84 @@
+[
+  {
+    "blob": "55e41a45fbf3402ae67213e4eff2680aa7b4f003",
+    "bytes_each": 1516855,
+    "paths": [
+      "assets/branding/Supernova_Double_Ring_Final_Visual_Reference.png",
+      "res/drawable-nodpi/foundation_ring.png"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  },
+  {
+    "blob": "8a28d9ba94c0f98d489be5fb3db6d7be04c37603",
+    "bytes_each": 2006535,
+    "paths": [
+      "assets/branding/Supernova_Space_Black_Blend_4K_UHD.png",
+      "res/drawable-nodpi/foundation_space_black.png"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  },
+  {
+    "blob": "f29a25bd70f7846469b839221a4c87caab6ede8e",
+    "bytes_each": 843,
+    "paths": [
+      "res/drawable/video_format_arrow_horizontal_disabled.xml",
+      "res/drawable/video_format_arrow_horizontal_normal.xml"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  },
+  {
+    "blob": "9c04a8518cbfa2a3026e31ed759f24edcb59df8a",
+    "bytes_each": 386,
+    "paths": [
+      "res/layout-land/player_controller.xml",
+      "res/layout-sw500dp-notouch/player_controller.xml",
+      "res/layout-sw600dp/player_controller.xml"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  },
+  {
+    "blob": "e1fe0b53dfd7c822996f1c81d2ba6604d7c40d22",
+    "bytes_each": 2453,
+    "paths": [
+      "res/layout-sw500dp-notouch/subtitle_delay_picker.xml",
+      "res/layout/subtitle_delay_picker.xml"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  },
+  {
+    "blob": "3e5236c4bad4b46861398b259e7982c4a2f660b7",
+    "bytes_each": 604,
+    "paths": [
+      "res/layout/browser_item_list_server.xml",
+      "res/layout/browser_item_list_shortcut.xml"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  },
+  {
+    "blob": "636139f6471795647ff83289a2b2923814832ae0",
+    "bytes_each": 336,
+    "paths": [
+      "res/values-sw500dp-land-notouch/config.xml",
+      "res/values-sw600dp/config.xml"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  },
+  {
+    "blob": "7754b5810f920b61259d3736f1505f3067f9764a",
+    "bytes_each": 1214,
+    "paths": [
+      "res/values-sw500dp-land-notouch/video_info_dimens.xml",
+      "res/values-sw600dp/video_info_dimens.xml"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  },
+  {
+    "blob": "61eb0e536af764ee2a16b1e6d308b1f3133a6075",
+    "bytes_each": 845,
+    "paths": [
+      "res/values-sw500dp-land-notouch/widget_dimens.xml",
+      "res/values-sw600dp/widget_dimens.xml"
+    ],
+    "removal_status": "UNRESOLVED; byte identity is not unused-resource evidence"
+  }
+]
