@@ -81,3 +81,9 @@ Updated: 2026-10-13. Owner-approved planning and QA source of truth; **Customise
 - **0.139 implementation:** only after owner approves consolidated handover.
 - **Maintenance:** only after delivered 0.139 passes owner's smoke test and owner explicitly authorises.
 - Never mark a Codex-reported fix as owner-tested without owner evidence; don't assume removed UI implies removed code; don't silently alter approved visuals.
+
+
+## 2026-10-13 owner selection and backup investigation — latest override
+- Owner has now **approved the 41-item INCLUDE and 7-item EXCLUDE/PARK 0.139 feature/fix scope** documented in the [consolidated handover](2026-10-13-supernova-0139-consolidated-handover-scope.md). Earlier headings that describe all non-Customise Home fixes as merely candidates are historical; the **coding start, complete implementation handover and build remain separately gated**. No app code or merge is authorised by this documentation.
+- The owner additionally requested a **read-only comprehensive backup/restore Codex audit**, anchored in the existing maintenance report. See [canonical backup/restore audit brief](2026-10-13-backup-restore-audit-brief.md). The broader backup UI/format redesign remains **parked for 0.139 implementation** pending findings and explicit owner decision. New export reliability incident and no-artwork/granular/privacy decisions are documented, not implemented.
+- Hero 5 Movies/5 TV rotation policy is a newly refined **design proposal**, but 10-title policy implementation remains parked pending explicit re-inclusion.
