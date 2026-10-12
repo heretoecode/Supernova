@@ -222,3 +222,12 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - **Direction is NOT an inline D-pad spinner.** It is a **single-press OK toggle** between Ascending and Descending. Left icon represents sorting direction function (e.g. up/down arrows); middle label shows current value; **right icon is one arrow pointing up for Ascending or down for Descending**, changing immediately on OK. No redundant right-side chevrons, no extra edit mode or confirmation. Commit/persist the choice immediately so leaving focus retains it.
 - Sort By and Maximum Items continue to use OK→Up/Down cycle→OK commit/Back cancel, with function icon left and chevrons right. No layout shifts or row height changes when toggled/focused.
 - Design decisions only; no code implementation authorised.
+
+
+## 2026-10-12 Customise Home — focus, genre icon summary, neutral built-in copy
+- Owner reiterates **exactly one active focus target** at any time: row body OR independent Show/Hide eye button, never both. Row text retains its normal colour under focus; use border only, no cyan/blue recolouring of row label.
+- Owner likes descriptive label **Automatically include new matching media** for dynamic genre behaviour; keep it as the bottom setting for custom rows, subject to source semantics verification.
+- In the custom-row Genres summary, display **the individual monochrome icons of the actually selected genres**, preceding the selected genre names. E.g. Science Fiction icon + Action icon, then `Science Fiction, Action`, and `2 selected`. For many genres, compact overflow handling can be designed without losing the selected-count text. Do not use a single unrelated generic genre icon when specific selected icons are available.
+- Built-in Trending Movies explanatory description should be **content-neutral**, e.g. `Shows currently trending media based on your library activity`, rather than `Shows currently trending movies ...`; verify actual row population semantics before asserting it is library-activity-based.
+- The preceding generated mockup incorrectly showed two simultaneous focus outlines and built-in row edit controls; these are NOT approved. Built-in rows show contextual explanation, not editable custom-row fields; genre popup belongs only to a custom row.
+- Documentation only; no implementation authorised.
