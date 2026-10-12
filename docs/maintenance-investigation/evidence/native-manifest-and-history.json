@@ -1,0 +1,1915 @@
+{
+  "captured_utc": "2026-10-12T12:19:19.964930+00:00",
+  "release": "aos-AVP@eacf19d5ff8de2e250f77a639dfe9c12429ed076",
+  "projects": [
+    {
+      "repo": "nova-video-player/aos-AVP",
+      "path": "AVP",
+      "manifest_ref": "nova",
+      "observed_sha": "eacf19d5ff8de2e250f77a639dfe9c12429ed076",
+      "supernova_pin": "9c5842b74ab180c99441ed23fdd5d508448388a7",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "ahead",
+      "ahead_by": 4,
+      "behind_by": 0,
+      "total_commits": 4,
+      "commits": [
+        {
+          "sha": "ba6ebd5c3298b357fc58617a355f7775c1e6f4a3",
+          "subject": "add debug targets"
+        },
+        {
+          "sha": "4a12745cdc025e6728def64382e4a9ff7a70a521",
+          "subject": "remove libyuv since we are full ffmpeg swscale now"
+        },
+        {
+          "sha": "6d06c3d460a7d461c14ead8fba0e74d177dd0fa4",
+          "subject": "default manifest points to v6.4-lint branch"
+        },
+        {
+          "sha": "eacf19d5ff8de2e250f77a639dfe9c12429ed076",
+          "subject": "add opus include clean"
+        }
+      ],
+      "files": [
+        {
+          "path": "core.mk",
+          "status": "modified",
+          "changes": 63
+        },
+        {
+          "path": "v6_4.xml",
+          "status": "modified",
+          "changes": 9
+        }
+      ],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/aos-Video",
+      "path": "Video",
+      "manifest_ref": "v6.4-lint",
+      "observed_sha": "e394eda85058d076c1b85adf7b64a788068d2c8a",
+      "supernova_pin": "0651a3e0b60ada996a9774ab527d7c1ef34b7503",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance"
+    },
+    {
+      "repo": "nova-video-player/aos-MediaLib",
+      "path": "MediaLib",
+      "manifest_ref": "v6.4-lint",
+      "observed_sha": "34e319942e8f9df965bb7feae74e939e232f67c4",
+      "supernova_pin": "5758074049bc153ac4967b4ecd21886469270076",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance"
+    },
+    {
+      "repo": "nova-video-player/aos-FileCoreLibrary",
+      "path": "FileCoreLibrary",
+      "manifest_ref": "v6.4-lint",
+      "observed_sha": "93e560b086f60b0e5080267d18613749d4d6cd7b",
+      "supernova_pin": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance"
+    },
+    {
+      "repo": "nova-video-player/aos-avos",
+      "path": "native/avos",
+      "manifest_ref": "v6.4-lint",
+      "observed_sha": "08ac39b6fa21396044963bace7cc3d60fedff695",
+      "supernova_pin": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance"
+    },
+    {
+      "repo": "nova-video-player/aos-audiocompress",
+      "path": "native/audiocompress",
+      "manifest_ref": "master",
+      "observed_sha": "3a3f9324d2550bd305060e1c52b803121ea09aad",
+      "supernova_pin": "3a3f9324d2550bd305060e1c52b803121ea09aad",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/ffmpeg-android-builder-nobin",
+      "path": "native/ffmpeg-android-builder",
+      "manifest_ref": "v8_0",
+      "observed_sha": "fd7c9f9c3f63befedafc8a36b2da722f81b64aad",
+      "supernova_pin": "49b63bcec9125f96b327d055bfc49875c07f3ce4",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "ahead",
+      "ahead_by": 4,
+      "behind_by": 0,
+      "total_commits": 4,
+      "commits": [
+        {
+          "sha": "9e319d411727a2789ca77a57511711b698e29d2d",
+          "subject": "new atempo companion patch"
+        },
+        {
+          "sha": "b439f4b68ae9c6a86bcc1224dc7f31f0b86ebdac",
+          "subject": "add dependency to opus includes to allow rebuild"
+        },
+        {
+          "sha": "c1038a803201e43c1ae338a49e6f3b686a9dd9b9",
+          "subject": "add sofalizer patch"
+        },
+        {
+          "sha": "fd7c9f9c3f63befedafc8a36b2da722f81b64aad",
+          "subject": "Restore TSL verify off behavior of 8.0.x versions"
+        }
+      ],
+      "files": [
+        {
+          "path": "atempo.patch",
+          "status": "modified",
+          "changes": 47
+        },
+        {
+          "path": "build.sh",
+          "status": "modified",
+          "changes": 12
+        },
+        {
+          "path": "sofalizer.patch",
+          "status": "added",
+          "changes": 55
+        },
+        {
+          "path": "tls_verify_default.patch",
+          "status": "added",
+          "changes": 12
+        }
+      ],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/dav1d-android-builder-nobin",
+      "path": "native/dav1d-android-builder",
+      "manifest_ref": "v1_4",
+      "observed_sha": "d6c1a350295aaf4458e698f681503e7b6a051d1a",
+      "supernova_pin": "d6c1a350295aaf4458e698f681503e7b6a051d1a",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/opus-android-builder-nobin",
+      "path": "native/opus-android-builder",
+      "manifest_ref": "20241012",
+      "observed_sha": "c0251c36a4524110bea6b52047c918d11d087102",
+      "supernova_pin": "72b91b1fa45fc036406e9a96d4d78bf5ce698a2c",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "total_commits": 1,
+      "commits": [
+        {
+          "sha": "c0251c36a4524110bea6b52047c918d11d087102",
+          "subject": "add in prebuilt the includes since it allows ffmpeg independent rebuild"
+        }
+      ],
+      "files": [
+        {
+          "path": "build.sh",
+          "status": "modified",
+          "changes": 16
+        }
+      ],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/libmysofa-android-builder",
+      "path": "native/libmysofa-android-builder",
+      "manifest_ref": "main",
+      "observed_sha": "dc97741d01fa3cee8c81312b24bb4414c3f85d5c",
+      "supernova_pin": "dc97741d01fa3cee8c81312b24bb4414c3f85d5c",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/openssl-android-builder-nobin",
+      "path": "native/openssl-android-builder",
+      "manifest_ref": "v3_5_2",
+      "observed_sha": "524a99ffdf139844d5817ec2fe94dc63a4277087",
+      "supernova_pin": "524a99ffdf139844d5817ec2fe94dc63a4277087",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/aos-libnativehelper",
+      "path": "native/libnativehelper",
+      "manifest_ref": "master",
+      "observed_sha": "ab46fb536b594b25f93611ad7ef0f27b8fc24edb",
+      "supernova_pin": "ab46fb536b594b25f93611ad7ef0f27b8fc24edb",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/aos-boost-android-builder",
+      "path": "native/boost",
+      "manifest_ref": "master",
+      "observed_sha": "43daa8621f4b74239d8fd52a545fe3344f0ff43c",
+      "supernova_pin": "43daa8621f4b74239d8fd52a545fe3344f0ff43c",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/aos-libtorrent-android-builder",
+      "path": "native/libtorrent-android-builder",
+      "manifest_ref": "main",
+      "observed_sha": "f30c887f14eb61f7fe1dc1a7208610eebd251f59",
+      "supernova_pin": "f30c887f14eb61f7fe1dc1a7208610eebd251f59",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/torrentd-nobin",
+      "path": "native/torrentd",
+      "manifest_ref": "master",
+      "observed_sha": "49bd6a6aeb783fae0089e04e2e84c50112acb5c3",
+      "supernova_pin": "49bd6a6aeb783fae0089e04e2e84c50112acb5c3",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/prebuilt-ffmpeg",
+      "path": "native/prebuilt/ffmpeg",
+      "manifest_ref": "v8_0",
+      "observed_sha": "7bc9a0860ba400a103d5e88f1706fb0435dcb676",
+      "supernova_pin": "6ba0e9340cf725bede2e2f29d30c290a2ab8130e",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 1,
+      "total_commits": 1,
+      "commits": [
+        {
+          "sha": "7bc9a0860ba400a103d5e88f1706fb0435dcb676",
+          "subject": "prebuilt 9.0.1"
+        }
+      ],
+      "files": [
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/ac3_parser.h",
+          "status": "added",
+          "changes": 36
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/adts_parser.h",
+          "status": "added",
+          "changes": 37
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/avcodec.h",
+          "status": "added",
+          "changes": 2961
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/avdct.h",
+          "status": "added",
+          "changes": 91
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/bsf.h",
+          "status": "added",
+          "changes": 332
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/codec.h",
+          "status": "added",
+          "changes": 345
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/codec_desc.h",
+          "status": "added",
+          "changes": 142
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/codec_id.h",
+          "status": "added",
+          "changes": 686
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/codec_par.h",
+          "status": "added",
+          "changes": 302
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/d3d11va.h",
+          "status": "added",
+          "changes": 109
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/defs.h",
+          "status": "added",
+          "changes": 362
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/dirac.h",
+          "status": "added",
+          "changes": 135
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/dv_profile.h",
+          "status": "added",
+          "changes": 82
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/dxva2.h",
+          "status": "added",
+          "changes": 90
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/exif.h",
+          "status": "added",
+          "changes": 242
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/jni.h",
+          "status": "added",
+          "changes": 67
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/mediacodec.h",
+          "status": "added",
+          "changes": 103
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/packet.h",
+          "status": "added",
+          "changes": 950
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/qsv.h",
+          "status": "added",
+          "changes": 109
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/smpte_436m.h",
+          "status": "added",
+          "changes": 254
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/vdpau.h",
+          "status": "added",
+          "changes": 138
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/version.h",
+          "status": "added",
+          "changes": 45
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/version_major.h",
+          "status": "added",
+          "changes": 45
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/videotoolbox.h",
+          "status": "added",
+          "changes": 85
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavcodec/vorbis_parser.h",
+          "status": "added",
+          "changes": 74
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavfilter/avfilter.h",
+          "status": "added",
+          "changes": 1194
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavfilter/buffersink.h",
+          "status": "added",
+          "changes": 172
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavfilter/buffersrc.h",
+          "status": "added",
+          "changes": 231
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavfilter/version.h",
+          "status": "added",
+          "changes": 48
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavfilter/version_major.h",
+          "status": "added",
+          "changes": 38
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavformat/avformat.h",
+          "status": "added",
+          "changes": 3192
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavformat/avio.h",
+          "status": "added",
+          "changes": 831
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavformat/version.h",
+          "status": "added",
+          "changes": 47
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavformat/version_major.h",
+          "status": "added",
+          "changes": 52
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/adler32.h",
+          "status": "added",
+          "changes": 63
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/aes.h",
+          "status": "added",
+          "changes": 69
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/aes_ctr.h",
+          "status": "added",
+          "changes": 99
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/ambient_viewing_environment.h",
+          "status": "added",
+          "changes": 72
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/attributes.h",
+          "status": "added",
+          "changes": 235
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/audio_fifo.h",
+          "status": "added",
+          "changes": 187
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/avassert.h",
+          "status": "added",
+          "changes": 125
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/avconfig.h",
+          "status": "added",
+          "changes": 6
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/avstring.h",
+          "status": "added",
+          "changes": 428
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/avutil.h",
+          "status": "added",
+          "changes": 340
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/base64.h",
+          "status": "added",
+          "changes": 72
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/blowfish.h",
+          "status": "added",
+          "changes": 82
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/bprint.h",
+          "status": "added",
+          "changes": 254
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/bswap.h",
+          "status": "added",
+          "changes": 105
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/buffer.h",
+          "status": "added",
+          "changes": 322
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/camellia.h",
+          "status": "added",
+          "changes": 70
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/cast5.h",
+          "status": "added",
+          "changes": 80
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/channel_layout.h",
+          "status": "added",
+          "changes": 762
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/common.h",
+          "status": "added",
+          "changes": 578
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/container_fifo.h",
+          "status": "added",
+          "changes": 130
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/cpu.h",
+          "status": "added",
+          "changes": 152
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/crc.h",
+          "status": "added",
+          "changes": 102
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/csp.h",
+          "status": "added",
+          "changes": 208
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/des.h",
+          "status": "added",
+          "changes": 81
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/detection_bbox.h",
+          "status": "added",
+          "changes": 108
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/dict.h",
+          "status": "added",
+          "changes": 242
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/display.h",
+          "status": "added",
+          "changes": 109
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/dovi_meta.h",
+          "status": "added",
+          "changes": 408
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/downmix_info.h",
+          "status": "added",
+          "changes": 115
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/encryption_info.h",
+          "status": "added",
+          "changes": 205
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/error.h",
+          "status": "added",
+          "changes": 129
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/eval.h",
+          "status": "added",
+          "changes": 140
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/executor.h",
+          "status": "added",
+          "changes": 67
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/ffversion.h",
+          "status": "added",
+          "changes": 5
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/fifo.h",
+          "status": "added",
+          "changes": 242
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/file.h",
+          "status": "added",
+          "changes": 62
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/film_grain_params.h",
+          "status": "added",
+          "changes": 282
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/frame.h",
+          "status": "added",
+          "changes": 1215
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hash.h",
+          "status": "added",
+          "changes": 264
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hdr_dynamic_metadata.h",
+          "status": "added",
+          "changes": 480
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hdr_dynamic_vivid_metadata.h",
+          "status": "added",
+          "changes": 292
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hmac.h",
+          "status": "added",
+          "changes": 99
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext.h",
+          "status": "added",
+          "changes": 601
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_amf.h",
+          "status": "added",
+          "changes": 58
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_cuda.h",
+          "status": "added",
+          "changes": 74
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_d3d11va.h",
+          "status": "added",
+          "changes": 192
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_d3d12va.h",
+          "status": "added",
+          "changes": 209
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_drm.h",
+          "status": "added",
+          "changes": 169
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_dxva2.h",
+          "status": "added",
+          "changes": 75
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_mediacodec.h",
+          "status": "added",
+          "changes": 61
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_oh.h",
+          "status": "added",
+          "changes": 34
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_opencl.h",
+          "status": "added",
+          "changes": 100
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_qsv.h",
+          "status": "added",
+          "changes": 86
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_vaapi.h",
+          "status": "added",
+          "changes": 117
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_vdpau.h",
+          "status": "added",
+          "changes": 44
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_videotoolbox.h",
+          "status": "added",
+          "changes": 106
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/hwcontext_vulkan.h",
+          "status": "added",
+          "changes": 355
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/iamf.h",
+          "status": "added",
+          "changes": 697
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/imgutils.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/intfloat.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/intreadwrite.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/lfg.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/log.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/lzo.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/macros.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/mastering_display_metadata.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/mathematics.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/md5.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/mem.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/motion_vector.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/murmur3.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/opt.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/parseutils.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/pixdesc.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/pixelutils.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/pixfmt.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/random_seed.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/rational.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/raw_color_params.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/rc4.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/refstruct.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/replaygain.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/ripemd.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/samplefmt.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/sha.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/sha512.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/spherical.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/stereo3d.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/tdrdi.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/tea.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/threadmessage.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/time.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/timecode.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/timestamp.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/tree.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/twofish.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/tx.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/uuid.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/video_enc_params.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/video_hint.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libavutil/xtea.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libswresample/swresample.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libswresample/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libswresample/version_major.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libswscale/swscale.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libswscale/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/include/libswscale/version_major.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/lib/libavcodec.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/lib/libavfilter.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/lib/libavformat.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/lib/libavutil.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/lib/libswresample.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-arm64-v8a/lib/libswscale.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/ac3_parser.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/adts_parser.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/avcodec.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/avdct.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/bsf.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/codec.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/codec_desc.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/codec_id.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/codec_par.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/d3d11va.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/defs.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/dirac.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/dv_profile.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/dxva2.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/exif.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/jni.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/mediacodec.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/packet.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/qsv.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/smpte_436m.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/vdpau.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/version_major.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/videotoolbox.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavcodec/vorbis_parser.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavfilter/avfilter.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavfilter/buffersink.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavfilter/buffersrc.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavfilter/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavfilter/version_major.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavformat/avformat.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavformat/avio.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavformat/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavformat/version_major.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/adler32.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/aes.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/aes_ctr.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/ambient_viewing_environment.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/attributes.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/audio_fifo.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/avassert.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/avconfig.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/avstring.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/avutil.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/base64.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/blowfish.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/bprint.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/bswap.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/buffer.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/camellia.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/cast5.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/channel_layout.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/common.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/container_fifo.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/cpu.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/crc.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/csp.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/des.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/detection_bbox.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/dict.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/display.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/dovi_meta.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/downmix_info.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/encryption_info.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/error.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/eval.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/executor.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/ffversion.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/fifo.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/file.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/film_grain_params.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/frame.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hash.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hdr_dynamic_metadata.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hdr_dynamic_vivid_metadata.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hmac.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_amf.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_cuda.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_d3d11va.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_d3d12va.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_drm.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_dxva2.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_mediacodec.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_oh.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_opencl.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_qsv.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_vaapi.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_vdpau.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_videotoolbox.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/hwcontext_vulkan.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/iamf.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/imgutils.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/intfloat.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/intreadwrite.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/lfg.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/log.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/lzo.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/macros.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/mastering_display_metadata.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/mathematics.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/md5.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/mem.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/motion_vector.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/murmur3.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/opt.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/parseutils.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/pixdesc.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/pixelutils.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/pixfmt.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/random_seed.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/rational.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/raw_color_params.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/rc4.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/refstruct.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/replaygain.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/ripemd.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/samplefmt.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/sha.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/sha512.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/spherical.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/stereo3d.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/tdrdi.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/tea.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/threadmessage.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/time.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/timecode.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/timestamp.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/tree.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/twofish.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/tx.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/uuid.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/video_enc_params.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/video_hint.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libavutil/xtea.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libswresample/swresample.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libswresample/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libswresample/version_major.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libswscale/swscale.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libswscale/version.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/include/libswscale/version_major.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/lib/libavcodec.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/lib/libavfilter.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/lib/libavformat.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/lib/libavutil.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/lib/libswresample.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-armeabi-v7a/lib/libswscale.so",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-x86/include/libavcodec/ac3_parser.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-x86/include/libavcodec/adts_parser.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-x86/include/libavcodec/avcodec.h",
+          "status": "added",
+          "changes": 0
+        },
+        {
+          "path": "dist-full-x86/include/libavcodec/avdct.h",
+          "status": "added",
+          "changes": 0
+        }
+      ],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/prebuilt-opus",
+      "path": "native/prebuilt/opus",
+      "manifest_ref": "main",
+      "observed_sha": "2a04bae78e56281bf57d4116b1e2545b5de2abdb",
+      "supernova_pin": "27544063be93ee55c6ba58a2ebb32c106eb2e37b",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "compare_blocker": "HTTPError: HTTP Error 404: Not Found",
+      "alternative_comparison": {
+        "method": "explicit pin fetched successfully by Git; no common ancestor; direct snapshot diff",
+        "baseline_commits": [
+          "27544063be93ee55c6ba58a2ebb32c106eb2e37b 03647f5 upstep",
+          "03584c8de92e6e7958aceda399ddcfadd3c256ae Initial commit"
+        ],
+        "upstream_commits": [
+          "2a04bae78e56281bf57d4116b1e2545b5de2abdb prebuilt opus 03647f5"
+        ],
+        "diff_stat": [
+          " lib/arm64-v8a/libopus.so   | Bin 1965248 -> 1967712 bytes",
+          " lib/armeabi-v7a/libopus.so | Bin 1453144 -> 1455364 bytes",
+          " lib/x86/libopus.so         | Bin 1620160 -> 1619056 bytes",
+          " lib/x86_64/libopus.so      | Bin 2015808 -> 2021232 bytes",
+          " 4 files changed, 0 insertions(+), 0 deletions(-)"
+        ]
+      }
+    },
+    {
+      "repo": "nova-video-player/prebuilt-dav1d",
+      "path": "native/prebuilt/dav1d",
+      "manifest_ref": "v1_5",
+      "observed_sha": "f89559d62f671881431146b94c4364e568a623c8",
+      "supernova_pin": "f89559d62f671881431146b94c4364e568a623c8",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/prebuilt-openssl",
+      "path": "native/prebuilt/openssl",
+      "manifest_ref": "v3_5",
+      "observed_sha": "78631105380190806182d77943b5524e81609f65",
+      "supernova_pin": "78631105380190806182d77943b5524e81609f65",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/prebuilt-libmysofa",
+      "path": "native/prebuilt/libmysofa",
+      "manifest_ref": "v1_3",
+      "observed_sha": "adf0d8278382a631d67dc3764d62d6ceece3789b",
+      "supernova_pin": "adf0d8278382a631d67dc3764d62d6ceece3789b",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/prebuilt-torrentd",
+      "path": "native/prebuilt/torrentd",
+      "manifest_ref": "main",
+      "observed_sha": "4a516e32c5e57fa1305540e7b622ba5e39080abe",
+      "supernova_pin": "4a516e32c5e57fa1305540e7b622ba5e39080abe",
+      "manifest_removal": false,
+      "comparison_method": "release manifest ref resolved now; NOT release build provenance",
+      "status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "commits": [],
+      "files": [],
+      "api_cap_caution": "250 commits / 300 files cap; check counts before treating exhaustive"
+    },
+    {
+      "repo": "nova-video-player/aos-libyuv",
+      "path": "native/libyuv",
+      "manifest_removal": true,
+      "supernova_pin": "650963473a2568eb81218f6e2703d3efaad6300e",
+      "interpretation": "Removed in upstream manifest; actual Supernova AVOS still consumes it"
+    }
+  ]
+}

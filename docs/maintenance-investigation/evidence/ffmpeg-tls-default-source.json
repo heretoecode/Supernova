@@ -1,0 +1,10 @@
+{
+  "source": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/894da5ca7d742e4429ffb2af534fcda0103ef593/libavformat/tls.h",
+  "sha256": "d7ce8aee5569540266dba3dc29dc4aa6d9534a51a525b27d4535716ecd646e66",
+  "tls_options": [
+    {
+      "line": 91,
+      "text": "{\"tls_verify\", \"Verify the peer certificate\",         offsetof(pstruct, options_field . verify),    AV_OPT_TYPE_INT, { .i64 = TLS_VERIFY_DEFAULT }, 0, 1, .flags = TLS_OPTFL }, \\"
+    }
+  ]
+}

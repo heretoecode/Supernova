@@ -1,5 +1,5 @@
 {
-  "captured_utc": "2026-10-12T12:06:25.667721+00:00",
+  "captured_utc": "2026-10-12T12:11:03.417343+00:00",
   "source": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
   "refs": {
     "origin": "75d9f012fa4f65869eef5d972ad4725df504bd9c",
@@ -16,6 +16,7 @@
     "origin/codex/supernova-0.137-qa-2026-10-11": "45521c370563c8c176b0c3d9435fbf08fcd115e0",
     "origin/codex/supernova-0.138-qa-2026-10-12": "16a60cb11a5dd20ebe374873db360e32b617d7b0",
     "origin/codex/supernova-next-refinement-2026-10-10": "91a502a7355c637b2630990e15a2582aa96a0329",
+    "origin/docs/maintenance-investigation-2026-10": "c9438ca11f9d6b80f6f47038c2b54059d16b9795",
     "origin/docs/nova-upstream-deep-audit-2026-10-11": "0a30dbf8f91fd652812677bc4472565f390ab24a",
     "origin/feature/supernova-app-analysis-and-mockup-6358464526881152498": "20c7a51e2feb9179caf7fd5b902e0f1ac584a70f",
     "origin/main": "75d9f012fa4f65869eef5d972ad4725df504bd9c",

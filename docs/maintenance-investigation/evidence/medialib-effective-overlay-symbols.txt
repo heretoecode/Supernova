@@ -339,7 +339,7 @@ src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java SHA256 bf3075fd0
 41:     private void emit(String phase){
 47:     private PreviewLocalImportTrace(){throw new AssertionError();}
 
-src/com/archos/mediaprovider/video/VideoStoreImportImpl.java SHA256 c04b0fa8b1df61811d8c7ab2ed2f1b6df30e0d9c20dce86953073a5d25d571f2
+src/com/archos/mediaprovider/video/VideoStoreImportImpl.java SHA256 4097109e4d0c7b5fa90e88628eb0ec67f49932cc49450f79179a2c410728a7f4
 73: public class VideoStoreImportImpl {
 74:     private static final Logger log = LoggerFactory.getLogger(VideoStoreImportImpl.class);
 95:     public VideoStoreImportImpl(Context context) {
@@ -399,67 +399,68 @@ src/com/archos/mediaprovider/video/VideoStoreImportImpl.java SHA256 c04b0fa8b1df
 1166:     private static final String DIRECTORY_NEEDS_SCAN = "scan_state < (select date_modified from files as files_parent where files_parent._id = files.parent)";
 1167:     private static final String WHERE_UNSCANNED = "scan_state >= 0 AND ("
 1173:     private void doScan(ContentResolver cr, Context context, Blacklist blacklist) {
-1206:                 PreviewLocalImportTrace.problem();
-1217:     private MediaMetadata getMetadata(String path) throws RemoteException, InterruptedException, MediaRetrieverServiceClient.ServiceManagementException {
-1225:     private ContentValues fromRetrieverService(Job job, String timeString) throws InterruptedException, MediaRetrieverServiceClient.ServiceManagementException {
-1285:     private static void extract(ContentValues target, MediaMetadata metadata,
-1291:     private static void extract(ContentValues target, MediaMetadata metadata,
-1305:     private static boolean isNumberOtherThanZero(String input) {
-1314:     private static long parseLong(String input, long fallback) {
-1322:     private static String getDefaultTitle(String path) {
-1370:     private static final Set<Integer> sLastVisibleStorageIds = new HashSet<>();
-1373:     private static synchronized void resetVisibleStorageIds() {
-1377:     private static synchronized void recordVisibleStorageId(Integer storageId) {
-1383:     private static synchronized Set<Integer> getVisibleStorageIdsSnapshot() {
-1387:     private static synchronized boolean remoteProjectionHasStorageId() {
-1391:     private static synchronized void disableRemoteStorageIdTracking() {
-1397:     private static int copySnapshotData(ContentResolver cr, ReconciliationSnapshot snapshot,
-1419:     private static int copyData(ContentResolver cr, String minId) {
-1448:             PreviewLocalImportTrace.problem();
-1517:                             if (log.isTraceEnabled()) log.trace("copyData: processing cursor number={}/{}, {}", cursor_count, numberOfRows, DatabaseUtils.dumpCurrentRowToString(allFiles));
-1531:                                     if (log.isTraceEnabled()) log.trace("copyData: _data={} -> storageId={}", data, storageId);
-1561:     private static final String[] MAX_LOCAL_PROJ = new String[] { "max(local_id)" };
-1562:     private static String getMaxLocalId (ContentResolver cr) {
-1577:     private static final String[] COUNT_PROJ = new String[] { "count(*)" };
-1578:     private static int getLocalCount (ContentResolver cr) {
-1595:                     PreviewLocalImportTrace.problem();
-1609:     private static final String[] MAX_ID_PROJ = new String[] { "max(_id)" };
-1611:     private static String getMaxId(ContentResolver cr) {
-1647:                     PreviewLocalImportTrace.problem();
-1666:     private void updateVolumeHiddenStates(String existingFiles) {
-1756:                     PreviewLocalImportTrace.problem();
-1793:     private static List<Long> queryIds(ContentResolver cr, String selection, String[] args) {
-1811:     private static String queryStoragePath(ContentResolver cr, String selection, String[] args) {
-1833:     private static int deleteMatchingInBatches(ContentResolver cr, String selection, String[] args) {
-1841:                 PreviewLocalImportTrace.problem();
-1850:     private static int countRows(ContentResolver cr, String selection, String[] args) {
-1860:     private Set<Integer> getMountedReadableStorageIds() {
-1876:     private void collectMountedStorageIds(List<String> paths, Set<Integer> target, ExtStorageManager storageManager) {
-1889:     private boolean isMountedReadable(String state) {
-1893:     private String buildStorageIdSelection(Set<Integer> storageIds) {
-1916:     private void updateVolumeHiddenStatesByPath(String existingFiles) {
-1989:     private void hideFilesFromVolumes(List<String> volumePaths, long timestamp) {
-2016:         // existingFiles are left untouched here and handled by verifyAndHideDeletedFiles below.
-2032:     private void checkDatabaseForUnmountedVolumes(List<String> mountedVolumePaths, List<String> unmountedVolumePaths) {
-2095:             PreviewLocalImportTrace.problem();
-2102:     private void hideDeletedFilesFromMountedVolumes(List<String> volumePaths, String existingFiles, long timestamp) {
-2114:         // For mounted volumes, verify files truly don't exist before hiding them
-2116:         verifyAndHideDeletedFiles(mCr, where.toString(), timestamp, "hideDeletedFilesFromMountedVolumes");
-2122:     private void hideDeletedFilesFromRecentlyMountedVolumes(List<String> volumePaths, String existingFiles, long timestamp) {
-2134:         // For recently mounted volumes, verify files truly don't exist before hiding
-2136:         verifyAndHideDeletedFiles(mCr, where.toString(), timestamp, "hideDeletedFilesFromRecentlyMountedVolumes");
-2142:     static void verifyAndHideDeletedFiles(ContentResolver cr, String whereClause, long timestamp, String logTag) {
-2191:             PreviewLocalImportTrace.problem();
-2192:             log.error("verifyAndHideDeletedFiles: error verifying files", e);
-2206:     private void checkVolumeStatesWithRecentMount(List<String> volumePaths, List<String> allMountedVolumes,
-2228:     private boolean wasVolumeRecentlyHidden(String volumePath) {
-2254:     private static String getRemoteIdList(ContentResolver cr) {
-2303:                     PreviewLocalImportTrace.problem();
-2322:         if (log.isTraceEnabled()) log.trace("getRemoteIdList: ids of files visible {}", result);
-2327:     public static boolean isNoMediaPath(Uri uri) {
-2362:     public static boolean isNoMediaPath(String path) {
-2396:     private static boolean isNoMediaFile(String path) {
-2440:     public void interruptImport() {
+1206:                     PreviewLocalImportTrace.problem();
+1218:                 PreviewLocalImportTrace.problem();
+1229:     private MediaMetadata getMetadata(String path) throws RemoteException, InterruptedException, MediaRetrieverServiceClient.ServiceManagementException {
+1237:     private ContentValues fromRetrieverService(Job job, String timeString) throws InterruptedException, MediaRetrieverServiceClient.ServiceManagementException {
+1297:     private static void extract(ContentValues target, MediaMetadata metadata,
+1303:     private static void extract(ContentValues target, MediaMetadata metadata,
+1317:     private static boolean isNumberOtherThanZero(String input) {
+1326:     private static long parseLong(String input, long fallback) {
+1334:     private static String getDefaultTitle(String path) {
+1382:     private static final Set<Integer> sLastVisibleStorageIds = new HashSet<>();
+1385:     private static synchronized void resetVisibleStorageIds() {
+1389:     private static synchronized void recordVisibleStorageId(Integer storageId) {
+1395:     private static synchronized Set<Integer> getVisibleStorageIdsSnapshot() {
+1399:     private static synchronized boolean remoteProjectionHasStorageId() {
+1403:     private static synchronized void disableRemoteStorageIdTracking() {
+1409:     private static int copySnapshotData(ContentResolver cr, ReconciliationSnapshot snapshot,
+1431:     private static int copyData(ContentResolver cr, String minId) {
+1460:             PreviewLocalImportTrace.problem();
+1529:                             if (log.isTraceEnabled()) log.trace("copyData: processing cursor number={}/{}, {}", cursor_count, numberOfRows, DatabaseUtils.dumpCurrentRowToString(allFiles));
+1543:                                     if (log.isTraceEnabled()) log.trace("copyData: _data={} -> storageId={}", data, storageId);
+1573:     private static final String[] MAX_LOCAL_PROJ = new String[] { "max(local_id)" };
+1574:     private static String getMaxLocalId (ContentResolver cr) {
+1589:     private static final String[] COUNT_PROJ = new String[] { "count(*)" };
+1590:     private static int getLocalCount (ContentResolver cr) {
+1607:                     PreviewLocalImportTrace.problem();
+1621:     private static final String[] MAX_ID_PROJ = new String[] { "max(_id)" };
+1623:     private static String getMaxId(ContentResolver cr) {
+1659:                     PreviewLocalImportTrace.problem();
+1678:     private void updateVolumeHiddenStates(String existingFiles) {
+1768:                     PreviewLocalImportTrace.problem();
+1805:     private static List<Long> queryIds(ContentResolver cr, String selection, String[] args) {
+1823:     private static String queryStoragePath(ContentResolver cr, String selection, String[] args) {
+1845:     private static int deleteMatchingInBatches(ContentResolver cr, String selection, String[] args) {
+1853:                 PreviewLocalImportTrace.problem();
+1862:     private static int countRows(ContentResolver cr, String selection, String[] args) {
+1872:     private Set<Integer> getMountedReadableStorageIds() {
+1888:     private void collectMountedStorageIds(List<String> paths, Set<Integer> target, ExtStorageManager storageManager) {
+1901:     private boolean isMountedReadable(String state) {
+1905:     private String buildStorageIdSelection(Set<Integer> storageIds) {
+1928:     private void updateVolumeHiddenStatesByPath(String existingFiles) {
+2001:     private void hideFilesFromVolumes(List<String> volumePaths, long timestamp) {
+2028:         // existingFiles are left untouched here and handled by verifyAndHideDeletedFiles below.
+2044:     private void checkDatabaseForUnmountedVolumes(List<String> mountedVolumePaths, List<String> unmountedVolumePaths) {
+2107:             PreviewLocalImportTrace.problem();
+2114:     private void hideDeletedFilesFromMountedVolumes(List<String> volumePaths, String existingFiles, long timestamp) {
+2126:         // For mounted volumes, verify files truly don't exist before hiding them
+2128:         verifyAndHideDeletedFiles(mCr, where.toString(), timestamp, "hideDeletedFilesFromMountedVolumes");
+2134:     private void hideDeletedFilesFromRecentlyMountedVolumes(List<String> volumePaths, String existingFiles, long timestamp) {
+2146:         // For recently mounted volumes, verify files truly don't exist before hiding
+2148:         verifyAndHideDeletedFiles(mCr, where.toString(), timestamp, "hideDeletedFilesFromRecentlyMountedVolumes");
+2154:     static void verifyAndHideDeletedFiles(ContentResolver cr, String whereClause, long timestamp, String logTag) {
+2203:             PreviewLocalImportTrace.problem();
+2204:             log.error("verifyAndHideDeletedFiles: error verifying files", e);
+2218:     private void checkVolumeStatesWithRecentMount(List<String> volumePaths, List<String> allMountedVolumes,
+2240:     private boolean wasVolumeRecentlyHidden(String volumePath) {
+2266:     private static String getRemoteIdList(ContentResolver cr) {
+2315:                     PreviewLocalImportTrace.problem();
+2334:         if (log.isTraceEnabled()) log.trace("getRemoteIdList: ids of files visible {}", result);
+2339:     public static boolean isNoMediaPath(Uri uri) {
+2374:     public static boolean isNoMediaPath(String path) {
+2408:     private static boolean isNoMediaFile(String path) {
+2452:     public void interruptImport() {
 
 src/com/archos/mediaprovider/video/VideoStoreImportService.java SHA256 62a00591f3abf21cfffdc1d7afb08d402a58a67024bc70142e9a4a148050e5a6
 71: public class VideoStoreImportService extends Service implements Handler.Callback, DefaultLifecycleObserver {

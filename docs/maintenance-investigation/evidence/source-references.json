@@ -1,0 +1,674 @@
+[
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/CustomApplication.java",
+    "line": 470,
+    "symbol": "attachBaseContext",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/CustomApplication.java#L470"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/CustomApplication.java",
+    "line": 634,
+    "symbol": "Diagnostics.install",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/CustomApplication.java#L634"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java",
+    "line": 373,
+    "symbol": "new PreviewPages",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java#L373"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+    "line": 18,
+    "symbol": "class PreviewPages",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L18"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/player/Player.java",
+    "line": 523,
+    "symbol": "MediaFactory.createPlayer",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/Player.java#L523"
+  },
+  {
+    "repo": "heretoecode/aos-MediaLib",
+    "sha": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/medialib/MediaFactory.java",
+    "line": 159,
+    "symbol": "createPlayer",
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/medialib/MediaFactory.java#L159"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "settings.gradle",
+    "line": 1,
+    "symbol": "file",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/settings.gradle#L1"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/workflows/supernova-0138-qa.yml",
+    "line": 63,
+    "symbol": "git -C MediaLib apply",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/.github/workflows/supernova-0138-qa.yml#L63"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java",
+    "line": 18,
+    "symbol": "WRITER",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java#L18"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewEnrichmentQueue.java",
+    "line": 14,
+    "symbol": "ScheduledExecutorService",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewEnrichmentQueue.java#L14"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java",
+    "line": 375,
+    "symbol": "cache.shutdown",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java#L375"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+    "line": 479,
+    "symbol": "onDetachedFromWindow",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L479"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "build.gradle",
+    "line": 310,
+    "symbol": "minifyEnabled",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/build.gradle#L310"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "proguard-project.txt",
+    "line": 7,
+    "symbol": "-keep class com.archos.mediacenter",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/proguard-project.txt#L7"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/foundation/FoundationUiPolicy.java",
+    "line": 13,
+    "symbol": "try_new_ui",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/foundation/FoundationUiPolicy.java#L13"
+  },
+  {
+    "repo": "heretoecode/aos-MediaLib",
+    "sha": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+    "line": 50,
+    "symbol": "DATABASE_VERSION",
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L50"
+  },
+  {
+    "repo": "heretoecode/aos-MediaLib",
+    "sha": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+    "line": 1590,
+    "symbol": "toVersion == 62",
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1590"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/build/medialib-supernova135.patch",
+    "line": 231,
+    "symbol": "METADATA",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/.github/build/medialib-supernova135.patch#L231"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/build/avos-supernova135.patch",
+    "line": 22,
+    "symbol": "AVOS_MP_METADATA_VIDEO_TRACK_DOVI_PROFILE",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/.github/build/avos-supernova135.patch#L22"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/build/ffmpeg-foundation.lock.json",
+    "line": 4,
+    "symbol": "source_tag",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/.github/build/ffmpeg-foundation.lock.json#L4"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/workflows/supernova-0138-qa.yml",
+    "line": 85,
+    "symbol": "build-foundation-ffmpeg.py",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/.github/workflows/supernova-0138-qa.yml#L85"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/player/Player.java",
+    "line": 523,
+    "symbol": "MediaFactory.createPlayer",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/Player.java#L523"
+  },
+  {
+    "repo": "heretoecode/aos-MediaLib",
+    "sha": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/medialib/MediaFactory.java",
+    "line": 102,
+    "symbol": "decoder == -1",
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/medialib/MediaFactory.java#L102"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/player/PlayerService.java",
+    "line": 665,
+    "symbol": "PlaybackResumePolicy.chooseStartupSource",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PlayerService.java#L665"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/ExternalPlayerWithResultStarter.java",
+    "line": 1,
+    "symbol": "class ExternalPlayerWithResultStarter",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/ExternalPlayerWithResultStarter.java#L1"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/player/Player.java",
+    "line": 593,
+    "symbol": "previewFrameRendered",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/Player.java#L593"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/player/Player.java",
+    "line": 1217,
+    "symbol": "case 3:",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/Player.java#L1217"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/player/SurfaceController.java",
+    "line": 35,
+    "symbol": "class SurfaceController",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/SurfaceController.java#L35"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 102,
+    "symbol": "public static void install",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L102"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 277,
+    "symbol": "private static void heartbeat",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L277"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 142,
+    "symbol": "previousExitEvidence",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L142"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/player/Player.java",
+    "line": 798,
+    "symbol": "Diagnostics.event(\"seek\"",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/Player.java#L798"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/player/PlayerService.java",
+    "line": 2032,
+    "symbol": "Diagnostics.event(\"seek_complete\"",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PlayerService.java#L2032"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticArchive.java",
+    "line": 107,
+    "symbol": "operation_summaries",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticArchive.java#L107"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticExportActivity.java",
+    "line": 13,
+    "symbol": "ACTION_CREATE_DOCUMENT",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticExportActivity.java#L13"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 452,
+    "symbol": "public static void export",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L452"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticArchive.java",
+    "line": 10,
+    "symbol": "static List<File> files",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticArchive.java#L10"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 417,
+    "symbol": "static String safe",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L417"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 425,
+    "symbol": "private static String record",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L425"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 220,
+    "symbol": "sourceType",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L220"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/CustomApplication.java",
+    "line": 691,
+    "symbol": "configureFullLoggingAsync",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/CustomApplication.java#L691"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "res/raw/logback_full.xml",
+    "line": 210,
+    "symbol": "<root",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/res/raw/logback_full.xml#L210"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "res/raw/logback_user.xml",
+    "line": 1,
+    "symbol": "file",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/res/raw/logback_user.xml#L1"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/CustomApplication.java",
+    "line": 475,
+    "symbol": "BuildConfig.ENABLE_BUG_REPORT",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/CustomApplication.java#L475"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkWorkspace.java",
+    "line": 17,
+    "symbol": "new UniversalFileBrowser",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkWorkspace.java#L17"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+    "line": 235,
+    "symbol": "private void connect",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L235"
+  },
+  {
+    "repo": "nova-video-player/aos-FileCoreLibrary",
+    "sha": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+    "path": "src/com/archos/filecorelibrary/MetaFile2Factory.java",
+    "line": 36,
+    "symbol": "class MetaFile2Factory",
+    "url": "https://github.com/nova-video-player/aos-FileCoreLibrary/blob/c4b760c55102c72d45f68b0d16999fc1f4f013a7/src/com/archos/filecorelibrary/MetaFile2Factory.java#L36"
+  },
+  {
+    "repo": "nova-video-player/aos-FileCoreLibrary",
+    "sha": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+    "path": "src/com/archos/filecorelibrary/samba/NetworkCredentialsDatabase.java",
+    "line": 65,
+    "symbol": "DATABASE_CREATE_CREDENTIALS",
+    "url": "https://github.com/nova-video-player/aos-FileCoreLibrary/blob/c4b760c55102c72d45f68b0d16999fc1f4f013a7/src/com/archos/filecorelibrary/samba/NetworkCredentialsDatabase.java#L65"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "res/xml/network_security_config.xml",
+    "line": 3,
+    "symbol": "cleartextTrafficPermitted",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/res/xml/network_security_config.xml#L3"
+  },
+  {
+    "repo": "nova-video-player/aos-FileCoreLibrary",
+    "sha": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+    "path": "src/com/archos/filecorelibrary/StreamOverHttp.java",
+    "line": 87,
+    "symbol": "new ServerSocket(0)",
+    "url": "https://github.com/nova-video-player/aos-FileCoreLibrary/blob/c4b760c55102c72d45f68b0d16999fc1f4f013a7/src/com/archos/filecorelibrary/StreamOverHttp.java#L87"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+    "line": 255,
+    "symbol": "private void showOverview",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L255"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+    "line": 147,
+    "symbol": "requestExit",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L147"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+    "line": 479,
+    "symbol": "onDetachedFromWindow",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L479"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryLoader.java",
+    "line": 12,
+    "symbol": "class PreviewLibraryLoader",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryLoader.java#L12"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+    "line": 18,
+    "symbol": "class PreviewPages",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L18"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryPage.java",
+    "line": 9,
+    "symbol": "class CustomLibraryPage",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryPage.java#L9"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java",
+    "line": 11,
+    "symbol": "class PreviewHomeRows",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L11"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewSeriesJourney.java",
+    "line": 13,
+    "symbol": "class PreviewSeriesJourney",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewSeriesJourney.java#L13"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java",
+    "line": 16,
+    "symbol": "class ViewingHistory",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java#L16"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/collections/UserCollectionStore.java",
+    "line": 16,
+    "symbol": "class UserCollectionStore",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/collections/UserCollectionStore.java#L16"
+  },
+  {
+    "repo": "heretoecode/aos-MediaLib",
+    "sha": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java",
+    "line": 86,
+    "symbol": "class NetworkScannerServiceVideo",
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java#L86"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/build/medialib-preview417.patch",
+    "line": 109,
+    "symbol": "ProviderDiscoveryGate",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/.github/build/medialib-preview417.patch#L109"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/build/medialib-next-qa.patch",
+    "line": 7,
+    "symbol": "afterId",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/.github/build/medialib-next-qa.patch#L7"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/build/medialib-next-refinement.patch",
+    "line": 30,
+    "symbol": "SupernovaLibraryPolicy",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/.github/build/medialib-next-refinement.patch#L30"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadataCache.java",
+    "line": 13,
+    "symbol": "STALE_AFTER",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadataCache.java#L13"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewEnrichmentQueue.java",
+    "line": 13,
+    "symbol": "FOREGROUND=0",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewEnrichmentQueue.java#L13"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SubtitleDiscovery.java",
+    "line": 27,
+    "symbol": "private static boolean enabled",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SubtitleDiscovery.java#L27"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java",
+    "line": 14,
+    "symbol": "ORIGINAL_NAMES",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L14"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java",
+    "line": 45,
+    "symbol": "p.setEnabled(false)",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L45"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java",
+    "line": 116,
+    "symbol": "public static void style",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L116"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/foundation/FoundationUiPolicy.java",
+    "line": 10,
+    "symbol": "apply",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/foundation/FoundationUiPolicy.java#L10"
+  },
+  {
+    "repo": "heretoecode/aos-MediaLib",
+    "sha": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+    "line": 50,
+    "symbol": "DATABASE_VERSION",
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L50"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java",
+    "line": 28,
+    "symbol": "super(c,DATABASE,null,1)",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java#L28"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewEnrichmentQueue.java",
+    "line": 126,
+    "symbol": "super(c,\"preview-enrichment.db\",null,2)",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewEnrichmentQueue.java#L126"
+  },
+  {
+    "repo": "nova-video-player/aos-FileCoreLibrary",
+    "sha": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+    "path": "src/com/archos/filecorelibrary/samba/NetworkCredentialsDatabase.java",
+    "line": 67,
+    "symbol": "DATABASE_VERSION",
+    "url": "https://github.com/nova-video-player/aos-FileCoreLibrary/blob/c4b760c55102c72d45f68b0d16999fc1f4f013a7/src/com/archos/filecorelibrary/samba/NetworkCredentialsDatabase.java#L67"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/RestoreJournal.java",
+    "line": 24,
+    "symbol": "pending-restore.json",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/RestoreJournal.java#L24"
+  },
+  {
+    "repo": "heretoecode/aos-MediaLib",
+    "sha": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediaprovider/DeleteOnDowngradeSQLiteOpenHelper.java",
+    "line": 55,
+    "symbol": "mDatabaseFile.delete",
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/DeleteOnDowngradeSQLiteOpenHelper.java#L55"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+    "line": 65,
+    "symbol": "version != VideoOpenHelper.getDatabaseVersion()",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java#L65"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/BackupFormat.java",
+    "line": 8,
+    "symbol": "formatVersion",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/BackupFormat.java#L8"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/VerifiedBackup.java",
+    "line": 13,
+    "symbol": "file.getFD().sync",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/VerifiedBackup.java#L13"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+    "line": 18,
+    "symbol": "MAX_BYTES",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java#L18"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+    "line": 117,
+    "symbol": "public static void restore",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java#L117"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/MediaLibraryBackupService.java",
+    "line": 213,
+    "symbol": "addPrivateDatabaseToZip",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/MediaLibraryBackupService.java#L213"
+  },
+  {
+    "repo": "heretoecode/Supernova",
+    "sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/CustomApplication.java",
+    "line": 472,
+    "symbol": "RestoreJournal.recover",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/CustomApplication.java#L472"
+  }
+]

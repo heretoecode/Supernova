@@ -175,3 +175,37 @@ src/com/archos/filecorelibrary/sshj/SshjUtils.java SHA256 2f49d65a680c828cf68a68
 182:     public static String getSftpPath(Uri uri) {
 188:     public static boolean isSSHjEnabled() {
 189:         if (log.isTraceEnabled()) log.trace("isSSHjEnabled={}", PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("pref_sshj", false));
+
+src/com/archos/filecorelibrary/ListingEngine.java SHA256 1ee6c1f6c682980c15c854fbcd37d0975d0cdefbd95925ef462a874d2c0beeca
+35: public abstract class ListingEngine {
+37:     protected Listener mListener;
+38:     protected String[] mMimeTypeFilter;
+39:     protected String[] mExtensionFilter;
+40:     protected Handler mUiHandler;
+41:     protected Context mContext;
+42:     protected SortOrder mSortOrder;
+49:     public static enum ErrorEnum{
+61:     public static int getErrorStringResId(ErrorEnum error) {
+82:     public static enum SortOrder {
+98:     public interface Listener {
+102:         public void onListingStart();
+104:         public void onListingUpdate(List<? extends MetaFile2> files);
+109:         public void onListingEnd();
+114:         public void onListingTimeOut();
+121:         public void onCredentialRequired(Exception e);
+127:         public void onListingFatalError(Exception e, ErrorEnum errorCode);
+132:     public ListingEngine(Context context) {
+142:     public final void setListener(Listener listener) {
+146:     public final Listener getListener() {
+150:     public void setFilter(String[] mimeTypeFilter, String[] extensionFilter) {
+159:     public void setListingTimeOut(long listingTimeOutMs) {
+163:     public void setSortOrder(SortOrder order) {
+167:     public void setKeepHiddenFiles(boolean keep){
+171:     public abstract void start();
+173:     public abstract void abort();
+175:     protected boolean keepFile(String filename) {
+207:     protected boolean keepDirectory(String filename) {
+219:     protected void preLaunchTimeOut() {
+228:     protected void noTimeOut() {
+233:     protected boolean timeOutHasOccurred() {
+238:         public void run() {

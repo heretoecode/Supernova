@@ -1,0 +1,44 @@
+{
+  "classification": "VERIFIED source rules; executed Python regex translation probe. Java/Android execution UNKNOWN: javac absent.",
+  "source": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "method_sha256": "4bd5ba50b5c2d04491607a46dd80ad2a9b50188e9227d78f752c3e70ba4b2c5f",
+  "cases": [
+    {
+      "case": "username plain",
+      "synthetic_input": "username=CANARY_USER",
+      "output": "username=CANARY_USER",
+      "canary_survives": true
+    },
+    {
+      "case": "bare username",
+      "synthetic_input": "CANARY_USER",
+      "output": "CANARY_USER",
+      "canary_survives": true
+    },
+    {
+      "case": "authorization header",
+      "synthetic_input": "Authorization: Bearer CANARY_TOKEN",
+      "output": "[redacted] CANARY_TOKEN",
+      "canary_survives": true
+    },
+    {
+      "case": "password with spaces",
+      "synthetic_input": "password=CANARY_ONE CANARY_TWO",
+      "output": "[redacted] CANARY_TWO",
+      "canary_survives": true
+    },
+    {
+      "case": "credential URL",
+      "synthetic_input": "smb://CANARY_USER:CANARY_PASSWORD@host/file",
+      "output": "[location]",
+      "canary_survives": false
+    },
+    {
+      "case": "cookie with fields",
+      "synthetic_input": "Cookie: session=CANARY_SESSION; name=CANARY_COOKIE",
+      "output": "[redacted]; name=CANARY_COOKIE",
+      "canary_survives": true
+    }
+  ],
+  "limitation": "No private logs read. Generic API acceptance is insufficient; this does not establish that current producers emit secrets. Java regex equivalence outside these ASCII cases is unverified."
+}

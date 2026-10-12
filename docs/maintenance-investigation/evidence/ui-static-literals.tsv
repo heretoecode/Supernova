@@ -1,0 +1,345 @@
+file	line	literal	status
+src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackInfo.java	9	See All Cast & Crew	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackInfo.java	9	Cast & Crew	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/FloatingPlayerService.java	136	DISPLAY_FLOATING_PLAYER	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java	67	More	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java	97	Subtitles · Other languages	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PreviewUpNext.java	18	UP NEXT  ·  Starting in 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PreviewUpNext.java	25	Skip 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PlayerService.java	1759	IntroDbFetch	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PlayerController.java	1417	Pause	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PlayerController.java	1496	Audio	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PlayerController.java	2915	—	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/AudioSpeedPicker.java	61	-	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/AudioSpeedPicker.java	90	+	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/SDKNotSupportedDialogActivity.java	50	Oops...	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java	2767	Segment Skipping (this session)	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java	3197	Incompatible device	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java	4537	 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PreviewTaglines.java	12	data	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PreviewTaglines.java	14	movie	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/PreviewTaglines.java	17	tv	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/AudioDelayPicker.java	54	-	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/AudioDelayPicker.java	79	+	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPicker.java	67	+	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPicker.java	184	+	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutActivity.java	35	About	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	160	Supernova double-ring logo	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	186	▸ 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	189	▾ 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	190	▾ 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	196	SupernovaLegalReader	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	207	Components	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	258	TMDB	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	261	QR code for the official 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/FoundationAboutWorkspace.java	288	Bundled information exceeds the reader limit	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/foundation/BundledNoticePager.java	36	 / 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java	18	SupernovaViewingHistory	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java	23	Viewing history is busy; retry the operation	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java	56	history	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java	125	supernova_backup_history	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewMatchSearch.java	38	Searching…	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewMatchSearch.java	39	Search unavailable. Please try again.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewMatchSearch.java	51	No matches	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java	31	Network Scanning	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java	35	Scan Frequency	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java	38	Last Scan / Result	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java	48	Sources Included	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java	49	Sources Included	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java	56	SUPERNOVA	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java	64	semantic:topnav.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java	186	:page.name);tabs[6].setContentDescription(CustomLibraryPage.load(getContext())==null?	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewEnrichmentQueue.java	14	SupernovaEnrichment	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialog.java	50	, Current	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialog.java	55	, Current	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewArtworkPicker.java	33	 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewArtworkPicker.java	38	✓	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewArtworkPicker.java	40	 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewArtworkPicker.java	44	Applying artwork…	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewArtworkPicker.java	47	 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewArtworkPicker.java	48	Artwork could not be applied. Try again.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java	95	QR containing only report reference, category and timestamp	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java	126	preview-label:	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java	128	, selected	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java	146	, selected	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java	150	, selected	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java	160	Cancel	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java	168	Supernova	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewWatchedScopeDialog.java	17	Watched state	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java	20	Library Health	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java	25	health:	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java	28	Scan Library	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java	30	View Details	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java	31	Find a Match	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java	32	Match Is Correct	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/SharedMetadata.java	58	data	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/SharedMetadata.java	61	tv	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java	21	Caps Lock 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java	61	);key.setSelected(true);key.setContentDescription(	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java	62	);key.setContentDescription(	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java	21	Page name	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java	22	private.credential	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java	12	SupernovaMetadata	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java	13	SupernovaTechnicalQueue	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	65	Add to Row	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	83	Remove all titles from Watch Next?	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	89	Move	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	92	Move row to	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	95	Customise Home	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	95	Shown	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	108	|	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	111	Row sort	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java	112	Maximum items	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java	488	Sort	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java	496	Filters	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java	499	|	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java	505	|	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java	584	 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java	595	Scanning network sources · 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/HomePlaceholder.java	14	Library placeholder. Add media folders to see details.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewAccent.java	10	Slate Blue	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewAccent.java	10	Accent & Colour	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewAccent.java	12	Custom accent — Left / Right adjusts each colour	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewAccent.java	12	Red	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewAccent.java	12	Apply	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewGenres.java	20	Genres · Match Any Selected	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	20	custom_library_load	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	36	wizard.option.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	42	Create one personalised library page using your Movies and TV Shows. Choose filters and a layout, then save your page.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	43	Library Page	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	43	. 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	45	Page not deleted	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	47	Genre matching: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	48	Year	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	49	Watched state	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	49	Minimum rating	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	51	Display	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	51	Sort	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	57	Live Preview	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	69	Review page settings	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	69	Page not saved	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java	74	Page not saved	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewSources.java	29	Indexed folders	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/UnavailablePosterBroadcastReceiver.java	52	UnavailablePosterCheck	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java	47	.LOCAL_IMPORT_LIFECYCLE	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/OfficialTitleArtwork.java	96	cancelled	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java	20	Library review is temporarily unavailable. Your library is unchanged.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java	35	  (	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java	39	Incorrect matches appear here when you flag a title. Open a title’s details and select Find a Match to correct its identification.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java	45	Source Problem\n\n	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java	47	Filename\n	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryColumns.java	71	, sort	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryColumns.java	96	 (always shown)	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryColumns.java	97	Columns · ◀ ▶ to reorder	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewSubtitleResults.java	15	Download Subtitles	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewNotice.java	8	preview-notice	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedCard.java	37	More Info	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewFolderActions.java	12	Add to Library	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryLoader.java	170	movie	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedIndicators.java	17	Featured carousel, Left or Right on More Info to change title	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedIndicators.java	24	Featured title 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewSubtitleChooser.java	74	Choose Subtitles	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/PreviewSubtitleChooser.java	89	Subtitle Actions	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowFragment.java	133	Watched state	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowFragment.java	142	Watched state	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowFragment.java	151	Artwork	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowFragment.java	164	Artwork	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualShowScrappingSearchFragment.java	91	TV show title, TMDb ID or IMDb ID / link	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java	82	›	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java	138	Resume · 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java	148	 : 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java	156	 : 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java	176	, 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java	179	, 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java	185	); c.subtitle.setText(	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/VideoBadgePresenter.java	130	Local	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/presenter/VideoBadgePresenter.java	133	UPNP	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewTrailer.java	20	In-app trailers are unavailable on this device.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewTrailer.java	28	Official trailer · 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewTrailer.java	29	Open YouTube	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsData.java	74	id	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/ArchosDetailsOverviewRowPresenter.java	71	JustWatch via TMDb · 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewSeasonActivity.java	22	season_library_load	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewLandscapeCard.java	23	:	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsFragment.java	231	Subtitles and artwork	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsFragment.java	237	Artwork	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsFragment.java	936	Manage put.io file	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	145	Versions (	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	177	sans-serif-light	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	183	Not matched · Synopsis unavailable	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	184	Resume	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	189	 — 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	201	\n	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	238	Season 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	350	: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	376	, 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	402	 · 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	452	 · 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	511	title	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	511	overview	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	511	release_date	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	539	overview	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	586	Season 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java	605	Actions	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java	68	preview_search_query	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java	93	Searching library…	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java	94	No matching library titles	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java	113	 · 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java	113	search.results	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java	113	 · 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java	113	  ·  	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java	113	search.results	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	23	SFTP server identities	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	26	SFTP server identities	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	27	Recorded SFTP servers	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	27	Reset this server identity only after independently verifying its new key	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	32	Remember library view preferences	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	34	Prepare Subtitle Searches	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	34	Prepare Current Season	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	37	Full Library Scan	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	38	Scan network library on return	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	39	Automatic network scan interval	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	47	Accent & Colour	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	47	Appearance	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	48	Home rows	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	49	Clear Watch Next	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	50	Select from matching local-library titles; offline local fallback	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	51	Diagnostic Logging	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	52	Issues Digest	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	53	Export Diagnostic Report	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	55	Keep viewing history until explicitly cleared. Turning this off keeps existing history.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	56	Controls backup inclusion independently of tracking. Backups can reveal viewing habits.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	57	Clear Viewing History	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	65	Video	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	66	Network	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	67	Library & Metadata	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	68	Home	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	69	Audio	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	83	Backup & Restore	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	85	Diagnostics	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	88	OpenSubtitles	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	89	IntroDB	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	90	Enable IntroDB	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	92	Play Normally	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	96	Subtitles by Default	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	101	Connection credentials are kept when disabled.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	120	settings.inline.choices	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	142	Information	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	164	  ›	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	168	\n\n	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	170	Advanced	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	171	Integrations	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	171	trakt_category	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java	185	preview_opensubtitles	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/VideoSettingsMoreLeanbackFragment.java	96	Home & Discovery · More options	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/VideoSettingsLicencesFragment.java	91	Licences & acknowledgements	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java	14	SupernovaSubtitleLogin	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java	17	OpenSubtitles	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java	17	Use your OpenSubtitles account to download available subtitles. Passwords are stored privately on this device and excluded from backups and diagnostics.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java	19	Enter your username and password before signing in.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java	19	Signing in…	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java	19	Signed in to OpenSubtitles.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java	19	Sign-in failed. Check the account details and connection. Previously saved credentials have been kept.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/InlinePreferenceChoices.java	27	Selected Providers	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewBuildInfo.java	9	SUPERNOVA Preview · Build information	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewBuildInfo.java	11	Metadata & availability	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewBuildInfo.java	12	Build information	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewBuildInfo.java	13	SUPERNOVA Preview · Build information	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewBuildInfo.java	14	What's New	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewBuildInfo.java	14	UTF-8	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewBuildInfo.java	14	What's New	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	55	SupernovaBrowserMetadata	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	72	Local Storage	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	72	Choose a local drive to browse its folders.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	72	Choose Your Media Folders	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	72	);actions.removeAllViews();}else{overview.setVisibility(VISIBLE);((TextView)left.getChildAt(0)).setText(	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	85	Locations	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	86	Overview	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	88	List / Grid	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	89	Sort	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	105	Information	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	149	Network Scanning	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	149	Automatic checks use the existing scanner. Scans continue when you leave this page.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	151	Automatic: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	152	Frequency: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	152	Frequency	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	153	On Open / Return: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	154	Sources Included	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	154	Scan Now	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	173	Provider	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	180	provider.crumb.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	193	File Information	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	205	Local Storage  ›	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	210	Internal Storage	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	213	Network Shares	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	215	Add Network Source	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	216	Discover Devices	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	217	Cloud Services	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	218	Network Scanning	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	219	Library Health  ›	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	219	Missing Metadata	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	221	semantic:network.item.saved.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	226	semantic:network.item.source.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	226	Add Network Source	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	227	Local Storage  	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	228	Library Health  	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	229	);facts.setVisibility(GONE);poster.setVisibility(GONE);information.setText(	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	229	Library Health	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	233	Enabled: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	233	Account / Connection	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	233	Disabled. Saved account connection and library associations are retained.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	235	Protocol: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	235	✓  	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	235	: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	235	Save Password: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	235	Show Password: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	237	Discovering…	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	237	 devices	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	237	SMB discovery unavailable. Direct connections remain available.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	237	Device discovery unavailable. Direct connections remain available.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	260	Overview	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	260	Choose a storage device, network share or saved location.\n\nLibrary changes remain unsaved until Save Changes & Scan. Scans continue in the background.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	262	Choose a Folder	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	262	Browse local storage and choose a writable folder. This changes the download destination and keeps your library unchanged.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	263	Scan Library	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	264	Network Scanning	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	265	Library Health	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	271	Choose local folders during initial setup.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	284	Loading…	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	295	 items	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	297	Connect	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	312	Retry	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	316	This source uses its existing account connection controls.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	366	No matching files or folders	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	371	folder	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	383	Information	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	384	Storage	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	384	Folder	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	384	Directory selection	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	398	Choose This Folder	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	402	Browse Folder	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	403	Remove from Library	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	404	Add to Library	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	405	Restore Inclusion	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	406	Save Location	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	407	Remove Saved Location	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	407	Remove saved location? Library records and media files are kept.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	409	Removal not confirmed	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	412	View Details	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	413	Save & Finish	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	416	Library changes pending	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	423	Changes not saved	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	432	Discard Changes	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	433	Continue Editing	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	434	Save Changes & Scan	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	459	Sort	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	461	List View	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	461	All Files: 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	461	All Files 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java	475	network.action.	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/ListingFragment.java	265	Files	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/ListingFragment.java	294	File Options	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/PreviewFilePresenter.java	13	folder	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/PreviewFilePresenter.java	13	Folder, 	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/network/PreviewSourceManagement.java	14	Connect a source	static literal candidate; conditional visibility/callback inspect source
+src/main/java/com/archos/mediacenter/video/leanback/network/NetworkServerCredentialsDialog.java	182	Add Network Source	static literal candidate; conditional visibility/callback inspect source
