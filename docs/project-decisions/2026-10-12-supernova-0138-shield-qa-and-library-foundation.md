@@ -200,3 +200,11 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - Owner confirms Supernova is currently **private/testing only**, not a public app with users whose custom-row settings need backwards-compatibility guarantees. Owner is comfortable with existing custom-row limits outside the proposed **5, 10, 15, 20, 25, 30** preset range being adjusted during eventual implementation. Do **not** treat preservation of old 0/unlimited or 100-item custom-row limits as a release blocker.
 - Preserve other row configuration and content where practical; implementation should still avoid crashes or invalid persisted state. Exact fallback for legacy limits and default for newly created rows should be confirmed at handover (15 is a candidate based on existing Home rows, not an explicitly owner-approved new-row default).
 - No code changes authorised yet.
+
+
+## 2026-10-12 Customise Home — owner approves compact Display Settings layout and monochrome states
+- Owner approves **three compact, fixed-size controls side by side** under Display Settings: **Sort By**, **Direction**, **Maximum Items**. Each must carry an appropriate **monochrome icon anchored at the left**. For Maximum Items, the selected numeric value (default **15**) is **centred in the remaining value area**; no width/height reflow while focused or editing.
+- Maximum Items uses a single inline D-pad selector: OK activates, Up/Down cycles **5/10/15/20/25/30**, OK confirms, Back cancels; no 0/unlimited or arbitrary custom value. Default **15 explicitly approved**.
+- Owner approves monochrome **eye** (visible) / **eye-off** (hidden) icons with state conveyed by glyph, not colour. The Show/Hide icon is an independent focus target outside the main row-body focus border. The six-dot move affordance is inside the right edge of the main row-body focus target. Focus does not recolour row text.
+- Owner also approves direction of genre selector: monochrome selection indicators on left, separate genre icon, names and stable live counts on right; entire genre row one focus target, selections persist independently of focus.
+- These are approved **design refinements**, not permission to modify application code. Other Customise Home questions and validation remain open.
