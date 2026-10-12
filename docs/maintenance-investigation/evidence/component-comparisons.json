@@ -1,0 +1,46 @@
+[
+  {
+    "component": "Video",
+    "baseline": "f53a1fc055d1d550a2edad4992bf82f9d12a7872",
+    "supernova_pin": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "upstream_snapshot": "e394eda85058d076c1b85adf7b64a788068d2c8a",
+    "supernova_repo": "heretoecode/Supernova",
+    "upstream_repo": "nova-video-player/aos-Video",
+    "upstream_ahead": 90,
+    "supernova_ahead": 464,
+    "upstream_release_provenance": "observed branch snapshot, NOT reconstructed release binary pin"
+  },
+  {
+    "component": "MediaLib",
+    "baseline": "53ba67259afa100e0898d7b6500413fb027d4b6f",
+    "supernova_pin": "5758074049bc153ac4967b4ecd21886469270076",
+    "upstream_snapshot": "34e319942e8f9df965bb7feae74e939e232f67c4",
+    "supernova_repo": "heretoecode/aos-MediaLib",
+    "upstream_repo": "nova-video-player/aos-MediaLib",
+    "upstream_ahead": 23,
+    "supernova_ahead": 4,
+    "upstream_release_provenance": "observed branch snapshot, NOT reconstructed release binary pin"
+  },
+  {
+    "component": "FileCoreLibrary",
+    "baseline": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+    "supernova_pin": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+    "upstream_snapshot": "93e560b086f60b0e5080267d18613749d4d6cd7b",
+    "supernova_repo": "nova-video-player/aos-FileCoreLibrary",
+    "upstream_repo": "nova-video-player/aos-FileCoreLibrary",
+    "upstream_ahead": 46,
+    "supernova_ahead": 0,
+    "upstream_release_provenance": "observed branch snapshot, NOT reconstructed release binary pin"
+  },
+  {
+    "component": "AVOS",
+    "baseline": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+    "supernova_pin": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+    "upstream_snapshot": "08ac39b6fa21396044963bace7cc3d60fedff695",
+    "supernova_repo": "nova-video-player/aos-avos",
+    "upstream_repo": "nova-video-player/aos-avos",
+    "upstream_ahead": 60,
+    "supernova_ahead": 0,
+    "upstream_release_provenance": "observed branch snapshot, NOT reconstructed release binary pin"
+  }
+]

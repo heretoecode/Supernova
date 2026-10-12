@@ -1,0 +1,109 @@
+type	name	exported	permission	target	actions
+activity	.foundation.FoundationAboutActivity	false			
+activity	.EntryActivity	true			
+activity	.browser.MainActivity	implicit/merged-manifest check needed			
+activity-alias	${applicationId}.browser.BrowserActivityVideo	true		.EntryActivity	android.intent.action.MAIN
+activity-alias	.browser.MainActivityStereo	implicit/merged-manifest check needed		.browser.MainActivity	
+activity	.browser.QueryBrowserActivityVideo	true			android.intent.action.SEARCH;android.intent.action.MEDIA_SEARCH;com.google.android.gms.actions.SEARCH_ACTION
+provider	com.archos.mediacenter.video.browser.SearchProviderVideo	implicit/merged-manifest check needed			
+provider	androidx.core.content.FileProvider	false			
+activity	.player.PlayerActivity	true			android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;archos.intent.action.RESUME_VIDEOPLAYER
+activity	.autoscraper.AutoScraperActivity	true			android.intent.action.MAIN
+activity	.utils.SubtitlesWizardActivity	true			android.intent.action.MAIN
+activity	.utils.credentialsmanager.CredentialsManagerPreferenceActivity	implicit/merged-manifest check needed			
+activity	.utils.VideoPreferencesActivity	true			android.intent.action.MAIN
+activity	.utils.TraktDeviceAuthActivity	true			android.intent.action.VIEW;android.intent.action.VIEW
+activity	.utils.VideoPreferencesLicencesActivity	true			android.intent.action.MAIN
+activity	.browser.VideoPicker	true			android.intent.action.GET_CONTENT
+activity	.utils.SubtitlesDownloaderActivity2	implicit/merged-manifest check needed			
+activity	.player.SDKNotSupportedDialogActivity	implicit/merged-manifest check needed			
+activity	com.archos.filecorelibrary.samba.SharedPasswordRequest	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.utils.HelpOverlayActivity	implicit/merged-manifest check needed			
+service	com.archos.mediacenter.filecoreextension.upnp2.NovaUpnpService	implicit/merged-manifest check needed			
+service	.browser.TorrentObserverService	implicit/merged-manifest check needed			
+service	.player.FloatingPlayerService	false			
+service	com.archos.mediacenter.video.player.PlayerService	true			
+service	.player.ExternalPlayerService	false			
+service	com.archos.mediascraper.AutoScrapeService	implicit/merged-manifest check needed			
+service	com.archos.mediascraper.AllCollectionScrapeService	implicit/merged-manifest check needed			
+service	com.archos.mediacenter.video.browser.FileManagerService	implicit/merged-manifest check needed			
+service	com.archos.mediacenter.video.utils.MediaLibraryBackupService	false			
+receiver	com.archos.mediacenter.LibAvosReceiver	false			com.archos.mediacenter.NEW_PLUGINS;com.archos.mediacenter.DEBUG;com.archos.mediacenter.DEBUG_SCAN;com.archos.mediacenter.AVSH;com.archos.mediacenter.RM_XML
+receiver	com.archos.mediaprovider.video.NetworkAutoRefresh	false			com.archos.mediaprovider.video.NetworkAutoRefresh_force;android.intent.action.BOOT_COMPLETED;com.archos.mediaprovider.video.NetworkAutoRefresh
+service	com.archos.mediaprovider.video.NetworkRefreshJob	implicit/merged-manifest check needed	android.permission.BIND_JOB_SERVICE		
+provider	com.archos.mediaprovider.video.VideoProvider	false			
+receiver	com.archos.mediaprovider.video.VideoStoreImportReceiver	true			android.intent.action.ACTION_SHUTDOWN;archos.media.intent.action.VIDEO_SCANNER_SCAN_FILE;android.intent.action.MEDIA_SCANNER_SCAN_FILE;archos.intent.action.MEDIA_SCANNER_SCAN_FILE;archos.media.intent.action.VIDEO_SCANNER_IMPORT_INCR;archos.media.intent.action.VIDEO_SCANNER_REMOVE_FILE;archos.intent.action.MEDIA_SCANNER_REMOVE_FILE;archos.media.intent.action.VIDEO_SCANNER_METADATA_UPDATE
+service	com.archos.mediaprovider.MediaThumbnailService	implicit/merged-manifest check needed			
+service	com.archos.mediaprovider.MediaRetrieverService	true			
+service	com.archos.mediaprovider.video.VideoStoreImportService	implicit/merged-manifest check needed			
+service	com.archos.mediaprovider.video.NetworkScannerServiceVideo	implicit/merged-manifest check needed			
+service	com.archos.mediacenter.utils.trakt.TraktService	implicit/merged-manifest check needed			
+receiver	com.archos.mediascraper.receiver.ScraperReceiver	false			archos.intent.action.MEDIA_LIBRARY_FLUSH;archos.intent.action.MEDIASCANNER_MEDIASCRAPER_RESET
+activity	com.archos.filecorelibrary.samba.SambaPreferenceActivity	implicit/merged-manifest check needed			
+activity	.info.VideoInfoActivity	implicit/merged-manifest check needed			
+activity	.info.VideoInfoScraperActivity	implicit/merged-manifest check needed			
+activity	.info.VideoInfoPosterBackdropActivity	implicit/merged-manifest check needed			
+activity	.player.TorrentLoaderActivity	true			android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW;android.intent.action.VIEW
+activity	.utils.FolderPicker	true			
+service	com.archos.mediaprovider.video.RemoteStateService	false			
+receiver	com.archos.mediacenter.video.utils.PreviewScanReceiver	false			archos.media.intent.action.VIDEO_SCANNER_SCAN_STARTED;archos.media.intent.action.VIDEO_SCANNER_SCAN_FINISHED
+receiver	com.archos.filecorelibrary.ExtStorageReceiver	true			android.intent.action.MEDIA_MOUNTED;android.intent.action.MEDIA_UNMOUNTED;android.intent.action.MEDIA_EJECT;android.intent.action.MEDIA_BAD_REMOVAL
+service	com.archos.mediascraper.NfoExportService	false			
+service	.browser.UpdateRecommendationsService	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.MainActivityLeanback	true			android.intent.action.MAIN
+activity	com.archos.mediacenter.video.leanback.movies.AllMoviesGridActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.animes.AllAnimesGridActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.tvshow.AllAnimeShowsGridActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.tvshow.AllTvshowsGridActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.tvshow.DocumentaryTvshowsGridActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.collections.AllCollectionsGridActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.collections.AllAnimeCollectionsGridActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.tvshow.AnimeShowsByAlphaActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.collections.CollectionActivity	true			
+activity	com.archos.mediacenter.video.leanback.tvshow.TvshowActivity	true			
+activity	com.archos.mediacenter.video.leanback.tvshow.TvshowMoreDetailsActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.details.PreviewSeasonActivity	false			
+activity	com.archos.mediacenter.video.leanback.tvshow.SeasonActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.movies.MoviesByAlphaActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.movies.MoviesByGenreActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.movies.MoviesByRatingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.movies.MoviesByYearActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.animes.AnimesByAlphaActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.animes.AnimesByGenreActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.animes.AnimesByRatingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.animes.AnimesByYearActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.tvshow.TvshowsByAlphaActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.tvshow.TvshowsByGenreActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.tvshow.TvshowsByRatingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.tvshow.EpisodesByDateActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.VideosByListActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.details.VideoDetailsActivity	true			
+activity	com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity	false			
+activity	com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.scrapping.ManualShowScrappingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.filebrowsing.LocalListingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.filebrowsing.ExtStorageListingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.network.NetworkRootActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.network.ftp.FtpListingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.network.smb.SmbListingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.network.upnp.UpnpListingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.network.webdav.WebdavListingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.network.smbj.SmbjListingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.network.sshj.SshjListingActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.nonscraped.NonScrapedVideosActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.search.VideoSearchActivity	true			android.intent.action.SEARCH
+provider	com.archos.mediacenter.video.leanback.search.VideoSearchProvider	true			
+activity	com.archos.mediacenter.video.utils.WebViewActivity	false			
+activity	com.archos.mediacenter.video.leanback.network.rescan.RescanActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.wizard.SubtitlesWizardActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.LibraryHealthActivity	false			
+activity	com.archos.mediacenter.video.leanback.CustomLibraryActivity	false			
+activity	com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.settings.VideoSettingsLicencesActivity	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.leanback.settings.VideoSettingsMoreLeanbackActivity	implicit/merged-manifest check needed			
+provider	io.sentry.android.core.SentryInitProvider	implicit/merged-manifest check needed			
+provider	io.sentry.android.core.SentryPerformanceProvider	implicit/merged-manifest check needed			
+activity	com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity	false			
+activity	com.archos.mediacenter.video.streaming.putio.PutioBrowserActivity	false			

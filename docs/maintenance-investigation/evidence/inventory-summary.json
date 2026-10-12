@@ -1,0 +1,11 @@
+{
+  "video_tracked_files": 2250,
+  "java_source_files": 769,
+  "xml_preferences": 111,
+  "manifest_components": 108,
+  "diagnostic_literal_producers": 119,
+  "upstream_commit_rows": 219,
+  "three_way_changed_paths": 1487,
+  "overlay_file_applications": 56,
+  "method": "Git object reads and exact-context in-memory patch reconstruction; no Android build, device run or source mutation"
+}

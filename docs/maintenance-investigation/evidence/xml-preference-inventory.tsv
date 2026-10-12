@@ -1,0 +1,112 @@
+file	type	key	title	default	dependency
+res/xml/preferences_more_leanback.xml	CheckBoxPreference	make_time_negative	Make remaining time negative in player	false	
+res/xml/preferences_more_leanback.xml	CheckBoxPreference	hide_trailer_row	Hide trailer row in movies	false	
+res/xml/preferences_more_leanback.xml	CheckBoxPreference	show_by_rating	Show movies/tv shows by rating	false	
+res/xml/preferences_video.xml	PreferenceCategory	preferences_about	@string/preferences_about		
+res/xml/preferences_video.xml	Preference	preferences_version	Build		
+res/xml/preferences_video.xml	ListPreference	ui_lang	@string/UiLang_title		
+res/xml/preferences_video.xml	PreferenceCategory	streaming_category	@string/streaming_title		
+res/xml/preferences_video.xml	PreferenceCategory	preferences_category_video	@string/preferences_category_video		
+res/xml/preferences_video.xml	CheckBoxPreference	force_software_decoding	@string/preferences_force_software_decoding	false	
+res/xml/preferences_video.xml	ListPreference	dec_choice	@string/dec_choice_title	0	
+res/xml/preferences_video.xml	ListPreference	audio_interface_choice	@string/audio_interface_choice_title	0	
+res/xml/preferences_video.xml	ListPreference	audio_decoder_choice	@string/audio_decoder_choice_title	1	
+res/xml/preferences_video.xml	CheckBoxPreference	enable_cutout_mode_short_edges	@string/preference_cutout_short_edges	true	
+res/xml/preferences_video.xml	CheckBoxPreference	enable_cutout_both_sidesx	@string/preference_enable_cutout_both_sidesx	false	
+res/xml/preferences_video.xml	ListPreference	force_audio_passthrough_multiple	@string/preferences_force_audio_passthrough	0	
+res/xml/preferences_video.xml	CheckBoxPreference	force_passthrough	@string/preferences_force_passthrough	false	
+res/xml/preferences_video.xml	CheckBoxPreference	playback_speed	@string/preferences_playback_speed	true	
+res/xml/preferences_video.xml	CheckBoxPreference	audio_speed_audiotrack	@string/preferences_audio_speed_audiotrack	false	
+res/xml/preferences_video.xml	CheckBoxPreference	enable_dynamic_audio_delay	@string/preferences_enable_dynamic_audio_delay_title	true	
+res/xml/preferences_video.xml	CheckBoxPreference	player_spatialization_enabled	@string/preferences_enable_spatialization_title	false	
+res/xml/preferences_video.xml	CheckBoxPreference	disable_downmix	@string/preferences_disable_downmix_title	false	
+res/xml/preferences_video.xml	ListPreference	parser_sync_mode	@string/preferences_parser_sync_mode	0	
+res/xml/preferences_video.xml	CheckBoxPreference	enable_downmix_androidtv	@string/preferences_enable_downmix_androidtv_title	false	
+res/xml/preferences_video.xml	ListPreference	enable_tv_refreshrate_switch_mode	@string/preference_tv_refreshrate_switch	0	
+res/xml/preferences_video.xml	ListPreference	dolby_vision_mode	@string/preference_dolby_vision_mode	auto	
+res/xml/preferences_video.xml	CheckBoxPreference	prefer_original_audio_track	@string/prefer_original_audio_track_title	false	
+res/xml/preferences_video.xml	ListPreference	favAudioLang	@string/favAudioLang_title		
+res/xml/preferences_video.xml	CheckBoxPreference	activate_tv_switch	@string/preference_tv_3d_automatic_switch	false	
+res/xml/preferences_video.xml	EditTextPreference	stream_buffer_size	@string/preferences_stream_buffer_size_title	24	
+res/xml/preferences_video.xml	EditTextPreference	stream_max_iframe_size	@string/preferences_stream_max_iframe_size_title	6	
+res/xml/preferences_video.xml	CheckBoxPreference	allow_3rd_party_player	@string/preferences_allow_3rd_party_player	false	
+res/xml/preferences_video.xml	PreferenceCategory	category_user_interface	@string/preferences_user_interface		
+res/xml/preferences_video.xml	CheckBoxPreference	smart_recently_rows	@string/pref_smart_recently_rows_title	false	
+res/xml/preferences_video.xml	CheckBoxPreference	player_projector_mode_key	@string/enable_projector_mode	false	
+res/xml/preferences_video.xml	CheckBoxPreference	hide_watched	@string/hide_watched_videos	false	
+res/xml/preferences_video.xml	CheckBoxPreference	sort_ignore_articles	@string/preferences_sort_ignore_articles_title	false	
+res/xml/preferences_video.xml	ListPreference	uimode	@string/ui_mode_title	0	
+res/xml/preferences_video.xml	ListPreference	uimode_leanback	@string/ui_mode_title		
+res/xml/preferences_video.xml	Preference	ui_zoom	@string/interface_size		
+res/xml/preferences_video.xml	CheckBoxPreference	display_resume_box	@string/preferences_display_resume_box	true	
+res/xml/preferences_video.xml	CheckBoxPreference	@string/reset_brightness_on_start_key	@string/reset_brightness_on_start	false	
+res/xml/preferences_video.xml	CheckBoxPreference	hide_controls_on_pause	@string/hide_controls_on_pause	false	
+res/xml/preferences_video.xml	ListPreference	app_theme	@string/theme_selection_title	slate	
+res/xml/preferences_video.xml	PreferenceCategory	category_leanback_user_interface	@string/preferences_leanback_user_interface		
+res/xml/preferences_video.xml	CheckBoxPreference	always_leanback_on_tv_key	@string/always_leanback_on_tv	true	
+res/xml/preferences_video.xml	CheckBoxPreference	separate_anime_movie_show	@string/preferences_separate_animation_from_movies	true	
+res/xml/preferences_video.xml	CheckBoxPreference	show_last_added_row	@string/preferences_show_last_added_row	true	
+res/xml/preferences_video.xml	CheckBoxPreference	show_last_played_row	@string/preferences_show_last_played_row	true	
+res/xml/preferences_video.xml	CheckBoxPreference	show_watching_up_next_row	@string/preferences_show_watching_up_next_row	false	
+res/xml/preferences_video.xml	Preference	reset_last_played_row	@string/preferences_reset_last_played_row		
+res/xml/preferences_video.xml	CheckBoxPreference	show_all_movies_row	@string/preferences_show_all_movies_row	false	
+res/xml/preferences_video.xml	ListPreference	preferences_movie_sort_order	@string/preferences_movie_sort_order_title		
+res/xml/preferences_video.xml	SwitchPreferenceCompat	try_new_ui	Try new UI	false	
+res/xml/preferences_video.xml	CheckBoxPreference	show_documentaries	Show documentaries	true	
+res/xml/preferences_video.xml	CheckBoxPreference	show_all_tv_shows_row	@string/preferences_show_all_tv_shows_row	false	
+res/xml/preferences_video.xml	ListPreference	preferences_tv_show_sort_order	@string/preferences_tv_show_sort_order_title		
+res/xml/preferences_video.xml	CheckBoxPreference	show_all_animes_row	@string/preferences_show_all_animes_row	false	
+res/xml/preferences_video.xml	ListPreference	preferences_animes_sort_order	@string/preferences_anime_sort_order_title		
+res/xml/preferences_video.xml	Preference	subtitles_credentials	@string/subtitles_credentials_title		
+res/xml/preferences_video.xml	CheckBoxPreference	subtitles_hide_default	@string/subtitles_hide_default	false	
+res/xml/preferences_video.xml	ListPreference	favSubLang	@string/favSubLang_title		
+res/xml/preferences_video.xml	MultiSelectListPreference	languages_list	@string/preferences_languages		
+res/xml/preferences_video.xml	ListPreference	codepage	@string/codepage_title	0	
+res/xml/preferences_video.xml	PreferenceCategory	trakt_category	@string/category_trakt		
+res/xml/preferences_video.xml	Preference	trakt_getfull	@string/upgrade_to_add_free_version		
+res/xml/preferences_video.xml	com.archos.mediacenter.video.utils.TraktSigninDialogPreference	trakt_signin	@string/trakt_signin_title		
+res/xml/preferences_video.xml	CheckBoxPreference	trakt_live_scrobbling	@string/trakt_live_scrobbling_title	true	
+res/xml/preferences_video.xml	CheckBoxPreference	trakt_sync_resume	@string/trakt_sync_trakt_resume_title	true	
+res/xml/preferences_video.xml	Preference	trakt_force_push	@string/trakt_force_push_title		
+res/xml/preferences_video.xml	Preference	trakt_force_pull	@string/trakt_force_pull_title		
+res/xml/preferences_video.xml	com.archos.mediacenter.video.utils.TraktWipeDialogPreference	trakt_wipe	@string/trakt_wipe_title		
+res/xml/preferences_video.xml	PreferenceCategory	netshare_category	@string/network_shared_folders		
+res/xml/preferences_video.xml	CheckBoxPreference	pref_smbj	@string/share_folders_smbj	false	
+res/xml/preferences_video.xml	CheckBoxPreference	pref_smbv2	@string/share_folders_smbv2	true	
+res/xml/preferences_video.xml	CheckBoxPreference	pref_smb_resolv	@string/share_folders_smb_resolv	false	
+res/xml/preferences_video.xml	CheckBoxPreference	pref_smb_disable_tcp_discovery	@string/share_folders_smb_disable_tcp_discovery	false	
+res/xml/preferences_video.xml	CheckBoxPreference	pref_smb_disable_udp_discovery	@string/share_folders_smb_disable_udp_discovery	false	
+res/xml/preferences_video.xml	CheckBoxPreference	pref_smb_disable_mdns_discovery	@string/share_folders_smb_disable_mdns_discovery	false	
+res/xml/preferences_video.xml	CheckBoxPreference	pref_sshj	@string/share_folders_sshj	false	
+res/xml/preferences_video.xml	PreferenceScreen	share_folders	@string/samba_settings_title		
+res/xml/preferences_video.xml	CheckBoxPreference	pref_create_remote_thumbs	@string/network_thumbnails	false	
+res/xml/preferences_video.xml	CheckBoxPreference	network_bookmarks	@string/network_bookmarks	true	
+res/xml/preferences_video.xml	CheckBoxPreference	pref_network_prefer_vpn	@string/preferences_network_prefer_vpn_title	false	
+res/xml/preferences_video.xml	CheckBoxPreference	@string/preferences_network_mobile_vpn_key	@string/preferences_network_mobile_vpn_title	false	
+res/xml/preferences_video.xml	PreferenceCategory	scraper_category	@string/scraper_settigns		
+res/xml/preferences_video.xml	CheckBoxPreference	enable_auto_scrap_key	@string/enable_auto_scrap	true	
+res/xml/preferences_video.xml	ListPreference	favScraperLang	@string/scraper_language_title		
+res/xml/preferences_video.xml	CheckBoxPreference	@string/network_nfo_parse_prefkey	@string/network_nfo_parse	@bool/network_nfo_parse_default	
+res/xml/preferences_video.xml	CheckBoxPreference	scrape_from_database_key	@string/enable_scrape_from_db_title	false	
+res/xml/preferences_video.xml	CheckBoxPreference	@string/nfo_export_auto_prefkey	@string/nfo_export_auto_title	@bool/nfo_export_auto_default	
+res/xml/preferences_video.xml	Preference	@string/rescrap_all_prefkey	@string/rescrap_all_title		
+res/xml/preferences_video.xml	Preference	@string/rescrap_all_movies_prefkey	@string/rescrap_all_movies_title		
+res/xml/preferences_video.xml	Preference	@string/rescrap_all_collections_prefkey	@string/rescrap_all_collections_title		
+res/xml/preferences_video.xml	Preference	@string/recreate_sort_titles_prefkey	@string/recreate_sort_titles_title		
+res/xml/preferences_video.xml	Preference	@string/nfo_export_manual_prefkey	@string/nfo_export_manual_title		
+res/xml/preferences_video.xml	Preference	@string/db_export_manual_prefkey	@string/db_export_manual_title		
+res/xml/preferences_video.xml	Preference	@string/media_library_export_prefkey	@string/media_library_export_title		
+res/xml/preferences_video.xml	Preference	@string/media_library_import_prefkey	@string/media_library_import_title		
+res/xml/preferences_video.xml	CheckBoxPreference	enable_adult_scrap_key	@string/enable_adult_scrap_title	false	
+res/xml/preferences_video.xml	Preference	rescan_storage	@string/rescan_storage		
+res/xml/preferences_video.xml	CheckBoxPreference	preference_display_all_files	@string/preference_display_all_files	false	
+res/xml/preferences_video.xml	com.archos.mediacenter.video.utils.TorrentPathDialogPreference	preferences_torrent_path	@string/torrent_path		
+res/xml/preferences_video.xml	com.archos.mediacenter.video.utils.TorrentBlocklistDialogPreference	preferences_torrent_blocklist	@string/torrent_blocklist		
+res/xml/preferences_video.xml	PreferenceCategory	about_category	@string/preferences_video_about		
+res/xml/preferences_video.xml	CheckBoxPreference	enable_sponsor	@string/enable_sponsor_title	false	
+res/xml/preferences_video.xml	Preference	preferences_video_os	@string/preferences_video_os_text		
+res/xml/preferences_video.xml	Preference	preferences_video_tmdb	@string/preferences_video_tmdb_text		
+res/xml/preferences_video.xml	Preference	preferences_video_trakt	@string/preferences_video_trakt_text		
+res/xml/preferences_video.xml	PreferenceScreen	preferences_video_licences	@string/preferences_video_licenses		
+res/xml/preferences_video.xml	PreferenceCategory	preferences_category_advanced_video	@string/preferences_video_advanced		
+res/xml/preferences_video.xml	Preference	preferences_video_advanced_quit	@string/preferences_video_advanced_quit_title		

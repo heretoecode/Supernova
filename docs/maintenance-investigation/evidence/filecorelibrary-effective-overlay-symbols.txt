@@ -1,0 +1,177 @@
+
+src/com/archos/filecorelibrary/StreamOverHttp.java SHA256 1d8d09238335a1f12e8a818013690153236d4363f687eb9b8e7553de6770fcb8
+57: public class StreamOverHttp {
+58: 	private static final Logger log = LoggerFactory.getLogger(StreamOverHttp.class);
+68: 	private final AtomicInteger mNextRequestId = new AtomicInteger(1);
+71: 	private final Object mSessionLock = new Object();
+72: 	private final Set<HttpSession> mSessions = new HashSet<>();
+89: 	public StreamOverHttp(MetaFile2 f, String forceMimeType) throws IOException{
+96: 			public void run(){
+112:     public StreamOverHttp(final Uri uri, final String forceMimeType) throws IOException{
+118:             public void run(){
+137: 	public List<MetaFile2> getSubtitleList(Uri video) throws SftpException, AuthenticationException, JSchException, IOException {
+178: 	public void setLocalSubFolder(String subFolder) {
+181: 	public int doesCurrentFileExists() {
+185: 	public Uri setPosterUri(Uri posterLocalUri, int posterGenericResource) {
+206: 		private final Properties requestHeaders = new Properties();
+223: 			synchronized (mSessionLock) {
+233: 		private void markActiveMediaRequest() throws IOException {
+236: 			synchronized (mSessionLock) {
+245: 		private boolean isCancelled() {
+249: 		private void closeSocket() {
+253: 		private void closeInput(InputStream input) {
+259: 		private synchronized InputStream takeInput() {
+265: 		private void publishInput(InputStream input) throws IOException {
+267: 			synchronized (this) {
+274: 		private void cancel() {
+275: 			synchronized (this) {
+284: 			synchronized (this) {
+287: 					synchronized (mSessionLock) { cleanupTasks++; }
+299: 		private void finishTask() {
+300: 			synchronized (mSessionLock) {
+307: 		public void run() {
+325: 		private String readRequest() throws IOException {
+353: 		private void resolveRange() throws IOException {
+375: 		private void openInputStream() throws Exception {
+492: 		private void handleResponse() throws IOException {
+502: 			synchronized (this) { input = is; }
+510: 	private boolean isResourcePoster(Uri posterLocalUri) {
+519: 	public Uri getUri(String fileName){
+527: 	public Uri getEncodedUri(String fileName){
+543: 	public void close() {
+545: 		synchronized (mSessionLock) {
+557: 	private void sendError(Socket socket, String status, String msg){
+565: 	private void copyStream(InputStream in, OutputStream out, byte[] buffer, long remaining, HttpSession session) throws IOException {
+583: 	private void sendResponse(Socket socket, String status, String mimeType, Properties header, InputStream isInput, long sendCount, byte[] buf, String errMsg, HttpSession session) throws IOException {
+
+src/com/archos/filecorelibrary/webdav/WebdavFile2.java SHA256 0ce61e3f04f67a8787cb73ca1364f6c57f53bd5c8d91124ef8ea42c62c01f5a3
+34: public class WebdavFile2 extends MetaFile2 {
+39:     private static final Logger log = LoggerFactory.getLogger(WebdavFile2.class);
+41:     public static Uri uriToHttp(Uri u) {
+83:     public static boolean isSelfResource(DavResource res, Uri directoryUri) {
+120:     public WebdavFile2(DavResource res, Uri uri) {
+138:                 if (log.isTraceEnabled()) log.error("WebdavFile2: caught IOException", ioe);
+146:     public String getName() {
+151:     public boolean isDirectory() {
+156:     public boolean isFile() {
+161:     public long lastModified() {
+166:     public long length() {
+171:     public boolean canRead() {
+176:     public boolean canWrite() {
+181:     public boolean isRemote() {
+186:     public boolean equals(Object other) {
+195:     public Uri getUri() {
+200:     public RawLister getRawListerInstance() {
+205:     public FileEditor getFileEditorInstance(Context ct) {
+225:     public static MetaFile2 fromUri(Uri uri) throws Exception {
+
+src/com/archos/filecorelibrary/webdav/WebdavUtils.java SHA256 950e0d9e439b9d9d963ce22d287aef33512bb233b595584e0666c4f6f83913e2
+46: public class WebdavUtils {
+48:     private static final Logger log = LoggerFactory.getLogger(WebdavUtils.class);
+49:     static private ConcurrentHashMap<NetworkCredentialsDatabase.Credential, OkHttpSardine> sardines = new ConcurrentHashMap<>();
+50:     static private ConcurrentHashMap<NetworkCredentialsDatabase.Credential, OkHttpClient> httpClients = new ConcurrentHashMap<>();
+51:     static private ConcurrentHashMap<Uri, String> resolvedRedirects = new ConcurrentHashMap<>();
+56:     private static final Set<QName> LISTING_PROPERTIES = Set.of(
+61:     private static final OkHttpClient DEFAULT_REDIRECT_CLIENT = new OkHttpClient.Builder().followRedirects(false).followSslRedirects(false).build();
+73:     public static WebdavUtils getInstance(Context context) {
+77:             synchronized(WebdavUtils.class) {
+85:     public static WebdavUtils peekInstance() {
+89:     public static Context getContext() {
+106:     private WebdavUtils(Context context) {
+111:     public synchronized OkHttpSardine getSardine(Uri uri) {
+121:             if (log.isTraceEnabled()) {
+124:                     public void log(String msg) {
+139:                 public Response intercept(Chain chain) throws IOException {
+167:                 public Request authenticate(Route route, Response response) throws IOException {
+212:     public synchronized OkHttpClient getHttpClient(Uri uri) {
+219:     private Uri buildKeyFromUri(Uri uri) {
+224:     public String resolveRedirect(Uri uri) {
+228:             if (log.isTraceEnabled()) log.trace("resolveRedirect: cache hit for " + key + " -> " + resolved);
+231:         if (log.isTraceEnabled()) log.trace("resolveRedirect: cache miss for " + key);
+
+test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java SHA256 2c184cdd02d925ac5d9d11089b23565d587301a530d75747a6d2d2e08605db82
+60: public class WebdavSecurityAndRangeTest {
+65:     public void setUp() {
+70:     private DavResource createDavResource(String href, boolean isDirectory) throws Exception {
+103:     public void testSelfResourceCasingAndMatching() throws Exception {
+123:     public void testRangeValidationExactStart() {
+138:     public void testRangeRequestRejects200Ok() throws Exception {
+158:     public void testRangeRequestHandles416() throws Exception {
+178:     public void testRangeRequestAccepts206WithExactStart() throws Exception {
+198:     public void testRedirectWithBasePathPreservation() throws Exception {
+217:     public void testHttpsToHttpRedirectBlocked() throws Exception {
+257:     public void testCrossOriginAuthSecurity() throws Exception {
+299:     public void testCrossOriginRedirect401ChallengeDoesNotDiscloseSourceCredentials() throws Exception {
+348:     public void testTempFileDeletedAfterFailedPut() throws Exception {
+377:     public void testDepthZeroSelectExactMatchWhenMultiple() throws Exception {
+389:     public void testDepthZeroAcceptsSingleCanonicalHref() throws Exception {
+400:     public void testDepthZeroRejectsAmbiguousNonMatchingResponses() throws Exception {
+412:     public void testDepthZeroRejectsEmptyResponse() throws Exception {
+420:     public void testFromUriIssuesDepthZeroRequest() throws Exception {
+472:     public void testSelectivePropfindFallbackToAllpropOn405() throws Exception {
+520:     public void testUriToHttpDeduplicatesMountPath() throws Exception {
+
+src/com/archos/filecorelibrary/sftp/SFTPSession.java SHA256 9e1ac934632b8d1793ec1f0255e1e8b25ee4eabeaf27affe1a1045f61ccf441c
+32: public class SFTPSession {
+34:     private static final Logger log = LoggerFactory.getLogger(SFTPSession.class);
+40:     public SFTPSession(){
+45: 	public static SFTPSession getInstance(){
+51: 	public synchronized Channel getSFTPChannel(Uri cred) throws JSchException{
+83:     private synchronized void acquireSession(Channel channel){
+86:             if (log.isTraceEnabled()) log.trace("acquireSession: acquiring channel {} for session {}", channel, session);
+98:     public synchronized void releaseSession(Channel channel) {
+101:             if (log.isTraceEnabled()) log.trace("releaseSession: releasing channel {} for session {}", channel, session);
+124:     public synchronized void removeSession(Uri cred) {
+136:                 if (log.isTraceEnabled()) log.trace("removeSession: disconnecting session {} for {}", s, c);
+143:     private Uri buildKeyFromUri(Uri uri) {
+149:     public synchronized Session getSession(Uri path) throws JSchException{
+171:             else if (log.isTraceEnabled()) log.trace("getSession: reusing session for {}", path);
+187:                 public int check(String ignored, byte[] key) { return SftpHostTrust.verify(host,trustedPort,key)?OK:CHANGED; }
+188:                 public void add(com.jcraft.jsch.HostKey key,com.jcraft.jsch.UserInfo info) { }
+189:                 public void remove(String host,String type) { }
+190:                 public void remove(String host,String type,byte[] key) { }
+191:                 public String getKnownHostsRepositoryID() { return "Supernova persisted SSH identity"; }
+192:                 public com.jcraft.jsch.HostKey[] getHostKey() { return new com.jcraft.jsch.HostKey[0]; }
+193:                 public com.jcraft.jsch.HostKey[] getHostKey(String host,String type) { return getHostKey(); }
+
+src/com/archos/filecorelibrary/sftp/SftpHostTrust.java SHA256 0eb7d7b1d2d51073b6bd7eb1a1fd144af40c0225fe460ea964a83665f392adc8
+13: public final class SftpHostTrust {
+15:     public static synchronized void initialise(Context context) { directory=context.getFilesDir(); }
+16:     private interface Action<T>{T run(Properties pins,AtomicFile file)throws Exception;}
+18:     private static synchronized <T>T access(Action<T> action,T failure){
+26:     private static void save(Properties pins,AtomicFile file)throws IOException{
+31:     private static String identity(String host,int port) { return host.toLowerCase(Locale.ROOT)+":"+(port<0?22:port); }
+32:     public static boolean verify(String host,int port,byte[] wireKey) {
+43:     public static String[] hosts(){return access((pins,file)->pins.stringPropertyNames().toArray(new String[0]),new String[0]);}
+44:     public static boolean forget(String identity){return access((pins,file)->{pins.remove(identity);save(pins,file);return true;},false);}
+45:     private SftpHostTrust(){}
+
+src/com/archos/filecorelibrary/sshj/SshjUtils.java SHA256 2f49d65a680c828cf68a68098ab2aa51535927ea6e6fc4b3a1a07f34059d2cfe
+42: public class SshjUtils {
+44:     private static final Logger log = LoggerFactory.getLogger(SshjUtils.class);
+45:     static private ConcurrentHashMap<NetworkCredentialsDatabase.Credential, SSHClient> sshClients = new ConcurrentHashMap<>();
+46:     static private ConcurrentHashMap<NetworkCredentialsDatabase.Credential, SFTPClient> sftpClients = new ConcurrentHashMap<>();
+52:     public static SshjUtils getInstance(Context context) {
+56:             synchronized(SshjUtils.class) {
+64:     public static SshjUtils peekInstance() {
+68:     private SshjUtils(Context context) {
+73:     public synchronized SSHClient getSshClient(Uri uri) throws IOException, AuthenticationException {
+84:                 if (log.isTraceEnabled()) log.trace("getSshClient: sshClient is null or not connected for {}, connecting to {}", uri, server);
+88:                     public boolean verify(String hostname,int port,java.security.PublicKey key) {
+89:                         return com.archos.filecorelibrary.sftp.SftpHostTrust.verify(hostname,port,
+92:                     public java.util.List<String> findExistingAlgorithms(String hostname,int port) { return java.util.Collections.emptyList(); }
+99:                 if (log.isTraceEnabled()) log.trace("getSshClient: found non null connected sshClient for {}", uri);
+119:     public static synchronized void disconnectSshClient(Uri uri) {
+127:                 if (log.isTraceEnabled()) log.trace("disconnectSshClient: sshClient disconnected for {}", uri);
+132:             if (log.isTraceEnabled()) log.trace("closeSFTPClient: remove sshClient from known sshClients for {}", uri);
+137:     public synchronized SFTPClient getSFTPClient(Uri uri) throws IOException, AuthenticationException {
+144:             if (log.isTraceEnabled()) log.trace("getSFTPClient: sftpClient is null or not connected for {}", sftpClient);
+150:                 if (log.isTraceEnabled()) log.trace("getSFTPClient: saving sftpClient {}", sftpClient);
+154:             if (log.isTraceEnabled()) log.trace("getSFTPClient: sftpClient is not null reusing it for {}", uri);
+159:     public static synchronized void closeSFTPClient(Uri uri)  {
+167:                 if (log.isTraceEnabled()) log.trace("closeSFTPClient: sftpClient disconnected for {}", uri);
+172:             if (log.isTraceEnabled()) log.trace("closeSFTPClient: remove sftpClient from known sftpClients for {}", uri);
+177:     private static Uri buildKeyFromUri(Uri uri) {
+182:     public static String getSftpPath(Uri uri) {
+188:     public static boolean isSSHjEnabled() {
+189:         if (log.isTraceEnabled()) log.trace("isSSHjEnabled={}", PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("pref_sshj", false));
