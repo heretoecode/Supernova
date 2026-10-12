@@ -1,8 +1,27 @@
 # Supernova 0.138 build and QA provenance
 
-The complete approved software scope is implemented and an exact-source unsigned release candidate is verified. It is not yet an installable, signed Shield distribution or a physical Shield acceptance result. The [48-item conformance matrix](CONFORMANCE.md) retains every handover requirement; [SHIELD_QA.md](SHIELD_QA.md) covers the remaining device/live-service checks and explicit distribution gate.
+The complete approved software scope is implemented and the user-approved signed Shield QA candidate is verified. Physical Shield acceptance remains unverified. The [48-item conformance matrix](CONFORMANCE.md) retains every handover requirement; [SHIELD_QA.md](SHIELD_QA.md) covers the remaining device/live-service checks and explicit distribution gate.
 
-## Exact tested candidate
+## Signed Shield QA candidate
+
+Protected [signing run 38239064325](https://github.com/heretoecode/Supernova/actions/runs/38239064325) completed **success** on exact source `b3504c2c4b1725f3070416d14b63e53ae1db3d74` after rebuilding the pinned dependencies, FFmpeg, native wrappers and application and repeating all 564 release tests, Python tooling checks, lint and unsigned conformance. The key and certificate are unchanged. The user approved only QA signing/distribution; no public release or merge occurred.
+
+| Field | Verified value |
+|---|---|
+| APK | `Supernova_0.138.apk`, **103518717 bytes** |
+| APK SHA-256 | `6f46a40c9698e9219b6e26c2f09277de93462d3b9721a9b0b2bfd64814cd04ee` |
+| Application / version | `app.supernova.player` / `0.138` / code `138` |
+| Existing certificate SHA-256 | `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e` |
+| Signed QA download | [artifact 11744230421](https://github.com/heretoecode/Supernova/actions/runs/38239064325/artifacts/11744230421), expires `2026-10-26T11:25:07Z` |
+| Corresponding FFmpeg source | [artifact 11744035621](https://github.com/heretoecode/Supernova/actions/runs/38239064325/artifacts/11744035621), expires `2026-11-11T11:25:12Z` |
+| Automated validation | 564 release tests, zero failures/errors/skips; lint zero errors / 1500 warnings; 138 runtime hashes, 92 native hashes, 24 FFmpeg libraries; 64 native decode comparisons |
+| Independent downloaded APK checks | Signature/certificate, identity/version/providers/branding/legal assets, SHA-256, ZIP CRC, no duplicate entries, 16 KiB zip alignment, all 92 native hashes and all 24 FFmpeg library hashes **passed** |
+| Payload parity | Exact unsigned-to-signed parity **passed in CI**. Not repeated locally because the unsigned CI APK is not distributed. |
+| Shield installation / upgrade / hardware playback | **UNVERIFIED**; final acceptance follows the user's Shield testing |
+
+[SIGNED_QA_VERIFICATION.json](SIGNED_QA_VERIFICATION.json) records independent verification and exact artifact archive digests/expiry. [SIGNED_QA_CI_EVIDENCE.json](SIGNED_QA_CI_EVIDENCE.json) retains the original public CI receipt, including its exact-source unsigned proof. The documentation receipt commit that follows this build changes no application source; it must not be substituted for the APK's source commit.
+
+## Original local unsigned candidate
 
 | Field | Verified value |
 |---|---|
@@ -22,7 +41,7 @@ The complete approved software scope is implemented and an exact-source unsigned
 
 The receipt is [UNSIGNED_CONFORMANCE.json](UNSIGNED_CONFORMANCE.json). It derives identity, resources, providers, runtime hashes, native hashes and completed test/lint outcomes from the real built APK. The exact unsigned candidate also passed `supernova_0138_qa_signing.gate`; no keystore was decoded. No APK is committed or uploaded by this evidence checkpoint.
 
-After the tested application commit, `b47582af3337ec2aef8bc7f50c2c852968771890` fixes clean-runner native prerequisite ordering and pins the wrapper NDK, and `074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f` registers the new signing workflow using a push event for which all signing jobs are disabled. These commits change the recipe, workflow and its Python guard test only; application Java/resources and Android tests are unchanged. The subsequent evidence commit adds documentation/receipts/renders only. The protected signing workflow will rebuild and re-run conformance on its exact dispatched branch SHA before accessing the existing key; it does not reuse this APK under a different source label.
+After the tested application commit, `b47582af3337ec2aef8bc7f50c2c852968771890` fixes clean-runner native prerequisite ordering and pins the wrapper NDK, and `074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f` registers the new signing workflow using a push event for which all signing jobs are disabled. These commits change the recipe, workflow and its Python guard test only; application Java/resources and Android tests are unchanged. The subsequent evidence commit adds documentation/receipts/renders only. The protected signing run recorded above rebuilt and re-ran conformance on its exact dispatched branch SHA before accessing the existing key; it did not reuse this local APK under a different source label.
 
 ## Verification
 
@@ -38,7 +57,7 @@ After the tested application commit, `b47582af3337ec2aef8bc7f50c2c852968771890` 
 | Native runtime comparison | All four ABI registry/tempo checks and **64 decode comparisons passed**, [NATIVE_RUNTIME_REGRESSION.json](NATIVE_RUNTIME_REGRESSION.json) |
 | Isolated native wrapper build | Fresh AVOS/libyuv/nativehelper/FileCore worktrees without existing wrapper obj/libraries compile successfully with full FFmpeg and NDK **29.0.14206865**; **88 inputs** recorded in [CLEAN_NATIVE_BUILD.json](CLEAN_NATIVE_BUILD.json) |
 | Application layout/focus evidence | [12 actual app-view renders](ui/README.md), synthetic fixtures; exact test-source hash in [render provenance](ui/RENDER_PROVENANCE.json) |
-| Signing/distribution | Not performed; existing key and protected-environment policies retained |
+| Signing/distribution | User-approved QA artifact produced in run 38239064325; existing key/certificate retained and only the exact 0.138 branch added to the existing allowlist |
 | Physical Shield / historical logs / live account/provider | UNKNOWN; no device or authorised diagnostic export supplied, and public terms/reference retrieval blocked |
 
 The native runtime harness runs Android API 23 bionic: x86_64 directly and the other architectures through QEMU user emulation. It is a real native decoder/registry comparison, not Android framework, MediaCodec, Shield hardware, passthrough, HDR output, startup-latency or playback acceptance proof.
@@ -77,6 +96,6 @@ Local build output remains in the execution workspace. Public evidence is allowl
 
 ## CI and release gate
 
-Unsigned conformance runs without signing secrets on the isolated branch. The clean-runner recipe correction is independently built locally and is being checked in fresh CI. Current run/status is linked from PR #13; do not mistake an earlier failed or cancelled checkpoint for the final candidate, or a signing-registration **skipped** run for a signed build.
+Unsigned conformance [38207140954](https://github.com/heretoecode/Supernova/actions/runs/38207140954) completed **success** on source `074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f`. The subsequent `b3504c2c4b1725f3070416d14b63e53ae1db3d74` commit adds evidence/documentation only. Signed QA [38239064325](https://github.com/heretoecode/Supernova/actions/runs/38239064325) independently rebuilt and repeated the complete checks on that exact source and completed **success**. Earlier failed/cancelled checkpoints remain historical; the signing registration run `38207141176` was **skipped**, not a signed build.
 
-Signing workflow ID `381805661` is now registered as `.github/workflows/supernova-0138-qa.yml`. Its push registration run `38207141176` completed **skipped**; every signing job requires `workflow_dispatch`, the exact 0.138 ref and explicit `approved_qa_distribution=true`. It still performs complete source/native/test/lint/unsigned conformance before decoding a key. The existing protected environment currently excludes the new branch; adding only that exact branch and signing/distributing the QA APK need approval under the handover. Existing branch restrictions, certificate pin, key, main and 0.137 history remain intact.
+Signing workflow ID `381805661` is `.github/workflows/supernova-0138-qa.yml`. Its job requires manual dispatch, the exact 0.138 ref and `approved_qa_distribution=true`. After explicit user approval, the integration's environment-policy POST returned HTTP 403; the user added only `codex/supernova-0.138-qa-2026-10-12` (policy `62775528`). All four prior entries remain. The successful protected run verified the existing certificate, signed the exact tested unsigned APK, checked payload parity and removed temporary signing material before uploading its two allowlisted QA artifacts. No key was downloaded locally. Main, 0.137, application identity and key/certificate arrangements remain unchanged; PR #13 remains draft and unmerged. This approval covers QA distribution only, not final acceptance or a public release.

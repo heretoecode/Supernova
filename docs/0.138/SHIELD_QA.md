@@ -6,7 +6,22 @@ This checklist complements the complete [48-item conformance report](CONFORMANCE
 
 Use the existing `app.supernova.player` signing identity, certificate SHA-256 `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`, version name `0.138`, version code `138`. Record the source SHA, protected workflow run, APK SHA-256 and device Android/Shield version before testing. Verify certificate, unsigned-to-signed payload parity, version and ZIP CRC through `.github/signing/verify_supernova_0138_qa_apk.py`. Install as an update to the existing 0.137 application; keep the existing library, preferences and viewing history. Do not clear app data or use a replacement key.
 
-No 0.138 APK has been distributed in this implementation session. The protected signing environment currently permits the old approved branches, including 0.137, but excludes the new 0.138 branch (live read 2026-10-12). Approval must cover adding only `codex/supernova-0.138-qa-2026-10-12` to that existing branch allowlist and running `supernova-0138-qa.yml` with its explicit `approved_qa_distribution` input. The new workflow is registered via a push event that skips every signing job; the signing job itself remains manual-only. Keep all existing restrictions/certificate pins. Do not bypass the gate through an old ref, change the identity or merge either PR.
+The user-approved QA artifact is [Supernova 0.138, artifact 11744230421](https://github.com/heretoecode/Supernova/actions/runs/38239064325/artifacts/11744230421) from [successful signing run 38239064325](https://github.com/heretoecode/Supernova/actions/runs/38239064325). Download the artifact ZIP and extract `Supernova_0.138.apk`. It expires `2026-10-26T11:25:07Z`. Exact source: `b3504c2c4b1725f3070416d14b63e53ae1db3d74`. APK SHA-256: `6f46a40c9698e9219b6e26c2f09277de93462d3b9721a9b0b2bfd64814cd04ee`. Independent certificate/identity/version/CRC/native checks passed; complete unsigned-to-signed payload parity passed in the protected run. See [signed verification](SIGNED_QA_VERIFICATION.json) and [build provenance](BUILD_QA.md).
+
+With ADB debugging enabled and the computer authorised on the Shield, connect by USB or, for network debugging:
+
+```sh
+adb connect <SHIELD-IP>:5555
+adb install -r Supernova_0.138.apk
+```
+
+Install as an update; do not uninstall or clear data. After installation, open Supernova and check About shows `0.138`; record the Shield/Android version and exercise the scenarios below. ADB verification commands include:
+
+```sh
+adb shell dumpsys package app.supernova.player
+```
+
+The exact branch was added to the existing signing allowlist with the user's approval; the other four entries, key and certificate are preserved. PR #13 remains draft/unmerged, main and 0.137 unchanged, and no public release was published. Installation/upgrade and physical testing are still **UNVERIFIED**; final acceptance awaits the user's Shield results.
 
 ## Device scenarios
 
