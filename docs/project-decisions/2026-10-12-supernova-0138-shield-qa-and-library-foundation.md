@@ -338,3 +338,10 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - Preserve current blur appearance/strength, navigation position and scrolling/row/poster layout. Adjust blur region's lower boundary and associated falloff/gradient consistently, wherever shared top-nav blur is used; avoid unintended clipping or seams.
 - Audit actual source implementation and compare before/after screenshots on Shield for Home and other affected scrollable screens. If the 80% extent still causes overlap artefacts, report and consider alternative approaches rather than repeatedly adjusting unrelated values.
 - Add to next-version approved QA/implementation scope; no source change made by this docs update.
+
+
+## 2026-10-13 — LATEST OWNER OVERRIDE: Shield Home integration parked; 0.139 consolidation
+- **PARKED until further owner discussion:** Android TV / NVIDIA Shield Home launcher channel integration and adjustments. **Exclude the proposed 'Show on Shield Home' toggle from 0.139 Customise Home UI and implementation** while this track is parked. Do not present an inert or misleading toggle. Preserve current existing launcher channels and behaviour; no channel publication/removal changes.
+- Other Customise Home, Home heading icons/white text and 80%-extent navigation blur owner approvals remain active for first implementation. Earlier notes proposing Show on Shield Home within that implementation are superseded by this explicit latest decision.
+- Authoritative up-to-date status/issue checklist: [Supernova 0.139 consolidated handover scope](2026-10-13-supernova-0139-consolidated-handover-scope.md). The present file remains chronological evidence; older design experiments may conflict and must not be treated as latest instructions.
+- This GitHub change is documentation only. It does not mean Codex implemented, built or tested any feature, nor that the full 0.139 candidate list has received blanket coding approval.
