@@ -18,3 +18,13 @@
 ## Future follow-up
 - User intends to review the entire playback HUD later. **At the start of that discussion, remind user they previously said they have something to mention about subtitles.**
 - This spec is for the stated fixes, not approval of any additional seek-bar redesign beyond them.
+
+## User-approved alignment and timing placement refinement (latest)
+
+- **Play/Pause, seek track, and total-duration/end-time text share one horizontal centreline**. Do not align the track with the top or bottom of the neighbouring elements; validate geometry on Shield.
+- Secondary buttons **Subtitles, Audio, More** remain in that order but are **left-aligned above the seek bar**, not right-aligned.
+- On the right of the seek track, show **total media duration · Episode Ends HH:MM** on one line. For movies, use context-appropriate **Movie Ends HH:MM** rather than Episode Ends. Use middle dot separator `·`, comfortable gaps, same baseline/centreline as Play/Pause and seek track.
+- **Top-right HUD contains only the current clock**, no Episode Ends/end-time text. Preserve the clock.
+- Timestamp pill stays visible above seek track whenever HUD visible; remove duplicate elapsed time beneath seek track and large outer focus box.
+- Calculate predicted end time from current playback position, remaining duration, current clock and playback speed where applicable; refresh appropriately on seek/resume/speed changes and avoid stale or misleading times. Decide reasonable paused-state behaviour via technical audit; do not invent static times.
+- This latest approved layout supersedes earlier illustration placing the secondary controls on the right or end time in the top-right.
