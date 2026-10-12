@@ -29,7 +29,7 @@ public class FoundationHomeRegressionTest {
   try{PreviewPages pages=new PreviewPages(host.get(),(h,item)->{});host.get().setContentView(pages);Snapshot snapshot=source();
    Entry next=new Entry(new PreviewPagesTest().episode(4,0,false,0,200).media,200,123,"Drama");next.heroEligible=true;next.heroSequential=true;next.secondary="Next Episode · S1 E4";next.backdrop=android.net.Uri.parse("file:///fixture/next");
    Entry another=new Entry(new PreviewPagesTest().episode(2,0,false,0,199).media,199,456,"Drama");another.heroEligible=true;another.heroSequential=true;another.secondary="Next Episode · S1 E2";another.backdrop=android.net.Uri.parse("file:///fixture/another");snapshot.featured.add(next);snapshot.featured.add(another);pages.setSnapshot(snapshot);
-   java.util.List<Entry> candidates=org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages,"featuredCandidates");assertSame(next,candidates.get(0));assertSame(another,candidates.get(1));assertFalse(candidates.get(2).heroSequential);assertEquals(8,candidates.size());
+   java.util.List<Entry> candidates=org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages,"featuredCandidates");assertSame(next,candidates.get(0));assertSame(another,candidates.get(1));assertFalse(candidates.get(2).heroSequential);assertEquals(snapshot.featured.size(),candidates.size());assertTrue(candidates.containsAll(snapshot.featured));
   }finally{host.pause().stop().destroy();}
  }
  @Test public void homeViewportHasEqualNeighboursSixtyPercentTeaserAndNoBackgroundDuplicate()throws Exception{

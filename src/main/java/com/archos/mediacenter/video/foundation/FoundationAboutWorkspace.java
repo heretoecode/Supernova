@@ -73,7 +73,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     }
     private LinearLayout column(){LinearLayout v=new LinearLayout(getContext());v.setOrientation(VERTICAL);return v;}
     private ScrollView scroll(LinearLayout body){ScrollView v=new ScrollView(getContext());v.setFillViewport(false);v.setClipToPadding(false);v.addView(body,new ScrollView.LayoutParams(-1,-2));return v;}
-    private TextView text(String value,int size){TextView v=new TextView(getContext());v.setText(value);v.setTextColor(Color.WHITE);v.setTextSize(size);v.setLineSpacing(dp(3),1);return v;}
+    private TextView text(String value,int size){TextView v=com.archos.mediacenter.video.leanback.SharedThreePanel.text(getContext(),value,size);v.setLineSpacing(dp(3),1);return v;}
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
     public void show(TextView aboutButton) {
         parentButton=aboutButton;

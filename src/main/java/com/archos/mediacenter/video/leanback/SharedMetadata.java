@@ -19,9 +19,10 @@ import java.util.*;
 
 /** Shared, compact metadata. Descriptive provider facts never imply local file capabilities. */
 public final class SharedMetadata {
-    public static final class Facts {
+    public static final class Facts implements java.io.Serializable {
         public String certificate="",year="",genres="",context="";
         public double rating; public long votes;
+        public Facts copy(){Facts copy=new Facts();copy.certificate=certificate;copy.year=year;copy.genres=genres;copy.context=context;copy.rating=rating;copy.votes=votes;copy.technical.addAll(technical);return copy;}
         public final List<String> technical=new ArrayList<>();
     }
     public static String runtime(long minutes){return minutes<=0?"":(minutes>=60?minutes/60+"h":"")+(minutes%60>0?(minutes>=60?" ":"")+minutes%60+"m":"");}
@@ -51,8 +52,8 @@ public final class SharedMetadata {
         Facts facts=new Facts();if(entry==null)return facts;
         facts.year=entry.year()>0?String.valueOf(entry.year()):"";facts.genres=entry.genres.replace('|',',');
         boolean episode=entry.media instanceof Episode;
-        facts.certificate=entry.media instanceof Movie?((Movie)entry.media).getContentRating():"";
-        facts.rating=entry.media instanceof Movie?((Movie)entry.media).getRating():episode?((Episode)entry.media).getEpisodeRating():entry.media instanceof Tvshow?((Tvshow)entry.media).getRating():0;
+        facts.certificate=""; // The legacy index loses territory; only the country-scoped cache can supply an age badge.
+        facts.rating=0; // Indexed/NFO scores do not retain a verified provider.
         String kind=entry.media instanceof Movie?"movie":"tv";String section=episode?"season/"+((Episode)entry.media).getSeasonNumber():"";
         JSONObject cached=entry.onlineId>0?PreviewMetadataCache.read(c,kind,entry.onlineId,section):null,data=cached==null?null:cached.optJSONObject("data");
         if(episode&&data!=null){JSONArray episodes=data.optJSONArray("episodes");data=null;if(episodes!=null)for(int n=0;n<episodes.length();n++){JSONObject candidate=episodes.optJSONObject(n);if(candidate!=null&&candidate.optInt("episode_number")==((Episode)entry.media).getEpisodeNumber()){data=candidate;break;}}}

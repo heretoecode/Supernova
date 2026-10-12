@@ -2912,7 +2912,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if(mClock==null)return;long now=System.currentTimeMillis();String currentClockText=getDateFormat().format(new Date(now));mClock.setText(currentClockText);
         if(Player.sPlayer==null)return;int duration=Player.sPlayer.getDuration(),position=mNextSeek>=0?mNextSeek:Player.sPlayer.getCurrentPosition();float speed=PlayerService.sPlayerService!=null?PlayerService.sPlayerService.getAudioSpeed():1f;
         if(experimentalUi()){
-            if(mEndTime!=null){boolean episode=mContext instanceof PlayerActivity&&!((PlayerActivity)mContext).previewEpisode().isEmpty();long end=PreviewHudTiming.end(now,duration,position,speed);mEndTime.setText(stringForTime(Math.max(0,duration))+(end>=0?" · "+(episode?"Episode Ends ":"Movie Ends ")+getDateFormat().format(new Date(end)):""));}
+            if(mEndTime!=null){boolean episode=mContext instanceof PlayerActivity&&!((PlayerActivity)mContext).previewEpisode().isEmpty();long end=PreviewHudTiming.end(now,duration,position,speed);mEndTime.setText((duration>0?stringForTime(duration):"—")+(end>=0?" · "+(episode?"Episode Ends ":"Movie Ends ")+getDateFormat().format(new Date(end)):""));}
         }else if(duration>0&&duration>position)mClock.setText(Clock.formatTimeWithArrow(currentClockText,getDateFormat().format(new Date(PreviewHudTiming.end(now,duration,position,speed)))));
     }
 

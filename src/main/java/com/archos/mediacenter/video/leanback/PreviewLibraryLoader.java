@@ -37,7 +37,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public final Base media;
         public final long added, show;
         public final String genres;
-        public boolean heroEligible,heroSequential;public String tagline="";
+        public boolean heroEligible,heroSequential;public String tagline="";public SharedMetadata.Facts homeMetadata;
         public String language="",studio="",collection="";public String secondary="";public boolean active;public long playedAt;
         public String sortTitle="";public String releaseDate=""; public long onlineId; public transient android.net.Uri backdrop;
         public long bytes, runtime, modified, bitrate;
@@ -167,7 +167,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             if(HeroEligibility.sequential(episode.getSeasonNumber(),episode.getEpisodeNumber(),completed.getOrDefault(entry.show,Collections.emptySet()),entry.added,times.getOrDefault(entry.show,0L))){entry.heroEligible=true;entry.heroSequential=true;entry.secondary="Next Episode · S"+episode.getSeasonNumber()+" E"+episode.getEpisodeNumber();s.featured.add(entry);}
         }
         s.featured.sort(Comparator.comparing((Entry e)->!e.heroSequential).thenComparing(Comparator.comparingLong((Entry e)->e.added).reversed()));
-        for(Entry entry:s.featured){if(entry.onlineId<=0)continue;try{org.json.JSONObject cache=com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(getContext(),entry.media instanceof Movie?"movie":"tv",entry.onlineId,"");if(cache!=null)entry.tagline=cache.optJSONObject("data")==null?"":cache.getJSONObject("data").optString("tagline","");}catch(Exception unavailable){/* Real indexed synopsis remains available. */}}
+        for(Entry entry:s.featured){entry.homeMetadata=SharedMetadata.entry(getContext(),entry,true);if(entry.onlineId<=0)continue;try{org.json.JSONObject cache=com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(getContext(),entry.media instanceof Movie?"movie":"tv",entry.onlineId,"");if(cache!=null)entry.tagline=cache.optJSONObject("data")==null?"":cache.getJSONObject("data").optString("tagline","");}catch(Exception unavailable){/* Real indexed synopsis remains available. */}}
     }
     private static String cell(Cursor cursor,String column){int index=cursor.getColumnIndex(column);return index<0||cursor.isNull(index)?"":cursor.getString(index);}
     @Override public Cursor loadInBackground() {
