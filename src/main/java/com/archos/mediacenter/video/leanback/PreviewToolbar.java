@@ -51,14 +51,8 @@ public final class PreviewToolbar extends LinearLayout {
         super.dispatchDraw(canvas);
         if (boxed) return;
         float y = getHeight() - getResources().getDisplayMetrics().density;
-        paint.setColor(0x99ffffff); canvas.drawRect(0, y, getWidth(), getHeight(), paint);
-        View focused = selectedSegment!=null?selectedSegment:findFocus();
-        if (focused != null && focused.getParent() == this) {
-            int colour=PreviewAccent.color(getContext());float halo=8*getResources().getDisplayMetrics().density;
-            paint.setShader(new android.graphics.LinearGradient(0,y-halo,0,y,new int[]{colour&0xffffff,(colour&0xffffff)|0x30000000},null,android.graphics.Shader.TileMode.CLAMP));
-            canvas.drawRect(focused.getLeft(),y-halo,focused.getRight(),y,paint);paint.setShader(null);
-            paint.setColor(colour);
-            canvas.drawRect(focused.getLeft(), y, focused.getRight(), getHeight(), paint);
-        }
+        View focused=findFocus();View active=focused!=null?focused:selectedSegment;
+        if(active!=null&&active.getParent()==this){paint.setColor(focused!=null?android.graphics.Color.WHITE:0x88ffffff);canvas.drawRect(active.getLeft(),y,active.getRight(),getHeight(),paint);}
+
     }
 }

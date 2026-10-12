@@ -1,0 +1,17 @@
+# Source findings for the 0.138 checkpoints
+
+Continue Watching's production loader selects a journey target, then incorrectly requires its resume bookmark before adding it to Home. This excludes unstarted Up Next episodes, including season boundaries. Brief sampled files also have bookmarks but are excluded from journey migration; the Home row now offers a valid resume without replacing an established journey cursor. Home Health composition is removed independently; no causal relationship with missing progress is claimed.
+
+Series first-air dates persist Date.getTime() milliseconds. Comparing raw strings gives incorrect chronological order, including negative pre-1970 timestamps. Dates are normalised to UTC calendar dates; valid full date, then indexed year fallback, missing last in both directions. A snapshot refresh no longer imposes the previous screen ordering over the chosen sort.
+
+Custom Home row composition already combines movie and series identities into one eligibility set and applies one comparator and final user limit. With date-added ordering, a recently imported TV batch may legitimately occupy a limited row. No arbitrary content ratio is introduced; mixed/type-only and cap tests verify eligibility. Hero's former eight-item final catalogue and twelve-item source probe can permanently exclude eligible older movies. Rotation now traverses the complete eligible catalogue; artwork preparation remains a three-card window and warming remains bounded to eight nearby titles; indicators show bounded progress.
+
+Home poster artwork already uses alpha 1 and Picasso noFade. No full-poster dimming overlay was found. Caption contrast is intentional and confined to its region; automated assertions and synthetic captures will verify. User photos are unavailable, so no photo-based diagnosis is claimed.
+
+CustomLibraryActivity had its own heading/toolbar/RecyclerView and routed Filters to edit(2). It now delegates to PreviewPages, which also renders Movies and TV Shows. Custom saved selection remains the base collection; ordinary transient Genre/Year/Streaming filters refine it. Edit Library retains its native editor. Common card presenter, toolbar, grid, scroll and return anchors are shared.
+
+SharedMetadata handles ordered compact age/year/genre/context/TMDB/votes rows and separately verified playable-file badges. Episode rating uses episode data; show and season pages do not inherit per-file capabilities. FFmpeg disposition bits establish SDH/AD when present; absence is unknown, not unsupported. Technical retrieval already inspects local tracks asynchronously, without subtitle-provider library searches.
+
+Details Card geometry and lower five-column layout are implementation calibration against provisional dimensions, requiring application renders and Shield review. The lower information contains no focus stops and people cap at eight per section. Extras and recommendations retain their handlers. All legal notice text remains bundled; bounded pages remove megabyte TextView layout and permit notices above the former 1 MB reader cap. The reported 02:36 crash remains uncorrelated without permitted device logs.
+
+Browser breadcrumb fullScroll() may transfer focus while a drive's on-focus handler rebuilds breadcrumbs. Scroll-only positioning preserves the left rail. Overview uses a contained read-only scrolling layout. All Files is an explicit shared styled toggle linked to the existing hidden-file and MIME filtering preferences, without changing library inclusion.

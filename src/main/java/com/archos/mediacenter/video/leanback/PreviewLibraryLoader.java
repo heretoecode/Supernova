@@ -145,12 +145,13 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     }
     private void writeCacheLocked(Snapshot value){android.util.AtomicFile file=new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(),"preview-library-v42"));java.io.FileOutputStream stream=null;try{stream=file.startWrite();java.io.ObjectOutputStream out=new java.io.ObjectOutputStream(stream);out.writeObject(value);out.flush();file.finishWrite(stream);}catch(Exception failure){if(stream!=null)file.failWrite(stream);android.util.Log.d("NovaPreview","Snapshot cache unavailable",failure);}}
 
-    private void applyJourneys(Snapshot s,List<Entry> videos){
+    void applyJourneys(Snapshot s,List<Entry> videos){
         Map<Long,List<Entry>> groups=new LinkedHashMap<>();for(Entry e:videos)if(e.media instanceof Episode&&e.show>0)groups.computeIfAbsent(e.show,k->new ArrayList<>()).add(e);
         s.continuingShows.clear();
         for(Map.Entry<Long,List<Entry>> group:groups.entrySet()){
             PreviewSeriesJourney.Selection journey=PreviewSeriesJourney.select(getContext(),group.getValue());Entry candidate=journey.episode;
-            if(candidate!=null&&journey.started){Episode ep=(Episode)candidate.media;candidate.playedAt=journey.activity;candidate.active=true;candidate.secondary=(PreviewSeriesJourney.resumable(ep)?"Resume · ":"Up Next · ")+"S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();if(PreviewSeriesJourney.resumable(ep))s.continuingShows.add(candidate);
+            if(candidate!=null&&!journey.started){Entry resume=PreviewVariants.logicalChoices(group.getValue()).stream().filter(e->PreviewSeriesJourney.resumable((Video)e.media)&&!watched((Video)e.media)).max(Comparator.comparingLong(e->e.playedAt)).orElse(null);if(resume!=null){candidate=resume;journey=new PreviewSeriesJourney.Selection(resume,true,resume.playedAt);}}
+            if(candidate!=null&&journey.started){Episode ep=(Episode)candidate.media;candidate.playedAt=journey.activity;candidate.active=true;candidate.secondary=(PreviewSeriesJourney.resumable(ep)?"Resume · ":"Up Next · ")+"S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();s.continuingShows.add(candidate);
                 for(Entry show:s.shows)if(show.show==group.getKey()){show.secondary=candidate.secondary;show.active=true;break;}
             }
         }

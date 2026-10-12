@@ -87,11 +87,11 @@ public final class UniversalFileBrowser extends LinearLayout {
         overview.setTag("semantic:network.category.overview");
         TextView listMode = action("List / Grid", this::toggleGrid);listMode.setTag("browser.view");
         TextView sort = action("Sort", this::chooseSort);
-        androidx.appcompat.widget.SwitchCompat all=new androidx.appcompat.widget.SwitchCompat(c);all.setShowText(false);all.setTextOn("ON");all.setTextOff("OFF");all.setText("All Files");all.setTextColor(-1);all.setFocusable(true);all.setFocusableInTouchMode(true);all.setBackground(SharedThreePanel.accentFocus(c));all.setChecked(prefs.getBoolean(ALL_FILES,false));all.setThumbTintList(android.content.res.ColorStateList.valueOf(-1));all.setTrackTintList(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{PreviewAccent.color(c),0xff59616b}));all.setOnCheckedChangeListener((button,checked)->prefs.edit().putBoolean(ALL_FILES,checked).apply());
+        TextView all=TvButton.create(c,"All Files",()->{boolean enabled=!prefs.getBoolean(ALL_FILES,false);prefs.edit().putBoolean(ALL_FILES,enabled).apply();refreshControls();if(!isAttachedToWindow()){remember();reload();}},false);
         all.setTag("browser.all_files");
         for(TextView button : new TextView[]{listMode,sort,all}) {
             TvButton.style(button,false);button.setSingleLine(false);button.setMaxLines(2);button.setPadding(dp(6),dp(6),dp(6),dp(6));
-            if(button==all)button.setCompoundDrawables(null,null,null,null); // White switch thumb carries its state icon.
+            if(button==all)PreviewIcon.apply(button,prefs.getBoolean(ALL_FILES,false)?"checkbox checked":"checkbox",18);
             LayoutParams size=new LayoutParams(0,-2,1);size.leftMargin=dp(3);size.rightMargin=dp(3);
             toolbar.addView(button,size);
         }
@@ -145,7 +145,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
     private void scanControls(){
         requestExit(()->{
-            toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);remember();current=null;stopListing();items.removeAllViews();crumbs.removeAllViews();scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(true);scanOverview.setFocusableInTouchMode(true);scanOverview.setBackground(SharedThreePanel.accentFocus(getContext()));items.addView(scanOverview);
+            toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);remember();current=null;stopListing();items.removeAllViews();crumbs.removeAllViews();scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(false);scanOverview.setFocusableInTouchMode(false);scanOverview.setBackground(null);items.addView(scanOverview);
             facts.setVisibility(GONE);heading.setText("Network Scanning");information.setText("Automatic checks use the existing scanner. Scans continue when you leave this page.");actions.removeAllViews();
             int period=com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(getContext());
             addAction("Automatic: "+(period>0?"On":"Off"),()->{if(period>0)prefs.edit().putInt("preview_scan_frequency",period).apply();com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(getContext(),0,period>0?0:prefs.getInt("preview_scan_frequency",3600000),true);scanControls();actions.getChildAt(0).requestFocus();});
@@ -181,7 +181,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             crumbs.addView(segment,new LayoutParams(-2,dp(48)));
             if(n<labels.size()-1)crumbs.addView(SharedThreePanel.text(getContext()," › ",18));
         }
-        breadcrumbScroll.post(()->breadcrumbScroll.fullScroll(FOCUS_RIGHT));
+        breadcrumbScroll.post(()->breadcrumbScroll.scrollTo(Math.max(0,crumbs.getWidth()-breadcrumbScroll.getWidth()),0));
     }
     public void focusVideo(Video video){
         facts.setVisibility(GONE);heading.setText(video.getName());information.setText(video.getFilenameNonCryptic());
@@ -256,14 +256,14 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(current!=null&&selection.changed()) { // Category changes leave the browser section.
             requestExit(()->{current=null;showOverview();}); return;
         }
-        toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);panels.widths(.31f,.42f,.27f);remember(); current=null; stopListing(); indexed.clear(); files.clear(); items.removeAllViews(); crumbs.removeAllViews();
+        centreScrolling(true);toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);panels.widths(.31f,.42f,.27f);remember(); current=null; stopListing(); indexed.clear(); files.clear(); items.removeAllViews(); crumbs.removeAllViews();
         facts.setVisibility(GONE);heading.setText("Overview"); information.setText("Choose a storage device, network share or saved location.\n\nLibrary changes remain unsaved until Save Changes & Scan. Scans continue in the background.");
-        status.setText(PreviewLibraryScan.libraryStatus(getContext())); actions.removeAllViews();
+        status.setText(""); actions.removeAllViews();
         if(directoryChoice!=null){heading.setText("Choose a Folder");information.setText("Browse local storage and choose a writable folder. This changes the download destination and keeps your library unchanged.");status.setText("");return;}
         addAction("Scan Library",()->PreviewLibraryScan.request(getContext()));
         addAction("Network Scanning",this::scanControls);
         addAction("Library Health",()->health(-1));
-        scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(true);scanOverview.setFocusableInTouchMode(true);scanOverview.setBackground(SharedThreePanel.accentFocus(getContext()));items.addView(scanOverview,new LayoutParams(-1,-2));
+        scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(false);scanOverview.setFocusableInTouchMode(false);scanOverview.setBackground(null);items.addView(scanOverview,new LayoutParams(-1,-2));
         items.addView(SharedThreePanel.text(getContext(),"Select a location to browse its files and folders.",16));
     }
 
@@ -336,7 +336,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             crumbs.addView(segment,new LayoutParams(-2,dp(48)));
             if(i<trail.size()-1)crumbs.addView(SharedThreePanel.text(getContext()," › ",18));
         }
-        breadcrumbScroll.post(()->breadcrumbScroll.fullScroll(FOCUS_RIGHT));
+        breadcrumbScroll.post(()->breadcrumbScroll.scrollTo(Math.max(0,crumbs.getWidth()-breadcrumbScroll.getWidth()),0));
     }
     private void renderItems() {
         if(current==null)return;
@@ -457,7 +457,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private void toggleGrid(){remember();prefs.edit().putBoolean(GRID,!prefs.getBoolean(GRID,false)).apply();}
     private void chooseSort(){PreviewDialog.choose(getContext(),"Sort",new String[]{"Name ↑","Name ↓","Date ↑","Date ↓","Size ↑","Size ↓"},prefs.getInt(SORT,0),n->prefs.edit().putInt(SORT,n).apply());}
     private ListingEngine.SortOrder sortOrder(){return new ListingEngine.SortOrder[]{ListingEngine.SortOrder.SORT_BY_NAME_ASC,ListingEngine.SortOrder.SORT_BY_NAME_DESC,ListingEngine.SortOrder.SORT_BY_DATE_ASC,ListingEngine.SortOrder.SORT_BY_DATE_DESC,ListingEngine.SortOrder.SORT_BY_SIZE_ASC,ListingEngine.SortOrder.SORT_BY_SIZE_DESC}[Math.max(0,Math.min(5,prefs.getInt(SORT,0)))];}
-    private void refreshControls(){TextView view=toolbar.findViewWithTag("browser.view");view.setText(prefs.getBoolean(GRID,false)?"List View":"Grid View");PreviewIcon.apply(view,view.getText().toString(),16);androidx.appcompat.widget.SwitchCompat all=toolbar.findViewWithTag("browser.all_files");all.setChecked(prefs.getBoolean(ALL_FILES,false));all.setText("All Files: "+(all.isChecked()?"On":"Off"));all.setContentDescription("All Files "+(all.isChecked()?"On":"Off"));}
+    private void refreshControls(){TextView view=toolbar.findViewWithTag("browser.view");view.setText(prefs.getBoolean(GRID,false)?"List View":"Grid View");PreviewIcon.apply(view,view.getText().toString(),16);TextView all=toolbar.findViewWithTag("browser.all_files");boolean enabled=prefs.getBoolean(ALL_FILES,false);all.setSelected(enabled);all.setText("All Files: "+(enabled?"On":"Off"));all.setContentDescription("All Files "+(enabled?"On":"Off"));PreviewIcon.apply(all,enabled?"checkbox checked":"checkbox",18);}
     private final SharedPreferences.OnSharedPreferenceChangeListener changes=(preferences,key)->{if(ALL_FILES.equals(key)||SORT.equals(key)){refreshControls();remember();reload();}else if(GRID.equals(key)){refreshControls();renderItems();}};
     private TextView action(String label,Runnable run){return SharedThreePanel.accentAction(getContext(),label,run);}
     private void revealContext(View target) {
@@ -483,7 +483,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(left.hasFocus()) {
             if(key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
             if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(suppliedDock!=null)suppliedDock.requestFocus();else focusCentre();return true;}
-            List<TextView> visible=new ArrayList<>();for(TextView row:locations)if(row.getVisibility()==VISIBLE)visible.add(row);int position=visible.indexOf(focused);if(position>=0&&(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN)){int next=position+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next<0&&key==KeyEvent.KEYCODE_DPAD_UP)return super.dispatchKeyEvent(event);if(next>=0&&next<visible.size())visible.get(next).requestFocus();return true;}
+            List<TextView> visible=new ArrayList<>();for(TextView row:locations)if(row.isShown()&&row.isEnabled()&&row.isFocusable())visible.add(row);View locationFocus=focused;while(locationFocus!=null&&locationFocus.getParent()!=left)locationFocus=locationFocus.getParent() instanceof View?(View)locationFocus.getParent():null;int position=visible.indexOf(locationFocus);if(position>=0&&(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN)){int next=position+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next<0&&key==KeyEvent.KEYCODE_DPAD_UP)return super.dispatchKeyEvent(event);if(next>=0&&next<visible.size())visible.get(next).requestFocus();return true;}
         }
         if(centre.hasFocus()) {
             centreAnchor=focused;

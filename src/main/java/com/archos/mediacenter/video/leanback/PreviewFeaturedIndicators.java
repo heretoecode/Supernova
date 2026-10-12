@@ -17,10 +17,11 @@ final class PreviewFeaturedIndicators extends View {
         setContentDescription("Featured carousel, Left or Right on More Info to change title");
     }
     void setPosition(int count,int selected){
-        if(count<0||count>8)throw new IllegalArgumentException("Invalid Featured count");
+        if(count<0)throw new IllegalArgumentException("Invalid Featured count");
         if(morph!=null)morph.cancel();
         if(count==0){weights=new float[0];invalidate();return;}
-        int target=Math.floorMod(selected,count);
+        int actual=count;int position=Math.floorMod(selected,actual);count=Math.min(8,actual);int target=actual<=8?position:Math.min(7,Math.round(position*7f/(actual-1)));
+        setContentDescription("Featured title "+(position+1)+" of "+actual+", Left or Right on More Info to change title");
         if(weights.length!=count){weights=new float[count];weights[target]=1;invalidate();return;}
         float[] origin=weights.clone();
         morph=ValueAnimator.ofFloat(0,1);morph.setDuration(200);morph.setInterpolator(new DecelerateInterpolator());
