@@ -22,3 +22,7 @@
 ## User-approved right panel refinement
 
 User approves left-aligned headings/descriptions, aligned icons and subtle separators. **Each of the five headings must have its own distinct, semantically appropriate monochrome icon**, consistently sized, aligned and stroked: Your Library (library/media icon), Flexible Formatting (formatting/list icon), Original Titles (globe/language icon), Minor Typos (spelling/search icon), People & Studios (**two-person icon**, not generic information symbol). No colourful mismatched icons or repeated generic info icons. This is approved for the next-version handover.
+
+## Copy and capitalisation approval
+
+User explicitly authorises editorial improvements to the five right-hand explanatory headings/descriptions **where wording better communicates actual implemented search behaviour**, with consistent British English spelling, capitalisation, punctuation and terminology. Audit search indexing/features before promising capabilities; avoid changing semantics or inventing search functions. Apply consistent title-case or sentence-case policy for headings and sentence-case descriptions. Preserve distinct monochrome icons and approved left-aligned, subtle-divider layout.
