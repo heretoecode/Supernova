@@ -340,6 +340,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
     private void renderItems() {
         if(current==null)return;
+        centreScrolling(false); // The RecyclerView owns folder scrolling, including empty-list focus restoration.
         boolean hadFocus=items.hasFocus();View previous=fileList.findFocus();View oldRow=previous==null?null:fileList.findContainingItemView(previous);int previousPosition=oldRow==null?0:Math.max(0,fileList.getChildAdapterPosition(oldRow));String identity=selectedUri==null?rememberedItems.get(current.toString()):selectedUri.toString();
         if(fileList.getParent()!=items){if(fileList.getParent() instanceof ViewGroup)((ViewGroup)fileList.getParent()).removeView(fileList);items.removeAllViews();items.addView(fileList,new LayoutParams(-1,-1));}
         final int renderRequest=++listingRenderGeneration;
@@ -505,7 +506,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             }
         }
         if(right.hasFocus()) {
-            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(centreAnchor==null||!centreAnchor.isAttachedToWindow()||!centreAnchor.isShown()||!centreAnchor.requestFocus())focusCentre();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(centreAnchor==null||!centreAnchor.isAttachedToWindow()||!centreAnchor.isShown()||!centreAnchor.requestFocus())focusCentre();if(!centre.hasFocus()){if(leftAnchor!=null)leftAnchor.requestFocus();else overview.requestFocus();}return true;}
             if(key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){
                 if(addressScroll.hasFocus()){int direction=key==KeyEvent.KEYCODE_DPAD_UP?-1:1;if(addressScroll.canScrollVertically(direction))addressScroll.scrollBy(0,direction*dp(48));else if(direction>0){if(information.getText().length()>0)informationScroll.requestFocus();else if(actions.getChildCount()>0)actions.getChildAt(0).requestFocus();}return true;}

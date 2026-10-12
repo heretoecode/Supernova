@@ -24,7 +24,7 @@ public class PreviewNextTest {
         PreviewPagesTest.findText(keyboard,"1").performClick();
         assertEquals("1",input.getText().toString());
         input.setText("A😀");input.setSelection(input.length());
-        PreviewPagesTest.findText(keyboard,"Backspace").performClick();
+        keyboard.findViewWithTag("semantic:keyboard:Backspace").performClick();
         assertEquals("A",input.getText().toString());
         input.setSelection(0,input.length());
         PreviewPagesTest.findText(keyboard,"Q").performClick();
@@ -42,20 +42,19 @@ public class PreviewNextTest {
         assertEquals(PreviewLibraryColumns.Column.AUDIO,restored.sortColumn);
         assertFalse(restored.ascending);
     }
-    @Test public void hudHasFourGroupsWithPlayPauseGeometricallyCentred() {
+    @Test public void hudKeepsNativeControlsInApprovedSecondaryAndMainRows() {
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             View hud=LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental,null);
             ViewGroup transport=hud.findViewById(R.id.preview_transport);
-            assertEquals(4,transport.getChildCount());
-            int[] ids={R.id.preview_subtitles,R.id.preview_audio,R.id.pause,R.id.preview_more};
+            assertEquals(3,transport.getChildCount());
+            int[] ids={R.id.preview_subtitles,R.id.preview_audio,R.id.preview_more};
             for(int i=0;i<ids.length;i++) {
                 View button=hud.findViewById(ids[i]);
                 assertEquals(View.VISIBLE,button.getVisibility());
                 assertSame(transport.getChildAt(i),button.getParent());
             }
-            android.widget.RelativeLayout.LayoutParams pause=(android.widget.RelativeLayout.LayoutParams)((View)hud.findViewById(R.id.pause).getParent()).getLayoutParams();
-            assertEquals(android.widget.RelativeLayout.TRUE,pause.getRule(android.widget.RelativeLayout.CENTER_HORIZONTAL));
+            View pause=hud.findViewById(R.id.pause);assertTrue(pause instanceof ImageButton);assertEquals(View.VISIBLE,pause.getVisibility());assertNotSame(transport,pause.getParent().getParent());assertNotNull(hud.findViewById(R.id.preview_pause_label));assertTrue(hud.findViewById(R.id.seek_progress) instanceof SeekBar);
             for(int id:new int[]{R.id.preview_info,R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward})
                 assertEquals(View.GONE,hud.findViewById(id).getVisibility());
         } finally {host.pause().stop().destroy();}
