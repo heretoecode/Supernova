@@ -1,5 +1,5 @@
 # SUPERNOVA — CURRENT ROADMAP AND DECISION HUB
-Updated: 2026-10-12. Owner-approved planning and QA source of truth; not code authorisation.
+Updated: 2026-10-13. Owner-approved planning and QA source of truth; **Customise Home first implementation approved in principle**, but complete 0.139 release scope and other candidates still require explicit handover approval.
 
 > Version naming: this repository's established release notation is **0.138** (owner sometimes says 1.3.8) and **0.139** (owner sometimes says 1.3.9). Confirm actual versionCode/versionName in signed artifact before publishing; do not silently rename.
 
@@ -11,8 +11,10 @@ Updated: 2026-10-12. Owner-approved planning and QA source of truth; not code au
 - Obtain **one diagnostic ZIP near the end** of walkthrough, not repeated requests during testing. Correlate known playback startup failures and other incidents; protect sensitive information.
 - Preserve 0.138 install, library data and historical baseline.
 
-### Stage B — approve and implement 0.139 (NOT STARTED)
+### Stage B — consolidate 0.139 and implement approved scope (Customise Home phase approved; full handover pending)
 - Compile one explicit owner-reviewed 0.139 handover: selected 0.138 QA fixes, diagnostics expansion, Library/navigation/hero/UI fixes, and **BitTorrent functionality retirement requested by owner**.
+- **Customise Home first implementation is owner-approved in principle**, alongside Home heading monochrome icons, default pure-white heading text and 20% reduced top-navigation blur vertical reach; consult [consolidated 0.139 scope](2026-10-13-supernova-0139-consolidated-handover-scope.md) for exact contract.
+- **PARKED:** Shield Home / Android TV launcher channel integration, including proposed **Show on Shield Home** toggle; exclude from 0.139 until owner revisits it. Preserve existing functionality.
 - Diagnostics: build on existing recorder, add precise playback/seek/startup/native/transport evidence, correct privacy/sanitisation and bounded retention as approved; do not rewrite functioning diagnostics.
 - BitTorrent: remove torrent/magnet/libtorrent/torrentd entrypoints and exclusive native/build/UI components only after full impact graph, shared-dependency checks, APK inventory and safe data/backup compatibility. If removal cannot be proven safe, report exception to owner rather than break unrelated functions.
 - Do not silently bundle broad Jetty/OpenSSL/FFmpeg/Android target migrations into 0.139 unless a separately approved urgent security exception is warranted.
@@ -62,6 +64,7 @@ Updated: 2026-10-12. Owner-approved planning and QA source of truth; not code au
 5. New release source, binary and device evidence supersede only the applicable current-state assertions, not historical observations.
 
 ## Central references
+- **[Consolidated 0.139 owner scope, approved work and parked items](2026-10-13-supernova-0139-consolidated-handover-scope.md)**
 - [0.138 walkthrough and Library UI contracts](2026-10-12-supernova-0138-shield-qa-and-library-foundation.md)
 - [Release sequencing and baseline documentation policy](2026-10-12-owner-decisions-and-baseline-policy.md)
 - [NOVA-first dependency policy and Android 17](2026-10-12-nova-first-dependency-policy-and-android-17.md)
@@ -73,8 +76,8 @@ Updated: 2026-10-12. Owner-approved planning and QA source of truth; not code au
 - [Draft PR #15 — read-only maintenance audit](https://github.com/heretoecode/Supernova/pull/15)
 
 ## Release gates and boundaries
-- **Now:** discuss, investigate, update documentation, continue 0.138 QA.
-- **Not yet:** start 0.139 coding, change release signing or identity, merge PRs, launch broad maintenance, clean resources, upgrade Jetty/FFmpeg/Android targets.
+- **Now:** Customise Home first implementation authorised in principle; complete consolidated 0.139 handover and 0.138 QA, source audit, and documentation. No actual app source change has been made by these docs commits.
+- **Not yet:** start unapproved 0.139 work beyond Customise Home/approved Home-heading and blur scope, change release signing or identity, merge PRs, launch broad maintenance, clean resources, upgrade Jetty/FFmpeg/Android targets.
 - **0.139 implementation:** only after owner approves consolidated handover.
 - **Maintenance:** only after delivered 0.139 passes owner's smoke test and owner explicitly authorises.
 - Never mark a Codex-reported fix as owner-tested without owner evidence; don't assume removed UI implies removed code; don't silently alter approved visuals.
