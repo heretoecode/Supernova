@@ -82,7 +82,14 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             TextView child=text(name,16); child.setSingleLine(true);child.setEllipsize(android.text.TextUtils.TruncateAt.END);child.setPadding(dp(24),0,dp(6),0);child.setGravity(Gravity.CENTER_VERTICAL);
             child.setFocusable(true);child.setFocusableInTouchMode(true);child.setTag("semantic:settings:about:"+name);child.setBackground(PreviewDialog.focus(getContext()));com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(child);
             rail.addView(child,new LayoutParams(-1,Math.max(dp(34),Math.round(child.getPaint().getFontMetrics().bottom-child.getPaint().getFontMetrics().top)+dp(8))));navigation.add(child);
-            Runnable reveal=()->{if(child.hasFocus()&&child.getWidth()>0&&child.getHeight()>0)child.requestRectangleOnScreen(new android.graphics.Rect(0,0,child.getWidth(),child.getHeight()+dp(12)),true);};
+            Runnable reveal=()->{
+                if(!child.hasFocus()||child.getWidth()==0||child.getHeight()==0)return;
+                android.view.ViewParent ancestor=child.getParent();while(ancestor!=null&&!(ancestor instanceof ScrollView))ancestor=ancestor.getParent();
+                if(ancestor instanceof ScrollView){ScrollView viewport=(ScrollView)ancestor;int[] item=new int[2],pane=new int[2];child.getLocationOnScreen(item);viewport.getLocationOnScreen(pane);
+                    int above=pane[1]+viewport.getPaddingTop()+dp(12)-item[1],below=item[1]+child.getHeight()+dp(12)-(pane[1]+viewport.getHeight()-viewport.getPaddingBottom());
+                    if(below>0)viewport.scrollBy(0,below);else if(above>0)viewport.scrollBy(0,-above);
+                }
+            };
             child.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{if(child.hasFocus())child.post(reveal);});
             child.setOnFocusChangeListener((v,focused)->{if(focused){select(name,child);child.post(reveal);child.postDelayed(reveal,240);}});
             child.setOnClickListener(v->{child.requestFocus();select(name,child);enterContentInternal();});
