@@ -33,3 +33,18 @@ User asks whether Supernova currently fetches/detects subtitles and closed capti
 ## Workflow and scope
 
 Documentation-only GitHub branch; do not touch active development branch, start Codex implementation or broaden the next release without explicit user authorisation.
+
+## Global implementation contract — refined 2026-10-12
+
+User explicitly confirms the **primary metadata row and technical-capability badges are a global Supernova design rule**, not merely a Home hero change. The same shared component/tokens/formatting/ordering/compaction rules should be used anywhere equivalent metadata appears (Home hero, movie details, TV-show details, season details, episode details, and any other applicable screen). **Do not implement visually similar but independent screen-specific copies.** A change to shared metadata presentation should propagate to every consumer; screens may select context-appropriate fields and layouts. Before implementation, audit actual existing detail-page components, data sources and constraints; do not claim a global implementation already exists.
+
+**Additional content-specific fields required before final implementation sign-off:**
+- Movie details: runtime, e.g. `2h 14m`.
+- TV-show details: number of seasons and episodes, e.g. `3 seasons · 24 episodes`, if counts are accurate and their scope (library vs catalogue) is explicitly defined.
+- Season details: episode count for that season.
+- Episode details: runtime, e.g. `48m`; episode-specific review data only if actually available and correctly attributed.
+- Home hero: **retain prior decision to omit season/episode counts and runtime** to avoid clutter. The shared component must support conditional fields rather than mandate all fields everywhere.
+
+Proposed detail-page order, to confirm when implementing: **age classification → release year → genres (where applicable) → content-specific count/runtime → TMDB score → muted vote count**. All missing fields dynamically collapse with their separators. Episode-level classification/year/genre/rating should not silently inherit misleading show-level values; verify source and attribution. Technical capabilities are a separate shared row and must describe verified playable media, not unsupported season/show-wide assumptions.
+
+**Documentation reconciliation:** Earlier hero QA exploration document has an outdated provisional metadata order and says decisions were pending; this global standard supersedes those older provisional notes. This is a documented approved *design direction*, not evidence that source code has already been updated or that technical detection is implemented. No Codex implementation handover has been authorised.
