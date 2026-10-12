@@ -33,3 +33,7 @@ Settings > Backup currently has **Include watch history in backups** (observed d
 
 ## Deliverables — separate docs-only branch
 Executive summary; exhaustive archive inventory; full settings matrix; media identity/restore map; SAF/temp-file analysis; incident evidence plan; granular controls proposal; archive compatibility/safety plan; prioritised **0.139 candidates versus later** and unresolved owner decisions. Link evidence to code commit/path/line. Do not repeat already-proven maintenance work, do not claim runtime crash root cause from static source. No source edits, builds, APK, merge, database changes, signing changes, dependency maintenance or private data publication.
+
+
+## LATEST OWNER AUTHORISATION — 2026-10-13
+The owner has now **approved implementation of the complete backup and restore improvement programme in Supernova 0.139**, superseding this brief's earlier statement that broad backup implementation is parked. This does **not** change the present Codex assignment: **finish the read-only investigation and docs-only deliverables first**. The audit must provide the inventory, concrete granular control proposal, archive compatibility design, SAF limitation analysis and test plan needed for a separate implementation handover. Do not begin app code changes, merge or build as part of this audit. All previously stated no-artwork, privacy, optional media identification/path, settings, and progress requirements remain binding. Any new risky or incompatible design must be raised for owner approval.
