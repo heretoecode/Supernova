@@ -214,3 +214,11 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - Owner supersedes earlier centred-value requirement for Maximum Items: place **15 left-aligned immediately after the monochrome list/count icon**, with the **same icon-to-label gap as Sort By (Date Added) and Direction (Descending)**. Keep the selector's fixed dimensions and its position as the third compact control alongside Sort By and Direction.
 - Add a small **up/down chevron indicator at the right edge** to communicate inline cycling, not a separate button or popup. Prefer consistent selector affordances across the three controls. Existing D-pad editing, six presets and default 15 remain unchanged.
 - Design-only documentation; no app implementation authorised.
+
+
+## 2026-10-12 Customise Home — Direction one-click toggle (latest owner decision)
+- Owner confirms **Maximum Items numeric value remains left-aligned** after its monochrome function icon, like other selector values; ignore the briefly considered return to centring. Right-side up/down chevrons remain for inline cycling.
+- Three compact, fixed-height, single-line controls remain side by side: Sort By, Direction, Maximum Items. Avoid text wrapping in TV layout.
+- **Direction is NOT an inline D-pad spinner.** It is a **single-press OK toggle** between Ascending and Descending. Left icon represents sorting direction function (e.g. up/down arrows); middle label shows current value; **right icon is one arrow pointing up for Ascending or down for Descending**, changing immediately on OK. No redundant right-side chevrons, no extra edit mode or confirmation. Commit/persist the choice immediately so leaving focus retains it.
+- Sort By and Maximum Items continue to use OK→Up/Down cycle→OK commit/Back cancel, with function icon left and chevrons right. No layout shifts or row height changes when toggled/focused.
+- Design decisions only; no code implementation authorised.
