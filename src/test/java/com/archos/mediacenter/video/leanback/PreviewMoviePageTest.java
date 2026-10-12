@@ -162,7 +162,7 @@ public class PreviewMoviePageTest {
             assertNotNull(PreviewPagesTest.findText(page,"Key Information"));assertNotNull(PreviewPagesTest.findText(page,"Reception"));assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
             View keyPanel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(keyPanel);assertFalse(keyPanel.requestFocus());assertSame(restored,page.findFocus());
             for(int frame=0;frame<8;frame++){page.computeScroll();PreviewPagesTest.layout(nav);}
-            android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertTrue(visible.height()>80);
+            android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertEquals("Entire compact information panel must be visible",keyPanel.getHeight(),visible.height());assertNotNull(PreviewPagesTest.findText(keyPanel,"Year"));
             PreviewPagesTest.capture(nav,"details-information-next");
         }finally{host.pause().stop().destroy();}
     }
