@@ -120,3 +120,11 @@ Date: 2026-10-12. Status: owner-reported runtime observations and owner-approved
 - **Full synopsis moves to Details tab** with no arbitrary truncation, using cached/offline metadata where available.
 - **Retain Details tab information, redesign presentation later:** full synopsis, up to **8 cast**, up to **8 crew**, **Key Information**, **Reception**, **Technical Information** sections/boxes. Owner wants this content retained; precise visual redesign, section layout and detailed fields pending actual UI atlas/review. Avoid deleting existing data/fields just to simplify design.
 - Earlier fallback options/provisional tagline discussion are superseded by this owner decision. No implementation authorised until consolidated 0.139 handover.
+
+
+## 2026-10-12 owner-approved TV season navigation decision
+- **One master Details page per TV show**; do not require separate full Details pages for Season 1, Season 2, etc. For multi-season shows (e.g. Only Fools and Horses), navigate available seasons/episodes within the show's **Seasons & Episodes** tab.
+- Replace oversized full-width/focusable season banners with **Home-style row headings** and equivalent Home row focus/zoom/scroll behaviour where applicable. Season headings should not masquerade as giant action cards. Preserve useful season-specific metadata/actions via an intentional compact alternative if source investigation shows they exist.
+- **Only library-available seasons and episodes** should appear in library browsing as available playable content; investigate Save Me phantom unavailable Season 1, preserve correct metadata distinctions where relevant. Correct bottom-edge episode clipping, trailer focus spacing and animation.
+- Episode selection should retain appropriate details/playback functionality; returning restores the precise season/episode focus and scroll position. Preserve TV show's context.
+- This supersedes prior open question about separate season Details pages. **Owner approved the recommendation**; code feasibility and any existing season-specific functions still need a read-only audit before implementation. No 0.139 coding authorised.
