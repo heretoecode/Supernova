@@ -2,7 +2,9 @@
 
 **Read-only investigation/documentation delivery, 2026-10-12. Full atlas acceptance remains INCOMPLETE.** Ten area inventories and both priority visual packages are delivered; every conditional runtime option/reachability and physical Shield verification remain explicit gaps. Do not describe the source catalogue as a fully executed UI graph.
 
-[Drive atlas folder](https://drive.google.com/drive/folders/1kzYXFIvuxs5eGrvGD-c-2cgHBKpPkLGc) · [Standalone searchable master report](MASTER_INDEX.html) · [Drive master report](https://drive.google.com/file/d/1iQvaP8w2C8Oe31Bb_tAUsR8dC8uOoRFS/view?usp=drivesdk) · [Acceptance and gaps](ACCEPTANCE_AND_GAPS.md) · [Reusable on-demand protocol](ON_DEMAND_REFERENCES.md).
+[Draft GitHub PR #16](https://github.com/heretoecode/Supernova/pull/16) · [Downloadable full package](https://drive.google.com/file/d/1UIlz-XYZvRHs82GuvI5VhkwWSzuXEC2o/view?usp=drivesdk)
+
+[Drive atlas folder](https://drive.google.com/drive/folders/1kzYXFIvuxs5eGrvGD-c-2cgHBKpPkLGc) · [Standalone searchable master report](MASTER_INDEX.html) · [Drive master report](https://drive.google.com/file/d/1iQvaP8w2C8Oe31Bb_tAUsR8dC8uOoRFS/view?usp=drivesdk) · [All published Drive links](https://drive.google.com/file/d/1qpIgpicpX3OwGkTPR9KAM6qq6oqTZ7Ob/view?usp=drivesdk) · [Acceptance and gaps](ACCEPTANCE_AND_GAPS.md) · [Reusable on-demand protocol](ON_DEMAND_REFERENCES.md).
 
 ## Baseline and evidence
 

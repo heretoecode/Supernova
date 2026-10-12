@@ -26,5 +26,13 @@
   "Shield_captures": 0,
   "0.139_or_maintenance_implementation_started": false,
   "verification": "Documentation links/JSON/images/dimensions/uniqueIDs/source-clean/search checked; observed Drive IDs,parent/size readbacks; protected refs rechecked after publication",
-  "draft_pr": "To be recorded after creation"
+  "draft_pr": {
+    "baseRefName": "docs/maintenance-investigation-2026-10",
+    "headRefOid": "cb889d9370f10edfb0d7f444202056ba0bc85dfa",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/heretoecode/Supernova/pull/16"
+  },
+  "atlas_content_commit": "cb889d9370f10edfb0d7f444202056ba0bc85dfa",
+  "download_package_drive": "https://drive.google.com/file/d/1UIlz-XYZvRHs82GuvI5VhkwWSzuXEC2o/view?usp=drivesdk"
 }

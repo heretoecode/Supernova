@@ -1531,12 +1531,12 @@
     "url": "https://drive.google.com/file/d/1Tl0Ticr3CTCs64GsDnySldsfnEhFpOC_/view?usp=drivesdk",
     "parent": "1DE7F-TbiUquzXvR2RlDVord2-BlOByf8",
     "file": "/workspace/Supernova/docs/ui-reference-atlas/areas/06-settings-about.md",
-    "size": 9242,
+    "size": 9240,
     "metadata_readback": {
       "id": "1Tl0Ticr3CTCs64GsDnySldsfnEhFpOC_",
       "title": "2026-10-12_06-settings-about.md",
       "mime_type": "text/markdown",
-      "size": "9242",
+      "size": "9240",
       "url": "https://drive.google.com/file/d/1Tl0Ticr3CTCs64GsDnySldsfnEhFpOC_/view?usp=drivesdk",
       "display_url": "https://drive.google.com/file/d/1Tl0Ticr3CTCs64GsDnySldsfnEhFpOC_/view?usp=drivesdk",
       "file_or_folder": "file",
@@ -2125,7 +2125,23 @@
     "file": "MASTER_INDEX.html",
     "url": "https://drive.google.com/file/d/1iQvaP8w2C8Oe31Bb_tAUsR8dC8uOoRFS/view?usp=drivesdk",
     "parent": "1kzYXFIvuxs5eGrvGD-c-2cgHBKpPkLGc",
-    "size": 5327822,
+    "size": 5327899,
+    "metadata_verified": true
+  },
+  {
+    "id": "1OlDc0VmbXLrlZvz0qzOywJjWMlSTWd3X",
+    "file": "README.md",
+    "url": "https://drive.google.com/file/d/1OlDc0VmbXLrlZvz0qzOywJjWMlSTWd3X/view?usp=drivesdk",
+    "parent": "1kzYXFIvuxs5eGrvGD-c-2cgHBKpPkLGc",
+    "size": 7731,
+    "metadata_verified": true
+  },
+  {
+    "id": "1qpIgpicpX3OwGkTPR9KAM6qq6oqTZ7Ob",
+    "file": "DRIVE_FILE_INDEX.md",
+    "url": "https://drive.google.com/file/d/1qpIgpicpX3OwGkTPR9KAM6qq6oqTZ7Ob/view?usp=drivesdk",
+    "parent": "1kzYXFIvuxs5eGrvGD-c-2cgHBKpPkLGc",
+    "size": 8549,
     "metadata_verified": true
   }
 ]
