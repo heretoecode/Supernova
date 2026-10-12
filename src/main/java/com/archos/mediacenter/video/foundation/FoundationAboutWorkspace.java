@@ -132,7 +132,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private void focusSelectedRow(){if(!rows.isEmpty())rows.get(Math.min(selectedIndex,rows.size()-1)).requestFocus();else selectedNavigation.requestFocus();}
     private TextView row(String label,Runnable select,Runnable activate){
         final int index=rows.size();TextView row=text(label,14);row.setPadding(dp(10),dp(10),dp(8),dp(10));
-        row.setFocusable(true);row.setBackground(PreviewDialog.focus(getContext()));row.setTag("semantic:about:row:"+section+":"+index);
+        row.setFocusable(true);row.setFocusableInTouchMode(true);row.setBackground(PreviewDialog.focus(getContext()));row.setTag("semantic:about:row:"+section+":"+index);
         catalogueBody.addView(row,new LayoutParams(-1,-2));rows.add(row);
         Runnable selected=()->{selectedIndex=index;selections.put(section,index);select.run();};rowSelections.add(selected);
         row.setOnFocusChangeListener((v,focused)->{if(focused)selected.run();});
