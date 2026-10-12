@@ -313,7 +313,7 @@ public final class PreviewMoviePage extends ScrollView {
                 if(!physical.isEmpty()&&knownSizes==physical.size())fact(technical,"Average file size",android.text.format.Formatter.formatShortFileSize(getContext(),bytes/physical.size()));
                 if(specials>0)fact(technical,"Specials (files)",String.valueOf(specials));
                 if(enriched!=null&&enriched.optInt("number_of_episodes")>0)fact(technical,"Series episodes (metadata)",String.valueOf(enriched.optInt("number_of_episodes")));
-                for(Map.Entry<String,Integer> format:formats.entrySet())fact(technical,format.getKey(),format.getValue()+" files");
+                List<String> formatCounts=new ArrayList<>();for(Map.Entry<String,Integer> format:formats.entrySet())formatCounts.add(format.getKey()+": "+format.getValue()+" files");fact(technical,"File formats",android.text.TextUtils.join(", ",formatCounts));
                 fact(technical,"Storage locations",android.text.TextUtils.join("\n",locations));
             }
         }else{
@@ -347,7 +347,7 @@ public final class PreviewMoviePage extends ScrollView {
     private LinearLayout factPanel(LinearLayout panels,String name){LinearLayout panel=new LinearLayout(getContext());panel.setTag("semantic:details.panel."+name.toLowerCase(Locale.ROOT).replace(' ','.'));panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(6),dp(6),dp(6),dp(6));panel.setBackground(PreviewDialog.surface(getContext(),false));panel.setFocusable(false);panel.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,-2,1);size.rightMargin=dp(8);panels.addView(panel,size);panel.addView(text(name,15));return panel;}
     private void fact(LinearLayout panel,String label,String value){
         if(value==null||value.trim().isEmpty())return;
-        LinearLayout row=new LinearLayout(getContext());row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(0,dp(1),0,dp(1));row.setContentDescription(label+": "+value);
+        LinearLayout row=new LinearLayout(getContext());row.setGravity(Gravity.CENTER_VERTICAL);row.setContentDescription(label+": "+value);
         TextView name=text(label,12),content=text(value.replace("\n",", "),13);name.setTextColor(0xffb9c7d2);name.setSingleLine(true);content.setSingleLine(true);name.setEllipsize(android.text.TextUtils.TruncateAt.END);content.setEllipsize(android.text.TextUtils.TruncateAt.END);
         row.addView(name,new LinearLayout.LayoutParams(0,-2,.44f));LinearLayout.LayoutParams valueSize=new LinearLayout.LayoutParams(0,-2,.56f);valueSize.leftMargin=dp(8);row.addView(content,valueSize);panel.addView(row);
     }
