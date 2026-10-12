@@ -82,7 +82,9 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             TextView child=text(name,16); child.setSingleLine(true);child.setEllipsize(android.text.TextUtils.TruncateAt.END);child.setPadding(dp(24),0,dp(6),0);child.setGravity(Gravity.CENTER_VERTICAL);
             child.setFocusable(true);child.setOnFocusChangeListener((v,yes)->{if(yes)v.requestRectangleOnScreen(new android.graphics.Rect(0,0,v.getWidth(),v.getHeight()),true);});child.setTag("semantic:settings:about:"+name);child.setBackground(PreviewDialog.focus(getContext()));com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(child);
             rail.addView(child,new LayoutParams(-1,Math.max(dp(34),Math.round(child.getPaint().getFontMetrics().bottom-child.getPaint().getFontMetrics().top)+dp(8))));navigation.add(child);
-            child.setOnFocusChangeListener((v,focused)->{if(focused){select(name,child);child.post(()->child.requestRectangleOnScreen(new android.graphics.Rect(0,0,child.getWidth(),child.getHeight()+dp(12)),true));}});
+            Runnable reveal=()->{if(child.hasFocus()&&child.getWidth()>0&&child.getHeight()>0)child.requestRectangleOnScreen(new android.graphics.Rect(0,0,child.getWidth(),child.getHeight()+dp(12)),true);};
+            child.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{if(child.hasFocus())child.post(reveal);});
+            child.setOnFocusChangeListener((v,focused)->{if(focused){select(name,child);child.post(reveal);child.postDelayed(reveal,240);}});
             child.setOnClickListener(v->{child.requestFocus();select(name,child);enterContentInternal();});
             child.setOnKeyListener((v,key,event)->{
                 if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
