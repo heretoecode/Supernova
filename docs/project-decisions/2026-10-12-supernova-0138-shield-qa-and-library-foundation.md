@@ -331,3 +331,10 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - Same next-version scope: monochrome icons beside actual Home headings; default pure-white headings while retaining Appearance accent-colour customisation.
 - Deliver versioned reusable Menu Foundation visual specification and shared components, incorporating monochrome semantic icons, regional flag exception and provider-branding standard. Implement and validate Customise Home first; **do not roll out other menu replacements until this reference is tested, refined and explicitly approved**.
 - Before source changes: source audit and feasibility/dependency report, map existing behaviour and existing keyboard/spinner, assess Android TV launcher channel integration separately, freeze measurable tokens and D-pad navigation, prepare screenshots/QA criteria. Keep changes on an appropriately isolated implementation branch; do not disturb unrelated active work, merge main, or produce release APK without explicit separate authorisation.
+
+
+## 2026-10-13 — Next-version top-navigation blur extent reduction
+- Owner requests one further attempt to correct the top navigation blur/underlapping scrolling-content visual issue: reduce the **vertical downward reach/extent of the current blur effect by 20%**, i.e. new extent = **0.80 x existing extent**, measured from the same top origin. This is not a request to reduce blur strength/opacity by 20% or change navigation-bar geometry.
+- Preserve current blur appearance/strength, navigation position and scrolling/row/poster layout. Adjust blur region's lower boundary and associated falloff/gradient consistently, wherever shared top-nav blur is used; avoid unintended clipping or seams.
+- Audit actual source implementation and compare before/after screenshots on Shield for Home and other affected scrollable screens. If the 80% extent still causes overlap artefacts, report and consider alternative approaches rather than repeatedly adjusting unrelated values.
+- Add to next-version approved QA/implementation scope; no source change made by this docs update.
