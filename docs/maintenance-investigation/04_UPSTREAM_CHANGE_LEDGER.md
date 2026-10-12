@@ -444,3 +444,39 @@ Native mode 1/2 sync work includes multiple correction/publication/slew changes 
 Every upstream commit in the compared ranges is listed, including translation/resource, lint/security-manifest, dependency/version, test and documentation changes. These are not omitted because they are inconvenient. Bulk resource modernization, RTL/focus/layout fixes and updater UI are excluded from import under the prior owner boundary. Dependency-only commits need resolved runtime/native comparison rather than Gradle-line substitution. Test/tool/documentation commits can inform future validation without changing product behavior. Nonselected technical commits remain **UNRESOLVED** for individual portability; the inventory is not an assertion of completed backport certification.
 
 **INCOMPLETE:** exhaustive per-commit adaptation certification across all 219 changes and every native builder/prebuilt repository is not established by this source audit. The important source groups above are investigated and prioritized; remaining rows need candidate-level reconciliation on validated 0.139 plus compile/device verification. No upstream integration or bulk merge was performed.
+
+## Earlier leads reconciled to the actual baseline
+
+**VERIFIED:** all eight previously unresolved short leads are ancestors of both the pinned Supernova component and current upstream head. Current pin source retains the inspected algorithm symbols below. They are baseline functionality, not eight new upstream fixes to import. Workflow overlays/later revisions can change their surrounding behavior; no runtime success is inferred. [Full ancestry and symbol evidence](evidence/earlier-audit-lead-reconciliation.json).
+
+| Commit / component | Present source behavior | Recommendation and tests |
+|---|---|---|
+| [fe57ba1adf626f03ac103a718ef1fa9d1fd41a38](https://github.com/nova-video-player/aos-avos/commit/fe57ba1adf626f03ac103a718ef1fa9d1fd41a38) / aos-avos | sfdec2: Restore android_sync=1 platform-timed release synchronization engine; `Source/codec_sfdec2.c` / `_get_render_heard_ts` retained: True | ALREADY PRESENT; preserve while testing later coherent seek/pause/lock/URI/genre changes |
+| [ae006e5f980d513fcbd18cd1d59f1965598866f9](https://github.com/nova-video-player/aos-avos/commit/ae006e5f980d513fcbd18cd1d59f1965598866f9) / aos-avos | avos: fix seek backward jumping forward during speed playback; `Source/stream_video.c` / `RST_TO_TS_TIME( time, int )` retained: True | ALREADY PRESENT; preserve while testing later coherent seek/pause/lock/URI/genre changes |
+| [2fd1e0d220baa89457754a42bde11e73f153a042](https://github.com/nova-video-player/aos-avos/commit/2fd1e0d220baa89457754a42bde11e73f153a042) / aos-avos | video: fix ANR from lock-order inversion in videosink_thread; `Source/codec_sfdec2.c` / `ABBA lock-order inversion` retained: True | ALREADY PRESENT; preserve while testing later coherent seek/pause/lock/URI/genre changes |
+| [cf0b003ea825aa20dfdd8c9ecbe693d893570364](https://github.com/nova-video-player/aos-avos/commit/cf0b003ea825aa20dfdd8c9ecbe693d893570364) / aos-avos | sync: break the PCM post-seek startup hold deadlock; `Source/stream_sync.c` / `PCM startup holds` retained: False | UNRESOLVED; preserve while testing later coherent seek/pause/lock/URI/genre changes |
+| [b8d7b800338afa1c0cd4a7496f3dffe47f733ce2](https://github.com/nova-video-player/aos-avos/commit/b8d7b800338afa1c0cd4a7496f3dffe47f733ce2) / aos-avos | stream: sync first start to the achieved seek position, not the target; `Source/stream_video.c` / `drops_armed` retained: True | ALREADY PRESENT; preserve while testing later coherent seek/pause/lock/URI/genre changes |
+| [7cd2eb4bd703e14a7af2336bcdc800d5788eda04](https://github.com/nova-video-player/aos-FileCoreLibrary/commit/7cd2eb4bd703e14a7af2336bcdc800d5788eda04) / aos-FileCoreLibrary | jcifs: automatically select SMB protocol per server; `src/com/archos/filecorelibrary/jcifs/JcifsUtils.java` / `SmbProtocolMode` retained: True | ALREADY PRESENT; preserve while testing later coherent seek/pause/lock/URI/genre changes |
+| [78076e738640445128e9c852ce6a3ee60e31bd96](https://github.com/nova-video-player/aos-FileCoreLibrary/commit/78076e738640445128e9c852ce6a3ee60e31bd96) / aos-FileCoreLibrary | fix: preserve '#' characters in intermediate SMB path segments; `src/com/archos/filecorelibrary/FileUtils.java` / `str.lastIndexOf('/')` retained: True | ALREADY PRESENT; preserve while testing later coherent seek/pause/lock/URI/genre changes |
+| [3d3226d99468a3ddd1539bdcd82f17ecf90c66a0](https://github.com/nova-video-player/aos-MediaLib/commit/3d3226d99468a3ddd1539bdcd82f17ecf90c66a0) / aos-MediaLib | force tmdb genre translation based on id; `src/com/archos/mediascraper/themoviedb3/MovieIdParser2.java` / `getLocalizedGenres` retained: True | ALREADY PRESENT; preserve while testing later coherent seek/pause/lock/URI/genre changes |
+
+## Auxiliary builder source ledger
+
+These changes are separately reviewed; the v6.5.5 coherent reference is not authority to import a TLS policy downgrade.
+
+### U48 — P1 / ADAPT
+
+[9e319d411727a2789ca77a57511711b698e29d2d](https://github.com/nova-video-player/ffmpeg-android-builder-nobin/commit/9e319d411727a2789ca77a57511711b698e29d2d), `atempo.patch`. **VERIFIED:** Publish only emitted output frontier; finish old-tempo output before speed change. **PROPOSED:** adapt. Risk/required adaptation: Depends on AVOS speed clocks and locked FFmpeg patch generation. Reconcile with Foundation lock and native caller contracts. Verification: Speed ramps, partial output and EOF drain; output duration/PCM sync.
+
+### U49 — P1 / ADAPT
+
+[c1038a803201e43c1ae338a49e6f3b686a9dd9b9](https://github.com/nova-video-player/ffmpeg-android-builder-nobin/commit/c1038a803201e43c1ae338a49e6f3b686a9dd9b9), `sofalizer.patch`. **VERIFIED:** Resample HRTF rather than program audio; split convolution copy only at ring boundary. **PROPOSED:** adapt. Risk/required adaptation: Requires selected FFmpeg/libmysofa generation; feature reachability verify first. Reconcile with Foundation lock and native caller contracts. Verification: Odd/non-power-of-two IR lengths, headphones/sofalizer, source sample rate and ring bounds.
+
+### U50 — P0 / REJECT
+
+[fd7c9f9c3f63befedafc8a36b2da722f81b64aad](https://github.com/nova-video-player/ffmpeg-android-builder-nobin/commit/fd7c9f9c3f63befedafc8a36b2da722f81b64aad), `tls_verify_default.patch`. **VERIFIED:** Changes TLS peer certificate verification default1 to0. **PROPOSED:** reject. Risk/required adaptation: Automatic coherent upstream adoption would silently settle trust policy; current legacy default also needs review. Reconcile with Foundation lock and native caller contracts. Verification: Valid/invalid/untrusted/self-signed/expired cert and redirects under intended native backend.
+
+### U51 — P2 / ADAPT
+
+[c0251c36a4524110bea6b52047c918d11d087102](https://github.com/nova-video-player/opus-android-builder-nobin/commit/c0251c36a4524110bea6b52047c918d11d087102), `build.sh`. **VERIFIED:** Packages Opus includes for independent FFmpeg rebuild. **PROPOSED:** adapt. Risk/required adaptation: Build packaging delta, not demonstrated decoder/performance improvement. Reconcile with Foundation lock and native caller contracts. Verification: Clean pinned rebuild with matching headers/ABI/binary/source and licensing.
+

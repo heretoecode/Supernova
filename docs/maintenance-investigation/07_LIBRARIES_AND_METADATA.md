@@ -13,7 +13,7 @@ Anchors: [PreviewLibraryLoader.java:12](https://github.com/heretoecode/Supernova
 | Inherited movie collections | ScraperStore.MovieCollections and collection loaders | Provider movie franchises coexist with user-created membership |
 | Continue Watching / next episode | ViewingHistory identity, PreviewSeriesJourney and local availability | Completed season→next season intent differs from resumed file bookmark |
 | Watch Next / custom Home rows | PreviewHomeRows preferences and owner limits | Automatic row caps differ from explicit user row limits |
-| Search | PreviewSearch/SearchIndex/PreviewSearchText + inherited provider path | Search indexing/filtering and people metadata need dataset coverage; explanation text alone is not proof |
+| Search | PreviewSearch/search index / PreviewSearchText + inherited provider path | Search indexing/filtering and people metadata need dataset coverage; explanation text alone is not proof |
 | Local metadata badges | PreviewMediaInfo/DetailsFacts + MediaLib native track metadata | Provider values cannot certify file codec/SDH/HDR or storage presence |
 | Enrichment | PreviewEnrichmentQueue SQLite jobs and PreviewMetadataCache AtomicFile envelopes | Caches may return stale usable data; fresh() distinguishes that from successful refresh |
 | Artwork | Picasso/custom handlers, ArtworkRequest diagnostics, PreviewBackdrop/Frost, scraper artwork | Fetch/decode/cancel/blur cost must be measured separately; no visual replacement authorized |

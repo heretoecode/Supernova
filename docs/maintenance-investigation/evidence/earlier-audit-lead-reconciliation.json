@@ -1,0 +1,144 @@
+[
+  {
+    "repo": "aos-avos",
+    "lead": "fe57ba1adf62",
+    "sha": "fe57ba1adf626f03ac103a718ef1fa9d1fd41a38",
+    "subject": "sfdec2: Restore android_sync=1 platform-timed release synchronization engine",
+    "ancestor_current_snapshot": true,
+    "files": [
+      "Include/stream.h",
+      "Source/codec_sfdec2.c",
+      "Source/stream.c",
+      "Source/stream_audio.c",
+      "Source/stream_sync.c",
+      "Source/stream_video.c"
+    ],
+    "portability": "UNRESOLVED; ancestry alone is not applicability",
+    "ancestor_supernova_component_pin": true,
+    "pin_symbol_check": {
+      "path": "Source/codec_sfdec2.c",
+      "marker": "_get_render_heard_ts",
+      "present": true
+    }
+  },
+  {
+    "repo": "aos-avos",
+    "lead": "ae006e5f980d",
+    "sha": "ae006e5f980d513fcbd18cd1d59f1965598866f9",
+    "subject": "avos: fix seek backward jumping forward during speed playback",
+    "ancestor_current_snapshot": true,
+    "files": [
+      "Source/stream_video.c"
+    ],
+    "portability": "UNRESOLVED; ancestry alone is not applicability",
+    "ancestor_supernova_component_pin": true,
+    "pin_symbol_check": {
+      "path": "Source/stream_video.c",
+      "marker": "RST_TO_TS_TIME( time, int )",
+      "present": true
+    }
+  },
+  {
+    "repo": "aos-avos",
+    "lead": "2fd1e0d220ba",
+    "sha": "2fd1e0d220baa89457754a42bde11e73f153a042",
+    "subject": "video: fix ANR from lock-order inversion in videosink_thread",
+    "ancestor_current_snapshot": true,
+    "files": [
+      "Source/codec_sfdec2.c"
+    ],
+    "portability": "UNRESOLVED; ancestry alone is not applicability",
+    "ancestor_supernova_component_pin": true,
+    "pin_symbol_check": {
+      "path": "Source/codec_sfdec2.c",
+      "marker": "ABBA lock-order inversion",
+      "present": true
+    }
+  },
+  {
+    "repo": "aos-avos",
+    "lead": "cf0b003ea825",
+    "sha": "cf0b003ea825aa20dfdd8c9ecbe693d893570364",
+    "subject": "sync: break the PCM post-seek startup hold deadlock",
+    "ancestor_current_snapshot": true,
+    "files": [
+      "Source/stream_sync.c"
+    ],
+    "portability": "UNRESOLVED; ancestry alone is not applicability",
+    "ancestor_supernova_component_pin": true,
+    "pin_symbol_check": {
+      "path": "Source/stream_sync.c",
+      "marker": "PCM startup holds",
+      "present": false
+    }
+  },
+  {
+    "repo": "aos-avos",
+    "lead": "b8d7b800338a",
+    "sha": "b8d7b800338afa1c0cd4a7496f3dffe47f733ce2",
+    "subject": "stream: sync first start to the achieved seek position, not the target",
+    "ancestor_current_snapshot": true,
+    "files": [
+      "Source/stream_video.c"
+    ],
+    "portability": "UNRESOLVED; ancestry alone is not applicability",
+    "ancestor_supernova_component_pin": true,
+    "pin_symbol_check": {
+      "path": "Source/stream_video.c",
+      "marker": "drops_armed",
+      "present": true
+    }
+  },
+  {
+    "repo": "aos-FileCoreLibrary",
+    "lead": "7cd2eb4bd703",
+    "sha": "7cd2eb4bd703e14a7af2336bcdc800d5788eda04",
+    "subject": "jcifs: automatically select SMB protocol per server",
+    "ancestor_current_snapshot": true,
+    "files": [
+      "src/com/archos/filecorelibrary/jcifs/JcifsUtils.java"
+    ],
+    "portability": "UNRESOLVED; ancestry alone is not applicability",
+    "ancestor_supernova_component_pin": true,
+    "pin_symbol_check": {
+      "path": "src/com/archos/filecorelibrary/jcifs/JcifsUtils.java",
+      "marker": "SmbProtocolMode",
+      "present": true
+    }
+  },
+  {
+    "repo": "aos-FileCoreLibrary",
+    "lead": "78076e738640",
+    "sha": "78076e738640445128e9c852ce6a3ee60e31bd96",
+    "subject": "fix: preserve '#' characters in intermediate SMB path segments",
+    "ancestor_current_snapshot": true,
+    "files": [
+      "src/com/archos/filecorelibrary/FileUtils.java"
+    ],
+    "portability": "UNRESOLVED; ancestry alone is not applicability",
+    "ancestor_supernova_component_pin": true,
+    "pin_symbol_check": {
+      "path": "src/com/archos/filecorelibrary/FileUtils.java",
+      "marker": "str.lastIndexOf('/')",
+      "present": true
+    }
+  },
+  {
+    "repo": "aos-MediaLib",
+    "lead": "3d3226d99468",
+    "sha": "3d3226d99468a3ddd1539bdcd82f17ecf90c66a0",
+    "subject": "force tmdb genre translation based on id",
+    "ancestor_current_snapshot": true,
+    "files": [
+      "res/values/strings.xml",
+      "src/com/archos/mediascraper/themoviedb3/MovieIdParser2.java"
+    ],
+    "portability": "UNRESOLVED; ancestry alone is not applicability",
+    "ancestor_supernova_component_pin": true,
+    "pin_symbol_check": {
+      "path": "src/com/archos/mediascraper/themoviedb3/MovieIdParser2.java",
+      "marker": "getLocalizedGenres",
+      "present": true
+    }
+  }
+]
