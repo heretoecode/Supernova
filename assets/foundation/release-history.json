@@ -8,22 +8,47 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.137",
-    "version_code": 137,
-    "kind": "Development / QA \u2014 unreleased",
+    "version": "0.138",
+    "version_code": 138,
+    "kind": "Development / Shield QA candidate",
     "notes": [
-      "Settings category and remote-navigation reliability; excluded-row import paging and All Files filtering.",
-      "Playback history refresh and Home-only Continue Watching.",
-      "Production Home placeholders, welcome and shared responsive dialog/button/keyboard tokens.",
-      "Custom wizard exit protection and shared library controls; bounded three-card hero preparation.",
-      "Existing package, signing certificate, library records and playback engine preserved. Physical NVIDIA Shield acceptance pending."
+      "Home progression, automatic row limits and shared metadata refinements.",
+      "Shared Details Card, compact read-only information and eight-person credit caps.",
+      "Shared custom Library filtering, full-collection Air Date sorting and focus return.",
+      "Search, Settings, local licence navigation and Network & Files refinements.",
+      "Minimal Preparing Playback tagline and approved playback HUD layout.",
+      "Opt-in intent-driven persistent subtitle discovery with provider backoff and current-season preparation.",
+      "Candidate validation is recorded separately; physical Shield acceptance and distribution require review."
     ]
   },
   "history": [
     {
+      "version": "0.137",
+      "version_code": 137,
+      "kind": "Development / QA — unreleased",
+      "notes": [
+        "Settings category and remote-navigation reliability; excluded-row import paging and All Files filtering.",
+        "Playback history refresh and Home-only Continue Watching.",
+        "Production Home placeholders, welcome and shared responsive dialog/button/keyboard tokens.",
+        "Custom wizard exit protection and shared library controls; bounded three-card hero preparation.",
+        "Existing package, signing certificate, library records and playback engine preserved. Physical NVIDIA Shield acceptance pending."
+      ],
+      "date": "2026-10-11",
+      "source_sha": "68caa2c0ac3c42073b8ed2168995c2316625b29a",
+      "run_id": 38134479237,
+      "recorded_binary_verification": "docs/0.138/BASELINE_0137_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "apks": [
+        {
+          "filename": "Supernova_0.137.apk",
+          "sha256": "d999db6387ec380de22818d3324c1acf4ffa6d956a3961f594878048644325fe"
+        }
+      ]
+    },
+    {
       "version": "0.136",
       "version_code": 136,
-      "kind": "Provisional refinement QA \u2014 unreleased",
+      "kind": "Provisional refinement QA — unreleased",
       "notes": [
         "Refined Home heroes, navigation, shared library controls and live genre choices.",
         "Embedded custom Library Page creation and focused editing with a retained live preview.",
@@ -45,7 +70,7 @@
     {
       "version": "0.135",
       "version_code": 135,
-      "kind": "Development / QA \u2014 unreleased",
+      "kind": "Development / QA — unreleased",
       "notes": [
         "Shared three-panel Settings and Network & Files, plus one compact Home and TV file browser with complete breadcrumbs and persisted controls.",
         "Staged recursive library selection and exclusions, atomic Apply & Scan, and five-category Library Health that retains unavailable records and viewing progress.",

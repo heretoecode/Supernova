@@ -1,0 +1,48 @@
+package com.archos.mediacenter.video.leanback;
+
+import android.app.Application;
+import android.view.*;
+import android.widget.*;
+import androidx.leanback.widget.*;
+import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.leanback.details.*;
+import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.robolectric.*;
+import org.robolectric.annotation.*;
+import org.robolectric.util.ReflectionHelpers;
+import static org.junit.Assert.*;
+import java.util.*;
+
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=30,qualifiers="w960dp-h540dp-land-mdpi") @GraphicsMode(GraphicsMode.Mode.NATIVE)
+public class Supernova138UiTest {
+    @Before public void before(){PreviewAsyncFixtures.offlineTransport();PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().clear().putBoolean("supernova_onboarding_complete",true).putBoolean("supernova_welcome_dismissed",true).commit();try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException absent){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}}
+    @After public void after()throws Exception{PreviewAsyncFixtures.drain();}
+    @Test public void allFiveDetailsSectionsFitAndRemainReadOnly()throws Exception{
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
+            PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});TopNavigation nav=new TopNavigation(host.get(),page,n->{},page::atTop);host.get().setContentView(nav);
+            org.json.JSONObject details=new org.json.JSONObject().put("title","A Long Official Movie Title").put("release_date","2024-03-01").put("runtime",134).put("vote_average",8.1).put("vote_count",8200).put("original_title","An Original Title").put("tagline","One genuine provider tagline").put("budget",12345678).put("revenue",87654321).put("overview","An actual synopsis fixture.").put("production_countries",new org.json.JSONArray().put(new org.json.JSONObject().put("name","United Kingdom")));
+            page.bindRemote(details,"movie",0);com.archos.mediascraper.MovieTags tags=new com.archos.mediascraper.MovieTags();for(int n=1;n<=12;n++){tags.addActorIfAbsent("Actor "+n,"Role "+n);tags.addDirectorIfAbsent("Director "+n);}tags.addGenreIfAbsent("Drama");page.setTags(tags,Collections.emptyList(),Collections.emptyList());PreviewPagesTest.layout(nav);
+            View tab=page.findViewWithTag("section:Details");assertTrue(tab.requestFocus());tab.performClick();PreviewPagesTest.layout(nav);assertSame(tab,page.findFocus());
+            for(String heading:new String[]{"Cast","Crew","Key Information","Reception","Streaming Availability"}){View text=PreviewPagesTest.findText(page,heading);assertNotNull(heading,text);android.graphics.Rect visible=new android.graphics.Rect();assertTrue(heading,text.getGlobalVisibleRect(visible));assertTrue(heading,visible.height()>=text.getHeight());}
+            for(View focus:page.getFocusables(View.FOCUS_FORWARD))assertFalse("Informational focus target "+focus.getTag(),String.valueOf(focus.getTag()).startsWith("person:")||String.valueOf(focus.getTag()).startsWith("semantic:details.panel."));assertNull(PreviewPagesTest.findText(page,"Actor 9"));assertNull(PreviewPagesTest.findText(page,"Director 9"));
+            int scroll=page.getScrollY();page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertEquals(scroll,page.getScrollY());assertSame(tab,page.findFocus());PreviewPagesTest.capture(nav,"0138-details-five-sections");
+        }finally{host.pause().stop().destroy();}
+    }
+    @Test public void customFiltersIsNotEditorAndReturnsToInvoker(){
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{PreviewPages pages=new PreviewPages(host.get(),(holder,item)->{});CustomLibraryPage config=new CustomLibraryPage();config.name="Documentaries";config.sort="added";int[] edited={0};pages.configureCustomLibrary(config,()->edited[0]++);host.get().setContentView(pages);pages.setSnapshot(new Snapshot());PreviewPagesTest.layout(pages);
+            View filters=pages.findViewWithTag("custom.control.filters");assertNotNull(filters);filters.requestFocus();filters.performClick();android.app.Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertNotNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(),"Clear Filters"));assertNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(),"Page Details"));assertEquals(0,edited[0]);dialog.cancel();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertSame(filters,pages.findFocus());pages.findViewWithTag("custom.control.edit").performClick();assertEquals(1,edited[0]);
+        }finally{host.pause().stop().destroy();}
+    }
+    @Test public void breadcrumbUpdatesCannotStealLeftDeviceFocusAndAllFilesActuallyToggles(){
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{var browser=new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());host.get().setContentView(browser);List<com.archos.mediacenter.video.leanback.adapter.object.Box> volumes=new ArrayList<>();for(int n=0;n<10;n++){var box=new com.archos.mediacenter.video.leanback.adapter.object.Box(com.archos.mediacenter.video.leanback.adapter.object.Box.ID.USB,"USB "+n,0,"/storage/usb"+n);volumes.add(box);}browser.locations(volumes,Collections.emptyList(),Collections.emptyList(),s->{});PreviewPagesTest.layout(browser);View local=browser.findViewWithTag("semantic:network.category.local_storage");local.requestFocus();local.performClick();PreviewPagesTest.layout(browser);
+            for(int n=0;n<10;n++){browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();PreviewPagesTest.layout(browser);assertEquals("storage:file:///storage/usb"+n,browser.findFocus().getTag());}
+            TextView toggle=browser.findViewWithTag("browser.all_files");assertNotNull(toggle);toggle.performClick();assertTrue(toggle.getText().toString().endsWith("On"));toggle.performClick();assertTrue(toggle.getText().toString().endsWith("Off"));browser.close();
+        }finally{host.pause().stop().destroy();}
+    }
+    @Test public void overviewScanTextIsReadOnlyAndContained(){var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{var browser=new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());host.get().setContentView(browser);PreviewPagesTest.layout(browser);TextView scan=ReflectionHelpers.getField(browser,"scanOverview");assertFalse(scan.isFocusable());android.graphics.Rect visible=new android.graphics.Rect();assertTrue(scan.getGlobalVisibleRect(visible));assertTrue(visible.bottom<=browser.getHeight());browser.close();}finally{host.pause().stop().destroy();}}
+    @Test public void hudCentrelinePillAndFontGeometryMatchesApprovedLayout()throws Exception{var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{View root=LayoutInflater.from(host.get()).inflate(com.archos.mediacenter.video.R.layout.player_controller_experimental,null);host.get().setContentView(root);View bar=root.findViewById(com.archos.mediacenter.video.R.id.control_bar);bar.setVisibility(View.VISIBLE);((TextView)root.findViewById(com.archos.mediacenter.video.R.id.time)).setText("52:52 · Episode Ends 03:58");((TextView)root.findViewById(com.archos.mediacenter.video.R.id.preview_scrub_time)).setText("12:34");PreviewPagesTest.layout(root);View seek=root.findViewById(com.archos.mediacenter.video.R.id.seek_progress),pause=root.findViewById(com.archos.mediacenter.video.R.id.preview_pause_group),end=root.findViewById(com.archos.mediacenter.video.R.id.time);assertEquals(centreY(pause),centreY(seek),1);assertEquals(centreY(seek),centreY(end),1);assertEquals(View.GONE,root.findViewById(com.archos.mediacenter.video.R.id.time_current).getVisibility());assertEquals(View.VISIBLE,root.findViewById(com.archos.mediacenter.video.R.id.preview_scrub_time).getVisibility());assertFalse(bar.isFocusable());assertTrue(root.findViewById(com.archos.mediacenter.video.R.id.preview_subtitles_group).getLeft()<root.findViewById(com.archos.mediacenter.video.R.id.preview_audio_group).getLeft());PreviewPagesTest.capture(root,"0138-playback-hud");}finally{host.pause().stop().destroy();}}
+    private float centreY(View view){int[] point=new int[2];view.getLocationInWindow(point);return point[1]+view.getHeight()/2f;}
+}

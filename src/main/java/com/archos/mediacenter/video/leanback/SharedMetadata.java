@@ -62,7 +62,7 @@ public final class SharedMetadata {
         if(entry.media instanceof Video)facts.technical.addAll(technical(c,(Video)entry.media));return facts;
     }
     public static List<String> technical(Context c,Video video) {
-        List<String> badges=new ArrayList<>();int w=video.getMeasuredWidth(),h=video.getMeasuredHeight();
+        List<String> badges=new ArrayList<>();if(LibraryHealth.state(c,video)!=LibraryHealth.State.AVAILABLE)return badges;int w=video.getMeasuredWidth(),h=video.getMeasuredHeight();
         if(w>0&&h>0)badges.add(w>=3840||h>=2160?"4K UHD":w>=1728||h>=1040?"FHD":w>=1200||h>=720?"HD":"SD");
         String hdr=PreviewVariants.dynamicRange(c,video);if(!hdr.isEmpty())badges.add(hdr);
         String audio=PreviewMediaInfo.format(video.getCalculatedBestAudioFormat());if(!audio.isEmpty())badges.add(audio);

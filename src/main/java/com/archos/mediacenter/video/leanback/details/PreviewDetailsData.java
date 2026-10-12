@@ -77,4 +77,14 @@ final class PreviewDetailsData {
             try{StreamingRepository.Availability availability=StreamingRepository.load(c,kind,candidate,country);List<StreamingRepository.Offer> offers=StreamingRepository.filter(availability,configured,StreamingRepository.preferred(c));if(!offers.isEmpty())result.related.add(new Remote(title,offers.get(0).provider));}catch(Exception error){com.archos.mediacenter.video.diagnostics.Diagnostics.error("discovery_availability_unavailable",error);}
         }return result;
     }
+    static Result cachedSeason(Context c,long id,int number){
+        Result result=new Result();result.details=cachedSection(c,"tv",id,"season/"+number);result.credits=cachedSection(c,"tv",id,"season/"+number+"/credits");
+        if(result.details==null)return null;JSONArray episodes=result.details.optJSONArray("episodes");if(episodes!=null)result.episodes.put(number,episodes);addExtras(result,cachedSection(c,"tv",id,"season/"+number+"/videos"));return result;
+    }
+    static Result loadSeason(Context c,long id,int number)throws Exception{
+        Result result=new Result();result.details=StreamingRepository.metadata(c,"tv",id,"season/"+number);JSONArray episodes=result.details.optJSONArray("episodes");if(episodes!=null)result.episodes.put(number,episodes);
+        try{result.credits=StreamingRepository.metadata(c,"tv",id,"season/"+number+"/credits");}catch(Exception unavailable){/* Missing season credits are not borrowed from the series. */}
+        try{addExtras(result,StreamingRepository.metadata(c,"tv",id,"season/"+number+"/videos"));}catch(Exception unavailable){/* No fabricated extras. */}
+        if(StreamingRepository.prefs(c).getBoolean(StreamingRepository.ENABLED,false))try{result.seasonAvailability.put(number,StreamingRepository.load(c,"tv",id,StreamingRepository.country(c),number));}catch(Exception unavailable){/* Provider scope remains unknown. */}return result;
+    }
 }

@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class PreviewMoviePageTest {
  @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
  @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
-    @Test public void deferredDetailsPeopleKeepWhiteFocusWhileBrowserUsesAccent(){
+    @Test public void detailsPeopleAreReadOnlyWhileBrowserRetainsAccentFocus(){
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});
@@ -24,9 +24,7 @@ public class PreviewMoviePageTest {
                 org.robolectric.util.ReflectionHelpers.ClassParameter.from(android.widget.LinearLayout.class,people),
                 org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class,"Actor"),
                 org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class,"Role"));
-            android.graphics.drawable.Drawable details=people.getChildAt(0).getBackground();details.setState(new int[]{android.R.attr.state_focused});
-            assertEquals("Deferred Details appearance remains the 0.135 white outline",android.graphics.Color.WHITE,
-                Shadows.shadowOf((android.graphics.drawable.GradientDrawable)details.getCurrent()).getStrokeColor());
+            assertFalse(people.getChildAt(0).isFocusable());assertNull(people.getChildAt(0).getBackground());
             var browser=new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
             android.graphics.drawable.Drawable navigation=browser.findViewWithTag("semantic:network.category.overview").getBackground();navigation.setState(new int[]{android.R.attr.state_focused});
             assertEquals(PreviewAccent.color(host.get()),Shadows.shadowOf((android.graphics.drawable.GradientDrawable)navigation.getCurrent()).getStrokeColor());
@@ -44,7 +42,7 @@ public class PreviewMoviePageTest {
                     snapshot.episodes.add(new PreviewLibraryLoader.Entry(episode,0,7,""));
                 }
                 page.setSnapshot(snapshot);
-                View panel=page.findViewWithTag("semantic:details.panel.library.information");assertNotNull(panel);
+                View panel=page.findViewWithTag("semantic:details.panel.technical.information");assertNotNull(panel);
                 assertNotNull(PreviewPagesTest.findText(panel,"Library size"));
                 if(complete){assertNull(PreviewPagesTest.findText(panel,"≥ "));assertNotNull(PreviewPagesTest.findText(panel,"Average file size"));}
                 else{assertNotNull(PreviewPagesTest.findText(panel,"≥ "));assertNull(PreviewPagesTest.findText(panel,"Average file size"));}
@@ -127,7 +125,7 @@ public class PreviewMoviePageTest {
             com.archos.mediacenter.video.browser.adapters.object.Episode episode=new com.archos.mediacenter.video.browser.adapters.object.Episode(1,1,1,1,"Pilot",1642377600000L,0,"","An episode synopsis","Example show","/episode",null,null,0,0,0,0,false,false,false,false,1,0,1920,1080,null,null,null,null,0,1,2000);
             com.archos.mediascraper.ShowTags series=new com.archos.mediascraper.ShowTags();series.setRating(9.8f);series.addGenreIfAbsent("Drama");
             com.archos.mediascraper.EpisodeTags tags=new com.archos.mediascraper.EpisodeTags(series,1,1);tags.setRuntime(45,java.util.concurrent.TimeUnit.MINUTES);page.bind(episode);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
-            assertNotNull(PreviewPagesTest.findText(page,"S1 E1"));assertNotNull(PreviewPagesTest.findText(page,"45 min"));assertNotNull(PreviewPagesTest.findText(page,"Drama"));assertNull(PreviewPagesTest.findText(page,"9.8"));
+            assertNotNull(PreviewPagesTest.findText(page,"S1 E1"));assertNotNull(PreviewPagesTest.findText(page,"45m"));assertNotNull(PreviewPagesTest.findText(page,"Drama"));assertNull(PreviewPagesTest.findText(page,"9.8"));
             tags.setRating(7.4f);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());assertNotNull(PreviewPagesTest.findText(page,"7.4"));assertNull(PreviewPagesTest.findText(page,"9.8"));PreviewPagesTest.layout(shell);PreviewPagesTest.capture(shell,"episode-details");
         }finally{host.pause().stop().destroy();}
     }

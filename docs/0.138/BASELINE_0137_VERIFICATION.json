@@ -1,0 +1,13 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "d999db6387ec380de22818d3324c1acf4ffa6d956a3961f594878048644325fe",
+  "apk_zip_crc_verified": true,
+  "source_commit": "68caa2c0ac3c42073b8ed2168995c2316625b29a",
+  "run_id": 38134479237,
+  "signature_verified": true,
+  "readback_origin": "Existing delivered Drive APK 1Jc1UnpDufFQdUAMHBSvbSOIeMQojRLpd",
+  "physical_shield_verified": false,
+  "version_name": "0.137",
+  "version_code": 137
+}
