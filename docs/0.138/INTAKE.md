@@ -37,3 +37,9 @@ The workspace has no attached Shield, Android emulator, user diagnostic export o
 - `docs/project/QA_0137_TV_AIR_DATE_SORT_AND_PREPARING_PLAYBACK_TAGLINE_2026-10-12.md`: `b9ff0fb0afb854cb1b6040e18eb5048eb63ab5161267ac16acb7b74a7d377c2f`
 - `docs/project/QA_0137_PLAYBACK_HUD_SEEKBAR_FOCUS_AND_LAYOUT_2026-10-12.md`: `e4f8643fc09e52b14e7bb36ad5376f8681536aefae87d2edaa28b75bf3555fcc`
 - `docs/project/QA_0137_DIAGNOSTICS_1122_PRE_HANDOVER_2026-10-11.md`: `924ab4cef803d38bb99fd80809615587552621e157675a124ce3e321952c9ecb`
+
+Live recheck during implementation: PR #12/0.137 remains at `45521c370563c8c176b0c3d9435fbf08fcd115e0`. Documentation advanced to `0a30dbf8f91fd652812677bc4472565f390ab24a`; its four new commits concern later maintenance/diagnostics planning and explicitly prohibit expanding/interfering with 0.138. The handover and all 17 approved input files are unchanged. Draft PR #13 stacks on the preserved 0.137 branch; no merge or force-push.
+
+Live protected-environment read confirms existing certificate environment `supernova-foundation-signing` has custom branch policies and excludes the new 0.138 branch. Existing allowed branches are retained; adding only the exact new QA branch and APK distribution remain explicit final approval steps. No signing secrets were read locally.
+
+Signing workflow registration is complete without main changes: a path-scoped push event registers the workflow but every signing job requires a manual dispatch and explicit distribution approval. Registration run `38207141176` was skipped. No environment policy or signing secret was changed/read.

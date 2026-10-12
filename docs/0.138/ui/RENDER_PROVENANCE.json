@@ -1,0 +1,74 @@
+[
+  {
+    "file": "0138-details-five-sections.png",
+    "sha256": "db46b7eee4a3f6510fa6cba7cec45f194bba3b1b8197466bccc130351a73444e",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "0138-details-five-sections-150-text.png",
+    "sha256": "492b20c651c8611f0df44df2fd9189ecc387afb9f917070848898b3fa96e4a16",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "0138-details-small-viewport.png",
+    "sha256": "47ea70af5a500b0a0d15fec54ff3048789c3979f3d9ca36b180ca7a6ef3f3800",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "0138-details-local-tracks-150-text.png",
+    "sha256": "f0a4937f79b3e742084806b498e47a6de444272835cb2a26784bff8781d27f2e",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "0138-navigation-150-text.png",
+    "sha256": "a5979d6ab59784011aadcf3878e3d6b2a23bf8567cb08244eb130cb1ed7af5ad",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "0138-settings-technical-bottom.png",
+    "sha256": "54c65f9d39d6b7643f656a3a057bba72698d54e103eebafc12af473ff86a14d0",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "0138-licences-androidx-reader.png",
+    "sha256": "a532b07bb10565d97bf35a53a1d055bdee23536410fb3551d736de328dfe150c",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "0138-playback-hud.png",
+    "sha256": "1c0bde9c9502cfddaeb472ce9060cd41c79ac5b7b3129344e68e94694f275ad0",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "search-empty-next.png",
+    "sha256": "d06887f70f4b7030778822115c623d0bfa3cf3765b8719f57126294403bf26e7",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "foundation-home-initial.png",
+    "sha256": "3b226e10f7ba79784d7674fab38646689aabe43e09d4cdac3a5da2755b48eefd",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "foundation-home-focus-position-5.png",
+    "sha256": "5507a4c443c6cec3d5f9fd3a2a7e9beaf6ca662c4b32ef395caffc4510f19d6e",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  },
+  {
+    "file": "next-qa-wizard-review-save.png",
+    "sha256": "49562158f89d82b7e127639c821d6caf472d037a352bd83f9b13dfe75f4894b4",
+    "provenance": "Robolectric actual application view with synthetic fixtures",
+    "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9"
+  }
+]
