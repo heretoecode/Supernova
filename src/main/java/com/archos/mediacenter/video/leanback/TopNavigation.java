@@ -16,6 +16,9 @@ import java.util.function.BooleanSupplier;
 /** Optional navigation shell; the same native BrowseSupportFragment owns all library rows. */
 public final class TopNavigation extends LinearLayout {
     private final LinearLayout bar;
+    private final TextView brand;
+    private final android.widget.TextClock clock;
+    private int navigationInset;
     private final PreviewFocusRail group;
     private static final int[] VISUAL_ORDER = {0, 1, 2, 6, 3, 5, 4};
     private final PreviewBackdrop artwork;
@@ -49,12 +52,11 @@ public final class TopNavigation extends LinearLayout {
         bar = new LinearLayout(c); bar.setClipChildren(false);bar.setClipToPadding(false); bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(26), 0, dp(26), 0);
         bar.setBackgroundColor(Color.TRANSPARENT);
-        TextView brand = new TextView(c);
+        brand = new TextView(c);brand.setSingleLine(true);
         brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(Color.WHITE);
         brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(136), -1));
         group = new PreviewFocusRail(c);group.useUnderline();group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
-        if(TvLayout.width(c)<900){android.widget.HorizontalScrollView rail=new android.widget.HorizontalScrollView(c);rail.setHorizontalScrollBarEnabled(false);rail.setFillViewport(true);rail.setClipToPadding(false);rail.addView(group,new android.widget.FrameLayout.LayoutParams(-2,-1));bar.addView(rail,new LayoutParams(0,-1,1));}
-        else bar.addView(group, new LayoutParams(0, -1, 1));
+        android.widget.HorizontalScrollView rail=new android.widget.HorizontalScrollView(c);rail.setHorizontalScrollBarEnabled(false);rail.setFillViewport(true);rail.setClipToPadding(false);rail.setFocusable(false);rail.addView(group,new android.widget.FrameLayout.LayoutParams(-2,-1));bar.addView(rail,new LayoutParams(0,-1,1));
         String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search", customLabel(c)};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
@@ -102,10 +104,11 @@ public final class TopNavigation extends LinearLayout {
         group.removeView(tabs[5]);group.addView(tabs[5],group.indexOfChild(tabs[4]),new LayoutParams(-2,dp(36)));
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(64), dp(46)));
-        android.widget.TextClock clock=new android.widget.TextClock(c);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19);clock.setTextColor(Color.WHITE);clock.setGravity(Gravity.CENTER_VERTICAL|Gravity.END);clock.setIncludeFontPadding(tabs[0].getIncludeFontPadding());clock.setPadding(0,dp(6),0,dp(6));status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        clock=new android.widget.TextClock(c);clock.setSingleLine(true);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19);clock.setTextColor(Color.WHITE);clock.setGravity(Gravity.CENTER_VERTICAL|Gravity.END);clock.setIncludeFontPadding(tabs[0].getIncludeFontPadding());clock.setPadding(0,dp(6),0,dp(6));status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
         updateCustomPage();selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
         stage=new android.widget.FrameLayout(c);
+        navigationInset=dp(52);
         scrollingContent=prepareScrollingContent(content);
         stage.addView(content,new android.widget.FrameLayout.LayoutParams(-1,-1));
         android.widget.FrameLayout.LayoutParams scanParams=new android.widget.FrameLayout.LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.END);
@@ -121,7 +124,22 @@ public final class TopNavigation extends LinearLayout {
         if(view instanceof android.widget.FrameLayout){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++)if(prepareScrollingContent(group.getChildAt(i)))return true;}
         return false;
     }
-    @Override protected void onMeasure(int width,int height){super.onMeasure(width,height);if(scrollingContent)stage.measure(View.MeasureSpec.makeMeasureSpec(getMeasuredWidth(),View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(getMeasuredHeight(),View.MeasureSpec.EXACTLY));}
+    @Override protected void onMeasure(int width,int height){
+        int tabHeight=Math.max(dp(36),Math.round(tabs[0].getPaint().getFontMetrics().bottom-tabs[0].getPaint().getFontMetrics().top)+tabs[0].getPaddingTop()+tabs[0].getPaddingBottom());
+        for(TextView tab:tabs)tab.getLayoutParams().height=tabHeight;
+        int inset=Math.max(dp(52),tabHeight+dp(12));bar.getLayoutParams().height=inset;
+        brand.getLayoutParams().width=Math.max(dp(136),(int)Math.ceil(brand.getPaint().measureText("SUPERNOVA"))+dp(8));
+        status.getLayoutParams().width=Math.max(dp(64),(int)Math.ceil(clock.getPaint().measureText("00:00"))+dp(8));status.getLayoutParams().height=Math.max(dp(46),tabHeight);
+        if(scrollingContent&&inset!=navigationInset)updateNavigationInset(content,inset,inset-navigationInset);navigationInset=inset;
+        super.onMeasure(width,height);if(scrollingContent)stage.measure(View.MeasureSpec.makeMeasureSpec(getMeasuredWidth(),View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(getMeasuredHeight(),View.MeasureSpec.EXACTLY));
+    }
+    private boolean updateNavigationInset(View view,int inset,int delta){
+        if(view.getVisibility()==GONE)return false;
+        if(view instanceof PreviewPages){((PreviewPages)view).setNavigationInset(inset);return true;}
+        if(view instanceof android.widget.ScrollView){view.setPadding(view.getPaddingLeft(),view.getPaddingTop()+delta,view.getPaddingRight(),view.getPaddingBottom());return true;}
+        if(view instanceof android.widget.FrameLayout){android.view.ViewGroup children=(android.view.ViewGroup)view;for(int n=0;n<children.getChildCount();n++)if(updateNavigationInset(children.getChildAt(n),inset,delta))return true;}
+        return false;
+    }
     @Override protected void onLayout(boolean changed,int left,int top,int right,int bottom){super.onLayout(changed,left,top,right,bottom);if(scrollingContent)stage.layout(0,0,getWidth(),getHeight());}
     @Override protected int getChildDrawingOrder(int count,int position){return count==2?1-position:position;}
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key))refreshAccent();else if(CustomLibraryPage.KEY.equals(key))updateCustomPage();};

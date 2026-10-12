@@ -1612,6 +1612,7 @@
             android:name="com.archos.mediacenter.video.leanback.tvshow.TvshowMoreDetailsActivity"
             android:theme="@style/MyLeanbackTheme" />
 
+        <activity android:name="com.archos.mediacenter.video.leanback.details.PreviewSeasonActivity" android:exported="false" android:theme="@style/MyLeanbackTheme" />
         <activity
             android:name="com.archos.mediacenter.video.leanback.tvshow.SeasonActivity"
             android:theme="@style/MyLeanbackTheme" />

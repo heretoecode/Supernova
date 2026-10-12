@@ -89,9 +89,9 @@ public final class PreviewVariants {
     }
     static String dynamicRange(android.content.Context context,Video video,PreviewLibraryLoader.Snapshot snapshot){
         if(video.getMetadata()!=null&&video.getMetadata().getVideoTrack()!=null){
-            com.archos.mediacenter.video.utils.VideoMetadata.VideoTrack track=video.getMetadata().getVideoTrack();String measured=track.dynamicRange();if(!measured.isEmpty()||track.colorTrc>0)return measured;
+            com.archos.mediacenter.video.utils.VideoMetadata.VideoTrack track=video.getMetadata().getVideoTrack();String measured=track.dynamicRange();if(measured!=null&&!measured.isEmpty()||track.colorTrc>0)return measured==null?"":measured;
         }
-        String measured=video.getPreviewDynamicRange();if(!measured.isEmpty())return measured;
+        String measured=video.getPreviewDynamicRange();if(measured!=null&&!measured.isEmpty())return measured;
         if(snapshot!=null)for(Entry entry:snapshot.technical){
             if(!(entry.media instanceof Video))continue;
             Video indexed=(Video)entry.media;

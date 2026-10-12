@@ -53,7 +53,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private String section = "About";
     private int selectedIndex, requestGeneration;
     private ExecutorService reader;
-    private boolean licencesOpened;
+    private boolean licencesOpened;private BundledNoticePager noticePager;
     private final Map<String,String> legalCache = new java.util.LinkedHashMap<String,String>() { protected boolean removeEldestEntry(Map.Entry<String,String> entry) { return size()>4; } };
 
     public FoundationAboutWorkspace(PreferenceFragmentCompat fragment, LinearLayout split,
@@ -73,16 +73,25 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     }
     private LinearLayout column(){LinearLayout v=new LinearLayout(getContext());v.setOrientation(VERTICAL);return v;}
     private ScrollView scroll(LinearLayout body){ScrollView v=new ScrollView(getContext());v.setFillViewport(false);v.setClipToPadding(false);v.addView(body,new ScrollView.LayoutParams(-1,-2));return v;}
-    private TextView text(String value,int size){TextView v=new TextView(getContext());v.setText(value);v.setTextColor(Color.WHITE);v.setTextSize(size);v.setLineSpacing(dp(3),1);return v;}
+    private TextView text(String value,int size){TextView v=com.archos.mediacenter.video.leanback.SharedThreePanel.text(getContext(),value,size);v.setLineSpacing(dp(3),1);return v;}
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
     public void show(TextView aboutButton) {
         parentButton=aboutButton;
         if(navigation.isEmpty()) for(int index=0;index<SECTIONS.length;index++) {
             final String name=SECTIONS[index]; final int position=index;
-            TextView child=text(name,18); child.setPadding(dp(24),0,dp(6),0);child.setGravity(Gravity.CENTER_VERTICAL);
-            child.setFocusable(true);child.setTag("semantic:settings:about:"+name);child.setBackground(PreviewDialog.focus(getContext()));com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(child);
-            rail.addView(child,new LayoutParams(-1,dp(44)));navigation.add(child);
-            child.setOnFocusChangeListener((v,focused)->{if(focused)select(name,child);});
+            TextView child=text(name,16); child.setSingleLine(true);child.setEllipsize(android.text.TextUtils.TruncateAt.END);child.setPadding(dp(24),0,dp(6),0);child.setGravity(Gravity.CENTER_VERTICAL);
+            child.setFocusable(true);child.setFocusableInTouchMode(true);child.setTag("semantic:settings:about:"+name);child.setBackground(PreviewDialog.focus(getContext()));com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(child);
+            rail.addView(child,new LayoutParams(-1,Math.max(dp(34),Math.round(child.getPaint().getFontMetrics().bottom-child.getPaint().getFontMetrics().top)+dp(8))));navigation.add(child);
+            Runnable reveal=()->{
+                if(!child.hasFocus()||child.getWidth()==0||child.getHeight()==0)return;
+                android.view.ViewParent ancestor=child.getParent();while(ancestor!=null&&!(ancestor instanceof ScrollView))ancestor=ancestor.getParent();
+                if(ancestor instanceof ScrollView){ScrollView viewport=(ScrollView)ancestor;int[] item=new int[2],pane=new int[2];child.getLocationOnScreen(item);viewport.getLocationOnScreen(pane);
+                    int above=pane[1]+viewport.getPaddingTop()+dp(12)-item[1],below=item[1]+child.getHeight()+dp(12)-(pane[1]+viewport.getHeight()-viewport.getPaddingBottom());
+                    if(below>0)viewport.scrollBy(0,below);else if(above>0)viewport.scrollBy(0,-above);
+                }
+            };
+            child.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{if(child.hasFocus())child.post(reveal);});
+            child.setOnFocusChangeListener((v,focused)->{if(focused){select(name,child);child.post(reveal);child.postDelayed(reveal,240);}});
             child.setOnClickListener(v->{child.requestFocus();select(name,child);enterContentInternal();});
             child.setOnKeyListener((v,key,event)->{
                 if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
@@ -130,7 +139,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private void focusSelectedRow(){if(!rows.isEmpty())rows.get(Math.min(selectedIndex,rows.size()-1)).requestFocus();else selectedNavigation.requestFocus();}
     private TextView row(String label,Runnable select,Runnable activate){
         final int index=rows.size();TextView row=text(label,14);row.setPadding(dp(10),dp(10),dp(8),dp(10));
-        row.setFocusable(true);row.setBackground(PreviewDialog.focus(getContext()));row.setTag("semantic:about:row:"+section+":"+index);
+        row.setFocusable(true);row.setFocusableInTouchMode(true);row.setBackground(PreviewDialog.focus(getContext()));row.setTag("semantic:about:row:"+section+":"+index);
         catalogueBody.addView(row,new LayoutParams(-1,-2));rows.add(row);
         Runnable selected=()->{selectedIndex=index;selections.put(section,index);select.run();};rowSelections.add(selected);
         row.setOnFocusChangeListener((v,focused)->{if(focused)selected.run();});
@@ -138,7 +147,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         row.setOnKeyListener((v,key,event)->{
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){selectedNavigation.requestFocus();return true;}
-            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(detailsBody.getChildCount()>0)detailsBody.getChildAt(0).requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(noticePager!=null){noticePager.focusReader();return true;}if(detailsBody.getChildCount()>0)detailsBody.getChildAt(0).requestFocus();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){int next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<rows.size())rows.get(next).requestFocus();return true;}
             return false;
         });
@@ -243,7 +252,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     }
     private void showDetails(String heading,String body,String url,String logo){
         ((LayoutParams)details.getLayoutParams()).weight=.56f;details.setFillViewport(false);detailsBody.setGravity(Gravity.TOP);detailsBody.setPadding(dp(8),dp(8),dp(8),dp(16));
-        boolean restore=details.hasFocus();detailsBody.removeAllViews();TextView title=text(heading,20);title.setFocusable(true);detailsBody.addView(title);
+        boolean restore=details.hasFocus();detailsBody.removeAllViews();noticePager=null;TextView title=text(heading,20);title.setFocusable(true);detailsBody.addView(title);
         if("tmdb".equals(logo)){
             int id=R.drawable.tmdb_banner;
             if(id!=0){ImageView image=new ImageView(getContext());image.setImageResource(id);image.setContentDescription("TMDB");detailsBody.addView(image,new LayoutParams(dp(160),dp(48)));}
@@ -253,11 +262,11 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             final int generation=requestGeneration;
             reader().execute(()->{Bitmap bitmap=qr(url);post(()->{if(generation==requestGeneration&&image.getParent()==detailsBody&&isAttachedToWindow())image.setImageBitmap(bitmap);else if(bitmap!=null)bitmap.recycle();});});
         }
-        TextView text=text(body,14);if(section.equals(SECTIONS[1]))com.archos.mediacenter.video.leanback.PreviewIcon.apply(text,"info",16);text.setFocusable(true);text.setPadding(0,dp(12),0,0);detailsBody.addView(text);
+        TextView text=text(section.equals(SECTIONS[1])&&licencesOpened&&body.length()>BundledNoticePager.PAGE_CHARS?"":body,14);if(section.equals(SECTIONS[1]))com.archos.mediacenter.video.leanback.PreviewIcon.apply(text,"info",16);text.setFocusable(true);text.setPadding(0,dp(12),0,0);detailsBody.addView(text);if(section.equals(SECTIONS[1])&&licencesOpened&&body.length()>BundledNoticePager.PAGE_CHARS){text.setVisibility(GONE);text.setFocusable(false);noticePager=new BundledNoticePager(getContext(),body,this::focusSelectedRow);detailsBody.addView(noticePager);}
         View.OnKeyListener keys=(v,key,event)->{
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){focusSelectedRow();return true;}
-            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){details.smoothScrollBy(0,dp(key==KeyEvent.KEYCODE_DPAD_UP?-48:48));return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_DOWN&&noticePager!=null){noticePager.focusReader();return true;}if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){details.smoothScrollBy(0,dp(key==KeyEvent.KEYCODE_DPAD_UP?-48:48));return true;}
             return false;
         };
         title.setOnKeyListener(keys);text.setOnKeyListener(keys);details.scrollTo(0,0);details.requestLayout();if(restore)title.requestFocus();
@@ -276,7 +285,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private String readText(String asset) throws Exception {
         if(!asset.startsWith("foundation/")||asset.contains(".."))throw new IllegalArgumentException();
         try(InputStream in=getContext().getAssets().open(asset);ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
-            byte[] buffer=new byte[4096];int n;while((n=in.read(buffer))!=-1){if(bytes.size()+n>1024*1024)throw new java.io.IOException("Bundled information exceeds the reader limit");bytes.write(buffer,0,n);}return bytes.toString(StandardCharsets.UTF_8.name());
+            byte[] buffer=new byte[4096];int n;while((n=in.read(buffer))!=-1){if(bytes.size()+n>8*1024*1024)throw new java.io.IOException("Bundled information exceeds the reader limit");bytes.write(buffer,0,n);}return bytes.toString(StandardCharsets.UTF_8.name());
         }
     }
     @Override protected void onDetachedFromWindow(){requestGeneration++;if(reader!=null)reader.shutdownNow();super.onDetachedFromWindow();}

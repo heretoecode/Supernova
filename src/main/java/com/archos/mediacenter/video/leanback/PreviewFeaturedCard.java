@@ -21,16 +21,13 @@ final class PreviewFeaturedCard extends FrameLayout {
             neighbour.setAlpha(1f);neighbour.setTag(direction<0?"semantic:featured.previous":"semantic:featured.next");
             LayoutParams size=new LayoutParams(-1,-1);size.gravity=direction<0?Gravity.LEFT:Gravity.RIGHT;addView(neighbour,size);
         }
-        FrameLayout card=new FrameLayout(c){@Override protected void dispatchDraw(android.graphics.Canvas canvas){int saved=canvas.save();android.graphics.Path mask=new android.graphics.Path();mask.addRoundRect(new android.graphics.RectF(0,0,getWidth(),getHeight()),dp(12),dp(12),android.graphics.Path.Direction.CW);canvas.clipPath(mask);super.dispatchDraw(canvas);canvas.restoreToCount(saved);}};card.setTag("semantic:featured.active");rounded(card,c);card.setElevation(dp(8));
-        addView(card,new LayoutParams(-1,-1,Gravity.CENTER));card.addView(art(c,entry),new LayoutParams(-1,-1));
+        CinematicCard card=new CinematicCard(c);card.setTag("semantic:featured.active");rounded(card,c);card.setElevation(dp(8));
+        addView(card,new LayoutParams(-1,-1,Gravity.CENTER));card.addView(art(c,entry),new LayoutParams(-1,-1));card.addScrim();
 
         LinearLayout copy=new LinearLayout(c);copy.setOrientation(LinearLayout.VERTICAL);copy.setTag("featured.copy");copy.setPadding(dp(24),dp(22),dp(18),dp(18));card.addView(copy,new LayoutParams(-1,-1));
         TextView title=text(entry==null?"":PreviewPages.displayName(entry),30);title.setTag("semantic:featured.title");title.setMaxLines(2);title.setTypeface(null,android.graphics.Typeface.BOLD);copy.addView(title,new LinearLayout.LayoutParams(-1,dp(86)));if(entry!=null)OfficialTitleArtwork.bindStable(title,entry.media);else title.setForeground(new HomePlaceholder.Skeleton());
-        List<String> metaValues=new ArrayList<>();if(entry!=null&&entry.year()>0)metaValues.add(String.valueOf(entry.year()));
-        if(entry!=null&&!entry.genres.isEmpty())metaValues.add(entry.genres.replace("|",", "));
-        if(entry!=null&&entry.media instanceof Tvshow){Tvshow show=(Tvshow)entry.media;if(entry.seasons>0)metaValues.add(entry.seasons+(entry.seasons==1?" season":" seasons"));}
-        else if(entry!=null&&entry.media instanceof Video){Video video=(Video)entry.media;long minutes=video.getDurationMs()/60000;if(minutes>0)metaValues.add((minutes>=60?minutes/60+"h ":"")+minutes%60+"m");}
-        TextView metadata=text(android.text.TextUtils.join(" · ",metaValues),12);metadata.setMaxLines(2);metadata.setTag("semantic:featured.metadata");LinearLayout.LayoutParams metadataSize=new LinearLayout.LayoutParams(-1,dp(34));metadataSize.topMargin=dp(24);copy.addView(metadata,metadataSize);
+        TextView metadata=text("",18);metadata.setMaxLines(2);metadata.setTag("semantic:featured.metadata");metadata.setPadding(0,dp(4),0,dp(4));LinearLayout.LayoutParams metadataSize=new LinearLayout.LayoutParams(-1,-2);metadataSize.topMargin=dp(18);copy.addView(metadata,metadataSize);
+        LinearLayout badges=new LinearLayout(c);LinearLayout.LayoutParams badgeSize=new LinearLayout.LayoutParams(-1,-2);badgeSize.topMargin=dp(8);copy.addView(badges,badgeSize);SharedMetadata.bind(metadata,badges,entry!=null&&entry.homeMetadata!=null?entry.homeMetadata:SharedMetadata.entry(c,entry,true),5);
         String plot=entry==null?"":entry.media instanceof Tvshow?((Tvshow)entry.media).getPlot():entry.media instanceof Video?((Video)entry.media).getDescriptionBody():"";
         String tagline=entry==null?"":entry.tagline;
         if(tagline!=null&&!tagline.trim().isEmpty())plot=tagline;

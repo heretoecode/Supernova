@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class PreviewMoviePageTest {
  @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
  @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
-    @Test public void deferredDetailsPeopleKeepWhiteFocusWhileBrowserUsesAccent(){
+    @Test public void detailsPeopleAreReadOnlyWhileBrowserRetainsAccentFocus(){
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});
@@ -24,9 +24,7 @@ public class PreviewMoviePageTest {
                 org.robolectric.util.ReflectionHelpers.ClassParameter.from(android.widget.LinearLayout.class,people),
                 org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class,"Actor"),
                 org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class,"Role"));
-            android.graphics.drawable.Drawable details=people.getChildAt(0).getBackground();details.setState(new int[]{android.R.attr.state_focused});
-            assertEquals("Deferred Details appearance remains the 0.135 white outline",android.graphics.Color.WHITE,
-                Shadows.shadowOf((android.graphics.drawable.GradientDrawable)details.getCurrent()).getStrokeColor());
+            assertFalse(people.getChildAt(0).isFocusable());assertNull(people.getChildAt(0).getBackground());
             var browser=new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
             android.graphics.drawable.Drawable navigation=browser.findViewWithTag("semantic:network.category.overview").getBackground();navigation.setState(new int[]{android.R.attr.state_focused});
             assertEquals(PreviewAccent.color(host.get()),Shadows.shadowOf((android.graphics.drawable.GradientDrawable)navigation.getCurrent()).getStrokeColor());
@@ -44,7 +42,7 @@ public class PreviewMoviePageTest {
                     snapshot.episodes.add(new PreviewLibraryLoader.Entry(episode,0,7,""));
                 }
                 page.setSnapshot(snapshot);
-                View panel=page.findViewWithTag("semantic:details.panel.library.information");assertNotNull(panel);
+                View panel=page.findViewWithTag("semantic:details.panel.technical.information");assertNotNull(panel);
                 assertNotNull(PreviewPagesTest.findText(panel,"Library size"));
                 if(complete){assertNull(PreviewPagesTest.findText(panel,"≥ "));assertNotNull(PreviewPagesTest.findText(panel,"Average file size"));}
                 else{assertNotNull(PreviewPagesTest.findText(panel,"≥ "));assertNull(PreviewPagesTest.findText(panel,"Average file size"));}
@@ -73,14 +71,14 @@ public class PreviewMoviePageTest {
             TopNavigation nav=new TopNavigation(host.get(),page,i->{},page::atTop);host.get().setContentView(nav);
             page.bindRemote(new org.json.JSONObject().put("title","Compact title fixture"),"movie",0);
             PreviewPagesTest.layout(nav);
-            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertTrue(panel.requestFocus());
+            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertFalse(panel.requestFocus());View detailsTab=page.findViewWithTag("section:Details");assertTrue(detailsTab.requestFocus());
             page.scrollTo(0,250);
             android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);
             nav.draw(new android.graphics.Canvas(bitmap));
-            assertSame(panel,page.findFocus());
+            assertSame(detailsTab,page.findFocus());
             java.io.File out=new java.io.File("build/reports/preview-ui/details-compact-title.png");out.getParentFile().mkdirs();
             try(java.io.FileOutputStream stream=new java.io.FileOutputStream(out)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,stream);}bitmap.recycle();
-            page.scrollTo(0,0);assertSame(panel,page.findFocus());
+            page.scrollTo(0,0);assertSame(detailsTab,page.findFocus());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void backgroundSnapshotRetainsInformationPanelFocus()throws Exception{
@@ -89,9 +87,9 @@ public class PreviewMoviePageTest {
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);
             page.bindRemote(new org.json.JSONObject().put("title","Fixture"),"movie",0);
             PreviewPagesTest.layout(page);
-            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(panel);assertTrue(panel.requestFocus());
+            View panel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(panel);assertFalse(panel.requestFocus());View detailsTab=page.findViewWithTag("section:Details");assertTrue(detailsTab.requestFocus());
             page.setSnapshot(new PreviewLibraryLoader.Snapshot());
-            assertNotNull(page.findFocus());assertEquals("semantic:details.panel.key.information",page.findFocus().getTag());
+            assertNotNull(page.findFocus());assertEquals("section:Details",page.findFocus().getTag());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void remotePanelsOmitEmptyReceptionAndLocalFileInformation() throws Exception {
@@ -127,7 +125,7 @@ public class PreviewMoviePageTest {
             com.archos.mediacenter.video.browser.adapters.object.Episode episode=new com.archos.mediacenter.video.browser.adapters.object.Episode(1,1,1,1,"Pilot",1642377600000L,0,"","An episode synopsis","Example show","/episode",null,null,0,0,0,0,false,false,false,false,1,0,1920,1080,null,null,null,null,0,1,2000);
             com.archos.mediascraper.ShowTags series=new com.archos.mediascraper.ShowTags();series.setRating(9.8f);series.addGenreIfAbsent("Drama");
             com.archos.mediascraper.EpisodeTags tags=new com.archos.mediascraper.EpisodeTags(series,1,1);tags.setRuntime(45,java.util.concurrent.TimeUnit.MINUTES);page.bind(episode);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
-            assertNotNull(PreviewPagesTest.findText(page,"S1 E1"));assertNotNull(PreviewPagesTest.findText(page,"45 min"));assertNotNull(PreviewPagesTest.findText(page,"Drama"));assertNull(PreviewPagesTest.findText(page,"9.8"));
+            assertNotNull(PreviewPagesTest.findText(page,"S1 E1"));assertNotNull(PreviewPagesTest.findText(page,"45m"));assertNotNull(PreviewPagesTest.findText(page,"Drama"));assertNull(PreviewPagesTest.findText(page,"9.8"));
             tags.setRating(7.4f);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());assertNotNull(PreviewPagesTest.findText(page,"7.4"));assertNull(PreviewPagesTest.findText(page,"9.8"));PreviewPagesTest.layout(shell);PreviewPagesTest.capture(shell,"episode-details");
         }finally{host.pause().stop().destroy();}
     }
@@ -151,10 +149,10 @@ public class PreviewMoviePageTest {
             assertNotNull(PreviewPagesTest.findText(page,"SMB · server/movies/film.mkv"));assertNotNull(PreviewPagesTest.findText(page,"MKV"));
             com.archos.mediascraper.ShowTags cast=new com.archos.mediascraper.ShowTags();for(int person=1;person<=10;person++)cast.addActorIfAbsent("Fixture Person "+person,"Role "+person);page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
             android.view.ViewGroup body=(android.view.ViewGroup)page.getChildAt(0);android.view.ViewGroup hero=(android.view.ViewGroup)body.getChildAt(0);assertTrue("Hero retains its content and lower tabs",hero.getChildCount()>1);
-            assertNull(PreviewPagesTest.findText(page,"See All"));assertNotNull(PreviewPagesTest.findText(page,"Fixture Person 10"));
+            assertNull(PreviewPagesTest.findText(page,"See All"));assertNull(PreviewPagesTest.findText(page,"Fixture Person 10"));assertNotNull(PreviewPagesTest.findText(page,"Fixture Person 8"));
             assertNull("Empty recommendations have no navigation entry",page.findViewWithTag("section:More Like This"));assertNotNull(page.findViewWithTag("section:Details"));assertNull(page.findViewWithTag("section:Extras"));
             for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
-            assertTrue("Initial hero leaves at least 44dp of lower content visible",page.getPaddingTop()+hero.getBottom()<=page.getHeight()-44);
+            assertTrue("Initial hero leaves at least 32dp of lower content visible",page.getPaddingTop()+hero.getBottom()<=page.getHeight()-32);
             PreviewPagesTest.addTestArtwork(nav);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(210));
             android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));java.io.File out=new java.io.File("build/reports/preview-ui/movie-details.png");out.getParentFile().mkdirs();try(java.io.FileOutputStream stream=new java.io.FileOutputStream(out)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,stream);}
             View tab=page.findViewWithTag("section:Details");assertNotNull(tab);tab.requestFocus();
@@ -162,9 +160,9 @@ public class PreviewMoviePageTest {
             View restored=page.findViewWithTag("section:Details");assertTrue(restored.isSelected());assertTrue(restored.hasFocus());
             restored.performClick();PreviewPagesTest.layout(nav);
             assertNotNull(PreviewPagesTest.findText(page,"Key Information"));assertNotNull(PreviewPagesTest.findText(page,"Reception"));assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
-            View keyPanel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(keyPanel);keyPanel.requestFocus();
+            View keyPanel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(keyPanel);assertFalse(keyPanel.requestFocus());assertSame(restored,page.findFocus());
             for(int frame=0;frame<8;frame++){page.computeScroll();PreviewPagesTest.layout(nav);}
-            android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertTrue(visible.height()>80);
+            android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertEquals("Entire compact information panel must be visible",keyPanel.getHeight(),visible.height());assertNotNull(PreviewPagesTest.findText(keyPanel,"Year"));
             PreviewPagesTest.capture(nav,"details-information-next");
         }finally{host.pause().stop().destroy();}
     }

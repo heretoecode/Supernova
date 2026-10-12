@@ -16,16 +16,16 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewPeopleRailTest {
-    @Test public void nativePrincipalCrewUsesIndividualNamesAndRetainsFocusedPerson(){
+    @Test public void nativePrincipalCrewRetainsIndividualNamesWithoutInformationFocus(){
         Activity activity=Robolectric.buildActivity(Activity.class).setup().visible().get();
         PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);
         com.archos.mediascraper.MovieTags tags=new com.archos.mediascraper.MovieTags();
         tags.setDirectors(java.util.Arrays.asList("Director One","Director Two"));tags.setWriters(java.util.Collections.singletonList("Writer, Jr."));
         page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
         View second=page.findViewWithTag("person:Director Two:Director");assertNotNull(second);assertNotNull(page.findViewWithTag("person:Director One:Director"));
-        assertNotNull(page.findViewWithTag("person:Writer, Jr.:Writer"));assertTrue(second.requestFocus());
+        assertNotNull(page.findViewWithTag("person:Writer, Jr.:Writer"));assertFalse(second.requestFocus());
         page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
-        assertEquals("person:Director Two:Director",page.findFocus().getTag());
+        assertNotNull(page.findViewWithTag("person:Director Two:Director"));assertFalse(page.findViewWithTag("person:Director Two:Director").isFocusable());
     }
     @Test public void creditsCreateIndividualPrincipalCrewAndRemoteCast()throws Exception{
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();
@@ -41,10 +41,10 @@ public class PreviewPeopleRailTest {
         assertNull(page.findViewWithTag("person:Crew Other:Production Assistant"));
         assertTrue(first.getParent() instanceof LinearLayout);
         assertEquals(LinearLayout.VERTICAL,((LinearLayout)first.getParent()).getOrientation());
-        assertTrue(first instanceof LinearLayout);assertEquals(2,((LinearLayout)first).getChildCount());
+        assertTrue(first instanceof LinearLayout);assertEquals(1,((LinearLayout)first).getChildCount());
         assertTrue(((LinearLayout)first).getChildAt(0) instanceof android.widget.TextView);
-        assertTrue(((LinearLayout)first).getChildAt(1) instanceof android.widget.TextView);
-        assertTrue(first.isFocusable());assertFalse(first.isClickable());
+        assertEquals("Director One · Director",((android.widget.TextView)((LinearLayout)first).getChildAt(0)).getText().toString());
+        assertFalse(first.isFocusable());assertFalse(first.isClickable());
         page.setTags(null,java.util.Collections.emptyList(),java.util.Collections.emptyList());
         assertNotNull("A local tag refresh must retain cached individual crew",page.findViewWithTag("person:Director One:Director"));
         assertNotNull(page.findViewWithTag("person:Director Two:Director"));

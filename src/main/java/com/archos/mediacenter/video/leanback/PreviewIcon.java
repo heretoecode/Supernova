@@ -20,6 +20,9 @@ public final class PreviewIcon extends Drawable {
   else if(kind.equals("discard")){line(c,5,7,6,21,18,21,19,7);line(c,3,5,21,5);line(c,9,5,9,2,15,2,15,5);}
   else if(kind.startsWith("explore")||kind.startsWith("continue")){line(c,3,12,21,12);line(c,14,5,21,12,14,19);}
   else if(kind.equals("cancel")){line(c,6,6,18,18);line(c,18,6,6,18);}
+  else if(kind.equals("people")){c.drawCircle(8,7,3,p);c.drawCircle(17,8,2.5f,p);c.drawArc(2,12,14,24,180,180,false,p);c.drawArc(13,13,23,23,180,180,false,p);}
+  else if(kind.equals("formatting")){for(int y=5;y<=19;y+=7){c.drawCircle(4,y,.7f,p);line(c,9,y,21,y);}}
+  else if(kind.equals("spelling")){line(c,3,12,7,3,11,12);line(c,4,9,10,9);c.drawCircle(16,15,4,p);line(c,19,18,23,22);}
   else if(kind.equals("language")){c.drawCircle(12,12,9,p);c.drawOval(7,3,17,21,p);line(c,3,12,21,12);line(c,5,7,19,7);line(c,5,17,19,17);}
   else if(kind.equals("search")){c.drawCircle(10,10,6,p);line(c,15,15,21,21);}
   else if(kind.equals("cog")){c.drawCircle(12,12,7,p);c.drawCircle(12,12,3,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,12,2,12,5);c.restore();}}

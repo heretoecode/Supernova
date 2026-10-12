@@ -18,7 +18,7 @@ public final class PreviewKeyboard extends LinearLayout {
     private Runnable confirm, cancel;
     public void setActions(Runnable select,Runnable dismiss){confirm=select;cancel=dismiss;}
     public boolean capsLocked(){return caps;}
-    private void toggleCaps(){caps=!caps;for(int r=1;r<ROWS.length;r++)for(TextView key:keys.get(r)){String value=key.getTag().toString().substring("semantic:keyboard:".length());key.setText(caps?value:value.toLowerCase(java.util.Locale.ROOT));}keys.get(4).get(0).setText("Caps: "+(caps?"On":"Off"));keys.get(4).get(0).setContentDescription("Caps Lock "+(caps?"On":"Off"));}
+    private void toggleCaps(){caps=!caps;for(int r=1;r<ROWS.length;r++)for(TextView key:keys.get(r)){String value=key.getTag().toString().substring("semantic:keyboard:".length());key.setText(caps?value:value.toLowerCase(java.util.Locale.ROOT));}keys.get(4).get(0).setSelected(caps);keys.get(4).get(0).setContentDescription("Caps Lock "+(caps?"On":"Off"));}
     public void setLeaveDown(Runnable action) { leaveDown = action; }
 
     public PreviewKeyboard(Context context, EditText input, Runnable leaveRight) {
@@ -31,9 +31,9 @@ public final class PreviewKeyboard extends LinearLayout {
             LinearLayout row = new LinearLayout(context);
             row.setGravity(Gravity.CENTER);row.setClipChildren(false);
             row.setClipToPadding(false);
-            LayoutParams lp = new LayoutParams(-1, dp(38));
-            if(r>=4){android.graphics.Paint metrics=new android.graphics.Paint();metrics.setTextSize(12*context.getResources().getDisplayMetrics().scaledDensity);lp.height=Math.max(lp.height,Math.round(metrics.getFontSpacing()*2)+dp(8));}
-            lp.topMargin = dp(5);
+            LayoutParams lp = new LayoutParams(-1, dp(32));
+            if(r>=4){android.graphics.Paint metrics=new android.graphics.Paint();metrics.setTextSize(12*context.getResources().getDisplayMetrics().scaledDensity);lp.height=Math.max(lp.height,Math.round(metrics.getFontSpacing())+dp(10));}
+            lp.topMargin = dp(3);
             // Equal key widths, with the familiar stagger on the two shorter letter rows.
             if (r == 2) { lp.leftMargin = dp(12); lp.rightMargin = dp(12); }
             if (r == 3) { lp.leftMargin = dp(36); lp.rightMargin = dp(36); }
@@ -58,8 +58,8 @@ public final class PreviewKeyboard extends LinearLayout {
                     }
                 });
                 key.setTag("semantic:keyboard:" + label);
-                if(r>=4){key.setBackground(SharedThreePanel.control(context,10));key.setTextSize(12);key.setPadding(dp(6),0,dp(6),0);key.setGravity(Gravity.CENTER);PreviewIcon.apply(key,label,14);key.setCompoundDrawablePadding(dp(4));if(label.equals("Caps Lock")){key.setText("Caps: On");key.setContentDescription("Caps Lock On");}}
-                LayoutParams keySize=new LayoutParams(0,-1,1);if(r>=4){keySize=new LayoutParams(dp(104),-1);lp.leftMargin=0;lp.rightMargin=0;}keySize.leftMargin=dp(2);keySize.rightMargin=dp(2);
+                if(r>=4){key.setBackground(SharedThreePanel.control(context,10));key.setTextSize(12);key.setPadding(dp(6),0,dp(6),0);key.setGravity(Gravity.CENTER);PreviewIcon.apply(key,label,14);key.setCompoundDrawablePadding(dp(4));if(label.equals("Caps Lock")){key.setText("");key.setSelected(true);key.setContentDescription("Caps Lock On");}}
+                LayoutParams keySize=new LayoutParams(0,-1,1);if(r>=4){keySize=new LayoutParams(0,-1,r==4&&label.equals("Space")?3f:1f);lp.leftMargin=0;lp.rightMargin=0;}if(label.equals("Backspace")){key.setText("");key.setContentDescription("Backspace");}keySize.leftMargin=dp(2);keySize.rightMargin=dp(2);
                 key.setOnFocusChangeListener((v, focused) -> { if (focused) lastKey = (TextView) v; });
                 key.setOnKeyListener((v, code, event) -> {
                     if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
@@ -101,10 +101,10 @@ public final class PreviewKeyboard extends LinearLayout {
 
     public boolean focusLastKey() { return lastKey.requestFocus(); }
     public boolean atTop() { return keys.get(0).contains(findFocus()); }
-    public String focusedKey() { return lastKey.getText().toString(); }
+    public String focusedKey() { return String.valueOf(lastKey.getTag()).replace("semantic:keyboard:",""); }
     public void restoreKey(String label) {
         for (List<TextView> row : keys) for (TextView key : row)
-            if (key.getText().toString().equals(label)) { lastKey = key; return; }
+            if (key.getText().toString().equals(label)||String.valueOf(key.getTag()).equals("semantic:keyboard:"+label)) { lastKey = key; return; }
     }
     private static int selection(EditText input) { return input.getSelectionStart() < 0 ? input.length() : input.getSelectionStart(); }
     private static void replace(EditText input, String value) {

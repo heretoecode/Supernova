@@ -355,7 +355,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             if (fileInfo != null) if (log.isDebugEnabled()) log.debug("getSubtitle: tmdbId={}, imdbId={}, videoHash={}, fileName={}, languages={}", fileInfo.getTmdbId(), fileInfo.getImdbId(), fileInfo.getFileHash(), fileInfo.getFileName(), languagesString);
             else if (log.isDebugEnabled()) log.debug("getSubtitle: fileInfo is null for {}", fileUrl);
             try {
-                searchResults = OpenSubtitlesApiHelper.searchSubtitle(fileInfo, languagesString);
+                searchResults = SubtitleDiscovery.manual(getApplicationContext(),fileInfo,languagesString);
             } catch (Throwable e) { //for various service outages
                 log.error("getSubtitles: caught Throwable ", e);
                 OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");

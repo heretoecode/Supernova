@@ -37,7 +37,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public final Base media;
         public final long added, show;
         public final String genres;
-        public boolean heroEligible,heroSequential;public String tagline="";
+        public boolean heroEligible,heroSequential;public String tagline="";public SharedMetadata.Facts homeMetadata;
         public String language="",studio="",collection="";public String secondary="";public boolean active;public long playedAt;
         public String sortTitle="";public String releaseDate=""; public long onlineId; public transient android.net.Uri backdrop;
         public long bytes, runtime, modified, bitrate;
@@ -145,12 +145,13 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     }
     private void writeCacheLocked(Snapshot value){android.util.AtomicFile file=new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(),"preview-library-v42"));java.io.FileOutputStream stream=null;try{stream=file.startWrite();java.io.ObjectOutputStream out=new java.io.ObjectOutputStream(stream);out.writeObject(value);out.flush();file.finishWrite(stream);}catch(Exception failure){if(stream!=null)file.failWrite(stream);android.util.Log.d("NovaPreview","Snapshot cache unavailable",failure);}}
 
-    private void applyJourneys(Snapshot s,List<Entry> videos){
+    void applyJourneys(Snapshot s,List<Entry> videos){
         Map<Long,List<Entry>> groups=new LinkedHashMap<>();for(Entry e:videos)if(e.media instanceof Episode&&e.show>0)groups.computeIfAbsent(e.show,k->new ArrayList<>()).add(e);
         s.continuingShows.clear();
         for(Map.Entry<Long,List<Entry>> group:groups.entrySet()){
             PreviewSeriesJourney.Selection journey=PreviewSeriesJourney.select(getContext(),group.getValue());Entry candidate=journey.episode;
-            if(candidate!=null&&journey.started){Episode ep=(Episode)candidate.media;candidate.playedAt=journey.activity;candidate.active=true;candidate.secondary=(PreviewSeriesJourney.resumable(ep)?"Resume · ":"Up Next · ")+"S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();if(PreviewSeriesJourney.resumable(ep))s.continuingShows.add(candidate);
+            if(candidate!=null&&!journey.started){Entry resume=PreviewVariants.logicalChoices(group.getValue()).stream().filter(e->PreviewSeriesJourney.resumable((Video)e.media)&&!watched((Video)e.media)).max(Comparator.comparingLong(e->e.playedAt)).orElse(null);if(resume!=null){candidate=resume;journey=new PreviewSeriesJourney.Selection(resume,true,resume.playedAt);}}
+            if(candidate!=null&&journey.started){Episode ep=(Episode)candidate.media;candidate.playedAt=journey.activity;candidate.active=true;candidate.secondary=(PreviewSeriesJourney.resumable(ep)?"Resume · ":"Up Next · ")+"S"+ep.getSeasonNumber()+" E"+ep.getEpisodeNumber();s.continuingShows.add(candidate);
                 for(Entry show:s.shows)if(show.show==group.getKey()){show.secondary=candidate.secondary;show.active=true;break;}
             }
         }
@@ -166,7 +167,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             if(HeroEligibility.sequential(episode.getSeasonNumber(),episode.getEpisodeNumber(),completed.getOrDefault(entry.show,Collections.emptySet()),entry.added,times.getOrDefault(entry.show,0L))){entry.heroEligible=true;entry.heroSequential=true;entry.secondary="Next Episode · S"+episode.getSeasonNumber()+" E"+episode.getEpisodeNumber();s.featured.add(entry);}
         }
         s.featured.sort(Comparator.comparing((Entry e)->!e.heroSequential).thenComparing(Comparator.comparingLong((Entry e)->e.added).reversed()));
-        for(Entry entry:s.featured){if(entry.onlineId<=0)continue;try{org.json.JSONObject cache=com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(getContext(),entry.media instanceof Movie?"movie":"tv",entry.onlineId,"");if(cache!=null)entry.tagline=cache.optJSONObject("data")==null?"":cache.getJSONObject("data").optString("tagline","");}catch(Exception unavailable){/* Real indexed synopsis remains available. */}}
+        for(Entry entry:s.featured){entry.homeMetadata=SharedMetadata.entry(getContext(),entry,true);if(entry.onlineId<=0)continue;try{org.json.JSONObject cache=com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(getContext(),entry.media instanceof Movie?"movie":"tv",entry.onlineId,"");if(cache!=null)entry.tagline=cache.optJSONObject("data")==null?"":cache.getJSONObject("data").optString("tagline","");}catch(Exception unavailable){/* Real indexed synopsis remains available. */}}
     }
     private static String cell(Cursor cursor,String column){int index=cursor.getColumnIndex(column);return index<0||cursor.isNull(index)?"":cursor.getString(index);}
     @Override public Cursor loadInBackground() {

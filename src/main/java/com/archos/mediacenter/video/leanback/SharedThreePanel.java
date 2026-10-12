@@ -97,12 +97,10 @@ public class SharedThreePanel extends LinearLayout {
     }
     public static StateListDrawable control(Context context, int radius) {
         StateListDrawable states = new StateListDrawable();
-        for (boolean focused : new boolean[]{true, false}) {
-            GradientDrawable shape = new GradientDrawable();
-            shape.setColor(focused ? 0xe0203b50 : 0xc80b1b29);
-            shape.setCornerRadius(dp(context, Math.max(10,Math.min(12,radius))));
-            shape.setStroke(dp(context, 1), focused ? PreviewAccent.color(context) : 0x887f8996);
-            states.addState(focused ? new int[]{android.R.attr.state_focused} : new int[]{}, shape);
+        int[][] conditions={new int[]{-android.R.attr.state_enabled},new int[]{android.R.attr.state_pressed},new int[]{android.R.attr.state_focused},new int[]{}};
+        for(int i=0;i<conditions.length;i++){
+            GradientDrawable shape=new GradientDrawable();shape.setColor(i==0?0x800b1b29:i==1?0xe0324a5b:i==2?0xe0203b50:0xc80b1b29);
+            shape.setCornerRadius(dp(context,Math.max(10,Math.min(12,radius))));shape.setStroke(dp(context,1),i==2?PreviewAccent.color(context):i==0?0x447f8996:0x887f8996);states.addState(conditions[i],shape);
         }
         return states;
     }

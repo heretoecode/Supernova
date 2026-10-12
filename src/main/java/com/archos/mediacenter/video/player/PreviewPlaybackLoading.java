@@ -27,7 +27,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         LinearLayout labels=new LinearLayout(context);labels.setOrientation(LinearLayout.VERTICAL);
         LayoutParams labelsParams=new LayoutParams(dp(570),-2,Gravity.START|Gravity.CENTER_VERTICAL);labelsParams.leftMargin=dp(48);addView(labels,labelsParams);
         title=text("",32);title.setTypeface(null,android.graphics.Typeface.BOLD);title.setMaxLines(2);title.setEllipsize(android.text.TextUtils.TruncateAt.END);labels.addView(title);
-        episode=text("",16);episode.setPadding(0,dp(10),0,dp(20));labels.addView(episode);
+        episode=text("",16);episode.setMaxLines(2);episode.setEllipsize(android.text.TextUtils.TruncateAt.END);episode.setPadding(0,dp(10),0,dp(20));labels.addView(episode);
         LinearLayout status=new LinearLayout(context);status.setGravity(Gravity.CENTER_VERTICAL);status.setPadding(0,dp(18),0,0);labels.addView(status);
         ProgressBar spinner=new ProgressBar(context,null,android.R.attr.progressBarStyleSmall);spinner.setIndeterminateDrawable(com.archos.mediacenter.video.BuildConfig.FOUNDATION ? new com.archos.mediacenter.video.foundation.DoubleRingDrawable() : new com.archos.mediacenter.video.leanback.ThinSpinner());if(!com.archos.mediacenter.video.BuildConfig.FOUNDATION)spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(com.archos.mediacenter.video.leanback.PreviewAccent.color(context)));status.addView(spinner,new LinearLayout.LayoutParams(dp(28),dp(28)));
         TextView starting=text("Preparing playback…",16);starting.setPadding(dp(14),0,dp(8),0);status.addView(starting);
@@ -37,7 +37,9 @@ final class PreviewPlaybackLoading extends FrameLayout {
         if(value instanceof Video){Video video=(Video)value;source=video.getUri();fileSource=video.getFileUri();cachedArtwork=video.getPreviewBackdrop();
             com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title,video,true);
             title.setText(video instanceof Episode?((Episode)video).getShowName():video.getName());
-            if(video instanceof Episode){Episode e=(Episode)video;episode.setText(String.format(Locale.getDefault(),"Season %d • Episode %d",e.getSeasonNumber(),e.getEpisodeNumber())+(video.getName()==null?"":" · "+video.getName()));}
+            long online=video instanceof Movie?((Movie)video).getOnlineId():0;
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();if(online<=0&&library!=null)for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry:library.episodes)if(((Video)entry.media).getId()==video.getId()){online=entry.onlineId;break;}
+            Episode selected=video instanceof Episode?(Episode)video:null;episode.setText(PreviewTaglines.cached(context,selected!=null,online,selected==null?0:selected.getSeasonNumber(),selected==null?0:selected.getEpisodeNumber()));
         }
         episode.setVisibility(episode.length()==0?GONE:VISIBLE);
     }
@@ -65,7 +67,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title,info);
         title.setText(info.isScraped&&info.scraperTitle!=null?info.scraperTitle:fallback);
         boolean show=info.isShow&&info.scraperSeasonNr>=0&&info.scraperEpisodeNr>=0;
-        episode.setText(show?String.format(Locale.getDefault(),"Season %d • Episode %d",info.scraperSeasonNr,info.scraperEpisodeNr)+(info.scraperEpisodeName==null?"":" · "+info.scraperEpisodeName):"");episode.setVisibility(show?VISIBLE:GONE);
+        long id=0;try{id=Long.parseLong(info.isShow?info.scraperShowId:info.scraperMovieId);}catch(Exception unavailable){}episode.setText(PreviewTaglines.cached(getContext(),info.isShow,id,info.scraperSeasonNr,info.scraperEpisodeNr));episode.setVisibility(episode.length()==0?GONE:VISIBLE);
         if(info.uri!=null&&!info.uri.equals(source)&&!info.uri.equals(fileSource)){cachedArtwork=null;Picasso.get().cancelRequest(artwork);artwork.setImageDrawable(null);}
     }
     @Override protected void onVisibilityChanged(View changed,int visibility){

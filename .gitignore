@@ -20,3 +20,6 @@ crowdin.yml
 *.pfx
 *.jks
 *.keystore
+
+# Local Python verification bytecode is never source or signing material.
+__pycache__/

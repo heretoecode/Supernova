@@ -8,9 +8,11 @@ import android.graphics.drawable.Drawable;
 public final class PreviewFocusGlow extends Drawable {
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float density;
-    private final int colour;
+    private final int colour;private final float radius;
     private int alpha=255;
-    public PreviewFocusGlow(Context context){
+    public PreviewFocusGlow(Context context){this(context,6);}
+    public PreviewFocusGlow(Context context,float cornerRadius){
+        radius=cornerRadius;
         density=context.getResources().getDisplayMetrics().density;
         colour=PreviewAccent.color(context);
         paint.setStyle(Paint.Style.STROKE);
@@ -22,10 +24,10 @@ public final class PreviewFocusGlow extends Drawable {
             paint.setStrokeWidth(density);
             RectF halo=new RectF(edge);halo.inset(-i*density,-i*density);
             paint.setColor(colour);paint.setAlpha((i==1?42:12)*alpha/255);
-            canvas.drawRoundRect(halo,(6+i)*density,(6+i)*density,paint);
+            canvas.drawRoundRect(halo,(radius+i)*density,(radius+i)*density,paint);
         }
         paint.setStrokeWidth(density);paint.setAlpha(190*alpha/255);
-        canvas.drawRoundRect(edge,6*density,6*density,paint);
+        canvas.drawRoundRect(edge,radius*density,radius*density,paint);
     }
     @Override public void setAlpha(int value){alpha=value;invalidateSelf();}
     @Override public void setColorFilter(ColorFilter filter){paint.setColorFilter(filter);invalidateSelf();}
