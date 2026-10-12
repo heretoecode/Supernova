@@ -208,3 +208,9 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - Owner approves monochrome **eye** (visible) / **eye-off** (hidden) icons with state conveyed by glyph, not colour. The Show/Hide icon is an independent focus target outside the main row-body focus border. The six-dot move affordance is inside the right edge of the main row-body focus target. Focus does not recolour row text.
 - Owner also approves direction of genre selector: monochrome selection indicators on left, separate genre icon, names and stable live counts on right; entire genre row one focus target, selections persist independently of focus.
 - These are approved **design refinements**, not permission to modify application code. Other Customise Home questions and validation remain open.
+
+
+## 2026-10-12 Customise Home — Maximum Items selector alignment refinement
+- Owner supersedes earlier centred-value requirement for Maximum Items: place **15 left-aligned immediately after the monochrome list/count icon**, with the **same icon-to-label gap as Sort By (Date Added) and Direction (Descending)**. Keep the selector's fixed dimensions and its position as the third compact control alongside Sort By and Direction.
+- Add a small **up/down chevron indicator at the right edge** to communicate inline cycling, not a separate button or popup. Prefer consistent selector affordances across the three controls. Existing D-pad editing, six presets and default 15 remain unchanged.
+- Design-only documentation; no app implementation authorised.
