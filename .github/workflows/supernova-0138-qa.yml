@@ -89,10 +89,13 @@ jobs:
         run: |
           set -euo pipefail
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'ndk;29.0.14206865'
+          python3 source/.github/build/build-foundation-native-wrappers.py --root nova \
+            --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
+            --output "$RUNNER_TEMP/supernova-foundation-native-wrappers.json"
           cd nova/Video
           chmod +x gradlew
           ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease \
-            -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4
+            -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild
           python3 .github/build/verify-foundation-runtime.py \
             --inventory build/foundation/runtime-artifacts.json --reviewed docs/foundation/RUNTIME_SBOM.json
           mapfile -t unsigned_apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
@@ -174,6 +177,7 @@ jobs:
           path: |
             ${{ runner.temp }}/supernova-foundation-ffmpeg/Supernova-Foundation-FFmpeg-Source.tar.xz
             ${{ runner.temp }}/supernova-foundation-ffmpeg/verified-native-build.json
+            ${{ runner.temp }}/supernova-foundation-native-wrappers.json
             ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
           if-no-files-found: error
           retention-days: 30
