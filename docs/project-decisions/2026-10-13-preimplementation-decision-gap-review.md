@@ -17,3 +17,10 @@ Original 41 approved items **plus** (1) 10-title hero rotation and (2) comprehen
 
 ## Review limits
 This is a documentation/conversation decision audit, **not** a proof that every historical message, image or Google Doc was accessible. Some prior visual attachments/Google Docs may need explicit review before asserting 100% coverage. Excludes physical APK testing and all device QA steps as requested. No application source changes, merge or build.
+
+
+## 2026-10-13 owner follow-up — gaps partly resolved
+- **Resolved:** hero idle start **30 seconds**; flexible 5/5 type balance, other type fills shortages; then unique Recently Added fallback subject to eligibility exclusions, never duplicates; if still short show fewer. **Pending owner acceptance:** assistant recommended **8 seconds per slide**.
+- **Resolved:** incomplete draft Customise Home row exit triggers clear discard confirmation, Continue editing initially focused, Discard row second, using global monochrome Menu Foundation controls; only incomplete draft, not all live settings. Exact mandatory fields source audit.
+- **Still open:** hero ranking/refresh cadence and focus return details; backup audit results; detailed Details tab presentation. The owner explicitly deferred discussion of comprehensive Details tab visual redesign; existing 0.139 tab fixes stay.
+- **Clarified:** app banner refers to Android TV launcher tile, distinct from hero; no change approved. Avoid adding it to 0.139.
