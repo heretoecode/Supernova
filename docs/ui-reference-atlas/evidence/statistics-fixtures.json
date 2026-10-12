@@ -1,0 +1,285 @@
+{
+  "method": "Pure Python source-transcribed counts/sums check; not Android execution",
+  "data_provenance": "Synthetic documentation fixtures, decimal bytes, en-US displayed Formatter text approximated",
+  "fixtures": {
+    "LS-C-MOVIES-PARTIAL": {
+      "movies": [
+        {
+          "id": "m1",
+          "scheme": "file",
+          "bytes": 1000000000,
+          "knownSizes": 1
+        },
+        {
+          "id": "m2",
+          "scheme": "content",
+          "bytes": 0,
+          "knownSizes": 0
+        },
+        {
+          "id": "m3",
+          "scheme": "webdavs",
+          "bytes": 2000000000,
+          "knownSizes": 1
+        }
+      ],
+      "shows": []
+    },
+    "LS-C-TV-SPANNING": {
+      "movies": [],
+      "shows": [
+        "s1",
+        "s2"
+      ],
+      "episodes": [
+        {
+          "show": "s1",
+          "scheme": "file",
+          "bytes": 1000000000,
+          "knownSizes": 1
+        },
+        {
+          "show": "s1",
+          "scheme": "smbj",
+          "bytes": 1000000000,
+          "knownSizes": 1
+        },
+        {
+          "show": "s2",
+          "scheme": "webdavs",
+          "bytes": 1000000000,
+          "knownSizes": 1
+        },
+        {
+          "show": "s2",
+          "scheme": "webdavs",
+          "bytes": 0,
+          "knownSizes": 0
+        }
+      ]
+    },
+    "LS-C-CUSTOM-MIXED": {
+      "movies": [
+        {
+          "id": "m1",
+          "scheme": "file",
+          "bytes": 500000000,
+          "knownSizes": 1
+        },
+        {
+          "id": "m2",
+          "scheme": "webdavs",
+          "bytes": 500000000,
+          "knownSizes": 1
+        }
+      ],
+      "shows": [
+        "s1"
+      ],
+      "episodes": [
+        {
+          "show": "s1",
+          "scheme": "file",
+          "bytes": 1000000000,
+          "knownSizes": 1
+        },
+        {
+          "show": "s1",
+          "scheme": "smbj",
+          "bytes": 1000000000,
+          "knownSizes": 1
+        }
+      ],
+      "selection": [
+        "m1",
+        "m2",
+        "s1"
+      ]
+    },
+    "LS-C-CUSTOM-EMPTY": {
+      "movies": [],
+      "shows": [],
+      "episodes": [],
+      "selection": []
+    },
+    "LS-C-CUSTOM-MOVIES": {
+      "movies": [
+        {
+          "id": "m1",
+          "scheme": "file",
+          "bytes": 500000000,
+          "knownSizes": 1
+        },
+        {
+          "id": "m2",
+          "scheme": "webdavs",
+          "bytes": 500000000,
+          "knownSizes": 1
+        }
+      ],
+      "shows": [],
+      "episodes": [],
+      "selection": [
+        "m1",
+        "m2"
+      ]
+    },
+    "LS-C-CUSTOM-TV": {
+      "movies": [],
+      "shows": [
+        "s1"
+      ],
+      "episodes": [
+        {
+          "show": "s1",
+          "scheme": "file",
+          "bytes": 1000000000,
+          "knownSizes": 1
+        },
+        {
+          "show": "s1",
+          "scheme": "smbj",
+          "bytes": 1000000000,
+          "knownSizes": 1
+        }
+      ],
+      "selection": [
+        "s1"
+      ]
+    }
+  },
+  "computed": {
+    "LS-C-MOVIES-PARTIAL": {
+      "movies": {
+        "total_count": 3,
+        "total_bytes": 3000000000,
+        "local_count": 2,
+        "local_bytes": 1000000000,
+        "network_count": 1,
+        "network_bytes": 2000000000,
+        "partial": true,
+        "spanning": false
+      },
+      "shows": {
+        "total_count": 0,
+        "total_bytes": 0,
+        "local_count": 0,
+        "local_bytes": 0,
+        "network_count": 0,
+        "network_bytes": 0,
+        "partial": false,
+        "spanning": false
+      }
+    },
+    "LS-C-TV-SPANNING": {
+      "movies": {
+        "total_count": 0,
+        "total_bytes": 0,
+        "local_count": 0,
+        "local_bytes": 0,
+        "network_count": 0,
+        "network_bytes": 0,
+        "partial": false,
+        "spanning": false
+      },
+      "shows": {
+        "total_count": 2,
+        "total_bytes": 3000000000,
+        "local_count": 1,
+        "local_bytes": 1000000000,
+        "network_count": 2,
+        "network_bytes": 2000000000,
+        "partial": true,
+        "spanning": true
+      }
+    },
+    "LS-C-CUSTOM-MIXED": {
+      "movies": {
+        "total_count": 2,
+        "total_bytes": 1000000000,
+        "local_count": 1,
+        "local_bytes": 500000000,
+        "network_count": 1,
+        "network_bytes": 500000000,
+        "partial": false,
+        "spanning": false
+      },
+      "shows": {
+        "total_count": 1,
+        "total_bytes": 2000000000,
+        "local_count": 1,
+        "local_bytes": 1000000000,
+        "network_count": 1,
+        "network_bytes": 1000000000,
+        "partial": false,
+        "spanning": true
+      }
+    },
+    "LS-C-CUSTOM-EMPTY": {
+      "movies": {
+        "total_count": 0,
+        "total_bytes": 0,
+        "local_count": 0,
+        "local_bytes": 0,
+        "network_count": 0,
+        "network_bytes": 0,
+        "partial": false,
+        "spanning": false
+      },
+      "shows": {
+        "total_count": 0,
+        "total_bytes": 0,
+        "local_count": 0,
+        "local_bytes": 0,
+        "network_count": 0,
+        "network_bytes": 0,
+        "partial": false,
+        "spanning": false
+      }
+    },
+    "LS-C-CUSTOM-MOVIES": {
+      "movies": {
+        "total_count": 2,
+        "total_bytes": 1000000000,
+        "local_count": 1,
+        "local_bytes": 500000000,
+        "network_count": 1,
+        "network_bytes": 500000000,
+        "partial": false,
+        "spanning": false
+      },
+      "shows": {
+        "total_count": 0,
+        "total_bytes": 0,
+        "local_count": 0,
+        "local_bytes": 0,
+        "network_count": 0,
+        "network_bytes": 0,
+        "partial": false,
+        "spanning": false
+      }
+    },
+    "LS-C-CUSTOM-TV": {
+      "movies": {
+        "total_count": 0,
+        "total_bytes": 0,
+        "local_count": 0,
+        "local_bytes": 0,
+        "network_count": 0,
+        "network_bytes": 0,
+        "partial": false,
+        "spanning": false
+      },
+      "shows": {
+        "total_count": 1,
+        "total_bytes": 2000000000,
+        "local_count": 1,
+        "local_bytes": 1000000000,
+        "network_count": 1,
+        "network_bytes": 1000000000,
+        "partial": false,
+        "spanning": true
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "protected_application_and_existing_maintenance_refs_unchanged": true,
+  "preexisting_ref_count": 24,
+  "changed_other_existing_refs": {
+    "refs/heads/docs/project-decisions-2026-10-12": {
+      "before": "721598999d040c84b8e6dac49cc5e916ea7bd466",
+      "after": "6678d5e395a50258a97b6a3160a27dfefb6ee9d6"
+    }
+  },
+  "other_ref_change_attribution": "Observed during task; this task issued no write to these refs",
+  "task_written_ref": "refs/heads/docs/ui-reference-atlas-2026-10-12",
+  "pr": {
+    "baseRefName": "docs/maintenance-investigation-2026-10",
+    "headRefOid": "cb889d9370f10edfb0d7f444202056ba0bc85dfa",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/heretoecode/Supernova/pull/16"
+  },
+  "application_worktree_clean": true,
+  "existing_reports_not_modified": "Only docs/README.md link added plus new docs/ui-reference-atlas",
+  "historical_drive_artifacts": "No mutation calls issued for original audit/six original IDs"
+}

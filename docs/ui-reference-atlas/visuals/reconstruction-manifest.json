@@ -1,0 +1,2271 @@
+[
+  {
+    "id": "CH-C-EDITOR-TOP",
+    "area": "customise-home",
+    "state": "Main editor top",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      732,
+      446
+    ],
+    "ui_crop_resolution": [
+      700,
+      350
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "rows": [
+        "Continue Watching",
+        "Watch Next",
+        "Recently Added",
+        "Trending on Trakt · In Your Library",
+        "Popular on Trakt · In Your Library",
+        "Recently Watched",
+        "Because You Watched",
+        "Atlas Fixture"
+      ],
+      "hidden": "watchnext",
+      "customRow": "custom:fixture",
+      "dynamic": true,
+      "moving": false,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void editor",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L95",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Scroll offsets are illustrative fixture offsets, not measured Android scroll positions"
+    ],
+    "html": "visuals/customise-home/CH-C-EDITOR-TOP.html",
+    "file": "visuals/customise-home/CH-C-EDITOR-TOP.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "877eb5d1a0bfe6ffdf85a0a734ca9a27c4925fc0833104773d4757f3d4906a1b"
+  },
+  {
+    "id": "CH-C-EDITOR-CUSTOM-ROW",
+    "area": "customise-home",
+    "state": "Main editor custom-row",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      732,
+      446
+    ],
+    "ui_crop_resolution": [
+      700,
+      350
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "rows": [
+        "Continue Watching",
+        "Watch Next",
+        "Recently Added",
+        "Trending on Trakt · In Your Library",
+        "Popular on Trakt · In Your Library",
+        "Recently Watched",
+        "Because You Watched",
+        "Atlas Fixture"
+      ],
+      "hidden": "watchnext",
+      "customRow": "custom:fixture",
+      "dynamic": true,
+      "moving": false,
+      "scrollOffset": 109
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void editor",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L95",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Scroll offsets are illustrative fixture offsets, not measured Android scroll positions"
+    ],
+    "html": "visuals/customise-home/CH-C-EDITOR-CUSTOM-ROW.html",
+    "file": "visuals/customise-home/CH-C-EDITOR-CUSTOM-ROW.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "bf318314f859f92843edf61b04820ac7b76381bd4a03bd3b86169d2492d2eeed"
+  },
+  {
+    "id": "CH-C-EDITOR-MOVEMENT",
+    "area": "customise-home",
+    "state": "Main editor movement",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      732,
+      446
+    ],
+    "ui_crop_resolution": [
+      700,
+      350
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "rows": [
+        "Continue Watching",
+        "Watch Next",
+        "Recently Added",
+        "Trending on Trakt · In Your Library",
+        "Popular on Trakt · In Your Library",
+        "Recently Watched",
+        "Because You Watched",
+        "Atlas Fixture"
+      ],
+      "hidden": "watchnext",
+      "customRow": "custom:fixture",
+      "dynamic": true,
+      "moving": true,
+      "scrollOffset": 109
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void editor",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L95",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Scroll offsets are illustrative fixture offsets, not measured Android scroll positions"
+    ],
+    "html": "visuals/customise-home/CH-C-EDITOR-MOVEMENT.html",
+    "file": "visuals/customise-home/CH-C-EDITOR-MOVEMENT.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "85584eab41fde5bc7c7a818d8937122e6b51cc354baebd146c5201e59fb8b165"
+  },
+  {
+    "id": "CH-C-RULE-FOCUS-0",
+    "area": "customise-home",
+    "state": "Atlas Fixture / Dynamic genre rule: On",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      300,
+      488
+    ],
+    "ui_crop_resolution": [
+      268,
+      320
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Dynamic genre rule: On",
+        "Genres: All",
+        "Movies: On",
+        "TV Shows: On",
+        "Sort: added",
+        "Maximum items: No Limit",
+        "Direction: Descending"
+      ],
+      "checked_indices": [],
+      "focus_index": 0,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RULE-FOCUS-0.html",
+    "file": "visuals/customise-home/CH-C-RULE-FOCUS-0.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "70aa7a010ea98dcd01d3c68c73998d3d4af1ca6c048a230f4d67e2a5ad127b8c"
+  },
+  {
+    "id": "CH-C-RULE-FOCUS-1",
+    "area": "customise-home",
+    "state": "Atlas Fixture / Genres: All",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      300,
+      488
+    ],
+    "ui_crop_resolution": [
+      268,
+      320
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Dynamic genre rule: On",
+        "Genres: All",
+        "Movies: On",
+        "TV Shows: On",
+        "Sort: added",
+        "Maximum items: No Limit",
+        "Direction: Descending"
+      ],
+      "checked_indices": [],
+      "focus_index": 1,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RULE-FOCUS-1.html",
+    "file": "visuals/customise-home/CH-C-RULE-FOCUS-1.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "cc0c32b25909e9c58049ad8e4ae012fa20ff5cb14348661ea158adb942bcda80"
+  },
+  {
+    "id": "CH-C-RULE-FOCUS-2",
+    "area": "customise-home",
+    "state": "Atlas Fixture / Movies: On",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      300,
+      488
+    ],
+    "ui_crop_resolution": [
+      268,
+      320
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Dynamic genre rule: On",
+        "Genres: All",
+        "Movies: On",
+        "TV Shows: On",
+        "Sort: added",
+        "Maximum items: No Limit",
+        "Direction: Descending"
+      ],
+      "checked_indices": [],
+      "focus_index": 2,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RULE-FOCUS-2.html",
+    "file": "visuals/customise-home/CH-C-RULE-FOCUS-2.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "c22bb313f0ab832c7f2dae6040074658b72b99e23f6b5cc04e6ad5b5d66b8fc7"
+  },
+  {
+    "id": "CH-C-RULE-FOCUS-3",
+    "area": "customise-home",
+    "state": "Atlas Fixture / TV Shows: On",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      300,
+      488
+    ],
+    "ui_crop_resolution": [
+      268,
+      320
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Dynamic genre rule: On",
+        "Genres: All",
+        "Movies: On",
+        "TV Shows: On",
+        "Sort: added",
+        "Maximum items: No Limit",
+        "Direction: Descending"
+      ],
+      "checked_indices": [],
+      "focus_index": 3,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RULE-FOCUS-3.html",
+    "file": "visuals/customise-home/CH-C-RULE-FOCUS-3.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "9d1f5675c89dd74931e71a4b3f11da9f35158abe95819f74d317ae8f0748bd12"
+  },
+  {
+    "id": "CH-C-RULE-FOCUS-4",
+    "area": "customise-home",
+    "state": "Atlas Fixture / Sort: added",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      300,
+      488
+    ],
+    "ui_crop_resolution": [
+      268,
+      320
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Dynamic genre rule: On",
+        "Genres: All",
+        "Movies: On",
+        "TV Shows: On",
+        "Sort: added",
+        "Maximum items: No Limit",
+        "Direction: Descending"
+      ],
+      "checked_indices": [],
+      "focus_index": 4,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RULE-FOCUS-4.html",
+    "file": "visuals/customise-home/CH-C-RULE-FOCUS-4.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "85fee96e6fac795da46433fce4b3bdf682c50f0c3fb4f1de14dbbc637e879d24"
+  },
+  {
+    "id": "CH-C-RULE-FOCUS-5",
+    "area": "customise-home",
+    "state": "Atlas Fixture / Maximum items: No Limit",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      300,
+      488
+    ],
+    "ui_crop_resolution": [
+      268,
+      320
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Dynamic genre rule: On",
+        "Genres: All",
+        "Movies: On",
+        "TV Shows: On",
+        "Sort: added",
+        "Maximum items: No Limit",
+        "Direction: Descending"
+      ],
+      "checked_indices": [],
+      "focus_index": 5,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RULE-FOCUS-5.html",
+    "file": "visuals/customise-home/CH-C-RULE-FOCUS-5.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "64e293f0e71c42f8e0281bd1721dc5b9f5e349bd33afce611841af8a17105982"
+  },
+  {
+    "id": "CH-C-RULE-FOCUS-6",
+    "area": "customise-home",
+    "state": "Atlas Fixture / Direction: Descending",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      300,
+      488
+    ],
+    "ui_crop_resolution": [
+      268,
+      320
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Dynamic genre rule: On",
+        "Genres: All",
+        "Movies: On",
+        "TV Shows: On",
+        "Sort: added",
+        "Maximum items: No Limit",
+        "Direction: Descending"
+      ],
+      "checked_indices": [],
+      "focus_index": 6,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RULE-FOCUS-6.html",
+    "file": "visuals/customise-home/CH-C-RULE-FOCUS-6.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "001413d33674a0add3943931211cdfb138338bebed0149f32eb722e2120dfdab"
+  },
+  {
+    "id": "CH-C-RULE-CHANGED",
+    "area": "customise-home",
+    "state": "Atlas Fixture / Dynamic genre rule: Off",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      340,
+      470
+    ],
+    "ui_crop_resolution": [
+      308,
+      320
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Dynamic genre rule: Off",
+        "Genres: Drama, Science Fiction",
+        "Movies: Off",
+        "TV Shows: On",
+        "Sort: title",
+        "Maximum items: 37",
+        "Direction: Ascending"
+      ],
+      "checked_indices": [],
+      "focus_index": 0,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RULE-CHANGED.html",
+    "file": "visuals/customise-home/CH-C-RULE-CHANGED.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "bbc657f11bb1941417bb44e9253dfcb879208acd2d7df15dbe31b428cf25b8b4"
+  },
+  {
+    "id": "CH-C-SORT-0",
+    "area": "customise-home",
+    "state": "Row sort / Date Added",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      340
+    ],
+    "ui_crop_resolution": [
+      240,
+      172
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Date Added",
+        "Title",
+        "Year"
+      ],
+      "checked_indices": [
+        0
+      ],
+      "focus_index": 0,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-SORT-0.html",
+    "file": "visuals/customise-home/CH-C-SORT-0.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "48072d7a0f25ac6f8dd73067f6350789aeb73042024be09039027cd8d430b5e1"
+  },
+  {
+    "id": "CH-C-SORT-1",
+    "area": "customise-home",
+    "state": "Row sort / Title",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      340
+    ],
+    "ui_crop_resolution": [
+      240,
+      172
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Date Added",
+        "Title",
+        "Year"
+      ],
+      "checked_indices": [
+        1
+      ],
+      "focus_index": 1,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-SORT-1.html",
+    "file": "visuals/customise-home/CH-C-SORT-1.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "2295168b933483872be0d676db09c1901ad833f6d5d55ca5e298829ec18bc9da"
+  },
+  {
+    "id": "CH-C-SORT-2",
+    "area": "customise-home",
+    "state": "Row sort / Year",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      340
+    ],
+    "ui_crop_resolution": [
+      240,
+      172
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Date Added",
+        "Title",
+        "Year"
+      ],
+      "checked_indices": [
+        2
+      ],
+      "focus_index": 2,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-SORT-2.html",
+    "file": "visuals/customise-home/CH-C-SORT-2.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "17075727abb94b3f0d9e280fcf5458f4fe4d4ef34032cdf9a72d13a7af38e13a"
+  },
+  {
+    "id": "CH-C-MAX-PRESETS",
+    "area": "customise-home",
+    "state": "Maximum items / No Limit",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      562
+    ],
+    "ui_crop_resolution": [
+      240,
+      394
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "No Limit",
+        "10",
+        "20",
+        "30",
+        "40",
+        "50",
+        "75",
+        "100",
+        "Select…"
+      ],
+      "checked_indices": [
+        0
+      ],
+      "focus_index": 0,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-MAX-PRESETS.html",
+    "file": "visuals/customise-home/CH-C-MAX-PRESETS.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "550528bd270c4ba09a9d9c79ee930888daae58cc714c49209354f582f81bd801"
+  },
+  {
+    "id": "CH-C-MAX-SELECT",
+    "area": "customise-home",
+    "state": "Maximum items / Select…",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      562
+    ],
+    "ui_crop_resolution": [
+      240,
+      394
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "No Limit",
+        "10",
+        "20",
+        "30",
+        "40",
+        "50",
+        "75",
+        "100",
+        "Select…"
+      ],
+      "checked_indices": [
+        2
+      ],
+      "focus_index": 8,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-MAX-SELECT.html",
+    "file": "visuals/customise-home/CH-C-MAX-SELECT.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "c94759b7e61212417891d992893b250186d664e2d3db12473a437bb4d7f0dc6c"
+  },
+  {
+    "id": "CH-C-MAX-CUSTOM",
+    "area": "customise-home",
+    "state": "Maximum items / Select…",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      562
+    ],
+    "ui_crop_resolution": [
+      240,
+      394
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "No Limit",
+        "10",
+        "20",
+        "30",
+        "40",
+        "50",
+        "75",
+        "100",
+        "Select…"
+      ],
+      "checked_indices": [],
+      "focus_index": 8,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void rule",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L96",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L102",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-MAX-CUSTOM.html",
+    "file": "visuals/customise-home/CH-C-MAX-CUSTOM.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "8bce78bd4376748d8e95a04e646ae08815f2108cc5e9e50038cd86e1d488ee08"
+  },
+  {
+    "id": "CH-C-GENRES-EMPTY",
+    "area": "customise-home",
+    "state": "Genres · Match Any Selected / All Genres",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      266
+    ],
+    "ui_crop_resolution": [
+      240,
+      98
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "memoryCache": "null / no available genres",
+      "selected": []
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "Set<String> values=new TreeSet",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L108",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewGenres",
+        "method_or_token": "public static void choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewGenres.java#L16",
+        "source_sha256": "c57ec50a520315023ca20b0e759c1a64e7e3a9ba739b3ab6fe3572d9c7e6ecee"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-GENRES-EMPTY.html",
+    "file": "visuals/customise-home/CH-C-GENRES-EMPTY.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "512a0b1961eb1d4aa8b8b11ee8c281445a32dd5fba5a3bd844884e579f6a4af9"
+  },
+  {
+    "id": "CH-C-GENRES-FIXTURE",
+    "area": "customise-home",
+    "state": "Genres · Match Any Selected / Science Fiction",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      340
+    ],
+    "ui_crop_resolution": [
+      240,
+      172
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "memoryCache": "controlled movie/show genres Drama|Science Fiction",
+      "selected": [
+        "Drama",
+        "Science Fiction"
+      ]
+    },
+    "source_references": [
+      {
+        "owner": "PreviewGenres",
+        "method_or_token": "public static void choose",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewGenres.java#L16",
+        "source_sha256": "c57ec50a520315023ca20b0e759c1a64e7e3a9ba739b3ab6fe3572d9c7e6ecee"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-GENRES-FIXTURE.html",
+    "file": "visuals/customise-home/CH-C-GENRES-FIXTURE.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "680bd4d3e5d281e55391c04b82967306ae6878bdc4ebe370048e7d5e3b9c6443"
+  },
+  {
+    "id": "CH-C-MEMBERSHIP",
+    "area": "customise-home",
+    "state": "Add to Row / Atlas Fixture",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      377
+    ],
+    "ui_crop_resolution": [
+      240,
+      209
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "entry": "v1",
+      "hiddenRowSelectable": true,
+      "membership": [
+        "watchnext",
+        "custom:hidden"
+      ]
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void membership",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L54",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static void updateMembership",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L139",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-MEMBERSHIP.html",
+    "file": "visuals/customise-home/CH-C-MEMBERSHIP.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "c771144c2dd592d9ee60016f46d3b70571be7433dd084896c29436c54134b1a8"
+  },
+  {
+    "id": "CH-C-MOVE-HIDE",
+    "area": "customise-home",
+    "state": "Atlas Fixture / Move",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      272,
+      303
+    ],
+    "ui_crop_resolution": [
+      240,
+      135
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "Move",
+        "Hide"
+      ],
+      "checked_indices": [],
+      "focus_index": 0,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "public static void rowControls",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L85",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-MOVE-HIDE.html",
+    "file": "visuals/customise-home/CH-C-MOVE-HIDE.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "725730692f8fadc82b553e8aa36cac24e2adc5d5bc8b1340254d3b010bb82426"
+  },
+  {
+    "id": "CH-C-MOVE-TO",
+    "area": "customise-home",
+    "state": "Move row to / 8 · Atlas Fixture",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      378,
+      489
+    ],
+    "ui_crop_resolution": [
+      346,
+      357
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "labels": [
+        "1 · Continue Watching",
+        "2 · Watch Next",
+        "3 · Recently Added",
+        "4 · Trending on Trakt · In Your Library",
+        "5 · Popular on Trakt · In Your Library",
+        "6 · Recently Watched",
+        "7 · Because You Watched",
+        "8 · Atlas Fixture"
+      ],
+      "checked_indices": [
+        7
+      ],
+      "focus_index": 7,
+      "scrollOffset": 0
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "public static void rowControls",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L85",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-MOVE-TO.html",
+    "file": "visuals/customise-home/CH-C-MOVE-TO.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "321d58749250333182c447f6eac6f843ff3b07299477ab6dba3c1f12cba3fb35"
+  },
+  {
+    "id": "CH-C-RENAME",
+    "area": "customise-home",
+    "state": "Rename Row / T",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      592,
+      426
+    ],
+    "ui_crop_resolution": [
+      560,
+      312
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "input": "Atlas Fixture",
+      "focusKey": "T",
+      "caps": true,
+      "validation_error": null
+    },
+    "source_references": [
+      {
+        "owner": "PreviewTextInput",
+        "method_or_token": "private static void showInput",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java#L18",
+        "source_sha256": "e997a508fcbf3e3fc51c11e477879e4b243dd83ecc340bb66f30feefffd3d2d9"
+      },
+      {
+        "owner": "PreviewKeyboard",
+        "method_or_token": "public PreviewKeyboard",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java#L24",
+        "source_sha256": "fd96df9380de38d0ce9bacc1278c475ac8dc71c6d78c54999d66ad02877ce023"
+      },
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void name",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L81",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-RENAME.html",
+    "file": "visuals/customise-home/CH-C-RENAME.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "2ffb973af01e998efd373baaba14ef4dc784159c8e7b3615f79bb904023404ed"
+  },
+  {
+    "id": "CH-C-CREATE",
+    "area": "customise-home",
+    "state": "Create New Row / T",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      592,
+      426
+    ],
+    "ui_crop_resolution": [
+      560,
+      312
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "input": "",
+      "focusKey": "T",
+      "caps": true,
+      "validation_error": null
+    },
+    "source_references": [
+      {
+        "owner": "PreviewTextInput",
+        "method_or_token": "private static void showInput",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java#L18",
+        "source_sha256": "e997a508fcbf3e3fc51c11e477879e4b243dd83ecc340bb66f30feefffd3d2d9"
+      },
+      {
+        "owner": "PreviewKeyboard",
+        "method_or_token": "public PreviewKeyboard",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java#L24",
+        "source_sha256": "fd96df9380de38d0ce9bacc1278c475ac8dc71c6d78c54999d66ad02877ce023"
+      },
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void name",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L81",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-CREATE.html",
+    "file": "visuals/customise-home/CH-C-CREATE.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "253ef8d05488f92855ec467168603ec4bcde6f9d258422591a48395bd91f92a8"
+  },
+  {
+    "id": "CH-C-CREATE-ERROR",
+    "area": "customise-home",
+    "state": "Create New Row / Done",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      592,
+      474
+    ],
+    "ui_crop_resolution": [
+      560,
+      382
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "input": "",
+      "focusKey": "Done",
+      "caps": true,
+      "validation_error": "Enter a name"
+    },
+    "source_references": [
+      {
+        "owner": "PreviewTextInput",
+        "method_or_token": "private static void showInput",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java#L18",
+        "source_sha256": "e997a508fcbf3e3fc51c11e477879e4b243dd83ecc340bb66f30feefffd3d2d9"
+      },
+      {
+        "owner": "PreviewKeyboard",
+        "method_or_token": "public PreviewKeyboard",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java#L24",
+        "source_sha256": "fd96df9380de38d0ce9bacc1278c475ac8dc71c6d78c54999d66ad02877ce023"
+      },
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void name",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L81",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Input error icon uses a marked approximation; native setError popup omitted and exact text transcribed outside UI crop"
+    ],
+    "html": "visuals/customise-home/CH-C-CREATE-ERROR.html",
+    "file": "visuals/customise-home/CH-C-CREATE-ERROR.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "119e0cb3653762df3ad7d19aab7b24e80287c66bdf351ca7cf0dae5443fb8463"
+  },
+  {
+    "id": "CH-C-MAX-INPUT",
+    "area": "customise-home",
+    "state": "Maximum items / T",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      592,
+      426
+    ],
+    "ui_crop_resolution": [
+      560,
+      312
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "input": "37",
+      "focusKey": "T",
+      "caps": true,
+      "validation_error": null
+    },
+    "source_references": [
+      {
+        "owner": "PreviewTextInput",
+        "method_or_token": "private static void showInput",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java#L18",
+        "source_sha256": "e997a508fcbf3e3fc51c11e477879e4b243dd83ecc340bb66f30feefffd3d2d9"
+      },
+      {
+        "owner": "PreviewKeyboard",
+        "method_or_token": "public PreviewKeyboard",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java#L24",
+        "source_sha256": "fd96df9380de38d0ce9bacc1278c475ac8dc71c6d78c54999d66ad02877ce023"
+      },
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void name",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L81",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [],
+    "html": "visuals/customise-home/CH-C-MAX-INPUT.html",
+    "file": "visuals/customise-home/CH-C-MAX-INPUT.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "a48a0e45608e0d8d704393dd1955a6c437991294903c12e8fd7f3f995b22bf97"
+  },
+  {
+    "id": "CH-C-MAX-ERROR",
+    "area": "customise-home",
+    "state": "Maximum items / Done",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      592,
+      474
+    ],
+    "ui_crop_resolution": [
+      560,
+      382
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "input": "2147483648",
+      "focusKey": "Done",
+      "caps": true,
+      "validation_error": "Enter a whole number from 0 to 2147483647. Zero means No Limit."
+    },
+    "source_references": [
+      {
+        "owner": "PreviewTextInput",
+        "method_or_token": "private static void showInput",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java#L18",
+        "source_sha256": "e997a508fcbf3e3fc51c11e477879e4b243dd83ecc340bb66f30feefffd3d2d9"
+      },
+      {
+        "owner": "PreviewKeyboard",
+        "method_or_token": "public PreviewKeyboard",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java#L24",
+        "source_sha256": "fd96df9380de38d0ce9bacc1278c475ac8dc71c6d78c54999d66ad02877ce023"
+      },
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "private void name",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L81",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Input error icon uses a marked approximation; native setError popup omitted and exact text transcribed outside UI crop"
+    ],
+    "html": "visuals/customise-home/CH-C-MAX-ERROR.html",
+    "file": "visuals/customise-home/CH-C-MAX-ERROR.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "9150b699f431bba79eadbce3aa2295ccf6ba2d7e9c2c2615defe82b0b343ab72"
+  },
+  {
+    "id": "CH-C-DELETE-CANCEL",
+    "area": "customise-home",
+    "state": "Production Delete Row? / Cancel",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      394,
+      355
+    ],
+    "ui_crop_resolution": [
+      362,
+      205
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "title": "Delete Row?",
+      "focus": "Cancel"
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "Delete Row?",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L95",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog confirmDelete",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L160",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Native AlertDialog icon and framework geometry are omitted/approximate; use historical native captures for real framework rendering, whose test title has lowercase row"
+    ],
+    "html": "visuals/customise-home/CH-C-DELETE-CANCEL.html",
+    "file": "visuals/customise-home/CH-C-DELETE-CANCEL.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "8c3a88ff5793de14bbd5c9abd10b9a3cfeccef7a08982d5e28d08e21b9ab5957"
+  },
+  {
+    "id": "CH-C-DELETE-DELETE",
+    "area": "customise-home",
+    "state": "Production Delete Row? / Delete",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      394,
+      355
+    ],
+    "ui_crop_resolution": [
+      362,
+      205
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "title": "Delete Row?",
+      "focus": "Delete"
+    },
+    "source_references": [
+      {
+        "owner": "PreviewHomeRows",
+        "method_or_token": "Delete Row?",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java#L95",
+        "source_sha256": "5c0cafe5c2d3f233dcc58b04c144cc66c2bdb74195e3b678e1c7284d58a3a49b"
+      },
+      {
+        "owner": "PreviewDialog",
+        "method_or_token": "public static Dialog confirmDelete",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L160",
+        "source_sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Native AlertDialog icon and framework geometry are omitted/approximate; use historical native captures for real framework rendering, whose test title has lowercase row"
+    ],
+    "html": "visuals/customise-home/CH-C-DELETE-DELETE.html",
+    "file": "visuals/customise-home/CH-C-DELETE-DELETE.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "6d1ae182cfa518d5de73f000554d55f245a4baf26d2c32d8e360421bc40eee38"
+  },
+  {
+    "id": "LS-C-MOVIES-PARTIAL",
+    "area": "library-statistics",
+    "state": "Movies header and toolbar",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      936,
+      399
+    ],
+    "ui_crop_resolution": [
+      904,
+      303
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "summary_lines": [
+        "3 Movies",
+        "Total Size    ≥ 3.0 GB",
+        "Local Storage    2 movies · 1.0 GB",
+        "Network / WebDAV    1 movies · 2.0 GB",
+        "Indexed sizes only; some file sizes are unknown"
+      ],
+      "custom": false,
+      "listMode": false,
+      "focus": "Filters",
+      "values": "controlled indexed fixtures; not real owner data"
+    },
+    "source_references": [
+      {
+        "owner": "LibraryPageHeader",
+        "method_or_token": "private static void add",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryPageHeader.java#L12",
+        "source_sha256": "bdb9a59699750ba6fbe335fa15b92eb9574a031eedbefc807bec60dfbd3a0d3d"
+      },
+      {
+        "owner": "PreviewLibrarySummary",
+        "method_or_token": "public static String describe",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibrarySummary.java#L12",
+        "source_sha256": "a701350a406277c21fd6928db6fcfdd80a89d9766f5b172d7e86856272f7870d"
+      },
+      {
+        "owner": "PreviewPages",
+        "method_or_token": "else if(c.type==HEADER)",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L565",
+        "source_sha256": "b1da344db307649cb147c9dac8af22b1a2caa9183ea9b6e3b4baadd72de8a913"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Header/toolbar crop only; background artwork omitted",
+      "File sizes use explicitly supplied en-US display strings; Android Formatter/locale rounding unexecuted",
+      "First four icon positions only, matching source even for mixed blocks; blank line row retained"
+    ],
+    "html": "visuals/library-statistics/LS-C-MOVIES-PARTIAL.html",
+    "file": "visuals/library-statistics/LS-C-MOVIES-PARTIAL.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "1cdd077185a3aa3fffd4b062ff3268054c10616372775ce96aa5d307ec7546fe"
+  },
+  {
+    "id": "LS-C-TV-SPANNING",
+    "area": "library-statistics",
+    "state": "TV Shows header and toolbar",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      936,
+      422
+    ],
+    "ui_crop_resolution": [
+      904,
+      326
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "summary_lines": [
+        "2 Shows",
+        "Total Size    ≥ 3.0 GB",
+        "Local Storage    1 shows · 1.0 GB",
+        "Network / WebDAV    2 shows · 2.0 GB",
+        "Indexed sizes only; some file sizes are unknown",
+        "Shows spanning sources appear in both source counts"
+      ],
+      "custom": false,
+      "listMode": false,
+      "focus": "Filters",
+      "values": "controlled indexed fixtures; not real owner data"
+    },
+    "source_references": [
+      {
+        "owner": "LibraryPageHeader",
+        "method_or_token": "private static void add",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryPageHeader.java#L12",
+        "source_sha256": "bdb9a59699750ba6fbe335fa15b92eb9574a031eedbefc807bec60dfbd3a0d3d"
+      },
+      {
+        "owner": "PreviewLibrarySummary",
+        "method_or_token": "public static String describe",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibrarySummary.java#L12",
+        "source_sha256": "a701350a406277c21fd6928db6fcfdd80a89d9766f5b172d7e86856272f7870d"
+      },
+      {
+        "owner": "PreviewPages",
+        "method_or_token": "else if(c.type==HEADER)",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L565",
+        "source_sha256": "b1da344db307649cb147c9dac8af22b1a2caa9183ea9b6e3b4baadd72de8a913"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Header/toolbar crop only; background artwork omitted",
+      "File sizes use explicitly supplied en-US display strings; Android Formatter/locale rounding unexecuted",
+      "First four icon positions only, matching source even for mixed blocks; blank line row retained"
+    ],
+    "html": "visuals/library-statistics/LS-C-TV-SPANNING.html",
+    "file": "visuals/library-statistics/LS-C-TV-SPANNING.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "f7386626112715218bad4e746cbdaeb62dd6f0e212f5308e2a528fbd390c4b72"
+  },
+  {
+    "id": "LS-C-CUSTOM-MIXED",
+    "area": "library-statistics",
+    "state": "Atlas Library header and toolbar",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      936,
+      514
+    ],
+    "ui_crop_resolution": [
+      904,
+      418
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "summary_lines": [
+        "2 Movies",
+        "Total Size    1.0 GB",
+        "Local Storage    1 movies · 500 MB",
+        "Network / WebDAV    1 movies · 500 MB",
+        "",
+        "1 Shows",
+        "Total Size    2.0 GB",
+        "Local Storage    1 shows · 1.0 GB",
+        "Network / WebDAV    1 shows · 1.0 GB",
+        "Shows spanning sources appear in both source counts"
+      ],
+      "custom": true,
+      "listMode": false,
+      "focus": "Filters",
+      "values": "controlled indexed fixtures; not real owner data"
+    },
+    "source_references": [
+      {
+        "owner": "LibraryPageHeader",
+        "method_or_token": "private static void add",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryPageHeader.java#L12",
+        "source_sha256": "bdb9a59699750ba6fbe335fa15b92eb9574a031eedbefc807bec60dfbd3a0d3d"
+      },
+      {
+        "owner": "PreviewLibrarySummary",
+        "method_or_token": "public static String describe",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibrarySummary.java#L12",
+        "source_sha256": "a701350a406277c21fd6928db6fcfdd80a89d9766f5b172d7e86856272f7870d"
+      },
+      {
+        "owner": "PreviewPages",
+        "method_or_token": "else if(c.type==HEADER)",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L565",
+        "source_sha256": "b1da344db307649cb147c9dac8af22b1a2caa9183ea9b6e3b4baadd72de8a913"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Header/toolbar crop only; background artwork omitted",
+      "File sizes use explicitly supplied en-US display strings; Android Formatter/locale rounding unexecuted",
+      "First four icon positions only, matching source even for mixed blocks; blank line row retained"
+    ],
+    "html": "visuals/library-statistics/LS-C-CUSTOM-MIXED.html",
+    "file": "visuals/library-statistics/LS-C-CUSTOM-MIXED.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "a22b64751818418b820890ddced4275d1f89466d34913ce2987bff603783c78c"
+  },
+  {
+    "id": "LS-C-CUSTOM-MOVIES",
+    "area": "library-statistics",
+    "state": "Atlas Movies header and toolbar",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      936,
+      376
+    ],
+    "ui_crop_resolution": [
+      904,
+      280
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "summary_lines": [
+        "2 Movies",
+        "Total Size    1.0 GB",
+        "Local Storage    1 movies · 500 MB",
+        "Network / WebDAV    1 movies · 500 MB"
+      ],
+      "custom": true,
+      "listMode": true,
+      "focus": "Filters",
+      "values": "controlled indexed fixtures; not real owner data"
+    },
+    "source_references": [
+      {
+        "owner": "LibraryPageHeader",
+        "method_or_token": "private static void add",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryPageHeader.java#L12",
+        "source_sha256": "bdb9a59699750ba6fbe335fa15b92eb9574a031eedbefc807bec60dfbd3a0d3d"
+      },
+      {
+        "owner": "PreviewLibrarySummary",
+        "method_or_token": "public static String describe",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibrarySummary.java#L12",
+        "source_sha256": "a701350a406277c21fd6928db6fcfdd80a89d9766f5b172d7e86856272f7870d"
+      },
+      {
+        "owner": "PreviewPages",
+        "method_or_token": "else if(c.type==HEADER)",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L565",
+        "source_sha256": "b1da344db307649cb147c9dac8af22b1a2caa9183ea9b6e3b4baadd72de8a913"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Header/toolbar crop only; background artwork omitted",
+      "File sizes use explicitly supplied en-US display strings; Android Formatter/locale rounding unexecuted",
+      "First four icon positions only, matching source even for mixed blocks; blank line row retained"
+    ],
+    "html": "visuals/library-statistics/LS-C-CUSTOM-MOVIES.html",
+    "file": "visuals/library-statistics/LS-C-CUSTOM-MOVIES.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "9a7907f3e146cc266ac486a59912458ce3946219fdb13eb9cef2ea497b628709"
+  },
+  {
+    "id": "LS-C-CUSTOM-TV",
+    "area": "library-statistics",
+    "state": "Atlas TV header and toolbar",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      936,
+      399
+    ],
+    "ui_crop_resolution": [
+      904,
+      303
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "summary_lines": [
+        "1 Shows",
+        "Total Size    2.0 GB",
+        "Local Storage    1 shows · 1.0 GB",
+        "Network / WebDAV    1 shows · 1.0 GB",
+        "Shows spanning sources appear in both source counts"
+      ],
+      "custom": true,
+      "listMode": false,
+      "focus": "Filters",
+      "values": "controlled indexed fixtures; not real owner data"
+    },
+    "source_references": [
+      {
+        "owner": "LibraryPageHeader",
+        "method_or_token": "private static void add",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryPageHeader.java#L12",
+        "source_sha256": "bdb9a59699750ba6fbe335fa15b92eb9574a031eedbefc807bec60dfbd3a0d3d"
+      },
+      {
+        "owner": "PreviewLibrarySummary",
+        "method_or_token": "public static String describe",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibrarySummary.java#L12",
+        "source_sha256": "a701350a406277c21fd6928db6fcfdd80a89d9766f5b172d7e86856272f7870d"
+      },
+      {
+        "owner": "PreviewPages",
+        "method_or_token": "else if(c.type==HEADER)",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L565",
+        "source_sha256": "b1da344db307649cb147c9dac8af22b1a2caa9183ea9b6e3b4baadd72de8a913"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Header/toolbar crop only; background artwork omitted",
+      "File sizes use explicitly supplied en-US display strings; Android Formatter/locale rounding unexecuted",
+      "First four icon positions only, matching source even for mixed blocks; blank line row retained"
+    ],
+    "html": "visuals/library-statistics/LS-C-CUSTOM-TV.html",
+    "file": "visuals/library-statistics/LS-C-CUSTOM-TV.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "4220ad9da39251f363d42be50cf1d065de2d11889a7790c012fe03e2e55d1138"
+  },
+  {
+    "id": "LS-C-CUSTOM-EMPTY",
+    "area": "library-statistics",
+    "state": "Atlas Empty header and toolbar",
+    "category": "C — code-derived approximation",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "date": "2026-10-12",
+    "render_method": "Source-literal assertions + selected geometry/icon transcription to HTML/SVG; system Chromium screenshot",
+    "resolution": [
+      936,
+      376
+    ],
+    "ui_crop_resolution": [
+      904,
+      280
+    ],
+    "viewport_fixture": {
+      "screenWidthDp": 960,
+      "screenHeightDp": 540,
+      "density": 1,
+      "scaledDensity": 1,
+      "fontScale": 1,
+      "TvLayout.scale": 1
+    },
+    "fixture": {
+      "summary_lines": [
+        "0 Movies",
+        "Total Size    0 B",
+        "Local Storage    0 movies · 0 B",
+        "Network / WebDAV    0 movies · 0 B"
+      ],
+      "custom": true,
+      "listMode": false,
+      "focus": "Filters",
+      "values": "controlled indexed fixtures; not real owner data"
+    },
+    "source_references": [
+      {
+        "owner": "LibraryPageHeader",
+        "method_or_token": "private static void add",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryPageHeader.java#L12",
+        "source_sha256": "bdb9a59699750ba6fbe335fa15b92eb9574a031eedbefc807bec60dfbd3a0d3d"
+      },
+      {
+        "owner": "PreviewLibrarySummary",
+        "method_or_token": "public static String describe",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibrarySummary.java#L12",
+        "source_sha256": "a701350a406277c21fd6928db6fcfdd80a89d9766f5b172d7e86856272f7870d"
+      },
+      {
+        "owner": "PreviewPages",
+        "method_or_token": "else if(c.type==HEADER)",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L565",
+        "source_sha256": "b1da344db307649cb147c9dac8af22b1a2caa9183ea9b6e3b4baadd72de8a913"
+      }
+    ],
+    "known_deviations": [
+      "DejaVu Sans substitutes Android sans-serif/sans-serif-light; line breaks/ellipses can differ",
+      "HTML layout/rasterisation is not Android; panel measurements are transcribed estimates",
+      "Crops omit underlying app/window placement and dimming; controlled focus state is illustrated, not executed",
+      "No physical Shield evidence; no real library values or assets"
+    ],
+    "state_specific_limits": [
+      "Header/toolbar crop only; background artwork omitted",
+      "File sizes use explicitly supplied en-US display strings; Android Formatter/locale rounding unexecuted",
+      "First four icon positions only, matching source even for mixed blocks; blank line row retained"
+    ],
+    "html": "visuals/library-statistics/LS-C-CUSTOM-EMPTY.html",
+    "file": "visuals/library-statistics/LS-C-CUSTOM-EMPTY.png",
+    "verified": "Labels/order/selected dimensions checked against source; raster inspected separately",
+    "sha256": "adddbe0bb5842f5d21eeeb7ff17d07a79c6b30abd38da2e5767d0ccce2ace39d"
+  }
+]

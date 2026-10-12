@@ -1,0 +1,372 @@
+[
+  {
+    "id": "LS-B-138-MOVIES",
+    "area": "library-statistics",
+    "state": "Movies header + grid",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/page-1.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      960,
+      540
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "18 indexed Movie fixtures /movie1..18, year2024, each indexed size1000; synthetic posters/background; offline transport",
+    "source_references": [
+      {
+        "owner": "PreviewPagesTest",
+        "method_or_token": "renderActualPagesAndCheckTabFocus",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java#L60"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/library-statistics/LS-B-138-MOVIES.png",
+    "sha256": "a3277edc9054c2e946aa9a64f25cb0a6516dcaa8100623e577d6df5f23e3ff80",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "LS-B-138-TV",
+    "area": "library-statistics",
+    "state": "TV header + grid",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/page-2.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      960,
+      540
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "12 Tvshow fixtures, no snapshot.episodes; count12/size0/sourcecounts0 is fixture sparsity, not owner data",
+    "source_references": [
+      {
+        "owner": "PreviewPagesTest",
+        "method_or_token": "renderActualPagesAndCheckTabFocus",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java#L60"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/library-statistics/LS-B-138-TV.png",
+    "sha256": "f5cb39d1935c243b5a08b0e7e643b6c0235f1ade6fba0a98dc81a1b1413916c5",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "LS-B-138-LIST",
+    "area": "library-statistics",
+    "state": "Movies header + list columns",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/library-list.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      960,
+      540
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "Same18 movies; List View selected, real columns/toolbar, synthetic posters",
+    "source_references": [
+      {
+        "owner": "PreviewPagesTest",
+        "method_or_token": "renderActualPagesAndCheckTabFocus",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java#L60"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/library-statistics/LS-B-138-LIST.png",
+    "sha256": "daf00a2bde5ae23b9e9bc06037ab6812b5c4602434aa07dc69a76a31afb216f8",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "LS-B-138-CUSTOM-EMPTY",
+    "area": "library-statistics",
+    "state": "Custom header empty library + toolbar",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0135-custom-page-library.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      960,
+      540
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "Empty library Snapshot, default saved Library Page; List View focus. Filename0135 is historical test naming, actual artifact is0.138",
+    "source_references": [
+      {
+        "owner": "SupernovaWorkspaceUiTest",
+        "method_or_token": "fiveStepEditorSavesOnePageAndReopensPrefilled",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/SupernovaWorkspaceUiTest.java#L47"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/library-statistics/LS-B-138-CUSTOM-EMPTY.png",
+    "sha256": "20c4ad12b37d117085360adfa9743679f0b406e8ebd9864c8b3e950e4feec409",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "CH-B-138-EDITOR",
+    "area": "customise-home",
+    "state": "Editor reordered/hidden upper viewport",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/customise-home.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      700,
+      350
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "Watch Next moved before Continue Watching and Hidden; media membership fixture, Watch Next focused",
+    "source_references": [
+      {
+        "owner": "Preview41RowsTest",
+        "method_or_token": "customise",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/Preview41RowsTest.java#L19"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/customise-home/CH-B-138-EDITOR.png",
+    "sha256": "c059373fab4c8ec37ce77d19565e04b544f7b0e383eadf76273638d08cc0dfb5",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "CH-B-138-GENRES-TOP",
+    "area": "customise-home",
+    "state": "Genre top focus and checks",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/home-genres-initial.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      240,
+      492
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "Fixed27-entry PreviewGenres.NAMES, Drama and Science Fiction checked; All Genres focus, callback no-op",
+    "source_references": [
+      {
+        "owner": "PreviewHomeVisualTest",
+        "method_or_token": "genreHeaderRemainsVisibleAndChoicesPersistWithoutDone",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeVisualTest.java#L22"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/customise-home/CH-B-138-GENRES-TOP.png",
+    "sha256": "4facc017d5f8ae93512d4c1a727003f39f8a56d5ff6e1966e0ab302653c1435d",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "CH-B-138-GENRES-BOTTOM",
+    "area": "customise-home",
+    "state": "Genre scrolled bottom focus",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/home-genres-footer-focused.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      240,
+      492
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "Same fixed vocabulary, Western focus after fullScroll; no footer/Done",
+    "source_references": [
+      {
+        "owner": "PreviewHomeVisualTest",
+        "method_or_token": "genreHeaderRemainsVisibleAndChoicesPersistWithoutDone",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeVisualTest.java#L22"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/customise-home/CH-B-138-GENRES-BOTTOM.png",
+    "sha256": "b863d9b4cf7379be99596d5186d8f8fab5ed170d5bc220bb5659b31fdfb955f7",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "CH-B-138-DELETE-CANCEL",
+    "area": "customise-home",
+    "state": "Delete confirmation Cancel focus",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/home-delete-initial.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      362,
+      159
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "Test literal Delete row? (lowercase r), production Delete Row?; native AlertDialog Cancel focus",
+    "source_references": [
+      {
+        "owner": "PreviewHomeVisualTest",
+        "method_or_token": "deleteConfirmationKeepsBothButtonsInsideWindow",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeVisualTest.java#L39"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/customise-home/CH-B-138-DELETE-CANCEL.png",
+    "sha256": "925d6699a85e7a315bf7e88a54dffdda5d519734b1120534304aa1f77a9d2cd2",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "CH-B-138-DELETE-DELETE",
+    "area": "customise-home",
+    "state": "Delete confirmation Delete focus",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/home-delete-focused.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      362,
+      159
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "Same test title casing, Delete focus pink-red button",
+    "source_references": [
+      {
+        "owner": "PreviewHomeVisualTest",
+        "method_or_token": "deleteConfirmationKeepsBothButtonsInsideWindow",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeVisualTest.java#L39"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/customise-home/CH-B-138-DELETE-DELETE.png",
+    "sha256": "85dcd19f5dab0ca895b802d4c5e256104e9d81bc13a7c5f3d2c139906792f6b0",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  },
+  {
+    "id": "CH-B-138-MAX-INPUT",
+    "area": "customise-home",
+    "state": "Maximum value37 Done focus after invalid attempt",
+    "category": "B \u2014 Android native/test render",
+    "source_branch": "codex/supernova-0.138-qa-2026-10-12",
+    "source_commit": "074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f",
+    "comparison_baseline": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "equivalence": "git diff CI\u2192signed source lists documentation only; src/res/tests identical",
+    "render_method": "Existing Robolectric API28 native View.draw\u2192Bitmap PNG, recovered unchanged; not rerun",
+    "date": "2026-10-12",
+    "ci_run": "https://github.com/heretoecode/Supernova/actions/runs/38207140954",
+    "artifact_id": 11728856790,
+    "artifact_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/home-maximum-keyboard-focused.png",
+    "archive_sha256": "73ac45a0648debe052a4bab9c6a47d71cf13561e7094c3677e24326ddaed97d9",
+    "resolution": [
+      560,
+      314
+    ],
+    "viewport": "w960dp-h540dp-land-mdpi; cropped dialog or full960\u00d7540 View fixture",
+    "fixture": "Input initiallybad, validation text Enter a whole number (shorter than production); then value37, Done focus, stale error indicator",
+    "source_references": [
+      {
+        "owner": "PreviewHomeMaximumTest",
+        "method_or_token": "invalidExactValueKeepsSharedKeyboardOpen",
+        "source_url": "https://github.com/heretoecode/Supernova/blob/074d7c4a90bafdf6ce487ecf0b2f8b4f773c092f/src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java#L14"
+      }
+    ],
+    "known_deviations": [
+      "Synthetic controlled data/artwork; not installed full app or Shield",
+      "Framework font/raster/animation can differ from device",
+      "State-specific fixture differences described above"
+    ],
+    "file": "visuals/customise-home/CH-B-138-MAX-INPUT.png",
+    "sha256": "672c585efcfaa6c91a879c716becf2c12ddd5e8748bfc5c047ed8ec57c1d0158",
+    "verified": "Archive CRC and unchanged PNG digest; source/test reference inspected; raster reviewed in gallery"
+  }
+]

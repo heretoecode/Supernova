@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-12",
+  "local_markdown_links": "PASS",
+  "all_json_valid": "PASS",
+  "image_hashes_and_dimensions": "PASS45 current;6 historical exact audit hashes checked",
+  "unique_image_ids": 51,
+  "application_worktree_clean": "PASS",
+  "master_search": "PASS final Chromium readback: 2,847 records; no JS errors",
+  "native_app_tests": "NOT RUN",
+  "Shield": "NOT CAPTURED",
+  "full_acceptance": "INCOMPLETE; see gap register",
+  "approximation_provenance_banner_layout": "PASS35 C reconstructions; no banner/UI overlap"
+}
