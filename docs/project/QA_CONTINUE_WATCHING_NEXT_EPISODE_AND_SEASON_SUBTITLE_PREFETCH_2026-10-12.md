@@ -29,3 +29,9 @@ Audit current Continue Watching eligibility, episode completion thresholds, next
 ## Scope safeguards
 
 This is an agreed product direction and explicit verification request, **not** authorisation to change the active development branch or launch a Codex release handover. Continue to remind the user to raise their separate subtitle-related point when returning to the playback HUD.
+
+## Additional approved progression rule: season boundary
+
+When the last episode of a season is completed, **the first available episode of the next season should become eligible for Continue Watching**, even if it has never been started. For example, completed S1E10 → unstarted S2E1. Preserve ordinary in-progress resume behaviour, and do not advance beyond the last available episode of a series. Determine ordering from reliable season/episode metadata and library availability; verify actual implementation and device behaviour, including gaps, specials and completion thresholds, before claiming this works today.
+
+**Subtitle interaction:** When S2E1 becomes the next Continue Watching item, prioritise subtitles for S2E1 in the preferred language. Do **not** automatically enqueue the rest of Season 2 until the user starts watching that season, keeping the season-scoped API-budget rule intact.
