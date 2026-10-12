@@ -1,5 +1,10 @@
 name: Supernova 0.138 signed QA
 on:
+  # Register the new workflow without merging into main. Every job is skipped
+  # for push events; signing still requires the explicit manual approval below.
+  push:
+    branches: [codex/supernova-0.138-qa-2026-10-12]
+    paths: [.github/workflows/supernova-0138-qa.yml]
   workflow_dispatch:
     inputs:
       approved_qa_distribution:
