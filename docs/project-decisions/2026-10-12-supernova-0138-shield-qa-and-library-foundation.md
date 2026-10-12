@@ -128,3 +128,21 @@ Date: 2026-10-12. Status: owner-reported runtime observations and owner-approved
 - **Only library-available seasons and episodes** should appear in library browsing as available playable content; investigate Save Me phantom unavailable Season 1, preserve correct metadata distinctions where relevant. Correct bottom-edge episode clipping, trailer focus spacing and animation.
 - Episode selection should retain appropriate details/playback functionality; returning restores the precise season/episode focus and scroll position. Preserve TV show's context.
 - This supersedes prior open question about separate season Details pages. **Owner approved the recommendation**; code feasibility and any existing season-specific functions still need a read-only audit before implementation. No 0.139 coding authorised.
+
+
+## 2026-10-12 Library Statistics concept review — PARKED, NOT APPROVED FOR IMPLEMENTATION
+Owner reviewed several progressively more compact **concept mockups** (not Shield screenshots or source-verified layouts) for library statistics, then explicitly requested to **hold off on the change**, document current thinking and move on. **Do not implement or treat the visuals as approved final designs.**
+
+### Current preferred exploration direction
+- Keep Statistics **integrated into existing Movies, TV Shows and custom-library headers**, not a new dashboard, side panel or top-level page.
+- Reclaim vertical space so the **first poster row starts higher**; retain poster size, focus enlargement and readable TV typography.
+- Explore a **single low-height, full-width translucent horizontal strip** with monochrome icons and subtle vertical separators, not large multi-row cards.
+- Show each figure and its label **on the same line**, e.g. `1,248 Movies` rather than a stacked `Items` / `1,248`; `1.12 TB total`, `682 GB local`, `438 GB network`. Figures shown in concepts are **illustrative, not user library data**.
+- For TV Shows, investigate fitting **unique TV show count, available episode count, total indexed size, local and network sizes** on the same single-line strip without crowding. The latest visual showed Movies and TV Shows as two comparative mockup sections, **not a proposal to display both libraries together on one screen**.
+- Custom libraries must adapt to movie-only, TV-only and mixed collections; their exact counts, labels and layout remain undecided.
+- Keep the **real existing library controls** in their normal position between the statistics and posters; mockups omitted or invented controls, and the owner explicitly **rejected those illustrated control-button designs**. Do not copy mockup control labels, order or buttons into requirements.
+- The final approved design must be assessed against **actual 0.138 Shield UI and Codex UI Atlas**, not reconstructed artwork. Blank poster placeholders are preferred in future concept mockups to avoid irrelevant artwork.
+- Data integrity: distinguish unique shows from source membership, avoid double-counting local/network mixed shows; local/network percentages should be based on measured storage size if shown; account for unknown file sizes and incomplete totals. Confirm semantics and source code before implementation.
+
+### Status and next steps
+**STATUS: PARKED / NO IMPLEMENTATION AUTHORISED.** Preserve current production UI. Return to statistics only on owner request; compare to genuine Shield layout, settle exact labels and TV/custom variants, controls and D-pad routes, then explicitly approve. Continue other 0.138 QA / 0.139 planning in the meantime.
