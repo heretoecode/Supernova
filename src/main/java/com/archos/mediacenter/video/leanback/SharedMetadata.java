@@ -66,12 +66,15 @@ public final class SharedMetadata {
         List<String> badges=new ArrayList<>();if(LibraryHealth.state(c,video)!=LibraryHealth.State.AVAILABLE)return badges;int w=video.getMeasuredWidth(),h=video.getMeasuredHeight();
         if(w>0&&h>0)badges.add(w>=3840||h>=2160?"4K UHD":w>=1728||h>=1040?"FHD":w>=1200||h>=720?"HD":"SD");
         String hdr=PreviewVariants.dynamicRange(c,video);if(!hdr.isEmpty())badges.add(hdr);
-        String audio=PreviewMediaInfo.format(video.getCalculatedBestAudioFormat());if(!audio.isEmpty())badges.add(audio);
-        VideoMetadata data=video.getMetadata();boolean subtitles=false,sdh=false,ad=false;
-        if(data!=null){for(int n=0;n<data.getSubtitleTrackNb();n++){VideoMetadata.SubtitleTrack track=data.getSubtitleTrack(n);if(track!=null){subtitles=true;sdh|=(track.disposition&128)!=0;}}
+        VideoMetadata data=video.getMetadata();Set<String> measuredAudio=new LinkedHashSet<>();if(data!=null)for(int n=0;n<data.getAudioTrackNb();n++){VideoMetadata.AudioTrack track=data.getAudioTrack(n);if(track!=null){String value=PreviewMediaInfo.audioTrack(track.format,track.channels,0);if(!value.isEmpty())measuredAudio.add(value);}}
+        String audio=measuredAudio.isEmpty()?PreviewMediaInfo.format(video.getCalculatedBestAudioFormat()):TextUtils.join(" / ",measuredAudio);if(!audio.isEmpty())badges.add(audio);
+        boolean subtitles=false,sdh=false,captions=false,ad=false;
+        if(data!=null){for(int n=0;n<data.getSubtitleTrackNb();n++){VideoMetadata.SubtitleTrack track=data.getSubtitleTrack(n);if(track!=null){subtitles=true;sdh|=(track.disposition&128)!=0;captions|=(track.disposition&(1<<16))!=0;}}
             for(int n=0;n<data.getAudioTrackNb();n++){VideoMetadata.AudioTrack track=data.getAudioTrack(n);if(track!=null)ad|=(track.disposition&256)!=0;}}
-        if(subtitles)badges.add(sdh?"SDH":"Subtitles");if(ad)badges.add("AD");for(String local:com.archos.mediacenter.video.utils.SubtitleDiscovery.localBadges(c,video))if(!badges.contains(local)&&!(local.equals("Subtitles")&&badges.contains("SDH")))badges.add(local);return badges;
+        if(subtitles)badges.add(subtitleLabel(sdh,captions));if(ad)badges.add("AD");for(String local:com.archos.mediacenter.video.utils.SubtitleDiscovery.localBadges(c,video))if(!badges.contains(local)&&!(local.equals("Subtitles")&&(badges.contains("SDH")||badges.contains("Captions")||badges.contains("Captions/SDH"))))badges.add(local);return badges;
     }
+    /** FFmpeg's CAPTIONS flag verifies caption text; it does not establish a closed-caption transport codec. */
+    public static String subtitleLabel(boolean sdh,boolean captions){return captions?(sdh?"Captions/SDH":"Captions"):sdh?"SDH":"Subtitles";}
     public static String certificate(JSONObject data,String country){
         JSONArray regions=data==null?null:data.optJSONArray("results");if(regions==null)return "";
         for(int i=0;i<regions.length();i++){JSONObject region=regions.optJSONObject(i);if(region==null||!country.equals(region.optString("iso_3166_1")))continue;
