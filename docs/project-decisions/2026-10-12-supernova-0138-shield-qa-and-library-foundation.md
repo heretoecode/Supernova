@@ -291,3 +291,11 @@ Owner reviewed several progressively more compact **concept mockups** (not Shiel
 - Proposed visual choice: toggles for 'Show on Shield Home' and bottommost 'Automatically include new matching media' (binary independent settings), checkboxes for multi-select genres. This recommendation awaits owner confirmation.
 - Inline selector Back can cancel only the currently uncommitted preview value; previously committed changes remain live. Avoid conflating dismissing a pop-out with discarding committed changes.
 - Prototype is not the final visual implementation contract. No coding authorised.
+
+
+## 2026-10-12 — Latest Customise Home mockup corrections
+- Treat erroneous multiple focus outlines in generated mockup as image-generation artefacts, not a revision of the **single active D-pad focus** contract. User is setting focus rendering aside for this visual review only.
+- Left Home row bodies should be moderately wider than latest draft: increase label-to-trailing-grip spacing by approximately **75% relative to that draft**, while remaining content-proportionate and avoiding prior overly wide landscape layout. Replace erroneous vertical three-dot glyph with **six-dot drag grip (two columns x three)** within row body. Eye control remains independent with visible gap.
+- Retain the existing dynamic-row feature under bottommost label **Automatically include new matching media**; user flagged missing 'dynamic genre row option' and this must be clarified against existing feature semantics rather than assumed equivalent or silently omitted.
+- Genre pop-out must include clear explanatory text: counts come from indexed library and can change as scan discovers titles; show scanning progress/status only when actual scan active. Differentiate unknown/not yet scanned from confirmed zero, keep counts stable width and selections possible before indexing. No permanent fictitious scanning status.
+- Latest mockup remains unapproved visual draft. No implementation authorised.
