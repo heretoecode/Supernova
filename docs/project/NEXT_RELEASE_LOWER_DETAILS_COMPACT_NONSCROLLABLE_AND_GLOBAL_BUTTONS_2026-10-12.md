@@ -23,3 +23,7 @@
 - User explicitly requests all above in next version **even if no further lower-details-page discussion happens**. Include with already agreed global metadata, upper Details Card design direction and other QA requirements in the consolidated handover, but reconcile scope and implementation approval before coding.
 - Test no-scroll for titles with 0/8/>8 cast and crew, long names, various technical/reception fields, TV vs movie; test Left/Right tab focus and upper button rest/focus visuals.
 - These are **design/acceptance requirements, not claims of implemented functionality**. No changes to active development branch without explicit authorisation.
+
+## Approved spacing clarification — compact label/value cards
+
+For Key Information, Reception and Technical Information, labels (e.g. `Year`, `Resolution`) and their values (e.g. `2024`, `4K UHD`) sit on the **same line** with a **comfortable, deliberate gap**: neither crowded together nor pushed to opposite edges of an excessively wide box. Use a restrained two-column alignment with consistent label widths or appropriate flexible grid, ensuring readable proximity and clear association. Card/container widths and padding should fit their contents comfortably, with **no excessive empty space**. Avoid assuming `justify-content: space-between` across a very wide container is acceptable. Test representative short/long labels and values on actual Android TV dimensions and align consistently across all three sections. This is a next-release acceptance criterion.
