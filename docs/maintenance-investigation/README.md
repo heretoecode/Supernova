@@ -1,6 +1,8 @@
 # Supernova maintenance investigation — 2026-10-12
 
-**Read-only application audit; documentation-only delivery.** Frozen signed0.138 source: `b3504c2c4b1725f3070416d14b63e53ae1db3d74`. Branch: `docs/maintenance-investigation-2026-10`, based on the existing upstream documentation branch. No implementation or release authority is implied. Recheck findings against final validated0.139 before maintenance.
+**Read-only application audit; documentation-only delivery.** Frozen signed 0.138 source: `b3504c2c4b1725f3070416d14b63e53ae1db3d74`. Branch: `docs/maintenance-investigation-2026-10`, based on the existing upstream documentation branch. No implementation or release authority is implied. Recheck findings against final validated 0.139 before maintenance.
+
+[Draft PR #15](https://github.com/heretoecode/Supernova/pull/15) · [Delivery provenance](evidence/delivery.json).
 
 The package covers all major source areas. Static investigation and planning are delivered; specific runtime, every-option atlas, release-binary and portability/security work remains **INCOMPLETE**, identified precisely in report15. Do not treat the presence of reports as runtime acceptance.
 

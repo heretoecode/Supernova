@@ -1,6 +1,6 @@
 # 00 — Executive summary
 
-**Documentation-only investigation delivered against signed0.138 source `b3504c2c4b1725f3070416d14b63e53ae1db3d74`.** All recommendations are PROPOSED and provisional until rechecked against validated0.139. This is a substantial static audit with specific incomplete runtime/portability/security work; it is not release readiness or implementation approval.
+**Documentation-only investigation delivered against signed 0.138 source `b3504c2c4b1725f3070416d14b63e53ae1db3d74`.** All recommendations are PROPOSED and provisional until rechecked against validated 0.139. This is a substantial static audit with specific incomplete runtime/portability/security work; it is not release readiness or implementation approval.
 
 ## Most important verified findings
 
@@ -21,11 +21,11 @@ Evidence and impact are detailed in reports01–12 and linked immutable source r
 
 **PROPOSED P0:** privacy/measurement boundary; database namespace/rollback; Jetty/security prerequisites; SMB readiness/credential boundaries, relay scope and native HTTPS trust policy. **PROPOSED P1:** coherent native seek/pause/subtitle/surface fixes and purpose-aware networking; scan/refresh/cache behavior; semantic UI pilot; safe R8/reachability-based cleanup.
 
-Follow the existing sequence: install/walkthrough0.138; approve selected fixes and smallest diagnostic expansion for provisional0.139; validate startup/stability; rebaseline findings; then approve itemized maintenance packages. Do not merge upstream UI/updater, change application identity/signing or implement maintenance from this document alone.
+Follow the existing sequence: install/walkthrough 0.138; approve selected fixes and smallest diagnostic expansion for provisional 0.139; validate startup/stability; rebaseline findings; then approve itemized maintenance packages. Do not merge upstream UI/updater, change application identity/signing or implement maintenance from this document alone.
 
 ## Outstanding evidence
 
-Shield installation/playback/HDR/passthrough and all performance distributions are UNKNOWN. Full runtime UI/every-option focus atlas, exact upstream release binary pins/native equivalence, all219 patch portability certifications, exhaustive native/advisory exploit/secret-sink assurance, exact APK/installed/DEX size comparison and media corpus hashes remain INCOMPLETE as precisely recorded in [report15](15_OPEN_QUESTIONS_AND_UNVERIFIED_ITEMS.md). No benchmark, runtime acceptance, historical incident diagnosis or unused-code certainty is fabricated.
+Shield installation/playback/HDR/passthrough and all performance distributions are UNKNOWN. Full runtime UI/every-option focus atlas, exact upstream release binary pins/native equivalence, all 219 patch portability certifications, exhaustive native/advisory exploit/secret-sink assurance, exact APK/installed/DEX size comparison and media corpus hashes remain INCOMPLETE as precisely recorded in [report15](15_OPEN_QUESTIONS_AND_UNVERIFIED_ITEMS.md). No benchmark, runtime acceptance, historical incident diagnosis or unused-code certainty is fabricated.
 
 ## Scope assurance
 

@@ -49,6 +49,8 @@ Ownership/duplicate bytes is not reachability/removal proof. Commit metadata/hun
 - [preference-consumer-trace.tsv](preference-consumer-trace.tsv)
 - [earlier-audit-lead-reconciliation.json](earlier-audit-lead-reconciliation.json)
 
+- [delivery.json](delivery.json)
+
 ## Reproduce primary source comparisons
 
 Use independent full clones; no protected checkout mutation is required. Example read-only commands after fetching the frozen objects:

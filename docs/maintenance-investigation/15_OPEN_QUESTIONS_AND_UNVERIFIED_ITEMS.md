@@ -5,10 +5,10 @@ This report separates evidence limitations from owner product decisions. Static 
 | ID | Classification / remaining work | Exact limitation / resolution |
 |---|---|---|
 | Q01 | UNKNOWN:0.138 install and Shield acceptance | QA receipt/PR expressly say UNVERIFIED. No Shield/ADB endpoint or device recording supplied; owner installation/walkthrough remains separate |
-| Q02 | INCOMPLETE: full runtime UI atlas/every-control interaction graph | No device/emulator/JDK/Android SDK attached; static78-screen/label/key/consumer inventories are not screenshots/bounds/every-key proof. Capture authorized fixtures on final validated0.139 |
+| Q02 | INCOMPLETE: full runtime UI atlas/every-control interaction graph | No device/emulator/JDK/Android SDK attached; static78-screen/label/key/consumer inventories are not screenshots/bounds/every-key proof. Capture authorized fixtures on final validated 0.139 |
 | Q03 | INCOMPLETE: every dynamic Settings/Network option handler and focus state | XML111 instances and source callbacks are inventoried; dynamic providers/categories/credential/error/recreation states need exhaustive cross-reference/runtime review. Do not equate arrays/labels with visible options |
 | Q04 | UNKNOWN: exact v6.5.5 release binary component pins | AVP tag uses moving refs. Current immutable heads are compared; recover build manifest/source/binary metadata to certify shipped combination |
-| Q05 | INCOMPLETE:219-commit portability certification | Complete primary-module history/files/hunk inventory and51 prioritized source groups supplied. Remaining technical/lint/test/dependency commits need candidate-level net-source adaptation and build/device tests on0.139; not all are adoption-ready |
+| Q05 | INCOMPLETE:219-commit portability certification | Complete primary-module history/files/hunk inventory and 51 prioritized source groups supplied. Remaining technical/lint/test/dependency commits need candidate-level net-source adaptation and build/device tests on 0.139; not all are adoption-ready |
 | Q06 | INCOMPLETE: native binary/current upstream equivalence | Native manifest histories/headers/build patches examined; FFmpeg prebuilt API file cap300 and Opus unrelated histories documented. No upstream APK/native ABI symbols/decoder-output reproduction executed here |
 | Q07 | UNKNOWN: physical first-frame/seek/A-V/audio-drop metrics | Java callbacks/sampler are partial; no calibrated presentation/audio measurement or Shield corpus. Proposed numeric boundaries must preserve evidence quality |
 | Q08 | UNKNOWN: actual recorder overhead/retention under incidents/slow export | Source queues/locks/pruning reviewed; no runtime saturation/thermal/network measurements. Need A/A logger overhead and global-cap/export tests |
@@ -22,7 +22,7 @@ This report separates evidence limitations from owner product decisions. Static 
 | Q16 | UNKNOWN: media corpus bytes/hashes and provider live terms/quotas | Fixed18-family specification is proposed; legal HDR/proprietary fixtures/provider accounts not available. Populate immutable hashes/provenance before benchmarks; discovery stays default-off |
 | Q17 | UNKNOWN:23:22/02:36 historical incident causes | No authorized diagnostic export, date/clock reconstruction or recording analyzed. Source hypothesis is not diagnosis; raw material never uploaded |
 | Q18 | PROPOSED: semantic hierarchy and appearance migration | Existing helper roles verified; owner design decisions and optional later independent consultation still pending. No arbitrary role cap, upstream visual replacement or Claude review claimed |
-| Q19 | REQUIRED RECHECK: final validated0.139 | All recommendations provisional at signed0.138 source; repeat source/patch/dependency/schema/diagnostics overlap audit before maintenance implementation |
+| Q19 | REQUIRED RECHECK: final validated 0.139 | All recommendations provisional at signed 0.138 source; repeat source/patch/dependency/schema/diagnostics overlap audit before maintenance implementation |
 
 ## Work executed versus carried evidence
 
@@ -32,4 +32,4 @@ Carried/attributed evidence: existing0.138 signed delivery/identity/native hashe
 
 ## Completion meaning
 
-The documentation package covers every requested major area with source-based findings, exact references, evidence inventories, prioritized candidates and concrete test/implementation proposals. The rows marked INCOMPLETE are still incomplete: no declaration that the entire runtime atlas, every option, all vulnerability reachability, all patch portability or release readiness is complete. These are explicit follow-up investigations with precise missing evidence/work. Maintenance implementation remains gated by validated0.139 recheck and owner approval.
+The documentation package covers every requested major area with source-based findings, exact references, evidence inventories, prioritized candidates and concrete test/implementation proposals. The rows marked INCOMPLETE are still incomplete: no declaration that the entire runtime atlas, every option, all vulnerability reachability, all patch portability or release readiness is complete. These are explicit follow-up investigations with precise missing evidence/work. Maintenance implementation remains gated by validated 0.139 recheck and owner approval.

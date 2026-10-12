@@ -1,6 +1,6 @@
 # 14 — Proposed maintenance implementation roadmap
 
-This is **PROPOSED**, with no implementation authority. The source baseline is signed0.138; recheck all source/overlap/dependency/security recommendations against final validated0.139 before creating a maintenance implementation branch. Source investigation does not authorize updates, cleanup, schema migration, CI changes, signing or release.
+This is **PROPOSED**, with no implementation authority. The source baseline is signed 0.138; recheck all source/overlap/dependency/security recommendations against final validated 0.139 before creating a maintenance implementation branch. Source investigation does not authorize updates, cleanup, schema migration, CI changes, signing or release.
 
 ## Sequencing decisions
 
@@ -8,7 +8,7 @@ This is **PROPOSED**, with no implementation authority. The source baseline is s
 |---|---|---|---|
 | R0: owner0.138 walkthrough | Signed candidate already delivered; install/upgrade/Shield observations still unknown | Owner walkthrough and prioritized bug list against exact APK; private logs only with separate authorization | Preserve existing signed install/data; no branch merge implied |
 | R1: intervening diagnostics release, provisionally0.139 | Selected approved0.138 fixes + typed safe recorder additions, reliable playback/seek/startup pairing and sampler deltas | Privacy tests, startup stability, recorder A/A overhead/retention/export proof, owner acceptance of exact fields | Revert event additions independently; keep historical schema/readability and safe export |
-| R2: maintenance rebaseline and compatibility specification | Exact validated0.139 + upstream stable/current refs, actual native build provenance, schema fingerprints and transport/shrinker/role maps | Updated ledger with already-present/changed findings and owner-selected work packages; corpus hashes frozen | Docs/spec only |
+| R2: maintenance rebaseline and compatibility specification | Exact validated 0.139 + upstream stable/current refs, actual native build provenance, schema fingerprints and transport/shrinker/role maps | Updated ledger with already-present/changed findings and owner-selected work packages; corpus hashes frozen | Docs/spec only |
 | M1: isolated critical safety/stability | Jetty/advisory prerequisite review, relay/native HTTPS policy, credential readiness/repair, native buffer bound candidates | Per-candidate owner approval, exact diff/dependencies, controlled security/privacy tests and device smoke | Separate commits/dependency lock changes; credentials migrations require protected recovery, never dump secrets |
 | M2a: network/files | Read-purpose/stream ownership/SMB readiness and URI/NFO reconciliation; protect SFTP trust and staged browser selection | NAS/protocol/encoded-path/integrity/reconnect tests, FD/memory/startup distributions, no UI change | Reversible non-schema patches; retain original source identity and progress fixture |
 | M2b: coherent playback/native group | Rebuilt FFmpeg/AVOS/MediaLib/Video APIs, surface/route/seek/pause/subtitle behavior; no updater/TLS-default downgrade | Four-ABI/JNI/enum/native build proof, corpus/Shield output, measured start/seek/recovery and stable requested state | Whole coherent group boundary, not mixing native generations; retain previous artifact/source set |
@@ -34,4 +34,4 @@ Use one problem/contract per reviewable commit where possible, frozen dependency
 5. Review semantic role taxonomy/pilot and intended visual invariance; approve exact removal candidates only after evidence.
 6. Set hardware/test corpus/performance acceptance thresholds and authorize any subsequent builds/implementation/releases separately.
 
-Suggested release boundaries are diagnostics first, then one or more focused safety/subsystem maintenance candidates, then comprehensive UI/cleanup candidate. Version numbers beyond provisional0.139 remain owner decisions. Nothing in this package establishes release readiness or authorizes any of these changes.
+Suggested release boundaries are diagnostics first, then one or more focused safety/subsystem maintenance candidates, then comprehensive UI/cleanup candidate. Version numbers beyond provisional 0.139 remain owner decisions. Nothing in this package establishes release readiness or authorizes any of these changes.

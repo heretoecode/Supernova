@@ -68,8 +68,10 @@
     "ancestor_supernova_component_pin": true,
     "pin_symbol_check": {
       "path": "Source/stream_sync.c",
-      "marker": "PCM startup holds",
-      "present": false
+      "marker": "startup_audio_gap_hold",
+      "present": true,
+      "line": 2912,
+      "interpretation": "Original PCM-only guard evolved to PCM plus delayed Mode1; current source admits forward video before requiring audio clock"
     }
   },
   {

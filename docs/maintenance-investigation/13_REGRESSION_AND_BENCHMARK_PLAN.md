@@ -12,7 +12,7 @@ Use an unchanged library fixture with movies, episodes, season gap/completion/ne
 
 | Area | Fixed action/scenario | Required correctness evidence |
 |---|---|---|
-| Startup/upgrade | Cold/warm entry, upgrade signed0.137→0.138→approved diagnostics/maintenance, no clear-data | Exact package/certificate/version/source; data intact; permissions and consent preserved; interactive-ready boundary |
+| Startup/upgrade | Cold/warm entry, upgrade signed 0.137→0.138→approved diagnostics/maintenance, no clear-data | Exact package/certificate/version/source; data intact; permissions and consent preserved; interactive-ready boundary |
 | Local playback | All corpus engines/containers, software force and Android fallback where supported | Prepared/play/end, correct metadata, valid picture/audio, known first-output quality, no false EOF |
 | Network playback | SMB jcifs/SMBJ, JSch/SSHJ SFTP, FTP/FTPS, DAV HTTP/HTTPS, UPnP, content grants | Byte-integrity check, authentication/trust boundary, bounded resources, recovery and no secret output |
 | Seek | Start/middle/end, ±10/30/300s, before/after keyframe, repeated overlapping seeks while playing/paused | Attempt pairing, target/achieved decoded or presented timestamp, latency and tolerance tied to keyframes/backend |
