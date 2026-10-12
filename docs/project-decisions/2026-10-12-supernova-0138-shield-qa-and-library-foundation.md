@@ -85,3 +85,10 @@ Date: 2026-10-12. Status: owner-reported runtime observations and owner-approved
 - **Misleading tab focus indicator:** Underline persists beneath the currently selected/loaded Details tab (e.g. Seasons & Episodes or More Like This) even after focus has moved Up to Play. Unlike top navigation, where underline does not persist without focus, this makes focus location ambiguous. Owner wants underline to mean **actual tab focus only**; remove underline when focus leaves tab strip, while retaining selected tab content. On return, underline follows focused tab. Investigate any other selected-state styling without confusing it with focus.
 - **Owner-approved TV show Details tab order:** **Details → Extras → Seasons & Episodes → More Like This**. Details and Extras describe current title, Seasons & Episodes navigates show contents, recommendations last. Keep existing functionality, left/right traversal and accessible focus. Check movie vs TV tab applicability without inventing missing tabs.
 - Candidate for consolidated 0.139, no app code changes authorised.
+
+
+## 2026-10-12 owner addition — monochrome Details tab icons
+- Add a small corresponding **monochrome icon immediately before each Details-page tab label**. Proposed icon semantics: Details = info, Extras = film, Seasons & Episodes = list-video, More Like This = clapperboard. Final glyphs should match existing Supernova icon family and be checked against the actual UI atlas before implementation; these are proposals, not existing app assets.
+- Preserve owner-approved order: **Details → Extras → Seasons & Episodes → More Like This** for TV shows; handle movie applicability as discovered.
+- Icons should be subtle, single-colour, consistently sized/aligned/spaced, and inherit each tab's normal/focused label colour. Icon+label form **one D-pad focus target**. Focus underline appears only while tab strip has actual focus; selection/content state persists without false focus underline.
+- No code change authorised yet; 0.139 candidate.
