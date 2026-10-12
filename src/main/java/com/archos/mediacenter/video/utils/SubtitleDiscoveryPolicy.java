@@ -20,9 +20,10 @@ public final class SubtitleDiscoveryPolicy {
         public synchronized void clearSpeculation(){jobs.values().removeIf(j->j.priority>=HERO);}
         public synchronized int size(){return jobs.size();}
     }
-    public static List<Entry> remainingSeason(Entry playing,List<Entry> source){
+    public static List<Entry> remainingSeason(android.content.Context context,Entry playing,List<Entry> source){
         if(!(playing.media instanceof Episode))return Collections.emptyList();Episode selected=(Episode)playing.media;List<Entry> season=new ArrayList<>();
-        for(Entry entry:PreviewVariants.logicalChoices(source))if(entry.media instanceof Episode){Episode episode=(Episode)entry.media;if(entry.show==playing.show&&episode.getSeasonNumber()==selected.getSeasonNumber()&&episode.getEpisodeNumber()>selected.getEpisodeNumber()&&!PreviewSeriesJourney.completed(episode))season.add(entry);}
+        PreviewVariants.initialize(context);
+        for(Entry entry:PreviewVariants.logicalChoices(source))if(entry.media instanceof Episode){Episode episode=(Episode)entry.media;if(entry.show==playing.show&&episode.getSeasonNumber()==selected.getSeasonNumber()&&episode.getEpisodeNumber()>selected.getEpisodeNumber()&&!PreviewSeriesJourney.completed(episode)&&LibraryHealth.state(context,episode)==LibraryHealth.State.AVAILABLE)season.add(entry);}
         season.sort(Comparator.comparingInt(e->((Episode)e.media).getEpisodeNumber()));return season;
     }
     public static long retryAfter(String value,long now){

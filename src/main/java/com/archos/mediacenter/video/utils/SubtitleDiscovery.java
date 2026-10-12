@@ -35,7 +35,7 @@ public final class SubtitleDiscovery {
         if(video instanceof Episode){Episode episode=(Episode)video;query.setIsShow(true);query.setSeasonNumber(episode.getSeasonNumber());query.setEpisodeNumber(episode.getEpisodeNumber());query.setShowTitle(episode.getShowName());}return query;
     }
     public static void offer(Context c,Entry entry,int priority){
-        if(entry==null||!enabled(c)||!(entry.media instanceof Video))return;String languages=languages(c);if(localMatches(c,(Video)entry.media,languages))return;OpenSubtitlesQueryParams query=query(entry);if(query==null||query.getTmdbId()==null)return; // Speculation requires verified provider identity.
+        if(entry==null||!enabled(c)||!(entry.media instanceof Video)||LibraryHealth.state(c,(Video)entry.media)!=LibraryHealth.State.AVAILABLE)return;String languages=languages(c);if(localMatches(c,(Video)entry.media,languages))return;OpenSubtitlesQueryParams query=query(entry);if(query==null||query.getTmdbId()==null)return; // Speculation requires verified provider identity.
         String key=key(query,languages);Context app=c.getApplicationContext();WORK.execute(()->{if(!enabled(app)||cached(app,key,System.currentTimeMillis())!=null)return;QUEUE.offer(key,query,languages,priority);schedule(app,0);});
     }
     private static Entry target(Context c,Entry title,Snapshot library){if(title==null||title.media instanceof Video)return title;if(library==null)return null;List<Entry> episodes=new ArrayList<>();for(Entry episode:library.episodes)if(episode.show==title.show)episodes.add(episode);return PreviewSeriesJourney.select(c,episodes).episode;}
@@ -45,12 +45,13 @@ public final class SubtitleDiscovery {
     public static void playback(Context c,Video video,Snapshot library){
         if(!enabled(c)||video==null)return;Entry playing=null;if(library!=null)for(Entry entry:library.technical)if(((Video)entry.media).getId()==video.getId()){playing=entry;break;}if(playing==null)playing=new Entry(video,0,0,"");
         Entry selected=playing;WORK.execute(()->{String season=selected.media instanceof Episode?selected.show+":"+((Episode)selected.media).getSeasonNumber():"movie";if(!season.equals(playingSeason)){QUEUE.clearSpeculation();playingSeason=season;}});offer(c,playing,SubtitleDiscoveryPolicy.PLAYBACK);
-        if(library!=null&&androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean(PREFETCH,true))for(Entry entry:SubtitleDiscoveryPolicy.remainingSeason(playing,library.episodes))offer(c,entry,SubtitleDiscoveryPolicy.SEASON);
+        if(library!=null&&androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean(PREFETCH,true))for(Entry entry:SubtitleDiscoveryPolicy.remainingSeason(c,playing,library.episodes))offer(c,entry,SubtitleDiscoveryPolicy.SEASON);
     }
     private static void schedule(Context app,long delay){if(scheduled!=null&&!scheduled.isDone()){if(delay>0)return;scheduled.cancel(false);}scheduled=WORK.schedule(()->drain(app),Math.max(0,delay),TimeUnit.MILLISECONDS);}
     private static void drain(Context app){
         if(!enabled(app))return;long now=System.currentTimeMillis();SharedPreferences state=state(app);long due=Math.max(state.getLong("provider_until",0),state.getLong("last_request",0)+SubtitleDiscoveryPolicy.SPACING);
         if(due>now){scheduled=null;schedule(app,due-now);return;}SubtitleDiscoveryPolicy.Job job=QUEUE.take();if(job==null)return;
+        if(!job.languages.equals(languages(app))){scheduled=null;if(QUEUE.size()>0)schedule(app,0);return;}
         try{synchronized(REQUEST_LOCK){if(cached(app,job.key,System.currentTimeMillis())==null)fetch(app,job.query,job.languages,job.key);}}catch(IOException unavailable){/* Persistent provider backoff retains this intent without a burst. */QUEUE.offer(job.key,job.query,job.languages,job.priority);}
         scheduled=null;if(QUEUE.size()>0)schedule(app,SubtitleDiscoveryPolicy.SPACING);
     }
