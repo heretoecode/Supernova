@@ -51,7 +51,7 @@ public final class PreviewMoviePage extends ScrollView {
     private final PreviewCardPresenter presenter=new PreviewCardPresenter(PreviewCardPresenter.Style.CONTINUE);
     public PreviewMoviePage(Context c,Supplier<ObjectAdapter> actions,Consumer<Action> action,Runnable nativeDetails,Consumer<Uri> artwork){
         super(c);this.actions=actions;this.action=action;this.nativeDetails=nativeDetails;this.artwork=artwork;
-        setFillViewport(true);setSmoothScrollingEnabled(false);setClipToPadding(false);setClipChildren(false);body=new LinearLayout(c);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(dp(42),0,dp(42),dp(24));body.setClipChildren(false);addView(body);
+        setFillViewport(true);setFocusable(false);setFocusableInTouchMode(false);setSmoothScrollingEnabled(false);setClipToPadding(false);setClipChildren(false);body=new LinearLayout(c);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(dp(42),0,dp(42),dp(24));body.setClipChildren(false);addView(body);
         heroPage=new LinearLayout(c);heroPage.setOrientation(LinearLayout.VERTICAL);heroPage.setPadding(0,dp(24),0,0);heroPage.setClipChildren(false);body.addView(heroPage,new LinearLayout.LayoutParams(-1,dp(488)));
         detailsCard=new CinematicCard(c);detailsCard.setTag("semantic:details.card");heroPage.addView(detailsCard,new LinearLayout.LayoutParams(-1,0,1));
         cardArtwork=new ImageView(c);cardArtwork.setScaleType(ImageView.ScaleType.CENTER_CROP);detailsCard.addView(cardArtwork,new FrameLayout.LayoutParams(-1,-1));detailsCard.addScrim();

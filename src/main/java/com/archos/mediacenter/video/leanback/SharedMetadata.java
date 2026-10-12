@@ -1,7 +1,10 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.text.*;
 import android.text.style.*;
