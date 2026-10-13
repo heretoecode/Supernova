@@ -27,7 +27,7 @@ public enum BackupCategory {
     POSITIONS("Playback positions","history",3,true,"Unfinished playback offsets and duration, independently of history.","ViewingHistory.position/duration / legacy bookmarks"),
     TITLE_PLAYBACK("Title playback","audio",3,false,"Per-title track and delay choices; file variants may differ.","VideoDbInfo playback parameters"),
     HISTORY("Watch history","history",3,true,"What you watched and when. Excluding it loses restored watched state.","ViewingHistory flags/times / legacy watched markers"),
-    BOOKMARKS("File bookmarks","bookmark",4,false,"Saved browser favourites. Recreating locations needs explicit opt-in.","shortcuts_db / shortcuts2_db browser routes"),
+    BOOKMARKS("File bookmarks","bookmark",4,false,"Saved browser favourites. Recreating locations needs explicit opt-in.","shortcuts2_db browser favourites; indexed roots and FTP credentials excluded"),
     SOURCES("Library sources","folder",4,false,"Selected roots and exclusions. Reconnect access and permissions separately.","SupernovaLibraryPolicy roots/exclusions / source shortcuts"),
     LOCATIONS("Filenames and locations","folder",5,false,"May reveal filenames, folders, hosts and shares across included categories.","Global physical-locator policy; never authentication" );
 

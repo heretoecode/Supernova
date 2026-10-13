@@ -21,7 +21,7 @@ public final class LogicalBackupExporter {
         try {
             LogicalBackupCatalog catalog=Collections.disjoint(categories,INVENTORY)?null:LogicalBackupCatalog.capture(context,cancel);
             // Allocate the private opaque origin before the consistency snapshot; this is never an archive setting.
-            if(catalog!=null)new PortableTitleReferences(context,catalog.snapshot);
+            if(catalog!=null||categories.contains(BackupCategory.BOOKMARKS))new PortableTitleReferences(context,catalog.snapshot);
             var preferences=PreferenceManager.getDefaultSharedPreferences(context);Map<String,?> before=preferences.getAll();
             var health=context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0);Map<String,?> healthBefore=health.getAll();
             PortablePhysicalReferences physical=catalog==null?null:new PortablePhysicalReferences(context,catalog.physical);
@@ -29,6 +29,9 @@ public final class LogicalBackupExporter {
             if(categories.contains(BackupCategory.HISTORY)||categories.contains(BackupCategory.POSITIONS)){
                 ViewingHistory.awaitWrites();viewing=PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(context));
             }
+            JSONObject bookmarks=categories.contains(BackupCategory.BOOKMARKS)?BookmarkStoreRecovery.capture(context):null;
+            Set<String> locations=new TreeSet<>();
+            if(categories.contains(BackupCategory.LOCATIONS)){if(categories.contains(BackupCategory.SOURCES))locations.addAll(PortableLibrarySources.locations(context));if(bookmarks!=null)locations.addAll(PortableBookmarks.locations(bookmarks));}
             Map<BackupCategory,JSONObject> payloads=new EnumMap<>(BackupCategory.class);
             for(BackupCategory category:categories) {
                 LogicalBackupCatalog.cancelled(cancel);JSONObject payload;
@@ -43,17 +46,22 @@ public final class LogicalBackupExporter {
                     case HIDDEN:payload=PortableHiddenItems.export(context,catalog.hidden,physical);break;
                     case HISTORY:case POSITIONS:payload=PortableViewingState.export(viewing,PortableViewingState.Kind.valueOf(category.name()));break;
                     case SOURCES:payload=PortableLibrarySources.export(context);break;
-                    case LOCATIONS:payload=PortableLocations.export(categories.contains(BackupCategory.SOURCES)?PortableLibrarySources.locations(context):Collections.emptySet());break;
+                    case BOOKMARKS:payload=PortableBookmarks.export(context,bookmarks);break;
+                    case LOCATIONS:payload=PortableLocations.export(locations);break;
                     default:throw new IOException("Selected category has no source exporter");
                 }
                 payloads.put(category,payload);
             }
             if(!before.equals(preferences.getAll())||!healthBefore.equals(health.getAll()))throw new IOException("Configuration changed during backup; retry to capture a consistent selection");
+            if(bookmarks!=null&&!bookmarks.toString().equals(BookmarkStoreRecovery.capture(context).toString()))throw new IOException("Bookmarks changed during backup; retry to capture a consistent selection");
             LogicalBackupCatalog.cancelled(cancel);return Collections.unmodifiableMap(payloads);
         }catch(JSONException|RuntimeException invalid){throw new IOException("Selected configuration failed logical backup validation; no backup was created",invalid);}
     }
     public static File preparePrivate(Context context,Set<BackupCategory> selected,BooleanSupplier cancel)throws IOException {
-        Map<BackupCategory,JSONObject> payloads=collect(context,selected,cancel);
+        JSONObject bookmarks=categories.contains(BackupCategory.BOOKMARKS)?BookmarkStoreRecovery.capture(context):null;
+            Set<String> locations=new TreeSet<>();
+            if(categories.contains(BackupCategory.LOCATIONS)){if(categories.contains(BackupCategory.SOURCES))locations.addAll(PortableLibrarySources.locations(context));if(bookmarks!=null)locations.addAll(PortableBookmarks.locations(bookmarks));}
+            Map<BackupCategory,JSONObject> payloads=collect(context,selected,cancel);
         File folder=new File(context.getCacheDir(),"supernova-logical-backups");
         if(!folder.isDirectory()&&!folder.mkdirs())throw new IOException("Cannot prepare private logical backup folder");
         File archive=new File(folder,"Supernova-"+UUID.randomUUID()+".zip");boolean complete=false;
