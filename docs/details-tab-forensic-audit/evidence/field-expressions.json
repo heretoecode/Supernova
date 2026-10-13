@@ -1,0 +1,192 @@
+[
+  {
+    "line": 234,
+    "expression": "if(movie!=null&&!movie.hasScraperData())fact(key,\"Metadata\",\"Not matched\");",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L234"
+  },
+  {
+    "line": 242,
+    "expression": "if(year>0)fact(key,\"Year\",String.valueOf(year));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L242"
+  },
+  {
+    "line": 246,
+    "expression": "if(runtime>0&&(movie!=null||\"movie\".equals(remoteKind)))fact(key,\"Runtime\",SharedMetadata.runtime(runtime));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L246"
+  },
+  {
+    "line": 250,
+    "expression": "fact(key,\"Age rating\",certificate);fact(key,\"Genres\",genre);",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L250"
+  },
+  {
+    "line": 253,
+    "expression": "fact(key,\"Studio / Network\",studios);",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L253"
+  },
+  {
+    "line": 260,
+    "expression": "if(rating>0&&rating<=10)fact(reception,tmdbRating?\"TMDB Rating\":\"Indexed Rating\",String.format(Locale.UK,tmdbRating?\"%.1f / 10\":\"%.1f\",rating));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L260"
+  },
+  {
+    "line": 261,
+    "expression": "if(selectedEpisode!=null)fact(key,\"Air date\",episodeDate>0?PreviewDetailsFacts.date(episodeDate):episodeFacts==null?\"\":episodeFacts.optString(\"air_date\"));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L261"
+  },
+  {
+    "line": 263,
+    "expression": "if(selectedEpisode==null)fact(key,\"Release / first air date\",enriched.optString(\"release_date\",enriched.optString(\"first_air_date\")));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L263"
+  },
+  {
+    "line": 264,
+    "expression": "fact(key,selectedEpisode!=null?\"Series original title\":\"Original title\",enriched.optString(\"original_title\",enriched.optString(\"original_name\")));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L264"
+  },
+  {
+    "line": 265,
+    "expression": "if(show!=null||\"tv\".equals(remoteKind)){fact(key,\"Last air date\",enriched.optString(\"last_air_date\"));fact(key,\"Series status\",enriched.optString(\"status\"));}",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L265"
+  },
+  {
+    "line": 266,
+    "expression": "fact(key,\"Countries\",jsonNames(enriched.optJSONArray(\"production_countries\"),\"name\"));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L266"
+  },
+  {
+    "line": 267,
+    "expression": "fact(key,selectedEpisode!=null?\"Series tagline\":\"Tagline\",enriched.optString(\"tagline\"));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L267"
+  },
+  {
+    "line": 269,
+    "expression": "if(collection!=null)fact(key,\"Collection\",collection.optString(\"name\"));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L269"
+  },
+  {
+    "line": 270,
+    "expression": "for(String field:new String[]{\"budget\",\"revenue\"})if(enriched.optLong(field)>0)fact(key,field.equals(\"budget\")?\"Budget (TMDb)\":\"Box office (TMDb)\",java.text.NumberFormat.getCurrencyInstance(Locale.US).format(enriched.optLong(field)));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L270"
+  },
+  {
+    "line": 271,
+    "expression": "if(enriched.optLong(\"vote_count\")>0&&!(movie instanceof Episode))fact(reception,\"TMDb votes\",java.text.NumberFormat.getIntegerInstance().format(enriched.optLong(\"vote_count\")));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L271"
+  },
+  {
+    "line": 272,
+    "expression": "if(episodeFacts!=null&&episodeFacts.optLong(\"vote_count\")>0)fact(reception,\"TMDb votes\",java.text.NumberFormat.getIntegerInstance().format(episodeFacts.optLong(\"vote_count\")));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L272"
+  },
+  {
+    "line": 275,
+    "expression": "if(movie.getMeasuredWidth()>0&&movie.getMeasuredHeight()>0)fact(technical,\"Resolution\",movie.getMeasuredWidth()+\" \u00d7 \"+movie.getMeasuredHeight());",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L275"
+  },
+  {
+    "line": 276,
+    "expression": "fact(technical,\"Video codec\",PreviewMediaInfo.format(movie.getCalculatedVideoFormat()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L276"
+  },
+  {
+    "line": 277,
+    "expression": "fact(technical,\"Audio\",PreviewMediaInfo.format(movie.getCalculatedBestAudioFormat()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L277"
+  },
+  {
+    "line": 278,
+    "expression": "fact(technical,\"Dynamic range\",PreviewVariants.dynamicRange(getContext(),movie));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L278"
+  },
+  {
+    "line": 279,
+    "expression": "fact(technical,\"Source\",source(movie.getFileUri()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L279"
+  },
+  {
+    "line": 280,
+    "expression": "if(movie.getSize()>0)fact(technical,\"File size\",android.text.format.Formatter.formatShortFileSize(getContext(),movie.getSize()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L280"
+  },
+  {
+    "line": 281,
+    "expression": "fact(technical,\"Selected file\",movie.getFilenameNonCryptic());",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L281"
+  },
+  {
+    "line": 282,
+    "expression": "fact(technical,\"Location\",PreviewVariants.safeLocation(movie.getFileUri()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L282"
+  },
+  {
+    "line": 284,
+    "expression": "if(extension>=0&&filename.length()-extension<=6)fact(technical,\"Container\",filename.substring(extension+1).toUpperCase(Locale.ROOT));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L284"
+  },
+  {
+    "line": 289,
+    "expression": "if(video.bitRate>0)fact(technical,\"Video bitrate\",video.bitRate+\" kb/s\");",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L289"
+  },
+  {
+    "line": 290,
+    "expression": "if(video.fpsScale>0)fact(technical,\"Frame rate\",String.format(Locale.UK,\"%.3f fps\",video.fpsRate/(double)video.fpsScale));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L290"
+  },
+  {
+    "line": 295,
+    "expression": "fact(technical,\"Audio tracks\",android.text.TextUtils.join(\"\\n\",audioTracks));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L295"
+  },
+  {
+    "line": 297,
+    "expression": "fact(technical,\"Subtitles\",android.text.TextUtils.join(\", \",subtitles));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L297"
+  },
+  {
+    "line": 311,
+    "expression": "fact(technical,\"Local episodes\",String.valueOf(logical.size()));fact(technical,\"Local seasons\",String.valueOf(availableSeasons.size()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L311"
+  },
+  {
+    "line": 312,
+    "expression": "if(bytes>0)fact(technical,\"Library size\",(knownSizes<physical.size()?\"\u2265 \":\"\")+android.text.format.Formatter.formatShortFileSize(getContext(),bytes));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L312"
+  },
+  {
+    "line": 313,
+    "expression": "if(!physical.isEmpty()&&knownSizes==physical.size())fact(technical,\"Average file size\",android.text.format.Formatter.formatShortFileSize(getContext(),bytes/physical.size()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L313"
+  },
+  {
+    "line": 314,
+    "expression": "if(specials>0)fact(technical,\"Specials (files)\",String.valueOf(specials));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L314"
+  },
+  {
+    "line": 315,
+    "expression": "if(enriched!=null&&enriched.optInt(\"number_of_episodes\")>0)fact(technical,\"Series episodes (metadata)\",String.valueOf(enriched.optInt(\"number_of_episodes\")));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L315"
+  },
+  {
+    "line": 316,
+    "expression": "List<String> formatCounts=new ArrayList<>();for(Map.Entry<String,Integer> format:formats.entrySet())formatCounts.add(format.getKey()+\": \"+format.getValue()+\" files\");fact(technical,\"File formats\",android.text.TextUtils.join(\", \",formatCounts));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L316"
+  },
+  {
+    "line": 317,
+    "expression": "fact(technical,\"Storage locations\",android.text.TextUtils.join(\"\\n\",locations));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L317"
+  },
+  {
+    "line": 320,
+    "expression": "fact(technical,\"Region\",com.archos.mediacenter.video.streaming.StreamingRepository.country(getContext()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L320"
+  },
+  {
+    "line": 323,
+    "expression": "if(item instanceof Action&&com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))fact(technical,\"Available on\",String.valueOf(((Action)item).getLabel1()));",
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L323"
+  }
+]

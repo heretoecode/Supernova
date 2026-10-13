@@ -1,0 +1,344 @@
+{
+  "source": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+  "distinct_labels": [
+    "Age rating",
+    "Air date",
+    "Audio",
+    "Audio tracks",
+    "Available on",
+    "Average file size",
+    "Box office (TMDb)",
+    "Budget (TMDb)",
+    "Collection",
+    "Container",
+    "Countries",
+    "Dynamic range",
+    "File formats",
+    "File size",
+    "Frame rate",
+    "Genres",
+    "Indexed Rating",
+    "Last air date",
+    "Library size",
+    "Local episodes",
+    "Local seasons",
+    "Location",
+    "Metadata",
+    "Original title",
+    "Region",
+    "Release / first air date",
+    "Resolution",
+    "Runtime",
+    "Selected file",
+    "Series episodes (metadata)",
+    "Series original title",
+    "Series status",
+    "Series tagline",
+    "Source",
+    "Specials (files)",
+    "Storage locations",
+    "Studio / Network",
+    "Subtitles",
+    "TMDB Rating",
+    "TMDb votes",
+    "Tagline",
+    "Video bitrate",
+    "Video codec",
+    "Year"
+  ],
+  "calls": [
+    {
+      "label_expression": "\"Metadata\"",
+      "possible_labels": [
+        "Metadata"
+      ],
+      "value_expression": "\"Not matched\""
+    },
+    {
+      "label_expression": "\"Year\"",
+      "possible_labels": [
+        "Year"
+      ],
+      "value_expression": "String.valueOf(year)"
+    },
+    {
+      "label_expression": "\"Runtime\"",
+      "possible_labels": [
+        "Runtime"
+      ],
+      "value_expression": "SharedMetadata.runtime(runtime)"
+    },
+    {
+      "label_expression": "\"Age rating\"",
+      "possible_labels": [
+        "Age rating"
+      ],
+      "value_expression": "certificate"
+    },
+    {
+      "label_expression": "\"Genres\"",
+      "possible_labels": [
+        "Genres"
+      ],
+      "value_expression": "genre"
+    },
+    {
+      "label_expression": "\"Studio / Network\"",
+      "possible_labels": [
+        "Studio / Network"
+      ],
+      "value_expression": "studios"
+    },
+    {
+      "label_expression": "tmdbRating?\"TMDB Rating\":\"Indexed Rating\"",
+      "possible_labels": [
+        "TMDB Rating",
+        "Indexed Rating"
+      ],
+      "value_expression": "String.format(Locale.UK,tmdbRating?\"%.1f / 10\":\"%.1f\",rating)"
+    },
+    {
+      "label_expression": "\"Air date\"",
+      "possible_labels": [
+        "Air date"
+      ],
+      "value_expression": "episodeDate>0?PreviewDetailsFacts.date(episodeDate):episodeFacts==null?\"\":episodeFacts.optString(\"air_date\")"
+    },
+    {
+      "label_expression": "\"Release / first air date\"",
+      "possible_labels": [
+        "Release / first air date"
+      ],
+      "value_expression": "enriched.optString(\"release_date\",enriched.optString(\"first_air_date\"))"
+    },
+    {
+      "label_expression": "selectedEpisode!=null?\"Series original title\":\"Original title\"",
+      "possible_labels": [
+        "Series original title",
+        "Original title"
+      ],
+      "value_expression": "enriched.optString(\"original_title\",enriched.optString(\"original_name\"))"
+    },
+    {
+      "label_expression": "\"Last air date\"",
+      "possible_labels": [
+        "Last air date"
+      ],
+      "value_expression": "enriched.optString(\"last_air_date\")"
+    },
+    {
+      "label_expression": "\"Series status\"",
+      "possible_labels": [
+        "Series status"
+      ],
+      "value_expression": "enriched.optString(\"status\")"
+    },
+    {
+      "label_expression": "\"Countries\"",
+      "possible_labels": [
+        "Countries"
+      ],
+      "value_expression": "jsonNames(enriched.optJSONArray(\"production_countries\"),\"name\")"
+    },
+    {
+      "label_expression": "selectedEpisode!=null?\"Series tagline\":\"Tagline\"",
+      "possible_labels": [
+        "Series tagline",
+        "Tagline"
+      ],
+      "value_expression": "enriched.optString(\"tagline\")"
+    },
+    {
+      "label_expression": "\"Collection\"",
+      "possible_labels": [
+        "Collection"
+      ],
+      "value_expression": "collection.optString(\"name\")"
+    },
+    {
+      "label_expression": "field.equals(\"budget\")?\"Budget (TMDb)\":\"Box office (TMDb)\"",
+      "possible_labels": [
+        "Budget (TMDb)",
+        "Box office (TMDb)"
+      ],
+      "value_expression": "java.text.NumberFormat.getCurrencyInstance(Locale.US).format(enriched.optLong(field))"
+    },
+    {
+      "label_expression": "\"TMDb votes\"",
+      "possible_labels": [
+        "TMDb votes"
+      ],
+      "value_expression": "java.text.NumberFormat.getIntegerInstance().format(enriched.optLong(\"vote_count\"))"
+    },
+    {
+      "label_expression": "\"TMDb votes\"",
+      "possible_labels": [
+        "TMDb votes"
+      ],
+      "value_expression": "java.text.NumberFormat.getIntegerInstance().format(episodeFacts.optLong(\"vote_count\"))"
+    },
+    {
+      "label_expression": "\"Resolution\"",
+      "possible_labels": [
+        "Resolution"
+      ],
+      "value_expression": "movie.getMeasuredWidth()+\" \u00d7 \"+movie.getMeasuredHeight()"
+    },
+    {
+      "label_expression": "\"Video codec\"",
+      "possible_labels": [
+        "Video codec"
+      ],
+      "value_expression": "PreviewMediaInfo.format(movie.getCalculatedVideoFormat())"
+    },
+    {
+      "label_expression": "\"Audio\"",
+      "possible_labels": [
+        "Audio"
+      ],
+      "value_expression": "PreviewMediaInfo.format(movie.getCalculatedBestAudioFormat())"
+    },
+    {
+      "label_expression": "\"Dynamic range\"",
+      "possible_labels": [
+        "Dynamic range"
+      ],
+      "value_expression": "PreviewVariants.dynamicRange(getContext(),movie)"
+    },
+    {
+      "label_expression": "\"Source\"",
+      "possible_labels": [
+        "Source"
+      ],
+      "value_expression": "source(movie.getFileUri())"
+    },
+    {
+      "label_expression": "\"File size\"",
+      "possible_labels": [
+        "File size"
+      ],
+      "value_expression": "android.text.format.Formatter.formatShortFileSize(getContext(),movie.getSize())"
+    },
+    {
+      "label_expression": "\"Selected file\"",
+      "possible_labels": [
+        "Selected file"
+      ],
+      "value_expression": "movie.getFilenameNonCryptic()"
+    },
+    {
+      "label_expression": "\"Location\"",
+      "possible_labels": [
+        "Location"
+      ],
+      "value_expression": "PreviewVariants.safeLocation(movie.getFileUri())"
+    },
+    {
+      "label_expression": "\"Container\"",
+      "possible_labels": [
+        "Container"
+      ],
+      "value_expression": "filename.substring(extension+1).toUpperCase(Locale.ROOT)"
+    },
+    {
+      "label_expression": "\"Video bitrate\"",
+      "possible_labels": [
+        "Video bitrate"
+      ],
+      "value_expression": "video.bitRate+\" kb/s\""
+    },
+    {
+      "label_expression": "\"Frame rate\"",
+      "possible_labels": [
+        "Frame rate"
+      ],
+      "value_expression": "String.format(Locale.UK,\"%.3f fps\",video.fpsRate/(double)video.fpsScale)"
+    },
+    {
+      "label_expression": "\"Audio tracks\"",
+      "possible_labels": [
+        "Audio tracks"
+      ],
+      "value_expression": "android.text.TextUtils.join(\"\\n\",audioTracks)"
+    },
+    {
+      "label_expression": "\"Subtitles\"",
+      "possible_labels": [
+        "Subtitles"
+      ],
+      "value_expression": "android.text.TextUtils.join(\", \",subtitles)"
+    },
+    {
+      "label_expression": "\"Local episodes\"",
+      "possible_labels": [
+        "Local episodes"
+      ],
+      "value_expression": "String.valueOf(logical.size())"
+    },
+    {
+      "label_expression": "\"Local seasons\"",
+      "possible_labels": [
+        "Local seasons"
+      ],
+      "value_expression": "String.valueOf(availableSeasons.size())"
+    },
+    {
+      "label_expression": "\"Library size\"",
+      "possible_labels": [
+        "Library size"
+      ],
+      "value_expression": "(knownSizes<physical.size()?\"\u2265 \":\"\")+android.text.format.Formatter.formatShortFileSize(getContext(),bytes)"
+    },
+    {
+      "label_expression": "\"Average file size\"",
+      "possible_labels": [
+        "Average file size"
+      ],
+      "value_expression": "android.text.format.Formatter.formatShortFileSize(getContext(),bytes/physical.size())"
+    },
+    {
+      "label_expression": "\"Specials (files)\"",
+      "possible_labels": [
+        "Specials (files)"
+      ],
+      "value_expression": "String.valueOf(specials)"
+    },
+    {
+      "label_expression": "\"Series episodes (metadata)\"",
+      "possible_labels": [
+        "Series episodes (metadata)"
+      ],
+      "value_expression": "String.valueOf(enriched.optInt(\"number_of_episodes\"))"
+    },
+    {
+      "label_expression": "\"File formats\"",
+      "possible_labels": [
+        "File formats"
+      ],
+      "value_expression": "android.text.TextUtils.join(\", \",formatCounts)"
+    },
+    {
+      "label_expression": "\"Storage locations\"",
+      "possible_labels": [
+        "Storage locations"
+      ],
+      "value_expression": "android.text.TextUtils.join(\"\\n\",locations)"
+    },
+    {
+      "label_expression": "\"Region\"",
+      "possible_labels": [
+        "Region"
+      ],
+      "value_expression": "com.archos.mediacenter.video.streaming.StreamingRepository.country(getContext())"
+    },
+    {
+      "label_expression": "\"Available on\"",
+      "possible_labels": [
+        "Available on"
+      ],
+      "value_expression": "String.valueOf(((Action)item).getLabel1())"
+    }
+  ],
+  "all_labels_documented": true
+}

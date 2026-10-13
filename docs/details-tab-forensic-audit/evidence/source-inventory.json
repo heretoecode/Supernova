@@ -1,0 +1,488 @@
+[
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+    "sha256": "7e83fe1792cad9dcd6b86d5fecab31fc36f1ea19777e09b91ebe2b345a9f5569"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "res/layout/androidtv_details_activity.xml",
+    "sha256": "301e7aa74ef549718eda8c537bb8cb5f959294a9ae4feda947310432336f708d"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsFragment.java",
+    "sha256": "084815b036742310afa005c70a79ffe1ad9b0226d8e6179d7c569a5c423cc94b"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowFragment.java",
+    "sha256": "e6aa0ca3a85bf229912dffc4a8f9cd7c65057799332370b93dd49cf79f721091"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java",
+    "sha256": "1ab9d8ccd9f92d0d5db19bc5ae7492ff76a7aefbe357251102c40803c332455c"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java",
+    "sha256": "91694db5a74a88cfb018e49caa39170ec3cca08b42a90d976f1fef04ab5f4f92"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/TvLayout.java",
+    "sha256": "191fce93160ddff14b46a7047d3c70fbea4a52ddbc787cd4279b26ed39362102"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java",
+    "sha256": "f96b09dcca972f22b78fb65c0016c1be1f404b360b07f91d13825c998796ce57"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/CinematicCard.java",
+    "sha256": "7a4b53caff38c31d56040bf58a32034aabab19899e81cd5f1c524790f83b7429"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/SharedThreePanel.java",
+    "sha256": "4b291c427eceae8fce3487a940bdf99755e748b016813d98e2fa49f1542ebe37"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/TvButton.java",
+    "sha256": "ad4fccee68439171730c584669f47473dc94024df9f082949bea245be60d1e68"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/SharedMetadata.java",
+    "sha256": "aa2985eae63bdcd6cadb9e9db42a51c7eb3cfc9c0263b023e57543999f7b51e0"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMediaInfo.java",
+    "sha256": "3ea3e6e75e154ff70eea9ef3f47c453fff8cb917fecebe08708e09df8fc797fb"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewVariants.java",
+    "sha256": "fab32a6e705f6614229a77bf5915f9b9685438f1c20981e8fd9f5fdf73c2c833"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadataCache.java",
+    "sha256": "3c8a81790497434b8ca715d86aff3c683998968e142f5d7a9254deb0554b7e6d"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/streaming/StreamingRepository.java",
+    "sha256": "ee0de459b62c4a963c8dc14764c177e150aebe626f38f2520016b766d2523c59"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsData.java",
+    "sha256": "3041fc80b047f6122f7a91cdb0d33df00e7ada44dab9f6a86fed0f1c4646c98f"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsFacts.java",
+    "sha256": "0b7dbce1e01d314b8a43cdb371af6bce9f05301211ba44c9a379ac7994f8f1d9"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewSeasonActivity.java",
+    "sha256": "f834868627affbc350b7dc4f5ad3eb4ca3bc02893bb00ca45554fbe0e63fc963"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/streaming/PreviewRemoteDetailsActivity.java",
+    "sha256": "038adad920cc5722f061a008bd8ded2447cb8892ec430b5dc939d657f77a8a09"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/browser/adapters/mappers/VideoCursorMapper.java",
+    "sha256": "5a948e0e3f5befcffb6f8325370123838d70ae2e077cf2d2285c3ddeccd52e7f"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryLoader.java",
+    "sha256": "76714619ffd7333c04246fa675df735a65483f570349bc4acc89248535e40730"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/VideoMetadata.java",
+    "sha256": "cb635a05618cc343770ea689dab3fbe95d81050bf3f5960b1a6eb1d87dd0e548"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/info/VideoInfoCommonClass.java",
+    "sha256": "216a6f84e4169d5a4e71ee4a1eff79ab28ee0922785bddadfd93bde529b6c448"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/overlay/Overlay.java",
+    "sha256": "a140769b39729cf1f949a47b640a9a87b825491f1b40b1efe5670d1795a1b165"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/overlay/ScannerAndScraperProgress.java",
+    "sha256": "f9e6d09045b6f5c4bc4bad5ccf91bb36743da0ef5d6a182c6dce3f2f41f79eee"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+    "sha256": "b1da344db307649cb147c9dac8af22b1a2caa9183ea9b6e3b4baadd72de8a913"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewBackdrop.java",
+    "sha256": "2e625a2d17cc64f6bae46c0de5832f9e7aa3a7d9184d91241ec84001bc8923e0"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewPeople.java",
+    "sha256": "917de26f516a816dc00939a3ac1c454ca4f71665353f5b3591ea516004890dc8"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/browser/adapters/object/Video.java",
+    "sha256": "e7daaf5ad35cc5376215ebe493e0d615e551657a8c95468399c3cecb3cf2317e"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/browser/adapters/object/Movie.java",
+    "sha256": "000eb41e5927039462754184de2a1a541d8574b0f303c2d84c80aaf775fc9bfc"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/browser/adapters/object/Tvshow.java",
+    "sha256": "c1e3f7bdba4ba8391581ee55ff9c66b5e58167de3af1f53b3ae3b5bcc96eee2a"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/browser/adapters/object/Episode.java",
+    "sha256": "ebeefe8e4235b9dbb7dfea3fc5814f6bb6dd4592dfb61618ee20b13bd7b79e58"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/info/MultipleVideoLoader.java",
+    "sha256": "5472734877469463c008e118d5a72d4cf4c55b3529925be1431ca9d2f2218ead"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialog.java",
+    "sha256": "ece3370be3ab709e73e915332902372c22afe2a555401d28c4b4585230370f69"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/VideoViewClickedListener.java",
+    "sha256": "71f2ea1e7b381b87359df71d5e737213523b38e4fff6173791beb73bab3ae7d5"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/foundation/FoundationUiPolicy.java",
+    "sha256": "f991fdd979003b36af15b81831cf3d126f665e1750688a6a36e2278165397d75"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/OfficialTitleArtwork.java",
+    "sha256": "0642437cad2e2c63a0009e9e0e6b32e1828c130a59de96efdb4faaabe1245b0d"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsActivity.java",
+    "sha256": "1e898e9be90c33cb98447a39800816d88845f7f43b056ab30dfcc43f69e997bc"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/browser/loader/VideoLoader.java",
+    "sha256": "d702cb71dc5c9ce6526aed3e8133d99255a97b224b04a299807830dbad5167f5"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "res/layout/androidtv_tvshow_activity.xml",
+    "sha256": "bab54fc07e46cf2190b4e0f50206e396a02bc3c1071d65c8427a6a18ce829b71"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/browser/adapters/object/NonIndexedVideo.java",
+    "sha256": "cefd0591b994f60ba6fb583f37eff1bf7d1fc30bc6084a58a313973f05eae2cc"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/main/java/com/archos/mediacenter/video/streaming/StreamingActions.java",
+    "sha256": "264e8fa67b600696306344d5fc6a3885c70008bb8265e70b40851f41c47f4cf4"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediascraper/BaseTags.java",
+    "sha256": "06e234610d4843bb80522f4f246b776a4c1134cf840c13c7c1ed805609d5ad49"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediascraper/VideoTags.java",
+    "sha256": "6566e6a83349f12c1a77d8dee9d5adf1beb6bf7b9accb58760bf494b04ef623b"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediascraper/MovieTags.java",
+    "sha256": "4c03a24014217ef60ce6d7740339a42bf6ddaefc6625fbb6f630c0ea203de0ee"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediascraper/ShowTags.java",
+    "sha256": "d6e76b22961cca2b6c46dcfd81aed3bcc17f8ce311feaa1234624091cefd3131"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediascraper/EpisodeTags.java",
+    "sha256": "1a911732539c532aabc935e04915f85d9a14532ad30b0aeecb97165d14c18ad7"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediascraper/TagsFactory.java",
+    "sha256": "b67e8008ada08738a62214093a323b3f738f9698bf04424e8a7dfafe8dd952e7"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediaprovider/video/ScraperProvider.java",
+    "sha256": "482c0f04919303957236472ea16e1c3f2f91e98ce010ecad1d14956a1b1cd417"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+    "sha256": "8da76a2745de96773cef51fcc279c0b56ed2a7d1c2c7ea0eb577d0c6fce9cabf"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediascraper/themoviedb3/MovieIdParser2.java",
+    "sha256": "6f7fbd2bfb2e2693af70358d93cc88b0a5588dcadbb923df84dbd0c7e8781466"
+  },
+  {
+    "repository": "heretoecode/aos-MediaLib",
+    "commit": "5758074049bc153ac4967b4ecd21886469270076",
+    "path": "src/com/archos/mediascraper/themoviedb3/ShowIdParser.java",
+    "sha256": "11886f4345e0ea93a5696cf47d01d5b6ee9e0cc778090b2b6172da3f69e3e54f"
+  },
+  {
+    "repository": "nova-video-player/aos-avos",
+    "commit": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+    "path": "Source/avos_mr.c",
+    "sha256": "2f3fc641a84994e9e45c60f71cb1fccbb281137fa39ff51332caa8c15878f52c"
+  },
+  {
+    "repository": "nova-video-player/aos-avos",
+    "commit": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+    "path": "Source/avos_mp.c",
+    "sha256": "5e717e8ef4e0a3b95b038898873c243b8848e39b12795803e33547e585edbb8d"
+  },
+  {
+    "repository": "nova-video-player/aos-avos",
+    "commit": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+    "path": "Source/stream_parser_ffmpeg.c",
+    "sha256": "f2b823f5a577ad1dab35ad135851ffdcf64fb4a65ae690683945ca41f1f464e5"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/build/avos-supernova135.patch",
+    "sha256": "f4585443b3d1205442f4f53452b4e8fb11b0e2d4b7aad8b5efa0da5fa7c47580"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": ".github/build/medialib-supernova135.patch",
+    "sha256": "23aa0e069e77b35212f3abe2cae511e503adfc8038cce6c5fe4ddfa16be01551"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java",
+    "sha256": "0e10cbac3981dc932035f2879009c852a963e900017f53e5fc95a93ded2aa332"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Preview414Test.java",
+    "sha256": "a8758cd9e887a5195527794a2b9c6625b09332f9833901e615f5e3518d0227d1"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java",
+    "sha256": "6d8b3fab38a3e135dab96cc6b74caf5db48091d9267864b5541d11a3ffa87d3c"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java",
+    "sha256": "4a6c6184b6d9c0950b0b51ece4f9851244534e40ddc1912f98ca9006d5edfeba"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewDiscoveryTest.java",
+    "sha256": "27856270c3a476c8b61b5f2f0e56670e5fcdbe9b0859785a5fce9bcccdb351cf"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewMediaInfoTest.java",
+    "sha256": "4318127588b79516b58fc218500b42afab3a46f69434a6bbc090a8c9763942d7"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
+    "sha256": "4b2ff58db1d297b52238b92fcd49bd59353520de7cf009701b0583ccd86fff76"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java",
+    "sha256": "34ebcd5b2a1d9351eb2d6b0373de2f1772c8f5f1a3637eac0775793c269dc3c9"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java",
+    "sha256": "ace242be09076c2c593b6b0acefa2d5ec6fb1885bd5182255a2244e99350d4d1"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewScanProgressTest.java",
+    "sha256": "a5edfd5b8137467d6291ea81095795affc319aec1316880dbb07c7384c3638a1"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewTechnicalEnrichmentTest.java",
+    "sha256": "b0e8e619067519c2af5314422cf0d48257c22941722a33d64a5b52dc8b89d073"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialogTest.java",
+    "sha256": "6ee128aba2de27581fc96ba528ee2fcb678d91e69a3067dd407a93f81c9100c5"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Supernova138HomeTest.java",
+    "sha256": "7bc96e47d318241f7b354a5f40088b069dee8e7826f3dbe03ee198d6e2c99191"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java",
+    "sha256": "5d13d359676d92d4f16ad6051c8d6f79002d5eedfbeb1e075c1bf33ad8953cf1"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java",
+    "sha256": "bf2a55482ce850751888c09fb8577d8fb5fb5ae2a3785a3cfb8cd0174bc80e9f"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/VersionPreferenceTest.java",
+    "sha256": "a5f8cf3e6fe6b1b36288556999805cf357f6a3b99c8e3e8f75cafe48a48c616e"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewCompactTitleTest.java",
+    "sha256": "bb8e653c559d1dd8f4e48258d0547ca6988ae6bfca3352a3dd538341ae7dff7b"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsCacheTest.java",
+    "sha256": "4270ccfca812de493771367da0ec78bab7a3497f6a81a96d8ce75470811095a4"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsFactsTest.java",
+    "sha256": "d72be0697522220ba10c364778f2c0a2c429c221cceaa4e9f8f38eebb99233d0"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java",
+    "sha256": "6cfd400820399d221d9f83f77e7bde1c01920a3fb3f17e69fe400a23cf3feb6e"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewPeopleRailTest.java",
+    "sha256": "aaadfccc30f967628d85cc2b992541c7f0a8f224004509ab0a1d45a5ffe058e4"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewSeasonTest.java",
+    "sha256": "7ff76b53138faf487852973528d7b51dfe21cd7c1201a6e92f1a833139450c48"
+  },
+  {
+    "repository": "heretoecode/Supernova",
+    "commit": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+    "path": "src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java",
+    "sha256": "1ed5672ebedb6b362196b4c4a939eaaacc3fc0268cf62837a9bb9384a6d0d33c"
+  }
+]

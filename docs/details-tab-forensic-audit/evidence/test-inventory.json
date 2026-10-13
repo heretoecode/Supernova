@@ -1,0 +1,768 @@
+[
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java",
+    "sha256": "0e10cbac3981dc932035f2879009c852a963e900017f53e5fc95a93ded2aa332",
+    "methods": [
+      {
+        "method": "postFailureWindowUsesEventTimeEvenWhenBothWritersAreDelayed",
+        "line": 12,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L12"
+      },
+      {
+        "method": "queuedIncidentPreservesThePreFailureRecorderWindow",
+        "line": 40,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L40"
+      },
+      {
+        "method": "activityReturnRestoresItsOwnPageAndUnknownChildDoesNotInheritIt",
+        "line": 59,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L59"
+      },
+      {
+        "method": "detailsRebindReportsReasonAndPerViewCountWithoutTitle",
+        "line": 68,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L68"
+      },
+      {
+        "method": "nativeConfirmationTracksModalWithoutReplacingDismissOrDeleteCallbacks",
+        "line": 81,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L81"
+      },
+      {
+        "method": "detailsReaderRetainsSemanticOpenerAndModalContext",
+        "line": 95,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L95"
+      },
+      {
+        "method": "trailerModalIsCapturedAndDismissalRestoresItsOpener",
+        "line": 107,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L107"
+      },
+      {
+        "method": "nestedDialogSnapshotRetainsKindsAfterDismissal",
+        "line": 118,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L118"
+      },
+      {
+        "method": "librarySnapshotRetainsSafeFilterValuesAndExactSort",
+        "line": 129,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L129"
+      },
+      {
+        "method": "delayedIncidentKeepsFailureTimeState",
+        "line": 143,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L143"
+      },
+      {
+        "method": "delayedIncidentDoesNotAttachToALaterPlaybackSession",
+        "line": 153,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L153"
+      },
+      {
+        "method": "incidentSnapshotContainsStructuralUiStateWithoutRawPaths",
+        "line": 166,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L166"
+      },
+      {
+        "method": "repeatedFailuresKeepRawEventsAndAddCorrelatedCumulativeSummaries",
+        "line": 178,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L178"
+      },
+      {
+        "method": "generatedFocusControlsAreDistinctWithoutText",
+        "line": 192,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L192"
+      },
+      {
+        "method": "rotatedFilesStayBoundedAndSessionsRemainCorrelated",
+        "line": 196,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L196"
+      },
+      {
+        "method": "locationsAndInlineSecretsAreRemoved",
+        "line": 209,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L209"
+      },
+      {
+        "method": "exceptionMessagesNeverEnterReport",
+        "line": 210,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L210"
+      },
+      {
+        "method": "offByDefaultAndExportWorksWhileOff",
+        "line": 211,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java#L211"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Preview414Test.java",
+    "sha256": "a8758cd9e887a5195527794a2b9c6625b09332f9833901e615f5e3518d0227d1",
+    "methods": [
+      {
+        "method": "qualitySelectionUsesIndexedResolutionThenBitrateThenStableIdentity",
+        "line": 16,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview414Test.java#L16"
+      },
+      {
+        "method": "logicalMovieChoiceKeepsResumeFromAnotherEncode",
+        "line": 22,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview414Test.java#L22"
+      },
+      {
+        "method": "physicalVariantsDoNotInflateShowEpisodeCount",
+        "line": 27,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview414Test.java#L27"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java",
+    "sha256": "6d8b3fab38a3e135dab96cc6b74caf5db48091d9267864b5541d11a3ffa87d3c",
+    "methods": [
+      {
+        "method": "automaticVersionResumeReachesLaunchBoundaryButDoesNotOverrideExplicitChoice",
+        "line": 25,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L25"
+      },
+      {
+        "method": "nextEpisodeIgnoresDuplicateEncodesAndChoosesBestNextVersion",
+        "line": 35,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L35"
+      },
+      {
+        "method": "providerSeekTargetsCannotStandInForCompletion",
+        "line": 43,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L43"
+      },
+      {
+        "method": "replacingSettingsRemovesStaleKeysAndRejectsInvalidInputBeforeCommit",
+        "line": 49,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L49"
+      },
+      {
+        "method": "sftpTrustInitialisesBeforeApplicationContextExists",
+        "line": 57,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L57"
+      },
+      {
+        "method": "sftpIdentityPersistsAndRejectsChangedKeyAcrossInitialisation",
+        "line": 64,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L64"
+      },
+      {
+        "method": "sourceInclusionUsesIdentityDespiteDuplicateNames",
+        "line": 74,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L74"
+      },
+      {
+        "method": "detailsWithoutAnAttachedLegacyImageNeedNoTransition",
+        "line": 86,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L86"
+      },
+      {
+        "method": "modernLibraryPreferencesReachFilterAndTitleSort",
+        "line": 92,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L92"
+      },
+      {
+        "method": "backdropFailureRetainsDisplayedArtworkWithoutStaleCrossfade",
+        "line": 100,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview415Test.java#L100"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java",
+    "sha256": "4a6c6184b6d9c0950b0b51ece4f9851244534e40ddc1912f98ca9006d5edfeba",
+    "methods": [
+      {
+        "method": "keyboardStartsAtTAndEmptyResultEdgeKeepsFocus",
+        "line": 24,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java#L24"
+      },
+      {
+        "method": "navigationHasOneBoundaryAndLocksBothEnds",
+        "line": 41,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java#L41"
+      },
+      {
+        "method": "toolbarColumnsRightCannotEscapeAndDownEntersContent",
+        "line": 60,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java#L60"
+      },
+      {
+        "method": "gridRightDoesNotWrapAndLastRowDownDoesNotEscape",
+        "line": 74,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Preview417NavigationTest.java#L74"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewDiscoveryTest.java",
+    "sha256": "27856270c3a476c8b61b5f2f0e56670e5fcdbe9b0859785a5fce9bcccdb351cf",
+    "methods": [
+      {
+        "method": "chartsMatchIdsNotNamesAndKeepFilmShowNamespacesSeparate",
+        "line": 17,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewDiscoveryTest.java#L17"
+      },
+      {
+        "method": "releaseSortUsesActualDateAndBothDirections",
+        "line": 22,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewDiscoveryTest.java#L22"
+      },
+      {
+        "method": "unrankedTitlesStayAfterRankedInEitherOrder",
+        "line": 23,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewDiscoveryTest.java#L23"
+      },
+      {
+        "method": "emptyGenreDoesNotInventRecommendations",
+        "line": 24,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewDiscoveryTest.java#L24"
+      },
+      {
+        "method": "sourceLabelsNeverExposeEmbeddedCredentials",
+        "line": 25,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewDiscoveryTest.java#L25"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewMediaInfoTest.java",
+    "sha256": "4318127588b79516b58fc218500b42afab3a46f69434a6bbc090a8c9763942d7",
+    "methods": [
+      {
+        "method": "measuredChannelsAreNotGuessedSpeakerLayouts",
+        "line": 14,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMediaInfoTest.java#L14"
+      },
+      {
+        "method": "unknownMeasurementsAreOmitted",
+        "line": 18,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMediaInfoTest.java#L18"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java",
+    "sha256": "4b2ff58db1d297b52238b92fcd49bd59353520de7cf009701b0583ccd86fff76",
+    "methods": [
+      {
+        "method": "cacheReadDoesNotWaitForNetworkFetch",
+        "line": 19,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java#L19"
+      },
+      {
+        "method": "freshPackageAvoidsRepeatedFetch",
+        "line": 35,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java#L35"
+      },
+      {
+        "method": "failedFirstFetchDoesNotCreateCompletePackage",
+        "line": 43,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java#L43"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java",
+    "sha256": "34ebcd5b2a1d9351eb2d6b0373de2f1772c8f5f1a3637eac0775793c269dc3c9",
+    "methods": [
+      {
+        "method": "detailsPeopleAreReadOnlyWhileBrowserRetainsAccentFocus",
+        "line": 18,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L18"
+      },
+      {
+        "method": "seriesInformationDoesNotCountUnknownFileSizesAsZero",
+        "line": 33,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L33"
+      },
+      {
+        "method": "unmatchedHeroExposesTheExistingMatchHandlerAndHonestPlaceholders",
+        "line": 52,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L52"
+      },
+      {
+        "method": "scrolledTitleDoesNotIntroduceAFocusTarget",
+        "line": 66,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L66"
+      },
+      {
+        "method": "backgroundSnapshotRetainsInformationPanelFocus",
+        "line": 84,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L84"
+      },
+      {
+        "method": "remotePanelsOmitEmptyReceptionAndLocalFileInformation",
+        "line": 95,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L95"
+      },
+      {
+        "method": "extrasHavePopulatedCategoriesOnly",
+        "line": 107,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L107"
+      },
+      {
+        "method": "episodeMetadataDoesNotBorrowSeriesRating",
+        "line": 120,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L120"
+      },
+      {
+        "method": "moviePageDelegatesPlaybackAndRenders",
+        "line": 132,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java#L132"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java",
+    "sha256": "ace242be09076c2c593b6b0acefa2d5ec6fb1885bd5182255a2244e99350d4d1",
+    "methods": [
+      {
+        "method": "libraryControlIncludesLocalProgressButNetworkControlStaysNetworkOnly",
+        "line": 17,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L17"
+      },
+      {
+        "method": "nativeLocalTraceReportsMeasuredCountsAndPartialOutcome",
+        "line": 29,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L29"
+      },
+      {
+        "method": "queuedLocalImportReportsStartAndCancellation",
+        "line": 43,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L43"
+      },
+      {
+        "method": "localQueueBoundariesShareBatchAndObservedTrigger",
+        "line": 58,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L58"
+      },
+      {
+        "method": "localMetadataQueueReportsActualServiceAcceptance",
+        "line": 70,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L70"
+      },
+      {
+        "method": "interruptedLocalImportCannotReportCompletionOrInventCounts",
+        "line": 79,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L79"
+      },
+      {
+        "method": "localTelemetryBroadcastFailureDoesNotBreakImport",
+        "line": 88,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L88"
+      },
+      {
+        "method": "libraryProgressKeepsConcurrentPhasesAndHonestRemainingCounts",
+        "line": 95,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L95"
+      },
+      {
+        "method": "queuedSourcesAndMetadataEventsPreserveMeasuredBatchTotals",
+        "line": 111,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L111"
+      },
+      {
+        "method": "batchTerminalClosesOperationOnceNotAtIndividualSourceCompletion",
+        "line": 124,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L124"
+      },
+      {
+        "method": "metadataQueueDistinguishesAcceptedNullAndRestrictedStarts",
+        "line": 141,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanLifecycleTest.java#L141"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewScanProgressTest.java",
+    "sha256": "a5edfd5b8137467d6291ea81095795affc319aec1316880dbb07c7384c3638a1",
+    "methods": [
+      {
+        "method": "unstartedAndCoalescedSourcesReleaseTheirProgressSlots",
+        "line": 7,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanProgressTest.java#L7"
+      },
+      {
+        "method": "sourceCountsAccumulateWithoutCountingRepeatedCompletionTwice",
+        "line": 14,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanProgressTest.java#L14"
+      },
+      {
+        "method": "newBatchResetsPreviousCountersAndNegativeCountsAreNotPresented",
+        "line": 24,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewScanProgressTest.java#L24"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewTechnicalEnrichmentTest.java",
+    "sha256": "b0e8e619067519c2af5314422cf0d48257c22941722a33d64a5b52dc8b89d073",
+    "methods": [
+      {
+        "method": "homePriorityStillIncludesEveryPhysicalVersion",
+        "line": 16,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewTechnicalEnrichmentTest.java#L16"
+      },
+      {
+        "method": "cachedHdrSurvivesEntryRecreationButNotChangedFileFingerprint",
+        "line": 22,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewTechnicalEnrichmentTest.java#L22"
+      },
+      {
+        "method": "detailsReadsOnlyTheCurrentIndexedFingerprint",
+        "line": 29,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewTechnicalEnrichmentTest.java#L29"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialogTest.java",
+    "sha256": "6ee128aba2de27581fc96ba528ee2fcb678d91e69a3067dd407a93f81c9100c5",
+    "methods": [
+      {
+        "method": "titlePositionIsReconstructedAfterSelectedVersionReload",
+        "line": 28,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialogTest.java#L28"
+      },
+      {
+        "method": "newestRestartOverridesOlderPositionWithoutChangingOtherFileHistory",
+        "line": 36,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialogTest.java#L36"
+      },
+      {
+        "method": "selectingVersionKeepsDialogOpenAndCurrentIndependentOfFocus",
+        "line": 41,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialogTest.java#L41"
+      },
+      {
+        "method": "locationOmitsAuthenticationAndQueryMaterial",
+        "line": 59,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialogTest.java#L59"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Supernova138HomeTest.java",
+    "sha256": "7bc96e47d318241f7b354a5f40088b069dee8e7826f3dbe03ee198d6e2c99191",
+    "methods": [
+      {
+        "method": "committedNextEpisodeAndSeasonAppearWithoutStartingThem",
+        "line": 22,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138HomeTest.java#L22"
+      },
+      {
+        "method": "sampledInProgressEpisodeStillHasHomeResume",
+        "line": 27,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138HomeTest.java#L27"
+      },
+      {
+        "method": "persistedEpochAirDatesSortCompleteCollectionBothWaysAndUnknownLast",
+        "line": 28,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138HomeTest.java#L28"
+      },
+      {
+        "method": "dynamicMixedRowsApplyOneOrderAndOneUserLimit",
+        "line": 33,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138HomeTest.java#L33"
+      },
+      {
+        "method": "automaticHomeRowsCapAfterEligibilityAndWatchNextDoesNot",
+        "line": 39,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138HomeTest.java#L39"
+      },
+      {
+        "method": "metadataCompactsAndNeverOrphansVotes",
+        "line": 48,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138HomeTest.java#L48"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java",
+    "sha256": "5d13d359676d92d4f16ad6051c8d6f79002d5eedfbeb1e075c1bf33ad8953cf1",
+    "methods": [
+      {
+        "method": "allFiveDetailsSectionsFitAndRemainReadOnly",
+        "line": 23,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L23"
+      },
+      {
+        "method": "fiveSectionsFitAt150PercentText",
+        "line": 34,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L34"
+      },
+      {
+        "method": "smallViewportKeepsDetailsActionsAndTabsVisible",
+        "line": 38,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L38"
+      },
+      {
+        "method": "localTechnicalTracksAndEightPeopleFitTogetherAtEnlargedText",
+        "line": 41,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L41"
+      },
+      {
+        "method": "customFiltersIsNotEditorAndReturnsToInvoker",
+        "line": 47,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L47"
+      },
+      {
+        "method": "breadcrumbUpdatesCannotStealLeftDeviceFocusAndAllFilesActuallyToggles",
+        "line": 52,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L52"
+      },
+      {
+        "method": "settingsBottomRowsAndActualFirstLicenceRemainReachable",
+        "line": 58,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L58"
+      },
+      {
+        "method": "overviewScanTextIsReadOnlyAndContained",
+        "line": 118,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L118"
+      },
+      {
+        "method": "hudCentrelinePillAndFontGeometryMatchesApprovedLayout",
+        "line": 119,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java#L119"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java",
+    "sha256": "bf2a55482ce850751888c09fb8577d8fb5fb5ae2a3785a3cfb8cd0174bc80e9f",
+    "methods": [
+      {
+        "method": "topShellWorksWithNativeBrowseAndCanFocusNavigation",
+        "line": 39,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java#L39"
+      },
+      {
+        "method": "experimentalPlaybackLayoutKeepsNativeControlTypes",
+        "line": 56,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java#L56"
+      },
+      {
+        "method": "sectionsDoNotLeakIntoEachOther",
+        "line": 67,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java#L67"
+      },
+      {
+        "method": "classicBrowseRetainsItsTitle",
+        "line": 75,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java#L75"
+      },
+      {
+        "method": "previewCardsResetRecycledStateAndClampProgress",
+        "line": 85,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java#L85"
+      },
+      {
+        "method": "renderPreviewHomeAndCheckRemoteTabSelection",
+        "line": 103,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/TopNavigationTest.java#L103"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/VersionPreferenceTest.java",
+    "sha256": "a5f8cf3e6fe6b1b36288556999805cf357f6a3b99c8e3e8f75cafe48a48c616e",
+    "methods": [
+      {
+        "method": "manualVersionPersistsAcrossSnapshotRebuildsAndOverridesQuality",
+        "line": 14,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/VersionPreferenceTest.java#L14"
+      },
+      {
+        "method": "unavailableManualChoiceUsesAvailableEncodeWithoutDeletingPreference",
+        "line": 15,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/VersionPreferenceTest.java#L15"
+      },
+      {
+        "method": "nativeDetailsListUsesTheSamePersistedVersionWithoutSnapshot",
+        "line": 16,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/VersionPreferenceTest.java#L16"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewCompactTitleTest.java",
+    "sha256": "bb8e653c559d1dd8f4e48258d0547ca6988ae6bfca3352a3dd538341ae7dff7b",
+    "methods": [
+      {
+        "method": "compactTitleAppearsOnlyAfterHeroTitleLeavesAndReversesWithScroll",
+        "line": 12,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewCompactTitleTest.java#L12"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsCacheTest.java",
+    "sha256": "4270ccfca812de493771367da0ec78bab7a3497f6a81a96d8ce75470811095a4",
+    "methods": [
+      {
+        "method": "cachedSeasonAndRecommendationsConsumeKnownProviderPackages",
+        "line": 17,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsCacheTest.java#L17"
+      },
+      {
+        "method": "diskPackageSuppliesDetailsWithoutInventingProviderAvailability",
+        "line": 27,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsCacheTest.java#L27"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsFactsTest.java",
+    "sha256": "d72be0697522220ba10c364778f2c0a2c429c221cceaa4e9f8f38eebb99233d0",
+    "methods": [
+      {
+        "method": "classificationNeverBorrowsAnotherCountrysRating",
+        "line": 13,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsFactsTest.java#L13"
+      },
+      {
+        "method": "remoteYearAndEpisodeRuntimesUseOnlyPublishedValues",
+        "line": 18,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsFactsTest.java#L18"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java",
+    "sha256": "6cfd400820399d221d9f83f77e7bde1c01920a3fb3f17e69fe400a23cf3feb6e",
+    "methods": [
+      {
+        "method": "episodePanelConsumesItsSeasonPackageWithoutBorrowingSeriesFacts",
+        "line": 20,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java#L20"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewPeopleRailTest.java",
+    "sha256": "aaadfccc30f967628d85cc2b992541c7f0a8f224004509ab0a1d45a5ffe058e4",
+    "methods": [
+      {
+        "method": "nativePrincipalCrewRetainsIndividualNamesWithoutInformationFocus",
+        "line": 19,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewPeopleRailTest.java#L19"
+      },
+      {
+        "method": "creditsCreateIndividualPrincipalCrewAndRemoteCast",
+        "line": 30,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewPeopleRailTest.java#L30"
+      },
+      {
+        "method": "awkwardViewportWidthKeepsWholeCardsOnFocusScroll",
+        "line": 53,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewPeopleRailTest.java#L53"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewSeasonTest.java",
+    "sha256": "7ff76b53138faf487852973528d7b51dfe21cd7c1201a6e92f1a833139450c48",
+    "methods": [
+      {
+        "method": "seasonUsesSharedCardExactSeasonMetadataAndAvailableEpisodeCount",
+        "line": 20,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewSeasonTest.java#L20"
+      },
+      {
+        "method": "seasonDetailCreditsRemainScopedToSeasonCache",
+        "line": 26,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/leanback/details/PreviewSeasonTest.java#L26"
+      }
+    ],
+    "execution": "not run by this investigation"
+  },
+  {
+    "path": "src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java",
+    "sha256": "1ed5672ebedb6b362196b4c4a939eaaacc3fc0268cf62837a9bb9384a6d0d33c",
+    "methods": [
+      {
+        "method": "cacheSurvivesNewRequestAndReimportIdentityButSeparatesLanguages",
+        "line": 20,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L20"
+      },
+      {
+        "method": "genuineNegativeResultsCacheAndExpireWithoutCachingFailures",
+        "line": 21,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L21"
+      },
+      {
+        "method": "providerPauseSurvivesProcessStateAndManualCannotIgnoreIt",
+        "line": 26,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L26"
+      },
+      {
+        "method": "queueDeduplicatesAndPromotesManualAbovePlaybackAndSpeculation",
+        "line": 27,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L27"
+      },
+      {
+        "method": "playbackPreparesOnlyRemainingAvailableCurrentSeasonEpisodes",
+        "line": 29,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L29"
+      },
+      {
+        "method": "currentSeasonSkipsKnownMissingFiles",
+        "line": 30,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L30"
+      },
+      {
+        "method": "changedLanguagePreferenceDropsQueuedProviderRequest",
+        "line": 31,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L31"
+      },
+      {
+        "method": "retryAfterSecondsAndHttpDateAndExponentialBackoffAreHonoured",
+        "line": 32,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L32"
+      },
+      {
+        "method": "localSidecarIsVerifiedWithoutCallingProviderAndLanguageIsNotGuessed",
+        "line": 33,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L33"
+      },
+      {
+        "method": "importingAndOptingOutCannotStartProviderRequests",
+        "line": 34,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L34"
+      },
+      {
+        "method": "measuredCaptionsAudioChannelsAndDescriptionStayFileScoped",
+        "line": 35,
+        "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/test/java/com/archos/mediacenter/video/utils/SubtitleDiscoveryTest.java#L35"
+      }
+    ],
+    "execution": "not run by this investigation"
+  }
+]

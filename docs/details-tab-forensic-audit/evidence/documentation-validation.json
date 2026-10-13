@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-13",
+  "classification": "documentation/static evidence validation only; not application test results",
+  "source_sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "source_excerpts_exact": 88,
+  "file_hashes_verified": 81,
+  "immutable_links_verified": 290,
+  "distinct_lower_fact_labels": 44,
+  "lower_fact_calls": 41,
+  "labels_all_documented": true,
+  "existing_render_hashes_verified": 4,
+  "svg_xml_valid": true,
+  "signed_source_worktree_clean": true,
+  "no_app_tests_or_apk_build": true
+}

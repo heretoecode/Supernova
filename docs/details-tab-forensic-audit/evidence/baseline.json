@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-13",
+  "signed_source": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "native_metadata_pin": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+  "medialib_pin": "5758074049bc153ac4967b4ecd21886469270076",
+  "reference_commits": {
+    "decisions": "d75024fed0747453ea2cf774506beb66f22f9773",
+    "maintenance": "eac3e504490a92dd9f43252649264657e485982c",
+    "atlas": "7b6413a641139efe4d355727980f12f9729d1bbc",
+    "main": "75d9f012fa4f65869eef5d972ad4725df504bd9c",
+    "qa_receipts": "16a60cb11a5dd20ebe374873db360e32b617d7b0"
+  },
+  "documentation_branch": "docs/details-tab-forensic-audit-2026-10-13",
+  "source_vs_qa_paths": [
+    "docs/0.138/BUILD_QA.md",
+    "docs/0.138/CONFORMANCE.md",
+    "docs/0.138/INTAKE.md",
+    "docs/0.138/SHIELD_QA.md",
+    "docs/0.138/SIGNED_QA_CI_EVIDENCE.json",
+    "docs/0.138/SIGNED_QA_VERIFICATION.json"
+  ],
+  "main_vs_signed_src_res": "213 files changed, 980 insertions(+), 5921 deletions(-)",
+  "source_worktree_status": "",
+  "scope": {
+    "app_changes": false,
+    "apk_build": false,
+    "app_tests_executed": false,
+    "physical_ui_inspection": false,
+    "owner_photo_bytes_available": false,
+    "new_artifacts": "documentation/evidence/reconstruction only"
+  },
+  "image_evidence": [
+    {
+      "file": "0138-details-five-sections.png",
+      "sha256": "db46b7eee4a3f6510fa6cba7cec45f194bba3b1b8197466bccc130351a73444e",
+      "provenance": "Robolectric actual application view with synthetic fixtures",
+      "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9",
+      "hash_verified": true,
+      "classification": "B: existing synthetic native fixture, not Shield",
+      "new_render": false
+    },
+    {
+      "file": "0138-details-five-sections-150-text.png",
+      "sha256": "492b20c651c8611f0df44df2fd9189ecc387afb9f917070848898b3fa96e4a16",
+      "provenance": "Robolectric actual application view with synthetic fixtures",
+      "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9",
+      "hash_verified": true,
+      "classification": "B: existing synthetic native fixture, not Shield",
+      "new_render": false
+    },
+    {
+      "file": "0138-details-small-viewport.png",
+      "sha256": "47ea70af5a500b0a0d15fec54ff3048789c3979f3d9ca36b180ca7a6ef3f3800",
+      "provenance": "Robolectric actual application view with synthetic fixtures",
+      "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9",
+      "hash_verified": true,
+      "classification": "B: existing synthetic native fixture, not Shield",
+      "new_render": false
+    },
+    {
+      "file": "0138-details-local-tracks-150-text.png",
+      "sha256": "f0a4937f79b3e742084806b498e47a6de444272835cb2a26784bff8781d27f2e",
+      "provenance": "Robolectric actual application view with synthetic fixtures",
+      "test_source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9",
+      "hash_verified": true,
+      "classification": "B: existing synthetic native fixture, not Shield",
+      "new_render": false
+    }
+  ]
+}
