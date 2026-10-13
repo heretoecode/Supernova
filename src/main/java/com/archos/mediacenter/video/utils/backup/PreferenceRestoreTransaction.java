@@ -33,11 +33,13 @@ public final class PreferenceRestoreTransaction {
         private final Set<String> healthKeys;
         public final Set<BackupCategory> categories;
         public final int unresolved;
+        public final Set<String> receivingChecks;
         private Plan(SharedPreferences owner,Map<String,Object> before,Map<String,Object> after,Set<String> keys,Map<String,Object> healthBefore,Map<String,Object> healthAfter,Set<String> healthKeys,Set<BackupCategory> categories,int unresolved){
             this.owner=owner;
             this.before=copy(before);this.after=copy(after);this.keys=Collections.unmodifiableSet(new LinkedHashSet<>(keys));
             this.healthBefore=copy(healthBefore);this.healthAfter=copy(healthAfter);this.healthKeys=Collections.unmodifiableSet(new LinkedHashSet<>(healthKeys));
             this.categories=Collections.unmodifiableSet(EnumSet.copyOf(categories));this.unresolved=unresolved;
+            this.receivingChecks=after.containsKey("user_defined_density_confirmed")?Collections.singleton("user_defined_density"):Collections.emptySet();
         }
     }
     private final SharedPreferences prefs;
@@ -100,6 +102,7 @@ public final class PreferenceRestoreTransaction {
                 healthKeys.addAll(notes.keys);healthAfter.putAll(notes.values);unresolved+=notes.unresolved;
             }else throw new JSONException("Category restore codec not registered: "+category.name());
         }
+        if(after.containsKey("user_defined_density")&&!Objects.equals(current.get("user_defined_density"),after.get("user_defined_density"))){keys.add("user_defined_density_confirmed");after.put("user_defined_density_confirmed",false);}
         Map<String,Object> before=new LinkedHashMap<>();for(String key:keys)if(current.containsKey(key))before.put(key,current.get(key));
         Map<String,?> healthCurrent=health.getAll();Map<String,Object> healthBefore=new LinkedHashMap<>();for(String key:healthKeys)if(healthCurrent.containsKey(key))healthBefore.put(key,healthCurrent.get(key));
         return new Plan(prefs,before,after,keys,healthBefore,healthAfter,healthKeys,selected.keySet(),unresolved);
@@ -148,7 +151,7 @@ public final class PreferenceRestoreTransaction {
         }
         if(!edit.commit())throw new IOException("Configuration write failed; private recovery is required");
     }
-    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||PortablePreferredVersions.ownsKey(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
+    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||PortablePreferredVersions.ownsKey(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
     private static boolean healthOwned(String key){return key.equals(PortableReviewNotes.PENDING)||key.matches("incorrect:[1-9][0-9]{0,18}");}
     private static JSONObject record(Plan plan,boolean complete)throws JSONException,IOException{
         JSONArray values=new JSONArray();recordValues(values,"DEFAULT",plan.keys,plan.before);recordValues(values,"HEALTH",plan.healthKeys,plan.healthBefore);

@@ -104,4 +104,11 @@ public class PreferenceRestoreTransactionTest {
         var health=app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH,0);health.edit().putBoolean("incorrect:10",true).commit();prefs.edit().putInt("preview_accent41",19).commit();journal.getParentFile().mkdirs();Files.writeString(journal.toPath(),new JSONObject().put("schema",1).put("complete",false).put("values",new JSONArray().put(new JSONObject().put("key","preview_accent41").put("present",true).put("type","int").put("value",7))).toString());
         assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,transaction.recover());assertEquals(7,prefs.getInt("preview_accent41",0));assertTrue(health.getBoolean("incorrect:10",false));untouched();
     }
+    @Test public void changedSupportedDensityRequiresReceivingConfirmationAndRecoveryPreservesOldConfirmation()throws Exception{
+        prefs.edit().putInt("user_defined_density",160).putBoolean("user_defined_density_confirmed",true).commit();JSONObject incoming=appearance();incoming.getJSONObject("values").put("user_defined_density",new JSONObject().put("type","INT").put("value",240));var plan=transaction.prepare(Map.of(BackupCategory.APPEARANCE,incoming),null);assertEquals(Set.of("user_defined_density"),plan.receivingChecks);assertTrue(prefs.getBoolean("user_defined_density_confirmed",false));
+        try{transaction.apply(plan,()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.DEFAULT_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}assertEquals(240,prefs.getInt("user_defined_density",0));assertFalse(prefs.getBoolean("user_defined_density_confirmed",true));transaction.recover();assertEquals(160,prefs.getInt("user_defined_density",0));assertTrue(prefs.getBoolean("user_defined_density_confirmed",false));
+        transaction.apply(transaction.prepare(Map.of(BackupCategory.APPEARANCE,incoming),null),()->false);assertFalse(prefs.getBoolean("user_defined_density_confirmed",true));
+        for(int unsupported:new int[]{0,1,159,2147483647}){incoming.getJSONObject("values").getJSONObject("user_defined_density").put("value",unsupported);try{transaction.prepare(Map.of(BackupCategory.APPEARANCE,incoming),null);fail();}catch(JSONException expected){}}
+        assertEquals(240,prefs.getInt("user_defined_density",0));untouched();
+    }
 }

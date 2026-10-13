@@ -74,7 +74,7 @@ public final class PortableSettingsRegistry {
     private static boolean valid(String key,Rule rule,Object value){
         switch(rule.type){
             case BOOLEAN:return value instanceof Boolean;
-            case INT:return numeric(value)&&((Number)value).longValue()>=Integer.MIN_VALUE&&((Number)value).longValue()<=Integer.MAX_VALUE;
+            case INT:return numeric(value)&&((Number)value).longValue()>=Integer.MIN_VALUE&&((Number)value).longValue()<=Integer.MAX_VALUE&&(!key.equals("user_defined_density")||Arrays.asList(-1L,160L,240L,320L,480L).contains(((Number)value).longValue()));
             case FLOAT:return value instanceof Number&&Float.isFinite(((Number)value).floatValue())&&((Number)value).doubleValue()>0&&((Number)value).doubleValue()<=4;
             case COUNTRY:return value instanceof String&&countries().contains(value);
             case PROVIDER:return string(value,"(?:|[1-9][0-9]{0,8})",9);
@@ -117,7 +117,7 @@ public final class PortableSettingsRegistry {
         for(Map.Entry<String,Object> item:data.entrySet()){Object value=item.getValue();String key=item.getKey();switch(rule(key).type){
             case BOOLEAN:editor.putBoolean(key,(Boolean)value);break;case INT:editor.putInt(key,((Number)value).intValue());break;case FLOAT:editor.putFloat(key,((Number)value).floatValue());break;
             case LANGUAGES:case PROVIDERS:editor.putStringSet(key,(Set<String>)value);break;default:editor.putString(key,(String)value);
-        }}return editor;
+        }}if(data.containsKey("user_defined_density")&&!Objects.equals(prefs.getAll().get("user_defined_density"),((Number)data.get("user_defined_density")).intValue()))editor.putBoolean("user_defined_density_confirmed",false);return editor;
     }
     private PortableSettingsRegistry(){}
 }
