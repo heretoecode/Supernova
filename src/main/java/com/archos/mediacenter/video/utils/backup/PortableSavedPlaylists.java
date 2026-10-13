@@ -40,7 +40,7 @@ public final class PortableSavedPlaylists {
             try(Cursor rows=database.query(ListTables.LIST_TABLE,new String[]{VideoStore.List.Columns.ID,VideoStore.List.Columns.TITLE,VideoStore.List.Columns.SYNC_STATUS},null,null,null,null,"_id ASC")){
                 while(rows.moveToNext()){
                     if(rows.getType(0)!=Cursor.FIELD_TYPE_INTEGER||rows.getLong(0)<=0||!rows.isNull(1)&&rows.getType(1)!=Cursor.FIELD_TYPE_STRING||!rows.isNull(2)&&rows.getType(2)!=Cursor.FIELD_TYPE_INTEGER)throw new IOException("Invalid saved-playlist definition");
-                    long status=rows.isNull(2)?VideoStore.List.SyncStatus.STATUS_OK:rows.getLong(2);if(status<0||status>VideoStore.List.SyncStatus.STATUS_RENAMED)throw new IOException("Unknown saved-playlist sync status");if(status==VideoStore.List.SyncStatus.STATUS_DELETED)continue;
+                    long status=rows.isNull(2)?VideoStore.List.SyncStatus.STATUS_OK:rows.getLong(2);if(status<0||status>VideoStore.List.SyncStatus.STATUS_LOCAL_ONLY)throw new IOException("Unknown saved-playlist sync status");if(status==VideoStore.List.SyncStatus.STATUS_DELETED)continue;
                     if(names.size()>=MAX_LISTS||members.put(rows.getLong(0),new LinkedHashSet<>())!=null)throw new IOException("Ambiguous or excessive playlist definitions");names.put(rows.getLong(0),rows.isNull(1)?null:rows.getString(1));
                 }
             }
@@ -48,7 +48,7 @@ public final class PortableSavedPlaylists {
                 while(rows.moveToNext()){
                     if(rows.getType(0)!=Cursor.FIELD_TYPE_INTEGER)throw new IOException("Invalid playlist owner");Set<String> target=members.get(rows.getLong(0));if(target==null)continue;
                     if(!rows.isNull(3)&&rows.getType(3)!=Cursor.FIELD_TYPE_INTEGER)throw new IOException("Invalid playlist membership status");long status=rows.isNull(3)?0:rows.getLong(3);
-                    if(status<0||status>VideoStore.List.SyncStatus.STATUS_RENAMED)throw new IOException("Unknown playlist membership status");if(status==VideoStore.List.SyncStatus.STATUS_DELETED)continue;
+                    if(status<0||status>VideoStore.List.SyncStatus.STATUS_LOCAL_ONLY)throw new IOException("Unknown playlist membership status");if(status==VideoStore.List.SyncStatus.STATUS_DELETED)continue;
                     if(!rows.isNull(1)&&rows.getType(1)!=Cursor.FIELD_TYPE_INTEGER||!rows.isNull(2)&&rows.getType(2)!=Cursor.FIELD_TYPE_INTEGER)throw new IOException("Invalid playlist provider identity");long movie=rows.isNull(1)?-1:rows.getLong(1),episode=rows.isNull(2)?-1:rows.getLong(2);
                     if((movie>0)==(episode>0)||++count>MAX_MEMBERS)throw new IOException("Ambiguous or excessive playlist membership");String identity="tmdb:"+(movie>0?"movie:":"episode:")+(movie>0?movie:episode);member(identity);target.add(identity);
                 }

@@ -37,7 +37,7 @@ public class PortableSavedPlaylistsTest {
         JSONObject current=PortableSavedPlaylists.export(app,Map.of(1L,new PortableSavedPlaylists.Definition(1,"Current",List.of("tmdb:movie:999"))));JSONObject conflict=new JSONObject(current.toString());conflict.getJSONArray("rows").getJSONObject(0).put("name","Old pending name");PreferenceManager.getDefaultSharedPreferences(app).edit().putString(PortableSavedPlaylists.PENDING,conflict.toString()).commit();assertEquals(current.toString(),PortableSavedPlaylists.export(app,Map.of(1L,new PortableSavedPlaylists.Definition(1,"Current",List.of("tmdb:movie:999")))).toString());
     }
     @Test public void unknownDefinitionAndMembershipStatusesIncludingWideIntegerOverflowFail()throws Exception{
-        for(String column:List.of("definition","member"))for(long value:List.of(4L,-1L,4294967296L)){
+        for(String column:List.of("definition","member"))for(long value:List.of(5L,-1L,4294967296L)){
             app.deleteDatabase("media.db");try(VideoOpenHelper helper=new VideoOpenHelper(app)){var db=helper.getWritableDatabase();db.execSQL("INSERT INTO list_table(_id,title,sync_status) VALUES(1,'Fixture',?)",new Object[]{column.equals("definition")?value:0});db.execSQL("INSERT INTO video_list_table(list_id,m_online_id,e_online_id,sync_status) VALUES(1,123,-1,?)",new Object[]{column.equals("member")?value:0});try{PortableSavedPlaylists.read(db);fail();}catch(IOException expected){}}
         }
     }
