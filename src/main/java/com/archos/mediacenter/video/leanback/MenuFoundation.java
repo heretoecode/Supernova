@@ -74,7 +74,7 @@ public final class MenuFoundation {
     }
 
     /** Tracks the window boundary, so a covered parent never displays a second focus outline. */
-    public static final class WindowPanel extends android.widget.LinearLayout {
+    public static class WindowPanel extends android.widget.LinearLayout {
         boolean active = true;
         public WindowPanel(Context context) { super(context); }
         @Override public void onWindowFocusChanged(boolean focused) {
