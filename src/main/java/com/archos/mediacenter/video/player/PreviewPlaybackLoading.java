@@ -32,7 +32,6 @@ final class PreviewPlaybackLoading extends FrameLayout {
         ProgressBar spinner=new ProgressBar(context,null,android.R.attr.progressBarStyleSmall);spinner.setIndeterminateDrawable(com.archos.mediacenter.video.BuildConfig.FOUNDATION ? new com.archos.mediacenter.video.foundation.DoubleRingDrawable() : new com.archos.mediacenter.video.leanback.ThinSpinner());if(!com.archos.mediacenter.video.BuildConfig.FOUNDATION)spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(com.archos.mediacenter.video.leanback.PreviewAccent.color(context)));status.addView(spinner,new LinearLayout.LayoutParams(dp(28),dp(28)));
         TextView starting=text("Preparing playback…",16);starting.setPadding(dp(14),0,dp(8),0);status.addView(starting);
         TextView buffer=text("",13);buffer.setId(R.id.buffer_percentage);status.addView(buffer);
-        TextView torrent=text("",13);torrent.setId(R.id.torrent_status);torrent.setVisibility(GONE);labels.addView(torrent);
         Object value=intent.getSerializableExtra(PlayerService.VIDEO);
         if(value instanceof Video){Video video=(Video)value;source=video.getUri();fileSource=video.getFileUri();cachedArtwork=video.getPreviewBackdrop();
             com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title,video,true);

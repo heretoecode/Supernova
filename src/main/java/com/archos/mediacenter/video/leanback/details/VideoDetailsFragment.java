@@ -1627,14 +1627,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             updateSubtitleRowWhenReady();
 
         }
-        //do not execute file info task when torrent file
-        if(video.getFileUri() == null || mLaunchedFromPlayer) { // avoid NPE on .getLastPathSegment()
-            mVideoInfoTask = new VideoInfoTask();
-            mVideoInfoTask.execute(video);
-        } else if(!FileUtils.getName(video.getFileUri()).endsWith("torrent")) {
-            mVideoInfoTask = new VideoInfoTask();
-            mVideoInfoTask.execute(video);
-        }
+        mVideoInfoTask = new VideoInfoTask();
+        mVideoInfoTask.execute(video);
 
         if (poster == null) {
             if (log.isDebugEnabled()) log.debug("fullyReloadVideo: no poster, generate it");

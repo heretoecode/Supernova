@@ -320,7 +320,8 @@ android {
                          'kotlin/**',
                          'okhttp3/**',
                          'org/**',
-                         "**/libc++_shared.so"
+                         "**/libc++_shared.so",
+                         "**/libtorrentd.so"
                         ]
                          
             pickFirsts += ['lib/x86/libnvpnativehelper.so',

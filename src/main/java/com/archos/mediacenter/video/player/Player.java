@@ -142,7 +142,7 @@ public class Player implements IPlayerControl,
     private boolean     mCanSeekBack;
     private boolean     mCanSeekForward;
     private boolean     mIsLocalVideo;
-    private boolean     mIsTorrent;
+
     private boolean     mWaitForNewRate;
     private final int   NUMBER_RETRIES = 5;
     private int         numberRetries = NUMBER_RETRIES;
@@ -340,7 +340,7 @@ public class Player implements IPlayerControl,
         mForceSoftwareDecoding =forceSoftwareDecoding;
         mMediaPlayer = null;
         mUri = null;
-        mIsTorrent = false;
+
         mExtraMap = null;
         mResumeCtx.reset();
         mContext = context;
@@ -585,12 +585,6 @@ public class Player implements IPlayerControl,
             }
         });
     }
-    public void setIsTorrent(boolean isTorrent){
-        mIsTorrent = isTorrent;
-    }
-    public boolean isTorrent(){
-        return mIsTorrent;
-    }
     private volatile boolean previewFrameRendered;
     private boolean outputEstablished;
     private void playbackOutput(){
@@ -765,8 +759,7 @@ public class Player implements IPlayerControl,
             if (log.isDebugEnabled()) log.debug("pause: no listener");
         }
         /* on pause, Don't suspend when video is non local or can't seek */
-        //if (!isTorrent() && isLocalVideo() && canSeekBackward() && canSeekForward()) {
-        if (!isTorrent() && canSeekBackward() && canSeekForward()) {
+        if (canSeekBackward() && canSeekForward()) {
             if (log.isDebugEnabled()) log.debug("pause: allow to go to sleep");
             stayAwake(false);
         } else {

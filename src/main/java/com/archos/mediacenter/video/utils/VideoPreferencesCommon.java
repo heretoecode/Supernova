@@ -145,8 +145,6 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     public static final String KEY_NETSHARE_CATEGORY = "netshare_category";
     public static final String KEY_ADVANCED_3D_TV_SWITCH_SUPPORTED = "preferences_tv_switch_supported";
     public static final String KEY_ADVANCED_VIDEO_QUIT = "preferences_video_advanced_quit";
-    public static final String KEY_TORRENT_BLOCKLIST = "preferences_torrent_blocklist";
-    public static final String KEY_TORRENT_PATH = "preferences_torrent_path";
     public static final String KEY_SHARED_FOLDERS= "share_folders";
     public static final String KEY_SUBTITILES_CREDENTIALS= "subtitles_credentials";
     public static final String KEY_FORCE_SW = "force_software_decoding";
@@ -327,7 +325,6 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     List<String> UiLanguageListEntries = new ArrayList<>();
     List<String> UiLanguageListEntryValues = new ArrayList<>();
 
-    private final ActivityResultLauncher<Intent> mFolderPickerLauncher;
     private final ActivityResultLauncher<Intent> mTraktAuthLauncher;
 
     private final ActivityResultLauncher<String> backupDestination;
@@ -349,28 +346,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 intent.putExtra(MediaLibraryBackupService.EXTRA_IMPORT_FILE,path);getContext().startService(intent);
             });
         });
-        mFolderPickerLauncher = preferencesFragment.registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                this::onFolderPickerResult);
         mTraktAuthLauncher = preferencesFragment.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 this::onTraktAuthResult);
-    }
-
-    private void onFolderPickerResult(ActivityResult result) {
-        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-            String newPath = result.getData().getStringExtra(FolderPicker.EXTRA_SELECTED_FOLDER);
-            if (newPath != null) {
-                java.io.File f = new java.io.File(newPath);
-                if (f.isDirectory() && f.exists()) {
-                    PreferenceManager.getDefaultSharedPreferences(getActivity())
-                            .edit().putString(KEY_TORRENT_PATH, f.getAbsolutePath()).apply();
-                    TorrentPathDialogPreference pref =
-                            (TorrentPathDialogPreference) findPreference(KEY_TORRENT_PATH);
-                    if (pref != null) pref.notifyChanged();
-                }
-            }
-        }
     }
 
     private void onTraktAuthResult(ActivityResult result) {
@@ -683,10 +661,6 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
 
         addPreferencesFromResource(R.xml.preferences_video);
         mStreamingPreferences = new com.archos.mediacenter.video.streaming.StreamingPreferences(mPreferencesFragment);
-
-        TorrentPathDialogPreference torrentPref =
-                (TorrentPathDialogPreference) findPreference(KEY_TORRENT_PATH);
-        if (torrentPref != null) torrentPref.setFolderPickerLauncher(mFolderPickerLauncher);
 
         mSharedPreferences = getPreferenceManager().getSharedPreferences();
         migrateDolbyVisionPreference(mSharedPreferences);
@@ -1496,8 +1470,6 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         PreferenceCategory prefCategorty = (PreferenceCategory) findPreference(KEY_TRAKT_CATEGORY);
         prefCategorty.removePreference(mTraktFull);
         mTraktSigninPreference.setEnabled(true);
-        findPreference(KEY_TORRENT_BLOCKLIST).setOnPreferenceClickListener(null);
-        findPreference(KEY_TORRENT_PATH).setOnPreferenceClickListener(null);
 
         mLastTraktUser = Trakt.getUserFromPreferences(mSharedPreferences);
         if (onTraktUserChange()) {

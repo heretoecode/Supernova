@@ -24,7 +24,6 @@ import android.view.Window;
 import androidx.fragment.app.Fragment;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.TorrentObserverService;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 
 import org.slf4j.Logger;
@@ -101,14 +100,12 @@ public class VideoDetailsActivity extends LeanbackActivity {
     public void onPause(){
         traceDetails("activity-onPause");
         super.onPause();
-        if(getIntent().getBooleanExtra(VideoDetailsFragment.EXTRA_LAUNCHED_FROM_PLAYER, false))
-            TorrentObserverService.paused(this);
+
     }
     public void onResume(){
         super.onResume();
         traceDetails("activity-onResume");
-        if(getIntent().getBooleanExtra(VideoDetailsFragment.EXTRA_LAUNCHED_FROM_PLAYER, false))
-            TorrentObserverService.resumed(this);
+
     }
 
     @Override
