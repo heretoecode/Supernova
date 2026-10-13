@@ -31,7 +31,7 @@ public final class HomeIntentCodec {
         JSONObject payload=new JSONObject().put("schema",1).put("rows",rows);validate(payload);return payload;
     }
     private static void validatePending(JSONObject pending)throws JSONException{
-        if(pending.length()!=2||pending.getInt("schema")!=1)throw new JSONException("Unsupported pending Home schema");JSONArray rows=pending.getJSONArray("rows");if(rows.length()>200)throw new JSONException("Too many pending Home rows");Set<String> ids=new HashSet<>();
+        if(pending.length()!=2||!(pending.get("schema") instanceof Integer||pending.get("schema") instanceof Long)||pending.getLong("schema")!=1)throw new JSONException("Unsupported pending Home schema");JSONArray rows=pending.getJSONArray("rows");if(rows.length()>200)throw new JSONException("Too many pending Home rows");Set<String> ids=new HashSet<>();
         for(int i=0;i<rows.length();i++){JSONObject row=rows.getJSONObject(i);String id=row.getString("id");if(row.length()!=3||!ids.add(id)||!(Arrays.asList(PreviewHomeRows.SYSTEM).contains(id)||id.matches("custom:[a-zA-Z0-9-]{1,80}")))throw new JSONException("Invalid pending Home row");for(String key:new String[]{"members","calculated"}){JSONArray refs=row.getJSONArray(key);if(refs.length()>100000)throw new JSONException("Too many pending memberships");for(int n=0;n<refs.length();n++)PortableTitleReferences.validate(refs.getString(n));}}
     }
     public static void validate(JSONObject payload)throws JSONException{
@@ -43,7 +43,7 @@ public final class HomeIntentCodec {
             if(!row.getBoolean("movies")&&!row.getBoolean("tv"))throw new JSONException("Empty Home media types");
             if(!Arrays.asList("added","title","year").contains(row.getString("sort")))throw new JSONException("Unsupported Home sort");
             Object maximumValue=row.get("maximum");if(!(maximumValue instanceof Integer||maximumValue instanceof Long)||((Number)maximumValue).longValue()<0||((Number)maximumValue).longValue()>30)throw new JSONException("Invalid Home maximum type or range");int maximum=row.getInt("maximum");if(maximum<0||maximum>30||id.startsWith("custom:")&&!Arrays.asList(5,10,15,20,25,30).contains(maximum))throw new JSONException("Invalid Home maximum");
-            String genres=row.getString("genres"),icon=row.getString("icon");if(genres.length()>2048||genres.contains("://")||genres.contains("/")||genres.contains("\\")||icon.length()>80||icon.contains("://"))throw new JSONException("Unsafe Home genre or icon value");
+            String genres=row.getString("genres"),icon=row.getString("icon");if(!genres.isEmpty())label(genres,2048);if(!icon.isEmpty())label(icon,80);
             for(String key:new String[]{"members","calculated"}){JSONArray refs=row.getJSONArray(key);if(refs.length()>100000||id.equals("watchnext")&&refs.length()>0)throw new JSONException("Watch Next membership belongs to its own category");Set<String> unique=new HashSet<>();for(int n=0;n<refs.length();n++){String ref=refs.getString(n);PortableTitleReferences.validate(ref);if(!unique.add(ref))throw new JSONException("Duplicate Home title reference");}}
         }
     }
@@ -65,8 +65,9 @@ public final class HomeIntentCodec {
             }
             rows.put(row);if(pending.getJSONArray("members").length()+pending.getJSONArray("calculated").length()>0)pendingRows.put(pending);
         }
-        // Present-empty resets definitions; preserve separately owned Watch Next membership.
-        if(definitions.length()==0&& !watchNext.isEmpty())rows.put(new JSONObject().put("id","watchnext").put("name","Watch Next").put("members",new JSONArray(watchNext)));
+        // Omitted built-in rows and present-empty definitions still cannot erase independently owned queue state.
+        boolean queuePresent=false;for(int i=0;i<rows.length();i++)if(rows.getJSONObject(i).getString("id").equals("watchnext"))queuePresent=true;
+        if(!queuePresent&&!watchNext.isEmpty())rows.put(new JSONObject().put("id","watchnext").put("name","Watch Next").put("members",new JSONArray(watchNext)));
         return new Prepared(rows.toString(),new JSONObject().put("schema",1).put("rows",pendingRows).toString(),unresolved);
     }
     private HomeIntentCodec(){}

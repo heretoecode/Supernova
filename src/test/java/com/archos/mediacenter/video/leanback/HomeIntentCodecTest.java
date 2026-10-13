@@ -37,4 +37,12 @@ public class HomeIntentCodecTest {
         Context source=scope("source");PreviewHomeRows home=new PreviewHomeRows(source);home.rows.add(new PreviewHomeRows.Row("custom:test","smb://person:CANARY@host/private"));home.save();try{HomeIntentCodec.export(source,null);fail();}catch(JSONException expected){}
         home.rows.remove(home.rows.size()-1);home.save();JSONObject payload=HomeIntentCodec.export(source,null);payload.getJSONArray("rows").getJSONObject(0).getJSONArray("members").put("file:///private/CANARY");try{HomeIntentCodec.prepare(scope("target"),payload,null);fail();}catch(JSONException expected){}
     }
+    @Test public void customOnlyDefinitionsCannotClearUnselectedQueueAndSemanticGenreSlashIsPortable()throws Exception{
+        Context source=scope("source"),target=scope("target");PreviewHomeRows home=new PreviewHomeRows(source);PreviewHomeRows.Row row=new PreviewHomeRows.Row("custom:crime","Crime / Drama");row.genreRule="Crime / Drama";home.rows.add(0,row);home.save();
+        JSONObject exported=HomeIntentCodec.export(source,null);JSONObject payload=new JSONObject().put("schema",1).put("rows",new JSONArray().put(exported.getJSONArray("rows").getJSONObject(0)));
+        PreviewHomeRows destination=new PreviewHomeRows(target);for(var current:destination.rows)if(current.id.equals("watchnext"))current.members.add("v99");destination.save();
+        HomeIntentCodec.Prepared prepared=HomeIntentCodec.prepare(target,payload,null);PreferenceManager.getDefaultSharedPreferences(target).edit().putString("preview_home_rows41",prepared.rows).commit();PreviewHomeRows restored=new PreviewHomeRows(target);
+        assertEquals("Crime / Drama",restored.rows.get(0).genreRule);assertEquals(Set.of("v99"),restored.rows.stream().filter(current->current.id.equals("watchnext")).findFirst().get().members);
+        payload.getJSONArray("rows").getJSONObject(0).put("genres","/private/path");try{HomeIntentCodec.validate(payload);fail();}catch(JSONException expected){}
+    }
 }
