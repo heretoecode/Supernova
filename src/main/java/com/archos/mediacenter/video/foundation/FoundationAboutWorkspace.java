@@ -53,7 +53,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private String section = "About";
     private int selectedIndex, requestGeneration;
     private ExecutorService reader;
-    private boolean licencesOpened;private BundledNoticePager noticePager;
+    private boolean licencesOpened,licenceEntryPending;private BundledNoticePager noticePager;
     private final Map<String,String> legalCache = new java.util.LinkedHashMap<String,String>() { protected boolean removeEldestEntry(Map.Entry<String,String> entry) { return size()>4; } };
 
     public FoundationAboutWorkspace(PreferenceFragmentCompat fragment, LinearLayout split,
@@ -106,7 +106,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         normalMiddle.setVisibility(GONE);normalHelp.setVisibility(GONE);setVisibility(VISIBLE);
         select("About",parentButton);
     }
-    public void hide(){requestGeneration++;licencesOpened=false;for(TextView child:navigation)child.setVisibility(GONE);setVisibility(GONE);normalMiddle.setVisibility(VISIBLE);normalHelp.setVisibility(VISIBLE);}
+    public void hide(){requestGeneration++;licencesOpened=false;licenceEntryPending=false;for(TextView child:navigation)child.setVisibility(GONE);setVisibility(GONE);normalMiddle.setVisibility(VISIBLE);normalHelp.setVisibility(VISIBLE);}
     public void collapseNavigation(){for(TextView child:navigation)child.setVisibility(GONE);}
     public void enterContent(){enterContentInternal();}
     public void enter(){if(selectedNavigation==parentButton&&!navigation.isEmpty())navigation.get(0).requestFocus();else if(selectedNavigation!=null)selectedNavigation.requestFocus();}
@@ -128,14 +128,14 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         try {
             if(name.equals("About"))appInformation();
             else if(name.equals(SECTIONS[0]))releases();
-            else if(name.equals(SECTIONS[1])) { licencesOpened=false; showDetails("Open-source Licences", "Press OK to open the locally bundled software licences and notices.", null, null); }
+            else if(name.equals(SECTIONS[1])) { licencesOpened=true;licenceEntryPending=false;loadLicences(); }
             else if(name.equals(SECTIONS[2]))credits();
             else technical();
         } catch(Exception unavailable){showDetails("Information unavailable","This build could not read the bundled information.",null,null);}
         if(!rows.isEmpty()){selectedIndex=Math.min(selectedIndex,rows.size()-1);rowSelections.get(selectedIndex).run();}
     }
     private void enterContentInternal(){enterContentInternal(true);}
-    private void enterContentInternal(boolean confirmed){if(section.equals(SECTIONS[1])&&!licencesOpened&&confirmed){licencesOpened=true;loadLicences();return;}if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
+    private void enterContentInternal(boolean confirmed){if(section.equals(SECTIONS[1])&&rows.isEmpty()){licenceEntryPending=true;return;}if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
     private void focusSelectedRow(){if(!rows.isEmpty())rows.get(Math.min(selectedIndex,rows.size()-1)).requestFocus();else selectedNavigation.requestFocus();}
     private TextView row(String label,Runnable select,Runnable activate){
         final int index=rows.size();TextView row=text(label,14);row.setPadding(dp(10),dp(10),dp(8),dp(10));
@@ -208,9 +208,9 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                     for(int i=0;i<components.length();i++){
                         JSONObject component=components.optJSONObject(i);if(component==null)continue;
                         String name=component.optString("name"),version=component.optString("version","Version unavailable");
-                        row(name+"\n"+component.optString("role","Software component"),()->loadLegal(component,name+" · "+version),null);
+                        TextView componentRow=row(name,()->loadLegal(component,name+" · "+version),null);componentRow.setSingleLine(true);componentRow.setEllipsize(android.text.TextUtils.TruncateAt.END);componentRow.setMinimumHeight(dp(44));
                     }
-                    if(!rows.isEmpty())focusSelectedRow();
+                    if(!rows.isEmpty()){selectedIndex=Math.min(selectedIndex,rows.size()-1);if(licenceEntryPending){licenceEntryPending=false;focusSelectedRow();}else rowSelections.get(selectedIndex).run();}
                 });
             } catch(Exception error){post(()->{if(generation==requestGeneration)showDetails("Information unavailable","This build could not read the bundled licence catalogue.",null,null);});}
         });
@@ -257,7 +257,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             int id=R.drawable.tmdb_banner;
             if(id!=0){ImageView image=new ImageView(getContext());image.setImageResource(id);image.setContentDescription("TMDB");detailsBody.addView(image,new LayoutParams(dp(160),dp(48)));}
         }
-        if(url!=null&&!url.isEmpty()){
+        if(url!=null&&!url.isEmpty()&&!section.equals(SECTIONS[1])){
             ImageView image=new ImageView(getContext());image.setContentDescription("QR code for the official "+heading+" website");detailsBody.addView(image,new LayoutParams(dp(124),dp(124)));
             final int generation=requestGeneration;
             reader().execute(()->{Bitmap bitmap=qr(url);post(()->{if(generation==requestGeneration&&image.getParent()==detailsBody&&isAttachedToWindow())image.setImageBitmap(bitmap);else if(bitmap!=null)bitmap.recycle();});});

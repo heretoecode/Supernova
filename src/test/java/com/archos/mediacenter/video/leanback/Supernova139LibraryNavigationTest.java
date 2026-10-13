@@ -38,7 +38,7 @@ public class Supernova139LibraryNavigationTest {
             key(nav,KeyEvent.KEYCODE_DPAD_UP);assertSame(selected,nav.findFocus());
             key(nav,KeyEvent.KEYCODE_DPAD_DOWN);assertEquals(first,nav.findFocus().getTag());
             TextView control=nav.findViewWithTag(mode==2?"custom.control.order":"control:2");assertEquals(1,control.getLineCount());assertEquals(0,control.getLayout().getEllipsisCount(0));assertTrue(control.getHeight()>=44&&control.getHeight()<49);assertNotNull(control.getCompoundDrawables()[0]);
-            PreviewPagesTest.capture(nav,"0139-library-"+mode);
+            nav.dispatchWindowFocusChanged(true);assertTrue(nav.hasWindowFocus());PreviewPagesTest.capture(nav,"0139-library-"+mode);
         }}finally{host.pause().stop().destroy();}
     }
     @Test public void explicitNavigationEntryDoesNotReuseDeepPosterAnchor(){
