@@ -31,3 +31,10 @@ This is a documentation/conversation decision audit, **not** a proof that every 
 - This is **owner-reported historical implementation**, not independently source/build-verified in this documentation review. If a future release process needs precise artifact/commit/signing identity, consult original branding release receipts; do not change or regenerate signing credentials.
 - Preserve existing implemented branding and signing in 0.139. Separate parked **Shield Home launcher channels/integration** from already implemented Android TV **launcher app banner**.
 - Supersedes earlier entry in this gap review that suggested launcher banner artwork remained undecided.
+
+
+## 2026-10-13 — Closed by owner
+- **Hero auto-rotation interval: 8 seconds APPROVED** (following 30 seconds inactivity), replacing the earlier recommendation-only status.
+- **Customise Home unfinished draft confirmation: APPROVED**, with Continue editing as default focus and Discard row alternative; normal valid settings continue live-saving.
+- **Details tab comprehensive visual redesign: deferred for discussion**; preserve agreed 0.139 tab/navigation fixes and existing full content.
+- **Launcher app banner: already implemented in prior branding release**, not an outstanding design choice. Branding release also implemented backdrops, app icon, progress/loading icons, animated icon and new signing key. Preserve these. Shield Home channel integration remains separate and parked.
