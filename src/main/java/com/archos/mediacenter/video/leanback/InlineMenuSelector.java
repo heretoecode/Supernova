@@ -14,9 +14,9 @@ final class InlineMenuSelector extends TextView {
     private int selected, preview;
     private boolean editing;
 
-    InlineMenuSelector(Context context, String[] labels, int selected, String icon, IntConsumer commit) {
+    InlineMenuSelector(Context context, String[] labels, int initial, String icon, IntConsumer commit) {
         super(context);
-        this.labels = labels.clone(); this.selected = Math.max(0, Math.min(selected, labels.length - 1));
+        this.labels = labels.clone(); this.selected = Math.max(0, Math.min(initial, labels.length - 1));
         this.preview = this.selected; this.commit = commit;
         setTextSize(14 * TvLayout.scale(context)); setTextColor(MenuFoundation.TEXT);
         setTypeface(android.graphics.Typeface.create("sans-serif-light", 0)); setIncludeFontPadding(false);
