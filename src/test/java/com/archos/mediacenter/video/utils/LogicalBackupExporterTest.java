@@ -26,7 +26,7 @@ public class LogicalBackupExporterTest {
         try(VideoOpenHelper helper=new VideoOpenHelper(app)) {
             var db=helper.getWritableDatabase();db.execSQL("INSERT INTO files(_id,remote_id,media_type,Archos_hiddenByUser,_data,bookmark,title) VALUES(10,10,3,1,'file:///excluded/PATH_CANARY.mkv',-2,'TITLE_CANARY'),(11,11,3,0,'file:///other/second.mkv',5555,'SECOND_CANARY'),(12,12,2,0,'file:///audio/AUDIO_CANARY.mp3',0,'AUDIO_CANARY')");
             db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,Nova_pinned,name_movie) VALUES(100,10,123,9,'MOVIE_CANARY'),(101,11,456,0,'OTHER_CANARY')");
-            db.execSQL("INSERT INTO SHOW(_id,s_online_id,Nova_pinned,name_show,s_genres) VALUES(20,789,8,'SHOW_CANARY','Drama')");db.execSQL("UPDATE files SET ArchosMediaScraper_type=1,ArchosMediaScraper_id=100 WHERE _id=10");db.execSQL("UPDATE files SET ArchosMediaScraper_type=1,ArchosMediaScraper_id=101 WHERE _id=11");
+            db.execSQL("INSERT INTO SHOW(_id,s_online_id,Nova_pinned,name_show,s_genres) VALUES(20,789,8,'SHOW_CANARY','Drama')");db.execSQL("UPDATE files SET ArchosMediaScraper_type=11,ArchosMediaScraper_id=100 WHERE _id=10");db.execSQL("UPDATE files SET ArchosMediaScraper_type=11,ArchosMediaScraper_id=101 WHERE _id=11");
         }
         prefs.edit().putBoolean("hide_watched",true).putBoolean("supernova_library_policy_initialized",true).putBoolean("supernova_onboarding_complete",true).putStringSet("supernova_library_roots",Set.of("file:///allowed")).commit();
     }
