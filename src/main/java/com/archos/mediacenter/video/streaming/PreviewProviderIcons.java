@@ -19,6 +19,9 @@ public final class PreviewProviderIcons {
    case "paramount+":case "paramount plus":return R.drawable.provider_paramountplus;
    case "hbo":return R.drawable.provider_hbo;
    case "hbo max":return R.drawable.provider_hbomax;
+   case "disney+":case "disney plus":return R.drawable.provider_disneyplus;
+   case "amazon prime video":case "prime video":return R.drawable.provider_primevideo;
+   case "britbox":return R.drawable.provider_britbox;
    case "mubi":return R.drawable.provider_mubi;
    case "crunchyroll":return R.drawable.provider_crunchyroll;
    default:return 0;

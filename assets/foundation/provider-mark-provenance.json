@@ -36,14 +36,6 @@
       "modification": "Original path data; white fill and Android vector container; no background geometry"
     },
     {
-      "slug": "hbomax",
-      "upstream_file": "icons/hbomax.svg",
-      "svg_sha256": "7d964ae20f0c9dc40d20ef9fab36658cb962443ae52fa7d075c20d12eb1b3e04",
-      "resource": "res/drawable/provider_hbomax.xml",
-      "resource_sha256": "3188d2668882f735f7e3063f2fbbd465a455b67d19cd94d36916bad13421cb0f",
-      "modification": "Original path data; white fill and Android vector container; no background geometry"
-    },
-    {
       "slug": "mubi",
       "upstream_file": "icons/mubi.svg",
       "svg_sha256": "f49ca57d4efb9356a76088e0148b2f9c6d253dccb20ae5fba8d108d82b80e290",
@@ -60,10 +52,7 @@
       "modification": "Original path data; white fill and Android vector container; no background geometry"
     }
   ],
-  "missing_authentic_assets": [
-    "Disney+",
-    "Prime Video",
-    "BritBox"
-  ],
-  "fallback": "Neutral streaming glyph and existing provider name; never desaturated opaque catalogue tile"
+  "missing_authentic_assets": [],
+  "fallback": "Neutral streaming glyph and existing provider name; never desaturated opaque catalogue tile",
+  "additional_marks": "foundation/commons-provider-mark-provenance.json"
 }

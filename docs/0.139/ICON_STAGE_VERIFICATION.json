@@ -1,0 +1,13 @@
+{
+  "source_sha": "1278e7c44ca113cea7d54bb6b8e608d19016ada7",
+  "classes": 8,
+  "tests": 27,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "limits": [
+    "Seven initial Simple Icons assets and249 flag coverage; four additional Commons marks changed after this SHA and require separate render verification",
+    "Provider control optics, localisation/aliases and Shield open",
+    "Registry receiving-device capability validation and density confirmation still pending"
+  ]
+}

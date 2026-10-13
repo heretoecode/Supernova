@@ -472,6 +472,14 @@
       "role": "Original provider mark paths converted to transparent white Android vectors",
       "url": "https://github.com/simple-icons/simple-icons",
       "text_asset": "foundation/legal/simple-icons-provider-marks.txt"
+    },
+    {
+      "name": "Additional provider logo marks",
+      "version": "Recorded Commons source revisions and checksums",
+      "licence": "Public-domain logo declarations; brand trademarks",
+      "role": "Disney+, Prime Video, BritBox2026 and HBO Max2025 original geometry in white vectors",
+      "url": "https://commons.wikimedia.org",
+      "text_asset": "foundation/legal/commons-provider-marks.txt"
     }
   ]
 }
