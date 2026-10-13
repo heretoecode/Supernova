@@ -456,6 +456,14 @@
       "role": "Source availability and relinking notice",
       "url": "https://github.com/heretoecode/Supernova",
       "text_asset": "foundation/legal/source-availability.txt"
+    },
+    {
+      "name": "Twemoji country flags",
+      "version": "b6b55fef1e8636b540a6d016a4729ca8cdf2e60b",
+      "licence": "Creative Commons Attribution4.0 International",
+      "role": "Explicit-region country flag artwork; unchanged source PNGs",
+      "url": "https://github.com/jdecked/twemoji",
+      "text_asset": "foundation/legal/twemoji-country-flags.txt"
     }
   ]
 }

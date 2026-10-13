@@ -1,0 +1,13 @@
+{
+  "source_sha": "d7d7f71ad1edab9eedfe74558e2e5ecb0a21fbce",
+  "classes": 7,
+  "tests": 21,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "limits": [
+    "Home codec staged, not yet included in logical archive or journal/UI",
+    "Unresolved opaque references retained; no universal cross-device matching guarantee",
+    "No Shield claim"
+  ]
+}
