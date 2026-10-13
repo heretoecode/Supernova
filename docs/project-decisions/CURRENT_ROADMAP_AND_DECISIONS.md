@@ -1,4 +1,4 @@
-# SUPERNOVA — CURRENT ROADMAP AND DECISION HUB
+> **CURRENT IMPLEMENTATION AUTHORITY — 2026-10-13:** Owner has now authorised Codex to begin work on the complete approved **Supernova 0.139** scope (original 41 workstreams plus hero rotation and comprehensive Backup & Restore). Read [authoritative 0.139 Codex implementation handover](2026-10-13-supernova-0139-codex-implementation-handover.md) FIRST. Older statements below about full handover still pending, backup/hero parked, or coding not authorised are superseded. This is NOT approval to merge, publish or change signing/identity.\n\n# SUPERNOVA — CURRENT ROADMAP AND DECISION HUB
 Updated: 2026-10-13. Owner-approved planning and QA source of truth; **Customise Home first implementation approved in principle**, but complete 0.139 release scope and other candidates still require explicit handover approval.
 
 > Version naming: this repository's established release notation is **0.138** (owner sometimes says 1.3.8) and **0.139** (owner sometimes says 1.3.9). Confirm actual versionCode/versionName in signed artifact before publishing; do not silently rename.
