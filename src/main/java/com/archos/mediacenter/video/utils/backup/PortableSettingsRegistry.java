@@ -102,7 +102,7 @@ public final class PortableSettingsRegistry {
         return new JSONObject().put("schema",SCHEMA).put("category",category.name()).put("values",data);
     }
     public static Map<String,Object> validate(JSONObject payload,Category category)throws JSONException{
-        if(payload.length()!=3||payload.getInt("schema")!=SCHEMA||!payload.getString("category").equals(category.name()))throw new JSONException("Unsupported settings schema or category");
+        if(payload.length()!=3||!numeric(payload.get("schema"))||((Number)payload.get("schema")).longValue()!=SCHEMA||!(payload.get("category") instanceof String)||!payload.getString("category").equals(category.name()))throw new JSONException("Unsupported settings schema or category");
         JSONObject data=payload.getJSONObject("values");Map<String,Object> result=new LinkedHashMap<>();
         for(Iterator<String> keys=data.keys();keys.hasNext();){String key=keys.next();Rule rule=rule(key);JSONObject item=data.getJSONObject(key);
             if(rule==null||rule.category!=category||item.length()!=2||!rule.type.name().equals(item.getString("type")))throw new JSONException("Unsupported category-owned setting");
