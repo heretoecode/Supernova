@@ -56,5 +56,41 @@ public final class PortableViewingState {
             result.put(key,new ViewingHistory.Record(completed,started,position,duration,played,completedAt));
         }return Collections.unmodifiableMap(result);
     }
+    /** App-private before/after images, never accepted as a public category payload. */
+    public static JSONObject recoverySnapshot(Map<String,ViewingHistory.Record> records)throws JSONException {
+        JSONArray rows=new JSONArray();for(String key:new TreeSet<>(records.keySet())) {
+            ViewingHistory.Record value=records.get(key);rows.put(new JSONObject().put("identity",key)
+                    .put("completed",value.completed).put("started",value.started).put("position",value.position)
+                    .put("duration",value.duration).put("played",value.played).put("completedAt",value.completedAt));
+        }
+        JSONObject snapshot=new JSONObject().put("schema",1).put("rows",rows);validateRecoverySnapshot(snapshot);return snapshot;
+    }
+    public static Map<String,ViewingHistory.Record> validateRecoverySnapshot(JSONObject snapshot)throws JSONException {
+        if(snapshot.length()!=2||integer(snapshot.get("schema"),1,1)!=1)throw new JSONException("Unsupported viewing recovery schema");
+        JSONArray rows=snapshot.getJSONArray("rows");if(rows.length()>100000)throw new JSONException("Too many viewing recovery records");
+        Map<String,ViewingHistory.Record> result=new LinkedHashMap<>();for(int i=0;i<rows.length();i++) {
+            JSONObject row=rows.getJSONObject(i);if(row.length()!=7||!(row.get("identity") instanceof String)||
+                    !(row.get("completed") instanceof Boolean)||!(row.get("started") instanceof Boolean))throw new JSONException("Invalid viewing recovery fields");
+            String key=row.getString("identity");identity(key);
+            ViewingHistory.Record value=new ViewingHistory.Record(row.getBoolean("completed"),row.getBoolean("started"),
+                    (int)integer(row.get("position"),-2,Integer.MAX_VALUE),(int)integer(row.get("duration"),0,Integer.MAX_VALUE),
+                    integer(row.get("played"),0,Long.MAX_VALUE),integer(row.get("completedAt"),0,Long.MAX_VALUE));
+            if(result.put(key,value)!=null)throw new JSONException("Duplicate viewing recovery identity");
+        }return Collections.unmodifiableMap(result);
+    }
+    /** Roll back only selected columns; later unselected intent is preserved, including newly created records. */
+    public static JSONObject recoverSelected(Map<String,ViewingHistory.Record> current,JSONObject before,boolean history,boolean positions)throws JSONException {
+        if(!history&&!positions)throw new JSONException("No viewing recovery category selected");
+        Map<String,ViewingHistory.Record> originals=validateRecoverySnapshot(before),result=new LinkedHashMap<>();
+        Set<String> keys=new TreeSet<>(current.keySet());keys.addAll(originals.keySet());
+        for(String key:keys) {
+            ViewingHistory.Record now=current.get(key),old=originals.get(key);if(now==null)now=new ViewingHistory.Record(false,false,0,0,0,0);
+            boolean original=old!=null;if(old==null)old=new ViewingHistory.Record(false,false,0,0,0,0);
+            int position=positions?old.position:history&&(old.position<0||now.position<0)?old.position:now.position;
+            ViewingHistory.Record value=new ViewingHistory.Record(history?old.completed:now.completed,history?old.started:now.started,
+                    position,positions?old.duration:now.duration,history?old.played:now.played,history?old.completedAt:now.completedAt);
+            if(original||value.completed||value.started||value.position!=0||value.duration!=0||value.played!=0||value.completedAt!=0)result.put(key,value);
+        }return recoverySnapshot(result);
+    }
     private PortableViewingState(){}
 }

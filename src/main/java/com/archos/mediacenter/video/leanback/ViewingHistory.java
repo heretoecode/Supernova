@@ -60,7 +60,7 @@ public final class ViewingHistory {
         if(history==null&&positions==null)throw new org.json.JSONException("No viewing category selected");
         if(history!=null)PortableViewingState.validate(history,PortableViewingState.Kind.HISTORY);
         if(positions!=null)PortableViewingState.validate(positions,PortableViewingState.Kind.POSITIONS);
-        restoreCancelled(cancel);awaitWrites();restoreCancelled(cancel);
+        restoreCancelled(cancel);if(!Thread.holdsLock(LOCK))awaitWrites();restoreCancelled(cancel);
         synchronized(LOCK){try(Store helper=new Store(context)){
             android.database.sqlite.SQLiteDatabase database=helper.getWritableDatabase();Map<String,Record> existing=new LinkedHashMap<>();
             try(Cursor rows=database.query("history",null,null,null,null,null,null)){while(rows.moveToNext())existing.put(rows.getString(0),new Record(rows.getInt(1)!=0,rows.getInt(2)!=0,rows.getInt(3),rows.getInt(4),rows.getLong(5),rows.getLong(6)));}
@@ -74,6 +74,45 @@ public final class ViewingHistory {
                 restoreCancelled(cancel);database.setTransactionSuccessful();
             }finally{database.endTransaction();}
         }catch(android.database.sqlite.SQLiteException failure){throw new java.io.IOException("Viewing-state transaction failed; restoration must not be reported as complete",failure);}}
+    }
+    /** Strict app-private image capture. Absent stores are read as empty without creating a database. */
+    public static org.json.JSONObject captureRecovery(Context context)throws java.io.IOException,org.json.JSONException {
+        synchronized(LOCK) {
+            Map<String,Record> records=new LinkedHashMap<>();
+            if(context.getDatabasePath(DATABASE).exists()) {
+                validate(context.getDatabasePath(DATABASE));
+                try(Store helper=new Store(context);Cursor rows=helper.getReadableDatabase().query("history",new String[]{"identity","completed","started","position","duration","played","completed_at"},null,null,null,null,"identity ASC")) {
+                while(rows.moveToNext()) {
+                    if(rows.getType(0)!=Cursor.FIELD_TYPE_STRING)throw new java.io.IOException("Invalid viewing recovery identity");
+                    for(int column=1;column<7;column++)if(rows.getType(column)!=Cursor.FIELD_TYPE_INTEGER)throw new java.io.IOException("Invalid viewing recovery integer");
+                    if(rows.getLong(1)<0||rows.getLong(1)>1||rows.getLong(2)<0||rows.getLong(2)>1||
+                            rows.getLong(3)< -2||rows.getLong(3)>Integer.MAX_VALUE||rows.getLong(4)<0||rows.getLong(4)>Integer.MAX_VALUE)
+                        throw new java.io.IOException("Invalid viewing recovery range");
+                    if(records.size()>=100000)throw new java.io.IOException("Viewing recovery exceeds supported limits");
+                    records.put(rows.getString(0),new Record(rows.getInt(1)==1,rows.getInt(2)==1,rows.getInt(3),rows.getInt(4),rows.getLong(5),rows.getLong(6)));
+                }
+                }catch(RuntimeException failure){throw new java.io.IOException("Viewing recovery inventory unavailable",failure);}
+            }
+            return PortableViewingState.recoverySnapshot(records);
+        }
+    }
+    /** Combined restore callers hold LOCK and coordinate a durable journal before invoking this primitive. */
+    public static void replaceRecovery(Context context,org.json.JSONObject snapshot,java.util.function.BooleanSupplier cancel)throws java.io.IOException,org.json.JSONException {
+        Map<String,Record> prepared=PortableViewingState.validateRecoverySnapshot(snapshot);
+        restoreCancelled(cancel);if(!Thread.holdsLock(LOCK))awaitWrites();restoreCancelled(cancel);
+        synchronized(LOCK){try(Store helper=new Store(context)) {
+            if(context.getDatabasePath(DATABASE).exists())validate(context.getDatabasePath(DATABASE));
+            SQLiteDatabase database=helper.getWritableDatabase();database.beginTransaction();
+            try(android.database.sqlite.SQLiteStatement insert=database.compileStatement("INSERT INTO history(identity,completed,started,position,duration,played,completed_at) VALUES(?,?,?,?,?,?,?)")) {
+                database.delete("history",null,null);
+                for(var entry:prepared.entrySet()) {
+                    restoreCancelled(cancel);Record value=entry.getValue();insert.clearBindings();insert.bindString(1,entry.getKey());
+                    insert.bindLong(2,value.completed?1:0);insert.bindLong(3,value.started?1:0);insert.bindLong(4,value.position);
+                    insert.bindLong(5,value.duration);insert.bindLong(6,value.played);insert.bindLong(7,value.completedAt);insert.executeInsert();
+                }
+                restoreCancelled(cancel);database.setTransactionSuccessful();
+            }finally{database.endTransaction();}
+        }catch(android.database.sqlite.SQLiteException failure){throw new java.io.IOException("Viewing recovery replacement failed",failure);}}
     }
     private static void write(Context c,String key,boolean complete,boolean started,int position,int duration,long played,boolean track,boolean resume){
         if(key==null||(!track&&!resume))return;
@@ -155,7 +194,12 @@ public final class ViewingHistory {
                 if(metadata.moveToFirst()){try(Cursor schema=db.rawQuery("PRAGMA table_info(android_metadata)",null)){if(schema.getCount()!=1||!schema.moveToFirst()||!"locale".equals(schema.getString(1)))throw new java.io.IOException("Unexpected history metadata");}try(Cursor locale=db.rawQuery("SELECT locale FROM android_metadata",null)){while(locale.moveToNext())if(locale.isNull(0)||!locale.getString(0).matches("[A-Za-z0-9_-]{1,40}"))throw new java.io.IOException("Invalid history locale");}}
             }
             Set<String> columns=new HashSet<>();
-            try(Cursor schema=db.rawQuery("PRAGMA table_info(history)",null)){while(schema.moveToNext())columns.add(schema.getString(1));}
+            try(Cursor schema=db.rawQuery("PRAGMA table_info(history)",null)){while(schema.moveToNext()){
+                String column=schema.getString(1);boolean identity=column.equals("identity");
+                if(!(identity?"TEXT":"INTEGER").equalsIgnoreCase(schema.getString(2))||schema.getInt(5)!=(identity?1:0)||
+                        !identity&&schema.getInt(3)!=1||!schema.isNull(4))throw new java.io.IOException("Unexpected history column contract");
+                columns.add(column);
+            }}
             if(!columns.equals(Set.of("identity","completed","started","position","duration","played","completed_at")))throw new java.io.IOException("Unexpected history fields");
             try(Cursor rows=db.rawQuery("SELECT identity,completed,started,position,duration,played,completed_at FROM history",null)) {
                 while(rows.moveToNext())if(rows.isNull(0)||!rows.getString(0).matches("tmdb:(movie:[1-9][0-9]*|tv:[1-9][0-9]*:[0-9]+:[1-9][0-9]*)|file:[0-9a-f]{64}")||rows.getInt(1)<0||rows.getInt(1)>1||rows.getInt(2)<0||rows.getInt(2)>1||rows.getLong(3)<-2||rows.getLong(3)>Integer.MAX_VALUE||rows.getLong(4)<0||rows.getLong(4)>Integer.MAX_VALUE||rows.getLong(5)<0||rows.getLong(6)<0)throw new java.io.IOException("Invalid viewing history");
