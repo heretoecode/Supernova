@@ -38,7 +38,7 @@ public class LogicalBackupExporterTest {
     }
     @Test public void freshAllRegisteredCategoriesCreateVerifiedArchiveWithoutCreatingDatabaseStores()throws Exception {
         File archive=LogicalBackupExporter.preparePrivate(app,LogicalBackupArchive.registered(),()->false);assertTrue(archive.isFile());var read=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(LogicalBackupArchive.registered(),read.keySet());assertEquals(22,read.size());
-        assertFalse(VideoOpenHelper.getDatabaseFile(app).exists());assertFalse(app.getDatabasePath(ViewingHistory.DATABASE).exists());assertFalse(contents(archive).contains("CANARY"));assertTrue(contents(archive).contains("RESTORE"));
+        assertFalse("Export must not create a media database",VideoOpenHelper.getDatabaseFile(app).exists());assertFalse("Export must not create a viewing database",app.getDatabasePath(ViewingHistory.DATABASE).exists());assertFalse(contents(archive).contains("CANARY"));try(ZipFile zip=new ZipFile(archive)){assertNotNull(zip.getEntry("RESTORE_INSTRUCTIONS.txt"));}
     }
     @Test public void sourceExportKeepsHiddenMembershipLogicalAndNeverCopiesMetadataArtworkAccountsOrLocationsByDefault()throws Exception {
         seed();JSONArray rows=new JSONArray().put(new JSONObject().put("id","custom:fixture").put("name","Fixture row").put("maximum",15).put("members",new JSONArray().put("v10").put("s20")));

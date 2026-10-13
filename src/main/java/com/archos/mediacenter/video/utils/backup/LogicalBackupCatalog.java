@@ -30,7 +30,7 @@ public final class LogicalBackupCatalog {
         try(SQLiteDatabase database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READONLY)) {
             if(database.getVersion()!=VideoOpenHelper.getDatabaseVersion())throw new IOException("Indexed media schema is not compatible with logical backup");
             // One SQLite read snapshot across files, show identities, pins and hidden state.
-            database.beginTransactionNonExclusive();try {
+            database.execSQL("SAVEPOINT supernova_backup_read");try {
                 Set<String> columns=new LinkedHashSet<>(Arrays.asList(VideoLoader.mProjection));
                 columns.addAll(List.of(VideoStore.Video.VideoColumns.DATE_ADDED,VideoStore.Video.VideoColumns.SCRAPER_M_GENRES,
                     VideoStore.Video.VideoColumns.SCRAPER_S_GENRES,android.provider.MediaStore.Video.VideoColumns.WIDTH,
@@ -57,8 +57,8 @@ public final class LogicalBackupCatalog {
                     }
                 }
                 cancelled(cancel);List<PortablePinnedTitles.Title> pins=PortablePinnedTitles.read(database);Map<Long,Boolean> hidden=PortableHiddenItems.read(database);
-                database.setTransactionSuccessful();return new LogicalBackupCatalog(snapshot,physical,pins,hidden);
-            }finally{database.endTransaction();}
+                return new LogicalBackupCatalog(snapshot,physical,pins,hidden);
+            }finally{database.execSQL("RELEASE SAVEPOINT supernova_backup_read");}
         }catch(RuntimeException invalid){throw new IOException("Complete indexed identity inventory is unavailable; backup was not created",invalid);}
     }
 }
