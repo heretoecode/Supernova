@@ -14,3 +14,9 @@ These discussions are paused, **not deleted or rejected**. Reopen only at owner'
 | — | Detailed content warnings | Parked separately from approved FD-001 age-only overlay. See [research and decision log](../../project-decisions/2026-10-13-playback-age-rating-content-advisories-investigation.md). |
 
 **Asset rule:** when an image or video is not committed to GitHub, do not claim it is archived; preserve a description and add a tracked asset when provided/authorised.
+
+## Latest owner clarification — 13 October 2026
+- Unattended Google Drive publishing: **already implemented**, not a parked implementation task; retain historical proposal only.
+- Broader Movies/TV/metadata audits: **owner reports already done**, not a pending discussion; preserve audit records, verify only when necessary for a new change.
+- Detailed content warnings/advisories: historical proposed extension of the age-classification playback overlay; **excluded from approved age-only v1**, still parked.
+- Preparing Playback redesign: separate pre-video screen, **parked**, with visual design not established as finally approved in this register.
