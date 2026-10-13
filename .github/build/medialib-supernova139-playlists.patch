@@ -1,0 +1,39 @@
+diff --git a/src/com/archos/mediacenter/utils/trakt/TraktService.java b/src/com/archos/mediacenter/utils/trakt/TraktService.java
+index f8a0721..098347d 100644
+--- a/src/com/archos/mediacenter/utils/trakt/TraktService.java
++++ b/src/com/archos/mediacenter/utils/trakt/TraktService.java
+@@ -1836,7 +1836,9 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+     @SuppressWarnings("unchecked")
+     private void syncLists() {
+         if (log.isDebugEnabled()) log.debug("syncLists");
+-        Cursor cursor = getContentResolver().query(VideoStore.List.LIST_CONTENT_URI,VideoStore.List.Columns.COLUMNS, null, null, null);
++        Cursor cursor = getContentResolver().query(VideoStore.List.LIST_CONTENT_URI,VideoStore.List.Columns.COLUMNS,
++                "(" + VideoStore.List.Columns.SYNC_STATUS + " IS NULL OR " + VideoStore.List.Columns.SYNC_STATUS + " != ?)",
++                new String[]{String.valueOf(VideoStore.List.SyncStatus.STATUS_LOCAL_ONLY)}, null);
+         List<VideoStore.List.ListObj> localLists = new ArrayList<>();
+         if(cursor.getCount() > 0){
+             int titleCol = cursor.getColumnIndex(VideoStore.List.Columns.TITLE);
+@@ -1933,7 +1935,9 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+ 
+         //Sync videos
+         //reload local and distant
+-        cursor = getContentResolver().query(VideoStore.List.LIST_CONTENT_URI,VideoStore.List.Columns.COLUMNS, null, null, null);
++        cursor = getContentResolver().query(VideoStore.List.LIST_CONTENT_URI,VideoStore.List.Columns.COLUMNS,
++                "(" + VideoStore.List.Columns.SYNC_STATUS + " IS NULL OR " + VideoStore.List.Columns.SYNC_STATUS + " != ?)",
++                new String[]{String.valueOf(VideoStore.List.SyncStatus.STATUS_LOCAL_ONLY)}, null);
+         localLists = new ArrayList<>();
+         if(cursor.getCount() > 0){
+             int titleCol = cursor.getColumnIndex(VideoStore.List.Columns.TITLE);
+diff --git a/src/com/archos/mediaprovider/video/VideoStore.java b/src/com/archos/mediaprovider/video/VideoStore.java
+index 63206e5..1ee7532 100644
+--- a/src/com/archos/mediaprovider/video/VideoStore.java
++++ b/src/com/archos/mediaprovider/video/VideoStore.java
+@@ -686,6 +686,8 @@ public final class VideoStore {
+             public static final int STATUS_NOT_SYNC = 1;
+             public static final int STATUS_DELETED = 2;
+             public static final int STATUS_RENAMED = 3;
++            /** Restored portable definitions have no receiving Trakt account ownership. */
++            public static final int STATUS_LOCAL_ONLY = 4;
+         }
+ 
+         public static class ListObj {
