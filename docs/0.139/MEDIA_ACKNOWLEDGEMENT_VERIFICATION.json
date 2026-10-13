@@ -1,0 +1,33 @@
+{
+  "source_sha": "66ca066ade68e10603ca232e338b1e1de049c99d",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 75,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 39s",
+  "log_sha256": "a65cd08f03bb4312c0e71e469de44f2022deccd58d3d1d7515583e76b4245341",
+  "checks": [
+    "20-category public archive roundtrip into default preferences, health, viewing SQLite and selected media pin/hidden fields",
+    "Cancellation exception retains interruption subtype and outcome; rollback completes under worker interruption before restoring interrupt flag",
+    "Native crash-boundary, corrupt journal and stale preview recovery regressions",
+    "Durable media acknowledgement preserves later manual changes when cleanup is interrupted",
+    "Earlier schema4 commit decision without acknowledgement remains recoverable"
+  ],
+  "limits": [
+    "Error-based crash simulation; no actual Android force-stop",
+    "Unresolved hidden references remain pending; matching dependencies and legacy media viewing fields remain open",
+    "Production Backup workspace/exporter not integrated; no signed APK or Shield acceptance"
+  ]
+}

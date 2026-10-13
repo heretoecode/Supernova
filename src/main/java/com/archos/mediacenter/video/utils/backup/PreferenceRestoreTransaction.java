@@ -146,6 +146,12 @@ public final class PreferenceRestoreTransaction {
                 var references=physical==null?new PortablePhysicalReferences(destination,Collections.emptyList()):physical;
                 var hidden=PortableHiddenItems.prepare(item.getValue(),MediaStateRecovery.hiddenInventory(mediaBefore),references,false);mediaAfter=MediaStateRecovery.hiddenAfter(mediaAfter,hidden);
                 keys.add(PortableHiddenItems.PENDING);after.put(PortableHiddenItems.PENDING,hidden.pending);unresolved+=hidden.unresolved;
+            }else if(category==BackupCategory.SOURCES){
+                var sources=PortableLibrarySources.prepare(current,item.getValue(),selected.get(BackupCategory.LOCATIONS));
+                keys.addAll(sources.keys);after.putAll(sources.values);unresolved+=sources.unresolved;
+            }else if(category==BackupCategory.LOCATIONS){
+                // This privacy modifier supplies locators to selected owners; it never grants storage access.
+                PortableLocations.validate(item.getValue());
             }else throw new JSONException("Category restore codec not registered: "+category.name());
         }
         if(after.containsKey("user_defined_density")&&!Objects.equals(current.get("user_defined_density"),after.get("user_defined_density"))){keys.add("user_defined_density_confirmed");after.put("user_defined_density_confirmed",false);}
@@ -234,7 +240,7 @@ public final class PreferenceRestoreTransaction {
         }
         if(!edit.commit())throw new IOException("Configuration write failed; private recovery is required");
     }
-    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||PortablePreferredVersions.ownsKey(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
+    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
     private static boolean healthOwned(String key){return key.equals(PortableReviewNotes.PENDING)||key.matches("incorrect:[1-9][0-9]{0,18}");}
     private static JSONObject record(Plan plan,boolean complete)throws JSONException,IOException{
         JSONArray values=new JSONArray();recordValues(values,"DEFAULT",plan.keys,plan.before);recordValues(values,"HEALTH",plan.healthKeys,plan.healthBefore);
