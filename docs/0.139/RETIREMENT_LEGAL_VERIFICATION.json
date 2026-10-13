@@ -1,0 +1,13 @@
+{
+  "source_sha": "8a6315b1425adeb7626b69622d8271aeb8397c39",
+  "classes": 9,
+  "tests": 32,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "limits": [
+    "Retirement app compile and selected regressions only; final APK/R8/native inventory and Shield open",
+    "No source file or existing user data deletion",
+    "Licence async selection verified; dependency/legal catalogue coverage still pending"
+  ]
+}
