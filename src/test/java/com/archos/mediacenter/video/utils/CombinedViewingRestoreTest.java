@@ -102,4 +102,22 @@ public class CombinedViewingRestoreTest {
         try{transaction.apply(plan,()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
         assertTrue(app.getDatabasePath(ViewingHistory.DATABASE).exists());new PreferenceRestoreTransaction(app).recover();assertFalse(app.getDatabasePath(ViewingHistory.DATABASE).exists());assertEquals(7,prefs.getInt("preview_accent41",0));
     }
+    public static class Bootstrap extends com.archos.mediacenter.video.CustomApplication {
+        public void attach(Context base){super.attachBaseContext(base);}
+    }
+    @Test public void applicationAttachmentRecoversBeforeInitializationWithNoApplicationContextYet()throws Exception {
+        String before=ViewingHistory.captureRecovery(app).toString();try{transaction.apply(transaction.prepare(incoming(true),null,physical()),()->false,
+                at->{if(at==PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+        Context bootstrap=new ContextWrapper(app){@Override public Context getApplicationContext(){return null;}};
+        new Bootstrap().attach(bootstrap);assertOriginal(before);assertFalse(journal.exists());
+    }
+    @Test public void verifiedArchiveImportValidatesBothViewingCodecsBeforeCombinedReplacement()throws Exception {
+        File file=new File(app.getCacheDir(),"combined-viewing.zip");LogicalBackupArchive.writeCategories(file,incoming(true),()->false);
+        try(LogicalBackupImport.Prepared imported=LogicalBackupImport.prepare(app,new FileInputStream(file),()->false)) {
+            assertEquals(Set.of(BackupCategory.APPEARANCE,BackupCategory.REVIEW,BackupCategory.HISTORY,BackupCategory.POSITIONS),imported.categories());
+            var selected=imported.payloads(()->false);transaction.apply(transaction.prepare(selected,null,physical()),()->false);
+        }
+        assertEquals(19,prefs.getInt("preview_accent41",0));assertTrue(ViewingHistory.read(app).get("tmdb:movie:456").completed);
+        assertEquals(4000,ViewingHistory.read(app).get("tmdb:tv:999:2:4").position);assertTrue(file.delete());
+    }
 }

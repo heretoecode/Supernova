@@ -53,10 +53,15 @@ public final class PreferenceRestoreTransaction {
     private final Context destination;
     private final AtomicFile journal;
     public PreferenceRestoreTransaction(Context context){
-        destination=context.getApplicationContext();
+        Context application=context.getApplicationContext();destination=application==null?context:application;
         prefs=PreferenceManager.getDefaultSharedPreferences(context);
         health=context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH,0);
         journal=new AtomicFile(new File(context.getFilesDir(),"supernova-restore/preferences-v1.json"));
+    }
+    /** Application attachment runs this before providers, services, playback writers and settings initialize. */
+    public static void recoverAtStartup(Context context)throws IOException {
+        File file=new File(context.getFilesDir(),"supernova-restore/preferences-v1.json");
+        if(file.exists()||new File(file+".bak").exists())new PreferenceRestoreTransaction(context).recover();
     }
     private static Map<String,Object> copy(Map<String,?> source){
         Map<String,Object> result=new LinkedHashMap<>();for(Map.Entry<String,?> item:source.entrySet()){
