@@ -4,7 +4,7 @@ Keep **owner-approved design**, **release assignment**, **active coding**, **imp
 
 | Feature | Status | Source and next verification |
 |---|---|---|
-| Existing custom Library Page / five-step Edit Library wizard (FD-014) | **Owner-confirmed existing in app**; not future queue | [Original 0.135 approval](../../project/SUPERNOVA_0.135_CUSTOM_LIBRARY_PAGE_APPROVAL_2026-10-09.md), [Shield wizard QA/fixes](../../project/STAGED_CUSTOM_LIBRARY_WIZARD_FOCUS_KEYBOARD_AND_EXIT_2026-10-11.md); verify exact current build and residual defects |
+| Existing custom Library Page / five-step Edit Library wizard (FD-014) | **Existing / implemented — awaiting build-specific verification**; not future queue | [Original 0.135 approval](../../project/SUPERNOVA_0.135_CUSTOM_LIBRARY_PAGE_APPROVAL_2026-10-09.md), [Shield wizard QA/fixes](../../project/STAGED_CUSTOM_LIBRARY_WIZARD_FOCUS_KEYBOARD_AND_EXIT_2026-10-11.md); verify exact current build and residual defects |
 | Current 0.139 workstreams | **Authorised / active development**; not declared implemented or accepted | [Authoritative handover](../../project-decisions/2026-10-13-supernova-0139-codex-implementation-handover.md); 43 workstreams incl. Hero and Backup & Restore |
 | Put.io activation FD-008 | **Provisional 0.140 candidate**, not coding-authorised | [Future backlog](../../project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md); linking URL and Settings audit pending |
 | Age-only overlay FD-001 | **Design approved, not scheduled** | [Approved specification](../03%20Approved%20-%20Awaiting%20Scheduling/FD-001-age-rating-overlay.md) |
@@ -17,3 +17,6 @@ Keep **owner-approved design**, **release assignment**, **active coding**, **imp
 5. Completed & Verified — installed/tested/accepted; record version, commit and evidence.
 
 Do not duplicate old approved features in the future queue. Record residual fixes against their actual release handover.
+
+## 13 October clarification — existing custom Library page
+The third/custom Library page and its five-step Edit Library creation workflow are existing Supernova functionality. FD-014 is retained solely as a historical traceability identifier, not a proposal, backlog candidate, or unscheduled feature. Preserve the original 0.135 approval, both referenced approved mock-ups, implementation/fix history and Shield QA separately. Do not infer that all wizard defects are resolved merely because the feature exists. Move to Completed & Verified only when the specific build and owner QA evidence establish acceptance.
