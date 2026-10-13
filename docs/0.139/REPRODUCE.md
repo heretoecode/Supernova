@@ -30,6 +30,7 @@ Add `--tests '*ClassName'` for each class below for a staged run. Baseline recei
 | Viewing-state schemas | PortableViewingChoicesTest, PortableViewingStateTest, Supernova138PlaybackTest, ViewingHistoryTest | VIEWING_STATE_SCHEMA_VERIFICATION.json |
 | SQLite viewing-state replacement | PortableViewingStateTest, PreferenceRestoreTransactionTest, ViewingHistoryTest | SQLITE_VIEWING_STATE_VERIFICATION.json |
 | Verified provider publication | LogicalBackupArchiveTest, PreferenceRestoreTransactionTest, VerifiedBackupPublicationTest | PUBLICATION_VERIFICATION.json |
+| Pin and Hidden Items primitives | PortablePinnedTitlesTest, PortableHiddenItemsTest, PortableReviewNotesTest, PortablePreferredVersionsTest | PINNED_HIDDEN_VERIFICATION.json |
 | Backup privacy/focus retest | BackupWorkspaceTest, HomeIntentCodecTest, PortableViewingChoicesTest, Supernova139HomeEditorTest | BACKUP_PRIVACY_VERIFICATION.json |
 
 JUnit XML and HTML: `build/test-results/testNoamazonReleaseUnitTest/` and `build/reports/tests/testNoamazonReleaseUnitTest/`. Native images: `build/reports/preview-ui/`. Tests use public synthetic fixtures and offline provider transport. Viewport and window-focus assertions must be inspected with captures, not replaced with only focus method return values. Android-native fixtures do not establish real WindowManager/compositor blur, Shield held-key dispatch, performance, signed upgrades or live network playback.

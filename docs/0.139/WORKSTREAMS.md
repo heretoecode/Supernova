@@ -57,3 +57,7 @@ Source `90eb2ee14c466d65e2b2590cd657139e88953f5d`: **PASS** 33 selected unit/And
 ## Full staged regression retest
 
 Source `7042a3cdf1dc0c6e7b67fc8c54934522fb1c5a37`: **PASS** 656 tests across163 classes, no failures/errors/skips; full unfiltered `testNoamazonReleaseUnitTest`,11m57s. See `FULL_STAGED_RETEST_VERIFICATION.json`. Native builds were excluded. This does not pass incomplete production integration, unavailable hardware, signing or complete workstream acceptance. The earlier635-test/two-failure receipt remains preserved.
+
+## Pin and Hidden Items staged receipt
+
+Source `f16e0e16494fcf3ea2f4f4bc9af15d57e216302f`: **PASS**20 tests/four classes, zero failures/errors/skips. See `PINNED_HIDDEN_VERIFICATION.json`; earlier fixture/source/build failures remain in their first-run receipts. Native pin replacement preserves unowned columns, rejects stale previews and rolls back interrupted writes. Hidden Items has a validated source reader and pure preparation only. Neither category is registered in the16-codec archive or production UI; cross-store recovery, manual intent supersession and post-index reconciliation remain open. BACKUP43 remains **BLOCKED**.
