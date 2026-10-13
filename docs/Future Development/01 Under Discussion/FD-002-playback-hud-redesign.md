@@ -50,3 +50,10 @@ Feature discussion: owner is **interested in investigating embedded chapter navi
 - The existing floating **`HH:MM:SS` timestamp bubble must remain visible whenever playback HUD is visible**, including ordinary playback, tracking current progress. It is the sole elapsed/progress time display; do not add left-hand elapsed time.
 - Preferred optional thumbnail treatment **Design D integrated preview**: timestamp remains readable without overlapping thumbnail. Proposed progressive disclosure: compact timestamp bubble in normal HUD, expand upwards to show thumbnail during seeking; owner has not yet approved exact transition. Thumbnail feature itself still under investigation, not authorised.
 - Remote Left/Right held performs **accelerating seeking/skipping through positions**, NOT faster video playback: longer hold means progressively faster traversal; release stops acceleration. Codex to validate existing event handling, seek/preview performance and whether seek commits immediately or on confirmation. Exact OK/Back/Up focus-state model is **not yet owner-approved**; do not presume a two-click model.
+
+## Owner-approved focus and seeking interaction — 14 October 2026
+- When playback HUD first appears, **seek bar has focus by default**; Left/Right immediately seek backward/forward, **no initial OK/Select needed**.
+- If HUD is hidden and user presses/holds remote Left or Right to seek, **show HUD immediately** and display the seek timestamp/position while processing that same initiating input; do not require a second keypress.
+- Sustained Left/Right progressively accelerates timeline traversal (not video playback speed); release ends acceleration. Bubble remains visible while HUD is visible; on seeking shows selected target position, normal playback shows current progress.
+- Owner accepts **Up from focused seek bar to Settings above/right** as preferred focus route. Specific seek commit/cancel semantics, OK/Back behaviour, focus restoration, timeout and edge cases need source-informed validation, not assumed.
+- This interaction behaviour is owner-approved for future HUD design, **not authorisation to implement or modify 0.139**.
