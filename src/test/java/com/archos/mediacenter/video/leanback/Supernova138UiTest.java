@@ -94,7 +94,8 @@ public class Supernova138UiTest {
             PreviewPagesTest.layout(root);
             List<TextView> rows=ReflectionHelpers.getField(workspace,"rows");
             assertFalse(rows.isEmpty());
-            assertTrue(rows.get(0).getText().toString().startsWith("AndroidX\n"));
+            assertTrue(rows.get(0).getText().toString().startsWith("AndroidX"));
+            assertEquals("Licence component labels use the approved single-line rows",1,rows.get(0).getMaxLines());
             assertSame(rows.get(0),root.findFocus());
             com.archos.mediacenter.video.foundation.BundledNoticePager pager=ReflectionHelpers.getField(workspace,"noticePager");
             assertNotNull("Actual large first notice opens bounded reader",pager);

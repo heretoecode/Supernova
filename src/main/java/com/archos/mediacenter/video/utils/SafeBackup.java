@@ -125,8 +125,12 @@ public final class SafeBackup {
         List<Swap> swaps=new ArrayList<>();
         try {
             for(String name:new String[]{"supernova-viewing-history.db","media.db","credentials_db","shortcuts_db","shortcuts2_db","putio-associations.db"}) {
+                File staged=new File(stage,name);
+                // Legacy1.0 optional absence is not a request to erase the destination's store.
+                // Its documented full-restore credential disconnect remains explicit and separate.
+                if(!name.equals("credentials_db")&&!staged.isFile())continue;
                 File dest=c.getDatabasePath(name);
-                swaps.add(new Swap(dest,new File(stage,name),token));
+                swaps.add(new Swap(dest,staged,token));
                 swaps.add(new Swap(new File(dest+"-wal"),null,token));
                 swaps.add(new Swap(new File(dest+"-shm"),null,token));
             }
@@ -134,9 +138,10 @@ public final class SafeBackup {
             // same durable journal so a failed restore brings the existing envelope back.
             File providerToken=new File(c.getNoBackupFilesDir(),"putio-oauth-v1.bin");
             swaps.add(new Swap(providerToken,null,token));swaps.add(new Swap(new File(providerToken+".bak"),null,token));
-            swaps.add(new Swap(MediaScraper.getPosterDirectory(c),new File(stage,"scraper_posters"),token));
-            swaps.add(new Swap(MediaScraper.getBackdropDirectory(c),new File(stage,"scraper_backdrops"),token));
-            swaps.add(new Swap(MediaScraper.getPictureDirectory(c),new File(stage,"scraper_pictures"),token));
+            File posters=new File(stage,"scraper_posters"),backdrops=new File(stage,"scraper_backdrops"),pictures=new File(stage,"scraper_pictures");
+            if(posters.isDirectory())swaps.add(new Swap(MediaScraper.getPosterDirectory(c),posters,token));
+            if(backdrops.isDirectory())swaps.add(new Swap(MediaScraper.getBackdropDirectory(c),backdrops,token));
+            if(pictures.isDirectory())swaps.add(new Swap(MediaScraper.getPictureDirectory(c),pictures,token));
             File named=new File(stage,"named_preferences.json");Map<String,String> restoredNamed=named.isFile()?MigrationBackup.validateSettings(c,read(named)):Collections.emptyMap();Map<String,String> originalNamed=new LinkedHashMap<>();for(String name:restoredNamed.keySet())originalNamed.put(name,SettingsBackup.encode(c.getSharedPreferences(name,0)));
             originalNamed.put("opensubtitles_credentials",SettingsBackup.encode(c.getSharedPreferences("opensubtitles_credentials",0)));
             String originalSettings=SettingsBackup.encode(PreferenceManager.getDefaultSharedPreferences(c));
