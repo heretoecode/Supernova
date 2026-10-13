@@ -127,10 +127,10 @@ final class HomeGenrePicker {
         Paint text=new Paint(Paint.ANTI_ALIAS_FLAG);text.setColor(MenuFoundation.SECONDARY);text.setTextSize(12*TvLayout.scale(view.getContext())*view.getResources().getDisplayMetrics().scaledDensity);
         String label=selected.size()+" selected";
         Drawable count=new Drawable(){
-            @Override public void draw(Canvas canvas){canvas.drawText(label,getBounds().left,getBounds().centerY()-(text.ascent()+text.descent())/2,text);}
+            @Override public void draw(Canvas canvas){canvas.drawText(label,getBounds().left+dp(view.getContext(),8),getBounds().centerY()-(text.ascent()+text.descent())/2,text);}
             @Override public void setAlpha(int value){text.setAlpha(value);}@Override public void setColorFilter(android.graphics.ColorFilter filter){text.setColorFilter(filter);}@Override public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
         };
-        count.setBounds(0,0,(int)Math.ceil(text.measureText(label)),size);
+        count.setBounds(0,0,(int)Math.ceil(text.measureText(label))+dp(view.getContext(),8),size);
         view.setText(android.text.TextUtils.join(", ",genres));view.setContentDescription("Genres, "+android.text.TextUtils.join(", ",genres)+", "+label);
         view.setCompoundDrawables(icons,null,count,null);
     }

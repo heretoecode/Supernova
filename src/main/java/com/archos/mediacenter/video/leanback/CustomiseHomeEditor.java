@@ -51,9 +51,9 @@ final class CustomiseHomeEditor {
         hint.setTextColor(MenuFoundation.SECONDARY); hint.setPadding(0, dp(8), 0, dp(12));
         LinearLayout columns = new LinearLayout(context); columns.setClipChildren(false);
         screen.addView(columns, new LinearLayout.LayoutParams(-1, 0, 1));
-        LinearLayout left = column();left.addView(heading);left.addView(hint);
+        LinearLayout left = column();left.setClipChildren(true);left.addView(heading);left.addView(hint);
         columns.addView(left,new LinearLayout.LayoutParams(0,-1,.37f));
-        ScrollView rows = new ScrollView(context); rows.setFillViewport(true); rows.setClipToPadding(false);
+        ScrollView rows = new ScrollView(context); rows.setFillViewport(true); rows.setClipToPadding(true);rows.setClipChildren(true);
         list = column(); list.setPadding(dp(3), dp(3), dp(3), dp(8)); rows.addView(list);
         left.addView(rows,new LinearLayout.LayoutParams(-1,0,1));
         ScrollView viewport = new ScrollView(context); viewport.setFillViewport(true); viewport.setClipToPadding(false);

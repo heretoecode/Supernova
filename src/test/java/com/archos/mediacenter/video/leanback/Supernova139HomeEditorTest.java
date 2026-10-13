@@ -36,7 +36,18 @@ public class Supernova139HomeEditorTest {
     private void key(Dialog dialog,int code){dialog.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,code));dialog.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,code));}
     private EditText input(View view){if(view instanceof EditText)return (EditText)view;if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++){EditText result=input(((ViewGroup)view).getChildAt(i));if(result!=null)return result;}return null;}
     private void createNamed(Dialog dialog,String name){root(dialog).findViewWithTag("home.editor.create").performClick();root(dialog).findViewWithTag("home.editor.name").performClick();Dialog keyboard=ShadowDialog.getLatestDialog();input(root(keyboard)).setText(name);PreviewPagesTest.findText(root(keyboard),"Done").performClick();}
-    private void fullyVisible(View view){StringBuilder geometry=new StringBuilder();View cursor=view;while(cursor!=null){geometry.append(cursor.getClass().getSimpleName()).append(':').append(cursor.getLeft()).append(',').append(cursor.getTop()).append(',').append(cursor.getWidth()).append('x').append(cursor.getHeight()).append(" scroll=").append(cursor.getScrollY()).append(" shown=").append(cursor.isShown()).append(';');cursor=cursor.getParent() instanceof View?(View)cursor.getParent():null;}android.graphics.Rect visible=new android.graphics.Rect();assertTrue("target must be visible: "+view.getTag()+" "+geometry,view.getGlobalVisibleRect(visible));assertEquals("full target height: "+view.getTag(),view.getHeight(),visible.height());}
+    private void fullyVisible(View view){
+        // Native fixtures lay out the real hierarchy explicitly; their ViewRoot window frame is
+        // not an Android WindowManager/device measurement. Intersect measured ancestor viewports.
+        android.graphics.Rect bounds=new android.graphics.Rect(0,0,view.getWidth(),view.getHeight());
+        View cursor=view;
+        while(cursor.getParent() instanceof View){View parent=(View)cursor.getParent();
+            bounds.offset(cursor.getLeft()-parent.getScrollX()+Math.round(cursor.getTranslationX()),cursor.getTop()-parent.getScrollY()+Math.round(cursor.getTranslationY()));
+            assertTrue("target inside "+parent.getClass().getSimpleName()+": "+view.getTag(),bounds.intersect(0,0,parent.getWidth(),parent.getHeight()));
+            assertEquals("full target height: "+view.getTag(),view.getHeight(),bounds.height());
+            assertEquals("full target width: "+view.getTag(),view.getWidth(),bounds.width());cursor=parent;
+        }
+    }
     private void layout(Dialog dialog){View view=root(dialog);int w=dialog.getWindow().getAttributes().width,h=dialog.getWindow().getAttributes().height;view.measure(View.MeasureSpec.makeMeasureSpec(w,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(h,View.MeasureSpec.EXACTLY));view.layout(0,0,w,h);view.dispatchWindowFocusChanged(true);}
 
     @Test public void builtinIsLockedAndMoveCancellationPreservesPersistedOrder(){
