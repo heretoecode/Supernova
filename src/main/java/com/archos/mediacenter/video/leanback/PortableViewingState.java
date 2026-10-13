@@ -1,0 +1,60 @@
+package com.archos.mediacenter.video.leanback;
+
+import android.content.Context;
+import java.io.IOException;
+import java.util.*;
+import org.json.*;
+
+/** Logical history and unfinished positions have separate positive schemas despite sharing a live table. */
+public final class PortableViewingState {
+    public enum Kind { HISTORY, POSITIONS }
+    private static long integer(Object value,long minimum,long maximum)throws JSONException{
+        if(!(value instanceof Integer||value instanceof Long))throw new JSONException("Integer viewing state required");long result=((Number)value).longValue();if(result<minimum||result>maximum)throw new JSONException("Viewing state outside supported range");return result;
+    }
+    private static void identity(String key)throws JSONException{
+        if(key.matches("file:[a-f0-9]{64}"))return;
+        if(!key.matches("tmdb:(?:movie:[1-9][0-9]{0,18}|tv:[1-9][0-9]{0,18}:(?:0|[1-9][0-9]{0,9}):[1-9][0-9]{0,9})"))throw new JSONException("Unsupported viewing identity");
+        String[] parts=key.split(":");try{if(Long.parseLong(parts[2])<=0)throw new NumberFormatException();if(parts.length==5&&(Integer.parseInt(parts[3])<0||Integer.parseInt(parts[4])<=0))throw new NumberFormatException();}catch(NumberFormatException e){throw new JSONException("Viewing identity outside supported range");}
+    }
+    private static JSONObject payload(Kind kind,JSONArray rows)throws JSONException{return new JSONObject().put("schema",1).put("kind",kind.name()).put("rows",rows);}
+    public static JSONObject export(Context context,Kind kind)throws IOException,JSONException{ViewingHistory.awaitWrites();return export(ViewingHistory.read(context),kind);}
+    public static JSONObject export(Map<String,ViewingHistory.Record> records,Kind kind)throws JSONException{
+        JSONArray rows=new JSONArray();for(String key:new TreeSet<>(records.keySet())){
+            identity(key);ViewingHistory.Record value=records.get(key);if(value==null||value.position< -2||value.duration<0||value.played<0||value.completedAt<0)throw new JSONException("Saved viewing record needs review");
+            if(kind==Kind.HISTORY){if(!value.completed&&!value.started&&value.played==0&&value.completedAt==0)continue;rows.put(new JSONObject().put("identity",key).put("completed",value.completed).put("started",value.started).put("played",value.played).put("completedAt",value.completedAt));}
+            else if(value.position>0)rows.put(new JSONObject().put("identity",key).put("position",value.position).put("duration",value.duration));
+        }JSONObject result=payload(kind,rows);validate(result,kind);return result;
+    }
+    public static Map<String,ViewingHistory.Record> validate(JSONObject payload,Kind kind)throws JSONException{
+        if(payload.length()!=3||integer(payload.get("schema"),1,1)!=1||!kind.name().equals(payload.get("kind")))throw new JSONException("Unsupported viewing state schema");
+        JSONArray rows=payload.getJSONArray("rows");if(rows.length()>100000)throw new JSONException("Too many viewing records");Map<String,ViewingHistory.Record> result=new LinkedHashMap<>();
+        for(int i=0;i<rows.length();i++){
+            JSONObject row=rows.getJSONObject(i);if(!(row.get("identity") instanceof String))throw new JSONException("Viewing identity must be text");String key=row.getString("identity");identity(key);ViewingHistory.Record record;
+            if(kind==Kind.HISTORY){
+                if(row.length()!=5||!(row.get("completed") instanceof Boolean)||!(row.get("started") instanceof Boolean))throw new JSONException("Invalid history fields");
+                record=new ViewingHistory.Record(row.getBoolean("completed"),row.getBoolean("started"),0,0,integer(row.get("played"),0,Long.MAX_VALUE),integer(row.get("completedAt"),0,Long.MAX_VALUE));
+            }else{
+                if(row.length()!=3)throw new JSONException("Invalid position fields");int position=(int)integer(row.get("position"),1,Integer.MAX_VALUE),duration=(int)integer(row.get("duration"),0,Integer.MAX_VALUE);
+                record=new ViewingHistory.Record(false,false,position,duration,0,0);
+            }if(result.put(key,record)!=null)throw new JSONException("Duplicate viewing identity");
+        }return Collections.unmodifiableMap(result);
+    }
+    /** Null means unselected. Present-empty clears only the selected columns. Returns staged values, no writes. */
+    public static Map<String,ViewingHistory.Record> prepare(Map<String,ViewingHistory.Record> existing,JSONObject history,JSONObject positions)throws JSONException{
+        if(history==null&&positions==null)throw new JSONException("No viewing category selected");
+        Map<String,ViewingHistory.Record> historyRows=history==null?Collections.emptyMap():validate(history,Kind.HISTORY),positionRows=positions==null?Collections.emptyMap():validate(positions,Kind.POSITIONS);
+        Set<String> keys=new TreeSet<>(existing.keySet());keys.addAll(historyRows.keySet());keys.addAll(positionRows.keySet());Map<String,ViewingHistory.Record> result=new LinkedHashMap<>();
+        for(String key:keys){
+            identity(key);ViewingHistory.Record old=existing.get(key);if(old==null)old=new ViewingHistory.Record(false,false,0,0,0,0);
+            ViewingHistory.Record h=historyRows.get(key),p=positionRows.get(key);
+            boolean completed=history==null?old.completed:h!=null&&h.completed,started=history==null?old.started:h!=null&&h.started;
+            long played=history==null?old.played:h==null?0:h.played,completedAt=history==null?old.completedAt:h==null?0:h.completedAt;
+            int position=positions==null?old.position:p==null?(history==null&&old.position<0?old.position:0):p.position;
+            int duration=positions==null?old.duration:p==null?0:p.duration;
+            // Negative legacy bookmarks are completion markers, not unfinished offsets.
+            if(history!=null&&position<0)position=0;
+            result.put(key,new ViewingHistory.Record(completed,started,position,duration,played,completedAt));
+        }return Collections.unmodifiableMap(result);
+    }
+    private PortableViewingState(){}
+}
