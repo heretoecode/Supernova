@@ -36,6 +36,7 @@ final class CustomiseHomeEditor {
     private List<Row> moveOriginal;
     private TextView hint;
     private boolean dismissed;
+    private Runnable releaseBackdrop=()->{};
 
     CustomiseHomeEditor(Context context, PreviewHomeRows model, Runnable changed) {
         this.context = context; this.model = model; this.changed = changed;
@@ -69,17 +70,18 @@ final class CustomiseHomeEditor {
             requestExit(); return true;
         });
         dialog.setOnCancelListener(window -> requestExit());
-        dialog.setOnDismissListener(window -> { if (!dismissed) { dismissed = true; changed.run(); } });
+        dialog.setOnDismissListener(window -> { if (!dismissed) { dismissed = true; releaseBackdrop.run(); changed.run(); } });
     }
 
     void show() {
+        if(android.os.Build.VERSION.SDK_INT<31&&context instanceof android.app.Activity)releaseBackdrop=PreviewFrost.show((android.app.Activity)context);
         dialog.setCancelable(false); dialog.show();
         Window window = dialog.getWindow(); window.setBackgroundDrawableResource(android.R.color.transparent);
         window.setDimAmount(.58f);
         window.setLayout(Math.min(dp(900), TvLayout.safeWidth(context)), Math.min(dp(468), TvLayout.safeHeight(context)));
         if (android.os.Build.VERSION.SDK_INT >= 31) {
             window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-            window.setBackgroundBlurRadius(dp(8));
+            WindowManager.LayoutParams blur=window.getAttributes();blur.setBlurBehindRadius(dp(8));window.setAttributes(blur);
         }
         bodies.get(0).requestFocus();
     }
@@ -243,7 +245,7 @@ final class CustomiseHomeEditor {
                 // Do not silently re-enable automatic additions when the user froze this row.
                 renderRows(); renderEditor(); restore("home.editor.genres");
             });
-        }), "home.editor.genres"); editor.addView(genres);
+        }), "home.editor.genres"); HomeGenrePicker.bindSummary(genres,selectedGenres); editor.addView(genres);
         if (selectedGenres.size() > 1) {
             LinearLayout modes = new LinearLayout(context); modes.setClipChildren(false);
             for (int i = 0; i < 2; i++) {

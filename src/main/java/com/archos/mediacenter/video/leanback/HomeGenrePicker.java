@@ -113,6 +113,27 @@ final class HomeGenrePicker {
         WindowManager.LayoutParams position = dialog.getWindow().getAttributes(); position.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL; position.x = dp(context, 28); dialog.getWindow().setAttributes(position);
         targets.get(0).requestFocus(); refresh.run();
     }
+    static void bindSummary(TextView view,Set<String> selected){
+        if(selected.isEmpty())return;
+        List<String> genres=new ArrayList<>(selected);
+        Drawable icons=new Drawable(){
+            @Override public void draw(Canvas canvas){
+                int size=dp(view.getContext(),19),gap=dp(view.getContext(),5);
+                for(int i=0;i<Math.min(3,genres.size());i++){Drawable icon=PreviewGenres.known(genres.get(i))?new PreviewGenres.Icon(genres.get(i)):new PreviewIcon("genres");icon.setBounds(getBounds().left+i*(size+gap),getBounds().top,getBounds().left+i*(size+gap)+size,getBounds().top+size);icon.draw(canvas);}
+            }
+            @Override public void setAlpha(int value){} @Override public void setColorFilter(android.graphics.ColorFilter filter){} @Override public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
+        };
+        int size=dp(view.getContext(),19),total=Math.min(3,genres.size());icons.setBounds(0,0,total*size+(total-1)*dp(view.getContext(),5),size);
+        Paint text=new Paint(Paint.ANTI_ALIAS_FLAG);text.setColor(MenuFoundation.SECONDARY);text.setTextSize(12*TvLayout.scale(view.getContext())*view.getResources().getDisplayMetrics().scaledDensity);
+        String label=selected.size()+" selected";
+        Drawable count=new Drawable(){
+            @Override public void draw(Canvas canvas){canvas.drawText(label,getBounds().left,getBounds().centerY()-(text.ascent()+text.descent())/2,text);}
+            @Override public void setAlpha(int value){text.setAlpha(value);}@Override public void setColorFilter(android.graphics.ColorFilter filter){text.setColorFilter(filter);}@Override public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
+        };
+        count.setBounds(0,0,(int)Math.ceil(text.measureText(label)),size);
+        view.setText(android.text.TextUtils.join(", ",genres));view.setContentDescription("Genres, "+android.text.TextUtils.join(", ",genres)+", "+label);
+        view.setCompoundDrawables(icons,null,count,null);
+    }
     private static boolean contains(Set<String> names, String value) { return names.stream().anyMatch(name -> name.equalsIgnoreCase(value)); }
     static int count(Snapshot snapshot, PreviewHomeRows.Row row, String genre) {
         Set<String> identities = new LinkedHashSet<>();
