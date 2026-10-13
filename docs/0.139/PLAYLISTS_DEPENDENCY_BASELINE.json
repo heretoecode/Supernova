@@ -1,0 +1,27 @@
+{
+  "base_sha": "5758074049bc153ac4967b4ecd21886469270076",
+  "tracked_patch_sha256": "03de9dfff9e9082b8d60ddf852083574bf284afa6bb4ffad87010326f82f764b",
+  "untracked_sources": [
+    {
+      "path": "src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java",
+      "sha256": "bf3075fd0e8b534f30451c04574bf5a829853f60f3c8d999ee17031074bffd6f"
+    },
+    {
+      "path": "src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java",
+      "sha256": "50d89e9ca6105cdfd140a4a77c6d08fda0dd05cd6020f74cd3c9bbc169906f3c"
+    },
+    {
+      "path": "src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java",
+      "sha256": "922e6390992f6d82f9fa09172784f0f0ce55c305d37b776c318470bf6b647684"
+    },
+    {
+      "path": "src/com/archos/mediaprovider/video/SupernovaViewingPolicy.java",
+      "sha256": "54dc376c25896c451c8a7e7afdae2ab2ef2ed7b9c03777a53b2db99c05556dd0"
+    }
+  ],
+  "construction": "Read-only snapshot of established patched shared MediaLib into a separate detached worktree. Original shared tree unchanged.",
+  "isolated_baseline_commit": "ebac4f4659482fb917af83e346d84d3fd95f8950",
+  "isolated_policy_commit": "eabdcc933c28235a6479e3718326d942a9f0712e",
+  "policy_patch_sha256": "0b96bb5fc4f81b8e2aecb84a2c468409227a8e369292e81ae98fd2ae64f154df",
+  "verification": "Policy not yet compiled or behaviorally validated. Must be appended after the established0.138 patch chain in the0.139 recipe; do not alter historical workflows."
+}
