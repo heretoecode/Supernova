@@ -120,4 +120,12 @@ public class CombinedViewingRestoreTest {
         assertEquals(19,prefs.getInt("preview_accent41",0));assertTrue(ViewingHistory.read(app).get("tmdb:movie:456").completed);
         assertEquals(4000,ViewingHistory.read(app).get("tmdb:tv:999:2:4").position);assertTrue(file.delete());
     }
+    @Test public void historyOnlyRecoveryDoesNotEraseLaterPositiveProgressOnAnOriginallyCompletedTitle()throws Exception {
+        try{transaction.apply(transaction.prepare(incoming(false),null,physical()),()->false,
+                at->{if(at==PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+        JSONObject later=ViewingHistory.captureRecovery(app);for(int i=0;i<later.getJSONArray("rows").length();i++) {
+            JSONObject row=later.getJSONArray("rows").getJSONObject(i);if(row.getString("identity").equals("tmdb:movie:123"))row.put("position",7777);
+        }ViewingHistory.replaceRecovery(app,later,()->false);transaction.recover();
+        assertTrue(ViewingHistory.read(app).get("tmdb:movie:123").completed);assertEquals(7777,ViewingHistory.read(app).get("tmdb:movie:123").position);
+    }
 }

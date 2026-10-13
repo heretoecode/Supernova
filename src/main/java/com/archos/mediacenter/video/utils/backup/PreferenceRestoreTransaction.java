@@ -27,6 +27,17 @@ public final class PreferenceRestoreTransaction {
     public enum Recovery { NONE, ROLLED_BACK, COMPLETED }
     public enum Checkpoint { JOURNAL_DURABLE, DEFAULT_DURABLE, HEALTH_DURABLE, VIEWING_DURABLE, MEDIA_PREPARED, PREFERENCES_DURABLE, COMMIT_MARKER_DURABLE, MEDIA_DURABLE, COMPLETION_DURABLE }
     public interface Observer { void reached(Checkpoint checkpoint)throws IOException; }
+    public static final class Failure extends IOException {
+        public final Recovery outcome;
+        public final boolean recoveryRequired;
+        private Failure(Throwable cause,Recovery outcome,boolean recoveryRequired) {
+            super(recoveryRequired?"Restoration requires recovery; do not assume originals were restored":
+                    outcome==Recovery.COMPLETED?"Restored state is committed; finalization was interrupted":
+                    outcome==Recovery.ROLLED_BACK?"Restoration was interrupted; original selected state was recovered":
+                    "Restoration was interrupted before changes",cause);
+            this.outcome=outcome;this.recoveryRequired=recoveryRequired;
+        }
+    }
     public static final class Plan {
         private final SharedPreferences owner;
         private final Map<String,Object> before,after;
@@ -185,8 +196,9 @@ public final class PreferenceRestoreTransaction {
                 if(media!=null){media.commit();media.close();media=null;observer.reached(Checkpoint.MEDIA_DURABLE);}
             }catch(IOException|RuntimeException failure){
                 if(media!=null){try{media.close();}catch(RuntimeException close){failure.addSuppressed(close);}media=null;}
-                try{recover();}catch(IOException recovery){failure.addSuppressed(recovery);}
-                throw failure;
+                Recovery outcome=Recovery.NONE;boolean required=false;
+                try{outcome=recover();}catch(IOException recovery){failure.addSuppressed(recovery);required=true;}
+                throw new Failure(failure,outcome,required);
             }finally{if(media!=null)media.close();}
             // Durable completion wins over late cancellation. Recovery must retain the new values now.
             observer.reached(Checkpoint.COMPLETION_DURABLE);removeJournal();

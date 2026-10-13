@@ -84,4 +84,17 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
         }String changed=mediaImage();try{transaction.apply(plan,()->false);fail();}catch(IOException expected){}
         assertEquals(7,prefs.getInt("preview_accent41",0));assertEquals(changed,mediaImage());assertFalse(journal.exists());
     }
+    @Test public void postDecisionIOExceptionReportsCommittedOutcomeAndReplaysMediaInsteadOfClaimingRollback()throws Exception {
+        try{transaction.apply(transaction.prepare(all(),null,physical()),()->false,
+                at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE)throw new IOException("Injected post-decision failure");});fail();}
+        catch(PreferenceRestoreTransaction.Failure failure){assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,failure.outcome);assertFalse(failure.recoveryRequired);}
+        assertNew();assertFalse(journal.exists());
+    }
+    @Test public void verifiedArchiveImportIncludesPinAndHiddenPayloadsAndPreservesOmittedData()throws Exception {
+        File file=new File(app.getCacheDir(),"four-store.zip");LogicalBackupArchive.writeCategories(file,all(),()->false);
+        try(var imported=LogicalBackupImport.prepare(app,new FileInputStream(file),()->false)) {
+            assertTrue(imported.categories().containsAll(Set.of(BackupCategory.PINNED,BackupCategory.HIDDEN)));
+            transaction.apply(transaction.prepare(imported.payloads(()->false),null,physical()),()->false);
+        }assertNew();assertTrue(file.delete());
+    }
 }

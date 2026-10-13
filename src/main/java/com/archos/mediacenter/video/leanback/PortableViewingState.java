@@ -86,7 +86,7 @@ public final class PortableViewingState {
         for(String key:keys) {
             ViewingHistory.Record now=current.get(key),old=originals.get(key);if(now==null)now=new ViewingHistory.Record(false,false,0,0,0,0);
             boolean original=old!=null;if(old==null)old=new ViewingHistory.Record(false,false,0,0,0,0);
-            int position=positions?old.position:history&&(old.position<0||now.position<0)?old.position:now.position;
+            int position=positions?old.position:history&&now.position<=0&&(old.position<0||now.position<0)?old.position:now.position;
             ViewingHistory.Record value=new ViewingHistory.Record(history?old.completed:now.completed,history?old.started:now.started,
                     position,positions?old.duration:now.duration,history?old.played:now.played,history?old.completedAt:now.completedAt);
             if(original||value.completed||value.started||value.position!=0||value.duration!=0||value.played!=0||value.completedAt!=0)result.put(key,value);
