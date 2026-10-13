@@ -14,7 +14,7 @@
 | ID | Feature | Status | Record |
 |---|---|---|---|
 | FD-001 | Playback age classification overlay | **Approved - Awaiting Scheduling** | [Approved](03%20Approved%20-%20Awaiting%20Scheduling/FD-001-age-rating-overlay.md) |
-| FD-002 | Playback HUD redesign | Parked | [Parked](02%20Parked%20Ideas/README.md) |
+| FD-002 | Playback HUD redesign | **Under Discussion — needs further discussion** | [Discussion record](01%20Under%20Discussion/FD-002-playback-hud-redesign.md) |
 | FD-003 | Preparing Playback screen redesign | Parked | [Parked](02%20Parked%20Ideas/README.md) |
 | FD-004 | Shield Home integration | Parked | [Parked](02%20Parked%20Ideas/README.md) |
 | FD-005 | Network & Files redesign | Parked | [Parked](02%20Parked%20Ideas/README.md) |
@@ -88,3 +88,6 @@ For future feature discussions, report readiness based on **outstanding owner de
 
 ## Approved Details tab visual specification — 13 October 2026
 - **FD-033: Approved — awaiting scheduling.** [Owner-approved Details tab specification](03%20Approved%20-%20Awaiting%20Scheduling/FD-033-details-tab-approved-design.md). Covers final 16:9 layout below hero, retained official typography, single continuous user-accent focus outline integrating active tab with panel, unboxed inactive tabs, non-interactive/no-scroll Details information, Description/Key Information/Reception hierarchy, 8 cast + 8 crew, technical single-line path and OMDb Reception scope. Owner-approved final illustrative mock-up remains in conversation; GitHub contains the text implementation specification, **not the image asset**. No changes to active 0.139.
+
+## 13 October — Playback HUD discussion reopened
+FD-002 is now **Under Discussion**, not approved or scheduled. [Full owner discussion and source-verification requirements](01%20Under%20Discussion/FD-002-playback-hud-redesign.md). Previous parked status in older chronological documents is superseded for this item only. The unfinished 0.139 Codex implementation remains protected.
