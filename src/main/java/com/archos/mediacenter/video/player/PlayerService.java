@@ -1104,7 +1104,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private void sampleJourneyTime(){
         if(mPlayer==null||!mPlaybackSession.startPositionApplied)return;
         long now=android.os.SystemClock.elapsedRealtime();int position=captureCurrentPosition(false);
-        if(mVideoInfo!=null&&mVideoInfo.id>=0&&!PrivateMode.isActive()&&mPlaybackSession.coverageId!=mVideoInfo.id){
+        if(mPlaybackSession.outputEstablished&&mVideoInfo!=null&&mVideoInfo.id>=0&&!PrivateMode.isActive()&&mPlaybackSession.coverageId!=mVideoInfo.id){
             mPlaybackSession.coverageId=mVideoInfo.id;mPlaybackSession.coverage=PlaybackViewingCoverage.decode(mPreferences.getString("supernova_viewed_ranges:"+mVideoInfo.id,"[]"));
             mPreferences.edit().putBoolean("supernova_viewed_eligible:"+mVideoInfo.id,mPlaybackSession.coverage.eligible(getEffectiveDurationMs())).apply();
         }
@@ -1112,7 +1112,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if(elapsed>0&&elapsed<=5000&&advanced>0&&advanced<=elapsed*8+1000){
                 mPlaybackSession.viewedMs+=elapsed;
                 if(elapsed>=250&&!mPlaybackSession.outputEstablished){mPlaybackSession.outputEstablished=true;excludeEstablishedHero();com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_output_established","evidence","advancing_media_clock");}
-                if(mVideoInfo!=null&&!PrivateMode.isActive()){
+                if(mPlaybackSession.outputEstablished&&mVideoInfo!=null&&!PrivateMode.isActive()){
                     if(mPlaybackSession.coverageId!=mVideoInfo.id){mPlaybackSession.coverageId=mVideoInfo.id;mPlaybackSession.coverage=PlaybackViewingCoverage.decode(mPreferences.getString("supernova_viewed_ranges:"+mVideoInfo.id,"[]"));}
                     mPlaybackSession.coverage.add(mPlaybackSession.samplePosition,position);
                     mPreferences.edit().putString("supernova_viewed_ranges:"+mVideoInfo.id,mPlaybackSession.coverage.encode()).putBoolean("supernova_viewed_eligible:"+mVideoInfo.id,mPlaybackSession.coverage.eligible(getEffectiveDurationMs())).apply();
@@ -1125,7 +1125,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private void saveVideoStateIfReady(boolean periodic){
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_attempt","periodic",periodic,"state",String.valueOf(mPlayerState),"has_played",mPlaybackSession.hasPlayed,"failed",mPlaybackSession.failed);
         sampleJourneyTime();
-        if(mPlaybackSession.failed&&!mPlaybackSession.outputEstablished){com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_skipped","reason","failed_before_playback_established");return;}
+        if(!mPlaybackSession.outputEstablished){com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_skipped","reason","before_playback_established","failed",mPlaybackSession.failed);return;}
         if(mIndexHelper!=null) {
             if (mPlaybackSession.startPositionApplied && mPlaybackSession.hasPlayed && mPlayerState != PlayerState.INIT && mPlayerState != PlayerState.PREPARING) {
                 if (log.isDebugEnabled()) log.debug("saveVideoStateIfReady");

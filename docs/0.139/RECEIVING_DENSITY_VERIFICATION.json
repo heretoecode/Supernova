@@ -1,0 +1,25 @@
+{
+  "source_sha": "2ecde85a5c454a65ed3918229fe5dad09ac48b39",
+  "classes": 5,
+  "tests": 30,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.PortableSettingsRegistryTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "checks": [
+    "UI density accepts only source-supported unset/160/240/320/480 choices",
+    "Changed receiving density resets device-local confirmation; private rollback restores old confirmation and density",
+    "Arbitrary/corrupt density values rejected before mutation",
+    "16-codec archive, selected-store recovery and review/preferred intent regressions"
+  ],
+  "limits": [
+    "Production restore preview must expose receivingChecks; no physical receiving-device density dialog or audio/video capability matrix",
+    "Complete Backup integration and combined database recovery still pending"
+  ]
+}
