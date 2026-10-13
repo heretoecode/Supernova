@@ -31,9 +31,11 @@ public class PlaylistSyncPolicyTest {
         try(VideoOpenHelper helper=new VideoOpenHelper(app)){
             var db=helper.getWritableDatabase();db.execSQL("INSERT INTO list_table(_id,title,trakt_id,sync_status) VALUES(77,'Selected',NULL,4),(88,'Other',NULL,4)");
             db.execSQL("INSERT INTO video_list_table(_id,list_id,m_online_id,e_online_id,sync_status) VALUES(100,77,123,-1,1),(101,77,-1,456,1),(102,88,789,-1,1)");
+            try(var rows=db.rawQuery("SELECT _id,list_id FROM video_list_table WHERE list_id=77 ORDER BY _id",null)){assertEquals("Seeded native membership count",2,rows.getCount());}
         }
         try(var rows=app.getContentResolver().query(VideoStore.List.getListUri(77),new String[]{"_id","list_id","m_online_id","e_online_id"},null,null,"_id ASC")){
-            assertNotNull(rows);assertEquals(2,rows.getCount());assertTrue(rows.moveToFirst());assertEquals(100,rows.getInt(0));assertEquals(77,rows.getInt(1));assertEquals(123,rows.getInt(2));assertTrue(rows.moveToNext());assertEquals(101,rows.getInt(0));assertEquals(456,rows.getInt(3));
+            assertNotNull(rows);while(rows.moveToNext())System.out.println("Native playlist query fixture row: "+rows.getLong(0)+","+rows.getLong(1)+","+rows.getLong(2)+","+rows.getLong(3));
+            assertEquals("Provider membership count",2,rows.getCount());assertTrue(rows.moveToFirst());assertEquals(100,rows.getInt(0));assertEquals(77,rows.getInt(1));assertEquals(123,rows.getInt(2));assertTrue(rows.moveToNext());assertEquals(101,rows.getInt(0));assertEquals(456,rows.getInt(3));
         }
     }
     @Test public void realTraktSyncCannotUploadDeleteOrQueryMembersOfLocalOnlyDefinitions()throws Exception{
