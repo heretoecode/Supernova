@@ -1,0 +1,3 @@
+# FD-031 — Settings > About (historically approved designs)
+
+**DESIGN APPROVED for all five subsections; implementation/release assignment needs reconciliation with current work.** [Canonical approved spec](../../design/ABOUT_SETTINGS.md): App Information, Release Notes, Open-source Licences, Credits & Acknowledgements, Technical Information; flexible two content panels or merged area, consistent TV focus, accurate credits/licence texts and provider attributions. **Do not ask user to redesign approved subsections.** Final APK-specific licence verification remains technical QA. This file is a preservation pointer, not fresh authorisation or assertion of absence in current build.
