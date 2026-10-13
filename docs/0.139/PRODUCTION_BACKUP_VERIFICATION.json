@@ -1,0 +1,28 @@
+{
+  "source_sha": "2925739d989b940d232327c350148cda5dfceb7f",
+  "result": "PASS",
+  "classes": 6,
+  "tests": 24,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.BackupCycleTest",
+    "com.archos.mediacenter.video.utils.BackupStageRevalidationTest",
+    "com.archos.mediacenter.video.utils.RestoreJournalTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest"
+  ],
+  "duration": "2m 24s",
+  "log_sha256": "edfa1cfc81982d6db24e281f8c96dac38e3c05c1eac70f9bdaf3190664ceae56",
+  "coverage": [
+    "Production legacy export entry emits only selected logical2.0 categories",
+    "Unsupported selections cannot fall back to whole-library export",
+    "Legacy1.0 fixtures are generated only in test sources, never packaged",
+    "Dedicated legacy reader uses existing private durable originals, without new full-library archive",
+    "Legacy credential-clearing contract preserved and instructions updated",
+    "Previous stage revalidation and restore-journal regressions retained"
+  ],
+  "limits": "Synthetic current-schema1.0 fixtures, not owner original historical backup. Actual foreground/provider lifecycle, all historical schema versions, full candidate/native/R8/signing/Shield acceptance remain open."
+}
