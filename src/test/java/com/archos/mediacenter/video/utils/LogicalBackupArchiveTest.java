@@ -48,4 +48,27 @@ public class LogicalBackupArchiveTest {
         String manifest;try(ZipFile zip=new ZipFile(original);InputStream input=zip.getInputStream(zip.getEntry("manifest.json"))){manifest=new String(input.readAllBytes(),StandardCharsets.UTF_8);}
         rewritten(original,altered,null,"manifest.json",new JSONObject(manifest).put("formatVersion","999.0").toString());try{LogicalBackupArchive.read(altered,()->false);fail();}catch(IOException expected){}
     }
+    @Test public void categoryAwareArchivePreservesPresentEmptyHomeAndPageWithoutInventingOtherCodecs()throws Exception{
+        Map<BackupCategory,JSONObject> payloads=new EnumMap<>(BackupCategory.class);
+        payloads.put(BackupCategory.HOME,new JSONObject().put("schema",1).put("rows",new JSONArray()));
+        payloads.put(BackupCategory.CUSTOM_PAGES,new JSONObject().put("schema",1).put("page",JSONObject.NULL));
+        payloads.put(BackupCategory.APPEARANCE,settings().get(Category.APPEARANCE));
+        File archive=new File(dir,"logical-intent.zip");LogicalBackupArchive.writeCategories(archive,payloads,()->false);
+        Map<BackupCategory,JSONObject> read=LogicalBackupArchive.readCategories(archive,()->false);
+        assertEquals(payloads.keySet(),read.keySet());assertEquals(0,read.get(BackupCategory.HOME).getJSONArray("rows").length());assertTrue(read.get(BackupCategory.CUSTOM_PAGES).isNull("page"));
+        assertFalse(read.containsKey(BackupCategory.WATCH_NEXT));assertEquals(12,LogicalBackupArchive.registered().size());
+        try{LogicalBackupArchive.read(archive,()->false);fail("settings-only reader must not silently drop Home");}catch(IOException expected){}
+        payloads.put(BackupCategory.HISTORY,new JSONObject());File unsupported=new File(dir,"unsupported.zip");
+        try{LogicalBackupArchive.writeCategories(unsupported,payloads,()->false);fail();}catch(IOException expected){}assertFalse(unsupported.exists());
+    }
+    @Test public void manifestAndPayloadSchemasCannotCoerceFractionalOrStringVersions()throws Exception{
+        File original=new File(dir,"original.zip"),altered=new File(dir,"altered.zip");LogicalBackupArchive.write(original,settings(),()->false);
+        String raw;try(ZipFile zip=new ZipFile(original);InputStream input=zip.getInputStream(zip.getEntry("manifest.json"))){raw=new String(input.readAllBytes(),StandardCharsets.UTF_8);}
+        for(Object invalid:List.of(1.5,"1",4294967297L)){
+            JSONObject manifest=new JSONObject(raw);manifest.getJSONArray("categories").getJSONObject(0).put("schema",invalid);
+            rewritten(original,altered,null,"manifest.json",manifest.toString());try{LogicalBackupArchive.readCategories(altered,()->false);fail("coerced manifest schema");}catch(IOException expected){}
+            Map<Category,JSONObject> payloads=settings();payloads.get(Category.APPEARANCE).put("schema",invalid);
+            File bad=new File(dir,"bad-schema.zip");try{LogicalBackupArchive.write(bad,payloads,()->false);fail("coerced payload schema");}catch(IOException expected){}assertFalse(bad.exists());
+        }
+    }
 }
