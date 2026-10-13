@@ -48,6 +48,15 @@ public final class SharedMetadata {
             LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(-2,-2);size.rightMargin=dp(primary.getContext(),6);badges.addView(badge,size);
         }badges.setVisibility(badges.getChildCount()==0?View.GONE:View.VISIBLE);
     }
+    /** Card policy is shared by Home and Details; the lower facts retain their full data. */
+    public static void bindCard(TextView primary,LinearLayout badges,Facts original,boolean home){
+        Facts facts=original.copy();facts.votes=0;
+        Set<String> genres=PreviewGenres.parse(facts.genres);List<String> compact=new ArrayList<>(genres);
+        facts.genres=android.text.TextUtils.join(", ",compact.subList(0,Math.min(3,compact.size())));
+        if(home){facts.technical.clear();facts.context="";}
+        primary.setTextSize(16*TvLayout.scale(primary.getContext()));primary.setSingleLine(true);
+        bind(primary,badges,facts,5);
+    }
     public static Facts entry(Context c,Entry entry,boolean home) {
         Facts facts=new Facts();if(entry==null)return facts;
         facts.year=entry.year()>0?String.valueOf(entry.year()):"";facts.genres=entry.genres.replace('|',',');

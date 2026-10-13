@@ -433,6 +433,7 @@ public class Player implements IPlayerControl,
         // TODO used to have if (PlayerService.sPlayerService != null) PlayerService.sPlayerService.saveVideoStateIfReady();
         if (log.isDebugEnabled()) log.debug("stopPlayback");
         mHandler.removeCallbacks(mPreparedAsync);
+        outputEstablished=false;previewFrameRendered=false;
         stayAwake(false);
         if (mEffectRenderer != null) {
             mEffectRenderer.pause();
@@ -591,10 +592,16 @@ public class Player implements IPlayerControl,
         return mIsTorrent;
     }
     private volatile boolean previewFrameRendered;
+    private boolean outputEstablished;
+    private void playbackOutput(){
+        if(mCurrentState!=STATE_PLAYING||mMediaPlayer==null||outputEstablished)return;
+        outputEstablished=true;previewFrameRendered=true;
+        if(mPlayerListener!=null)mPlayerListener.onPlaybackEstablished();
+    }
     public boolean hasRenderedPreviewFrame(){return previewFrameRendered;}
     /* TextureView.SurfaceTextureListener */
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        previewFrameRendered=true;
+        playbackOutput();
         if (log.isDebugEnabled()) log.debug("CONFIG onSurfaceTextureUpdated");
     }
 
@@ -1029,7 +1036,7 @@ public class Player implements IPlayerControl,
     /* IMediaPlayer.Listener */
     public void onPrepared(IMediaPlayer mp) {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_prepared","backend",getType());
-        previewFrameRendered=false;
+        previewFrameRendered=false;outputEstablished=false;
         mCurrentState = STATE_PREPARED;
         if (mSurfaceController != null)
             mSurfaceController.setMediaPlayer(mMediaPlayer);
@@ -1215,7 +1222,7 @@ public class Player implements IPlayerControl,
         if (log.isDebugEnabled()) log.debug("onInfo: {} {}", what, extra);
         switch(what) {
         case 3: // Android MEDIA_INFO_VIDEO_RENDERING_START, also forwarded by compatible backends.
-            previewFrameRendered=true;return true;
+            if(mp==mMediaPlayer)playbackOutput();return true;
         case IMediaPlayer.MEDIA_INFO_METADATA_UPDATE:
             if (mIsBusy) {
                 if (log.isDebugEnabled()) log.debug("onInfo: mIsBusy set mUpdateMetadata = true");
@@ -1299,6 +1306,7 @@ public class Player implements IPlayerControl,
 
     public interface Listener {
         void onPrepared();
+        default void onPlaybackEstablished() {}
         void onCompletion();
         boolean onError( int errorCode, int errorQualCode, String msg);
         void onSeekStart(int pos);

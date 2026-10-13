@@ -207,7 +207,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         private long viewedMs, sampleTime;
         private PlaybackViewingCoverage coverage=new PlaybackViewingCoverage();private long coverageId=-1;
         private int samplePosition=-1;
-        private boolean seeking, hasPlayed, failed;
+        private boolean seeking, hasPlayed, failed, outputEstablished;
 
         private void reset(Uri newUri, String newLaunchGeneration) {
             uri = newUri;
@@ -219,7 +219,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             lastKnownPositionMs = LAST_POSITION_UNKNOWN;
             completed = false;
             startPositionApplied = false;
-            coverage=new PlaybackViewingCoverage();coverageId=-1;viewedMs=0;sampleTime=0;samplePosition=-1;seeking=false;hasPlayed=false;failed=false;
+            coverage=new PlaybackViewingCoverage();coverageId=-1;viewedMs=0;sampleTime=0;samplePosition=-1;seeking=false;hasPlayed=false;failed=false;outputEstablished=false;
         }
 
         private void setCandidate(ResumeSource source, int positionMs) {
@@ -1702,6 +1702,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     mPlaybackSession.selectedSource, startPosition);
             Player.sPlayer.seekTo(startPosition);
             mPlaybackSession.startPositionApplied = true;
+            excludeEstablishedHero();
             // Explicit intent positions are one-shot inputs. Keep the selected source for
             // diagnostics, but do not let a later metadata refresh seek backward again.
             mPlaybackSession.setCandidate(ResumeSource.EXPLICIT, 0);
@@ -2035,6 +2036,22 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if(mPlayerFrontend!=null) {
             mPlayerFrontend.onAllSeekComplete();
         }
+    }
+
+    @Override public void onPlaybackEstablished(){
+        mPlaybackSession.outputEstablished=true;
+        excludeEstablishedHero();
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_output_established","backend",mPlayer==null?-1:mPlayer.getType());
+    }
+    private void excludeEstablishedHero(){
+        if(!mPlaybackSession.outputEstablished||!mPlaybackSession.startPositionApplied||mVideoInfo==null||PrivateMode.isActive())return;
+        String provider=mVideoInfo.isShow?mVideoInfo.scraperShowId:mVideoInfo.scraperMovieId;
+        String identity=provider!=null&&provider.matches("[1-9][0-9]*")?(mVideoInfo.isShow?"tv:":"movie:")+provider:!mVideoInfo.isShow?"v"+mVideoInfo.id:null;
+        if(identity==null){
+            var library=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+            if(library!=null)for(var entry:library.episodes)if(((Video)entry.media).getId()==mVideoInfo.id){identity=entry.key();break;}
+        }
+        com.archos.mediacenter.video.leanback.HeroPlaybackEligibility.established(this,identity);
     }
 
     @Override

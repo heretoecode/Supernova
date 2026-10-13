@@ -22,17 +22,17 @@ final class PreviewFeaturedCard extends FrameLayout {
             LayoutParams size=new LayoutParams(-1,-1);size.gravity=direction<0?Gravity.LEFT:Gravity.RIGHT;addView(neighbour,size);
         }
         CinematicCard card=new CinematicCard(c);card.setTag("semantic:featured.active");rounded(card,c);card.setElevation(dp(8));
-        addView(card,new LayoutParams(-1,-1,Gravity.CENTER));card.addView(art(c,entry),new LayoutParams(-1,-1));card.addScrim();
+        addView(card,new LayoutParams(-1,-1,Gravity.CENTER));card.addView(art(c,entry),new LayoutParams(-1,-1));
 
         LinearLayout copy=new LinearLayout(c);copy.setOrientation(LinearLayout.VERTICAL);copy.setTag("featured.copy");copy.setPadding(dp(24),dp(22),dp(18),dp(18));card.addView(copy,new LayoutParams(-1,-1));
-        TextView title=text(entry==null?"":PreviewPages.displayName(entry),30);title.setTag("semantic:featured.title");title.setMaxLines(2);title.setTypeface(null,android.graphics.Typeface.BOLD);copy.addView(title,new LinearLayout.LayoutParams(-1,dp(86)));if(entry!=null)OfficialTitleArtwork.bindStable(title,entry.media);else title.setForeground(new HomePlaceholder.Skeleton());
+        TextView title=text(entry==null?"":PreviewPages.displayName(entry),30);title.setTag("semantic:featured.title");title.setSingleLine(true);title.setShadowLayer(dp(2),0,dp(1),Color.BLACK);title.setTypeface(null,android.graphics.Typeface.BOLD);copy.addView(title,new LinearLayout.LayoutParams(-1,dp(86)));if(entry!=null)OfficialTitleArtwork.bindStable(title,entry.media);else title.setForeground(new HomePlaceholder.Skeleton());
         TextView metadata=text("",18);metadata.setMaxLines(2);metadata.setTag("semantic:featured.metadata");metadata.setPadding(0,dp(4),0,dp(4));LinearLayout.LayoutParams metadataSize=new LinearLayout.LayoutParams(-1,-2);metadataSize.topMargin=dp(18);copy.addView(metadata,metadataSize);
-        LinearLayout badges=new LinearLayout(c);LinearLayout.LayoutParams badgeSize=new LinearLayout.LayoutParams(-1,-2);badgeSize.topMargin=dp(8);copy.addView(badges,badgeSize);SharedMetadata.bind(metadata,badges,entry!=null&&entry.homeMetadata!=null?entry.homeMetadata:SharedMetadata.entry(c,entry,true),5);
+        LinearLayout badges=new LinearLayout(c);LinearLayout.LayoutParams badgeSize=new LinearLayout.LayoutParams(-1,-2);badgeSize.topMargin=dp(8);copy.addView(badges,badgeSize);SharedMetadata.bindCard(metadata,badges,entry!=null&&entry.homeMetadata!=null?entry.homeMetadata:SharedMetadata.entry(c,entry,true),true);
         String plot=entry==null?"":entry.media instanceof Tvshow?((Tvshow)entry.media).getPlot():entry.media instanceof Video?((Video)entry.media).getDescriptionBody():"";
         String tagline=entry==null?"":entry.tagline;
         if(tagline!=null&&!tagline.trim().isEmpty())plot=tagline;
         if(plot==null)plot="";
-        TextView synopsis=text(plot,16);synopsis.setSingleLine(true);if(plot.trim().isEmpty())synopsis.setVisibility(GONE);if(tagline!=null&&!tagline.trim().isEmpty())synopsis.setTypeface(android.graphics.Typeface.create("casual",android.graphics.Typeface.NORMAL));synopsis.setTag("semantic:featured.synopsis");LinearLayout.LayoutParams synopsisSize=new LinearLayout.LayoutParams(-1,dp(26));synopsisSize.topMargin=dp(12);copy.addView(synopsis,synopsisSize);copy.addView(new View(c),new LinearLayout.LayoutParams(1,0,1));
+        TextView synopsis=text(plot,16);synopsis.setSingleLine(true);if(plot.trim().isEmpty())synopsis.setVisibility(GONE);synopsis.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));synopsis.setShadowLayer(dp(2),0,dp(1),Color.BLACK);synopsis.setTag("semantic:featured.synopsis");LinearLayout.LayoutParams synopsisSize=new LinearLayout.LayoutParams(-1,dp(26));synopsisSize.topMargin=dp(12);copy.addView(synopsis,synopsisSize);copy.addView(new View(c),new LinearLayout.LayoutParams(1,0,1));
         LinearLayout actions=new LinearLayout(c);actions.setClipChildren(false);copy.addView(actions,new LinearLayout.LayoutParams(-1,dp(44)));
         TextView more=action("More Info",info);more.setTag("hero:info");actions.addView(more,new LinearLayout.LayoutParams(-2,-1));
     }

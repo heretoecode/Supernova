@@ -196,10 +196,12 @@ public final class TopNavigation extends LinearLayout {
         selected.requestFocus(); return true;
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
+        if(event.getAction()==KeyEvent.ACTION_DOWN||event.getAction()==KeyEvent.ACTION_UP)homeInput(content);
         View previous=findFocus();boolean consumed=routeKeyEvent(event);
         if(event.getAction()==KeyEvent.ACTION_DOWN)com.archos.mediacenter.video.diagnostics.Diagnostics.navigation(previous,findFocus(),event.getKeyCode(),consumed);
         return consumed;
     }
+    private static void homeInput(View view){if(view instanceof PreviewPages){((PreviewPages)view).recordRemoteInput();return;}if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)homeInput(((android.view.ViewGroup)view).getChildAt(i));}
     private boolean routeKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP
                 && !bar.hasFocus() && firstRow.getAsBoolean()) {
