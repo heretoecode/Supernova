@@ -27,8 +27,9 @@ public final class PreviewToolbar extends LinearLayout {
             TvButton.style((android.widget.TextView)child,true);
             ((android.widget.TextView)child).setSingleLine(true);
             ((android.widget.TextView)child).setEllipsize(android.text.TextUtils.TruncateAt.END);
-            ((android.widget.TextView)child).setMaxWidth(PreviewDialog.dp(getContext(), 220));
-            child.setMinimumHeight(TvLayout.dimension(getContext(), 49));
+            child.setMinimumHeight(TvLayout.dimension(getContext(), 44));
+            child.setPadding(TvLayout.dimension(getContext(),12),TvLayout.dimension(getContext(),6),TvLayout.dimension(getContext(),12),TvLayout.dimension(getContext(),6));
+            ((android.widget.TextView)child).setCompoundDrawablePadding(TvLayout.dimension(getContext(),6));
         }
         child.setOnFocusChangeListener((v, focused) -> invalidate());
         child.setOnKeyListener((v, key, event) -> {

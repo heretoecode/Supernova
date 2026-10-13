@@ -75,7 +75,7 @@ public final class TopNavigation extends LinearLayout {
             });});
             tab.setOnKeyListener((v, key, event) -> {
                 if (key == KeyEvent.KEYCODE_DPAD_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    content.requestFocus(); return true;
+                    if(!focusLibraryEntry(content))content.requestFocus(); return true;
                 }
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (key == KeyEvent.KEYCODE_DPAD_UP) return true;
@@ -200,6 +200,11 @@ public final class TopNavigation extends LinearLayout {
         View previous=findFocus();boolean consumed=routeKeyEvent(event);
         if(event.getAction()==KeyEvent.ACTION_DOWN)com.archos.mediacenter.video.diagnostics.Diagnostics.navigation(previous,findFocus(),event.getKeyCode(),consumed);
         return consumed;
+    }
+    private static boolean focusLibraryEntry(View view){
+        if(view instanceof PreviewPages)return ((PreviewPages)view).focusFromNavigation();
+        if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)if(focusLibraryEntry(((android.view.ViewGroup)view).getChildAt(i)))return true;
+        return false;
     }
     private static void homeInput(View view){if(view instanceof PreviewPages){((PreviewPages)view).recordRemoteInput();return;}if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)homeInput(((android.view.ViewGroup)view).getChildAt(i));}
     private boolean routeKeyEvent(KeyEvent event) {

@@ -81,6 +81,20 @@ public final class PreviewPages extends FrameLayout {
         if(anchors[tab]!=null){holdFocus();restoreFocus();return true;}
         return super.onRequestFocusInDescendants(direction,rect);
     }
+    private static boolean libraryControl(View view){
+        if(view==null||!(view.getTag() instanceof String))return false;
+        String tag=(String)view.getTag();return tag.startsWith("control:")||tag.startsWith("custom.control.");
+    }
+    private String firstLibraryControl(){return customLibrary==null?"control:0":"custom.control.filters";}
+    /** Navigation entry is deliberate; returning from Details uses the saved item anchor instead. */
+    public boolean focusFromNavigation(){
+        if(tab!=1&&tab!=2)return false;
+        for(int i=0;i<cells.size();i++)if(cells.get(i).type==HEADER&&Boolean.TRUE.equals(cells.get(i).value)){
+            FocusAnchor anchor=new FocusAnchor();anchor.cell=cellKey(cells.get(i));anchor.position=i;anchor.child=firstLibraryControl();anchors[tab]=anchor;
+            holdFocus();layout.scrollToPositionWithOffset(0,0);restoreFocus();return true;
+        }
+        return false;
+    }
     private void holdFocus(){restoringFocus=true;setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);requestFocus();setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);}
     private View tagged(View root,String tag){if(tag!=null&&tag.equals(root.getTag())&&root.isFocusable())return root;if(root instanceof ViewGroup){ViewGroup g=(ViewGroup)root;for(int i=0;i<g.getChildCount();i++){View found=tagged(g.getChildAt(i),tag);if(found!=null)return found;}}return null;}
     private void restoreFocus(){
@@ -304,7 +318,7 @@ public final class PreviewPages extends FrameLayout {
         int p=list.getChildAdapterPosition(item);if(p<0||p>=cells.size())return false;
         Cell cell=cells.get(p);
         if(tab==0)return cell.type==HERO && item.getTop()>=list.getPaddingTop() || cell.type==CUSTOMISE&&cells.stream().noneMatch(c->c.type==HERO)&&!list.canScrollVertically(-1);
-        if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value)&&focused.getTag() instanceof String&&((String)focused.getTag()).startsWith("control:")&&!list.canScrollVertically(-1)
+        if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value)&&libraryControl(focused)&&!list.canScrollVertically(-1)
                 ||cell.type==HERO&&item.getTop()>=list.getPaddingTop();
         if(cell.type==NETWORK){
             View cursor=focused;
@@ -376,6 +390,10 @@ public final class PreviewPages extends FrameLayout {
         }
         if(tab==0&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_DOWN&&findFocus()!=null&&"hero:info".equals(findFocus().getTag())){for(int i=0;i<cells.size();i++)if(cells.get(i).type==RAIL||cells.get(i).type==PLACEHOLDERS){FocusAnchor anchor=new FocusAnchor();anchor.cell=cellKey(cells.get(i));anchor.position=i;anchors[tab]=anchor;holdFocus();restoreFocus();return true;}}
         if(event.getAction()==KeyEvent.ACTION_DOWN)lastInteraction=android.os.SystemClock.elapsedRealtime();
+        if((tab==1||tab==2)&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_DOWN&&libraryControl(findFocus())){
+            for(int i=0;i<cells.size();i++)if(cells.get(i).type==POSTER){FocusAnchor anchor=new FocusAnchor();anchor.cell=cellKey(cells.get(i));anchor.position=i;anchors[tab]=anchor;holdFocus();restoreFocus();return true;}
+            return true; // Empty filtered library retains its control focus.
+        }
         if((tab==1||tab==2)&&event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_DPAD_UP){
             View focused=list.findFocus(),item=focused==null?null:list.findContainingItemView(focused);
             int p=item==null?-1:list.getChildAdapterPosition(item);
@@ -383,7 +401,7 @@ public final class PreviewPages extends FrameLayout {
                 Cell c=cells.get(p);int header=-1,first=-1;
                 for(int i=0;i<cells.size();i++){if(cells.get(i).type==HEADER&&Boolean.TRUE.equals(cells.get(i).value))header=i;if(cells.get(i).type==POSTER){first=i;break;}}
                 boolean firstRow=first>=0&&c.type==POSTER&&layout.getSpanSizeLookup().getSpanGroupIndex(p,layout.getSpanCount())==layout.getSpanSizeLookup().getSpanGroupIndex(first,layout.getSpanCount());
-                if(firstRow&&header>=0){FocusAnchor a=new FocusAnchor();a.cell=cellKey(cells.get(header));a.position=header;a.child="control:0";anchors[tab]=a;holdFocus();layout.scrollToPositionWithOffset(0,0);restoreFocus();return true;}
+                if(firstRow&&header>=0){FocusAnchor a=new FocusAnchor();a.cell=cellKey(cells.get(header));a.position=header;a.child=firstLibraryControl();anchors[tab]=a;holdFocus();layout.scrollToPositionWithOffset(0,0);restoreFocus();return true;}
                 if((c.type==HEADER||c.type==HERO)&&list.canScrollVertically(-1)){layout.scrollToPositionWithOffset(0,0);return true;}
             }
         }
@@ -598,7 +616,7 @@ public final class PreviewPages extends FrameLayout {
                     for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order,()->{quietOrder.clear();boolean value=!(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending);ascending[tab]=value;columns[tab].setAscending(value);render();}),button(listMode[tab]?"Grid View":"List View",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
                     if(listMode[tab]){TextView chooser=button("Columns",()->columns[tab].choose(this::refreshColumns));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(chooser,lp);}
                     String[] controlIds={"filters","sort","order","view","columns"};
-                    for(int i=0;i<controls.getChildCount();i++){View control=controls.getChildAt(i);control.setTag(customLibrary==null?"control:"+i:"custom.control."+controlIds[i]);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds[i]);}if(customLibrary!=null){controls.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));TextView edit=button("Edit Library",()->customEdit.run());edit.setTag("custom.control.edit");controls.addView(edit);}
+                    for(int i=0;i<controls.getChildCount();i++){View control=controls.getChildAt(i);control.setTag(customLibrary==null?"control:"+i:"custom.control."+controlIds[i]);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds[i]);}if(customLibrary!=null){TextView edit=button("Edit Library",()->customEdit.run());edit.setTag("custom.control.edit");LinearLayout.LayoutParams editSize=new LinearLayout.LayoutParams(-2,-2);editSize.leftMargin=dp(8);controls.addView(edit,editSize);}
                     v.addView(PreviewToolbar.viewport(controls));
                     View divider=new View(getContext());divider.setBackgroundColor(0x557f8996);LinearLayout.LayoutParams dividerSize=new LinearLayout.LayoutParams(-1,dp(1));dividerSize.topMargin=dp(12);v.addView(divider,dividerSize);
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));
