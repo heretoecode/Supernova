@@ -40,7 +40,7 @@ public class PortablePinnedTitlesTest {
     }
     @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
     @Test public void actualUnfilteredProviderProjectionIncludesOrphanPinsWithoutReadingMetadataText()throws Exception{
-        Context context=RuntimeEnvironment.getApplication();try(DbHolder database=new DbHolder(new VideoOpenHelper(context))){
+        Context context=RuntimeEnvironment.getApplication();DbHolder database=new DbHolder(new VideoOpenHelper(context));try{
             var db=database.get();db.execSQL("INSERT INTO MOVIE(_id,m_online_id,Nova_pinned,name_movie) VALUES(10,123,400,'TITLE_CANARY')");db.execSQL("INSERT INTO MOVIE(_id,m_online_id,Nova_pinned,name_movie) VALUES(11,456,0,'UNPINNED_CANARY')");db.execSQL("INSERT INTO SHOW(_id,s_online_id,Nova_pinned,name_show) VALUES(20,789,800,'SHOW_CANARY')");
         ScraperProvider.hookUriMatcher(new UriMatcher(UriMatcher.NO_MATCH));
         ScraperProvider scraper=new ScraperProvider(context,database);
@@ -54,6 +54,6 @@ public class PortablePinnedTitlesTest {
         provider.attachInfo(context,null);ShadowContentResolver.registerProviderInternal(ScraperStore.AUTHORITY,provider);
         List<Title> titles=PortablePinnedTitles.read(context);assertEquals(3,titles.size());JSONObject payload=PortablePinnedTitles.export(context,titles);assertEquals(2,payload.getJSONArray("rows").length());assertFalse(payload.toString().contains("CANARY"));assertTrue(payload.toString().contains("tmdb:movie:123"));assertTrue(payload.toString().contains("tmdb:tv:789"));
         db.execSQL("UPDATE MOVIE SET Nova_pinned=1.5 WHERE _id=10");try{PortablePinnedTitles.read(context);fail();}catch(java.io.IOException expected){}
-        }
+        }finally{database.close();}
     }
 }
