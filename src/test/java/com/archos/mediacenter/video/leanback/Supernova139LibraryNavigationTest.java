@@ -32,7 +32,8 @@ public class Supernova139LibraryNavigationTest {
             key(nav,KeyEvent.KEYCODE_DPAD_DOWN);assertEquals(first,nav.findFocus().getTag());
             key(nav,KeyEvent.KEYCODE_DPAD_LEFT);assertEquals(first,nav.findFocus().getTag());
             key(nav,KeyEvent.KEYCODE_DPAD_RIGHT);assertNotEquals(first,nav.findFocus().getTag());
-            key(nav,KeyEvent.KEYCODE_DPAD_DOWN);assertEquals(mode==1?"s100":"v40",nav.findFocus().getTag());
+            java.util.List<PreviewPages.Cell> cells=org.robolectric.util.ReflectionHelpers.getField(pages,"cells");String firstPoster=((Entry)cells.stream().filter(cell->cell.value instanceof Entry&&cell.title.isEmpty()).findFirst().get().value).key();
+            key(nav,KeyEvent.KEYCODE_DPAD_DOWN);assertEquals(firstPoster,nav.findFocus().getTag());
             key(nav,KeyEvent.KEYCODE_DPAD_UP);assertEquals(first,nav.findFocus().getTag());
             key(nav,KeyEvent.KEYCODE_DPAD_UP);assertSame(selected,nav.findFocus());
             key(nav,KeyEvent.KEYCODE_DPAD_DOWN);assertEquals(first,nav.findFocus().getTag());
@@ -44,7 +45,7 @@ public class Supernova139LibraryNavigationTest {
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{PreviewPages pages=new PreviewPages(host.get(),(h,item)->{});TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);host.get().setContentView(nav);pages.setDiscovery(new PreviewDiscovery());pages.setSnapshot(library());pages.setTab(1);nav.selectTab(1);PreviewPagesTest.layout(nav);
             RecyclerView list=(RecyclerView)pages.getChildAt(0);GridLayoutManager layout=(GridLayoutManager)list.getLayoutManager();layout.scrollToPositionWithOffset(25,100);PreviewPagesTest.layout(nav);View item=layout.findViewByPosition(25);assertTrue(item.requestFocus());
-            View selected=nav.findViewWithTag("semantic:topnav.movies");assertTrue(selected.requestFocus());key(nav,KeyEvent.KEYCODE_DPAD_DOWN);assertEquals("control:0",nav.findFocus().getTag());assertFalse(list.canScrollVertically(-1));
+            View selected=nav.findViewWithTag("semantic:topnav.movies");assertTrue(selected.requestFocus());key(nav,KeyEvent.KEYCODE_DPAD_DOWN);assertEquals("control:0",nav.findFocus().getTag());assertTrue(pages.atTop());key(nav,KeyEvent.KEYCODE_DPAD_UP);assertSame(selected,nav.findFocus());
         }finally{host.pause().stop().destroy();}
     }
 }

@@ -318,7 +318,7 @@ public final class PreviewPages extends FrameLayout {
         int p=list.getChildAdapterPosition(item);if(p<0||p>=cells.size())return false;
         Cell cell=cells.get(p);
         if(tab==0)return cell.type==HERO && item.getTop()>=list.getPaddingTop() || cell.type==CUSTOMISE&&cells.stream().noneMatch(c->c.type==HERO)&&!list.canScrollVertically(-1);
-        if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value)&&libraryControl(focused)&&!list.canScrollVertically(-1)
+        if(tab==1||tab==2)return cell.type==HEADER&&Boolean.TRUE.equals(cell.value)&&libraryControl(focused)
                 ||cell.type==HERO&&item.getTop()>=list.getPaddingTop();
         if(cell.type==NETWORK){
             View cursor=focused;
