@@ -24,3 +24,10 @@ This is a documentation/conversation decision audit, **not** a proof that every 
 - **Resolved:** incomplete draft Customise Home row exit triggers clear discard confirmation, Continue editing initially focused, Discard row second, using global monochrome Menu Foundation controls; only incomplete draft, not all live settings. Exact mandatory fields source audit.
 - **Still open:** hero ranking/refresh cadence and focus return details; backup audit results; detailed Details tab presentation. The owner explicitly deferred discussion of comprehensive Details tab visual redesign; existing 0.139 tab fixes stay.
 - **Clarified:** app banner refers to Android TV launcher tile, distinct from hero; no change approved. Avoid adding it to 0.139.
+
+
+## 2026-10-13 — Owner correction: branding release already completed
+- **CLOSED — not an open design question:** Android TV launcher banner was already redesigned and implemented in a prior Supernova **branding release**, alongside new branding, app backdrops, app icon, progress/loading icons, animated icon and a new signing key. Do not present wordmark-only versus symbol-and-wordmark as a current owner decision or 0.139 candidate.
+- This is **owner-reported historical implementation**, not independently source/build-verified in this documentation review. If a future release process needs precise artifact/commit/signing identity, consult original branding release receipts; do not change or regenerate signing credentials.
+- Preserve existing implemented branding and signing in 0.139. Separate parked **Shield Home launcher channels/integration** from already implemented Android TV **launcher app banner**.
+- Supersedes earlier entry in this gap review that suggested launcher banner artwork remained undecided.
