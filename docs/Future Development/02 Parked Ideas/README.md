@@ -20,3 +20,6 @@ These discussions are paused, **not deleted or rejected**. Reopen only at owner'
 - Broader Movies/TV/metadata audits: **owner reports already done**, not a pending discussion; preserve audit records, verify only when necessary for a new change.
 - Detailed content warnings/advisories: historical proposed extension of the age-classification playback overlay; **excluded from approved age-only v1**, still parked.
 - Preparing Playback redesign: separate pre-video screen, **parked**, with visual design not established as finally approved in this register.
+
+## Latest correction — Preparing Playback
+FD-003 Preparing Playback redesign is **already implemented and owner-confirmed**, not parked or pending redesign. Any future changes are owner-initiated tweaks only. Historical parked references above are superseded.
