@@ -91,4 +91,8 @@ public class PortableLibrarySourcesTest {
         assertEquals(PortableLocations.reference("smb://NAS.EXAMPLE/a/./b/../c"),PortableLocations.reference("smb://nas.example/a/c"));
         assertEquals(1,PortableLocations.validate(PortableLocations.export(List.of("smb://NAS.EXAMPLE/a/./c","smb://nas.example/a/c"))).size());
     }
+    @Test public void supportedWebdavRoutesRoundtripButLossyUnicodeEncodedSeparatorsAndInvalidPortsReject()throws Exception {
+        for(String scheme:List.of("webdav","webdavs","dav","davs")){String uri=scheme+"://nas.example:8443/Media";assertEquals(uri,PortableLocations.validate(PortableLocations.export(List.of(uri))).values().iterator().next());}
+        for(String unsafe:List.of("file:///a%2Fb","smb://nas.example:65536/share","smb://nas.example:0/share",new String(new char[]{'/','x','\ud800'})))try{PortableLocations.locator(unsafe);fail();}catch(JSONException expected){}
+    }
 }
