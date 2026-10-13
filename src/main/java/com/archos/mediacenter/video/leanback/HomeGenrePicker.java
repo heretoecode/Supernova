@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Consumer;
@@ -94,11 +95,13 @@ final class HomeGenrePicker {
             options.addView(divider, new LinearLayout.LayoutParams(-1, Math.max(1, dp(context, 1))));
         }
         Handler handler = new Handler(Looper.getMainLooper());
+        CountCache countCache=new CountCache();
         Runnable refresh = new Runnable() {
             @Override public void run() {
                 if (!dialog.isShowing()) return;
                 Snapshot snapshot = PreviewLibraryLoader.memoryCache();
-                for (int i = 0; i < names.size(); i++) counts.get(i).setCount(snapshot == null ? -1 : count(snapshot, row, i == 0 ? null : names.get(i)));
+                Counts indexed=countCache.get(snapshot,row);
+                for (int i = 0; i < names.size(); i++) counts.get(i).setCount(indexed==null?-1:indexed.get(i==0?null:names.get(i)));
                 boolean active = NetworkScannerReceiver.isScannerWorking() || ImportState.VIDEO.isInitialImport() || ImportState.VIDEO.isRegularImport() || LoaderUtils.getScrapeInProgress();
                 scanning.setVisibility(active ? View.VISIBLE : View.GONE);
                 android.graphics.drawable.Animatable rotating = (android.graphics.drawable.Animatable) animation;
@@ -136,13 +139,28 @@ final class HomeGenrePicker {
     }
     private static boolean contains(Set<String> names, String value) { return names.stream().anyMatch(name -> name.equalsIgnoreCase(value)); }
     static int count(Snapshot snapshot, PreviewHomeRows.Row row, String genre) {
-        Set<String> identities = new LinkedHashSet<>();
-        if (row.movies) for (Entry entry : snapshot.movies) if (genre == null || PreviewGenres.matches(entry.genres, CollectionsHelper.one(genre))) identities.add(entry.key());
-        if (row.tv) for (Entry entry : snapshot.shows) if (genre == null || PreviewGenres.matches(entry.genres, CollectionsHelper.one(genre))) identities.add(entry.key());
-        return identities.size();
+        return new Counts(snapshot,row).get(genre);
+    }
+    static final class CountCache {
+        private Snapshot snapshot;private boolean movies,tv,initialized;private Counts counts;
+        Counts get(Snapshot next,PreviewHomeRows.Row row){
+            if(!initialized||snapshot!=next||movies!=row.movies||tv!=row.tv){snapshot=next;movies=row.movies;tv=row.tv;initialized=true;counts=next==null?null:new Counts(next,row);}
+            return counts;
+        }
+    }
+    static final class Counts {
+        private final Map<String,Integer> genres=new java.util.TreeMap<>(String.CASE_INSENSITIVE_ORDER);private final int all;
+        Counts(Snapshot snapshot,PreviewHomeRows.Row row){
+            Set<String> titles=new LinkedHashSet<>();Map<String,Set<String>> members=new java.util.TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            if(row.movies)add(snapshot.movies,"movie:",titles,members);if(row.tv)add(snapshot.shows,"tv:",titles,members);
+            all=titles.size();for(Map.Entry<String,Set<String>> genre:members.entrySet())genres.put(genre.getKey(),genre.getValue().size());
+        }
+        private static void add(List<Entry> entries,String kind,Set<String> titles,Map<String,Set<String>> genres){
+            for(Entry entry:entries){String identity=entry.onlineId>0?kind+entry.onlineId:kind+entry.key();titles.add(identity);for(String genre:PreviewGenres.parse(entry.genres))genres.computeIfAbsent(genre,key->new LinkedHashSet<>()).add(identity);}
+        }
+        int get(String genre){return genre==null?all:genres.getOrDefault(genre,0);}
     }
     private static int dp(Context context, float value) { return MenuFoundation.dp(context, value); }
-    private static final class CollectionsHelper { static Set<String> one(String name) { return java.util.Collections.singleton(name); } }
 
     /** Fixed-width tabular digits; updates coalesce and only changed digits roll. No alpha flashing. */
     private static final class RollingCount extends View {

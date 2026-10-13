@@ -20,6 +20,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.annotation.GraphicsMode;
 import org.robolectric.shadows.ShadowDialog;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import static org.junit.Assert.*;
@@ -100,6 +101,13 @@ public class Supernova139HomeEditorTest {
         }finally{host.pause().stop().destroy();}
     }
     private Entry movie(long id,String genres){Movie movie=mock(Movie.class);when(movie.getId()).thenReturn(id);when(movie.getName()).thenReturn("Fixture"+id);return new Entry(movie,id,0,genres);}
+    @Test public void genreCountsDeduplicatePhysicalVersionsAndReuseOnlyUnchangedSnapshotAndMediaTypes(){
+        PreviewHomeRows.Row row=new PreviewHomeRows.Row("custom:counts","Counts");Snapshot snapshot=new Snapshot();Entry first=movie(1,"Drama|Crime"),second=movie(2,"DRAMA|Comedy"),unmatched=movie(3,"Crime");first.onlineId=77;second.onlineId=77;snapshot.movies.addAll(List.of(first,second,unmatched));
+        com.archos.mediacenter.video.browser.adapters.object.Tvshow show=mock(com.archos.mediacenter.video.browser.adapters.object.Tvshow.class);when(show.getTvshowId()).thenReturn(10L);Entry tv=new Entry(show,0,10,"Drama");tv.onlineId=77;snapshot.shows.add(tv);
+        assertEquals(3,HomeGenrePicker.count(snapshot,row,null));assertEquals(2,HomeGenrePicker.count(snapshot,row,"Drama"));assertEquals(2,HomeGenrePicker.count(snapshot,row,"Crime"));assertEquals(1,HomeGenrePicker.count(snapshot,row,"Comedy"));assertEquals(0,HomeGenrePicker.count(snapshot,row,"Unknown"));
+        HomeGenrePicker.CountCache cache=new HomeGenrePicker.CountCache();var counts=cache.get(snapshot,row);assertSame(counts,cache.get(snapshot,row));row.tv=false;var movies=cache.get(snapshot,row);assertNotSame(counts,movies);assertEquals(2,movies.get(null));assertEquals(1,movies.get("drama"));
+        Snapshot changed=new Snapshot();changed.movies.addAll(snapshot.movies);changed.movies.add(movie(4,"Drama"));assertEquals(2,cache.get(changed,row).get("Drama"));assertNull(cache.get(null,row));assertNotNull(cache.get(changed,row));
+    }
     @Test public void legacySavedUnlimitedRowRetainsLargestApprovedCountWhileNewRowsDefaultToFifteen()throws Exception{
         Context context=org.robolectric.RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().putString("preview_home_rows41","[{\"id\":\"custom:legacy\",\"name\":\"Legacy\",\"maximum\":0}]").commit();
         PreviewHomeRows model=new PreviewHomeRows(context);PreviewHomeRows.Row row=model.rows.stream().filter(value->value.id.equals("custom:legacy")).findFirst().get();assertEquals(30,row.maximum);assertEquals(15,new PreviewHomeRows.Row("custom:new","New").maximum);
