@@ -68,3 +68,6 @@ See [13 October documentation audit and status corrections](REPOSITORY_WIDE_RECO
 - 0.139 authorised scope and Stage D maintenance stay in their own authoritative release tracks, not duplicated as new ideas.
 
 The reconciliation inventory counted **170 documentation Markdown/text files**, with targeted reading of central planning/decision documents; it does not certify line-by-line review of every file or every conversation. Do not claim otherwise.
+
+## Owner-facing decision readiness (13 October 2026)
+For future feature discussions, report readiness based on **outstanding owner decisions**, not routine engineering work. Use: **Ready for implementation** (all owner decisions final; scheduling authorisation still required), **Needs your decision** (specific unresolved owner choice), or **Still under discussion** (design/behaviour not final). Record metadata audits, feasibility checks, coding prerequisites and QA in technical handovers for Codex; do not present these as questions for the owner unless they reveal a genuine product choice or blocker. FD-001 age-rating overlay is **ready for implementation from the owner's perspective**, but remains **approved — awaiting scheduling**; do not start it without explicit release authorisation.
