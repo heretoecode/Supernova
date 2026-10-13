@@ -464,6 +464,14 @@
       "role": "Explicit-region country flag artwork; unchanged source PNGs",
       "url": "https://github.com/jdecked/twemoji",
       "text_asset": "foundation/legal/twemoji-country-flags.txt"
+    },
+    {
+      "name": "Simple Icons provider marks",
+      "version": "4d29a35c954699b389a834aacc97dd6e7e74143c",
+      "licence": "CC0-1.0 Universal; respective brand trademarks",
+      "role": "Original provider mark paths converted to transparent white Android vectors",
+      "url": "https://github.com/simple-icons/simple-icons",
+      "text_asset": "foundation/legal/simple-icons-provider-marks.txt"
     }
   ]
 }

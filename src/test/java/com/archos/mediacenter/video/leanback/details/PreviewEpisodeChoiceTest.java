@@ -35,9 +35,7 @@ public class PreviewEpisodeChoiceTest {
             androidx.recyclerview.widget.RecyclerView.ViewHolder holder=adapter.onCreateViewHolder(row,0);adapter.onBindViewHolder(holder,0);
             PreviewLandscapeCard card=(PreviewLandscapeCard)holder.itemView;
             assertTrue(card.isClickable());assertEquals(Boolean.TRUE,card.availability.getTag());
-            assertTrue(card.availability.getColorFilter() instanceof android.graphics.ColorMatrixColorFilter);
-            android.graphics.ColorMatrix matrix=new android.graphics.ColorMatrix();((android.graphics.ColorMatrixColorFilter)card.availability.getColorFilter()).getColorMatrix(matrix);
-            float[] values=matrix.getArray();for(int channel=0;channel<3;channel++){assertEquals(values[channel],values[channel+5],.0001f);assertEquals(values[channel],values[channel+10],.0001f);}assertEquals(1f,values[18],.0001f);
+            assertNull(card.availability.getColorFilter());assertNotNull(card.availability.getDrawable());assertNull(card.availability.getBackground());
             assertEquals(205,card.availability.getImageAlpha());
             card.bind("Local episode","",null,true);assertNull(card.availability.getColorFilter());assertEquals(255,card.availability.getImageAlpha());
             adapter.onViewRecycled(holder);

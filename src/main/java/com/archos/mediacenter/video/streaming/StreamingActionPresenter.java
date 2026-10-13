@@ -52,16 +52,8 @@ public final class StreamingActionPresenter extends Presenter {
         Holder h = (Holder)viewHolder; LogoAction a = (LogoAction)item;
         h.view.setContentDescription("Open " + a.provider.name);
         h.fallback.setText(a.provider.name); h.fallback.setVisibility(View.VISIBLE);
-        h.image.setImageDrawable(new com.archos.mediacenter.video.leanback.PreviewIcon("streaming"));
         h.view.setOnClickListener(v -> a.click.run());
-        String path = a.provider.logo;
-        if (path != null && path.matches("/[A-Za-z0-9._-]+")) {
-            Picasso.get().load("https://image.tmdb.org/t/p/w154" + path).fit().centerInside()
-                .into(h.image, new com.squareup.picasso.Callback() {
-                    @Override public void onSuccess() { h.fallback.setVisibility(View.VISIBLE); }
-                    @Override public void onError(Exception error) { h.fallback.setVisibility(View.VISIBLE); }
-                });
-        }
+        PreviewProviderIcons.bind(h.image,a.provider,0,"details.actions");
     }
     @Override public void onUnbindViewHolder(ViewHolder viewHolder) {
         Holder h = (Holder)viewHolder; Picasso.get().cancelRequest(h.image);
