@@ -11,6 +11,8 @@ import org.json.*;
 import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.leanback.HomeIntentCodec;
 import com.archos.mediacenter.video.leanback.PortableViewingChoices;
+import com.archos.mediacenter.video.leanback.PortablePreferredVersions;
+import com.archos.mediacenter.video.leanback.PortableReviewNotes;
 import com.archos.mediacenter.video.utils.backup.PortableSettingsRegistry.Category;
 
 /** Logical2.0 archive foundation. Only positively registered codecs may write or read payloads. */
@@ -18,10 +20,11 @@ public final class LogicalBackupArchive {
     public static final String FORMAT="2.0";
     private static final int MAX_ENTRY=4*1024*1024,MAX_TOTAL=20*1024*1024;
     public static final String INSTRUCTIONS="SUPERNOVA LOGICAL BACKUP FORMAT 2.0\n\n"
-        +"This archive contains only the categories listed in manifest.json. Currently registered categories are settings, Home rows, the custom Library page, Watch Next and Continue Watching choices. It contains no media, artwork, subtitle files, credentials, accounts, permissions or diagnostic recordings.\n"
+        +"This archive contains only the categories listed in manifest.json. Currently registered categories are settings, Home rows, the custom Library page, Watch Next, Continue Watching choices, preferred versions and user review notes. It contains no media, artwork, subtitle files, credentials, accounts, permissions or diagnostic recordings.\n"
         +"Keep this unencrypted archive private: language, provider and preference choices can reveal personal interests.\n\n"
         +"Before restoring, make a backup of the destination. A compatible reader must validate every archive entry and category schema before offering a restore preview. Select the categories you want to replace and confirm the preview. Selected categories replace their corresponding configuration; a selected empty category clears that configuration. Missing or unselected categories leave the destination unchanged. Home rows never replace independently owned Watch Next membership.\n"
         +"Reconnect storage and services and grant Android permissions separately. Home membership uses exact logical title identities; unresolved members remain pending, without guessing titles or recreating locations. This staged format does not yet contain media identification, viewing progress or other database-backed categories. Device-specific audio/video choices may need adjustment. Portability, permissions and hardware behavior are not guaranteed.\n"
+        +"Preferred physical versions require validated media matching. They remain pending when that dependency is not ready; restoring them never enables filenames or locations automatically. Review notes do not include system health caches. Physical location fingerprints do not authenticate storage/accounts or prove media contents; ambiguous, credential/query-bearing, missing and differently matched records remain unresolved.\n"
         +"Cancel before confirming to leave the destination unchanged. Do not use incomplete files. Export succeeds only after the closed archive and any destination copy pass verification. Interrupted restoration requires recovery by the reader's restore journal; do not assume every failure can roll back external services.\n"
         +"Legacy Supernova1.0 archives require their dedicated database/schema reader and may contain paths and artwork. They are not converted by this archive foundation. Unknown future formats and category schemas must be rejected.\n";
     private static void cancelled(BooleanSupplier cancel)throws IOException{if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Backup cancelled");}
@@ -29,12 +32,14 @@ public final class LogicalBackupArchive {
     private static String text(byte[] data)throws IOException{try{return StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(data)).toString();}catch(CharacterCodingException e){throw new IOException("Invalid backup text",e);}}
     private static String hash(byte[] data)throws IOException{try{StringBuilder result=new StringBuilder();for(byte b:MessageDigest.getInstance("SHA-256").digest(data))result.append(String.format(Locale.ROOT,"%02x",b&255));return result.toString();}catch(Exception e){throw new IOException("Cannot verify backup digest",e);}}
     private static void entry(ZipOutputStream zip,String name,byte[] data)throws IOException{zip.putNextEntry(new ZipEntry(name));zip.write(data);zip.closeEntry();}
-    public static Set<BackupCategory> registered(){EnumSet<BackupCategory> result=EnumSet.of(BackupCategory.HOME,BackupCategory.CUSTOM_PAGES,BackupCategory.WATCH_NEXT,BackupCategory.CONTINUE_CHOICES);for(BackupCategory category:BackupCategory.values())if(category.settings()!=null)result.add(category);return Collections.unmodifiableSet(result);}
+    public static Set<BackupCategory> registered(){EnumSet<BackupCategory> result=EnumSet.of(BackupCategory.HOME,BackupCategory.CUSTOM_PAGES,BackupCategory.WATCH_NEXT,BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW);for(BackupCategory category:BackupCategory.values())if(category.settings()!=null)result.add(category);return Collections.unmodifiableSet(result);}
     private static void validate(BackupCategory category,JSONObject payload)throws JSONException{
         if(category.settings()!=null)PortableSettingsRegistry.validate(payload,category.settings());
         else if(category==BackupCategory.HOME)HomeIntentCodec.validate(payload);
         else if(category==BackupCategory.CUSTOM_PAGES)PortableCustomPage.validate(payload);
         else if(category==BackupCategory.WATCH_NEXT||category==BackupCategory.CONTINUE_CHOICES)PortableViewingChoices.validate(payload,PortableViewingChoices.Kind.valueOf(category.name()));
+        else if(category==BackupCategory.PREFERRED)PortablePreferredVersions.validate(payload);
+        else if(category==BackupCategory.REVIEW)PortableReviewNotes.validate(payload);
         else throw new JSONException("Category codec is not registered");
     }
     private static boolean integer(Object value){return value instanceof Integer||value instanceof Long;}

@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediacenter.video.leanback.CustomLibraryPage;
+import com.archos.mediacenter.video.leanback.PortableReviewNotes;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
+import android.net.Uri;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -14,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreferenceRestoreTransactionTest {
@@ -78,5 +83,25 @@ public class PreferenceRestoreTransactionTest {
         JSONObject record=new JSONObject(Files.readString(journal.toPath()));record.getJSONArray("values").put(new JSONObject().put("key","oauth_token").put("present",true).put("type","string").put("value","OVERWRITE"));Files.writeString(journal.toPath(),record.toString());
         try{transaction.recover();fail();}catch(IOException expected){}assertTrue(journal.exists());assertEquals(19,prefs.getInt("preview_accent41",0));untouched();
         journal.delete();
+    }
+    private Movie movie(long id){Movie video=mock(Movie.class);when(video.getId()).thenReturn(id);when(video.getOnlineId()).thenReturn(123L);when(video.getFileUri()).thenReturn(Uri.parse("file:///storage/fixture.mkv"));when(video.getFilePath()).thenReturn("file:///storage/fixture.mkv");return video;}
+    @Test public void twoStoreProcessDeathAtEachCommitRecoversOriginalsWithoutHealthCacheOrAuthInJournal()throws Exception{
+        var health=app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH,0);var physical=new PortablePhysicalReferences(app,List.of(movie(10)));String ref=physical.reference(10);
+        JSONObject review=new JSONObject().put("schema",1).put("rows",new JSONArray().put(new JSONObject().put("physical",ref).put("expected","tmdb:movie:123").put("incorrect",true)));
+        for(var boundary:List.of(PreferenceRestoreTransaction.Checkpoint.DEFAULT_DURABLE,PreferenceRestoreTransaction.Checkpoint.HEALTH_DURABLE)){
+            health.edit().putBoolean("incorrect:10",false).putBoolean("incorrect:99",true).putString("offline:source","PATH_CANARY").putString("media:10","CACHE_CANARY").commit();Map<BackupCategory,JSONObject> selected=selected();selected.put(BackupCategory.REVIEW,review);var plan=transaction.prepare(selected,null,physical);
+            try{transaction.apply(plan,()->false,at->{if(at==boundary)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+            assertEquals(19,prefs.getInt("preview_accent41",0));assertEquals(boundary==PreferenceRestoreTransaction.Checkpoint.HEALTH_DURABLE,health.getBoolean("incorrect:10",false));String record=Files.readString(journal.toPath());assertFalse(record.contains("AUTH_CANARY"));assertFalse(record.contains("PATH_CANARY"));assertFalse(record.contains("CACHE_CANARY"));
+            assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,new PreferenceRestoreTransaction(app).recover());assertEquals(7,prefs.getInt("preview_accent41",0));assertFalse(health.getBoolean("incorrect:10",true));assertTrue(health.getBoolean("incorrect:99",false));assertEquals("PATH_CANARY",health.getString("offline:source",null));untouched();
+        }
+    }
+    @Test public void durableTwoStoreCompletionAndPresentEmptyReviewAreIndependentOfDefaultPreferences()throws Exception{
+        var health=app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH,0);health.edit().putBoolean("incorrect:10",true).putString("offline:source","KEEP").commit();JSONObject empty=new JSONObject().put("schema",1).put("rows",new JSONArray());Map<BackupCategory,JSONObject> selected=selected();selected.put(BackupCategory.REVIEW,empty);var plan=transaction.prepare(selected,null,new PortablePhysicalReferences(app,List.of()));
+        try{transaction.apply(plan,()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMPLETION_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+        assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,transaction.recover());assertEquals(19,prefs.getInt("preview_accent41",0));assertFalse(health.contains("incorrect:10"));assertEquals("KEEP",health.getString("offline:source",null));untouched();
+    }
+    @Test public void versionOnePrivateRecoveryRemainsReadableWithoutTouchingNamedStores()throws Exception{
+        var health=app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH,0);health.edit().putBoolean("incorrect:10",true).commit();prefs.edit().putInt("preview_accent41",19).commit();journal.getParentFile().mkdirs();Files.writeString(journal.toPath(),new JSONObject().put("schema",1).put("complete",false).put("values",new JSONArray().put(new JSONObject().put("key","preview_accent41").put("present",true).put("type","int").put("value",7))).toString());
+        assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,transaction.recover());assertEquals(7,prefs.getInt("preview_accent41",0));assertTrue(health.getBoolean("incorrect:10",false));untouched();
     }
 }

@@ -18,6 +18,7 @@ public final class PortablePreferredVersions {
             String[] parts=choice.split(":");try{Long.parseLong(parts[1]);Integer.parseInt(parts[2]);Integer.parseInt(parts[3]);}catch(NumberFormatException e){throw new JSONException("Version episode exceeds supported range");}return "tmdb:tv:"+parts[1]+":"+parts[2]+":"+parts[3];
         }throw new JSONException("Unsupported version parent identity");
     }
+    public static boolean ownsKey(String key){if(!key.startsWith(PREFIX))return false;try{expected(key.substring(PREFIX.length()));return true;}catch(JSONException invalid){return false;}}
     public static void validate(JSONObject payload)throws JSONException{
         Object schema=payload.get("schema");if(payload.length()!=2||!(schema instanceof Integer||schema instanceof Long)||((Number)schema).longValue()!=1)throw new JSONException("Unsupported preferred-version schema");JSONArray rows=payload.getJSONArray("rows");if(rows.length()>100000)throw new JSONException("Too many preferred versions");Set<String> distinct=new HashSet<>();
         for(int i=0;i<rows.length();i++){
@@ -29,7 +30,7 @@ public final class PortablePreferredVersions {
     private static String key(JSONObject row)throws JSONException{return row.isNull("expected")?row.getString("physical"):row.getString("expected");}
     public static JSONObject export(Context context,PortablePhysicalReferences references)throws JSONException{
         var prefs=PreferenceManager.getDefaultSharedPreferences(context);Map<String,JSONObject> rows=new LinkedHashMap<>();
-        for(Map.Entry<String,?> entry:prefs.getAll().entrySet())if(entry.getKey().startsWith(PREFIX)){
+        for(Map.Entry<String,?> entry:prefs.getAll().entrySet())if(ownsKey(entry.getKey())){
             String title=expected(entry.getKey().substring(PREFIX.length()));if(!(entry.getValue() instanceof String))throw new JSONException("Saved version choice needs review");String[] selection=((String)entry.getValue()).split("\\|",2);long id;
             try{if(selection.length!=2||!selection[0].matches("[1-9][0-9]{0,18}"))throw new NumberFormatException();id=Long.parseLong(selection[0]);}catch(NumberFormatException e){throw new JSONException("Unsupported saved version selection");}
             Video video=references.video(id);String ref;
@@ -49,7 +50,7 @@ public final class PortablePreferredVersions {
     /** Only a validated media-matching dependency may enable physical version binding; privacy choices stay unchanged. */
     public static Prepared prepare(Context destination,JSONObject payload,PortablePhysicalReferences references,boolean matchingValidated)throws JSONException{
         validate(payload);Set<String> keys=new LinkedHashSet<>();Map<String,Object> values=new LinkedHashMap<>();JSONArray pending=new JSONArray(),rows=payload.getJSONArray("rows");
-        for(String key:PreferenceManager.getDefaultSharedPreferences(destination).getAll().keySet())if(key.startsWith(PREFIX))keys.add(key);
+        for(String key:PreferenceManager.getDefaultSharedPreferences(destination).getAll().keySet())if(ownsKey(key))keys.add(key);
         for(int i=0;i<rows.length();i++){
             JSONObject row=rows.getJSONObject(i);Video target=references.resolve(row.getString("physical"));String parent=row.isNull("expected")?null:row.getString("expected");
             if(!matchingValidated||target==null||target.getFileUri()==null||!Objects.equals(parent,expected(PreviewVariants.choiceKey(target)))){pending.put(new JSONObject(row.toString()));continue;}
