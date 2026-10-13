@@ -20,12 +20,13 @@ import static org.mockito.Mockito.*;
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class OfficialTitleBindingTest {
     private org.robolectric.android.controller.ActivityController<Activity> host;
-    private Locale previous;private TextView title;
+    private Locale previous;private TextView title;private int captures;
+    @Rule public org.junit.rules.TestName name=new org.junit.rules.TestName();
     @Before public void setup()throws Exception {
         previous=Locale.getDefault();Locale.setDefault(Locale.US);settle();
         for(String cache:List.of("ALIASES","MEMORY","PREFETCHED")){android.util.LruCache<?,?> value=ReflectionHelpers.getStaticField(OfficialTitleArtwork.class,cache);value.evictAll();}
         for(String map:List.of("BOUND","READY","TRACES")){Map<?,?> value=ReflectionHelpers.getStaticField(OfficialTitleArtwork.class,map);value.clear();}
-        host=Robolectric.buildActivity(Activity.class).setup().visible();title=new TextView(host.get());title.setText("Official artwork fallback title");host.get().setContentView(title);title.measure(android.view.View.MeasureSpec.makeMeasureSpec(240,1073741824),android.view.View.MeasureSpec.makeMeasureSpec(80,1073741824));title.layout(0,0,240,80);
+        host=Robolectric.buildActivity(Activity.class).setup().visible();title=new TextView(host.get());title.setText("Official artwork fallback title");host.get().setContentView(title);title.measure(android.view.View.MeasureSpec.makeMeasureSpec(240,android.view.View.MeasureSpec.EXACTLY),android.view.View.MeasureSpec.makeMeasureSpec(80,android.view.View.MeasureSpec.EXACTLY));title.layout(0,0,240,80);
     }
     @After public void teardown()throws Exception{settle();host.pause().stop().destroy();Locale.setDefault(previous);}
     private void settle()throws Exception {
@@ -38,7 +39,7 @@ public class OfficialTitleBindingTest {
         File directory=new File(host.get().getCacheDir(),"official-title-artwork");directory.mkdirs();Bitmap bitmap=Bitmap.createBitmap(24,8,Bitmap.Config.ARGB_8888);bitmap.eraseColor(color);
         try(FileOutputStream stream=new FileOutputStream(new File(directory,kind+"_"+id+"_"+language+".png"))){assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG,100,stream));}bitmap.recycle();
     }
-    private int pixel(){Bitmap bitmap=Bitmap.createBitmap(240,80,Bitmap.Config.ARGB_8888);title.draw(new Canvas(bitmap));int color=bitmap.getPixel(120,40);bitmap.recycle();return color;}
+    private int pixel()throws IOException{Bitmap bitmap=Bitmap.createBitmap(240,80,Bitmap.Config.ARGB_8888);title.draw(new Canvas(bitmap));int color=bitmap.getPixel(120,40);File output=new File("build/reports/preview-ui/official-title-"+name.getMethodName()+"-"+(++captures)+".png");output.getParentFile().mkdirs();try(FileOutputStream stream=new FileOutputStream(output)){assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG,100,stream));}bitmap.recycle();return color;}
     @Test public void changedMovieMatchOnTheSameLocalRowRebindsTheCorrectProviderLogo()throws Exception {
         disk("movie",123,"en",Color.RED);disk("movie",456,"en",Color.GREEN);
         OfficialTitleArtwork.bind(title,movie(10,123),true);settle();assertEquals(Color.RED,pixel());
@@ -52,6 +53,9 @@ public class OfficialTitleBindingTest {
     @Test public void stableTransitionFallsBackToWhiteTextWhenTheNewProviderHasNoCachedLogo()throws Exception {
         disk("movie",123,"en",Color.RED);OfficialTitleArtwork.bind(title,movie(10,123),true);settle();assertEquals(Color.RED,pixel());
         OfficialTitleArtwork.bindStable(title,movie(10,456));assertNull(title.getForeground());assertEquals(Color.WHITE,title.getCurrentTextColor());assertTrue(OfficialTitleArtwork.readyForFirstFrame(title));
+    }
+    @Test public void fullyTransparentCachedLogoRetainsReadableFallbackInsteadOfAnInvisibleTitle()throws Exception {
+        disk("movie",123,"en",Color.TRANSPARENT);OfficialTitleArtwork.bind(title,movie(10,123),true);settle();assertNull(title.getForeground());assertEquals(Color.WHITE,title.getCurrentTextColor());assertTrue(OfficialTitleArtwork.readyForFirstFrame(title));
     }
     @Test public void movieAndTvWithTheSameProviderNumberKeepDistinctCacheEntriesAndArtworkPixels()throws Exception {
         disk("movie",123,"en",Color.RED);disk("tv",123,"en",Color.GREEN);OfficialTitleArtwork.bindRemote(title,"movie",123);settle();assertEquals(Color.RED,pixel());

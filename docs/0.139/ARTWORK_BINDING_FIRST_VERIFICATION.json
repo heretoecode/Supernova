@@ -1,0 +1,33 @@
+{
+  "source_sha": "337fd2d760e8533f4d25016eebe9a03513f47cdb",
+  "result": "FAIL",
+  "classes": 2,
+  "tests": 5,
+  "failures": 3,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest",
+    "com.archos.mediacenter.video.leanback.OfficialTitleNetworkTest"
+  ],
+  "failures_detail": [
+    {
+      "class": "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest",
+      "test": "changedMovieMatchOnTheSameLocalRowRebindsTheCorrectProviderLogo",
+      "message": "java.lang.AssertionError: expected:<-16711936> but was:<-65536>"
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest",
+      "test": "localeChangeRebindsWithoutKeepingThePreviousLanguageAlias",
+      "message": "java.lang.AssertionError: expected:<-16776961> but was:<-65536>"
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest",
+      "test": "stableTransitionFallsBackToWhiteTextWhenTheNewProviderHasNoCachedLogo",
+      "message": "java.lang.AssertionError: expected null, but was:<com.archos.mediacenter.video.leanback.OfficialTitleArtwork$Logo@76dd007a>"
+    }
+  ],
+  "duration": "2m 5s",
+  "log_sha256": "970f6de2d1fefab6e7dec9f1a85919ed21c65d3d468aeff56fe3a8233ce14832",
+  "correction": "Bind aliases by verified provider kind/id plus language, capture language before worker submission, reject stale completions and fall back when the current provider lacks cached artwork. Fresh verification required."
+}
