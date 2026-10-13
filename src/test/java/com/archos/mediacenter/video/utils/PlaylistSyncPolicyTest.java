@@ -21,8 +21,12 @@ public class PlaylistSyncPolicyTest {
         app=RuntimeEnvironment.getApplication();app.deleteDatabase("media.db");
         // Exercise real provider query code; avoid unrelated receiver/network lifecycle startup.
         provider=spy(new VideoProvider());doReturn(true).when(provider).onCreate();
-        android.content.pm.ProviderInfo info=new android.content.pm.ProviderInfo();info.authority=VideoStore.AUTHORITY;provider.attachInfo(app,info);ShadowContentResolver.registerProviderInternal(VideoStore.AUTHORITY,provider);
+        android.content.pm.ProviderInfo info=new android.content.pm.ProviderInfo();info.authority=VideoStore.AUTHORITY;provider.attachInfo(app,info);
+        ReflectionHelpers.setField(provider,"mDbHolder",com.archos.mediaprovider.VideoDb.getHolder(app));
+        ReflectionHelpers.setField(provider,"mCr",app.getContentResolver());
+        ShadowContentResolver.registerProviderInternal(VideoStore.AUTHORITY,provider);
     }
+    @After public void closeProviderStore(){com.archos.mediaprovider.VideoDb.getHolder(app).close();}
     @Test public void membershipUriReturnsAllAndOnlyRowsOwnedBySelectedList()throws Exception{
         try(VideoOpenHelper helper=new VideoOpenHelper(app)){
             var db=helper.getWritableDatabase();db.execSQL("INSERT INTO list_table(_id,title,trakt_id,sync_status) VALUES(77,'Selected',NULL,4),(88,'Other',NULL,4)");

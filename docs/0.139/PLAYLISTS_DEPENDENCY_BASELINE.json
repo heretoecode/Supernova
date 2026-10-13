@@ -21,7 +21,7 @@
   ],
   "construction": "Read-only snapshot of established patched shared MediaLib into a separate detached worktree. Original shared tree unchanged.",
   "isolated_baseline_commit": "ebac4f4659482fb917af83e346d84d3fd95f8950",
-  "isolated_policy_commit": "eabdcc933c28235a6479e3718326d942a9f0712e",
-  "policy_patch_sha256": "0b96bb5fc4f81b8e2aecb84a2c468409227a8e369292e81ae98fd2ae64f154df",
-  "verification": "Policy not yet compiled or behaviorally validated. Must be appended after the established0.138 patch chain in the0.139 recipe; do not alter historical workflows."
+  "isolated_policy_commit": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "policy_patch_sha256": "362305f0bba7dfccff58058e9cd1b4a2650674bdede355b6d88c0f46643f629e",
+  "verification": "Compiled in isolated lists build; first two native tests failed due to incomplete provider fixture. Behavioral retest pending. Patch adds local-only status4 and correct list-owner membership queries; append after0.138 patch chain in distinct0.139 recipe."
 }
