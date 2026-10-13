@@ -29,13 +29,13 @@ public final class PreviewProviderIcons {
   try{JSONArray rows=new JSONArray(StreamingRepository.prefs(c).getString("streaming_catalogue_"+StreamingRepository.country(c),"[]"));for(int i=0;i<rows.length();i++){JSONObject p=rows.getJSONObject(i);if(path.equals(p.optString("logo")))return new StreamingRepository.Provider(p.getInt("id"),p.getString("name"),path);}}catch(JSONException ignored){}return null;
  }
  public static void bind(Dialog dialog,int row,String path){bind(dialog,row,path,"provider.choice");}
- public static void bind(Dialog dialog,int row,String path,String surface){bind(dialog,row,provider(dialog.getContext(),path),surface);}
- public static void bind(Dialog dialog,int row,StreamingRepository.Provider provider,String surface){
+ public static void bind(Dialog dialog,int row,String path,String surface){bindProvider(dialog,row,provider(dialog.getContext(),path),surface);}
+ public static void bindProvider(Dialog dialog,int row,StreamingRepository.Provider provider,String surface){
   if(dialog.getWindow()==null)return;View found=dialog.getWindow().getDecorView().findViewWithTag(row);
-  if(!(found instanceof ViewGroup)||((ViewGroup)found).getChildCount()==0)return;View child=((ViewGroup)found).getChildAt(0);if(child instanceof ImageView)bind((ImageView)child,provider,0,surface);
+  if(!(found instanceof ViewGroup)||((ViewGroup)found).getChildCount()==0)return;View child=((ViewGroup)found).getChildAt(0);if(child instanceof ImageView)bindProvider((ImageView)child,provider,0,surface);
  }
- public static void bind(ImageView icon,String path,long media,String surface){bind(icon,provider(icon.getContext(),path),media,surface);}
- public static void bind(ImageView icon,StreamingRepository.Provider provider,long media,String surface){
+ public static void bind(ImageView icon,String path,long media,String surface){bindProvider(icon,provider(icon.getContext(),path),media,surface);}
+ public static void bindProvider(ImageView icon,StreamingRepository.Provider provider,long media,String surface){
   com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(icon);icon.clearColorFilter();icon.setBackground(null);icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
   int resource=provider==null?0:resource(provider.name);
   if(resource!=0)icon.setImageResource(resource);else icon.setImageDrawable(new com.archos.mediacenter.video.leanback.PreviewIcon("streaming"));

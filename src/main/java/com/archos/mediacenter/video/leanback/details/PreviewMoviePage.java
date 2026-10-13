@@ -449,7 +449,7 @@ public final class PreviewMoviePage extends ScrollView {
                 org.json.JSONObject value=recommendation.title;String name=value.optString("title",value.optString("name"));String backdrop=value.optString("backdrop_path");
                 PreviewLandscapeCard card=new PreviewLandscapeCard(getContext());
                 card.bind(name,value.optString("release_date",value.optString("first_air_date")).replaceFirst("-.*$",""),backdrop.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+backdrop):null,true,id,"details.related","landscape");
-                PreviewProviderIcons.bind(card.availability,recommendation.provider,id,"details.related");
+                PreviewProviderIcons.bindProvider(card.availability,recommendation.provider,id,"details.related");
                 card.availability.setImageAlpha(205);
                 card.setTag("remote:"+id);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(card,"details.related.remote."+id);card.setContentDescription(name+" · "+recommendation.provider.name);
                 card.setOnClickListener(v->getContext().startActivity(new Intent(getContext(),com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity.class).putExtra("kind",television?"tv":"movie").putExtra("tmdb_id",id)));

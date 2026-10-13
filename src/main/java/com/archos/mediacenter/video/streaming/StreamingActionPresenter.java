@@ -53,7 +53,7 @@ public final class StreamingActionPresenter extends Presenter {
         h.view.setContentDescription("Open " + a.provider.name);
         h.fallback.setText(a.provider.name); h.fallback.setVisibility(View.VISIBLE);
         h.view.setOnClickListener(v -> a.click.run());
-        PreviewProviderIcons.bind(h.image,a.provider,0,"details.actions");
+        PreviewProviderIcons.bindProvider(h.image,a.provider,0,"details.actions");
     }
     @Override public void onUnbindViewHolder(ViewHolder viewHolder) {
         Holder h = (Holder)viewHolder; Picasso.get().cancelRequest(h.image);

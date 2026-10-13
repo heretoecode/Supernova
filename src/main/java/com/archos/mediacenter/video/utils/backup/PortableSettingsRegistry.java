@@ -16,23 +16,28 @@ public final class PortableSettingsRegistry {
     private static final Map<String,Rule> RULES=new LinkedHashMap<>();
     private static void rules(Category category,Type type,String keys){for(String key:keys.split(" ")){if(RULES.put(key,new Rule(category,type))!=null)throw new IllegalStateException("Overlapping category ownership");}}
     static {
-        rules(Category.APPEARANCE,Type.INT,"preview_accent41");
+        rules(Category.APPEARANCE,Type.INT,"preview_accent41 user_defined_density");
+        rules(Category.APPEARANCE,Type.BOOLEAN,"enable_sponsor");
         rules(Category.APPEARANCE,Type.LANGUAGE,"ui_lang");
         rules(Category.APPEARANCE,Type.CHOICE,"app_theme");
         rules(Category.AUDIO,Type.BOOLEAN,"force_passthrough audio_speed_audiotrack enable_dynamic_audio_delay player_spatialization_enabled disable_downmix enable_downmix_androidtv prefer_original_audio_track");
         rules(Category.AUDIO,Type.CHOICE,"audio_interface_choice audio_decoder_choice force_audio_passthrough_multiple");
         rules(Category.AUDIO,Type.LANGUAGE,"favAudioLang");
         rules(Category.AUDIO,Type.FLOAT,"save_audio_speed_setting_pref_key");
+        rules(Category.AUDIO,Type.INT,"pref_audio_filt_int_key");
+        rules(Category.AUDIO,Type.BOOLEAN,"pref_audio_filt_night_int_key");
         rules(Category.DIAGNOSTICS,Type.BOOLEAN,"supernova_diagnostic_logging");
-        rules(Category.INTEGRATIONS,Type.BOOLEAN,"supernova_integration_trakt supernova_integration_opensubtitles supernova_segment_enabled trakt_live_scrobbling trakt_sync_resume");
+        rules(Category.INTEGRATIONS,Type.BOOLEAN,"supernova_integration_trakt supernova_integration_opensubtitles supernova_segment_enabled introdb_enabled trakt_sync_collection trakt_live_scrobbling trakt_sync_resume");
         rules(Category.INTEGRATIONS,Type.CHOICE,"supernova_segment_intro supernova_segment_recap supernova_segment_preview supernova_segment_outro supernova_segment_credits");
         rules(Category.LIBRARY,Type.BOOLEAN,"hide_watched sort_ignore_articles remember_library_views enable_auto_scrap_key network_nfo_parse scrape_from_database_key nfo_export_auto enable_adult_scrap_key smart_recently_rows hide_trailer_row show_by_rating separate_anime_movie_show show_last_added_row show_last_played_row show_watching_up_next_row show_all_movies_row show_documentaries show_all_tv_shows_row show_all_animes_row");
         rules(Category.LIBRARY,Type.LANGUAGE,"favScraperLang");
+        rules(Category.LIBRARY,Type.INT,"PREF_ALL_ANIMESHOWS_DISPLAY_MODE PREF_ALL_ANIMES_DISPLAY_MODE PREF_ALL_MOVIES_DISPLAY_MODE PREF_ALL_TVSHOWS_DISPLAY_MODE PREF_ANIME_COLLECTION_DISPLAY_MODE PREF_LISTING_DISPLAY_MODE PREF_MOVIE_COLLECTION_DISPLAY_MODE PREF_NON_SCRAPED_VIDEOS_DISPLAY_MODE");
         rules(Category.LIBRARY,Type.CHOICE,"preferences_movie_sort_order preferences_tv_show_sort_order preferences_animes_sort_order");
         rules(Category.NETWORK,Type.BOOLEAN,"pref_smbj pref_smbv2 pref_smb_resolv pref_smb_disable_tcp_discovery pref_smb_disable_udp_discovery pref_smb_disable_mdns_discovery pref_sshj pref_create_remote_thumbs network_bookmarks pref_network_prefer_vpn vpn_mobile auto_rescan_on_app_restart preference_display_all_files");
         rules(Category.NETWORK,Type.INT,"preview_scan_frequency auto_rescan_period auto_rescan_starting_time");
-        rules(Category.PLAYBACK,Type.BOOLEAN,"display_resume_box hide_controls_on_pause make_time_negative playback_speed allow_3rd_party_player reset_brightness_on_start supernova_track_viewing_history supernova_save_resume preview_featured_recent preview_featured_trending preview_featured_popular");
-        rules(Category.PLAYBACK,Type.INT,"brightness_saved");
+        rules(Category.PLAYBACK,Type.BOOLEAN,"display_resume_box hide_controls_on_pause make_time_negative playback_speed allow_3rd_party_player reset_brightness_on_start supernova_track_viewing_history supernova_save_resume PREF_PRIVATE_MODE preview_featured_recent preview_featured_trending preview_featured_popular");
+        rules(Category.PLAYBACK,Type.INT,"brightness_saved pref_play_mode_int_key notifications_mode");
+        rules(Category.PLAYBACK,Type.BOOLEAN,"pref_lock_rotation");
         rules(Category.STREAMING,Type.BOOLEAN,"streaming_enabled");
         rules(Category.STREAMING,Type.COUNTRY,"streaming_country");
         rules(Category.SUBTITLES,Type.BOOLEAN,"subtitles_hide_default pref_play_subtitle_outline_key subtitle_background supernova_subtitle_discovery supernova_subtitle_season_prefetch");
@@ -40,8 +45,8 @@ public final class PortableSettingsRegistry {
         rules(Category.SUBTITLES,Type.LANGUAGE,"favSubLang");
         rules(Category.SUBTITLES,Type.LANGUAGES,"languages_list");
         rules(Category.SUBTITLES,Type.CHOICE,"codepage");
-        rules(Category.VIDEO,Type.BOOLEAN,"force_software_decoding enable_cutout_mode_short_edges enable_cutout_both_sidesx activate_tv_switch player_projector_mode_key");
-        rules(Category.VIDEO,Type.CHOICE,"dec_choice parser_sync_mode enable_tv_refreshrate_switch_mode dolby_vision_mode stream_buffer_size stream_max_iframe_size");
+        rules(Category.VIDEO,Type.BOOLEAN,"force_software_decoding enable_cutout_mode_short_edges enable_cutout_both_sidesx activate_tv_switch player_projector_mode_key preferences_advanced_video_enabled");
+        rules(Category.VIDEO,Type.CHOICE,"dec_choice parser_sync_mode enable_tv_refreshrate_switch_mode dolby_vision_mode stream_buffer_size stream_max_iframe_size player_pref_format_key player_pref_auto_format_key");
     }
     private static final Map<String,Set<String>> CHOICES=new HashMap<>();
     private static void choices(String key,String values){CHOICES.put(key,new HashSet<>(Arrays.asList(values.split("\\|",-1))));}
