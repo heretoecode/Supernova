@@ -25,7 +25,7 @@ public enum BackupCategory {
     WATCH_NEXT("Watch Next","list",2,true,"Manually queued logical titles, independent of Home definitions.","preview_home_rows41 watchnext.members"),
     CONTINUE_CHOICES("Continue Watching","history",3,true,"Explicit dismissals and viewing choices; no invented watch counts.","preview_cw_dismiss:* / PreviewHomeRows.dismiss"),
     POSITIONS("Playback positions","history",3,true,"Unfinished playback offsets and duration, independently of history.","ViewingHistory.position/duration / legacy bookmarks"),
-    TITLE_PLAYBACK("Title adjustments","audio",3,false,"Per-title track and delay choices; file variants may differ.","VideoDbInfo playback parameters"),
+    TITLE_PLAYBACK("Title playback","audio",3,false,"Per-title track and delay choices; file variants may differ.","VideoDbInfo playback parameters"),
     HISTORY("Watch history","history",3,true,"What you watched and when. Excluding it loses restored watched state.","ViewingHistory flags/times / legacy watched markers"),
     BOOKMARKS("File bookmarks","bookmark",4,false,"Saved browser favourites. Recreating locations needs explicit opt-in.","shortcuts_db / shortcuts2_db browser routes"),
     SOURCES("Library sources","folder",4,false,"Selected roots and exclusions. Reconnect access and permissions separately.","SupernovaLibraryPolicy roots/exclusions / source shortcuts"),

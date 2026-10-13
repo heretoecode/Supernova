@@ -10,7 +10,7 @@ import org.json.*;
 public final class HomeIntentCodec {
     public static final String PENDING="supernova_restore_pending_home_v2";
     private static void label(String value,int max)throws JSONException{
-        if(value.length()>max||value.trim().isEmpty()||value.contains("://")||value.contains("/")||value.contains("\\")||value.matches("(?is).*(?:password|token|secret|authorization|cookie)\\s*[:=].*"))throw new JSONException("Home label needs privacy review before backup");
+        if(value.length()>max||value.trim().isEmpty()||value.contains("://")||value.trim().startsWith("/")||value.trim().startsWith("\\")||value.matches("(?is)\\s*(?:[a-z]:|file:|content:)[/\\\\].*")||value.matches("(?is).*(?:password|token|secret|authorization|cookie)\\s*[:=].*"))throw new JSONException("Home label needs privacy review before backup");
     }
     private static JSONArray refs(Set<String> keys,PortableTitleReferences identities)throws JSONException{
         JSONArray result=new JSONArray();Set<String> distinct=new LinkedHashSet<>();for(String key:keys)distinct.add(identities.reference(key));for(String ref:distinct)result.put(ref);return result;
@@ -35,14 +35,14 @@ public final class HomeIntentCodec {
         for(int i=0;i<rows.length();i++){JSONObject row=rows.getJSONObject(i);String id=row.getString("id");if(row.length()!=3||!ids.add(id)||!(Arrays.asList(PreviewHomeRows.SYSTEM).contains(id)||id.matches("custom:[a-zA-Z0-9-]{1,80}")))throw new JSONException("Invalid pending Home row");for(String key:new String[]{"members","calculated"}){JSONArray refs=row.getJSONArray(key);if(refs.length()>100000)throw new JSONException("Too many pending memberships");for(int n=0;n<refs.length();n++)PortableTitleReferences.validate(refs.getString(n));}}
     }
     public static void validate(JSONObject payload)throws JSONException{
-        if(payload.length()!=2||payload.getInt("schema")!=1)throw new JSONException("Unsupported Home intent schema");
+        if(payload.length()!=2||!(payload.get("schema") instanceof Integer||payload.get("schema") instanceof Long)||payload.getLong("schema")!=1)throw new JSONException("Unsupported Home intent schema");
         JSONArray rows=payload.getJSONArray("rows");if(rows.length()>200)throw new JSONException("Too many Home rows");Set<String> ids=new HashSet<>();
         for(int i=0;i<rows.length();i++){JSONObject row=rows.getJSONObject(i);String id=row.getString("id");
             if(row.length()!=14||!ids.add(id)||!(Arrays.asList(PreviewHomeRows.SYSTEM).contains(id)||id.matches("custom:[a-zA-Z0-9-]{1,80}")))throw new JSONException("Invalid Home row identity");label(row.getString("name"),id.startsWith("custom:")?40:100);
             for(String key:new String[]{"visible","dynamic","movies","tv","matchAll","descending"})if(!(row.get(key) instanceof Boolean))throw new JSONException("Invalid Home row Boolean");
             if(!row.getBoolean("movies")&&!row.getBoolean("tv"))throw new JSONException("Empty Home media types");
             if(!Arrays.asList("added","title","year").contains(row.getString("sort")))throw new JSONException("Unsupported Home sort");
-            int maximum=row.getInt("maximum");if(maximum<0||maximum>30||id.startsWith("custom:")&&!Arrays.asList(5,10,15,20,25,30).contains(maximum))throw new JSONException("Invalid Home maximum");
+            Object maximumValue=row.get("maximum");if(!(maximumValue instanceof Integer||maximumValue instanceof Long)||((Number)maximumValue).longValue()<0||((Number)maximumValue).longValue()>30)throw new JSONException("Invalid Home maximum type or range");int maximum=row.getInt("maximum");if(maximum<0||maximum>30||id.startsWith("custom:")&&!Arrays.asList(5,10,15,20,25,30).contains(maximum))throw new JSONException("Invalid Home maximum");
             String genres=row.getString("genres"),icon=row.getString("icon");if(genres.length()>2048||genres.contains("://")||genres.contains("/")||genres.contains("\\")||icon.length()>80||icon.contains("://"))throw new JSONException("Unsafe Home genre or icon value");
             for(String key:new String[]{"members","calculated"}){JSONArray refs=row.getJSONArray(key);if(refs.length()>100000||id.equals("watchnext")&&refs.length()>0)throw new JSONException("Watch Next membership belongs to its own category");Set<String> unique=new HashSet<>();for(int n=0;n<refs.length();n++){String ref=refs.getString(n);PortableTitleReferences.validate(ref);if(!unique.add(ref))throw new JSONException("Duplicate Home title reference");}}
         }

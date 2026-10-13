@@ -29,7 +29,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
 
     public BackupWorkspace(Context context,Consumer<Set<BackupCategory>> create,Runnable restore,Runnable sidebar,List<Paragraph> details,List<Paragraph> instructions){
         super(context);preferences=PreferenceManager.getDefaultSharedPreferences(context);this.create=create;this.restore=restore;this.sidebar=sidebar;this.details=new ArrayList<>(details);this.instructions=new ArrayList<>(instructions);
-        setOrientation(VERTICAL);setClipChildren(false);setClipToPadding(false);showMain();
+        setOrientation(VERTICAL);setPadding(dp(2),dp(2),dp(2),dp(2));setClipChildren(false);setClipToPadding(false);showMain();
     }
     private int dp(float value){return MenuFoundation.dp(getContext(),value);}
     public boolean included(BackupCategory category){String key=category.preference();if(!preferences.contains(key)&&category==BackupCategory.HISTORY)return preferences.getBoolean("supernova_backup_history",true);if(!preferences.contains(key)&&category==BackupCategory.POSITIONS)return preferences.getBoolean("supernova_backup_resume",true);return preferences.getBoolean(key,category.defaultIncluded);}
