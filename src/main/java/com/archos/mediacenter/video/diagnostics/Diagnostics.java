@@ -206,7 +206,7 @@ public final class Diagnostics {
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
-        synchronized(LOCK){enabled=value;}mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default","off");
+        synchronized(LOCK){enabled=value;}mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default",defaultEnabled()?"on":"off");
     }
     public static void disable(Context c,boolean deleteSaved){
         setEnabled(c,false);
@@ -226,6 +226,44 @@ public final class Diagnostics {
         String lower=scheme.toLowerCase(Locale.ROOT);
         return Arrays.asList("content","smb","webdav","webdavs","dav","davs","http","https","ftp","ftps","upnp").contains(lower)?lower:"other";
     }
+    public enum PlaybackOperation { OPEN, SEEK }
+    public enum PlaybackBoundary { REQUESTED, BACKEND_CREATED, PREPARE_SUBMITTED, PREPARED, FIRST_OUTPUT, SEEK_CALLBACK, TERMINAL }
+    public enum MeasurementQuality { UNKNOWN, CALLBACK, PROXY, NATIVE, PRESENTATION }
+    public enum PlaybackOutcome { PENDING, COMPLETED, FAILED, CANCELLED, SUPERSEDED, UNATTRIBUTED }
+    /** Producer-time identity. No arbitrary text, native timestamps or media address is accepted. */
+    public static final class PlaybackAttempt {
+        public final String id,parent,playbackSession;
+        public final PlaybackOperation operation;
+        public final long started,target;
+        private boolean terminal;
+        private PlaybackAttempt(PlaybackOperation operation,PlaybackAttempt parent,long target){
+            this.operation=Objects.requireNonNull(operation);this.parent=parent==null?"":parent.id;
+            playbackSession=playback;id=PROCESS+":playback:"+SEQUENCE.incrementAndGet();
+            started=android.os.SystemClock.elapsedRealtime();this.target=Math.max(-1,target);
+        }
+    }
+    public static PlaybackAttempt playbackAttempt(PlaybackOperation operation,PlaybackAttempt parent,long target){
+        PlaybackAttempt attempt=new PlaybackAttempt(operation,parent,target);
+        playbackBoundary(attempt,PlaybackBoundary.REQUESTED,PlaybackOutcome.PENDING,MeasurementQuality.UNKNOWN,-1,-1);
+        return attempt;
+    }
+    public static void playbackBoundary(PlaybackAttempt attempt,PlaybackBoundary boundary,PlaybackOutcome outcome,
+            MeasurementQuality quality,long achieved,int backend){
+        if(attempt==null||boundary==null||outcome==null||quality==null)return;
+        synchronized(attempt){
+            if(attempt.terminal)return;
+            if(boundary==PlaybackBoundary.TERMINAL)attempt.terminal=true;
+            event("playback_attempt","schema",1,"attempt_id",attempt.id,"parent_attempt_id",attempt.parent,
+                "playback_session",attempt.playbackSession,"operation",attempt.operation.name(),"boundary",boundary.name(),
+                "outcome",outcome.name(),"measurement_quality",quality.name(),"target_ms",attempt.target,
+                "achieved_ms",Math.max(-1,achieved),"backend",backend,"attempt_elapsed_ms",Math.max(0,android.os.SystemClock.elapsedRealtime()-attempt.started));
+        }
+    }
+    public static void unpairedSeekCallback(PlaybackAttempt open,int backend){
+        event("seek_callback_unattributed","schema",1,"parent_attempt_id",open==null?"":open.id,
+            "playback_session",open==null?"":open.playbackSession,"outcome",PlaybackOutcome.UNATTRIBUTED.name(),
+            "measurement_quality",MeasurementQuality.CALLBACK.name(),"achieved_ms",-1,"backend",backend);
+    }
     public static synchronized void event(String event,Object... fields){
         if(!enabled||context==null)return;
         try{String line=record(event,fields),session=playback;long now=android.os.SystemClock.elapsedRealtime();FLIGHT.add(now,line);if(COVERAGE.size()<256)COVERAGE.add(event);
@@ -243,7 +281,7 @@ public final class Diagnostics {
             WORK.execute(()->{if(!enabled)return;if(qa||!detail)write(line,session);if(postTarget!=null)appendPostFlight(postTarget,line);});
         }catch(RuntimeException ignored){DROPPED.incrementAndGet();}
     }
-    static boolean important(String event){return event.contains("failed")||event.contains("error")||event.contains("exception")||event.contains("UNCLEAN")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.equals("focus_anomaly_suspected")||event.startsWith("session_")||event.startsWith("app_session_")||event.equals("startup")||event.equals("playback_begin")||event.equals("playback_end")||event.equals("scan_started")||event.equals("scan_complete")||event.equals("scan_partial")||event.equals("incident_capture");}
+    static boolean important(String event){return event.contains("failed")||event.contains("error")||event.contains("exception")||event.contains("UNCLEAN")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.equals("focus_anomaly_suspected")||event.startsWith("session_")||event.startsWith("app_session_")||event.equals("startup")||event.equals("playback_begin")||event.equals("playback_end")||event.equals("playback_attempt")||event.equals("seek_callback_unattributed")||event.equals("scan_started")||event.equals("scan_complete")||event.equals("scan_partial")||event.equals("incident_capture");}
     static String severity(String event){
         if(event.equals("uncaught_exception"))return "FATAL";
         if(event.contains("failed")||event.contains("error")||event.contains("exception"))return "ERROR";
@@ -466,7 +504,7 @@ public final class Diagnostics {
             StringBuilder decoders=new StringBuilder();
             try{for(android.media.MediaCodecInfo codec:new android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS).getCodecInfos())if(!codec.isEncoder())decoders.append(safe(codec.getName())).append(" ").append(Arrays.toString(codec.getSupportedTypes())).append('\n');}catch(RuntimeException failure){decoders.append("Capability enumeration unavailable: ").append(failure.getClass().getSimpleName());}
             entry(zip,"decoders.txt",decoders.toString().getBytes(StandardCharsets.UTF_8));
-            entry(zip,"README.txt",("Supernova opt-in diagnostic report\nStructured UTC and monotonic timestamps; process and playback session IDs.\nLogging is off by default. Disabling stops new events, not export of existing bounded logs.\nException messages, credentials, raw media paths, headers and preference dumps are excluded.\nRoutine streams are size-bounded. Important events use a separate queue and seven-day, daily size-bounded retention. Copies are deduplicated by process/sequence in the summaries.\nNo native decoder A/V clock precision or physical Shield playback success is implied.\n").getBytes(StandardCharsets.UTF_8));
+            entry(zip,"README.txt",("Supernova opt-in diagnostic report\nStructured UTC and monotonic timestamps; process and playback session IDs.\nLogging defaults to "+(defaultEnabled()?"on":"off")+". Disabling stops new events, not export of existing bounded logs.\nException messages, credentials, raw media paths, headers and preference dumps are excluded.\nRoutine streams are size-bounded. Important events use a separate queue and seven-day, daily size-bounded retention. Copies are deduplicated by process/sequence in the summaries.\nNo native decoder A/V clock precision or physical Shield playback success is implied.\n").getBytes(StandardCharsets.UTF_8));
             entry(zip,"summary.txt",summary().getBytes(StandardCharsets.UTF_8));
             entry(zip,"manifest.json",DiagnosticArchive.manifest(directory()).toString(2).getBytes(StandardCharsets.UTF_8));
             String coverage; synchronized(COVERAGE){coverage=COVERAGE.toString();}entry(zip,"coverage.txt",("Completeness: PARTIAL\nObserved event types: "+coverage+"\nNative decoder and every direct network transport are not fully observable. No app-quality score.\nDropped: "+DROPPED.get()+"; write errors: "+WRITE_ERRORS.get()+"; queued: "+WORK.getQueue().size()+"\n").getBytes(StandardCharsets.UTF_8));

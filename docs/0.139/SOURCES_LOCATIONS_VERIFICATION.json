@@ -1,0 +1,31 @@
+{
+  "source_sha": "67eda4fabf9c73b8979358ef183639077c7f13de",
+  "result": "PASS",
+  "classes": 6,
+  "tests": 64,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableLibrarySourcesTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 25s",
+  "log_sha256": "9a2da5f527a40b30ecdb1995ab391eaaa4245cb3ecc5152a75abea50ca1ae908",
+  "checks": [
+    "22-category registry; Sources and optional Locations archive roundtrip",
+    "No locator text in Sources; Put.io ownership excluded; unsafe/authenticated/query-bearing locators reject",
+    "Unknown roots and exclusions survive as pending references; explicitly selected locations recreate eligible roots without granting access or activating setup",
+    "Present-empty, omitted, stale preview, cancellation and durable crash-boundary recovery preserve unrelated state",
+    "Combined media/viewing/preference recovery regressions"
+  ],
+  "limits": [
+    "Sources restore currently uses default preference participant; no production exporter/Settings controller yet",
+    "Locations currently supplies Sources only; bookmark and match dependencies remain pending",
+    "No actual provider access, signed APK or Shield acceptance"
+  ]
+}
