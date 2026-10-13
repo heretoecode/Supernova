@@ -26,7 +26,7 @@ public class Supernova139LanguageFlagsTest {
         String[] locales={"en","en-GB","pt-BR","zh-Hant-TW","en-XX","en-US","fr-CA"};
         for(int i=0;i<locales.length;i++){PreviewLanguageIcon icon=new PreviewLanguageIcon(context,locales[i]);icon.setBounds(i*80,16,i*80+72,88);icon.setColorFilter(new PorterDuffColorFilter(Color.WHITE,PorterDuff.Mode.SRC_IN));icon.draw(canvas);}
         Set<Integer> regional=new HashSet<>();for(int y=16;y<88;y++)for(int x=80;x<152;x++)regional.add(sheet.getPixel(x,y));assertTrue(regional.stream().anyMatch(color->Color.red(color)>170&&Color.blue(color)<150));assertTrue(regional.stream().anyMatch(color->Color.blue(color)>Color.red(color)+30));
-        for(int y=16;y<88;y++)for(int x=0;x<72;x++){int color=sheet.getPixel(x,y);if(color!=0xff14212c)assertTrue(Math.abs(Color.red(color)-Color.blue(color))<=8);}
+        Bitmap neutral=Bitmap.createBitmap(72,72,Bitmap.Config.ARGB_8888);PreviewLanguageIcon generic=new PreviewLanguageIcon(context,"en");generic.setBounds(0,0,72,72);generic.draw(new Canvas(neutral));int painted=0;for(int y=0;y<72;y++)for(int x=0;x<72;x++){int color=neutral.getPixel(x,y);if(Color.alpha(color)>0){painted++;assertTrue(Math.abs(Color.red(color)-Color.blue(color))<=1);assertTrue(Math.abs(Color.red(color)-Color.green(color))<=1);}}assertTrue(painted>0);
         File image=new File("build/reports/preview-ui/0139-regional-language-flags.png");image.getParentFile().mkdirs();try(FileOutputStream output=new FileOutputStream(image)){sheet.compress(Bitmap.CompressFormat.PNG,100,output);}
     }
 }
