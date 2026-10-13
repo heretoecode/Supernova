@@ -76,7 +76,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
     private void divider(LinearLayout parent){View line=new View(getContext());line.setBackgroundColor(MenuFoundation.DIVIDER);line.setTag("backup.divider");parent.addView(line,new LayoutParams(-1,dp(1)));}
     private LinearLayout cell(BackupCategory category){LinearLayout cell=new LinearLayout(getContext());cell.setOrientation(VERTICAL);cell.setClipChildren(false);cell.setClipToPadding(false);cell.addView(option(category),new LayoutParams(-1,-2));divider(cell);return cell;}
     private void showMain(){
-        Object restoreTag=previousFocus==null?null:previousFocus.getTag();removeAllViews();toggles.clear();information=null;
+        Object restoreTag=previousFocus==null?null:previousFocus.getTag();boolean held=holdFocus();removeAllViews();toggles.clear();information=null;
         LinearLayout actions=new LinearLayout(getContext());actions.setGravity(Gravity.CENTER_VERTICAL);actions.setClipChildren(false);
         TextView title=MenuFoundation.text(getContext(),restoreSelected==null?"Backup & Restore":"Restore Backup",22);actions.addView(title,new LayoutParams(0,-2,1));
         createButton=MenuFoundation.control(getContext(),restoreSelected==null?"Create Backup":"Review Replacement","save",()->create.accept(selection()));createButton.setTag("backup.create");createButton.setTextSize(13*TvLayout.scale(getContext()));createButton.setPadding(dp(8),dp(4),dp(8),dp(4));actions.addView(createButton,new LayoutParams(-2,dp(44)));

@@ -1,0 +1,9 @@
+{
+  "source_sha": "d23d19757b350a605a40b7472166d81323a734a6",
+  "result": "FAIL",
+  "phase": "compileNoamazonReleaseJavaWithJavac",
+  "tests_executed": 0,
+  "duration": "16s",
+  "log_sha256": "bc4cb78c767a96ce43a8d85936fb3e2ff2d3f37f9a076acec2bfc9eacf67f72b",
+  "correction": "Declare held focus before rebuilding main workspace. An automated edit matched only the completion half of the change. Fresh compile and native verification required."
+}
