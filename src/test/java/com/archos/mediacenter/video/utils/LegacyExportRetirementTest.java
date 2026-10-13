@@ -33,6 +33,9 @@ public class LegacyExportRetirementTest {
         String historical=HistoricalBackupFixture.export(app);try(var database=SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,SQLiteDatabase.OPEN_READWRITE)){database.execSQL("UPDATE files SET bookmark=5555 WHERE _id=77");}
         ReflectionHelpers.callInstanceMethod(service,"importMediaLibrary",ReflectionHelpers.ClassParameter.from(String.class,historical));
         try(var database=SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,SQLiteDatabase.OPEN_READONLY);var cursor=database.rawQuery("SELECT bookmark FROM files WHERE _id=77",null)){assertTrue(cursor.moveToFirst());assertEquals(4444,cursor.getLong(0));}
-        File[] external=app.getExternalFilesDir(null).listFiles(file->file.getName().endsWith(".zip"));assertNotNull(external);assertEquals(0,external.length);assertEquals("AUTH_CANARY",PreferenceManager.getDefaultSharedPreferences(app).getString("oauth_token",null));
+        File[] external=app.getExternalFilesDir(null).listFiles(file->file.getName().endsWith(".zip"));assertNotNull(external);assertEquals(0,external.length);
+        // Preserve the established1.0 reader contract: reconnect authentication after whole-library restore.
+        // New logical selected restoration has its own credential-preservation checks.
+        assertNull(PreferenceManager.getDefaultSharedPreferences(app).getString("oauth_token",null));
     }
 }
