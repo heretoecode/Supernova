@@ -168,7 +168,7 @@ public final class PreferenceRestoreTransaction {
     private void save(JSONObject record)throws IOException{
         byte[] data=record.toString().getBytes(StandardCharsets.UTF_8);if(data.length>MAX_JOURNAL)throw new IOException("Private recovery exceeds storage limit");
         File folder=journal.getBaseFile().getParentFile();if(!folder.isDirectory()&&!folder.mkdirs())throw new IOException("Cannot create private recovery folder");
-        FileOutputStream output=journal.startWrite();try{output.write(data);journal.finishWrite(output);}catch(IOException|RuntimeException e){journal.failWrite(output);throw e;}
+        FileOutputStream output=journal.startWrite();try{output.write(data);output.getFD().sync();journal.finishWrite(output);}catch(IOException|RuntimeException e){journal.failWrite(output);throw e;}
     }
     public Recovery recover()throws IOException{
         synchronized(LOCK){

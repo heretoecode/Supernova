@@ -1,0 +1,25 @@
+{
+  "source_sha": "619312583bc1d9243673fe57ded80ebd3a53de27",
+  "classes": 6,
+  "tests": 30,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.player.HeroPlaybackOutputTest",
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.player.ExternalResumeIntentTest",
+    "com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest",
+    "com.archos.mediacenter.video.player.PlaybackResumePolicyTest",
+    "com.archos.mediacenter.video.player.Supernova138PlaybackTest"
+  ],
+  "checks": [
+    "Actual checkpoint method rejects normal cancellation before established output as well as failed starts",
+    "Prepared-but-unestablished paused player preserves prior resume/timestamp and does not access viewing-coverage preferences",
+    "Output, external resume, resume-policy, viewing-history and playback regressions"
+  ],
+  "limits": [
+    "Actual native decoder/lifecycle/advancing-clock and signed Shield upgrade matrices remain open",
+    "Not diagnosis of the missing owner Dune/Tulsa incident ZIP"
+  ]
+}
