@@ -24,6 +24,19 @@ index f8a0721..098347d 100644
          localLists = new ArrayList<>();
          if(cursor.getCount() > 0){
              int titleCol = cursor.getColumnIndex(VideoStore.List.Columns.TITLE);
+diff --git a/src/com/archos/mediaprovider/video/VideoProvider.java b/src/com/archos/mediaprovider/video/VideoProvider.java
+index 4a31df2..50401c2 100644
+--- a/src/com/archos/mediaprovider/video/VideoProvider.java
++++ b/src/com/archos/mediaprovider/video/VideoProvider.java
+@@ -338,7 +338,7 @@ public class VideoProvider extends ContentProvider implements DefaultLifecycleOb
+                 break;
+             case VIDEO_LIST: {
+                 qb.setTables(ListTables.VIDEO_LIST_TABLE);
+-                qb.appendWhere(VideoStore.List.Columns.ID+"=?");
++                qb.appendWhere(VideoStore.VideoList.Columns.LIST_ID+"=?");
+                 prependArgs.add(FileUtils.getName(uri));
+                 break;
+             }
 diff --git a/src/com/archos/mediaprovider/video/VideoStore.java b/src/com/archos/mediaprovider/video/VideoStore.java
 index 63206e5..1ee7532 100644
 --- a/src/com/archos/mediaprovider/video/VideoStore.java
