@@ -21,7 +21,8 @@ public final class PortablePhysicalReferences {
             if(fingerprint!=null){fingerprints.put(video.getId(),fingerprint);groups.computeIfAbsent(fingerprint,key->new ArrayList<>()).add(video);}
         }
     }
-    private static String fingerprint(String path){
+    /** Strict locator fingerprint for restore preconditions; null means it cannot bind automatically. */
+    public static String fingerprint(String path){
         if(path==null)return null;android.net.Uri uri=android.net.Uri.parse(path);
         // Removing account/query material cannot prove the remaining address names the same media.
         // Preserve those records with opaque origin IDs for explicit matching instead.

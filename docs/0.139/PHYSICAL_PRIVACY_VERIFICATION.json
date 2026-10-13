@@ -1,0 +1,30 @@
+{
+  "source_sha": "2486984bffdecd1b6cb21180360370cfe4857880",
+  "result": "PASS",
+  "classes": 6,
+  "tests": 38,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 23s",
+  "log_sha256": "45576782d5c9a36c1dfda2a72b388214040e05d83c5269f6efd39464d1eb43a3",
+  "checks": [
+    "Encoded authority user-info and URI fragments stay opaque; no binding after stripping authentication/selector material",
+    "Duplicate local physical IDs reject instead of selecting first path",
+    "Pin/Hidden Items schema and atomic pin replacement checks",
+    "Archive allowlist and preference journal regression checks"
+  ],
+  "limits": [
+    "No production integration or combined SQLite/preferences recovery",
+    "Hidden Items SQLite writer is added after this source SHA and is not covered",
+    "No Shield or signed upgrade evidence"
+  ]
+}

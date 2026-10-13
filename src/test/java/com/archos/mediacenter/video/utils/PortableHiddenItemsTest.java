@@ -48,4 +48,50 @@ public class PortableHiddenItemsTest {
             db.execSQL("UPDATE files SET Archos_hiddenByUser=1.5 WHERE _id=10");try{PortableHiddenItems.read(db);fail();}catch(java.io.IOException expected){}
         }
     }
+    private void seed(android.database.sqlite.SQLiteDatabase db) {
+        db.execSQL("INSERT INTO files(_id,media_type,Archos_hiddenByUser,_data,bookmark,title) VALUES(10,3,0,'file:///media/first.mkv',4444,'KEEP_FIRST'),(11,3,1,'file:///media/second.mkv',5555,'KEEP_SECOND')");
+    }
+    private PortablePhysicalReferences receiving(Context context) {
+        return new PortablePhysicalReferences(context,List.of(video(10,"file:///media/first.mkv"),video(11,"file:///media/second.mkv")));
+    }
+    private JSONObject payload()throws Exception {
+        Context source=scope("native-source");return PortableHiddenItems.export(source,Map.of(100L,true),new PortablePhysicalReferences(source,List.of(video(100,"file:///media/first.mkv"))));
+    }
+    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @Test public void nativeReplacementChangesOnlyHiddenFlagsWithoutPublishingPendingPreferences()throws Exception {
+        Context context=RuntimeEnvironment.getApplication();try(VideoOpenHelper helper=new VideoOpenHelper(context)) {
+            var db=helper.getWritableDatabase();seed(db);var plan=HiddenItemReplacement.prepare(db,payload(),receiving(context),true);assertEquals(0,plan.unresolved);
+            db.execSQL("UPDATE files SET title='NEW_METADATA' WHERE _id=10");HiddenItemReplacement.replace(db,plan,()->false,count->{});
+            assertEquals(Map.of(10L,true,11L,false),PortableHiddenItems.read(db));
+            try(var rows=db.rawQuery("SELECT _data,bookmark,title FROM files WHERE _id=10",null)){assertTrue(rows.moveToFirst());assertEquals("file:///media/first.mkv",rows.getString(0));assertEquals(4444,rows.getInt(1));assertEquals("NEW_METADATA",rows.getString(2));}
+            assertFalse(PreferenceManager.getDefaultSharedPreferences(context).contains(PortableHiddenItems.PENDING));
+        }
+    }
+    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @Test public void nativeCancellationAndCheckpointFailureRollBackAllHiddenFlags()throws Exception {
+        Context context=RuntimeEnvironment.getApplication();try(VideoOpenHelper helper=new VideoOpenHelper(context)) {
+            var db=helper.getWritableDatabase();seed(db);var before=PortableHiddenItems.read(db);var plan=HiddenItemReplacement.prepare(db,payload(),receiving(context),true);
+            try{HiddenItemReplacement.replace(db,plan,()->true,count->{});fail();}catch(java.io.InterruptedIOException expected){}
+            assertEquals(before,PortableHiddenItems.read(db));
+            try{HiddenItemReplacement.replace(db,plan,()->false,count->{throw new java.io.IOException("Injected write checkpoint failure");});fail();}catch(java.io.IOException expected){}
+            assertEquals(before,PortableHiddenItems.read(db));
+            var cancelled=new java.util.concurrent.atomic.AtomicBoolean(false);
+            try{HiddenItemReplacement.replace(db,plan,cancelled::get,count->cancelled.set(true));fail();}catch(java.io.InterruptedIOException expected){}
+            assertEquals(before,PortableHiddenItems.read(db));assertFalse(db.inTransaction());
+        }
+    }
+    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @Test public void pathRelationshipHiddenStateOrInventoryChangesRejectStalePreviewAndStaleMatchingInput()throws Exception {
+        Context context=RuntimeEnvironment.getApplication();try(VideoOpenHelper helper=new VideoOpenHelper(context)) {
+            var db=helper.getWritableDatabase();
+            for(String change:List.of("UPDATE files SET _data='file:///media/new.mkv' WHERE _id=10","UPDATE files SET ArchosMediaScraper_id=999 WHERE _id=10","UPDATE files SET Archos_hiddenByUser=1 WHERE _id=10","INSERT INTO files(_id,media_type,_data) VALUES(12,3,'file:///media/third.mkv')")) {
+                db.execSQL("DELETE FROM files");seed(db);var plan=HiddenItemReplacement.prepare(db,payload(),receiving(context),true);db.execSQL(change);var afterUserChange=PortableHiddenItems.read(db);
+                try{HiddenItemReplacement.replace(db,plan,()->false,count->fail("Stale preview must not write"));fail();}catch(java.io.IOException expected){}
+                assertEquals(afterUserChange,PortableHiddenItems.read(db));
+            }
+            db.execSQL("DELETE FROM files");seed(db);db.execSQL("UPDATE files SET _data='file:///media/changed.mkv' WHERE _id=10");
+            try{HiddenItemReplacement.prepare(db,payload(),receiving(context),true);fail();}catch(java.io.IOException expected){}
+            assertEquals(Map.of(10L,false,11L,true),PortableHiddenItems.read(db));
+        }
+    }
 }
