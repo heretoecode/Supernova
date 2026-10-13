@@ -19,7 +19,7 @@ public final class PortableCustomPage {
         JSONObject definition=new JSONObject(page.encode());definition.put("franchise",definition.getString("collection"));definition.remove("collection");payload.put("page",definition);validate(payload);return payload;
     }
     public static void validate(JSONObject payload)throws JSONException{
-        if(payload.length()!=2||!(payload.get("schema") instanceof Integer||payload.get("schema") instanceof Long)||payload.getLong("schema")!=1)throw new JSONException("Unsupported Library page schema");
+        if(payload.length()!=2||!payload.has("page")||!(payload.get("schema") instanceof Integer||payload.get("schema") instanceof Long)||payload.getLong("schema")!=1)throw new JSONException("Unsupported Library page schema");
         if(payload.isNull("page"))return;JSONObject page=payload.getJSONObject("page");
         Set<String> expected=new HashSet<>(Arrays.asList("name","icon","type","view","sort","watched","allGenres","descending","year","rating","language","studio","franchise","genres")),actual=new HashSet<>();for(Iterator<String> keys=page.keys();keys.hasNext();)actual.add(keys.next());if(!actual.equals(expected))throw new JSONException("Unsupported Library definition fields");
         text(page.getString("name"),40,false);text(page.getString("studio"),256,true);text(page.getString("franchise"),256,true);

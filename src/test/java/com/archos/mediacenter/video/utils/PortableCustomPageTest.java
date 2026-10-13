@@ -25,6 +25,7 @@ public class PortableCustomPageTest {
     @Test public void injectedCredentialLocationOrLegacyCollectionPayloadIsRejectedBeforeMutation()throws Exception{
         Context source=scope("source"),target=scope("target");CustomLibraryPage page=new CustomLibraryPage();assertTrue(page.save(source));JSONObject good=PortableCustomPage.export(source);var prefs=PreferenceManager.getDefaultSharedPreferences(target);Map<String,?> before=prefs.getAll();
         for(String key:List.of("credentials","user_collection","putio")){JSONObject bad=new JSONObject(good.toString());bad.getJSONObject("page").put(key,"CANARY");try{PortableCustomPage.replace(target,bad);fail();}catch(JSONException expected){}assertEquals(before,prefs.getAll());}
+        JSONObject missing=new JSONObject().put("schema",1).put("credentials","CANARY");try{PortableCustomPage.replace(target,missing);fail();}catch(JSONException expected){}assertEquals(before,prefs.getAll());
         JSONObject bad=new JSONObject(good.toString());bad.getJSONObject("page").put("name","smb://person:CANARY@host/share");try{PortableCustomPage.replace(target,bad);fail();}catch(JSONException expected){}assertEquals(before,prefs.getAll());
     }
 }
