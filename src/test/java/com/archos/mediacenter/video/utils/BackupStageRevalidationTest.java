@@ -21,7 +21,7 @@ public class BackupStageRevalidationTest {
     @Test public void changedStagingCopyIsRefusedBeforeAnyLiveStateReplacement()throws Exception {
         Context context=RuntimeEnvironment.getApplication();VideoOpenHelper helper=new VideoOpenHelper(context);
         helper.getWritableDatabase().execSQL("INSERT INTO files(_id,_data,Archos_bookmark) VALUES(991,'file:///storage/USB/film.mkv',123456)");helper.close();
-        MediaLibraryBackupService service=Robolectric.buildService(MediaLibraryBackupService.class).get();String archive=ReflectionHelpers.callInstanceMethod(service,"exportMediaLibrary");
+        String archive=HistoricalBackupFixture.export(context);
         File stage;try(InputStream input=new FileInputStream(archive)){stage=SafeBackup.stage(context,input);}
         var preferences=androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);preferences.edit().putString("preview_home_rows41","Current state").commit();
         try(SQLiteDatabase live=SQLiteDatabase.openDatabase(context.getDatabasePath("media.db").getPath(),null,SQLiteDatabase.OPEN_READWRITE)){live.execSQL("UPDATE files SET Archos_bookmark=888888 WHERE _id=991");}

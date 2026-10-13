@@ -26,7 +26,7 @@ public class BackupCycleTest {
   com.archos.mediacenter.video.leanback.ViewingHistory.record(context,resume,false);
   var completed=new com.archos.mediacenter.utils.videodb.VideoDbInfo(android.net.Uri.parse("file:///removed-drive/ep1.mkv"));completed.isShow=true;completed.scraperShowId="123";completed.scraperSeasonNr=1;completed.scraperEpisodeNr=1;completed.resume=-2;completed.duration=100000;completed.lastTimePlayed=100;
   com.archos.mediacenter.video.leanback.ViewingHistory.record(context,completed,true);com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
-  MediaLibraryBackupService service=Robolectric.buildService(MediaLibraryBackupService.class).get();String archive=ReflectionHelpers.callInstanceMethod(service,"exportMediaLibrary");
+  String archive=HistoricalBackupFixture.export(context);
   assertTrue("Export keeps device-local authentication",providerToken.isFile());File staged;try(ZipFile zip=new ZipFile(archive)){assertNull(zip.getEntry("credentials_db"));assertNotNull(zip.getEntry("RESTORE_INSTRUCTIONS.txt"));assertNotNull(zip.getEntry("manifest.json"));}
   try(InputStream input=new FileInputStream(archive)){staged=SafeBackup.stage(context,input);}
   resume.resume=54321;com.archos.mediacenter.video.leanback.ViewingHistory.record(context,resume,false);com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
@@ -48,7 +48,7 @@ public class BackupCycleTest {
   try(com.archos.mediacenter.video.streaming.putio.PutioAssociationStore store=new com.archos.mediacenter.video.streaming.putio.PutioAssociationStore(context)){store.prepare(10,20,android.net.Uri.parse("https://webdav.put.io/Films"));}
   File poster=new File(com.archos.mediascraper.MediaScraper.getPosterDirectory(context),"destination-keep.png");poster.getParentFile().mkdirs();java.nio.file.Files.writeString(poster.toPath(),"ART_KEEP");
   var info=new com.archos.mediacenter.utils.videodb.VideoDbInfo(android.net.Uri.parse("file:///storage/fixture.mkv"));info.scraperMovieId="99";info.resume=3333;info.duration=100000;info.lastTimePlayed=100;com.archos.mediacenter.video.leanback.ViewingHistory.record(context,info,false);com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
-  MediaLibraryBackupService service=Robolectric.buildService(MediaLibraryBackupService.class).get();String archive=ReflectionHelpers.callInstanceMethod(service,"exportMediaLibrary");ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+  String archive=HistoricalBackupFixture.export(context);ByteArrayOutputStream bytes=new ByteArrayOutputStream();
   Set<String> omitted=Set.of("shortcuts_db","shortcuts2_db","putio-associations.db",com.archos.mediacenter.video.leanback.ViewingHistory.DATABASE);
   try(ZipFile source=new ZipFile(archive);ZipOutputStream output=new ZipOutputStream(bytes)){for(var entries=source.entries();entries.hasMoreElements();){ZipEntry entry=entries.nextElement();if(omitted.contains(entry.getName())||entry.getName().startsWith("scraper_"))continue;output.putNextEntry(new ZipEntry(entry.getName()));if(!entry.isDirectory())try(InputStream input=source.getInputStream(entry)){input.transferTo(output);}output.closeEntry();}}
   info.resume=4444;com.archos.mediacenter.video.leanback.ViewingHistory.record(context,info,false);com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();File staged=SafeBackup.stage(context,new ByteArrayInputStream(bytes.toByteArray()));SafeBackup.restore(context,staged);
