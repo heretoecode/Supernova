@@ -1,0 +1,16 @@
+{
+  "source_sha": "f60e66a2c60341c71d2117fd65d20859b30d3ad7",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "FAIL",
+  "classes": 1,
+  "tests": 2,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest"
+  ],
+  "duration": "2m 7s",
+  "log_sha256": "8b24a67b12aa2175af05d3b36fb288c498f01e5c11accba31ac12788aeb11ad3",
+  "failure_detail": "Seeded current app DB has2 members; provider returned the first test app DB data (row100 only). VideoDb process singleton retains its initial Application across Robolectric app resets. Use a fresh real DbHolder/VideoOpenHelper per fixture. Production singleton unchanged; retest required."
+}

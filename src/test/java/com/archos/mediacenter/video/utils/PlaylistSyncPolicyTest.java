@@ -16,17 +16,19 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class PlaylistSyncPolicyTest {
-    private Context app;private VideoProvider provider;
+    private Context app;private VideoProvider provider;private com.archos.mediaprovider.DbHolder holder;
     @Before public void setup(){
         app=RuntimeEnvironment.getApplication();app.deleteDatabase("media.db");
         // Exercise real provider query code; avoid unrelated receiver/network lifecycle startup.
         provider=spy(new VideoProvider());doReturn(true).when(provider).onCreate();
         android.content.pm.ProviderInfo info=new android.content.pm.ProviderInfo();info.authority=VideoStore.AUTHORITY;provider.attachInfo(app,info);
-        ReflectionHelpers.setField(provider,"mDbHolder",com.archos.mediaprovider.VideoDb.getHolder(app));
+        // VideoDb's process singleton retains its first Application across Robolectric test resets.
+        // Use a fresh real holder for this fixture's current app database.
+        holder=new com.archos.mediaprovider.DbHolder(new VideoOpenHelper(app));ReflectionHelpers.setField(provider,"mDbHolder",holder);
         ReflectionHelpers.setField(provider,"mCr",app.getContentResolver());
         ShadowContentResolver.registerProviderInternal(VideoStore.AUTHORITY,provider);
     }
-    @After public void closeProviderStore(){com.archos.mediaprovider.VideoDb.getHolder(app).close();}
+    @After public void closeProviderStore(){holder.close();}
     @Test public void membershipUriReturnsAllAndOnlyRowsOwnedBySelectedList()throws Exception{
         try(VideoOpenHelper helper=new VideoOpenHelper(app)){
             var db=helper.getWritableDatabase();db.execSQL("INSERT INTO list_table(_id,title,trakt_id,sync_status) VALUES(77,'Selected',NULL,4),(88,'Other',NULL,4)");
