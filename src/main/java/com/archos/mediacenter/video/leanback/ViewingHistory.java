@@ -54,6 +54,27 @@ public final class ViewingHistory {
         Record(boolean c,boolean s,int p,int d,long t,long completion){completed=c;started=s;position=p;duration=d;played=t;completedAt=completion;}
     }
     public static Map<String,Record> read(Context c){synchronized(LOCK){Map<String,Record> records=new HashMap<>();try(Store helper=new Store(c);Cursor rows=helper.getReadableDatabase().query("history",null,null,null,null,null,null)){while(rows.moveToNext())records.put(rows.getString(0),new Record(rows.getInt(1)!=0,rows.getInt(2)!=0,rows.getInt(3),rows.getInt(4),rows.getLong(5),rows.getLong(6)));}return records;}}
+    private static void restoreCancelled(java.util.function.BooleanSupplier cancel)throws java.io.InterruptedIOException{if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new java.io.InterruptedIOException("Viewing-state restore cancelled");}
+    /** Staged database primitive only: no legacy media flags, preference journal or external sync changes. */
+    static void replacePortable(Context context,org.json.JSONObject history,org.json.JSONObject positions,java.util.function.BooleanSupplier cancel)throws java.io.IOException,org.json.JSONException{
+        if(history==null&&positions==null)throw new org.json.JSONException("No viewing category selected");
+        if(history!=null)PortableViewingState.validate(history,PortableViewingState.Kind.HISTORY);
+        if(positions!=null)PortableViewingState.validate(positions,PortableViewingState.Kind.POSITIONS);
+        restoreCancelled(cancel);awaitWrites();restoreCancelled(cancel);
+        synchronized(LOCK){try(Store helper=new Store(context)){
+            android.database.sqlite.SQLiteDatabase database=helper.getWritableDatabase();Map<String,Record> existing=new LinkedHashMap<>();
+            try(Cursor rows=database.query("history",null,null,null,null,null,null)){while(rows.moveToNext())existing.put(rows.getString(0),new Record(rows.getInt(1)!=0,rows.getInt(2)!=0,rows.getInt(3),rows.getInt(4),rows.getLong(5),rows.getLong(6)));}
+            Map<String,Record> prepared=PortableViewingState.prepare(existing,history,positions);restoreCancelled(cancel);
+            database.beginTransaction();
+            try(android.database.sqlite.SQLiteStatement insert=database.compileStatement("INSERT INTO history(identity,completed,started,position,duration,played,completed_at) VALUES(?,?,?,?,?,?,?)")){
+                database.delete("history",null,null);
+                for(Map.Entry<String,Record> entry:prepared.entrySet()){
+                    restoreCancelled(cancel);Record value=entry.getValue();insert.clearBindings();insert.bindString(1,entry.getKey());insert.bindLong(2,value.completed?1:0);insert.bindLong(3,value.started?1:0);insert.bindLong(4,value.position);insert.bindLong(5,value.duration);insert.bindLong(6,value.played);insert.bindLong(7,value.completedAt);insert.executeInsert();
+                }
+                restoreCancelled(cancel);database.setTransactionSuccessful();
+            }finally{database.endTransaction();}
+        }catch(android.database.sqlite.SQLiteException failure){throw new java.io.IOException("Viewing-state transaction failed; restoration must not be reported as complete",failure);}}
+    }
     private static void write(Context c,String key,boolean complete,boolean started,int position,int duration,long played,boolean track,boolean resume){
         if(key==null||(!track&&!resume))return;
         synchronized(LOCK){try(Store helper=new Store(c)){SQLiteDatabase db=helper.getWritableDatabase();ContentValues values=new ContentValues();values.put("identity",key);

@@ -7,6 +7,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.RuntimeEnvironment;
+import androidx.preference.PreferenceManager;
+import android.database.sqlite.SQLiteDatabase;
+import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
@@ -53,5 +58,27 @@ public class PortableViewingStateTest {
         }
         JSONObject duplicate=new JSONObject(valid.toString());duplicate.getJSONArray("rows").put(duplicate.getJSONArray("rows").getJSONObject(0));try{PortableViewingState.validate(duplicate,PortableViewingState.Kind.POSITIONS);fail();}catch(JSONException expected){}
         JSONObject secrets=new JSONObject(valid.toString());secrets.getJSONArray("rows").getJSONObject(0).put("credentials","SECRET");try{PortableViewingState.validate(secrets,PortableViewingState.Kind.POSITIONS);fail();}catch(JSONException expected){}
+    }
+    private void seedStore()throws Exception{
+        var app=RuntimeEnvironment.getApplication();ViewingHistory.read(app);
+        try(SQLiteDatabase db=SQLiteDatabase.openDatabase(app.getDatabasePath(ViewingHistory.DATABASE).getPath(),null,SQLiteDatabase.OPEN_READWRITE)){
+            db.delete("history",null,null);db.execSQL("INSERT INTO history VALUES(?,1,1,1234,6000,100,100)",new Object[]{movie});db.execSQL("INSERT INTO history VALUES(?,0,1,2000,8000,300,0)",new Object[]{episode});
+        }
+        PreferenceManager.getDefaultSharedPreferences(app).edit().putString("oauth_token","AUTH_CANARY").putString("preview_home_rows41","HOME_CANARY").commit();
+    }
+    @Test public void sqliteReplacementPersistsSelectedColumnsAndLeavesUnselectedPreferencesUntouched()throws Exception{
+        seedStore();var app=RuntimeEnvironment.getApplication();var incoming=Map.of(movie,record(false,true,888,9000,777,0));
+        ViewingHistory.replacePortable(app,PortableViewingState.export(incoming,PortableViewingState.Kind.HISTORY),null,()->false);
+        var first=ViewingHistory.read(app);assertFalse(first.get(movie).completed);assertEquals(777,first.get(movie).played);assertEquals(1234,first.get(movie).position);assertEquals(2000,first.get(episode).position);assertFalse(first.get(episode).started);
+        ViewingHistory.replacePortable(app,null,PortableViewingState.export(incoming,PortableViewingState.Kind.POSITIONS),()->false);
+        var second=ViewingHistory.read(app);assertEquals(888,second.get(movie).position);assertEquals(777,second.get(movie).played);assertEquals(0,second.get(episode).position);assertFalse(second.get(episode).started);
+        var prefs=PreferenceManager.getDefaultSharedPreferences(app);assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));assertEquals("HOME_CANARY",prefs.getString("preview_home_rows41",null));
+    }
+    @Test public void cancellationAfterDeleteAndDuringInsertRollsBackActualSqliteRows()throws Exception{
+        seedStore();var app=RuntimeEnvironment.getApplication();JSONObject payload=PortableViewingState.export(Map.of(movie,record(false,false,888,9000,0,0),unmatched,record(false,false,999,10000,0,0)),PortableViewingState.Kind.POSITIONS);
+        for(int boundary:List.of(4,5,6,7)){
+            AtomicInteger checks=new AtomicInteger();try{ViewingHistory.replacePortable(app,null,payload,()->checks.incrementAndGet()>=boundary);fail();}catch(InterruptedIOException expected){}
+            var restored=ViewingHistory.read(app);assertEquals(Set.of(movie,episode),restored.keySet());assertTrue(restored.get(movie).completed);assertEquals(1234,restored.get(movie).position);assertEquals(100,restored.get(movie).played);assertEquals(2000,restored.get(episode).position);
+        }
     }
 }
