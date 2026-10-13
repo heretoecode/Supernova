@@ -21,7 +21,7 @@ public final class LogicalBackupExporter {
         try {
             LogicalBackupCatalog catalog=Collections.disjoint(categories,INVENTORY)?null:LogicalBackupCatalog.capture(context,cancel);
             // Allocate the private opaque origin before the consistency snapshot; this is never an archive setting.
-            if(catalog!=null||categories.contains(BackupCategory.BOOKMARKS))new PortableTitleReferences(context,catalog.snapshot);
+            if(catalog!=null||categories.contains(BackupCategory.BOOKMARKS))new PortableTitleReferences(context,catalog==null?null:catalog.snapshot);
             var preferences=PreferenceManager.getDefaultSharedPreferences(context);Map<String,?> before=preferences.getAll();
             var health=context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0);Map<String,?> healthBefore=health.getAll();
             PortablePhysicalReferences physical=catalog==null?null:new PortablePhysicalReferences(context,catalog.physical);
