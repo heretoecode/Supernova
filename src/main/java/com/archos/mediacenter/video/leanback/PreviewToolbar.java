@@ -30,6 +30,7 @@ public final class PreviewToolbar extends LinearLayout {
             child.setMinimumHeight(TvLayout.dimension(getContext(), 44));
             child.setPadding(TvLayout.dimension(getContext(),12),TvLayout.dimension(getContext(),6),TvLayout.dimension(getContext(),12),TvLayout.dimension(getContext(),6));
             ((android.widget.TextView)child).setCompoundDrawablePadding(TvLayout.dimension(getContext(),6));
+            child.setBackground(MenuFoundation.controlBackground(getContext()));
         }
         child.setOnFocusChangeListener((v, focused) -> invalidate());
         child.setOnKeyListener((v, key, event) -> {
