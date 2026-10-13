@@ -74,3 +74,11 @@ For future feature discussions, report readiness based on **outstanding owner de
 
 ## Owner-confirmed existing features — 13 October 2026
 **FD-031 Settings > About** is already implemented and working (including centred branding, Release Notes and Open-source Licences; the prior licences crash is fixed). **FD-014 custom Library page and five-step Edit Library workflow** are already implemented and working. Neither is an unscheduled future feature; future owner-requested visual or usability tweaks are normal ongoing maintenance. Historical approved designs remain for reference. Owner confirmation establishes functional status; do not invent build-specific QA evidence.
+
+## 13 October owner decision reconciliation — readiness and closed items
+- **FD-012 Smart Collections:** **CLOSED — superseded by existing Supernova Library pages and Home rows**; no further discussion requested. Historical file remains as record only, despite its original Under Discussion directory location.
+- **FD-032 Google Drive APK delivery:** current Codex-to-Drive release delivery **implemented and owner-confirmed working** across recent versions. An optional fully unattended OAuth/Actions publisher is a separate historical proposal, not required future work.
+- **FD-014 and FD-031:** owner-confirmed implemented and working; cosmetic refinements are routine usage feedback, not future feature approvals.
+- **FD-001:** only currently confirmed new feature with complete owner design approval, **ready for implementation when assigned a release**.
+- **FD-008 Put.io:** owner-side registration/planning complete; **provisional 0.140** only. Remaining source/linking validation and QA belong to Codex; not an owner design discussion unless a genuine choice arises.
+- **FD-028 detailed advisories:** parked; distinct from age-only FD-001. TMDb movie release-date schema includes a `descriptors` array but populated real-title/region/TV coverage remains unverified; investigate as engineering research, not a question for the owner.
