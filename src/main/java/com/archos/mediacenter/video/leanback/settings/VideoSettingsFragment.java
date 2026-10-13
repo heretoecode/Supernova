@@ -83,6 +83,8 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
     }
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
+        private BackupSettingsController backupController;
+        @Override public void onCreate(Bundle state){super.onCreate(state);if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))backupController=new BackupSettingsController(this);}
         @Override public void onDisplayPreferenceDialog(androidx.preference.Preference pref){
             if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&PreviewPreferenceDialogs.show(this,pref))return;
             super.onDisplayPreferenceDialog(pref);
@@ -119,7 +121,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
                 scrollToPreference("streaming_category");
                 requireActivity().getIntent().removeExtra("show_streaming_settings");
             }
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.sidebar(this);
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.sidebar(this,backupController);
             // Note: Header color is now handled by the theme (MyLeanbackTheme.Preferences.Black)
         }
 
