@@ -95,7 +95,7 @@ public final class PreviewHomeRows {
  private void editor(Runnable changed){new CustomiseHomeEditor(context,this,changed).show();}
  public static final int[] MAXIMUM_PRESETS={5,10,15,20,25,30};
  static int normaliseMaximum(int old){
-  if(old==0)return 15;
+  if(old==0)return 30; // Legacy0 meant unlimited: retain the largest permitted count.
   int nearest=5;for(int preset:MAXIMUM_PRESETS)if(Math.abs((long)old-preset)<Math.abs((long)old-nearest))nearest=preset;
   return nearest;
  }

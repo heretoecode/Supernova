@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.app.Dialog;
+import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,8 +100,14 @@ public class Supernova139HomeEditorTest {
         }finally{host.pause().stop().destroy();}
     }
     private Entry movie(long id,String genres){Movie movie=mock(Movie.class);when(movie.getId()).thenReturn(id);when(movie.getName()).thenReturn("Fixture"+id);return new Entry(movie,id,0,genres);}
+    @Test public void legacySavedUnlimitedRowRetainsLargestApprovedCountWhileNewRowsDefaultToFifteen()throws Exception{
+        Context context=org.robolectric.RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().putString("preview_home_rows41","[{\"id\":\"custom:legacy\",\"name\":\"Legacy\",\"maximum\":0}]").commit();
+        PreviewHomeRows model=new PreviewHomeRows(context);PreviewHomeRows.Row row=model.rows.stream().filter(value->value.id.equals("custom:legacy")).findFirst().get();assertEquals(30,row.maximum);assertEquals(15,new PreviewHomeRows.Row("custom:new","New").maximum);
+        PreviewLibraryLoader.Snapshot library=new PreviewLibraryLoader.Snapshot();for(int id=1;id<=40;id++){com.archos.mediacenter.video.browser.adapters.object.Movie movie=org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Movie.class);org.mockito.Mockito.when(movie.getId()).thenReturn((long)id);org.mockito.Mockito.when(movie.getName()).thenReturn("Film "+id);PreviewLibraryLoader.Entry entry=new PreviewLibraryLoader.Entry(movie,id,0,"");library.movies.add(entry);row.members.add(entry.key());}
+        assertEquals(30,model.members(row,library).size());model.save();assertEquals(30,new PreviewHomeRows(context).rows.stream().filter(value->value.id.equals(row.id)).findFirst().get().maximum);
+    }
     @Test public void legacyLimitsAndCaseInsensitiveAllGenresAreSafe(){
-        assertEquals(15,PreviewHomeRows.normaliseMaximum(0));assertEquals(5,PreviewHomeRows.normaliseMaximum(1));assertEquals(30,PreviewHomeRows.normaliseMaximum(100));
+        assertEquals(30,PreviewHomeRows.normaliseMaximum(0));assertEquals(5,PreviewHomeRows.normaliseMaximum(1));assertEquals(30,PreviewHomeRows.normaliseMaximum(100));
         assertTrue(PreviewGenres.matches("crime|DRAMA",new LinkedHashSet<>(Arrays.asList("Crime","Drama")),true));assertFalse(PreviewGenres.matches("Crime",new LinkedHashSet<>(Arrays.asList("Crime","Drama")),true));
         assertTrue(PreviewGenres.matches("",Collections.emptySet(),true));
     }

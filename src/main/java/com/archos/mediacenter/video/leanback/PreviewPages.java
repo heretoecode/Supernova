@@ -209,7 +209,7 @@ public final class PreviewPages extends FrameLayout {
         if(heroClock.due(now,visible,motionAllowed(),count))changeFeatured(1,false);
         postDelayed(this,visible&&motionAllowed()&&count>1?Math.max(200,heroClock.delay(now)):HeroRotationPolicy.INTERVAL_MS);
     }};
-    @Override public void onWindowFocusChanged(boolean focused){super.onWindowFocusChanged(focused);if(focused)startHeroClock();else{heroClock.suspend();removeCallbacks(rotateFeatured);carouselGeneration++;featuredMoving=false;View hero=list.findViewWithTag("semantic:featured.active");if(hero!=null){hero.animate().cancel();hero.setTranslationX(0);}}}
+    @Override public void onWindowFocusChanged(boolean focused){super.onWindowFocusChanged(focused);if(focused)startHeroClock();else{heroOwnsHorizontal=false;heroClock.suspend();removeCallbacks(rotateFeatured);carouselGeneration++;featuredMoving=false;View hero=list.findViewWithTag("semantic:featured.active");if(hero!=null){hero.animate().cancel();hero.setTranslationX(0);}}}
     private Runnable ready=()->{};
     private final Runnable prioritiseVisible=this::prioritiseVisibleEntries;
     private void prioritiseVisibleEntries(){
@@ -275,7 +275,7 @@ public final class PreviewPages extends FrameLayout {
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();post(this::showWelcome);if(tab==3||loaded&&snapshot.technical.isEmpty())loadSources();preferences.registerOnSharedPreferenceChangeListener(homeSettings);preferences.registerOnSharedPreferenceChangeListener(providerSettings);requestDiscovery();startHeroClock();post(importRefresh);}
     private void requestDiscovery(){if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext())||requestedDiscovery||!isAttachedToWindow()||snapshot.movies.isEmpty()&&snapshot.shows.isEmpty())return;requestedDiscovery=true;
         worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{try{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});}finally{worker.shutdown();}});}
-    @Override protected void onDetachedFromWindow(){sourceGeneration++;sourcesLoading=false;removeCallbacks(warmHeroes);for(PreviewFeaturedCard card:heroWindow.values())card.releaseArtwork();heroWindow.clear();removeCallbacks(rotateFeatured);heroClock.suspend();carouselGeneration++;removeCallbacks(providerRefresh);removeCallbacks(importRefresh);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);preferences.unregisterOnSharedPreferenceChangeListener(providerSettings);super.onDetachedFromWindow();}
+    @Override protected void onDetachedFromWindow(){sourceGeneration++;sourcesLoading=false;removeCallbacks(warmHeroes);for(PreviewFeaturedCard card:heroWindow.values())card.releaseArtwork();heroWindow.clear();removeCallbacks(rotateFeatured);heroClock.suspend();heroOwnsHorizontal=false;carouselGeneration++;removeCallbacks(providerRefresh);removeCallbacks(importRefresh);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);preferences.unregisterOnSharedPreferenceChangeListener(providerSettings);super.onDetachedFromWindow();}
     private Entry featured(){List<Entry> entries=tab==1?snapshot.movies:tab==2?snapshot.shows:featuredCandidates();return entries.isEmpty()?null:entries.get(Math.floorMod(featuredIndex,entries.size()));}
     private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==0||tab==3||entry==null?null:entry.backdrop);}
     public static String displayName(Entry e){return e.media instanceof Episode?((Episode)e.media).getShowName():e.media.getName();}
@@ -341,7 +341,7 @@ public final class PreviewPages extends FrameLayout {
         if(this.tab==tab){if(tab==3)requestNetworkEntryFocus();return;}
         rememberFocus();scrollStates[this.tab]=layout.onSaveInstanceState();
         // TopNavigation owns the single full-viewport background, including the header.
-        quietOrder.clear();switchingTab=true;carouselGeneration++;featuredMoving=false;this.tab=tab;startHeroClock();setBackground(null);featuredIndex=0;render("tab_change");switchingTab=false;
+        quietOrder.clear();switchingTab=true;heroOwnsHorizontal=false;carouselGeneration++;featuredMoving=false;this.tab=tab;startHeroClock();setBackground(null);featuredIndex=0;render("tab_change");switchingTab=false;
         if(scrollStates[tab]!=null)layout.onRestoreInstanceState(scrollStates[tab]);else list.scrollToPosition(0);PreviewMetadata.library(getContext(),snapshot,tab);
     }
     private void requestNetworkEntryFocus(){
