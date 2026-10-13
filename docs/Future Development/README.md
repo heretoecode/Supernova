@@ -26,3 +26,34 @@
 | FD-011 | Profiles, Smart Collections, Discovery, library health and related historical futures | Parked or needs decision; see canonical historical register | [Parked](02%20Parked%20Ideas/README.md) |
 
 The full historical inventories remain at [parked future design](../design/PARKED_FUTURE.md) and [post-0.139 backlog](../project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md). This new register does not erase or silently supersede their evidence. Each new decision should update this index and the relevant permanent feature record; keep mock-ups in GitHub when available, otherwise link existing approved assets and clearly note missing attachments. Never claim all prior chat imagery is archived unless verified.
+
+## Historical cross-check — 8–13 October 2026
+
+The following **additional historical discussion-only candidates** were found in the 10 October discussion backlog and the legacy parked design file. They are retained here pending individual records and any later owner decisions; **none is scheduled or implementation-approved by this migration**:
+
+| ID | Subject | Status / caution |
+|---|---|---|
+| FD-012 | Smart Collections | **Under discussion / needs decision**, not approved |
+| FD-013 | Dedicated Discovery / Coming Soon | Parked |
+| FD-014 | One custom local Library Page | **Historically approved design**, check current release handover to avoid duplicate scheduling |
+| FD-015 | Library Health / broader unmatched-media workflows | Parked |
+| FD-016 | Cast and crew person profiles | Parked |
+| FD-017 | Multiple custom Library Pages | Historical discussion-only; distinct from FD-014 |
+| FD-018 | Anime section | Historical discussion-only |
+| FD-019 | Seek-bar thumbnail previews | Historical discussion-only |
+| FD-020 | Advanced subtitle presets | Historical discussion-only |
+| FD-021 | Expanded playback intelligence / version choice | Historical discussion-only |
+| FD-022 | Expanded IMDb / Rotten Tomatoes ratings | Historical discussion-only, separate from age classification |
+| FD-023 | Trakt community reviews | Historical discussion-only |
+| FD-024 | AI-assisted matching, search or recommendations | Historical discussion-only |
+| FD-025 | Additional layout/theme/navigation personalisation | Historical discussion-only |
+| FD-026 | Other service integrations | Historical discussion-only |
+| FD-027 | Generic WebDAV downloads / transfer idea | Parked; not equivalent to existing playback |
+| FD-028 | Detailed content warnings | Parked, removed from approved age-only v1 |
+| FD-029 | Broader Movies/TV/metadata UI audits | Parked; distinguish from Stage D maintenance |
+
+**Separate governance tracks, not to be duplicated as new feature requests:** the complete active 0.139 scope (including hero, Backup & Restore, Customise Home, Details and 43 workstreams); signed 0.138 Shield QA; Stage D upstream/dependency/Jetty/FFmpeg/security/performance/shared-UI/APK size and Kotlin/Compose investigation; existing completed branding and signing. Their source of truth remains the [roadmap](../project-decisions/CURRENT_ROADMAP_AND_DECISIONS.md) and [0.139 handover](../project-decisions/2026-10-13-supernova-0139-codex-implementation-handover.md).
+
+**Evidence audit:** The register was cross-checked against [the 10 October future discussion backlog](../project/SUPERNOVA_FUTURE_DISCUSSION_BACKLOG_2026-10-10.md), [historical parked design](../design/PARKED_FUTURE.md), [post-0.139 backlog](../project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md), and [current roadmap](../project-decisions/CURRENT_ROADMAP_AND_DECISIONS.md). Those documents contain chronological, sometimes superseded decisions; the latest explicit owner approval controls. Not every prior chat, external Claude design or video/mock-up has a verified GitHub asset. **Do not claim a complete image/conversation archive.**
+
+**Follow-up reconciliation required:** the historically approved custom Library Page and About Settings designs need comparison with active 0.139 scope/current shipped behaviour before being categorised as unscheduled; branding was reported completed. Put.io is only *provisionally* proposed for 0.140. The age overlay is approved but has **no assigned release**.
