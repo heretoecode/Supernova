@@ -32,7 +32,7 @@ public class BackupWorkspaceTest {
     private int count(View view,Class<?> type){int total=type.isInstance(view)?1:0;if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)total+=count(((ViewGroup)view).getChildAt(i),type);return total;}
     @Test public void allTwentySixCategoriesFitWithoutScrollingAndFinalDividerHasIndependentBottomPadding()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
-        try{BackupWorkspace workspace=workspace(host.get());host.get().setContentView(workspace);layout(workspace,628,468);host.windowFocusChanged(true);assertEquals(26,BackupCategory.values().length);assertEquals(0,count(workspace,ScrollView.class));
+        try{BackupWorkspace workspace=workspace(host.get());host.get().setContentView(workspace,new ViewGroup.LayoutParams(628,468));layout(workspace,628,468);host.windowFocusChanged(true);assertEquals(628,workspace.getWidth());assertEquals(468,workspace.getHeight());assertEquals(26,BackupCategory.values().length);assertEquals(0,count(workspace,ScrollView.class));
             int previousRisk=-1;String previousLabel="";
             for(BackupCategory category:BackupCategory.ordered()){
                 TextView toggle=workspace.findViewWithTag("backup.category."+category.name());assertNotNull(category.name(),toggle);assertTrue(category.label+" bounds",inside(toggle,workspace));assertTrue(category.label+" readable target",toggle.getHeight()>=44);
@@ -45,13 +45,13 @@ public class BackupWorkspaceTest {
     }
     @Test public void informationalPagesReplaceRightAreaAndBackRestoresExactOpener()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
-        try{BackupWorkspace workspace=workspace(host.get());host.get().setContentView(workspace);layout(workspace,628,468);
+        try{BackupWorkspace workspace=workspace(host.get());host.get().setContentView(workspace,new ViewGroup.LayoutParams(628,468));layout(workspace,628,468);
             for(String tag:List.of("backup.details","backup.instructions")){View opener=workspace.findViewWithTag(tag);assertTrue(opener.requestFocus());opener.performClick();layout(workspace,628,468);assertEquals(1,workspace.getChildCount());assertNull(workspace.findViewWithTag("backup.options"));View page=workspace.findViewWithTag(tag+".page");assertNotNull(page);assertTrue(page.hasFocus());ArrayList<View> controls=new ArrayList<>();page.addFocusables(controls,View.FOCUS_DOWN);assertEquals(1,controls.size());assertSame(page,controls.get(0));if(tag.equals("backup.details"))assertEquals(0,count(page,ScrollView.class));capture(workspace,"0139-"+tag.replace('.','-'));assertTrue(workspace.back());layout(workspace,628,468);assertEquals(tag,workspace.findFocus().getTag());}
         }finally{host.pause().stop().destroy();}
     }
     @Test public void checkboxStatePersistsAndDirectionRoutesRemainBounded(){
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
-        try{BackupWorkspace workspace=workspace(host.get());host.get().setContentView(workspace);layout(workspace,628,468);List<BackupCategory> rows=BackupCategory.ordered();TextView first=workspace.findViewWithTag("backup.category."+rows.get(0).name());assertTrue(first.requestFocus());first.performClick();assertFalse(workspace.included(rows.get(0)));assertFalse(workspace(host.get()).included(rows.get(0)));
+        try{BackupWorkspace workspace=workspace(host.get());host.get().setContentView(workspace,new ViewGroup.LayoutParams(628,468));layout(workspace,628,468);List<BackupCategory> rows=BackupCategory.ordered();TextView first=workspace.findViewWithTag("backup.category."+rows.get(0).name());assertTrue(first.requestFocus());first.performClick();assertFalse(workspace.included(rows.get(0)));assertFalse(workspace(host.get()).included(rows.get(0)));
             workspace.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertEquals("backup.category."+rows.get(1).name(),workspace.findFocus().getTag());workspace.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(first,workspace.findFocus());workspace.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertEquals("backup.category."+rows.get(5).name(),workspace.findFocus().getTag());
             assertFalse(PreferenceManager.getDefaultSharedPreferences(host.get()).contains("include_credentials"));assertFalse(PreferenceManager.getDefaultSharedPreferences(host.get()).contains("include_media"));
         }finally{host.pause().stop().destroy();}
