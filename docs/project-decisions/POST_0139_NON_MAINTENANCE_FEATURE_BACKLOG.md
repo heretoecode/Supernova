@@ -27,3 +27,10 @@ Updated 2026-10-13. Planning only; no code/build/merge authorisation.
 
 ## Backlog workflow
 For each track: (a) source/current behaviour investigation, (b) privacy and technical feasibility, (c) owner design discussion, (d) TV D-pad/mockups, (e) separate explicit implementation approval. No automatic start of future work.
+
+## 2026-10-13 — Owner backlog refinements
+- **Hero More Info -> Resume proposal REJECTED / removed from actionable backlog**: Continue Watching is king. Hero promotes **not-yet-started eligible items**, including a newly available next episode after previous episodes watched; once actual playback starts successfully, item transitions to Continue Watching. This is a clarification for ongoing 0.139 implementation, not new post-release scope.
+- **Shield Home integration**, **Network & Files redesign**, **remaining Settings/context menus**: explicitly remain PARKED; do not proactively design now.
+- **ACTIVE FUTURE DESIGN DISCUSSIONS**: Library statistics/header (explain what 'header' means to owner); broader playback HUD; **Preparing Playback screen** as a separate design topic; playback-start age/content overlay after source feasibility.
+- **Custom row extra icons**: existing 0.139 includes canonical genre/action icon catalogue, auto first-genre icon and manual override. No identified essential extra icons, no further decision required unless user finds missing semantics. Downgrade to OPTIONAL/NO ACTION.
+- **Put.io**: prior Preview 4.1.7 reportedly partially implemented native account handling, discovery/association, stable provider IDs, protected snapshots, sync diagnostics and lifecycle, with original-quality playback still via WebDAV -> AVOS/FFmpeg. **Production OAuth app registration/client configuration and real-account Shield validation were blocked**; no user password or borrowed OAuth client. Native transfers/downloads not implemented. Separate generic WebDAV Downloads concept was parked. Require independent source audit of actual merged/current branch before assuming these features are present in signed 0.138 or in active 0.139; keep auth blocked and no 0.139 expansion.
