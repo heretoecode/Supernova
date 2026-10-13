@@ -17,16 +17,24 @@ public final class PortablePhysicalReferences {
         this.context=context;
         for(Video video:records){if(video.getId()<=0)throw new IllegalArgumentException("Indexed physical identity required");
             if(videos.putIfAbsent(video.getId(),video)!=null)continue;
-            String path=video.getFileUri()==null?video.getFilePath():video.getFileUri().toString();String fingerprint=ViewingHistory.identity(false,null,-1,-1,path);
+            String path=video.getFileUri()==null?video.getFilePath():video.getFileUri().toString();String fingerprint=fingerprint(path);
             if(fingerprint!=null){fingerprints.put(video.getId(),fingerprint);groups.computeIfAbsent(fingerprint,key->new ArrayList<>()).add(video);}
         }
+    }
+    private static String fingerprint(String path){
+        if(path==null)return null;android.net.Uri uri=android.net.Uri.parse(path);
+        // Removing account/query material cannot prove the remaining address names the same media.
+        // Preserve those records with opaque origin IDs for explicit matching instead.
+        if(uri.getEncodedQuery()!=null||uri.getEncodedAuthority()!=null&&uri.getEncodedAuthority().contains("@"))return null;
+        return ViewingHistory.identity(false,null,-1,-1,path);
     }
     public Video video(long sourceId){return videos.get(sourceId);}
     public String reference(long sourceId)throws JSONException{
         if(sourceId<=0)throw new JSONException("Indexed physical identity required");String fingerprint=fingerprints.get(sourceId);
         if(fingerprint!=null&&groups.get(fingerprint).size()==1)return fingerprint;
-        if(unresolved==null)unresolved=new PortableTitleReferences(context,null);return unresolved.reference("v"+sourceId);
+        return pendingReference(sourceId);
     }
+    public String pendingReference(long sourceId)throws JSONException{if(sourceId<=0)throw new JSONException("Indexed physical identity required");if(unresolved==null)unresolved=new PortableTitleReferences(context,null);return unresolved.reference("v"+sourceId);}
     public static void validate(String ref)throws JSONException{
         if(ref.matches("file:[a-f0-9]{64}"))return;
         PortableTitleReferences.validate(ref);if(!ref.startsWith("unresolved:")||!ref.matches(".*:v[1-9][0-9]{0,18}"))throw new JSONException("Physical identity required");
