@@ -1,0 +1,24 @@
+{
+  "source_sha": "4176a94cd9caa50848774d197464ab1835d420b5",
+  "classes": 4,
+  "tests": 16,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+    "com.archos.mediacenter.video.leanback.PreviewMatchMembershipTest",
+    "com.archos.mediacenter.video.leanback.Preview41RowsTest",
+    "com.archos.mediacenter.video.leanback.Supernova139HomeEditorTest"
+  ],
+  "checks": [
+    "Distinct movie provider titles count once across physical versions; Movie/TV IDs remain separate",
+    "Case-insensitive genres, unknownzero counts and unmatched distinct titles",
+    "Count cache reused for identical immutable snapshot/type selection; refreshed after snapshot/type change",
+    "Home editor/membership/maximum regressions"
+  ],
+  "limits": [
+    "No physical performance budget, live scanner/rolling-digit accessibility or connected-popout geometry acceptance",
+    "Snapshot cache assumes the loader documented immutable published snapshot contract"
+  ]
+}
