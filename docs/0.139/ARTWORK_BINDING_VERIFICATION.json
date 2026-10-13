@@ -1,0 +1,32 @@
+{
+  "source_sha": "9bf0ec4bd525b496fc0c9acf5924cb94b08ebee0",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 34,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.HeroRotationPolicyTest",
+    "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest",
+    "com.archos.mediacenter.video.leanback.OfficialTitleNetworkTest",
+    "com.archos.mediacenter.video.leanback.Preview412Test",
+    "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+    "com.archos.mediacenter.video.leanback.Supernova138HomeTest",
+    "com.archos.mediacenter.video.leanback.Supernova139SharedCardMetadataTest",
+    "com.archos.mediacenter.video.player.HeroPlaybackOutputTest"
+  ],
+  "duration": "2m 35s",
+  "log_sha256": "873d89e7664d4ad816e0c44f802875e46f8cb0078949391f81cc76d91ece5ec1",
+  "checks": [
+    "Native disk/memory binding changes logos when provider match changes on the same local row",
+    "Language-specific rebinding and movie/tv provider-number separation",
+    "No cached current-provider logo yields white fallback text; transparent cached image does not hide title",
+    "Actual pixel preservation in offline native fixtures; hero and Details regression classes included"
+  ],
+  "limits": [
+    "Synthetic coloured PNGs, not genuine owner photos or live provider responses",
+    "Same-provider negative cache/retry, source update races, full visual/font/viewport/device matrix remain pending",
+    "No complete H03 acceptance, signed APK or physical Shield verification"
+  ]
+}

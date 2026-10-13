@@ -34,7 +34,8 @@ public final class OfficialTitleArtwork {
    PreviewLibraryLoader.Snapshot snapshot=PreviewLibraryLoader.memoryCache();if(snapshot!=null)for(PreviewLibraryLoader.Entry entry:snapshot.shows)if(entry.media instanceof Tvshow&&((Tvshow)entry.media).getTvshowId()==show.getTvshowId()&&entry.onlineId>0)return "tv/"+entry.onlineId;
   }return null;
  }
- private static String identity(Base media){String provider=providerIdentity(media);if(provider!=null)return provider;return media instanceof Tvshow?"show-local:"+((Tvshow)media).getTvshowId():media instanceof Video?"video-local:"+((Video)media).getId():media.getName();}
+ private static String identity(Base media){String provider=providerIdentity(media);return provider!=null?provider:localIdentity(media);}
+ private static String localIdentity(Base media){return media instanceof Tvshow?"show-local:"+((Tvshow)media).getTvshowId():media instanceof Video?"video-local:"+((Video)media).getId():media.getName();}
  /** Freeze typography at transition time; a late network logo never replaces visible text. */
  public static int cachedRevision(Base media){String provider=providerIdentity(media);Bitmap image=provider==null?null:ALIASES.get(provider+":"+Locale.getDefault().getLanguage());return image==null?0:image.getGenerationId();}
  public static void bindStable(TextView view,Base media){clear(view);String provider=providerIdentity(media);Bitmap bitmap=provider==null?null:ALIASES.get(provider+":"+Locale.getDefault().getLanguage());if(bitmap!=null){view.setForeground(new Logo(bitmap,true));view.setTextColor(Color.TRANSPARENT);}READY.put(view,true);}
@@ -47,7 +48,7 @@ public final class OfficialTitleArtwork {
   bind(view,media,cachedOnly,null);
  }
  public static void bind(TextView view,Base media,boolean cachedOnly,Runnable changed){
-  if(media==null){clear(view);return;}String provider=providerIdentity(media),identity=identity(media);
+  if(media==null){clear(view);return;}String provider=providerIdentity(media),identity=provider!=null?provider:localIdentity(media);
   request(view,identity,cachedOnly,()->{if(provider!=null)return provider;BaseTags tags=media.getFullScraperTags(view.getContext().getApplicationContext());if(tags instanceof EpisodeTags)tags=((EpisodeTags)tags).getShowTags();return tags==null||tags.getOnlineId()<=0?null:(media instanceof Movie?"movie/":"tv/")+tags.getOnlineId();},changed);
  }
  public static void bind(TextView view,VideoDbInfo info){

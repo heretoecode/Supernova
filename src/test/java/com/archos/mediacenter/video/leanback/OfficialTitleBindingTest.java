@@ -57,6 +57,12 @@ public class OfficialTitleBindingTest {
     @Test public void fullyTransparentCachedLogoRetainsReadableFallbackInsteadOfAnInvisibleTitle()throws Exception {
         disk("movie",123,"en",Color.TRANSPARENT);OfficialTitleArtwork.bind(title,movie(10,123),true);settle();assertNull(title.getForeground());assertEquals(Color.WHITE,title.getCurrentTextColor());assertTrue(OfficialTitleArtwork.readyForFirstFrame(title));
     }
+    @Test public void bindingCapturesProviderOnceWhenSourceMetadataChangesDuringResolution()throws Exception {
+        disk("tv",123,"en",Color.RED);disk("tv",456,"en",Color.GREEN);OfficialTitleArtwork.bindRemote(title,"tv",123);settle();OfficialTitleArtwork.bindRemote(title,"tv",456);settle();
+        com.archos.mediacenter.video.browser.adapters.object.Tvshow show=mock(com.archos.mediacenter.video.browser.adapters.object.Tvshow.class);
+        com.archos.mediascraper.ShowTags first=new com.archos.mediascraper.ShowTags(),later=new com.archos.mediascraper.ShowTags();first.setOnlineId(123);later.setOnlineId(456);
+        when(show.getShowTags()).thenReturn(first,later);OfficialTitleArtwork.bind(title,show,true);settle();assertEquals(Color.RED,pixel());
+    }
     @Test public void movieAndTvWithTheSameProviderNumberKeepDistinctCacheEntriesAndArtworkPixels()throws Exception {
         disk("movie",123,"en",Color.RED);disk("tv",123,"en",Color.GREEN);OfficialTitleArtwork.bindRemote(title,"movie",123);settle();assertEquals(Color.RED,pixel());
         OfficialTitleArtwork.bindRemote(title,"tv",123);settle();assertEquals(Color.GREEN,pixel());assertEquals("Official artwork fallback title",title.getText().toString());
