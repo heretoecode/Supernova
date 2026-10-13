@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class CombinedViewingRestoreTest {
-    private Context app;private SharedPreferences prefs,health;private File journal;private PreferenceRestoreTransaction transaction;
+    protected Context app;protected SharedPreferences prefs,health;protected File journal;protected PreferenceRestoreTransaction transaction;
     private static final class ProcessDeath extends Error {}
     private JSONObject row(String id,boolean completed,int position,long played)throws Exception {
         return new JSONObject().put("identity",id).put("completed",completed).put("started",true).put("position",position)
@@ -32,7 +32,7 @@ public class CombinedViewingRestoreTest {
             .put(row("tmdb:movie:123",true,-2,100)).put(row("tmdb:tv:999:2:4",false,2345,50)));}
     private JSONObject appearance()throws Exception {return new JSONObject().put("schema",1).put("category","APPEARANCE")
             .put("values",new JSONObject().put("preview_accent41",new JSONObject().put("type","INT").put("value",19)));}
-    private Map<BackupCategory,JSONObject> incoming(boolean positions)throws Exception {
+    protected Map<BackupCategory,JSONObject> incoming(boolean positions)throws Exception {
         JSONObject history=new JSONObject().put("schema",1).put("kind","HISTORY").put("rows",new JSONArray()
                 .put(new JSONObject().put("identity","tmdb:movie:456").put("completed",true).put("started",true).put("played",900).put("completedAt",900)));
         Map<BackupCategory,JSONObject> result=new EnumMap<>(BackupCategory.class);result.put(BackupCategory.APPEARANCE,appearance());result.put(BackupCategory.HISTORY,history);
@@ -41,7 +41,7 @@ public class CombinedViewingRestoreTest {
         if(positions)result.put(BackupCategory.POSITIONS,new JSONObject().put("schema",1).put("kind","POSITIONS").put("rows",new JSONArray()
                 .put(new JSONObject().put("identity","tmdb:tv:999:2:4").put("position",4000).put("duration",12000))));return result;
     }
-    private PortablePhysicalReferences physical() {
+    protected PortablePhysicalReferences physical() {
         Movie video=mock(Movie.class);when(video.getId()).thenReturn(10L);when(video.getOnlineId()).thenReturn(123L);
         when(video.getFileUri()).thenReturn(Uri.parse("file:///media/PATH_CANARY.mkv"));return new PortablePhysicalReferences(app,List.of(video));
     }
@@ -53,7 +53,7 @@ public class CombinedViewingRestoreTest {
         journal=new File(app.getFilesDir(),"supernova-restore/preferences-v1.json");journal.delete();transaction=new PreferenceRestoreTransaction(app);
         ViewingHistory.replaceRecovery(app,original(),()->false);
     }
-    private void assertOriginal(String before)throws Exception {
+    protected void assertOriginal(String before)throws Exception {
         assertEquals(7,prefs.getInt("preview_accent41",0));assertFalse(health.getBoolean("incorrect:10",true));assertTrue(health.getBoolean("incorrect:99",false));
         assertEquals(before,ViewingHistory.captureRecovery(app).toString());assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));assertEquals("CACHE_CANARY",health.getString("offline:source",null));
     }
