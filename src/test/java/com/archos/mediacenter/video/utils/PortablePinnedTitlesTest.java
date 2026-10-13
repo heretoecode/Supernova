@@ -41,7 +41,9 @@ public class PortablePinnedTitlesTest {
     @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
     @Test public void actualUnfilteredProviderProjectionIncludesOrphanPinsWithoutReadingMetadataText()throws Exception{
         Context context=RuntimeEnvironment.getApplication();DbHolder database=new DbHolder(new VideoOpenHelper(context));try{
-            var db=database.get();db.execSQL("INSERT INTO MOVIE(_id,m_online_id,Nova_pinned,name_movie) VALUES(10,123,400,'TITLE_CANARY')");db.execSQL("INSERT INTO MOVIE(_id,m_online_id,Nova_pinned,name_movie) VALUES(11,456,0,'UNPINNED_CANARY')");db.execSQL("INSERT INTO SHOW(_id,s_online_id,Nova_pinned,name_show) VALUES(20,789,800,'SHOW_CANARY')");
+            var db=database.get();
+            // Historic orphan scraper records are possible in an imported database. Only the fixture disables FK checks.
+            db.execSQL("PRAGMA foreign_keys=OFF");db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,Nova_pinned,name_movie) VALUES(10,100,123,400,'TITLE_CANARY')");db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,Nova_pinned,name_movie) VALUES(11,101,456,0,'UNPINNED_CANARY')");db.execSQL("INSERT INTO SHOW(_id,s_online_id,Nova_pinned,name_show) VALUES(20,789,800,'SHOW_CANARY')");
         ScraperProvider.hookUriMatcher(new UriMatcher(UriMatcher.NO_MATCH));
         ScraperProvider scraper=new ScraperProvider(context,database);
         ContentProvider provider=new ContentProvider(){
