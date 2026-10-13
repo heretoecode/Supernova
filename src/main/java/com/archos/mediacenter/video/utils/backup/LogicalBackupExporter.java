@@ -58,10 +58,7 @@ public final class LogicalBackupExporter {
         }catch(JSONException|RuntimeException invalid){throw new IOException("Selected configuration failed logical backup validation; no backup was created",invalid);}
     }
     public static File preparePrivate(Context context,Set<BackupCategory> selected,BooleanSupplier cancel)throws IOException {
-        JSONObject bookmarks=categories.contains(BackupCategory.BOOKMARKS)?BookmarkStoreRecovery.capture(context):null;
-            Set<String> locations=new TreeSet<>();
-            if(categories.contains(BackupCategory.LOCATIONS)){if(categories.contains(BackupCategory.SOURCES))locations.addAll(PortableLibrarySources.locations(context));if(bookmarks!=null)locations.addAll(PortableBookmarks.locations(bookmarks));}
-            Map<BackupCategory,JSONObject> payloads=collect(context,selected,cancel);
+        Map<BackupCategory,JSONObject> payloads=collect(context,selected,cancel);
         File folder=new File(context.getCacheDir(),"supernova-logical-backups");
         if(!folder.isDirectory()&&!folder.mkdirs())throw new IOException("Cannot prepare private logical backup folder");
         File archive=new File(folder,"Supernova-"+UUID.randomUUID()+".zip");boolean complete=false;

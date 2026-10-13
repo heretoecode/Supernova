@@ -1,0 +1,9 @@
+{
+  "source_sha": "4bb27401c2d8b69161599b29760b83f6f2ef404c",
+  "result": "FAIL",
+  "phase": "compileNoamazonReleaseJavaWithJavac",
+  "tests_executed": 0,
+  "duration": "16s",
+  "log_sha256": "22d9df1301afa9cd2c84d1eb247ce74efd1455fb82316992d8e72d922c130743",
+  "failures_detail": "Accidental duplicate locator collection block in preparePrivate referred to categories defined only in collect. Removed duplicate; fresh compilation and behavioral verification required."
+}

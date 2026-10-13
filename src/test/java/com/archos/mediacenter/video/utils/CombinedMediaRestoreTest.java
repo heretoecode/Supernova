@@ -119,4 +119,42 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
         JSONObject older=new JSONObject(Files.readString(journal.toPath()));older.put("schema",4);older.getJSONObject("media").remove("committed");Files.writeString(journal.toPath(),older.toString());
         assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,transaction.recover());assertNew();assertFalse(journal.exists());
     }
+
+    private void seedBookmarks()throws Exception {
+        app.deleteDatabase(BookmarkStoreRecovery.DATABASE);
+        try(var db=android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(app.getDatabasePath(BookmarkStoreRecovery.DATABASE),null)) {
+            db.execSQL("CREATE TABLE shortcuts(_id INTEGER PRIMARY KEY AUTOINCREMENT,uri TEXT NOT NULL,shortcut_name TEXT NOT NULL,friendly_uri TEXT)");db.setVersion(2);
+            db.execSQL("INSERT INTO shortcuts(uri,shortcut_name,friendly_uri) VALUES('smb://nas.example/Media','Original bookmark',NULL)");
+        }
+    }
+    private Map<BackupCategory,JSONObject> allWithBookmarks()throws Exception {
+        var selected=all();selected.put(BackupCategory.BOOKMARKS,new JSONObject().put("schema",1).put("rows",new JSONArray().put(new JSONObject()
+                .put("id","bookmark:12345678-1234-1234-1234-123456789012:1").put("location",PortableLocations.reference("smb://nas.example/Media")).put("name","Restored bookmark"))));return selected;
+    }
+    @Test public void allFiveStoresRecoverOriginalsAcrossEveryUnfinishedBoundary()throws Exception {
+        seedBookmarks();String originalBookmarks=BookmarkStoreRecovery.capture(app).toString(),originalMedia=mediaImage(),originalViewing=ViewingHistory.captureRecovery(app).toString();
+        for(var boundary:List.of(PreferenceRestoreTransaction.Checkpoint.JOURNAL_DURABLE,PreferenceRestoreTransaction.Checkpoint.DEFAULT_DURABLE,
+                PreferenceRestoreTransaction.Checkpoint.HEALTH_DURABLE,PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE,
+                PreferenceRestoreTransaction.Checkpoint.MEDIA_PREPARED,PreferenceRestoreTransaction.Checkpoint.BOOKMARKS_PREPARED,
+                PreferenceRestoreTransaction.Checkpoint.PREFERENCES_DURABLE)) {
+            try{transaction.apply(transaction.prepare(allWithBookmarks(),null,physical()),()->false,at->{if(at==boundary)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+            assertEquals(6,new JSONObject(Files.readString(journal.toPath())).getInt("schema"));
+            assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,new PreferenceRestoreTransaction(app).recover());assertOriginal(originalViewing);
+            assertEquals(originalMedia,mediaImage());assertEquals(originalBookmarks,BookmarkStoreRecovery.capture(app).toString());assertFalse(prefs.contains(PortableBookmarks.PENDING));
+        }
+    }
+    @Test public void durableDecisionBeforeEitherSqliteCommitReplaysBothParticipants()throws Exception {
+        for(var boundary:List.of(PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE,PreferenceRestoreTransaction.Checkpoint.MEDIA_DURABLE)) {
+            setup();media();seedBookmarks();
+            try{transaction.apply(transaction.prepare(allWithBookmarks(),null,physical()),()->false,at->{if(at==boundary)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+            assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,new PreferenceRestoreTransaction(app).recover());assertNew();assertEquals("Restored bookmark",BookmarkStoreRecovery.capture(app).getJSONArray("rows").getJSONObject(0).getString("name"));
+        }
+    }
+    @Test public void invalidBookmarkRecoveryCannotMutateAnyEarlierParticipant()throws Exception {
+        seedBookmarks();try{transaction.apply(transaction.prepare(allWithBookmarks(),null,physical()),()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+        String currentMedia=mediaImage(),currentBookmarks=BookmarkStoreRecovery.capture(app).toString(),currentViewing=ViewingHistory.captureRecovery(app).toString();
+        JSONObject record=new JSONObject(Files.readString(journal.toPath()));record.getJSONObject("bookmarks").getJSONObject("after").put("schema",99);Files.writeString(journal.toPath(),record.toString());
+        try{new PreferenceRestoreTransaction(app).recover();fail();}catch(IOException expected){}
+        assertEquals(currentMedia,mediaImage());assertEquals(currentBookmarks,BookmarkStoreRecovery.capture(app).toString());assertEquals(currentViewing,ViewingHistory.captureRecovery(app).toString());assertTrue(journal.exists());assertEquals(19,prefs.getInt("preview_accent41",0));
+    }
 }
