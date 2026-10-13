@@ -1,0 +1,24 @@
+{
+  "source_sha": "6d0b355af4fd640fe00fe3dffe89195ce782465b",
+  "classes": 3,
+  "tests": 22,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.leanback.PortableViewingStateTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "checks": [
+    "Actual SQLite history-only and position-only replacement persists selected columns independently",
+    "Cancellation after DELETE and during INSERT rolls back original stored rows",
+    "Auth and Home preferences remain untouched by the database primitive",
+    "History/position schema matrix, existing viewing-history and preference journal regressions"
+  ],
+  "limits": [
+    "SQLite replacement primitive only; no legacy-media flag updates or combined cross-store restore journal",
+    "New history/position codecs not yet registered for production archive restore",
+    "Synthetic SQLite/cancellation; no physical power-loss, SAF or Shield proof"
+  ]
+}
