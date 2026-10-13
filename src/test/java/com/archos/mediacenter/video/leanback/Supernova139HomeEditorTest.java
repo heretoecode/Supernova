@@ -36,7 +36,7 @@ public class Supernova139HomeEditorTest {
     private void key(Dialog dialog,int code){dialog.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,code));dialog.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,code));}
     private EditText input(View view){if(view instanceof EditText)return (EditText)view;if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++){EditText result=input(((ViewGroup)view).getChildAt(i));if(result!=null)return result;}return null;}
     private void createNamed(Dialog dialog,String name){root(dialog).findViewWithTag("home.editor.create").performClick();root(dialog).findViewWithTag("home.editor.name").performClick();Dialog keyboard=ShadowDialog.getLatestDialog();input(root(keyboard)).setText(name);PreviewPagesTest.findText(root(keyboard),"Done").performClick();}
-    private void fullyVisible(View view){android.graphics.Rect visible=new android.graphics.Rect();assertTrue("target must be visible: "+view.getTag(),view.getGlobalVisibleRect(visible));assertEquals("full target height: "+view.getTag(),view.getHeight(),visible.height());}
+    private void fullyVisible(View view){StringBuilder geometry=new StringBuilder();View cursor=view;while(cursor!=null){geometry.append(cursor.getClass().getSimpleName()).append(':').append(cursor.getLeft()).append(',').append(cursor.getTop()).append(',').append(cursor.getWidth()).append('x').append(cursor.getHeight()).append(" scroll=").append(cursor.getScrollY()).append(" shown=").append(cursor.isShown()).append(';');cursor=cursor.getParent() instanceof View?(View)cursor.getParent():null;}android.graphics.Rect visible=new android.graphics.Rect();assertTrue("target must be visible: "+view.getTag()+" "+geometry,view.getGlobalVisibleRect(visible));assertEquals("full target height: "+view.getTag(),view.getHeight(),visible.height());}
     private void layout(Dialog dialog){View view=root(dialog);int w=dialog.getWindow().getAttributes().width,h=dialog.getWindow().getAttributes().height;view.measure(View.MeasureSpec.makeMeasureSpec(w,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(h,View.MeasureSpec.EXACTLY));view.layout(0,0,w,h);view.dispatchWindowFocusChanged(true);}
 
     @Test public void builtinIsLockedAndMoveCancellationPreservesPersistedOrder(){
@@ -97,7 +97,7 @@ public class Supernova139HomeEditorTest {
         ActivityController<TopNavigationTest.Host> host=host();try{
             Dialog dialog=open(host);layout(dialog);PreviewPagesTest.capture(root(dialog),"0139-customise-built-in");
             createNamed(dialog,"Science Fiction");layout(dialog);
-            fullyVisible(root(dialog).findViewWithTag("home.editor.automatic"));
+            PreviewPagesTest.capture(root(dialog),"0139-customise-custom-calibration");fullyVisible(root(dialog).findViewWithTag("home.editor.automatic"));
             assertEquals("home.editor.name",dialog.getCurrentFocus().getTag());
             PreviewPagesTest.capture(root(dialog),"0139-customise-custom");
             root(dialog).findViewWithTag("home.editor.genres").performClick();Dialog genres=ShadowDialog.getLatestDialog();layout(genres);
@@ -112,7 +112,7 @@ public class Supernova139HomeEditorTest {
             PreviewHomeRows model=new PreviewHomeRows(host.get());PreviewHomeRows.Row row=new PreviewHomeRows.Row("custom:two","Science Fiction");row.genreRule="Science Fiction|Action";row.dynamic=true;model.rows.add(row);model.save();
             Dialog dialog=open(host);layout(dialog);View body=root(dialog).findViewWithTag(row.id);body.requestFocus();key(dialog,KeyEvent.KEYCODE_DPAD_RIGHT);
             assertEquals(row.id+":visibility",dialog.getCurrentFocus().getTag());key(dialog,KeyEvent.KEYCODE_DPAD_RIGHT);assertEquals("home.editor.name",dialog.getCurrentFocus().getTag());
-            layout(dialog);fullyVisible(root(dialog).findViewWithTag("home.editor.automatic"));fullyVisible(root(dialog).findViewWithTag("home.editor.maximum"));
+            layout(dialog);PreviewPagesTest.capture(root(dialog),"0139-customise-two-genres-calibration");fullyVisible(root(dialog).findViewWithTag("home.editor.automatic"));fullyVisible(root(dialog).findViewWithTag("home.editor.maximum"));
             PreviewPagesTest.capture(root(dialog),"0139-customise-two-genres");dialog.dismiss();
         }finally{host.pause().stop().destroy();}
     }
