@@ -97,4 +97,13 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
             transaction.apply(transaction.prepare(imported.payloads(()->false),null,physical()),()->false);
         }assertNew();assertTrue(file.delete());
     }
+    @Test public void workerInterruptionAfterViewingCommitRecoversOriginalsAndPreservesInterruptStatus()throws Exception {
+        String originalMedia=mediaImage(),originalViewing=ViewingHistory.captureRecovery(app).toString();
+        try {
+            try{transaction.apply(transaction.prepare(all(),null,physical()),()->false,
+                    at->{if(at==PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE)Thread.currentThread().interrupt();});fail();}
+            catch(PreferenceRestoreTransaction.Cancelled cancelled){assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,cancelled.outcome);assertFalse(cancelled.recoveryRequired);assertTrue(Thread.currentThread().isInterrupted());}
+        }finally{Thread.interrupted();}
+        assertOriginal(originalViewing);assertEquals(originalMedia,mediaImage());assertFalse(journal.exists());
+    }
 }

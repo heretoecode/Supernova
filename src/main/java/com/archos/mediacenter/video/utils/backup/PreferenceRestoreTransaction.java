@@ -38,6 +38,15 @@ public final class PreferenceRestoreTransaction {
             this.outcome=outcome;this.recoveryRequired=recoveryRequired;
         }
     }
+    public static final class Cancelled extends InterruptedIOException {
+        public final Recovery outcome;
+        public final boolean recoveryRequired;
+        private Cancelled(Throwable cause,Recovery outcome,boolean recoveryRequired) {
+            super(recoveryRequired?"Cancelled restoration requires recovery":outcome==Recovery.COMPLETED?
+                    "Cancellation arrived after restoration committed":"Restoration cancelled; original selected state was recovered");
+            initCause(cause);this.outcome=outcome;this.recoveryRequired=recoveryRequired;
+        }
+    }
     public static final class Plan {
         private final SharedPreferences owner;
         private final Map<String,Object> before,after;
@@ -195,9 +204,12 @@ public final class PreferenceRestoreTransaction {
                 observer.reached(Checkpoint.COMMIT_MARKER_DURABLE);
                 if(media!=null){media.commit();media.close();media=null;observer.reached(Checkpoint.MEDIA_DURABLE);}
             }catch(IOException|RuntimeException failure){
-                if(media!=null){try{media.close();}catch(RuntimeException close){failure.addSuppressed(close);}media=null;}
-                Recovery outcome=Recovery.NONE;boolean required=false;
-                try{outcome=recover();}catch(IOException recovery){failure.addSuppressed(recovery);required=true;}
+                boolean interrupted=Thread.interrupted();Recovery outcome=Recovery.NONE;boolean required=false;
+                try {
+                    if(media!=null){try{media.close();}catch(RuntimeException close){failure.addSuppressed(close);}media=null;}
+                    try{outcome=recover();}catch(IOException recovery){failure.addSuppressed(recovery);required=true;}
+                }finally{if(interrupted)Thread.currentThread().interrupt();}
+                if(failure instanceof InterruptedIOException||interrupted)throw new Cancelled(failure,outcome,required);
                 throw new Failure(failure,outcome,required);
             }finally{if(media!=null)media.close();}
             // Durable completion wins over late cancellation. Recovery must retain the new values now.

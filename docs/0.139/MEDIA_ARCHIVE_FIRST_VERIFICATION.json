@@ -1,0 +1,39 @@
+{
+  "source_sha": "3b72a7d97a31d50c481f32b6ccb296b5361536c4",
+  "result": "FAIL",
+  "classes": 8,
+  "tests": 72,
+  "failures": 3,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "failures_detail": [
+    {
+      "class": "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+      "test": "ioFailureAndCancellationAfterDatabaseCommitRollBackPreferencesHealthAndViewingTogether",
+      "message": "com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction$Failure: Restoration was interrupted; original selected state was recovered"
+    },
+    {
+      "class": "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+      "test": "ioFailureAndCancellationAfterDatabaseCommitRollBackPreferencesHealthAndViewingTogether",
+      "message": "com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction$Failure: Restoration was interrupted; original selected state was recovered"
+    },
+    {
+      "class": "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest",
+      "test": "cancellationAndFailureBeforeCompletionRollBackWithoutTouchingAuth",
+      "message": "com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction$Failure: Restoration was interrupted; original selected state was recovered"
+    }
+  ],
+  "log_sha256": "9dc7a3c4167c7c35ae37b667385e73d8826793b9ba0cd7607e24507bfb9f9935",
+  "duration": "2m 35s",
+  "correction": "Preserve InterruptedIOException subtype with explicit outcome; temporarily clear worker interrupt while recovering, then restore interrupt flag. Fresh verification required."
+}
