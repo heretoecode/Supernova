@@ -58,4 +58,51 @@ public class PortablePinnedTitlesTest {
         db.execSQL("UPDATE MOVIE SET Nova_pinned=1.5 WHERE _id=10");try{PortablePinnedTitles.read(context);fail();}catch(java.io.IOException expected){}
         }finally{database.close();}
     }
+    private void seed(android.database.sqlite.SQLiteDatabase db) {
+        db.execSQL("INSERT INTO files(_id,remote_id,media_type,bookmark,Archos_hiddenByUser) VALUES(100,100,3,4444,1),(101,101,3,5555,0)");
+        db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,Nova_pinned,name_movie) VALUES(10,100,123,9,'KEEP_MOVIE'),(11,101,456,7,'KEEP_OTHER')");
+        db.execSQL("INSERT INTO SHOW(_id,s_online_id,Nova_pinned,name_show) VALUES(20,789,8,'KEEP_SHOW')");
+    }
+    private PortablePinnedTitles.Prepared replacement(Context context,android.database.sqlite.SQLiteDatabase db)throws Exception {
+        JSONObject payload=PortablePinnedTitles.export(scope("replacement-source"),List.of(new Title(Kind.MOVIE,1,123,400),new Title(Kind.TV,2,789,800)));
+        return PortablePinnedTitles.prepare(payload,PortablePinnedTitles.read(db));
+    }
+    private Map<String,Long> pins(android.database.sqlite.SQLiteDatabase db)throws Exception {
+        Map<String,Long> result=new LinkedHashMap<>();for(Title title:PortablePinnedTitles.read(db))result.put(title.target(),title.pinned);return result;
+    }
+    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @Test public void sqliteReplacementUpdatesOnlyPinsAndPreservesFileProgressHiddenStateAndMetadata()throws Exception {
+        Context context=RuntimeEnvironment.getApplication();try(VideoOpenHelper helper=new VideoOpenHelper(context)) {
+            var db=helper.getWritableDatabase();seed(db);var prepared=replacement(context,db);
+            db.execSQL("UPDATE MOVIE SET name_movie='NEW_METADATA' WHERE _id=10");
+            PortablePinnedTitles.replace(db,prepared,()->false,count->{});
+            assertEquals(Map.of("MOVIE:10",400L,"MOVIE:11",0L,"TV:20",800L),pins(db));
+            try(var rows=db.rawQuery("SELECT bookmark,Archos_hiddenByUser FROM files WHERE _id=100",null)){assertTrue(rows.moveToFirst());assertEquals(4444,rows.getInt(0));assertEquals(1,rows.getInt(1));}
+            try(var rows=db.rawQuery("SELECT name_movie,m_online_id,video_id FROM MOVIE WHERE _id=10",null)){assertTrue(rows.moveToFirst());assertEquals("NEW_METADATA",rows.getString(0));assertEquals(123,rows.getLong(1));assertEquals(100,rows.getLong(2));}
+        }
+    }
+    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @Test public void cancellationAndFailureAfterFirstWriteRollBackEveryPin()throws Exception {
+        Context context=RuntimeEnvironment.getApplication();try(VideoOpenHelper helper=new VideoOpenHelper(context)) {
+            var db=helper.getWritableDatabase();seed(db);Map<String,Long> before=pins(db);
+            try{PortablePinnedTitles.replace(db,replacement(context,db),()->true,count->{});fail();}catch(java.io.InterruptedIOException expected){}
+            assertEquals(before,pins(db));
+            try{PortablePinnedTitles.replace(db,replacement(context,db),()->false,count->{throw new java.io.IOException("Injected write checkpoint failure");});fail();}catch(java.io.IOException expected){}
+            assertEquals(before,pins(db));
+            var cancelled=new java.util.concurrent.atomic.AtomicBoolean(false);
+            try{PortablePinnedTitles.replace(db,replacement(context,db),cancelled::get,count->cancelled.set(true));fail();}catch(java.io.InterruptedIOException expected){}
+            assertEquals(before,pins(db));assertFalse(db.inTransaction());
+        }
+    }
+    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @Test public void changedProviderPinOrInventoryRejectsStalePreviewBeforeAnyWrites()throws Exception {
+        Context context=RuntimeEnvironment.getApplication();try(VideoOpenHelper helper=new VideoOpenHelper(context)) {
+            var db=helper.getWritableDatabase();seed(db);
+            for(String change:List.of("UPDATE MOVIE SET m_online_id=999 WHERE _id=10","UPDATE MOVIE SET Nova_pinned=12 WHERE _id=10","INSERT INTO SHOW(_id,s_online_id,Nova_pinned,name_show) VALUES(21,999,1,'NEW_SHOW')")) {
+                var prepared=replacement(context,db);db.execSQL(change);Map<String,Long> afterUserChange=pins(db);
+                try{PortablePinnedTitles.replace(db,prepared,()->false,count->{fail("Stale preview must not write");});fail();}catch(java.io.IOException expected){}
+                assertEquals(afterUserChange,pins(db));
+            }
+        }
+    }
 }
