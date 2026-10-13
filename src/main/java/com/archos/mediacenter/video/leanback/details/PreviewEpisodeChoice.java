@@ -8,6 +8,12 @@ import java.util.*;
 final class PreviewEpisodeChoice {
     final int season,number;final Episode local;final JSONObject remote;
     PreviewEpisodeChoice(int season,int number,Episode local,JSONObject remote){this.season=season;this.number=number;this.local=local;this.remote=remote;}
+    /** Provider facts enrich indexed episodes; they cannot invent available media. */
+    static SortedMap<Integer,List<PreviewEpisodeChoice>> indexed(Map<Integer,List<Episode>> local,Map<Integer,JSONArray> remote){
+        SortedMap<Integer,List<PreviewEpisodeChoice>> result=reconcile(local,remote);
+        for(List<PreviewEpisodeChoice> row:result.values())row.removeIf(choice->choice.local==null);
+        result.entrySet().removeIf(row->row.getValue().isEmpty());return result;
+    }
     static SortedMap<Integer,List<PreviewEpisodeChoice>> reconcile(Map<Integer,List<Episode>> local,Map<Integer,JSONArray> remote){
         SortedMap<Integer,SortedMap<Integer,PreviewEpisodeChoice>> merged=new TreeMap<>();
         for(Map.Entry<Integer,JSONArray> row:remote.entrySet())for(int i=0;i<row.getValue().length();i++){

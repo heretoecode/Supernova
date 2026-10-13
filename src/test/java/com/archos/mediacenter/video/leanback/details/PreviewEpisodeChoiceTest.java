@@ -12,6 +12,18 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class PreviewEpisodeChoiceTest {
+    @Test public void indexedFourEpisodesDoNotGrowIntoMetadataOnlySeasons()throws Exception{
+        List<Episode> episodes=new ArrayList<>();
+        for(int n=1;n<=4;n++){Episode e=mock(Episode.class);when(e.getEpisodeNumber()).thenReturn(n);episodes.add(e);}
+        Map<Integer,JSONArray> provider=new TreeMap<>();
+        provider.put(1,new JSONArray("[{episode_number:1,season_number:1}]"));
+        provider.put(2,new JSONArray("[{episode_number:1,season_number:2,name:'Actual metadata'},{episode_number:5,season_number:2},{episode_number:6,season_number:2}]"));
+        var rows=PreviewEpisodeChoice.indexed(Collections.singletonMap(2,episodes),provider);
+        assertEquals(Collections.singleton(2),rows.keySet());assertEquals(4,rows.get(2).size());
+        assertEquals("Actual metadata",rows.get(2).get(0).remote.getString("name"));
+        for(int i=0;i<4;i++)assertSame(episodes.get(i),rows.get(2).get(i).local);
+        assertTrue(PreviewEpisodeChoice.indexed(Collections.emptyMap(),provider).isEmpty());
+    }
     @Test @SuppressWarnings({"rawtypes","unchecked"}) public void providerMarkKeepsMonochromeShapeAndLocalRebindRestoresPlay()throws Exception{
         android.app.Activity activity=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
         try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException unset){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(activity.getApplicationContext()).build());}
