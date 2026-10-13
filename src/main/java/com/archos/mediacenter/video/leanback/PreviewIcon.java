@@ -9,7 +9,15 @@ public final class PreviewIcon extends Drawable {
  public void focus(boolean focused,int accent){p.setColor(0xffe1e9ef);p.clearShadowLayer();invalidateSelf();}
  private void line(Canvas c,float... pts){Path q=new Path();q.moveTo(pts[0],pts[1]);for(int i=2;i<pts.length;i+=2)q.lineTo(pts[i],pts[i+1]);c.drawPath(q,p);}
  public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);
-  if(kind.startsWith("checkbox")){c.drawRoundRect(3,3,21,21,2,2,p);if(kind.equals("checkbox checked"))line(c,6,12,10,16,18,7);}
+  if(kind.equals("eye")||kind.equals("eye-off")){c.drawOval(2,6,22,18,p);c.drawCircle(12,12,3,p);if(kind.equals("eye-off"))line(c,2,2,22,22);}
+  else if(kind.equals("grip")){for(int x=9;x<=15;x+=6)for(int y=5;y<=19;y+=7)c.drawCircle(x,y,.8f,p);}
+  else if(kind.equals("chevrons")){line(c,8,9,12,5,16,9);line(c,8,15,12,19,16,15);}
+  else if(kind.equals("arrow-up")){line(c,12,21,12,3);line(c,5,10,12,3,19,10);}
+  else if(kind.equals("arrow-down")){line(c,12,3,12,21);line(c,5,14,12,21,19,14);}
+  else if(kind.equals("history")){c.drawArc(3,3,21,21,-90,290,false,p);line(c,3,4,3,10,8,10);line(c,12,7,12,12,16,15);}
+  else if(kind.equals("recommendation")){line(c,12,2,14,9,21,12,14,15,12,22,10,15,3,12,10,9,12,2);}
+  else if(kind.equals("custom row")){for(int y=5;y<=19;y+=7){c.drawCircle(4,y,1,p);line(c,9,y,21,y);}}
+  else if(kind.startsWith("checkbox")){c.drawRoundRect(3,3,21,21,2,2,p);if(kind.equals("checkbox checked"))line(c,6,12,10,16,18,7);}
   else if(kind.equals("caps lock")){line(c,4,13,12,4,20,13,16,13,16,17,8,17,8,13,4,13);c.drawRect(8,20,16,22,p);}
   else if(kind.equals("space")){line(c,4,10,4,17,20,17,20,10);}
   else if(kind.equals("backspace")){line(c,9,5,22,5,22,19,9,19,2,12,9,5);line(c,12,9,18,15);line(c,18,9,12,15);}

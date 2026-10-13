@@ -11,16 +11,22 @@ public final class PreviewTextInput {
     public static void show(Context c,String title,String previous,int limit,Consumer<String> accept){
         showValidated(c,title,previous,limit,value->value.isEmpty()?"Enter a name":null,accept);
     }
+    public static void showFoundation(Context c,String title,String previous,int limit,Consumer<String> accept){
+        showInput(c,title,previous,limit,value->value.isEmpty()?"Enter a name":null,accept,false,true);
+    }
     public static void showValidated(Context c,String title,String previous,int limit,java.util.function.Function<String,String> validate,Consumer<String> accept){
         showInput(c,title,previous,limit,validate,accept,false);
     }
     public static void showSecret(Context c,String title,String previous,Consumer<String> accept){showInput(c,title,previous,512,value->null,accept,true);}
     private static void showInput(Context c,String title,String previous,int limit,java.util.function.Function<String,String> validate,Consumer<String> accept,boolean secret){
+        showInput(c,title,previous,limit,validate,accept,secret,false);
+    }
+    private static void showInput(Context c,String title,String previous,int limit,java.util.function.Function<String,String> validate,Consumer<String> accept,boolean secret,boolean foundation){
         Dialog d=PreviewDialog.create(c);d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        LinearLayout panel=new LinearLayout(c);panel.setOrientation(LinearLayout.VERTICAL);if(secret)com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(panel,"private.credential");panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(PreviewDialog.dialogSurface(c));
+        LinearLayout panel=new LinearLayout(c);panel.setOrientation(LinearLayout.VERTICAL);if(secret)com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(panel,"private.credential");panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(foundation?MenuFoundation.surface(c,false):PreviewDialog.dialogSurface(c));
         TextView heading=new TextView(c);heading.setText(title.equalsIgnoreCase("Page name")?"Page Name":title);heading.setGravity(Gravity.CENTER);heading.setTextColor(-1);heading.setTextSize(20);panel.addView(heading);
-        EditText input=new KeyboardInput(c);input.setSingleLine(true);input.setShowSoftInputOnFocus(false);input.setText(previous);if(secret){input.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(input,"private.credential");}input.setTextColor(-1);input.setTextSize(16);input.setBackground(SharedThreePanel.control(c,10));input.setPadding(dp(c,12),0,dp(c,12),0);if(title.equalsIgnoreCase("Page name")){input.setHint("Name your library page");input.setHintTextColor(0xff8197a8);}input.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(limit)});panel.addView(input,new LinearLayout.LayoutParams(-1,dp(c,44)));input.setSelection(input.length());
-        PreviewKeyboard keyboard=new PreviewKeyboard(c,input,null);panel.addView(keyboard);
+        EditText input=new KeyboardInput(c);input.setSingleLine(true);input.setShowSoftInputOnFocus(false);input.setText(previous);if(secret){input.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(input,"private.credential");}input.setTextColor(-1);input.setTextSize(16);input.setBackground(SharedThreePanel.control(c,10));input.setPadding(dp(c,12),0,dp(c,12),0);if(title.equalsIgnoreCase("Row Name")){input.setHint("Enter a name for your row…");input.setHintTextColor(0xff8197a8);}if(title.equalsIgnoreCase("Page name")){input.setHint("Name your library page");input.setHintTextColor(0xff8197a8);}input.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(limit)});panel.addView(input,new LinearLayout.LayoutParams(-1,dp(c,44)));input.setSelection(input.length());
+        PreviewKeyboard keyboard=new PreviewKeyboard(c,input,null);panel.addView(keyboard);if(foundation)keyboard.useMenuFoundation();
         keyboard.setActions(()->{String value=secret?input.getText().toString():input.getText().toString().trim();String error=validate.apply(value);if(error!=null){input.setError(error);return;}d.dismiss();accept.accept(value);},d::dismiss);
         // The denser keyboard variant may use more width; oversized text scrolls safely.
         int width=Math.min(dp(c,560),TvLayout.safeWidth(c));panel.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));

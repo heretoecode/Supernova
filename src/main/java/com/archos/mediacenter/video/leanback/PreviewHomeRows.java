@@ -11,15 +11,15 @@ import org.json.*;
 public final class PreviewHomeRows {
  public static final String[] SYSTEM={"continue","watchnext","recent","trending","popular","watched","similar"};
  private static final String[] LABELS={"Continue Watching","Watch Next","Recently Added","Trending on Trakt · In Your Library","Popular on Trakt · In Your Library","Recently Watched","Because You Watched"};
- public static final class Row {public String id,name;public boolean visible=true,dynamic=false,movies=true,tv=true;public String genreRule="",sort="added";public int maximum=0;public boolean descending=true;public final Set<String> members=new LinkedHashSet<>(),calculated=new LinkedHashSet<>();Row(String id,String name){this.id=id;this.name=name;}public boolean custom(){return id.startsWith("custom:");}}
+ public static final class Row {public String id,name;public boolean visible=true,dynamic=false,movies=true,tv=true;public String genreRule="",sort="added",icon="";public boolean matchAll;public int maximum=15;public boolean descending=true;public final Set<String> members=new LinkedHashSet<>(),calculated=new LinkedHashSet<>();Row(String id,String name){this.id=id;this.name=name;}public boolean custom(){return id.startsWith("custom:");}}
  private final Context context;private final SharedPreferences prefs;public final List<Row> rows=new ArrayList<>();
- public PreviewHomeRows(Context c){context=c;prefs=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);try{JSONArray data=new JSONArray(prefs.getString("preview_home_rows41","[]"));for(int i=0;i<data.length();i++){JSONObject o=data.getJSONObject(i);Row r=new Row(o.getString("id"),o.getString("name"));r.visible=o.optBoolean("visible",true);r.dynamic=o.optBoolean("dynamic",false);r.movies=o.optBoolean("movies",true);r.tv=o.optBoolean("tv",true);if(!r.movies&&!r.tv)r.movies=true;r.genreRule=o.optString("genres","");r.sort=o.optString("sort","added");r.descending=o.optBoolean("descending",!r.sort.equals("title"));JSONArray calculated=o.optJSONArray("calculated");if(calculated!=null)for(int j=0;j<calculated.length();j++)r.calculated.add(calculated.getString(j));r.maximum=Math.max(0,o.optInt("maximum",0));JSONArray members=o.optJSONArray("members");if(members!=null)for(int j=0;j<members.length();j++)r.members.add(members.getString(j));rows.add(r);}}catch(JSONException ignored){}for(int i=0;i<SYSTEM.length;i++){final String id=SYSTEM[i];if(rows.stream().noneMatch(r->r.id.equals(id)))rows.add(new Row(id,LABELS[i]));}for(Row row:rows)for(int i=0;i<SYSTEM.length;i++)if(row.id.equals(SYSTEM[i]))row.name=LABELS[i];}
- private void save(){JSONArray data=new JSONArray();try{for(Row r:rows)data.put(new JSONObject().put("id",r.id).put("name",r.name).put("visible",r.visible).put("members",new JSONArray(r.members)).put("dynamic",r.dynamic).put("movies",r.movies).put("tv",r.tv).put("genres",r.genreRule).put("sort",r.sort).put("descending",r.descending).put("calculated",new JSONArray(r.calculated)).put("maximum",r.maximum));prefs.edit().putString("preview_home_rows41",data.toString()).apply();}catch(JSONException error){throw new IllegalStateException(error);}}
+ public PreviewHomeRows(Context c){context=c;prefs=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);try{JSONArray data=new JSONArray(prefs.getString("preview_home_rows41","[]"));for(int i=0;i<data.length();i++){JSONObject o=data.getJSONObject(i);Row r=new Row(o.getString("id"),o.getString("name"));r.visible=o.optBoolean("visible",true);r.dynamic=o.optBoolean("dynamic",false);r.movies=o.optBoolean("movies",true);r.tv=o.optBoolean("tv",true);if(!r.movies&&!r.tv)r.movies=true;r.genreRule=o.optString("genres","");r.sort=o.optString("sort","added");r.icon=o.optString("icon","");r.matchAll=o.optBoolean("matchAll",false);r.descending=o.optBoolean("descending",!r.sort.equals("title"));JSONArray calculated=o.optJSONArray("calculated");if(calculated!=null)for(int j=0;j<calculated.length();j++)r.calculated.add(calculated.getString(j));r.maximum=r.custom()?normaliseMaximum(o.optInt("maximum",15)):Math.max(0,o.optInt("maximum",0));JSONArray members=o.optJSONArray("members");if(members!=null)for(int j=0;j<members.length();j++)r.members.add(members.getString(j));rows.add(r);}}catch(JSONException ignored){}for(int i=0;i<SYSTEM.length;i++){final String id=SYSTEM[i];if(rows.stream().noneMatch(r->r.id.equals(id)))rows.add(new Row(id,LABELS[i]));}for(Row row:rows)for(int i=0;i<SYSTEM.length;i++)if(row.id.equals(SYSTEM[i]))row.name=LABELS[i];}
+ void save(){JSONArray data=new JSONArray();try{for(Row r:rows)data.put(new JSONObject().put("id",r.id).put("name",r.name).put("visible",r.visible).put("members",new JSONArray(r.members)).put("dynamic",r.dynamic).put("movies",r.movies).put("tv",r.tv).put("genres",r.genreRule).put("sort",r.sort).put("icon",r.icon).put("matchAll",r.matchAll).put("descending",r.descending).put("calculated",new JSONArray(r.calculated)).put("maximum",r.maximum));prefs.edit().putString("preview_home_rows41",data.toString()).apply();}catch(JSONException error){throw new IllegalStateException(error);}}
  public List<Entry> members(Row row,Snapshot snapshot){
   Map<String,Entry> available=new LinkedHashMap<>();for(Entry entry:snapshot.movies)available.put(entry.key(),entry);for(Entry entry:snapshot.shows)available.put(entry.key(),entry);
   LinkedHashSet<String> keys=new LinkedHashSet<>(row.members);
   if(row.dynamic){Set<String> genres=PreviewGenres.parse(row.genreRule);Set<String> calculated=new LinkedHashSet<>();
-   for(Entry entry:available.values())if((entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow?row.tv:row.movies)&&PreviewGenres.matches(entry.genres,genres))calculated.add(entry.key());
+   for(Entry entry:available.values())if((entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow?row.tv:row.movies)&&PreviewGenres.matches(entry.genres,genres,row.matchAll))calculated.add(entry.key());
    if(!row.calculated.equals(calculated)){row.calculated.clear();row.calculated.addAll(calculated);save();}keys.addAll(calculated);
   }
   List<Entry> result=new ArrayList<>();for(String key:keys)if(available.containsKey(key))result.add(available.get(key));
@@ -92,32 +92,20 @@ public final class PreviewHomeRows {
    PreviewDialog.choose(c,"Move row to",positions,model.rows.indexOf(row),position->{model.rows.remove(row);model.rows.add(Math.min(position,model.rows.size()),row);model.save();changed.run();});
   });
  }
- private void editor(Runnable changed){Dialog dialog=PreviewDialog.create(context);LinearLayout screen=new LinearLayout(context);screen.setOrientation(LinearLayout.VERTICAL);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);screen.setPadding(dp(16),dp(12),dp(16),dp(12));screen.setBackground(PreviewDialog.surface(context,false));SharedThreePanel.heading(screen,"Customise Home");TextView help=label("Select to edit · Up/Down to reorder",13);help.setPadding(0,dp(8),0,dp(16));screen.addView(help);ScrollView scroll=new ScrollView(context);LinearLayout list=new LinearLayout(context);list.setOrientation(LinearLayout.VERTICAL);scroll.addView(list);screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));final String[] moving={null};final Runnable[] render={null};render[0]=()->{list.removeAllViews();for(Row row:rows){LinearLayout line=new LinearLayout(context);TextView move=control((row.id.equals(moving[0])?"↕  ":"")+row.name,()->{moving[0]=row.id.equals(moving[0])?null:row.id;save();render[0].run();View target=list.findViewWithTag(row.id);if(target!=null)target.requestFocus();});move.setTag(row.id);move.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN||!row.id.equals(moving[0])||key!=KeyEvent.KEYCODE_DPAD_UP&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;int index=rows.indexOf(row),next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<rows.size()){Collections.swap(rows,index,next);save();render[0].run();list.findViewWithTag(row.id).requestFocus();}return true;});line.addView(move,new LinearLayout.LayoutParams(0,dp(36),1));TextView visible=control(row.visible?"Shown":"Hidden",()->{row.visible=!row.visible;save();TextView control=list.findViewWithTag(row.id+":visibility");if(control!=null)control.setText(row.visible?"Shown":"Hidden");});visible.setTag(row.id+":visibility");line.addView(visible,new LinearLayout.LayoutParams(dp(95),dp(36)));if(row.custom()){TextView rename=control("Rename",()->name("Rename Row",row.name,value->{row.name=value;save();render[0].run();}));TextView genres=control("Genre Rule",()->rule(row,()->{save();render[0].run();}));TextView delete=control("Delete",()->PreviewDialog.confirmDelete(context,"Delete Row?","Titles remain in your library. Only this Home row is removed.",()->{rows.remove(row);save();render[0].run();}));for(TextView button:new TextView[]{rename,genres,delete}){LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(dp(88),dp(36));size.leftMargin=dp(6);line.addView(button,size);}}LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(3);list.addView(line,lp);}list.addView(control("Create New Row",()->name("Create New Row","",name->{Row row=new Row("custom:"+UUID.randomUUID(),name);row.dynamic=true;rows.add(row);save();rule(row,()->{save();render[0].run();});render[0].run();})),0,new LinearLayout.LayoutParams(-1,dp(36)));};render[0].run();dialog.setContentView(screen);dialog.setOnDismissListener(d->changed.run());dialog.show();dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setDimAmount(.4f);dialog.getWindow().setLayout(Math.min(dp(700),context.getResources().getDisplayMetrics().widthPixels-dp(60)),Math.min(dp(Math.min(350,100+39*(rows.size()+1))),context.getResources().getDisplayMetrics().heightPixels-dp(100)));if(!rows.isEmpty())list.findViewWithTag(rows.get(0).id).requestFocus();}
- private void rule(Row row,Runnable changed) {
-  Dialog[] menu={null};
-  java.util.function.IntFunction<String> label = n -> new String[]{
-   "Dynamic genre rule: "+(row.dynamic?"On":"Off"),
-   "Genres: "+(row.genreRule.isEmpty()?"All":row.genreRule.replace("|",", ")),
-   "Movies: "+(row.movies?"On":"Off"),"TV Shows: "+(row.tv?"On":"Off"),
-   "Sort: "+row.sort,"Maximum items: "+(row.maximum==0?"No Limit":row.maximum),"Direction: "+(row.descending?"Descending":"Ascending")}[n];
-  String[] labels=new String[7];for(int i=0;i<labels.length;i++)labels[i]=label.apply(i);
-  Runnable refresh=()->{save();changed.run();for(int i=0;i<7;i++)PreviewDialog.updateLabel(menu[0],i,label.apply(i));};
-  menu[0]=PreviewDialog.choose(context,row.name,labels,-1,Collections.emptySet(),false,n->{
-   if(n==0)setDynamic(row,!row.dynamic,PreviewLibraryLoader.memoryCache());
-   if(n==6)row.descending=!row.descending;
-   if(n==1){Set<String> values=new TreeSet<>();Snapshot snapshot=PreviewLibraryLoader.memoryCache();if(snapshot!=null){for(Entry e:snapshot.movies)values.addAll(PreviewGenres.parse(e.genres));for(Entry e:snapshot.shows)values.addAll(PreviewGenres.parse(e.genres));}PreviewGenres.choose(context,values,PreviewGenres.parse(row.genreRule),selected->{row.genreRule=android.text.TextUtils.join("|",selected);row.dynamic=true;refresh.run();});return;}
-   if(n==2&&(!row.movies||row.tv))row.movies=!row.movies;
-   if(n==3&&(!row.tv||row.movies))row.tv=!row.tv;
-   if(n==4){PreviewDialog.choose(context,"Row sort",new String[]{"Date Added","Title","Year"},Arrays.asList("added","title","year").indexOf(row.sort),i->{row.sort=new String[]{"added","title","year"}[i];row.descending=!row.sort.equals("title");refresh.run();});return;}
-   if(n==5){int[] limits={0,10,20,30,40,50,75,100};String[] options={"No Limit","10","20","30","40","50","75","100","Select…"};int selected=-1;for(int i=0;i<limits.length;i++)if(limits[i]==row.maximum)selected=i;PreviewDialog.choose(context,"Maximum items",options,selected,i->{
-    if(i<limits.length){row.maximum=limits[i];refresh.run();return;}
-    PreviewTextInput.showValidated(context,"Maximum items",row.maximum==0?"":String.valueOf(row.maximum),10,
-      value->parseMaximum(value)==null?"Enter a whole number from 0 to 2147483647. Zero means No Limit.":null,value->{
-     row.maximum=parseMaximum(value);refresh.run();
-    });
-   });return;}
-   refresh.run();
-  });
+ private void editor(Runnable changed){new CustomiseHomeEditor(context,this,changed).show();}
+ public static final int[] MAXIMUM_PRESETS={5,10,15,20,25,30};
+ static int normaliseMaximum(int old){
+  if(old==0)return 15;
+  int nearest=5;for(int preset:MAXIMUM_PRESETS)if(Math.abs((long)old-preset)<Math.abs((long)old-nearest))nearest=preset;
+  return nearest;
+ }
+ public static String iconName(Row row){
+  if(row.custom()){
+   if(PreviewGenres.known(row.icon))return row.icon;
+   Set<String> genres=PreviewGenres.parse(row.genreRule);return genres.isEmpty()?"custom row":genres.iterator().next();
+  }
+  switch(row.id){case "continue":return "history";case "watchnext":return "list";case "recent":return "date added";
+   case "trending":return "trending";case "popular":return "star";case "watched":return "history";case "similar":return "recommendation";default:return "custom row";}
  }
  static Integer parseMaximum(String value){
   if(value==null||!value.trim().matches("[0-9]{1,10}"))return null;
