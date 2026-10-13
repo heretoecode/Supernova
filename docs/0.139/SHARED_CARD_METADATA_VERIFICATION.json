@@ -1,0 +1,25 @@
+{
+  "source_sha": "5b3a2f473dca51b673c7373551c45a237d457b9c",
+  "classes": 5,
+  "tests": 21,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+    "com.archos.mediacenter.video.leanback.PreviewFeaturedIndicatorsTest",
+    "com.archos.mediacenter.video.leanback.details.PreviewDetailsFactsTest",
+    "com.archos.mediacenter.video.leanback.Supernova138HomeTest",
+    "com.archos.mediacenter.video.leanback.Supernova139SharedCardMetadataTest"
+  ],
+  "checks": [
+    "Shared card policy limits displayed genres to three and omits vote count without mutating complete source facts",
+    "Actual Details header retains shared16sp single-line policy after repeated measurement",
+    "Complete lower genres and vote count remain in Details facts; synopsis unchanged",
+    "Home/Details native regressions"
+  ],
+  "limits": [
+    "Tagline/fallback and full-information layout still incomplete pending Details content/overflow policy",
+    "No full long-metadata/locale/density/physical-device visual conformance matrix"
+  ]
+}
