@@ -1,0 +1,37 @@
+package com.archos.mediacenter.video.leanback.settings;
+
+import android.app.Application;
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.utils.backup.*;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.*;
+import org.json.*;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.robolectric.*;
+import org.robolectric.annotation.*;
+import static org.junit.Assert.*;
+
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
+public class BackupOperationModelTest {
+    private Application app;private SharedPreferences prefs;private BackupOperationModel model;
+    @Before public void setup(){app=RuntimeEnvironment.getApplication();prefs=PreferenceManager.getDefaultSharedPreferences(app);prefs.edit().clear().putInt("preview_accent41",7).putString("oauth_token","AUTH_CANARY").commit();app.deleteDatabase("media.db");new File(app.getFilesDir(),"supernova-restore/preferences-v1.json").delete();model=new BackupOperationModel(app,Runnable::run);}
+    private byte[] archive()throws Exception{File file=new File(app.getCacheDir(),"incoming.zip");JSONObject appearance=new JSONObject().put("schema",1).put("category","APPEARANCE").put("values",new JSONObject().put("preview_accent41",new JSONObject().put("type","INT").put("value",19)));LogicalBackupArchive.writeCategories(file,Map.of(BackupCategory.APPEARANCE,appearance),()->false);return Files.readAllBytes(file.toPath());}
+    private void phase(BackupOperationModel.Phase phase){assertEquals(model.current().message,phase,model.current().phase);assertFalse(model.isBusy());}
+    @Test public void actualExportIsPreparedBeforePickerAndVerifiedDestinationCanBeRetried()throws Exception{
+        model.create(Set.of(BackupCategory.APPEARANCE));phase(BackupOperationModel.Phase.EXPORT_READY);assertTrue(model.current().retryExport);model.destinationPending();phase(BackupOperationModel.Phase.DESTINATION_PENDING);
+        model.publish(new VerifiedBackupPublication.Destination(){public OutputStream openWrite()throws IOException{throw new IOException("Provider unavailable");}public InputStream openRead(){throw new AssertionError();}public boolean removeIncomplete(){return false;}});phase(BackupOperationModel.Phase.FAILED);assertTrue(model.current().retryExport);assertTrue(model.current().message.contains("incomplete"));
+        ByteArrayOutputStream destination=new ByteArrayOutputStream();model.publish(new VerifiedBackupPublication.Destination(){public OutputStream openWrite(){return destination;}public InputStream openRead(){return new ByteArrayInputStream(destination.toByteArray());}public boolean removeIncomplete(){throw new AssertionError();}});phase(BackupOperationModel.Phase.EXPORTED);assertTrue(destination.size()>0);assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));
+    }
+    @Test public void cancelledPickerRetainsVerifiedArchiveAndDoesNotOpenAnyDestination(){model.create(Set.of(BackupCategory.APPEARANCE));model.destinationPending();model.destinationCancelled();phase(BackupOperationModel.Phase.CANCELLED);assertTrue(model.current().retryExport);assertTrue(new File(app.getCacheDir(),"supernova-logical-backups").listFiles().length>0);}
+    @Test public void unsupportedApprovedCategoryFailsWithoutSilentlyDroppingIt(){model.create(Set.of(BackupCategory.APPEARANCE,BackupCategory.MATCHES));phase(BackupOperationModel.Phase.FAILED);assertFalse(model.current().retryExport);assertFalse(new File(app.getCacheDir(),"supernova-logical-backups").exists());assertEquals(7,prefs.getInt("preview_accent41",0));}
+    @Test public void validatedReviewAndPreviewDoNotWriteUntilExplicitConfirm()throws Exception{model.open(new ByteArrayInputStream(archive()));phase(BackupOperationModel.Phase.REVIEW);assertEquals(Set.of(BackupCategory.APPEARANCE),model.current().categories);assertEquals(7,prefs.getInt("preview_accent41",0));model.preview(Set.of(BackupCategory.APPEARANCE));phase(BackupOperationModel.Phase.RESTORE_PREVIEW);assertEquals(7,prefs.getInt("preview_accent41",0));model.confirm();phase(BackupOperationModel.Phase.RESTORED);assertEquals(19,prefs.getInt("preview_accent41",0));assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));assertFalse(new File(app.getFilesDir(),"supernova-restore/preferences-v1.json").exists());assertEquals(0,new File(app.getCacheDir(),"supernova-logical-restore").listFiles().length);}
+    @Test public void changedDestinationAfterPreviewFailsAndLeavesManualStateIntact()throws Exception{model.open(new ByteArrayInputStream(archive()));model.preview(Set.of(BackupCategory.APPEARANCE));prefs.edit().putInt("preview_accent41",31).commit();model.confirm();phase(BackupOperationModel.Phase.FAILED);assertEquals(31,prefs.getInt("preview_accent41",0));assertFalse(model.current().recoveryRequired);assertFalse(new File(app.getFilesDir(),"supernova-restore/preferences-v1.json").exists());}
+    @Test public void invalidInputAndMissingSelectionNeverWriteDestination()throws Exception{model.open(new ByteArrayInputStream(new byte[]{1,2,3}));phase(BackupOperationModel.Phase.FAILED);assertEquals(7,prefs.getInt("preview_accent41",0));model.open(new ByteArrayInputStream(archive()));model.preview(Set.of(BackupCategory.HISTORY));phase(BackupOperationModel.Phase.FAILED);assertEquals(7,prefs.getInt("preview_accent41",0));}
+    @Test public void cancellationBeforeQueuedWorkBeginsPreventsPreparationAndParallelJobs(){List<Runnable> queued=new ArrayList<>();model=new BackupOperationModel(app,queued::add);model.create(Set.of(BackupCategory.APPEARANCE));assertTrue(model.isBusy());try{model.create(Set.of(BackupCategory.AUDIO));fail();}catch(IllegalStateException expected){}model.cancel();queued.get(0).run();phase(BackupOperationModel.Phase.CANCELLED);assertFalse(new File(app.getCacheDir(),"supernova-logical-backups").exists());}
+    @Test public void publicationCancellationRetainsPrivateBackupAndReportsUnverifiedExternalFile(){model.create(Set.of(BackupCategory.APPEARANCE));model.publish(new VerifiedBackupPublication.Destination(){public OutputStream openWrite(){return new OutputStream(){public void write(int b){model.cancel();}public void write(byte[] bytes,int offset,int length){model.cancel();}};}public InputStream openRead(){throw new AssertionError();}public boolean removeIncomplete(){return false;}});phase(BackupOperationModel.Phase.CANCELLED);assertTrue(model.current().retryExport);assertTrue(model.current().message.contains("incomplete"));}
+    @Test public void privateRetentionIsBoundedAndDoesNotDeleteUnownedFiles()throws Exception{File folder=new File(app.getCacheDir(),"supernova-logical-backups");folder.mkdirs();File unrelated=new File(folder,"user-kept.txt");Files.writeString(unrelated.toPath(),"KEEP");for(int i=0;i<5;i++){model.create(Set.of(BackupCategory.APPEARANCE));phase(BackupOperationModel.Phase.EXPORT_READY);}assertEquals(3,folder.listFiles(file->file.getName().endsWith(".zip")).length);assertEquals("KEEP",Files.readString(unrelated.toPath()));}
+    @Test public void closeReviewDeletesOnlyPrivateCopyAndKeepsLiveConfiguration()throws Exception{model.open(new ByteArrayInputStream(archive()));model.closeReview();phase(BackupOperationModel.Phase.IDLE);assertEquals(0,new File(app.getCacheDir(),"supernova-logical-restore").listFiles().length);assertEquals(7,prefs.getInt("preview_accent41",0));}
+}
