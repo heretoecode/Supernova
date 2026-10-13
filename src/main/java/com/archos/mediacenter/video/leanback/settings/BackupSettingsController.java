@@ -39,8 +39,8 @@ public final class BackupSettingsController {
         this.split=split;this.middle=middle;this.help=help;frame=new FrameLayout(fragment.requireContext());frame.setTag("settings.backup.workspace");frame.setVisibility(View.GONE);
         split.addView(frame,new LinearLayout.LayoutParams(0,-1,.72f));model.states().observe(fragment.getViewLifecycleOwner(),state->{if(isVisible())render(state);});
     }
-    public void show(View opener){this.opener=opener;middle.setVisibility(View.GONE);help.setVisibility(View.GONE);split.widths(.28f,0,0);frame.setVisibility(View.VISIBLE);render(model.current());}
-    public void hide(){if(frame!=null)frame.setVisibility(View.GONE);}
+    public void show(View opener){this.opener=opener;int railWidth=split.getChildAt(0).getWidth();middle.setVisibility(View.GONE);help.setVisibility(View.GONE);split.widths(.28f,0,0);LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=railWidth;rail.weight=0;split.getChildAt(0).setLayoutParams(rail);frame.setVisibility(View.VISIBLE);render(model.current());}
+    public void hide(){if(frame!=null){frame.setVisibility(View.GONE);LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=0;rail.weight=.28f;split.getChildAt(0).setLayoutParams(rail);}}
     public boolean isVisible(){return frame!=null&&frame.getVisibility()==View.VISIBLE;}
     public boolean hasFocus(){return isVisible()&&frame.hasFocus();}
     public void enter(){if(isVisible())focusFirst(frame);}
