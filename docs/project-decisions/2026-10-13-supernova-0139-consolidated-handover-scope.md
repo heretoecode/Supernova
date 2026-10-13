@@ -1,4 +1,4 @@
-# Supernova 0.139 — consolidated owner decisions and handover scope
+> **CURRENT IMPLEMENTATION AUTHORITY — 2026-10-13:** Owner has now authorised Codex to begin work on the complete approved **Supernova 0.139** scope (original 41 workstreams plus hero rotation and comprehensive Backup & Restore). Read [authoritative 0.139 Codex implementation handover](2026-10-13-supernova-0139-codex-implementation-handover.md) FIRST. Older statements below about full handover still pending, backup/hero parked, or coding not authorised are superseded. This is NOT approval to merge, publish or change signing/identity.\n\n# Supernova 0.139 — consolidated owner decisions and handover scope
 Updated: 2026-10-13. **Planning and implementation-readiness record; not evidence of implementation or completed tests.** This is a current-state index that supersedes contradictory *older proposals* in the chronological [Shield QA and UI decision log](2026-10-12-supernova-0138-shield-qa-and-library-foundation.md). Preserve that log as historical evidence.
 
 ## Status and authority
