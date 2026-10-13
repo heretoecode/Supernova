@@ -30,6 +30,7 @@ Add `--tests '*ClassName'` for each class below for a staged run. Baseline recei
 | Viewing-state schemas | PortableViewingChoicesTest, PortableViewingStateTest, Supernova138PlaybackTest, ViewingHistoryTest | VIEWING_STATE_SCHEMA_VERIFICATION.json |
 | SQLite viewing-state replacement | PortableViewingStateTest, PreferenceRestoreTransactionTest, ViewingHistoryTest | SQLITE_VIEWING_STATE_VERIFICATION.json |
 | Verified provider publication | LogicalBackupArchiveTest, PreferenceRestoreTransactionTest, VerifiedBackupPublicationTest | PUBLICATION_VERIFICATION.json |
+| Physical privacy and native hidden replacement | PortablePinnedTitlesTest, PortableHiddenItemsTest, PortableReviewNotesTest, PortablePreferredVersionsTest, PreferenceRestoreTransactionTest, LogicalBackupArchiveTest | PHYSICAL_PRIVACY_VERIFICATION.json / HIDDEN_SQLITE_VERIFICATION.json |
 | Pin and Hidden Items primitives | PortablePinnedTitlesTest, PortableHiddenItemsTest, PortableReviewNotesTest, PortablePreferredVersionsTest | PINNED_HIDDEN_VERIFICATION.json |
 | Backup privacy/focus retest | BackupWorkspaceTest, HomeIntentCodecTest, PortableViewingChoicesTest, Supernova139HomeEditorTest | BACKUP_PRIVACY_VERIFICATION.json |
 
