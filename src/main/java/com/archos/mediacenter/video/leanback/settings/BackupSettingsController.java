@@ -59,7 +59,7 @@ public final class BackupSettingsController {
     private void chooseSave(){model.destinationPending();try{savePicker.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/zip").addCategory(Intent.CATEGORY_OPENABLE).putExtra(Intent.EXTRA_TITLE,"Supernova_Backup.zip"));}catch(RuntimeException unavailable){model.destinationCancelled();notice("File picker unavailable","The verified private backup is retained for retry.");}}
     private void chooseRestore(){try{openPicker.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("application/zip").addCategory(Intent.CATEGORY_OPENABLE));}catch(RuntimeException unavailable){notice("File picker unavailable","No state was changed. Connect an available document provider and try again.");}}
     private void render(BackupOperationModel.State state){
-        if(!isVisible())return;boolean focused=frame.hasFocus();frame.removeAllViews();workspace=null;noticeActive=false;
+        if(!isVisible())return;boolean focused=holdFrameFocus();frame.removeAllViews();workspace=null;noticeActive=false;
         if(state.phase==BackupOperationModel.Phase.IDLE){selectedRestore=null;workspace=new BackupWorkspace(fragment.requireContext(),this::create,this::chooseRestore,this::sidebar,details,instructions);frame.addView(workspace,new FrameLayout.LayoutParams(-1,-1));}
         else if(state.phase==BackupOperationModel.Phase.EXPORT_READY){chooseSave();return;}
         else if(state.phase==BackupOperationModel.Phase.REVIEW){
@@ -74,7 +74,7 @@ public final class BackupSettingsController {
             LinearLayout panel=panel(state.phase==BackupOperationModel.Phase.RESTORED?"Restore result":state.phase==BackupOperationModel.Phase.EXPORTED?"Backup verified":"Backup & Restore",state.message+(state.unresolved>0?"\nUnresolved references: "+state.unresolved:""));
             action(panel,"Back to Backup & Restore",model::closeReview,"back");if(state.retryExport&&!state.recoveryRequired)action(panel,"Save verified backup again",this::chooseSave,"save");
         }
-        if(focused)focusFirst(frame);
+        releaseFrameFocus(focused);
     }
     private static String labels(Set<BackupCategory> categories){List<String> labels=new ArrayList<>();for(BackupCategory category:BackupCategory.ordered())if(categories.contains(category))labels.add(category.label);return android.text.TextUtils.join(", ",labels);}
     private LinearLayout panel(String title,String message){
@@ -82,7 +82,9 @@ public final class BackupSettingsController {
         TextView copy=MenuFoundation.text(fragment.requireContext(),message,14);copy.setTextColor(MenuFoundation.SECONDARY);LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(-1,-2);size.topMargin=dp(16);size.bottomMargin=dp(20);panel.addView(copy,size);frame.addView(panel,new FrameLayout.LayoutParams(-1,-1));return panel;
     }
     private void action(LinearLayout panel,String label,Runnable action,String icon){TextView button=MenuFoundation.control(fragment.requireContext(),label,icon,action);button.setTag("backup.operation:"+label);panel.addView(button,new LinearLayout.LayoutParams(-1,-2));}
-    private void notice(String title,String message){if(frame==null)return;frame.removeAllViews();workspace=null;noticeActive=true;LinearLayout panel=panel(title,message);action(panel,"Back to Backup & Restore",()->render(model.current()),"back");focusFirst(frame);}
+    private void notice(String title,String message){if(frame==null)return;holdFrameFocus();frame.removeAllViews();workspace=null;noticeActive=true;LinearLayout panel=panel(title,message);action(panel,"Back to Backup & Restore",()->render(model.current()),"back");releaseFrameFocus(true);}
+    private boolean holdFrameFocus(){boolean held=frame.hasFocus();if(held){frame.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);frame.setFocusableInTouchMode(true);frame.setFocusable(true);frame.requestFocus();}return held;}
+    private void releaseFrameFocus(boolean held){frame.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);if(held)for(int i=0;i<frame.getChildCount();i++)if(focusFirst(frame.getChildAt(i)))break;frame.setFocusable(false);frame.setFocusableInTouchMode(false);}
     private int dp(float value){return MenuFoundation.dp(fragment.requireContext(),value);}
     private static boolean focusFirst(View view){if(view.isFocusable()&&view.isEnabled())return view.requestFocus();if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)if(focusFirst(((android.view.ViewGroup)view).getChildAt(i)))return true;return false;}
 }
