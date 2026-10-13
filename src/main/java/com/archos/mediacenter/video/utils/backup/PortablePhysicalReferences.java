@@ -16,7 +16,7 @@ public final class PortablePhysicalReferences {
     public PortablePhysicalReferences(Context context,Collection<? extends Video> records){
         this.context=context;
         for(Video video:records){if(video.getId()<=0)throw new IllegalArgumentException("Indexed physical identity required");
-            if(videos.putIfAbsent(video.getId(),video)!=null)continue;
+            if(videos.putIfAbsent(video.getId(),video)!=null)throw new IllegalArgumentException("Duplicate indexed physical identity");
             String path=video.getFileUri()==null?video.getFilePath():video.getFileUri().toString();String fingerprint=fingerprint(path);
             if(fingerprint!=null){fingerprints.put(video.getId(),fingerprint);groups.computeIfAbsent(fingerprint,key->new ArrayList<>()).add(video);}
         }
@@ -25,7 +25,8 @@ public final class PortablePhysicalReferences {
         if(path==null)return null;android.net.Uri uri=android.net.Uri.parse(path);
         // Removing account/query material cannot prove the remaining address names the same media.
         // Preserve those records with opaque origin IDs for explicit matching instead.
-        if(uri.getEncodedQuery()!=null||uri.getEncodedAuthority()!=null&&uri.getEncodedAuthority().contains("@"))return null;
+        if(uri.getEncodedQuery()!=null||uri.getEncodedFragment()!=null||
+                uri.getAuthority()!=null&&uri.getAuthority().contains("@"))return null;
         return ViewingHistory.identity(false,null,-1,-1,path);
     }
     public Video video(long sourceId){return videos.get(sourceId);}

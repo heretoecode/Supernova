@@ -40,9 +40,13 @@ public class PortableReviewNotesTest {
     }
     @Test public void credentialOrQueryBearingUrisStayOpaqueInsteadOfBindingAfterSecretRemoval()throws Exception{
         Context source=scope("source"),target=scope("target");
-        for(String path:List.of("smb://person:AUTH_CANARY@nas/Films/FILE_CANARY.mkv","https://host/media?id=1&token=AUTH_CANARY")){
+        for(String path:List.of("smb://person:AUTH_CANARY@nas/Films/FILE_CANARY.mkv","smb://person%3AAUTH_CANARY%40nas/Films/FILE_CANARY.mkv","https://host/media?id=1&token=AUTH_CANARY","https://host/media#token=AUTH_CANARY")){
             var references=new PortablePhysicalReferences(source,List.of(movie(10,123,path)));assertTrue(references.reference(10).startsWith("unresolved:"));health(source).edit().putBoolean("incorrect:10",true).commit();JSONObject payload=PortableReviewNotes.export(source,references);assertFalse(payload.toString().contains("CANARY"));assertEquals(1,PortableReviewNotes.prepare(target,payload,new PortablePhysicalReferences(target,List.of(movie(700,123,path)))).unresolved);
         }
+    }
+    @Test public void duplicateLocalIdsRejectInsteadOfBindingWhicheverPathWasReadFirst() {
+        Context source=scope("source");
+        try{new PortablePhysicalReferences(source,List.of(movie(10,123,"file:///storage/first.mkv"),movie(10,123,"file:///storage/second.mkv")));fail();}catch(IllegalArgumentException expected){}
     }
     @Test public void emptySelectedReviewClearsOnlyItsIntentAndInjectedCachesOrLocationsAreRejected()throws Exception{
         Context target=scope("target");health(target).edit().putBoolean("incorrect:10",true).putString("offline:source","KEEP").commit();JSONObject empty=new JSONObject().put("schema",1).put("rows",new JSONArray());apply(target,PortableReviewNotes.prepare(target,empty,new PortablePhysicalReferences(target,List.of())));assertFalse(health(target).contains("incorrect:10"));assertEquals("KEEP",health(target).getString("offline:source",null));
