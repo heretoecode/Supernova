@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.*;
 import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.VideoOpenHelper;
+import com.archos.mediaprovider.DbHolder;
+import android.database.Cursor;
+import android.net.Uri;
 import com.archos.mediaprovider.video.ScraperProvider;
 import com.archos.mediaprovider.video.ScraperStore;
 import org.robolectric.shadows.ShadowContentResolver;
@@ -35,11 +38,21 @@ public class PortablePinnedTitlesTest {
         for(String field:List.of("credentials","filename","user_collection")){JSONObject bad=new JSONObject(payload.toString());bad.getJSONArray("rows").getJSONObject(0).put(field,"CANARY");try{PortablePinnedTitles.validate(bad);fail();}catch(JSONException expected){}}
         for(Object time:List.of(1.5,"4",0,-1)){JSONObject bad=new JSONObject(payload.toString());bad.getJSONArray("rows").getJSONObject(0).put("pinnedAt",time);try{PortablePinnedTitles.prepare(bad,List.of());fail();}catch(JSONException expected){}}
     }
+    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
     @Test public void actualUnfilteredProviderProjectionIncludesOrphanPinsWithoutReadingMetadataText()throws Exception{
-        Context context=RuntimeEnvironment.getApplication();try(VideoOpenHelper helper=new VideoOpenHelper(context)){
-            var db=helper.getWritableDatabase();db.execSQL("INSERT INTO movies(_id,m_online_id,Nova_pinned,name_movie) VALUES(10,123,400,'TITLE_CANARY')");db.execSQL("INSERT INTO movies(_id,m_online_id,Nova_pinned,name_movie) VALUES(11,456,0,'UNPINNED_CANARY')");db.execSQL("INSERT INTO shows(_id,s_online_id,Nova_pinned,name_show) VALUES(20,789,800,'SHOW_CANARY')");
-        }
-        ScraperProvider provider=Robolectric.buildContentProvider(ScraperProvider.class).create().get();ShadowContentResolver.registerProviderInternal(ScraperStore.AUTHORITY,provider);
+        Context context=RuntimeEnvironment.getApplication();try(DbHolder database=new DbHolder(new VideoOpenHelper(context))){
+            var db=database.get();db.execSQL("INSERT INTO movies(_id,m_online_id,Nova_pinned,name_movie) VALUES(10,123,400,'TITLE_CANARY')");db.execSQL("INSERT INTO movies(_id,m_online_id,Nova_pinned,name_movie) VALUES(11,456,0,'UNPINNED_CANARY')");db.execSQL("INSERT INTO shows(_id,s_online_id,Nova_pinned,name_show) VALUES(20,789,800,'SHOW_CANARY')");
+        ScraperProvider.hookUriMatcher(new UriMatcher(UriMatcher.NO_MATCH));
+        ScraperProvider scraper=new ScraperProvider(context,database);
+        ContentProvider provider=new ContentProvider(){
+            public boolean onCreate(){return true;}public String getType(Uri uri){return null;}
+            public Cursor query(Uri uri,String[] columns,String where,String[] args,String order){return scraper.query(uri,columns,where,args,order);}
+            public Uri insert(Uri uri,ContentValues values){throw new AssertionError("Backup inventory is read only");}
+            public int update(Uri uri,ContentValues values,String where,String[] args){throw new AssertionError("Backup inventory is read only");}
+            public int delete(Uri uri,String where,String[] args){throw new AssertionError("Backup inventory is read only");}
+        };
+        provider.attachInfo(context,null);ShadowContentResolver.registerProviderInternal(ScraperStore.AUTHORITY,provider);
         List<Title> titles=PortablePinnedTitles.read(context);assertEquals(3,titles.size());JSONObject payload=PortablePinnedTitles.export(context,titles);assertEquals(2,payload.getJSONArray("rows").length());assertFalse(payload.toString().contains("CANARY"));assertTrue(payload.toString().contains("tmdb:movie:123"));assertTrue(payload.toString().contains("tmdb:tv:789"));
+        }
     }
 }

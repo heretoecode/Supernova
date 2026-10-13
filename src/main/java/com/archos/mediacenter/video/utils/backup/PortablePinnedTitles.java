@@ -25,7 +25,7 @@ public final class PortablePinnedTitles {
         List<Title> titles=new ArrayList<>();try{
             for(Kind kind:Kind.values()){
                 String online=kind==Kind.MOVIE?ScraperStore.Movie.ONLINE_ID:ScraperStore.Show.ONLINE_ID;
-                try(Cursor rows=context.getContentResolver().query(kind==Kind.MOVIE?ScraperStore.Movie.URI.BASE:ScraperStore.Show.URI.BASE,new String[]{"_id",online,VideoStore.Video.VideoColumns.NOVA_PINNED},null,null,"_id ASC")){
+                try(Cursor rows=context.getContentResolver().query(kind==Kind.MOVIE?ScraperStore.Movie.URI.ALL:ScraperStore.Show.URI.ALL,new String[]{"_id",online,VideoStore.Video.VideoColumns.NOVA_PINNED},null,null,"_id ASC")){
                     if(rows==null)throw new IOException("Indexed pin query unavailable");while(rows.moveToNext()){
                         if(titles.size()>=100000||rows.isNull(0))throw new IOException("Indexed pin inventory exceeds supported limits");titles.add(new Title(kind,rows.getLong(0),rows.isNull(1)?0:rows.getLong(1),rows.isNull(2)?0:rows.getLong(2)));
                     }
