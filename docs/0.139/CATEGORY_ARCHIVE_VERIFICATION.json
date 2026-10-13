@@ -1,0 +1,19 @@
+{
+  "source_sha": "50545a32c23602ef7dc50149815f7718c72fb747",
+  "classes": 4,
+  "tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "checks": [
+    "Settings, Home and custom-page archive codecs preserve present-empty and omitted-category distinctions",
+    "Unsupported logical categories rejected before publishing a private archive",
+    "Settings-only reader refuses to silently drop non-settings categories",
+    "Manifest and payload schema versions reject fractional, string and overflowing values",
+    "CRC, digest, unsafe entries, credentials/media canaries and cancellation checks"
+  ],
+  "limits": [
+    "12 codecs at this source SHA; other category codecs and SAF publication still incomplete",
+    "No legacy1.0 reader integration, production restore or device test implied"
+  ]
+}

@@ -6,6 +6,7 @@ import android.util.AtomicFile;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.CustomLibraryPage;
 import com.archos.mediacenter.video.leanback.HomeIntentCodec;
+import com.archos.mediacenter.video.leanback.PortableViewingChoices;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -50,7 +51,9 @@ public final class PreferenceRestoreTransaction {
     public Plan prepare(Map<BackupCategory,JSONObject> selected,Snapshot snapshot)throws JSONException{
         if(selected.isEmpty())throw new JSONException("Select at least one present category");
         Map<String,?> current=prefs.getAll();Map<String,Object> after=new LinkedHashMap<>();Set<String> keys=new LinkedHashSet<>();int unresolved=0;
-        for(Map.Entry<BackupCategory,JSONObject> item:selected.entrySet()){
+        Map<BackupCategory,JSONObject> ordered=new EnumMap<>(BackupCategory.class);
+        for(Map.Entry<BackupCategory,JSONObject> item:selected.entrySet()){if(item.getKey()==null||item.getValue()==null)throw new JSONException("Missing selected category");ordered.put(item.getKey(),item.getValue());}
+        for(Map.Entry<BackupCategory,JSONObject> item:ordered.entrySet()){
             BackupCategory category=item.getKey();if(category==null||item.getValue()==null)throw new JSONException("Missing selected category");
             PortableSettingsRegistry.Category settings=category.settings();
             if(settings!=null){
@@ -71,6 +74,10 @@ public final class PreferenceRestoreTransaction {
                 if(!item.getValue().isNull("page")){
                     JSONObject page=new JSONObject(item.getValue().getJSONObject("page").toString());page.put("collection",page.getString("franchise"));page.remove("franchise");after.put(CustomLibraryPage.KEY,page.toString());
                 }
+            }else if(category==BackupCategory.WATCH_NEXT||category==BackupCategory.CONTINUE_CHOICES){
+                PortableViewingChoices.Kind kind=PortableViewingChoices.Kind.valueOf(category.name());
+                PortableViewingChoices.Prepared choices=PortableViewingChoices.prepare(destination,item.getValue(),snapshot,kind,(String)after.get(HOME));
+                keys.addAll(choices.keys);after.putAll(choices.values);unresolved+=choices.unresolved;
             }else throw new JSONException("Category restore codec not registered: "+category.name());
         }
         Map<String,Object> before=new LinkedHashMap<>();for(String key:keys)if(current.containsKey(key))before.put(key,current.get(key));
@@ -117,7 +124,7 @@ public final class PreferenceRestoreTransaction {
         }
         if(!edit.commit())throw new IOException("Configuration write failed; private recovery is required");
     }
-    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY);}
+    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
     private static JSONObject record(Plan plan,boolean complete)throws JSONException,IOException{
         JSONArray values=new JSONArray();for(String key:plan.keys){
             if(!owned(key))throw new IOException("Unregistered restore key");
