@@ -1,0 +1,174 @@
+# Documentation evidence extractor; reads source, writes only evidence output. No app build or source mutation.
+import re,json,pathlib,collections,xml.etree.ElementTree as ET
+import sys
+if len(sys.argv)!=5:raise SystemExit('Usage: python reproduce-inventories.txt VIDEO_ROOT MEDIALIB_ROOT FILECORE_ROOT DOCS_EVIDENCE_OUTPUT')
+V,M,F,OUT=map(pathlib.Path,sys.argv[1:])
+OUT.mkdir(parents=True,exist_ok=True)
+SHAS={'Supernova':'b3504c2c4b1725f3070416d14b63e53ae1db3d74','MediaLib':'5758074049bc153ac4967b4ecd21886469270076','FileCore':'c4b760c55102c72d45f68b0d16999fc1f4f013a7'}
+REPOS={'Supernova':'heretoecode/Supernova','MediaLib':'heretoecode/aos-MediaLib','FileCore':'nova-video-player/aos-FileCoreLibrary'}
+def link(module,path,line):return f'https://github.com/{REPOS[module]}/blob/{SHAS[module]}/{path}#L{line}'
+def strip(s):
+ return re.sub(r'"(?:\\.|[^"\\])*"|//[^\n]*|/\*[\s\S]*?\*/',lambda m:m[0] if m[0].startswith('"') else re.sub(r'[^\n]',' ',m[0]),s)
+def scope_at(s,pos):
+ stack=[];pending=None
+ for m in re.finditer(r'\b(?:class|interface|enum)\s+(\w+)|[{}]',s[:pos]):
+  if m.group(1):pending=m.group(1)
+  elif m[0]=='{':stack.append(pending);pending=None
+  else:
+   if stack:stack.pop()
+ return '.'.join(x for x in stack if x)
+symbols={}; entries=[];sources=[]
+for module,root in [('Supernova',V),('MediaLib',M),('FileCore',F)]:
+ for p in (root/'src').rglob('*.java'):
+  if 'test' in str(p.relative_to(root)).lower():continue
+  raw=p.read_text(errors='replace');s=strip(raw);path=str(p.relative_to(root));sources.append((module,path,raw,s))
+  for m in re.finditer(r'\b(?:String|int|long|boolean|float)\s+([A-Za-z_]\w*)\s*=\s*((?:"(?:\\.|[^"\\])*"|[^;])+);',s):
+   sc=scope_at(s,m.start());key=sc+'.'+m[1];rec=(m[2].strip(),sc,module,path,s[:m.start()].count('\n')+1)
+   symbols[key]=rec;entries.append((key,rec))
+for module,path,raw,s in sources:
+ for m in re.finditer(r'\b([A-Z][A-Z0-9_]*)\s*=\s*("(?:\\.|[^"\\])*")',s):
+  sc=scope_at(s,m.start());symbols[sc+'.'+m[1]]=(m[2],sc,module,path,s[:m.start()].count('\n')+1)
+cache={};special={'BaseColumns._ID':'_id','BaseColumns._COUNT':'_count','BaseTags.MOVIE':'1','BaseTags.TV_SHOW':'2','Video.Media.SCRAPER_M_ONLINE_ID':'m_online_id','Video.Media.SCRAPER_E_ONLINE_ID':'e_online_id'}
+def resolve(token,scope,depth=0):
+ token=token.strip()
+ if token.startswith('com.'):token=re.sub(r'^(?:[a-z][a-z0-9_]*\.)+','',token)
+ if not token.startswith('"') and not re.fullmatch(r'-?\d+[lL]?',token) and not token.split('.')[-1].isupper():raise ValueError(token)
+ if token.startswith('"') and token.endswith('"'):return json.loads(token)
+ if re.fullmatch(r'-?\d+[lL]?',token):return token.rstrip('lL')
+ if token in special:return special[token]
+ candidates=[scope+'.'+token]
+ parts=scope.split('.')
+ while parts: candidates.append('.'.join(parts)+'.'+token);parts.pop()
+ candidates.append(token)
+ candidates += [k for k in symbols if k.endswith('.'+token)]
+ for key in dict.fromkeys(candidates):
+  if key in cache:return cache[key]
+  if key in symbols and depth<15:
+   expr,sc,*_=symbols[key]
+   try:value=evalexpr(expr,sc,depth+1);cache[key]=value;return value
+   except (ValueError,RecursionError,json.JSONDecodeError):pass
+ raise ValueError(token)
+def evalexpr(expr,sc,depth=0):
+ parts=re.findall(r'"(?:\\.|[^"\\])*"|[A-Za-z_][A-Za-z0-9_.]*|-?[0-9]+[lL]?',expr)
+ remainder=re.sub(r'"(?:\\.|[^"\\])*"|[A-Za-z_][A-Za-z0-9_.]*|-?[0-9]+[lL]?', '',expr)
+ if re.sub(r'[+\s]', '', remainder):raise ValueError('non-concatenation expression')
+ return ''.join(resolve(t,sc,depth) for t in parts if t.strip())
+sql=[];fail=[]
+for key,(expr,sc,module,path,line) in entries:
+ if 'CREATE TABLE' in expr.upper() or 'CREATE VIEW' in expr.upper() or 'CREATE INDEX' in expr.upper() or 'CREATE TRIGGER' in expr.upper():
+  try:sql.append(dict(symbol=key,sql=evalexpr(expr,sc),module=module,path=path,line=line,url=link(module,path,line)))
+  except Exception as e:fail.append([key,str(e)])
+for module,path,raw,s in sources:
+ if pathlib.Path(path).name not in ['VideoOpenHelper.java','ScraperTables.java','ViewingHistory.java','PutioAssociationStore.java','ShortcutDb.java']:continue
+ for m in re.finditer(r'\bdb\.execSQL\(\s*((?:"(?:\\.|[^"\\])*"|[^;])+?)\);',s):
+  if not re.search(r'"(?:CREATE TABLE|ALTER TABLE)',m[1],re.I):continue
+  line=s[:m.start()].count('\n')+1
+  try:sql.append(dict(symbol='inline',sql=evalexpr(m[1],scope_at(s,m.start())),module=module,path=path,line=line,url=link(module,path,line)))
+  except Exception as e:fail.append([path,line,str(e)])
+(OUT/'sql-source-definitions.json').write_text(json.dumps({'description':'Static definitions, including historical migration variants; not an executed Android schema or user archive.','definitions':sql,'unresolved':fail},indent=2)+'\n')
+print('sql',len(sql),'unresolved',fail)
+
+# Catalog current tables by base definitions plus relevant successor definitions and ADD COLUMNs.
+import sqlite3,csv
+tables={};alters=[]
+for row in sql:
+ if row['module']!='MediaLib' or pathlib.Path(row['path']).name not in ['VideoOpenHelper.java','ScraperTables.java','ListTables.java']:continue
+ text=row['sql'];match=re.match(r'CREATE TABLE(?: IF NOT EXISTS)? (\w+)',text,re.I)
+ if match:
+  name=match[1];name=re.sub(r'_(new|v56)$','',name)
+  row=dict(row);row['sql']=re.sub(r'^(CREATE TABLE(?: IF NOT EXISTS)? )\w+',r'\g<1>'+name,text,flags=re.I)
+  tables[name]=row
+ elif re.match(r'ALTER TABLE \w+ ADD COLUMN',text,re.I):alters.append(row)
+db=sqlite3.connect(':memory:');db.create_collation('LOCALIZED',lambda a,b:(a>b)-(a<b))
+for name,row in tables.items():db.execute(row['sql'])
+field_sources={}
+for row in alters:
+ match=re.match(r'ALTER TABLE (\w+) ADD COLUMN (\w+)',row['sql'],re.I);name,col=match.groups()
+ if col not in {r[1] for r in db.execute('PRAGMA table_info('+name+')')}:db.execute(row['sql'])
+ field_sources[name,col]=row
+with (OUT/'media-db-fields.tsv').open('w') as f:
+ writer=csv.writer(f,delimiter='\t',lineterminator='\n');writer.writerow(['table','field','type','not_null','default','primary_key','definition_url','backup_rule','restore_rule'])
+ for name in sorted(tables):
+  for _,col,typ,nn,default,pk in db.execute('PRAGMA table_info('+name+')'):
+   row=field_sources.get((name,col),tables[name]);rule='copied; text URLs sanitized; secret-named fields null'
+   if col in ['Archos_traktSeen','Archos_lastTimePlayed']:rule+='; zeroed when history off'
+   if col in ['bookmark','Archos_bookmark','Archos_traktResume']:rule+='; zeroed when resume off'
+   if col=='bookmark':rule+='; negatives zeroed when history off'
+   writer.writerow([name,col,typ,nn,default or '',pk,row['url'],rule,'entire database replaced; local IDs preserved'])
+(OUT/'media-db-table-definitions.json').write_text(json.dumps({'description':'Static v62 table field catalog: in-memory SQL definition analysis, not an Android migration run; artwork successor CREATEs normalized to final names; ADD COLUMN union reviewed against migration path. No user DB.','tables':tables,'add_columns':alters},indent=2)+'\n')
+print('media tables',len(tables),'fields',sum(len(list(db.execute('PRAGMA table_info('+n+')'))) for n in tables))
+
+privacy=(V/'src/main/java/com/archos/mediacenter/video/utils/BackupPrivacy.java').read_text()
+choices=set(re.findall(r'"([^"]+)"',privacy[privacy.index('CHOICES='):privacy.index('private static final Set<String> NAMED')]))
+prefixes=['preview_columns_','preview_source_kind:','preview_cw_dismiss:','preview_version_choice:','preview_library_','supernova_custom_library_','preview_journey41:','supernova_viewed_','supernova_segment_']
+denied={'try_new_ui','uimode','uimode_leanback','theme','username','user_id','account','account_status','trakt_signin','network_bookmarks'}
+def inclusion(k):
+ if re.search(r'password|passwd|credential|token|cookie|authorization|secret|session|api.?key|access.?key',k,re.I) or k in denied:return 'EXCLUDED'
+ if k in choices or re.fullmatch(r'streaming_(providers|preferred)_[A-Z]{2}',k) or any(k.startswith(p) for p in prefixes):return 'INCLUDED if stored in default preferences (sanitized)'
+ return 'EXCLUDED from default preferences'
+def args_at(s,start):
+ depth=0;quoted=False;escape=False;parts=[];last=start
+ for i in range(start,len(s)):
+  c=s[i]
+  if quoted:
+   if escape:escape=False
+   elif c=='\\':escape=True
+   elif c=='"':quoted=False
+  elif c=='"':quoted=True
+  elif c in '([{':depth+=1
+  elif c in ')]}':
+   if depth==0:parts.append(s[last:i].strip());return parts
+   depth-=1
+  elif c==',' and depth==0:parts.append(s[last:i].strip());last=i+1
+ return []
+keyrows=collections.defaultdict(list);calls=[];dynamic=[]
+for module,path,raw,s in sources:
+ for m in re.finditer(r'\b(getBoolean|getInt|getLong|getFloat|getString|getStringSet|putBoolean|putInt|putLong|putFloat|putString|putStringSet|setKey)\s*\(',s):
+  args=args_at(s,m.end())
+  if len(args)<(1 if m[1]=='setKey' else 2):continue
+  # Prevent resource/Cursor/JSON single-argument APIs; two-argument preference calls remain trace candidates.
+  line=s[:m.start()].count('\n')+1;expr=args[0];default=args[1] if len(args)>1 and m[1].startswith('get') else ''
+  rec=dict(module=module,path=path,line=line,method=m[1],key_expression=expr,default_expression=default,url=link(module,path,line))
+  try:
+   key=evalexpr(expr,pathlib.Path(path).stem)
+   if not key or re.fullmatch(r'-?\d+',key) or expr.startswith('R.'):continue
+   rec['key']=key;keyrows[key].append(rec);calls.append(rec)
+  except Exception:dynamic.append(rec)
+resource={}
+for root in [V,M,F]:
+ for p in (root/'res/values').glob('*.xml'):
+  try:
+   for e in ET.parse(p).getroot():
+    if e.tag in ['string','bool','integer','item']:resource['@'+(e.get('type') if e.tag=='item' else e.tag)+'/'+e.get('name','')]=''.join(e.itertext())
+  except ET.ParseError:pass
+xmlrows=[]
+ns='{http://schemas.android.com/apk/res/android}'
+for p in sorted((V/'res/xml').glob('*preferences*.xml')):
+ for e in ET.parse(p).getroot().iter():
+  rawkey=e.get(ns+'key')
+  if not rawkey:continue
+  key=resource.get(rawkey,rawkey);default=e.get(ns+'defaultValue','');default=resource.get(default,default);kind=e.tag.split('.')[-1];category='action/category (no value)' if kind in ['Preference','PreferenceScreen','PreferenceCategory'] else inclusion(key)
+  line=next((i for i,l in enumerate(p.read_text().splitlines(),1) if rawkey in l),1)
+  rec=dict(key=key,raw_key=rawkey,kind=kind,default=default,title=resource.get(e.get(ns+'title',''),e.get(ns+'title','')),url=link('Supernova',str(p.relative_to(V)),line),inclusion=category)
+  xmlrows.append(rec)
+  keyrows[key].append(dict(method='XML',default_expression=default,url=rec['url']))
+with (OUT/'xml-settings-matrix.tsv').open('w') as f:
+ writer=csv.writer(f,delimiter='\t',lineterminator='\n');writer.writerow(['key','raw_key','kind','defined_default','label','backup_inclusion','source'])
+ for r in xmlrows:writer.writerow([r['key'],r['raw_key'],r['kind'],r['default'],r['title'],r['inclusion'],r['url']])
+with (OUT/'setting-key-matrix.tsv').open('w') as f:
+ writer=csv.writer(f,delimiter='\t',lineterminator='\n');writer.writerow(['key_or_literal_prefix','read_defaults_or_XML_defaults','default_store_backup_rule','methods','source_references'])
+ for key,rows in sorted(keyrows.items()):writer.writerow([key,' ; '.join(sorted(set(r['default_expression'] for r in rows if r.get('default_expression')))),inclusion(key),' ; '.join(sorted(set(r['method'] for r in rows))),' ; '.join(sorted(set(r['url'] for r in rows)))])
+(OUT/'preference-call-sites.json').write_text(json.dumps({'description':'Complete scanned production preference-shaped call ledger; expressions retained for dynamic keys. Includes non-preference model calls and named-store keys, requiring the report storage map. No runtime preference values.','resolved':calls,'dynamic_or_unresolved':dynamic,'default_allowlist':sorted(choices),'default_prefixes':prefixes,'xml':xmlrows},indent=2)+'\n')
+print('xml',len(xmlrows),'keys',len(keyrows),'calls',len(calls),'dynamic',len(dynamic))
+
+named=[]
+for module,path,raw,s in sources:
+ for m in re.finditer(r'\bgetSharedPreferences\s*\(',s):
+  args=args_at(s,m.end())
+  if len(args)!=2:continue
+  line=s[:m.start()].count('\n')+1
+  try:name=evalexpr(args[0],pathlib.Path(path).stem)
+  except Exception:name='unresolved: '+args[0]
+  named.append(dict(store=name,module=module,path=path,line=line,url=link(module,path,line),backup='group-allowlisted, accepted keys only' if name in ['putio-library-selection-v1','provider-discovery-ownership-v1','supernova_library_health_v1'] else 'not an allowlisted named group; default-store wrappers require contextual resolution'))
+(OUT/'named-store-call-sites.json').write_text(json.dumps(named,indent=2)+'\n')
+print('named call sites',len(named))

@@ -1,0 +1,471 @@
+{
+  "description": "Static v62 table field catalog: in-memory SQL definition analysis, not an Android migration run; artwork successor CREATEs normalized to final names; ADD COLUMN union reviewed against migration path. No user DB.",
+  "tables": {
+    "files_import": {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IMPORT_TABLE_V21",
+      "sql": "CREATE TABLE files_import (\n    local_id            INTEGER PRIMARY KEY AUTOINCREMENT,\n    inserted            INTEGER DEFAULT ( strftime( '%s', 'now' )  ),\n    _id                 INTEGER UNIQUE ON CONFLICT REPLACE,\n    _data               TEXT UNIQUE ON CONFLICT REPLACE,\n    _display_name       TEXT,\n    _size               INTEGER,\n    date_added          INTEGER,\n    date_modified       INTEGER,\n    bucket_id           TEXT,\n    bucket_display_name TEXT,\n    format              INTEGER,\n    parent              INTEGER,\n    storage_id          INTEGER,\n    volume_hidden       INTEGER DEFAULT (0)\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 66,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L66"
+    },
+    "files_scanned": {
+      "symbol": "VideoOpenHelper.CREATE_FILES_SCANNED_TABLE_V32",
+      "sql": "CREATE TABLE files_scanned (\n    inserted            INTEGER DEFAULT ( strftime( '%s', 'now' ) ),\n    _id                 INTEGER PRIMARY KEY AUTOINCREMENT,\n    _data               TEXT,\n    _display_name       TEXT,\n    _size               INTEGER,\n    date_added          INTEGER DEFAULT ( strftime( '%s', 'now' )  ),\n    date_modified       INTEGER,\n    mime_type           TEXT,\n    title               TEXT,\n    media_type          INTEGER,\n    bucket_id           TEXT,\n    bucket_display_name TEXT,\n    format              INTEGER,\n    parent              INTEGER DEFAULT ( -1 ),\n    storage_id          INTEGER,\n    Archos_smbserver    INTEGER DEFAULT ( 0 ),\n    Archos_videoStereo  INTEGER DEFAULT (0),\n    Archos_videoDefinition INTEGER DEFAULT (0),\nArchos_unique_id STRING DEFAULT (''),\nArchos_guessedAudioFormat STRING,\nArchos_guessedVideoFormat STRING\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 148,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L148"
+    },
+    "files": {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TABLE_V32",
+      "sql": "CREATE TABLE files ( \n    local_id                        INTEGER PRIMARY KEY AUTOINCREMENT,\n    inserted                        INTEGER DEFAULT ( strftime( '%s', 'now' ) ),\n    _id                             INTEGER UNIQUE ON CONFLICT REPLACE,\n    _data                           TEXT UNIQUE ON CONFLICT IGNORE,\n    _display_name                   TEXT,\n    title                           TEXT,\n    _size                           INTEGER,\n    date_added                      INTEGER,\n    date_modified                   INTEGER,\n    bucket_id                       TEXT,\n    bucket_display_name             TEXT,\n    format                          INTEGER,\n    parent                          INTEGER DEFAULT ( -1 ),\n    storage_id                      INTEGER,\n    Archos_smbserver                INTEGER DEFAULT ( 0 ), \n    remote_id                       INTEGER UNIQUE ON CONFLICT IGNORE,\n    scan_state                      INTEGER DEFAULT ( 0 ),\n    mime_type                       TEXT,\n    media_type                      INTEGER,\n    is_drm                          INTEGER,\n    title_key                       TEXT,\n    artist_id                       INTEGER,\n    composer                        TEXT,\n    album_id                        INTEGER,\n    artist                          TEXT,\n    album                           TEXT,\n    track                           INTEGER,\n    number_of_tracks                INTEGER DEFAULT 1,\n    year                            INTEGER,\n    is_ringtone                     INTEGER,\n    is_music                        INTEGER,\n    is_alarm                        INTEGER,\n    is_notification                 INTEGER,\n    is_podcast                      INTEGER,\n    album_artist                    TEXT,\n    duration                        INTEGER,\n    width                           INTEGER,\n    height                          INTEGER,\n    mini_thumb_data                 TEXT,\n    mini_thumb_magic                INTEGER,\n    bookmark                        INTEGER,\n    Archos_favorite_track           INTEGER DEFAULT ( 0 ),\n    Archos_bookmark                 INTEGER DEFAULT ( 0 ),\n    Archos_lastTimePlayed           INTEGER DEFAULT ( 0 ),\n    Archos_playerParams             INTEGER DEFAULT ( 0 ),\n    Archos_playerSubtitleDelay      INTEGER DEFAULT ( 0 ),\n    ArchosMediaScraper_id           INTEGER DEFAULT ( 0 ),\n    ArchosMediaScraper_type         INTEGER DEFAULT ( 0 ),\n    Archos_numberOfSubtitleTracks   INTEGER DEFAULT ( -1 ),\n    Archos_numberOfAudioTracks      INTEGER DEFAULT ( -1 ),\n    Archos_sampleRate               INTEGER DEFAULT ( 0 ),\n    Archos_numberOfChannels         INTEGER DEFAULT ( 0 ),\n    Archos_audioWaveCodec           INTEGER DEFAULT ( 0 ),\n    Archos_audioBitRate             INTEGER DEFAULT ( 0 ),\n    Archos_videoFourCCCodec         INTEGER DEFAULT ( 0 ),\n    Archos_videoBitRate             INTEGER DEFAULT ( 0 ),\n    Archos_framesPerThousandSeconds INTEGER DEFAULT ( 0 ),\n    Archos_encodingProfile          TEXT    DEFAULT ( NULL ),\n    Archos_playerSubtitleRatio      INTEGER DEFAULT ( 0 ),\n    Archos_thumbTry                 INTEGER DEFAULT ( 0 ),\n    Archos_hideFile                 INTEGER DEFAULT ( 0 ),\n    Archos_title                    TEXT    DEFAULT ( NULL ),\n    subtitle_count_ext INTEGER DEFAULT (0),\n    autoscrape_status INTEGER DEFAULT (0)\n,    volume_hidden INTEGER DEFAULT (0)\n,    Archos_traktSeen INTEGER DEFAULT (0)\n,    Archos_traktLibrary INTEGER DEFAULT (0)\n,    Archos_videoStereo INTEGER DEFAULT (0)\n,    Archos_videoDefinition INTEGER DEFAULT (0),\n    Archos_traktResume INTEGER DEFAULT (0),\n    Archos_hiddenByUser INTEGER DEFAULT (0),\nArchos_calculatedVideoFormat STRING,\nArchos_bestAudiotrackFormat STRING,\nArchos_guessedAudioFormat STRING,\nArchos_guessedVideoFormat STRING\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 225,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L225"
+    },
+    "smb_server": {
+      "symbol": "VideoOpenHelper.CREATE_SMB_SERVER_TABLE",
+      "sql": "CREATE TABLE smb_server(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 1,_data TEXT UNIQUE NOT NULL,last_seen INTEGER NOT NULL DEFAULT 0,active INTEGER NOT NULL DEFAULT 0)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 386,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L386"
+    },
+    "videothumbnails": {
+      "symbol": "VideoOpenHelper.CREATE_VIDEOTHUMBNAIL_TABLE",
+      "sql": "CREATE TABLE videothumbnails (_id INTEGER PRIMARY KEY,_data TEXT,video_id INTEGER,kind INTEGER,width INTEGER,height INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1546,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1546"
+    },
+    "subtitles": {
+      "symbol": "VideoOpenHelper.CREATE_SUBTITLES_TABLE_V17",
+      "sql": "CREATE TABLE subtitles (\n    _id      INTEGER PRIMARY KEY AUTOINCREMENT,\n    _data    TEXT,\n    lang     TEXT,\n    _size     INTEGER,\n    video_id INTEGER REFERENCES files ( _id ) ON DELETE CASCADE\n                                              ON UPDATE CASCADE,\n    file_id  INTEGER NOT NULL\n                     REFERENCES files ( _id ) ON DELETE CASCADE\n                                              ON UPDATE CASCADE,\n    UNIQUE ( video_id, file_id )  ON CONFLICT IGNORE \n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1594,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1594"
+    },
+    "delete_files": {
+      "symbol": "VideoOpenHelper.CREATE_FILES_DELETE_TABLE",
+      "sql": "CREATE TABLE IF NOT EXISTS delete_files (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT REPLACE, use_count INTEGER);",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1634,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1634"
+    },
+    "vob_insert": {
+      "symbol": "VideoOpenHelper.CREATE_VOB_INSERT_TABLE",
+      "sql": "CREATE TABLE IF NOT EXISTS vob_insert (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT REPLACE);",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1637,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1637"
+    },
+    "MOVIE": {
+      "symbol": "ScraperTables.MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE MOVIE (_id INTEGER PRIMARY KEY NOT NULL,video_id INTEGER NOT NULL UNIQUE ON CONFLICT REPLACE REFERENCES files(remote_id) ON DELETE CASCADE ON UPDATE CASCADE,name_movie TEXT,year_movie INTEGER,rating_movie FLOAT,plot_movie TEXT,cover_movie TEXT,overview_movie TEXT,backdrop_url_movie TEXT,backdrop_movie TEXT,m_backdrop_id INTEGER,m_poster_id INTEGER,m_online_id INTEGER,m_imdb_id TEXT,m_content_rating TEXT,m_actors TEXT,m_directors TEXT,m_genres TEXT,m_studios TEXT)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 177,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L177"
+    },
+    "SHOW": {
+      "symbol": "ScraperTables.SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE SHOW (_id INTEGER PRIMARY KEY NOT NULL,name_show TEXT UNIQUE,cover_show TEXT,premiered_show INTEGER,rating_show FLOAT,plot_show TEXT,backdrop_url_show TEXT,backdrop_show TEXT,s_backdrop_id INTEGER,s_poster_id INTEGER,s_online_id INTEGER,s_imdb_id TEXT,s_content_rating TEXT,s_actors TEXT,s_directors TEXT,s_genres TEXT,s_studios TEXT)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 201,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L201"
+    },
+    "EPISODE": {
+      "symbol": "ScraperTables.EPISODE_TABLE_CREATE",
+      "sql": "CREATE TABLE EPISODE (_id INTEGER PRIMARY KEY NOT NULL,video_id INTEGER NOT NULL UNIQUE ON CONFLICT REPLACE REFERENCES files(remote_id) ON DELETE CASCADE ON UPDATE CASCADE,show_episode INTEGER REFERENCES SHOW ON DELETE RESTRICT ON UPDATE CASCADE,name_episode TEXT,aired_episode INTEGER,rating_episode FLOAT,plot_episode TEXT,number_episode INTEGER,season_episode INTEGER,cover_episode TEXT,e_poster_id INTEGER,e_online_id INTEGER,e_imdb_id TEXT,e_actors TEXT,e_directors TEXT,picture_episode TEXT)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 222,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L222"
+    },
+    "ACTOR": {
+      "symbol": "ScraperTables.ACTORS_TABLE_CREATE",
+      "sql": "CREATE TABLE ACTOR (_id INTEGER PRIMARY KEY NOT NULL,name_actor TEXT UNIQUE,count_actor INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 244,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L244"
+    },
+    "GENRE": {
+      "symbol": "ScraperTables.GENRES_TABLE_CREATE",
+      "sql": "CREATE TABLE GENRE (_id INTEGER PRIMARY KEY NOT NULL,name_genre TEXT UNIQUE,count_genre INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 250,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L250"
+    },
+    "DIRECTOR": {
+      "symbol": "ScraperTables.DIRECTORS_TABLE_CREATE",
+      "sql": "CREATE TABLE DIRECTOR (_id INTEGER PRIMARY KEY NOT NULL,name_director TEXT UNIQUE,count_director INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 256,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L256"
+    },
+    "WRITER": {
+      "symbol": "ScraperTables.WRITERS_TABLE_CREATE",
+      "sql": "CREATE TABLE WRITER (_id INTEGER PRIMARY KEY NOT NULL,name_writer TEXT UNIQUE,count_writer INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 262,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L262"
+    },
+    "STUDIO": {
+      "symbol": "ScraperTables.STUDIOS_TABLE_CREATE",
+      "sql": "CREATE TABLE STUDIO (_id INTEGER PRIMARY KEY NOT NULL,name_studio TEXT UNIQUE,count_studio INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 268,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L268"
+    },
+    "FILMS_MOVIE": {
+      "symbol": "ScraperTables.FILMS_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE FILMS_MOVIE (movie_films INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,director_films INTEGER REFERENCES DIRECTOR ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(movie_films,director_films))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 277,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L277"
+    },
+    "FILMS_SHOW": {
+      "symbol": "ScraperTables.FILMS_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE FILMS_SHOW (show_films INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,director_films INTEGER REFERENCES DIRECTOR ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(show_films,director_films))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 284,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L284"
+    },
+    "FILMS_EPISODE": {
+      "symbol": "ScraperTables.FILMS_EPISODE_TABLE_CREATE",
+      "sql": "CREATE TABLE FILMS_EPISODE (episode_films INTEGER REFERENCES EPISODE ON DELETE CASCADE ON UPDATE CASCADE,director_films INTEGER REFERENCES DIRECTOR ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(episode_films,director_films))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 291,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L291"
+    },
+    "WRITERS_MOVIE": {
+      "symbol": "ScraperTables.WRITERS_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE WRITERS_MOVIE (movie_writers INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,writer_writers INTEGER REFERENCES WRITER ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(movie_writers,writer_writers))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 302,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L302"
+    },
+    "WRITERS_SHOW": {
+      "symbol": "ScraperTables.WRITERS_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE WRITERS_SHOW (show_writers INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,writer_writers INTEGER REFERENCES WRITER ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(show_writers,writer_writers))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 309,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L309"
+    },
+    "WRITERS_EPISODE": {
+      "symbol": "ScraperTables.WRITERS_EPISODE_TABLE_CREATE",
+      "sql": "CREATE TABLE WRITERS_EPISODE (episode_writers INTEGER REFERENCES EPISODE ON DELETE CASCADE ON UPDATE CASCADE,writer_writers INTEGER REFERENCES WRITER ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(episode_writers,writer_writers))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 316,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L316"
+    },
+    "PRODUCES_MOVIE": {
+      "symbol": "ScraperTables.PRODUCES_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE PRODUCES_MOVIE (movie_produces INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,studio_produces INTEGER REFERENCES STUDIO ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(movie_produces,studio_produces))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 326,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L326"
+    },
+    "PRODUCES_SHOW": {
+      "symbol": "ScraperTables.PRODUCES_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE PRODUCES_SHOW (show_produces INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,studio_produces INTEGER REFERENCES STUDIO ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(show_produces,studio_produces))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 333,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L333"
+    },
+    "PLAYS_MOVIE": {
+      "symbol": "ScraperTables.PLAYS_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE PLAYS_MOVIE (movie_plays INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,actor_plays INTEGER REFERENCES ACTOR ON DELETE RESTRICT ON UPDATE CASCADE,role_plays TEXT,PRIMARY KEY(movie_plays,actor_plays))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 343,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L343"
+    },
+    "PLAYS_SHOW": {
+      "symbol": "ScraperTables.PLAYS_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE PLAYS_SHOW (show_plays INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,actor_plays INTEGER REFERENCES ACTOR ON DELETE RESTRICT ON UPDATE CASCADE,role_plays TEXT,PRIMARY KEY(show_plays,actor_plays))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 351,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L351"
+    },
+    "GUESTS": {
+      "symbol": "ScraperTables.GUESTS_TABLE_CREATE",
+      "sql": "CREATE TABLE GUESTS (episode_guests INTEGER REFERENCES EPISODE ON DELETE CASCADE ON UPDATE CASCADE,actor_guests INTEGER REFERENCES ACTOR ON DELETE RESTRICT ON UPDATE CASCADE,role_guests TEXT,PRIMARY KEY(episode_guests,actor_guests))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 359,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L359"
+    },
+    "BELONGS_MOVIE": {
+      "symbol": "ScraperTables.BELONGS_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE BELONGS_MOVIE (movie_belongs INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,genre_belongs INTEGER REFERENCES GENRE ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(movie_belongs,genre_belongs))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 370,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L370"
+    },
+    "BELONGS_SHOW": {
+      "symbol": "ScraperTables.BELONGS_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE BELONGS_SHOW (show_belongs INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,genre_belongs INTEGER REFERENCES GENRE ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(show_belongs,genre_belongs))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 377,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L377"
+    },
+    "movie_posters": {
+      "symbol": "inline",
+      "sql": "CREATE TABLE movie_posters (_id INTEGER PRIMARY KEY,movie_id INTEGER REFERENCES movie(_id) ON DELETE CASCADE ON UPDATE CASCADE,m_po_thumb_url TEXT,m_po_thumb_file TEXT,m_po_large_url TEXT,m_po_large_file TEXT,UNIQUE(movie_id,m_po_thumb_file) ON CONFLICT IGNORE,UNIQUE(movie_id,m_po_large_file) ON CONFLICT IGNORE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1634,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1634"
+    },
+    "movie_trailers": {
+      "symbol": "ScraperTables.CREATE_MOVIE_TRAILERS_TABLE",
+      "sql": "CREATE TABLE movie_trailers ( \n    _id             INTEGER PRIMARY KEY,\n    movie_id        INTEGER REFERENCES movie ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    m_t_key  TEXT,\n    m_t_site TEXT,\n    m_t_name  TEXT,\n    m_t_lang TEXT\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1111,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1111"
+    },
+    "movie_backdrops": {
+      "symbol": "inline",
+      "sql": "CREATE TABLE movie_backdrops (_id INTEGER PRIMARY KEY,movie_id INTEGER REFERENCES movie(_id) ON DELETE CASCADE ON UPDATE CASCADE,m_bd_thumb_url TEXT,m_bd_thumb_file TEXT,m_bd_large_url TEXT,m_bd_large_file TEXT,UNIQUE(movie_id,m_bd_thumb_file) ON CONFLICT IGNORE,UNIQUE(movie_id,m_bd_large_file) ON CONFLICT IGNORE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1676,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1676"
+    },
+    "show_posters": {
+      "symbol": "inline",
+      "sql": "CREATE TABLE show_posters (_id INTEGER PRIMARY KEY,show_id INTEGER REFERENCES show(_id) ON DELETE CASCADE ON UPDATE CASCADE,s_po_thumb_url TEXT,s_po_thumb_file TEXT,s_po_large_url TEXT,s_po_large_file TEXT,s_po_season INTEGER DEFAULT(-1),UNIQUE(show_id,s_po_thumb_file) ON CONFLICT IGNORE,UNIQUE(show_id,s_po_large_file) ON CONFLICT IGNORE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1712,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1712"
+    },
+    "show_backdrops": {
+      "symbol": "inline",
+      "sql": "CREATE TABLE show_backdrops (_id INTEGER PRIMARY KEY,show_id INTEGER REFERENCES show(_id) ON DELETE CASCADE ON UPDATE CASCADE,s_bd_thumb_url TEXT,s_bd_thumb_file TEXT,s_bd_large_url TEXT,s_bd_large_file TEXT,UNIQUE(show_id,s_bd_thumb_file) ON CONFLICT IGNORE,UNIQUE(show_id,s_bd_large_file) ON CONFLICT IGNORE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1760,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1760"
+    },
+    "movie_collection": {
+      "symbol": "ScraperTables.CREATE_MOVIE_COLLECTION_TABLE",
+      "sql": "CREATE TABLE movie_collection ( \nm_coll_id INTEGER PRIMARY KEY NOT NULL,\nm_coll_name TEXT,\nm_coll_description TEXT,\nm_coll_po_large_url TEXT,\nm_coll_po_large_file TEXT UNIQUE ON CONFLICT IGNORE,\nm_coll_bd_large_url TEXT,\nm_coll_bd_large_file TEXT UNIQUE ON CONFLICT IGNORE,\nm_coll_po_thumb_url TEXT,\nm_coll_po_thumb_file TEXT UNIQUE ON CONFLICT IGNORE,\nm_coll_bd_thumb_url TEXT,\nm_coll_bd_thumb_file TEXT UNIQUE ON CONFLICT IGNORE\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1199,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1199"
+    },
+    "user_collection": {
+      "symbol": "ScraperTables.CREATE_USER_COLLECTIONS_TABLE",
+      "sql": "CREATE TABLE user_collection (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL COLLATE NOCASE UNIQUE, sort_name TEXT NOT NULL DEFAULT '', position INTEGER NOT NULL DEFAULT 0, hidden INTEGER NOT NULL DEFAULT 0)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1226,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1226"
+    },
+    "user_collection_item": {
+      "symbol": "ScraperTables.CREATE_USER_COLLECTION_ITEMS_TABLE",
+      "sql": "CREATE TABLE user_collection_item (_id INTEGER PRIMARY KEY AUTOINCREMENT, collection_id INTEGER NOT NULL REFERENCES user_collection(_id) ON DELETE CASCADE, media_type INTEGER NOT NULL, media_id INTEGER NOT NULL, UNIQUE(collection_id, media_type, media_id))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1233,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1233"
+    },
+    "list_table": {
+      "symbol": "ListTables.LIST_TABLE_CREATE",
+      "sql": "CREATE TABLE list_table (_id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,trakt_id INTEGER UNIQUE ON CONFLICT REPLACE,sync_status INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ListTables.java",
+      "line": 29,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ListTables.java#L29"
+    },
+    "video_list_table": {
+      "symbol": "ListTables.VIDEO_LIST_TABLE_CREATE",
+      "sql": "CREATE TABLE video_list_table (_id INTEGER PRIMARY KEY AUTOINCREMENT,list_id INTEGER REFERENCES list_table(_id) ON DELETE CASCADE,m_online_id INTEGER,e_online_id INTEGER,sync_status INTEGER,UNIQUE(list_id,m_online_id,e_online_id))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ListTables.java",
+      "line": 38,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ListTables.java#L38"
+    }
+  },
+  "add_columns": [
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE files ADD COLUMN Archos_subtitleLanguage TEXT DEFAULT (NULL)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1915,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1915"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN Nova_pinned INTEGER DEFAULT (0)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1332,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1332"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN Nova_pinned INTEGER DEFAULT (0)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1333,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1333"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN m_coll_id INTEGER DEFAULT (-1)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1337,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1337"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN m_writers TEXT DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1378,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1378"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN s_writers TEXT DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1379,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1379"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE EPISODE ADD COLUMN e_writers TEXT DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1380,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1380"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN release_date_movie TEXT",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1428,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1428"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN original_language_movie TEXT NOT NULL DEFAULT 'und'",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1517,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1517"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN original_title_movie TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1519,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1519"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN spoken_languages_movie TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1521,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1521"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN original_language_show TEXT NOT NULL DEFAULT 'und'",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1523,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1523"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN original_title_show TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1525,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1525"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN spoken_languages_show TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1527,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1527"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN title_language_movie TEXT NOT NULL DEFAULT 'und'",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1547,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1547"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN title_language_show TEXT NOT NULL DEFAULT 'und'",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1549,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1549"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN sort_name_movie TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1561,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1561"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN sort_name_show TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1563,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1563"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE movie_collection ADD COLUMN m_coll_sort_name TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1565,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1565"
+    }
+  ]
+}

@@ -1,0 +1,1598 @@
+{
+  "description": "Static definitions, including historical migration variants; not an executed Android schema or user archive.",
+  "definitions": [
+    {
+      "symbol": "BlacklistedDbAdapter.DATABASE_CREATE_VIDEO",
+      "sql": "create table blacklisteds_table_video (_id integer primary key autoincrement, path text not null);",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediacenter/utils/BlacklistedDbAdapter.java",
+      "line": 49,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediacenter/utils/BlacklistedDbAdapter.java#L49"
+    },
+    {
+      "symbol": "FTPShortcutDbAdapter.DATABASE_CREATE_VIDEO",
+      "sql": "create table ftp_shortcuts_table_video (_id integer primary key autoincrement, path text not null, ftp_type integer, host text not null , port integer, username text not null , password text not null, shortcut_name text not null );",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediacenter/utils/FTPShortcutDbAdapter.java",
+      "line": 65,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediacenter/utils/FTPShortcutDbAdapter.java#L65"
+    },
+    {
+      "symbol": "ShortcutDbAdapter.DATABASE_CREATE_VIDEO",
+      "sql": "create table shortcuts_table_video (_id integer primary key autoincrement, path text not null, name text not null, ippath text, friendly_url text);",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediacenter/utils/ShortcutDbAdapter.java",
+      "line": 56,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java#L56"
+    },
+    {
+      "symbol": "ShortcutDbAdapter.DATABASE_CREATE_VIDEO5",
+      "sql": "create table shortcuts_table_video (_id integer primary key autoincrement, path text not null, name text not null, ippath text, friendly_url text, rescan INTEGER DEFAULT (1));",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediacenter/utils/ShortcutDbAdapter.java",
+      "line": 59,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java#L59"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IMPORT_TABLE_V21",
+      "sql": "CREATE TABLE files_import (\n    local_id            INTEGER PRIMARY KEY AUTOINCREMENT,\n    inserted            INTEGER DEFAULT ( strftime( '%s', 'now' )  ),\n    _id                 INTEGER UNIQUE ON CONFLICT REPLACE,\n    _data               TEXT UNIQUE ON CONFLICT REPLACE,\n    _display_name       TEXT,\n    _size               INTEGER,\n    date_added          INTEGER,\n    date_modified       INTEGER,\n    bucket_id           TEXT,\n    bucket_display_name TEXT,\n    format              INTEGER,\n    parent              INTEGER,\n    storage_id          INTEGER,\n    volume_hidden       INTEGER DEFAULT (0)\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 66,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L66"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IMPORT_TRIGGER_INSERT_V21",
+      "sql": "CREATE TRIGGER IF NOT EXISTS after_insert_files_import AFTER INSERT ON files_import BEGIN \nINSERT INTO files(_data) VALUES (NEW._data);\nUPDATE files SET\n_id = NEW._id , \nremote_id = NEW._id , \n_display_name = NEW._display_name , \n_size = NEW._size , \ndate_added = NEW.date_added , \ndate_modified = NEW.date_modified , \nbucket_id = NEW.bucket_id , \nbucket_display_name = NEW.bucket_display_name , \nformat = NEW.format , \nparent = NEW.parent , \nstorage_id = NEW.storage_id , \nArchos_smbserver = 0 , \nvolume_hidden = 0\nWHERE _data=NEW._data;\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 87,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L87"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IMPORT_TRIGGER_DELETE_V20",
+      "sql": "CREATE TRIGGER IF NOT EXISTS after_delete_files_import AFTER DELETE ON files_import BEGIN DELETE FROM files WHERE _data=OLD._data; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 109,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L109"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IMPORT_TRIGGER_UPDATE_V21",
+      "sql": "CREATE TRIGGER IF NOT EXISTS after_update_files_import AFTER UPDATE OF volume_hidden ON files_import BEGIN UPDATE files SET volume_hidden = NEW.volume_hidden WHERE _id = OLD._id; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 116,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L116"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_HIDE_VOLUMES_VIEW",
+      "sql": "CREATE VIEW hide_volume_cmd AS SELECT DISTINCT storage_id FROM files_import",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 128,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L128"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_HIDE_VOLUMES_TRIGGER",
+      "sql": "CREATE TRIGGER hide_volume_cmd_trigger INSTEAD OF INSERT ON hide_volume_cmd \nBEGIN\n    DELETE FROM files_import WHERE storage_id = NEW.storage_id AND volume_hidden > 0 AND volume_hidden < strftime('%s', 'now', '-1 month');\n    UPDATE files_import SET volume_hidden = strftime('%s', 'now') WHERE volume_hidden == 0 AND storage_id == NEW.storage_id;\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 130,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L130"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_HIDE_VOLUMES_TRIGGER_V57",
+      "sql": "CREATE TRIGGER hide_volume_cmd_trigger INSTEAD OF INSERT ON hide_volume_cmd \nBEGIN\n    UPDATE files_import SET volume_hidden = strftime('%s', 'now') WHERE volume_hidden == 0 AND storage_id == NEW.storage_id;\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 139,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L139"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_SCANNED_TABLE_V32",
+      "sql": "CREATE TABLE files_scanned (\n    inserted            INTEGER DEFAULT ( strftime( '%s', 'now' ) ),\n    _id                 INTEGER PRIMARY KEY AUTOINCREMENT,\n    _data               TEXT,\n    _display_name       TEXT,\n    _size               INTEGER,\n    date_added          INTEGER DEFAULT ( strftime( '%s', 'now' )  ),\n    date_modified       INTEGER,\n    mime_type           TEXT,\n    title               TEXT,\n    media_type          INTEGER,\n    bucket_id           TEXT,\n    bucket_display_name TEXT,\n    format              INTEGER,\n    parent              INTEGER DEFAULT ( -1 ),\n    storage_id          INTEGER,\n    Archos_smbserver    INTEGER DEFAULT ( 0 ),\n    Archos_videoStereo  INTEGER DEFAULT (0),\n    Archos_videoDefinition INTEGER DEFAULT (0),\nArchos_unique_id STRING DEFAULT (''),\nArchos_guessedAudioFormat STRING,\nArchos_guessedVideoFormat STRING\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 148,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L148"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_SCANNED_TRIGGER_INSERT_V32",
+      "sql": "CREATE TRIGGER IF NOT EXISTS after_insert_files_scanned AFTER INSERT ON files_scanned BEGIN INSERT INTO files(remote_id) VALUES (NEW._id + 2000000000);UPDATE files SET\n_id = (NEW._id + 2000000000), \n_data = NEW._data , \n_display_name = NEW._display_name , \n_size = NEW._size , \ndate_added = NEW.date_added , \ndate_modified = NEW.date_modified , \nmime_type = NEW.mime_type , \ntitle = NEW.title , \nmedia_type = NEW.media_type , \nbucket_id = NEW.bucket_id , \nbucket_display_name = NEW.bucket_display_name , \nformat = NEW.format , \nparent = NEW.parent , \nstorage_id = NEW.storage_id , \nArchos_smbserver = NEW.Archos_smbserver , \nArchos_videoStereo = NEW.Archos_videoStereo , \nArchos_videoDefinition = NEW.Archos_videoDefinition, \nArchos_guessedAudioFormat = NEW.Archos_guessedAudioFormat, \nArchos_guessedVideoFormat = NEW.Archos_guessedVideoFormat\nWHERE remote_id=(NEW._id + 2000000000);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 177,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L177"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_SCANNED_TRIGGER_DELETE",
+      "sql": "CREATE TRIGGER IF NOT EXISTS after_delete_files_scanned AFTER DELETE ON files_scanned BEGIN DELETE FROM files WHERE remote_id=(OLD._id + 2000000000);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 207,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L207"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_SCANNED_IDX_UNIQUE_ID",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_archos_unique_id ON files_scanned(archos_unique_id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 215,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L215"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_SCANNED_IDX_DATA",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_data_prefix ON files_scanned(_data)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 218,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L218"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TABLE_V32",
+      "sql": "CREATE TABLE files ( \n    local_id                        INTEGER PRIMARY KEY AUTOINCREMENT,\n    inserted                        INTEGER DEFAULT ( strftime( '%s', 'now' ) ),\n    _id                             INTEGER UNIQUE ON CONFLICT REPLACE,\n    _data                           TEXT UNIQUE ON CONFLICT IGNORE,\n    _display_name                   TEXT,\n    title                           TEXT,\n    _size                           INTEGER,\n    date_added                      INTEGER,\n    date_modified                   INTEGER,\n    bucket_id                       TEXT,\n    bucket_display_name             TEXT,\n    format                          INTEGER,\n    parent                          INTEGER DEFAULT ( -1 ),\n    storage_id                      INTEGER,\n    Archos_smbserver                INTEGER DEFAULT ( 0 ), \n    remote_id                       INTEGER UNIQUE ON CONFLICT IGNORE,\n    scan_state                      INTEGER DEFAULT ( 0 ),\n    mime_type                       TEXT,\n    media_type                      INTEGER,\n    is_drm                          INTEGER,\n    title_key                       TEXT,\n    artist_id                       INTEGER,\n    composer                        TEXT,\n    album_id                        INTEGER,\n    artist                          TEXT,\n    album                           TEXT,\n    track                           INTEGER,\n    number_of_tracks                INTEGER DEFAULT 1,\n    year                            INTEGER,\n    is_ringtone                     INTEGER,\n    is_music                        INTEGER,\n    is_alarm                        INTEGER,\n    is_notification                 INTEGER,\n    is_podcast                      INTEGER,\n    album_artist                    TEXT,\n    duration                        INTEGER,\n    width                           INTEGER,\n    height                          INTEGER,\n    mini_thumb_data                 TEXT,\n    mini_thumb_magic                INTEGER,\n    bookmark                        INTEGER,\n    Archos_favorite_track           INTEGER DEFAULT ( 0 ),\n    Archos_bookmark                 INTEGER DEFAULT ( 0 ),\n    Archos_lastTimePlayed           INTEGER DEFAULT ( 0 ),\n    Archos_playerParams             INTEGER DEFAULT ( 0 ),\n    Archos_playerSubtitleDelay      INTEGER DEFAULT ( 0 ),\n    ArchosMediaScraper_id           INTEGER DEFAULT ( 0 ),\n    ArchosMediaScraper_type         INTEGER DEFAULT ( 0 ),\n    Archos_numberOfSubtitleTracks   INTEGER DEFAULT ( -1 ),\n    Archos_numberOfAudioTracks      INTEGER DEFAULT ( -1 ),\n    Archos_sampleRate               INTEGER DEFAULT ( 0 ),\n    Archos_numberOfChannels         INTEGER DEFAULT ( 0 ),\n    Archos_audioWaveCodec           INTEGER DEFAULT ( 0 ),\n    Archos_audioBitRate             INTEGER DEFAULT ( 0 ),\n    Archos_videoFourCCCodec         INTEGER DEFAULT ( 0 ),\n    Archos_videoBitRate             INTEGER DEFAULT ( 0 ),\n    Archos_framesPerThousandSeconds INTEGER DEFAULT ( 0 ),\n    Archos_encodingProfile          TEXT    DEFAULT ( NULL ),\n    Archos_playerSubtitleRatio      INTEGER DEFAULT ( 0 ),\n    Archos_thumbTry                 INTEGER DEFAULT ( 0 ),\n    Archos_hideFile                 INTEGER DEFAULT ( 0 ),\n    Archos_title                    TEXT    DEFAULT ( NULL ),\n    subtitle_count_ext INTEGER DEFAULT (0),\n    autoscrape_status INTEGER DEFAULT (0)\n,    volume_hidden INTEGER DEFAULT (0)\n,    Archos_traktSeen INTEGER DEFAULT (0)\n,    Archos_traktLibrary INTEGER DEFAULT (0)\n,    Archos_videoStereo INTEGER DEFAULT (0)\n,    Archos_videoDefinition INTEGER DEFAULT (0),\n    Archos_traktResume INTEGER DEFAULT (0),\n    Archos_hiddenByUser INTEGER DEFAULT (0),\nArchos_calculatedVideoFormat STRING,\nArchos_bestAudiotrackFormat STRING,\nArchos_guessedAudioFormat STRING,\nArchos_guessedVideoFormat STRING\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 225,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L225"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_SCANNED_TRIGGER_UPDATE_URI",
+      "sql": "CREATE TRIGGER after_update_uri_files_scanned AFTER UPDATE OF _data ON files_scanned BEGIN UPDATE files SET _data= NEW._data WHERE remote_id=(OLD._id + 2000000000);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 308,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L308"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_SCANNED_TRIGGER_STORAGE_ID",
+      "sql": "CREATE TRIGGER after_update_storage_id_files_scanned AFTER UPDATE OF storage_id ON files_scanned BEGIN UPDATE files SET storage_id = NEW.storage_id;END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 315,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L315"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TRIGGER_SCRAPER_MOVIE_CLEANUP",
+      "sql": "CREATE TRIGGER scraper_movie_cleanup AFTER UPDATE OF ArchosMediaScraper_id ON files WHEN OLD.ArchosMediaScraper_type=1 AND NEW.ArchosMediaScraper_id != OLD.ArchosMediaScraper_id BEGIN DELETE FROM movie WHERE _id = OLD.ArchosMediaScraper_id; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 325,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L325"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TRIGGER_SCRAPER_EPISODE_CLEANUP",
+      "sql": "CREATE TRIGGER scraper_episode_cleanup AFTER UPDATE OF ArchosMediaScraper_id ON files WHEN OLD.ArchosMediaScraper_type=2 AND NEW.ArchosMediaScraper_id != OLD.ArchosMediaScraper_id BEGIN DELETE FROM episode WHERE _id = OLD.ArchosMediaScraper_id; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 332,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L332"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TRIGGER_VOB_INSERT",
+      "sql": "CREATE TRIGGER vob_insert_import AFTER INSERT ON files WHEN NEW.bucket_id IS NOT NULL AND NEW.date_modified > 0 AND ( NEW._data LIKE '%/vts!___!__.vob' ESCAPE '!' OR NEW._data LIKE '%/video!_ts.vob' ESCAPE '!') BEGIN INSERT INTO vob_insert(name) VALUES(NEW.bucket_id);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 341,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L341"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TRIGGER_VOB_UPDATE",
+      "sql": "CREATE TRIGGER vob_update_import AFTER UPDATE OF date_modified ON files WHEN NEW.date_modified > 0 AND (NEW._data LIKE '%/vts!___!__.vob' ESCAPE '!' OR NEW._data LIKE '%/video!_ts.vob' ESCAPE '!') BEGIN INSERT INTO vob_insert(name) VALUES(NEW.bucket_id);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 350,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L350"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TRIGGER_VOB_DELETE",
+      "sql": "CREATE TRIGGER vob_delete_import AFTER DELETE ON files WHEN OLD._data LIKE '%/vts!___!__.vob' ESCAPE '!' OR OLD._data LIKE '%/video!_ts.vob' ESCAPE '!' BEGIN INSERT INTO vob_insert(name) VALUES(OLD.bucket_id);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 358,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L358"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IDX_MEDIA_TYPE",
+      "sql": "CREATE INDEX media_type_index ON files (media_type)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 366,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L366"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IDX_TITLE",
+      "sql": "CREATE INDEX title_idx ON files (title)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 368,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L368"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IDX_PARENT",
+      "sql": "CREATE INDEX parent_index ON files (parent)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 370,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L370"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IDX_BUCKET_NAME",
+      "sql": "CREATE INDEX bucket_name ON files (bucket_id, media_type, bucket_display_name)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 372,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L372"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IDX_BUCKET_INDEX",
+      "sql": "CREATE INDEX bucket_index ON files (bucket_id, media_type, _id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 374,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L374"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_IDX_PATH",
+      "sql": "CREATE INDEX path_index ON files(_data)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 376,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L376"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_HIDDEN_IDX",
+      "sql": "CREATE INDEX files_hidden ON files (volume_hidden, media_type, Archos_hideFile)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 379,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L379"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_SMB_SERVER_TABLE",
+      "sql": "CREATE TABLE smb_server(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 1,_data TEXT UNIQUE NOT NULL,last_seen INTEGER NOT NULL DEFAULT 0,active INTEGER NOT NULL DEFAULT 0)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 386,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L386"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_SMB_SERVER_ACTIVE_VIEW",
+      "sql": "CREATE VIEW smb_server_acitve AS SELECT _id AS Archos_smbserver FROM smb_server WHERE active != 0",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 396,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L396"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEO_VIEW_V32",
+      "sql": "CREATE VIEW video AS SELECT \n    f._id,\n    _data,\n    _display_name,\n    _size,\n    mime_type,\n    date_added,\n    date_modified,\n    inserted,\n    coalesce( archos_title, title ) AS title,\n    title AS android_title,\n    archos_title,\n    duration,\n    artist,\n    album,\n    NULL AS resolution,\n    NULL AS description,\n    NULL AS isprivate,\n    NULL AS tags,\n    NULL AS category,\n    NULL AS language,\n    mini_thumb_data,\n    NULL AS latitude,\n    NULL AS longitude,\n    NULL AS datetaken,\n    mini_thumb_magic,\n    bucket_id,\n    bucket_display_name,\n    bookmark,\n    width,\n    height,\n    Archos_favorite_track,\n    Archos_bookmark,\n    Archos_lastTimePlayed,\n    Archos_playerParams,\n    Archos_playerSubtitleDelay,\n    ArchosMediaScraper_id,\n    ArchosMediaScraper_type,\n    Archos_numberOfSubtitleTracks,\n    subtitle_count_ext,\n    Archos_numberOfAudioTracks,\n    Archos_sampleRate,\n    Archos_numberOfChannels,\n    Archos_audioWaveCodec,\n    Archos_audioBitRate,\n    Archos_videoFourCCCodec,\n    Archos_videoBitRate,\n    Archos_framesPerThousandSeconds,\n    Archos_encodingProfile,\n    Archos_playerSubtitleRatio,\n    Archos_thumbTry,\n    Archos_hideFile,\n    Archos_hiddenByUser,\n    m._id AS m_id,\n    s._id AS s_id,\n    e._id AS e_id,\n    coalesce(name_movie, name_show) AS scraper_name,\n    name_movie AS m_name,\n    name_show AS s_name,\n    name_episode AS e_name,\n    season_episode AS e_season,\n    number_episode AS e_episode,\n    aired_episode AS e_aired,\n    premiered_show AS s_premiered,\n    year_movie AS m_year,\n    coalesce(rating_movie, rating_episode) AS rating,\n    rating_movie AS m_rating,\n    rating_episode AS e_rating,\n    rating_show AS s_rating,\n    coalesce(m_online_id, s_online_id) AS online_id,\n    coalesce(m_online_id, e_online_id) AS video_online_id,\n    coalesce(m_imdb_id, s_imdb_id) AS imdb_id,\n    coalesce(m_content_rating, s_content_rating) AS content_rating,\n    m_online_id,\n    m_imdb_id,\n    m_content_rating,\n    s_online_id,\n    s_imdb_id,\n    s_content_rating,\n    e_online_id,\n    e_imdb_id,\n    coalesce(plot_movie, plot_episode) AS plot,\n    plot_movie AS m_plot,\n    plot_episode AS e_plot,\n    plot_show AS s_plot,\n    coalesce(m_actors, s_actors) AS actors,\n    m_actors,\n    s_actors,\n    e_actors,\n    coalesce(m_directors, e_directors) AS directors,\n    m_directors,\n    e_directors,\n    s_directors,\n    coalesce(m_genres, s_genres) AS genres,\n    m_genres,\n    s_genres,\n    coalesce(m_studios, s_studios) AS studios,\n    m_studios,\n    s_studios,\n    coalesce(mp.m_po_large_file, cover_movie, ep.s_po_large_file, cover_episode, sp.s_po_large_file, cover_show) AS cover,\n    coalesce(mp.m_po_large_file, cover_movie) AS m_cover,\n    coalesce(ep.s_po_large_file, cover_episode) AS e_cover,\n    coalesce(sp.s_po_large_file, cover_show) AS s_cover,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie, sb.s_bd_large_url, backdrop_url_show) AS bd_url,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie) AS m_bd_url,\n    coalesce(sb.s_bd_large_url, backdrop_url_show) AS s_bd_url,\n    coalesce(mb.m_bd_large_file, backdrop_movie, sb.s_bd_large_file, backdrop_show) AS bd_file,\n    coalesce(mb.m_bd_large_file, backdrop_movie) AS m_bd_file,\n    coalesce(sb.s_bd_large_file, backdrop_show) AS s_bd_file,\n    coalesce(mp._id, ep._id, sp._id) AS poster_id,\n    coalesce(mp.m_po_thumb_url, ep.s_po_thumb_url, sp.s_po_thumb_url) AS po_thumb_url,\n    coalesce(mp.m_po_thumb_file, ep.s_po_thumb_file, sp.s_po_thumb_file) AS po_thumb_file,\n    coalesce(mp.m_po_large_url, ep.s_po_large_url, sp.s_po_large_url) AS po_large_url,\n    coalesce(mp.m_po_large_file, ep.s_po_large_file, sp.s_po_large_file) AS po_large_file,\n    coalesce(mb._id, sb._id) AS backdrop_id,\n    coalesce(mb.m_bd_thumb_url, sb.s_bd_thumb_url) AS bd_thumb_url,\n    coalesce(mb.m_bd_thumb_file, sb.s_bd_thumb_file) AS bd_thumb_file,\n    coalesce(mb.m_bd_large_url, sb.s_bd_large_url) AS bd_large_url,\n    coalesce(mb.m_bd_large_file, sb.s_bd_large_file) AS bd_large_file,\n    ep._id AS e_poster_id,\n    ep.s_po_thumb_url AS e_po_thumb_url,\n    ep.s_po_thumb_file AS e_po_thumb_file,\n    ep.s_po_large_url AS e_po_large_url,\n    ep.s_po_large_file AS e_po_large_file,\n    ep.s_po_season AS e_po_season,\n    sp._id AS s_poster_id,\n    sp.s_po_thumb_url,\n    sp.s_po_thumb_file,\n    sp.s_po_large_url,\n    sp.s_po_large_file,\n    sb._id AS s_backdrop_id,\n    sb.s_bd_thumb_url,\n    sb.s_bd_thumb_file,\n    sb.s_bd_large_url,\n    sb.s_bd_large_file,\n    mp._id AS m_poster_id,\n    mp.m_po_thumb_url,\n    mp.m_po_thumb_file,\n    mp.m_po_large_url,\n    mp.m_po_large_file,\n    mb._id AS m_backdrop_id,\n    mb.m_bd_thumb_url,\n    mb.m_bd_thumb_file,\n    mb.m_bd_large_url,\n    mb.m_bd_large_file,\n    autoscrape_status,\n    Archos_traktSeen,\n    Archos_traktLibrary,\n    Archos_videoStereo,\n    Archos_videoDefinition,\n    Archos_traktResume,\n    Archos_calculatedVideoFormat,\n    Archos_bestAudiotrackFormat,\n    Archos_guessedVideoFormat,\n    Archos_guessedAudioFormat,\n    picture_episode AS e_picture \nFROM\nfiles AS f\nLEFT JOIN movie AS m ON (m.video_id = f._id)\n       LEFT JOIN movie_posters AS mp ON ( m.m_poster_id = mp._id ) \n       LEFT JOIN movie_backdrops AS mb ON ( m.m_backdrop_id = mb._id )\nLEFT JOIN episode AS e ON (e.video_id = f._id)\n       LEFT JOIN show_posters AS ep ON ( e.e_poster_id = ep._id )\n   LEFT JOIN show AS s on (e.show_episode = s._id)\n       LEFT JOIN show_posters AS sp ON ( s.s_poster_id = sp._id ) \n       LEFT JOIN show_backdrops AS sb ON ( s.s_backdrop_id = sb._id )\nWHERE\n    volume_hidden == 0 AND\n    media_type == 3 AND\n    (Archos_smbserver == 0 OR\n    Archos_smbserver IN (SELECT _id FROM smb_server WHERE active == 1))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 406,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L406"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEO_VIEW_V37",
+      "sql": "CREATE VIEW video AS SELECT \n    f._id,\n    _data,\n    _display_name,\n    _size,\n    mime_type,\n    date_added,\n    date_modified,\n    inserted,\n    coalesce( archos_title, title ) AS title,\n    title AS android_title,\n    archos_title,\n    duration,\n    artist,\n    album,\n    NULL AS resolution,\n    NULL AS description,\n    NULL AS isprivate,\n    NULL AS tags,\n    NULL AS category,\n    NULL AS language,\n    mini_thumb_data,\n    NULL AS latitude,\n    NULL AS longitude,\n    NULL AS datetaken,\n    mini_thumb_magic,\n    bucket_id,\n    bucket_display_name,\n    bookmark,\n    width,\n    height,\n    Archos_favorite_track,\n    Archos_bookmark,\n    Archos_lastTimePlayed,\n    Archos_playerParams,\n    Archos_playerSubtitleDelay,\n    ArchosMediaScraper_id,\n    ArchosMediaScraper_type,\n    Archos_numberOfSubtitleTracks,\n    subtitle_count_ext,\n    Archos_numberOfAudioTracks,\n    Archos_sampleRate,\n    Archos_numberOfChannels,\n    Archos_audioWaveCodec,\n    Archos_audioBitRate,\n    Archos_videoFourCCCodec,\n    Archos_videoBitRate,\n    Archos_framesPerThousandSeconds,\n    Archos_encodingProfile,\n    Archos_playerSubtitleRatio,\n    Archos_thumbTry,\n    Archos_hideFile,\n    Archos_hiddenByUser,\n    m._id AS m_id,\n    s._id AS s_id,\n    e._id AS e_id,\n    coalesce(name_movie, name_show) AS scraper_name,\n    name_movie AS m_name,\n    name_show AS s_name,\n    name_episode AS e_name,\n    season_episode AS e_season,\n    number_episode AS e_episode,\n    aired_episode AS e_aired,\n    premiered_show AS s_premiered,\n    year_movie AS m_year,\n    coalesce(rating_movie, rating_episode) AS rating,\n    rating_movie AS m_rating,\n    rating_episode AS e_rating,\n    rating_show AS s_rating,\n    coalesce(m_online_id, s_online_id) AS online_id,\n    coalesce(m_online_id, e_online_id) AS video_online_id,\n    coalesce(m_imdb_id, s_imdb_id) AS imdb_id,\n    coalesce(m_content_rating, s_content_rating) AS content_rating,\n    m_online_id,\n    m_imdb_id,\n    m_content_rating,\n    s_online_id,\n    s_imdb_id,\n    s_content_rating,\n    e_online_id,\n    e_imdb_id,\n    coalesce(plot_movie, plot_episode) AS plot,\n    plot_movie AS m_plot,\n    plot_episode AS e_plot,\n    plot_show AS s_plot,\n    coalesce(m_actors, s_actors) AS actors,\n    m_actors,\n    s_actors,\n    e_actors,\n    coalesce(m_directors, e_directors) AS directors,\n    m_directors,\n    e_directors,\n    s_directors,\n    coalesce(m_genres, s_genres) AS genres,\n    m_genres,\n    s_genres,\n    coalesce(m_studios, s_studios) AS studios,\n    m_studios,\n    s_studios,\n    coalesce(mp.m_po_large_file, cover_movie, ep.s_po_large_file, cover_episode, sp.s_po_large_file, cover_show) AS cover,\n    coalesce(mp.m_po_large_file, cover_movie) AS m_cover,\n    coalesce(ep.s_po_large_file, cover_episode) AS e_cover,\n    coalesce(sp.s_po_large_file, cover_show) AS s_cover,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie, sb.s_bd_large_url, backdrop_url_show) AS bd_url,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie) AS m_bd_url,\n    coalesce(sb.s_bd_large_url, backdrop_url_show) AS s_bd_url,\n    coalesce(mb.m_bd_large_file, backdrop_movie, sb.s_bd_large_file, backdrop_show) AS bd_file,\n    coalesce(mb.m_bd_large_file, backdrop_movie) AS m_bd_file,\n    coalesce(sb.s_bd_large_file, backdrop_show) AS s_bd_file,\n    coalesce(mp._id, ep._id, sp._id) AS poster_id,\n    coalesce(mp.m_po_thumb_url, ep.s_po_thumb_url, sp.s_po_thumb_url) AS po_thumb_url,\n    coalesce(mp.m_po_thumb_file, ep.s_po_thumb_file, sp.s_po_thumb_file) AS po_thumb_file,\n    coalesce(mp.m_po_large_url, ep.s_po_large_url, sp.s_po_large_url) AS po_large_url,\n    coalesce(mp.m_po_large_file, ep.s_po_large_file, sp.s_po_large_file) AS po_large_file,\n    coalesce(mb._id, sb._id) AS backdrop_id,\n    coalesce(mb.m_bd_thumb_url, sb.s_bd_thumb_url) AS bd_thumb_url,\n    coalesce(mb.m_bd_thumb_file, sb.s_bd_thumb_file) AS bd_thumb_file,\n    coalesce(mb.m_bd_large_url, sb.s_bd_large_url) AS bd_large_url,\n    coalesce(mb.m_bd_large_file, sb.s_bd_large_file) AS bd_large_file,\n    ep._id AS e_poster_id,\n    ep.s_po_thumb_url AS e_po_thumb_url,\n    ep.s_po_thumb_file AS e_po_thumb_file,\n    ep.s_po_large_url AS e_po_large_url,\n    ep.s_po_large_file AS e_po_large_file,\n    ep.s_po_season AS e_po_season,\n    sp._id AS s_poster_id,\n    sp.s_po_thumb_url,\n    sp.s_po_thumb_file,\n    sp.s_po_large_url,\n    sp.s_po_large_file,\n    sb._id AS s_backdrop_id,\n    sb.s_bd_thumb_url,\n    sb.s_bd_thumb_file,\n    sb.s_bd_large_url,\n    sb.s_bd_large_file,\n    mp._id AS m_poster_id,\n    mp.m_po_thumb_url,\n    mp.m_po_thumb_file,\n    mp.m_po_large_url,\n    mp.m_po_large_file,\n    mb._id AS m_backdrop_id,\n    mb.m_bd_thumb_url,\n    mb.m_bd_thumb_file,\n    mb.m_bd_large_url,\n    mb.m_bd_large_file,\n    autoscrape_status,\n    Archos_traktSeen,\n    Archos_traktLibrary,\n    Archos_videoStereo,\n    Archos_videoDefinition,\n    Archos_traktResume,\n    Archos_calculatedVideoFormat,\n    Archos_bestAudiotrackFormat,\n    Archos_guessedVideoFormat,\n    Archos_guessedAudioFormat,\n    picture_episode AS e_picture,\n    coalesce(m.Nova_pinned, s.Nova_pinned) AS Nova_pinned \nFROM\nfiles AS f\nLEFT JOIN movie AS m ON (m.video_id = f._id)\n       LEFT JOIN movie_posters AS mp ON ( m.m_poster_id = mp._id ) \n       LEFT JOIN movie_backdrops AS mb ON ( m.m_backdrop_id = mb._id )\nLEFT JOIN episode AS e ON (e.video_id = f._id)\n       LEFT JOIN show_posters AS ep ON ( e.e_poster_id = ep._id )\n   LEFT JOIN show AS s on (e.show_episode = s._id)\n       LEFT JOIN show_posters AS sp ON ( s.s_poster_id = sp._id ) \n       LEFT JOIN show_backdrops AS sb ON ( s.s_backdrop_id = sb._id )\nWHERE\n    volume_hidden == 0 AND\n    media_type == 3 AND\n    (Archos_smbserver == 0 OR\n    Archos_smbserver IN (SELECT _id FROM smb_server WHERE active == 1))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 579,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L579"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEO_VIEW_V38",
+      "sql": "CREATE VIEW video AS SELECT \n    f._id,\n    _data,\n    _display_name,\n    _size,\n    mime_type,\n    date_added,\n    date_modified,\n    inserted,\n    coalesce( archos_title, title ) AS title,\n    title AS android_title,\n    archos_title,\n    duration,\n    artist,\n    album,\n    NULL AS resolution,\n    NULL AS description,\n    NULL AS isprivate,\n    NULL AS tags,\n    NULL AS category,\n    NULL AS language,\n    mini_thumb_data,\n    NULL AS latitude,\n    NULL AS longitude,\n    NULL AS datetaken,\n    mini_thumb_magic,\n    bucket_id,\n    bucket_display_name,\n    bookmark,\n    width,\n    height,\n    Archos_favorite_track,\n    Archos_bookmark,\n    Archos_lastTimePlayed,\n    Archos_playerParams,\n    Archos_playerSubtitleDelay,\n    ArchosMediaScraper_id,\n    ArchosMediaScraper_type,\n    Archos_numberOfSubtitleTracks,\n    subtitle_count_ext,\n    Archos_numberOfAudioTracks,\n    Archos_sampleRate,\n    Archos_numberOfChannels,\n    Archos_audioWaveCodec,\n    Archos_audioBitRate,\n    Archos_videoFourCCCodec,\n    Archos_videoBitRate,\n    Archos_framesPerThousandSeconds,\n    Archos_encodingProfile,\n    Archos_playerSubtitleRatio,\n    Archos_thumbTry,\n    Archos_hideFile,\n    Archos_hiddenByUser,\n    m._id AS m_id,\n    s._id AS s_id,\n    e._id AS e_id,\n    coalesce(name_movie, name_show) AS scraper_name,\n    name_movie AS m_name,\n    name_show AS s_name,\n    name_episode AS e_name,\n    season_episode AS e_season,\n    number_episode AS e_episode,\n    aired_episode AS e_aired,\n    premiered_show AS s_premiered,\n    year_movie AS m_year,\n    coalesce(rating_movie, rating_episode) AS rating,\n    rating_movie AS m_rating,\n    rating_episode AS e_rating,\n    rating_show AS s_rating,\n    coalesce(m_online_id, s_online_id) AS online_id,\n    coalesce(m_online_id, e_online_id) AS video_online_id,\n    coalesce(m_imdb_id, s_imdb_id) AS imdb_id,\n    coalesce(m_content_rating, s_content_rating) AS content_rating,\n    m_online_id,\n    m_imdb_id,\n    m_content_rating,\n    s_online_id,\n    s_imdb_id,\n    s_content_rating,\n    e_online_id,\n    e_imdb_id,\n    coalesce(plot_movie, plot_episode) AS plot,\n    plot_movie AS m_plot,\n    plot_episode AS e_plot,\n    plot_show AS s_plot,\n    coalesce(m_actors, s_actors) AS actors,\n    m_actors,\n    s_actors,\n    e_actors,\n    coalesce(m_directors, e_directors) AS directors,\n    m_directors,\n    e_directors,\n    s_directors,\n    coalesce(m_genres, s_genres) AS genres,\n    m_genres,\n    s_genres,\n    coalesce(m_studios, s_studios) AS studios,\n    m_studios,\n    s_studios,\n    coalesce(mp.m_po_large_file, cover_movie, ep.s_po_large_file, cover_episode, sp.s_po_large_file, cover_show) AS cover,\n    coalesce(mp.m_po_large_file, cover_movie) AS m_cover,\n    coalesce(ep.s_po_large_file, cover_episode) AS e_cover,\n    coalesce(sp.s_po_large_file, cover_show) AS s_cover,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie, sb.s_bd_large_url, backdrop_url_show) AS bd_url,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie) AS m_bd_url,\n    coalesce(sb.s_bd_large_url, backdrop_url_show) AS s_bd_url,\n    coalesce(mb.m_bd_large_file, backdrop_movie, sb.s_bd_large_file, backdrop_show) AS bd_file,\n    coalesce(mb.m_bd_large_file, backdrop_movie) AS m_bd_file,\n    coalesce(sb.s_bd_large_file, backdrop_show) AS s_bd_file,\n    coalesce(mp._id, ep._id, sp._id) AS poster_id,\n    coalesce(mp.m_po_thumb_url, ep.s_po_thumb_url, sp.s_po_thumb_url) AS po_thumb_url,\n    coalesce(mp.m_po_thumb_file, ep.s_po_thumb_file, sp.s_po_thumb_file) AS po_thumb_file,\n    coalesce(mp.m_po_large_url, ep.s_po_large_url, sp.s_po_large_url) AS po_large_url,\n    coalesce(mp.m_po_large_file, ep.s_po_large_file, sp.s_po_large_file) AS po_large_file,\n    coalesce(mb._id, sb._id) AS backdrop_id,\n    coalesce(mb.m_bd_thumb_url, sb.s_bd_thumb_url) AS bd_thumb_url,\n    coalesce(mb.m_bd_thumb_file, sb.s_bd_thumb_file) AS bd_thumb_file,\n    coalesce(mb.m_bd_large_url, sb.s_bd_large_url) AS bd_large_url,\n    coalesce(mb.m_bd_large_file, sb.s_bd_large_file) AS bd_large_file,\n    ep._id AS e_poster_id,\n    ep.s_po_thumb_url AS e_po_thumb_url,\n    ep.s_po_thumb_file AS e_po_thumb_file,\n    ep.s_po_large_url AS e_po_large_url,\n    ep.s_po_large_file AS e_po_large_file,\n    ep.s_po_season AS e_po_season,\n    sp._id AS s_poster_id,\n    sp.s_po_thumb_url,\n    sp.s_po_thumb_file,\n    sp.s_po_large_url,\n    sp.s_po_large_file,\n    sb._id AS s_backdrop_id,\n    sb.s_bd_thumb_url,\n    sb.s_bd_thumb_file,\n    sb.s_bd_large_url,\n    sb.s_bd_large_file,\n    mp._id AS m_poster_id,\n    mp.m_po_thumb_url,\n    mp.m_po_thumb_file,\n    mp.m_po_large_url,\n    mp.m_po_large_file,\n    mb._id AS m_backdrop_id,\n    mb.m_bd_thumb_url,\n    mb.m_bd_thumb_file,\n    mb.m_bd_large_url,\n    mb.m_bd_large_file,\n    autoscrape_status,\n    Archos_traktSeen,\n    Archos_traktLibrary,\n    Archos_videoStereo,\n    Archos_videoDefinition,\n    Archos_traktResume,\n    Archos_calculatedVideoFormat,\n    Archos_bestAudiotrackFormat,\n    Archos_guessedVideoFormat,\n    Archos_guessedAudioFormat,\n    picture_episode AS e_picture,\n    coalesce(m.Nova_pinned, s.Nova_pinned) AS Nova_pinned,\n    c.m_coll_id AS m_coll_id,\n    c.m_coll_name AS m_coll_name,\n    c.m_coll_description AS m_coll_description,\n    c.m_coll_po_large_url AS m_coll_po_large_url,\n    c.m_coll_po_large_file AS m_coll_po_large_file,\n    c.m_coll_bd_large_url AS m_coll_bd_large_url,\n    c.m_coll_bd_large_file AS m_coll_bd_large_file,\n    c.m_coll_po_thumb_url AS m_coll_po_thumb_url,\n    c.m_coll_po_thumb_file AS m_coll_po_thumb_file,\n    c.m_coll_bd_thumb_url AS m_coll_bd_thumb_url,\n    c.m_coll_bd_thumb_file AS m_coll_bd_thumb_file\nFROM\nfiles AS f\nLEFT JOIN movie AS m ON (m.video_id = f._id)\n       LEFT JOIN movie_posters AS mp ON ( m.m_poster_id = mp._id ) \n       LEFT JOIN movie_backdrops AS mb ON ( m.m_backdrop_id = mb._id )\nLEFT JOIN episode AS e ON (e.video_id = f._id)\n       LEFT JOIN show_posters AS ep ON ( e.e_poster_id = ep._id )\n   LEFT JOIN show AS s on (e.show_episode = s._id)\n       LEFT JOIN show_posters AS sp ON ( s.s_poster_id = sp._id ) \n       LEFT JOIN show_backdrops AS sb ON ( s.s_backdrop_id = sb._id )\nLEFT JOIN movie_collection AS c ON (c.m_coll_id = m.m_coll_id) \nWHERE\n    volume_hidden == 0 AND\n    media_type == 3 AND\n    (Archos_smbserver == 0 OR\n    Archos_smbserver IN (SELECT _id FROM smb_server WHERE active == 1))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 754,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L754"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEO_VIEW_V41",
+      "sql": "CREATE VIEW video AS SELECT \n    f._id,\n    _data,\n    _display_name,\n    _size,\n    mime_type,\n    date_added,\n    date_modified,\n    inserted,\n    coalesce( archos_title, title ) AS title,\n    title AS android_title,\n    archos_title,\n    duration,\n    artist,\n    album,\n    NULL AS resolution,\n    NULL AS description,\n    NULL AS isprivate,\n    NULL AS tags,\n    NULL AS category,\n    NULL AS language,\n    mini_thumb_data,\n    NULL AS latitude,\n    NULL AS longitude,\n    NULL AS datetaken,\n    mini_thumb_magic,\n    bucket_id,\n    bucket_display_name,\n    bookmark,\n    width,\n    height,\n    Archos_favorite_track,\n    Archos_bookmark,\n    Archos_lastTimePlayed,\n    Archos_playerParams,\n    Archos_playerSubtitleDelay,\n    ArchosMediaScraper_id,\n    ArchosMediaScraper_type,\n    Archos_numberOfSubtitleTracks,\n    subtitle_count_ext,\n    Archos_numberOfAudioTracks,\n    Archos_sampleRate,\n    Archos_numberOfChannels,\n    Archos_audioWaveCodec,\n    Archos_audioBitRate,\n    Archos_videoFourCCCodec,\n    Archos_videoBitRate,\n    Archos_framesPerThousandSeconds,\n    Archos_encodingProfile,\n    Archos_playerSubtitleRatio,\n    Archos_thumbTry,\n    Archos_hideFile,\n    Archos_hiddenByUser,\n    m._id AS m_id,\n    s._id AS s_id,\n    e._id AS e_id,\n    coalesce(name_movie, name_show) AS scraper_name,\n    name_movie AS m_name,\n    name_show AS s_name,\n    name_episode AS e_name,\n    season_episode AS e_season,\n    number_episode AS e_episode,\n    aired_episode AS e_aired,\n    premiered_show AS s_premiered,\n    year_movie AS m_year,\n    coalesce(rating_movie, rating_episode) AS rating,\n    rating_movie AS m_rating,\n    rating_episode AS e_rating,\n    rating_show AS s_rating,\n    coalesce(m_online_id, s_online_id) AS online_id,\n    coalesce(m_online_id, e_online_id) AS video_online_id,\n    coalesce(m_imdb_id, s_imdb_id) AS imdb_id,\n    coalesce(m_content_rating, s_content_rating) AS content_rating,\n    m_online_id,\n    m_imdb_id,\n    m_content_rating,\n    s_online_id,\n    s_imdb_id,\n    s_content_rating,\n    e_online_id,\n    e_imdb_id,\n    coalesce(plot_movie, plot_episode) AS plot,\n    plot_movie AS m_plot,\n    plot_episode AS e_plot,\n    plot_show AS s_plot,\n    coalesce(m_actors, s_actors) AS actors,\n    m_actors,\n    s_actors,\n    e_actors,\n    coalesce(m_directors, e_directors) AS directors,\n    m_directors,\n    e_directors,\n    s_directors,\n    coalesce(m_writers, e_writers) AS writers,\n    m_writers,\n    e_writers,\n    s_writers,\n    coalesce(m_genres, s_genres) AS genres,\n    m_genres,\n    s_genres,\n    coalesce(m_studios, s_studios) AS studios,\n    m_studios,\n    s_studios,\n    coalesce(mp.m_po_large_file, cover_movie, ep.s_po_large_file, cover_episode, sp.s_po_large_file, cover_show) AS cover,\n    coalesce(mp.m_po_large_file, cover_movie) AS m_cover,\n    coalesce(ep.s_po_large_file, cover_episode) AS e_cover,\n    coalesce(sp.s_po_large_file, cover_show) AS s_cover,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie, sb.s_bd_large_url, backdrop_url_show) AS bd_url,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie) AS m_bd_url,\n    coalesce(sb.s_bd_large_url, backdrop_url_show) AS s_bd_url,\n    coalesce(mb.m_bd_large_file, backdrop_movie, sb.s_bd_large_file, backdrop_show) AS bd_file,\n    coalesce(mb.m_bd_large_file, backdrop_movie) AS m_bd_file,\n    coalesce(sb.s_bd_large_file, backdrop_show) AS s_bd_file,\n    coalesce(mp._id, ep._id, sp._id) AS poster_id,\n    coalesce(mp.m_po_thumb_url, ep.s_po_thumb_url, sp.s_po_thumb_url) AS po_thumb_url,\n    coalesce(mp.m_po_thumb_file, ep.s_po_thumb_file, sp.s_po_thumb_file) AS po_thumb_file,\n    coalesce(mp.m_po_large_url, ep.s_po_large_url, sp.s_po_large_url) AS po_large_url,\n    coalesce(mp.m_po_large_file, ep.s_po_large_file, sp.s_po_large_file) AS po_large_file,\n    coalesce(mb._id, sb._id) AS backdrop_id,\n    coalesce(mb.m_bd_thumb_url, sb.s_bd_thumb_url) AS bd_thumb_url,\n    coalesce(mb.m_bd_thumb_file, sb.s_bd_thumb_file) AS bd_thumb_file,\n    coalesce(mb.m_bd_large_url, sb.s_bd_large_url) AS bd_large_url,\n    coalesce(mb.m_bd_large_file, sb.s_bd_large_file) AS bd_large_file,\n    ep._id AS e_poster_id,\n    ep.s_po_thumb_url AS e_po_thumb_url,\n    ep.s_po_thumb_file AS e_po_thumb_file,\n    ep.s_po_large_url AS e_po_large_url,\n    ep.s_po_large_file AS e_po_large_file,\n    ep.s_po_season AS e_po_season,\n    sp._id AS s_poster_id,\n    sp.s_po_thumb_url,\n    sp.s_po_thumb_file,\n    sp.s_po_large_url,\n    sp.s_po_large_file,\n    sb._id AS s_backdrop_id,\n    sb.s_bd_thumb_url,\n    sb.s_bd_thumb_file,\n    sb.s_bd_large_url,\n    sb.s_bd_large_file,\n    mp._id AS m_poster_id,\n    mp.m_po_thumb_url,\n    mp.m_po_thumb_file,\n    mp.m_po_large_url,\n    mp.m_po_large_file,\n    mb._id AS m_backdrop_id,\n    mb.m_bd_thumb_url,\n    mb.m_bd_thumb_file,\n    mb.m_bd_large_url,\n    mb.m_bd_large_file,\n    autoscrape_status,\n    Archos_traktSeen,\n    Archos_traktLibrary,\n    Archos_videoStereo,\n    Archos_videoDefinition,\n    Archos_traktResume,\n    Archos_calculatedVideoFormat,\n    Archos_bestAudiotrackFormat,\n    Archos_guessedVideoFormat,\n    Archos_guessedAudioFormat,\n    picture_episode AS e_picture,\n    coalesce(m.Nova_pinned, s.Nova_pinned) AS Nova_pinned,\n    c.m_coll_id AS m_coll_id,\n    c.m_coll_name AS m_coll_name,\n    c.m_coll_description AS m_coll_description,\n    c.m_coll_po_large_url AS m_coll_po_large_url,\n    c.m_coll_po_large_file AS m_coll_po_large_file,\n    c.m_coll_bd_large_url AS m_coll_bd_large_url,\n    c.m_coll_bd_large_file AS m_coll_bd_large_file,\n    c.m_coll_po_thumb_url AS m_coll_po_thumb_url,\n    c.m_coll_po_thumb_file AS m_coll_po_thumb_file,\n    c.m_coll_bd_thumb_url AS m_coll_bd_thumb_url,\n    c.m_coll_bd_thumb_file AS m_coll_bd_thumb_file\nFROM\nfiles AS f\nLEFT JOIN movie AS m ON (m.video_id = f._id)\n       LEFT JOIN movie_posters AS mp ON ( m.m_poster_id = mp._id ) \n       LEFT JOIN movie_backdrops AS mb ON ( m.m_backdrop_id = mb._id )\nLEFT JOIN episode AS e ON (e.video_id = f._id)\n       LEFT JOIN show_posters AS ep ON ( e.e_poster_id = ep._id )\n   LEFT JOIN show AS s on (e.show_episode = s._id)\n       LEFT JOIN show_posters AS sp ON ( s.s_poster_id = sp._id ) \n       LEFT JOIN show_backdrops AS sb ON ( s.s_backdrop_id = sb._id )\nLEFT JOIN movie_collection AS c ON (c.m_coll_id = m.m_coll_id) \nWHERE\n    volume_hidden == 0 AND\n    media_type == 3 AND\n    (Archos_smbserver == 0 OR\n    Archos_smbserver IN (SELECT _id FROM smb_server WHERE active == 1))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 942,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L942"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEO_VIEW_V49",
+      "sql": "CREATE VIEW video AS SELECT \n    f._id,\n    _data,\n    _display_name,\n    _size,\n    mime_type,\n    date_added,\n    date_modified,\n    inserted,\n    coalesce( archos_title, title ) AS title,\n    title AS android_title,\n    archos_title,\n    duration,\n    artist,\n    album,\n    NULL AS resolution,\n    NULL AS description,\n    NULL AS isprivate,\n    NULL AS tags,\n    NULL AS category,\n    NULL AS language,\n    mini_thumb_data,\n    NULL AS latitude,\n    NULL AS longitude,\n    NULL AS datetaken,\n    mini_thumb_magic,\n    bucket_id,\n    bucket_display_name,\n    bookmark,\n    width,\n    height,\n    Archos_favorite_track,\n    Archos_bookmark,\n    Archos_lastTimePlayed,\n    Archos_playerParams,\n    Archos_playerSubtitleDelay,\n    ArchosMediaScraper_id,\n    ArchosMediaScraper_type,\n    Archos_numberOfSubtitleTracks,\n    subtitle_count_ext,\n    Archos_numberOfAudioTracks,\n    Archos_sampleRate,\n    Archos_numberOfChannels,\n    Archos_audioWaveCodec,\n    Archos_audioBitRate,\n    Archos_videoFourCCCodec,\n    Archos_videoBitRate,\n    Archos_framesPerThousandSeconds,\n    Archos_encodingProfile,\n    Archos_playerSubtitleRatio,\n    Archos_thumbTry,\n    Archos_hideFile,\n    Archos_hiddenByUser,\n    m._id AS m_id,\n    s._id AS s_id,\n    e._id AS e_id,\n    coalesce(name_movie, name_show) AS scraper_name,\n    name_movie AS m_name,\n    name_show AS s_name,\n    name_episode AS e_name,\n    season_episode AS e_season,\n    number_episode AS e_episode,\n    aired_episode AS e_aired,\n    premiered_show AS s_premiered,\n    year_movie AS m_year,\n    release_date_movie AS m_release_date,\n    coalesce(rating_movie, rating_episode) AS rating,\n    rating_movie AS m_rating,\n    rating_episode AS e_rating,\n    rating_show AS s_rating,\n    coalesce(m_online_id, s_online_id) AS online_id,\n    coalesce(m_online_id, e_online_id) AS video_online_id,\n    coalesce(m_imdb_id, s_imdb_id) AS imdb_id,\n    coalesce(m_content_rating, s_content_rating) AS content_rating,\n    m_online_id,\n    m_imdb_id,\n    m_content_rating,\n    s_online_id,\n    s_imdb_id,\n    s_content_rating,\n    e_online_id,\n    e_imdb_id,\n    coalesce(plot_movie, plot_episode) AS plot,\n    plot_movie AS m_plot,\n    plot_episode AS e_plot,\n    plot_show AS s_plot,\n    coalesce(m_actors, s_actors) AS actors,\n    m_actors,\n    s_actors,\n    e_actors,\n    coalesce(m_directors, e_directors) AS directors,\n    m_directors,\n    e_directors,\n    s_directors,\n    coalesce(m_writers, e_writers) AS writers,\n    m_writers,\n    e_writers,\n    s_writers,\n    coalesce(m_genres, s_genres) AS genres,\n    m_genres,\n    s_genres,\n    coalesce(m_studios, s_studios) AS studios,\n    m_studios,\n    s_studios,\n    coalesce(mp.m_po_large_file, cover_movie, ep.s_po_large_file, cover_episode, sp.s_po_large_file, cover_show) AS cover,\n    coalesce(mp.m_po_large_file, cover_movie) AS m_cover,\n    coalesce(ep.s_po_large_file, cover_episode) AS e_cover,\n    coalesce(sp.s_po_large_file, cover_show) AS s_cover,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie, sb.s_bd_large_url, backdrop_url_show) AS bd_url,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie) AS m_bd_url,\n    coalesce(sb.s_bd_large_url, backdrop_url_show) AS s_bd_url,\n    coalesce(mb.m_bd_large_file, backdrop_movie, sb.s_bd_large_file, backdrop_show) AS bd_file,\n    coalesce(mb.m_bd_large_file, backdrop_movie) AS m_bd_file,\n    coalesce(sb.s_bd_large_file, backdrop_show) AS s_bd_file,\n    coalesce(mp._id, ep._id, sp._id) AS poster_id,\n    coalesce(mp.m_po_thumb_url, ep.s_po_thumb_url, sp.s_po_thumb_url) AS po_thumb_url,\n    coalesce(mp.m_po_thumb_file, ep.s_po_thumb_file, sp.s_po_thumb_file) AS po_thumb_file,\n    coalesce(mp.m_po_large_url, ep.s_po_large_url, sp.s_po_large_url) AS po_large_url,\n    coalesce(mp.m_po_large_file, ep.s_po_large_file, sp.s_po_large_file) AS po_large_file,\n    coalesce(mb._id, sb._id) AS backdrop_id,\n    coalesce(mb.m_bd_thumb_url, sb.s_bd_thumb_url) AS bd_thumb_url,\n    coalesce(mb.m_bd_thumb_file, sb.s_bd_thumb_file) AS bd_thumb_file,\n    coalesce(mb.m_bd_large_url, sb.s_bd_large_url) AS bd_large_url,\n    coalesce(mb.m_bd_large_file, sb.s_bd_large_file) AS bd_large_file,\n    ep._id AS e_poster_id,\n    ep.s_po_thumb_url AS e_po_thumb_url,\n    ep.s_po_thumb_file AS e_po_thumb_file,\n    ep.s_po_large_url AS e_po_large_url,\n    ep.s_po_large_file AS e_po_large_file,\n    ep.s_po_season AS e_po_season,\n    sp._id AS s_poster_id,\n    sp.s_po_thumb_url,\n    sp.s_po_thumb_file,\n    sp.s_po_large_url,\n    sp.s_po_large_file,\n    sb._id AS s_backdrop_id,\n    sb.s_bd_thumb_url,\n    sb.s_bd_thumb_file,\n    sb.s_bd_large_url,\n    sb.s_bd_large_file,\n    mp._id AS m_poster_id,\n    mp.m_po_thumb_url,\n    mp.m_po_thumb_file,\n    mp.m_po_large_url,\n    mp.m_po_large_file,\n    mb._id AS m_backdrop_id,\n    mb.m_bd_thumb_url,\n    mb.m_bd_thumb_file,\n    mb.m_bd_large_url,\n    mb.m_bd_large_file,\n    autoscrape_status,\n    Archos_traktSeen,\n    Archos_traktLibrary,\n    Archos_videoStereo,\n    Archos_videoDefinition,\n    Archos_traktResume,\n    Archos_calculatedVideoFormat,\n    Archos_bestAudiotrackFormat,\n    Archos_guessedVideoFormat,\n    Archos_guessedAudioFormat,\n    picture_episode AS e_picture,\n    coalesce(m.Nova_pinned, s.Nova_pinned) AS Nova_pinned,\n    c.m_coll_id AS m_coll_id,\n    c.m_coll_name AS m_coll_name,\n    c.m_coll_description AS m_coll_description,\n    c.m_coll_po_large_url AS m_coll_po_large_url,\n    c.m_coll_po_large_file AS m_coll_po_large_file,\n    c.m_coll_bd_large_url AS m_coll_bd_large_url,\n    c.m_coll_bd_large_file AS m_coll_bd_large_file,\n    c.m_coll_po_thumb_url AS m_coll_po_thumb_url,\n    c.m_coll_po_thumb_file AS m_coll_po_thumb_file,\n    c.m_coll_bd_thumb_url AS m_coll_bd_thumb_url,\n    c.m_coll_bd_thumb_file AS m_coll_bd_thumb_file\nFROM\nfiles AS f\nLEFT JOIN movie AS m ON (m.video_id = f._id)\n       LEFT JOIN movie_posters AS mp ON ( m.m_poster_id = mp._id ) \n       LEFT JOIN movie_backdrops AS mb ON ( m.m_backdrop_id = mb._id )\nLEFT JOIN episode AS e ON (e.video_id = f._id)\n       LEFT JOIN show_posters AS ep ON ( e.e_poster_id = ep._id )\n   LEFT JOIN show AS s on (e.show_episode = s._id)\n       LEFT JOIN show_posters AS sp ON ( s.s_poster_id = sp._id ) \n       LEFT JOIN show_backdrops AS sb ON ( s.s_backdrop_id = sb._id )\nLEFT JOIN movie_collection AS c ON (c.m_coll_id = m.m_coll_id) \nWHERE\n    volume_hidden == 0 AND\n    media_type == 3 AND\n    (Archos_smbserver == 0 OR\n    Archos_smbserver IN (SELECT _id FROM smb_server WHERE active == 1))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1133,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1133"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEO_VIEW_V50",
+      "sql": "CREATE VIEW video AS SELECT \n    f._id,\n    _data,\n    _display_name,\n    _size,\n    mime_type,\n    date_added,\n    date_modified,\n    inserted,\n    coalesce( archos_title, title ) AS title,\n    coalesce( archos_title, title ) AS name,\n    title AS android_title,\n    archos_title,\n    duration,\n    artist,\n    album,\n    NULL AS resolution,\n    NULL AS description,\n    NULL AS isprivate,\n    NULL AS tags,\n    NULL AS category,\n    NULL AS language,\n    mini_thumb_data,\n    NULL AS latitude,\n    NULL AS longitude,\n    NULL AS datetaken,\n    mini_thumb_magic,\n    bucket_id,\n    bucket_display_name,\n    bookmark,\n    width,\n    height,\n    Archos_favorite_track,\n    Archos_bookmark,\n    Archos_lastTimePlayed,\n    Archos_playerParams,\n    Archos_playerSubtitleDelay,\n    Archos_subtitleLanguage,\n    ArchosMediaScraper_id,\n    ArchosMediaScraper_type,\n    Archos_numberOfSubtitleTracks,\n    subtitle_count_ext,\n    Archos_numberOfAudioTracks,\n    Archos_sampleRate,\n    Archos_numberOfChannels,\n    Archos_audioWaveCodec,\n    Archos_audioBitRate,\n    Archos_videoFourCCCodec,\n    Archos_videoBitRate,\n    Archos_framesPerThousandSeconds,\n    Archos_encodingProfile,\n    Archos_playerSubtitleRatio,\n    Archos_thumbTry,\n    Archos_hideFile,\n    Archos_hiddenByUser,\n    m._id AS m_id,\n    s._id AS s_id,\n    e._id AS e_id,\n    coalesce(name_movie, name_show) AS scraper_name,\n    name_movie AS m_name,\n    name_show AS s_name,\n    name_episode AS e_name,\n    season_episode AS e_season,\n    number_episode AS e_episode,\n    aired_episode AS e_aired,\n    premiered_show AS s_premiered,\n    year_movie AS m_year,\n    release_date_movie AS m_release_date,\n    coalesce(rating_movie, rating_episode) AS rating,\n    rating_movie AS m_rating,\n    rating_episode AS e_rating,\n    rating_show AS s_rating,\n    coalesce(m_online_id, s_online_id) AS online_id,\n    coalesce(m_online_id, e_online_id) AS video_online_id,\n    coalesce(m_imdb_id, s_imdb_id) AS imdb_id,\n    coalesce(m_content_rating, s_content_rating) AS content_rating,\n    m_online_id,\n    m_imdb_id,\n    m_content_rating,\n    s_online_id,\n    s_imdb_id,\n    s_content_rating,\n    e_online_id,\n    e_imdb_id,\n    coalesce(plot_movie, plot_episode) AS plot,\n    plot_movie AS m_plot,\n    plot_episode AS e_plot,\n    plot_show AS s_plot,\n    coalesce(m_actors, s_actors) AS actors,\n    m_actors,\n    s_actors,\n    e_actors,\n    coalesce(m_directors, e_directors) AS directors,\n    m_directors,\n    e_directors,\n    s_directors,\n    coalesce(m_writers, e_writers) AS writers,\n    m_writers,\n    e_writers,\n    s_writers,\n    coalesce(m_genres, s_genres) AS genres,\n    m_genres,\n    s_genres,\n    coalesce(m_studios, s_studios) AS studios,\n    m_studios,\n    s_studios,\n    coalesce(mp.m_po_large_file, cover_movie, ep.s_po_large_file, cover_episode, sp.s_po_large_file, cover_show) AS cover,\n    coalesce(mp.m_po_large_file, cover_movie) AS m_cover,\n    coalesce(ep.s_po_large_file, cover_episode) AS e_cover,\n    coalesce(sp.s_po_large_file, cover_show) AS s_cover,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie, sb.s_bd_large_url, backdrop_url_show) AS bd_url,\n    coalesce(mb.m_bd_large_url, backdrop_url_movie) AS m_bd_url,\n    coalesce(sb.s_bd_large_url, backdrop_url_show) AS s_bd_url,\n    coalesce(mb.m_bd_large_file, backdrop_movie, sb.s_bd_large_file, backdrop_show) AS bd_file,\n    coalesce(mb.m_bd_large_file, backdrop_movie) AS m_bd_file,\n    coalesce(sb.s_bd_large_file, backdrop_show) AS s_bd_file,\n    coalesce(mp._id, ep._id, sp._id) AS poster_id,\n    coalesce(mp.m_po_thumb_url, ep.s_po_thumb_url, sp.s_po_thumb_url) AS po_thumb_url,\n    coalesce(mp.m_po_thumb_file, ep.s_po_thumb_file, sp.s_po_thumb_file) AS po_thumb_file,\n    coalesce(mp.m_po_large_url, ep.s_po_large_url, sp.s_po_large_url) AS po_large_url,\n    coalesce(mp.m_po_large_file, ep.s_po_large_file, sp.s_po_large_file) AS po_large_file,\n    coalesce(mb._id, sb._id) AS backdrop_id,\n    coalesce(mb.m_bd_thumb_url, sb.s_bd_thumb_url) AS bd_thumb_url,\n    coalesce(mb.m_bd_thumb_file, sb.s_bd_thumb_file) AS bd_thumb_file,\n    coalesce(mb.m_bd_large_url, sb.s_bd_large_url) AS bd_large_url,\n    coalesce(mb.m_bd_large_file, sb.s_bd_large_file) AS bd_large_file,\n    ep._id AS e_poster_id,\n    ep.s_po_thumb_url AS e_po_thumb_url,\n    ep.s_po_thumb_file AS e_po_thumb_file,\n    ep.s_po_large_url AS e_po_large_url,\n    ep.s_po_large_file AS e_po_large_file,\n    ep.s_po_season AS e_po_season,\n    sp._id AS s_poster_id,\n    sp.s_po_thumb_url,\n    sp.s_po_thumb_file,\n    sp.s_po_large_url,\n    sp.s_po_large_file,\n    sb._id AS s_backdrop_id,\n    sb.s_bd_thumb_url,\n    sb.s_bd_thumb_file,\n    sb.s_bd_large_url,\n    sb.s_bd_large_file,\n    mp._id AS m_poster_id,\n    mp.m_po_thumb_url,\n    mp.m_po_thumb_file,\n    mp.m_po_large_url,\n    mp.m_po_large_file,\n    mb._id AS m_backdrop_id,\n    mb.m_bd_thumb_url,\n    mb.m_bd_thumb_file,\n    mb.m_bd_large_url,\n    mb.m_bd_large_file,\n    autoscrape_status,\n    Archos_traktSeen,\n    Archos_traktLibrary,\n    Archos_videoStereo,\n    Archos_videoDefinition,\n    Archos_traktResume,\n    Archos_calculatedVideoFormat,\n    Archos_bestAudiotrackFormat,\n    Archos_guessedVideoFormat,\n    Archos_guessedAudioFormat,\n    picture_episode AS e_picture,\n    coalesce(m.Nova_pinned, s.Nova_pinned) AS Nova_pinned,\n    c.m_coll_id AS m_coll_id,\n    c.m_coll_name AS m_coll_name,\n    c.m_coll_description AS m_coll_description,\n    c.m_coll_po_large_url AS m_coll_po_large_url,\n    c.m_coll_po_large_file AS m_coll_po_large_file,\n    c.m_coll_bd_large_url AS m_coll_bd_large_url,\n    c.m_coll_bd_large_file AS m_coll_bd_large_file,\n    c.m_coll_po_thumb_url AS m_coll_po_thumb_url,\n    c.m_coll_po_thumb_file AS m_coll_po_thumb_file,\n    c.m_coll_bd_thumb_url AS m_coll_bd_thumb_url,\n    c.m_coll_bd_thumb_file AS m_coll_bd_thumb_file\nFROM\nfiles AS f\nLEFT JOIN movie AS m ON (m.video_id = f._id)\n       LEFT JOIN movie_posters AS mp ON ( m.m_poster_id = mp._id ) \n       LEFT JOIN movie_backdrops AS mb ON ( m.m_backdrop_id = mb._id )\nLEFT JOIN episode AS e ON (e.video_id = f._id)\n       LEFT JOIN show_posters AS ep ON ( e.e_poster_id = ep._id )\n   LEFT JOIN show AS s on (e.show_episode = s._id)\n       LEFT JOIN show_posters AS sp ON ( s.s_poster_id = sp._id ) \n       LEFT JOIN show_backdrops AS sb ON ( s.s_backdrop_id = sb._id )\nLEFT JOIN movie_collection AS c ON (c.m_coll_id = m.m_coll_id) \nWHERE\n    volume_hidden == 0 AND\n    media_type == 3 AND\n    (Archos_smbserver == 0 OR\n    Archos_smbserver IN (SELECT _id FROM smb_server WHERE active == 1))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1325,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1325"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEOTHUMBNAIL_TABLE",
+      "sql": "CREATE TABLE videothumbnails (_id INTEGER PRIMARY KEY,_data TEXT,video_id INTEGER,kind INTEGER,width INTEGER,height INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1546,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1546"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEOTHUMBNAIL_TRIGGER_CLEANUP",
+      "sql": "CREATE TRIGGER videothumbnails_cleanup DELETE ON videothumbnails BEGIN SELECT _DELETE_FILE_J(old._data);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1550,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1550"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEOTHUMBNAIL_IDX_VIDEO_ID",
+      "sql": "CREATE INDEX video_id_index on videothumbnails(video_id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1555,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1555"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEO_IDX_LAST_PLAYED",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_video_last_played_desc ON files(Archos_lastTimePlayed DESC) WHERE Archos_lastTimePlayed > 0",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1559,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1559"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VIDEO_IDX_DATE_ADDED",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_video_date_added ON files(date_added DESC) WHERE date_added IS NOT NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1562,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1562"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_HIDDEN_BY_USER_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_files_hidden_by_user ON files(Archos_hiddenByUser) WHERE Archos_hiddenByUser = 0",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1567,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1567"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_BOOKMARK_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_files_bookmark ON files(bookmark) WHERE bookmark IS NOT NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1570,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1570"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TRAKT_SEEN_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_files_trakt_seen ON files(Archos_traktSeen)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1573,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1573"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_HIDDEN_BOOKMARK_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_files_hidden_bookmark ON files(Archos_hiddenByUser, bookmark, Archos_traktSeen)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1578,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1578"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_DATE_ADDED_FILTERED_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_files_date_added_filtered ON files(date_added DESC, Archos_hiddenByUser, bookmark) WHERE date_added IS NOT NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1581,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1581"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_LAST_PLAYED_FILTERED_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_files_last_played_filtered ON files(Archos_lastTimePlayed DESC, Archos_hiddenByUser, bookmark) WHERE Archos_lastTimePlayed > 0",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1584,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1584"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_TITLE_SEARCH_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_files_title_search ON files(title COLLATE NOCASE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1589,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1589"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_SUBTITLES_TABLE_V17",
+      "sql": "CREATE TABLE subtitles (\n    _id      INTEGER PRIMARY KEY AUTOINCREMENT,\n    _data    TEXT,\n    lang     TEXT,\n    _size     INTEGER,\n    video_id INTEGER REFERENCES files ( _id ) ON DELETE CASCADE\n                                              ON UPDATE CASCADE,\n    file_id  INTEGER NOT NULL\n                     REFERENCES files ( _id ) ON DELETE CASCADE\n                                              ON UPDATE CASCADE,\n    UNIQUE ( video_id, file_id )  ON CONFLICT IGNORE \n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1594,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1594"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_SUBTITLES_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER subtitle_insert\n       AFTER INSERT ON subtitles\n       WHEN NEW.video_id > 0\nBEGIN\n    UPDATE files\n       SET subtitle_count_ext = ( \n               SELECT count( * )\n                 FROM subtitles\n                WHERE video_id = NEW.video_id \n           )\n     WHERE _id = NEW.video_id;\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1607,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1607"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_SUBTITLES_DELETE_TRIGGER",
+      "sql": "CREATE TRIGGER subtitle_delete\n       AFTER DELETE ON subtitles\n       WHEN OLD.video_id > 0\nBEGIN\n    UPDATE files\n       SET subtitle_count_ext = ( \n               SELECT count( * )\n                 FROM subtitles\n                WHERE video_id = OLD.video_id \n           )\n     WHERE _id = OLD.video_id;\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1620,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1620"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_FILES_DELETE_TABLE",
+      "sql": "CREATE TABLE IF NOT EXISTS delete_files (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT REPLACE, use_count INTEGER);",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1634,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1634"
+    },
+    {
+      "symbol": "VideoOpenHelper.CREATE_VOB_INSERT_TABLE",
+      "sql": "CREATE TABLE IF NOT EXISTS vob_insert (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT REPLACE);",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1637,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1637"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_EPISODE_SEASON_EPISODE_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_episode_season_episode ON EPISODE(show_episode, season_episode, number_episode)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 85,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L85"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_YEAR_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_movie_year ON MOVIE(year_movie)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 88,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L88"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_RATING_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_movie_rating ON MOVIE(rating_movie)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 91,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L91"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_EPISODE_VIDEO_ID_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_episode_video_id ON EPISODE(video_id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 94,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L94"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_VIDEO_ID_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_movie_video_id ON MOVIE(video_id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 97,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L97"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_SHOW_RATING_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_show_rating ON SHOW(rating_show)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 102,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L102"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_EPISODE_AIRED_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_episode_aired ON EPISODE(aired_episode) WHERE aired_episode > 0",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 105,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L105"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_COLLECTION_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_movie_collection ON MOVIE(m_coll_id) WHERE m_coll_id > 0",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 108,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L108"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_EPISODE_SERIES_ORDERING_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_episode_series_ordering ON EPISODE(show_episode, season_episode, number_episode)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 113,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L113"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_COLLECTION_YEAR_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_movie_collection_year ON MOVIE(m_coll_id, year_movie) WHERE m_coll_id IS NOT NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 116,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L116"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_EPISODE_WATCHED_ORDERING_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_episode_watched_ordering ON EPISODE(show_episode, season_episode DESC, number_episode DESC)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 121,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L121"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_WATCHED_ORDERING_IDX",
+      "sql": "CREATE INDEX IF NOT EXISTS idx_movie_watched_ordering ON MOVIE(m_coll_id, year_movie DESC) WHERE m_coll_id IS NOT NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 124,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L124"
+    },
+    {
+      "symbol": "ScraperTables.MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE MOVIE (_id INTEGER PRIMARY KEY NOT NULL,video_id INTEGER NOT NULL UNIQUE ON CONFLICT REPLACE REFERENCES files(remote_id) ON DELETE CASCADE ON UPDATE CASCADE,name_movie TEXT,year_movie INTEGER,rating_movie FLOAT,plot_movie TEXT,cover_movie TEXT,overview_movie TEXT,backdrop_url_movie TEXT,backdrop_movie TEXT,m_backdrop_id INTEGER,m_poster_id INTEGER,m_online_id INTEGER,m_imdb_id TEXT,m_content_rating TEXT,m_actors TEXT,m_directors TEXT,m_genres TEXT,m_studios TEXT)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 177,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L177"
+    },
+    {
+      "symbol": "ScraperTables.SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE SHOW (_id INTEGER PRIMARY KEY NOT NULL,name_show TEXT UNIQUE,cover_show TEXT,premiered_show INTEGER,rating_show FLOAT,plot_show TEXT,backdrop_url_show TEXT,backdrop_show TEXT,s_backdrop_id INTEGER,s_poster_id INTEGER,s_online_id INTEGER,s_imdb_id TEXT,s_content_rating TEXT,s_actors TEXT,s_directors TEXT,s_genres TEXT,s_studios TEXT)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 201,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L201"
+    },
+    {
+      "symbol": "ScraperTables.EPISODE_TABLE_CREATE",
+      "sql": "CREATE TABLE EPISODE (_id INTEGER PRIMARY KEY NOT NULL,video_id INTEGER NOT NULL UNIQUE ON CONFLICT REPLACE REFERENCES files(remote_id) ON DELETE CASCADE ON UPDATE CASCADE,show_episode INTEGER REFERENCES SHOW ON DELETE RESTRICT ON UPDATE CASCADE,name_episode TEXT,aired_episode INTEGER,rating_episode FLOAT,plot_episode TEXT,number_episode INTEGER,season_episode INTEGER,cover_episode TEXT,e_poster_id INTEGER,e_online_id INTEGER,e_imdb_id TEXT,e_actors TEXT,e_directors TEXT,picture_episode TEXT)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 222,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L222"
+    },
+    {
+      "symbol": "ScraperTables.ACTORS_TABLE_CREATE",
+      "sql": "CREATE TABLE ACTOR (_id INTEGER PRIMARY KEY NOT NULL,name_actor TEXT UNIQUE,count_actor INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 244,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L244"
+    },
+    {
+      "symbol": "ScraperTables.GENRES_TABLE_CREATE",
+      "sql": "CREATE TABLE GENRE (_id INTEGER PRIMARY KEY NOT NULL,name_genre TEXT UNIQUE,count_genre INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 250,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L250"
+    },
+    {
+      "symbol": "ScraperTables.DIRECTORS_TABLE_CREATE",
+      "sql": "CREATE TABLE DIRECTOR (_id INTEGER PRIMARY KEY NOT NULL,name_director TEXT UNIQUE,count_director INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 256,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L256"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_TABLE_CREATE",
+      "sql": "CREATE TABLE WRITER (_id INTEGER PRIMARY KEY NOT NULL,name_writer TEXT UNIQUE,count_writer INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 262,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L262"
+    },
+    {
+      "symbol": "ScraperTables.STUDIOS_TABLE_CREATE",
+      "sql": "CREATE TABLE STUDIO (_id INTEGER PRIMARY KEY NOT NULL,name_studio TEXT UNIQUE,count_studio INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 268,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L268"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE FILMS_MOVIE (movie_films INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,director_films INTEGER REFERENCES DIRECTOR ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(movie_films,director_films))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 277,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L277"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE FILMS_SHOW (show_films INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,director_films INTEGER REFERENCES DIRECTOR ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(show_films,director_films))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 284,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L284"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_EPISODE_TABLE_CREATE",
+      "sql": "CREATE TABLE FILMS_EPISODE (episode_films INTEGER REFERENCES EPISODE ON DELETE CASCADE ON UPDATE CASCADE,director_films INTEGER REFERENCES DIRECTOR ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(episode_films,director_films))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 291,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L291"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE WRITERS_MOVIE (movie_writers INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,writer_writers INTEGER REFERENCES WRITER ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(movie_writers,writer_writers))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 302,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L302"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE WRITERS_SHOW (show_writers INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,writer_writers INTEGER REFERENCES WRITER ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(show_writers,writer_writers))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 309,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L309"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_EPISODE_TABLE_CREATE",
+      "sql": "CREATE TABLE WRITERS_EPISODE (episode_writers INTEGER REFERENCES EPISODE ON DELETE CASCADE ON UPDATE CASCADE,writer_writers INTEGER REFERENCES WRITER ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(episode_writers,writer_writers))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 316,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L316"
+    },
+    {
+      "symbol": "ScraperTables.PRODUCES_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE PRODUCES_MOVIE (movie_produces INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,studio_produces INTEGER REFERENCES STUDIO ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(movie_produces,studio_produces))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 326,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L326"
+    },
+    {
+      "symbol": "ScraperTables.PRODUCES_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE PRODUCES_SHOW (show_produces INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,studio_produces INTEGER REFERENCES STUDIO ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(show_produces,studio_produces))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 333,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L333"
+    },
+    {
+      "symbol": "ScraperTables.PLAYS_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE PLAYS_MOVIE (movie_plays INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,actor_plays INTEGER REFERENCES ACTOR ON DELETE RESTRICT ON UPDATE CASCADE,role_plays TEXT,PRIMARY KEY(movie_plays,actor_plays))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 343,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L343"
+    },
+    {
+      "symbol": "ScraperTables.PLAYS_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE PLAYS_SHOW (show_plays INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,actor_plays INTEGER REFERENCES ACTOR ON DELETE RESTRICT ON UPDATE CASCADE,role_plays TEXT,PRIMARY KEY(show_plays,actor_plays))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 351,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L351"
+    },
+    {
+      "symbol": "ScraperTables.GUESTS_TABLE_CREATE",
+      "sql": "CREATE TABLE GUESTS (episode_guests INTEGER REFERENCES EPISODE ON DELETE CASCADE ON UPDATE CASCADE,actor_guests INTEGER REFERENCES ACTOR ON DELETE RESTRICT ON UPDATE CASCADE,role_guests TEXT,PRIMARY KEY(episode_guests,actor_guests))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 359,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L359"
+    },
+    {
+      "symbol": "ScraperTables.BELONGS_MOVIE_TABLE_CREATE",
+      "sql": "CREATE TABLE BELONGS_MOVIE (movie_belongs INTEGER REFERENCES MOVIE ON DELETE CASCADE ON UPDATE CASCADE,genre_belongs INTEGER REFERENCES GENRE ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(movie_belongs,genre_belongs))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 370,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L370"
+    },
+    {
+      "symbol": "ScraperTables.BELONGS_SHOW_TABLE_CREATE",
+      "sql": "CREATE TABLE BELONGS_SHOW (show_belongs INTEGER REFERENCES SHOW ON DELETE CASCADE ON UPDATE CASCADE,genre_belongs INTEGER REFERENCES GENRE ON DELETE RESTRICT ON UPDATE CASCADE,PRIMARY KEY(show_belongs,genre_belongs))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 377,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L377"
+    },
+    {
+      "symbol": "ScraperTables.GUESTS_VIEW_CREATE",
+      "sql": "CREATE VIEW V_GUESTS AS SELECT GUESTS.episode_guests AS episode_v_guests, ACTOR._id AS actor_v_guests, ACTOR.name_actor AS name_v_guests, GUESTS.role_guests AS role_v_guests FROM GUESTS LEFT JOIN ACTOR ON (GUESTS.actor_guests = ACTOR._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 389,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L389"
+    },
+    {
+      "symbol": "ScraperTables.GUESTS_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_guests INSTEAD OF INSERT ON V_GUESTS BEGIN INSERT OR IGNORE INTO ACTOR ( name_actor ) VALUES (NEW.name_v_guests); INSERT INTO GUESTS ( episode_guests, role_guests, actor_guests ) SELECT NEW.episode_v_guests, NEW.role_v_guests, ACTOR._id  FROM ACTOR WHERE name_actor = NEW.name_v_guests; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 403,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L403"
+    },
+    {
+      "symbol": "ScraperTables.PLAYS_SHOW_VIEW_CREATE",
+      "sql": "CREATE VIEW V_PLAYS_SHOW AS SELECT PLAYS_SHOW.show_plays AS show_v_plays_show, ACTOR._id AS actor_v_plays_show, ACTOR.name_actor AS name_v_plays_show, PLAYS_SHOW.role_plays AS role_v_plays_show FROM PLAYS_SHOW LEFT JOIN ACTOR ON (PLAYS_SHOW.actor_plays = ACTOR._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 417,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L417"
+    },
+    {
+      "symbol": "ScraperTables.PLAYS_SHOW_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_plays_show INSTEAD OF INSERT ON V_PLAYS_SHOW BEGIN INSERT OR IGNORE INTO ACTOR ( name_actor ) VALUES (NEW.name_v_plays_show); INSERT OR REPLACE INTO PLAYS_SHOW ( show_plays, role_plays, actor_plays ) SELECT NEW.show_v_plays_show, NEW.role_v_plays_show, ACTOR._id  FROM ACTOR WHERE name_actor = NEW.name_v_plays_show; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 432,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L432"
+    },
+    {
+      "symbol": "ScraperTables.PLAYS_MOVIE_VIEW_CREATE",
+      "sql": "CREATE VIEW V_PLAYS_MOVIE AS SELECT PLAYS_MOVIE.movie_plays AS movie_v_plays_movie, ACTOR._id AS actor_v_plays_movie, ACTOR.name_actor AS name_v_plays_movie, PLAYS_MOVIE.role_plays AS role_v_plays_movie FROM PLAYS_MOVIE LEFT JOIN ACTOR ON (PLAYS_MOVIE.actor_plays = ACTOR._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 446,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L446"
+    },
+    {
+      "symbol": "ScraperTables.PLAYS_MOVIE_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_plays_movie INSTEAD OF INSERT ON V_PLAYS_MOVIE BEGIN INSERT OR IGNORE INTO ACTOR ( name_actor ) VALUES (NEW.name_v_plays_movie); INSERT INTO PLAYS_MOVIE ( movie_plays, role_plays, actor_plays ) SELECT NEW.movie_v_plays_movie, NEW.role_v_plays_movie, ACTOR._id  FROM ACTOR WHERE name_actor = NEW.name_v_plays_movie; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 460,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L460"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_MOVIE_VIEW_CREATE",
+      "sql": "CREATE VIEW V_FILMS_MOVIE AS SELECT FILMS_MOVIE.movie_films AS movie_v_films_movie, DIRECTOR.name_director AS name_v_films_movie, DIRECTOR._id AS director_v_films_movie FROM FILMS_MOVIE LEFT JOIN DIRECTOR ON (FILMS_MOVIE.director_films = DIRECTOR._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 474,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L474"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_MOVIE_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_films_movie INSTEAD OF INSERT ON V_FILMS_MOVIE BEGIN INSERT OR IGNORE INTO DIRECTOR ( name_director ) VALUES (NEW.name_v_films_movie); INSERT INTO FILMS_MOVIE ( movie_films,director_films ) SELECT NEW.movie_v_films_movie, DIRECTOR._id  FROM DIRECTOR WHERE name_director = NEW.name_v_films_movie; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 486,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L486"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_MOVIE_VIEW_CREATE",
+      "sql": "CREATE VIEW V_WRITERS_MOVIE AS SELECT WRITERS_MOVIE.movie_writers AS movie_v_writers_movie, WRITER.name_writer AS name_v_writers_movie, WRITER._id AS writer_v_writers_movie FROM WRITERS_MOVIE LEFT JOIN WRITER ON (WRITERS_MOVIE.writer_writers = WRITER._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 499,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L499"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_MOVIE_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_writers_movie INSTEAD OF INSERT ON V_WRITERS_MOVIE BEGIN INSERT OR IGNORE INTO WRITER ( name_writer ) VALUES (NEW.name_v_writers_movie); INSERT INTO WRITERS_MOVIE ( movie_writers,writer_writers ) SELECT NEW.movie_v_writers_movie, WRITER._id  FROM WRITER WHERE name_writer = NEW.name_v_writers_movie; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 511,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L511"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_SHOW_VIEW_CREATE",
+      "sql": "CREATE VIEW V_FILMS_SHOW AS SELECT FILMS_SHOW.show_films AS show_v_films_show, DIRECTOR.name_director AS name_v_films_show, DIRECTOR._id AS director_v_films_show FROM FILMS_SHOW LEFT JOIN DIRECTOR ON (FILMS_SHOW.director_films = DIRECTOR._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 524,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L524"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_SHOW_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_films_show INSTEAD OF INSERT ON V_FILMS_SHOW BEGIN INSERT OR IGNORE INTO DIRECTOR ( name_director ) VALUES (NEW.name_v_films_show); INSERT INTO FILMS_SHOW ( show_films,director_films ) SELECT NEW.show_v_films_show, DIRECTOR._id  FROM DIRECTOR WHERE name_director = NEW.name_v_films_show; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 536,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L536"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_EPISODE_VIEW_CREATE",
+      "sql": "CREATE VIEW V_FILMS_EPISODE AS SELECT FILMS_EPISODE.episode_films AS episode_v_films_episode, DIRECTOR.name_director AS name_v_films_episode, DIRECTOR._id AS director_v_films_episode FROM FILMS_EPISODE LEFT JOIN DIRECTOR ON (FILMS_EPISODE.director_films = DIRECTOR._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 549,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L549"
+    },
+    {
+      "symbol": "ScraperTables.FILMS_EPISODE_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_films_episode INSTEAD OF INSERT ON V_FILMS_EPISODE BEGIN INSERT OR IGNORE INTO DIRECTOR ( name_director ) VALUES (NEW.name_v_films_episode); INSERT INTO FILMS_EPISODE ( episode_films,director_films ) SELECT NEW.episode_v_films_episode, DIRECTOR._id  FROM DIRECTOR WHERE name_director = NEW.name_v_films_episode; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 561,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L561"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_SHOW_VIEW_CREATE",
+      "sql": "CREATE VIEW V_WRITERS_SHOW AS SELECT WRITERS_SHOW.show_writers AS show_v_writers_show, WRITER.name_writer AS name_v_writers_show, WRITER._id AS writer_v_writers_show FROM WRITERS_SHOW LEFT JOIN WRITER ON (WRITERS_SHOW.writer_writers = WRITER._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 574,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L574"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_SHOW_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_writers_show INSTEAD OF INSERT ON V_WRITERS_SHOW BEGIN INSERT OR IGNORE INTO WRITER ( name_writer ) VALUES (NEW.name_v_writers_show); INSERT INTO WRITERS_SHOW ( show_writers,writer_writers ) SELECT NEW.show_v_writers_show, WRITER._id  FROM WRITER WHERE name_writer = NEW.name_v_writers_show; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 586,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L586"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_EPISODE_VIEW_CREATE",
+      "sql": "CREATE VIEW V_WRITERS_EPISODE AS SELECT WRITERS_EPISODE.episode_writers AS episode_v_writers_episode, WRITER.name_writer AS name_v_writers_episode, WRITER._id AS writer_v_writers_episode FROM WRITERS_EPISODE LEFT JOIN WRITER ON (WRITERS_EPISODE.writer_writers = WRITER._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 599,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L599"
+    },
+    {
+      "symbol": "ScraperTables.WRITERS_EPISODE_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_writers_episode INSTEAD OF INSERT ON V_WRITERS_EPISODE BEGIN INSERT OR IGNORE INTO WRITER ( name_writer ) VALUES (NEW.name_v_writers_episode); INSERT INTO WRITERS_EPISODE ( episode_writers,writer_writers ) SELECT NEW.episode_v_writers_episode, WRITER._id  FROM WRITER WHERE name_writer = NEW.name_v_writers_episode; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 611,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L611"
+    },
+    {
+      "symbol": "ScraperTables.PRODUCES_MOVIE_VIEW_CREATE",
+      "sql": "CREATE VIEW V_PRODUCES_MOVIE AS SELECT PRODUCES_MOVIE.movie_produces AS movie_v_produces_movie, STUDIO.name_studio AS name_v_produces_movie, STUDIO._id AS studio_v_produces_movie FROM PRODUCES_MOVIE LEFT JOIN STUDIO ON (PRODUCES_MOVIE.studio_produces = STUDIO._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 628,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L628"
+    },
+    {
+      "symbol": "ScraperTables.PRODUCES_MOVIE_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_produces_movie INSTEAD OF INSERT ON V_PRODUCES_MOVIE BEGIN INSERT OR IGNORE INTO STUDIO ( name_studio ) VALUES (NEW.name_v_produces_movie); INSERT INTO PRODUCES_MOVIE ( movie_produces,studio_produces ) SELECT NEW.movie_v_produces_movie, STUDIO._id  FROM STUDIO WHERE name_studio = NEW.name_v_produces_movie; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 640,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L640"
+    },
+    {
+      "symbol": "ScraperTables.PRODUCES_SHOW_VIEW_CREATE",
+      "sql": "CREATE VIEW V_PRODUCES_SHOW AS SELECT PRODUCES_SHOW.show_produces AS show_v_produces_show, STUDIO.name_studio AS name_v_produces_show, STUDIO._id AS studio_v_produces_show FROM PRODUCES_SHOW LEFT JOIN STUDIO ON (PRODUCES_SHOW.show_produces = STUDIO._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 653,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L653"
+    },
+    {
+      "symbol": "ScraperTables.PRODUCES_SHOW_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_produces_show INSTEAD OF INSERT ON V_PRODUCES_SHOW BEGIN INSERT OR IGNORE INTO STUDIO ( name_studio ) VALUES (NEW.name_v_produces_show); INSERT INTO PRODUCES_SHOW ( show_produces,studio_produces ) SELECT NEW.show_v_produces_show, STUDIO._id  FROM STUDIO WHERE name_studio = NEW.name_v_produces_show; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 665,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L665"
+    },
+    {
+      "symbol": "ScraperTables.BELONGS_MOVIE_VIEW_CREATE",
+      "sql": "CREATE VIEW V_BELONGS_MOVIE AS SELECT BELONGS_MOVIE.movie_belongs AS movie_v_belongs_movie, GENRE.name_genre AS name_v_belongs_movie, GENRE._id AS genre_v_belongs_movie FROM BELONGS_MOVIE LEFT JOIN GENRE ON (BELONGS_MOVIE.genre_belongs = GENRE._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 678,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L678"
+    },
+    {
+      "symbol": "ScraperTables.BELONGS_MOVIE_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_belongs_movie INSTEAD OF INSERT ON V_BELONGS_MOVIE BEGIN INSERT OR IGNORE INTO GENRE ( name_genre ) VALUES (NEW.name_v_belongs_movie); INSERT INTO BELONGS_MOVIE ( movie_belongs,genre_belongs ) SELECT NEW.movie_v_belongs_movie, GENRE._id  FROM GENRE WHERE name_genre = NEW.name_v_belongs_movie; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 690,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L690"
+    },
+    {
+      "symbol": "ScraperTables.BELONGS_SHOW_VIEW_CREATE",
+      "sql": "CREATE VIEW V_BELONGS_SHOW AS SELECT BELONGS_SHOW.show_belongs AS show_v_belongs_show, GENRE.name_genre AS name_v_belongs_show, GENRE._id AS genre_v_belongs_show FROM BELONGS_SHOW LEFT JOIN GENRE ON (BELONGS_SHOW.genre_belongs = GENRE._id)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 703,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L703"
+    },
+    {
+      "symbol": "ScraperTables.BELONGS_SHOW_VIEW_INSERT_TRIGGER",
+      "sql": "CREATE TRIGGER insert_belongs_show INSTEAD OF INSERT ON V_BELONGS_SHOW BEGIN INSERT OR IGNORE INTO GENRE ( name_genre ) VALUES (NEW.name_v_belongs_show); INSERT INTO BELONGS_SHOW ( show_belongs,genre_belongs ) SELECT NEW.show_v_belongs_show, GENRE._id  FROM GENRE WHERE name_genre = NEW.name_v_belongs_show; END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 715,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L715"
+    },
+    {
+      "symbol": "ScraperTables.ACTOR_DELETABLE_VIEW_CREATE",
+      "sql": "CREATE VIEW v_actor_deletable AS SELECT _id FROM actor LEFT JOIN plays_movie ON plays_movie.actor_plays=actor._id LEFT JOIN plays_show ON plays_show.actor_plays=actor._id LEFT JOIN guests ON  guests.actor_guests = actor._id WHERE coalesce(movie_plays, show_plays, episode_guests) IS NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 728,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L728"
+    },
+    {
+      "symbol": "ScraperTables.DIRECTOR_DELETABLE_VIEW_CREATE",
+      "sql": "CREATE VIEW v_director_deletable AS SELECT _id FROM director LEFT JOIN films_movie ON films_movie.director_films=director._id LEFT JOIN films_show ON films_show.director_films=director._id LEFT JOIN films_episode ON films_episode.director_films=director._id WHERE coalesce(movie_films, show_films, episode_films) IS NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 735,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L735"
+    },
+    {
+      "symbol": "ScraperTables.WRITER_DELETABLE_VIEW_CREATE",
+      "sql": "CREATE VIEW v_writer_deletable AS SELECT _id FROM writer LEFT JOIN writers_movie ON writers_movie.writer_writers=writer._id LEFT JOIN writers_show ON writers_show.writer_writers=writer._id LEFT JOIN writers_episode ON writers_episode.writer_writers=writer._id WHERE coalesce(movie_writers, show_writers, episode_writers) IS NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 743,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L743"
+    },
+    {
+      "symbol": "ScraperTables.GENRE_DELETABLE_VIEW_CREATE",
+      "sql": "CREATE VIEW v_genre_deletable AS SELECT _id FROM genre LEFT JOIN belongs_show  ON belongs_show.genre_belongs=genre._id LEFT JOIN belongs_movie ON belongs_movie.genre_belongs=genre._id WHERE coalesce(movie_belongs, show_belongs) IS NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 751,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L751"
+    },
+    {
+      "symbol": "ScraperTables.STUDIO_DELETABLE_VIEW_CREATE",
+      "sql": "CREATE VIEW v_studio_deletable AS SELECT _id FROM studio LEFT JOIN produces_movie ON produces_movie.studio_produces=studio._id LEFT JOIN produces_show ON produces_show.studio_produces=studio._id WHERE coalesce(movie_produces, show_produces) IS NULL",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 757,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L757"
+    },
+    {
+      "symbol": "ScraperTables.EPISODE_DELETE_TRIGGER_CREATE",
+      "sql": "CREATE TRIGGER episode_delete AFTER DELETE ON episode BEGIN delete from actor where _id in (select _id from v_actor_deletable); delete from director where _id in (select _id from v_director_deletable); delete from studio where _id in (select _id from v_studio_deletable); delete from genre where _id in (select _id from v_genre_deletable); DELETE FROM SHOW WHERE SHOW._id = OLD.show_episode AND NOT EXISTS (SELECT 1 FROM EPISODE WHERE show_episode = OLD.show_episode LIMIT 1); UPDATE files SET ArchosMediaScraper_id=0, ArchosMediaScraper_type=0 WHERE ArchosMediaScraper_id = OLD._id AND ArchosMediaScraper_type = 2;END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 764,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L764"
+    },
+    {
+      "symbol": "ScraperTables.EPISODE_DELETE_TRIGGER_CREATE_v2",
+      "sql": "CREATE TRIGGER episode_delete AFTER DELETE ON episode BEGIN DELETE FROM SHOW WHERE SHOW._id = OLD.show_episode AND NOT EXISTS (SELECT 1 FROM EPISODE WHERE show_episode = OLD.show_episode LIMIT 1); UPDATE files SET ArchosMediaScraper_id=0, ArchosMediaScraper_type=0 WHERE ArchosMediaScraper_id = OLD._id AND ArchosMediaScraper_type = 2;END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 776,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L776"
+    },
+    {
+      "symbol": "ScraperTables.MOVIE_DELETE_TRIGGER_CREATE",
+      "sql": "CREATE TRIGGER movie_delete AFTER DELETE ON movie BEGIN delete from actor where _id in (select _id from v_actor_deletable); delete from director where _id in (select _id from v_director_deletable); delete from genre where _id in (select _id from v_genre_deletable); UPDATE files SET ArchosMediaScraper_id=0, ArchosMediaScraper_type=0 WHERE ArchosMediaScraper_id = OLD._id AND ArchosMediaScraper_type = 1;INSERT INTO delete_files(name,use_count) VALUES(OLD.cover_movie, (SELECT COUNT(cover_movie) FROM MOVIE  WHERE cover_movie = OLD.cover_movie));END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 785,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L785"
+    },
+    {
+      "symbol": "ScraperTables.MOVIE_DELETE_TRIGGER_CREATE_v2",
+      "sql": "CREATE TRIGGER movie_delete AFTER DELETE ON movie BEGIN UPDATE files SET ArchosMediaScraper_id=0, ArchosMediaScraper_type=0 WHERE ArchosMediaScraper_id = OLD._id AND ArchosMediaScraper_type = 1;INSERT INTO delete_files(name,use_count) VALUES(OLD.cover_movie, (SELECT COUNT(cover_movie) FROM MOVIE  WHERE cover_movie = OLD.cover_movie));END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 798,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L798"
+    },
+    {
+      "symbol": "ScraperTables.MOVIE_DELETE_TRIGGER_CREATE_v3",
+      "sql": "CREATE TRIGGER movie_delete AFTER DELETE ON movie BEGIN UPDATE files SET ArchosMediaScraper_id=0, ArchosMediaScraper_type=0 WHERE ArchosMediaScraper_id = OLD._id AND ArchosMediaScraper_type = 1;INSERT INTO delete_files(name,use_count) VALUES(OLD.cover_movie, (SELECT COUNT(cover_movie) FROM MOVIE WHERE cover_movie = OLD.cover_movie));DELETE FROM movie_collection WHERE m_coll_id = OLD.m_coll_id AND OLD.m_coll_id > 0 AND NOT EXISTS (SELECT 1 FROM MOVIE WHERE m_coll_id = OLD.m_coll_id);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 808,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L808"
+    },
+    {
+      "symbol": "ScraperTables.MOVIE_COLLECTION_REFERENCE_UPDATE_TRIGGER_CREATE",
+      "sql": "CREATE TRIGGER movie_collection_reference_update AFTER UPDATE OF m_coll_id ON MOVIE WHEN OLD.m_coll_id IS NOT NEW.m_coll_id BEGIN DELETE FROM movie_collection WHERE m_coll_id = OLD.m_coll_id AND OLD.m_coll_id > 0 AND NOT EXISTS (SELECT 1 FROM MOVIE WHERE m_coll_id = OLD.m_coll_id);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 821,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L821"
+    },
+    {
+      "symbol": "ScraperTables.SHOW_DELETE_TRIGGER_CREATE",
+      "sql": "CREATE TRIGGER show_delete AFTER DELETE ON show BEGIN delete from actor where _id in (select _id from v_actor_deletable); delete from director where _id in (select _id from v_director_deletable); delete from studio where _id in (select _id from v_studio_deletable); delete from genre where _id in (select _id from v_genre_deletable); INSERT INTO delete_files(name) VALUES(OLD.cover_show);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 833,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L833"
+    },
+    {
+      "symbol": "ScraperTables.SHOW_DELETE_TRIGGER_CREATE_v2",
+      "sql": "CREATE TRIGGER show_delete AFTER DELETE ON show BEGIN INSERT INTO delete_files(name) VALUES(OLD.cover_show);END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 842,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L842"
+    },
+    {
+      "symbol": "ScraperTables.MOVIE_INSERT_TRIGGER_CREATE",
+      "sql": "CREATE TRIGGER movie_insert AFTER INSERT ON movie BEGIN UPDATE files SET ArchosMediaScraper_id=NEW._id, ArchosMediaScraper_type=1 WHERE remote_id=NEW.video_id;END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 848,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L848"
+    },
+    {
+      "symbol": "ScraperTables.EPISODE_INSERT_TRIGGER_CREATE",
+      "sql": "CREATE TRIGGER episode_insert AFTER INSERT ON episode BEGIN UPDATE files SET ArchosMediaScraper_id=NEW._id, ArchosMediaScraper_type=2 WHERE remote_id=NEW.video_id;END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 855,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L855"
+    },
+    {
+      "symbol": "ScraperTables.ALL_VIDEOS_VIEW_CREATE_v24",
+      "sql": "CREATE VIEW v_all_videos AS SELECT '1' AS scraper_type, _id AS scraper_id, name_movie AS name, NULL AS name_episode, NULL AS number_episode, NULL AS season_episode, year_movie AS year_movie, NULL AS premiered_show, NULL AS aired_episode, rating_movie AS rating, NULL AS rating_episode, cover_movie AS cover, backdrop_movie AS backdrop, backdrop_url_movie AS backdrop_url, plot_movie AS plot, NULL AS plot_episode FROM movie UNION SELECT '2' AS scraper_type, episode._id AS scraper_id, name_show AS name, name_episode AS name_episode, number_episode AS number_episode, season_episode AS season_episode, NULL AS year_movie, premiered_show AS premiered_show, aired_episode AS aired_episode, rating_show AS rating, rating_episode AS rating_episode, coalesce(cover_episode, cover_show) AS cover, backdrop_show AS backdrop, backdrop_url_show AS backdrop_url, plot_show AS plot, plot_episode AS plot_episode FROM show LEFT JOIN episode ON show_episode = show._id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 863,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L863"
+    },
+    {
+      "symbol": "ScraperTables.VIEW_SEASONS_CREATE",
+      "sql": "CREATE VIEW v_seasons AS\nSELECT show_id, season, group_concat( episode_number ) AS episode_numbers,\n                  group_concat( episode_id ) AS episode_ids, group_concat( video_id ) AS video_ids,\n          count( video_id ) AS episode_count\n  FROM  ( \n    SELECT show_episode AS show_id, season_episode AS season, number_episode AS episode_number, _id AS episode_id, video_id\n      FROM episode\n     ORDER BY show_id, season, episode_number \n) \n GROUP BY show_id, season\n ORDER BY show_id, season",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 900,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L900"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_SHOW_GENRES",
+      "sql": "CREATE VIEW v_show_genres AS\n SELECT _id, group_concat( name_genre, ', ' ) AS genres\n  FROM  ( \n    SELECT show_belongs AS _id, name_genre\n      FROM belongs_show\n           LEFT JOIN genre\n                  ON ( genre_belongs = _id ) \n     ORDER BY belongs_show.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 917,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L917"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_MOVIE_GENRES",
+      "sql": "CREATE VIEW v_movie_genres AS\n SELECT _id, group_concat( name_genre, ', ' ) AS genres\n  FROM  ( \n    SELECT movie_belongs AS _id, name_genre\n      FROM belongs_movie\n           LEFT JOIN genre\n                  ON ( genre_belongs = _id ) \n     ORDER BY belongs_movie.ROWID \n) \nGROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 929,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L929"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_SHOW_DIRECTORS",
+      "sql": "CREATE VIEW v_show_directors AS\nSELECT _id, group_concat( name_director, ', ' ) AS directors\n  FROM  ( \n    SELECT show_films AS _id, name_director\n      FROM films_show\n           LEFT JOIN director\n                  ON ( director_films = _id ) \n     ORDER BY films_show.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 943,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L943"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_EPISODE_DIRECTORS",
+      "sql": "CREATE VIEW v_episode_directors AS\nSELECT _id, group_concat( name_director, ', ' ) AS directors\n  FROM  ( \n    SELECT episode_films AS _id, name_director\n      FROM films_episode\n           LEFT JOIN director\n                  ON ( director_films = _id ) \n     ORDER BY films_episode.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 955,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L955"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_MOVIE_DIRECTORS",
+      "sql": "CREATE VIEW v_movie_directors AS\nSELECT _id, group_concat( name_director, ', ' ) AS directors\n  FROM  ( \n    SELECT movie_films AS _id, name_director\n      FROM films_movie\n           LEFT JOIN director\n                  ON ( director_films = _id ) \n     ORDER BY films_movie.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 967,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L967"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_SHOW_WRITERS",
+      "sql": "CREATE VIEW v_show_writers AS\nSELECT _id, group_concat( name_writer, ', ' ) AS writers\n  FROM  ( \n    SELECT show_writers AS _id, name_writer\n      FROM writers_show\n           LEFT JOIN writer\n                  ON ( writer_writers = _id ) \n     ORDER BY writers_show.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 981,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L981"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_EPISODE_WRITERS",
+      "sql": "CREATE VIEW v_episode_writers AS\nSELECT _id, group_concat( name_writer, ', ' ) AS writers\n  FROM  ( \n    SELECT episode_writers AS _id, name_writer\n      FROM writers_episode\n           LEFT JOIN writer\n                  ON ( writer_writers = _id ) \n     ORDER BY writers_episode.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 993,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L993"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_MOVIE_WRITERS",
+      "sql": "CREATE VIEW v_movie_writers AS\nSELECT _id, group_concat( name_writer, ', ' ) AS writers\n  FROM  ( \n    SELECT movie_writers AS _id, name_writer\n      FROM writers_movie\n           LEFT JOIN writer\n                  ON ( writer_writers = _id ) \n     ORDER BY writers_movie.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1005,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1005"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_SHOW_ACTORS",
+      "sql": "CREATE VIEW v_show_actors AS\nSELECT _id, group_concat( actor_role, ', ' ) AS actors\n  FROM  ( \n    SELECT show_plays AS _id, CASE\n                WHEN role_plays IS NULL \n           OR\n           role_plays = '' THEN name_actor \n                ELSE name_actor || ' (' || role_plays || ')' \n           END AS actor_role\n      FROM plays_show\n           LEFT JOIN actor\n                  ON ( actor_plays = _id ) \n     ORDER BY plays_show.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1019,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1019"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_EPISODE_ACTORS",
+      "sql": "CREATE VIEW v_episode_actors AS\nSELECT _id, group_concat( actor_role, ', ' ) AS guests\n  FROM  ( \n    SELECT episode_guests AS _id, CASE\n                WHEN role_guests IS NULL \n           OR\n           role_guests = '' THEN name_actor \n                ELSE name_actor || ' (' || role_guests || ')' \n           END AS actor_role\n      FROM guests\n           LEFT JOIN actor\n                  ON ( actor_guests = _id ) \n     ORDER BY guests.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1036,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1036"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_MOVIE_ACTORS",
+      "sql": "CREATE VIEW v_movie_actors AS\nSELECT _id, group_concat( actor_role, ', ' ) AS actors\n  FROM  ( \n    SELECT movie_plays AS _id, CASE\n                WHEN role_plays IS NULL \n           OR\n           role_plays = '' THEN name_actor \n                ELSE name_actor || ' (' || role_plays || ')' \n           END AS actor_role\n      FROM plays_movie\n           LEFT JOIN actor\n                  ON ( actor_plays = _id ) \n     ORDER BY plays_movie.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1053,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1053"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_SHOW_STUDIOS",
+      "sql": "CREATE VIEW v_show_studios AS\nSELECT _id, group_concat( name_studio, ', ' ) AS studios\n  FROM  ( \n    SELECT show_produces AS _id, name_studio\n      FROM produces_show\n           LEFT JOIN studio\n                  ON ( studio_produces = _id ) \n     ORDER BY produces_show.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1072,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1072"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_VIEW_MOVIE_STUDIOS",
+      "sql": "CREATE VIEW v_movie_studios AS\nSELECT _id, group_concat( name_studio, ', ' ) AS studios\n  FROM  ( \n    SELECT movie_produces AS _id, name_studio\n      FROM produces_movie\n           LEFT JOIN studio\n                  ON ( studio_produces = _id ) \n     ORDER BY produces_movie.ROWID \n) \n GROUP BY _id",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1084,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1084"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_POSTERS_TABLE",
+      "sql": "CREATE TABLE movie_posters ( \n    _id             INTEGER PRIMARY KEY,\n    movie_id        INTEGER REFERENCES movie ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    m_po_thumb_url  TEXT,\n    m_po_thumb_file TEXT,\n    m_po_large_url  TEXT,\n    m_po_large_file TEXT\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1099,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1099"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_TRAILERS_TABLE",
+      "sql": "CREATE TABLE movie_trailers ( \n    _id             INTEGER PRIMARY KEY,\n    movie_id        INTEGER REFERENCES movie ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    m_t_key  TEXT,\n    m_t_site TEXT,\n    m_t_name  TEXT,\n    m_t_lang TEXT\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1111,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1111"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_POSTERS_DELETE_TRIGGER",
+      "sql": "CREATE TRIGGER movie_posters_delete\n       BEFORE DELETE ON movie_posters\nBEGIN\n    INSERT INTO delete_files(name,use_count) VALUES(OLD.m_po_large_file,(SELECT COUNT(cover_movie) FROM MOVIE  WHERE cover_movie = OLD.m_po_large_file));\n    INSERT INTO delete_files(name) VALUES(OLD.m_po_thumb_file);\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1121,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1121"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_BACKDROPS_TABLE",
+      "sql": "CREATE TABLE movie_backdrops ( \n    _id             INTEGER PRIMARY KEY,\n    movie_id        INTEGER REFERENCES movie ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    m_bd_thumb_url  TEXT,\n    m_bd_thumb_file TEXT,\n    m_bd_large_url  TEXT,\n    m_bd_large_file TEXT\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1135,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1135"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_BACKDROPS_DELETE_TRIGGER",
+      "sql": "CREATE TRIGGER movie_backdrops_delete\n       AFTER DELETE ON movie_backdrops\nBEGIN\n    INSERT INTO delete_files(name) VALUES ( OLD.m_bd_large_file );\n    INSERT INTO delete_files(name) VALUES ( OLD.m_bd_thumb_file );\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1145,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1145"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_SHOW_POSTERS_TABLE",
+      "sql": "CREATE TABLE show_posters ( \n    _id             INTEGER PRIMARY KEY,\n    show_id         INTEGER REFERENCES show ( _id ) ON DELETE CASCADE\n                                                    ON UPDATE CASCADE,\n    s_po_thumb_url  TEXT,\n    s_po_thumb_file TEXT UNIQUE ON CONFLICT IGNORE,\n    s_po_large_url  TEXT,\n    s_po_large_file TEXT UNIQUE ON CONFLICT IGNORE,\n    s_po_season     INTEGER DEFAULT ( -1 )\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1155,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1155"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_SHOW_POSTERS_DELETE_TRIGGER",
+      "sql": "CREATE TRIGGER show_posters_delete\n       AFTER DELETE ON show_posters\nBEGIN\n    INSERT INTO delete_files(name) VALUES ( OLD.s_po_large_file );\n    INSERT INTO delete_files(name) VALUES ( OLD.s_po_thumb_file );\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1166,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1166"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_SHOW_BACKDROPS_TABLE",
+      "sql": "CREATE TABLE show_backdrops ( \n    _id             INTEGER PRIMARY KEY,\n    show_id         INTEGER REFERENCES show ( _id ) ON DELETE CASCADE\n                                                    ON UPDATE CASCADE,\n    s_bd_thumb_url  TEXT,\n    s_bd_thumb_file TEXT UNIQUE ON CONFLICT IGNORE,\n    s_bd_large_url  TEXT,\n    s_bd_large_file TEXT UNIQUE ON CONFLICT IGNORE\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1176,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1176"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_SHOW_BACKDROPS_DELETE_TRIGGER",
+      "sql": "CREATE TRIGGER show_backdrops_delete\n       AFTER DELETE ON show_backdrops\nBEGIN\n    INSERT INTO delete_files(name) VALUES ( OLD.s_bd_large_file );\n    INSERT INTO delete_files(name) VALUES ( OLD.s_bd_thumb_file );\nEND",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1186,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1186"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_MOVIE_COLLECTION_TABLE",
+      "sql": "CREATE TABLE movie_collection ( \nm_coll_id INTEGER PRIMARY KEY NOT NULL,\nm_coll_name TEXT,\nm_coll_description TEXT,\nm_coll_po_large_url TEXT,\nm_coll_po_large_file TEXT UNIQUE ON CONFLICT IGNORE,\nm_coll_bd_large_url TEXT,\nm_coll_bd_large_file TEXT UNIQUE ON CONFLICT IGNORE,\nm_coll_po_thumb_url TEXT,\nm_coll_po_thumb_file TEXT UNIQUE ON CONFLICT IGNORE,\nm_coll_bd_thumb_url TEXT,\nm_coll_bd_thumb_file TEXT UNIQUE ON CONFLICT IGNORE\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1199,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1199"
+    },
+    {
+      "symbol": "ScraperTables.MOVIE_COLLECTION_DELETE_TRIGGER_CREATE",
+      "sql": "CREATE TRIGGER movie_collection_delete AFTER DELETE ON movie_collection BEGIN INSERT INTO delete_files(name) SELECT OLD.m_coll_po_large_file WHERE OLD.m_coll_po_large_file IS NOT NULL;INSERT INTO delete_files(name) SELECT OLD.m_coll_bd_large_file WHERE OLD.m_coll_bd_large_file IS NOT NULL;INSERT INTO delete_files(name) SELECT OLD.m_coll_po_thumb_file WHERE OLD.m_coll_po_thumb_file IS NOT NULL;INSERT INTO delete_files(name) SELECT OLD.m_coll_bd_thumb_file WHERE OLD.m_coll_bd_thumb_file IS NOT NULL;END",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1213,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1213"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_USER_COLLECTIONS_TABLE",
+      "sql": "CREATE TABLE user_collection (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL COLLATE NOCASE UNIQUE, sort_name TEXT NOT NULL DEFAULT '', position INTEGER NOT NULL DEFAULT 0, hidden INTEGER NOT NULL DEFAULT 0)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1226,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1226"
+    },
+    {
+      "symbol": "ScraperTables.CREATE_USER_COLLECTION_ITEMS_TABLE",
+      "sql": "CREATE TABLE user_collection_item (_id INTEGER PRIMARY KEY AUTOINCREMENT, collection_id INTEGER NOT NULL REFERENCES user_collection(_id) ON DELETE CASCADE, media_type INTEGER NOT NULL, media_id INTEGER NOT NULL, UNIQUE(collection_id, media_type, media_id))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1233,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1233"
+    },
+    {
+      "symbol": "ListTables.LIST_TABLE_CREATE",
+      "sql": "CREATE TABLE list_table (_id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,trakt_id INTEGER UNIQUE ON CONFLICT REPLACE,sync_status INTEGER)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ListTables.java",
+      "line": 29,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ListTables.java#L29"
+    },
+    {
+      "symbol": "ListTables.VIDEO_LIST_TABLE_CREATE",
+      "sql": "CREATE TABLE video_list_table (_id INTEGER PRIMARY KEY AUTOINCREMENT,list_id INTEGER REFERENCES list_table(_id) ON DELETE CASCADE,m_online_id INTEGER,e_online_id INTEGER,sync_status INTEGER,UNIQUE(list_id,m_online_id,e_online_id))",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ListTables.java",
+      "line": 38,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ListTables.java#L38"
+    },
+    {
+      "symbol": "NetworkCredentialsDatabase.DATABASE_CREATE_CREDENTIALS",
+      "sql": "create table credentials_table (path text not null primary key, username text, password text, domain text);",
+      "module": "FileCore",
+      "path": "src/com/archos/filecorelibrary/samba/NetworkCredentialsDatabase.java",
+      "line": 65,
+      "url": "https://github.com/nova-video-player/aos-FileCoreLibrary/blob/c4b760c55102c72d45f68b0d16999fc1f4f013a7/src/com/archos/filecorelibrary/samba/NetworkCredentialsDatabase.java#L65"
+    },
+    {
+      "symbol": "inline",
+      "sql": "create table shortcuts( _id integer primary key autoincrement, uri text not null, shortcut_name text not null, friendly_uri text );",
+      "module": "Supernova",
+      "path": "src/main/java/com/archos/mediacenter/video/browser/ShortcutDb.java",
+      "line": 227,
+      "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/browser/ShortcutDb.java#L227"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE shortcuts ADD COLUMN friendly_uri TEXT",
+      "module": "Supernova",
+      "path": "src/main/java/com/archos/mediacenter/video/browser/ShortcutDb.java",
+      "line": 238,
+      "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/browser/ShortcutDb.java#L238"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE history(identity TEXT PRIMARY KEY, completed INTEGER NOT NULL, started INTEGER NOT NULL, position INTEGER NOT NULL, duration INTEGER NOT NULL, played INTEGER NOT NULL, completed_at INTEGER NOT NULL)",
+      "module": "Supernova",
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java",
+      "line": 29,
+      "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java#L29"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE scopes (account_id INTEGER NOT NULL,folder_id INTEGER NOT NULL,source TEXT NOT NULL,generation INTEGER NOT NULL DEFAULT 0,ownership TEXT NOT NULL,complete_generation INTEGER NOT NULL DEFAULT -1,unresolved INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(account_id,folder_id))",
+      "module": "Supernova",
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java",
+      "line": 34,
+      "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java#L34"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE links (account_id INTEGER NOT NULL,file_id INTEGER NOT NULL,folder_id INTEGER NOT NULL,parent_id INTEGER NOT NULL,media_id INTEGER NOT NULL UNIQUE,size INTEGER NOT NULL,relative_path TEXT NOT NULL,missing INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(account_id,file_id))",
+      "module": "Supernova",
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java",
+      "line": 35,
+      "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java#L35"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE reassignments (account_id INTEGER NOT NULL,folder_id INTEGER NOT NULL,old_folder INTEGER NOT NULL,old_source TEXT NOT NULL,new_source TEXT NOT NULL,choice TEXT NOT NULL,PRIMARY KEY(account_id,folder_id))",
+      "module": "Supernova",
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java",
+      "line": 39,
+      "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java#L39"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE retired_sources (account_id INTEGER NOT NULL,source TEXT NOT NULL,gate_key TEXT NOT NULL,PRIMARY KEY(account_id,source))",
+      "module": "Supernova",
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java",
+      "line": 40,
+      "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAssociationStore.java#L40"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE files ADD COLUMN Archos_subtitleLanguage TEXT DEFAULT (NULL)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "line": 1915,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/VideoOpenHelper.java#L1915"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN Nova_pinned INTEGER DEFAULT (0)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1332,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1332"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN Nova_pinned INTEGER DEFAULT (0)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1333,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1333"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN m_coll_id INTEGER DEFAULT (-1)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1337,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1337"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN m_writers TEXT DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1378,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1378"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN s_writers TEXT DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1379,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1379"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE EPISODE ADD COLUMN e_writers TEXT DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1380,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1380"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN release_date_movie TEXT",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1428,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1428"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE movie_posters_new ( \n    _id             INTEGER PRIMARY KEY,\n    movie_id        INTEGER REFERENCES movie ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    m_po_thumb_url  TEXT,\n    m_po_thumb_file TEXT UNIQUE ON CONFLICT IGNORE,\n    m_po_large_url  TEXT,\n    m_po_large_file TEXT UNIQUE ON CONFLICT IGNORE\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1439,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1439"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE movie_posters_new RENAME TO movie_posters",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1457,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1457"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE movie_backdrops_new ( \n    _id             INTEGER PRIMARY KEY,\n    movie_id        INTEGER REFERENCES movie ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    m_bd_thumb_url  TEXT,\n    m_bd_thumb_file TEXT UNIQUE ON CONFLICT IGNORE,\n    m_bd_large_url  TEXT,\n    m_bd_large_file TEXT UNIQUE ON CONFLICT IGNORE\n)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1465,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1465"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE movie_backdrops_new RENAME TO movie_backdrops",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1478,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1478"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN original_language_movie TEXT NOT NULL DEFAULT 'und'",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1517,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1517"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN original_title_movie TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1519,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1519"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN spoken_languages_movie TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1521,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1521"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN original_language_show TEXT NOT NULL DEFAULT 'und'",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1523,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1523"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN original_title_show TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1525,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1525"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN spoken_languages_show TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1527,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1527"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN title_language_movie TEXT NOT NULL DEFAULT 'und'",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1547,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1547"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN title_language_show TEXT NOT NULL DEFAULT 'und'",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1549,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1549"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE MOVIE ADD COLUMN sort_name_movie TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1561,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1561"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE SHOW ADD COLUMN sort_name_show TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1563,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1563"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE movie_collection ADD COLUMN m_coll_sort_name TEXT NOT NULL DEFAULT ''",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1565,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1565"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE movie_posters_v56 (_id INTEGER PRIMARY KEY,movie_id INTEGER REFERENCES movie(_id) ON DELETE CASCADE ON UPDATE CASCADE,m_po_thumb_url TEXT,m_po_thumb_file TEXT,m_po_large_url TEXT,m_po_large_file TEXT,UNIQUE(movie_id,m_po_thumb_file) ON CONFLICT IGNORE,UNIQUE(movie_id,m_po_large_file) ON CONFLICT IGNORE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1634,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1634"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE movie_posters_v56 RENAME TO movie_posters",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1669,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1669"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE movie_backdrops_v56 (_id INTEGER PRIMARY KEY,movie_id INTEGER REFERENCES movie(_id) ON DELETE CASCADE ON UPDATE CASCADE,m_bd_thumb_url TEXT,m_bd_thumb_file TEXT,m_bd_large_url TEXT,m_bd_large_file TEXT,UNIQUE(movie_id,m_bd_thumb_file) ON CONFLICT IGNORE,UNIQUE(movie_id,m_bd_large_file) ON CONFLICT IGNORE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1676,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1676"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE movie_backdrops_v56 RENAME TO movie_backdrops",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1705,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1705"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE show_posters_v56 (_id INTEGER PRIMARY KEY,show_id INTEGER REFERENCES show(_id) ON DELETE CASCADE ON UPDATE CASCADE,s_po_thumb_url TEXT,s_po_thumb_file TEXT,s_po_large_url TEXT,s_po_large_file TEXT,s_po_season INTEGER DEFAULT(-1),UNIQUE(show_id,s_po_thumb_file) ON CONFLICT IGNORE,UNIQUE(show_id,s_po_large_file) ON CONFLICT IGNORE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1712,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1712"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE show_posters_v56 RENAME TO show_posters",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1753,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1753"
+    },
+    {
+      "symbol": "inline",
+      "sql": "CREATE TABLE show_backdrops_v56 (_id INTEGER PRIMARY KEY,show_id INTEGER REFERENCES show(_id) ON DELETE CASCADE ON UPDATE CASCADE,s_bd_thumb_url TEXT,s_bd_thumb_file TEXT,s_bd_large_url TEXT,s_bd_large_file TEXT,UNIQUE(show_id,s_bd_thumb_file) ON CONFLICT IGNORE,UNIQUE(show_id,s_bd_large_file) ON CONFLICT IGNORE)",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1760,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1760"
+    },
+    {
+      "symbol": "inline",
+      "sql": "ALTER TABLE show_backdrops_v56 RENAME TO show_backdrops",
+      "module": "MediaLib",
+      "path": "src/com/archos/mediaprovider/video/ScraperTables.java",
+      "line": 1789,
+      "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/ScraperTables.java#L1789"
+    }
+  ],
+  "unresolved": []
+}

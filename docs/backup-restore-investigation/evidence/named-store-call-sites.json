@@ -1,0 +1,362 @@
+[
+  {
+    "store": "player",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java",
+    "line": 1065,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java#L1065",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "player",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java",
+    "line": 1279,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java#L1279",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "MediaCenter",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/player/PlayerController.java",
+    "line": 772,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/player/PlayerController.java#L772",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "MediaCenter",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/browser/NewVideosActionProvider.java",
+    "line": 106,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/browser/NewVideosActionProvider.java#L106",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "opensubtitles_credentials",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SubtitlesDownloaderActivity2.java",
+    "line": 305,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SubtitlesDownloaderActivity2.java#L305",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: name",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+    "line": 140,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java#L140",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "opensubtitles_credentials",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+    "line": 141,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java#L141",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: entry.getKey()",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+    "line": 153,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java#L153",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "opensubtitles_credentials",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java",
+    "line": 157,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SafeBackup.java#L157",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: key",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/RestoreJournal.java",
+    "line": 54,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/RestoreJournal.java#L54",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "opensubtitles_credentials",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesCredentialsDialog.java",
+    "line": 71,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesCredentialsDialog.java#L71",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "opensubtitles_credentials",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/VideoPreferencesCommon.java",
+    "line": 1143,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/VideoPreferencesCommon.java#L1143",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: name",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/MigrationBackup.java",
+    "line": 18,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/MigrationBackup.java#L18",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: name",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/MigrationBackup.java",
+    "line": 22,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/MigrationBackup.java#L22",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "opensubtitles_credentials",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesApiHelper.java",
+    "line": 597,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesApiHelper.java#L597",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "supernova-subtitle-discovery-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/utils/SubtitleDiscovery.java",
+    "line": 26,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/utils/SubtitleDiscovery.java#L26",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java",
+    "line": 12,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java#L12",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java",
+    "line": 19,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java#L19",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java",
+    "line": 26,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java#L26",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java",
+    "line": 22,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java#L22",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java",
+    "line": 32,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java#L32",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview_discovery",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewDiscovery.java",
+    "line": 26,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewDiscovery.java#L26",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview-technical-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java",
+    "line": 32,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java#L32",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview-technical-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java",
+    "line": 46,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java#L46",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview-technical-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java",
+    "line": 53,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java#L53",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview_title_logos",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/OfficialTitleArtwork.java",
+    "line": 65,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/OfficialTitleArtwork.java#L65",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview-technical-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewVariants.java",
+    "line": 99,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/PreviewVariants.java#L99",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java",
+    "line": 27,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java#L27",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java",
+    "line": 50,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java#L50",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "supernova_diagnostic_session",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 108,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L108",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "supernova_diagnostic_session",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 386,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L386",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "supernova_diagnostic_session",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java",
+    "line": 392,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java#L392",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "opensubtitles_credentials",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java",
+    "line": 15,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java#L15",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "opensubtitles_credentials",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java",
+    "line": 19,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/settings/InlineOpenSubtitles.java#L19",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview-extra-duration",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewExtraDuration.java",
+    "line": 12,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewExtraDuration.java#L12",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview_tv_trailers",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewTvTrailers.java",
+    "line": 12,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewTvTrailers.java#L12",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "preview_people",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewPeople.java",
+    "line": 14,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewPeople.java#L14",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+    "line": 591,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java#L591",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "unresolved: com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingSearchFragment.java",
+    "line": 285,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingSearchFragment.java#L285",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "putio-library-selection-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioSync.java",
+    "line": 77,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioSync.java#L77",
+    "backup": "group-allowlisted, accepted keys only"
+  },
+  {
+    "store": "putio-library-selection-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java",
+    "line": 40,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L40",
+    "backup": "group-allowlisted, accepted keys only"
+  },
+  {
+    "store": "putio-library-selection-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioRootLocation.java",
+    "line": 35,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioRootLocation.java#L35",
+    "backup": "group-allowlisted, accepted keys only"
+  },
+  {
+    "store": "putio-library-selection-v1",
+    "module": "Supernova",
+    "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioRootLocation.java",
+    "line": 44,
+    "url": "https://github.com/heretoecode/Supernova/blob/b3504c2c4b1725f3070416d14b63e53ae1db3d74/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioRootLocation.java#L44",
+    "backup": "group-allowlisted, accepted keys only"
+  },
+  {
+    "store": "MediaCenter",
+    "module": "MediaLib",
+    "path": "src/com/archos/mediacenter/cover/LibraryUtils.java",
+    "line": 164,
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediacenter/cover/LibraryUtils.java#L164",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  },
+  {
+    "store": "MediaCenter",
+    "module": "MediaLib",
+    "path": "src/com/archos/mediacenter/cover/LibraryUtils.java",
+    "line": 169,
+    "url": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediacenter/cover/LibraryUtils.java#L169",
+    "backup": "not an allowlisted named group; default-store wrappers require contextual resolution"
+  }
+]
