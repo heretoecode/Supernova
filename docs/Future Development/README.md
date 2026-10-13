@@ -57,3 +57,14 @@ The following **additional historical discussion-only candidates** were found in
 **Evidence audit:** The register was cross-checked against [the 10 October future discussion backlog](../project/SUPERNOVA_FUTURE_DISCUSSION_BACKLOG_2026-10-10.md), [historical parked design](../design/PARKED_FUTURE.md), [post-0.139 backlog](../project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md), and [current roadmap](../project-decisions/CURRENT_ROADMAP_AND_DECISIONS.md). Those documents contain chronological, sometimes superseded decisions; the latest explicit owner approval controls. Not every prior chat, external Claude design or video/mock-up has a verified GitHub asset. **Do not claim a complete image/conversation archive.**
 
 **Follow-up reconciliation required:** the historically approved custom Library Page and About Settings designs need comparison with active 0.139 scope/current shipped behaviour before being categorised as unscheduled; branding was reported completed. Put.io is only *provisionally* proposed for 0.140. The age overlay is approved but has **no assigned release**.
+
+## Repository-wide reconciliation update
+See [13 October documentation audit and status corrections](REPOSITORY_WIDE_RECONCILIATION_2026-10-13.md). Important corrections:
+- **FD-014** single custom Library Page: explicitly approved **for historical 0.135 scope**, **not** a fresh unscheduled item; check installed/active code before treating it as incomplete.
+- **FD-031** About five subsections: **approved design**, not awaiting a fresh design discussion; implementation/release verification outstanding.
+- **FD-030** seek-bar/end-time refinement: **parked**, with detailed preferred layout retained; separate from broader FD-002 HUD redesign and **previously approved 0.135 four-button HUD**.
+- **FD-032** Google Drive release publishing: parked **operational** workflow.
+- Branding/icon/banner/signing: owner-reported implemented, not new work.
+- 0.139 authorised scope and Stage D maintenance stay in their own authoritative release tracks, not duplicated as new ideas.
+
+The reconciliation inventory counted **170 documentation Markdown/text files**, with targeted reading of central planning/decision documents; it does not certify line-by-line review of every file or every conversation. Do not claim otherwise.
