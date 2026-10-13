@@ -23,6 +23,7 @@ public final class PortableTitleReferences {
         if(entry!=null&&entry.onlineId>0)return (entry.media instanceof Tvshow?"tmdb:tv:":"tmdb:movie:")+entry.onlineId;
         return "unresolved:"+origin+":"+sourceKey;
     }
+    public String origin(){return origin;}
     public static void validate(String reference)throws JSONException{
         if(!reference.matches("(?:tmdb:(?:movie|tv):[1-9][0-9]{0,18}|unresolved:[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}:[vs][1-9][0-9]{0,18})"))throw new JSONException("Unsafe or unsupported logical title reference");
     }

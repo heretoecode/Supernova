@@ -53,3 +53,7 @@ PASS requires behavioral evidence for the stated check; source changes alone nev
 ## Customise Home stage receipt
 
 Source `90eb2ee14c466d65e2b2590cd657139e88953f5d`: **PASS** 33 selected unit/Android-native regression tests, nine classes, no failures/errors/skips. See `CUSTOMISE_HOME_VERIFICATION.json` and `ui/customise-home/`. Measured ancestor bounds verify the controls within the dialog at 960×540 and the small-viewport focus route at 640×360. Active setting text retains the deliberate selected accent; focus uses a white external outline. These results establish subchecks of C01–C12/V01–V05, not complete workstream acceptance. Connected Genres geometry, large-font/physical-density coverage, held-key persistence matrix, compositor blur and Shield verification remain **BLOCKED** or pending.
+
+## Full staged regression retest
+
+Source `7042a3cdf1dc0c6e7b67fc8c54934522fb1c5a37`: **PASS** 656 tests across163 classes, no failures/errors/skips; full unfiltered `testNoamazonReleaseUnitTest`,11m57s. See `FULL_STAGED_RETEST_VERIFICATION.json`. Native builds were excluded. This does not pass incomplete production integration, unavailable hardware, signing or complete workstream acceptance. The earlier635-test/two-failure receipt remains preserved.
