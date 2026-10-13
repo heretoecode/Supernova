@@ -66,3 +66,6 @@ Library statistics/header redesign; Shield launcher channels and 'Show on Shield
 
 ## 6. Initial Codex response expected
 Return: exact repository/branch/base SHA, authoritative docs reviewed, conflicts/other active branches identified, ordered implementation plan and 43-row traceability matrix. Then proceed with approved 0.139 implementation in safe stages; do not wait for another generic authorisation, but request owner input for genuine blockers and final merge/release.
+
+## 2026-10-13 owner clarification — hero / Continue Watching hierarchy
+**Continue Watching is king.** Hero should surface eligible not-yet-started titles, including the **next newly available episode** when the user has watched preceding episodes (e.g. episodes 1 and 2 watched, episode 3 newly added). Once the featured movie or episode **actually begins playback successfully**, it leaves hero eligibility and belongs to Continue Watching. Never promote already in-progress titles to hero, and **do not implement an unapproved hero 'More Info' -> 'Resume' switch**. Ensure episode-level eligibility and state changes are covered by tests. Do not mistake mere Play click or Preparing Playback screen for confirmed playback.
