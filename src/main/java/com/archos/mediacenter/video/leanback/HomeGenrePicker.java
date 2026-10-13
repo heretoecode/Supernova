@@ -34,7 +34,7 @@ final class HomeGenrePicker {
     private HomeGenrePicker() { }
     static void show(Context context, PreviewHomeRows.Row row, Consumer<Set<String>> accept) {
         Dialog dialog = PreviewDialog.create(context, "choice"); dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        LinearLayout panel = new LinearLayout(context); panel.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout panel = new MenuFoundation.WindowPanel(context); panel.setOrientation(LinearLayout.VERTICAL);
         panel.setTag("home.genres.panel"); panel.setPadding(dp(context, 16), dp(context, 14), dp(context, 16), dp(context, 18));
         panel.setBackground(MenuFoundation.surface(context, false));
         panel.addView(MenuFoundation.text(context, "Genres", 21));

@@ -73,6 +73,20 @@ public final class MenuFoundation {
         return states;
     }
 
+    /** Tracks the window boundary, so a covered parent never displays a second focus outline. */
+    public static final class WindowPanel extends android.widget.LinearLayout {
+        boolean active = true;
+        public WindowPanel(Context context) { super(context); }
+        @Override public void onWindowFocusChanged(boolean focused) {
+            super.onWindowFocusChanged(focused); active = focused; invalidateChildren(this);
+        }
+        private static void invalidateChildren(View view) {
+            view.invalidate();
+            if (view instanceof android.view.ViewGroup) for (int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)
+                invalidateChildren(((android.view.ViewGroup)view).getChildAt(i));
+        }
+    }
+
     /** Focus adds only a soft-white perimeter. It never recolours text or fills with accent. */
     private static final class Outline extends Drawable {
         private final Drawable resting;
@@ -90,7 +104,12 @@ public final class MenuFoundation {
             resting.setBounds(getBounds()); resting.draw(canvas);
             Drawable.Callback owner=getCallback();
             while(owner instanceof Drawable)owner=((Drawable)owner).getCallback();
-            if(owner instanceof View&&!((View)owner).hasWindowFocus())return;
+            if(owner instanceof View){
+                View view=(View)owner; boolean tracked=false;
+                while(view!=null){if(view instanceof WindowPanel){tracked=true;if(!((WindowPanel)view).active)return;break;}
+                    view=view.getParent() instanceof View?(View)view.getParent():null;}
+                if(!tracked&&!((View)owner).hasWindowFocus())return;
+            }
             RectF border = new RectF(getBounds()); border.inset(-stroke / 2, -stroke / 2);
             canvas.drawRoundRect(border, radius, radius, paint);
         }

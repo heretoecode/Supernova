@@ -42,20 +42,22 @@ final class CustomiseHomeEditor {
         this.context = context; this.model = model; this.changed = changed;
         dialog = PreviewDialog.create(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        screen = column(); screen.setTag("home.editor");
+        screen = new MenuFoundation.WindowPanel(context);screen.setOrientation(LinearLayout.VERTICAL);screen.setClipChildren(false);screen.setClipToPadding(false); screen.setTag("home.editor");
         screen.setPadding(dp(18), dp(16), dp(18), dp(16));
         screen.setBackground(MenuFoundation.surface(context, false));
         TextView heading = MenuFoundation.text(context, "Customise Home", 23);
-        screen.addView(heading);
+
         hint = MenuFoundation.text(context, "OK to move a row · Right to edit · Back to return", 12);
-        hint.setTextColor(MenuFoundation.SECONDARY); hint.setPadding(0, dp(8), 0, dp(12)); screen.addView(hint);
+        hint.setTextColor(MenuFoundation.SECONDARY); hint.setPadding(0, dp(8), 0, dp(12));
         LinearLayout columns = new LinearLayout(context); columns.setClipChildren(false);
         screen.addView(columns, new LinearLayout.LayoutParams(-1, 0, 1));
+        LinearLayout left = column();left.addView(heading);left.addView(hint);
+        columns.addView(left,new LinearLayout.LayoutParams(0,-1,.37f));
         ScrollView rows = new ScrollView(context); rows.setFillViewport(true); rows.setClipToPadding(false);
         list = column(); list.setPadding(dp(3), dp(3), dp(3), dp(8)); rows.addView(list);
-        columns.addView(rows, new LinearLayout.LayoutParams(0, -1, .37f));
+        left.addView(rows,new LinearLayout.LayoutParams(-1,0,1));
         ScrollView viewport = new ScrollView(context); viewport.setFillViewport(true); viewport.setClipToPadding(false);
-        editor = column(); editor.setTag("home.editor.context"); editor.setPadding(dp(16), dp(14), dp(16), dp(14));
+        editor = column(); editor.setTag("home.editor.context"); editor.setPadding(dp(16), dp(10), dp(16), dp(10));
         editor.setBackground(MenuFoundation.surface(context, true)); viewport.addView(editor);
         LinearLayout.LayoutParams right = new LinearLayout.LayoutParams(0, -1, .63f); right.leftMargin = dp(18);
         columns.addView(viewport, right);
@@ -182,18 +184,28 @@ final class CustomiseHomeEditor {
         hint.setText("OK to move a row · Right to edit · Back to return");
     }
     private void restore(Object anchor) { if (anchor != null) { View view = screen.findViewWithTag(anchor); if (view != null) view.requestFocus(); } }
-    private void firstField() { if (!fields.isEmpty()) fields.get(0).requestFocus(); }
+    private void firstField() { View name=editor.findViewWithTag("home.editor.name");if(name!=null)name.requestFocus();else if(!fields.isEmpty())fields.get(0).requestFocus(); }
 
     private TextView heading(String title) {
-        TextView text = MenuFoundation.text(context, title, 12); text.setTextColor(MenuFoundation.SECONDARY);
-        LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-1, -2); size.topMargin = dp(12); size.bottomMargin = dp(6);
+        TextView text = MenuFoundation.text(context, title, 11); text.setTextColor(MenuFoundation.SECONDARY);
+        LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-1, -2); size.topMargin = dp(6); size.bottomMargin = dp(4);
         editor.addView(text, size); return text;
     }
     private <T extends View> T field(T view, String tag) { view.setTag(tag); fields.add(view); return view; }
     private void renderEditor() {
         editor.removeAllViews(); fields.clear(); final Row row = selected;
         TextView title = MenuFoundation.text(context, row.name.isEmpty() ? "New Row" : shortLabel(row), 20);
-        MenuFoundation.icon(title, PreviewHomeRows.iconName(row)); editor.addView(title);
+        MenuFoundation.icon(title, PreviewHomeRows.iconName(row));
+        if(!row.custom())editor.addView(title);
+        else {
+            LinearLayout titleLine=new LinearLayout(context);titleLine.setGravity(Gravity.CENTER_VERTICAL);titleLine.setClipChildren(false);
+            titleLine.addView(title,new LinearLayout.LayoutParams(0,-2,1));
+            TextView remove=field(MenuFoundation.control(context,"","delete",()->confirm("Delete Row?","Titles remain in your library. Only this Home row is removed.","Cancel","Delete Row",()->{
+                if(row==draft)draft=null;else{model.rows.remove(row);committed();}
+                selected=model.rows.get(0);renderRows();renderEditor();bodies.get(0).requestFocus();
+            })),"home.editor.delete");remove.setContentDescription("Delete Row");
+            titleLine.addView(remove,new LinearLayout.LayoutParams(dp(44),-2));editor.addView(titleLine);
+        }
         if (!row.custom()) {
             TextView description = MenuFoundation.text(context, builtInDescription(row.id), 14);
             description.setTextColor(MenuFoundation.SECONDARY); description.setPadding(0, dp(14), 0, dp(12)); editor.addView(description);
@@ -262,29 +274,26 @@ final class CustomiseHomeEditor {
         LinearLayout display = new LinearLayout(context); display.setClipChildren(false);
         String[] methods = {"Date Added", "Title", "Year"}, keys = {"added", "title", "year"};
         InlineMenuSelector sort = field(new InlineMenuSelector(context, methods, Math.max(0, Arrays.asList(keys).indexOf(row.sort)), "sort", value -> { row.sort = keys[value]; saveRow(row); }), "home.editor.sort");
-        display.addView(sort, new LinearLayout.LayoutParams(0, -2, 1.15f));
+        display.addView(sort, new LinearLayout.LayoutParams(dp(158), -2));
         TextView direction = field(MenuFoundation.control(context, row.descending ? "Descending" : "Ascending", "order", () -> {
             row.descending = !row.descending; saveRow(row); renderEditor(); restore("home.editor.direction");
         }), "home.editor.direction"); direction.setTextSize(14 * TvLayout.scale(context));
         Drawable arrow = new PreviewIcon(row.descending ? "arrow-down" : "arrow-up"); arrow.setBounds(0, 0, dp(14), dp(14));
         direction.setCompoundDrawables(direction.getCompoundDrawables()[0], null, arrow, null);
-        LinearLayout.LayoutParams dirSize = new LinearLayout.LayoutParams(0, -2, 1.1f); dirSize.leftMargin = dp(8); display.addView(direction, dirSize);
+        LinearLayout.LayoutParams dirSize = new LinearLayout.LayoutParams(dp(164), -2); dirSize.leftMargin = dp(8); display.addView(direction, dirSize);
         String[] limits = {"5", "10", "15", "20", "25", "30"};
         InlineMenuSelector maximum = field(new InlineMenuSelector(context, limits, Math.max(0, Arrays.asList(limits).indexOf(String.valueOf(row.maximum))), "list", value -> { row.maximum = PreviewHomeRows.MAXIMUM_PRESETS[value]; saveRow(row); }), "home.editor.maximum");
         maximum.setContentDescription("Maximum Items, " + row.maximum + ", OK to edit");
-        LinearLayout.LayoutParams limitSize = new LinearLayout.LayoutParams(0, -2, .75f); limitSize.leftMargin = dp(8); display.addView(maximum, limitSize); editor.addView(display);
-        TextView remove = field(MenuFoundation.control(context, "Delete Row", "delete", () -> confirm("Delete Row?", "Titles remain in your library. Only this Home row is removed.", "Cancel", "Delete Row", () -> {
-            if (row == draft) draft = null; else { model.rows.remove(row); committed(); }
-            selected = model.rows.get(0); renderRows(); renderEditor(); bodies.get(0).requestFocus();
-        })), "home.editor.delete");
-        LinearLayout.LayoutParams removeSize = new LinearLayout.LayoutParams(-1, -2); removeSize.topMargin = dp(12); editor.addView(remove, removeSize);
+        LinearLayout.LayoutParams limitSize = new LinearLayout.LayoutParams(dp(88), -2); limitSize.leftMargin = dp(8); display.addView(maximum, limitSize);
+        android.widget.HorizontalScrollView displayViewport=new android.widget.HorizontalScrollView(context);displayViewport.setClipToPadding(false);displayViewport.setHorizontalScrollBarEnabled(false);
+        displayViewport.addView(display,new android.widget.HorizontalScrollView.LayoutParams(-2,-2));editor.addView(displayViewport,new LinearLayout.LayoutParams(-1,-2));
         TextView automatic = field(MenuFoundation.control(context, "Automatically include new matching media", row.dynamic ? "checkbox checked" : "checkbox", () -> {
             if (row == draft) row.dynamic = !row.dynamic;
             else model.setDynamic(row, !row.dynamic, PreviewLibraryLoader.memoryCache());
             if (row != draft) changed.run(); renderEditor(); restore("home.editor.automatic");
         }), "home.editor.automatic");
         automatic.setTextSize(14 * TvLayout.scale(context)); automatic.setContentDescription("Automatically include new matching media, " + (row.dynamic ? "On" : "Off"));
-        LinearLayout.LayoutParams autoSize = new LinearLayout.LayoutParams(-1, -2); autoSize.topMargin = dp(10); editor.addView(automatic, autoSize);
+        LinearLayout.LayoutParams autoSize = new LinearLayout.LayoutParams(-1, -2); autoSize.topMargin = dp(6); editor.addView(automatic, autoSize);
         wireFields();
     }
     private void saveRow(Row row) { if (row != draft) committed(); }
@@ -331,7 +340,7 @@ final class CustomiseHomeEditor {
     }
     private void confirm(String title, String message, String safe, String destructive, Runnable accepted) {
         Dialog confirmation = PreviewDialog.create(context); confirmation.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        LinearLayout panel = column(); panel.setPadding(dp(20), dp(18), dp(20), dp(18)); panel.setBackground(MenuFoundation.surface(context, false));
+        LinearLayout panel = new MenuFoundation.WindowPanel(context);panel.setOrientation(LinearLayout.VERTICAL); panel.setPadding(dp(20), dp(18), dp(20), dp(18)); panel.setBackground(MenuFoundation.surface(context, false));
         panel.addView(MenuFoundation.text(context, title, 22));
         TextView body = MenuFoundation.text(context, message, 15); body.setTextColor(MenuFoundation.SECONDARY); body.setPadding(0, dp(14), 0, dp(16)); panel.addView(body);
         TextView keep = MenuFoundation.control(context, safe, "continue", confirmation::dismiss); keep.setTag("home.confirm.safe"); panel.addView(keep);
