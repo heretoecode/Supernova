@@ -51,7 +51,7 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
                 PreferenceRestoreTransaction.Checkpoint.HEALTH_DURABLE,PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE,
                 PreferenceRestoreTransaction.Checkpoint.MEDIA_PREPARED,PreferenceRestoreTransaction.Checkpoint.PREFERENCES_DURABLE)) {
             try{transaction.apply(transaction.prepare(all(),null,physical()),()->false,at->{if(at==boundary)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
-            String image=Files.readString(journal.toPath());assertEquals(4,new JSONObject(image).getInt("schema"));assertFalse(image.contains("CANARY"));
+            String image=Files.readString(journal.toPath());assertEquals(5,new JSONObject(image).getInt("schema"));assertFalse(image.contains("CANARY"));
             assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,new PreferenceRestoreTransaction(app).recover());assertOriginal(originalViewing);assertEquals(originalMedia,mediaImage());
             assertFalse(prefs.contains(PortablePinnedTitles.PENDING));assertFalse(prefs.contains(PortableHiddenItems.PENDING));
         }
@@ -105,5 +105,18 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
             catch(PreferenceRestoreTransaction.Cancelled cancelled){assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,cancelled.outcome);assertFalse(cancelled.recoveryRequired);assertTrue(Thread.currentThread().isInterrupted());}
         }finally{Thread.interrupted();}
         assertOriginal(originalViewing);assertEquals(originalMedia,mediaImage());assertFalse(journal.exists());
+    }
+    @Test public void acknowledgedCompletionDoesNotOverwriteLaterManualMediaChangesDuringCleanupRecovery()throws Exception {
+        try{transaction.apply(transaction.prepare(all(),null,physical()),()->false,
+                at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMPLETION_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+        try(android.database.sqlite.SQLiteDatabase db=android.database.sqlite.SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READWRITE)) {
+            db.execSQL("UPDATE MOVIE SET Nova_pinned=9000 WHERE _id=100");db.execSQL("UPDATE files SET Archos_hiddenByUser=1 WHERE _id=10");
+        }String later=mediaImage();assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,transaction.recover());assertEquals(later,mediaImage());assertFalse(journal.exists());
+    }
+    @Test public void earlierVersionFourDecisionWithoutAcknowledgementStillReplaysSafely()throws Exception {
+        try{transaction.apply(transaction.prepare(all(),null,physical()),()->false,
+                at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+        JSONObject older=new JSONObject(Files.readString(journal.toPath()));older.put("schema",4);older.getJSONObject("media").remove("committed");Files.writeString(journal.toPath(),older.toString());
+        assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,transaction.recover());assertNew();assertFalse(journal.exists());
     }
 }

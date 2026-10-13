@@ -202,7 +202,11 @@ public final class PreferenceRestoreTransaction {
                 save(record);
                 // The durable decision includes media redo data. Late cancellation cannot undo it.
                 observer.reached(Checkpoint.COMMIT_MARKER_DURABLE);
-                if(media!=null){media.commit();media.close();media=null;observer.reached(Checkpoint.MEDIA_DURABLE);}
+                if(media!=null){
+                    media.commit();media.close();media=null;
+                    try{record.getJSONObject("media").put("committed",true);}catch(JSONException invalid){throw new IOException("Cannot acknowledge durable media state",invalid);}
+                    save(record);observer.reached(Checkpoint.MEDIA_DURABLE);
+                }
             }catch(IOException|RuntimeException failure){
                 boolean interrupted=Thread.interrupted();Recovery outcome=Recovery.NONE;boolean required=false;
                 try {
@@ -234,13 +238,13 @@ public final class PreferenceRestoreTransaction {
     private static boolean healthOwned(String key){return key.equals(PortableReviewNotes.PENDING)||key.matches("incorrect:[1-9][0-9]{0,18}");}
     private static JSONObject record(Plan plan,boolean complete)throws JSONException,IOException{
         JSONArray values=new JSONArray();recordValues(values,"DEFAULT",plan.keys,plan.before);recordValues(values,"HEALTH",plan.healthKeys,plan.healthBefore);
-        JSONObject record=new JSONObject().put("schema",plan.mediaBefore!=null?4:plan.viewingBefore==null?2:3).put("complete",complete).put("values",values);
+        JSONObject record=new JSONObject().put("schema",plan.mediaBefore!=null?5:plan.viewingBefore==null?2:3).put("complete",complete).put("values",values);
         if(plan.viewingBefore!=null)record.put("viewing",new JSONObject().put("before",new JSONObject(plan.viewingBefore))
                 .put("existed",plan.viewingExisted).put("history",plan.historySelected).put("positions",plan.positionsSelected));
         if(plan.mediaBefore!=null){
             if(plan.viewingBefore==null)record.put("viewing",JSONObject.NULL);
             JSONObject before=new JSONObject(plan.mediaBefore),after=new JSONObject(plan.mediaAfter);MediaStateRecovery.validatePair(before,after);
-            record.put("media",new JSONObject().put("before",before).put("after",after));
+            record.put("media",new JSONObject().put("before",before).put("after",after).put("committed",false));
         }
         return record;
     }
@@ -269,13 +273,14 @@ public final class PreferenceRestoreTransaction {
                 ByteArrayOutputStream output=new ByteArrayOutputStream();byte[] buffer=new byte[8192];int n;
                 while((n=input.read(buffer))!=-1){if(output.size()+n>MAX_JOURNAL)throw new IOException("Private recovery exceeds storage limit");output.write(buffer,0,n);}
                 JSONObject record=new JSONObject(new String(output.toByteArray(),StandardCharsets.UTF_8));
-                if(!(record.get("schema") instanceof Integer)||!Arrays.asList(1,2,3,4).contains(record.getInt("schema"))||!(record.get("complete") instanceof Boolean))throw new JSONException("Unknown recovery schema");int schema=record.getInt("schema");
-                if(record.length()!=(schema==4?5:schema==3?4:3))throw new JSONException("Unknown recovery fields");
-                if(schema==4) {
-                    media=record.getJSONObject("media");if(media.length()!=2)throw new JSONException("Invalid media recovery fields");
+                if(!(record.get("schema") instanceof Integer)||!Arrays.asList(1,2,3,4,5).contains(record.getInt("schema"))||!(record.get("complete") instanceof Boolean))throw new JSONException("Unknown recovery schema");int schema=record.getInt("schema");
+                if(record.length()!=(schema>=4?5:schema==3?4:3))throw new JSONException("Unknown recovery fields");
+                if(schema>=4) {
+                    media=record.getJSONObject("media");if(media.length()!=(schema==5?3:2))throw new JSONException("Invalid media recovery fields");
+                    if(schema==5&&(!(media.get("committed") instanceof Boolean)||media.getBoolean("committed")&&!record.getBoolean("complete")))throw new JSONException("Invalid durable media acknowledgement");
                     MediaStateRecovery.validatePair(media.getJSONObject("before"),media.getJSONObject("after"));
                 }
-                if(schema>=3&&!(schema==4&&record.isNull("viewing"))) {
+                if(schema>=3&&!(schema>=4&&record.isNull("viewing"))) {
                     viewing=record.getJSONObject("viewing");if(viewing.length()!=4||!(viewing.get("existed") instanceof Boolean)||
                             !(viewing.get("history") instanceof Boolean)||!(viewing.get("positions") instanceof Boolean)||
                             !viewing.getBoolean("history")&&!viewing.getBoolean("positions"))throw new JSONException("Invalid viewing recovery scope");
@@ -298,7 +303,7 @@ public final class PreferenceRestoreTransaction {
                     }(named?healthOriginals:originals).put(key,value);
                 }
             }catch(JSONException e){throw new IOException("Private restore recovery is invalid; originals retained for inspection",e);}
-            if(media!=null)try{MediaStateRecovery.recover(destination,media.getJSONObject("before"),media.getJSONObject("after"),complete);}
+            if(media!=null&&!Boolean.TRUE.equals(media.opt("committed")))try{MediaStateRecovery.recover(destination,media.getJSONObject("before"),media.getJSONObject("after"),complete);}
                 catch(JSONException invalid){throw new IOException("Media recovery values are invalid",invalid);}
             if(!complete){
                 if(viewing!=null)try {
