@@ -11,7 +11,7 @@ import org.json.*;
 /** Real source-to-archive export. No legacy DB snapshot writer or content/account payload is reachable. */
 public final class LogicalBackupExporter {
     private static final Set<BackupCategory> INVENTORY=EnumSet.of(BackupCategory.HOME,BackupCategory.WATCH_NEXT,
-        BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.PINNED,BackupCategory.HIDDEN,BackupCategory.PLAYLISTS,BackupCategory.TITLE_PLAYBACK);
+        BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.PINNED,BackupCategory.HIDDEN,BackupCategory.PLAYLISTS,BackupCategory.TITLE_PLAYBACK,BackupCategory.HISTORY,BackupCategory.POSITIONS);
     /** Unsupported selected categories fail before reading source or allocating a backup file; none is silently omitted. */
     public static Map<BackupCategory,JSONObject> collect(Context context,Set<BackupCategory> selected,BooleanSupplier cancel)throws IOException {
         LogicalBackupCatalog.cancelled(cancel);
@@ -27,7 +27,7 @@ public final class LogicalBackupExporter {
             PortablePhysicalReferences physical=catalog==null?null:new PortablePhysicalReferences(context,catalog.physical);
             Map<String,ViewingHistory.Record> viewing=Collections.emptyMap();
             if(categories.contains(BackupCategory.HISTORY)||categories.contains(BackupCategory.POSITIONS)){
-                ViewingHistory.awaitWrites();viewing=PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(context));
+                ViewingHistory.awaitWrites();viewing=LegacyViewingSnapshot.merge(context,PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(context)),catalog.snapshot);
             }
             JSONObject bookmarks=categories.contains(BackupCategory.BOOKMARKS)?BookmarkStoreRecovery.capture(context):null;
             JSONObject sources=categories.contains(BackupCategory.SOURCES)?IndexedSourceStoreRecovery.capture(context):null;
