@@ -36,7 +36,7 @@ public final class CanonicalMatchMaterial {
     }
     public static OwnedCanonicalBatch prepare(Context context,MediaMatchInventory.Owner owner,
             PortableMediaMatches.Match requested,Uri receivingFile,long receivingShowId,Long receivingPin,Resolver resolver)throws IOException {
-        if(owner==null||owner.match==null||owner.localId<=0||resolver==null)throw new IOException("Canonical restoration requires an owned receiving identification");
+        if(owner==null||owner.match==null||owner.localId<=0||resolver==null||requested==null||receivingFile==null||"putio".equalsIgnoreCase(receivingFile.getScheme())||!owner.guard.equals(MediaMatchInventory.guard(owner.videoId,receivingFile.toString())))throw new IOException("Canonical restoration requires an owned receiving identification");
         BaseTags tags=verify(requested,resolver.resolve(context,requested,receivingFile));
         try {
             if(tags instanceof MovieTags&&owner.type==BaseTags.MOVIE)return ((MovieTags)tags).prepareOwnedRestore(context,owner.videoId,owner.localId,Long.parseLong(owner.match.identity.split(":")[2]),receivingPin);
