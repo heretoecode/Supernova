@@ -1,0 +1,18 @@
+{
+  "result": "FAIL",
+  "source_sha": "66fd340e16b7b271fe7d44503fc6f9466da627a7",
+  "dependency_sha": "35bc6414a50f4ad349ce2b2e3f40bbbf304a806f",
+  "duration": "42s",
+  "log_sha256": "199796650a5dd17f987418f0cf4b03d0b309124e9f0980a192168477cc548ae4",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "reason": "New-slot assertion queried insert-only Movie.URI.BASE. Native provider correctly rejected Unknown URI before insertion; use existing queryable Movie.URI.ALL.",
+  "tests": 40,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0
+}
