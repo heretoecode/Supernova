@@ -1,0 +1,34 @@
+{
+  "source_sha": "34a3bfc897ea14665044d29668b9b6ec3edf0f22",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 10,
+  "tests": 102,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.LegacyViewingSnapshotTest",
+    "com.archos.mediacenter.video.leanback.PortableViewingStateTest",
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.player.PlaybackResumePolicyTest",
+    "com.archos.mediacenter.video.utils.CombinedIndexedSourcesTest",
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.LegacyViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackSessionTest"
+  ],
+  "duration": "3m2s",
+  "log_path": "/workspace/scratch/supernova139-legacy-viewing-restore-first.log",
+  "log_sha256": "96f68b21b88ace94bedc75f84f8f82beb81163ff6c28c0cb2c13f78f2d2902fb",
+  "coverage": [
+    "Selected empty history suppresses native reintroduction and preserves unselected offsets",
+    "Selected empty positions suppresses native offsets while preserving watch state, independent native timestamps and bookmarks",
+    "Positive restored offsets work without fabricated native played timestamp, with resume opt-out respected",
+    "Schema8 rollback at four pre-decision boundaries for both single-category selections restores absent store and flags",
+    "Later independent offsets survive rollback; malformed/null/conflicting private images fail before writes; native staleness refuses preview",
+    "Combined viewing/media/indexed sources/default preferences/player title and resume policy regressions"
+  ],
+  "limits": "Native SQLite fixtures and synthetic player callbacks. No actual owner archive/force-stop/SAF/device/output or Shield acceptance; native tasks excluded."
+}
