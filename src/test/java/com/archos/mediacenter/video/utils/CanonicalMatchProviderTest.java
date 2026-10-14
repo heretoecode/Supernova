@@ -198,4 +198,27 @@ public class CanonicalMatchProviderTest {
         }finally{db.endTransaction();}
     }
 
+    @Test public void canonicalAndSelectedPinHiddenRecoveryShareOneAtomicNativeParticipant()throws Exception {
+        var before=com.archos.mediacenter.video.utils.backup.MediaStateRecovery.capture(app,true,true,true);
+        var after=new org.json.JSONObject(before.toString());
+        for(int i=0;i<after.getJSONArray("pins").length();i++){var pin=after.getJSONArray("pins").getJSONObject(i);if(pin.getLong("id")==100)pin.put("value",0);}
+        for(int i=0;i<after.getJSONArray("hidden").length();i++){var hidden=after.getJSONArray("hidden").getJSONObject(i);if(hidden.getLong("id")==11)hidden.put("value",true);}
+        var batch=tags().prepareOwnedRestore(app,10,100,123,9L);org.json.JSONObject canonical;
+        try(var session=com.archos.mediacenter.video.utils.backup.MediaStateRecovery.begin(app,before,false)){
+            canonical=session.stageCanonical(java.util.List.of(10L),java.util.List.of(batch),()->false);
+            session.write(after,()->false);session.sealCanonical(canonical,()->false);
+        }
+        // A pre-decision death rolls back the entire SQLite transaction; recovery retains originals.
+        com.archos.mediacenter.video.utils.backup.MediaStateRecovery.recoverCanonical(app,before,after,canonical,false);
+        try(var row=holder.get().rawQuery("SELECT m_online_id,Nova_pinned FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals(9,row.getLong(1));}
+        // Durable decision before native commit replays canonical metadata and selected native values together.
+        com.archos.mediacenter.video.utils.backup.MediaStateRecovery.recoverCanonical(app,before,after,new org.json.JSONObject(canonical.toString()),true);
+        try(var row=holder.get().rawQuery("SELECT m_online_id,Nova_pinned FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(789,row.getLong(0));assertEquals(0,row.getLong(1));}
+        try(var row=holder.get().rawQuery("SELECT Archos_hiddenByUser,bookmark FROM files WHERE _id=11",null)){assertTrue(row.moveToFirst());assertEquals(1,row.getLong(0));assertEquals(5555,row.getLong(1));}
+        // A commit before acknowledgement is recognized, and a later unselected bookmark remains exact.
+        holder.get().execSQL("UPDATE files SET bookmark=8888 WHERE _id=10");
+        com.archos.mediacenter.video.utils.backup.MediaStateRecovery.recoverCanonical(app,before,after,canonical,true);
+        try(var row=holder.get().rawQuery("SELECT bookmark FROM files WHERE _id=10",null)){assertTrue(row.moveToFirst());assertEquals(8888,row.getLong(0));}
+    }
+
 }

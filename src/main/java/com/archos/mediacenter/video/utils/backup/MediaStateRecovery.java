@@ -114,17 +114,25 @@ public final class MediaStateRecovery {
         if(before.getInt("schema")==2&&!before.isNull("playlists"))PlaylistStateRecovery.validatePair(before.getJSONObject("playlists"),after.getJSONObject("playlists"));
     }
     public static final class Session implements AutoCloseable {
-        private SQLiteDatabase database;private final JSONObject before;private boolean ended;
+        private SQLiteDatabase database;private final JSONObject before;private final Context context;private boolean ended;
         private Session(Context context,JSONObject image,JSONObject redo,boolean recovery)throws IOException,JSONException {
-            validate(image);before=new JSONObject(image.toString());File file=VideoOpenHelper.getDatabaseFile(context);
+            this(context,image,redo,recovery,null);
+        }
+        private Session(Context context,JSONObject image,JSONObject redo,boolean recovery,JSONObject canonical)throws IOException,JSONException {
+            this.context=context;validate(image);before=new JSONObject(image.toString());File file=VideoOpenHelper.getDatabaseFile(context);
             if(!image.getBoolean("exists")){if(file.exists())throw new IOException("Media store appeared after restore preview");return;}
             if(!file.exists())throw new IOException("Media store is unavailable for recovery");
             database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READWRITE);
             try {
                 database.setForeignKeyConstraintsEnabled(true);
                 database.beginTransaction();JSONObject current=capture(database,!image.isNull("pins"),!image.isNull("hidden"),image.getInt("schema")==2&&!image.isNull("playlists"));
-                if(!(recovery?guards(current).toString().equals(guards(image).toString()):current.toString().equals(image.toString())))throw new IOException("Media inventory changed; refusing stale restore or recovery");
-                if(recovery&&image.getInt("schema")==2&&!image.isNull("playlists")){String state=current.getJSONObject("playlists").toString();if(!state.equals(image.getJSONObject("playlists").toString())&&(redo==null||!state.equals(redo.getJSONObject("playlists").toString())))throw new IOException("Playlists changed independently; recovery requires inspection");}
+                if(canonical==null){
+                    if(!(recovery?guards(current).toString().equals(guards(image).toString()):current.toString().equals(image.toString())))throw new IOException("Media inventory changed; refusing stale restore or recovery");
+                }else{
+                    CanonicalNativeRecovery.validate(canonical);String state=CanonicalNativeRecovery.fingerprint(database,canonical.getJSONArray("files"),()->false);
+                    if(!state.equals(canonical.getString("before"))&&!state.equals(canonical.getString("after")))throw new IOException("Canonical metadata changed independently; recovery requires inspection");
+                }
+                if(canonical==null&&recovery&&image.getInt("schema")==2&&!image.isNull("playlists")){String state=current.getJSONObject("playlists").toString();if(!state.equals(image.getJSONObject("playlists").toString())&&(redo==null||!state.equals(redo.getJSONObject("playlists").toString())))throw new IOException("Playlists changed independently; recovery requires inspection");}
             }catch(IOException|JSONException|RuntimeException failure){close();throw failure;}
         }
         public void write(JSONObject image,BooleanSupplier cancel)throws IOException,JSONException {
@@ -139,6 +147,16 @@ public final class MediaStateRecovery {
             }
             if(image.getInt("schema")==2&&!image.isNull("playlists"))PlaylistStateRecovery.write(database,image.getJSONObject("playlists"),cancel);
         }
+        /** Stage on the same connection as selected pins/hidden/playlists. Caller seals after all native writes. */
+        public JSONObject stageCanonical(Collection<Long> files,List<com.archos.mediascraper.OwnedCanonicalBatch> batches,BooleanSupplier cancel)throws IOException,JSONException {
+            if(database==null||ended)throw new IOException("Canonical receiving media store is unavailable");
+            JSONObject record=CanonicalNativeRecovery.begin(database,files,batches,cancel);
+            for(var batch:batches)CanonicalMatchExecutor.apply(context,database,batch,cancel);
+            return record;
+        }
+        public void sealCanonical(JSONObject record,BooleanSupplier cancel)throws IOException,JSONException {
+            if(database==null||ended)throw new IOException("Canonical receiving transaction is unavailable");CanonicalNativeRecovery.seal(database,record,cancel);
+        }
         public void commit()throws IOException {if(database!=null&&!ended){database.setTransactionSuccessful();database.endTransaction();ended=true;}}
         @Override public void close(){if(database!=null){try{if(!ended&&database.inTransaction())database.endTransaction();}finally{database.close();database=null;}}}
     }
@@ -146,6 +164,17 @@ public final class MediaStateRecovery {
     public static void recover(Context context,JSONObject before,JSONObject after,boolean complete)throws IOException,JSONException {
         validatePair(before,after);
         try(Session session=new Session(context,before,after,true)){session.write(complete?after:before,()->false);session.commit();}
+    }
+    /** Native commit is atomic across canonical matches and selected pin/hidden/playlist state. */
+    public static void recoverCanonical(Context context,JSONObject before,JSONObject after,JSONObject canonical,boolean complete)throws IOException,JSONException {
+        validatePair(before,after);CanonicalNativeRecovery.validate(canonical);
+        try(Session session=new Session(context,before,after,true,canonical)){
+            if(session.database==null)throw new IOException("Canonical recovery media store is unavailable");
+            boolean replayed=CanonicalNativeRecovery.replay(context,session.database,canonical,complete,()->false);
+            if(!complete||replayed)session.write(complete?after:before,()->false);
+            if(complete)CanonicalNativeRecovery.verifyComplete(session.database,canonical,()->false);
+            session.commit();
+        }
     }
     private MediaStateRecovery(){}
 }
