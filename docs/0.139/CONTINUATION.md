@@ -4,7 +4,7 @@ Implementation is ongoing. No 0.139 APK has been built, signed or delivered.
 
 Branch: `codex/supernova-0.139-implementation-2026-10-13`.
 Recovered committed source on 14 October: `e89c211b1d467dd3b4879a56f06c3d4cafb1f76e`, plus preserved MediaStateRecovery and CombinedPlaylistMediaTest changes. Those changes are now committed at `074db4bcf1112a3ec89922d70c6e8519a6393a1a`.
-Current application source: `8664c4dd04144766868b87a8df2b666087dfd30f`.
+Current application source: `d18a80f83fc417f68d3a8ee9afabbb6aa8001d94`. Draft review PR: https://github.com/heretoecode/Supernova/pull/17, based on the existing0.138 development branch, with no merge authorization.
 Read INTAKE.md, WORKSTREAMS.md, UI_CONFORMANCE.md, REPRODUCE.md and the source-pinned JSON receipts. The 43-row ledger still describes whole-workstream acceptance; staged test passes do not complete the release.
 
 ## Preserved and verified work
@@ -22,11 +22,21 @@ Current code registers24 categories including Saved playlists. Matches and Title
 
 ## Exact verification environment and next action
 
-Isolated detached app build: `/workspace/supernova139-lists-build/Video`, tested source8664c4dd, build-only AndroidManifest.xml/searchable_video.xml modifications preserved.
+Isolated detached app build: `/workspace/supernova139-lists-build/Video`, currently at source d18a80f8, build-only AndroidManifest.xml/searchable_video.xml modifications preserved.
 Isolated MediaLib: `/workspace/supernova139-lists-source/MediaLib`, clean8424b8af3f54f498d8e1c1cac322487e15b9ab54. Its parentebac4f4 snapshots the existing20-file0.138 preparation. Original shared dirty MediaLib at5758074 is untouched. Apply `.github/build/medialib-supernova139-playlists.patch` AFTER the established0.138 patch stack for reproduction. FileCoreLibrary remains the existing prepared sibling.
 JDK `/workspace/toolchains/jdk-21.0.12.1+1`; SDK `/workspace/android-sdk`. Gradle command/flags in REPRODUCE.md; native build tasks excluded from these staged checks.
 
-At this checkpoint the integration retest is running in exec session66354, log `/workspace/scratch/supernova139-playlists-integration-second.log`. It selects CombinedPlaylistJournalTest, PortableSavedPlaylistsTest, LogicalBackupExporterTest, LogicalBackupArchiveTest, LogicalBackupImportTest, BackupOperationModelTest, BackupSettingsControllerTest and PlaylistSyncPolicyTest. FIRST save exact XML counts/classes and log hash before advancing the detached build. Investigate any failures, preserve their receipts, then complete playlist source/pending/provider lifecycle coverage. Continue Matches, Title playback including real receiving-track checks and explicit choices without invented timestamps, indexed-folder Sources coverage, legacy media viewing, full Settings/recovery/provider matrices and the other43 acceptance rows. Do not rerun completed stages without a relevant source change or concern.
+At this checkpoint the title None/schema2 test is running in exec session75462, log `/workspace/scratch/supernova139-title-none-first.log`, isolated app source d18a80f8. It selects TitlePlaybackCompatibilityTest and PortableTitlePlaybackTest. FIRST save exact XML counts/classes and log hash before advancing the detached build; investigate failures and preserve their receipts. The previous track-parser run at98cf33bc passed9/2 (TITLE_TRACKS_VERIFICATION.json).
+
+Completed subsequent playlist integration: PASS56/8 at3eaced03, PLAYLISTS_INTEGRATION_VERIFICATION.json. Earlier compilation failure and55/8/1-failure run remain preserved. Playlist preview no longer allocates origin preferences; source-device restore and receiving alias collisions have distinct stable identities. Source/library/controller integration now passes its stated staged checks.
+
+Media matches: strict public source/schema/pure preparation PASS7/1 at e8faad18; receiving metadata ownership plus native dependency investigation PASS10/2 at df238703. MATCHES_SOURCE_VERIFICATION.json and MATCHES_DEPENDENCY_VERIFICATION.json preserve exact scope. Native Library joins metadata by video_id; merely rewriting files scraper pointers deletes the old metadata/pin/facts and cannot borrow another file's metadata. Changing only provider ID leaves old scraped facts visible. Implement a canonical metadata/join/cache-aware participant with coordinated originals/redo; do not register this category or drop cleanup triggers as a shortcut. It remains unregistered.
+
+Indexed folders: private native participant and public source codec PASS10/1 at55103ee0 (INDEXED_SOURCES_VERIFICATION.json). Sources schema2/archive plus six-store private journal schema7 PASS122/12 at40e0be99 (INDEXED_SOURCES_JOURNAL_VERIFICATION.json); schemas1–6 remain readable, source-schema1 leaves indexed folders untouched. Includes eight rollback and four acknowledgement boundaries, corruption/staleness, exact native source caches/originals and the actual ShortcutDbAdapter rescan reader. Pending-source reconciliation PASS68/8 at98116b91 (INDEXED_SOURCES_RECONCILIATION_VERIFICATION.json): only receiving configured locations resolve references; no archive-location opt-in or new unknown native store; later native name/rescan choice wins; malformed pending input fails before writes. Full scanner scheduling/provider/device behavior remains open.
+
+Title playback remains unregistered. State/source primitives, actual VideoMetadata parser compatibility and source-schema2 subtitle None distinction now exist. None must be a separate intent, remapped to the receiving subtitle count; a legacy index without language cannot prove it means a subtitle or None. d18a80f8 is not yet verified for those changes. Next implement durable explicit choices without invented lastTimePlayed/watch timestamps, combined-journal/persistence/export integration and real PlayerService callback validation/manual supersession. Avoid implementing an index-only restore that turns None into a subtitle on a different file.
+
+After this narrow run, finish the two unregistered domains (Matches and Title playback), source/controller/full VideoPreferencesCommon/legacy/non-preview/SAF/provider/actual-force-stop matrices, and remaining43-row acceptance work. Full current-source regression, native codecs/R8/4ABI/upgrade, legal/native retirement and final release gates are still open. Do not rerun completed stages without a relevant source change or concern.
 
 ## Scope and external limitations
 
