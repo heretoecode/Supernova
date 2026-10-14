@@ -67,4 +67,22 @@ public class OfficialTitleBindingTest {
         disk("movie",123,"en",Color.RED);disk("tv",123,"en",Color.GREEN);OfficialTitleArtwork.bindRemote(title,"movie",123);settle();assertEquals(Color.RED,pixel());
         OfficialTitleArtwork.bindRemote(title,"tv",123);settle();assertEquals(Color.GREEN,pixel());assertEquals("Official artwork fallback title",title.getText().toString());
     }
+    @Test public void sameProviderCanLoadNewlyAvailableDiskLogoAfterCompletedCacheOnlyMiss()throws Exception {
+        Movie media=movie(10,123);OfficialTitleArtwork.bind(title,media,true);settle();assertNull(title.getForeground());assertTrue(OfficialTitleArtwork.readyForFirstFrame(title));
+        disk("movie",123,"en",Color.RED);OfficialTitleArtwork.bind(title,media,true);settle();assertEquals(Color.RED,pixel());
+    }
+    @Test public void failedImageDownloadDoesNotNegativeCacheTheProviderAndSameViewCanRetry()throws Exception {
+        okhttp3.OkHttpClient client=ReflectionHelpers.getStaticField(OfficialTitleArtwork.class,"HTTP");var old=client.interceptors();java.util.concurrent.atomic.AtomicInteger images=new java.util.concurrent.atomic.AtomicInteger();
+        Bitmap bitmap=Bitmap.createBitmap(24,8,Bitmap.Config.ARGB_8888);bitmap.eraseColor(Color.BLUE);ByteArrayOutputStream bytes=new ByteArrayOutputStream();assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG,100,bytes));bitmap.recycle();
+        ReflectionHelpers.setField(client,"interceptors",List.<okhttp3.Interceptor>of(chain->{String path=chain.request().url().encodedPath();if(path.endsWith("/images"))return new okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK").body(okhttp3.ResponseBody.create("{\"id\":123,\"logos\":[{\"file_path\":\"/fixture.png\",\"iso_639_1\":\"en\"}]}",okhttp3.MediaType.get("application/json"))).build();if(images.incrementAndGet()==1)throw new IOException("Synthetic image failure");return new okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK").body(okhttp3.ResponseBody.create(bytes.toByteArray(),okhttp3.MediaType.get("image/png"))).build();}));
+        try{OfficialTitleArtwork.bindRemote(title,"movie",123);settle();assertNull(title.getForeground());assertFalse(host.get().getSharedPreferences("preview_title_logos",0).contains("movie_123_en"));OfficialTitleArtwork.bindRemote(title,"movie",123);settle();assertEquals(2,images.get());assertEquals(Color.BLUE,pixel());}
+        finally{settle();ReflectionHelpers.setField(client,"interceptors",old);}
+    }
+    @Test public void verifiedAbsentLogoUsesNegativeCacheUntilExpiryAndPlaybackNeverRequestsNetwork()throws Exception {
+        okhttp3.OkHttpClient client=ReflectionHelpers.getStaticField(OfficialTitleArtwork.class,"HTTP");var old=client.interceptors();java.util.concurrent.atomic.AtomicInteger requests=new java.util.concurrent.atomic.AtomicInteger();
+        ReflectionHelpers.setField(client,"interceptors",List.<okhttp3.Interceptor>of(chain->{requests.incrementAndGet();return new okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK").body(okhttp3.ResponseBody.create("{\"id\":123,\"logos\":[]}",okhttp3.MediaType.get("application/json"))).build();}));
+        try{OfficialTitleArtwork.bindRemote(title,"movie",123);settle();OfficialTitleArtwork.bindRemote(title,"movie",123);settle();assertEquals(1,requests.get());assertEquals(Color.WHITE,title.getCurrentTextColor());host.get().getSharedPreferences("preview_title_logos",0).edit().putLong("movie_123_en",System.currentTimeMillis()-86400001L).commit();OfficialTitleArtwork.bindRemote(title,"movie",123);settle();assertEquals(2,requests.get());OfficialTitleArtwork.bind(title,movie(10,456),true);settle();assertEquals(2,requests.get());assertNull(title.getForeground());}
+        finally{settle();ReflectionHelpers.setField(client,"interceptors",old);}
+    }
+
 }

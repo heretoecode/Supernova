@@ -59,7 +59,8 @@ public final class OfficialTitleArtwork {
  private static void request(TextView view,String identity,boolean cachedOnly,Callable<String> resolve,Runnable changed){
   String language=Locale.getDefault().getLanguage();boolean knownProvider=identity.matches("(?:movie|tv)/[1-9][0-9]*");
   String binding=identity+":"+language+(knownProvider?"":":"+UUID.randomUUID());
-  if(binding.equals(BOUND.get(view)))return;clear(view);BOUND.put(view,binding);
+  if(binding.equals(BOUND.get(view))&&(!readyForFirstFrame(view)||view.getForeground()!=null))return;
+  clear(view);BOUND.put(view,binding);
   long media=0;if(identity.matches("(?:video|show)-local:[0-9]+"))try{media=Long.parseLong(identity.substring(identity.indexOf(':')+1));}catch(NumberFormatException ignored){}
   if(identity.matches("(?:movie|tv)/[0-9]+"))try{media=Long.parseLong(identity.substring(identity.indexOf('/')+1));}catch(NumberFormatException ignored){}
   com.archos.mediacenter.video.diagnostics.ArtworkTrace trace=new com.archos.mediacenter.video.diagnostics.ArtworkTrace(media,cachedOnly?"playback_loading":com.archos.mediacenter.video.diagnostics.Diagnostics.artworkSurface(),"title_logo",cachedOnly?"cache_only":"tmdb");TRACES.put(view,trace);
@@ -71,14 +72,17 @@ public final class OfficialTitleArtwork {
    String key=resolve.call();if(key==null)return;String diskKey=key.replace('/','_')+"_"+language;
    Bitmap bitmap=MEMORY.get(diskKey);File directory=new File(app.getCacheDir(),"official-title-artwork"),file=new File(directory,diskKey+".png");
    if(bitmap==null&&file.isFile()){bitmap=BitmapFactory.decodeFile(file.getPath());cacheLayer="disk";}
+   if(bitmap!=null)bitmap=visibleArtwork(bitmap);
    if(bitmap==null&&!cachedOnly){android.content.SharedPreferences cache=app.getSharedPreferences("preview_title_logos",0);long last=cache.getLong(diskKey,0);
     cacheLayer="network";
     if(System.currentTimeMillis()-last<86400000L)return;
     android.net.Uri uri=android.net.Uri.parse("https://api.themoviedb.org/3/"+key+"/images").buildUpon().appendQueryParameter("api_key",app.getString(com.archos.medialib.R.string.tmdb_api_key)).appendQueryParameter("include_image_language",language+",en,null").build();
     JSONObject result=new JSONObject(new String(download(uri.toString(),2*1024*1024,trace.operationId(),"logo_metadata"),java.nio.charset.StandardCharsets.UTF_8));
     if(result.optLong("id",-1)!=Long.parseLong(key.substring(key.indexOf('/')+1))||result.optJSONArray("logos")==null)throw new IOException("Invalid artwork metadata");
-    String path=select(result.optJSONArray("logos"),language);cache.edit().putLong(diskKey,System.currentTimeMillis()).apply();
-    if(!path.isEmpty()){byte[] bytes=download("https://image.tmdb.org/t/p/w500"+path,4*1024*1024,trace.operationId(),"logo_image");BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);if(options.outWidth<=0||options.outHeight<=0||options.outWidth>4096||options.outHeight>4096)throw new IOException("Invalid artwork dimensions");bitmap=BitmapFactory.decodeByteArray(bytes,0,bytes.length);if(bitmap==null)throw new IOException("Invalid artwork bitmap");if(bitmap!=null){directory.mkdirs();android.util.AtomicFile atomic=new android.util.AtomicFile(file);FileOutputStream out=null;try{out=atomic.startWrite();out.write(bytes);atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);}}}
+    String path=select(result.optJSONArray("logos"),language);
+    // Only a verified absence is negative-cached. Download/decode failures may retry.
+    if(path.isEmpty())cache.edit().putLong(diskKey,System.currentTimeMillis()).apply();
+    if(!path.isEmpty()){byte[] bytes=download("https://image.tmdb.org/t/p/w500"+path,4*1024*1024,trace.operationId(),"logo_image");BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);if(options.outWidth<=0||options.outHeight<=0||options.outWidth>4096||options.outHeight>4096)throw new IOException("Invalid artwork dimensions");bitmap=BitmapFactory.decodeByteArray(bytes,0,bytes.length);if(bitmap==null)throw new IOException("Invalid artwork bitmap");bitmap=visibleArtwork(bitmap);if(bitmap==null)throw new IOException("Artwork has no visible pixels");if(bitmap!=null){directory.mkdirs();android.util.AtomicFile atomic=new android.util.AtomicFile(file);FileOutputStream out=null;try{out=atomic.startWrite();out.write(bytes);atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);}}}
    }
    if(bitmap==null)return;trimDisk(directory);bitmap=visibleArtwork(bitmap);if(bitmap==null)return;MEMORY.put(diskKey,bitmap);ALIASES.put(key+":"+language,bitmap);final Bitmap ready=bitmap;final String origin=cacheLayer;TextView target=weak.get();if(target!=null)submitted=target.post(()->{TextView current=weak.get();if(current==null||!binding.equals(BOUND.get(current))){trace.cancelled();return;}current.setForeground(new Logo(ready,"semantic:featured.title".equals(current.getTag())));current.setTextColor(Color.TRANSPARENT);trace.ready(origin);if(changed!=null)changed.run();});
   }catch(Exception unavailable){trace.failed(unavailable.getClass().getSimpleName(),true);}
