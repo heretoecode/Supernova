@@ -210,6 +210,15 @@ public final class Diagnostics {
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
+        activatePolicy(value);
+    }
+    /** Re-read durable configuration without inventing a preference for an unselected domain. */
+    public static void reloadPolicy(Context c){
+        Object saved=PreferenceManager.getDefaultSharedPreferences(c).getAll().get(KEY);
+        boolean desired=saved==null?defaultEnabled():Boolean.TRUE.equals(saved);
+        if(desired!=enabled){context=c.getApplicationContext();activatePolicy(desired);}
+    }
+    private static void activatePolicy(boolean value){
         synchronized(LOCK){enabled=value;}installTransportReads();mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default",defaultEnabled()?"on":"off");
     }
     public static void disable(Context c,boolean deleteSaved){

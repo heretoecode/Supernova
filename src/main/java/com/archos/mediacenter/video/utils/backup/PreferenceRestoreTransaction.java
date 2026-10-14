@@ -87,6 +87,7 @@ public final class PreferenceRestoreTransaction {
     /** Data is already durable; a refresh failure must not be reported as a failed restoration. */
     private void publishRestoredState(){
         try{
+            com.archos.mediacenter.video.diagnostics.Diagnostics.reloadPolicy(destination);
             com.archos.mediacenter.video.leanback.PreviewLibraryLoader.invalidateHistoryCache(destination);
             destination.getContentResolver().notifyChange(com.archos.mediaprovider.video.ScraperStore.ALL_CONTENT_URI,null);
             destination.sendBroadcast(new android.content.Intent(destination.getPackageName()+".VIEWING_STATE_CHANGED").setPackage(destination.getPackageName()));
