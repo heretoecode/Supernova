@@ -1,0 +1,27 @@
+{
+  "source_sha": "fbeb5835913f6d372b752c77b807708e617b692d",
+  "dependency_sha": "41645c85f073510ff17743ab042f8c1256c9fc04",
+  "result": "PASS",
+  "duration": "50s",
+  "classes": 5,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.CombinedCurrentRestoreTest",
+    "com.archos.mediacenter.video.utils.MediaMatchInventoryTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest",
+    "com.archos.mediacenter.video.utils.RestorePublicationTest"
+  ],
+  "log_sha256": "caa16657e8ac014e5a134b2e7a9442fe9c851ae0635b1ed17e60e4d2fdbd6d82",
+  "coverage": [
+    "Coordinated schema9 canonical matches with default preferences, health, viewing and native participants at six pre-decision deaths",
+    "Durable decision native redo and durable native acknowledgement preserve later receiving facts/pin",
+    "Same SQLite transaction coordinates canonical graph and selected pin/hidden/playlist image",
+    "Early recovery before scraper/provider initialization",
+    "Consistent canonical source catalog/export privacy and preceding combined/store publication regressions"
+  ],
+  "limits": "Staged compatible-owner integration; registry25, production model routing, clearing/new/cross-kind/different-parent and pending reconciliation remain incomplete. Error-injected death boundaries are synthetic, not Android force-stop.",
+  "tests": 31,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}
