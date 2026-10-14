@@ -125,3 +125,9 @@ Fresh full source42182512/MediaLibd4ac964:PASS942/203 withzero failures/errors/s
 
 
 Episode canonical dependency investigation PASS8/2 at3c9a9495 (EPISODE_MATCH_DEPENDENCY_VERIFICATION.json): nativecleanup loses lastparentSHOW pin and leaves oldSHOW Collectionreference unmatched. Preserve this ownership whenimplementing episode restore; no production episodeparticipant orMATCHES26 pass implied.
+
+## Canonical recovery continuation and versioned candidate
+
+Application counter now0.139/code139 via the established release-history file (07ec0ce7). This is a version correction, not candidate acceptance. Existing verified138 history and HTML styling are preserved; HTML source now distinguishes delivered138 and undelivered139, but the Drive HTML is not published yet.
+
+Canonical episode/material/executor/redo subchecks PASS in CANONICAL_EPISODE_OWNED_VERIFICATION.json (10/2), CANONICAL_MATERIAL_VERIFICATION.json (19/4), CANONICAL_EXECUTOR_VERIFICATION.json (16/3), CANONICAL_REDO_VERIFICATION.json (19/3). Exact source/dependency SHAs and limits are in each receipt. Partial rejected-row restore publication race PASS5/2 (PARTIAL_RESTORE_PUBLICATION_VERIFICATION.json). BACKUP43 remains BLOCKED: codec26 is unregistered; new combined native participant/schema9/source export need current focused checks and clearing/new/cross-kind/different-parent/pending/production completion. Remaining hardware, signing policy and full acceptance constraints are unchanged. Never aggregate these overlapping staged tests as unique totals.
