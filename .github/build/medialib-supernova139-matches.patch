@@ -107,10 +107,10 @@ index 285f608..1663718 100644
              public static final Uri ALL_INFOS = Uri.parse(CONTENT_AUTHORITY + "/tags/episode/full/");
              public static final Uri ALL_SEASONS = Uri.parse(CONTENT_AUTHORITY + "/tags/seasons/");
 diff --git a/src/com/archos/mediascraper/EpisodeTags.java b/src/com/archos/mediascraper/EpisodeTags.java
-index 858baff..9d0a662 100644
+index 858baff..0a008d8 100644
 --- a/src/com/archos/mediascraper/EpisodeTags.java
 +++ b/src/com/archos/mediascraper/EpisodeTags.java
-@@ -122,6 +122,24 @@ public class EpisodeTags extends BaseTags {
+@@ -122,6 +122,43 @@ public class EpisodeTags extends BaseTags {
              ScraperStore.ShowPosters.LARGE_FILE + "=?";
      @Override
      public long save(Context context, long videoId) {
@@ -130,12 +130,31 @@ index 858baff..9d0a662 100644
 +                expectedShowId, expectedShowProvider, expectedShowPin);
 +    }
 +
++    /** Prepare a compatible-parent guarded batch; never saves a show or poster. */
++    public OwnedCanonicalBatch prepareOwnedRestore(Context context, long videoId, long metadataId,
++            long expectedEpisodeProvider, long expectedShowId, long expectedShowProvider, Long expectedShowPin) {
++        if (videoId <= 0 || metadataId <= 0 || expectedEpisodeProvider <= 0 || expectedShowId <= 0
++                || expectedShowProvider <= 0 || mOnlineId <= 0 || mShowTags == null
++                || mShowTags.getOnlineId() != expectedShowProvider)
++            throw new IllegalArgumentException("Invalid or incompatible owned episode restoration");
++        return prepareSaveInternal(context, videoId, metadataId, expectedEpisodeProvider,
++                expectedShowId, expectedShowProvider, expectedShowPin);
++    }
++
 +    private long saveInternal(Context context, long videoId, Long metadataId, Long expectedEpisodeProvider,
++            Long expectedShowId, Long expectedShowProvider, Long expectedShowPin) {
++        try {
++            OwnedCanonicalBatch batch = prepareSaveInternal(context, videoId, metadataId, expectedEpisodeProvider, expectedShowId, expectedShowProvider, expectedShowPin);
++            return batch == null ? -1 : batch.apply(context.getContentResolver());
++        } catch (RemoteException | OperationApplicationException e) { log.error("Exception", e); return -1; }
++    }
++
++    private OwnedCanonicalBatch prepareSaveInternal(Context context, long videoId, Long metadataId, Long expectedEpisodeProvider,
 +            Long expectedShowId, Long expectedShowProvider, Long expectedShowPin) {
          // save the video id in this tag
          setVideoId(videoId);
  
-@@ -130,7 +148,7 @@ public class EpisodeTags extends BaseTags {
+@@ -130,11 +167,11 @@ public class EpisodeTags extends BaseTags {
          //---------------------------------------------------
          // Save or update the data for the TV show if needed
          //---------------------------------------------------
@@ -144,7 +163,12 @@ index 858baff..9d0a662 100644
  
          if (showId < 0) {
              log.error("Save aborted for episode {}: parent show could not be persisted", mTitle);
-@@ -144,6 +162,12 @@ public class EpisodeTags extends BaseTags {
+-            return -1;
++            return null;
+         }
+ 
+         if (log.isDebugEnabled()) log.debug("Save called for episode {} showId {} onlineId {}", mTitle, showId, mOnlineId);
+@@ -144,6 +181,12 @@ public class EpisodeTags extends BaseTags {
          //---------------------------------------------------------------------------------------
          ContentValues values = new ContentValues();
          values.put(ScraperStore.Episode.VIDEO_ID, Long.valueOf(videoId));
@@ -157,7 +181,7 @@ index 858baff..9d0a662 100644
          values.put(ScraperStore.Episode.NAME, mTitle);
          if(mAired != null) {
              values.put(ScraperStore.Episode.AIRED, Long.valueOf(mAired.getTime()));
-@@ -172,7 +196,7 @@ public class EpisodeTags extends BaseTags {
+@@ -172,7 +215,7 @@ public class EpisodeTags extends BaseTags {
          ScraperImage poster = getDefaultPoster();
          long posterId = -1;
  
@@ -166,7 +190,7 @@ index 858baff..9d0a662 100644
              // get or save this poster
              posterId = poster.save(context, showId);
          }
-@@ -184,8 +208,27 @@ public class EpisodeTags extends BaseTags {
+@@ -184,8 +227,27 @@ public class EpisodeTags extends BaseTags {
          Builder cop = null;
          ArrayList<ContentProviderOperation> allOperations = new ArrayList<ContentProviderOperation>();
  
@@ -196,7 +220,7 @@ index 858baff..9d0a662 100644
          cop.withValues(values);
          allOperations.add(cop.build());
  
-@@ -193,7 +236,7 @@ public class EpisodeTags extends BaseTags {
+@@ -193,7 +255,7 @@ public class EpisodeTags extends BaseTags {
          for(String director: mDirectors) {
              cop = ContentProviderOperation.newInsert(ScraperStore.Director.URI.EPISODE);
              cop.withValue(ScraperStore.Episode.Director.NAME, director);
@@ -205,7 +229,7 @@ index 858baff..9d0a662 100644
              allOperations.add(cop.build());
          }
  
-@@ -201,20 +244,20 @@ public class EpisodeTags extends BaseTags {
+@@ -201,20 +263,20 @@ public class EpisodeTags extends BaseTags {
          for(String writer: mWriters) {
              cop = ContentProviderOperation.newInsert(ScraperStore.Writer.URI.EPISODE);
              cop.withValue(ScraperStore.Episode.Writer.NAME, writer);
@@ -229,20 +253,29 @@ index 858baff..9d0a662 100644
              allOperations.add(
                      ContentProviderOperation.newUpdate(VideoStore.Video.Media.EXTERNAL_CONTENT_URI)
                      .withSelection(
-@@ -230,7 +273,7 @@ public class EpisodeTags extends BaseTags {
-         try {
-             ContentProviderResult[] results = cr.applyBatch(ScraperStore.AUTHORITY, allOperations);
-             if (results != null && results.length > 0) {
+@@ -226,16 +288,7 @@ public class EpisodeTags extends BaseTags {
+                     );
+         }
+ 
+-        long returnValue = -1;
+-        try {
+-            ContentProviderResult[] results = cr.applyBatch(ScraperStore.AUTHORITY, allOperations);
+-            if (results != null && results.length > 0) {
 -                returnValue = ContentUris.parseId(results[0].uri);
-+                returnValue = ContentUris.parseId(results[primaryOperation].uri);
-             }
-         } catch (RemoteException | OperationApplicationException e) {
-             log.error("Exception", e);
+-            }
+-        } catch (RemoteException | OperationApplicationException e) {
+-            log.error("Exception", e);
+-        }
+-        return returnValue;
++        return new OwnedCanonicalBatch(allOperations, primaryOperation);
+     }
+ 
+     public void addSaveOperation(ArrayList<ContentProviderOperation> list, Map<String, Long> poster2IdMap) {
 diff --git a/src/com/archos/mediascraper/MovieTags.java b/src/com/archos/mediascraper/MovieTags.java
-index 30bba74..f48d98b 100644
+index 30bba74..3195098 100644
 --- a/src/com/archos/mediascraper/MovieTags.java
 +++ b/src/com/archos/mediascraper/MovieTags.java
-@@ -197,12 +197,33 @@ public class MovieTags extends VideoTags {
+@@ -197,12 +197,47 @@ public class MovieTags extends VideoTags {
  
      @Override
      public long save(Context context, long videoId) {
@@ -260,7 +293,21 @@ index 30bba74..f48d98b 100644
 +        return saveInternal(context, videoId, metadataId, expectedProviderId, expectedPinned);
 +    }
 +
++    /** Prepare a guarded batch without changing native identification or metadata. */
++    public OwnedCanonicalBatch prepareOwnedRestore(Context context, long videoId, long metadataId,
++            long expectedProviderId, Long expectedPinned) {
++        if (videoId <= 0 || metadataId <= 0 || expectedProviderId <= 0 || mOnlineId <= 0)
++            throw new IllegalArgumentException("Invalid owned movie restoration");
++        return prepareSaveInternal(context, videoId, metadataId, expectedProviderId, expectedPinned);
++    }
++
 +    private long saveInternal(Context context, long videoId, Long metadataId,
++            Long expectedProviderId, Long expectedPinned) {
++        try { return prepareSaveInternal(context, videoId, metadataId, expectedProviderId, expectedPinned).apply(context.getContentResolver()); }
++        catch (RemoteException | OperationApplicationException e) { log.error("Exception", e); return -1; }
++    }
++
++    private OwnedCanonicalBatch prepareSaveInternal(Context context, long videoId, Long metadataId,
 +            Long expectedProviderId, Long expectedPinned) {
          ContentResolver cr = context.getContentResolver();
          //------------------------------------------------------
@@ -276,7 +323,7 @@ index 30bba74..f48d98b 100644
          values.put(ScraperStore.Movie.NAME, mTitle);
          values.put(ScraperStore.Movie.YEAR, Integer.valueOf(mYear));
          values.put(ScraperStore.Movie.RELEASE_DATE, mReleaseDate);
-@@ -240,36 +261,53 @@ public class MovieTags extends VideoTags {
+@@ -240,36 +275,53 @@ public class MovieTags extends VideoTags {
          Builder cop = null;
          ArrayList<ContentProviderOperation> allOperations = new ArrayList<ContentProviderOperation>();
  
@@ -336,7 +383,7 @@ index 30bba74..f48d98b 100644
              cop.withValue(ScraperStore.Movie.Actor.ROLE, mActors.get(actorName));
              allOperations.add(cop.build());
          }
-@@ -277,7 +315,7 @@ public class MovieTags extends VideoTags {
+@@ -277,7 +329,7 @@ public class MovieTags extends VideoTags {
          for(String genre: mGenres) {
              cop = ContentProviderOperation.newInsert(ScraperStore.Genre.URI.MOVIE);
              cop.withValue(ScraperStore.Movie.Genre.NAME, genre);
@@ -345,7 +392,7 @@ index 30bba74..f48d98b 100644
              allOperations.add(cop.build());
          }
  
-@@ -350,16 +388,16 @@ public class MovieTags extends VideoTags {
+@@ -350,16 +402,16 @@ public class MovieTags extends VideoTags {
          for (ScraperImage image : safeList(mPosters)) {
              if (posterId == -1)
                  posterId = allOperations.size();
@@ -365,7 +412,7 @@ index 30bba74..f48d98b 100644
          }
  
          ContentValues backRef = null;
-@@ -376,12 +414,12 @@ public class MovieTags extends VideoTags {
+@@ -376,12 +428,12 @@ public class MovieTags extends VideoTags {
                      ContentProviderOperation.newUpdate(ScraperStore.Movie.URI.BASE)
                      .withValueBackReferences(backRef)// will replace posterID with ID returned by execution of allOperations
                      .withSelection(ScraperStore.Movie.ID + "=?", new String[] { "-1" })
@@ -380,14 +427,56 @@ index 30bba74..f48d98b 100644
              allOperations.add(
                      ContentProviderOperation.newUpdate(VideoStore.Video.Media.EXTERNAL_CONTENT_URI)
                      .withSelection(
-@@ -395,8 +433,8 @@ public class MovieTags extends VideoTags {
-         long result = -1;
-         try {
-             ContentProviderResult[] results = cr.applyBatch(ScraperStore.AUTHORITY, allOperations);
+@@ -392,16 +444,7 @@ public class MovieTags extends VideoTags {
+                     .build()
+                     );
+         }
+-        long result = -1;
+-        try {
+-            ContentProviderResult[] results = cr.applyBatch(ScraperStore.AUTHORITY, allOperations);
 -            if (results != null && results.length > 0) {
 -                result = ContentUris.parseId(results[0].uri);
-+            if (results != null && results.length > primaryOperation) {
-+                result = ContentUris.parseId(results[primaryOperation].uri);
-             }
-         } catch (RemoteException | OperationApplicationException e) {
-             log.error("Exception", e);
+-            }
+-        } catch (RemoteException | OperationApplicationException e) {
+-            log.error("Exception", e);
+-        }
+-        return result;
++        return new OwnedCanonicalBatch(allOperations, primaryOperation);
+     }
+ 
+     @Override
+diff --git a/src/com/archos/mediascraper/OwnedCanonicalBatch.java b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
+new file mode 100644
+index 0000000..0244f70
+--- /dev/null
++++ b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
+@@ -0,0 +1,29 @@
++// Copyright 2026 Supernova contributors
++// Licensed under the Apache License, Version 2.0.
++package com.archos.mediascraper;
++
++import android.content.ContentProviderOperation;
++import android.content.ContentProviderResult;
++import android.content.ContentResolver;
++import android.content.ContentUris;
++import android.content.OperationApplicationException;
++import android.os.RemoteException;
++import com.archos.mediaprovider.video.ScraperStore;
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.List;
++
++/** Canonical operations prepared without application; execution requires the caller's transaction. */
++public final class OwnedCanonicalBatch {
++    public final List<ContentProviderOperation> operations;
++    public final int primaryOperation;
++    OwnedCanonicalBatch(ArrayList<ContentProviderOperation> operations, int primaryOperation) {
++        this.operations = Collections.unmodifiableList(new ArrayList<>(operations));
++        this.primaryOperation = primaryOperation;
++    }
++    long apply(ContentResolver resolver) throws RemoteException, OperationApplicationException {
++        ContentProviderResult[] result = resolver.applyBatch(ScraperStore.AUTHORITY, new ArrayList<>(operations));
++        return result != null && result.length > primaryOperation
++                ? ContentUris.parseId(result[primaryOperation].uri) : -1;
++    }
++}

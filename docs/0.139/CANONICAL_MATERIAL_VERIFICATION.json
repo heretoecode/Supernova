@@ -1,0 +1,25 @@
+{
+  "source_sha": "9dbb8d69ff542a7e7d6fddbf9b71013434f25bc6",
+  "dependency_sha": "67e2c4c60b7afcd305756bef88aad6340c01829e",
+  "result": "PASS",
+  "duration": "1m11s",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.foundation.FoundationApplicationIdentityTest",
+    "com.archos.mediacenter.video.foundation.FoundationVersionTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest"
+  ],
+  "log_sha256": "5af677444d556d13b9653af3fd7f98f31aee132d5b7531f7b52cebcc6c0c5516",
+  "coverage": [
+    "Exact canonical movie/show/season/episode/provider result validation",
+    "Prepared immutable movie operations do not apply native mutations; later provider tag mutation cannot change prepared title",
+    "Existing owned movie and episode native graph, pin, Collection and guard tests",
+    "Literal version convention and production Foundation identity checks at0.139/code139"
+  ],
+  "limits": "Provider response fixtures; no live TMDB or complete codec26/native recovery/Shield proof. Physical ownership guard added after this source and needs next focused retest.",
+  "tests": 19,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

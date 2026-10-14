@@ -1,14 +1,15 @@
 {
   "apply_after": "Established0.138 MediaLib patches/Foundation preparation, then medialib-supernova139-playlists.patch",
   "base_commit": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
-  "isolated_dependency_commit": "ea211b6891330a5f0bf862c264e403a52a53453f",
+  "isolated_dependency_commit": "67e2c4c60b7afcd305756bef88aad6340c01829e",
   "patch": ".github/build/medialib-supernova139-matches.patch",
-  "patch_sha256": "d6e5ae299b0d9e6f79740a8559235d273b0660635821e09b063780f3aa817bf1",
+  "patch_sha256": "a360a4dcfa2751d9fcd54dd6caed60531a886f9f84df51f61659b6da6c791446",
   "files": [
     "src/com/archos/mediascraper/MovieTags.java",
     "src/com/archos/mediaprovider/video/ScraperProvider.java",
     "src/com/archos/mediaprovider/video/ScraperStore.java",
-    "src/com/archos/mediascraper/EpisodeTags.java"
+    "src/com/archos/mediascraper/EpisodeTags.java",
+    "src/com/archos/mediascraper/OwnedCanonicalBatch.java"
   ],
-  "scope": "Java/provider only; normal save paths preserved. Staged guarded movie and compatible-parent episode replacement; no codec registration/production restore invocation yet. Original shared dirty dependencies unchanged."
+  "scope": "Java/provider only; normal save paths preserved. Staged owned movie/compatible-parent episode APIs and unapplied operation preparation; no production restore/codec26 yet."
 }
