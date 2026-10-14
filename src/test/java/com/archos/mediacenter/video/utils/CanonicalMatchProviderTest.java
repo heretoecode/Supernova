@@ -243,4 +243,25 @@ public class CanonicalMatchProviderTest {
         }finally{db.endTransaction();}
     }
 
+    @Test public void clearingIdentificationHidesEveryJoinedFactWithoutDeletingUnselectedPinsCollectionsOrViewingState()throws Exception {
+        episodeFixture();var db=holder.get();var movie=com.archos.mediascraper.MatchRestoreOperations.prepareClear(10,11,100,123L);var episode=com.archos.mediascraper.MatchRestoreOperations.prepareClear(20,12,400,555L);org.json.JSONObject record;
+        db.beginTransaction();try {
+            record=com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(db,java.util.List.of(10L,20L),java.util.List.of(movie,episode),()->false);
+            com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,movie,()->false);com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,episode,()->false);
+            com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db,record,()->false);
+            try(var row=db.query(VideoOpenHelper.VIDEO_VIEW_NAME,new String[]{"ArchosMediaScraper_type","m_online_id","m_name","m_plot","s_id","s_name","e_name","e_plot","Nova_pinned"},"_id IN(10,20)",null,null,null,"_id")){assertEquals(2,row.getCount());while(row.moveToNext()){assertEquals(0,row.getLong(0));for(int i=1;i<row.getColumnCount();i++)assertTrue("Cleared joined field "+row.getColumnName(i),row.isNull(i));}}
+            try(var row=db.rawQuery("SELECT m.m_online_id,m.name_movie,m.Nova_pinned,f.ArchosMediaScraper_id,f.bookmark FROM MOVIE m JOIN files f ON f._id=m.video_id WHERE m._id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals("Original title",row.getString(1));assertEquals(9,row.getLong(2));assertEquals(100,row.getLong(3));assertEquals(4444,row.getLong(4));}
+            try(var row=db.rawQuery("SELECT s.s_online_id,s.Nova_pinned,e.e_online_id FROM SHOW s JOIN EPISODE e ON e.show_episode=s._id WHERE e._id=400",null)){assertTrue(row.moveToFirst());assertEquals(666,row.getLong(0));assertEquals(9,row.getLong(1));assertEquals(555,row.getLong(2));}
+            try(var row=db.rawQuery("SELECT COUNT(*) FROM user_collection_item i LEFT JOIN MOVIE m ON i.media_type=1 AND m._id=i.media_id LEFT JOIN SHOW s ON i.media_type=2 AND s._id=i.media_id WHERE m._id IS NOT NULL OR s._id IS NOT NULL",null)){assertTrue(row.moveToFirst());assertEquals(2,row.getLong(0));}
+        }finally{db.endTransaction();}
+        db.beginTransaction();try{assertTrue(com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.replay(app,db,new org.json.JSONObject(record.toString()),true,()->false));com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.verifyComplete(db,record,()->false);try(var row=db.rawQuery("PRAGMA foreign_key_check",null)){assertFalse(row.moveToFirst());}}finally{db.endTransaction();}
+    }
+    @Test public void schema62UpgradeChangesOnlyTheJoinedViewAndPreservesSignedBaselineData()throws Exception {
+        var db=holder.get();String historical=org.robolectric.util.ReflectionHelpers.getStaticField(VideoOpenHelper.class,"CREATE_VIDEO_VIEW_V60");db.execSQL("DROP VIEW video");db.execSQL(historical);db.setVersion(62);holder.close();
+        db=holder.get();assertEquals(63,db.getVersion());
+        try(var row=db.rawQuery("SELECT m.m_online_id,m.name_movie,m.plot_movie,m.Nova_pinned,f.bookmark,f.Archos_lastTimePlayed,f.Archos_traktSeen FROM MOVIE m JOIN files f ON f._id=m.video_id WHERE m._id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals("Original title",row.getString(1));assertEquals("Original facts",row.getString(2));assertEquals(9,row.getLong(3));assertEquals(4444,row.getLong(4));assertEquals(100,row.getLong(5));assertEquals(1,row.getLong(6));}
+        try(var row=db.rawQuery("SELECT i.media_id,m.video_id FROM user_collection_item i JOIN MOVIE m ON m._id=i.media_id WHERE i._id=9",null)){assertTrue(row.moveToFirst());assertEquals(100,row.getLong(0));assertEquals(10,row.getLong(1));}
+        try(var row=db.rawQuery("PRAGMA foreign_key_check",null)){assertFalse(row.moveToFirst());}
+    }
+
 }

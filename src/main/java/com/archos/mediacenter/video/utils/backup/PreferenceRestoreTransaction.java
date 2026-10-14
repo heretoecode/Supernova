@@ -164,9 +164,14 @@ public final class PreferenceRestoreTransaction {
         if(!store.exists())return original;
         try(android.database.sqlite.SQLiteDatabase database=android.database.sqlite.SQLiteDatabase.openDatabase(store.getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY)){
             for(var entry:original.after.entrySet())if(MediaMatchIntents.owns(entry.getKey())){
-                cancelled(cancel);JSONObject intent=new JSONObject((String)entry.getValue());if(!intent.getBoolean("pending")||intent.isNull("requested"))continue;
+                cancelled(cancel);JSONObject intent=new JSONObject((String)entry.getValue());if(!intent.getBoolean("pending"))continue;
                 String[] key=entry.getKey().split(":");long id=Long.parseLong(key[key.length-1]);MediaMatchInventory.Owner owner=inventory.owners.get(id);
-                if(owner==null||owner.match==null)continue;JSONObject request=intent.getJSONObject("requested");var requested=new PortableMediaMatches.Match(request.getString("identity"),request.isNull("episodeProvider")?null:request.getLong("episodeProvider"));
+                if(owner==null||owner.match==null)continue;
+                if(intent.isNull("requested")){
+                    Long provider=owner.type==com.archos.mediascraper.BaseTags.MOVIE?Long.parseLong(owner.match.identity.split(":")[2]):owner.match.episodeProvider;
+                    batches.add(com.archos.mediascraper.MatchRestoreOperations.prepareClear(id,owner.type,owner.localId,provider));files.add(id);intent.put("pending",false);values.put(entry.getKey(),intent.toString());continue;
+                }
+                JSONObject request=intent.getJSONObject("requested");var requested=new PortableMediaMatches.Match(request.getString("identity"),request.isNull("episodeProvider")?null:request.getLong("episodeProvider"));
                 if(owner.type==com.archos.mediascraper.BaseTags.MOVIE&&!requested.identity.startsWith("tmdb:movie:")||owner.type==com.archos.mediascraper.BaseTags.TV_SHOW&&!requested.identity.startsWith("tmdb:tv:"))continue;
                 long parent=0;Long pin=null;
                 String table=owner.type==com.archos.mediascraper.BaseTags.MOVIE?"MOVIE":"EPISODE";

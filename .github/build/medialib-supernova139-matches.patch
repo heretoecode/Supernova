@@ -1,16 +1,17 @@
 diff --git a/src/com/archos/mediaprovider/video/ScraperProvider.java b/src/com/archos/mediaprovider/video/ScraperProvider.java
-index bbf4e60..a71d529 100644
+index bbf4e60..de09bdf 100644
 --- a/src/com/archos/mediaprovider/video/ScraperProvider.java
 +++ b/src/com/archos/mediaprovider/video/ScraperProvider.java
-@@ -61,6 +61,7 @@ public class ScraperProvider extends ContentProvider {
+@@ -61,6 +61,8 @@ public class ScraperProvider extends ContentProvider {
  
      private static final int MOVIE = SCRAPER_PROVIDER_OFFSET + 30;
      private static final int MOVIE_ID = SCRAPER_PROVIDER_OFFSET + 31;
 +    private static final int MOVIE_RESTORE_OWNED = SCRAPER_PROVIDER_OFFSET + 500;
++    private static final int MATCH_RESTORE_CLEAR = SCRAPER_PROVIDER_OFFSET + 502;
      private static final int MOVIE_ALL_INFOS = SCRAPER_PROVIDER_OFFSET + 33;
      private static final int MOVIE_ALL = SCRAPER_PROVIDER_OFFSET + 34;
  
-@@ -71,6 +72,7 @@ public class ScraperProvider extends ContentProvider {
+@@ -71,6 +73,7 @@ public class ScraperProvider extends ContentProvider {
      private static final int SHOW_ALL = SCRAPER_PROVIDER_OFFSET + 44;
      private static final int SHOW_ONLINE_ID = SCRAPER_PROVIDER_OFFSET + 45;
  
@@ -18,7 +19,7 @@ index bbf4e60..a71d529 100644
      private static final int EPISODE = SCRAPER_PROVIDER_OFFSET + 50;
      private static final int EPISODE_ID = SCRAPER_PROVIDER_OFFSET + 51;
      private static final int EPISODE_ALL_INFOS = SCRAPER_PROVIDER_OFFSET + 53;
-@@ -161,11 +163,13 @@ public class ScraperProvider extends ContentProvider {
+@@ -161,11 +164,14 @@ public class ScraperProvider extends ContentProvider {
      /**
       * called from VideoProvider static context. Registers these URIs
       */
@@ -29,11 +30,12 @@ index bbf4e60..a71d529 100644
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.BASE),
                  MOVIE);
 +        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.RESTORE_OWNED), MOVIE_RESTORE_OWNED);
++        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.RESTORE_CLEAR_MATCH), MATCH_RESTORE_CLEAR);
 +        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Episode.URI.RESTORE_OWNED), EPISODE_RESTORE_OWNED);
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.ALL),
                  MOVIE_ALL);
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.ID) + "#",
-@@ -374,8 +378,14 @@ public class ScraperProvider extends ContentProvider {
+@@ -374,8 +380,14 @@ public class ScraperProvider extends ContentProvider {
      private final ContentResolver mCr;
      private final Context mContext;
  
@@ -48,10 +50,31 @@ index bbf4e60..a71d529 100644
          mDbHolder = dbH;
          mContext = context;
          mCr = context.getContentResolver();
-@@ -540,6 +550,24 @@ public class ScraperProvider extends ContentProvider {
+@@ -540,6 +552,45 @@ public class ScraperProvider extends ContentProvider {
          ContentResolver cr = mCr;
          SQLiteDatabase db = mDbHolder.get();
          switch (sUriMatcher.match(uri)) {
++            case MATCH_RESTORE_CLEAR: {
++                if (!db.inTransaction()) throw new IllegalStateException("Identification clear requires a provider transaction");
++                Long file = values.getAsLong("video_id"), kind = values.getAsLong("expected_type"), metadata = values.getAsLong("expected_id");
++                Long provider = values.getAsLong("expected_provider");
++                if(file==null||file<=0||kind==null||metadata==null||metadata<=0||!values.containsKey("expected_provider")
++                        ||kind!=ScraperStore.SCRAPER_TYPE_MOVIE&&kind!=ScraperStore.SCRAPER_TYPE_SHOW)
++                    throw new IllegalArgumentException("Invalid identification clear");
++                try(Cursor current=db.query(VideoOpenHelper.FILES_TABLE_NAME,new String[]{"ArchosMediaScraper_type","ArchosMediaScraper_id"},"_id=?",new String[]{file.toString()},null,null,null)){
++                    if(!current.moveToFirst()||current.getLong(0)!=kind||current.getLong(1)!=metadata)throw new IllegalArgumentException("Receiving identification changed");
++                }
++                String table=kind==ScraperStore.SCRAPER_TYPE_MOVIE?ScraperTables.MOVIE_TABLE_NAME:ScraperTables.EPISODE_TABLE_NAME;
++                String identity=kind==ScraperStore.SCRAPER_TYPE_MOVIE?ScraperStore.Movie.ONLINE_ID:ScraperStore.Episode.ONLINE_ID;
++                try(Cursor current=db.query(table,new String[]{"video_id",identity},"_id=?",new String[]{metadata.toString()},null,null,null)){
++                    if(!current.moveToFirst()||current.getLong(0)!=file||current.isNull(1)!=(provider==null)||provider!=null&&current.getLong(1)!=provider)throw new IllegalArgumentException("Receiving metadata owner changed");
++                }
++                // No pointer update: existing native cleanup triggers stay intact and unselected
++                // pins/Collection owners retain their original metadata. View63 hides inert facts.
++                ContentValues cleared=new ContentValues();cleared.put("ArchosMediaScraper_type",0);
++                if(db.update(VideoOpenHelper.FILES_TABLE_NAME,cleared,"_id=?",new String[]{file.toString()})!=1)throw new IllegalStateException("Identification clear target disappeared");
++                rowId=file;noteUri=createUriAndNotify(rowId,db,VideoStore.Video.Media.EXTERNAL_CONTENT_URI,cr,ADDITIONAL_MOVIE,ADDITIONAL_SHOW);break;
++            }
 +            case MOVIE_RESTORE_OWNED:
 +                if (!db.inTransaction()) throw new IllegalStateException("Owned movie replacement requires a provider transaction");
 +                Long owner = values.getAsLong(ScraperStore.Movie.ID);
@@ -73,7 +96,7 @@ index bbf4e60..a71d529 100644
              case MOVIE:
                  rowId = db.insert(ScraperTables.MOVIE_TABLE_NAME,
                          ScraperStore.Movie.ID, values);
-@@ -550,6 +578,33 @@ public class ScraperProvider extends ContentProvider {
+@@ -550,6 +601,33 @@ public class ScraperProvider extends ContentProvider {
                          ScraperStore.Show.ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                  noteUri = createUriAndNotify(rowId, db, ScraperStore.Show.URI.ID, cr, ADDITIONAL_SHOW);
                  break;
@@ -108,10 +131,20 @@ index bbf4e60..a71d529 100644
                  rowId = db.insert(ScraperTables.EPISODE_TABLE_NAME,
                          ScraperStore.Episode.ID, values);
 diff --git a/src/com/archos/mediaprovider/video/ScraperStore.java b/src/com/archos/mediaprovider/video/ScraperStore.java
-index 285f608..2721f45 100644
+index 285f608..3934455 100644
 --- a/src/com/archos/mediaprovider/video/ScraperStore.java
 +++ b/src/com/archos/mediaprovider/video/ScraperStore.java
-@@ -72,6 +72,8 @@ public final class ScraperStore {
+@@ -28,6 +28,9 @@ public final class ScraperStore {
+ 
+     private static final String CONTENT_AUTHORITY = "content://" + AUTHORITY;
+ 
++    /** Internal restoration endpoint; clears identification without deleting unselected logical state. */
++    public static final Uri RESTORE_CLEAR_MATCH = Uri.parse(CONTENT_AUTHORITY + "/tags/match/restore-clear");
++
+     public static class Movie {
+         public static final String ID = "_id";
+         public static final String VIDEO_ID = "video_id";
+@@ -72,6 +75,8 @@ public final class ScraperStore {
  
          public static class URI {
              public static final Uri BASE = Uri.parse(CONTENT_AUTHORITY + "/tags/movie");
@@ -120,7 +153,7 @@ index 285f608..2721f45 100644
              public static final Uri ALL = Uri.parse(CONTENT_AUTHORITY + "/tags/movies");
              public static final Uri ID = Uri.parse(CONTENT_AUTHORITY + "/tags/movie/id/");
              public static final Uri ALL_INFOS = Uri.parse(CONTENT_AUTHORITY + "/tags/movie/full/");
-@@ -244,6 +246,8 @@ public final class ScraperStore {
+@@ -244,6 +249,8 @@ public final class ScraperStore {
      }
  
      public static class Episode {
@@ -129,7 +162,7 @@ index 285f608..2721f45 100644
          public static final String ID = "_id";
          public static final String VIDEO_ID = "video_id";
          public static final String NAME = "name_episode";
-@@ -269,6 +273,8 @@ public final class ScraperStore {
+@@ -269,6 +276,8 @@ public final class ScraperStore {
  
          public static class URI {
              public static final Uri BASE = Uri.parse(CONTENT_AUTHORITY + "/tags/episode");
@@ -138,6 +171,46 @@ index 285f608..2721f45 100644
              public static final Uri ID = Uri.parse(CONTENT_AUTHORITY + "/tags/episode/id/");
              public static final Uri ALL_INFOS = Uri.parse(CONTENT_AUTHORITY + "/tags/episode/full/");
              public static final Uri ALL_SEASONS = Uri.parse(CONTENT_AUTHORITY + "/tags/seasons/");
+diff --git a/src/com/archos/mediaprovider/video/VideoOpenHelper.java b/src/com/archos/mediaprovider/video/VideoOpenHelper.java
+index 03ad853..350818e 100644
+--- a/src/com/archos/mediaprovider/video/VideoOpenHelper.java
++++ b/src/com/archos/mediaprovider/video/VideoOpenHelper.java
+@@ -47,7 +47,7 @@ public class VideoOpenHelper extends DeleteOnDowngradeSQLiteOpenHelper {
+     // that is what onCreate creates
+     private static final int DATABASE_CREATE_VERSION = 36; // initial version for v1.0 of nova (archos was 10)
+     // that is the current version
+-    private static final int DATABASE_VERSION = 62;
++    private static final int DATABASE_VERSION = 63;
+     private static final String DATABASE_NAME = "media.db";
+ 
+     // (Integer.MAX_VALUE / 2) rounded to human readable form
+@@ -1543,6 +1543,14 @@ public class VideoOpenHelper extends DeleteOnDowngradeSQLiteOpenHelper {
+ 
+     // ------------- ---##[ Video Thumbnails     ]## ---------------------------
+     public static final String VIDEOTHUMBNAIL_TABLE_NAME = "videothumbnails";
++    // Identification can be cleared without deleting unselected logical pins/Collection owners.
++    // Retained metadata is inert while the file has no matching scraper kind.
++    private static final String CREATE_VIDEO_VIEW_V63 = CREATE_VIDEO_VIEW_V60
++            .replace("LEFT JOIN movie AS m ON (m.video_id = f._id)",
++                    "LEFT JOIN movie AS m ON (m.video_id = f._id AND f.ArchosMediaScraper_type = 11)")
++            .replace("LEFT JOIN episode AS e ON (e.video_id = f._id)",
++                    "LEFT JOIN episode AS e ON (e.video_id = f._id AND f.ArchosMediaScraper_type = 12)");
++
+     private static final String CREATE_VIDEOTHUMBNAIL_TABLE =
+             "CREATE TABLE " + VIDEOTHUMBNAIL_TABLE_NAME + " " +
+             "(_id INTEGER PRIMARY KEY,_data TEXT,video_id INTEGER,kind INTEGER,width INTEGER,height INTEGER)";
+@@ -1985,6 +1993,11 @@ public class VideoOpenHelper extends DeleteOnDowngradeSQLiteOpenHelper {
+             if (log.isDebugEnabled()) log.debug("onUpgrade: {} - adding user collections", 62);
+             ScraperTables.upgradeTo(db, 62);
+         }
++        if (oldVersion < 63 && newVersion >= 63) {
++            if (log.isDebugEnabled()) log.debug("onUpgrade: {} - require the current scraper kind for joined metadata", 63);
++            SQLiteUtils.dropView(db, VIDEO_VIEW_NAME);
++            db.execSQL(CREATE_VIDEO_VIEW_V63);
++        }
+     }
+ 
+     /**
 diff --git a/src/com/archos/mediascraper/EpisodeTags.java b/src/com/archos/mediascraper/EpisodeTags.java
 index 858baff..3b0bb00 100644
 --- a/src/com/archos/mediascraper/EpisodeTags.java
@@ -322,6 +395,35 @@ index 858baff..3b0bb00 100644
      }
  
      public void addSaveOperation(ArrayList<ContentProviderOperation> list, Map<String, Long> poster2IdMap) {
+diff --git a/src/com/archos/mediascraper/MatchRestoreOperations.java b/src/com/archos/mediascraper/MatchRestoreOperations.java
+new file mode 100644
+index 0000000..4eafbb5
+--- /dev/null
++++ b/src/com/archos/mediascraper/MatchRestoreOperations.java
+@@ -0,0 +1,23 @@
++// Copyright 2026 Supernova contributors
++// Licensed under the Apache License, Version 2.0.
++package com.archos.mediascraper;
++
++import android.content.ContentProviderOperation;
++import android.content.ContentUris;
++import android.content.ContentValues;
++import com.archos.mediaprovider.video.*;
++import java.util.ArrayList;
++
++/** Guarded identification operations. Retained metadata is inert while the receiving file is unidentified. */
++public final class MatchRestoreOperations {
++    public static OwnedCanonicalBatch prepareClear(long videoId,long kind,long metadataId,Long providerId) {
++        if(videoId<=0||metadataId<=0||kind!=BaseTags.MOVIE&&kind!=BaseTags.TV_SHOW||providerId!=null&&providerId<=0||kind==BaseTags.MOVIE&&providerId==null)throw new IllegalArgumentException("Invalid receiving identification clear");
++        ArrayList<ContentProviderOperation> operations=new ArrayList<>();ContentValues file=new ContentValues();file.put("ArchosMediaScraper_type",kind);file.put("ArchosMediaScraper_id",metadataId);
++        operations.add(ContentProviderOperation.newAssertQuery(ContentUris.withAppendedId(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,videoId)).withValues(file).withExpectedCount(1).build());
++        ContentValues owner=new ContentValues();owner.put("video_id",videoId);String identity=kind==BaseTags.MOVIE?ScraperStore.Movie.ONLINE_ID:ScraperStore.Episode.ONLINE_ID;if(providerId==null)owner.putNull(identity);else owner.put(identity,providerId);
++        operations.add(ContentProviderOperation.newAssertQuery(ContentUris.withAppendedId(kind==BaseTags.MOVIE?ScraperStore.Movie.URI.ID:ScraperStore.Episode.URI.ID,metadataId)).withValues(owner).withExpectedCount(1).build());
++        ContentValues clear=new ContentValues();clear.put("video_id",videoId);clear.put("expected_type",kind);clear.put("expected_id",metadataId);if(providerId==null)clear.putNull("expected_provider");else clear.put("expected_provider",providerId);
++        operations.add(ContentProviderOperation.newInsert(ScraperStore.RESTORE_CLEAR_MATCH).withValues(clear).build());return new OwnedCanonicalBatch(operations,2);
++    }
++    private MatchRestoreOperations(){}
++}
 diff --git a/src/com/archos/mediascraper/MovieTags.java b/src/com/archos/mediascraper/MovieTags.java
 index 30bba74..3195098 100644
 --- a/src/com/archos/mediascraper/MovieTags.java
@@ -498,7 +600,7 @@ index 30bba74..3195098 100644
      @Override
 diff --git a/src/com/archos/mediascraper/OwnedCanonicalBatch.java b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
 new file mode 100644
-index 0000000..cebe993
+index 0000000..2e3ac22
 --- /dev/null
 +++ b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
 @@ -0,0 +1,73 @@
@@ -552,7 +654,7 @@ index 0000000..cebe993
 +            long storedPrimary=record.getLong("primary");if(storedPrimary<0||storedPrimary>=count)throw new org.json.JSONException("Invalid canonical recovery primary operation");int primary=(int)storedPrimary;
 +            if(decoded==null||decoded.isEmpty()||decoded.size()>10000||parcel.dataAvail()!=0||primary<0||primary>=decoded.size())throw new org.json.JSONException("Invalid canonical recovery operations");
 +            android.net.Uri owner=decoded.get(primary).getUri();
-+            if(owner.equals(ScraperStore.Movie.URI.RESTORE_OWNED)?primary!=2:owner.equals(ScraperStore.Episode.URI.RESTORE_OWNED)?primary!=3&&primary!=4:true)throw new org.json.JSONException("Invalid canonical recovery owner");
++            if((owner.equals(ScraperStore.Movie.URI.RESTORE_OWNED)||owner.equals(ScraperStore.RESTORE_CLEAR_MATCH))?primary!=2:owner.equals(ScraperStore.Episode.URI.RESTORE_OWNED)?primary!=3&&primary!=4:true)throw new org.json.JSONException("Invalid canonical recovery owner");
 +            for(int i=0;i<decoded.size();i++) {
 +                ContentProviderOperation operation=decoded.get(i);
 +                if(operation==null||operation.isDelete()||i<primary&&!operation.isAssertQuery()

@@ -67,7 +67,7 @@ public final class SafeBackup {
             BackupFormat.validate(read(new File(stage,"manifest.json")));
             if(!new File(stage,"RESTORE_INSTRUCTIONS.txt").isFile())throw new IOException("Backup instructions are missing");
             int version = Integer.parseInt(read(new File(stage,"db_version.txt")).trim());
-            if (version != VideoOpenHelper.getDatabaseVersion()) throw new IOException("Backup database version is incompatible");
+            if (version != VideoOpenHelper.getDatabaseVersion() && !(version == 62 && VideoOpenHelper.getDatabaseVersion() == 63)) throw new IOException("Backup database version is incompatible");
             File history=new File(stage,com.archos.mediacenter.video.leanback.ViewingHistory.DATABASE);if(history.isFile())com.archos.mediacenter.video.leanback.ViewingHistory.validate(history);
             File media = new File(stage,"media.db");
             if (!media.isFile()) throw new IOException("Backup has no media database");
@@ -134,6 +134,22 @@ public final class SafeBackup {
             if(movedOld&&!old.renameTo(live)) throw new IOException("Recovery copy retained at "+old.getPath());
         }
     }
+    /** Migrate only the verified known62 ->63 view change on a private replacement, never the reviewed source. */
+    private static void migrateLegacyMedia(Context context,File fresh)throws IOException {
+        try(SQLiteDatabase database=SQLiteDatabase.openDatabase(fresh.getPath(),null,SQLiteDatabase.OPEN_READWRITE)){
+            if(database.getVersion()==VideoOpenHelper.getDatabaseVersion())return;
+            if(database.getVersion()!=62||VideoOpenHelper.getDatabaseVersion()!=63)throw new IOException("Unsupported legacy media migration");
+            database.beginTransaction();try(VideoOpenHelper helper=new VideoOpenHelper(context)){
+                helper.onUpgrade(database,62,63);database.setVersion(63);
+                try(Cursor projection=database.rawQuery("SELECT _id,ArchosMediaScraper_type,m_name,e_name,s_id FROM video LIMIT 0",null)){projection.getCount();}
+                try(Cursor integrity=database.rawQuery("PRAGMA quick_check",null)){if(!integrity.moveToFirst()||!"ok".equals(integrity.getString(0)))throw new IOException("Legacy media migration failed verification");}
+                database.setTransactionSuccessful();
+            }finally{database.endTransaction();}
+            try(Cursor checkpoint=database.rawQuery("PRAGMA wal_checkpoint(TRUNCATE)",null)){checkpoint.moveToFirst();}
+            database.execSQL("PRAGMA journal_mode=DELETE");
+        }catch(RuntimeException invalid){throw new IOException("Could not prepare compatible legacy media replacement",invalid);}
+        File wal=new File(fresh+"-wal");if(wal.exists()&&wal.length()>0)throw new IOException("Legacy migration checkpoint is incomplete");
+    }
     public static void restore(Context c, File stage) throws Exception {
         com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
         try(RestoreJournal.Guard guard=RestoreJournal.acquire(c)){synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){synchronized(com.archos.mediacenter.video.leanback.ViewingHistory.LOCK){restoreLocked(c,stage);}}}
@@ -150,7 +166,8 @@ public final class SafeBackup {
                 // Its documented full-restore credential disconnect remains explicit and separate.
                 if(!name.equals("credentials_db")&&!staged.isFile())continue;
                 File dest=c.getDatabasePath(name);
-                swaps.add(new Swap(dest,staged,token));
+                Swap replacement=new Swap(dest,staged,token);swaps.add(replacement);
+                if(name.equals("media.db")&&replacement.fresh.isFile())migrateLegacyMedia(c,replacement.fresh);
                 swaps.add(new Swap(new File(dest+"-wal"),null,token));
                 swaps.add(new Swap(new File(dest+"-shm"),null,token));
             }
