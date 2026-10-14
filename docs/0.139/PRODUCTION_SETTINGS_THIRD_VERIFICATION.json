@@ -1,0 +1,29 @@
+{
+  "source_sha": "fd9936be748c870213deb242a61a8b167d46cff1",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 18,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest"
+  ],
+  "failed_tests": [
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+      "test": "actualPreferencesFragmentBuildsFullSidebarAndAllBackupCategoriesAndFlatPages",
+      "message": "java.lang.NullPointerException: Can't set default locale to NULL"
+    },
+    {
+      "class": "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+      "test": "cleanupRefusesUnownedRootAndNeverFollowsLinksInsideOwnedReview",
+      "message": "java.nio.file.NoSuchFileException: /tmp/robolectric-BackupImportPreparationTest_cleanupRefusesUnownedRootAndNeverFollowsLinksInsideOwnedReview13379277659804172206/app.supernova.player-dataDir/cache/unrelated-keep/KEEP.txt"
+    }
+  ],
+  "log_sha256": "e2c0d4b987e27f3a023ebf4a3833d3a67d1c27010dc95e99e5b9c7dc9e2228fc",
+  "duration": "2m 22s",
+  "reason": "Primary full Preferences fixture error is missing CustomApplication systemLocale, normally set in onCreate. Symlink cleanup failure also reproduced. Next source adds canonical child path validation and completes ordinary fixture locale/global context initialization. No passes are claimed for those failed checks."
+}

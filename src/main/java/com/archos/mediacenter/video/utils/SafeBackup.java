@@ -89,6 +89,7 @@ public final class SafeBackup {
         removeOwnedStage(stage);if(stage.exists())throw new IOException("Private legacy review cleanup is pending");
     }
     public static boolean isSymbolicLink(File file)throws IOException {
+        File parent=file.getAbsoluteFile().getParentFile();if(parent!=null&&!new File(parent.getCanonicalFile(),file.getName()).equals(file.getCanonicalFile()))return true;
         try{return android.system.OsConstants.S_ISLNK(android.system.Os.lstat(file.getPath()).st_mode);}
         catch(android.system.ErrnoException failure){if(failure.errno==android.system.OsConstants.ENOENT)return false;throw new IOException("Private review inventory unavailable",failure);}
     }
