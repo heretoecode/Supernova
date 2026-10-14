@@ -233,7 +233,6 @@ public class MediaLibraryBackupService extends Service {
             // SafeBackup prepares its durable private originals before replacement.
             // Never create a new whole-library1.0 archive as a side effect of import.
             SafeBackup.restore(this,stage);
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("preview_restore_artwork_pending",true).commit();
         } finally { SafeBackup.remove(stage); }
     }
 

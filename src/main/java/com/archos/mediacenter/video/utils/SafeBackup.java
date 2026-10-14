@@ -85,7 +85,16 @@ public final class SafeBackup {
     /** Discard only an app-owned legacy review folder, including invalid/tampered review contents. */
     public static void discardStage(Context context,File stage)throws IOException {
         if(!stage.getCanonicalFile().getParentFile().equals(context.getCacheDir().getCanonicalFile())||!stage.getName().matches("restore-[a-f0-9-]{36}"))throw new IOException("Invalid restore staging location");
-        remove(stage);if(stage.exists())throw new IOException("Private legacy review cleanup is pending");
+        if(isSymbolicLink(stage))throw new IOException("Invalid restore staging link");
+        removeOwnedStage(stage);if(stage.exists())throw new IOException("Private legacy review cleanup is pending");
+    }
+    public static boolean isSymbolicLink(File file)throws IOException {
+        try{return android.system.OsConstants.S_ISLNK(android.system.Os.lstat(file.getPath()).st_mode);}
+        catch(android.system.ErrnoException failure){if(failure.errno==android.system.OsConstants.ENOENT)return false;throw new IOException("Private review inventory unavailable",failure);}
+    }
+    private static void removeOwnedStage(File file)throws IOException {
+        if(!isSymbolicLink(file)&&file.isDirectory()){File[] children=file.listFiles();if(children==null)throw new IOException("Private review cleanup unavailable");for(File child:children)removeOwnedStage(child);}
+        if(!file.delete()&&file.exists())throw new IOException("Private review cleanup is pending");
     }
     static String read(File file) throws IOException {
         try (InputStream in = new FileInputStream(file); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -170,7 +179,9 @@ public final class SafeBackup {
                     if(settings.isFile()&&!SettingsBackup.decodePortable(PreferenceManager.getDefaultSharedPreferences(c),read(settings),false).commit())
                         throw new IOException("Cannot save restored settings");
                     if(!c.getSharedPreferences("opensubtitles_credentials",0).edit().clear().commit())throw new IOException("Cannot clear obsolete credentials");
-                    if("app.supernova.player".equals(c.getPackageName()))PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean("try_new_ui",true).commit();
+                    android.content.SharedPreferences.Editor followup=PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean("preview_restore_artwork_pending",true);
+                    if("app.supernova.player".equals(c.getPackageName()))followup.putBoolean("try_new_ui",true);
+                    if(!followup.commit())throw new IOException("Cannot save legacy restore follow-up state");
                     RestoreJournal.commit(c,journal);
                 } catch(Exception error) {
                     try { RestoreJournal.recoverLocked(c); } catch(Exception recovery) { error.addSuppressed(recovery); }

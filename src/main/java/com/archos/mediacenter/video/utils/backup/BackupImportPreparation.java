@@ -47,10 +47,10 @@ public final class BackupImportPreparation implements AutoCloseable {
     }
     private static byte[] signature(File root)throws Exception {
         MessageDigest digest=MessageDigest.getInstance("SHA-256");List<File> files=new ArrayList<>();inventory(root,files);files.sort(Comparator.comparing(File::getPath));byte[] buffer=new byte[65536];
-        for(File file:files){String name=root.toPath().relativize(file.toPath()).toString();digest.update(name.getBytes(StandardCharsets.UTF_8));digest.update((byte)0);digest.update(Long.toString(file.length()).getBytes(StandardCharsets.UTF_8));digest.update((byte)0);try(InputStream input=new FileInputStream(file)){int n;while((n=input.read(buffer))!=-1)digest.update(buffer,0,n);}}return digest.digest();
+        for(File file:files){String name=file.getCanonicalPath().substring(root.getCanonicalPath().length()+1);digest.update(name.getBytes(StandardCharsets.UTF_8));digest.update((byte)0);digest.update(Long.toString(file.length()).getBytes(StandardCharsets.UTF_8));digest.update((byte)0);try(InputStream input=new FileInputStream(file)){int n;while((n=input.read(buffer))!=-1)digest.update(buffer,0,n);}}return digest.digest();
     }
     private static void inventory(File root,List<File> files)throws IOException {
-        File[] children=root.listFiles();if(children==null)throw new IOException("Private legacy review is unavailable");for(File file:children){if(java.nio.file.Files.isSymbolicLink(file.toPath()))throw new IOException("Invalid private legacy review");if(file.isDirectory())inventory(file,files);else files.add(file);if(files.size()>100000)throw new IOException("Private legacy review exceeds supported size");}
+        File[] children=root.listFiles();if(children==null)throw new IOException("Private legacy review is unavailable");for(File file:children){if(SafeBackup.isSymbolicLink(file))throw new IOException("Invalid private legacy review");if(file.isDirectory())inventory(file,files);else files.add(file);if(files.size()>100000)throw new IOException("Private legacy review exceeds supported size");}
     }
     /** Cancellation is checked before the historical reader's coordinated replacement begins. */
     public void restoreLegacy(Context context,BooleanSupplier cancel)throws Exception {
