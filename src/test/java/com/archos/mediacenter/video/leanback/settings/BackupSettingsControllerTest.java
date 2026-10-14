@@ -51,7 +51,7 @@ public class BackupSettingsControllerTest {
             Set<BackupCategory> selected=((BackupWorkspace)parent).selection();assertTrue(selected.contains(BackupCategory.MATCHES));assertFalse(selected.contains(BackupCategory.LOCATIONS));assertFalse(selected.contains(BackupCategory.BOOKMARKS));
             settings.requireView().findViewWithTag("backup.create").performClick();await(model(host.get()),BackupOperationModel.Phase.DESTINATION_PENDING);
             var request=Shadows.shadowOf(host.get()).getNextStartedActivityForResult();assertNotNull(request);assertEquals(Intent.ACTION_CREATE_DOCUMENT,request.intent.getAction());
-            File[] files=new File(host.get().getCacheDir(),"supernova-logical-backups").listFiles(f->f.getName().endsWith(".zip"));assertEquals(1,files.length);assertEquals(selected,LogicalBackupArchive.readCategories(files[0],()->false).keySet());
+            File[] files=new File(model(host.get()).getApplication().getCacheDir(),"supernova-logical-backups").listFiles(f->f.getName().endsWith(".zip"));assertEquals(1,files.length);assertEquals(selected,LogicalBackupArchive.readCategories(files[0],()->false).keySet());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void receivingCategorySelectionIsTemporaryAndDisablesEveryAbsentDomain()throws Exception{
