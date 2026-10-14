@@ -1,0 +1,18 @@
+{
+  "source_sha": "bb1e74ee9e824d718950b025c32c507e6193c118",
+  "result": "FAIL",
+  "classes": 4,
+  "tests": 14,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.RestoreJournalTest"
+  ],
+  "log_sha256": "6a75448064340ac064a2d71e373cfc2a27b87fe960c3e978d68c17181a2fd774",
+  "duration": "2m 30s",
+  "reason": "Production Settings fixture skipped CustomApplication.onCreate and did not initialize its logger. Preserved primary failure identifies CustomApplication.getDefaultLocale:527. Follow-up initializes that normal Java app state without replacing the real preferences implementation. Other selected checks passed, including API23 logical dispatch, guarded symlink cleanup and legacy artwork follow-up."
+}
