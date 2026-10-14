@@ -15,7 +15,8 @@ public final class LegacyViewingSnapshot {
         Map<String,ViewingHistory.Record> legacy=new LinkedHashMap<>();Set<String> excluded=new HashSet<>();List<Entry> entries=new ArrayList<>(snapshot.movies);entries.addAll(snapshot.episodes);entries.addAll(snapshot.unmatched);
         for(Entry entry:entries){if(!(entry.media instanceof Video))throw new JSONException("Invalid legacy viewing inventory");Video video=(Video)entry.media;String key=ViewingHistory.identity(entry);if(key==null)continue;boolean putio=video.getFileUri()!=null&&"putio".equalsIgnoreCase(video.getFileUri().getScheme());if(putio){if(key.startsWith("file:"))excluded.add(key);continue;}
             long nativePlayed=video.getLastPlayed();int nativePosition=video.getResumeMs(),duration=video.getDurationMs();if(nativePlayed<0||nativePosition< -2||duration<0)throw new JSONException("Legacy viewing values need review");boolean complete=!historyCleared&&(video.isWatched()||nativePosition==com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END);long played;
-            try{played=historyCleared?0:Math.multiplyExact(nativePlayed,1000L);}catch(ArithmeticException invalid){throw new JSONException("Legacy viewing time exceeds supported range");}
+            // PlayerService, ViewingHistory and series activity use epoch seconds, never milliseconds.
+            if(nativePlayed>Long.MAX_VALUE/1000L)throw new JSONException("Legacy viewing time exceeds supported range");played=historyCleared?0:nativePlayed;
             // Legacy last-played time does not prove when completion occurred.
             int position=positionsCleared?0:Math.max(0,nativePosition);boolean started=!historyCleared&&(complete||nativePlayed>0||nativePosition>0);long completedAt=0;ViewingHistory.Record previous=legacy.get(key);
             if(!complete&&!started&&played==0&&position==0)continue;
