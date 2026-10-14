@@ -6,7 +6,17 @@
     "FAIL": 1
   },
   "definition": "Whole-workstream acceptance includes the stated state/render and Shield checks. Partial software passes are recorded separately; no unavailable-device or failing-profile row is marked PASS.",
-  "current_full_run": "RUNNING \u2014 local23943 and unsigned CI38633930923; collect actual results before updating",
+  "current_full_run": {
+    "source_sha": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+    "result": "FAIL",
+    "tests": 995,
+    "passed": 994,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 208,
+    "receipt": "CURRENT_FULL_VERIFICATION.json"
+  },
   "staged_checks": [
     "POLICY_GENRES_VERIFICATION.json PASS64/10",
     "MATCHES_CODEC_COMBINED_VERIFICATION.json PASS68/9",
@@ -491,5 +501,20 @@
       "remaining_and_partial_evidence": "FAIL \u2014640\u00d7360 connected acceptance:395px inherited rail,672px virtual category panel;21 categories extend beyond physical screen and locations text has zero-height target. Larger-profile and26-codec/canonical recovery subchecks PASS. See BACKUP_SMALL_MEASURED_VERIFICATION.json; current binary/provider/OS-force-stop/historical/Shield gates remain open",
       "source_and_receipts": "`67eda4fabf9c73b8979358ef183639077c7f13de`; SOURCES_LOCATIONS_VERIFICATION.json; MEDIA_ACKNOWLEDGEMENT_VERIFICATION.json; MEDIA_ARCHIVE_VERIFICATION.json; COMBINED_MEDIA_VERIFICATION.json; STARTUP_VIEWING_VERIFICATION.json; COMBINED_VIEWING_VERIFICATION.json; earlier category/UI receipts retained"
     }
-  ]
+  ],
+  "lint": {
+    "result": "PASS",
+    "source_sha": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+    "errors": 0,
+    "warnings": 1771,
+    "log_sha256": "dce96025eee178409bb6e8f7074b7440a899920d6704e11a0b89c5b8644223c2",
+    "batch_result": "FAIL \u2014 independent unit acceptance failure; lint task completed successfully",
+    "suppression_added": false
+  },
+  "unsigned_binary": {
+    "result": "PASS technical packaging only",
+    "receipt": "CURRENT_DEVELOPMENT_PACKAGING_VERIFICATION.json",
+    "sha256": "b21869042256357e9e8c23c0dab7166571f0821c8d86f5b341111120d68e1667",
+    "signed": false
+  }
 }
