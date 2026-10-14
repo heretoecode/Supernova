@@ -63,4 +63,13 @@ public class CanonicalMatchProviderTest {
         var db=holder.get();db.beginTransaction();try{assertEquals(-1,tags().savePreservingOwnedIdentity(app,10,100,123,7L));assertEquals(-1,tags().savePreservingOwnedIdentity(app,10,200,456,8L));try(var row=db.rawQuery("SELECT m_online_id,Nova_pinned,name_movie FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals(9,row.getLong(1));assertEquals("Original title",row.getString(2));}try(var row=db.rawQuery("SELECT m_online_id,Nova_pinned,video_id FROM MOVIE WHERE _id=200",null)){assertTrue(row.moveToFirst());assertEquals(456,row.getLong(0));assertEquals(8,row.getLong(1));assertEquals(11,row.getLong(2));}}finally{db.endTransaction();}
     }
 
+    @Test public void ownedReplacementPreservesNullPinAndDoesNotFillUnselectedFileDuration(){
+        var db=holder.get();db.execSQL("UPDATE MOVIE SET Nova_pinned=NULL WHERE _id=100");db.execSQL("UPDATE files SET duration=0 WHERE _id=10");MovieTags canonical=tags();canonical.setRuntime(5,java.util.concurrent.TimeUnit.MINUTES);db.beginTransaction();try{assertEquals(100,canonical.savePreservingOwnedIdentity(app,10,100,123,null));try(var row=db.rawQuery("SELECT m.Nova_pinned,f.duration,f.bookmark,f.Archos_lastTimePlayed FROM MOVIE m JOIN files f ON f._id=m.video_id WHERE m._id=100",null)){assertTrue(row.moveToFirst());assertTrue(row.isNull(0));assertEquals(0,row.getLong(1));assertEquals(4444,row.getLong(2));assertEquals(100,row.getLong(3));}}finally{db.endTransaction();}
+    }
+    @Test public void changedFileKindRefusesReplacementAndDirectOwnedInsertRequiresTransaction(){
+        var db=holder.get();db.execSQL("UPDATE files SET ArchosMediaScraper_type=12 WHERE _id=10");db.beginTransaction();try{assertEquals(-1,tags().savePreservingOwnedIdentity(app,10,100,123,9L));try(var row=db.rawQuery("SELECT m_online_id,name_movie FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals("Original title",row.getString(1));}}finally{db.endTransaction();}
+        db.execSQL("UPDATE files SET ArchosMediaScraper_type=11 WHERE _id=10");try{tags().savePreservingOwnedIdentity(app,10,100,123,9L);fail("Uncoordinated owned replacement accepted");}catch(IllegalStateException expected){}
+        try(var row=db.rawQuery("SELECT m_online_id,Nova_pinned FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals(9,row.getLong(1));}
+    }
+
 }
