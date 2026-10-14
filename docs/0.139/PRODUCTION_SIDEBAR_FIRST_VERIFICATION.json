@@ -1,0 +1,15 @@
+{
+  "source_sha": "d4ed6086654b68f9fedd53dea2da89d124b2ac31",
+  "result": "FAIL",
+  "classes": 1,
+  "tests": 3,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "33s",
+  "log_sha256": "916711ebea979a02454cac18a137670df50d6be677be996108a79a0ac5251158",
+  "reason": "Full production geometry check reproduces the Backup sidebar opener clipped to14 of34pixels despite500ms settling. Prior25/4 passes establish other recreation behavior, not this visibility property. Next source requests the full child rectangle after layout/focus."
+}
