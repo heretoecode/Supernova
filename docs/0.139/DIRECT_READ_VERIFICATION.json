@@ -1,0 +1,28 @@
+{
+  "result": "PASS",
+  "source_sha": "5fbe1415647affe150c166f6827e91e5deefd8b2",
+  "medialib_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "filecore_sha": "f7f8d9055e6d5f7b84a9475d90e32dc95426a19e",
+  "duration": "37s",
+  "log_sha256": "c5db736225bc258db8490e1048ec93556a6a1757ac6f18b7f38270069b526d4a",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticStateTest",
+    "com.archos.mediacenter.video.diagnostics.TransportReadDiagnosticsTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticStorageTest"
+  ],
+  "tests": 28,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "coverage": [
+    "Optional direct Java read hooks preserve bulk/single read, skip, mark/reset, close and original exception identities",
+    "No wrapper when logging disabled; broken observer cannot break data stream",
+    "Typed bounded byte/call/duration aggregates and timeout classifications never accept addresses or exception text",
+    "Actual WebDAV redirect HEAD plus content GET feeds production recorder and private ZIP without canaries",
+    "Producer playback-session identity survives subsequent playback session change",
+    "Existing seek/output/state, storage cap and archive regressions"
+  ],
+  "limits": "Native/network connect and other uninstrumented inputs remain partial. No Shield throughput/overhead or native playback output acceptance."
+}
