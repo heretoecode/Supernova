@@ -63,8 +63,8 @@ public class PortableMediaMatchesTest {
         try{new PortableMediaMatches.Match("tmdb:movie:1",2L);fail();}catch(JSONException expected){}
         payload=payload(references);payload.put("schema","1");try{PortableMediaMatches.validate(payload);fail();}catch(JSONException expected){}
     }
-    @Test public void explicitEmptyAndPutioExclusionKeepCodecUnregisteredUntilNativeRecoveryIntegration()throws Exception{
+    @Test public void explicitEmptyAndPutioExclusionArePreservedWithRegisteredCanonicalCodec()throws Exception{
         var references=physical(video(10,"putio:///ACCOUNT_CANARY/file"));assertEquals(0,PortableMediaMatches.export(app,Map.of(10L,new PortableMediaMatches.Match("tmdb:movie:1",null)),references).getJSONArray("rows").length());
-        var prepared=PortableMediaMatches.prepare(new JSONObject().put("schema",1).put("rows",new JSONArray()),List.of(10L),Collections.emptyList(),references);assertTrue(prepared.associations.isEmpty());assertEquals(0,prepared.unresolved);assertFalse(LogicalBackupArchive.registered().contains(BackupCategory.MATCHES));
+        var prepared=PortableMediaMatches.prepare(new JSONObject().put("schema",1).put("rows",new JSONArray()),List.of(10L),Collections.emptyList(),references);assertTrue(prepared.associations.isEmpty());assertEquals(0,prepared.unresolved);assertTrue(LogicalBackupArchive.registered().contains(BackupCategory.MATCHES));
     }
 }

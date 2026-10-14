@@ -28,7 +28,7 @@ public class MediaMatchInventoryTest {
         var catalog=LogicalBackupCatalog.capture(app,()->false,false,false,true);assertEquals(Set.of(10L,11L,12L),catalog.matches.keySet());assertEquals("tmdb:movie:123",catalog.matches.get(10L).identity);assertEquals("tmdb:tv:789:0:2",catalog.matches.get(12L).identity);
         var physical=new PortablePhysicalReferences(app,catalog.physical);var payload=MediaMatchIntents.export(app,catalog.matches,MediaMatchInventory.capture(app),physical);PortableMediaMatches.validate(payload);
         assertEquals(3,payload.getJSONArray("rows").length());for(String forbidden:new String[]{"AUTH_CANARY","file:///","putio:","Original facts"})assertFalse(payload.toString().contains(forbidden));
-        assertFalse(LogicalBackupArchive.registered().contains(BackupCategory.MATCHES));
+        assertTrue(LogicalBackupArchive.registered().contains(BackupCategory.MATCHES));
         assertEquals(before.get("oauth_token"),preferences.getAll().get("oauth_token"));
     }
 
