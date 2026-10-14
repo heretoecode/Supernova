@@ -1,0 +1,22 @@
+{
+  "source_sha": "9c83d51f76cbb9c288e69640f003084fd2a73eb0",
+  "dependency_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 2,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest"
+  ],
+  "duration": "28s",
+  "log_sha256": "529fb6e721797dc550e2458249bea08338159174b3d3521c7c1e2c6d5ab625aa",
+  "coverage": [
+    "Existing MovieTags.save with actual ScraperProvider/native62 updates correct joined title/provider/plot instead of borrowing another file",
+    "Outer native transaction rollback restores metadata, pin and receiving Collection rows",
+    "Existing canonical replacement drops original pin and leaves old metadata-id Collection reference unmatched; must preserve ownership before integration"
+  ],
+  "limits": "In-process provider transport delegates actual scraper code/native SQLite, not full VideoProvider/VOB/observer/device execution. No canonical restore registration or production writes; codec26 remains unfinished.",
+  "tests": 3,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

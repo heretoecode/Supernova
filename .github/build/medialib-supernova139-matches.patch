@@ -1,0 +1,146 @@
+diff --git a/src/com/archos/mediascraper/MovieTags.java b/src/com/archos/mediascraper/MovieTags.java
+index 30bba74..afdfddd 100644
+--- a/src/com/archos/mediascraper/MovieTags.java
++++ b/src/com/archos/mediascraper/MovieTags.java
+@@ -197,12 +197,33 @@ public class MovieTags extends VideoTags {
+ 
+     @Override
+     public long save(Context context, long videoId) {
++        return saveInternal(context, videoId, null, null, null);
++    }
++
++    /** Restoration-only canonical replacement retaining the receiving metadata owner and user pin.
++     * The assertion executes in the provider batch before replacement. This does not supply
++     * cross-store recovery: callers still need coordinated originals/redo and cancellation.
++     */
++    public long savePreservingOwnedIdentity(Context context, long videoId, long metadataId,
++            long expectedProviderId, Long expectedPinned) {
++        if (videoId <= 0 || metadataId <= 0 || expectedProviderId <= 0 || mOnlineId <= 0)
++            throw new IllegalArgumentException("Invalid owned movie restoration");
++        return saveInternal(context, videoId, metadataId, expectedProviderId, expectedPinned);
++    }
++
++    private long saveInternal(Context context, long videoId, Long metadataId,
++            Long expectedProviderId, Long expectedPinned) {
+         ContentResolver cr = context.getContentResolver();
+         //------------------------------------------------------
+         // Create a new entry for this movie in the database.
+         //------------------------------------------------------
+         ContentValues values = new ContentValues();
+         values.put(ScraperStore.Movie.VIDEO_ID, Long.valueOf(videoId));
++        if (metadataId != null) {
++            values.put(ScraperStore.Movie.ID, metadataId);
++            if (expectedPinned == null) values.putNull(VideoStore.Video.VideoColumns.NOVA_PINNED);
++            else values.put(VideoStore.Video.VideoColumns.NOVA_PINNED, expectedPinned);
++        }
+         values.put(ScraperStore.Movie.NAME, mTitle);
+         values.put(ScraperStore.Movie.YEAR, Integer.valueOf(mYear));
+         values.put(ScraperStore.Movie.RELEASE_DATE, mReleaseDate);
+@@ -240,7 +261,18 @@ public class MovieTags extends VideoTags {
+         Builder cop = null;
+         ArrayList<ContentProviderOperation> allOperations = new ArrayList<ContentProviderOperation>();
+ 
+-        // first insert the movie base info - item 0 for backreferences
++        if (metadataId != null) {
++            ContentValues expected = new ContentValues();
++            expected.put(ScraperStore.Movie.VIDEO_ID, videoId);
++            expected.put(ScraperStore.Movie.ONLINE_ID, expectedProviderId);
++            if (expectedPinned == null) expected.putNull(VideoStore.Video.VideoColumns.NOVA_PINNED);
++            else expected.put(VideoStore.Video.VideoColumns.NOVA_PINNED, expectedPinned);
++            allOperations.add(ContentProviderOperation.newAssertQuery(
++                    ContentUris.withAppendedId(ScraperStore.Movie.URI.ID, metadataId))
++                    .withValues(expected).withExpectedCount(1).build());
++        }
++        final int primaryOperation = allOperations.size();
++        // The canonical base insert returns the stable receiving owner for backreferences.
+         cop = ContentProviderOperation.newInsert(ScraperStore.Movie.URI.BASE);
+         cop.withValues(values);
+         allOperations.add(cop.build());
+@@ -248,28 +280,28 @@ public class MovieTags extends VideoTags {
+         for(String studio: mStudios) {
+             cop = ContentProviderOperation.newInsert(ScraperStore.Studio.URI.MOVIE);
+             cop.withValue(ScraperStore.Movie.Studio.NAME, studio);
+-            cop.withValueBackReference(ScraperStore.Movie.Studio.MOVIE, 0);
++            cop.withValueBackReference(ScraperStore.Movie.Studio.MOVIE, primaryOperation);
+             allOperations.add(cop.build());
+         }
+ 
+         for(String director: mDirectors) {
+             cop = ContentProviderOperation.newInsert(ScraperStore.Director.URI.MOVIE);
+             cop.withValue(ScraperStore.Movie.Director.NAME, director);
+-            cop.withValueBackReference(ScraperStore.Movie.Director.MOVIE, 0);
++            cop.withValueBackReference(ScraperStore.Movie.Director.MOVIE, primaryOperation);
+             allOperations.add(cop.build());
+         }
+ 
+         for(String writer: mWriters) {
+             cop = ContentProviderOperation.newInsert(ScraperStore.Writer.URI.MOVIE);
+             cop.withValue(ScraperStore.Movie.Writer.NAME, writer);
+-            cop.withValueBackReference(ScraperStore.Movie.Writer.MOVIE, 0);
++            cop.withValueBackReference(ScraperStore.Movie.Writer.MOVIE, primaryOperation);
+             allOperations.add(cop.build());
+         }
+ 
+         for(String actorName: mActors.keySet()) {
+             cop = ContentProviderOperation.newInsert(ScraperStore.Actor.URI.MOVIE);
+             cop.withValue(ScraperStore.Movie.Actor.NAME, actorName);
+-            cop.withValueBackReference(ScraperStore.Movie.Actor.MOVIE, 0);
++            cop.withValueBackReference(ScraperStore.Movie.Actor.MOVIE, primaryOperation);
+             cop.withValue(ScraperStore.Movie.Actor.ROLE, mActors.get(actorName));
+             allOperations.add(cop.build());
+         }
+@@ -277,7 +309,7 @@ public class MovieTags extends VideoTags {
+         for(String genre: mGenres) {
+             cop = ContentProviderOperation.newInsert(ScraperStore.Genre.URI.MOVIE);
+             cop.withValue(ScraperStore.Movie.Genre.NAME, genre);
+-            cop.withValueBackReference(ScraperStore.Movie.Genre.MOVIE, 0);
++            cop.withValueBackReference(ScraperStore.Movie.Genre.MOVIE, primaryOperation);
+             allOperations.add(cop.build());
+         }
+ 
+@@ -350,16 +382,16 @@ public class MovieTags extends VideoTags {
+         for (ScraperImage image : safeList(mPosters)) {
+             if (posterId == -1)
+                 posterId = allOperations.size();
+-            allOperations.add(image.getSaveOperationBackreferenced(0));
++            allOperations.add(image.getSaveOperationBackreferenced(primaryOperation));
+         }
+         for (ScraperImage image : safeList(mBackdrops)) {
+             if (backdropId == -1)
+                 backdropId = allOperations.size();
+-            allOperations.add(image.getSaveOperationBackreferenced(0));
++            allOperations.add(image.getSaveOperationBackreferenced(primaryOperation));
+         }
+ 
+         for (ScraperTrailer trailer : safeList(trailers)) {
+-            allOperations.add(trailer.getSaveOperationBackreferenced(0));
++            allOperations.add(trailer.getSaveOperationBackreferenced(primaryOperation));
+         }
+ 
+         ContentValues backRef = null;
+@@ -376,12 +408,12 @@ public class MovieTags extends VideoTags {
+                     ContentProviderOperation.newUpdate(ScraperStore.Movie.URI.BASE)
+                     .withValueBackReferences(backRef)// will replace posterID with ID returned by execution of allOperations
+                     .withSelection(ScraperStore.Movie.ID + "=?", new String[] { "-1" })
+-                            .withSelectionBackReference(0, 0)
++                            .withSelectionBackReference(0, primaryOperation)
+                     .build()
+                     );
+         }
+         // update runtime in video db, it's not part of the scraper db part
+-        if (mRuntimeMs > 0) {
++        if (metadataId == null && mRuntimeMs > 0) {
+             allOperations.add(
+                     ContentProviderOperation.newUpdate(VideoStore.Video.Media.EXTERNAL_CONTENT_URI)
+                     .withSelection(
+@@ -395,8 +427,8 @@ public class MovieTags extends VideoTags {
+         long result = -1;
+         try {
+             ContentProviderResult[] results = cr.applyBatch(ScraperStore.AUTHORITY, allOperations);
+-            if (results != null && results.length > 0) {
+-                result = ContentUris.parseId(results[0].uri);
++            if (results != null && results.length > primaryOperation) {
++                result = ContentUris.parseId(results[primaryOperation].uri);
+             }
+         } catch (RemoteException | OperationApplicationException e) {
+             log.error("Exception", e);

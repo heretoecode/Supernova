@@ -50,4 +50,15 @@ public class CanonicalMatchProviderTest {
         try(var row=db.rawQuery("SELECT name,sort_name,position,hidden FROM user_collection WHERE _id=7",null)){assertTrue(row.moveToFirst());assertEquals("Receiving legacy collection",row.getString(0));assertEquals("Receiving legacy collection",row.getString(1));assertEquals(2,row.getLong(2));assertEquals(0,row.getLong(3));}
         try(var row=db.rawQuery("SELECT collection_id,media_type,media_id FROM user_collection_item WHERE _id=9",null)){assertTrue(row.moveToFirst());assertEquals(7,row.getLong(0));assertEquals(ScraperStore.UserCollectionItems.MEDIA_TYPE_MOVIE,row.getLong(1));assertEquals(100,row.getLong(2));}
     }
+    @Test public void guardedCanonicalReplacementRetainsNativeOwnerPinAndCollectionReferenceAndRollsBackTogether(){
+        var db=holder.get();for(boolean recursive:new boolean[]{false,true}){db.execSQL("PRAGMA recursive_triggers="+(recursive?1:0));db.beginTransaction();try{
+            assertEquals(100,tags().savePreservingOwnedIdentity(app,10,100,123,9L));
+            try(var row=db.rawQuery("SELECT m._id,m.video_id,m.m_online_id,m.Nova_pinned,m.name_movie,m.plot_movie,f.bookmark,f.Archos_lastTimePlayed,f.Archos_traktSeen FROM MOVIE m JOIN files f ON f._id=m.video_id WHERE m._id=100",null)){assertTrue(row.moveToFirst());assertEquals(100,row.getLong(0));assertEquals(10,row.getLong(1));assertEquals(789,row.getLong(2));assertEquals(9,row.getLong(3));assertEquals("Fresh canonical title",row.getString(4));assertEquals("Fresh canonical facts",row.getString(5));assertEquals(4444,row.getLong(6));assertEquals(100,row.getLong(7));assertEquals(1,row.getLong(8));}
+            try(var row=db.rawQuery("SELECT i.media_id,m.video_id FROM user_collection_item i JOIN MOVIE m ON m._id=i.media_id WHERE i._id=9",null)){assertTrue(row.moveToFirst());assertEquals(100,row.getLong(0));assertEquals(10,row.getLong(1));}
+        }finally{db.endTransaction();}try(var row=db.rawQuery("SELECT m_online_id,Nova_pinned,name_movie FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals(9,row.getLong(1));assertEquals("Original title",row.getString(2));}}
+    }
+    @Test public void guardedBatchRefusesChangedPinOrForeignMetadataOwnerBeforeReplacement(){
+        var db=holder.get();db.beginTransaction();try{assertEquals(-1,tags().savePreservingOwnedIdentity(app,10,100,123,7L));assertEquals(-1,tags().savePreservingOwnedIdentity(app,10,200,456,8L));try(var row=db.rawQuery("SELECT m_online_id,Nova_pinned,name_movie FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals(9,row.getLong(1));assertEquals("Original title",row.getString(2));}try(var row=db.rawQuery("SELECT m_online_id,Nova_pinned,video_id FROM MOVIE WHERE _id=200",null)){assertTrue(row.moveToFirst());assertEquals(456,row.getLong(0));assertEquals(8,row.getLong(1));assertEquals(11,row.getLong(2));}}finally{db.endTransaction();}
+    }
+
 }
