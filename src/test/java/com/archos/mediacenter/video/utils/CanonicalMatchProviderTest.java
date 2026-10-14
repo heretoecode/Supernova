@@ -272,7 +272,9 @@ public class CanonicalMatchProviderTest {
         db.beginTransaction();try{assertEquals(100,com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false));try(var row=db.query(VideoOpenHelper.VIDEO_VIEW_NAME,new String[]{"ArchosMediaScraper_type","m_online_id","m_name","Nova_pinned"},"_id=10",null,null,null,null)){assertTrue(row.moveToFirst());assertEquals(11,row.getLong(0));assertEquals(789,row.getLong(1));assertEquals("Fresh canonical title",row.getString(2));assertEquals(9,row.getLong(3));}}finally{db.endTransaction();}
     }
     @Test public void episodeToRetainedMovieSwitchKeepsOldEpisodeShowPinCollectionAndViewingState()throws Exception {
-        episodeFixture();var db=holder.get();db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,name_movie,Nova_pinned) VALUES(450,20,888,'Retained receiving movie',7)");db.execSQL("UPDATE files SET ArchosMediaScraper_type=12,ArchosMediaScraper_id=400 WHERE _id=20");
+        episodeFixture();var db=holder.get();
+        // Seed a retained owner without first deleting the episode through native link cleanup.
+        db.execSQL("UPDATE files SET ArchosMediaScraper_type=0 WHERE _id=20");db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,name_movie,Nova_pinned) VALUES(450,20,888,'Retained receiving movie',7)");db.execSQL("UPDATE files SET ArchosMediaScraper_type=0 WHERE _id=20");db.execSQL("UPDATE files SET ArchosMediaScraper_type=12,ArchosMediaScraper_id=400 WHERE _id=20");
         var owner=com.archos.mediacenter.video.utils.backup.MediaMatchInventory.capture(app).owners.get(20L);assertEquals(12,owner.type);
         var request=new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:movie:789",null);var batch=com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.prepare(app,owner,request,Uri.parse("file:///episode.mkv"),0,null,(context,requested,file)->new com.archos.mediascraper.ScrapeDetailResult(tags(),true,null,com.archos.mediascraper.ScrapeStatus.OKAY,null));
         db.beginTransaction();try {
