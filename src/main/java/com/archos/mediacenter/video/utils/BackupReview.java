@@ -52,7 +52,7 @@ public final class BackupReview implements DefaultLifecycleObserver {
                     ((AlertDialog)choice).getListView().setItemChecked(index,false);
                     privacy=new AlertDialog.Builder(fragment.requireContext()).setTitle("Include filenames and locations?")
                         .setMessage("This may expose filenames, folders, hosts and shares. Reconnect credentials and Android permissions separately. Unknown locations are not automatically trusted.")
-                        .setNegativeButton(android.R.string.cancel,(warning,which)->{selection.categories.remove(category);if(dialog!=null)dialog.getListView().setItemChecked(index,false);updateContinue();}).setPositiveButton("Include",(warning,which)->{selection.categories.add(category);if(dialog!=null)dialog.getListView().setItemChecked(index,true);updateContinue();}).create();privacy.setOnCancelListener(warning->{selection.categories.remove(category);if(dialog!=null)dialog.getListView().setItemChecked(index,false);updateContinue();});privacy.show();
+                        .setNegativeButton(android.R.string.cancel,(warning,which)->finishConsent(category,false,index)).setPositiveButton("Include",(warning,which)->finishConsent(category,true,index)).create();privacy.setOnCancelListener(warning->finishConsent(category,false,index));privacy.show();
                 }else if(included)selection.categories.add(category);else selection.categories.remove(category);
                 updateContinue();
             }).setNegativeButton(android.R.string.cancel,(d,w)->model.closeReview()).setPositiveButton("Review replacement",(d,w)->model.preview(new LinkedHashSet<>(selection.categories)));
@@ -70,6 +70,10 @@ public final class BackupReview implements DefaultLifecycleObserver {
                 .setPositiveButton(android.R.string.ok,(d,w)->model.closeReview());
         }
         dialog=builder.create();dialog.setOnCancelListener(d->{if(model.isBusy())model.cancel();else model.closeReview();});dialog.show();updateContinue();
+    }
+    private void finishConsent(BackupCategory category,boolean included,int index){
+        if(included)selection.categories.add(category);else selection.categories.remove(category);
+        dismiss();render(model.current());if(dialog!=null&&dialog.getListView()!=null){dialog.getListView().setSelection(index);dialog.getListView().requestFocus();}
     }
     private void updateContinue(){if(dialog!=null&&model.current().phase==BackupOperationModel.Phase.REVIEW)dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(selection.categories!=null&&!selection.categories.isEmpty());}
     private static String labels(Set<BackupCategory> categories){List<String> labels=new ArrayList<>();for(BackupCategory category:BackupCategory.ordered())if(categories.contains(category))labels.add(category.label);return android.text.TextUtils.join(", ",labels);}
