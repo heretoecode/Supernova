@@ -225,13 +225,15 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             if(rejected==0) {
                 applyJourneys(result,videos);
                 buildFeatured(result,history);
-                synchronized(CACHE_LOCK){
-                    if(generation!=CACHE_GENERATION.get()||isLoadInBackgroundCanceled())throw new android.os.OperationCanceledException("Library changed during loading");
+            } else loadWarning="Some library records could not be read. Library data was not changed. Please export diagnostics and retry.";
+            synchronized(CACHE_LOCK){
+                if(generation!=CACHE_GENERATION.get()||isLoadInBackgroundCanceled())throw new android.os.OperationCanceledException("Library changed during loading");
+                if(rejected==0){
                     cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=result;
                     if(!cachePrivate)cacheWriter.execute(()->writeCache(result));
                 }
-            } else loadWarning="Some library records could not be read. Library data was not changed. Please export diagnostics and retry.";
-            snapshot=result;
+                snapshot=result;
+            }
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_counts","operation_id",operation,"visited",visited,"rejected",rejected,"movies",result.movies.size(),"shows",result.shows.size(),"episodes",result.episodes.size());
             c.moveToPosition(-1); return c;
         } catch(android.os.OperationCanceledException | androidx.core.os.OperationCanceledException cancelled) {
