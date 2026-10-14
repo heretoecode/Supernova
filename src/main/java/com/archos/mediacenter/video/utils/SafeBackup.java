@@ -146,7 +146,7 @@ public final class SafeBackup {
                 database.setTransactionSuccessful();
             }finally{database.endTransaction();}
             try(Cursor checkpoint=database.rawQuery("PRAGMA wal_checkpoint(TRUNCATE)",null)){checkpoint.moveToFirst();}
-            database.execSQL("PRAGMA journal_mode=DELETE");
+            try(Cursor mode=database.rawQuery("PRAGMA journal_mode=DELETE",null)){if(!mode.moveToFirst()||!"delete".equalsIgnoreCase(mode.getString(0)))throw new IOException("Legacy migration journal mode is not self-contained");}
         }catch(RuntimeException invalid){throw new IOException("Could not prepare compatible legacy media replacement",invalid);}
         File wal=new File(fresh+"-wal");if(wal.exists()&&wal.length()>0)throw new IOException("Legacy migration checkpoint is incomplete");
     }
