@@ -1,5 +1,5 @@
 diff --git a/src/com/archos/mediaprovider/video/ScraperProvider.java b/src/com/archos/mediaprovider/video/ScraperProvider.java
-index bbf4e60..9850c39 100644
+index bbf4e60..45e5b6f 100644
 --- a/src/com/archos/mediaprovider/video/ScraperProvider.java
 +++ b/src/com/archos/mediaprovider/video/ScraperProvider.java
 @@ -61,6 +61,7 @@ public class ScraperProvider extends ContentProvider {
@@ -10,15 +10,24 @@ index bbf4e60..9850c39 100644
      private static final int MOVIE_ALL_INFOS = SCRAPER_PROVIDER_OFFSET + 33;
      private static final int MOVIE_ALL = SCRAPER_PROVIDER_OFFSET + 34;
  
-@@ -166,6 +167,7 @@ public class ScraperProvider extends ContentProvider {
+@@ -71,6 +72,7 @@ public class ScraperProvider extends ContentProvider {
+     private static final int SHOW_ALL = SCRAPER_PROVIDER_OFFSET + 44;
+     private static final int SHOW_ONLINE_ID = SCRAPER_PROVIDER_OFFSET + 45;
+ 
++    private static final int EPISODE_RESTORE_OWNED = SCRAPER_PROVIDER_OFFSET + 501;
+     private static final int EPISODE = SCRAPER_PROVIDER_OFFSET + 50;
+     private static final int EPISODE_ID = SCRAPER_PROVIDER_OFFSET + 51;
+     private static final int EPISODE_ALL_INFOS = SCRAPER_PROVIDER_OFFSET + 53;
+@@ -166,6 +168,8 @@ public class ScraperProvider extends ContentProvider {
  
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.BASE),
                  MOVIE);
 +        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.RESTORE_OWNED), MOVIE_RESTORE_OWNED);
++        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Episode.URI.RESTORE_OWNED), EPISODE_RESTORE_OWNED);
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.ALL),
                  MOVIE_ALL);
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.ID) + "#",
-@@ -540,6 +542,24 @@ public class ScraperProvider extends ContentProvider {
+@@ -540,6 +544,24 @@ public class ScraperProvider extends ContentProvider {
          ContentResolver cr = mCr;
          SQLiteDatabase db = mDbHolder.get();
          switch (sUriMatcher.match(uri)) {
@@ -43,8 +52,40 @@ index bbf4e60..9850c39 100644
              case MOVIE:
                  rowId = db.insert(ScraperTables.MOVIE_TABLE_NAME,
                          ScraperStore.Movie.ID, values);
+@@ -550,6 +572,31 @@ public class ScraperProvider extends ContentProvider {
+                         ScraperStore.Show.ID, values, SQLiteDatabase.CONFLICT_IGNORE);
+                 noteUri = createUriAndNotify(rowId, db, ScraperStore.Show.URI.ID, cr, ADDITIONAL_SHOW);
+                 break;
++            case EPISODE_RESTORE_OWNED: {
++                if (!db.inTransaction()) throw new IllegalStateException("Owned episode replacement requires a provider transaction");
++                Long episodeOwner = values.getAsLong(ScraperStore.Episode.ID);
++                Long episodeVideo = values.getAsLong(ScraperStore.Episode.VIDEO_ID);
++                Long parent = values.getAsLong(ScraperStore.Episode.SHOW);
++                if (episodeOwner == null || episodeOwner <= 0 || episodeVideo == null || episodeVideo <= 0 || parent == null || parent <= 0)
++                    throw new IllegalArgumentException("Invalid owned episode replacement");
++                try (Cursor current = db.query(ScraperTables.EPISODE_TABLE_NAME,
++                        new String[]{ScraperStore.Episode.VIDEO_ID, ScraperStore.Episode.SHOW},
++                        ScraperStore.Episode.ID + "=?", new String[]{episodeOwner.toString()}, null, null, null)) {
++                    if (!current.moveToFirst() || current.getLong(0) != episodeVideo || current.getLong(1) != parent)
++                        throw new IllegalArgumentException("Receiving episode owner or parent changed");
++                }
++                // UPDATE avoids episode_delete, which would delete a last-episode parent show.
++                // Replace only this owner's normalized relations; shared person rows remain intact.
++                String[] owned = {episodeOwner.toString()};
++                db.delete(ScraperTables.FILMS_EPISODE_TABLE_NAME, "episode_films=?", owned);
++                db.delete(ScraperTables.WRITERS_EPISODE_TABLE_NAME, "episode_writers=?", owned);
++                db.delete(ScraperTables.GUESTS_TABLE_NAME, "episode_guests=?", owned);
++                if (db.update(ScraperTables.EPISODE_TABLE_NAME, values, ScraperStore.Episode.ID + "=?", owned) != 1)
++                    throw new IllegalStateException("Receiving episode disappeared");
++                rowId = episodeOwner;
++                noteUri = createUriAndNotify(rowId, db, ScraperStore.Episode.URI.ID, cr, ADDITIONAL_SHOW);
++                break;
++            }
+             case EPISODE:
+                 rowId = db.insert(ScraperTables.EPISODE_TABLE_NAME,
+                         ScraperStore.Episode.ID, values);
 diff --git a/src/com/archos/mediaprovider/video/ScraperStore.java b/src/com/archos/mediaprovider/video/ScraperStore.java
-index 285f608..dd060db 100644
+index 285f608..1663718 100644
 --- a/src/com/archos/mediaprovider/video/ScraperStore.java
 +++ b/src/com/archos/mediaprovider/video/ScraperStore.java
 @@ -72,6 +72,8 @@ public final class ScraperStore {
@@ -56,6 +97,147 @@ index 285f608..dd060db 100644
              public static final Uri ALL = Uri.parse(CONTENT_AUTHORITY + "/tags/movies");
              public static final Uri ID = Uri.parse(CONTENT_AUTHORITY + "/tags/movie/id/");
              public static final Uri ALL_INFOS = Uri.parse(CONTENT_AUTHORITY + "/tags/movie/full/");
+@@ -269,6 +271,8 @@ public final class ScraperStore {
+ 
+         public static class URI {
+             public static final Uri BASE = Uri.parse(CONTENT_AUTHORITY + "/tags/episode");
++            /** Internal transaction-only update retaining the episode and its parent show. */
++            public static final Uri RESTORE_OWNED = Uri.parse(CONTENT_AUTHORITY + "/tags/episode/restore-owned");
+             public static final Uri ID = Uri.parse(CONTENT_AUTHORITY + "/tags/episode/id/");
+             public static final Uri ALL_INFOS = Uri.parse(CONTENT_AUTHORITY + "/tags/episode/full/");
+             public static final Uri ALL_SEASONS = Uri.parse(CONTENT_AUTHORITY + "/tags/seasons/");
+diff --git a/src/com/archos/mediascraper/EpisodeTags.java b/src/com/archos/mediascraper/EpisodeTags.java
+index 858baff..9d0a662 100644
+--- a/src/com/archos/mediascraper/EpisodeTags.java
++++ b/src/com/archos/mediascraper/EpisodeTags.java
+@@ -122,6 +122,24 @@ public class EpisodeTags extends BaseTags {
+             ScraperStore.ShowPosters.LARGE_FILE + "=?";
+     @Override
+     public long save(Context context, long videoId) {
++        return saveInternal(context, videoId, null, null, null, null, null);
++    }
++
++    /** Compatible-parent restoration only. The caller must coordinate native originals/redo.
++     * A different parent is deliberately refused: its shared pin and Collection need a separate policy.
++     */
++    public long savePreservingOwnedIdentity(Context context, long videoId, long metadataId,
++            long expectedEpisodeProvider, long expectedShowId, long expectedShowProvider, Long expectedShowPin) {
++        if (videoId <= 0 || metadataId <= 0 || expectedEpisodeProvider <= 0 || expectedShowId <= 0
++                || expectedShowProvider <= 0 || mOnlineId <= 0 || mShowTags == null
++                || mShowTags.getOnlineId() != expectedShowProvider)
++            throw new IllegalArgumentException("Invalid or incompatible owned episode restoration");
++        return saveInternal(context, videoId, metadataId, expectedEpisodeProvider,
++                expectedShowId, expectedShowProvider, expectedShowPin);
++    }
++
++    private long saveInternal(Context context, long videoId, Long metadataId, Long expectedEpisodeProvider,
++            Long expectedShowId, Long expectedShowProvider, Long expectedShowPin) {
+         // save the video id in this tag
+         setVideoId(videoId);
+ 
+@@ -130,7 +148,7 @@ public class EpisodeTags extends BaseTags {
+         //---------------------------------------------------
+         // Save or update the data for the TV show if needed
+         //---------------------------------------------------
+-        long showId = mShowTags.save(context, videoId);
++        long showId = metadataId == null ? mShowTags.save(context, videoId) : expectedShowId;
+ 
+         if (showId < 0) {
+             log.error("Save aborted for episode {}: parent show could not be persisted", mTitle);
+@@ -144,6 +162,12 @@ public class EpisodeTags extends BaseTags {
+         //---------------------------------------------------------------------------------------
+         ContentValues values = new ContentValues();
+         values.put(ScraperStore.Episode.VIDEO_ID, Long.valueOf(videoId));
++        if (metadataId != null) {
++            values.put(ScraperStore.Episode.ID, metadataId);
++            values.putNull(ScraperStore.Episode.COVER);
++            values.putNull(ScraperStore.Episode.PICTURE);
++            values.putNull(ScraperStore.Episode.POSTER_ID);
++        }
+         values.put(ScraperStore.Episode.NAME, mTitle);
+         if(mAired != null) {
+             values.put(ScraperStore.Episode.AIRED, Long.valueOf(mAired.getTime()));
+@@ -172,7 +196,7 @@ public class EpisodeTags extends BaseTags {
+         ScraperImage poster = getDefaultPoster();
+         long posterId = -1;
+ 
+-        if (poster != null) {
++        if (poster != null && metadataId == null) {
+             // get or save this poster
+             posterId = poster.save(context, showId);
+         }
+@@ -184,8 +208,27 @@ public class EpisodeTags extends BaseTags {
+         Builder cop = null;
+         ArrayList<ContentProviderOperation> allOperations = new ArrayList<ContentProviderOperation>();
+ 
+-        // first insert the episode base info - item 0 for backreferences
+-        cop = ContentProviderOperation.newInsert(ScraperStore.Episode.URI.BASE);
++        if (metadataId != null) {
++            ContentValues file = new ContentValues();
++            file.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, BaseTags.TV_SHOW);
++            file.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID, metadataId);
++            allOperations.add(ContentProviderOperation.newAssertQuery(ContentUris.withAppendedId(
++                    VideoStore.Video.Media.EXTERNAL_CONTENT_URI, videoId)).withValues(file).withExpectedCount(1).build());
++            ContentValues episode = new ContentValues();
++            episode.put(ScraperStore.Episode.VIDEO_ID, videoId);
++            episode.put(ScraperStore.Episode.SHOW, expectedShowId);
++            episode.put(ScraperStore.Episode.ONLINE_ID, expectedEpisodeProvider);
++            allOperations.add(ContentProviderOperation.newAssertQuery(ContentUris.withAppendedId(
++                    ScraperStore.Episode.URI.ID, metadataId)).withValues(episode).withExpectedCount(1).build());
++            ContentValues show = new ContentValues();
++            show.put(ScraperStore.Show.ONLINE_ID, expectedShowProvider);
++            if (expectedShowPin == null) show.putNull(VideoStore.Video.VideoColumns.NOVA_PINNED);
++            else show.put(VideoStore.Video.VideoColumns.NOVA_PINNED, expectedShowPin);
++            allOperations.add(ContentProviderOperation.newAssertQuery(ContentUris.withAppendedId(
++                    ScraperStore.Show.URI.ID, expectedShowId)).withValues(show).withExpectedCount(1).build());
++        }
++        final int primaryOperation = allOperations.size();
++        cop = ContentProviderOperation.newInsert(metadataId == null ? ScraperStore.Episode.URI.BASE : ScraperStore.Episode.URI.RESTORE_OWNED);
+         cop.withValues(values);
+         allOperations.add(cop.build());
+ 
+@@ -193,7 +236,7 @@ public class EpisodeTags extends BaseTags {
+         for(String director: mDirectors) {
+             cop = ContentProviderOperation.newInsert(ScraperStore.Director.URI.EPISODE);
+             cop.withValue(ScraperStore.Episode.Director.NAME, director);
+-            cop.withValueBackReference(ScraperStore.Episode.Director.EPISODE, 0);
++            cop.withValueBackReference(ScraperStore.Episode.Director.EPISODE, primaryOperation);
+             allOperations.add(cop.build());
+         }
+ 
+@@ -201,20 +244,20 @@ public class EpisodeTags extends BaseTags {
+         for(String writer: mWriters) {
+             cop = ContentProviderOperation.newInsert(ScraperStore.Writer.URI.EPISODE);
+             cop.withValue(ScraperStore.Episode.Writer.NAME, writer);
+-            cop.withValueBackReference(ScraperStore.Episode.Writer.EPISODE, 0);
++            cop.withValueBackReference(ScraperStore.Episode.Writer.EPISODE, primaryOperation);
+             allOperations.add(cop.build());
+         }
+ 
+         for(String actorName: mActors.keySet()) {
+             cop = ContentProviderOperation.newInsert(ScraperStore.Actor.URI.EPISODE);
+             cop.withValue(ScraperStore.Episode.Actor.NAME, actorName);
+-            cop.withValueBackReference(ScraperStore.Episode.Actor.EPISODE, 0);
++            cop.withValueBackReference(ScraperStore.Episode.Actor.EPISODE, primaryOperation);
+             cop.withValue(ScraperStore.Episode.Actor.ROLE, mActors.get(actorName));
+             allOperations.add(cop.build());
+         }
+ 
+         // update runtime in video db, it's not part of the scraper db part
+-        if (mRuntimeMs > 0) {
++        if (metadataId == null && mRuntimeMs > 0) {
+             allOperations.add(
+                     ContentProviderOperation.newUpdate(VideoStore.Video.Media.EXTERNAL_CONTENT_URI)
+                     .withSelection(
+@@ -230,7 +273,7 @@ public class EpisodeTags extends BaseTags {
+         try {
+             ContentProviderResult[] results = cr.applyBatch(ScraperStore.AUTHORITY, allOperations);
+             if (results != null && results.length > 0) {
+-                returnValue = ContentUris.parseId(results[0].uri);
++                returnValue = ContentUris.parseId(results[primaryOperation].uri);
+             }
+         } catch (RemoteException | OperationApplicationException e) {
+             log.error("Exception", e);
 diff --git a/src/com/archos/mediascraper/MovieTags.java b/src/com/archos/mediascraper/MovieTags.java
 index 30bba74..f48d98b 100644
 --- a/src/com/archos/mediascraper/MovieTags.java
