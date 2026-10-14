@@ -1,0 +1,23 @@
+{
+  "source_sha": "df2387036eec686970450ddd4005e9ac45eb4130",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 2,
+  "tests": 10,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.PortableMediaMatchesTest"
+  ],
+  "duration": "2m 15s",
+  "log_sha256": "c598e213fffcef2a48b88e5459725ecc8b0ad7b9bf94f0efe9751e03f5bd0a35",
+  "findings": [
+    "Native Library joins movie/episode by owned video_id, not merely the files scraper pointer",
+    "Changing files scraper pointer deletes original movie metadata including pin/facts; rollback recovers it",
+    "Updating provider ID alone leaves old scraped facts visible",
+    "Pure target preparation now requires exact receiving file ownership; never borrows another encoding row"
+  ],
+  "limits": "Dependency investigation and source/schema/pure preparation only. Media matches remains unregistered until a safe metadata/join/cache refresh and combined recovery implementation is validated. No production match mutation or hardware acceptance."
+}
