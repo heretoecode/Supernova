@@ -1,0 +1,15 @@
+{
+  "source_sha": "c155d86cc33bdbabfd6c5aaa82d745c37109bccd",
+  "result": "FAIL",
+  "classes": 1,
+  "tests": 3,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "31s",
+  "log_sha256": "d336bf6627f8dc42b6dfffafd681d53d935af3a5e70d3507060008005dadf556",
+  "reason": "Trace proves current selection/attachment are true and desired scroll50 is immediately clamped to0. Investigating content bounds during the existing expansion transition, rather than changing padding/geometry again."
+}
