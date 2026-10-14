@@ -3,11 +3,11 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.KeyEvent;
-import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatTextView;
 import java.util.function.IntConsumer;
 
 /** Fixed-size OK/cycle/OK selector: Back discards only its current uncommitted preview. */
-final class InlineMenuSelector extends TextView {
+final class InlineMenuSelector extends AppCompatTextView {
     private final String[] labels;
     private final IntConsumer commit;
     private final Drawable left;
@@ -19,7 +19,7 @@ final class InlineMenuSelector extends TextView {
         this.labels = labels.clone(); this.selected = Math.max(0, Math.min(initial, labels.length - 1));
         this.preview = this.selected; this.commit = commit;
         setTextSize(14 * TvLayout.scale(context)); setTextColor(MenuFoundation.TEXT);
-        setTypeface(android.graphics.Typeface.create("sans-serif-light", 0)); setIncludeFontPadding(false);
+        setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); setIncludeFontPadding(false);
         setSingleLine(true); setGravity(android.view.Gravity.CENTER_VERTICAL);
         setId(android.view.View.generateViewId()); setFocusable(true); setFocusableInTouchMode(true);
         setClickable(true); setMinimumHeight(MenuFoundation.dp(context, 44));

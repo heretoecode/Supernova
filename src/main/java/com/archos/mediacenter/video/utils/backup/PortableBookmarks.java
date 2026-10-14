@@ -12,7 +12,7 @@ public final class PortableBookmarks {
     private static void name(Object value)throws JSONException {
         if(value==JSONObject.NULL)return;
         if(!(value instanceof String))throw new JSONException("Invalid bookmark label");String text=(String)value;
-        if(text.isBlank()||text.length()>200||text.chars().anyMatch(c->c<32||c==127)||text.contains("://")||
+        if(text.isBlank()||text.length()>200||PortableLocations.controls(text)||text.contains("://")||
                 text.startsWith("/")||text.startsWith("\\")||text.matches("(?is).*(?:password|passwd|token|secret|authorization|cookie|api[_-]?key)\\s*[:=].*"))throw new JSONException("Bookmark label needs privacy review");
         try{java.nio.charset.StandardCharsets.UTF_8.newEncoder().encode(java.nio.CharBuffer.wrap(text));}catch(Exception invalid){throw new JSONException("Invalid bookmark label encoding");}
     }

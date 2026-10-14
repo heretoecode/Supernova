@@ -9,10 +9,11 @@ import org.json.*;
 /** Optional locator text, positively validated before serialization. No account or access grants. */
 public final class PortableLocations {
     private static final Set<String> SCHEMES=Set.of("file","smb","ftp","ftps","sftp","nfs","upnp","webdav","webdavs","dav","davs","http","https","content");
+    static boolean controls(String text){for(int i=0;i<text.length();i++){char character=text.charAt(i);if(character<32||character==127)return true;}return false;}
     public static String locator(String value)throws JSONException {
         try {
             if(value==null||value.isEmpty()||value.length()>8192||value.indexOf('\\')>=0||
-                    value.chars().anyMatch(c->c<32||c==127))throw new IllegalArgumentException();
+                    controls(value))throw new IllegalArgumentException();
             StandardCharsets.UTF_8.newEncoder().encode(java.nio.CharBuffer.wrap(value));
             // Raw local paths are supported by the current scanner; URI encoding preserves their segments.
             URI uri=value.startsWith("/")?new URI("file","",value,null):new URI(value);
@@ -20,7 +21,7 @@ public final class PortableLocations {
             String authority=uri.getAuthority(),path=uri.getPath();
             if(!SCHEMES.contains(scheme)||uri.isOpaque()||uri.getRawQuery()!=null||uri.getRawFragment()!=null||
                     uri.getUserInfo()!=null||authority!=null&&(authority.contains("@")||authority.indexOf('\\')>=0)||
-                    path==null||!path.startsWith("/")||path.indexOf('\\')>=0||path.chars().anyMatch(c->c<32||c==127)||
+                    path==null||!path.startsWith("/")||path.indexOf('\\')>=0||controls(path)||
                     uri.getRawPath().matches("(?i).*%2f.*")||uri.getPort()>65535||uri.getPort()==0)throw new IllegalArgumentException();
             if(scheme.equals("file")) {if(authority!=null&&!authority.isEmpty())throw new IllegalArgumentException();}
             else if(authority==null||authority.isEmpty()||uri.getHost()==null)throw new IllegalArgumentException();
