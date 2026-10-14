@@ -153,7 +153,7 @@ public class Supernova139HomeEditorTest {
         }finally{host.pause().stop().destroy();}
     }
     private void held(Dialog dialog,int code,int repeats){
-        long started=android.os.SystemClock.uptimeMillis();for(int repeat=0;repeat<repeats;repeat++)dialog.dispatchKeyEvent(new KeyEvent(started,started+repeat*50,KeyEvent.ACTION_DOWN,code,repeat));
+        long started=android.os.SystemClock.uptimeMillis();for(int repeat=0;repeat<repeats;repeat++){dialog.dispatchKeyEvent(new KeyEvent(started,started+repeat*50,KeyEvent.ACTION_DOWN,code,repeat));org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));layout(dialog);assertEquals("reorder repeat "+repeat,"watchnext",dialog.getCurrentFocus().getTag());}
         dialog.dispatchKeyEvent(new KeyEvent(started,started+repeats*50,KeyEvent.ACTION_UP,code,0));
     }
     private long focusedTargets(View view){long count=view.isFocused()?1:0;if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)count+=focusedTargets(((ViewGroup)view).getChildAt(i));return count;}
