@@ -21,8 +21,10 @@ public final class MediaStateRecovery {
         if(!number(value)||((Number)value).longValue()<minimum)throw new JSONException("Invalid media recovery integer");return ((Number)value).longValue();
     }
     public static void validate(JSONObject image)throws JSONException {
-        if(image.length()!=4||integer(image.get("schema"),1)!=1||!(image.get("exists") instanceof Boolean)||!image.has("pins")||!image.has("hidden")||
-                image.isNull("pins")&&image.isNull("hidden"))throw new JSONException("Unsupported media recovery image");
+        long schema=integer(image.get("schema"),1);
+        if((schema!=1&&schema!=2)||image.length()!=(schema==1?4:5)||!(image.get("exists") instanceof Boolean)||!image.has("pins")||!image.has("hidden")||schema==2&&!image.has("playlists")||
+                image.isNull("pins")&&image.isNull("hidden")&&(schema==1||image.isNull("playlists")))throw new JSONException("Unsupported media recovery image");
+        if(schema==2){if(image.isNull("playlists"))throw new JSONException("Missing selected playlist scope");PlaylistStateRecovery.validate(image.getJSONObject("playlists"));if(!image.getBoolean("exists")&&!image.getJSONObject("playlists").toString().equals(PlaylistStateRecovery.empty().toString()))throw new JSONException("Invalid absent playlist scope");}
         for(String category:List.of("pins","hidden"))if(!image.isNull(category)) {
             JSONArray rows=image.getJSONArray(category);if(rows.length()>100000||!image.getBoolean("exists")&&rows.length()!=0)throw new JSONException("Invalid media recovery scope");
             Set<String> seen=new HashSet<>();for(int i=0;i<rows.length();i++) {
@@ -42,7 +44,7 @@ public final class MediaStateRecovery {
         if(rows.isNull(index))return JSONObject.NULL;
         if(rows.getType(index)!=Cursor.FIELD_TYPE_INTEGER||rows.getLong(index)<minimum)throw new IOException("Invalid indexed media recovery value");return rows.getLong(index);
     }
-    private static JSONObject capture(SQLiteDatabase database,boolean pins,boolean hidden)throws IOException,JSONException {
+    private static JSONObject capture(SQLiteDatabase database,boolean pins,boolean hidden,boolean playlists)throws IOException,JSONException {
         if(database.getVersion()!=VideoOpenHelper.getDatabaseVersion())throw new IOException("Media schema is not compatible with this application");
         JSONArray pinRows=new JSONArray(),hiddenRows=new JSONArray();
         if(pins)for(String kind:List.of("MOVIE","TV")) {
@@ -69,13 +71,17 @@ public final class MediaStateRecovery {
                 hiddenRows.put(new JSONObject().put("id",id).put("value",value==JSONObject.NULL?JSONObject.NULL:((Number)value).longValue()==1).put("guard",guard.toString()));
             }
         }
-        JSONObject result=new JSONObject().put("schema",1).put("exists",true).put("pins",pins?pinRows:JSONObject.NULL).put("hidden",hidden?hiddenRows:JSONObject.NULL);validate(result);return result;
+        JSONObject result=new JSONObject().put("schema",playlists?2:1).put("exists",true).put("pins",pins?pinRows:JSONObject.NULL).put("hidden",hidden?hiddenRows:JSONObject.NULL);if(playlists)result.put("playlists",PlaylistStateRecovery.capture(database));validate(result);return result;
     }
-    public static JSONObject capture(Context context,boolean pins,boolean hidden)throws IOException,JSONException {
-        if(!pins&&!hidden)throw new JSONException("No media recovery category selected");File file=VideoOpenHelper.getDatabaseFile(context);
-        if(!file.exists())return new JSONObject().put("schema",1).put("exists",false).put("pins",pins?new JSONArray():JSONObject.NULL).put("hidden",hidden?new JSONArray():JSONObject.NULL);
-        try(SQLiteDatabase database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READONLY)){return capture(database,pins,hidden);}
+    public static JSONObject capture(Context context,boolean pins,boolean hidden)throws IOException,JSONException{return capture(context,pins,hidden,false);}
+    public static JSONObject capture(Context context,boolean pins,boolean hidden,boolean playlists)throws IOException,JSONException {
+        if(!pins&&!hidden&&!playlists)throw new JSONException("No media recovery category selected");File file=VideoOpenHelper.getDatabaseFile(context);
+        if(!file.exists()){JSONObject image=new JSONObject().put("schema",playlists?2:1).put("exists",false).put("pins",pins?new JSONArray():JSONObject.NULL).put("hidden",hidden?new JSONArray():JSONObject.NULL);if(playlists)image.put("playlists",PlaylistStateRecovery.empty());validate(image);return image;}
+        try(SQLiteDatabase database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READONLY)){database.execSQL("SAVEPOINT supernova_media_recovery_read");try{return capture(database,pins,hidden,playlists);}finally{database.execSQL("RELEASE SAVEPOINT supernova_media_recovery_read");}}
         catch(RuntimeException invalid){throw new IOException("Media recovery inventory unavailable",invalid);}
+    }
+    public static JSONObject playlistAfter(JSONObject before,PlaylistStateRecovery.Prepared prepared)throws JSONException {
+        JSONObject after=new JSONObject(before.toString());after.put("playlists",prepared.after);validatePair(before,after);return after;
     }
     public static JSONObject pinAfter(JSONObject before,PortablePinnedTitles.Prepared prepared)throws JSONException {
         JSONObject after=new JSONObject(before.toString());JSONArray rows=after.getJSONArray("pins");for(int i=0;i<rows.length();i++) {
@@ -101,26 +107,28 @@ public final class MediaStateRecovery {
     private static JSONObject guards(JSONObject image)throws JSONException {
         JSONObject guard=new JSONObject(image.toString());for(String category:List.of("pins","hidden"))if(!guard.isNull(category)) {
             JSONArray rows=guard.getJSONArray(category);for(int i=0;i<rows.length();i++)rows.getJSONObject(i).remove("value");
-        }return guard;
+        }if(guard.getInt("schema")==2)guard.put("playlists",JSONObject.NULL);return guard;
     }
     public static void validatePair(JSONObject before,JSONObject after)throws JSONException {
         validate(before);validate(after);if(!guards(before).toString().equals(guards(after).toString()))throw new JSONException("Conflicting media recovery identity scopes");
+        if(before.getInt("schema")==2&&!before.isNull("playlists"))PlaylistStateRecovery.validatePair(before.getJSONObject("playlists"),after.getJSONObject("playlists"));
     }
     public static final class Session implements AutoCloseable {
         private SQLiteDatabase database;private final JSONObject before;private boolean ended;
-        private Session(Context context,JSONObject image,boolean recovery)throws IOException,JSONException {
+        private Session(Context context,JSONObject image,JSONObject redo,boolean recovery)throws IOException,JSONException {
             validate(image);before=new JSONObject(image.toString());File file=VideoOpenHelper.getDatabaseFile(context);
             if(!image.getBoolean("exists")){if(file.exists())throw new IOException("Media store appeared after restore preview");return;}
             if(!file.exists())throw new IOException("Media store is unavailable for recovery");
             database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READWRITE);
             try {
                 database.setForeignKeyConstraintsEnabled(true);
-                database.beginTransaction();JSONObject current=capture(database,!image.isNull("pins"),!image.isNull("hidden"));
+                database.beginTransaction();JSONObject current=capture(database,!image.isNull("pins"),!image.isNull("hidden"),image.getInt("schema")==2&&!image.isNull("playlists"));
                 if(!(recovery?guards(current).toString().equals(guards(image).toString()):current.toString().equals(image.toString())))throw new IOException("Media inventory changed; refusing stale restore or recovery");
+                if(recovery&&image.getInt("schema")==2&&!image.isNull("playlists")){String state=current.getJSONObject("playlists").toString();if(!state.equals(image.getJSONObject("playlists").toString())&&(redo==null||!state.equals(redo.getJSONObject("playlists").toString())))throw new IOException("Playlists changed independently; recovery requires inspection");}
             }catch(IOException|JSONException|RuntimeException failure){close();throw failure;}
         }
         public void write(JSONObject image,BooleanSupplier cancel)throws IOException,JSONException {
-            validate(image);if(!guards(image).toString().equals(guards(before).toString()))throw new IOException("Media replacement changed its identity scope");if(database==null)return;
+            validatePair(before,image);if(database==null)return;
             for(String category:List.of("pins","hidden"))if(!image.isNull(category)) {
                 JSONArray rows=image.getJSONArray(category);for(int i=0;i<rows.length();i++) {
                     if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Media restore cancelled");JSONObject row=rows.getJSONObject(i);ContentValues value=new ContentValues();String column=category.equals("pins")?PIN:HIDDEN;
@@ -129,14 +137,15 @@ public final class MediaStateRecovery {
                     if(database.update(table,value,"_id = ?",new String[]{Long.toString(row.getLong("id"))})!=1)throw new IOException("Media restore target unavailable");
                 }
             }
+            if(image.getInt("schema")==2&&!image.isNull("playlists"))PlaylistStateRecovery.write(database,image.getJSONObject("playlists"),cancel);
         }
         public void commit()throws IOException {if(database!=null&&!ended){database.setTransactionSuccessful();database.endTransaction();ended=true;}}
         @Override public void close(){if(database!=null){try{if(!ended&&database.inTransaction())database.endTransaction();}finally{database.close();database=null;}}}
     }
-    public static Session begin(Context context,JSONObject image,boolean recovery)throws IOException,JSONException {return new Session(context,image,recovery);}
+    public static Session begin(Context context,JSONObject image,boolean recovery)throws IOException,JSONException {return new Session(context,image,null,recovery);}
     public static void recover(Context context,JSONObject before,JSONObject after,boolean complete)throws IOException,JSONException {
-        validate(before);validate(after);if(!guards(before).toString().equals(guards(after).toString()))throw new IOException("Media recovery images have conflicting identity scopes");
-        try(Session session=begin(context,before,true)){session.write(complete?after:before,()->false);session.commit();}
+        validatePair(before,after);
+        try(Session session=new Session(context,before,after,true)){session.write(complete?after:before,()->false);session.commit();}
     }
     private MediaStateRecovery(){}
 }
