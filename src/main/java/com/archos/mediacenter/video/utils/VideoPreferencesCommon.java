@@ -329,6 +329,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
 
     private final ActivityResultLauncher<String> backupDestination;
     private final ActivityResultLauncher<String[]> backupSource;
+    private BackupReview backupReview;
 
     public VideoPreferencesCommon(PreferenceFragmentCompat preferencesFragment) {
         mPreferencesFragment = preferencesFragment;
@@ -341,10 +342,12 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         });
         backupSource = preferencesFragment.registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
             if (uri == null) return;
-            BackupReview.show(getActivity(),uri,path->{
-                Intent intent=new Intent(MediaLibraryBackupService.ACTION_IMPORT,null,getActivity(),MediaLibraryBackupService.class);
-                intent.putExtra(MediaLibraryBackupService.EXTRA_IMPORT_FILE,path);getContext().startService(intent);
-            });
+            reviewBackup(uri);
+        });
+        preferencesFragment.getLifecycle().addObserver(new androidx.lifecycle.DefaultLifecycleObserver(){
+            @Override public void onCreate(androidx.lifecycle.LifecycleOwner owner){
+                if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(preferencesFragment.requireContext()).getBoolean("try_new_ui",false))backupReview=new BackupReview(preferencesFragment);
+            }
         });
         mTraktAuthLauncher = preferencesFragment.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -985,9 +988,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         });
 
         Preference exportLibraryPreference = findPreference(getString(R.string.media_library_export_prefkey));
-        exportLibraryPreference.setSummary("Settings, sources, rows and viewing history. Credentials are excluded. This unencrypted archive contains private library data.");
+        exportLibraryPreference.setSummary("Selected configuration and viewing choices. Media and credentials are excluded. Unencrypted; keep backups private.");
         exportLibraryPreference.setOnPreferenceClickListener(preference -> {
-            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This backup is unencrypted. It may expose filenames and paths, library and viewing history, settings, and source names and addresses. Passwords, tokens and login credentials are excluded. Keep it private. Reconnect protected shares and services after restore. Android storage permissions may need to be granted again.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
+            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This backup is unencrypted. Selected configuration and history can reveal private viewing interests. Media, artwork, subtitle files, credentials, accounts, access grants, Put.io associations and legacy Collections are excluded. Filenames and locations are Off by default. Reconnect services, sources and Android permissions separately.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
 
             try { backupDestination.launch("nova-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT).format(new java.util.Date()) + ".zip.in-progress"); }
             catch (android.content.ActivityNotFoundException missing) {
@@ -1844,25 +1847,15 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 .setTitle(R.string.media_library_import_dialog_title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    confirmImport(backupFile.getAbsolutePath());
+                    reviewBackup(android.net.Uri.fromFile(backupFile));
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
-    private void confirmImport(String importFilePath) {
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.media_library_import_confirm_title)
-                .setMessage(R.string.media_library_import_warning)
-                .setPositiveButton(R.string.media_library_import_button_confirm, (dialog, which) -> {
-                    Intent intent = new Intent(MediaLibraryBackupService.ACTION_IMPORT, null, getActivity(), MediaLibraryBackupService.class);
-                    intent.putExtra(MediaLibraryBackupService.EXTRA_IMPORT_FILE, importFilePath);
-                    getContext().startService(intent);
-                    Toast.makeText(getActivity(), R.string.media_library_import_in_progress, Toast.LENGTH_LONG).show();
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .setCancelable(true)
-                .show();
+    private void reviewBackup(android.net.Uri source) {
+        if(backupReview==null)backupReview=new BackupReview(mPreferencesFragment);
+        backupReview.open(source);
     }
 
     @Override
