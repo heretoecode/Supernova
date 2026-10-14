@@ -42,6 +42,18 @@ public final class BackupSettingsController {
     public void show(View opener){this.opener=opener;int railWidth=split.getChildAt(0).getWidth();middle.setVisibility(View.GONE);help.setVisibility(View.GONE);split.widths(.28f,0,0);LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=railWidth;rail.weight=0;split.getChildAt(0).setLayoutParams(rail);frame.setVisibility(View.VISIBLE);render(model.current());}
     public void hide(){if(frame!=null){frame.setVisibility(View.GONE);LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=0;rail.weight=.28f;split.getChildAt(0).setLayoutParams(rail);}}
     public boolean isVisible(){return frame!=null&&frame.getVisibility()==View.VISIBLE;}
+    public android.os.Bundle saveViewState(){
+        android.os.Bundle saved=new android.os.Bundle();saved.putBoolean("visible",isVisible());
+        if(workspace!=null){saved.putString("page",workspace.informationPage());if(model.current().phase==BackupOperationModel.Phase.REVIEW){ArrayList<String> selected=new ArrayList<>();for(BackupCategory category:workspace.selection())selected.add(category.name());saved.putStringArrayList("selection",selected);}}
+        return saved;
+    }
+    public void restoreViewState(android.os.Bundle saved){
+        if(saved==null||!saved.getBoolean("visible",false)||frame==null)return;
+        ArrayList<String> selection=saved.getStringArrayList("selection");if(selection!=null&&model.current().phase==BackupOperationModel.Phase.REVIEW){selectedRestore=EnumSet.noneOf(BackupCategory.class);for(String name:selection)if(name!=null)try{BackupCategory category=BackupCategory.valueOf(name);if(model.current().categories.contains(category))selectedRestore.add(category);}catch(IllegalArgumentException invalid){/* Ignore obsolete view-state choices. */}}
+        String page=saved.getString("page");View root=fragment.requireView();Runnable restore=()->{if(fragment.isAdded()&&fragment.getView()==root&&PreviewSettings.enterBackup(fragment)&&workspace!=null)workspace.restoreInformationPage(page);};
+        if(androidx.core.view.ViewCompat.isLaidOut(root)&&root.getWidth()>0)restore.run();
+        else root.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){public void onLayoutChange(View view,int left,int top,int right,int bottom,int oldLeft,int oldTop,int oldRight,int oldBottom){if(right>left){view.removeOnLayoutChangeListener(this);restore.run();}}});
+    }
     public boolean hasFocus(){return isVisible()&&frame.hasFocus();}
     public void enter(){if(isVisible())focusFirst(frame);}
     private void sidebar(){if(opener!=null)opener.requestFocus();}

@@ -1,0 +1,10 @@
+// Build-only acceleration: match the same selected top-level test classes before forking.
+// --tests remains in the invocation; XML class_names/counts verify the actual executed selection.
+allprojects {
+    tasks.withType(Test).configureEach {
+        def selected = System.getenv('SUPERNOVA_TEST_CLASS_FILES')
+        if (selected) {
+            selected.split(',').each { name -> include "**/${name}.class" }
+        }
+    }
+}

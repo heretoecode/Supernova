@@ -84,7 +84,8 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
         private BackupSettingsController backupController;
-        @Override public void onCreate(Bundle state){super.onCreate(state);if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))backupController=new BackupSettingsController(this);}
+        private Bundle backupViewState;
+        @Override public void onCreate(Bundle state){super.onCreate(state);if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){backupController=new BackupSettingsController(this);backupViewState=state==null?null:state.getBundle("supernova_backup_view");}}
         @Override public void onDisplayPreferenceDialog(androidx.preference.Preference pref){
             if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&PreviewPreferenceDialogs.show(this,pref))return;
             super.onDisplayPreferenceDialog(pref);
@@ -121,7 +122,8 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
                 scrollToPreference("streaming_category");
                 requireActivity().getIntent().removeExtra("show_streaming_settings");
             }
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.sidebar(this,backupController);
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.sidebar(this,backupController,backupViewState!=null&&backupViewState.getBoolean("visible",false));
+            if(backupController!=null&&backupViewState!=null){backupController.restoreViewState(backupViewState);backupViewState=null;}
             // Note: Header color is now handled by the theme (MyLeanbackTheme.Preferences.Black)
         }
 
@@ -133,6 +135,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
 
         @Override
         public void onSaveInstanceState(Bundle outState) {
+            if(backupController!=null)outState.putBundle("supernova_backup_view",backupController.saveViewState());
             super.onSaveInstanceState(outState);
             mPreferencesCommon.onSaveInstanceState(outState);
         }

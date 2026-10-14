@@ -105,6 +105,11 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
     }
     private boolean holdFocus(){boolean held=hasFocus();if(held){setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);setFocusableInTouchMode(true);setFocusable(true);requestFocus();}return held;}
     public boolean back(){if(information!=null){showMain();return true;}return false;}
+    public String informationPage(){return information==null?null:String.valueOf(information.getTag());}
+    public void restoreInformationPage(String page){
+        TextView opener="backup.details.page".equals(page)?detailsButton:"backup.instructions.page".equals(page)?instructionsButton:null;
+        if(opener!=null){opener.requestFocus();opener.performClick();}
+    }
     @Override public boolean dispatchKeyEvent(KeyEvent event){if(event.getAction()==KeyEvent.ACTION_DOWN){int key=event.getKeyCode();if(key==KeyEvent.KEYCODE_BACK&&back())return true;if(information!=null){if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){if(information instanceof ScrollView)information.scrollBy(0,dp(key==KeyEvent.KEYCODE_DPAD_UP?-60:60));return true;}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT||key==KeyEvent.KEYCODE_DPAD_CENTER||key==KeyEvent.KEYCODE_ENTER)return true;}}return super.dispatchKeyEvent(event);}
     private void privacy(String title,String message,String accept,Runnable confirm){
         View opener=findFocus();android.app.Dialog dialog=new android.app.Dialog(getContext());MenuFoundation.WindowPanel panel=new MenuFoundation.WindowPanel(getContext());panel.setOrientation(VERTICAL);panel.setPadding(dp(18),dp(18),dp(18),dp(18));panel.setBackground(MenuFoundation.surface(getContext(),false));panel.addView(MenuFoundation.text(getContext(),title,22));TextView copy=MenuFoundation.text(getContext(),message,16);LayoutParams copySize=new LayoutParams(-1,-2);copySize.topMargin=dp(12);copySize.bottomMargin=dp(16);panel.addView(copy,copySize);

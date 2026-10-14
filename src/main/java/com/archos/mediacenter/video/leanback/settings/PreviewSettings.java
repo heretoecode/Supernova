@@ -131,7 +131,15 @@ public final class PreviewSettings {
  private static void fitBadge(View view){if(view instanceof ImageView){ImageView image=(ImageView)view;image.setScaleType(ImageView.ScaleType.FIT_CENTER);ViewGroup.LayoutParams size=image.getLayoutParams();size.width=ViewGroup.LayoutParams.MATCH_PARENT;size.height=ViewGroup.LayoutParams.MATCH_PARENT;image.setLayoutParams(size);}else if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++)fitBadge(group.getChildAt(i));}}
  private static void move(PreferenceScreen root,PreferenceCategory dest,String key){Preference p=root.findPreference(key);if(p==null||p.getParent()==dest)return;PreferenceGroup parent=p.getParent();if(parent!=null)parent.removePreference(p);dest.addPreference(p);}
  public static void sidebar(PreferenceFragmentCompat fragment){sidebar(fragment,null);}
+ public static boolean enterBackup(PreferenceFragmentCompat fragment){
+  View root=fragment.getView();if(root==null)return false;View child=root.findViewWithTag("semantic:settings:section:preview_backup_restore");
+  if(child==null){View advanced=root.findViewWithTag("semantic:settings:category:Advanced");if(advanced==null)return false;advanced.performClick();child=root.findViewWithTag("semantic:settings:section:preview_backup_restore");}
+  if(child==null)return false;child.performClick();return true;
+ }
  public static void sidebar(PreferenceFragmentCompat fragment,BackupSettingsController backup) {
+  sidebar(fragment,backup,false);
+ }
+ public static void sidebar(PreferenceFragmentCompat fragment,BackupSettingsController backup,boolean restoringBackup) {
   android.content.Context c=fragment.requireContext();
   androidx.recyclerview.widget.RecyclerView list=fragment.getListView();
   ViewGroup parent=(ViewGroup)list.getParent();int index=parent.indexOfChild(list);ViewGroup.LayoutParams original=list.getLayoutParams();parent.removeView(list);
@@ -204,7 +212,7 @@ public final class PreviewSettings {
   fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(),back);list.setTag(R.id.preview_settings_return,(Runnable)back::handleOnBackPressed);
   ViewTreeObserver.OnGlobalFocusChangeListener focus=(oldView,newView)->back.setEnabled(middle.hasFocus()||helpScroll.hasFocus()||about!=null&&about.hasFocus()||backup!=null&&backup.hasFocus());split.getViewTreeObserver().addOnGlobalFocusChangeListener(focus);
   split.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){public void onViewAttachedToWindow(View v){}public void onViewDetachedFromWindow(View v){if(v.getViewTreeObserver().isAlive())v.getViewTreeObserver().removeOnGlobalFocusChangeListener(focus);}});
-  if(initial!=null){TextView first=initial;first.post(()->{first.requestFocus();});}
+  if(initial!=null&&!restoringBackup){TextView first=initial;first.post(()->{first.requestFocus();});}
  }
  private static TextView sidebarButton(android.content.Context c,String name,boolean child){TextView button=new TextView(c);button.setText(name);button.setTextSize(16);button.setSingleLine(true);button.setEllipsize(android.text.TextUtils.TruncateAt.END);button.setTextColor(android.graphics.Color.WHITE);button.setGravity(Gravity.CENTER_VERTICAL);button.setPadding(PreviewDialog.dp(c,child?24:10),0,PreviewDialog.dp(c,10),0);PreviewIcon.apply(button,name,22);button.setFocusable(true);button.setFocusableInTouchMode(true);button.setBackground(com.archos.mediacenter.video.leanback.SharedThreePanel.accentFocus(c));com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(button);return button;}
  private static android.content.Context activityContext(android.content.Context c){while(c instanceof android.content.ContextWrapper&&!(c instanceof android.app.Activity))c=((android.content.ContextWrapper)c).getBaseContext();return c;}
