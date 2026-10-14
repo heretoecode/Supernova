@@ -20,7 +20,7 @@ public class DiagnosticRestorePolicyTest {
     private static class ProcessDeath extends Error {}
     @Before public void setup(){app=RuntimeEnvironment.getApplication();prefs=PreferenceManager.getDefaultSharedPreferences(app);prefs.edit().clear().putString("oauth_token","AUTH_CANARY").commit();Diagnostics.setEnabled(app,true);transaction=new PreferenceRestoreTransaction(app);}
     @After public void close(){Diagnostics.setEnabled(app,false);}
-    private PreferenceRestoreTransaction.Plan selected(boolean enabled)throws Exception{return transaction.prepare(Map.of(BackupCategory.DIAGNOSTICS,PortableSettingsRegistry.export(Map.of(Diagnostics.KEY,enabled),PortableSettingsRegistry.Category.DIAGNOSTICS)),null);}
+    private PreferenceRestoreTransaction.Plan selected(boolean enabled)throws Exception{var incoming=app.getSharedPreferences("incoming-diagnostic-fixture",0);incoming.edit().clear().putBoolean(Diagnostics.KEY,enabled).commit();return transaction.prepare(Map.of(BackupCategory.DIAGNOSTICS,PortableSettingsRegistry.export(incoming,PortableSettingsRegistry.Category.DIAGNOSTICS)),null);}
     private boolean observing(){InputStream original=new ByteArrayInputStream(new byte[0]);return original!=TransportReadObserver.observe(TransportReadObserver.Protocol.SMBJ,original);}
     @Test public void completedLoggingOffRestoreAppliesRuntimePolicyAndKeepsSavedLogsAndCredentials()throws Exception {
         File saved=new File(app.getFilesDir(),"supernova-diagnostics/user-kept.txt");saved.getParentFile().mkdirs();Files.writeString(saved.toPath(),"KEEP_SAVED_LOGS");assertTrue(observing());transaction.apply(selected(false),()->false);
@@ -39,6 +39,6 @@ public class DiagnosticRestorePolicyTest {
     @Test public void preDecisionRollbackKeepsOriginalRuntimePolicyAndUnselectedRestoreNeverCreatesDiagnosticPreference()throws Exception {
         try{transaction.apply(selected(false),()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.PREFERENCES_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
         assertTrue(observing());assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,new PreferenceRestoreTransaction(app).recover());assertTrue(observing());assertTrue(prefs.getBoolean(Diagnostics.KEY,false));
-        prefs.edit().remove(Diagnostics.KEY).commit();transaction.apply(transaction.prepare(Map.of(BackupCategory.APPEARANCE,PortableSettingsRegistry.export(Map.of(),PortableSettingsRegistry.Category.APPEARANCE)),null),()->false);assertFalse(prefs.contains(Diagnostics.KEY));assertTrue(observing());assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));
+        prefs.edit().remove(Diagnostics.KEY).commit();transaction.apply(transaction.prepare(Map.of(BackupCategory.APPEARANCE,PortableSettingsRegistry.export(app.getSharedPreferences("empty-incoming-fixture",0),PortableSettingsRegistry.Category.APPEARANCE)),null),()->false);assertFalse(prefs.contains(Diagnostics.KEY));assertTrue(observing());assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));
     }
 }
