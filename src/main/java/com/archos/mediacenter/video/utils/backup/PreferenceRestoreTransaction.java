@@ -57,7 +57,7 @@ public final class PreferenceRestoreTransaction {
         public final int unresolved;
         public final Set<String> receivingChecks;
         private final String viewingBefore,viewingAfter;
-        private String viewingIntroduced,nativeViewingBefore;
+        private String viewingIntroduced,nativeViewingBefore,matchesBefore;
         private final String mediaBefore,mediaAfter;
         private final String bookmarksBefore,bookmarksAfter;
         private final String sourcesBefore,sourcesAfter;
@@ -155,7 +155,7 @@ public final class PreferenceRestoreTransaction {
         Map<String,?> current=prefs.getAll();Map<String,Object> after=new LinkedHashMap<>();Set<String> keys=new LinkedHashSet<>();int unresolved=0;
         Map<String,Object> healthAfter=new LinkedHashMap<>();Set<String> healthKeys=new LinkedHashSet<>();
         JSONObject mediaBefore=null,mediaAfter=null,bookmarksBefore=null,bookmarksAfter=null,sourcesBefore=null,sourcesAfter=null;
-        String titleBefore=null;
+        String titleBefore=null,matchesBefore=null;
         if(selected.containsKey(BackupCategory.PINNED)||selected.containsKey(BackupCategory.HIDDEN)||selected.containsKey(BackupCategory.PLAYLISTS)) {
             mediaBefore=MediaStateRecovery.capture(destination,selected.containsKey(BackupCategory.PINNED),selected.containsKey(BackupCategory.HIDDEN),selected.containsKey(BackupCategory.PLAYLISTS));mediaAfter=new JSONObject(mediaBefore.toString());
         }
@@ -222,6 +222,8 @@ public final class PreferenceRestoreTransaction {
                 bookmarksBefore=BookmarkStoreRecovery.capture(destination);
                 var bookmarks=PortableBookmarks.prepare(bookmarksBefore,item.getValue(),selected.get(BackupCategory.LOCATIONS));bookmarksAfter=bookmarks.after;
                 keys.add(PortableBookmarks.PENDING);after.put(PortableBookmarks.PENDING,bookmarks.pending);unresolved+=bookmarks.unresolved;
+            }else if(category==BackupCategory.MATCHES){
+                if(physical==null)throw new JSONException("Media identification needs an unfiltered receiving file inventory");MediaMatchInventory inventory=MediaMatchInventory.capture(destination);matchesBefore=inventory.signature;var matches=MediaMatchIntents.prepare(current,item.getValue(),inventory,physical);keys.addAll(matches.keys);after.putAll(matches.values);unresolved+=matches.unresolved;
             }else if(category==BackupCategory.TITLE_PLAYBACK){
                 if(physical==null)throw new JSONException("Title playback needs an unfiltered receiving file inventory");TitlePlaybackInventory inventory=TitlePlaybackInventory.capture(destination);inventory.validatePhysical(physical);titleBefore=inventory.signature;
                 var title=TitlePlaybackOverrides.prepare(current,item.getValue(),inventory.choices,physical);keys.addAll(title.keys);after.putAll(title.values);unresolved+=title.unresolved;
@@ -250,7 +252,7 @@ public final class PreferenceRestoreTransaction {
         }
         Plan plan=new Plan(prefs,before,after,keys,healthBefore,healthAfter,healthKeys,selected.keySet(),unresolved,viewingBefore,viewingAfter,viewingExisted,
                 mediaBefore==null?null:mediaBefore.toString(),mediaAfter==null?null:mediaAfter.toString(),bookmarksBefore==null?null:bookmarksBefore.toString(),bookmarksAfter==null?null:bookmarksAfter.toString(),sourcesBefore==null?null:sourcesBefore.toString(),sourcesAfter==null?null:sourcesAfter.toString(),titleBefore);
-        plan.viewingIntroduced=introducedImage;plan.nativeViewingBefore=nativeImage;return plan;
+        plan.viewingIntroduced=introducedImage;plan.nativeViewingBefore=nativeImage;plan.matchesBefore=matchesBefore;return plan;
     }
     private static void cancelled(BooleanSupplier cancel)throws InterruptedIOException{
         if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Restore cancelled before completion");
@@ -274,6 +276,7 @@ public final class PreferenceRestoreTransaction {
             }catch(JSONException invalid){throw new IOException("Viewing restore preview is invalid",invalid);}
             if(plan.bookmarksBefore!=null)try{if(!BookmarkStoreRecovery.capture(destination).toString().equals(plan.bookmarksBefore))throw new IOException("Bookmarks changed after restore preview; review again");}catch(JSONException invalid){throw new IOException("Bookmark restore preview is invalid",invalid);}
             if(plan.sourcesBefore!=null)try{if(!IndexedSourceStoreRecovery.capture(destination).toString().equals(plan.sourcesBefore))throw new IOException("Indexed sources changed after preview; review again");}catch(JSONException invalid){throw new IOException("Indexed-source preview is invalid",invalid);}
+            if(plan.matchesBefore!=null&&!MediaMatchInventory.capture(destination).signature.equals(plan.matchesBefore))throw new IOException("Receiving identification changed after preview; review again");
             if(plan.titleBefore!=null)try{if(!TitlePlaybackInventory.capture(destination).signature.equals(plan.titleBefore))throw new IOException("Receiving title playback state changed after preview; review again");}catch(JSONException invalid){throw new IOException("Title playback preview is invalid",invalid);}
             if(plan.nativeViewingBefore!=null)try{var catalog=LogicalBackupCatalog.capture(destination,()->false);var currentNative=com.archos.mediacenter.video.leanback.LegacyViewingSnapshot.merge(destination,Collections.emptyMap(),catalog.snapshot);if(!PortableViewingState.recoverySnapshot(currentNative).toString().equals(plan.nativeViewingBefore))throw new IOException("Receiving legacy viewing state changed after preview; review again");}catch(JSONException invalid){throw new IOException("Legacy viewing preview is invalid",invalid);}
             JSONObject record;
@@ -345,7 +348,7 @@ public final class PreferenceRestoreTransaction {
         }
         if(!edit.commit())throw new IOException("Configuration write failed; private recovery is required");
     }
-    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||key.equals(PortableBookmarks.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||PortableSavedPlaylists.owns(key)||key.equals(PortableTitlePlayback.PENDING)||TitlePlaybackOverrides.owns(key)||key.equals("supernova_history_migrated")||key.equals("supernova_history_cleared")||key.equals("supernova_positions_replaced_v2")||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
+    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||key.equals(PortableBookmarks.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||PortableSavedPlaylists.owns(key)||key.equals(PortableTitlePlayback.PENDING)||TitlePlaybackOverrides.owns(key)||key.equals(PortableMediaMatches.PENDING)||MediaMatchIntents.owns(key)||key.equals("supernova_history_migrated")||key.equals("supernova_history_cleared")||key.equals("supernova_positions_replaced_v2")||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
     private static boolean healthOwned(String key){return key.equals(PortableReviewNotes.PENDING)||key.matches("incorrect:[1-9][0-9]{0,18}");}
     private static JSONObject record(Plan plan,boolean complete)throws JSONException,IOException{
         JSONArray values=new JSONArray();recordValues(values,"DEFAULT",plan.keys,plan.before);recordValues(values,"HEALTH",plan.healthKeys,plan.healthBefore);
