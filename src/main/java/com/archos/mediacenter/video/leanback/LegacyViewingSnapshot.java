@@ -18,6 +18,7 @@ public final class LegacyViewingSnapshot {
             try{played=historyCleared?0:Math.multiplyExact(nativePlayed,1000L);}catch(ArithmeticException invalid){throw new JSONException("Legacy viewing time exceeds supported range");}
             // Legacy last-played time does not prove when completion occurred.
             int position=positionsCleared?0:Math.max(0,nativePosition);boolean started=!historyCleared&&(complete||nativePlayed>0||nativePosition>0);long completedAt=0;ViewingHistory.Record previous=legacy.get(key);
+            if(!complete&&!started&&played==0&&position==0)continue;
             if(previous==null)legacy.put(key,new ViewingHistory.Record(complete,started,position,position>0?duration:0,played,completedAt));else{
                 boolean newer=played>previous.played||played==previous.played&&position>previous.position;legacy.put(key,new ViewingHistory.Record(complete||previous.completed,started||previous.started,newer?position:previous.position,newer&&position>0?duration:previous.duration,Math.max(played,previous.played),Math.max(completedAt,previous.completedAt)));
             }

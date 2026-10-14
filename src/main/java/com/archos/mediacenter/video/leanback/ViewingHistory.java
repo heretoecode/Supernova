@@ -54,6 +54,14 @@ public final class ViewingHistory {
         Record(boolean c,boolean s,int p,int d,long t,long completion){completed=c;started=s;position=p;duration=d;played=t;completedAt=completion;}
     }
     public static Map<String,Record> read(Context c){synchronized(LOCK){Map<String,Record> records=new HashMap<>();try(Store helper=new Store(c);Cursor rows=helper.getReadableDatabase().query("history",null,null,null,null,null,null)){while(rows.moveToNext())records.put(rows.getString(0),new Record(rows.getInt(1)!=0,rows.getInt(2)!=0,rows.getInt(3),rows.getInt(4),rows.getLong(5),rows.getLong(6)));}return records;}}
+    /** Explicit restored positions bypass the native played-time gate without fabricating a timestamp. */
+    public static boolean applyRestoredPosition(Context context,VideoDbInfo info)throws java.io.IOException{
+        if(info==null||!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_positions_replaced_v2",false))return false;info.resume=0;if(!resumeEnabled(context))return true;
+        String key=identity(info.isShow,info.isShow?info.scraperShowId:info.scraperMovieId,info.scraperSeasonNr,info.scraperEpisodeNr,info.uri==null?null:info.uri.toString());if(key==null||key.startsWith("file:")&&com.archos.mediacenter.video.utils.backup.PortablePhysicalReferences.fingerprint(info.uri==null?null:info.uri.toString())==null)return true;
+        java.io.File file=context.getDatabasePath(DATABASE);if(!file.exists())return true;try(SQLiteDatabase database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READONLY);Cursor rows=database.query("history",new String[]{"position"},"identity=?",new String[]{key},null,null,null)){
+            if(database.getVersion()!=1)throw new java.io.IOException("Restored position store is incompatible");if(rows.moveToFirst()){if(rows.getType(0)!=Cursor.FIELD_TYPE_INTEGER||rows.getLong(0)< -2||rows.getLong(0)>Integer.MAX_VALUE)throw new java.io.IOException("Restored position is invalid");info.resume=Math.max(0,rows.getInt(0));}return true;
+        }catch(RuntimeException invalid){throw new java.io.IOException("Restored position could not be read safely",invalid);}
+    }
     private static void restoreCancelled(java.util.function.BooleanSupplier cancel)throws java.io.InterruptedIOException{if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new java.io.InterruptedIOException("Viewing-state restore cancelled");}
     /** Staged database primitive only: no legacy media flags, preference journal or external sync changes. */
     static void replacePortable(Context context,org.json.JSONObject history,org.json.JSONObject positions,java.util.function.BooleanSupplier cancel)throws java.io.IOException,org.json.JSONException{
@@ -147,18 +155,19 @@ public final class ViewingHistory {
         android.content.SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(c);
         boolean migrate=!prefs.getBoolean("supernova_history_migrated",false);
         boolean cleared=prefs.getBoolean("supernova_history_cleared",false);
+        boolean positionsReplaced=prefs.getBoolean("supernova_positions_replaced_v2",false);
         for(PreviewLibraryLoader.Entry e:entries){
             Video v=(Video)e.media;String key=identity(e);Record previous=records.get(key);
             if(migrate&&tracking(c)&&previous==null&&(v.getLastPlayed()>0||PreviewSeriesJourney.completed(v)))
-                write(c,key,PreviewSeriesJourney.completed(v),true,v.getResumeMs(),v.getDurationMs(),v.getLastPlayed(),true,true);
+                write(c,key,PreviewSeriesJourney.completed(v),true,positionsReplaced?0:v.getResumeMs(),positionsReplaced?0:v.getDurationMs(),v.getLastPlayed(),true,true);
             else if(previous!=null){
                 v.applyIdentityHistory(previous.completed,previous.played,resumeEnabled(c)?previous.position:0);
                 e.playedAt=previous.played;
             }else if(cleared){
                 // Clear also applies to legacy/offline identities not yet migrated. Positive resume is independent.
-                int position=Math.max(0,v.getResumeMs());
+                int position=positionsReplaced?0:Math.max(0,v.getResumeMs());
                 v.applyIdentityHistory(false,0,resumeEnabled(c)?position:0);e.playedAt=0;
-            }
+            }else if(positionsReplaced){v.applyIdentityHistory(v.isWatched(),v.getLastPlayed(),0);}
         }
         prefs.edit().putBoolean("supernova_history_migrated",true).commit();return read(c);
     }

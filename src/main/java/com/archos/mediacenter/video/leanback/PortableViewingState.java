@@ -92,5 +92,11 @@ public final class PortableViewingState {
             if(original||value.completed||value.started||value.position!=0||value.duration!=0||value.played!=0||value.completedAt!=0)result.put(key,value);
         }return recoverySnapshot(result);
     }
+    /** Native receiving state copied into new rows is not a later independent write during rollback. */
+    public static JSONObject recoverSelected(Map<String,ViewingHistory.Record> current,JSONObject before,JSONObject introduced,boolean history,boolean positions)throws JSONException {
+        Map<String,ViewingHistory.Record> copies=validateRecoverySnapshot(introduced),originals=validateRecoverySnapshot(before),filtered=new LinkedHashMap<>(current);
+        for(var entry:copies.entrySet()){if(originals.containsKey(entry.getKey()))throw new JSONException("Introduced viewing record conflicts with originals");ViewingHistory.Record now=current.get(entry.getKey()),copied=entry.getValue();if(now==null)continue;boolean same=history&&!positions?now.position==copied.position&&now.duration==copied.duration:positions&&!history?now.completed==copied.completed&&now.started==copied.started&&now.played==copied.played&&now.completedAt==copied.completedAt:false;if(same)filtered.remove(entry.getKey());}
+        return recoverSelected(filtered,before,history,positions);
+    }
     private PortableViewingState(){}
 }

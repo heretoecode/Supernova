@@ -57,6 +57,7 @@ public final class PreferenceRestoreTransaction {
         public final int unresolved;
         public final Set<String> receivingChecks;
         private final String viewingBefore,viewingAfter;
+        private String viewingIntroduced,nativeViewingBefore;
         private final String mediaBefore,mediaAfter;
         private final String bookmarksBefore,bookmarksAfter;
         private final String sourcesBefore,sourcesAfter;
@@ -195,6 +196,8 @@ public final class PreferenceRestoreTransaction {
                 healthKeys.addAll(notes.keys);healthAfter.putAll(notes.values);unresolved+=notes.unresolved;
             }else if(category==BackupCategory.HISTORY||category==BackupCategory.POSITIONS){
                 PortableViewingState.validate(item.getValue(),PortableViewingState.Kind.valueOf(category.name()));
+                if(category==BackupCategory.HISTORY){keys.add("supernova_history_migrated");keys.add("supernova_history_cleared");after.put("supernova_history_migrated",true);after.put("supernova_history_cleared",true);}
+                else{keys.add("supernova_positions_replaced_v2");after.put("supernova_positions_replaced_v2",true);}
             }else if(category==BackupCategory.PINNED){
                 var pins=PortablePinnedTitles.prepare(item.getValue(),MediaStateRecovery.pinInventory(mediaBefore));mediaAfter=MediaStateRecovery.pinAfter(mediaAfter,pins);
                 keys.add(PortablePinnedTitles.PENDING);after.put(PortablePinnedTitles.PENDING,pins.pending);unresolved+=pins.unresolved;
@@ -238,8 +241,16 @@ public final class PreferenceRestoreTransaction {
                         PortableViewingState.validateRecoverySnapshot(original),selected.get(BackupCategory.HISTORY),selected.get(BackupCategory.POSITIONS))).toString();
             }
         }
-        return new Plan(prefs,before,after,keys,healthBefore,healthAfter,healthKeys,selected.keySet(),unresolved,viewingBefore,viewingAfter,viewingExisted,
+        String introducedImage=null,nativeImage=null;
+        if(selected.containsKey(BackupCategory.HISTORY)!=selected.containsKey(BackupCategory.POSITIONS)){
+            var catalog=LogicalBackupCatalog.capture(destination,()->false);var nativeRows=com.archos.mediacenter.video.leanback.LegacyViewingSnapshot.merge(destination,Collections.emptyMap(),catalog.snapshot);Map<String,ViewingHistory.Record> original=PortableViewingState.validateRecoverySnapshot(new JSONObject(viewingBefore)),receiving=new LinkedHashMap<>(original),introduced=new LinkedHashMap<>();boolean history=selected.containsKey(BackupCategory.HISTORY);
+            for(var row:nativeRows.entrySet())if(!original.containsKey(row.getKey())){var value=row.getValue();if(history?value.position>0||value.duration>0:value.completed||value.started||value.played>0||value.completedAt>0){receiving.put(row.getKey(),value);introduced.put(row.getKey(),value);}}
+            nativeImage=PortableViewingState.recoverySnapshot(nativeRows).toString();
+            if(!introduced.isEmpty()){introducedImage=PortableViewingState.recoverySnapshot(introduced).toString();viewingAfter=PortableViewingState.recoverySnapshot(PortableViewingState.prepare(receiving,selected.get(BackupCategory.HISTORY),selected.get(BackupCategory.POSITIONS))).toString();}
+        }
+        Plan plan=new Plan(prefs,before,after,keys,healthBefore,healthAfter,healthKeys,selected.keySet(),unresolved,viewingBefore,viewingAfter,viewingExisted,
                 mediaBefore==null?null:mediaBefore.toString(),mediaAfter==null?null:mediaAfter.toString(),bookmarksBefore==null?null:bookmarksBefore.toString(),bookmarksAfter==null?null:bookmarksAfter.toString(),sourcesBefore==null?null:sourcesBefore.toString(),sourcesAfter==null?null:sourcesAfter.toString(),titleBefore);
+        plan.viewingIntroduced=introducedImage;plan.nativeViewingBefore=nativeImage;return plan;
     }
     private static void cancelled(BooleanSupplier cancel)throws InterruptedIOException{
         if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Restore cancelled before completion");
@@ -264,6 +275,7 @@ public final class PreferenceRestoreTransaction {
             if(plan.bookmarksBefore!=null)try{if(!BookmarkStoreRecovery.capture(destination).toString().equals(plan.bookmarksBefore))throw new IOException("Bookmarks changed after restore preview; review again");}catch(JSONException invalid){throw new IOException("Bookmark restore preview is invalid",invalid);}
             if(plan.sourcesBefore!=null)try{if(!IndexedSourceStoreRecovery.capture(destination).toString().equals(plan.sourcesBefore))throw new IOException("Indexed sources changed after preview; review again");}catch(JSONException invalid){throw new IOException("Indexed-source preview is invalid",invalid);}
             if(plan.titleBefore!=null)try{if(!TitlePlaybackInventory.capture(destination).signature.equals(plan.titleBefore))throw new IOException("Receiving title playback state changed after preview; review again");}catch(JSONException invalid){throw new IOException("Title playback preview is invalid",invalid);}
+            if(plan.nativeViewingBefore!=null)try{var catalog=LogicalBackupCatalog.capture(destination,()->false);var currentNative=com.archos.mediacenter.video.leanback.LegacyViewingSnapshot.merge(destination,Collections.emptyMap(),catalog.snapshot);if(!PortableViewingState.recoverySnapshot(currentNative).toString().equals(plan.nativeViewingBefore))throw new IOException("Receiving legacy viewing state changed after preview; review again");}catch(JSONException invalid){throw new IOException("Legacy viewing preview is invalid",invalid);}
             JSONObject record;
             try{record=record(plan,false);}catch(JSONException e){throw new IOException("Cannot prepare private restore recovery",e);}
             MediaStateRecovery.Session media=null;BookmarkStoreRecovery.Session bookmarks=null;
@@ -333,11 +345,11 @@ public final class PreferenceRestoreTransaction {
         }
         if(!edit.commit())throw new IOException("Configuration write failed; private recovery is required");
     }
-    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||key.equals(PortableBookmarks.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||PortableSavedPlaylists.owns(key)||key.equals(PortableTitlePlayback.PENDING)||TitlePlaybackOverrides.owns(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
+    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||key.equals(PortableBookmarks.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||PortableSavedPlaylists.owns(key)||key.equals(PortableTitlePlayback.PENDING)||TitlePlaybackOverrides.owns(key)||key.equals("supernova_history_migrated")||key.equals("supernova_history_cleared")||key.equals("supernova_positions_replaced_v2")||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
     private static boolean healthOwned(String key){return key.equals(PortableReviewNotes.PENDING)||key.matches("incorrect:[1-9][0-9]{0,18}");}
     private static JSONObject record(Plan plan,boolean complete)throws JSONException,IOException{
         JSONArray values=new JSONArray();recordValues(values,"DEFAULT",plan.keys,plan.before);recordValues(values,"HEALTH",plan.healthKeys,plan.healthBefore);
-        JSONObject record=new JSONObject().put("schema",plan.sourcesBefore!=null?7:plan.bookmarksBefore!=null?6:plan.mediaBefore!=null?5:plan.viewingBefore==null?2:3).put("complete",complete).put("values",values);
+        JSONObject record=new JSONObject().put("schema",plan.viewingIntroduced!=null?8:plan.sourcesBefore!=null?7:plan.bookmarksBefore!=null?6:plan.mediaBefore!=null?5:plan.viewingBefore==null?2:3).put("complete",complete).put("values",values);
         if(plan.viewingBefore!=null)record.put("viewing",new JSONObject().put("before",new JSONObject(plan.viewingBefore))
                 .put("existed",plan.viewingExisted).put("history",plan.historySelected).put("positions",plan.positionsSelected));
         if(plan.mediaBefore!=null){
@@ -352,6 +364,7 @@ public final class PreferenceRestoreTransaction {
             record.put("bookmarks",new JSONObject().put("before",before).put("after",after).put("committed",false));
         }
         if(plan.sourcesBefore!=null){if(plan.viewingBefore==null)record.put("viewing",JSONObject.NULL);if(plan.mediaBefore==null)record.put("media",JSONObject.NULL);if(plan.bookmarksBefore==null)record.put("bookmarks",JSONObject.NULL);JSONObject before=new JSONObject(plan.sourcesBefore),after=new JSONObject(plan.sourcesAfter);IndexedSourceStoreRecovery.validatePair(before,after);record.put("sources",new JSONObject().put("before",before).put("after",after).put("committed",false));}
+        if(plan.viewingIntroduced!=null){record.getJSONObject("viewing").put("introduced",new JSONObject(plan.viewingIntroduced));if(plan.mediaBefore==null)record.put("media",JSONObject.NULL);if(plan.bookmarksBefore==null)record.put("bookmarks",JSONObject.NULL);if(plan.sourcesBefore==null)record.put("sources",JSONObject.NULL);}
         return record;
     }
     private static void recordValues(JSONArray values,String store,Set<String> keys,Map<String,Object> originals)throws JSONException,IOException{
@@ -379,23 +392,25 @@ public final class PreferenceRestoreTransaction {
                 ByteArrayOutputStream output=new ByteArrayOutputStream();byte[] buffer=new byte[8192];int n;
                 while((n=input.read(buffer))!=-1){if(output.size()+n>MAX_JOURNAL)throw new IOException("Private recovery exceeds storage limit");output.write(buffer,0,n);}
                 JSONObject record=new JSONObject(new String(output.toByteArray(),StandardCharsets.UTF_8));
-                if(!(record.get("schema") instanceof Integer)||!Arrays.asList(1,2,3,4,5,6,7).contains(record.getInt("schema"))||!(record.get("complete") instanceof Boolean))throw new JSONException("Unknown recovery schema");int schema=record.getInt("schema");
-                if(record.length()!=(schema==7?7:schema==6?6:schema>=4?5:schema==3?4:3))throw new JSONException("Unknown recovery fields");
+                if(!(record.get("schema") instanceof Integer)||!Arrays.asList(1,2,3,4,5,6,7,8).contains(record.getInt("schema"))||!(record.get("complete") instanceof Boolean))throw new JSONException("Unknown recovery schema");int schema=record.getInt("schema");
+                if(record.length()!=(schema>=7?7:schema==6?6:schema>=4?5:schema==3?4:3))throw new JSONException("Unknown recovery fields");
                 if(schema>=4&&!(schema>=6&&record.isNull("media"))) {
                     media=record.getJSONObject("media");if(media.length()!=(schema>=5?3:2))throw new JSONException("Invalid media recovery fields");
                     if(schema>=5&&(!(media.get("committed") instanceof Boolean)||media.getBoolean("committed")&&!record.getBoolean("complete")))throw new JSONException("Invalid durable media acknowledgement");
                     MediaStateRecovery.validatePair(media.getJSONObject("before"),media.getJSONObject("after"));
                 }
-                if(schema>=6&&!(schema==7&&record.isNull("bookmarks"))){
+                if(schema>=6&&!(schema>=7&&record.isNull("bookmarks"))){
                     bookmarks=record.getJSONObject("bookmarks");if(bookmarks.length()!=3||!(bookmarks.get("committed") instanceof Boolean)||bookmarks.getBoolean("committed")&&!record.getBoolean("complete"))throw new JSONException("Invalid durable bookmark acknowledgement");
                     BookmarkStoreRecovery.validatePair(bookmarks.getJSONObject("before"),bookmarks.getJSONObject("after"));
                 }
-                if(schema==7){sources=record.getJSONObject("sources");if(sources.length()!=3||!(sources.get("committed") instanceof Boolean)||sources.getBoolean("committed")&&!record.getBoolean("complete"))throw new JSONException("Invalid durable indexed-source acknowledgement");IndexedSourceStoreRecovery.validatePair(sources.getJSONObject("before"),sources.getJSONObject("after"));}
+                if(schema>=7&&!(schema==8&&record.isNull("sources"))){sources=record.getJSONObject("sources");if(sources.length()!=3||!(sources.get("committed") instanceof Boolean)||sources.getBoolean("committed")&&!record.getBoolean("complete"))throw new JSONException("Invalid durable indexed-source acknowledgement");IndexedSourceStoreRecovery.validatePair(sources.getJSONObject("before"),sources.getJSONObject("after"));}
+                if(schema==8&&record.isNull("viewing"))throw new JSONException("Missing introduced viewing recovery");
                 if(schema>=3&&!(schema>=4&&record.isNull("viewing"))) {
-                    viewing=record.getJSONObject("viewing");if(viewing.length()!=4||!(viewing.get("existed") instanceof Boolean)||
+                    viewing=record.getJSONObject("viewing");if(viewing.length()!=(schema==8?5:4)||!(viewing.get("existed") instanceof Boolean)||
                             !(viewing.get("history") instanceof Boolean)||!(viewing.get("positions") instanceof Boolean)||
                             !viewing.getBoolean("history")&&!viewing.getBoolean("positions"))throw new JSONException("Invalid viewing recovery scope");
                     PortableViewingState.validateRecoverySnapshot(viewing.getJSONObject("before"));
+                    if(schema==8){Map<String,ViewingHistory.Record> introduced=PortableViewingState.validateRecoverySnapshot(viewing.getJSONObject("introduced")),original=PortableViewingState.validateRecoverySnapshot(viewing.getJSONObject("before"));if(introduced.isEmpty()||viewing.getBoolean("history")==viewing.getBoolean("positions"))throw new JSONException("Invalid introduced viewing scope");for(String identity:introduced.keySet())if(original.containsKey(identity))throw new JSONException("Introduced viewing identity conflicts with originals");}
                     if(!viewing.getBoolean("existed")&&viewing.getJSONObject("before").getJSONArray("rows").length()!=0)throw new JSONException("Invalid absent viewing store image");
                 }
                 complete=record.getBoolean("complete");JSONArray values=record.getJSONArray("values");if(values.length()>100000)throw new JSONException("Too many recovery keys");
@@ -422,8 +437,7 @@ public final class PreferenceRestoreTransaction {
                 catch(JSONException invalid){throw new IOException("Indexed-source recovery values are invalid",invalid);}
             if(!complete){
                 if(viewing!=null)try {
-                    JSONObject restored=PortableViewingState.recoverSelected(PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(destination)),
-                            viewing.getJSONObject("before"),viewing.getBoolean("history"),viewing.getBoolean("positions"));
+                    var currentViewing=PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(destination));JSONObject restored=viewing.has("introduced")?PortableViewingState.recoverSelected(currentViewing,viewing.getJSONObject("before"),viewing.getJSONObject("introduced"),viewing.getBoolean("history"),viewing.getBoolean("positions")):PortableViewingState.recoverSelected(currentViewing,viewing.getJSONObject("before"),viewing.getBoolean("history"),viewing.getBoolean("positions"));
                     if(!viewing.getBoolean("existed")&&restored.getJSONArray("rows").length()==0) {
                         if(destination.getDatabasePath(ViewingHistory.DATABASE).exists()&&!destination.deleteDatabase(ViewingHistory.DATABASE))throw new IOException("New viewing store rollback cleanup is pending");
                     }else ViewingHistory.replaceRecovery(destination,restored,()->false);

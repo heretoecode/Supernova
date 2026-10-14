@@ -756,9 +756,10 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     private void updateResumeCandidates(VideoDbInfo localInfo, VideoDbInfo networkInfo) {
         if (localInfo != null) {
+            boolean restoredPosition=false;try{restoredPosition=com.archos.mediacenter.video.leanback.ViewingHistory.applyRestoredPosition(this,localInfo);}catch(java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_position_invalid",invalid);}
             boolean eligible = PlaybackResumePolicy.isDatabaseResumeEligible(
                     localInfo.lastTimePlayed, mResume, RESUME_FROM_REMOTE_POS);
-            mPlaybackSession.setCandidate(ResumeSource.LOCAL, localInfo.resume, eligible);
+            mPlaybackSession.setCandidate(ResumeSource.LOCAL, localInfo.resume, restoredPosition?com.archos.mediacenter.video.leanback.ViewingHistory.resumeEnabled(this):eligible);
             mPlaybackSession.setCandidate(ResumeSource.BOOKMARK, localInfo.bookmark, eligible);
             int traktPosition = localInfo.duration > 0
                     ? Math.abs((int) (localInfo.traktResume * (double) localInfo.duration / 100))
