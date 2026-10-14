@@ -1,5 +1,5 @@
 diff --git a/src/com/archos/mediaprovider/video/ScraperProvider.java b/src/com/archos/mediaprovider/video/ScraperProvider.java
-index bbf4e60..4d69ddf 100644
+index bbf4e60..69daa07 100644
 --- a/src/com/archos/mediaprovider/video/ScraperProvider.java
 +++ b/src/com/archos/mediaprovider/video/ScraperProvider.java
 @@ -61,6 +61,8 @@ public class ScraperProvider extends ContentProvider {
@@ -50,7 +50,7 @@ index bbf4e60..4d69ddf 100644
          mDbHolder = dbH;
          mContext = context;
          mCr = context.getContentResolver();
-@@ -540,6 +552,63 @@ public class ScraperProvider extends ContentProvider {
+@@ -540,6 +552,64 @@ public class ScraperProvider extends ContentProvider {
          ContentResolver cr = mCr;
          SQLiteDatabase db = mDbHolder.get();
          switch (sUriMatcher.match(uri)) {
@@ -75,7 +75,7 @@ index bbf4e60..4d69ddf 100644
 +                if(db.update(VideoOpenHelper.FILES_TABLE_NAME,cleared,"_id=?",new String[]{file.toString()})!=1)throw new IllegalStateException("Identification clear target disappeared");
 +                rowId=file;noteUri=createUriAndNotify(rowId,db,VideoStore.Video.Media.EXTERNAL_CONTENT_URI,cr,ScraperStore.ALL_CONTENT_URI);break;
 +            }
-+            case MOVIE_RESTORE_OWNED:
++            case MOVIE_RESTORE_OWNED: {
 +                if (!db.inTransaction()) throw new IllegalStateException("Owned movie replacement requires a provider transaction");
 +                Long owner = values.getAsLong(ScraperStore.Movie.ID);
 +                Long video = values.getAsLong(ScraperStore.Movie.VIDEO_ID);
@@ -111,10 +111,11 @@ index bbf4e60..4d69ddf 100644
 +                        ScraperStore.Movie.ID, movieValues, SQLiteDatabase.CONFLICT_REPLACE);
 +                noteUri = createUriAndNotify(rowId, db, ScraperStore.Movie.URI.ID, cr, ADDITIONAL_MOVIE);
 +                break;
++            }
              case MOVIE:
                  rowId = db.insert(ScraperTables.MOVIE_TABLE_NAME,
                          ScraperStore.Movie.ID, values);
-@@ -550,6 +619,48 @@ public class ScraperProvider extends ContentProvider {
+@@ -550,6 +620,48 @@ public class ScraperProvider extends ContentProvider {
                          ScraperStore.Show.ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                  noteUri = createUriAndNotify(rowId, db, ScraperStore.Show.URI.ID, cr, ADDITIONAL_SHOW);
                  break;
