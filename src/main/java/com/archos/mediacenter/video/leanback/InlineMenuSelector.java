@@ -43,6 +43,11 @@ final class InlineMenuSelector extends AppCompatTextView {
         setActivated(editing);
     }
 
+    int contentWidth() {
+        float widest=0;for(String label:labels)widest=Math.max(widest,getPaint().measureText(label));
+        return (int)Math.ceil(widest)+getCompoundPaddingLeft()+getCompoundPaddingRight()+MenuFoundation.dp(getContext(),2);
+    }
+
     boolean cancelPreview() {
         if (!editing) return false;
         editing = false; preview = selected; update(); return true;

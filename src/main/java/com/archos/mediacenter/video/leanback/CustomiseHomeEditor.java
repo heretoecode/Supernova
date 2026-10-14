@@ -243,7 +243,7 @@ final class CustomiseHomeEditor {
         InlineMenuSelector icon = field(new InlineMenuSelector(context, icons, Math.max(0, Arrays.asList(icons).indexOf(row.icon)), PreviewHomeRows.iconName(row), value -> {
             row.icon = value == 0 ? "" : icons[value]; saveRow(row); renderRows(); renderEditor(); restore("home.editor.icon");
         }), "home.editor.icon");
-        LinearLayout.LayoutParams iconSize = new LinearLayout.LayoutParams(dp(128), -2); iconSize.leftMargin = dp(10); names.addView(icon, iconSize); editor.addView(names);
+        LinearLayout.LayoutParams iconSize = new LinearLayout.LayoutParams(Math.max(dp(128),icon.contentWidth()), -2); iconSize.leftMargin = dp(10); names.addView(icon, iconSize); editor.addView(names);
         heading("Content Type");
         LinearLayout types = new LinearLayout(context); types.setClipChildren(false);
         String[] labels = {"Movies", "TV Shows", "Both"};
@@ -284,17 +284,17 @@ final class CustomiseHomeEditor {
         LinearLayout display = new LinearLayout(context); display.setClipChildren(false);
         String[] methods = {"Date Added", "Title", "Year"}, keys = {"added", "title", "year"};
         InlineMenuSelector sort = field(new InlineMenuSelector(context, methods, Math.max(0, Arrays.asList(keys).indexOf(row.sort)), "sort", value -> { row.sort = keys[value]; saveRow(row); }), "home.editor.sort");
-        display.addView(sort, new LinearLayout.LayoutParams(dp(158), -2));
+        display.addView(sort, new LinearLayout.LayoutParams(Math.max(dp(158),sort.contentWidth()), -2));
         TextView direction = field(MenuFoundation.control(context, row.descending ? "Descending" : "Ascending", "order", () -> {
             row.descending = !row.descending; saveRow(row); renderEditor(); restore("home.editor.direction");
         }), "home.editor.direction"); direction.setTextSize(14 * TvLayout.scale(context));
         Drawable arrow = new PreviewIcon(row.descending ? "arrow-down" : "arrow-up"); arrow.setBounds(0, 0, dp(14), dp(14));
         direction.setCompoundDrawables(direction.getCompoundDrawables()[0], null, arrow, null);
-        LinearLayout.LayoutParams dirSize = new LinearLayout.LayoutParams(dp(164), -2); dirSize.leftMargin = dp(8); display.addView(direction, dirSize);
+        LinearLayout.LayoutParams dirSize = new LinearLayout.LayoutParams(Math.max(dp(164),(int)Math.ceil(Math.max(direction.getPaint().measureText("Descending"),direction.getPaint().measureText("Ascending")))+direction.getCompoundPaddingLeft()+direction.getCompoundPaddingRight()+dp(2)), -2); dirSize.leftMargin = dp(8); display.addView(direction, dirSize);
         String[] limits = {"5", "10", "15", "20", "25", "30"};
         InlineMenuSelector maximum = field(new InlineMenuSelector(context, limits, Math.max(0, Arrays.asList(limits).indexOf(String.valueOf(row.maximum))), "list", value -> { row.maximum = PreviewHomeRows.MAXIMUM_PRESETS[value]; saveRow(row); }), "home.editor.maximum");
         maximum.setContentDescription("Maximum Items, " + row.maximum + ", OK to edit");
-        LinearLayout.LayoutParams limitSize = new LinearLayout.LayoutParams(dp(88), -2); limitSize.leftMargin = dp(8); display.addView(maximum, limitSize);
+        LinearLayout.LayoutParams limitSize = new LinearLayout.LayoutParams(Math.max(dp(88),maximum.contentWidth()), -2); limitSize.leftMargin = dp(8); display.addView(maximum, limitSize);
         android.widget.HorizontalScrollView displayViewport=new android.widget.HorizontalScrollView(context);displayViewport.setClipToPadding(false);displayViewport.setHorizontalScrollBarEnabled(false);
         displayViewport.addView(display,new android.widget.HorizontalScrollView.LayoutParams(-2,-2));editor.addView(displayViewport,new LinearLayout.LayoutParams(-1,-2));
         TextView automatic = field(MenuFoundation.control(context, "Automatically include new matching media", row.dynamic ? "checkbox checked" : "checkbox", () -> {
