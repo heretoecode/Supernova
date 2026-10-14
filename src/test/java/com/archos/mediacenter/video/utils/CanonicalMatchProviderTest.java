@@ -138,4 +138,26 @@ public class CanonicalMatchProviderTest {
         try{com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.verify(episode,new com.archos.mediascraper.ScrapeDetailResult(changed,false,null,okay,null));fail("Wrong episode provider accepted");}catch(java.io.IOException expected){}
     }
 
+    @Test public void canonicalExecutorUsesCallerTransactionAndDoesNotPublishBeforeCommit()throws Exception {
+        var db=holder.get();var batch=tags().prepareOwnedRestore(app,10,100,123,9L);int[] notifications={0};
+        android.database.ContentObserver observer=new android.database.ContentObserver(null){@Override public void onChange(boolean self,Uri uri){notifications[0]++;}};
+        app.getContentResolver().registerContentObserver(ScraperStore.ALL_CONTENT_URI,true,observer);
+        try {
+            try{com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false);fail("Missing transaction accepted");}catch(java.io.IOException expected){}
+            db.beginTransaction();try {
+                assertEquals(100,com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false));assertEquals(0,notifications[0]);
+                try(var row=db.rawQuery("SELECT m_online_id,Nova_pinned FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(789,row.getLong(0));assertEquals(9,row.getLong(1));}
+            }finally{db.endTransaction();}
+            try(var row=db.rawQuery("SELECT m_online_id FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));}
+        }finally{app.getContentResolver().unregisterContentObserver(observer);}
+    }
+    @Test public void canonicalExecutorCancellationAfterMutationRollsBackParentAndEntireGraph()throws Exception {
+        episodeFixture();var db=holder.get();var batch=episodeTags(666).prepareOwnedRestore(app,20,400,555,300,666,9L);int[] operations={0};
+        db.beginTransaction();try {
+            try{com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->++operations[0]>4);fail("Cancellation ignored");}catch(java.io.InterruptedIOException expected){}
+        }finally{db.endTransaction();}
+        try(var row=db.rawQuery("SELECT e.e_online_id,e.name_episode,s.Nova_pinned FROM EPISODE e JOIN SHOW s ON s._id=e.show_episode WHERE e._id=400",null)){assertTrue(row.moveToFirst());assertEquals(555,row.getLong(0));assertEquals("Old episode",row.getString(1));assertEquals(9,row.getLong(2));}
+        try(var row=db.rawQuery("SELECT name_v_guests FROM V_GUESTS WHERE episode_v_guests=400",null)){assertTrue(row.moveToFirst());assertEquals("Old guest",row.getString(0));assertFalse(row.moveToNext());}
+    }
+
 }
