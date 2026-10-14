@@ -166,19 +166,23 @@ public final class PreferenceRestoreTransaction {
             for(var entry:original.after.entrySet())if(MediaMatchIntents.owns(entry.getKey())){
                 cancelled(cancel);JSONObject intent=new JSONObject((String)entry.getValue());if(!intent.getBoolean("pending"))continue;
                 String[] key=entry.getKey().split(":");long id=Long.parseLong(key[key.length-1]);MediaMatchInventory.Owner owner=inventory.owners.get(id);
-                if(owner==null||owner.match==null)continue;
+                if(owner==null)continue;
                 if(intent.isNull("requested")){
+                    if(owner.match==null)continue;
                     Long provider=owner.type==com.archos.mediascraper.BaseTags.MOVIE?Long.parseLong(owner.match.identity.split(":")[2]):owner.match.episodeProvider;
                     batches.add(com.archos.mediascraper.MatchRestoreOperations.prepareClear(id,owner.type,owner.localId,provider));files.add(id);intent.put("pending",false);values.put(entry.getKey(),intent.toString());continue;
                 }
                 JSONObject request=intent.getJSONObject("requested");var requested=new PortableMediaMatches.Match(request.getString("identity"),request.isNull("episodeProvider")?null:request.getLong("episodeProvider"));
-                if(owner.type==com.archos.mediascraper.BaseTags.MOVIE&&!requested.identity.startsWith("tmdb:movie:")||owner.type==com.archos.mediascraper.BaseTags.TV_SHOW&&!requested.identity.startsWith("tmdb:tv:"))continue;
+                boolean requestedMovie=requested.identity.startsWith("tmdb:movie:");
+                if(!requestedMovie&&(owner.type!=com.archos.mediascraper.BaseTags.TV_SHOW||owner.match==null))continue;
                 long parent=0;Long pin=null;
+                if(!requestedMovie||owner.type==com.archos.mediascraper.BaseTags.MOVIE&&owner.match!=null){
                 String table=owner.type==com.archos.mediascraper.BaseTags.MOVIE?"MOVIE":"EPISODE";
                 try(android.database.Cursor row=database.query(table,owner.type==com.archos.mediascraper.BaseTags.MOVIE?new String[]{"Nova_pinned"}:new String[]{"show_episode"},"_id=?",new String[]{Long.toString(owner.localId)},null,null,null)){
                     if(!row.moveToFirst())throw new IOException("Receiving canonical owner disappeared");if(owner.type==com.archos.mediascraper.BaseTags.MOVIE)pin=row.isNull(0)?null:row.getLong(0);else parent=row.getLong(0);
                 }
                 if(parent>0)try(android.database.Cursor row=database.query("SHOW",new String[]{"Nova_pinned"},"_id=?",new String[]{Long.toString(parent)},null,null,null)){if(!row.moveToFirst())throw new IOException("Receiving canonical parent disappeared");pin=row.isNull(0)?null:row.getLong(0);}
+                }
                 var video=physical.video(id);
                 try{batches.add(CanonicalMatchMaterial.prepare(destination,owner,requested,video==null?null:video.getFileUri(),parent,pin,resolver));}
                 catch(java.io.InterruptedIOException interrupted){throw interrupted;}

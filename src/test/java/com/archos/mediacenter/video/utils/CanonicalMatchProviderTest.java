@@ -264,4 +264,23 @@ public class CanonicalMatchProviderTest {
         try(var row=db.rawQuery("PRAGMA foreign_key_check",null)){assertFalse(row.moveToFirst());}
     }
 
+    @Test public void clearedMovieCanBeCanonicallyRestoredUsingRetainedOwnershipAndPin()throws Exception {
+        var db=holder.get();db.beginTransaction();try{com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,com.archos.mediascraper.MatchRestoreOperations.prepareClear(10,11,100,123L),()->false);db.setTransactionSuccessful();}finally{db.endTransaction();}
+        var owner=com.archos.mediacenter.video.utils.backup.MediaMatchInventory.capture(app).owners.get(10L);assertNull(owner.match);
+        var request=new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:movie:789",null);
+        var batch=com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.prepare(app,owner,request,Uri.parse("file:///one.mkv"),0,null,(context,requested,file)->new com.archos.mediascraper.ScrapeDetailResult(tags(),true,null,com.archos.mediascraper.ScrapeStatus.OKAY,null));
+        db.beginTransaction();try{assertEquals(100,com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false));try(var row=db.query(VideoOpenHelper.VIDEO_VIEW_NAME,new String[]{"ArchosMediaScraper_type","m_online_id","m_name","Nova_pinned"},"_id=10",null,null,null,null)){assertTrue(row.moveToFirst());assertEquals(11,row.getLong(0));assertEquals(789,row.getLong(1));assertEquals("Fresh canonical title",row.getString(2));assertEquals(9,row.getLong(3));}}finally{db.endTransaction();}
+    }
+    @Test public void episodeToRetainedMovieSwitchKeepsOldEpisodeShowPinCollectionAndViewingState()throws Exception {
+        episodeFixture();var db=holder.get();db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,name_movie,Nova_pinned) VALUES(450,20,888,'Retained receiving movie',7)");db.execSQL("UPDATE files SET ArchosMediaScraper_type=12,ArchosMediaScraper_id=400 WHERE _id=20");
+        var owner=com.archos.mediacenter.video.utils.backup.MediaMatchInventory.capture(app).owners.get(20L);assertEquals(12,owner.type);
+        var request=new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:movie:789",null);var batch=com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.prepare(app,owner,request,Uri.parse("file:///episode.mkv"),0,null,(context,requested,file)->new com.archos.mediascraper.ScrapeDetailResult(tags(),true,null,com.archos.mediascraper.ScrapeStatus.OKAY,null));
+        db.beginTransaction();try {
+            com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false);
+            try(var row=db.query(VideoOpenHelper.VIDEO_VIEW_NAME,new String[]{"ArchosMediaScraper_type","m_online_id","m_name","e_name","s_id","Nova_pinned","bookmark"},"_id=20",null,null,null,null)){assertTrue(row.moveToFirst());assertEquals(11,row.getLong(0));assertEquals(789,row.getLong(1));assertEquals("Fresh canonical title",row.getString(2));assertTrue(row.isNull(3));assertTrue(row.isNull(4));assertEquals(7,row.getLong(5));assertEquals(6789,row.getLong(6));}
+            try(var row=db.rawQuery("SELECT s.s_online_id,s.Nova_pinned,e.e_online_id FROM user_collection_item i JOIN SHOW s ON s._id=i.media_id JOIN EPISODE e ON e.show_episode=s._id WHERE i._id=10",null)){assertTrue(row.moveToFirst());assertEquals(666,row.getLong(0));assertEquals(9,row.getLong(1));assertEquals(555,row.getLong(2));}
+            try(var row=db.rawQuery("PRAGMA foreign_key_check",null)){assertFalse(row.moveToFirst());}
+        }finally{db.endTransaction();}
+    }
+
 }

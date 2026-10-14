@@ -95,7 +95,7 @@ public final class BackupOperationModel extends AndroidViewModel {
             Map<BackupCategory,JSONObject> payloads=new EnumMap<>(BackupCategory.class);for(var item:imported.payloads(token::get).entrySet())if(copy.contains(item.getKey()))payloads.put(item.getKey(),item.getValue());
             boolean needsInventory=!Collections.disjoint(copy,EnumSet.of(BackupCategory.HOME,BackupCategory.WATCH_NEXT,BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.HIDDEN,BackupCategory.TITLE_PLAYBACK));
             LogicalBackupCatalog catalog=needsInventory?LogicalBackupCatalog.capture(getApplication(),token::get):null;
-            PreferenceRestoreTransaction transaction=new PreferenceRestoreTransaction(getApplication());restorePlan=transaction.prepare(payloads,catalog==null?new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot():catalog.snapshot,new PortablePhysicalReferences(getApplication(),catalog==null?Collections.emptyList():catalog.physical));
+            PreferenceRestoreTransaction transaction=new PreferenceRestoreTransaction(getApplication());restorePlan=transaction.prepareCanonicalMatches(payloads,catalog==null?new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot():catalog.snapshot,new PortablePhysicalReferences(getApplication(),catalog==null?Collections.emptyList():catalog.physical),CanonicalMatchMaterial.PROVIDER,token::get);
             if(token.get())throw new InterruptedIOException("Restore preview cancelled");
             state(Phase.RESTORE_PREVIEW,"Selected categories replace existing state. Unresolved references remain pending. Reconnect storage and services separately.",copy,restorePlan.unresolved,false);
         });

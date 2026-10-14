@@ -36,11 +36,18 @@ public final class CanonicalMatchMaterial {
     }
     public static OwnedCanonicalBatch prepare(Context context,MediaMatchInventory.Owner owner,
             PortableMediaMatches.Match requested,Uri receivingFile,long receivingShowId,Long receivingPin,Resolver resolver)throws IOException {
-        if(owner==null||owner.match==null||owner.localId<=0||resolver==null||requested==null||receivingFile==null||"putio".equalsIgnoreCase(receivingFile.getScheme())||!owner.guard.equals(MediaMatchInventory.guard(owner.videoId,receivingFile.toString())))throw new IOException("Canonical restoration requires an owned receiving identification");
+        if(owner==null||resolver==null||requested==null||receivingFile==null||"putio".equalsIgnoreCase(receivingFile.getScheme())||!owner.guard.equals(MediaMatchInventory.guard(owner.videoId,receivingFile.toString())))throw new IOException("Canonical restoration requires an owned receiving identification");
         BaseTags tags=verify(requested,resolver.resolve(context,requested,receivingFile));
         try {
-            if(tags instanceof MovieTags&&owner.type==BaseTags.MOVIE)return ((MovieTags)tags).prepareOwnedRestore(context,owner.videoId,owner.localId,Long.parseLong(owner.match.identity.split(":")[2]),receivingPin);
-            if(tags instanceof EpisodeTags&&owner.type==BaseTags.TV_SHOW&&owner.match.episodeProvider!=null){
+            if(tags instanceof MovieTags){
+                if(owner.type==BaseTags.MOVIE&&owner.match!=null)return ((MovieTags)tags).prepareOwnedRestore(context,owner.videoId,owner.localId,Long.parseLong(owner.match.identity.split(":")[2]),receivingPin);
+                java.io.File store=com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
+                if(store.exists())try(android.database.sqlite.SQLiteDatabase database=android.database.sqlite.SQLiteDatabase.openDatabase(store.getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY);
+                        android.database.Cursor retained=database.query("MOVIE",new String[]{"_id","m_online_id","Nova_pinned"},"video_id=?",new String[]{Long.toString(owner.videoId)},null,null,null)){
+                    if(retained.moveToFirst()){long id=retained.getLong(0);Long provider=retained.isNull(1)?null:retained.getLong(1),pin=retained.isNull(2)?null:retained.getLong(2);if(retained.moveToNext())throw new IOException("Retained movie ownership is ambiguous");return ((MovieTags)tags).prepareOwnedMetadataRestore(context,owner.videoId,owner.type,owner.localId,id,provider,pin);}
+                }
+            }
+            if(tags instanceof EpisodeTags&&owner.type==BaseTags.TV_SHOW&&owner.match!=null&&owner.match.episodeProvider!=null){
                 long receivingShowProvider=Long.parseLong(owner.match.identity.split(":")[2]);EpisodeTags episode=(EpisodeTags)tags;
                 if(episode.getShowTags().getOnlineId()==receivingShowProvider)return episode.prepareOwnedRestore(context,owner.videoId,owner.localId,owner.match.episodeProvider,receivingShowId,receivingShowProvider,receivingPin);
                 java.io.File store=com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);

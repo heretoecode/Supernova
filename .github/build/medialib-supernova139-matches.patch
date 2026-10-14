@@ -1,5 +1,5 @@
 diff --git a/src/com/archos/mediaprovider/video/ScraperProvider.java b/src/com/archos/mediaprovider/video/ScraperProvider.java
-index bbf4e60..1a2b5a3 100644
+index bbf4e60..67710b7 100644
 --- a/src/com/archos/mediaprovider/video/ScraperProvider.java
 +++ b/src/com/archos/mediaprovider/video/ScraperProvider.java
 @@ -61,6 +61,8 @@ public class ScraperProvider extends ContentProvider {
@@ -50,7 +50,7 @@ index bbf4e60..1a2b5a3 100644
          mDbHolder = dbH;
          mContext = context;
          mCr = context.getContentResolver();
-@@ -540,6 +552,45 @@ public class ScraperProvider extends ContentProvider {
+@@ -540,6 +552,53 @@ public class ScraperProvider extends ContentProvider {
          ContentResolver cr = mCr;
          SQLiteDatabase db = mDbHolder.get();
          switch (sUriMatcher.match(uri)) {
@@ -89,14 +89,22 @@ index bbf4e60..1a2b5a3 100644
 +                            || !current.isNull(1) && current.getLong(1) != values.getAsLong(VideoStore.Video.VideoColumns.NOVA_PINNED))
 +                        throw new IllegalArgumentException("Receiving movie ownership or pin changed");
 +                }
++                long expectedKind=values.containsKey(ScraperStore.Movie.RESTORE_FILE_TYPE)?values.getAsLong(ScraperStore.Movie.RESTORE_FILE_TYPE):ScraperStore.SCRAPER_TYPE_MOVIE;
++                long expectedLink=values.containsKey(ScraperStore.Movie.RESTORE_FILE_ID)?values.getAsLong(ScraperStore.Movie.RESTORE_FILE_ID):owner;
++                if(expectedKind!= -1&&expectedKind!=0&&expectedKind!=ScraperStore.SCRAPER_TYPE_MOVIE&&expectedKind!=ScraperStore.SCRAPER_TYPE_SHOW||expectedLink< -1)throw new IllegalArgumentException("Invalid receiving file guard");
++                try(Cursor current=db.query(VideoOpenHelper.FILES_TABLE_NAME,new String[]{"ArchosMediaScraper_type","ArchosMediaScraper_id"},"_id=?",new String[]{video.toString()},null,null,null)){
++                    if(!current.moveToFirst()||current.getLong(0)!=expectedKind||current.getLong(1)!=expectedLink)throw new IllegalArgumentException("Receiving movie file changed");
++                }
++                if(expectedKind>0&&expectedKind!=ScraperStore.SCRAPER_TYPE_MOVIE){ContentValues detached=new ContentValues();detached.put("ArchosMediaScraper_type",0);db.update(VideoOpenHelper.FILES_TABLE_NAME,detached,"_id=?",new String[]{video.toString()});}
++                ContentValues movieValues=new ContentValues(values);movieValues.remove(ScraperStore.Movie.RESTORE_FILE_TYPE);movieValues.remove(ScraperStore.Movie.RESTORE_FILE_ID);
 +                rowId = db.insertWithOnConflict(ScraperTables.MOVIE_TABLE_NAME,
-+                        ScraperStore.Movie.ID, values, SQLiteDatabase.CONFLICT_REPLACE);
++                        ScraperStore.Movie.ID, movieValues, SQLiteDatabase.CONFLICT_REPLACE);
 +                noteUri = createUriAndNotify(rowId, db, ScraperStore.Movie.URI.ID, cr, ADDITIONAL_MOVIE);
 +                break;
              case MOVIE:
                  rowId = db.insert(ScraperTables.MOVIE_TABLE_NAME,
                          ScraperStore.Movie.ID, values);
-@@ -550,6 +601,33 @@ public class ScraperProvider extends ContentProvider {
+@@ -550,6 +609,33 @@ public class ScraperProvider extends ContentProvider {
                          ScraperStore.Show.ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                  noteUri = createUriAndNotify(rowId, db, ScraperStore.Show.URI.ID, cr, ADDITIONAL_SHOW);
                  break;
@@ -131,10 +139,10 @@ index bbf4e60..1a2b5a3 100644
                  rowId = db.insert(ScraperTables.EPISODE_TABLE_NAME,
                          ScraperStore.Episode.ID, values);
 diff --git a/src/com/archos/mediaprovider/video/ScraperStore.java b/src/com/archos/mediaprovider/video/ScraperStore.java
-index 285f608..3934455 100644
+index 285f608..b046e1f 100644
 --- a/src/com/archos/mediaprovider/video/ScraperStore.java
 +++ b/src/com/archos/mediaprovider/video/ScraperStore.java
-@@ -28,6 +28,9 @@ public final class ScraperStore {
+@@ -28,7 +28,13 @@ public final class ScraperStore {
  
      private static final String CONTENT_AUTHORITY = "content://" + AUTHORITY;
  
@@ -142,9 +150,13 @@ index 285f608..3934455 100644
 +    public static final Uri RESTORE_CLEAR_MATCH = Uri.parse(CONTENT_AUTHORITY + "/tags/match/restore-clear");
 +
      public static class Movie {
++        /** Internal guards, not native database columns. */
++        public static final String RESTORE_FILE_TYPE = "supernova_restore_file_type";
++        public static final String RESTORE_FILE_ID = "supernova_restore_file_id";
          public static final String ID = "_id";
          public static final String VIDEO_ID = "video_id";
-@@ -72,6 +75,8 @@ public final class ScraperStore {
+         public static final String NAME = "name_movie";
+@@ -72,6 +78,8 @@ public final class ScraperStore {
  
          public static class URI {
              public static final Uri BASE = Uri.parse(CONTENT_AUTHORITY + "/tags/movie");
@@ -153,7 +165,7 @@ index 285f608..3934455 100644
              public static final Uri ALL = Uri.parse(CONTENT_AUTHORITY + "/tags/movies");
              public static final Uri ID = Uri.parse(CONTENT_AUTHORITY + "/tags/movie/id/");
              public static final Uri ALL_INFOS = Uri.parse(CONTENT_AUTHORITY + "/tags/movie/full/");
-@@ -244,6 +249,8 @@ public final class ScraperStore {
+@@ -244,6 +252,8 @@ public final class ScraperStore {
      }
  
      public static class Episode {
@@ -162,7 +174,7 @@ index 285f608..3934455 100644
          public static final String ID = "_id";
          public static final String VIDEO_ID = "video_id";
          public static final String NAME = "name_episode";
-@@ -269,6 +276,8 @@ public final class ScraperStore {
+@@ -269,6 +279,8 @@ public final class ScraperStore {
  
          public static class URI {
              public static final Uri BASE = Uri.parse(CONTENT_AUTHORITY + "/tags/episode");
@@ -425,10 +437,10 @@ index 0000000..4eafbb5
 +    private MatchRestoreOperations(){}
 +}
 diff --git a/src/com/archos/mediascraper/MovieTags.java b/src/com/archos/mediascraper/MovieTags.java
-index 30bba74..3195098 100644
+index 30bba74..40c486b 100644
 --- a/src/com/archos/mediascraper/MovieTags.java
 +++ b/src/com/archos/mediascraper/MovieTags.java
-@@ -197,12 +197,47 @@ public class MovieTags extends VideoTags {
+@@ -197,12 +197,58 @@ public class MovieTags extends VideoTags {
  
      @Override
      public long save(Context context, long videoId) {
@@ -451,17 +463,26 @@ index 30bba74..3195098 100644
 +            long expectedProviderId, Long expectedPinned) {
 +        if (videoId <= 0 || metadataId <= 0 || expectedProviderId <= 0 || mOnlineId <= 0)
 +            throw new IllegalArgumentException("Invalid owned movie restoration");
-+        return prepareSaveInternal(context, videoId, metadataId, expectedProviderId, expectedPinned);
++        return prepareSaveInternal(context, videoId, metadataId, expectedProviderId, expectedPinned, (long)BaseTags.MOVIE, metadataId);
++    }
++
++    /** Reuse this file's retained movie metadata after clear or a change of media kind. */
++    public OwnedCanonicalBatch prepareOwnedMetadataRestore(Context context,long videoId,long expectedFileType,long expectedFileMetadataId,
++            long metadataId,Long expectedProviderId,Long expectedPinned) {
++        if(videoId<=0||metadataId<=0||mOnlineId<=0||expectedFileMetadataId< -1
++                ||expectedFileType!= -1&&expectedFileType!=0&&expectedFileType!=BaseTags.MOVIE&&expectedFileType!=BaseTags.TV_SHOW
++                ||expectedProviderId!=null&&expectedProviderId< -1)throw new IllegalArgumentException("Invalid retained movie restoration");
++        return prepareSaveInternal(context,videoId,metadataId,expectedProviderId,expectedPinned,expectedFileType,expectedFileMetadataId);
 +    }
 +
 +    private long saveInternal(Context context, long videoId, Long metadataId,
 +            Long expectedProviderId, Long expectedPinned) {
-+        try { return prepareSaveInternal(context, videoId, metadataId, expectedProviderId, expectedPinned).apply(context.getContentResolver()); }
++        try { return prepareSaveInternal(context, videoId, metadataId, expectedProviderId, expectedPinned, metadataId == null ? null : (long)BaseTags.MOVIE, metadataId).apply(context.getContentResolver()); }
 +        catch (RemoteException | OperationApplicationException e) { log.error("Exception", e); return -1; }
 +    }
 +
 +    private OwnedCanonicalBatch prepareSaveInternal(Context context, long videoId, Long metadataId,
-+            Long expectedProviderId, Long expectedPinned) {
++            Long expectedProviderId, Long expectedPinned, Long expectedFileType, Long expectedFileMetadataId) {
          ContentResolver cr = context.getContentResolver();
          //------------------------------------------------------
          // Create a new entry for this movie in the database.
@@ -470,13 +491,15 @@ index 30bba74..3195098 100644
          values.put(ScraperStore.Movie.VIDEO_ID, Long.valueOf(videoId));
 +        if (metadataId != null) {
 +            values.put(ScraperStore.Movie.ID, metadataId);
++            values.put(ScraperStore.Movie.RESTORE_FILE_TYPE, expectedFileType);
++            values.put(ScraperStore.Movie.RESTORE_FILE_ID, expectedFileMetadataId);
 +            if (expectedPinned == null) values.putNull(VideoStore.Video.VideoColumns.NOVA_PINNED);
 +            else values.put(VideoStore.Video.VideoColumns.NOVA_PINNED, expectedPinned);
 +        }
          values.put(ScraperStore.Movie.NAME, mTitle);
          values.put(ScraperStore.Movie.YEAR, Integer.valueOf(mYear));
          values.put(ScraperStore.Movie.RELEASE_DATE, mReleaseDate);
-@@ -240,36 +275,53 @@ public class MovieTags extends VideoTags {
+@@ -240,36 +286,53 @@ public class MovieTags extends VideoTags {
          Builder cop = null;
          ArrayList<ContentProviderOperation> allOperations = new ArrayList<ContentProviderOperation>();
  
@@ -484,8 +507,8 @@ index 30bba74..3195098 100644
 -        cop = ContentProviderOperation.newInsert(ScraperStore.Movie.URI.BASE);
 +        if (metadataId != null) {
 +            ContentValues expectedFile = new ContentValues();
-+            expectedFile.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, BaseTags.MOVIE);
-+            expectedFile.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID, metadataId);
++            expectedFile.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, expectedFileType);
++            expectedFile.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID, expectedFileMetadataId);
 +            allOperations.add(ContentProviderOperation.newAssertQuery(
 +                    ContentUris.withAppendedId(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, videoId))
 +                    .withValues(expectedFile).withExpectedCount(1).build());
@@ -536,7 +559,7 @@ index 30bba74..3195098 100644
              cop.withValue(ScraperStore.Movie.Actor.ROLE, mActors.get(actorName));
              allOperations.add(cop.build());
          }
-@@ -277,7 +329,7 @@ public class MovieTags extends VideoTags {
+@@ -277,7 +340,7 @@ public class MovieTags extends VideoTags {
          for(String genre: mGenres) {
              cop = ContentProviderOperation.newInsert(ScraperStore.Genre.URI.MOVIE);
              cop.withValue(ScraperStore.Movie.Genre.NAME, genre);
@@ -545,7 +568,7 @@ index 30bba74..3195098 100644
              allOperations.add(cop.build());
          }
  
-@@ -350,16 +402,16 @@ public class MovieTags extends VideoTags {
+@@ -350,16 +413,16 @@ public class MovieTags extends VideoTags {
          for (ScraperImage image : safeList(mPosters)) {
              if (posterId == -1)
                  posterId = allOperations.size();
@@ -565,7 +588,7 @@ index 30bba74..3195098 100644
          }
  
          ContentValues backRef = null;
-@@ -376,12 +428,12 @@ public class MovieTags extends VideoTags {
+@@ -376,12 +439,12 @@ public class MovieTags extends VideoTags {
                      ContentProviderOperation.newUpdate(ScraperStore.Movie.URI.BASE)
                      .withValueBackReferences(backRef)// will replace posterID with ID returned by execution of allOperations
                      .withSelection(ScraperStore.Movie.ID + "=?", new String[] { "-1" })
@@ -580,7 +603,7 @@ index 30bba74..3195098 100644
              allOperations.add(
                      ContentProviderOperation.newUpdate(VideoStore.Video.Media.EXTERNAL_CONTENT_URI)
                      .withSelection(
-@@ -392,16 +444,7 @@ public class MovieTags extends VideoTags {
+@@ -392,16 +455,7 @@ public class MovieTags extends VideoTags {
                      .build()
                      );
          }
