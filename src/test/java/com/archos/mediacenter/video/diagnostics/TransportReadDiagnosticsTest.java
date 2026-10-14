@@ -53,10 +53,11 @@ public class TransportReadDiagnosticsTest {
     }
     @Test public void actualWebdavReadUsesAdapterHookAndCapturesProducerSessionWithoutMediaAddressesInZip()throws Exception {
         WebdavUtils.getInstance(app);ExecutorService worker=Executors.newSingleThreadExecutor();
-        try(ServerSocket server=new ServerSocket(0,1,InetAddress.getLoopbackAddress())){
-            server.setSoTimeout(5000);Future<?> served=worker.submit(()->{try(Socket socket=server.accept()){socket.setSoTimeout(5000);BufferedReader request=new BufferedReader(new InputStreamReader(socket.getInputStream(),StandardCharsets.US_ASCII));String line;while((line=request.readLine())!=null&&!line.isEmpty()){}socket.getOutputStream().write("HTTP/1.1 200 OK\r\nContent-Length: 6\r\nConnection: close\r\n\r\nABCDEF".getBytes(StandardCharsets.US_ASCII));}catch(IOException failure){throw new UncheckedIOException(failure);}});
+        try(ServerSocket server=new ServerSocket(0,1,InetAddress.getByName("127.0.0.1"))){
+            server.setSoTimeout(15000);Future<?> served=worker.submit(()->{try(Socket socket=server.accept()){socket.setSoTimeout(5000);BufferedReader request=new BufferedReader(new InputStreamReader(socket.getInputStream(),StandardCharsets.US_ASCII));String line;while((line=request.readLine())!=null&&!line.isEmpty()){}socket.getOutputStream().write("HTTP/1.1 200 OK\r\nContent-Length: 6\r\nConnection: close\r\n\r\nABCDEF".getBytes(StandardCharsets.US_ASCII));}catch(IOException failure){throw new UncheckedIOException(failure);}});
             Uri uri=Uri.parse("webdav://127.0.0.1:"+server.getLocalPort()+"/FILE_CANARY");
-            try(InputStream input=new WebdavFileEditor(uri).getInputStream()){
+            InputStream opened;try{opened=new WebdavFileEditor(uri).getInputStream();}catch(Exception failure){try{served.get(1,TimeUnit.SECONDS);}catch(ExecutionException serverFailure){throw new AssertionError("Loopback server failed",serverFailure.getCause());}throw failure;}
+            try(InputStream input=opened){
                 assertEquals("WEBDAV",records().get(0).getString("source"));String session=records().get(0).getString("playback_session");Diagnostics.beginPlayback(Uri.parse("file:///OTHER_CANARY"));assertEquals("ABCDEF",new String(input.readAllBytes(),StandardCharsets.US_ASCII));
                 assertEquals(session,records().get(records().size()-1).getString("playback_session"));
             }
