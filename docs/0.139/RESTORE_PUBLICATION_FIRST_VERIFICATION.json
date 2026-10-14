@@ -1,0 +1,18 @@
+{
+  "source_sha": "1b6be929626621c1d71cece8759225f4ac01ac38",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "result": "FAIL",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.RestorePublicationTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.CombinedCurrentRestoreTest",
+    "com.archos.mediacenter.video.utils.PreviewLibraryRestoreRaceTest"
+  ],
+  "duration": "46s",
+  "log_sha256": "6c559589e4e45d9cee173ce3a11225203217cfa6372de35322d0cbe8ee7be591",
+  "tests": 16,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0
+}
