@@ -1,0 +1,30 @@
+{
+  "environment": "supernova-foundation-signing",
+  "observed_utc": "2026-10-14",
+  "requested_branch": "codex/supernova-0.139-implementation-2026-10-13",
+  "result": "BLOCKED",
+  "permitted_branch_policies": [
+    {
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "reason": "Existing signing environment uses custom deployment branch policies; current0.139 implementation branch is absent. No policy/key/signing changes or dispatch were attempted. This proves branch eligibility restriction, not absence of signing secrets.",
+  "next_step": "After implementation gates, use an owner-authorized signing route for the exact139 source. Preserve historical signing workflows/environment/key/certificate; do not silently widen policy."
+}
