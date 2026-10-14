@@ -22,12 +22,12 @@ import com.archos.mediascraper.MediaScraper;
 import java.io.*;
 import java.util.zip.*;
 /** Test-only historical1.0 fixture writer. Not packaged or reachable by application export. */
-final class HistoricalBackupFixture extends ContextWrapper {
+public final class HistoricalBackupFixture extends ContextWrapper {
     private static final org.slf4j.Logger log=org.slf4j.LoggerFactory.getLogger(HistoricalBackupFixture.class);
     private static final String DATABASE_NAME="media.db",CREDENTIALS_DB_NAME="credentials_db",SHORTCUTS_DB_NAME="shortcuts_db",SHORTCUTS2_DB_NAME="shortcuts2_db",VERSION_FILE="db_version.txt";
     private static final int BUFFER_SIZE=8192;
     private HistoricalBackupFixture(Context context){super(context);}
-    static String export(Context context)throws IOException{return new HistoricalBackupFixture(context).exportMediaLibrary();}
+    public static String export(Context context)throws IOException{return new HistoricalBackupFixture(context).exportMediaLibrary();}
     private void addPrivateDatabaseToZip(java.util.zip.ZipOutputStream zip,File original,String name)throws IOException{
         File clean=BackupPrivacy.database(original,getCacheDir());try{BackupPrivacy.applyViewingSelection(this,clean);addFileToZip(zip,clean,name);}finally{clean.delete();}
     }

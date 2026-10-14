@@ -29,6 +29,9 @@ public final class SafeBackup {
             || name.startsWith("scraper_posters/") || name.startsWith("scraper_backdrops/") || name.startsWith("scraper_pictures/");
     }
     public static File stage(Context c, InputStream input) throws Exception {
+        return stage(c,input,()->false);
+    }
+    public static File stage(Context c, InputStream input,java.util.function.BooleanSupplier cancel) throws Exception {
         File stage = new File(c.getCacheDir(), "restore-" + UUID.randomUUID());
         if (!stage.mkdirs()) throw new IOException("Cannot create restore staging folder");
         try {
@@ -37,6 +40,7 @@ public final class SafeBackup {
             try (ZipInputStream zip = new ZipInputStream(input)) {
                 ZipEntry entry; byte[] buffer = new byte[8192];
                 while ((entry = zip.getNextEntry()) != null) {
+                    if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Legacy backup preparation cancelled");
                     String name = entry.getName(); File file = child(stage, name);
                     if (++count > MAX_ENTRIES || !names.add(file.getCanonicalPath()) || !allowed(name))
                         throw new IOException("Unsupported or duplicate backup entry");
@@ -45,6 +49,7 @@ public final class SafeBackup {
                     try (FileOutputStream out = new FileOutputStream(file)) {
                         int n; long size = 0;
                         while ((n = zip.read(buffer)) != -1) {
+                            if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Legacy backup preparation cancelled");
                             total += n; size += n;
                             if (total > MAX_BYTES || ((name.equals("settings.json")||name.equals("named_preferences.json")) && size > 4194304)
                                     || (name.equals("db_version.txt") && size > 32)) throw new IOException("Backup exceeds size limit");

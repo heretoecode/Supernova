@@ -15,7 +15,7 @@ import org.json.JSONObject;
 /** Activity-owned operations survive view recreation and never keep an Activity, View or provider stream. */
 public final class BackupOperationModel extends AndroidViewModel {
     public enum Phase { IDLE, PREPARING_EXPORT, EXPORT_READY, DESTINATION_PENDING, PUBLISHING, EXPORTED, IMPORTING, REVIEW,
-        PREPARING_RESTORE, RESTORE_PREVIEW, RESTORING, RESTORED, CLOSING, FAILED, CANCELLED }
+        PREPARING_RESTORE, RESTORE_PREVIEW, LEGACY_PREVIEW, RESTORING_LEGACY, RESTORING, RESTORED, CLOSING, FAILED, CANCELLED }
     public static final class State {
         public final Phase phase;public final String message;
         public final Set<BackupCategory> categories;public final int unresolved;
@@ -31,7 +31,7 @@ public final class BackupOperationModel extends AndroidViewModel {
     private volatile boolean busy,cleared;
     private volatile AtomicBoolean cancellation=new AtomicBoolean();
     private VerifiedBackupPublication.Prepared export;
-    private LogicalBackupImport.Prepared imported;
+    private BackupImportPreparation imported;
     private PreferenceRestoreTransaction.Plan restorePlan;
     private Set<BackupCategory> exportCategories=Collections.emptySet();
     public BackupOperationModel(Application application){this(application,Executors.newSingleThreadExecutor(r->{Thread worker=new Thread(r,"supernova-backup");worker.setDaemon(true);return worker;}));}
@@ -77,10 +77,17 @@ public final class BackupOperationModel extends AndroidViewModel {
         work(Phase.PUBLISHING,"Saving and reading back the backup…",token->{VerifiedBackupPublication.publish(prepared,destination,token::get);state(Phase.EXPORTED,"Backup saved and verified.",exportCategories,0,false);});
     }
     public void open(Uri document){work(Phase.IMPORTING,"Copying and validating backup…",token->{
-        closeImported();restorePlan=null;imported=LogicalBackupImport.prepare(getApplication(),getApplication().getContentResolver().openInputStream(document),token::get);
-        state(Phase.REVIEW,"Select the present categories to replace. Missing categories remain unchanged.",imported.categories(),0,false);
+        closeImported();restorePlan=null;imported=BackupImportPreparation.prepare(getApplication(),getApplication().getContentResolver().openInputStream(document),token::get);
+        reviewImported();
     });}
-    void open(InputStream source){work(Phase.IMPORTING,"Copying and validating backup…",token->{closeImported();restorePlan=null;imported=LogicalBackupImport.prepare(getApplication(),source,token::get);state(Phase.REVIEW,"Select the present categories to replace. Missing categories remain unchanged.",imported.categories(),0,false);});}
+    void open(InputStream source){work(Phase.IMPORTING,"Copying and validating backup…",token->{closeImported();restorePlan=null;imported=BackupImportPreparation.prepare(getApplication(),source,token::get);reviewImported();});}
+    private void reviewImported(){
+        state(imported.isLegacy()?Phase.LEGACY_PREVIEW:Phase.REVIEW,imported.isLegacy()?"Legacy format1.0: replaces the whole supported library and settings together, including retained artwork and source locations. Receiving authentication is cleared; reconnect protected services and shares. Logical category selection does not apply. Make a destination backup before continuing.":"Select the present categories to replace. Missing categories remain unchanged.",imported.categories(),0,false);
+    }
+    public void confirmLegacy(){
+        if(latest.phase!=Phase.LEGACY_PREVIEW||imported==null||!imported.isLegacy())throw new IllegalStateException("Review legacy replacement before confirming");
+        work(Phase.RESTORING_LEGACY,"Restoring legacy library and settings. The coordinated replacement must finish before cancellation or exit.",token->{imported.restoreLegacy(getApplication(),token::get);restorePlan=null;String message="Legacy supported library and settings restored. Reconnect protected accounts and sources and verify the library.";try{closeImported();}catch(IOException cleanup){message+=" Private review cleanup is pending.";}state(Phase.RESTORED,message,Collections.emptySet(),0,false);});
+    }
     public void preview(Set<BackupCategory> selected){
         Set<BackupCategory> copy=new LinkedHashSet<>(selected);
         work(Phase.PREPARING_RESTORE,"Checking selected replacement and receiving identities…",token->{

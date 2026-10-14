@@ -47,7 +47,7 @@ public final class BackupSettingsController {
     private void sidebar(){if(opener!=null)opener.requestFocus();}
     public boolean back(){
         if(!isVisible())return false;if(noticeActive){render(model.current());return true;}if(workspace!=null&&workspace.back())return true;
-        if(model.isBusy()){model.cancel();return true;}
+        if(model.isBusy()){if(model.current().phase!=BackupOperationModel.Phase.RESTORING_LEGACY)model.cancel();return true;}
         if(model.current().phase!=BackupOperationModel.Phase.IDLE){selectedRestore=null;model.closeReview();return true;}
         sidebar();return true;
     }
@@ -68,6 +68,10 @@ public final class BackupSettingsController {
         }else if(state.phase==BackupOperationModel.Phase.RESTORE_PREVIEW){
             LinearLayout panel=panel("Confirm selected replacement",state.message+"\n\nSelected: "+labels(state.categories)+"\nUnresolved references: "+state.unresolved+(state.receivingChecks?"\nDisplay changes need receiving-device confirmation.":""));
             action(panel,"Cancel",model::closeReview,"cancel");action(panel,"Restore selected categories",model::confirm,"history");
+        }else if(state.phase==BackupOperationModel.Phase.LEGACY_PREVIEW){
+            LinearLayout panel=panel("Confirm legacy whole-library replacement",state.message);action(panel,"Cancel",model::closeReview,"cancel");action(panel,"Restore legacy backup",model::confirmLegacy,"history");
+        }else if(state.phase==BackupOperationModel.Phase.RESTORING_LEGACY){
+            panel("Restoring legacy backup",state.message);
         }else if(model.isBusy()||state.phase==BackupOperationModel.Phase.DESTINATION_PENDING){
             LinearLayout panel=panel("Backup & Restore",state.message);action(panel,"Cancel",model::cancel,"cancel");
         }else {
