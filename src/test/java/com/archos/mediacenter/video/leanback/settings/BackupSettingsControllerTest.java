@@ -31,7 +31,7 @@ public class BackupSettingsControllerTest {
     }
     @Before public void isolate(){PreviewAsyncFixtures.offlineTransport();}
     @After public void drain()throws Exception{PreviewAsyncFixtures.drain();}
-    private void layout(View view){view.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));view.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();}
+    private void layout(View view){var resources=view.getResources();int width=Math.round(resources.getConfiguration().screenWidthDp*resources.getDisplayMetrics().density),height=Math.round(resources.getConfiguration().screenHeightDp*resources.getDisplayMetrics().density);view.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));view.layout(0,0,width,height);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();}
     private void capture(View view,String name)throws Exception{Bitmap image=Bitmap.createBitmap(view.getWidth(),view.getHeight(),Bitmap.Config.ARGB_8888);view.draw(new Canvas(image));File file=new File("build/reports/preview-ui/"+name+".png");file.getParentFile().mkdirs();try(FileOutputStream output=new FileOutputStream(file)){image.compress(Bitmap.CompressFormat.PNG,100,output);}}
     private Settings add(TopNavigationTest.Host host){host.getIntent().putExtra("preview_settings_category","Advanced");Settings settings=new Settings();host.getSupportFragmentManager().beginTransaction().add(android.R.id.content,settings,"backup-fixture").commitNow();layout(settings.requireView());return settings;}
     private View enter(Settings settings){View root=settings.requireView();root.findViewWithTag("semantic:settings:category:Advanced").performClick();layout(root);View child=root.findViewWithTag("semantic:settings:section:preview_backup_restore");assertNotNull(child);child.requestFocus();layout(root);return child;}
@@ -65,4 +65,15 @@ public class BackupSettingsControllerTest {
     @Test public void connectedRestoreRequiresPreviewAndExplicitConfirmationBeforeWriting()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{Settings settings=add(host.get());enter(settings);settings.backup.enter();var prefs=PreferenceManager.getDefaultSharedPreferences(model(host.get()).getApplication());prefs.edit().putInt("preview_accent41",7).commit();File file=new File(host.get().getCacheDir(),"incoming.zip");JSONObject payload=new JSONObject().put("schema",1).put("category","APPEARANCE").put("values",new JSONObject().put("preview_accent41",new JSONObject().put("type","INT").put("value",19)));LogicalBackupArchive.writeCategories(file,Map.of(BackupCategory.APPEARANCE,payload),()->false);BackupOperationModel model=model(host.get());model.open(new FileInputStream(file));await(model,BackupOperationModel.Phase.REVIEW);layout(settings.requireView());assertFalse(settings.requireView().findViewWithTag("backup.category.HISTORY").isEnabled());assertEquals(7,prefs.getInt("preview_accent41",0));settings.requireView().findViewWithTag("backup.create").performClick();await(model,BackupOperationModel.Phase.RESTORE_PREVIEW);assertEquals(7,prefs.getInt("preview_accent41",0));settings.requireView().findViewWithTag("backup.operation:Restore selected categories").performClick();await(model,BackupOperationModel.Phase.RESTORED);assertEquals(19,prefs.getInt("preview_accent41",0));assertTrue(file.exists());}finally{host.pause().stop().destroy();}
     }
+    @Test @Config(qualifiers="w640dp-h360dp-land-mdpi") public void smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels()throws Exception {
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
+            Settings settings=add(host.get());enter(settings);View root=settings.requireView();layout(root);capture(root,"0139-settings-backup-small");View panel=root.findViewWithTag("backup.options");assertNotNull(panel);
+            for(BackupCategory category:BackupCategory.values()){
+                TextView option=root.findViewWithTag("backup.category."+category.name());assertNotNull(option);int[] item=new int[2],container=new int[2];option.getLocationOnScreen(item);panel.getLocationOnScreen(container);
+                assertTrue(category+" top in panel: "+(item[1]-container[1])+"; panel height="+panel.getHeight(),item[1]>=container[1]);assertTrue(category+" bottom in panel",item[1]+option.getHeight()<=container[1]+panel.getHeight());
+                assertTrue(category+" full text",option.getLayout().getLineBottom(option.getLineCount()-1)<=option.getHeight()-option.getPaddingBottom());for(int line=0;line<option.getLineCount();line++)assertEquals(0,option.getLayout().getEllipsisCount(line));
+            }
+        }finally{host.pause().stop().destroy();}
+    }
+
 }
