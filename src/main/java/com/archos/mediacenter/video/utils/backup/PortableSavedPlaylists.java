@@ -14,6 +14,13 @@ import org.json.*;
 /** Existing saved-playlist definitions and provider membership. No Trakt account mapping or physical locator. */
 public final class PortableSavedPlaylists {
     public static final String PENDING="supernova_restore_pending_playlists_v2";
+    private static final String REFERENCE="supernova_playlist_reference:";
+    public static String referenceKey(long id){return REFERENCE+id;}
+    public static boolean owns(String key){return key.equals(PENDING)||key.matches(REFERENCE+"[1-9][0-9]{0,18}");}
+    public static void identity(String id)throws JSONException {
+        if(id==null||!id.matches("playlist:[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}:[1-9][0-9]{0,18}"))throw new JSONException("Invalid saved-playlist identity");
+        try{Long.parseLong(id.substring(id.lastIndexOf(':')+1));}catch(NumberFormatException invalid){throw new JSONException("Playlist identity exceeds supported range");}
+    }
     private static final int MAX_LISTS=10000,MAX_MEMBERS=100000;
     private static long integer(Object value,long minimum)throws JSONException{if(!(value instanceof Integer||value instanceof Long)||((Number)value).longValue()<minimum)throw new JSONException("Invalid playlist integer");return ((Number)value).longValue();}
     private static void label(Object value)throws JSONException{
@@ -46,7 +53,7 @@ public final class PortableSavedPlaylists {
             }
             int count=0;try(Cursor rows=database.query(ListTables.VIDEO_LIST_TABLE,new String[]{VideoStore.VideoList.Columns.LIST_ID,VideoStore.VideoList.Columns.M_ONLINE_ID,VideoStore.VideoList.Columns.E_ONLINE_ID,VideoStore.List.Columns.SYNC_STATUS},null,null,null,null,"_id ASC")){
                 while(rows.moveToNext()){
-                    if(rows.getType(0)!=Cursor.FIELD_TYPE_INTEGER)throw new IOException("Invalid playlist owner");Set<String> target=members.get(rows.getLong(0));if(target==null)continue;
+                    if(rows.isNull(0))continue;if(rows.getType(0)!=Cursor.FIELD_TYPE_INTEGER)throw new IOException("Invalid playlist owner");Set<String> target=members.get(rows.getLong(0));if(target==null)continue;
                     if(!rows.isNull(3)&&rows.getType(3)!=Cursor.FIELD_TYPE_INTEGER)throw new IOException("Invalid playlist membership status");long status=rows.isNull(3)?0:rows.getLong(3);
                     if(status<0||status>VideoStore.List.SyncStatus.STATUS_LOCAL_ONLY)throw new IOException("Unknown playlist membership status");if(status==VideoStore.List.SyncStatus.STATUS_DELETED)continue;
                     if(!rows.isNull(1)&&rows.getType(1)!=Cursor.FIELD_TYPE_INTEGER||!rows.isNull(2)&&rows.getType(2)!=Cursor.FIELD_TYPE_INTEGER)throw new IOException("Invalid playlist provider identity");long movie=rows.isNull(1)?-1:rows.getLong(1),episode=rows.isNull(2)?-1:rows.getLong(2);
@@ -61,14 +68,15 @@ public final class PortableSavedPlaylists {
         if(payload.length()!=2||integer(payload.get("schema"),1)!=1)throw new JSONException("Unsupported saved-playlist schema");JSONArray rows=payload.getJSONArray("rows");if(rows.length()>MAX_LISTS)throw new JSONException("Too many saved playlists");Set<String> ids=new HashSet<>();int count=0;
         for(int i=0;i<rows.length();i++){
             JSONObject row=rows.getJSONObject(i);if(row.length()!=3||!(row.get("id") instanceof String)||!row.has("name"))throw new JSONException("Invalid saved-playlist fields");String id=row.getString("id");
-            if(!id.matches("playlist:[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}:[1-9][0-9]{0,18}")||!ids.add(id))throw new JSONException("Invalid or duplicate saved-playlist identity");try{Long.parseLong(id.substring(id.lastIndexOf(':')+1));}catch(NumberFormatException invalid){throw new JSONException("Playlist identity exceeds supported range");}label(row.get("name"));
+            identity(id);if(!ids.add(id))throw new JSONException("Duplicate saved-playlist identity");label(row.get("name"));
             JSONArray values=row.getJSONArray("members");Set<String> seen=new HashSet<>();for(int n=0;n<values.length();n++){if(!(values.get(n) instanceof String)||++count>MAX_MEMBERS)throw new JSONException("Invalid or excessive playlist members");String identity=values.getString(n);member(identity);if(!seen.add(identity))throw new JSONException("Duplicate playlist member");}
         }
     }
     public static JSONObject export(Context context,Map<Long,Definition> inventory)throws JSONException {
-        String origin=new PortableTitleReferences(context,null).origin();Map<String,JSONObject> rows=new LinkedHashMap<>();
+        String origin=new PortableTitleReferences(context,null).origin();Map<String,JSONObject> rows=new LinkedHashMap<>();var preferences=PreferenceManager.getDefaultSharedPreferences(context);
         for(var item:inventory.entrySet()){
-            Definition definition=item.getValue();if(definition==null||item.getKey()==null||item.getKey()!=definition.id)throw new JSONException("Invalid indexed playlist ownership");String id="playlist:"+origin+":"+definition.id;
+            Definition definition=item.getValue();if(definition==null||item.getKey()==null||item.getKey()!=definition.id)throw new JSONException("Invalid indexed playlist ownership");String id=preferences.getString(referenceKey(definition.id),"playlist:"+origin+":"+definition.id);identity(id);
+            if(rows.containsKey(id))throw new JSONException("Ambiguous saved-playlist references");
             rows.put(id,new JSONObject().put("id",id).put("name",definition.name==null?JSONObject.NULL:definition.name).put("members",new JSONArray(definition.members)));
         }
         String saved=PreferenceManager.getDefaultSharedPreferences(context).getString(PENDING,null);if(saved!=null){JSONObject pending=new JSONObject(saved);validate(pending);JSONArray values=pending.getJSONArray("rows");for(int i=0;i<values.length();i++){JSONObject row=values.getJSONObject(i);rows.putIfAbsent(row.getString("id"),row);}}

@@ -100,8 +100,8 @@ public final class PreferenceRestoreTransaction {
         Map<String,?> current=prefs.getAll();Map<String,Object> after=new LinkedHashMap<>();Set<String> keys=new LinkedHashSet<>();int unresolved=0;
         Map<String,Object> healthAfter=new LinkedHashMap<>();Set<String> healthKeys=new LinkedHashSet<>();
         JSONObject mediaBefore=null,mediaAfter=null,bookmarksBefore=null,bookmarksAfter=null;
-        if(selected.containsKey(BackupCategory.PINNED)||selected.containsKey(BackupCategory.HIDDEN)) {
-            mediaBefore=MediaStateRecovery.capture(destination,selected.containsKey(BackupCategory.PINNED),selected.containsKey(BackupCategory.HIDDEN));mediaAfter=new JSONObject(mediaBefore.toString());
+        if(selected.containsKey(BackupCategory.PINNED)||selected.containsKey(BackupCategory.HIDDEN)||selected.containsKey(BackupCategory.PLAYLISTS)) {
+            mediaBefore=MediaStateRecovery.capture(destination,selected.containsKey(BackupCategory.PINNED),selected.containsKey(BackupCategory.HIDDEN),selected.containsKey(BackupCategory.PLAYLISTS));mediaAfter=new JSONObject(mediaBefore.toString());
         }
         Map<BackupCategory,JSONObject> ordered=new EnumMap<>(BackupCategory.class);
         for(Map.Entry<BackupCategory,JSONObject> item:selected.entrySet()){if(item.getKey()==null||item.getValue()==null)throw new JSONException("Missing selected category");ordered.put(item.getKey(),item.getValue());}
@@ -147,6 +147,12 @@ public final class PreferenceRestoreTransaction {
                 var references=physical==null?new PortablePhysicalReferences(destination,Collections.emptyList()):physical;
                 var hidden=PortableHiddenItems.prepare(item.getValue(),MediaStateRecovery.hiddenInventory(mediaBefore),references,false);mediaAfter=MediaStateRecovery.hiddenAfter(mediaAfter,hidden);
                 keys.add(PortableHiddenItems.PENDING);after.put(PortableHiddenItems.PENDING,hidden.pending);unresolved+=hidden.unresolved;
+            }else if(category==BackupCategory.PLAYLISTS){
+                var playlists=PlaylistStateRecovery.prepare(mediaBefore.getJSONObject("playlists"),item.getValue(),mediaBefore.getBoolean("exists"));mediaAfter=MediaStateRecovery.playlistAfter(mediaAfter,playlists);
+                JSONArray originals=mediaBefore.getJSONObject("playlists").getJSONArray("definitions");
+                for(int i=0;i<originals.length();i++){JSONObject row=originals.getJSONObject(i);if(row.isNull("trakt"))keys.add(PortableSavedPlaylists.referenceKey(row.getLong("id")));}
+                for(var reference:playlists.references.entrySet()){String key=PortableSavedPlaylists.referenceKey(reference.getKey());keys.add(key);after.put(key,reference.getValue());}
+                keys.add(PortableSavedPlaylists.PENDING);after.put(PortableSavedPlaylists.PENDING,playlists.pending);unresolved+=playlists.unresolved;
             }else if(category==BackupCategory.SOURCES){
                 var sources=PortableLibrarySources.prepare(current,item.getValue(),selected.get(BackupCategory.LOCATIONS));
                 keys.addAll(sources.keys);after.putAll(sources.values);unresolved+=sources.unresolved;
@@ -256,7 +262,7 @@ public final class PreferenceRestoreTransaction {
         }
         if(!edit.commit())throw new IOException("Configuration write failed; private recovery is required");
     }
-    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||key.equals(PortableBookmarks.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
+    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||key.equals(PortableBookmarks.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||PortableSavedPlaylists.owns(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
     private static boolean healthOwned(String key){return key.equals(PortableReviewNotes.PENDING)||key.matches("incorrect:[1-9][0-9]{0,18}");}
     private static JSONObject record(Plan plan,boolean complete)throws JSONException,IOException{
         JSONArray values=new JSONArray();recordValues(values,"DEFAULT",plan.keys,plan.before);recordValues(values,"HEALTH",plan.healthKeys,plan.healthBefore);
