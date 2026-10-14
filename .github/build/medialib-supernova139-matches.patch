@@ -447,10 +447,10 @@ index 30bba74..3195098 100644
      @Override
 diff --git a/src/com/archos/mediascraper/OwnedCanonicalBatch.java b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
 new file mode 100644
-index 0000000..0244f70
+index 0000000..ea71ddf
 --- /dev/null
 +++ b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,73 @@
 +// Copyright 2026 Supernova contributors
 +// Licensed under the Apache License, Version 2.0.
 +package com.archos.mediascraper;
@@ -473,6 +473,50 @@ index 0000000..0244f70
 +    OwnedCanonicalBatch(ArrayList<ContentProviderOperation> operations, int primaryOperation) {
 +        this.operations = Collections.unmodifiableList(new ArrayList<>(operations));
 +        this.primaryOperation = primaryOperation;
++    }
++    /** Private in-progress recovery only; never part of a portable backup payload. */
++    public org.json.JSONObject encodeRecovery() throws org.json.JSONException {
++        android.os.Parcel parcel=android.os.Parcel.obtain();
++        try {
++            parcel.writeTypedList(operations);byte[] bytes=parcel.marshall();
++            if(bytes.length>4*1024*1024)throw new org.json.JSONException("Canonical recovery batch exceeds limit");
++            return new org.json.JSONObject().put("schema",1).put("sdk",android.os.Build.VERSION.SDK_INT)
++                    .put("primary",primaryOperation).put("sha256",digest(bytes))
++                    .put("operations",android.util.Base64.encodeToString(bytes,android.util.Base64.NO_WRAP));
++        } finally {parcel.recycle();}
++    }
++    public static OwnedCanonicalBatch decodeRecovery(org.json.JSONObject record) throws org.json.JSONException {
++        if(record.length()!=5||!(record.get("schema") instanceof Integer||record.get("schema") instanceof Long)||record.getLong("schema")!=1
++                ||!(record.get("sdk") instanceof Integer||record.get("sdk") instanceof Long)||record.getLong("sdk")!=android.os.Build.VERSION.SDK_INT
++                ||!(record.get("operations") instanceof String)||record.getString("operations").length()>6*1024*1024
++                ||!(record.get("primary") instanceof Integer||record.get("primary") instanceof Long))
++            throw new org.json.JSONException("Incompatible canonical recovery batch");
++        android.os.Parcel parcel=android.os.Parcel.obtain();
++        try {
++            byte[] bytes=android.util.Base64.decode(record.getString("operations"),android.util.Base64.DEFAULT);
++            if(bytes.length==0||bytes.length>4*1024*1024||!digest(bytes).equals(record.getString("sha256")))throw new org.json.JSONException("Canonical recovery digest mismatch");
++            parcel.unmarshall(bytes,0,bytes.length);parcel.setDataPosition(0);
++            int count=parcel.readInt();if(count<=0||count>10000)throw new org.json.JSONException("Invalid canonical recovery operation count");parcel.setDataPosition(0);
++            ArrayList<ContentProviderOperation> decoded=parcel.createTypedArrayList(ContentProviderOperation.CREATOR);
++            long storedPrimary=record.getLong("primary");if(storedPrimary<0||storedPrimary>=count)throw new org.json.JSONException("Invalid canonical recovery primary operation");int primary=(int)storedPrimary;
++            if(decoded==null||decoded.isEmpty()||decoded.size()>10000||parcel.dataAvail()!=0||primary<0||primary>=decoded.size())throw new org.json.JSONException("Invalid canonical recovery operations");
++            android.net.Uri owner=decoded.get(primary).getUri();
++            if(owner.equals(ScraperStore.Movie.URI.RESTORE_OWNED)?primary!=2:owner.equals(ScraperStore.Episode.URI.RESTORE_OWNED)?primary!=3:true)throw new org.json.JSONException("Invalid canonical recovery owner");
++            for(int i=0;i<decoded.size();i++) {
++                ContentProviderOperation operation=decoded.get(i);
++                if(operation==null||operation.isDelete()||i<primary&&!operation.isAssertQuery()
++                        ||!ScraperStore.AUTHORITY.equals(operation.getUri().getAuthority())
++                        &&!(i==0&&operation.isAssertQuery()&&com.archos.mediaprovider.video.VideoStore.AUTHORITY.equals(operation.getUri().getAuthority())))throw new org.json.JSONException("Unsupported canonical recovery operation");
++            }
++            return new OwnedCanonicalBatch(decoded,primary);
++        } catch(RuntimeException invalid) {
++            throw new org.json.JSONException("Unreadable canonical recovery operations");
++        } finally {parcel.recycle();}
++    }
++    private static String digest(byte[] bytes) throws org.json.JSONException {
++        try {
++            StringBuilder result=new StringBuilder();for(byte value:java.security.MessageDigest.getInstance("SHA-256").digest(bytes))result.append(String.format(java.util.Locale.ROOT,"%02x",value&255));return result.toString();
++        } catch(java.security.NoSuchAlgorithmException unavailable) {throw new org.json.JSONException("Canonical recovery digest unavailable");}
 +    }
 +    long apply(ContentResolver resolver) throws RemoteException, OperationApplicationException {
 +        ContentProviderResult[] result = resolver.applyBatch(ScraperStore.AUTHORITY, new ArrayList<>(operations));
