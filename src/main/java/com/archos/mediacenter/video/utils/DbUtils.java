@@ -125,6 +125,12 @@ public class DbUtils {
     }
 
     public static void deleteScraperInfo(Context context,Video video) {
+        try { com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context, video.getId()); }
+        catch (java.io.IOException failure) {
+            Log.e(TAG, "Cannot preserve manual identification choice", failure);
+            Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show();
+            return;
+        }
         // Reset the scraper fields for this item in the medialib
         // (set them to -1 because there is no need to search it again when running the automated task)
         // this also deletes the scraper data

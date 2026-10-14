@@ -37,7 +37,7 @@ public class LogicalBackupExporterTest {
         assertTrue(prefs.getBoolean("hide_watched",false));assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));
     }
     @Test public void freshAllRegisteredCategoriesCreateVerifiedArchiveWithoutCreatingDatabaseStores()throws Exception {
-        File archive=LogicalBackupExporter.preparePrivate(app,LogicalBackupArchive.registered(),()->false);assertTrue(archive.isFile());var read=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(LogicalBackupArchive.registered(),read.keySet());assertEquals(25,read.size());
+        File archive=LogicalBackupExporter.preparePrivate(app,LogicalBackupArchive.registered(),()->false);assertTrue(archive.isFile());var read=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(LogicalBackupArchive.registered(),read.keySet());assertEquals(26,read.size());
         assertFalse("Export must not create a media database",VideoOpenHelper.getDatabaseFile(app).exists());assertFalse("Export must not create a viewing database",app.getDatabasePath(ViewingHistory.DATABASE).exists());assertFalse(contents(archive).contains("CANARY"));try(ZipFile zip=new ZipFile(archive)){assertNotNull(zip.getEntry("RESTORE_INSTRUCTIONS.txt"));}
     }
     @Test public void sourceExportKeepsHiddenMembershipLogicalAndNeverCopiesMetadataArtworkAccountsOrLocationsByDefault()throws Exception {
@@ -48,14 +48,25 @@ public class LogicalBackupExporterTest {
         JSONObject custom=read.get(BackupCategory.HOME).getJSONArray("rows").getJSONObject(0);assertEquals("custom:fixture",custom.getString("id"));assertEquals("[\"tmdb:movie:123\",\"tmdb:tv:789\"]",custom.getJSONArray("members").toString());
         assertEquals(1,read.get(BackupCategory.HIDDEN).getJSONArray("rows").length());assertEquals(2,read.get(BackupCategory.PINNED).getJSONArray("rows").length());assertFalse(read.containsKey(BackupCategory.LOCATIONS));
     }
+
+    @Test public void productionMatchesArchiveContainsOnlyProviderReferencesAndPublicSchema()throws Exception {
+        seed();MediaMatchManualChanges.mark(app,10);
+        File archive=LogicalBackupExporter.preparePrivate(app,Set.of(BackupCategory.MATCHES),()->false);
+        String bytes=contents(archive);
+        for(String forbidden:List.of("PATH_CANARY","TITLE_CANARY","MOVIE_CANARY","SHOW_CANARY","AUTH_CANARY","PASSWORD_CANARY","file:///","manualAt","supernova_match_manual","uriHash"))assertFalse(forbidden,bytes.contains(forbidden));
+        var read=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(Set.of(BackupCategory.MATCHES),read.keySet());
+        JSONObject payload=read.get(BackupCategory.MATCHES);assertEquals(1,payload.getInt("schema"));assertEquals(2,payload.getJSONArray("rows").length());
+        try(var imported=LogicalBackupImport.prepare(app,new FileInputStream(archive),()->false)){assertEquals(payload.toString(),imported.payloads(()->false).get(BackupCategory.MATCHES).toString());}
+        assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));
+    }
     @Test public void locationsAreProducedOnlyWhenExplicitlySelectedAndExcludePutioOwnership()throws Exception {
         prefs.edit().putStringSet("supernova_library_roots",Set.of("file:///PRIVATE_FOLDER","putio:///ACCOUNT_CANARY")).commit();
         var no=LogicalBackupExporter.collect(app,Set.of(BackupCategory.SOURCES),()->false);assertFalse(no.toString().contains("PRIVATE_FOLDER"));assertFalse(no.toString().contains("ACCOUNT_CANARY"));
         var yes=LogicalBackupExporter.collect(app,Set.of(BackupCategory.SOURCES,BackupCategory.LOCATIONS),()->false);assertTrue(yes.get(BackupCategory.LOCATIONS).toString().contains("PRIVATE_FOLDER"));assertFalse(yes.toString().contains("ACCOUNT_CANARY"));
         assertTrue(LogicalBackupExporter.collect(app,Set.of(BackupCategory.LOCATIONS),()->false).get(BackupCategory.LOCATIONS).getJSONArray("rows").length()==0);
     }
-    @Test public void absentUnsupportedOrUnsafeSelectionsFailBeforeAnyBackupFile()throws Exception {
-        for(Set<BackupCategory> selection:List.of(Set.<BackupCategory>of(),Set.of(BackupCategory.MATCHES),Set.of(BackupCategory.APPEARANCE,BackupCategory.MATCHES)))try{LogicalBackupExporter.preparePrivate(app,selection,()->false);fail();}catch(IOException expected){}
+    @Test public void absentOrUnsafeSelectionsFailBeforeAnyBackupFile()throws Exception {
+        for(Set<BackupCategory> selection:List.of(Set.<BackupCategory>of()))try{LogicalBackupExporter.preparePrivate(app,selection,()->false);fail();}catch(IOException expected){}
         prefs.edit().putStringSet("supernova_library_roots",Set.of("smb://user:PASSWORD_CANARY@server/share")).commit();try{LogicalBackupExporter.preparePrivate(app,Set.of(BackupCategory.SOURCES,BackupCategory.LOCATIONS),()->false);fail();}catch(IOException expected){assertFalse(expected.getMessage().contains("CANARY"));}
         assertFalse(new File(app.getCacheDir(),"supernova-logical-backups").exists());assertFalse(VideoOpenHelper.getDatabaseFile(app).exists());assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));
     }
