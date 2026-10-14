@@ -21,6 +21,7 @@ public final class BackupReview implements DefaultLifecycleObserver {
     private final BackupOperationModel model;
     private final Selection selection;
     private AlertDialog dialog,privacy;
+    private BackupOperationModel.State rendered;
     public BackupReview(PreferenceFragmentCompat fragment) {
         this.fragment=fragment;
         ViewModelProvider provider=new ViewModelProvider(fragment.requireActivity());
@@ -37,7 +38,8 @@ public final class BackupReview implements DefaultLifecycleObserver {
     private void dismiss(){if(privacy!=null){privacy.dismiss();privacy=null;}if(dialog!=null){dialog.dismiss();dialog=null;}}
     private void render(BackupOperationModel.State state) {
         if(!fragment.isAdded()||!fragment.getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED))return;
-        dismiss();if(state.phase==BackupOperationModel.Phase.IDLE)return;
+        if(state!=model.current()||state==rendered&&dialog!=null&&dialog.isShowing())return;
+        dismiss();rendered=state;if(state.phase==BackupOperationModel.Phase.IDLE)return;
         AlertDialog.Builder builder=new AlertDialog.Builder(fragment.requireContext());
         if(state.phase==BackupOperationModel.Phase.REVIEW){
             List<BackupCategory> present=new ArrayList<>();for(BackupCategory category:BackupCategory.ordered())if(state.categories.contains(category))present.add(category);

@@ -55,7 +55,7 @@ return ReflectionHelpers.getField(common,"backupReview");
     private AlertDialog dialog(BackupReview review){return ReflectionHelpers.getField(review,"dialog");
 }
     private void await(BackupOperationModel model,BackupOperationModel.Phase expected)throws Exception{long end=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(15);
-while(model.isBusy()){Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+while(model.isBusy()||model.states().getValue()!=model.current()){Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
 if(System.nanoTime()>end)throw new AssertionError("worker timeout");
 Thread.sleep(10);
 }Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
@@ -103,7 +103,7 @@ await(model,BackupOperationModel.Phase.RESTORED);
 assertEquals("activity="+host.get().getPackageName()+", model="+model.getApplication().getPackageName()+", appAccent="+PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41",0),19,PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41",0));
 assertEquals("AUTH_CANARY",PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getString("oauth_token",null));
 assertTrue(source.exists());
-assertEquals(0,new File(host.get().getCacheDir(),"supernova-logical-restore").listFiles().length);
+assertEquals(0,new File(model.getApplication().getCacheDir(),"supernova-logical-restore").listFiles().length);
 
         }finally{host.pause().stop().destroy();
 }
