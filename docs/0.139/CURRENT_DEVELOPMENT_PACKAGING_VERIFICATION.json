@@ -122,5 +122,16 @@
   ],
   "min_sdk": "23",
   "target_sdk": "36",
-  "debuggable": "false"
+  "debuggable": "false",
+  "baseline_upgrade_prerequisites": {
+    "same_package_and_sdk_targets": true,
+    "baseline": {
+      "application_id": "app.supernova.player",
+      "version_code": "138",
+      "min_sdk": "23",
+      "target_sdk": "36"
+    },
+    "version_increases": true,
+    "physical_signed_upgrade": "BLOCKED \u2014 no accepted signed139/device"
+  }
 }
