@@ -60,8 +60,9 @@ public final class PreferenceRestoreTransaction {
         private final String mediaBefore,mediaAfter;
         private final String bookmarksBefore,bookmarksAfter;
         private final String sourcesBefore,sourcesAfter;
+        private final String titleBefore;
         private final boolean viewingExisted,historySelected,positionsSelected;
-        private Plan(SharedPreferences owner,Map<String,Object> before,Map<String,Object> after,Set<String> keys,Map<String,Object> healthBefore,Map<String,Object> healthAfter,Set<String> healthKeys,Set<BackupCategory> categories,int unresolved,String viewingBefore,String viewingAfter,boolean viewingExisted,String mediaBefore,String mediaAfter,String bookmarksBefore,String bookmarksAfter,String sourcesBefore,String sourcesAfter){
+        private Plan(SharedPreferences owner,Map<String,Object> before,Map<String,Object> after,Set<String> keys,Map<String,Object> healthBefore,Map<String,Object> healthAfter,Set<String> healthKeys,Set<BackupCategory> categories,int unresolved,String viewingBefore,String viewingAfter,boolean viewingExisted,String mediaBefore,String mediaAfter,String bookmarksBefore,String bookmarksAfter,String sourcesBefore,String sourcesAfter,String titleBefore){
             this.owner=owner;
             this.before=copy(before);this.after=copy(after);this.keys=Collections.unmodifiableSet(new LinkedHashSet<>(keys));
             this.healthBefore=copy(healthBefore);this.healthAfter=copy(healthAfter);this.healthKeys=Collections.unmodifiableSet(new LinkedHashSet<>(healthKeys));
@@ -71,6 +72,7 @@ public final class PreferenceRestoreTransaction {
             historySelected=categories.contains(BackupCategory.HISTORY);positionsSelected=categories.contains(BackupCategory.POSITIONS);
             this.mediaBefore=mediaBefore;this.mediaAfter=mediaAfter;this.bookmarksBefore=bookmarksBefore;this.bookmarksAfter=bookmarksAfter;
             this.sourcesBefore=sourcesBefore;this.sourcesAfter=sourcesAfter;
+            this.titleBefore=titleBefore;
         }
     }
     private final SharedPreferences prefs;
@@ -142,6 +144,7 @@ public final class PreferenceRestoreTransaction {
         Map<String,?> current=prefs.getAll();Map<String,Object> after=new LinkedHashMap<>();Set<String> keys=new LinkedHashSet<>();int unresolved=0;
         Map<String,Object> healthAfter=new LinkedHashMap<>();Set<String> healthKeys=new LinkedHashSet<>();
         JSONObject mediaBefore=null,mediaAfter=null,bookmarksBefore=null,bookmarksAfter=null,sourcesBefore=null,sourcesAfter=null;
+        String titleBefore=null;
         if(selected.containsKey(BackupCategory.PINNED)||selected.containsKey(BackupCategory.HIDDEN)||selected.containsKey(BackupCategory.PLAYLISTS)) {
             mediaBefore=MediaStateRecovery.capture(destination,selected.containsKey(BackupCategory.PINNED),selected.containsKey(BackupCategory.HIDDEN),selected.containsKey(BackupCategory.PLAYLISTS));mediaAfter=new JSONObject(mediaBefore.toString());
         }
@@ -206,6 +209,9 @@ public final class PreferenceRestoreTransaction {
                 bookmarksBefore=BookmarkStoreRecovery.capture(destination);
                 var bookmarks=PortableBookmarks.prepare(bookmarksBefore,item.getValue(),selected.get(BackupCategory.LOCATIONS));bookmarksAfter=bookmarks.after;
                 keys.add(PortableBookmarks.PENDING);after.put(PortableBookmarks.PENDING,bookmarks.pending);unresolved+=bookmarks.unresolved;
+            }else if(category==BackupCategory.TITLE_PLAYBACK){
+                if(physical==null)throw new JSONException("Title playback needs an unfiltered receiving file inventory");TitlePlaybackInventory inventory=TitlePlaybackInventory.capture(destination);titleBefore=inventory.signature;
+                var title=TitlePlaybackOverrides.prepare(current,item.getValue(),inventory.choices,physical);keys.addAll(title.keys);after.putAll(title.values);unresolved+=title.unresolved;
             }else if(category==BackupCategory.LOCATIONS){
                 // This privacy modifier supplies locators to selected owners; it never grants storage access.
                 PortableLocations.validate(item.getValue());
@@ -223,7 +229,7 @@ public final class PreferenceRestoreTransaction {
             }
         }
         return new Plan(prefs,before,after,keys,healthBefore,healthAfter,healthKeys,selected.keySet(),unresolved,viewingBefore,viewingAfter,viewingExisted,
-                mediaBefore==null?null:mediaBefore.toString(),mediaAfter==null?null:mediaAfter.toString(),bookmarksBefore==null?null:bookmarksBefore.toString(),bookmarksAfter==null?null:bookmarksAfter.toString(),sourcesBefore==null?null:sourcesBefore.toString(),sourcesAfter==null?null:sourcesAfter.toString());
+                mediaBefore==null?null:mediaBefore.toString(),mediaAfter==null?null:mediaAfter.toString(),bookmarksBefore==null?null:bookmarksBefore.toString(),bookmarksAfter==null?null:bookmarksAfter.toString(),sourcesBefore==null?null:sourcesBefore.toString(),sourcesAfter==null?null:sourcesAfter.toString(),titleBefore);
     }
     private static void cancelled(BooleanSupplier cancel)throws InterruptedIOException{
         if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Restore cancelled before completion");
@@ -247,6 +253,7 @@ public final class PreferenceRestoreTransaction {
             }catch(JSONException invalid){throw new IOException("Viewing restore preview is invalid",invalid);}
             if(plan.bookmarksBefore!=null)try{if(!BookmarkStoreRecovery.capture(destination).toString().equals(plan.bookmarksBefore))throw new IOException("Bookmarks changed after restore preview; review again");}catch(JSONException invalid){throw new IOException("Bookmark restore preview is invalid",invalid);}
             if(plan.sourcesBefore!=null)try{if(!IndexedSourceStoreRecovery.capture(destination).toString().equals(plan.sourcesBefore))throw new IOException("Indexed sources changed after preview; review again");}catch(JSONException invalid){throw new IOException("Indexed-source preview is invalid",invalid);}
+            if(plan.titleBefore!=null)try{if(!TitlePlaybackInventory.capture(destination).signature.equals(plan.titleBefore))throw new IOException("Receiving title playback state changed after preview; review again");}catch(JSONException invalid){throw new IOException("Title playback preview is invalid",invalid);}
             JSONObject record;
             try{record=record(plan,false);}catch(JSONException e){throw new IOException("Cannot prepare private restore recovery",e);}
             MediaStateRecovery.Session media=null;BookmarkStoreRecovery.Session bookmarks=null;
@@ -316,7 +323,7 @@ public final class PreferenceRestoreTransaction {
         }
         if(!edit.commit())throw new IOException("Configuration write failed; private recovery is required");
     }
-    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||key.equals(PortableBookmarks.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||PortableSavedPlaylists.owns(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
+    private static boolean owned(String key){return PortableSettingsRegistry.rule(key)!=null||key.equals("user_defined_density_confirmed")||key.equals(HOME)||key.equals(HomeIntentCodec.PENDING)||key.equals(CustomLibraryPage.KEY)||key.equals(PortableViewingChoices.QUEUE_PENDING)||key.equals(PortableViewingChoices.DISMISS_PENDING)||key.equals(PortablePreferredVersions.PENDING)||key.equals(PortablePinnedTitles.PENDING)||key.equals(PortableHiddenItems.PENDING)||key.equals(PortableBookmarks.PENDING)||PortablePreferredVersions.ownsKey(key)||PortableLibrarySources.owns(key)||PortableSavedPlaylists.owns(key)||key.equals(PortableTitlePlayback.PENDING)||TitlePlaybackOverrides.owns(key)||key.matches("preview_cw_dismiss:[vs][1-9][0-9]*");}
     private static boolean healthOwned(String key){return key.equals(PortableReviewNotes.PENDING)||key.matches("incorrect:[1-9][0-9]{0,18}");}
     private static JSONObject record(Plan plan,boolean complete)throws JSONException,IOException{
         JSONArray values=new JSONArray();recordValues(values,"DEFAULT",plan.keys,plan.before);recordValues(values,"HEALTH",plan.healthKeys,plan.healthBefore);
