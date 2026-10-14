@@ -7,6 +7,8 @@ import android.net.Uri;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediaprovider.video.*;
 import com.archos.mediascraper.MovieTags;
+import com.archos.mediascraper.EpisodeTags;
+import com.archos.mediascraper.ShowTags;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -70,6 +72,45 @@ public class CanonicalMatchProviderTest {
         var db=holder.get();db.execSQL("UPDATE files SET ArchosMediaScraper_type=12 WHERE _id=10");db.beginTransaction();try{assertEquals(-1,tags().savePreservingOwnedIdentity(app,10,100,123,9L));try(var row=db.rawQuery("SELECT m_online_id,name_movie FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals("Original title",row.getString(1));}}finally{db.endTransaction();}
         db.execSQL("UPDATE files SET ArchosMediaScraper_type=11 WHERE _id=10");try{tags().savePreservingOwnedIdentity(app,10,100,123,9L);fail("Uncoordinated owned replacement accepted");}catch(IllegalStateException expected){}
         try(var row=db.rawQuery("SELECT m_online_id,Nova_pinned FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals(9,row.getLong(1));}
+    }
+
+    private void episodeFixture() {
+        var db=holder.get();
+        db.execSQL("INSERT INTO files(_id,remote_id,media_type,_data,bookmark,duration,Archos_lastTimePlayed,Archos_traktSeen) VALUES(20,20,3,'file:///episode.mkv',6789,0,100,1)");
+        db.execSQL("INSERT INTO SHOW(_id,s_online_id,name_show,Nova_pinned) VALUES(300,666,'Receiving parent',9)");
+        db.execSQL("INSERT INTO EPISODE(_id,video_id,e_online_id,show_episode,season_episode,number_episode,name_episode,plot_episode,cover_episode,picture_episode) VALUES(400,20,555,300,1,1,'Old episode','Old facts','old-cover','old-picture')");
+        db.execSQL("INSERT INTO user_collection_item(_id,collection_id,media_type,media_id) VALUES(10,7,2,300)");
+        db.execSQL("INSERT INTO V_GUESTS(episode_v_guests,name_v_guests,role_v_guests) VALUES(400,'Old guest','Old role')");
+    }
+    private EpisodeTags episodeTags(long showProvider) {
+        ShowTags show=new ShowTags();show.setOnlineId(showProvider);show.setTitle("Fetched parent");
+        EpisodeTags episode=new EpisodeTags(show,2,3);episode.setOnlineId(777);episode.setTitle("Fresh episode");episode.setPlot("Fresh episode facts");episode.addActorIfAbsent("Fresh guest","Fresh role");episode.setRuntime(5,java.util.concurrent.TimeUnit.MINUTES);return episode;
+    }
+    @Test public void ownedEpisodeUpdatesCanonicalFactsWithoutDeletingItsLastParentOrCollectionAndRollsBack() {
+        episodeFixture();var db=holder.get();
+        for(boolean recursive:new boolean[]{false,true}) {
+            db.execSQL("PRAGMA recursive_triggers="+(recursive?1:0));db.beginTransaction();try {
+                assertEquals(400,episodeTags(666).savePreservingOwnedIdentity(app,20,400,555,300,666,9L));
+                try(var row=db.rawQuery("SELECT e._id,e.e_online_id,e.name_episode,e.plot_episode,e.season_episode,e.number_episode,e.cover_episode,e.picture_episode,s._id,s.s_online_id,s.name_show,s.Nova_pinned,f.bookmark,f.duration,f.Archos_lastTimePlayed,f.Archos_traktSeen,f.ArchosMediaScraper_id FROM EPISODE e JOIN SHOW s ON s._id=e.show_episode JOIN files f ON f._id=e.video_id WHERE e._id=400",null)) {
+                    assertTrue(row.moveToFirst());assertEquals(400,row.getLong(0));assertEquals(777,row.getLong(1));assertEquals("Fresh episode",row.getString(2));assertEquals("Fresh episode facts",row.getString(3));assertEquals(2,row.getLong(4));assertEquals(3,row.getLong(5));assertTrue(row.isNull(6));assertTrue(row.isNull(7));assertEquals(300,row.getLong(8));assertEquals(666,row.getLong(9));assertEquals("Receiving parent",row.getString(10));assertEquals(9,row.getLong(11));assertEquals(6789,row.getLong(12));assertEquals(0,row.getLong(13));assertEquals(100,row.getLong(14));assertEquals(1,row.getLong(15));assertEquals(400,row.getLong(16));
+                }
+                try(var row=db.rawQuery("SELECT name_v_guests,role_v_guests FROM V_GUESTS WHERE episode_v_guests=400",null)){assertTrue(row.moveToFirst());assertEquals("Fresh guest",row.getString(0));assertEquals("Fresh role",row.getString(1));assertFalse(row.moveToNext());}
+                try(var row=db.rawQuery("SELECT s._id,s.Nova_pinned FROM user_collection_item i JOIN SHOW s ON s._id=i.media_id WHERE i._id=10",null)){assertTrue(row.moveToFirst());assertEquals(300,row.getLong(0));assertEquals(9,row.getLong(1));}
+                try(var row=db.rawQuery("PRAGMA foreign_key_check",null)){assertFalse(row.moveToFirst());}
+            } finally {db.endTransaction();}
+            try(var row=db.rawQuery("SELECT e_online_id,name_episode,cover_episode FROM EPISODE WHERE _id=400",null)){assertTrue(row.moveToFirst());assertEquals(555,row.getLong(0));assertEquals("Old episode",row.getString(1));assertEquals("old-cover",row.getString(2));}
+            try(var row=db.rawQuery("SELECT name_v_guests FROM V_GUESTS WHERE episode_v_guests=400",null)){assertTrue(row.moveToFirst());assertEquals("Old guest",row.getString(0));assertFalse(row.moveToNext());}
+        }
+    }
+    @Test public void ownedEpisodeRejectsChangedParentPinProviderAndUncoordinatedSave() {
+        episodeFixture();var db=holder.get();
+        try {episodeTags(999).savePreservingOwnedIdentity(app,20,400,555,300,666,9L);fail("Different parent accepted");}catch(IllegalArgumentException expected){}
+        db.beginTransaction();try {
+            assertEquals(-1,episodeTags(666).savePreservingOwnedIdentity(app,20,400,555,300,666,7L));
+            assertEquals(-1,episodeTags(666).savePreservingOwnedIdentity(app,20,400,999,300,666,9L));
+        }finally{db.endTransaction();}
+        try {episodeTags(666).savePreservingOwnedIdentity(app,20,400,555,300,666,9L);fail("Missing native transaction accepted");}catch(IllegalStateException expected){}
+        try(var row=db.rawQuery("SELECT e.e_online_id,s.Nova_pinned FROM EPISODE e JOIN SHOW s ON s._id=e.show_episode WHERE e._id=400",null)){assertTrue(row.moveToFirst());assertEquals(555,row.getLong(0));assertEquals(9,row.getLong(1));}
     }
 
 }
