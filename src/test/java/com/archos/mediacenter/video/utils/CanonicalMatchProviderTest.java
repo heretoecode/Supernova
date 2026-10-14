@@ -160,4 +160,42 @@ public class CanonicalMatchProviderTest {
         try(var row=db.rawQuery("SELECT name_v_guests FROM V_GUESTS WHERE episode_v_guests=400",null)){assertTrue(row.moveToFirst());assertEquals("Old guest",row.getString(0));assertFalse(row.moveToNext());}
     }
 
+    @Test public void privateCanonicalRedoReplaysOnlyOriginalOrCommittedStateAndPreservesLaterReceivingChoices()throws Exception {
+        var db=holder.get();var batch=tags().prepareOwnedRestore(app,10,100,123,9L);org.json.JSONObject record;
+        db.beginTransaction();try {
+            record=com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(db,java.util.List.of(10L),java.util.List.of(batch),()->false);
+            com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false);
+            com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db,record,()->false);
+        }finally{db.endTransaction();}
+        record=new org.json.JSONObject(record.toString());assertFalse(record.toString().contains("file:///"));assertFalse(record.toString().contains("Original facts"));
+        db.execSQL("UPDATE files SET bookmark=9999 WHERE _id=10");
+        db.beginTransaction();try {
+            assertFalse(com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.replay(app,db,record,false,()->false));
+            assertTrue(com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.replay(app,db,record,true,()->false));
+            com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.verifyComplete(db,record,()->false);
+            assertFalse(com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.replay(app,db,record,true,()->false));db.setTransactionSuccessful();
+        }finally{db.endTransaction();}
+        try(var row=db.rawQuery("SELECT m.m_online_id,m.Nova_pinned,f.bookmark FROM MOVIE m JOIN files f ON f._id=m.video_id WHERE m._id=100",null)){assertTrue(row.moveToFirst());assertEquals(789,row.getLong(0));assertEquals(9,row.getLong(1));assertEquals(9999,row.getLong(2));}
+        db.execSQL("UPDATE MOVIE SET name_movie='Later receiving edit' WHERE _id=200");
+        db.beginTransaction();try {try{com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.replay(app,db,record,true,()->false);fail("Later receiving graph overwritten");}catch(java.io.IOException expected){assertTrue(expected.getMessage().contains("independently"));}}finally{db.endTransaction();}
+    }
+    @Test public void privateEpisodeRedoPreservesLastParentAndRefusesCorruptOrIncompatibleRecoveryPayload()throws Exception {
+        episodeFixture();var db=holder.get();var batch=episodeTags(666).prepareOwnedRestore(app,20,400,555,300,666,9L);org.json.JSONObject record;
+        db.beginTransaction();try {
+            record=com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(db,java.util.List.of(20L),java.util.List.of(batch),()->false);
+            com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false);
+            com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db,record,()->false);
+        }finally{db.endTransaction();}
+        for(String field:new String[]{"sha256","sdk","primary","schema"}) {
+            var corrupt=new org.json.JSONObject(record.getJSONArray("batches").getJSONObject(0).toString());
+            corrupt.put(field,field.equals("sha256")?"0".repeat(64):field.equals("sdk")?android.os.Build.VERSION.SDK_INT+1:field.equals("primary")?Long.MAX_VALUE:"1");
+            try{com.archos.mediascraper.OwnedCanonicalBatch.decodeRecovery(corrupt);fail("Corrupt private redo accepted: "+field);}catch(org.json.JSONException expected){}
+        }
+        db.beginTransaction();try {
+            assertTrue(com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.replay(app,db,new org.json.JSONObject(record.toString()),true,()->false));
+            com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.verifyComplete(db,record,()->false);
+            try(var row=db.rawQuery("SELECT s._id,s.Nova_pinned FROM user_collection_item i JOIN SHOW s ON s._id=i.media_id WHERE i._id=10",null)){assertTrue(row.moveToFirst());assertEquals(300,row.getLong(0));assertEquals(9,row.getLong(1));}
+        }finally{db.endTransaction();}
+    }
+
 }
