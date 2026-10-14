@@ -88,8 +88,9 @@ public final class PreferenceRestoreTransaction {
     }
     /** Worker-side reconciliation after normal provider initialization; never creates a media store. */
     public void reconcilePlaylists()throws IOException {
+        if(!prefs.contains(PortableSavedPlaylists.PENDING))return;
         ViewingHistory.awaitWrites();synchronized(ViewingHistory.LOCK){synchronized(LOCK){
-            String pending=prefs.getString(PortableSavedPlaylists.PENDING,null);if(pending==null)return;
+            Map<String,?> originalPrefs=prefs.getAll();Object saved=originalPrefs.get(PortableSavedPlaylists.PENDING);if(saved==null)return;if(!(saved instanceof String))throw new IOException("Pending playlist configuration is invalid");String pending=(String)saved;
             File file=com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(destination);if(!file.exists())return;
             try {
                 JSONObject payload=new JSONObject(pending);PortableSavedPlaylists.validate(payload);if(payload.getJSONArray("rows").length()==0)return;
@@ -102,6 +103,7 @@ public final class PreferenceRestoreTransaction {
                 }
                 // Live local definitions win over pending identities; receiving Trakt rows are preserved separately.
                 Plan plan=prepare(Collections.singletonMap(BackupCategory.PLAYLISTS,PortableSavedPlaylists.export(destination,local)),null);
+                Map<String,?> current=prefs.getAll();Set<String> checked=new HashSet<>(originalPrefs.keySet());checked.addAll(current.keySet());for(String key:checked)if(PortableSavedPlaylists.owns(key)&&!Objects.equals(originalPrefs.get(key),current.get(key)))throw new IOException("Playlist references changed during reconciliation; retry after refresh");
                 if(!pending.equals(plan.before.get(PortableSavedPlaylists.PENDING))||!before.toString().equals(new JSONObject(plan.mediaBefore).getJSONObject("playlists").toString()))throw new IOException("Playlist state changed during reconciliation; retry after refresh");
                 apply(plan,()->false);
             }catch(JSONException|RuntimeException invalid){throw new IOException("Pending saved playlists could not be reconciled safely",invalid);}
