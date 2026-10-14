@@ -1,0 +1,26 @@
+{
+  "result": "PASS",
+  "source_sha": "e13d8a1613a0c92c553c03d21da5a1f30379bc59",
+  "dependency_sha": "b23efb6bd4addbbb98981567d606ae34dc288818",
+  "duration": "53s",
+  "log_sha256": "2dfb4f2d09829f28d140df083081be0079926aaf9977a6be574e5d34387d7a5f",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchIntentsTest",
+    "com.archos.mediacenter.video.utils.MediaMatchInventoryTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "coverage": [
+    "Movie -> new episode to existing canonical parent retains old movie pin/Collection and viewing state",
+    "Re-identification reuses retained episode and clears stale aired date",
+    "Unknown raw episode provider0 is guarded and cleared without conflating NULL",
+    "Preparation reserves distinct movie identities for multiple physical targets",
+    "Existing canonical/schema9/intents/inventory cases"
+  ],
+  "limits": "New parent preparation, queued reconciliation/manual source integration and codec26 registration remain open. Synthetic Native63; physical/codec/signing not proven.",
+  "tests": 45,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}
