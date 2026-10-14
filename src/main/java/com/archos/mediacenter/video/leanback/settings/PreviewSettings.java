@@ -134,7 +134,7 @@ public final class PreviewSettings {
  public static boolean enterBackup(PreferenceFragmentCompat fragment){
   View root=fragment.getView();if(root==null)return false;View child=root.findViewWithTag("semantic:settings:section:preview_backup_restore");
   if(child==null){View advanced=root.findViewWithTag("semantic:settings:category:Advanced");if(advanced==null)return false;advanced.performClick();child=root.findViewWithTag("semantic:settings:section:preview_backup_restore");}
-  if(child==null)return false;child.performClick();return true;
+  if(child==null)return false;child.requestFocus();child.performClick();return true;
  }
  public static void sidebar(PreferenceFragmentCompat fragment,BackupSettingsController backup) {
   sidebar(fragment,backup,false);
