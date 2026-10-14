@@ -1,0 +1,23 @@
+{
+  "source_sha": "ecea38d7de56e179d81cd1e893921407d3ab42f6",
+  "result": "PASS",
+  "classes": 4,
+  "tests": 34,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.Supernova139HomeEditorTest",
+    "com.archos.mediacenter.video.utils.MediaMatchIntentsTest",
+    "com.archos.mediacenter.video.utils.PortableBookmarksTest",
+    "com.archos.mediacenter.video.utils.PortableMinimumApiTest"
+  ],
+  "duration": "45s",
+  "log_sha256": "68200d793097990f5184c1286963f127c7a3eab80fde2c549d09775e18c75a19",
+  "coverage": [
+    "Actual API23 privacy validators accept Unicode/canonical paths and reject raw/encoded ASCII controls",
+    "Browser favourites and Customise Home selector behavior/focus/state regressions",
+    "Guarded match intent retains moved original references unresolved instead of rebinding to new physical URI"
+  ],
+  "limits": "Focused source after full911/195 suite. Lint rerun/native/decoder/device/whole43 gates still open. Matches unregistered and without canonical native application."
+}
