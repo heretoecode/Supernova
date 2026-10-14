@@ -2391,7 +2391,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if (mVideoInfo.subtitleTrack >= 0 && mVideoInfo.subtitleTrack <= nbTrack) {
                 if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: newSubtitleTrack={}, mVideoInfo.subtitleTrack={}", newSubtitleTrack, mVideoInfo.subtitleTrack);
 
-                if (!mPlayer.setSubtitleTrack(mVideoInfo.subtitleTrack)) {
+                if (!mPlayer.setSubtitleTrack(mVideoInfo.subtitleTrack==nbTrack?-1:mVideoInfo.subtitleTrack)) {
                     if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: setSubtitleTrack failed, setting none track");
                     mVideoInfo.subtitleTrack = noneTrack;
                 } else {
@@ -2436,7 +2436,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mVideoInfo.subtitleTrack = noneTrack;
         mVideoInfo.subtitleLanguage = null;
         mNewSubtitleTrack = noneTrack;
-        if (track != noneTrack && !mPlayer.setSubtitleTrack(noneTrack)) {
+        if (track != -1 && !mPlayer.setSubtitleTrack(-1)) {
             log.error("onSubtitleTrackSelectionCompleted: failed to queue none-track fallback {}", noneTrack);
         }
     }
