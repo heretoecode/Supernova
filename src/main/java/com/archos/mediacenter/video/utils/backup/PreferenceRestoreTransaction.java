@@ -57,7 +57,7 @@ public final class PreferenceRestoreTransaction {
         public final int unresolved;
         public final Set<String> receivingChecks;
         private final String viewingBefore,viewingAfter;
-        private String viewingIntroduced,nativeViewingBefore,matchesBefore;
+        private String viewingIntroduced,nativeViewingBefore,matchesBefore;private Long manualRevision;
         private final String mediaBefore,mediaAfter;
         private final String bookmarksBefore,bookmarksAfter;
         private final String sourcesBefore,sourcesAfter;
@@ -156,7 +156,11 @@ public final class PreferenceRestoreTransaction {
     /** Staged compatible-owner canonical preparation; codec registration waits for clearing/cross-kind coverage. */
     public Plan prepareCanonicalMatches(Map<BackupCategory,JSONObject> selected,Snapshot snapshot,PortablePhysicalReferences physical,
             CanonicalMatchMaterial.Resolver resolver,BooleanSupplier cancel)throws IOException,JSONException {
-        Plan original=prepare(selected,snapshot,physical);if(!selected.containsKey(BackupCategory.MATCHES))return original;
+        return prepareCanonicalMatches(selected,snapshot,physical,resolver,cancel,null,64);
+    }
+    private Plan prepareCanonicalMatches(Map<BackupCategory,JSONObject> selected,Snapshot snapshot,PortablePhysicalReferences physical,
+            CanonicalMatchMaterial.Resolver resolver,BooleanSupplier cancel,Long manualAt,int limit)throws IOException,JSONException {
+        long revision=MediaMatchManualChanges.epoch(prefs.getAll());Plan original=prepare(selected,snapshot,physical,manualAt);original.manualRevision=revision;if(!selected.containsKey(BackupCategory.MATCHES))return original;
         MediaMatchInventory inventory=MediaMatchInventory.capture(destination);
         if(!inventory.signature.equals(original.matchesBefore))throw new IOException("Receiving identification changed during canonical preparation");
         List<com.archos.mediascraper.OwnedCanonicalBatch> batches=new ArrayList<>();List<Long> files=new ArrayList<>();Map<String,Object> values=new LinkedHashMap<>(original.after);
@@ -165,7 +169,7 @@ public final class PreferenceRestoreTransaction {
         CanonicalMatchMaterial.Preparation preparation=new CanonicalMatchMaterial.Preparation(destination);
         {
             for(var entry:original.after.entrySet())if(MediaMatchIntents.owns(entry.getKey())){
-                cancelled(cancel);JSONObject intent=new JSONObject((String)entry.getValue());if(!intent.getBoolean("pending"))continue;
+                cancelled(cancel);if(files.size()>=limit)break;JSONObject intent=new JSONObject((String)entry.getValue());if(!intent.getBoolean("pending"))continue;
                 String[] key=entry.getKey().split(":");long id=Long.parseLong(key[key.length-1]);MediaMatchInventory.Owner owner=inventory.owners.get(id);
                 if(owner==null)continue;
                 if(intent.isNull("requested")){
@@ -188,7 +192,23 @@ public final class PreferenceRestoreTransaction {
         Plan plan=new Plan(prefs,original.before,values,original.keys,original.healthBefore,original.healthAfter,original.healthKeys,original.categories,
                 original.unresolved-files.size(),original.viewingBefore,original.viewingAfter,original.viewingExisted,before.toString(),after.toString(),original.bookmarksBefore,original.bookmarksAfter,original.sourcesBefore,original.sourcesAfter,original.titleBefore);
         plan.viewingIntroduced=original.viewingIntroduced;plan.nativeViewingBefore=original.nativeViewingBefore;plan.matchesBefore=original.matchesBefore;
-        plan.canonicalBatches=Collections.unmodifiableList(batches);plan.canonicalFiles=Collections.unmodifiableList(files);return plan;
+        plan.canonicalBatches=Collections.unmodifiableList(batches);plan.canonicalFiles=Collections.unmodifiableList(files);plan.manualRevision=revision;return plan;
+    }
+    public boolean reconcileMatches(CanonicalMatchMaterial.Resolver resolver,BooleanSupplier cancel)throws IOException {
+        Map<String,?> original=prefs.getAll();boolean pending=false;long baseline;
+        try{
+            baseline=MediaMatchManualChanges.epoch(original);
+            Object unbound=original.get(PortableMediaMatches.PENDING);
+            if(unbound!=null){if(!(unbound instanceof String))throw new JSONException("Invalid pending matches");JSONObject saved=new JSONObject((String)unbound);pending|=PortableMediaMatches.pendingPayload(saved).getJSONArray("rows").length()>0;if(saved.getInt("schema")==2)baseline=Math.min(baseline,saved.getLong("manualAt"));}
+            for(var entry:original.entrySet())if(MediaMatchIntents.owns(entry.getKey())){if(!(entry.getValue() instanceof String))throw new JSONException("Invalid pending match intent");JSONObject record=new JSONObject((String)entry.getValue());MediaMatchIntents.validate(record);pending|=record.getBoolean("pending");if(record.getInt("schema")==2)baseline=Math.min(baseline,record.getLong("manualAt"));}
+            if(!pending)return false;File media=com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(destination);if(!media.exists())return false;
+            cancelled(cancel);LogicalBackupCatalog catalog=LogicalBackupCatalog.capture(destination,cancel,false,false,true);PortablePhysicalReferences physical=new PortablePhysicalReferences(destination,catalog.physical);MediaMatchInventory inventory=MediaMatchInventory.capture(destination);inventory.validatePhysical(physical);
+            JSONObject desired=MediaMatchIntents.export(destination,catalog.matches,inventory,physical);
+            Plan plan=prepareCanonicalMatches(Collections.singletonMap(BackupCategory.MATCHES,desired),catalog.snapshot,physical,resolver,cancel,baseline,8);
+            Set<String> checked=new HashSet<>(original.keySet());checked.addAll(prefs.getAll().keySet());for(String key:checked)if((MediaMatchIntents.owns(key)||key.equals(PortableMediaMatches.PENDING))&&!Objects.equals(original.get(key),prefs.getAll().get(key)))throw new IOException("Queued matches changed during preparation; retry after refresh");
+            boolean changed=!plan.canonicalBatches.isEmpty();for(String key:plan.keys)changed|=!Objects.equals(plan.before.get(key),plan.after.get(key));if(!changed)return false;
+            apply(plan,cancel);return true;
+        }catch(JSONException|RuntimeException invalid){throw new IOException("Queued media matches could not be reconciled safely",invalid);}
     }
     private static Map<String,Object> copy(Map<String,?> source){
         Map<String,Object> result=new LinkedHashMap<>();for(Map.Entry<String,?> item:source.entrySet()){
@@ -200,6 +220,9 @@ public final class PreferenceRestoreTransaction {
         return prepare(selected,snapshot,null);
     }
     public Plan prepare(Map<BackupCategory,JSONObject> selected,Snapshot snapshot,PortablePhysicalReferences physical)throws JSONException,IOException{
+        return prepare(selected,snapshot,physical,null);
+    }
+    private Plan prepare(Map<BackupCategory,JSONObject> selected,Snapshot snapshot,PortablePhysicalReferences physical,Long manualAt)throws JSONException,IOException{
         if(selected.isEmpty())throw new JSONException("Select at least one present category");
         Map<String,?> current=prefs.getAll();Map<String,Object> after=new LinkedHashMap<>();Set<String> keys=new LinkedHashSet<>();int unresolved=0;
         Map<String,Object> healthAfter=new LinkedHashMap<>();Set<String> healthKeys=new LinkedHashSet<>();
@@ -272,7 +295,7 @@ public final class PreferenceRestoreTransaction {
                 var bookmarks=PortableBookmarks.prepare(bookmarksBefore,item.getValue(),selected.get(BackupCategory.LOCATIONS));bookmarksAfter=bookmarks.after;
                 keys.add(PortableBookmarks.PENDING);after.put(PortableBookmarks.PENDING,bookmarks.pending);unresolved+=bookmarks.unresolved;
             }else if(category==BackupCategory.MATCHES){
-                if(physical==null)throw new JSONException("Media identification needs an unfiltered receiving file inventory");MediaMatchInventory inventory=MediaMatchInventory.capture(destination);matchesBefore=inventory.signature;var matches=MediaMatchIntents.prepare(current,item.getValue(),inventory,physical);keys.addAll(matches.keys);after.putAll(matches.values);unresolved+=matches.unresolved;
+                if(physical==null)throw new JSONException("Media identification needs an unfiltered receiving file inventory");MediaMatchInventory inventory=MediaMatchInventory.capture(destination);matchesBefore=inventory.signature;var matches=MediaMatchIntents.prepare(current,item.getValue(),inventory,physical,manualAt==null?MediaMatchManualChanges.epoch(current):manualAt);keys.addAll(matches.keys);after.putAll(matches.values);unresolved+=matches.unresolved;
             }else if(category==BackupCategory.TITLE_PLAYBACK){
                 if(physical==null)throw new JSONException("Title playback needs an unfiltered receiving file inventory");TitlePlaybackInventory inventory=TitlePlaybackInventory.capture(destination);inventory.validatePhysical(physical);titleBefore=inventory.signature;
                 var title=TitlePlaybackOverrides.prepare(current,item.getValue(),inventory.choices,physical);keys.addAll(title.keys);after.putAll(title.values);unresolved+=title.unresolved;
@@ -325,6 +348,7 @@ public final class PreferenceRestoreTransaction {
             }catch(JSONException invalid){throw new IOException("Viewing restore preview is invalid",invalid);}
             if(plan.bookmarksBefore!=null)try{if(!BookmarkStoreRecovery.capture(destination).toString().equals(plan.bookmarksBefore))throw new IOException("Bookmarks changed after restore preview; review again");}catch(JSONException invalid){throw new IOException("Bookmark restore preview is invalid",invalid);}
             if(plan.sourcesBefore!=null)try{if(!IndexedSourceStoreRecovery.capture(destination).toString().equals(plan.sourcesBefore))throw new IOException("Indexed sources changed after preview; review again");}catch(JSONException invalid){throw new IOException("Indexed-source preview is invalid",invalid);}
+            if(plan.manualRevision!=null)try{if(MediaMatchManualChanges.epoch(prefs.getAll())!=plan.manualRevision)throw new IOException("A receiving manual match changed after preview; review again");}catch(JSONException invalid){throw new IOException("Receiving manual match state is invalid",invalid);}
             if(plan.matchesBefore!=null&&!MediaMatchInventory.capture(destination).signature.equals(plan.matchesBefore))throw new IOException("Receiving identification changed after preview; review again");
             if(plan.titleBefore!=null)try{if(!TitlePlaybackInventory.capture(destination).signature.equals(plan.titleBefore))throw new IOException("Receiving title playback state changed after preview; review again");}catch(JSONException invalid){throw new IOException("Title playback preview is invalid",invalid);}
             if(plan.nativeViewingBefore!=null)try{var catalog=LogicalBackupCatalog.capture(destination,()->false);var currentNative=com.archos.mediacenter.video.leanback.LegacyViewingSnapshot.merge(destination,Collections.emptyMap(),catalog.snapshot);if(!PortableViewingState.recoverySnapshot(currentNative).toString().equals(plan.nativeViewingBefore))throw new IOException("Receiving legacy viewing state changed after preview; review again");}catch(JSONException invalid){throw new IOException("Legacy viewing preview is invalid",invalid);}
