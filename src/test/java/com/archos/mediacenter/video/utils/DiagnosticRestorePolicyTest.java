@@ -30,11 +30,12 @@ public class DiagnosticRestorePolicyTest {
         try{transaction.apply(selected(false),()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
         assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,new PreferenceRestoreTransaction(app).recover());assertFalse(observing());assertFalse(prefs.getBoolean(Diagnostics.KEY,true));
     }
-    @Test public void legacyReplacementAlsoAppliesRestoredRecorderChoiceWithoutCreatingNewLegacyBackupRoute()throws Exception {
+    @Test public void legacyReplacementReappliesSupportedDefaultWithoutInventingAbsentDiagnosticField()throws Exception {
         try(var helper=new com.archos.mediaprovider.video.VideoOpenHelper(app)){helper.getWritableDatabase();}
-        Diagnostics.setEnabled(app,false);File archive=new File(HistoricalBackupFixture.export(app));Diagnostics.setEnabled(app,true);assertTrue(observing());
+        Diagnostics.setEnabled(app,false);File archive=new File(HistoricalBackupFixture.export(app));assertFalse(observing());
+        try(java.util.zip.ZipFile legacy=new java.util.zip.ZipFile(archive)){assertFalse(new String(legacy.getInputStream(legacy.getEntry("settings.json")).readAllBytes(),java.nio.charset.StandardCharsets.UTF_8).contains(Diagnostics.KEY));}
         try(var incoming=BackupImportPreparation.prepare(app,new FileInputStream(archive),()->false)){assertTrue(incoming.isLegacy());incoming.restoreLegacy(app,()->false);}
-        assertFalse(prefs.getBoolean(Diagnostics.KEY,true));assertFalse(observing());assertNull(prefs.getString("oauth_token",null));
+        assertFalse(prefs.contains(Diagnostics.KEY));assertTrue(Diagnostics.defaultEnabled());assertTrue(observing());assertNull(prefs.getString("oauth_token",null));
     }
     @Test public void preDecisionRollbackKeepsOriginalRuntimePolicyAndUnselectedRestoreNeverCreatesDiagnosticPreference()throws Exception {
         try{transaction.apply(selected(false),()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.PREFERENCES_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}

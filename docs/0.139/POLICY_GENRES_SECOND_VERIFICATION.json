@@ -1,0 +1,12 @@
+{
+  "result": "FAIL",
+  "source_sha": "371b1df8",
+  "duration": "1m26s",
+  "classes": 10,
+  "tests": 54,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "log_sha256": "17692b351353c4a9590d7236a8df722b46f170e5b41c552164d13a00bd678bc3",
+  "reason": "Logical logging-off, rollback/recovery, Genres live counts/scanner/reduced motion and existing regressions pass. Legacy fixture expected a logging-off field its historical allowlist never exports/imports. Preserve legacy format semantics: absent diagnostic field defaults on after whole replacement; test that live policy follows default without creating the field."
+}

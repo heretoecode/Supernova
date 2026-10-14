@@ -1,0 +1,11 @@
+{
+  "result": "FAIL",
+  "run_id": 38629419064,
+  "source_sha": "aea3bf91daeaf6efddb7dc648670663e80a09462",
+  "url": "https://github.com/heretoecode/Supernova/actions/runs/38629419064",
+  "failed_step": "Rebuild and compare pinned LGPL FFmpeg before replacing dependency binaries",
+  "reason": "After four ABI builds, Android arm64 API23 runtime image curl transfer terminated with HTTP/2 INTERNAL_ERROR, exit92. Not a native decode mismatch. App test/lint/packaging steps were not reached.",
+  "log_sha256": "45ace28c84748291212bb16389cbd88970a3caa5e4c5955502fa40d399bb2422",
+  "followup": "Atomic verified-cache download, HTTP1.1 and bounded retries; retain hash fail-closed behavior. Python first guard run74 had one missing subprocess import in new failure fixture; corrected before rerun.",
+  "tooling_first_log_sha256": "1fbaa7c7d42ab4fef3eb0b7aed81ec0029c412ec00335ec951d3f3a951a3b9db"
+}
