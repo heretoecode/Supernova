@@ -1,0 +1,17 @@
+{
+  "source_sha": "e62917c2ef5b9859af524ab06b191c03fb48dfca",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 11,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "45s",
+  "log_sha256": "56c099d5dca0492e4ed467aee7b7dcbc813d6ec77857d95ed4b4fce47a70152f",
+  "reason": "Direct scroll attempt did not satisfy full production opener visibility. Diagnostic follow-up records content/scroll/child geometry before further correction; no navigation pass claimed."
+}
