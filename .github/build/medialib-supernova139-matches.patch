@@ -623,10 +623,10 @@ index 30bba74..40c486b 100644
      @Override
 diff --git a/src/com/archos/mediascraper/OwnedCanonicalBatch.java b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
 new file mode 100644
-index 0000000..2e3ac22
+index 0000000..e02eb3d
 --- /dev/null
 +++ b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
-@@ -0,0 +1,73 @@
+@@ -0,0 +1,81 @@
 +// Copyright 2026 Supernova contributors
 +// Licensed under the Apache License, Version 2.0.
 +package com.archos.mediascraper;
@@ -649,6 +649,14 @@ index 0000000..2e3ac22
 +    OwnedCanonicalBatch(ArrayList<ContentProviderOperation> operations, int primaryOperation) {
 +        this.operations = Collections.unmodifiableList(new ArrayList<>(operations));
 +        this.primaryOperation = primaryOperation;
++    }
++    /** Freeze the source identification assertion as well as file ownership before any mutation. */
++    public OwnedCanonicalBatch withReceivingState(android.content.ContentValues expected) {
++        if(primaryOperation<1||operations.isEmpty()||!operations.get(0).isAssertQuery()||expected==null)
++            throw new IllegalArgumentException("Receiving assertion requires a guarded canonical batch");
++        ArrayList<ContentProviderOperation> guarded=new ArrayList<>(operations);
++        guarded.set(0,ContentProviderOperation.newAssertQuery(operations.get(0).getUri()).withValues(expected).withExpectedCount(1).build());
++        return new OwnedCanonicalBatch(guarded,primaryOperation);
 +    }
 +    /** Private in-progress recovery only; never part of a portable backup payload. */
 +    public org.json.JSONObject encodeRecovery() throws org.json.JSONException {

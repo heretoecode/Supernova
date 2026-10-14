@@ -285,4 +285,15 @@ public class CanonicalMatchProviderTest {
         }finally{db.endTransaction();}
     }
 
+    @Test public void receivingEpisodeChangeWithoutPointerChangeIsRefusedAtTheNativeMutationBoundary()throws Exception {
+        episodeFixture();var db=holder.get();db.execSQL("UPDATE files SET ArchosMediaScraper_type=0 WHERE _id=20");db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,name_movie,Nova_pinned) VALUES(450,20,888,'Retained receiving movie',7)");db.execSQL("UPDATE files SET ArchosMediaScraper_type=0 WHERE _id=20");db.execSQL("UPDATE files SET ArchosMediaScraper_type=12,ArchosMediaScraper_id=400 WHERE _id=20");
+        var owner=com.archos.mediacenter.video.utils.backup.MediaMatchInventory.capture(app).owners.get(20L);var request=new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:movie:789",null);
+        var batch=com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.prepare(app,owner,request,Uri.parse("file:///episode.mkv"),0,null,(context,requested,file)->new com.archos.mediascraper.ScrapeDetailResult(tags(),true,null,com.archos.mediascraper.ScrapeStatus.OKAY,null));
+        db.beginTransaction();try {
+            db.execSQL("UPDATE EPISODE SET season_episode=5 WHERE _id=400");
+            try{com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false);fail("Changed receiving identification overwritten");}catch(java.io.IOException expected){}
+            try(var row=db.rawQuery("SELECT f.ArchosMediaScraper_type,f.ArchosMediaScraper_id,e.season_episode,m.m_online_id FROM files f JOIN EPISODE e ON e.video_id=f._id JOIN MOVIE m ON m.video_id=f._id WHERE f._id=20",null)){assertTrue(row.moveToFirst());assertEquals(12,row.getLong(0));assertEquals(400,row.getLong(1));assertEquals(5,row.getLong(2));assertEquals(888,row.getLong(3));}
+        }finally{db.endTransaction();}
+    }
+
 }
