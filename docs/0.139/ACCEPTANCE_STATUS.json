@@ -24,7 +24,8 @@
     "DIRECT_READ_VERIFICATION.json PASS28/4",
     "PACKAGED_CODEC_VERIFICATION.json PASS64 decode pairs/fourABIs",
     "REBUILT_CODEC_SOURCE_LINK_VERIFICATION.json PASS24 freshly rebuilt byte matches/corresponding source",
-    "Python74 and runtime138 reviewed artifact hash matches"
+    "Python74 and runtime138 reviewed artifact hash matches",
+    "CI_CURRENT_NATIVE_RUNTIME.json PASS64 paired decode cases/four freshly rebuilt ABIs; CI_CURRENT_PACKAGING_VERIFICATION.json PASS unsigned identity/native/CRC/alignment"
   ],
   "limits": "Overlapping staged tests are not a unique total. No signed139 APK, signed upgrade or Drive139 delivery. See DESIGN_BLOCKERS.md and SHIELD_ACCEPTANCE.md.",
   "workstreams": [
@@ -102,7 +103,7 @@
       "design_reference": "CH-004",
       "verification": "Empty/indexed/during scan counts; stable order/focus/scroll; reduced motion",
       "result": "BLOCKED",
-      "remaining_and_partial_evidence": "BLOCKED \u2014 native editor plus logical-title count/cache subchecks PASS; connected-popout, live scan/animation/profile and Shield matrix open",
+      "remaining_and_partial_evidence": "BLOCKED \u2014 native editor plus logical-title count/cache subchecks PASS; connected-popout stable focus/order/scroll, scanner broadcast/reduced-motion subchecks PASS atc72f7050; full profile and Shield matrix open",
       "source_and_receipts": "`4176a94cd9caa50848774d197464ab1835d420b5`; GENRE_COUNT_VERIFICATION.json; CUSTOMISE_HOME_VERIFICATION.json; ui/customise-home/"
     },
     {
@@ -476,7 +477,7 @@
       "design_reference": "Dependency retirement decision",
       "verification": "4 ABI/R8/merged manifest/upgrade/network playback; no unproven shared deletion",
       "result": "BLOCKED",
-      "remaining_and_partial_evidence": "BLOCKED \u2014 native dependency gate + app retirement regressions PASS; final APK/R8/4ABI/upgrade/playback pending",
+      "remaining_and_partial_evidence": "BLOCKED \u2014 native dependency, app retirement and actual unsigned APK/R8/fourABI manifest/native/class exclusion PASS; signed upgrade/physical playback pending",
       "source_and_receipts": "`8a6315b1425adeb7626b69622d8271aeb8397c39`; TORRENT_NATIVE_DEPENDENCIES.json; RETIREMENT_LEGAL_VERIFICATION.json"
     },
     {
@@ -516,5 +517,16 @@
     "receipt": "CURRENT_DEVELOPMENT_PACKAGING_VERIFICATION.json",
     "sha256": "b21869042256357e9e8c23c0dab7166571f0821c8d86f5b341111120d68e1667",
     "signed": false
+  },
+  "current_ci": {
+    "result": "FAIL",
+    "run_id": 38633930923,
+    "source_sha": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+    "tests": 995,
+    "passed": 994,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0,
+    "receipt": "CI_CURRENT_VERIFICATION.json"
   }
 }
