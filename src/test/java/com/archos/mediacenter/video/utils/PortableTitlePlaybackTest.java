@@ -26,7 +26,7 @@ public class PortableTitlePlaybackTest {
         return PortableTitlePlayback.export(source,Map.of(10L,new State(VideoStore.paramsFromTracks(3,2),-1500,1,"en")),new PortablePhysicalReferences(source,List.of(video(10,"file:///media/FILE_CANARY.mkv"))));
     }
     @Test public void sourceChoiceRemapsOnlyAfterBothMediaMatchingAndReceivingTrackValidation()throws Exception {
-        Context source=scope("source"),target=scope("target");JSONObject payload=payload(source);assertFalse(payload.toString().contains("CANARY"));assertEquals(5,payload.getJSONArray("rows").getJSONObject(0).length());
+        Context source=scope("source"),target=scope("target");JSONObject payload=payload(source);assertFalse(payload.toString().contains("CANARY"));assertEquals(6,payload.getJSONArray("rows").getJSONObject(0).length());assertEquals(2,payload.getInt("schema"));assertFalse(payload.getJSONArray("rows").getJSONObject(0).getBoolean("subtitleNone"));
         var refs=new PortablePhysicalReferences(target,List.of(video(700,"file:///media/FILE_CANARY.mkv")));Map<Long,State> before=Map.of(700L,new State(1,500,2,"fr"));
         assertEquals(1,PortableTitlePlayback.prepare(payload,before,refs,false,(id,state)->true).unresolved);
         assertEquals(1,PortableTitlePlayback.prepare(payload,before,refs,true,null).unresolved);
@@ -58,5 +58,13 @@ public class PortableTitlePlaybackTest {
             JSONObject payload=PortableTitlePlayback.export(context,state,new PortablePhysicalReferences(context,List.of()));assertEquals(2,payload.getJSONArray("rows").length());assertFalse(payload.toString().contains("CANARY"));assertFalse(payload.toString().contains("1789890000000"));assertFalse(payload.toString().contains("played"));
             db.execSQL("UPDATE files SET Archos_subtitleLanguage='AUTH_CANARY' WHERE _id=10");try{PortableTitlePlayback.read(db);fail();}catch(java.io.IOException expected){}
         }
+    }
+    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @Test public void nativeNoneSentinelIsExportedAsIntentRatherThanAnAmbiguousReceivingIndex()throws Exception{
+        Context context=RuntimeEnvironment.getApplication();context.deleteDatabase("media.db");try(VideoOpenHelper helper=new VideoOpenHelper(context)){var db=helper.getWritableDatabase();String count=VideoStore.Video.VideoColumns.ARCHOS_NUMBER_OF_SUBTITLE_TRACKS;db.execSQL("INSERT INTO files(_id,media_type,Archos_playerParams,Archos_lastTimePlayed,"+count+") VALUES(10,3,6144,100,5),(11,3,2048,100,5),(12,3,6144,100,1)");var values=PortableTitlePlayback.read(db);assertEquals(Boolean.TRUE,values.get(10L).subtitleNone);assertEquals(Boolean.FALSE,values.get(11L).subtitleNone);assertNull(values.get(12L).subtitleNone);JSONObject exported=PortableTitlePlayback.export(context,values,new PortablePhysicalReferences(context,List.of()));assertTrue(exported.getJSONArray("rows").getJSONObject(0).getBoolean("subtitleNone"));assertFalse(exported.toString().contains(count));assertFalse(exported.toString().contains("played"));}
+    }
+    @Test public void legacyPayloadConvertsUnknownSubtitleModeWithoutInventingNoneAndRejectsContradictoryIntent()throws Exception{
+        Context source=scope("legacy"),target=scope("legacy-target");JSONObject old=payload(source);old.put("schema",1);old.getJSONArray("rows").getJSONObject(0).remove("subtitleNone");PortableTitlePlayback.validate(old);var refs=new PortablePhysicalReferences(target,List.of(video(700,"file:///different.mkv")));var prepared=PortableTitlePlayback.prepare(old,Map.of(700L,new State(null,0,0,null)),refs,false,null);JSONObject pending=new JSONObject(prepared.pending);assertEquals(2,pending.getInt("schema"));assertFalse(pending.getJSONArray("rows").getJSONObject(0).getBoolean("subtitleNone"));PortableTitlePlayback.validate(pending);
+        JSONObject bad=payload(source);bad.getJSONArray("rows").getJSONObject(0).put("subtitleNone",true);try{PortableTitlePlayback.validate(bad);fail();}catch(JSONException expected){}bad=payload(source);bad.getJSONArray("rows").getJSONObject(0).put("subtitleNone","false");try{PortableTitlePlayback.validate(bad);fail();}catch(JSONException expected){}
     }
 }

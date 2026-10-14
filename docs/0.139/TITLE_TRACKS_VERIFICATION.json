@@ -1,0 +1,17 @@
+{
+  "source_sha": "98cf33bc32df4f8b4c05ffe07c0ab952eaee9418",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 2,
+  "tests": 9,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest"
+  ],
+  "duration": "2m 15s",
+  "log_sha256": "13ba25e95e2b3b6616f1beda545a7e481fd33cf2accc6c07e7b674fe3b18f7e9",
+  "limits": "Real VideoMetadata parser with mocked receiving metadata only; no actual decoder or PlayerService integration. Subtitle None intent cannot be inferred reliably from legacy source indices alone; source-schema2 distinction and receiving remapping follow this source. Title playback remains unregistered."
+}

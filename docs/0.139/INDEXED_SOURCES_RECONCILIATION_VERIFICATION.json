@@ -1,0 +1,29 @@
+{
+  "source_sha": "98116b9113dbfaac73ea9801af1ddb24aea9e7f1",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 68,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.utils.CombinedIndexedSourcesTest",
+    "com.archos.mediacenter.video.utils.IndexedSourceRecoveryTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableLibrarySourcesTest"
+  ],
+  "duration": "2m 45s",
+  "log_sha256": "aa0b5400e7ae129831741c4c43baf2c20690e05e3e430f41a710eb3f20817e5b",
+  "coverage": [
+    "Pending root/indexed intent resolves only after receiving source setup; no archive-location opt-in",
+    "Existing local source name/rescan choice wins over pending identity",
+    "Unresolved refresh performs no journal or native-store creation and remains idempotent",
+    "Malformed pending input, schema1/2 compatibility and source/Settings/export/import regression cases"
+  ],
+  "limits": "Synthetic Android/native SQLite fixtures and Error boundary injection, not actual force-stop. Full scanner scheduling, full VideoPreferencesCommon/provider/SAF lifecycle, legacy owner archive, Shield, native codecs/R8/upgrade/signing and delivery remain open."
+}
