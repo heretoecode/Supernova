@@ -1,0 +1,17 @@
+{
+  "source_sha": "a1531cff8655161052c866335cec1479eb6d1a9c",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 11,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "44s",
+  "log_sha256": "599d20381fb27df21a507ba1b42f5da65a48fc7c19ed3388a1b4b72026803bf7",
+  "reason": "Ancestor rectangle propagation did not retain the target in the visible padded sidebar; full production geometry still failed. Next source computes scroll delta directly in the existing sidebar content coordinates, with no layout/style change."
+}
