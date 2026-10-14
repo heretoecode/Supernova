@@ -8,20 +8,45 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.138",
-    "version_code": 138,
-    "kind": "Development / Shield QA candidate",
+    "version": "0.139",
+    "version_code": 139,
+    "kind": "Development candidate — implementation and acceptance incomplete",
     "notes": [
-      "Home progression, automatic row limits and shared metadata refinements.",
-      "Shared Details Card, compact read-only information and eight-person credit caps.",
-      "Shared custom Library filtering, full-collection Air Date sorting and focus return.",
-      "Search, Settings, local licence navigation and Network & Files refinements.",
-      "Minimal Preparing Playback tagline and approved playback HUD layout.",
-      "Opt-in intent-driven persistent subtitle discovery with provider backoff and current-season preparation.",
-      "Candidate validation is recorded separately; physical Shield acceptance and distribution require review."
+      "Customise Home editing, semantic icons and remote focus refinements.",
+      "Ten-title Home hero rotation and shared artwork retry improvements.",
+      "Granular logical Backup & Restore with privacy controls, independent viewing history and playback positions, and coordinated recovery.",
+      "Permanent Settings sidebar with flat backup Details and Restore Instructions.",
+      "Canonical Media matches integration and complete acceptance remain unfinished; no signed 0.139 APK or delivery is claimed.",
+      "Existing package, signing identity and approved Supernova visual language preserved."
     ]
   },
   "history": [
+    {
+      "version": "0.138",
+      "version_code": 138,
+      "kind": "Development / Shield QA candidate",
+      "notes": [
+        "Home progression, automatic row limits and shared metadata refinements.",
+        "Shared Details Card, compact read-only information and eight-person credit caps.",
+        "Shared custom Library filtering, full-collection Air Date sorting and focus return.",
+        "Search, Settings, local licence navigation and Network & Files refinements.",
+        "Minimal Preparing Playback tagline and approved playback HUD layout.",
+        "Opt-in intent-driven persistent subtitle discovery with provider backoff and current-season preparation.",
+        "Candidate validation is recorded separately; physical Shield acceptance and distribution require review."
+      ],
+      "date": "2026-10-12",
+      "source_sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+      "run_id": 38239064325,
+      "artifact_id": 11744230421,
+      "recorded_binary_verification": "docs/0.139/BASELINE_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "apks": [
+        {
+          "filename": "Supernova_0.138.apk",
+          "sha256": "6f46a40c9698e9219b6e26c2f09277de93462d3b9721a9b0b2bfd64814cd04ee"
+        }
+      ]
+    },
     {
       "version": "0.137",
       "version_code": 137,
