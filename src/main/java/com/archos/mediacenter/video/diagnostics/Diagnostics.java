@@ -105,6 +105,7 @@ public final class Diagnostics {
     public static void install(Application app){
         context=app.getApplicationContext();
         enabled=PreferenceManager.getDefaultSharedPreferences(app).getBoolean(KEY,defaultEnabled());
+        installTransportReads();
         qa=true; // One highest safe, bounded detail level for every Supernova build.
         if(!heartbeatInstalled){heartbeatInstalled=true;HEARTBEAT.scheduleWithFixedDelay(Diagnostics::heartbeat,10,10,TimeUnit.SECONDS);}
         PreferenceManager.getDefaultSharedPreferences(app).registerOnSharedPreferenceChangeListener(CONFIG);
@@ -209,7 +210,7 @@ public final class Diagnostics {
     public static void setEnabled(Context c,boolean value){
         context=c.getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(KEY,value).apply();
-        synchronized(LOCK){enabled=value;}mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default",defaultEnabled()?"on":"off");
+        synchronized(LOCK){enabled=value;}installTransportReads();mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default",defaultEnabled()?"on":"off");
     }
     public static void disable(Context c,boolean deleteSaved){
         setEnabled(c,false);
@@ -227,7 +228,17 @@ public final class Diagnostics {
         if(uri==null)return "unknown";String scheme=uri.getScheme();
         if(scheme==null||"file".equalsIgnoreCase(scheme))return "local";
         String lower=scheme.toLowerCase(Locale.ROOT);
-        return Arrays.asList("content","smb","webdav","webdavs","dav","davs","http","https","ftp","ftps","upnp").contains(lower)?lower:"other";
+        return Arrays.asList("content","smb","smbj","sshj","sftp","webdav","webdavs","dav","davs","http","https","ftp","ftps","upnp").contains(lower)?lower:"other";
+    }
+    private static void installTransportReads(){
+        com.archos.filecorelibrary.TransportReadObserver.install(enabled?protocol->{
+            if(!enabled)return null;
+            final String session=playback,id=PROCESS+":read:"+SEQUENCE.incrementAndGet();
+            return (boundary,bytes,calls,nanos,elapsed)->event("transport_read","schema",1,"stream_id",id,
+                "playback_session",session,"source",protocol.name(),"boundary",boundary.name(),"bytes",bytes,
+                "read_calls",calls,"read_duration_ns",nanos,"stream_elapsed_ns",elapsed,
+                "measurement_quality",MeasurementQuality.PROXY.name(),"coverage","JAVA_STREAM_READS_ONLY");
+        }:null);
     }
     public enum PlaybackOperation { OPEN, SEEK }
     public enum PlaybackBoundary { REQUESTED, BACKEND_CREATED, PREPARE_SUBMITTED, PREPARED, FIRST_OUTPUT, SEEK_CALLBACK, TERMINAL }
