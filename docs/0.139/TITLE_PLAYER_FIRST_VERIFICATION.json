@@ -1,0 +1,23 @@
+{
+  "source_sha": "252465ba471d25796042482e6d60d657f4138294",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "FAIL",
+  "classes": 8,
+  "tests": 45,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest",
+    "com.archos.mediacenter.video.player.HeroPlaybackOutputTest",
+    "com.archos.mediacenter.video.player.PlaybackResumePolicyTest",
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackJournalTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackOverridesTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackSessionTest"
+  ],
+  "duration": "2m 43s",
+  "log_sha256": "1320bcf6e9483bbf06a5470f20c3d1651e2f11e8da581873bf106db739c4d2db",
+  "finding": "One service-hook fixture used when() on a CALLS_REAL_METHODS mock ContextWrapper with no attached mBase; stubbing getPackageName invoked the real method. Use doReturn/doAnswer. Session callbacks/manual/stale tests and preceding regressions otherwise passed."
+}

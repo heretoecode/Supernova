@@ -210,7 +210,7 @@ public final class PreferenceRestoreTransaction {
                 var bookmarks=PortableBookmarks.prepare(bookmarksBefore,item.getValue(),selected.get(BackupCategory.LOCATIONS));bookmarksAfter=bookmarks.after;
                 keys.add(PortableBookmarks.PENDING);after.put(PortableBookmarks.PENDING,bookmarks.pending);unresolved+=bookmarks.unresolved;
             }else if(category==BackupCategory.TITLE_PLAYBACK){
-                if(physical==null)throw new JSONException("Title playback needs an unfiltered receiving file inventory");TitlePlaybackInventory inventory=TitlePlaybackInventory.capture(destination);titleBefore=inventory.signature;
+                if(physical==null)throw new JSONException("Title playback needs an unfiltered receiving file inventory");TitlePlaybackInventory inventory=TitlePlaybackInventory.capture(destination);inventory.validatePhysical(physical);titleBefore=inventory.signature;
                 var title=TitlePlaybackOverrides.prepare(current,item.getValue(),inventory.choices,physical);keys.addAll(title.keys);after.putAll(title.values);unresolved+=title.unresolved;
             }else if(category==BackupCategory.LOCATIONS){
                 // This privacy modifier supplies locators to selected owners; it never grants storage access.

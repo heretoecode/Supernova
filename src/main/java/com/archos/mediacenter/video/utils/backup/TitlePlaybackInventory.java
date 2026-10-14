@@ -15,6 +15,9 @@ public final class TitlePlaybackInventory {
     public final Map<Long,PortableTitlePlayback.State> choices;
     public final String signature;
     private TitlePlaybackInventory(Map<Long,PortableTitlePlayback.State> choices,JSONObject signature){this.choices=choices;this.signature=signature.toString();}
+    public void validatePhysical(PortablePhysicalReferences physical)throws JSONException,IOException{
+        JSONArray rows=new JSONObject(signature).getJSONArray("rows");for(int i=0;i<rows.length();i++){JSONObject row=rows.getJSONObject(i);var video=physical.video(row.getLong("id"));if(video==null)throw new IOException("Receiving playback file inventory is incomplete");String uri=video.getFileUri()==null?video.getFilePath():video.getFileUri().toString();StringBuilder hash=new StringBuilder();try{for(byte b:MessageDigest.getInstance("SHA-256").digest(new JSONArray().put(uri==null?JSONObject.NULL:uri).toString().getBytes(StandardCharsets.UTF_8)))hash.append(String.format(Locale.ROOT,"%02x",b&255));}catch(java.security.NoSuchAlgorithmException invalid){throw new IOException("Receiving identity guard unavailable",invalid);}if(!row.getString("guard").equals(hash.toString()))throw new IOException("Receiving playback locations changed during preview");}
+    }
     public static TitlePlaybackInventory capture(Context context)throws IOException,JSONException{
         File file=VideoOpenHelper.getDatabaseFile(context);JSONObject image=new JSONObject().put("exists",file.exists()).put("rows",new JSONArray());if(!file.exists())return new TitlePlaybackInventory(Collections.emptyMap(),image);
         try(SQLiteDatabase database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READONLY)){
