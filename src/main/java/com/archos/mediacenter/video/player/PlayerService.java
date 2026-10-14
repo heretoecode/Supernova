@@ -1403,6 +1403,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private VideoObserver mVideoObserver;
     private boolean mHasRequestedIndexing;
     private VideoDbInfo mVideoInfo;
+    private final com.archos.mediacenter.video.utils.backup.TitlePlaybackSession restoredTitle=new com.archos.mediacenter.video.utils.backup.TitlePlaybackSession();
+    private void applyRestoredTitle(VideoMetadata metadata){try{restoredTitle.metadata(this,mVideoInfo,metadata,mPlayer);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_choice_pending",invalid);}}
+    public void manualTitleChoice(VideoDbInfo info){try{com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this,info);restoredTitle.manual(this,info);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_title_choice_persistence_failed",invalid);}}
 
     /*
         IntroDB skip intro/outro (GET only, proof of concept)
@@ -1527,6 +1530,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void setVideoInfo(VideoDbInfo videoInfo, ResumeSource resumeSource){
         if (log.isDebugEnabled()) log.debug("setVideoInfo: videoInfo.id={}, videoInfo.uri={}", (videoInfo != null ? videoInfo.id : "null"), (videoInfo != null ? videoInfo.uri : "null"));
         mVideoInfo = videoInfo;
+        try{restoredTitle.videoInfo(this,mVideoInfo);}catch(org.json.JSONException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_choice_invalid",invalid);}
         if (mVideoInfo != null) {
             if (log.isDebugEnabled()) log.debug("setVideoInfo: setLastVideoPlayed");
             CustomApplication.setLastVideoPlayedId(mVideoInfo.id);
@@ -2025,6 +2029,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public void onAudioMetadataUpdated(VideoMetadata vMetadata, int newAudioTrack) {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("audio_metadata","selected",newAudioTrack,"tracks",vMetadata==null?0:vMetadata.getAudioTrackNb());
+        applyRestoredTitle(vMetadata);
         /*
          * if current audio track is invalid or not supported, choose the first supported one
          */
@@ -2144,6 +2149,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onAudioTrackSelectionCompleted(int track, boolean success) {
+        try{restoredTitle.selection(this,mVideoInfo,true,track,success);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_acknowledgement_failed",invalid);}
         if (success || mVideoInfo == null || mVideoInfo.audioTrack != track) {
             return;
         }
@@ -2165,6 +2171,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int newSubtitleTrack) {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("subtitle_metadata","selected",newSubtitleTrack,"tracks",vMetadata==null?0:vMetadata.getSubtitleTrackNb());
+        applyRestoredTitle(vMetadata);
         // note: if mIsPreparingSubs = true, onSubtitleMetadataUpdated can be called even if in not final state
         // subs could be still being copied in cache directory
         // however in a replay context cache is not  updated since all the subs have already been copied
@@ -2419,6 +2426,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onSubtitleTrackSelectionCompleted(int track, boolean success) {
+        try{restoredTitle.selection(this,mVideoInfo,false,track,success);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_acknowledgement_failed",invalid);}
         if (success || mVideoInfo == null || mVideoInfo.subtitleTrack != track) {
             return;
         }

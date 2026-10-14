@@ -1,0 +1,29 @@
+{
+  "source_sha": "21e9d81435f136845763f7fec75a14b1f3c6e34f",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 7,
+  "tests": 56,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CombinedIndexedSourcesTest",
+    "com.archos.mediacenter.video.utils.CombinedPlaylistJournalTest",
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackJournalTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackOverridesTest"
+  ],
+  "duration": "2m 52s",
+  "log_sha256": "4e63f729b6b54db3b72be1d623205158ebb5bb6d0e870bf8ceb06446141320fd",
+  "coverage": [
+    "Explicit title preference overlays share existing combined journal and rollback/commit decision",
+    "Read-only native inventory signature guards track/path changes before journal creation",
+    "Present-empty and omitted title choices stay independent of credentials/history/resume",
+    "New-device choices remain pending without media-store creation",
+    "Earlier indexed-source/playlist/default preference journal regressions"
+  ],
+  "limits": "Unregistered title domain. PlayerService/manual selection callback integration follows this exact source. Synthetic SQLite and metadata fixtures, not actual Android force-stop, decoder/output, full provider lifecycle or Shield acceptance."
+}

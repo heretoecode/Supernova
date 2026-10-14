@@ -23,7 +23,7 @@ import org.json.*;
 public final class PreferenceRestoreTransaction {
     private static final String HOME="preview_home_rows41";
     private static final int MAX_JOURNAL=32*1024*1024;
-    private static final Object LOCK=new Object();
+    static final Object LOCK=new Object();
     public enum Recovery { NONE, ROLLED_BACK, COMPLETED }
     public enum Checkpoint { JOURNAL_DURABLE, DEFAULT_DURABLE, HEALTH_DURABLE, VIEWING_DURABLE, MEDIA_PREPARED, BOOKMARKS_PREPARED, SOURCES_PREPARED, PREFERENCES_DURABLE, COMMIT_MARKER_DURABLE, MEDIA_DURABLE, BOOKMARKS_DURABLE, SOURCES_DURABLE, COMPLETION_DURABLE }
     public interface Observer { void reached(Checkpoint checkpoint)throws IOException; }

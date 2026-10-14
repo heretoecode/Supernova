@@ -2509,6 +2509,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mIndexHelper.writeVideoInfo(mVideoInfo, mNetworkBookmarksEnabled);
         }
     }
+    private void supersedeRestoredTitleChoice(){if(PlayerService.sPlayerService!=null)PlayerService.sPlayerService.manualTitleChoice(mVideoInfo);else try{com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this,mVideoInfo);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_title_choice_persistence_failed",invalid);}}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -3645,6 +3646,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mVideoInfo.subtitleDelay = delay;
         mVideoInfo.subtitleRatio = ratio;
         if (delayChanged || ratioChanged) {
+            supersedeRestoredTitleChoice();
             mSubtitleManager.clear();
             mPlayer.setSubtitleDelay(mVideoInfo.subtitleDelay);
             mPlayer.setSubtitleRatio(mVideoInfo.subtitleRatio);
@@ -3952,6 +3954,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 }
             }
         }
+        if(ret)supersedeRestoredTitleChoice();
         return ret;
     }
 

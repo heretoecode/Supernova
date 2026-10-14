@@ -60,5 +60,18 @@ public final class TitlePlaybackOverrides {
     public static PortableTitlePlayback.State validatedChoice(Context context,VideoDbInfo info,VideoMetadata metadata)throws JSONException{
         JSONObject saved=receiving(context,info);if(saved==null)return null;PortableTitlePlayback.State source=validate(saved);if(!TitlePlaybackCompatibility.accepts(metadata,source))return null;Integer params=TitlePlaybackCompatibility.receivingParams(metadata,source);return new PortableTitlePlayback.State(params,source.delay,source.ratio,source.language,source.subtitleNone);
     }
+    public static String token(Context context,VideoDbInfo info)throws JSONException{JSONObject saved=receiving(context,info);return saved==null?null:saved.toString();}
+    /** Callback acknowledgement is conditional on the exact prepared choice, never a later manual edit. */
+    public static String pending(Context context,VideoDbInfo info,String expected,boolean pending)throws JSONException,java.io.IOException{
+        synchronized(PreferenceRestoreTransaction.LOCK){JSONObject saved=receiving(context,info);if(saved==null||!saved.toString().equals(expected))return null;if(saved.getBoolean("pending")==pending)return expected;saved.put("pending",pending);String value=saved.toString();if(!PreferenceManager.getDefaultSharedPreferences(context).edit().putString(key(info.id),value).commit())throw new java.io.IOException("Explicit playback acknowledgement could not be saved");return value;}
+    }
+    /** Only explicit user controls supersede restoration; decoder defaults must not erase pending intent. */
+    public static boolean supersede(Context context,VideoDbInfo info)throws JSONException,java.io.IOException{
+        synchronized(PreferenceRestoreTransaction.LOCK){JSONObject previous=receiving(context,info);if(previous==null)return false;String language=info.subtitleLanguage==null?null:info.subtitleLanguage.toLowerCase(Locale.ROOT);if(language!=null&&!language.matches("(?:[a-z]{2}|srt|vtt)"))language=null;
+            Integer params=info.audioTrack<0?null:com.archos.mediaprovider.video.VideoStore.paramsFromTracks(info.audioTrack,info.subtitleTrack);if(info.audioTrack>1023||info.subtitleTrack>1022||info.subtitleTrack< -1)throw new JSONException("Manual playback index exceeds saved format");Boolean none=params==null||info.subtitleTrack<0?null:info.subtitleTrack==info.nbSubtitles;if(Boolean.TRUE.equals(none))language=null;
+            PortableTitlePlayback.State state=new PortableTitlePlayback.State(params,info.subtitleDelay,info.subtitleRatio,language,none);Object physical=previous.get("physical");if(physical==JSONObject.NULL&&state.meaningful()){String uri=info.uri==null?null:info.uri.toString(),ref=PortablePhysicalReferences.fingerprint(uri);physical=ref==null?new PortableTitleReferences(context,null).reference("v"+info.id):ref;}
+            JSONObject record=previous.put("physical",physical).put("choice",choice(state)).put("pending",false);validate(record);if(!PreferenceManager.getDefaultSharedPreferences(context).edit().putString(key(info.id),record.toString()).commit())throw new java.io.IOException("Manual playback choice could not supersede restoration");return true;
+        }
+    }
     private TitlePlaybackOverrides(){}
 }
