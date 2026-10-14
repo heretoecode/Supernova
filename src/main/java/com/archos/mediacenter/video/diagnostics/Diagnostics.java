@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.zip.*;
 
-/** Opt-in structured instrumentation. Never pass user text, headers or credentials here. */
+/** Bounded structured instrumentation. Never pass user text, headers or credentials here. */
 public final class Diagnostics {
     public static final String LEVEL="supernova_diagnostic_level";
     private static final java.util.concurrent.atomic.AtomicLong DROPPED=new java.util.concurrent.atomic.AtomicLong(),WRITE_ERRORS=new java.util.concurrent.atomic.AtomicLong(),SEQUENCE=new java.util.concurrent.atomic.AtomicLong();

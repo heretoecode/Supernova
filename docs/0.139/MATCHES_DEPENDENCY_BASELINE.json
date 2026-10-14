@@ -14,5 +14,5 @@
     "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
     "src/com/archos/mediascraper/ShowTags.java"
   ],
-  "scope": "Java/provider and schema63 view-only migration for guarded canonical restore/clear. Normal native tables/cleanup triggers preserved. Staged schema9 integration; codec26 not yet registered."
+  "scope": "Java/provider and schema63 view-only migration for guarded canonical restore/clear. Normal native tables/cleanup triggers preserved. Production schema9 canonical integration and codec26; exact acceptance stages in MATCHES_CODEC_COMBINED_VERIFICATION.json."
 }
