@@ -154,7 +154,7 @@ public final class PreferenceRestoreTransaction {
             }catch(JSONException|RuntimeException invalid){throw new IOException("Pending title choices could not be reconciled safely",invalid);}
         }}
     }
-    /** Staged compatible-owner canonical preparation; codec registration waits for clearing/cross-kind coverage. */
+    /** Resolve canonical metadata before the preview; mutations belong to the coordinated restore journal. */
     public Plan prepareCanonicalMatches(Map<BackupCategory,JSONObject> selected,Snapshot snapshot,PortablePhysicalReferences physical,
             CanonicalMatchMaterial.Resolver resolver,BooleanSupplier cancel)throws IOException,JSONException {
         return prepareCanonicalMatches(selected,snapshot,physical,resolver,cancel,null,64);

@@ -93,7 +93,7 @@ public final class BackupOperationModel extends AndroidViewModel {
         work(Phase.PREPARING_RESTORE,"Checking selected replacement and receiving identities…",token->{
             if(imported==null||copy.isEmpty()||!imported.categories().containsAll(copy))throw new IOException("Select only present categories");
             Map<BackupCategory,JSONObject> payloads=new EnumMap<>(BackupCategory.class);for(var item:imported.payloads(token::get).entrySet())if(copy.contains(item.getKey()))payloads.put(item.getKey(),item.getValue());
-            boolean needsInventory=!Collections.disjoint(copy,EnumSet.of(BackupCategory.HOME,BackupCategory.WATCH_NEXT,BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.HIDDEN,BackupCategory.TITLE_PLAYBACK));
+            boolean needsInventory=!Collections.disjoint(copy,EnumSet.of(BackupCategory.HOME,BackupCategory.WATCH_NEXT,BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.HIDDEN,BackupCategory.TITLE_PLAYBACK,BackupCategory.MATCHES));
             LogicalBackupCatalog catalog=needsInventory?LogicalBackupCatalog.capture(getApplication(),token::get):null;
             PreferenceRestoreTransaction transaction=new PreferenceRestoreTransaction(getApplication());restorePlan=transaction.prepareCanonicalMatches(payloads,catalog==null?new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot():catalog.snapshot,new PortablePhysicalReferences(getApplication(),catalog==null?Collections.emptyList():catalog.physical),CanonicalMatchMaterial.PROVIDER,token::get);
             if(token.get())throw new InterruptedIOException("Restore preview cancelled");
