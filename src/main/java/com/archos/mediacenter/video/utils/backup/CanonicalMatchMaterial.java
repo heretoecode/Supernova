@@ -29,7 +29,7 @@ public final class CanonicalMatchMaterial {
         else {
             if(result.isMovie||!(tags instanceof EpisodeTags))throw new IOException("Canonical episode kind does not match the request");
             EpisodeTags episode=(EpisodeTags)tags;
-            if(episode.getShowTags()==null||episode.getShowTags().getOnlineId()!=Long.parseLong(identity[2])||episode.getSeason()!=Integer.parseInt(identity[3])||episode.getEpisode()!=Integer.parseInt(identity[4])||episode.getOnlineId()<=0||requested.episodeProvider!=null&&episode.getOnlineId()!=requested.episodeProvider)throw new IOException("Canonical episode identity does not match the request");
+            if(episode.getShowTags()==null||episode.getShowTags().getTitle()==null||episode.getShowTags().getTitle().trim().isEmpty()||episode.getShowTags().getOnlineId()!=Long.parseLong(identity[2])||episode.getSeason()!=Integer.parseInt(identity[3])||episode.getEpisode()!=Integer.parseInt(identity[4])||episode.getOnlineId()<=0||requested.episodeProvider!=null&&episode.getOnlineId()!=requested.episodeProvider)throw new IOException("Canonical episode identity does not match the request");
         }
         if(tags.getTitle()==null||tags.getTitle().trim().isEmpty())throw new IOException("Canonical title is unavailable");
         return tags;
@@ -73,6 +73,9 @@ public final class CanonicalMatchMaterial {
     /** One preparation scope reserves distinct native identities across all selected physical targets. */
     public static final class Preparation {
         private final Context context;private final java.util.Map<String,Long> next=new java.util.HashMap<>();
+        private static final class Parent {final long id;final Long pin;Parent(long id,Long pin){this.id=id;this.pin=pin;}}
+        private final java.util.Map<Long,Parent> plannedParents=new java.util.HashMap<>();private final java.util.Set<String> plannedNames=new java.util.HashSet<>();
+        private boolean occupied(android.database.sqlite.SQLiteDatabase database,String name){if(plannedNames.contains(name))return true;try(android.database.Cursor row=database.query("SHOW",new String[]{"_id"},"name_show=?",new String[]{name},null,null,null)){return row.moveToFirst();}}
         public Preparation(Context context){this.context=context;}
         private long reserveNext(android.database.sqlite.SQLiteDatabase database,String table)throws IOException {
             long value=next.containsKey(table)?next.get(table):reserve(database,table);if(value<=0||value==Long.MAX_VALUE)throw new IOException("Canonical metadata identity limit reached");next.put(table,value+1);return value;
@@ -85,16 +88,22 @@ public final class CanonicalMatchMaterial {
                 if(material instanceof MovieTags){Long pin=null;if(owner.type==BaseTags.MOVIE&&owner.match!=null)try(android.database.Cursor row=database.query("MOVIE",new String[]{"Nova_pinned"},"_id=? AND video_id=?",new String[]{Long.toString(owner.localId),Long.toString(owner.videoId)},null,null,null)){if(!row.moveToFirst())throw new IOException("Receiving movie owner disappeared");pin=row.isNull(0)?null:row.getLong(0);}
                     return java.util.List.of(prepareInternal(context,owner,requested,file,0,pin,(ctx,match,uri)->resolved,this));
                 }
-                EpisodeTags episode=(EpisodeTags)material;long target;Long targetPin;
-                try(android.database.Cursor row=database.query("SHOW",new String[]{"_id","Nova_pinned","name_show"},"s_online_id=?",new String[]{Long.toString(episode.getShowTags().getOnlineId())},null,null,null)){
-                    if(!row.moveToFirst()||row.isNull(2)||row.getString(2).trim().isEmpty())throw new IOException("Receiving canonical parent requires preparation");target=row.getLong(0);targetPin=row.isNull(1)?null:row.getLong(1);if(row.moveToNext())throw new IOException("Receiving parent is ambiguous");
+                EpisodeTags episode=(EpisodeTags)material;long provider=episode.getShowTags().getOnlineId();Parent parent=plannedParents.get(provider);OwnedCanonicalBatch newParent=null;String reservedName=null;
+                if(parent==null)try(android.database.Cursor row=database.query("SHOW",new String[]{"_id","Nova_pinned","name_show"},"s_online_id=?",new String[]{Long.toString(provider)},null,null,null)){
+                    if(row.moveToFirst()){if(row.isNull(2)||row.getString(2).trim().isEmpty())throw new IOException("Receiving parent has unavailable canonical facts");parent=new Parent(row.getLong(0),row.isNull(1)?null:row.getLong(1));if(row.moveToNext())throw new IOException("Receiving parent is ambiguous");}
+                    else{
+                        String name=episode.getShowTags().getTitle();if(occupied(database,name)){int year=episode.getShowTags().getPremieredYear();if(year>1)name=name+" "+year;if(occupied(database,name))throw new IOException("Canonical parent name conflicts with receiving metadata");}
+                        parent=new Parent(reserveNext(database,"SHOW"),null);reservedName=name;newParent=guard(episode.getShowTags().prepareNewRestore(owner.videoId,owner.type,owner.localId,parent.id,name),owner);
+                    }
                 }
+                long target=parent.id;Long targetPin=parent.pin;
                 long metadata;Long oldProvider=null,oldShow=null,oldShowProvider=null,oldPin=null;boolean create;
                 try(android.database.Cursor row=database.query("EPISODE",new String[]{"_id","e_online_id","show_episode"},"video_id=?",new String[]{Long.toString(owner.videoId)},null,null,null)){
                     create=!row.moveToFirst();if(create)metadata=reserveNext(database,"EPISODE");else{metadata=row.getLong(0);oldProvider=row.isNull(1)?null:row.getLong(1);oldShow=row.getLong(2);if(row.moveToNext())throw new IOException("Receiving episode owner is ambiguous");}
                 }
                 if(!create)try(android.database.Cursor row=database.query("SHOW",new String[]{"s_online_id","Nova_pinned"},"_id=?",new String[]{oldShow.toString()},null,null,null)){if(!row.moveToFirst())throw new IOException("Receiving episode parent disappeared");oldShowProvider=row.getLong(0);oldPin=row.isNull(1)?null:row.getLong(1);}
-                return java.util.List.of(guard(episode.prepareCanonicalRestore(context,owner.videoId,owner.type,owner.localId,metadata,oldProvider,oldShow,oldShowProvider,oldPin,target,targetPin,create),owner));
+                OwnedCanonicalBatch child=guard(episode.prepareCanonicalRestore(context,owner.videoId,owner.type,owner.localId,metadata,oldProvider,oldShow,oldShowProvider,oldPin,target,targetPin,create),owner);
+                if(newParent!=null){plannedParents.put(provider,parent);plannedNames.add(reservedName);return java.util.List.of(newParent,child);}return java.util.List.of(child);
             }catch(IllegalArgumentException incompatible){throw new IOException("Canonical episode preparation is incompatible",incompatible);}
         }
     }

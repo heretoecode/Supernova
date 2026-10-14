@@ -1,17 +1,18 @@
 diff --git a/src/com/archos/mediaprovider/video/ScraperProvider.java b/src/com/archos/mediaprovider/video/ScraperProvider.java
-index bbf4e60..69daa07 100644
+index bbf4e60..ef099b3 100644
 --- a/src/com/archos/mediaprovider/video/ScraperProvider.java
 +++ b/src/com/archos/mediaprovider/video/ScraperProvider.java
-@@ -61,6 +61,8 @@ public class ScraperProvider extends ContentProvider {
+@@ -61,6 +61,9 @@ public class ScraperProvider extends ContentProvider {
  
      private static final int MOVIE = SCRAPER_PROVIDER_OFFSET + 30;
      private static final int MOVIE_ID = SCRAPER_PROVIDER_OFFSET + 31;
 +    private static final int MOVIE_RESTORE_OWNED = SCRAPER_PROVIDER_OFFSET + 500;
 +    private static final int MATCH_RESTORE_CLEAR = SCRAPER_PROVIDER_OFFSET + 502;
++    private static final int SHOW_RESTORE_NEW = SCRAPER_PROVIDER_OFFSET + 503;
      private static final int MOVIE_ALL_INFOS = SCRAPER_PROVIDER_OFFSET + 33;
      private static final int MOVIE_ALL = SCRAPER_PROVIDER_OFFSET + 34;
  
-@@ -71,6 +73,7 @@ public class ScraperProvider extends ContentProvider {
+@@ -71,6 +74,7 @@ public class ScraperProvider extends ContentProvider {
      private static final int SHOW_ALL = SCRAPER_PROVIDER_OFFSET + 44;
      private static final int SHOW_ONLINE_ID = SCRAPER_PROVIDER_OFFSET + 45;
  
@@ -19,7 +20,7 @@ index bbf4e60..69daa07 100644
      private static final int EPISODE = SCRAPER_PROVIDER_OFFSET + 50;
      private static final int EPISODE_ID = SCRAPER_PROVIDER_OFFSET + 51;
      private static final int EPISODE_ALL_INFOS = SCRAPER_PROVIDER_OFFSET + 53;
-@@ -161,11 +164,14 @@ public class ScraperProvider extends ContentProvider {
+@@ -161,11 +165,15 @@ public class ScraperProvider extends ContentProvider {
      /**
       * called from VideoProvider static context. Registers these URIs
       */
@@ -31,11 +32,12 @@ index bbf4e60..69daa07 100644
                  MOVIE);
 +        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.RESTORE_OWNED), MOVIE_RESTORE_OWNED);
 +        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.RESTORE_CLEAR_MATCH), MATCH_RESTORE_CLEAR);
++        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Show.URI.RESTORE_NEW), SHOW_RESTORE_NEW);
 +        sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Episode.URI.RESTORE_OWNED), EPISODE_RESTORE_OWNED);
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.ALL),
                  MOVIE_ALL);
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.ID) + "#",
-@@ -374,8 +380,14 @@ public class ScraperProvider extends ContentProvider {
+@@ -374,8 +382,14 @@ public class ScraperProvider extends ContentProvider {
      private final ContentResolver mCr;
      private final Context mContext;
  
@@ -50,7 +52,7 @@ index bbf4e60..69daa07 100644
          mDbHolder = dbH;
          mContext = context;
          mCr = context.getContentResolver();
-@@ -540,6 +552,64 @@ public class ScraperProvider extends ContentProvider {
+@@ -540,16 +554,123 @@ public class ScraperProvider extends ContentProvider {
          ContentResolver cr = mCr;
          SQLiteDatabase db = mDbHolder.get();
          switch (sUriMatcher.match(uri)) {
@@ -115,7 +117,17 @@ index bbf4e60..69daa07 100644
              case MOVIE:
                  rowId = db.insert(ScraperTables.MOVIE_TABLE_NAME,
                          ScraperStore.Movie.ID, values);
-@@ -550,6 +620,48 @@ public class ScraperProvider extends ContentProvider {
+                 noteUri = createUriAndNotify(rowId, db, ScraperStore.Movie.URI.ID, cr, ADDITIONAL_MOVIE);
+                 break;
++            case SHOW_RESTORE_NEW: {
++                if(!db.inTransaction())throw new IllegalStateException("Canonical parent creation requires a provider transaction");
++                Long id=values.getAsLong(ScraperStore.Show.ID),provider=values.getAsLong(ScraperStore.Show.ONLINE_ID);String name=values.getAsString(ScraperStore.Show.NAME);
++                if(id==null||id<=0||provider==null||provider<=0||name==null||name.trim().isEmpty()||!values.containsKey(VideoStore.Video.VideoColumns.NOVA_PINNED)||values.getAsLong(VideoStore.Video.VideoColumns.NOVA_PINNED)!=null)throw new IllegalArgumentException("Invalid canonical parent");
++                try(Cursor current=db.query(ScraperTables.SHOW_TABLE_NAME,new String[]{"_id"},"_id=? OR s_online_id=? OR name_show=?",new String[]{id.toString(),provider.toString(),name},null,null,null)){if(current.moveToFirst())throw new IllegalArgumentException("Receiving parent slot is occupied");}
++                rowId=db.insertOrThrow(ScraperTables.SHOW_TABLE_NAME,ScraperStore.Show.ID,values);noteUri=createUriAndNotify(rowId,db,ScraperStore.Show.URI.ID,cr,ADDITIONAL_SHOW);break;
++            }
+             case SHOW:
+                 rowId = db.insertWithOnConflict(ScraperTables.SHOW_TABLE_NAME,
                          ScraperStore.Show.ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                  noteUri = createUriAndNotify(rowId, db, ScraperStore.Show.URI.ID, cr, ADDITIONAL_SHOW);
                  break;
@@ -165,7 +177,7 @@ index bbf4e60..69daa07 100644
                  rowId = db.insert(ScraperTables.EPISODE_TABLE_NAME,
                          ScraperStore.Episode.ID, values);
 diff --git a/src/com/archos/mediaprovider/video/ScraperStore.java b/src/com/archos/mediaprovider/video/ScraperStore.java
-index 285f608..e0d338d 100644
+index 285f608..2d48dd2 100644
 --- a/src/com/archos/mediaprovider/video/ScraperStore.java
 +++ b/src/com/archos/mediaprovider/video/ScraperStore.java
 @@ -28,7 +28,14 @@ public final class ScraperStore {
@@ -192,7 +204,15 @@ index 285f608..e0d338d 100644
              public static final Uri ALL = Uri.parse(CONTENT_AUTHORITY + "/tags/movies");
              public static final Uri ID = Uri.parse(CONTENT_AUTHORITY + "/tags/movie/id/");
              public static final Uri ALL_INFOS = Uri.parse(CONTENT_AUTHORITY + "/tags/movie/full/");
-@@ -244,6 +253,11 @@ public final class ScraperStore {
+@@ -153,6 +162,7 @@ public final class ScraperStore {
+ 
+         public static class URI {
+             public static final Uri BASE = Uri.parse(CONTENT_AUTHORITY + "/tags/show");
++            public static final Uri RESTORE_NEW = Uri.parse(CONTENT_AUTHORITY + "/tags/show/restore-new");
+             public static final Uri ID = Uri.parse(CONTENT_AUTHORITY + "/tags/show/id/");
+             public static final Uri ONLINE_ID = Uri.parse(CONTENT_AUTHORITY + "/tags/show/online_id/");
+             public static final Uri NAME = Uri.parse(CONTENT_AUTHORITY + "/tags/show/name/");
+@@ -244,6 +254,11 @@ public final class ScraperStore {
      }
  
      public static class Episode {
@@ -204,7 +224,7 @@ index 285f608..e0d338d 100644
          public static final String ID = "_id";
          public static final String VIDEO_ID = "video_id";
          public static final String NAME = "name_episode";
-@@ -269,6 +283,8 @@ public final class ScraperStore {
+@@ -269,6 +284,8 @@ public final class ScraperStore {
  
          public static class URI {
              public static final Uri BASE = Uri.parse(CONTENT_AUTHORITY + "/tags/episode");
@@ -685,7 +705,7 @@ index 30bba74..b450fa7 100644
      @Override
 diff --git a/src/com/archos/mediascraper/OwnedCanonicalBatch.java b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
 new file mode 100644
-index 0000000..8258d10
+index 0000000..6bd51ef
 --- /dev/null
 +++ b/src/com/archos/mediascraper/OwnedCanonicalBatch.java
 @@ -0,0 +1,81 @@
@@ -747,7 +767,7 @@ index 0000000..8258d10
 +            long storedPrimary=record.getLong("primary");if(storedPrimary<0||storedPrimary>=count)throw new org.json.JSONException("Invalid canonical recovery primary operation");int primary=(int)storedPrimary;
 +            if(decoded==null||decoded.isEmpty()||decoded.size()>10000||parcel.dataAvail()!=0||primary<0||primary>=decoded.size())throw new org.json.JSONException("Invalid canonical recovery operations");
 +            android.net.Uri owner=decoded.get(primary).getUri();
-+            if(owner.equals(ScraperStore.RESTORE_CLEAR_MATCH)?primary!=2:owner.equals(ScraperStore.Movie.URI.RESTORE_OWNED)?primary!=2&&primary!=3:owner.equals(ScraperStore.Episode.URI.RESTORE_OWNED)?primary!=3&&primary!=4:true)throw new org.json.JSONException("Invalid canonical recovery owner");
++            if(owner.equals(ScraperStore.RESTORE_CLEAR_MATCH)?primary!=2:owner.equals(ScraperStore.Movie.URI.RESTORE_OWNED)?primary!=2&&primary!=3:owner.equals(ScraperStore.Episode.URI.RESTORE_OWNED)?primary!=3&&primary!=4:owner.equals(ScraperStore.Show.URI.RESTORE_NEW)?primary!=4:true)throw new org.json.JSONException("Invalid canonical recovery owner");
 +            for(int i=0;i<decoded.size();i++) {
 +                ContentProviderOperation operation=decoded.get(i);
 +                if(operation==null||operation.isDelete()||i<primary&&!operation.isAssertQuery()
@@ -770,3 +790,40 @@ index 0000000..8258d10
 +                ? ContentUris.parseId(result[primaryOperation].uri) : -1;
 +    }
 +}
+diff --git a/src/com/archos/mediascraper/ShowTags.java b/src/com/archos/mediascraper/ShowTags.java
+index f1a8bdd..30d4541 100644
+--- a/src/com/archos/mediascraper/ShowTags.java
++++ b/src/com/archos/mediascraper/ShowTags.java
+@@ -164,6 +164,32 @@ public class ShowTags extends VideoTags {
+     long showId = -1;
+     String newCover, newBackdrop;
+ 
++    /** Prepare a new canonical parent with no receiving pin or existing provider/name owner. */
++    public OwnedCanonicalBatch prepareNewRestore(long videoId,long fileType,long fileMetadataId,long metadataId,String canonicalName) {
++        if(videoId<=0||metadataId<=0||mOnlineId<=0||canonicalName==null||canonicalName.trim().isEmpty()||fileMetadataId< -1
++                ||fileType!= -1&&fileType!=0&&fileType!=BaseTags.MOVIE&&fileType!=BaseTags.TV_SHOW)
++            throw new IllegalArgumentException("Invalid canonical parent creation");
++        ArrayList<ContentProviderOperation> operations=new ArrayList<>();ContentValues file=new ContentValues();file.put("ArchosMediaScraper_type",fileType);file.put("ArchosMediaScraper_id",fileMetadataId);
++        operations.add(ContentProviderOperation.newAssertQuery(ContentUris.withAppendedId(com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI,videoId)).withValues(file).withExpectedCount(1).build());
++        operations.add(ContentProviderOperation.newAssertQuery(ContentUris.withAppendedId(ScraperStore.Show.URI.ID,metadataId)).withExpectedCount(0).build());
++        operations.add(ContentProviderOperation.newAssertQuery(ScraperStore.Show.URI.ALL).withSelection(ScraperStore.Show.ONLINE_ID+"=?",new String[]{Long.toString(mOnlineId)}).withExpectedCount(0).build());
++        operations.add(ContentProviderOperation.newAssertQuery(ScraperStore.Show.URI.ALL).withSelection(ScraperStore.Show.NAME+"=?",new String[]{canonicalName}).withExpectedCount(0).build());
++        ContentValues values=new ContentValues();values.put(ScraperStore.Show.ID,metadataId);values.put(ScraperStore.Show.NAME,canonicalName);values.put(ScraperStore.Show.ONLINE_ID,mOnlineId);values.putNull(com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.NOVA_PINNED);
++        values.put(ScraperStore.Show.IMDB_ID,mImdbId);values.put(ScraperStore.Show.CONTENT_RATING,mContentRating);values.put(ScraperStore.Show.PREMIERED,mPremiered==null?null:mPremiered.getTime());values.put(ScraperStore.Show.RATING,mRating);values.put(ScraperStore.Show.PLOT,mPlot);
++        values.put(ScraperStore.Show.ORIGINAL_LANGUAGE,mOriginalLanguage);values.put(ScraperStore.Show.ORIGINAL_TITLE,mOriginalTitle);values.put(ScraperStore.Show.SPOKEN_LANGUAGES,mSpokenLanguages);values.put(ScraperStore.Show.TITLE_LANGUAGE,mTitleLanguage);values.put(ScraperStore.Show.SORT_NAME,com.archos.mediascraper.preprocess.SortTitleUtils.extractSortTitle(canonicalName,mTitleLanguage));
++        values.put(ScraperStore.Show.ACTORS_FORMATTED,getActorsFormatted());values.put(ScraperStore.Show.DIRECTORS_FORMATTED,getDirectorsFormatted());values.put(ScraperStore.Show.WRITERS_FORMATTED,getWritersFormatted());values.put(ScraperStore.Show.GERNES_FORMATTED,getGenresFormatted());values.put(ScraperStore.Show.STUDIOS_FORMATTED,getStudiosFormatted());
++        ScraperImage cover=getDefaultPoster(),backdrop=getDefaultBackdrop();values.put(ScraperStore.Show.COVER,cover==null?null:cover.getLargeFile());values.put(ScraperStore.Show.BACKDROP,backdrop==null?null:backdrop.getLargeFile());values.put(ScraperStore.Show.BACKDROP_URL,backdrop==null?null:backdrop.getLargeUrl());
++        final int primary=operations.size();operations.add(ContentProviderOperation.newInsert(ScraperStore.Show.URI.RESTORE_NEW).withValues(values).build());
++        for(String studio:mStudios)operations.add(ContentProviderOperation.newInsert(ScraperStore.Studio.URI.SHOW).withValue(ScraperStore.Show.Studio.NAME,studio).withValueBackReference(ScraperStore.Show.Studio.SHOW,primary).build());
++        for(String director:mDirectors)operations.add(ContentProviderOperation.newInsert(ScraperStore.Director.URI.SHOW).withValue(ScraperStore.Show.Director.NAME,director).withValueBackReference(ScraperStore.Show.Director.SHOW,primary).build());
++        for(String writer:mWriters)operations.add(ContentProviderOperation.newInsert(ScraperStore.Writer.URI.SHOW).withValue(ScraperStore.Show.Writer.NAME,writer).withValueBackReference(ScraperStore.Show.Writer.SHOW,primary).build());
++        for(String actor:mActors.keySet())operations.add(ContentProviderOperation.newInsert(ScraperStore.Actor.URI.SHOW).withValue(ScraperStore.Show.Actor.NAME,actor).withValue(ScraperStore.Show.Actor.ROLE,mActors.get(actor)).withValueBackReference(ScraperStore.Show.Actor.SHOW,primary).build());
++        for(String genre:mGenres)operations.add(ContentProviderOperation.newInsert(ScraperStore.Genre.URI.SHOW).withValue(ScraperStore.Show.Genre.NAME,genre).withValueBackReference(ScraperStore.Show.Genre.SHOW,primary).build());
++        int poster=-1,background=-1;for(ScraperImage image:safeList(mPosters)){if(poster<0)poster=operations.size();operations.add(image.getSaveOperation(metadataId));}for(ScraperImage image:safeList(mBackdrops)){if(background<0)background=operations.size();operations.add(image.getSaveOperation(metadataId));}
++        if(poster>=0||background>=0){ContentValues refs=new ContentValues();if(poster>=0)refs.put(ScraperStore.Show.POSTER_ID,poster);if(background>=0)refs.put(ScraperStore.Show.BACKDROP_ID,background);operations.add(ContentProviderOperation.newUpdate(ScraperStore.Show.URI.BASE).withValueBackReferences(refs).withSelection(ScraperStore.Show.ID+"=?",new String[]{Long.toString(metadataId)}).build());}
++        return new OwnedCanonicalBatch(operations,primary);
++    }
++
+     @Override
+     public long save(Context context, long videoId) {
+ 
