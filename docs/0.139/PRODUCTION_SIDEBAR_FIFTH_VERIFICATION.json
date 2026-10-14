@@ -1,0 +1,15 @@
+{
+  "source_sha": "0e08dfb6dd627f3b56d4897d557831645c1773e1",
+  "result": "FAIL",
+  "classes": 1,
+  "tests": 3,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "30s",
+  "log_sha256": "386ef6de9281b506e51829cc57971f9750df28df5e5e9c0319e747503163d921",
+  "reason": "Geometry shows child target488\u2013522 inside608px content, padded viewport492px and scrollY0. Programmatic activation can happen before child focus/layout, so the focus-only reveal callback is insufficient. Next source also schedules reveal from section activation."
+}
