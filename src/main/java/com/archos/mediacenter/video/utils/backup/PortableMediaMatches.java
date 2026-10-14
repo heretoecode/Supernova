@@ -57,8 +57,8 @@ public final class PortableMediaMatches {
         JSONObject payload=new JSONObject().put("schema",1).put("rows",new JSONArray(rows.values()));validate(payload);return payload;
     }
     public static final class Target {
-        public final long localId;public final Match match;
-        public Target(long localId,Match match)throws JSONException{if(localId<=0||match==null)throw new JSONException("Invalid receiving match target");this.localId=localId;this.match=match;}
+        public final long localId,receivingVideoId;public final Match match;
+        public Target(long localId,long receivingVideoId,Match match)throws JSONException{if(localId<=0||receivingVideoId<=0||match==null)throw new JSONException("Invalid receiving match target");this.localId=localId;this.receivingVideoId=receivingVideoId;this.match=match;}
     }
     public static final class Prepared {
         public final Map<Long,Target> associations;public final String pending;public final int unresolved;
@@ -68,7 +68,7 @@ public final class PortableMediaMatches {
     public static Prepared prepare(JSONObject payload,Collection<Long> receivingFiles,Collection<Target> targets,PortablePhysicalReferences physical)throws JSONException {
         validate(payload);Set<Long> files=new HashSet<>();for(Long id:receivingFiles)if(id==null||id<=0||!files.add(id))throw new JSONException("Invalid receiving physical scope");Map<String,List<Target>> providers=new HashMap<>();for(Target target:targets)if(target==null)throw new JSONException("Missing receiving match target");else providers.computeIfAbsent(target.match.identity,key->new ArrayList<>()).add(target);
         Map<Long,Target> result=new LinkedHashMap<>();JSONArray pending=new JSONArray(),rows=payload.getJSONArray("rows");for(int i=0;i<rows.length();i++){
-            JSONObject row=rows.getJSONObject(i);Match incoming=match(row);Video video=physical.resolve(row.getString("physical"));List<Target> candidates=providers.getOrDefault(incoming.identity,Collections.emptyList());Target target=candidates.size()==1&&incoming.same(candidates.get(0).match)?candidates.get(0):null;
+            JSONObject row=rows.getJSONObject(i);Match incoming=match(row);Video video=physical.resolve(row.getString("physical"));List<Target> candidates=new ArrayList<>();if(video!=null)for(Target candidate:providers.getOrDefault(incoming.identity,Collections.emptyList()))if(candidate.receivingVideoId==video.getId()&&incoming.same(candidate.match))candidates.add(candidate);Target target=candidates.size()==1?candidates.get(0):null;
             if(video==null||!files.contains(video.getId())||target==null){pending.put(new JSONObject(row.toString()));continue;}result.put(video.getId(),target);
         }return new Prepared(result,pending);
     }
