@@ -28,7 +28,7 @@ public final class PortableTitlePlayback {
                 throw new IllegalArgumentException("Unsupported per-title playback choice");
             this.params=params;this.delay=delay;this.ratio=ratio;this.language=language;this.subtitleNone=subtitleNone;
         }
-        private boolean meaningful(){return params!=null||delay!=0||ratio!=0||language!=null;}
+        boolean meaningful(){return params!=null||delay!=0||ratio!=0||language!=null;}
     }
     private static int integer(Cursor rows,int index,int fallback)throws IOException {
         if(rows.isNull(index))return fallback;
@@ -57,7 +57,7 @@ public final class PortableTitlePlayback {
         return Collections.unmodifiableMap(result);
     }
     private static boolean integer(Object value){return value instanceof Integer||value instanceof Long;}
-    private static State state(JSONObject row,int schema)throws JSONException {
+    static State state(JSONObject row,int schema)throws JSONException {
         if(!row.has("params")||!row.has("language")||!integer(row.get("delay"))||!integer(row.get("ratio"))||
                 !row.isNull("params")&&!integer(row.get("params"))||!row.isNull("language")&&!(row.get("language") instanceof String))
             throw new JSONException("Invalid per-title playback fields");

@@ -1,0 +1,23 @@
+{
+  "source_sha": "d18a80f83fc417f68d3a8ee9afabbb6aa8001d94",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 2,
+  "tests": 11,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest"
+  ],
+  "duration": "2m 19s",
+  "log_sha256": "6d339f34ce6d16cb15cf4cc9293230e8f102378a8f25a901b2682bbefdb82618",
+  "coverage": [
+    "Source-schema2 distinguishes None, selected track and unknown legacy intent",
+    "Native count is used only to classify existing source intent, never exported as a locator or timestamp",
+    "Receiving None remaps across track-count differences; legacy unknown/no-language index never guesses",
+    "Real VideoMetadata parser validates supported audio, subtitle bounds, language and enumerated external format"
+  ],
+  "limits": "Synthetic backend metadata and native SQLite source fixtures, not native decoder/player output. No registered title codec, preference journal/player/manual supersession integration, real media probe or Shield acceptance."
+}
