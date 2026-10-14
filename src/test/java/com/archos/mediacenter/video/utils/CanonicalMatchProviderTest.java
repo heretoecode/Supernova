@@ -113,4 +113,29 @@ public class CanonicalMatchProviderTest {
         try(var row=db.rawQuery("SELECT e.e_online_id,s.Nova_pinned FROM EPISODE e JOIN SHOW s ON s._id=e.show_episode WHERE e._id=400",null)){assertTrue(row.moveToFirst());assertEquals(555,row.getLong(0));assertEquals(9,row.getLong(1));}
     }
 
+    @Test public void verifiedMaterialPreparesImmutableOperationsWithoutPublishingOrWritingNativeState()throws Exception {
+        var requested=new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:movie:789",null);
+        var inventory=com.archos.mediacenter.video.utils.backup.MediaMatchInventory.capture(app);MovieTags canonical=tags();
+        var batch=com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.prepare(app,inventory.owners.get(10L),requested,Uri.parse("file:///one.mkv"),0,9L,(context,match,file)->new com.archos.mediascraper.ScrapeDetailResult(canonical,true,null,com.archos.mediascraper.ScrapeStatus.OKAY,null));
+        canonical.setTitle("Later mutable provider object");
+        try(var row=holder.get().rawQuery("SELECT m_online_id,name_movie FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(123,row.getLong(0));assertEquals("Original title",row.getString(1));}
+        try{batch.operations.clear();fail("Mutable canonical operation list");}catch(UnsupportedOperationException expected){}
+        var db=holder.get();db.beginTransaction();try {
+            app.getContentResolver().applyBatch(ScraperStore.AUTHORITY,new java.util.ArrayList<>(batch.operations));
+            try(var row=db.rawQuery("SELECT m_online_id,name_movie,Nova_pinned FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(789,row.getLong(0));assertEquals("Fresh canonical title",row.getString(1));assertEquals(9,row.getLong(2));}
+        }finally{db.endTransaction();}
+    }
+    @Test public void providerMaterialMustMatchExactRequestedMovieAndEpisodeIdentity()throws Exception {
+        var movie=new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:movie:789",null);
+        var episode=new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:tv:666:2:3",777L);
+        var okay=com.archos.mediascraper.ScrapeStatus.OKAY;
+        assertNotNull(com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.verify(movie,new com.archos.mediascraper.ScrapeDetailResult(tags(),true,null,okay,null)));
+        assertNotNull(com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.verify(episode,new com.archos.mediascraper.ScrapeDetailResult(episodeTags(666),false,null,okay,null)));
+        for(var wrong:new com.archos.mediascraper.ScrapeDetailResult[]{null,new com.archos.mediascraper.ScrapeDetailResult(tags(),true,null,com.archos.mediascraper.ScrapeStatus.ERROR,null),new com.archos.mediascraper.ScrapeDetailResult(episodeTags(999),false,null,okay,null),new com.archos.mediascraper.ScrapeDetailResult(tags(),true,null,okay,null)}) {
+            try{com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.verify(episode,wrong);fail("Wrong provider material accepted");}catch(java.io.IOException expected){}
+        }
+        var changed=episodeTags(666);changed.setOnlineId(778);
+        try{com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.verify(episode,new com.archos.mediascraper.ScrapeDetailResult(changed,false,null,okay,null));fail("Wrong episode provider accepted");}catch(java.io.IOException expected){}
+    }
+
 }
