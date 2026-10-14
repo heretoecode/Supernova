@@ -93,7 +93,7 @@ jobs:
             --output "$RUNNER_TEMP/supernova-foundation-native-wrappers.json"
           cd nova/Video
           chmod +x gradlew
-          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease \
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild
           python3 .github/build/verify-foundation-runtime.py \
             --inventory build/foundation/runtime-artifacts.json --reviewed docs/foundation/RUNTIME_SBOM.json
