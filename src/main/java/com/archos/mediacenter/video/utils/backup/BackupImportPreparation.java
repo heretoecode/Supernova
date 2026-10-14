@@ -13,11 +13,12 @@ import org.json.*;
 /** One bounded provider snapshot, dispatched to the independent logical and historical readers. */
 public final class BackupImportPreparation implements AutoCloseable {
     private static final long MAX_ARCHIVE=4L*1024*1024*1024;
+    private final Context context;
     private final LogicalBackupImport.Prepared logical;
     private final File legacy;
     private final byte[] legacySignature;
-    private BackupImportPreparation(LogicalBackupImport.Prepared logical,File legacy)throws Exception {
-        this.logical=logical;this.legacy=legacy;legacySignature=legacy==null?null:signature(legacy);
+    private BackupImportPreparation(Context context,LogicalBackupImport.Prepared logical,File legacy)throws Exception {
+        this.context=context.getApplicationContext();this.logical=logical;this.legacy=legacy;legacySignature=legacy==null?null:signature(legacy);
     }
     public boolean isLegacy(){return legacy!=null;}
     public Set<BackupCategory> categories(){return logical==null?Collections.emptySet():logical.categories();}
@@ -41,8 +42,8 @@ public final class BackupImportPreparation implements AutoCloseable {
             if(LogicalBackupArchive.FORMAT.equals(format))logical=LogicalBackupImport.prepare(context,new FileInputStream(copied),cancel);
             else if("1.0".equals(format))stage=SafeBackup.stage(context,new FileInputStream(copied),cancel);
             else throw new IOException("Unsupported backup format");
-            cancelled(cancel);BackupImportPreparation result=new BackupImportPreparation(logical,stage);if(!copied.delete())throw new IOException("Private format snapshot cleanup is pending");return result;
-        }catch(Exception failure){if(logical!=null)try{logical.close();}catch(IOException cleanup){failure.addSuppressed(cleanup);}if(stage!=null)SafeBackup.remove(stage);if(copied!=null&&copied.exists()&&!copied.delete())failure.addSuppressed(new IOException("Private format snapshot cleanup is pending"));throw failure;}
+            cancelled(cancel);BackupImportPreparation result=new BackupImportPreparation(context,logical,stage);if(!copied.delete())throw new IOException("Private format snapshot cleanup is pending");return result;
+        }catch(Exception failure){if(logical!=null)try{logical.close();}catch(IOException cleanup){failure.addSuppressed(cleanup);}if(stage!=null)try{SafeBackup.discardStage(context,stage);}catch(IOException cleanup){failure.addSuppressed(cleanup); }if(copied!=null&&copied.exists()&&!copied.delete())failure.addSuppressed(new IOException("Private format snapshot cleanup is pending"));throw failure;}
     }
     private static byte[] signature(File root)throws Exception {
         MessageDigest digest=MessageDigest.getInstance("SHA-256");List<File> files=new ArrayList<>();inventory(root,files);files.sort(Comparator.comparing(File::getPath));byte[] buffer=new byte[65536];
@@ -56,6 +57,6 @@ public final class BackupImportPreparation implements AutoCloseable {
         if(legacy==null)throw new IOException("Not a legacy backup");cancelled(cancel);if(!MessageDigest.isEqual(legacySignature,signature(legacy)))throw new IOException("Private legacy review changed; select the backup again");SafeBackup.validateStage(context,legacy);cancelled(cancel);SafeBackup.restore(context,legacy);
     }
     @Override public void close()throws IOException {
-        if(logical!=null)logical.close();if(legacy!=null){SafeBackup.remove(legacy);if(legacy.exists())throw new IOException("Private legacy review cleanup is pending");}
+        if(logical!=null)logical.close();if(legacy!=null)SafeBackup.discardStage(context,legacy);
     }
 }

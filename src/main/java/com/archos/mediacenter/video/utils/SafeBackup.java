@@ -82,6 +82,11 @@ public final class SafeBackup {
             if(!new File(stage,"settings.json").isFile())throw new IOException("Backup settings are missing");
             for(String database:new String[]{"media.db","shortcuts_db","shortcuts2_db","putio-associations.db"}){File file=new File(stage,database);if(file.isFile())BackupPrivacy.validateDatabase(file);}
     }
+    /** Discard only an app-owned legacy review folder, including invalid/tampered review contents. */
+    public static void discardStage(Context context,File stage)throws IOException {
+        if(!stage.getCanonicalFile().getParentFile().equals(context.getCacheDir().getCanonicalFile())||!stage.getName().matches("restore-[a-f0-9-]{36}"))throw new IOException("Invalid restore staging location");
+        remove(stage);if(stage.exists())throw new IOException("Private legacy review cleanup is pending");
+    }
     static String read(File file) throws IOException {
         try (InputStream in = new FileInputStream(file); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] b = new byte[8192]; int n;
