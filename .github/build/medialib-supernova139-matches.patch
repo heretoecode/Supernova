@@ -1,5 +1,5 @@
 diff --git a/src/com/archos/mediaprovider/video/ScraperProvider.java b/src/com/archos/mediaprovider/video/ScraperProvider.java
-index bbf4e60..de09bdf 100644
+index bbf4e60..1a2b5a3 100644
 --- a/src/com/archos/mediaprovider/video/ScraperProvider.java
 +++ b/src/com/archos/mediaprovider/video/ScraperProvider.java
 @@ -61,6 +61,8 @@ public class ScraperProvider extends ContentProvider {
@@ -73,7 +73,7 @@ index bbf4e60..de09bdf 100644
 +                // pins/Collection owners retain their original metadata. View63 hides inert facts.
 +                ContentValues cleared=new ContentValues();cleared.put("ArchosMediaScraper_type",0);
 +                if(db.update(VideoOpenHelper.FILES_TABLE_NAME,cleared,"_id=?",new String[]{file.toString()})!=1)throw new IllegalStateException("Identification clear target disappeared");
-+                rowId=file;noteUri=createUriAndNotify(rowId,db,VideoStore.Video.Media.EXTERNAL_CONTENT_URI,cr,ADDITIONAL_MOVIE,ADDITIONAL_SHOW);break;
++                rowId=file;noteUri=createUriAndNotify(rowId,db,VideoStore.Video.Media.EXTERNAL_CONTENT_URI,cr,ScraperStore.ALL_CONTENT_URI);break;
 +            }
 +            case MOVIE_RESTORE_OWNED:
 +                if (!db.inTransaction()) throw new IllegalStateException("Owned movie replacement requires a provider transaction");
