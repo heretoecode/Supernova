@@ -1,0 +1,28 @@
+{
+  "source_sha": "e5bae202f5418126d691d89fc9a88db25d221581",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 5,
+  "tests": 36,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.LegacyViewingSnapshotTest",
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+    "com.archos.mediacenter.video.utils.LegacyViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest"
+  ],
+  "duration": "55s",
+  "log_sha256": "c499c12b840b86c48491536549c3b5f919a03d0bba17bad466fcfd3de427d2e4",
+  "selected_test_init_sha256": "dfa69c875cbf5fd01cac9952bd64b5012f23a8a6177cd66ba711b4959fc2dc05",
+  "coverage": [
+    "Legacy export and private receiving copies use the established epoch-second unit",
+    "Mixed native legacy and actual ViewingHistory.record writer output retain correct relative activity ordering through export and actual Video objects",
+    "No completion time is inferred from legacy last played",
+    "Selected viewing-domain clearing/rollback/staleness plus actual PlayerService candidates and production recreation/exporter/history regressions"
+  ],
+  "supersedes": "Prior legacy source/restore receipts demonstrate their stated mechanisms but used millisecond expectations for legacy played values. Those expectations were wrong; this receipt corrects the time contract without altering the existing structured history schema. PreviewSeriesJourneyTest was requested but no class with that name exists; no execution coverage for that name is claimed. Use the actual class_names here.",
+  "limits": "Synthetic native SQLite/graphics/player-context fixtures; no actual OS/decoder/force-stop/Shield. Native build tasks excluded."
+}

@@ -1,0 +1,34 @@
+{
+  "result": "BLOCKED",
+  "items": [
+    {
+      "item": "Physical Shield access",
+      "reason": "No connected ADB device, no configured VPN or TCP destination grant; network policy snapshot136 is enforced/unrestricted HTTP only."
+    },
+    {
+      "item": "Software Android/TV emulator provisioning",
+      "reason": "Official sdkmanager provisioning with closed stdin refused unaccepted system-image licence terms. No agreement accepted and no emulator installed. This is separate from native Robolectric coverage.",
+      "attempts": [
+        {
+          "packages": [
+            "emulator",
+            "system-images;android-28;android-tv;x86"
+          ],
+          "log_sha256": "1e2005b2436c03b55bba05b6c683006ac82ef9a32a3bda7475ee433e9117d1e1"
+        },
+        {
+          "packages": [
+            "emulator",
+            "system-images;android-28;default;x86"
+          ],
+          "log_sha256": "b11de49b94fe59d30bba73112159c859da55d9c2313e7fd29f72cfc5da4d2054"
+        }
+      ]
+    },
+    {
+      "item": "Final139 artifact",
+      "reason": "Implementation/release validation gates not complete; no signing dispatch, APK build or upload. This is unfinished engineering, not a claim of missing signing secrets."
+    }
+  ],
+  "continuation": "Continue independent software work. Full production recreation and epoch-second contract staged passes are recorded separately. Do not treat these external limitations as blocking all43 software workstreams."
+}
