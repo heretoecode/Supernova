@@ -81,6 +81,11 @@ public class CombinedPlaylistJournalTest {
         var plan=fixture.transaction.prepare(all(),null,fixture.physical());fixture.prefs.edit().putString(PortableSavedPlaylists.referenceKey(7),ID).commit();try{fixture.transaction.apply(plan,()->false);fail();}catch(IOException expected){}assertFalse(fixture.journal.exists());
         plan=fixture.transaction.prepare(all(),null,fixture.physical());try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app)){helper.getWritableDatabase().execSQL("UPDATE list_table SET title='Later' WHERE _id=7");}String current=media();try{fixture.transaction.apply(plan,()->false);fail();}catch(IOException expected){}assertEquals(current,media());assertEquals(7,fixture.prefs.getInt("preview_accent41",0));assertFalse(fixture.journal.exists());
     }
+    @Test public void previewDoesNotAllocateOriginAndAliasCollisionWithReceivingRemoteStillReexportsBoth()throws Exception{
+        Map<String,?> original=fixture.prefs.getAll();JSONObject incoming=payload();incoming.getJSONArray("rows").getJSONObject(0).put("id",fixture.prefs.getString(PortableSavedPlaylists.referenceKey(9),null));
+        var plan=fixture.transaction.prepare(Map.of(BackupCategory.PLAYLISTS,incoming),null);assertEquals(original,fixture.prefs.getAll());assertFalse(fixture.journal.exists());fixture.transaction.apply(plan,()->false);
+        JSONArray rows=export().getJSONArray("rows");assertEquals(2,rows.length());assertNotEquals(rows.getJSONObject(0).getString("id"),rows.getJSONObject(1).getString("id"));assertEquals(987654,MediaStateRecovery.capture(fixture.app,false,false,true).getJSONObject("playlists").getJSONArray("definitions").getJSONObject(0).getLong("trakt"));
+    }
     @Test public void newDevicePendingDefinitionReexportsExactIdentityWithoutCreatingMediaDatabase()throws Exception{
         fixture.app.deleteDatabase("media.db");var selected=Map.of(BackupCategory.PLAYLISTS,payload());var plan=fixture.transaction.prepare(selected,null);assertEquals(1,plan.unresolved);fixture.transaction.apply(plan,()->false);
         assertFalse(VideoOpenHelper.getDatabaseFile(fixture.app).exists());assertEquals(payload().toString(),PortableSavedPlaylists.export(fixture.app,Collections.emptyMap()).toString());assertEquals("AUTH_CANARY",fixture.prefs.getString("oauth_token",null));

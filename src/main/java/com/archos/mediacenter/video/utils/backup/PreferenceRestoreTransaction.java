@@ -173,9 +173,10 @@ public final class PreferenceRestoreTransaction {
             }else if(category==BackupCategory.PLAYLISTS){
                 var playlists=PlaylistStateRecovery.prepare(mediaBefore.getJSONObject("playlists"),item.getValue(),mediaBefore.getBoolean("exists"));mediaAfter=MediaStateRecovery.playlistAfter(mediaAfter,playlists);
                 JSONArray originals=mediaBefore.getJSONObject("playlists").getJSONArray("definitions");
-                String origin=new PortableTitleReferences(destination,null).origin();Set<String> preserved=new HashSet<>();
-                for(int i=0;i<originals.length();i++){JSONObject row=originals.getJSONObject(i);String key=PortableSavedPlaylists.referenceKey(row.getLong("id"));if(row.isNull("trakt"))keys.add(key);else{Object value=current.get(key);String identity=value==null?"playlist:"+origin+":"+row.getLong("id"):value instanceof String?(String)value:null;PortableSavedPlaylists.identity(identity);preserved.add(identity);}}
-                for(var reference:playlists.references.entrySet()){String key=PortableSavedPlaylists.referenceKey(reference.getKey());String identity=reference.getValue();if(preserved.contains(identity))identity="playlist:"+origin+":"+reference.getKey();keys.add(key);after.put(key,identity);}
+                String origin=PortableTitleReferences.existingOrigin(current);Set<String> preserved=new HashSet<>();
+                for(int i=0;i<originals.length();i++){JSONObject row=originals.getJSONObject(i);String key=PortableSavedPlaylists.referenceKey(row.getLong("id"));if(row.isNull("trakt"))keys.add(key);else{Object value=current.get(key);if(value==null&&origin==null)continue;String identity=value==null?"playlist:"+origin+":"+row.getLong("id"):value instanceof String?(String)value:null;PortableSavedPlaylists.identity(identity);preserved.add(identity);}}
+                String replacementOrigin=origin==null?UUID.randomUUID().toString():origin;
+                for(var reference:playlists.references.entrySet()){String key=PortableSavedPlaylists.referenceKey(reference.getKey());String identity=reference.getValue();if(preserved.contains(identity))identity="playlist:"+replacementOrigin+":"+reference.getKey();keys.add(key);after.put(key,identity);}
                 keys.add(PortableSavedPlaylists.PENDING);after.put(PortableSavedPlaylists.PENDING,playlists.pending);unresolved+=playlists.unresolved;
             }else if(category==BackupCategory.SOURCES){
                 var sources=PortableLibrarySources.prepare(current,item.getValue(),selected.get(BackupCategory.LOCATIONS));

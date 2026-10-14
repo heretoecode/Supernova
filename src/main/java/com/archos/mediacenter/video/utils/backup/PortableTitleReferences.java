@@ -12,6 +12,11 @@ public final class PortableTitleReferences {
     private static final String ORIGIN="supernova_backup_origin_v2";
     private final String origin;
     private final Map<String,Entry> indexed=new LinkedHashMap<>();
+    /** Read-only preview helper. Origin allocation belongs to an actual export, not restore preparation. */
+    public static String existingOrigin(Map<String,?> preferences)throws JSONException {
+        Object value=preferences.get(ORIGIN);if(value==null)return null;
+        if(!(value instanceof String)||!((String)value).matches("[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}"))throw new JSONException("Invalid private backup origin");return (String)value;
+    }
     public PortableTitleReferences(Context context,Snapshot snapshot){
         var prefs=PreferenceManager.getDefaultSharedPreferences(context);String saved=prefs.getString(ORIGIN,"");
         if(!saved.matches("[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}")){saved=UUID.randomUUID().toString();if(!prefs.edit().putString(ORIGIN,saved).commit())throw new IllegalStateException("Cannot preserve backup origin");}
