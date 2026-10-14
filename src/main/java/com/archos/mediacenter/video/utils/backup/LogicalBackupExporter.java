@@ -11,7 +11,7 @@ import org.json.*;
 /** Real source-to-archive export. No legacy DB snapshot writer or content/account payload is reachable. */
 public final class LogicalBackupExporter {
     private static final Set<BackupCategory> INVENTORY=EnumSet.of(BackupCategory.HOME,BackupCategory.WATCH_NEXT,
-        BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.PINNED,BackupCategory.HIDDEN,BackupCategory.PLAYLISTS,BackupCategory.TITLE_PLAYBACK,BackupCategory.HISTORY,BackupCategory.POSITIONS);
+        BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.PINNED,BackupCategory.HIDDEN,BackupCategory.PLAYLISTS,BackupCategory.TITLE_PLAYBACK,BackupCategory.MATCHES,BackupCategory.HISTORY,BackupCategory.POSITIONS);
     /** Unsupported selected categories fail before reading source or allocating a backup file; none is silently omitted. */
     public static Map<BackupCategory,JSONObject> collect(Context context,Set<BackupCategory> selected,BooleanSupplier cancel)throws IOException {
         LogicalBackupCatalog.cancelled(cancel);
@@ -19,12 +19,19 @@ public final class LogicalBackupExporter {
         EnumSet<BackupCategory> categories=EnumSet.copyOf(selected);
         if(!LogicalBackupArchive.registered().containsAll(categories))throw new IOException("Selected backup category is not implemented yet; no backup was created");
         try {
-            LogicalBackupCatalog catalog=Collections.disjoint(categories,INVENTORY)?null:LogicalBackupCatalog.capture(context,cancel,categories.contains(BackupCategory.PLAYLISTS),categories.contains(BackupCategory.TITLE_PLAYBACK));
+            LogicalBackupCatalog catalog=Collections.disjoint(categories,INVENTORY)?null:LogicalBackupCatalog.capture(context,cancel,categories.contains(BackupCategory.PLAYLISTS),categories.contains(BackupCategory.TITLE_PLAYBACK),categories.contains(BackupCategory.MATCHES));
             // Allocate the private opaque origin before the consistency snapshot; this is never an archive setting.
             if(catalog!=null||categories.contains(BackupCategory.BOOKMARKS))new PortableTitleReferences(context,catalog==null?null:catalog.snapshot);
             var preferences=PreferenceManager.getDefaultSharedPreferences(context);Map<String,?> before=preferences.getAll();
             var health=context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0);Map<String,?> healthBefore=health.getAll();
             PortablePhysicalReferences physical=catalog==null?null:new PortablePhysicalReferences(context,catalog.physical);
+            MediaMatchInventory matchInventory=categories.contains(BackupCategory.MATCHES)?MediaMatchInventory.capture(context):null;
+            if(matchInventory!=null){
+                matchInventory.validatePhysical(physical);Map<Long,PortableMediaMatches.Match> owned=new LinkedHashMap<>();
+                for(var owner:matchInventory.owners.values())if(owner.match!=null)owned.put(owner.videoId,owner.match);
+                if(owned.size()!=catalog.matches.size())throw new IOException("Identification changed during backup; retry");
+                for(var entry:owned.entrySet()){var captured=catalog.matches.get(entry.getKey());if(captured==null||!captured.identity.equals(entry.getValue().identity)||!Objects.equals(captured.episodeProvider,entry.getValue().episodeProvider))throw new IOException("Identification changed during backup; retry");}
+            }
             Map<String,ViewingHistory.Record> viewing=Collections.emptyMap();
             if(categories.contains(BackupCategory.HISTORY)||categories.contains(BackupCategory.POSITIONS)){
                 ViewingHistory.awaitWrites();viewing=LegacyViewingSnapshot.merge(context,PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(context)),catalog.snapshot);
@@ -49,6 +56,7 @@ public final class LogicalBackupExporter {
                     case SOURCES:payload=PortableLibrarySources.export(context,sources);break;
                     case BOOKMARKS:payload=PortableBookmarks.export(context,bookmarks);break;
                     case PLAYLISTS:payload=PortableSavedPlaylists.export(context,catalog.playlists);break;
+                    case MATCHES:payload=MediaMatchIntents.export(context,catalog.matches,matchInventory,physical);break;
                     case TITLE_PLAYBACK:payload=TitlePlaybackOverrides.export(context,catalog.titlePlayback,physical);break;
                     case LOCATIONS:payload=PortableLocations.export(locations);break;
                     default:throw new IOException("Selected category has no source exporter");
@@ -58,6 +66,7 @@ public final class LogicalBackupExporter {
             if(!before.equals(preferences.getAll())||!healthBefore.equals(health.getAll()))throw new IOException("Configuration changed during backup; retry to capture a consistent selection");
             if(bookmarks!=null&&!bookmarks.toString().equals(BookmarkStoreRecovery.capture(context).toString()))throw new IOException("Bookmarks changed during backup; retry to capture a consistent selection");
             if(sources!=null&&!sources.toString().equals(IndexedSourceStoreRecovery.capture(context).toString()))throw new IOException("Indexed sources changed during backup; retry to capture a consistent selection");
+            if(matchInventory!=null&&!matchInventory.signature.equals(MediaMatchInventory.capture(context).signature))throw new IOException("Identification changed during backup; retry");
             LogicalBackupCatalog.cancelled(cancel);return Collections.unmodifiableMap(payloads);
         }catch(JSONException|RuntimeException invalid){throw new IOException("Selected configuration failed logical backup validation; no backup was created",invalid);}
     }
