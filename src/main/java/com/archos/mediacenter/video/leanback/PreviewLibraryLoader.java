@@ -132,6 +132,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     }
     private static String summaryValue(Set<String> values){return values.isEmpty()?"":values.size()==1?values.iterator().next():"Mixed";}
     private static final Object CACHE_LOCK=new Object();
+    private static final java.util.concurrent.atomic.AtomicLong CACHE_GENERATION=new java.util.concurrent.atomic.AtomicLong();
     private static final java.util.concurrent.ExecutorService cacheWriter=java.util.concurrent.Executors.newSingleThreadExecutor();
     public static void warmCache(Context context){cacheWriter.execute(()->{synchronized(CACHE_LOCK){Snapshot value=readCache(context);if(value!=null&&cached==null&&!com.archos.mediacenter.video.player.PrivateMode.isActive()){cachePrivate=false;cached=value;}}});}
     public static volatile Snapshot cached;
@@ -140,7 +141,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     public static Snapshot readCache(Context c){if(memoryCache()!=null)return memoryCache();if(com.archos.mediacenter.video.player.PrivateMode.isActive())return null;try(java.io.ObjectInputStream in=new java.io.ObjectInputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(new java.io.File(c.getCacheDir(),"preview-library-v42"))))){Snapshot s=(Snapshot)in.readObject();for(List<Entry> list:java.util.Arrays.asList(s.movies,s.shows,s.recent,s.played,s.watched,s.continuingMovies,s.continuingShows,s.episodes))for(Entry e:list)if(e.media instanceof Video)e.backdrop=((Video)e.media).getPreviewBackdrop();return s;}catch(Exception unavailable){return null;}}
     private void writeCache(Snapshot value){if(com.archos.mediacenter.video.player.PrivateMode.isActive())return;synchronized(CACHE_LOCK){if(value==cached)writeCacheLocked(value);}}
     public static void invalidateHistoryCache(Context context){
-        synchronized(CACHE_LOCK){cached=null;new android.util.AtomicFile(new java.io.File(context.getCacheDir(),"preview-library-v42")).delete();}
+        synchronized(CACHE_LOCK){CACHE_GENERATION.incrementAndGet();cached=null;new android.util.AtomicFile(new java.io.File(context.getCacheDir(),"preview-library-v42")).delete();}
         context.getContentResolver().notifyChange(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,null);
     }
     private void writeCacheLocked(Snapshot value){android.util.AtomicFile file=new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(),"preview-library-v42"));java.io.FileOutputStream stream=null;try{stream=file.startWrite();java.io.ObjectOutputStream out=new java.io.ObjectOutputStream(stream);out.writeObject(value);out.flush();file.finishWrite(stream);}catch(Exception failure){if(stream!=null)file.failWrite(stream);android.util.Log.d("NovaPreview","Snapshot cache unavailable",failure);}}
@@ -182,6 +183,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             catch(java.io.IOException pending){loadWarning="Some restored sources are still pending. Refresh after source setup to retry.";com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_restore_pending",pending);}
             try {new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext()).reconcileTitlePlayback();}
             catch(java.io.IOException pending){loadWarning="Some restored title choices are still pending. Refresh after source setup to retry.";com.archos.mediacenter.video.diagnostics.Diagnostics.error("title_restore_pending",pending);}
+            long generation=CACHE_GENERATION.get();
             Cursor loaded=super.loadInBackground();
             if(loaded==null) throw new IllegalStateException("Library query unavailable");
             c=new PreviewMappingCursor(loaded);
@@ -223,8 +225,11 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             if(rejected==0) {
                 applyJourneys(result,videos);
                 buildFeatured(result,history);
-                cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=result;
-                if(!cachePrivate)cacheWriter.execute(()->writeCache(result));
+                synchronized(CACHE_LOCK){
+                    if(generation!=CACHE_GENERATION.get()||isLoadInBackgroundCanceled())throw new android.os.OperationCanceledException("Library changed during loading");
+                    cachePrivate=com.archos.mediacenter.video.player.PrivateMode.isActive();cached=result;
+                    if(!cachePrivate)cacheWriter.execute(()->writeCache(result));
+                }
             } else loadWarning="Some library records could not be read. Library data was not changed. Please export diagnostics and retry.";
             snapshot=result;
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_counts","operation_id",operation,"visited",visited,"rejected",rejected,"movies",result.movies.size(),"shows",result.shows.size(),"episodes",result.episodes.size());

@@ -79,6 +79,16 @@ public final class PreferenceRestoreTransaction {
     private final SharedPreferences prefs;
     private final SharedPreferences health;
     private final Context destination;
+    private boolean refreshFailed;
+    public boolean refreshFailed(){return refreshFailed;}
+    /** Data is already durable; a refresh failure must not be reported as a failed restoration. */
+    private void publishRestoredState(){
+        try{
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.invalidateHistoryCache(destination);
+            destination.getContentResolver().notifyChange(com.archos.mediaprovider.video.ScraperStore.ALL_CONTENT_URI,null);
+            destination.sendBroadcast(new android.content.Intent(destination.getPackageName()+".VIEWING_STATE_CHANGED").setPackage(destination.getPackageName()));
+        }catch(RuntimeException unavailable){refreshFailed=true;com.archos.mediacenter.video.diagnostics.Diagnostics.error("restore_refresh_failed",unavailable);}
+    }
     private final AtomicFile journal;
     public PreferenceRestoreTransaction(Context context){
         Context application=context.getApplicationContext();destination=application==null?context:application;
@@ -331,7 +341,7 @@ public final class PreferenceRestoreTransaction {
                 throw new Failure(failure,outcome,required);
             }finally{try{if(media!=null)media.close();}finally{try{if(bookmarks!=null)bookmarks.close();}finally{if(sources!=null)sources.close();}}}
             // Durable completion wins over late cancellation. Recovery must retain the new values now.
-            observer.reached(Checkpoint.COMPLETION_DURABLE);removeJournal();
+            observer.reached(Checkpoint.COMPLETION_DURABLE);removeJournal();publishRestoredState();
         }
     }
     private void replace(SharedPreferences destination,Set<String> keys,Map<String,Object> values)throws IOException{
@@ -446,7 +456,7 @@ public final class PreferenceRestoreTransaction {
                     }else ViewingHistory.replaceRecovery(destination,restored,()->false);
                 }catch(JSONException invalid){throw new IOException("Viewing recovery values are invalid",invalid);}
                 if(!keys.isEmpty())replace(prefs,keys,originals);if(!healthKeys.isEmpty())replace(health,healthKeys,healthOriginals);
-            }removeJournal();return complete?Recovery.COMPLETED:Recovery.ROLLED_BACK;
+            }removeJournal();publishRestoredState();return complete?Recovery.COMPLETED:Recovery.ROLLED_BACK;
         }
     }
     private void removeJournal()throws IOException{

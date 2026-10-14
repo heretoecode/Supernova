@@ -102,8 +102,8 @@ public final class BackupOperationModel extends AndroidViewModel {
     }
     public void confirm(){
         if(latest.phase!=Phase.RESTORE_PREVIEW||restorePlan==null)throw new IllegalStateException("Review replacement before confirming");PreferenceRestoreTransaction.Plan plan=restorePlan;
-        work(Phase.RESTORING,"Restoring selected categories…",token->{new PreferenceRestoreTransaction(getApplication()).apply(plan,token::get);restorePlan=null;
-            String message="Selected state restored. Reconnect sources and services, then scan and check unresolved items.";try{closeImported();}catch(IOException cleanup){message+=" Private review cleanup is pending.";}state(Phase.RESTORED,message,plan.categories,plan.unresolved,false);});
+        work(Phase.RESTORING,"Restoring selected categories…",token->{PreferenceRestoreTransaction transaction=new PreferenceRestoreTransaction(getApplication());transaction.apply(plan,token::get);restorePlan=null;
+            String message="Selected state restored. Reconnect sources and services, then scan and check unresolved items.";if(transaction.refreshFailed())message+=" Library refresh could not be requested; reopen Supernova to verify restored state.";try{closeImported();}catch(IOException cleanup){message+=" Private review cleanup is pending.";}state(Phase.RESTORED,message,plan.categories,plan.unresolved,false);});
     }
     public void closeReview(){work(Phase.CLOSING,"Closing restore review…",token->{closeImported();restorePlan=null;state(Phase.IDLE,"",Collections.emptySet(),0,false);});}
     private void closeImported()throws IOException{if(imported!=null){imported.close();imported=null;}}
