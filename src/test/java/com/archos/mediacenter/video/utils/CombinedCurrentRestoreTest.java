@@ -13,7 +13,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
-/** Current six-store matrix includes registered title choices and unregistered guarded match intent. */
+/** Six-store recovery with title choices and both pending and canonical identification. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class CombinedCurrentRestoreTest {
     private final CombinedIndexedSourcesTest source=new CombinedIndexedSourcesTest();
@@ -44,4 +44,33 @@ public class CombinedCurrentRestoreTest {
             PreferenceRestoreTransaction.recoverAtStartup(fixture.app);source.assertNew();assertTrue(fixture.prefs.contains(TitlePlaybackOverrides.key(10)));assertTrue(new JSONObject(fixture.prefs.getString(MediaMatchIntents.key(10),null)).getBoolean("pending"));assertEquals(before.get("identification"),state().get("identification"));assertEquals(before.get("native playback"),state().get("native playback"));assertFalse(fixture.journal.exists());assertEquals(PreferenceRestoreTransaction.Recovery.NONE,fixture.transaction.recover());
         }
     }
+    private PreferenceRestoreTransaction.Plan canonicalPlan()throws Exception {
+        return fixture.transaction.prepareCanonicalMatches(all(),null,fixture.physical(),(context,request,file)->{
+            var tags=new com.archos.mediascraper.MovieTags();tags.setOnlineId(789);tags.setTitle("Canonical combined title");tags.setPlot("Canonical combined facts");tags.addGenreIfAbsent("Drama");
+            return new com.archos.mediascraper.ScrapeDetailResult(tags,true,null,com.archos.mediascraper.ScrapeStatus.OKAY,null);
+        },()->false);
+    }
+    private String canonicalFacts()throws Exception {
+        try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app);var rows=helper.getReadableDatabase().rawQuery("SELECT m_online_id,name_movie,plot_movie,m_genres,Nova_pinned FROM MOVIE WHERE _id=100",null)){
+            assertTrue(rows.moveToFirst());JSONArray data=new JSONArray();for(int i=0;i<rows.getColumnCount();i++)data.put(rows.isNull(i)?JSONObject.NULL:rows.getString(i));return data.toString();
+        }
+    }
+    @Test public void canonicalCombinedRestoreRollsBackEveryStoreAndScrapedFactsAtAllPreDecisionBoundaries()throws Exception {
+        Map<String,Object> before=state();String facts=canonicalFacts();
+        for(var boundary:List.of(PreferenceRestoreTransaction.Checkpoint.JOURNAL_DURABLE,PreferenceRestoreTransaction.Checkpoint.DEFAULT_DURABLE,PreferenceRestoreTransaction.Checkpoint.HEALTH_DURABLE,PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE,PreferenceRestoreTransaction.Checkpoint.MEDIA_PREPARED,PreferenceRestoreTransaction.Checkpoint.BOOKMARKS_PREPARED,PreferenceRestoreTransaction.Checkpoint.SOURCES_PREPARED,PreferenceRestoreTransaction.Checkpoint.PREFERENCES_DURABLE)){
+            try{fixture.transaction.apply(canonicalPlan(),()->false,at->{if(at==boundary)throw new ProcessDeath();});fail("boundary not reached: "+boundary);}catch(ProcessDeath expected){}
+            assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,new PreferenceRestoreTransaction(fixture.app).recover());assertEquals(boundary.toString(),before,state());assertEquals(facts,canonicalFacts());assertFalse(fixture.journal.exists());
+        }
+    }
+    @Test public void canonicalDecisionAndEveryNativeAcknowledgementRecoverAllStoresAndRemainIdempotent()throws Exception {
+        for(var boundary:List.of(PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE,PreferenceRestoreTransaction.Checkpoint.MEDIA_DURABLE,PreferenceRestoreTransaction.Checkpoint.BOOKMARKS_DURABLE,PreferenceRestoreTransaction.Checkpoint.SOURCES_DURABLE)){
+            setup();String playback=(String)state().get("native playback");
+            try{fixture.transaction.apply(canonicalPlan(),()->false,at->{if(at==boundary)throw new ProcessDeath();});fail("boundary not reached: "+boundary);}catch(ProcessDeath expected){}
+            PreferenceRestoreTransaction.recoverAtStartup(fixture.app);source.assertNew();assertEquals(playback,state().get("native playback"));
+            assertEquals("[\"789\",\"Canonical combined title\",\"Canonical combined facts\",\"Drama\",\"0\"]",canonicalFacts());
+            assertFalse(new JSONObject(fixture.prefs.getString(MediaMatchIntents.key(10),null)).getBoolean("pending"));assertTrue(fixture.prefs.contains(TitlePlaybackOverrides.key(10)));assertFalse(fixture.journal.exists());
+            Map<String,Object> after=state();assertEquals(PreferenceRestoreTransaction.Recovery.NONE,new PreferenceRestoreTransaction(fixture.app).recover());assertEquals(after,state());
+        }
+    }
+
 }
