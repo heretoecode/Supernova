@@ -11,7 +11,7 @@ import org.json.*;
 /** Real source-to-archive export. No legacy DB snapshot writer or content/account payload is reachable. */
 public final class LogicalBackupExporter {
     private static final Set<BackupCategory> INVENTORY=EnumSet.of(BackupCategory.HOME,BackupCategory.WATCH_NEXT,
-        BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.PINNED,BackupCategory.HIDDEN);
+        BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.PINNED,BackupCategory.HIDDEN,BackupCategory.PLAYLISTS);
     /** Unsupported selected categories fail before reading source or allocating a backup file; none is silently omitted. */
     public static Map<BackupCategory,JSONObject> collect(Context context,Set<BackupCategory> selected,BooleanSupplier cancel)throws IOException {
         LogicalBackupCatalog.cancelled(cancel);
@@ -19,7 +19,7 @@ public final class LogicalBackupExporter {
         EnumSet<BackupCategory> categories=EnumSet.copyOf(selected);
         if(!LogicalBackupArchive.registered().containsAll(categories))throw new IOException("Selected backup category is not implemented yet; no backup was created");
         try {
-            LogicalBackupCatalog catalog=Collections.disjoint(categories,INVENTORY)?null:LogicalBackupCatalog.capture(context,cancel);
+            LogicalBackupCatalog catalog=Collections.disjoint(categories,INVENTORY)?null:LogicalBackupCatalog.capture(context,cancel,categories.contains(BackupCategory.PLAYLISTS));
             // Allocate the private opaque origin before the consistency snapshot; this is never an archive setting.
             if(catalog!=null||categories.contains(BackupCategory.BOOKMARKS))new PortableTitleReferences(context,catalog==null?null:catalog.snapshot);
             var preferences=PreferenceManager.getDefaultSharedPreferences(context);Map<String,?> before=preferences.getAll();
@@ -47,6 +47,7 @@ public final class LogicalBackupExporter {
                     case HISTORY:case POSITIONS:payload=PortableViewingState.export(viewing,PortableViewingState.Kind.valueOf(category.name()));break;
                     case SOURCES:payload=PortableLibrarySources.export(context);break;
                     case BOOKMARKS:payload=PortableBookmarks.export(context,bookmarks);break;
+                    case PLAYLISTS:payload=PortableSavedPlaylists.export(context,catalog.playlists);break;
                     case LOCATIONS:payload=PortableLocations.export(locations);break;
                     default:throw new IOException("Selected category has no source exporter");
                 }

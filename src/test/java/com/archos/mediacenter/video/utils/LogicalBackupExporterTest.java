@@ -37,7 +37,7 @@ public class LogicalBackupExporterTest {
         assertTrue(prefs.getBoolean("hide_watched",false));assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));
     }
     @Test public void freshAllRegisteredCategoriesCreateVerifiedArchiveWithoutCreatingDatabaseStores()throws Exception {
-        File archive=LogicalBackupExporter.preparePrivate(app,LogicalBackupArchive.registered(),()->false);assertTrue(archive.isFile());var read=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(LogicalBackupArchive.registered(),read.keySet());assertEquals(23,read.size());
+        File archive=LogicalBackupExporter.preparePrivate(app,LogicalBackupArchive.registered(),()->false);assertTrue(archive.isFile());var read=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(LogicalBackupArchive.registered(),read.keySet());assertEquals(24,read.size());
         assertFalse("Export must not create a media database",VideoOpenHelper.getDatabaseFile(app).exists());assertFalse("Export must not create a viewing database",app.getDatabasePath(ViewingHistory.DATABASE).exists());assertFalse(contents(archive).contains("CANARY"));try(ZipFile zip=new ZipFile(archive)){assertNotNull(zip.getEntry("RESTORE_INSTRUCTIONS.txt"));}
     }
     @Test public void sourceExportKeepsHiddenMembershipLogicalAndNeverCopiesMetadataArtworkAccountsOrLocationsByDefault()throws Exception {
@@ -68,5 +68,20 @@ public class LogicalBackupExporterTest {
         File file=LogicalBackupExporter.preparePrivate(app,Set.of(BackupCategory.APPEARANCE),()->false);assertTrue(file.isFile());
         try{LogicalBackupExporter.preparePrivate(app,Set.of(BackupCategory.PINNED),()->false);fail();}catch(IOException expected){}
         try(var db=android.database.sqlite.SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY)){assertEquals(900,db.getVersion());}
+    }
+    @Test public void productionPlaylistArchiveRoundtripContainsOnlyPublicDefinitionsAndRestoresLocalOnly()throws Exception {
+        seed();try(VideoOpenHelper helper=new VideoOpenHelper(app)){var db=helper.getWritableDatabase();db.execSQL("INSERT INTO list_table(_id,title,trakt_id,sync_status) VALUES(7,'Saved family',99887766,0),(8,'Deleted',11223344,2)");db.execSQL("INSERT INTO video_list_table(list_id,m_online_id,e_online_id,sync_status) VALUES(7,123,-1,0),(7,-1,456,0),(7,999,-1,2)");}
+        File archive=LogicalBackupExporter.preparePrivate(app,Set.of(BackupCategory.PLAYLISTS),()->false);String bytes=contents(archive);for(String excluded:List.of("99887766","11223344","PATH_CANARY","AUTH_CANARY","PASSWORD_CANARY","trakt_id","sync_status"))assertFalse(excluded,bytes.contains(excluded));
+        var payload=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(Set.of(BackupCategory.PLAYLISTS),payload.keySet());assertEquals(1,payload.get(BackupCategory.PLAYLISTS).getJSONArray("rows").length());String identity=payload.get(BackupCategory.PLAYLISTS).getJSONArray("rows").getJSONObject(0).getString("id");
+        try(var imported=LogicalBackupImport.prepare(app,new FileInputStream(archive),()->false)){var transaction=new PreferenceRestoreTransaction(app);transaction.apply(transaction.prepare(imported.payloads(()->false),null),()->false);}
+        try(VideoOpenHelper helper=new VideoOpenHelper(app);var rows=helper.getReadableDatabase().rawQuery("SELECT trakt_id,sync_status FROM list_table ORDER BY _id",null)){assertTrue(rows.moveToFirst());assertEquals(99887766,rows.getLong(0));assertTrue(rows.moveToNext());assertEquals(11223344,rows.getLong(0));assertTrue(rows.moveToNext());assertTrue(rows.isNull(0));assertEquals(4,rows.getInt(1));assertFalse(rows.moveToNext());}
+        // Restoring onto the source device preserves its receiving account definition. The new local copy
+        // receives its own opaque identity, so subsequent backups contain both without alias collisions.
+        var exported=LogicalBackupExporter.collect(app,Set.of(BackupCategory.PLAYLISTS),()->false).get(BackupCategory.PLAYLISTS).getJSONArray("rows");assertEquals(2,exported.length());assertEquals(identity,exported.getJSONObject(0).getString("id"));assertNotEquals(identity,exported.getJSONObject(1).getString("id"));
+        assertEquals(exported.getJSONObject(1).getString("id"),prefs.getString(PortableSavedPlaylists.referenceKey(9),null));assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));assertTrue(archive.delete());
+    }
+    @Test public void selectedPlaylistExportOnNewDevicePreservesPendingWithoutCreatingMediaStore()throws Exception {
+        var payload=new JSONObject().put("schema",1).put("rows",new JSONArray().put(new JSONObject().put("id","playlist:12345678-1234-1234-1234-123456789012:1").put("name","Pending family").put("members",new JSONArray().put("tmdb:movie:123"))));prefs.edit().putString(PortableSavedPlaylists.PENDING,payload.toString()).commit();
+        File archive=LogicalBackupExporter.preparePrivate(app,Set.of(BackupCategory.PLAYLISTS),()->false);assertEquals(payload.toString(),LogicalBackupArchive.readCategories(archive,()->false).get(BackupCategory.PLAYLISTS).toString());assertFalse(VideoOpenHelper.getDatabaseFile(app).exists());assertTrue(archive.delete());
     }
 }

@@ -18,15 +18,19 @@ public final class LogicalBackupCatalog {
     public final List<Video> physical;
     public final List<PortablePinnedTitles.Title> pins;
     public final Map<Long,Boolean> hidden;
-    private LogicalBackupCatalog(Snapshot snapshot,List<Video> physical,List<PortablePinnedTitles.Title> pins,Map<Long,Boolean> hidden){
-        this.snapshot=snapshot;this.physical=Collections.unmodifiableList(physical);this.pins=pins;this.hidden=hidden;
+    public final Map<Long,PortableSavedPlaylists.Definition> playlists;
+    private LogicalBackupCatalog(Snapshot snapshot,List<Video> physical,List<PortablePinnedTitles.Title> pins,Map<Long,Boolean> hidden,Map<Long,PortableSavedPlaylists.Definition> playlists){
+        this.snapshot=snapshot;this.physical=Collections.unmodifiableList(physical);this.pins=pins;this.hidden=hidden;this.playlists=playlists;
     }
     static void cancelled(BooleanSupplier cancel)throws InterruptedIOException{
         if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Logical backup cancelled");
     }
     public static LogicalBackupCatalog capture(Context context,BooleanSupplier cancel)throws IOException {
+        return capture(context,cancel,false);
+    }
+    public static LogicalBackupCatalog capture(Context context,BooleanSupplier cancel,boolean playlists)throws IOException {
         cancelled(cancel);Snapshot snapshot=new Snapshot();List<Video> physical=new ArrayList<>();File file=VideoOpenHelper.getDatabaseFile(context);
-        if(!file.exists())return new LogicalBackupCatalog(snapshot,physical,Collections.emptyList(),Collections.emptyMap());
+        if(!file.exists())return new LogicalBackupCatalog(snapshot,physical,Collections.emptyList(),Collections.emptyMap(),Collections.emptyMap());
         try(SQLiteDatabase database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READONLY)) {
             if(database.getVersion()!=VideoOpenHelper.getDatabaseVersion())throw new IOException("Indexed media schema is not compatible with logical backup");
             // One SQLite read snapshot across files, show identities, pins and hidden state.
@@ -57,7 +61,7 @@ public final class LogicalBackupCatalog {
                     }
                 }
                 cancelled(cancel);List<PortablePinnedTitles.Title> pins=PortablePinnedTitles.read(database);Map<Long,Boolean> hidden=PortableHiddenItems.read(database);
-                return new LogicalBackupCatalog(snapshot,physical,pins,hidden);
+                return new LogicalBackupCatalog(snapshot,physical,pins,hidden,playlists?PortableSavedPlaylists.read(database):Collections.emptyMap());
             }finally{database.execSQL("RELEASE SAVEPOINT supernova_backup_read");}
         }catch(RuntimeException invalid){throw new IOException("Complete indexed identity inventory is unavailable; backup was not created",invalid);}
     }

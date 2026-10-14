@@ -25,7 +25,7 @@ public final class PortableSavedPlaylists {
     private static long integer(Object value,long minimum)throws JSONException{if(!(value instanceof Integer||value instanceof Long)||((Number)value).longValue()<minimum)throw new JSONException("Invalid playlist integer");return ((Number)value).longValue();}
     private static void label(Object value)throws JSONException{
         if(value==JSONObject.NULL)return;if(!(value instanceof String))throw new JSONException("Invalid playlist name");String text=(String)value;
-        if(text.length()>8192||text.indexOf('\0')>=0||text.matches("(?is).*(?:password|passwd|token|secret|authorization|cookie|api[_-]?key)\\s*[:=].*")||text.matches("(?is).*\\b[a-z][a-z0-9+.-]*://[^\\s/]*@.*"))throw new JSONException("Playlist name requires privacy review");
+        if(text.length()>8192||text.indexOf('\0')>=0||text.contains("://")||text.startsWith("/")||text.startsWith("\\")||text.matches("(?is)^[a-z]:[\\\\/].*")||text.matches("(?is).*(?:password|passwd|token|secret|authorization|cookie|api[_-]?key)\\s*[:=].*"))throw new JSONException("Playlist name requires privacy review");
         try{java.nio.charset.StandardCharsets.UTF_8.newEncoder().encode(java.nio.CharBuffer.wrap(text));}catch(Exception invalid){throw new JSONException("Invalid playlist name encoding");}
     }
     public static void member(String identity)throws JSONException{

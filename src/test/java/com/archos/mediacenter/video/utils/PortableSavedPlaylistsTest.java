@@ -52,8 +52,8 @@ public class PortableSavedPlaylistsTest {
         JSONObject invalid=example();invalid.getJSONArray("rows").put(invalid.getJSONArray("rows").getJSONObject(0));try{PortableSavedPlaylists.validate(invalid);fail();}catch(JSONException expected){}
         invalid=example();invalid.getJSONArray("rows").getJSONObject(0).getJSONArray("members").put("tmdb:movie:123");try{PortableSavedPlaylists.validate(invalid);fail();}catch(JSONException expected){}
     }
-    @Test public void credentialLabelsRejectWithoutEchoAndCodecStaysUnregisteredUntilSyncRecoveryIntegration()throws Exception{
+    @Test public void unsafeLabelsRejectWithoutEchoAndRegisteredCodecRejectsInvalidData()throws Exception{
         for(String name:List.of("password=PRIVATE_CANARY","smb://user:PRIVATE_CANARY@nas/share",new String(new char[]{'x','\ud800'}))){try{new PortableSavedPlaylists.Definition(1,name,List.of());fail();}catch(JSONException expected){assertFalse(expected.getMessage().contains("PRIVATE_CANARY"));}}
-        assertFalse(LogicalBackupArchive.registered().contains(BackupCategory.PLAYLISTS));
+        assertTrue(LogicalBackupArchive.registered().contains(BackupCategory.PLAYLISTS));
     }
 }
