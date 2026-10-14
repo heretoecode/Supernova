@@ -23,3 +23,6 @@ These discussions are paused, **not deleted or rejected**. Reopen only at owner'
 
 ## Latest correction — Preparing Playback
 FD-003 Preparing Playback redesign is **already implemented and owner-confirmed**, not parked or pending redesign. Any future changes are owner-initiated tweaks only. Historical parked references above are superseded.
+
+## 14 October 2026 — FD-007 status superseded
+**FD-007 Library statistics/header is NO LONGER parked for design.** Owner approved the two-row full-width layout, responsive 16px-reference gaps above/below, matching library width, removed redundant page heading, monochrome static scan status, and explicit lower-row metric definitions. Move implementation planning to approved-awaiting-scheduling; no change to 0.139/0.140 scope. [Authoritative approved specification](../03%20Approved%20-%20Awaiting%20Scheduling/FD-007-library-statistics-header-approved-design.md). Older 'preserve vertical hierarchy' and 'design not final' table entry is superseded.
