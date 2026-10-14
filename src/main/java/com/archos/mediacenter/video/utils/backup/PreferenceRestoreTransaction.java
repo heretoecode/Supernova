@@ -62,6 +62,8 @@ public final class PreferenceRestoreTransaction {
         private final String bookmarksBefore,bookmarksAfter;
         private final String sourcesBefore,sourcesAfter;
         private final String titleBefore;
+        private List<com.archos.mediascraper.OwnedCanonicalBatch> canonicalBatches=Collections.emptyList();
+        private Collection<Long> canonicalFiles=Collections.emptyList();
         private final boolean viewingExisted,historySelected,positionsSelected;
         private Plan(SharedPreferences owner,Map<String,Object> before,Map<String,Object> after,Set<String> keys,Map<String,Object> healthBefore,Map<String,Object> healthAfter,Set<String> healthKeys,Set<BackupCategory> categories,int unresolved,String viewingBefore,String viewingAfter,boolean viewingExisted,String mediaBefore,String mediaAfter,String bookmarksBefore,String bookmarksAfter,String sourcesBefore,String sourcesAfter,String titleBefore){
             this.owner=owner;
@@ -150,6 +152,43 @@ public final class PreferenceRestoreTransaction {
                 Plan plan=new Plan(prefs,before,prepared.values,prepared.keys,Collections.emptyMap(),Collections.emptyMap(),Collections.emptySet(),EnumSet.of(BackupCategory.TITLE_PLAYBACK),prepared.unresolved,null,null,false,null,null,null,null,null,null,inventory.signature);apply(plan,()->false);
             }catch(JSONException|RuntimeException invalid){throw new IOException("Pending title choices could not be reconciled safely",invalid);}
         }}
+    }
+    /** Staged compatible-owner canonical preparation; codec registration waits for clearing/cross-kind coverage. */
+    public Plan prepareCanonicalMatches(Map<BackupCategory,JSONObject> selected,Snapshot snapshot,PortablePhysicalReferences physical,
+            CanonicalMatchMaterial.Resolver resolver,BooleanSupplier cancel)throws IOException,JSONException {
+        Plan original=prepare(selected,snapshot,physical);if(!selected.containsKey(BackupCategory.MATCHES))return original;
+        MediaMatchInventory inventory=MediaMatchInventory.capture(destination);
+        if(!inventory.signature.equals(original.matchesBefore))throw new IOException("Receiving identification changed during canonical preparation");
+        List<com.archos.mediascraper.OwnedCanonicalBatch> batches=new ArrayList<>();List<Long> files=new ArrayList<>();Map<String,Object> values=new LinkedHashMap<>(original.after);
+        File store=com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(destination);
+        if(!store.exists())return original;
+        try(android.database.sqlite.SQLiteDatabase database=android.database.sqlite.SQLiteDatabase.openDatabase(store.getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY)){
+            for(var entry:original.after.entrySet())if(MediaMatchIntents.owns(entry.getKey())){
+                cancelled(cancel);JSONObject intent=new JSONObject((String)entry.getValue());if(!intent.getBoolean("pending")||intent.isNull("requested"))continue;
+                String[] key=entry.getKey().split(":");long id=Long.parseLong(key[key.length-1]);MediaMatchInventory.Owner owner=inventory.owners.get(id);
+                if(owner==null||owner.match==null)continue;JSONObject request=intent.getJSONObject("requested");var requested=new PortableMediaMatches.Match(request.getString("identity"),request.isNull("episodeProvider")?null:request.getLong("episodeProvider"));
+                if(owner.type==com.archos.mediascraper.BaseTags.MOVIE&&!requested.identity.startsWith("tmdb:movie:")||owner.type==com.archos.mediascraper.BaseTags.TV_SHOW&&!requested.identity.startsWith("tmdb:tv:"))continue;
+                long parent=0;Long pin=null;
+                String table=owner.type==com.archos.mediascraper.BaseTags.MOVIE?"MOVIE":"EPISODE";
+                try(android.database.Cursor row=database.query(table,owner.type==com.archos.mediascraper.BaseTags.MOVIE?new String[]{"Nova_pinned"}:new String[]{"show_episode"},"_id=?",new String[]{Long.toString(owner.localId)},null,null,null)){
+                    if(!row.moveToFirst())throw new IOException("Receiving canonical owner disappeared");if(owner.type==com.archos.mediascraper.BaseTags.MOVIE)pin=row.isNull(0)?null:row.getLong(0);else parent=row.getLong(0);
+                }
+                if(parent>0)try(android.database.Cursor row=database.query("SHOW",new String[]{"Nova_pinned"},"_id=?",new String[]{Long.toString(parent)},null,null,null)){if(!row.moveToFirst())throw new IOException("Receiving canonical parent disappeared");pin=row.isNull(0)?null:row.getLong(0);}
+                var video=physical.video(id);
+                try{batches.add(CanonicalMatchMaterial.prepare(destination,owner,requested,video==null?null:video.getFileUri(),parent,pin,resolver));}
+                catch(java.io.InterruptedIOException interrupted){throw interrupted;}
+                catch(IOException unavailable){continue;}
+                files.add(id);intent.put("pending",false);values.put(entry.getKey(),intent.toString());
+            }
+        }
+        if(batches.isEmpty())return original;
+        JSONObject before=MediaStateRecovery.capture(destination,true,selected.containsKey(BackupCategory.HIDDEN),selected.containsKey(BackupCategory.PLAYLISTS)),after=new JSONObject(before.toString());
+        if(original.mediaAfter!=null){JSONObject selectedAfter=new JSONObject(original.mediaAfter);for(String category:List.of("pins","hidden","playlists"))if(selectedAfter.has(category)&&!selectedAfter.isNull(category))after.put(category,selectedAfter.get(category));}
+        MediaStateRecovery.validatePair(before,after);
+        Plan plan=new Plan(prefs,original.before,values,original.keys,original.healthBefore,original.healthAfter,original.healthKeys,original.categories,
+                original.unresolved-files.size(),original.viewingBefore,original.viewingAfter,original.viewingExisted,before.toString(),after.toString(),original.bookmarksBefore,original.bookmarksAfter,original.sourcesBefore,original.sourcesAfter,original.titleBefore);
+        plan.viewingIntroduced=original.viewingIntroduced;plan.nativeViewingBefore=original.nativeViewingBefore;plan.matchesBefore=original.matchesBefore;
+        plan.canonicalBatches=Collections.unmodifiableList(batches);plan.canonicalFiles=Collections.unmodifiableList(files);return plan;
     }
     private static Map<String,Object> copy(Map<String,?> source){
         Map<String,Object> result=new LinkedHashMap<>();for(Map.Entry<String,?> item:source.entrySet()){
@@ -297,6 +336,15 @@ public final class PreferenceRestoreTransaction {
                 if(plan.mediaBefore!=null)try{media=MediaStateRecovery.begin(destination,new JSONObject(plan.mediaBefore),false);}catch(JSONException invalid){throw new IOException("Media restore preview is invalid",invalid);}
                 if(plan.bookmarksBefore!=null)try{if(new JSONObject(plan.bookmarksBefore).getBoolean("exists"))bookmarks=BookmarkStoreRecovery.begin(destination,new JSONObject(plan.bookmarksBefore),new JSONObject(plan.bookmarksAfter));}catch(JSONException invalid){throw new IOException("Bookmark restore preview is invalid",invalid);}
                 if(plan.sourcesBefore!=null)try{if(new JSONObject(plan.sourcesBefore).getBoolean("exists"))sources=IndexedSourceStoreRecovery.begin(destination,new JSONObject(plan.sourcesBefore),new JSONObject(plan.sourcesAfter));}catch(JSONException invalid){throw new IOException("Indexed-source preview is invalid",invalid);}
+                if(!plan.canonicalBatches.isEmpty()){
+                    if(media==null)throw new IOException("Canonical native participant unavailable");
+                    try{
+                        JSONObject canonical=media.stageCanonical(plan.canonicalFiles,plan.canonicalBatches,cancel);
+                        media.write(new JSONObject(plan.mediaAfter),cancel);media.sealCanonical(canonical,cancel);
+                        record.put("schema",9).put("canonical",canonical);
+                        for(String optional:List.of("viewing","bookmarks","sources"))if(!record.has(optional))record.put(optional,JSONObject.NULL);
+                    }catch(JSONException invalid){throw new IOException("Canonical redo preparation failed",invalid);}
+                }
                 save(record);
                 observer.reached(Checkpoint.JOURNAL_DURABLE);cancelled(cancel);
                 if(plan.bookmarksBefore!=null&&bookmarks==null)try{bookmarks=BookmarkStoreRecovery.begin(destination,new JSONObject(plan.bookmarksBefore),new JSONObject(plan.bookmarksAfter));}catch(JSONException invalid){throw new IOException("Bookmark restore preview is invalid",invalid);}
@@ -307,7 +355,7 @@ public final class PreferenceRestoreTransaction {
                     try{ViewingHistory.replaceRecovery(destination,new JSONObject(plan.viewingAfter),cancel);}catch(JSONException invalid){throw new IOException("Viewing restore values are invalid",invalid);}
                     observer.reached(Checkpoint.VIEWING_DURABLE);cancelled(cancel);
                 }
-                if(media!=null){try{media.write(new JSONObject(plan.mediaAfter),cancel);}catch(JSONException invalid){throw new IOException("Media restore values are invalid",invalid);}
+                if(media!=null){try{if(plan.canonicalBatches.isEmpty())media.write(new JSONObject(plan.mediaAfter),cancel);}catch(JSONException invalid){throw new IOException("Media restore values are invalid",invalid);}
                     observer.reached(Checkpoint.MEDIA_PREPARED);cancelled(cancel);}
                 if(bookmarks!=null){try{bookmarks.write(new JSONObject(plan.bookmarksAfter),cancel);}catch(JSONException invalid){throw new IOException("Bookmark restore values are invalid",invalid);}
                     observer.reached(Checkpoint.BOOKMARKS_PREPARED);cancelled(cancel);}
@@ -400,30 +448,31 @@ public final class PreferenceRestoreTransaction {
     private Recovery recoverLocked()throws IOException{
         synchronized(LOCK){
             if(!journal.getBaseFile().exists()&&!new File(journal.getBaseFile()+".bak").exists())return Recovery.NONE;
-            Set<String> keys=new LinkedHashSet<>(),healthKeys=new LinkedHashSet<>();Map<String,Object> originals=new LinkedHashMap<>(),healthOriginals=new LinkedHashMap<>();boolean complete;JSONObject viewing=null,media=null,bookmarks=null,sources=null;
+            Set<String> keys=new LinkedHashSet<>(),healthKeys=new LinkedHashSet<>();Map<String,Object> originals=new LinkedHashMap<>(),healthOriginals=new LinkedHashMap<>();boolean complete;JSONObject viewing=null,media=null,bookmarks=null,sources=null,canonical=null;
             try(InputStream input=journal.openRead()){
                 ByteArrayOutputStream output=new ByteArrayOutputStream();byte[] buffer=new byte[8192];int n;
                 while((n=input.read(buffer))!=-1){if(output.size()+n>MAX_JOURNAL)throw new IOException("Private recovery exceeds storage limit");output.write(buffer,0,n);}
                 JSONObject record=new JSONObject(new String(output.toByteArray(),StandardCharsets.UTF_8));
-                if(!(record.get("schema") instanceof Integer)||!Arrays.asList(1,2,3,4,5,6,7,8).contains(record.getInt("schema"))||!(record.get("complete") instanceof Boolean))throw new JSONException("Unknown recovery schema");int schema=record.getInt("schema");
-                if(record.length()!=(schema>=7?7:schema==6?6:schema>=4?5:schema==3?4:3))throw new JSONException("Unknown recovery fields");
+                if(!(record.get("schema") instanceof Integer)||!Arrays.asList(1,2,3,4,5,6,7,8,9).contains(record.getInt("schema"))||!(record.get("complete") instanceof Boolean))throw new JSONException("Unknown recovery schema");int schema=record.getInt("schema");
+                if(record.length()!=(schema==9?8:schema>=7?7:schema==6?6:schema>=4?5:schema==3?4:3))throw new JSONException("Unknown recovery fields");
                 if(schema>=4&&!(schema>=6&&record.isNull("media"))) {
                     media=record.getJSONObject("media");if(media.length()!=(schema>=5?3:2))throw new JSONException("Invalid media recovery fields");
                     if(schema>=5&&(!(media.get("committed") instanceof Boolean)||media.getBoolean("committed")&&!record.getBoolean("complete")))throw new JSONException("Invalid durable media acknowledgement");
                     MediaStateRecovery.validatePair(media.getJSONObject("before"),media.getJSONObject("after"));
                 }
+                if(schema==9){if(media==null)throw new JSONException("Missing canonical native participant");canonical=record.getJSONObject("canonical");CanonicalNativeRecovery.validate(canonical);}
                 if(schema>=6&&!(schema>=7&&record.isNull("bookmarks"))){
                     bookmarks=record.getJSONObject("bookmarks");if(bookmarks.length()!=3||!(bookmarks.get("committed") instanceof Boolean)||bookmarks.getBoolean("committed")&&!record.getBoolean("complete"))throw new JSONException("Invalid durable bookmark acknowledgement");
                     BookmarkStoreRecovery.validatePair(bookmarks.getJSONObject("before"),bookmarks.getJSONObject("after"));
                 }
-                if(schema>=7&&!(schema==8&&record.isNull("sources"))){sources=record.getJSONObject("sources");if(sources.length()!=3||!(sources.get("committed") instanceof Boolean)||sources.getBoolean("committed")&&!record.getBoolean("complete"))throw new JSONException("Invalid durable indexed-source acknowledgement");IndexedSourceStoreRecovery.validatePair(sources.getJSONObject("before"),sources.getJSONObject("after"));}
+                if(schema>=7&&!(schema>=8&&record.isNull("sources"))){sources=record.getJSONObject("sources");if(sources.length()!=3||!(sources.get("committed") instanceof Boolean)||sources.getBoolean("committed")&&!record.getBoolean("complete"))throw new JSONException("Invalid durable indexed-source acknowledgement");IndexedSourceStoreRecovery.validatePair(sources.getJSONObject("before"),sources.getJSONObject("after"));}
                 if(schema==8&&record.isNull("viewing"))throw new JSONException("Missing introduced viewing recovery");
                 if(schema>=3&&!(schema>=4&&record.isNull("viewing"))) {
-                    viewing=record.getJSONObject("viewing");if(viewing.length()!=(schema==8?5:4)||!(viewing.get("existed") instanceof Boolean)||
+                    viewing=record.getJSONObject("viewing");if(viewing.length()!=((schema==8||schema==9&&viewing.has("introduced"))?5:4)||!(viewing.get("existed") instanceof Boolean)||
                             !(viewing.get("history") instanceof Boolean)||!(viewing.get("positions") instanceof Boolean)||
                             !viewing.getBoolean("history")&&!viewing.getBoolean("positions"))throw new JSONException("Invalid viewing recovery scope");
                     PortableViewingState.validateRecoverySnapshot(viewing.getJSONObject("before"));
-                    if(schema==8){Map<String,ViewingHistory.Record> introduced=PortableViewingState.validateRecoverySnapshot(viewing.getJSONObject("introduced")),original=PortableViewingState.validateRecoverySnapshot(viewing.getJSONObject("before"));if(introduced.isEmpty()||viewing.getBoolean("history")==viewing.getBoolean("positions"))throw new JSONException("Invalid introduced viewing scope");for(String identity:introduced.keySet())if(original.containsKey(identity))throw new JSONException("Introduced viewing identity conflicts with originals");}
+                    if(schema==8||schema==9&&viewing.has("introduced")){Map<String,ViewingHistory.Record> introduced=PortableViewingState.validateRecoverySnapshot(viewing.getJSONObject("introduced")),original=PortableViewingState.validateRecoverySnapshot(viewing.getJSONObject("before"));if(introduced.isEmpty()||viewing.getBoolean("history")==viewing.getBoolean("positions"))throw new JSONException("Invalid introduced viewing scope");for(String identity:introduced.keySet())if(original.containsKey(identity))throw new JSONException("Introduced viewing identity conflicts with originals");}
                     if(!viewing.getBoolean("existed")&&viewing.getJSONObject("before").getJSONArray("rows").length()!=0)throw new JSONException("Invalid absent viewing store image");
                 }
                 complete=record.getBoolean("complete");JSONArray values=record.getJSONArray("values");if(values.length()>100000)throw new JSONException("Too many recovery keys");
@@ -442,7 +491,7 @@ public final class PreferenceRestoreTransaction {
                     }(named?healthOriginals:originals).put(key,value);
                 }
             }catch(JSONException e){throw new IOException("Private restore recovery is invalid; originals retained for inspection",e);}
-            if(media!=null&&!Boolean.TRUE.equals(media.opt("committed")))try{MediaStateRecovery.recover(destination,media.getJSONObject("before"),media.getJSONObject("after"),complete);}
+            if(media!=null&&!Boolean.TRUE.equals(media.opt("committed")))try{if(canonical==null)MediaStateRecovery.recover(destination,media.getJSONObject("before"),media.getJSONObject("after"),complete);else MediaStateRecovery.recoverCanonical(destination,media.getJSONObject("before"),media.getJSONObject("after"),canonical,complete);}
                 catch(JSONException invalid){throw new IOException("Media recovery values are invalid",invalid);}
             if(bookmarks!=null&&!Boolean.TRUE.equals(bookmarks.opt("committed")))try{BookmarkStoreRecovery.recover(destination,bookmarks.getJSONObject("before"),bookmarks.getJSONObject("after"),complete);}
                 catch(JSONException invalid){throw new IOException("Bookmark recovery values are invalid",invalid);}
