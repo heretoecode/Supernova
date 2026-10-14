@@ -1,0 +1,21 @@
+{
+  "source_sha": "3d457a7d148a5182a72d65a07afe8e69aaacbe79",
+  "classes": 1,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.Supernova139HomeEditorTest"
+  ],
+  "log_sha256": "370f8788d8132dec5534fb66a5ed3b1414ddf2f4ae3802cc741a735c7eab581b",
+  "tests": 12,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "result": "PASS",
+  "duration": "36s",
+  "coverage": [
+    "Twenty held key repeats in both directions remain bounded with one focused target after real layout frames",
+    "Back rolls back original order; placed hidden row persists on reopening",
+    "1.3 font profile reaches all custom editor controls with ancestor viewport checks and durable direction choice",
+    "Existing Home editor regressions"
+  ],
+  "limits": "Native Robolectric layout and root Dialog key dispatch only; not physical input/Shield, connected Genres geometry, all densities or full C01-C12 acceptance. The earlier nonexistent PreviewHomeRowsTest filter produced no class; exact executed class_names/counts above are authoritative."
+}

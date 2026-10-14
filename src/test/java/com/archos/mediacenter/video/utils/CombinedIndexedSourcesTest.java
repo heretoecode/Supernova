@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class CombinedIndexedSourcesTest {
-    private final CombinedViewingRestoreTest fixture=new CombinedViewingRestoreTest();
+    final CombinedViewingRestoreTest fixture=new CombinedViewingRestoreTest();
     private static class ProcessDeath extends Error {}
     private static final String LOCATION="smb://nas.example/Media";
     @Before public void setup()throws Exception{
@@ -28,14 +28,14 @@ public class CombinedIndexedSourcesTest {
         try(var db=android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(app.getDatabasePath(IndexedSourceStoreRecovery.DATABASE),null)){db.execSQL("CREATE TABLE shortcuts_table_video(_id INTEGER PRIMARY KEY AUTOINCREMENT,path TEXT NOT NULL,name TEXT NOT NULL,ippath TEXT,friendly_url TEXT,rescan INTEGER DEFAULT(1))");db.setVersion(5);db.execSQL("INSERT INTO shortcuts_table_video(_id,path,name,ippath,friendly_url,rescan) VALUES(1,'smb://nas.example/Media','Original source','smb://10.0.0.1/Media','Receiving friendly locator',0),(2,'putio:///ACCOUNT_CANARY','Receiving integration',NULL,NULL,NULL)");}
     }
     private JSONObject source()throws Exception{return new JSONObject().put("schema",2).put("roots",new JSONArray().put(PortableLocations.reference(LOCATION))).put("exclusions",new JSONArray()).put("indexed",new JSONObject().put("schema",1).put("rows",new JSONArray().put(new JSONObject().put("location",PortableLocations.reference(LOCATION)).put("name","Restored source").put("rescan",true))));}
-    private Map<BackupCategory,JSONObject> all()throws Exception{
+    Map<BackupCategory,JSONObject> all()throws Exception{
         var result=fixture.incoming(true);result.put(BackupCategory.SOURCES,source());result.put(BackupCategory.PINNED,new JSONObject().put("schema",1).put("rows",new JSONArray()));result.put(BackupCategory.HIDDEN,new JSONObject().put("schema",1).put("rows",new JSONArray()));
         result.put(BackupCategory.PLAYLISTS,new JSONObject().put("schema",1).put("rows",new JSONArray().put(new JSONObject().put("id","playlist:12345678-1234-1234-1234-123456789012:1").put("name","Restored local").put("members",new JSONArray().put("tmdb:movie:321")))));
         result.put(BackupCategory.BOOKMARKS,new JSONObject().put("schema",1).put("rows",new JSONArray().put(new JSONObject().put("id","bookmark:12345678-1234-1234-1234-123456789012:1").put("location",PortableLocations.reference(LOCATION)).put("name","Restored bookmark"))));return result;
     }
     private String media()throws Exception{return MediaStateRecovery.capture(fixture.app,true,true,true).toString();}
     private String sources()throws Exception{return IndexedSourceStoreRecovery.capture(fixture.app).toString();}
-    private void assertNew()throws Exception{
+    void assertNew()throws Exception{
         assertEquals(19,fixture.prefs.getInt("preview_accent41",0));assertTrue(fixture.health.getBoolean("incorrect:10",false));assertTrue(ViewingHistory.read(fixture.app).get("tmdb:movie:456").completed);
         assertEquals(Set.of(LOCATION),fixture.prefs.getStringSet(PortableLibrarySources.ROOTS,Set.of()));assertTrue(fixture.prefs.getStringSet(PortableLibrarySources.EXCLUSIONS,Set.of()).isEmpty());
         JSONObject source=IndexedSourceStoreRecovery.capture(fixture.app).getJSONArray("rows").getJSONObject(0);assertEquals("Restored source",source.getString("name"));assertEquals(1,source.getInt("rescan"));assertEquals("smb://10.0.0.1/Media",source.getString("ip"));
