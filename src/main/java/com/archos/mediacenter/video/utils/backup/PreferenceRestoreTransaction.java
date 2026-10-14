@@ -130,6 +130,16 @@ public final class PreferenceRestoreTransaction {
             }catch(JSONException|RuntimeException invalid){throw new IOException("Pending sources could not be reconciled safely",invalid);}
         }}
     }
+    public void reconcileTitlePlayback()throws IOException{
+        if(!prefs.contains(PortableTitlePlayback.PENDING))return;ViewingHistory.awaitWrites();synchronized(ViewingHistory.LOCK){synchronized(LOCK){
+            Map<String,?> current=prefs.getAll();Object saved=current.get(PortableTitlePlayback.PENDING);if(saved==null)return;
+            try{if(!(saved instanceof String))throw new JSONException("Invalid pending title choices");JSONObject payload=new JSONObject((String)saved);PortableTitlePlayback.validate(payload);if(payload.getJSONArray("rows").length()==0)return;
+                LogicalBackupCatalog catalog=LogicalBackupCatalog.capture(destination,()->false,false,true);PortablePhysicalReferences physical=new PortablePhysicalReferences(destination,catalog.physical);TitlePlaybackInventory inventory=TitlePlaybackInventory.capture(destination);inventory.validatePhysical(physical);var prepared=TitlePlaybackOverrides.preparePending(current,payload,inventory.choices,physical);
+                boolean changed=false;for(String key:prepared.keys)changed|=!Objects.equals(current.get(key),prepared.values.get(key));if(!changed)return;Map<String,Object> before=new LinkedHashMap<>();for(String key:prepared.keys)if(current.containsKey(key))before.put(key,current.get(key));
+                Plan plan=new Plan(prefs,before,prepared.values,prepared.keys,Collections.emptyMap(),Collections.emptyMap(),Collections.emptySet(),EnumSet.of(BackupCategory.TITLE_PLAYBACK),prepared.unresolved,null,null,false,null,null,null,null,null,null,inventory.signature);apply(plan,()->false);
+            }catch(JSONException|RuntimeException invalid){throw new IOException("Pending title choices could not be reconciled safely",invalid);}
+        }}
+    }
     private static Map<String,Object> copy(Map<String,?> source){
         Map<String,Object> result=new LinkedHashMap<>();for(Map.Entry<String,?> item:source.entrySet()){
             Object value=item.getValue();result.put(item.getKey(),value instanceof Set?Collections.unmodifiableSet(new LinkedHashSet<>((Set<?>)value)):value);

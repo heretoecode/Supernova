@@ -40,6 +40,14 @@ public final class TitlePlaybackOverrides {
         }
         values.put(PortableTitlePlayback.PENDING,new JSONObject().put("schema",2).put("rows",unknown).toString());return new Prepared(values,keys,unresolved);
     }
+    /** Reconcile only unknown members; current explicit or already-saved receiving choices win. */
+    public static Prepared preparePending(Map<String,?> current,JSONObject payload,Map<Long,PortableTitlePlayback.State> receiving,PortablePhysicalReferences physical)throws JSONException{
+        PortableTitlePlayback.validate(payload);Map<String,Object> values=new LinkedHashMap<>();Set<String> keys=new LinkedHashSet<>();keys.add(PortableTitlePlayback.PENDING);JSONArray unknown=new JSONArray(),rows=payload.getJSONArray("rows");int unresolved=0;
+        for(int i=0;i<rows.length();i++){JSONObject row=rows.getJSONObject(i);var state=PortableTitlePlayback.state(row,payload.getInt("schema"));Video video=physical.resolve(row.getString("physical"));if(video==null||!receiving.containsKey(video.getId())){unknown.put(publicRow(row.getString("physical"),state));unresolved++;continue;}
+            String key=key(video.getId());Object saved=current.get(key);boolean live=false;if(saved!=null){if(!(saved instanceof String))throw new JSONException("Invalid explicit playback store");JSONObject previous=new JSONObject((String)saved);var choice=validate(previous);live=previous.getString("guard").equals(guard(video.getId(),uri(video)))&&choice.meaningful();}else live=receiving.get(video.getId()).meaningful();if(live)continue;
+            boolean pending=state.meaningful();keys.add(key);values.put(key,record(video,row.getString("physical"),state,pending).toString());if(pending)unresolved++;
+        }values.put(PortableTitlePlayback.PENDING,new JSONObject().put("schema",2).put("rows",unknown).toString());return new Prepared(values,keys,unresolved);
+    }
     /** Export only public choice fields; an orphaned override keeps its original unresolved public reference. */
     public static JSONObject export(Context context,Map<Long,PortableTitlePlayback.State> indexed,PortablePhysicalReferences physical)throws JSONException{
         Map<Long,PortableTitlePlayback.State> effective=new LinkedHashMap<>(indexed);Map<String,JSONObject> orphaned=new LinkedHashMap<>();Map<String,?> preferences=PreferenceManager.getDefaultSharedPreferences(context).getAll();
