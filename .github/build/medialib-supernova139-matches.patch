@@ -1,5 +1,5 @@
 diff --git a/src/com/archos/mediaprovider/video/ScraperProvider.java b/src/com/archos/mediaprovider/video/ScraperProvider.java
-index bbf4e60..45e5b6f 100644
+index bbf4e60..1c3b975 100644
 --- a/src/com/archos/mediaprovider/video/ScraperProvider.java
 +++ b/src/com/archos/mediaprovider/video/ScraperProvider.java
 @@ -61,6 +61,7 @@ public class ScraperProvider extends ContentProvider {
@@ -18,7 +18,13 @@ index bbf4e60..45e5b6f 100644
      private static final int EPISODE = SCRAPER_PROVIDER_OFFSET + 50;
      private static final int EPISODE_ID = SCRAPER_PROVIDER_OFFSET + 51;
      private static final int EPISODE_ALL_INFOS = SCRAPER_PROVIDER_OFFSET + 53;
-@@ -166,6 +168,8 @@ public class ScraperProvider extends ContentProvider {
+@@ -161,11 +163,13 @@ public class ScraperProvider extends ContentProvider {
+     /**
+      * called from VideoProvider static context. Registers these URIs
+      */
+-    public static void hookUriMatcher(UriMatcher hook) {
++    public static synchronized void hookUriMatcher(UriMatcher hook) {
+         sUriMatcher = hook;
  
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.BASE),
                  MOVIE);
@@ -27,7 +33,22 @@ index bbf4e60..45e5b6f 100644
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.ALL),
                  MOVIE_ALL);
          sUriMatcher.addURI(ScraperStore.AUTHORITY, getPath(ScraperStore.Movie.URI.ID) + "#",
-@@ -540,6 +544,24 @@ public class ScraperProvider extends ContentProvider {
+@@ -374,8 +378,14 @@ public class ScraperProvider extends ContentProvider {
+     private final ContentResolver mCr;
+     private final Context mContext;
+ 
++    /** Early private restore recovery can precede VideoProvider initialization. */
++    private static synchronized void ensureUriMatcher() {
++        if (sUriMatcher == null) hookUriMatcher(new UriMatcher(UriMatcher.NO_MATCH));
++    }
++
+     /* Create an instance of this class to use. Don't use it as a real provider.*/
+     public ScraperProvider(Context context, DbHolder dbH) {
++        ensureUriMatcher();
+         mDbHolder = dbH;
+         mContext = context;
+         mCr = context.getContentResolver();
+@@ -540,6 +550,24 @@ public class ScraperProvider extends ContentProvider {
          ContentResolver cr = mCr;
          SQLiteDatabase db = mDbHolder.get();
          switch (sUriMatcher.match(uri)) {
@@ -52,7 +73,7 @@ index bbf4e60..45e5b6f 100644
              case MOVIE:
                  rowId = db.insert(ScraperTables.MOVIE_TABLE_NAME,
                          ScraperStore.Movie.ID, values);
-@@ -550,6 +572,31 @@ public class ScraperProvider extends ContentProvider {
+@@ -550,6 +578,31 @@ public class ScraperProvider extends ContentProvider {
                          ScraperStore.Show.ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                  noteUri = createUriAndNotify(rowId, db, ScraperStore.Show.URI.ID, cr, ADDITIONAL_SHOW);
                  break;

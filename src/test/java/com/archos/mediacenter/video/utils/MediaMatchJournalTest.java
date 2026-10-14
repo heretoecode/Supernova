@@ -55,4 +55,12 @@ public class MediaMatchJournalTest {
         }
     }
 
+    @Test public void earlyStartupCanonicalRecoveryInitializesScraperRoutesWithoutARegisteredVideoProvider()throws Exception {
+        try{fixture.transaction.apply(canonicalPlan(),()->false,point->{if(point==PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+        org.robolectric.util.ReflectionHelpers.setStaticField(com.archos.mediaprovider.video.ScraperProvider.class,"sUriMatcher",null);
+        PreferenceRestoreTransaction.recoverAtStartup(fixture.app);
+        try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app);var row=helper.getReadableDatabase().rawQuery("SELECT m_online_id,name_movie,Nova_pinned FROM MOVIE WHERE _id=100",null)){assertTrue(row.moveToFirst());assertEquals(789,row.getLong(0));assertEquals("Fresh canonical title",row.getString(1));assertEquals(9,row.getLong(2));}
+        assertFalse(fixture.journal.exists());assertEquals("AUTH_CANARY",fixture.prefs.getString("oauth_token",null));
+    }
+
 }
