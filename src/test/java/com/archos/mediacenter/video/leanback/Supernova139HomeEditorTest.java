@@ -152,4 +152,25 @@ public class Supernova139HomeEditorTest {
             PreviewPagesTest.capture(root(dialog),"0139-customise-small");dialog.dismiss();
         }finally{host.pause().stop().destroy();}
     }
+    private void held(Dialog dialog,int code,int repeats){
+        long started=android.os.SystemClock.uptimeMillis();for(int repeat=0;repeat<repeats;repeat++)dialog.dispatchKeyEvent(new KeyEvent(started,started+repeat*50,KeyEvent.ACTION_DOWN,code,repeat));
+        dialog.dispatchKeyEvent(new KeyEvent(started,started+repeats*50,KeyEvent.ACTION_UP,code,0));
+    }
+    private long focusedTargets(View view){long count=view.isFocused()?1:0;if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)count+=focusedTargets(((ViewGroup)view).getChildAt(i));return count;}
+    @Test public void heldReorderKeysStayBoundedBackRollsBackAndPlacedHiddenRowPersistsOnReopen(){
+        ActivityController<TopNavigationTest.Host> host=host();try{
+            PreviewHomeRows original=new PreviewHomeRows(host.get());original.rows.get(1).visible=false;original.save();List<String> order=original.rows.stream().map(row->row.id).collect(java.util.stream.Collectors.toList());
+            Dialog dialog=open(host);layout(dialog);View moving=root(dialog).findViewWithTag("watchnext");moving.requestFocus();moving.performClick();held(dialog,KeyEvent.KEYCODE_DPAD_DOWN,20);assertEquals("watchnext",dialog.getCurrentFocus().getTag());assertEquals(1,focusedTargets(root(dialog)));assertEquals(order,new PreviewHomeRows(host.get()).rows.stream().map(row->row.id).collect(java.util.stream.Collectors.toList()));key(dialog,KeyEvent.KEYCODE_BACK);assertEquals(order,new PreviewHomeRows(host.get()).rows.stream().map(row->row.id).collect(java.util.stream.Collectors.toList()));
+            root(dialog).findViewWithTag("watchnext").performClick();held(dialog,KeyEvent.KEYCODE_DPAD_UP,20);assertEquals("watchnext",dialog.getCurrentFocus().getTag());dialog.getCurrentFocus().performClick();PreviewHomeRows placed=new PreviewHomeRows(host.get());assertEquals("watchnext",placed.rows.get(0).id);assertFalse(placed.rows.get(0).visible);assertEquals(7,placed.rows.size());dialog.dismiss();dialog=open(host);layout(dialog);assertEquals("watchnext",dialog.getCurrentFocus().getTag());assertEquals(1,focusedTargets(root(dialog)));dialog.dismiss();
+        }finally{host.pause().stop().destroy();}
+    }
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void largeFontProfileKeepsIndependentEditorControlsReachableAndPersisted()throws Exception{
+        ActivityController<TopNavigationTest.Host> host=host();try{
+            android.content.res.Resources resources=host.get().getResources();android.content.res.Configuration configuration=new android.content.res.Configuration(resources.getConfiguration());configuration.fontScale=1.3f;android.util.DisplayMetrics metrics=new android.util.DisplayMetrics();metrics.setTo(resources.getDisplayMetrics());metrics.scaledDensity=metrics.density*1.3f;resources.updateConfiguration(configuration,metrics);
+            PreviewHomeRows model=new PreviewHomeRows(host.get());PreviewHomeRows.Row row=new PreviewHomeRows.Row("custom:font","Science Fiction and Adventure");row.genreRule="Science Fiction|Action";row.dynamic=true;model.rows.add(row);model.save();Dialog dialog=open(host);layout(dialog);root(dialog).findViewWithTag(row.id).requestFocus();key(dialog,KeyEvent.KEYCODE_DPAD_RIGHT);key(dialog,KeyEvent.KEYCODE_DPAD_RIGHT);
+            for(String tag:List.of("home.editor.name","home.editor.icon","home.editor.type:0","home.editor.type:1","home.editor.type:2","home.editor.genres","home.editor.match:true","home.editor.sort","home.editor.direction","home.editor.maximum","home.editor.automatic")){View field=root(dialog).findViewWithTag(tag);assertNotNull(tag,field);assertTrue(tag,field.requestFocus());org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();layout(dialog);fullyVisible(field);assertEquals(tag,dialog.getCurrentFocus().getTag());assertEquals(1,focusedTargets(root(dialog)));}
+            PreviewPagesTest.capture(root(dialog),"0139-customise-large-font-reachable");root(dialog).findViewWithTag("home.editor.direction").performClick();assertFalse(new PreviewHomeRows(host.get()).rows.get(7).descending);dialog.dismiss();dialog=open(host);layout(dialog);root(dialog).findViewWithTag(row.id).requestFocus();key(dialog,KeyEvent.KEYCODE_DPAD_RIGHT);key(dialog,KeyEvent.KEYCODE_DPAD_RIGHT);assertEquals("Ascending",((android.widget.TextView)root(dialog).findViewWithTag("home.editor.direction")).getText().toString());dialog.dismiss();
+        }finally{host.pause().stop().destroy();}
+    }
+
 }
