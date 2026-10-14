@@ -1,0 +1,9 @@
+# Remaining original 0.139 Details constraints
+
+This records unresolved acceptance requirements. It neither adds scope nor authorizes the future1.4.0 redesign.
+
+D03 remains unimplemented. The authoritative handover includes the connected tab/frame,4% usable-width sides and4% usable-height bottom. The [connected-panel decision](https://github.com/heretoecode/Supernova/blob/docs/project-decisions-2026-10-12/docs/project-decisions/2026-10-13-details-connected-tabs-panel-design-decision.md) also says: “The exact selected-versus-focused outline states and transitions for those interactive tabs require a later explicit design/behaviour decision.” The consolidated handover repeats that unresolved condition. No later approved state specification was available in the authoritative evidence already reviewed. The original independent card/actions/tab order/indexed-season/navigation changes remain preserved; no underline is described as a completed connected frame.
+
+D04 cannot meet all supplied constraints universally. The accepted passive fixed viewport must retain readable full unbounded synopsis and useful facts plus up to eight cast and eight crew, without scrolling, focusable content, hidden fields, unapproved truncation or unreadable shrinking. The forensic audit maps the existing card to a32dp lower-content teaser and documents long facts/synopsis overflow. Unbounded content cannot fit an arbitrary finite readable viewport. No routine rounding, spacing or focus fix resolves that contradiction. The1.4.0 information-layout redesign is explicitly excluded by the owner's current instruction.
+
+These are specific specification dependencies, separate from Shield access and signing branch eligibility. Other implementation and feasible tests continue. Neither whole43 acceptance nor a completed release is claimed while these remain open.
