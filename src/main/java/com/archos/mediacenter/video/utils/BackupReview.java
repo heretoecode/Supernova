@@ -50,7 +50,7 @@ public final class BackupReview implements DefaultLifecycleObserver {
                     ((AlertDialog)choice).getListView().setItemChecked(index,false);
                     privacy=new AlertDialog.Builder(fragment.requireContext()).setTitle("Include filenames and locations?")
                         .setMessage("This may expose filenames, folders, hosts and shares. Reconnect credentials and Android permissions separately. Unknown locations are not automatically trusted.")
-                        .setNegativeButton(android.R.string.cancel,null).setPositiveButton("Include",(warning,which)->{selection.categories.add(category);if(dialog!=null)dialog.getListView().setItemChecked(index,true);updateContinue();}).create();privacy.show();
+                        .setNegativeButton(android.R.string.cancel,(warning,which)->{selection.categories.remove(category);if(dialog!=null)dialog.getListView().setItemChecked(index,false);updateContinue();}).setPositiveButton("Include",(warning,which)->{selection.categories.add(category);if(dialog!=null)dialog.getListView().setItemChecked(index,true);updateContinue();}).create();privacy.setOnCancelListener(warning->{selection.categories.remove(category);if(dialog!=null)dialog.getListView().setItemChecked(index,false);updateContinue();});privacy.show();
                 }else if(included)selection.categories.add(category);else selection.categories.remove(category);
                 updateContinue();
             }).setNegativeButton(android.R.string.cancel,(d,w)->model.closeReview()).setPositiveButton("Review replacement",(d,w)->model.preview(new LinkedHashSet<>(selection.categories)));

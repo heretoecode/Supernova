@@ -93,15 +93,15 @@ fragment=(VideoSettingsFragment.PrefsFragment)host.get().getSupportFragmentManag
 review=review(fragment);
 assertSame(model,new androidx.lifecycle.ViewModelProvider(host.get()).get(BackupOperationModel.class));
 assertFalse(dialog(review).getListView().isItemChecked(1));
-assertEquals(7,PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).getInt("preview_accent41",0));
+assertEquals(7,PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41",0));
 dialog(review).getButton(AlertDialog.BUTTON_POSITIVE).performClick();
 await(model,BackupOperationModel.Phase.RESTORE_PREVIEW);
 assertEquals(Set.of(BackupCategory.APPEARANCE),model.current().categories);
-assertEquals(7,PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).getInt("preview_accent41",0));
+assertEquals(7,PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41",0));
 dialog(review).getButton(AlertDialog.BUTTON_POSITIVE).performClick();
 await(model,BackupOperationModel.Phase.RESTORED);
-assertEquals("activity="+host.get().getPackageName()+", model="+model.getApplication().getPackageName()+", appAccent="+PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41",0),19,PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).getInt("preview_accent41",0));
-assertEquals("AUTH_CANARY",PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).getString("oauth_token",null));
+assertEquals("activity="+host.get().getPackageName()+", model="+model.getApplication().getPackageName()+", appAccent="+PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41",0),19,PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41",0));
+assertEquals("AUTH_CANARY",PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getString("oauth_token",null));
 assertTrue(source.exists());
 assertEquals(0,new File(host.get().getCacheDir(),"supernova-logical-restore").listFiles().length);
 
@@ -130,8 +130,8 @@ Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
 assertTrue("location consent checked",choices.getListView().isItemChecked(2));
 choices.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
 await(model,BackupOperationModel.Phase.IDLE);
-assertEquals(7,PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).getInt("preview_accent41",0));
-assertEquals("AUTH_CANARY",PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).getString("oauth_token",null));
+assertEquals(7,PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41",0));
+assertEquals("AUTH_CANARY",PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getString("oauth_token",null));
 
         }finally{host.pause().stop().destroy();
 }
@@ -150,7 +150,7 @@ assertEquals("Restore legacy backup",dialog(review).getButton(AlertDialog.BUTTON
 assertTrue(model.current().message.contains("authentication is cleared"));
 dialog(review).getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
 await(model,BackupOperationModel.Phase.IDLE);
-assertEquals("AUTH_CANARY",PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).getString("oauth_token",null));
+assertEquals("AUTH_CANARY",PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getString("oauth_token",null));
 assertTrue(source.exists());
 
         }finally{host.pause().stop().destroy();
