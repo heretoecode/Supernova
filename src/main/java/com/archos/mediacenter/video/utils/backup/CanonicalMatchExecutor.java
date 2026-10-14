@@ -23,7 +23,7 @@ public final class CanonicalMatchExecutor {
                 if(ScraperStore.AUTHORITY.equals(uri.getAuthority()))return scraper.query(uri,columns,where,args,order);
                 String last=uri.getLastPathSegment();
                 if(!VideoStore.AUTHORITY.equals(uri.getAuthority())||last==null||!last.matches("[1-9][0-9]{0,18}"))throw new IllegalArgumentException("Unsupported canonical file assertion");
-                return database.query(VideoOpenHelper.FILES_TABLE_NAME,columns,"_id="+Long.parseLong(last)+(where==null?"":" AND ("+where+")"),args,null,null,order);
+                return database.query(VideoOpenHelper.VIDEO_VIEW_NAME,columns,"_id="+Long.parseLong(last)+(where==null?"":" AND ("+where+")"),args,null,null,order);
             }
             public Uri insert(Uri uri,ContentValues values){return scraper.insert(uri,values);}
             public int update(Uri uri,ContentValues values,String where,String[] args){return scraper.update(uri,values,where,args);}

@@ -170,7 +170,7 @@ public final class PreferenceRestoreTransaction {
                 if(intent.isNull("requested")){
                     if(owner.match==null)continue;
                     Long provider=owner.type==com.archos.mediascraper.BaseTags.MOVIE?Long.parseLong(owner.match.identity.split(":")[2]):owner.match.episodeProvider;
-                    batches.add(com.archos.mediascraper.MatchRestoreOperations.prepareClear(id,owner.type,owner.localId,provider));files.add(id);intent.put("pending",false);values.put(entry.getKey(),intent.toString());continue;
+                    batches.add(CanonicalMatchMaterial.guard(com.archos.mediascraper.MatchRestoreOperations.prepareClear(id,owner.type,owner.localId,provider),owner));files.add(id);intent.put("pending",false);values.put(entry.getKey(),intent.toString());continue;
                 }
                 JSONObject request=intent.getJSONObject("requested");var requested=new PortableMediaMatches.Match(request.getString("identity"),request.isNull("episodeProvider")?null:request.getLong("episodeProvider"));
                 boolean requestedMovie=requested.identity.startsWith("tmdb:movie:");

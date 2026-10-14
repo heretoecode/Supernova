@@ -40,24 +40,32 @@ public final class CanonicalMatchMaterial {
         BaseTags tags=verify(requested,resolver.resolve(context,requested,receivingFile));
         try {
             if(tags instanceof MovieTags){
-                if(owner.type==BaseTags.MOVIE&&owner.match!=null)return ((MovieTags)tags).prepareOwnedRestore(context,owner.videoId,owner.localId,Long.parseLong(owner.match.identity.split(":")[2]),receivingPin);
+                if(owner.type==BaseTags.MOVIE&&owner.match!=null)return guard(((MovieTags)tags).prepareOwnedRestore(context,owner.videoId,owner.localId,Long.parseLong(owner.match.identity.split(":")[2]),receivingPin),owner);
                 java.io.File store=com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
                 if(store.exists())try(android.database.sqlite.SQLiteDatabase database=android.database.sqlite.SQLiteDatabase.openDatabase(store.getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY);
                         android.database.Cursor retained=database.query("MOVIE",new String[]{"_id","m_online_id","Nova_pinned"},"video_id=?",new String[]{Long.toString(owner.videoId)},null,null,null)){
-                    if(retained.moveToFirst()){long id=retained.getLong(0);Long provider=retained.isNull(1)?null:retained.getLong(1),pin=retained.isNull(2)?null:retained.getLong(2);if(retained.moveToNext())throw new IOException("Retained movie ownership is ambiguous");return ((MovieTags)tags).prepareOwnedMetadataRestore(context,owner.videoId,owner.type,owner.localId,id,provider,pin);}
+                    if(retained.moveToFirst()){long id=retained.getLong(0);Long provider=retained.isNull(1)?null:retained.getLong(1),pin=retained.isNull(2)?null:retained.getLong(2);if(retained.moveToNext())throw new IOException("Retained movie ownership is ambiguous");return guard(((MovieTags)tags).prepareOwnedMetadataRestore(context,owner.videoId,owner.type,owner.localId,id,provider,pin),owner);}
                 }
             }
             if(tags instanceof EpisodeTags&&owner.type==BaseTags.TV_SHOW&&owner.match!=null&&owner.match.episodeProvider!=null){
                 long receivingShowProvider=Long.parseLong(owner.match.identity.split(":")[2]);EpisodeTags episode=(EpisodeTags)tags;
-                if(episode.getShowTags().getOnlineId()==receivingShowProvider)return episode.prepareOwnedRestore(context,owner.videoId,owner.localId,owner.match.episodeProvider,receivingShowId,receivingShowProvider,receivingPin);
+                if(episode.getShowTags().getOnlineId()==receivingShowProvider)return guard(episode.prepareOwnedRestore(context,owner.videoId,owner.localId,owner.match.episodeProvider,receivingShowId,receivingShowProvider,receivingPin),owner);
                 java.io.File store=com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
                 if(store.exists())try(android.database.sqlite.SQLiteDatabase database=android.database.sqlite.SQLiteDatabase.openDatabase(store.getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY);
                         android.database.Cursor target=database.query("SHOW",new String[]{"_id","Nova_pinned"},"s_online_id=? AND name_show IS NOT NULL AND trim(name_show)<>''",new String[]{Long.toString(episode.getShowTags().getOnlineId())},null,null,null)){
-                    if(target.moveToFirst()){long id=target.getLong(0);Long pin=target.isNull(1)?null:target.getLong(1);if(target.moveToNext())throw new IOException("Canonical receiving parent is ambiguous");return episode.prepareOwnedRestoreToExistingParent(context,owner.videoId,owner.localId,owner.match.episodeProvider,receivingShowId,receivingShowProvider,receivingPin,id,pin);}
+                    if(target.moveToFirst()){long id=target.getLong(0);Long pin=target.isNull(1)?null:target.getLong(1);if(target.moveToNext())throw new IOException("Canonical receiving parent is ambiguous");return guard(episode.prepareOwnedRestoreToExistingParent(context,owner.videoId,owner.localId,owner.match.episodeProvider,receivingShowId,receivingShowProvider,receivingPin,id,pin),owner);}
                 }
             }
         }catch(IllegalArgumentException incompatible){throw new IOException("Canonical material is incompatible with receiving ownership",incompatible);}
         throw new IOException("Canonical replacement requires further receiving dependency preparation");
+    }
+    public static OwnedCanonicalBatch guard(OwnedCanonicalBatch batch,MediaMatchInventory.Owner owner) {
+        android.content.ContentValues state=new android.content.ContentValues();state.put("ArchosMediaScraper_type",owner.type);state.put("ArchosMediaScraper_id",owner.localId);
+        if(owner.match!=null){String[] identity=owner.match.identity.split(":");
+            if(identity[1].equals("movie"))state.put("m_online_id",Long.parseLong(identity[2]));
+            else {state.put("s_online_id",Long.parseLong(identity[2]));state.put("e_season",Integer.parseInt(identity[3]));state.put("e_episode",Integer.parseInt(identity[4]));if(owner.match.episodeProvider==null)state.putNull("e_online_id");else state.put("e_online_id",owner.match.episodeProvider);}
+        }
+        return batch.withReceivingState(state);
     }
     private CanonicalMatchMaterial(){}
 }
