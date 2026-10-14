@@ -63,4 +63,18 @@ public class MediaMatchJournalTest {
         assertFalse(fixture.journal.exists());assertEquals("AUTH_CANARY",fixture.prefs.getString("oauth_token",null));
     }
 
+    @Test public void coordinatedEmptyMatchesClearAfterDurableDecisionAndPreserveUnselectedNativePinsAndFacts()throws Exception {
+        var selected=all();selected.put(BackupCategory.MATCHES,new JSONObject().put("schema",1).put("rows",new JSONArray()));
+        var plan=fixture.transaction.prepareCanonicalMatches(selected,null,fixture.physical(),(context,requested,file)->{throw new AssertionError("Clearing must not fetch provider material");},()->false);assertEquals(0,plan.unresolved);
+        try{fixture.transaction.apply(plan,()->false,point->{if(point==PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+        assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,new PreferenceRestoreTransaction(fixture.app).recover());
+        try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app);var row=helper.getReadableDatabase().rawQuery("SELECT f.ArchosMediaScraper_type,f.ArchosMediaScraper_id,f.bookmark,f.Archos_lastTimePlayed,m.m_online_id,m.Nova_pinned,m.name_movie,m.plot_movie FROM files f JOIN MOVIE m ON m.video_id=f._id WHERE f._id=10",null)) {
+            assertTrue(row.moveToFirst());assertEquals(0,row.getLong(0));assertEquals(100,row.getLong(1));assertEquals(4444,row.getLong(2));assertEquals(100,row.getLong(3));assertEquals(123,row.getLong(4));assertEquals(9,row.getLong(5));assertEquals("Original",row.getString(6));assertEquals("Original facts",row.getString(7));
+        }
+        var intent=new JSONObject(fixture.prefs.getString(MediaMatchIntents.key(10),null));assertFalse(intent.getBoolean("pending"));assertTrue(intent.isNull("requested"));assertNull(MediaMatchInventory.capture(fixture.app).owners.get(10L).match);assertEquals("AUTH_CANARY",fixture.prefs.getString("oauth_token",null));
+        try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app)){helper.getWritableDatabase().execSQL("UPDATE MOVIE SET m_online_id=999,name_movie='Later receiving title',plot_movie='Later receiving facts' WHERE _id=100");helper.getWritableDatabase().execSQL("UPDATE files SET ArchosMediaScraper_type=11 WHERE _id=10");}
+        var inventory=MediaMatchInventory.capture(fixture.app);Map<Long,PortableMediaMatches.Match> indexed;try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app)){indexed=PortableMediaMatches.read(helper.getReadableDatabase());}
+        var exported=MediaMatchIntents.export(fixture.app,indexed,inventory,fixture.physical());assertEquals("tmdb:movie:999",exported.getJSONArray("rows").getJSONObject(0).getString("identity"));
+    }
+
 }
