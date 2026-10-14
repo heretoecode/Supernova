@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "source_sha": "138e06f8c07cae9d49b61e746a0181b67d2a8f3a",
+  "dependency_sha": "00f87b4b9dff52f0299198489ce1fd414af3d8ca",
+  "duration": "46s",
+  "log_sha256": "c8417a04f4b6c2500893220184d62523e9e61bbd97633115bc9db30e15975cb3",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "coverage": [
+    "Exact receiving provider/show/season/episode asserted on the actual native view inside the write transaction",
+    "Cross-kind preparation refuses a changed receiving episode even when the file pointer and retained movie target are unchanged",
+    "Existing canonical, clear, schema9 and production model regressions"
+  ],
+  "limits": "Synthetic SQLite/provider execution. Fresh metadata/new parent creation, reverse cross-kind, pending reconciliation and codec26 remain open.",
+  "tests": 38,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}
