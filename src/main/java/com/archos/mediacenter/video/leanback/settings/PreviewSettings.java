@@ -186,6 +186,11 @@ public final class PreviewSettings {
       .setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER)
       .addTransition(new android.transition.ChangeBounds()).addTransition(new android.transition.Fade());
     transition.setDuration(220);
+    transition.addListener(new android.transition.Transition.TransitionListener(){
+     public void onTransitionEnd(android.transition.Transition finished){finished.removeListener(this);View selected=rememberedLeft[0];if(selected!=null&&selected.getParent()==links)revealSidebarChild(selected,()->rememberedLeft[0]==selected);}
+     public void onTransitionStart(android.transition.Transition started){} public void onTransitionCancel(android.transition.Transition cancelled){} public void onTransitionPause(android.transition.Transition paused){} public void onTransitionResume(android.transition.Transition resumed){}
+    });
+
     android.transition.TransitionManager.beginDelayedTransition(links,transition);
     if(expanded[0]==button){collapse.run();button.requestFocus();return;}collapse.run();expanded[0]=button;
     if(about!=null&&"About".equals(name)){about.show(button);button.requestFocus();return;}
