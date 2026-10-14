@@ -56,7 +56,7 @@ public class LogicalBackupArchiveTest {
         File archive=new File(dir,"logical-intent.zip");LogicalBackupArchive.writeCategories(archive,payloads,()->false);
         Map<BackupCategory,JSONObject> read=LogicalBackupArchive.readCategories(archive,()->false);
         assertEquals(payloads.keySet(),read.keySet());assertEquals(0,read.get(BackupCategory.HOME).getJSONArray("rows").length());assertTrue(read.get(BackupCategory.CUSTOM_PAGES).isNull("page"));
-        assertFalse(read.containsKey(BackupCategory.WATCH_NEXT));assertEquals(24,LogicalBackupArchive.registered().size());
+        assertFalse(read.containsKey(BackupCategory.WATCH_NEXT));assertEquals(25,LogicalBackupArchive.registered().size());
         try{LogicalBackupArchive.read(archive,()->false);fail("settings-only reader must not silently drop Home");}catch(IOException expected){}
         payloads.put(BackupCategory.HISTORY,new JSONObject());File unsupported=new File(dir,"unsupported.zip");
         try{LogicalBackupArchive.writeCategories(unsupported,payloads,()->false);fail();}catch(IOException expected){}assertFalse(unsupported.exists());

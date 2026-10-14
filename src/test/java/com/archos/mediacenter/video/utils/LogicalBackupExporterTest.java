@@ -37,7 +37,7 @@ public class LogicalBackupExporterTest {
         assertTrue(prefs.getBoolean("hide_watched",false));assertEquals("AUTH_CANARY",prefs.getString("oauth_token",null));
     }
     @Test public void freshAllRegisteredCategoriesCreateVerifiedArchiveWithoutCreatingDatabaseStores()throws Exception {
-        File archive=LogicalBackupExporter.preparePrivate(app,LogicalBackupArchive.registered(),()->false);assertTrue(archive.isFile());var read=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(LogicalBackupArchive.registered(),read.keySet());assertEquals(24,read.size());
+        File archive=LogicalBackupExporter.preparePrivate(app,LogicalBackupArchive.registered(),()->false);assertTrue(archive.isFile());var read=LogicalBackupArchive.readCategories(archive,()->false);assertEquals(LogicalBackupArchive.registered(),read.keySet());assertEquals(25,read.size());
         assertFalse("Export must not create a media database",VideoOpenHelper.getDatabaseFile(app).exists());assertFalse("Export must not create a viewing database",app.getDatabasePath(ViewingHistory.DATABASE).exists());assertFalse(contents(archive).contains("CANARY"));try(ZipFile zip=new ZipFile(archive)){assertNotNull(zip.getEntry("RESTORE_INSTRUCTIONS.txt"));}
     }
     @Test public void sourceExportKeepsHiddenMembershipLogicalAndNeverCopiesMetadataArtworkAccountsOrLocationsByDefault()throws Exception {
