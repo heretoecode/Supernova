@@ -18,6 +18,9 @@ public final class PortableLibrarySources {
         Map<String,?> preferences=PreferenceManager.getDefaultSharedPreferences(context).getAll();Set<String> result=new TreeSet<>();
         for(String key:List.of(ROOTS,EXCLUSIONS))for(String value:stored(preferences,key))if(!excluded(value))result.add(PortableLocations.locator(value));return Collections.unmodifiableSet(result);
     }
+    public static Set<String> configuredRoots(Map<String,?> preferences)throws JSONException {
+        Set<String> result=new TreeSet<>();for(String value:stored(preferences,ROOTS))if(!excluded(value))try{result.add(PortableLocations.locator(value));}catch(JSONException unsafe){/* Existing authenticated ownership is outside automatic restoration. */}return Collections.unmodifiableSet(result);
+    }
     public static JSONObject export(Context context)throws JSONException {
         Map<String,?> preferences=PreferenceManager.getDefaultSharedPreferences(context).getAll();Map<String,Set<String>> values=new LinkedHashMap<>();
         values.put("roots",new TreeSet<>());values.put("exclusions",new TreeSet<>());

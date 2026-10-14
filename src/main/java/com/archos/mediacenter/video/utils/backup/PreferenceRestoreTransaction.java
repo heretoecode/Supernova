@@ -111,6 +111,23 @@ public final class PreferenceRestoreTransaction {
             }catch(JSONException|RuntimeException invalid){throw new IOException("Pending saved playlists could not be reconciled safely",invalid);}
         }}
     }
+    /** Receiving source setup can resolve saved references; archive locators are never enabled here. */
+    public void reconcileSources()throws IOException {
+        if(!prefs.contains(PortableLibrarySources.PENDING)&&!prefs.contains(PortableIndexedSources.PENDING))return;
+        ViewingHistory.awaitWrites();synchronized(ViewingHistory.LOCK){synchronized(LOCK){
+            Map<String,?> original=prefs.getAll();boolean pending=false;
+            try {
+                for(String key:List.of(PortableLibrarySources.PENDING,PortableIndexedSources.PENDING)){Object value=original.get(key);if(value==null)continue;if(!(value instanceof String))throw new JSONException("Invalid pending source configuration");JSONObject payload=new JSONObject((String)value);if(key.equals(PortableLibrarySources.PENDING)){PortableLibrarySources.validate(payload);pending|=payload.getJSONArray("roots").length()!=0||payload.getJSONArray("exclusions").length()!=0;}else{PortableIndexedSources.validate(payload);pending|=payload.getJSONArray("rows").length()!=0;}}
+                if(!pending)return;JSONObject before=IndexedSourceStoreRecovery.capture(destination),payload=PortableLibrarySources.export(destination,before);
+                Plan plan=prepare(Collections.singletonMap(BackupCategory.SOURCES,payload),null);
+                Map<String,?> current=prefs.getAll();Set<String> checked=new HashSet<>(original.keySet());checked.addAll(current.keySet());for(String key:checked)if(PortableLibrarySources.owns(key)&&!Objects.equals(original.get(key),current.get(key)))throw new IOException("Receiving sources changed during reconciliation; retry after refresh");
+                if(!before.toString().equals(plan.sourcesBefore))throw new IOException("Indexed sources changed during reconciliation; retry after refresh");
+                // No resolved values means no transaction or write on each Library refresh.
+                if(before.toString().equals(plan.sourcesAfter)){boolean changed=false;for(String key:plan.keys)changed|=!Objects.equals(plan.before.get(key),plan.after.get(key));if(!changed)return;}
+                apply(plan,()->false);
+            }catch(JSONException|RuntimeException invalid){throw new IOException("Pending sources could not be reconciled safely",invalid);}
+        }}
+    }
     private static Map<String,Object> copy(Map<String,?> source){
         Map<String,Object> result=new LinkedHashMap<>();for(Map.Entry<String,?> item:source.entrySet()){
             Object value=item.getValue();result.put(item.getKey(),value instanceof Set?Collections.unmodifiableSet(new LinkedHashSet<>((Set<?>)value)):value);
@@ -184,7 +201,7 @@ public final class PreferenceRestoreTransaction {
                 PortableLibrarySources.validate(item.getValue());if(item.getValue().getInt("schema")==2)sourcesBefore=IndexedSourceStoreRecovery.capture(destination);
                 var sources=PortableLibrarySources.prepare(current,item.getValue(),selected.get(BackupCategory.LOCATIONS),sourcesBefore==null?Collections.emptySet():PortableIndexedSources.configuredLocations(sourcesBefore));
                 keys.addAll(sources.keys);after.putAll(sources.values);unresolved+=sources.unresolved;
-                if(sourcesBefore!=null){var indexed=PortableIndexedSources.prepare(sourcesBefore,item.getValue().getJSONObject("indexed"),selected.get(BackupCategory.LOCATIONS));sourcesAfter=indexed.after;keys.add(PortableIndexedSources.PENDING);after.put(PortableIndexedSources.PENDING,indexed.pending);unresolved+=indexed.unresolved;}
+                if(sourcesBefore!=null){var indexed=PortableIndexedSources.prepare(sourcesBefore,item.getValue().getJSONObject("indexed"),selected.get(BackupCategory.LOCATIONS),PortableLibrarySources.configuredRoots(current));sourcesAfter=indexed.after;keys.add(PortableIndexedSources.PENDING);after.put(PortableIndexedSources.PENDING,indexed.pending);unresolved+=indexed.unresolved;}
             }else if(category==BackupCategory.BOOKMARKS){
                 bookmarksBefore=BookmarkStoreRecovery.capture(destination);
                 var bookmarks=PortableBookmarks.prepare(bookmarksBefore,item.getValue(),selected.get(BackupCategory.LOCATIONS));bookmarksAfter=bookmarks.after;

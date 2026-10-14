@@ -33,7 +33,11 @@ public final class PortableIndexedSources {
         private Prepared(JSONObject after,JSONArray rows)throws JSONException{this.after=after;pending=new JSONObject().put("schema",1).put("rows",rows).toString();unresolved=rows.length();}
     }
     public static Prepared prepare(JSONObject before,JSONObject payload,JSONObject selectedLocations)throws JSONException{
+        return prepare(before,payload,selectedLocations,Collections.emptySet());
+    }
+    public static Prepared prepare(JSONObject before,JSONObject payload,JSONObject selectedLocations,Set<String> configuredRoots)throws JSONException{
         IndexedSourceStoreRecovery.validate(before);validate(payload);Map<String,String> locations=selectedLocations==null?new LinkedHashMap<>():new LinkedHashMap<>(PortableLocations.validate(selectedLocations));Map<String,JSONObject> configured=new HashMap<>();JSONArray preserved=new JSONArray(),original=before.getJSONArray("rows");long next=before.isNull("sequence")?0:before.getLong("sequence");
+        for(String path:configuredRoots)locations.putIfAbsent(PortableLocations.reference(path),PortableLocations.locator(path));
         for(int i=0;i<original.length();i++){JSONObject row=original.getJSONObject(i);next=Math.max(next,row.getLong("id"));String path=row.getString("path");if(excluded(path)){preserved.put(new JSONObject(row.toString()));continue;}String locator=PortableLocations.locator(path),ref=PortableLocations.reference(locator);if(configured.put(ref,row)!=null)throw new JSONException("Ambiguous receiving indexed-source location");locations.putIfAbsent(ref,locator);}
         JSONArray unknown=new JSONArray(),rows=payload.getJSONArray("rows");for(int i=0;i<rows.length();i++){
             JSONObject row=rows.getJSONObject(i);String ref=row.getString("location"),path=locations.get(ref);if(path==null){unknown.put(new JSONObject(row.toString()));continue;}JSONObject existing=configured.get(ref),target;

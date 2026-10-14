@@ -178,6 +178,8 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         try {
             try {new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext()).reconcilePlaylists();}
             catch(java.io.IOException pending){loadWarning="Some restored saved playlists are still pending. Refresh after source setup to retry.";com.archos.mediacenter.video.diagnostics.Diagnostics.error("playlist_restore_pending",pending);}
+            try {new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext()).reconcileSources();}
+            catch(java.io.IOException pending){loadWarning="Some restored sources are still pending. Refresh after source setup to retry.";com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_restore_pending",pending);}
             Cursor loaded=super.loadInBackground();
             if(loaded==null) throw new IllegalStateException("Library query unavailable");
             c=new PreviewMappingCursor(loaded);

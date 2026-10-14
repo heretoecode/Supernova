@@ -28,7 +28,7 @@ public enum BackupCategory {
     TITLE_PLAYBACK("Title playback","audio",3,false,"Per-title track and delay choices; file variants may differ.","VideoDbInfo playback parameters"),
     HISTORY("Watch history","history",3,true,"What you watched and when. Excluding it loses restored watched state.","ViewingHistory flags/times / legacy watched markers"),
     BOOKMARKS("File bookmarks","bookmark",4,false,"Saved browser favourites. Recreating locations needs explicit opt-in.","shortcuts2_db browser favourites; indexed roots and FTP credentials excluded"),
-    SOURCES("Library sources","folder",4,false,"Selected roots and exclusions. Reconnect access and permissions separately.","SupernovaLibraryPolicy roots/exclusions / source shortcuts"),
+    SOURCES("Library sources","folder",4,false,"Roots, exclusions and indexed-folder rescan choices. Reconnect access and permissions separately.","SupernovaLibraryPolicy roots/exclusions / ShortcutDbAdapter.VIDEO"),
     LOCATIONS("Filenames and locations","folder",5,false,"May reveal filenames, folders, hosts and shares across included categories.","Global physical-locator policy; never authentication" );
 
     public final String label,icon,description,source;
