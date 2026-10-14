@@ -33,13 +33,15 @@ public final class PortableMediaMatches {
     /** Within the caller's unfiltered SQLite read snapshot, without source labels or locators. */
     public static Map<Long,Match> read(SQLiteDatabase database)throws IOException {
         if(database.getVersion()!=VideoOpenHelper.getDatabaseVersion())throw new IOException("Media-match schema is incompatible");Map<Long,Match> matches=new LinkedHashMap<>();
-        String[] projection={"_id",VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE,VideoStore.Video.VideoColumns.SCRAPER_M_ONLINE_ID,VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID,VideoStore.Video.VideoColumns.SCRAPER_E_SEASON,VideoStore.Video.VideoColumns.SCRAPER_E_EPISODE,VideoStore.Video.VideoColumns.SCRAPER_E_ONLINE_ID};
+        String[] projection={"_id",VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE,VideoStore.Video.VideoColumns.SCRAPER_M_ONLINE_ID,VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID,VideoStore.Video.VideoColumns.SCRAPER_E_SEASON,VideoStore.Video.VideoColumns.SCRAPER_E_EPISODE,VideoStore.Video.VideoColumns.SCRAPER_E_ONLINE_ID,VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID};
         try(Cursor rows=database.query(VideoOpenHelper.VIDEO_VIEW_NAME,projection,"(_data IS NULL OR _data NOT LIKE ?)",new String[]{"putio:%"},null,null,"_id ASC")) {
             while(rows.moveToNext()){
                 Long id=number(rows,0),type=number(rows,1);if(id==null||id<=0)throw new IOException("Invalid indexed match owner");if(type==null||type<=0)continue;Match value;
                 if(type==BaseTags.MOVIE){Long provider=number(rows,2);if(provider==null||provider<=0)throw new IOException("Identified movie has no durable provider identity");value=new Match("tmdb:movie:"+provider,null);}
                 else if(type==BaseTags.TV_SHOW){Long show=number(rows,3),season=number(rows,4),episode=number(rows,5),provider=number(rows,6);if(show==null||show<=0||season==null||season<0||episode==null||episode<=0)throw new IOException("Identified episode has no durable provider identity");value=new Match("tmdb:tv:"+show+":"+season+":"+episode,provider==null||provider<=0?null:provider);}
                 else throw new IOException("Unknown indexed media-match kind");
+                Long local=number(rows,7);if(local==null||local<=0)throw new IOException("Identified media has no owned metadata pointer");String table=type==BaseTags.MOVIE?ScraperTables.MOVIE_TABLE_NAME:ScraperTables.EPISODE_TABLE_NAME;
+                try(Cursor owner=database.query(table,new String[]{"video_id"},"_id=?",new String[]{String.valueOf(local)},null,null,null)){if(!owner.moveToFirst()||owner.getType(0)!=Cursor.FIELD_TYPE_INTEGER||owner.getLong(0)!=id||owner.moveToNext())throw new IOException("Identification pointer is outside its physical owner");}
                 if(matches.size()>=100000||matches.put(id,value)!=null)throw new IOException("Ambiguous or excessive indexed matches");
             }
         }catch(JSONException|RuntimeException invalid){throw new IOException("Media identification cannot be exported safely",invalid);}return Collections.unmodifiableMap(matches);
