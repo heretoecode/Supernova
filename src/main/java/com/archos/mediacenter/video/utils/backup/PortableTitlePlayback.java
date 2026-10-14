@@ -42,7 +42,7 @@ public final class PortableTitlePlayback {
         try(Cursor rows=database.query(VideoOpenHelper.FILES_TABLE_NAME,new String[]{"_id",
                 VideoStore.Video.VideoColumns.ARCHOS_PLAYER_PARAMS,VideoStore.Video.VideoColumns.ARCHOS_PLAYER_SUBTITLE_DELAY,
                 VideoStore.Video.VideoColumns.ARCHOS_PLAYER_SUBTITLE_RATIO,VideoStore.Video.VideoColumns.ARCHOS_SUBTITLE_LANGUAGE,
-                VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED,VideoStore.Video.VideoColumns.ARCHOS_NUMBER_OF_SUBTITLE_TRACKS},"media_type = ?",new String[]{"3"},null,null,"_id ASC")) {
+                VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED,VideoStore.Video.VideoColumns.ARCHOS_NUMBER_OF_SUBTITLE_TRACKS},"media_type = ? AND (_data IS NULL OR _data NOT LIKE ?)",new String[]{"3","putio:%"},null,null,"_id ASC")) {
             while(rows.moveToNext()) {
                 long id=rows.getLong(0);int params=integer(rows,1,0);
                 if(result.size()>=100000||rows.getType(0)!=Cursor.FIELD_TYPE_INTEGER||id<=0||params<0||params>0xfffff||
@@ -81,6 +81,7 @@ public final class PortableTitlePlayback {
     public static JSONObject export(Context context,Map<Long,State> indexed,PortablePhysicalReferences references)throws JSONException {
         Map<String,JSONObject> rows=new LinkedHashMap<>();for(var entry:indexed.entrySet()) {
             if(entry.getKey()==null||entry.getKey()<=0||entry.getValue()==null)throw new JSONException("Invalid indexed playback identity");
+            Video video=references.video(entry.getKey());if(video!=null&&video.getFileUri()!=null&&"putio".equalsIgnoreCase(video.getFileUri().getScheme()))continue;
             State value=entry.getValue();if(!value.meaningful())continue;String ref=references.reference(entry.getKey());
             rows.put(ref,new JSONObject().put("physical",ref).put("params",value.params==null?JSONObject.NULL:value.params)
                     .put("delay",value.delay).put("ratio",value.ratio).put("language",value.language==null?JSONObject.NULL:value.language).put("subtitleNone",value.subtitleNone==null?JSONObject.NULL:value.subtitleNone));
