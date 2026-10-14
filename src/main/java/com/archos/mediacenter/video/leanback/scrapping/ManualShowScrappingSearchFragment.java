@@ -370,6 +370,8 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
             }
 
             // Update all episodes
+            java.util.List<Long> manualOwners=new java.util.ArrayList<>();for(EpisodeTags episode:targetEpisodesList)manualOwners.add(episode.getVideoId());
+            try{com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(mContext,manualOwners);}catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);return null;}
             final long newShowId = newShow.save(mContext, 0); // second argument is not used in case of ShowTags
             if(newShowId<=0)return null;
             newShow.setId(newShowId);

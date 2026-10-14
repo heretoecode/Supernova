@@ -234,6 +234,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 }
                 snapshot=result;
             }
+            com.archos.mediacenter.video.utils.backup.MediaMatchReconciler.request(getContext());
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_counts","operation_id",operation,"visited",visited,"rejected",rejected,"movies",result.movies.size(),"shows",result.shows.size(),"episodes",result.episodes.size());
             c.moveToPosition(-1); return c;
         } catch(android.os.OperationCanceledException | androidx.core.os.OperationCanceledException cancelled) {

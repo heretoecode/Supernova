@@ -28,5 +28,11 @@ public final class MediaMatchManualChanges {
             }catch(JSONException invalid){throw new IOException("Manual match protection is unavailable",invalid);}
         }
     }
+    public static void mark(Context context,android.net.Uri uri)throws IOException {
+        if(uri==null)throw new IOException("Manual match file is unavailable");
+        try(android.database.Cursor row=context.getContentResolver().query(com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI,new String[]{"_id"},"_data=?",new String[]{uri.toString()},null)){
+            if(row==null||!row.moveToFirst())throw new IOException("Manual match owner is unavailable");long id=row.getLong(0);if(row.moveToNext())throw new IOException("Manual match owner is ambiguous");mark(context,id);
+        }
+    }
     private MediaMatchManualChanges(){}
 }

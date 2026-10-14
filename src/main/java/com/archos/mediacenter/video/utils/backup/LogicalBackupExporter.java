@@ -14,6 +14,10 @@ public final class LogicalBackupExporter {
         BackupCategory.CONTINUE_CHOICES,BackupCategory.PREFERRED,BackupCategory.REVIEW,BackupCategory.PINNED,BackupCategory.HIDDEN,BackupCategory.PLAYLISTS,BackupCategory.TITLE_PLAYBACK,BackupCategory.MATCHES,BackupCategory.HISTORY,BackupCategory.POSITIONS);
     /** Unsupported selected categories fail before reading source or allocating a backup file; none is silently omitted. */
     public static Map<BackupCategory,JSONObject> collect(Context context,Set<BackupCategory> selected,BooleanSupplier cancel)throws IOException {
+        if(!Thread.holdsLock(ViewingHistory.LOCK))ViewingHistory.awaitWrites();
+        synchronized(ViewingHistory.LOCK){synchronized(PreferenceRestoreTransaction.LOCK){return collectStable(context,selected,cancel);}}
+    }
+    private static Map<BackupCategory,JSONObject> collectStable(Context context,Set<BackupCategory> selected,BooleanSupplier cancel)throws IOException {
         LogicalBackupCatalog.cancelled(cancel);
         if(selected==null||selected.isEmpty())throw new IOException("Choose at least one backup category");
         EnumSet<BackupCategory> categories=EnumSet.copyOf(selected);
@@ -34,7 +38,7 @@ public final class LogicalBackupExporter {
             }
             Map<String,ViewingHistory.Record> viewing=Collections.emptyMap();
             if(categories.contains(BackupCategory.HISTORY)||categories.contains(BackupCategory.POSITIONS)){
-                ViewingHistory.awaitWrites();viewing=LegacyViewingSnapshot.merge(context,PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(context)),catalog.snapshot);
+                viewing=LegacyViewingSnapshot.merge(context,PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(context)),catalog.snapshot);
             }
             JSONObject bookmarks=categories.contains(BackupCategory.BOOKMARKS)?BookmarkStoreRecovery.capture(context):null;
             JSONObject sources=categories.contains(BackupCategory.SOURCES)?IndexedSourceStoreRecovery.capture(context):null;

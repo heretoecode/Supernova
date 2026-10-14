@@ -24,6 +24,7 @@ public final class PreferenceRestoreTransaction {
     private static final String HOME="preview_home_rows41";
     private static final int MAX_JOURNAL=32*1024*1024;
     static final Object LOCK=new Object();
+    private static final java.util.concurrent.atomic.AtomicInteger MATCH_CURSOR=new java.util.concurrent.atomic.AtomicInteger();
     public enum Recovery { NONE, ROLLED_BACK, COMPLETED }
     public enum Checkpoint { JOURNAL_DURABLE, DEFAULT_DURABLE, HEALTH_DURABLE, VIEWING_DURABLE, MEDIA_PREPARED, BOOKMARKS_PREPARED, SOURCES_PREPARED, PREFERENCES_DURABLE, COMMIT_MARKER_DURABLE, MEDIA_DURABLE, BOOKMARKS_DURABLE, SOURCES_DURABLE, COMPLETION_DURABLE }
     public interface Observer { void reached(Checkpoint checkpoint)throws IOException; }
@@ -160,7 +161,7 @@ public final class PreferenceRestoreTransaction {
     }
     private Plan prepareCanonicalMatches(Map<BackupCategory,JSONObject> selected,Snapshot snapshot,PortablePhysicalReferences physical,
             CanonicalMatchMaterial.Resolver resolver,BooleanSupplier cancel,Long manualAt,int limit)throws IOException,JSONException {
-        long revision=MediaMatchManualChanges.epoch(prefs.getAll());Plan original=prepare(selected,snapshot,physical,manualAt);original.manualRevision=revision;if(!selected.containsKey(BackupCategory.MATCHES))return original;
+        long revision=MediaMatchManualChanges.epoch(prefs.getAll());Plan original=prepare(selected,snapshot,physical,manualAt);if(!selected.containsKey(BackupCategory.MATCHES))return original;original.manualRevision=revision;
         MediaMatchInventory inventory=MediaMatchInventory.capture(destination);
         if(!inventory.signature.equals(original.matchesBefore))throw new IOException("Receiving identification changed during canonical preparation");
         List<com.archos.mediascraper.OwnedCanonicalBatch> batches=new ArrayList<>();List<Long> files=new ArrayList<>();Map<String,Object> values=new LinkedHashMap<>(original.after);
@@ -168,8 +169,11 @@ public final class PreferenceRestoreTransaction {
         if(!store.exists())return original;
         CanonicalMatchMaterial.Preparation preparation=new CanonicalMatchMaterial.Preparation(destination);
         {
-            for(var entry:original.after.entrySet())if(MediaMatchIntents.owns(entry.getKey())){
-                cancelled(cancel);if(files.size()>=limit)break;JSONObject intent=new JSONObject((String)entry.getValue());if(!intent.getBoolean("pending"))continue;
+            List<Map.Entry<String,Object>> candidates=new ArrayList<>();for(var entry:original.after.entrySet())if(MediaMatchIntents.owns(entry.getKey())&&new JSONObject((String)entry.getValue()).getBoolean("pending"))candidates.add(entry);
+            if(manualAt!=null&&!candidates.isEmpty())Collections.rotate(candidates,-Math.floorMod(MATCH_CURSOR.getAndAdd(limit),candidates.size()));
+            int attempted=0;
+            for(var entry:candidates){
+                cancelled(cancel);if(attempted++>=limit)break;JSONObject intent=new JSONObject((String)entry.getValue());if(!intent.getBoolean("pending"))continue;
                 String[] key=entry.getKey().split(":");long id=Long.parseLong(key[key.length-1]);MediaMatchInventory.Owner owner=inventory.owners.get(id);
                 if(owner==null)continue;
                 if(intent.isNull("requested")){

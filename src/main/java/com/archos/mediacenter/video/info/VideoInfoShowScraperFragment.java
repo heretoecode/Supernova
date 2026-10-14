@@ -705,6 +705,8 @@ public class VideoInfoShowScraperFragment extends Fragment implements
                     targetList != null && targetList.size() > 0) {
 
                 ShowTags targetShow = item.source.values().iterator().next().getShowTags();
+                java.util.List<Long> manualOwners=new java.util.ArrayList<>();for(EpisodeTags episode:targetList)manualOwners.add(episode.getVideoId());
+                try{com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(mContext,manualOwners);}catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);return -1;}
                 long targetShowId = targetShow.save(mContext, 0);
                 int size = targetList.size();
                 int i = 1;
