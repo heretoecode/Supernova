@@ -30,6 +30,12 @@ public class DiagnosticRestorePolicyTest {
         try{transaction.apply(selected(false),()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
         assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,new PreferenceRestoreTransaction(app).recover());assertFalse(observing());assertFalse(prefs.getBoolean(Diagnostics.KEY,true));
     }
+    @Test public void legacyReplacementAlsoAppliesRestoredRecorderChoiceWithoutCreatingNewLegacyBackupRoute()throws Exception {
+        try(var helper=new com.archos.mediaprovider.video.VideoOpenHelper(app)){helper.getWritableDatabase();}
+        Diagnostics.setEnabled(app,false);File archive=new File(HistoricalBackupFixture.export(app));Diagnostics.setEnabled(app,true);assertTrue(observing());
+        try(var incoming=BackupImportPreparation.prepare(app,new FileInputStream(archive),()->false)){assertTrue(incoming.isLegacy());incoming.restoreLegacy(app,()->false);}
+        assertFalse(prefs.getBoolean(Diagnostics.KEY,true));assertFalse(observing());assertNull(prefs.getString("oauth_token",null));
+    }
     @Test public void preDecisionRollbackKeepsOriginalRuntimePolicyAndUnselectedRestoreNeverCreatesDiagnosticPreference()throws Exception {
         try{transaction.apply(selected(false),()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.PREFERENCES_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
         assertTrue(observing());assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,new PreferenceRestoreTransaction(app).recover());assertTrue(observing());assertTrue(prefs.getBoolean(Diagnostics.KEY,false));
