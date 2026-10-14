@@ -85,6 +85,17 @@ public class CombinedPlaylistJournalTest {
         fixture.app.deleteDatabase("media.db");var selected=Map.of(BackupCategory.PLAYLISTS,payload());var plan=fixture.transaction.prepare(selected,null);assertEquals(1,plan.unresolved);fixture.transaction.apply(plan,()->false);
         assertFalse(VideoOpenHelper.getDatabaseFile(fixture.app).exists());assertEquals(payload().toString(),PortableSavedPlaylists.export(fixture.app,Collections.emptyMap()).toString());assertEquals("AUTH_CANARY",fixture.prefs.getString("oauth_token",null));
     }
+    @Test public void pendingReconciliationPreservesNewLocalAndReceivingAccountDefinitionsAndIsIdempotent()throws Exception{
+        fixture.prefs.edit().putString(PortableSavedPlaylists.PENDING,payload().toString()).commit();fixture.transaction.reconcilePlaylists();
+        JSONObject state=MediaStateRecovery.capture(fixture.app,false,false,true).getJSONObject("playlists");assertEquals(3,state.getJSONArray("definitions").length());assertEquals(0,new JSONObject(fixture.prefs.getString(PortableSavedPlaylists.PENDING,null)).getJSONArray("rows").length());
+        String before=state.toString();fixture.transaction.reconcilePlaylists();assertEquals(before,MediaStateRecovery.capture(fixture.app,false,false,true).getJSONObject("playlists").toString());
+        JSONArray publicRows=export().getJSONArray("rows");assertEquals(3,publicRows.length());Set<String> ids=new HashSet<>();for(int i=0;i<publicRows.length();i++)ids.add(publicRows.getJSONObject(i).getString("id"));assertTrue(ids.contains(ID));assertTrue(ids.contains("playlist:12345678-1234-1234-1234-123456789012:7"));
+        assertEquals(9,MediaStateRecovery.capture(fixture.app,true,true).getJSONArray("pins").getJSONObject(0).getLong("value"));assertEquals("AUTH_CANARY",fixture.prefs.getString("oauth_token",null));
+    }
+    @Test public void pendingReconciliationNeverCreatesAbsentMediaAndRejectsMalformedPendingBeforeWrites()throws Exception{
+        String before=media();fixture.prefs.edit().putString(PortableSavedPlaylists.PENDING,"{\"schema\":999,\"rows\":[]}").commit();try{fixture.transaction.reconcilePlaylists();fail();}catch(IOException expected){}assertEquals(before,media());assertFalse(fixture.journal.exists());
+        fixture.app.deleteDatabase("media.db");fixture.prefs.edit().putString(PortableSavedPlaylists.PENDING,payload().toString()).commit();fixture.transaction.reconcilePlaylists();assertFalse(VideoOpenHelper.getDatabaseFile(fixture.app).exists());assertEquals(payload().toString(),fixture.prefs.getString(PortableSavedPlaylists.PENDING,null));
+    }
     @Test public void presentEmptyClearsOnlyLocalDefinitionsWhileOmittedLeavesListsUntouched()throws Exception{
         String before=media();fixture.transaction.apply(fixture.transaction.prepare(Map.of(BackupCategory.APPEARANCE,all().get(BackupCategory.APPEARANCE)),null),()->false);assertEquals(before,media());
         fixture.transaction.apply(fixture.transaction.prepare(Map.of(BackupCategory.PLAYLISTS,new JSONObject().put("schema",1).put("rows",new JSONArray())),null),()->false);

@@ -86,6 +86,27 @@ public final class PreferenceRestoreTransaction {
         File file=new File(context.getFilesDir(),"supernova-restore/preferences-v1.json");
         if(file.exists()||new File(file+".bak").exists())new PreferenceRestoreTransaction(context).recover();
     }
+    /** Worker-side reconciliation after normal provider initialization; never creates a media store. */
+    public void reconcilePlaylists()throws IOException {
+        ViewingHistory.awaitWrites();synchronized(ViewingHistory.LOCK){synchronized(LOCK){
+            String pending=prefs.getString(PortableSavedPlaylists.PENDING,null);if(pending==null)return;
+            File file=com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(destination);if(!file.exists())return;
+            try {
+                JSONObject payload=new JSONObject(pending);PortableSavedPlaylists.validate(payload);if(payload.getJSONArray("rows").length()==0)return;
+                JSONObject before;Map<Long,PortableSavedPlaylists.Definition> local=new LinkedHashMap<>();
+                try(var database=android.database.sqlite.SQLiteDatabase.openDatabase(file.getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY)){
+                    database.execSQL("SAVEPOINT supernova_playlist_pending_read");try{
+                        before=PlaylistStateRecovery.capture(database);var inventory=PortableSavedPlaylists.read(database);JSONArray definitions=before.getJSONArray("definitions");
+                        for(int i=0;i<definitions.length();i++){JSONObject row=definitions.getJSONObject(i);long id=row.getLong("id");if(row.isNull("trakt")&&inventory.containsKey(id))local.put(id,inventory.get(id));}
+                    }finally{database.execSQL("RELEASE SAVEPOINT supernova_playlist_pending_read");}
+                }
+                // Live local definitions win over pending identities; receiving Trakt rows are preserved separately.
+                Plan plan=prepare(Collections.singletonMap(BackupCategory.PLAYLISTS,PortableSavedPlaylists.export(destination,local)),null);
+                if(!pending.equals(plan.before.get(PortableSavedPlaylists.PENDING))||!before.toString().equals(new JSONObject(plan.mediaBefore).getJSONObject("playlists").toString()))throw new IOException("Playlist state changed during reconciliation; retry after refresh");
+                apply(plan,()->false);
+            }catch(JSONException|RuntimeException invalid){throw new IOException("Pending saved playlists could not be reconciled safely",invalid);}
+        }}
+    }
     private static Map<String,Object> copy(Map<String,?> source){
         Map<String,Object> result=new LinkedHashMap<>();for(Map.Entry<String,?> item:source.entrySet()){
             Object value=item.getValue();result.put(item.getKey(),value instanceof Set?Collections.unmodifiableSet(new LinkedHashSet<>((Set<?>)value)):value);

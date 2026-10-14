@@ -1,0 +1,22 @@
+{
+  "source_sha": "074db4bcf1112a3ec89922d70c6e8519a6393a1a",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 7,
+  "tests": 68,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedPlaylistMediaTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.PlaylistStateRecoveryTest",
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest",
+    "com.archos.mediacenter.video.utils.PortableSavedPlaylistsTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 41s",
+  "log_sha256": "7c880d99d0f8f80b7eb738ec555e439a274147814373bf5e669cdf9d882106af",
+  "limits": "Native same-media SQLite participant and earlier private-journal regressions. Playlist public category and coordinated restore not yet registered; no actual force-stop, Shield, decoder, signing or delivery acceptance."
+}
