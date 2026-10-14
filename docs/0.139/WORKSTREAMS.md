@@ -122,3 +122,6 @@ Unsigned development packaging at53f12631 passesR8, fourABI×22nativebytes ident
 
 
 Fresh full source42182512/MediaLibd4ac964:PASS942/203 withzero failures/errors/skips; release lint0errors/1771warnings,16m1s combined (FULL_FOLLOWUP_VERIFICATION.json, LINT_FOLLOWUP_COMPLETE_VERIFICATION.json). Production hero window lifecycle/actual root input/deadline cadence/native geometry + pure policy PASS13/2 atc6926bd4 (HERO_LIFECYCLE_VERIFICATION.json). These do not pass unfinished canonicalMATCHES26, physical decoder/Shield or complete43 acceptance. No final139 APK or delivery.
+
+
+Episode canonical dependency investigation PASS8/2 at3c9a9495 (EPISODE_MATCH_DEPENDENCY_VERIFICATION.json): nativecleanup loses lastparentSHOW pin and leaves oldSHOW Collectionreference unmatched. Preserve this ownership whenimplementing episode restore; no production episodeparticipant orMATCHES26 pass implied.
