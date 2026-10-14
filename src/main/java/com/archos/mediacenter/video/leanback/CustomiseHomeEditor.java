@@ -183,7 +183,17 @@ final class CustomiseHomeEditor {
         if (commit) committed(); renderRows(); restore(anchor);
         hint.setText("OK to move a row · Right to edit · Back to return");
     }
-    private void restore(Object anchor) { if (anchor != null) { View view = screen.findViewWithTag(anchor); if (view != null) view.requestFocus(); } }
+    private void restore(Object anchor) {
+        if(anchor==null)return;View view=screen.findViewWithTag(anchor);if(view==null)return;view.requestFocus();
+        // A rebuilt row has no bounds yet. Recheck after layout if focus fell back
+        // to a container; never take focus from a later deliberate control choice.
+        if(!androidx.core.view.ViewCompat.isLaidOut(view))view.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){
+            @Override public void onLayoutChange(View target,int left,int top,int right,int bottom,int oldLeft,int oldTop,int oldRight,int oldBottom){
+                if(right<=left||bottom<=top)return;target.removeOnLayoutChangeListener(this);
+                View focused=dialog.getCurrentFocus();if(target.isAttachedToWindow()&&screen.findViewWithTag(anchor)==target&&(focused==null||focused==target||focused.getTag()==null))target.requestFocus();
+            }
+        });
+    }
     private void firstField() { View name=editor.findViewWithTag("home.editor.name");if(name!=null)name.requestFocus();else if(!fields.isEmpty())fields.get(0).requestFocus(); }
 
     private TextView heading(String title) {
