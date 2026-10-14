@@ -1,6 +1,6 @@
-# FD-033 — Blueprint v3 approval notes, visual QA and 1.4.0 implementation scope
+# FD-033 — Blueprint v3 approval notes, visual QA and 0.140 implementation scope
 
-**Recorded:** 14 October 2026. **Owner decision:** The revised annotated v3 blueprint is visually much improved and approved to be included in the **1.4.0 implementation scope**; owner may still provide further visual corrections. Do not misstate this as final pixel-perfect approval or completed implementation. Earlier planning documents used **0.140**; owner now calls the target **1.4.0**. Codex must verify the project's versioning convention before changing release identifiers; do not silently rename the in-progress 0.139 release.
+**Recorded:** 14 October 2026. **Owner decision:** The revised annotated v3 blueprint is visually much improved and approved to be included in the **0.140 implementation scope**; owner may still provide further visual corrections. Do not misstate this as final pixel-perfect approval or completed implementation. Earlier planning documents used **0.140**; owner confirms the target is **0.140**. Codex must verify the project's versioning convention before changing release identifiers; do not silently rename the in-progress 0.139 release.
 
 ## Source-of-truth order
 1. Original owner-selected clean 1536×864 *The Goonies* reference screenshot (local conversation asset, not yet archived in GitHub).
@@ -41,7 +41,7 @@
 - All details content read-only and not independently focusable/scrollable. D-pad tab focus/selection remains correct. Accent-colour preference controls the connected outline (white default).
 - Missing metadata uses the existing approved fallbacks; never invent scores, awards, provider rights, portraits or data. Reception data sourcing and licensing must be validated separately before live API implementation.
 - Real device screenshots must be compared with the clean owner-approved reference and v3 blueprint at 720p, 1080p and 4K where supported. Inspect connected border, Reception **three rules**, provider icons, all font sizes, metadata columns, portrait grid, path overflow, long descriptions, TV cases and focus navigation. Record numerical final dp/sp, deviations and evidence. A successful build is **not** visual acceptance.
-- Implement in **1.4.0 after completion/acceptance of the ongoing 0.139 work**. Never edit, reset, replace or merge the active 0.139 Codex branch merely to begin FD-033. Engineering decisions belong to Codex within the approved visual constraints.
+- Implement in **0.140 after completion/acceptance of the ongoing 0.139 work**. Never edit, reset, replace or merge the active 0.139 Codex branch merely to begin FD-033. Engineering decisions belong to Codex within the approved visual constraints.
 
 ## Remaining archival / verification tasks
 - [ ] Commit the **original clean 1536×864 image** to GitHub as a binary reference.
