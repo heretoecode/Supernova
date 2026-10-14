@@ -25,4 +25,34 @@ public class MediaMatchJournalTest {
     @Test public void everyPreDecisionDeathRollsBackGuardedIntentWithDefaultHealthAndViewingAndLeavesNativeFactsExact()throws Exception{String nativeBefore=nativeState(),viewing=ViewingHistory.captureRecovery(fixture.app).toString();var prefs=fixture.prefs.getAll();for(var at:List.of(PreferenceRestoreTransaction.Checkpoint.JOURNAL_DURABLE,PreferenceRestoreTransaction.Checkpoint.DEFAULT_DURABLE,PreferenceRestoreTransaction.Checkpoint.HEALTH_DURABLE,PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE,PreferenceRestoreTransaction.Checkpoint.PREFERENCES_DURABLE)){try{fixture.transaction.apply(fixture.transaction.prepare(all(),null,fixture.physical()),()->false,point->{if(point==at)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}assertFalse(Files.readString(fixture.journal.toPath()).contains("CANARY"));assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,new PreferenceRestoreTransaction(fixture.app).recover());fixture.assertOriginal(viewing);assertEquals(prefs,fixture.prefs.getAll());assertEquals(nativeBefore,nativeState());}}
     @Test public void durableIntentDecisionKeepsCorrectionPendingWithoutClaimingCanonicalNativeApplication()throws Exception{String before=nativeState();try{fixture.transaction.apply(fixture.transaction.prepare(all(),null,fixture.physical()),()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}PreferenceRestoreTransaction.recoverAtStartup(fixture.app);assertEquals(before,nativeState());assertTrue(fixture.prefs.contains(MediaMatchIntents.key(10)));assertTrue(new JSONObject(fixture.prefs.getString(MediaMatchIntents.key(10),null)).getBoolean("pending"));assertEquals("AUTH_CANARY",fixture.prefs.getString("oauth_token",null));assertEquals(19,fixture.prefs.getInt("preview_accent41",0));assertTrue(ViewingHistory.read(fixture.app).get("tmdb:movie:456").completed);assertFalse(fixture.journal.exists());}
     @Test public void laterNativeIdentificationInvalidatesPreviewBeforeAnyJournalOrPreferenceWrite()throws Exception{var plan=fixture.transaction.prepare(all(),null,fixture.physical());try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app)){helper.getWritableDatabase().execSQL("UPDATE MOVIE SET m_online_id=999 WHERE _id=100");}String before=nativeState();try{fixture.transaction.apply(plan,()->false);fail();}catch(IOException expected){}assertEquals(before,nativeState());assertEquals(7,fixture.prefs.getInt("preview_accent41",0));assertFalse(fixture.prefs.contains(MediaMatchIntents.key(10)));assertFalse(fixture.journal.exists());}
+    private PreferenceRestoreTransaction.Plan canonicalPlan()throws Exception {
+        com.archos.mediaprovider.video.ScraperProvider.hookUriMatcher(new android.content.UriMatcher(android.content.UriMatcher.NO_MATCH));
+        return fixture.transaction.prepareCanonicalMatches(all(),null,fixture.physical(),(context,requested,file)->{
+            var tags=new com.archos.mediascraper.MovieTags();tags.setOnlineId(789);tags.setTitle("Fresh canonical title");tags.setPlot("Fresh canonical facts");tags.addGenreIfAbsent("Drama");
+            return new com.archos.mediascraper.ScrapeDetailResult(tags,true,null,com.archos.mediascraper.ScrapeStatus.OKAY,null);
+        },()->false);
+    }
+    @Test public void coordinatedCanonicalPreDecisionDeathsRollBackPreferencesHealthViewingAndFullNativeFacts()throws Exception {
+        String nativeBefore=nativeState(),viewing=ViewingHistory.captureRecovery(fixture.app).toString();var prefs=fixture.prefs.getAll();
+        for(var at:List.of(PreferenceRestoreTransaction.Checkpoint.JOURNAL_DURABLE,PreferenceRestoreTransaction.Checkpoint.DEFAULT_DURABLE,
+                PreferenceRestoreTransaction.Checkpoint.HEALTH_DURABLE,PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE,
+                PreferenceRestoreTransaction.Checkpoint.MEDIA_PREPARED,PreferenceRestoreTransaction.Checkpoint.PREFERENCES_DURABLE)) {
+            try{fixture.transaction.apply(canonicalPlan(),()->false,point->{if(point==at)throw new ProcessDeath();});fail("Death boundary not reached");}catch(ProcessDeath expected){}
+            assertEquals(9,new JSONObject(Files.readString(fixture.journal.toPath())).getInt("schema"));assertFalse(Files.readString(fixture.journal.toPath()).contains("CANARY"));
+            assertEquals(PreferenceRestoreTransaction.Recovery.ROLLED_BACK,new PreferenceRestoreTransaction(fixture.app).recover());
+            fixture.assertOriginal(viewing);assertEquals(prefs,fixture.prefs.getAll());assertEquals(nativeBefore,nativeState());
+        }
+    }
+    @Test public void coordinatedCanonicalDurableDecisionReplaysNativeAndCommittedAcknowledgementPreservesLaterManualFacts()throws Exception {
+        for(var at:List.of(PreferenceRestoreTransaction.Checkpoint.COMMIT_MARKER_DURABLE,PreferenceRestoreTransaction.Checkpoint.MEDIA_DURABLE)) {
+            setup();try{fixture.transaction.apply(canonicalPlan(),()->false,point->{if(point==at)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
+            if(at==PreferenceRestoreTransaction.Checkpoint.MEDIA_DURABLE)try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app)){helper.getWritableDatabase().execSQL("UPDATE MOVIE SET name_movie='Later receiving facts',Nova_pinned=7 WHERE _id=100");}
+            assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,new PreferenceRestoreTransaction(fixture.app).recover());
+            try(VideoOpenHelper helper=new VideoOpenHelper(fixture.app);var row=helper.getReadableDatabase().rawQuery("SELECT m.m_online_id,m.name_movie,m.plot_movie,m.Nova_pinned,f.bookmark,f.Archos_lastTimePlayed FROM MOVIE m JOIN files f ON f._id=m.video_id WHERE m._id=100",null)) {
+                assertTrue(row.moveToFirst());assertEquals(789,row.getLong(0));assertEquals(at==PreferenceRestoreTransaction.Checkpoint.MEDIA_DURABLE?"Later receiving facts":"Fresh canonical title",row.getString(1));assertEquals("Fresh canonical facts",row.getString(2));assertEquals(at==PreferenceRestoreTransaction.Checkpoint.MEDIA_DURABLE?7:9,row.getLong(3));assertEquals(4444,row.getLong(4));assertEquals(100,row.getLong(5));
+            }
+            assertFalse(new JSONObject(fixture.prefs.getString(MediaMatchIntents.key(10),null)).getBoolean("pending"));assertEquals("AUTH_CANARY",fixture.prefs.getString("oauth_token",null));assertEquals(19,fixture.prefs.getInt("preview_accent41",0));assertTrue(ViewingHistory.read(fixture.app).get("tmdb:movie:456").completed);assertFalse(fixture.journal.exists());
+        }
+    }
+
 }
