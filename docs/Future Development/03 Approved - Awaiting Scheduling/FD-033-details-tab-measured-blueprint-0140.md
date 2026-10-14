@@ -45,3 +45,27 @@
 
 ## Asset/archive caveat
 The owner-provided 1536×864 JPEG remains available in the planning conversation and local preparation session, but **GitHub currently contains this SVG trace and text spec, not the original JPEG**. Binary archival is outstanding and must be resolved before claiming the reference asset is permanently reproducible from the repository alone.
+
+## Component-level correction — 14 October 2026 (supersedes coarse geometry trace)
+**Owner QA found two faults in the initial annotated guide:** it did not identify positions *inside* the six regions, and it visually implied a line underneath the active Details title. Both are unacceptable as final handover. The tab and panel are a **single uninterrupted fill and single continuous external outline**: the outline follows the raised tab perimeter, then the panel top starts at the **right edge of the tab**; **there must be no horizontal stroke across the tab base, no tab underline and no duplicated border**. A developer must implement this as one compound outline or correctly clipped paths, not as a rectangle around the panel plus a rectangle around the tab. This clarification overrides any inaccurate line in the earlier SVG.
+
+### Image-coordinate register — inside-region landmarks (1536×864 original; approximate, not Android dp)
+| Element | Source image bounds / reference anchors | Rule |
+|---|---|---|
+| Upper headings | Description x~63 y~229; Key Information x~616 y~229; Reception x~1102 y~229 | Baselines and hierarchy visually matched; no underline |
+| Synopsis body | x~78–554, y~281–509 | Horizontally centred, vertically balanced, line wrapping from actual content |
+| Key labels | x~618, first baseline y~282; rows ~28px apart through y~530 | Left-aligned label column; ten named facts |
+| Key values | x~824, first baseline y~282; rows ~28px apart | Consistent value column; no collision with label text |
+| Reception provider symbols | x~1105–1163; stacked near y~271, 342, 410, 487 | Four visible slots; preserve icon/text association |
+| Reception score and captions | x~1197–1478, grouped y~271–542 | Scores bold, captions smaller; award lines must clear divider |
+| Lower headings | Cast x~65 y~574; Crew x~562 y~574; Technical x~1080 y~574 | Strong hierarchy; generous heading-to-portrait gap |
+| Cast grid | centres x~105,225,345,465; portrait rows centre y~632,741 | Four columns x two rows; name and role under each portrait |
+| Crew grid | centres x~615,735,855,975; portrait rows centre y~632,741 | Four columns x two rows; name and role under each portrait |
+| Portraits | approx 50–55px circular diameter | Crop consistently; portrait/name/role grouped, avoid collision |
+| Technical labels | x~1081, first row y~634; subsequent ~28px steps | Video, Audio, Container, Size, Source, Added, Path |
+| Technical values | x~1206, same row baselines | File path **one line only**; middle ellipsis if needed |
+
+**Image-vs-design caution:** This register is a careful approximate visual tracing, not a pixel-perfect OCR-derived source or exact font metrics. User's written 4% viewport outer margins override the generated image's narrower visible margins. Proportions must be reflowed within those margins. All sample content, portraits and values are illustrative. Original approved JPEG still requires GitHub binary archival.
+
+### QA gate
+The previous coarse geometry-only SVG is **not** an implementation-complete blueprint. Before implementation sign-off, archive the source image, calibrate exact sp/dp font/icon metrics, and produce device screenshots and difference overlays proving connected-border continuity, component positions and responsive behaviour. Do not assert completed QA from a design overlay alone.
