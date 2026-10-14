@@ -73,7 +73,7 @@ public final class LogicalBackupArchive {
         try{for(BackupCategory category:BackupCategory.values())if(payloads.containsKey(category)){
                 cancelled(cancel);if(payloads.get(category)==null)throw new JSONException("Missing selected category");JSONObject payload=new JSONObject(payloads.get(category).toString());validate(category,payload);
                 byte[] content=bytes(payload.toString());if(content.length>MAX_ENTRY)throw new IOException("Backup category exceeds size limit");data.put(category,content);
-                categories.put(new JSONObject().put("id",category.name()).put("schema",PortableSettingsRegistry.SCHEMA).put("size",content.length).put("sha256",hash(content)));
+                categories.put(new JSONObject().put("id",category.name()).put("schema",payload.getInt("schema")).put("size",content.length).put("sha256",hash(content)));
             }
             manifest.put("format","Supernova").put("formatVersion",FORMAT).put("applicationVersion",BuildConfig.VERSION_NAME).put("createdUtc",System.currentTimeMillis()).put("credentialsIncluded",false).put("mediaIncluded",false).put("categories",categories);
         }catch(JSONException e){throw new IOException("Invalid logical backup category",e);}
@@ -110,9 +110,9 @@ public final class LogicalBackupArchive {
             if(manifest.length()!=7||!"Supernova".equals(manifest.get("format"))||!FORMAT.equals(manifest.get("formatVersion"))||!Boolean.FALSE.equals(manifest.get("credentialsIncluded"))||!Boolean.FALSE.equals(manifest.get("mediaIncluded"))||!(manifest.get("applicationVersion") instanceof String)||!manifest.getString("applicationVersion").matches("0\\.[1-9][0-9]*")||!integer(manifest.get("createdUtc"))||manifest.getLong("createdUtc")<=0)throw new IOException("Unsupported logical backup manifest");
             JSONArray categories=manifest.getJSONArray("categories");if(categories.length()==0)throw new IOException("Backup contains no categories");
             for(int i=0;i<categories.length();i++){cancelled(cancel);JSONObject item=categories.getJSONObject(i);if(!(item.get("id") instanceof String))throw new IOException("Category identity must be text");BackupCategory category=BackupCategory.valueOf(item.getString("id"));
-                if(item.length()!=4||!registered().contains(category)||!integer(item.get("schema"))||item.getLong("schema")!=PortableSettingsRegistry.SCHEMA||result.containsKey(category))throw new IOException("Unsupported or duplicate category schema");
+                if(item.length()!=4||!registered().contains(category)||!integer(item.get("schema"))||item.getLong("schema")!=PortableSettingsRegistry.SCHEMA&&!(category==BackupCategory.SOURCES&&item.getLong("schema")==2)||result.containsKey(category))throw new IOException("Unsupported or duplicate category schema");
                 byte[] content=contents.get("categories/"+category.name()+".json");if(content==null||!integer(item.get("size"))||item.getLong("size")!=content.length||!hash(content).equals(item.get("sha256")))throw new IOException("Missing or changed backup category");
-                JSONObject payload=new JSONObject(text(content));validate(category,payload);result.put(category,payload);
+                JSONObject payload=new JSONObject(text(content));validate(category,payload);if(payload.getLong("schema")!=item.getLong("schema"))throw new IOException("Category schema does not match its manifest");result.put(category,payload);
             }
             if(contents.size()!=result.size()+2)throw new IOException("Unlisted backup payload rejected");
         }catch(JSONException|IllegalArgumentException e){throw new IOException("Invalid logical backup schema",e);}

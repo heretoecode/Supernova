@@ -30,8 +30,9 @@ public final class LogicalBackupExporter {
                 ViewingHistory.awaitWrites();viewing=PortableViewingState.validateRecoverySnapshot(ViewingHistory.captureRecovery(context));
             }
             JSONObject bookmarks=categories.contains(BackupCategory.BOOKMARKS)?BookmarkStoreRecovery.capture(context):null;
+            JSONObject sources=categories.contains(BackupCategory.SOURCES)?IndexedSourceStoreRecovery.capture(context):null;
             Set<String> locations=new TreeSet<>();
-            if(categories.contains(BackupCategory.LOCATIONS)){if(categories.contains(BackupCategory.SOURCES))locations.addAll(PortableLibrarySources.locations(context));if(bookmarks!=null)locations.addAll(PortableBookmarks.locations(bookmarks));}
+            if(categories.contains(BackupCategory.LOCATIONS)){if(sources!=null){locations.addAll(PortableLibrarySources.locations(context));locations.addAll(PortableIndexedSources.locations(sources));}if(bookmarks!=null)locations.addAll(PortableBookmarks.locations(bookmarks));}
             Map<BackupCategory,JSONObject> payloads=new EnumMap<>(BackupCategory.class);
             for(BackupCategory category:categories) {
                 LogicalBackupCatalog.cancelled(cancel);JSONObject payload;
@@ -45,7 +46,7 @@ public final class LogicalBackupExporter {
                     case PINNED:payload=PortablePinnedTitles.export(context,catalog.pins);break;
                     case HIDDEN:payload=PortableHiddenItems.export(context,catalog.hidden,physical);break;
                     case HISTORY:case POSITIONS:payload=PortableViewingState.export(viewing,PortableViewingState.Kind.valueOf(category.name()));break;
-                    case SOURCES:payload=PortableLibrarySources.export(context);break;
+                    case SOURCES:payload=PortableLibrarySources.export(context,sources);break;
                     case BOOKMARKS:payload=PortableBookmarks.export(context,bookmarks);break;
                     case PLAYLISTS:payload=PortableSavedPlaylists.export(context,catalog.playlists);break;
                     case LOCATIONS:payload=PortableLocations.export(locations);break;
@@ -55,6 +56,7 @@ public final class LogicalBackupExporter {
             }
             if(!before.equals(preferences.getAll())||!healthBefore.equals(health.getAll()))throw new IOException("Configuration changed during backup; retry to capture a consistent selection");
             if(bookmarks!=null&&!bookmarks.toString().equals(BookmarkStoreRecovery.capture(context).toString()))throw new IOException("Bookmarks changed during backup; retry to capture a consistent selection");
+            if(sources!=null&&!sources.toString().equals(IndexedSourceStoreRecovery.capture(context).toString()))throw new IOException("Indexed sources changed during backup; retry to capture a consistent selection");
             LogicalBackupCatalog.cancelled(cancel);return Collections.unmodifiableMap(payloads);
         }catch(JSONException|RuntimeException invalid){throw new IOException("Selected configuration failed logical backup validation; no backup was created",invalid);}
     }
