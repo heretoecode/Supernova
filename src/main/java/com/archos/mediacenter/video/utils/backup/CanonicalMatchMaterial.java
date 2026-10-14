@@ -45,6 +45,10 @@ public final class CanonicalMatchMaterial {
                 if(store.exists())try(android.database.sqlite.SQLiteDatabase database=android.database.sqlite.SQLiteDatabase.openDatabase(store.getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY);
                         android.database.Cursor retained=database.query("MOVIE",new String[]{"_id","m_online_id","Nova_pinned"},"video_id=?",new String[]{Long.toString(owner.videoId)},null,null,null)){
                     if(retained.moveToFirst()){long id=retained.getLong(0);Long provider=retained.isNull(1)?null:retained.getLong(1),pin=retained.isNull(2)?null:retained.getLong(2);if(retained.moveToNext())throw new IOException("Retained movie ownership is ambiguous");return guard(((MovieTags)tags).prepareOwnedMetadataRestore(context,owner.videoId,owner.type,owner.localId,id,provider,pin),owner);}
+                    try(android.database.Cursor next=database.rawQuery("SELECT IFNULL(MAX(_id),0)+1 FROM MOVIE",null)){
+                        if(!next.moveToFirst()||next.getType(0)!=android.database.Cursor.FIELD_TYPE_INTEGER||next.getLong(0)<=0)throw new IOException("Cannot reserve a canonical movie owner");
+                        return guard(((MovieTags)tags).prepareNewRestore(context,owner.videoId,owner.type,owner.localId,next.getLong(0)),owner);
+                    }
                 }
             }
             if(tags instanceof EpisodeTags&&owner.type==BaseTags.TV_SHOW&&owner.match!=null&&owner.match.episodeProvider!=null){

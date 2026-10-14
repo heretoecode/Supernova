@@ -1,9 +1,9 @@
 {
   "apply_after": "Established0.138 MediaLib patches/Foundation preparation, then medialib-supernova139-playlists.patch",
   "base_commit": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
-  "isolated_dependency_commit": "00f87b4b9dff52f0299198489ce1fd414af3d8ca",
+  "isolated_dependency_commit": "35bc6414a50f4ad349ce2b2e3f40bbbf304a806f",
   "patch": ".github/build/medialib-supernova139-matches.patch",
-  "patch_sha256": "ca8e2392b0b06d572163179f3580aa722099d60ee6fbbfc2d728d78de63a0e4b",
+  "patch_sha256": "17466f72e9410fc6c699fa7b4479404311b4e46f7a07ac3f929e1511ef893e69",
   "files": [
     "src/com/archos/mediascraper/MovieTags.java",
     "src/com/archos/mediaprovider/video/ScraperProvider.java",
