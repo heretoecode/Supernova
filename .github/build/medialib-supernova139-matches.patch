@@ -448,7 +448,7 @@ index 0000000..4eafbb5
 +    private MatchRestoreOperations(){}
 +}
 diff --git a/src/com/archos/mediascraper/MovieTags.java b/src/com/archos/mediascraper/MovieTags.java
-index 30bba74..51e0ceb 100644
+index 30bba74..b450fa7 100644
 --- a/src/com/archos/mediascraper/MovieTags.java
 +++ b/src/com/archos/mediascraper/MovieTags.java
 @@ -197,12 +197,67 @@ public class MovieTags extends VideoTags {
@@ -534,7 +534,7 @@ index 30bba74..51e0ceb 100644
 +                    .withValues(expectedFile).withExpectedCount(1).build());
 +            if(createNew){
 +                allOperations.add(ContentProviderOperation.newAssertQuery(ContentUris.withAppendedId(ScraperStore.Movie.URI.ID,metadataId)).withExpectedCount(0).build());
-+                allOperations.add(ContentProviderOperation.newAssertQuery(ScraperStore.Movie.URI.BASE).withSelection(ScraperStore.Movie.VIDEO_ID+"=?",new String[]{Long.toString(videoId)}).withExpectedCount(0).build());
++                allOperations.add(ContentProviderOperation.newAssertQuery(ScraperStore.Movie.URI.ALL).withSelection(ScraperStore.Movie.VIDEO_ID+"=?",new String[]{Long.toString(videoId)}).withExpectedCount(0).build());
 +            }else{
 +            ContentValues expected = new ContentValues();
 +            expected.put(ScraperStore.Movie.VIDEO_ID, videoId);
