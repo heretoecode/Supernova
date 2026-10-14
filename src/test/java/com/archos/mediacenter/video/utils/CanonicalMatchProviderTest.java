@@ -221,4 +221,26 @@ public class CanonicalMatchProviderTest {
         try(var row=holder.get().rawQuery("SELECT bookmark FROM files WHERE _id=10",null)){assertTrue(row.moveToFirst());assertEquals(8888,row.getLong(0));}
     }
 
+    @Test public void verifiedEpisodeReparentingRetainsBothShowPinsAndOldCollectionAcrossRedo()throws Exception {
+        episodeFixture();var db=holder.get();db.execSQL("INSERT INTO SHOW(_id,s_online_id,name_show,Nova_pinned) VALUES(350,999,'Receiving target parent',8)");
+        var inventory=com.archos.mediacenter.video.utils.backup.MediaMatchInventory.capture(app);var request=new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:tv:999:2:3",777L);
+        var batch=com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.prepare(app,inventory.owners.get(20L),request,Uri.parse("file:///episode.mkv"),300,9L,(context,requested,file)->new com.archos.mediascraper.ScrapeDetailResult(episodeTags(999),false,null,com.archos.mediascraper.ScrapeStatus.OKAY,null));
+        assertEquals(4,batch.primaryOperation);org.json.JSONObject record;
+        db.beginTransaction();try {
+            record=com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(db,java.util.List.of(20L),java.util.List.of(batch),()->false);
+            com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false);com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db,record,()->false);
+            try(var row=db.query(VideoOpenHelper.VIDEO_VIEW_NAME,new String[]{"s_id","s_online_id","e_online_id","e_name","Nova_pinned"},"_id=20",null,null,null,null)){assertTrue(row.moveToFirst());assertEquals(350,row.getLong(0));assertEquals(999,row.getLong(1));assertEquals(777,row.getLong(2));assertEquals("Fresh episode",row.getString(3));assertEquals(8,row.getLong(4));}
+            try(var row=db.rawQuery("SELECT s.Nova_pinned,s.s_online_id FROM user_collection_item i JOIN SHOW s ON s._id=i.media_id WHERE i._id=10",null)){assertTrue(row.moveToFirst());assertEquals(9,row.getLong(0));assertEquals(666,row.getLong(1));}
+        }finally{db.endTransaction();}
+        db.beginTransaction();try {
+            assertTrue(com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.replay(app,db,new org.json.JSONObject(record.toString()),true,()->false));com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.verifyComplete(db,record,()->false);
+            try(var row=db.rawQuery("SELECT s_online_id,Nova_pinned FROM SHOW WHERE _id=300",null)){assertTrue(row.moveToFirst());assertEquals(666,row.getLong(0));assertEquals(9,row.getLong(1));}
+            try(var row=db.rawQuery("PRAGMA foreign_key_check",null)){assertFalse(row.moveToFirst());}
+        }finally{db.endTransaction();}
+        db.execSQL("UPDATE SHOW SET Nova_pinned=7 WHERE _id=350");db.beginTransaction();try {
+            try{com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app,db,batch,()->false);fail("Stale receiving target pin accepted");}catch(java.io.IOException expected){}
+            try(var row=db.rawQuery("SELECT show_episode,e_online_id FROM EPISODE WHERE _id=400",null)){assertTrue(row.moveToFirst());assertEquals(300,row.getLong(0));assertEquals(555,row.getLong(1));}
+        }finally{db.endTransaction();}
+    }
+
 }
