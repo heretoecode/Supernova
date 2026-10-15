@@ -68,7 +68,7 @@ public final class PreviewMoviePage extends ScrollView {
         versions=button("Versions",()->chooseVersions.run());versions.setVisibility(GONE);
         tabBar=new PreviewToolbar(c);tabBar.setClipChildren(false);LinearLayout.LayoutParams tabsSize=new LinearLayout.LayoutParams(-1,dp(44));tabsSize.topMargin=dp(14);sectionFrame=new ConnectedDetailsPanel(c);body.addView(sectionFrame,new LinearLayout.LayoutParams(-1,dp(220)));((PreviewToolbar)tabBar).setConnected(true);tabBar.setPadding(0,0,0,0);tabsSize.topMargin=0;sectionFrame.addView(tabBar,tabsSize);
         episodes=section("Episodes");cast=section("Cast");crew=section("Crew");details=section("Details");related=section("More Like This");trailers=section("Extras");
-        lower=new FrameLayout(c);lower.setClipChildren(false);reading=new ScrollView(c);reading.setTag("details.reading.overflow");reading.setFillViewport(true);reading.setSmoothScrollingEnabled(false);reading.setFocusable(false);reading.setPadding(dp(8),dp(6),dp(8),dp(8));reading.addView(lower,new ScrollView.LayoutParams(-1,-2));sectionFrame.addView(reading,new LinearLayout.LayoutParams(-1,0,1));information=new LinearLayout(c);information.setOrientation(LinearLayout.HORIZONTAL);lower.addView(information,new FrameLayout.LayoutParams(-1,-2));
+        lower=new FrameLayout(c);lower.setClipChildren(false);reading=new ScrollView(c){@Override protected void onLayout(boolean changed,int l,int t,int r,int b){super.onLayout(changed,l,t,r,b);revealContentFocus();}};reading.setTag("details.reading.overflow");reading.setFillViewport(true);reading.setClipToPadding(false);reading.setSmoothScrollingEnabled(false);reading.setFocusable(false);reading.setPadding(dp(8),dp(6),dp(8),dp(8));reading.addView(lower,new ScrollView.LayoutParams(-1,-2));sectionFrame.addView(reading,new LinearLayout.LayoutParams(-1,0,1));information=new LinearLayout(c);information.setOrientation(LinearLayout.HORIZONTAL);lower.addView(information,new FrameLayout.LayoutParams(-1,-2));
         for(LinearLayout section:new LinearLayout[]{cast,crew,details}){View wrapper=(View)section.getParent();body.removeView(wrapper);LinearLayout.LayoutParams infoSize=new LinearLayout.LayoutParams(0,-2,section==details?3.6f:1f);infoSize.rightMargin=dp(12);information.addView(wrapper,infoSize);}
         for(LinearLayout section:new LinearLayout[]{episodes,related,trailers}){View wrapper=(View)section.getParent();body.removeView(wrapper);lower.addView(wrapper,new FrameLayout.LayoutParams(-1,-2));}
         ((View)cast.getParent()).setVisibility(GONE);((View)crew.getParent()).setVisibility(GONE);
@@ -139,6 +139,11 @@ public final class PreviewMoviePage extends ScrollView {
         information.setVisibility(label.equals("Details")?VISIBLE:GONE);
         for(TextView tab:sectionTabs){boolean selected=("section:"+label).equals(tab.getTag());tab.setSelected(selected);if(selected){((PreviewToolbar)tabBar).setSelectedSegment(tab);sectionFrame.selected(tab);}}
         if(enter){scrollTo(0,Math.max(0,heroPage.getHeight()-dp(48)));if(label.equals("Seasons & Episodes"))focusNextEpisode();else if(!label.equals("Details"))lower.requestFocus();}
+    }
+    /** Keep the existing growing media focus outline inside the new reading viewport. */
+    private void revealContentFocus(){
+        View focused=findFocus();if(focused==null||!inside(focused,lower))return;
+        android.graphics.Rect rect=new android.graphics.Rect(0,0,focused.getWidth(),focused.getHeight());lower.offsetDescendantRectToMyCoords(focused,rect);rect.inset(-dp(10),-dp(10));reading.requestChildRectangleOnScreen(lower,rect,true);
     }
     private void focusNextEpisode(){Snapshot cache=snapshot!=null?snapshot:PreviewLibraryLoader.memoryCache();if(cache!=null&&show!=null){List<Entry> values=new ArrayList<>();for(Entry e:cache.episodes)if(e.show==show.getTvshowId())values.add(e);PreviewSeriesJourney.Selection selected=PreviewSeriesJourney.select(getContext(),values);if(selected.episode!=null)for(PreviewEpisodeRow row:episodeRows)if(row.focusEpisode(((Video)selected.episode.media).getId()))return;}if(!episodeRows.isEmpty())episodeRows.get(0).focusRemembered();}
 

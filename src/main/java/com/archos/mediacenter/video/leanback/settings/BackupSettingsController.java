@@ -49,7 +49,7 @@ public final class BackupSettingsController {
         });
     }
     public void attach(SharedThreePanel split,View middle,View help){
-        this.split=split;this.middle=middle;this.help=help;frame=new FrameLayout(fragment.requireContext());frame.setTag("settings.backup.workspace");frame.setVisibility(View.GONE);
+        if(this.split!=null)hide();this.split=split;this.middle=middle;this.help=help;frame=new FrameLayout(fragment.requireContext());frame.setTag("settings.backup.workspace");frame.setVisibility(View.GONE);
         split.addView(frame,new LinearLayout.LayoutParams(0,-1,.72f));model.states().observe(fragment.getViewLifecycleOwner(),state->{if(isVisible())render(state);});
     }
     public void show(View opener){this.opener=opener;int railWidth=split.getChildAt(0).getWidth();

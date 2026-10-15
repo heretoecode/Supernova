@@ -38,9 +38,9 @@ def main():
     suites=[ET.parse(file).getroot() for file in (build/'test-results/testNoamazonReleaseUnitTest').glob('TEST-*.xml')]
     for name,attribute in [('unit_tests','tests'),('unit_failures','failures'),('unit_errors','errors'),('unit_skips','skipped')]:
         evidence[name]=sum(int(suite.get(attribute,0)) for suite in suites)
-    if evidence['unit_tests']<1005 or any(evidence[name] for name in ['unit_failures','unit_errors','unit_skips']):
+    if evidence['unit_tests']<1007 or any(evidence[name] for name in ['unit_failures','unit_errors','unit_skips']):
         raise ValueError('Complete 0.139 unit suite must pass without skips')
-    required={'Supernova138HomeTest','Supernova138PlaybackTest','SubtitleDiscoveryTest','Supernova138UiTest','BundledNoticePagerTest','PreviewSeasonTest','Supernova139HomeEditorTest','CanonicalMatchProviderTest','MediaMatchJournalTest','MediaMatchReconciliationTest','CombinedCurrentRestoreTest','TransportReadDiagnosticsTest','LogicalBackupExporterTest','BackupSettingsControllerTest','Details139AcceptanceTest'}
+    required={'Supernova138HomeTest','Supernova138PlaybackTest','SubtitleDiscoveryTest','Supernova138UiTest','BundledNoticePagerTest','PreviewSeasonTest','Supernova139HomeEditorTest','CanonicalMatchProviderTest','MediaMatchJournalTest','MediaMatchReconciliationTest','CombinedCurrentRestoreTest','TransportReadDiagnosticsTest','LogicalBackupExporterTest','BackupSettingsControllerTest','Details139AcceptanceTest','ProductionBackupSettingsTest'}
     present={suite.get('name','').split('.')[-1] for suite in suites if int(suite.get('tests','0'))>0}
     if not required.issubset(present):raise ValueError('Complete 0.139 regression classes are required')
     evidence['required_0139_test_classes']=sorted(required)
