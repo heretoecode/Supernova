@@ -1,0 +1,47 @@
+{
+  "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
+  "run_id": 38725529541,
+  "artifact_id": 11968869159,
+  "reviewed_utc": "2026-10-15",
+  "result": "BLOCKED_DESIGN_DEPENDENCIES",
+  "evidence_kind": "Actual native synthetic fixture renders produced in the139 CI;0138 filenames are historical test fixture names, not138 APK captures or owner Shield photographs.",
+  "captures": [
+    {
+      "name": "0138-details-five-sections.png",
+      "width": 960,
+      "height": 540,
+      "sha256": "310d4b31338003fcbe478bf4fa27c883d83849883d3661babcad7a9d873a2834"
+    },
+    {
+      "name": "0138-details-five-sections-150-text.png",
+      "width": 960,
+      "height": 540,
+      "sha256": "69eb6b707210fd4d8675e3c1dafad052804da5569cc2184d209b7f1bc85840bd"
+    },
+    {
+      "name": "0138-details-small-viewport.png",
+      "width": 640,
+      "height": 360,
+      "sha256": "d857530f6658ff5633f518166e4a90e9e68be52200bd755d417b80a9e1dd42fe"
+    }
+  ],
+  "D03": {
+    "result": "NOT_IMPLEMENTED",
+    "observed": "All reviewed tabs still use the legacy detached underline; no connected cap/shared side-and-bottom frame. No image is labelled a passing target-frame implementation.",
+    "decision": "Explicit selected/focused-state approval and target frame/content geometry from OWNER_DECISIONS_2026-10-15.md."
+  },
+  "D04": {
+    "result": "NOT_CONFORMANT_TO_TARGET",
+    "observed": [
+      "Normal960x540 rich lower view shows8cast/8crew but ellipsized Key Information values such as original title/countries/tagline.",
+      "At150percent font, crew jobs and more fact labels/values are ellipsized; the full information target is not established.",
+      "At640x360 the initial card synopsis is truncated and only the top of the lower panels is visible. This is the retained current presentation, not proof of a full passive fixed-screen canvas."
+    ],
+    "decision": "Unbounded full synopsis/facts in a finite readable passive no-scroll viewport requires an approved overflow/content-policy relaxation; no hidden omission or shrinking chosen."
+  },
+  "limits": [
+    "Static visual review, not complete navigation/persistence/state or physical Shield acceptance.",
+    "No image claims source bug diagnosis for private Dune/Tulsa incidents.",
+    "Existing independent Details card/actions/tab/season/navigation work remains preserved; no future FD-033 design adopted."
+  ]
+}

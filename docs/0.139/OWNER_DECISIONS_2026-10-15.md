@@ -62,3 +62,7 @@ QA signing must not be made circular: a signed QA APK is needed for physical sig
 There is no signed139 APK or139 Drive upload. Existing folder1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM remains the sole target once a valid signedQA APK exists; signature/version/code/hash, signed payload parity and uploaded readback must be verified. Neither unsigned artifact is delivered under the final filename. HTML release-note source must continue to describe unfinished status until actual delivery.
 
 Prepared signing source8e917bd3 passed81 Python tests. Workflow registration run38724382422 actually skipped its signing job with zero steps. This is verified registration/gating behavior, not a signing pass. Unsigned CI38724382347 and local full996-test regression are running; collect their actual results before ending.
+
+## Current-render corroboration
+
+DETAILS_VISUAL_RECHECK_2026-10-15.json and ui/details-recheck-2026-10-15 preserve actual139CI synthetic renders atb2source, including normal/150%-font/small cases. Historical0138fixture filenames do not denote an oldAPK or realShield photo. They still show the legacy detached underline (D03unimplemented), ellipsized long fact values and crew jobs, and a truncated synopsis/lower-content teaser at640 (D04targetunmet). No retained screenshot is described as the approved target layout. This corroborates the original source audit and pending decisions; no product or future-layout change is made.

@@ -522,7 +522,9 @@
     "result": "IN_PROGRESS",
     "run_id": 38730716137,
     "source_sha": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
-    "receipt_pending": true
+    "receipt_pending": true,
+    "native_step": "PASS",
+    "application_step_started_utc": "2026-10-15T12:04:32Z"
   },
   "application_content_unchanged_from": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
   "latest_tooling": {
@@ -541,5 +543,6 @@
     "failed": 2,
     "receipt": "CI_RECHECK_FIRST_2026-10-15.json"
   },
-  "artwork_test_wait_fix": "ARTWORK_READINESS_FIX_2026-10-15.json PASS19/5; newest full CI pending"
+  "artwork_test_wait_fix": "ARTWORK_READINESS_FIX_2026-10-15.json PASS19/5; newest full CI pending",
+  "details_visual_recheck": "DETAILS_VISUAL_RECHECK_2026-10-15.json corroborates D03/D04 unmet target/pending design, not hardware acceptance"
 }
