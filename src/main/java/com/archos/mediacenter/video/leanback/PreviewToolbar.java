@@ -11,6 +11,8 @@ public final class PreviewToolbar extends LinearLayout {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private View selectedSegment;
     private final boolean boxed;
+    private boolean connected;
+    public void setConnected(boolean value){connected=value;invalidate();}
     public void setSelectedSegment(View view){selectedSegment=view;invalidate();}
     public PreviewToolbar(Context context) { this(context, false); }
     public PreviewToolbar(Context context, boolean boxed) {
@@ -51,7 +53,7 @@ public final class PreviewToolbar extends LinearLayout {
     }
     @Override protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        if (boxed) return;
+        if (boxed || connected) return;
         float y = getHeight() - getResources().getDisplayMetrics().density;
         View focused=findFocus();View active=focused!=null?focused:selectedSegment;
         if(active!=null&&active.getParent()==this){paint.setColor(focused!=null?android.graphics.Color.WHITE:0x88ffffff);canvas.drawRect(active.getLeft(),y,active.getRight(),getHeight(),paint);}

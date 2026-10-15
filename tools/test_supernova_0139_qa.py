@@ -17,7 +17,7 @@ REQUIRED = ['Supernova138HomeTest', 'Supernova138PlaybackTest', 'SubtitleDiscove
             'Supernova138UiTest', 'BundledNoticePagerTest', 'PreviewSeasonTest', 'Supernova139HomeEditorTest',
             'CanonicalMatchProviderTest', 'MediaMatchJournalTest', 'MediaMatchReconciliationTest',
             'CombinedCurrentRestoreTest', 'TransportReadDiagnosticsTest', 'LogicalBackupExporterTest',
-            'BackupSettingsControllerTest']
+            'BackupSettingsControllerTest','Details139AcceptanceTest']
 
 
 class Supernova139QAGates(unittest.TestCase):

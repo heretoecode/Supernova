@@ -10,7 +10,7 @@ import sys
 import foundation_signing as key
 
 CERTIFICATE = '79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e'
-MINIMUM_TESTS = 996
+MINIMUM_TESTS = 1005
 
 
 def gate(evidence, apk, source):
@@ -25,7 +25,7 @@ def gate(evidence, apk, source):
             raise key.SigningError('QA native/runtime/branding conformance is incomplete.')
     if evidence.get('build_result') != 'BUILD SUCCESSFUL' or evidence.get('unit_tests', 0) < MINIMUM_TESTS or any(evidence.get(name) != 0 for name in ('unit_failures', 'unit_errors', 'unit_skips')) or evidence.get('lint', {}).get('errors') != 0:
         raise key.SigningError('QA signing requires the complete passing suite and release lint.')
-    required={'Supernova138HomeTest','Supernova138PlaybackTest','SubtitleDiscoveryTest','Supernova138UiTest','BundledNoticePagerTest','PreviewSeasonTest','Supernova139HomeEditorTest','CanonicalMatchProviderTest','MediaMatchJournalTest','MediaMatchReconciliationTest','CombinedCurrentRestoreTest','TransportReadDiagnosticsTest','LogicalBackupExporterTest','BackupSettingsControllerTest'}
+    required={'Supernova138HomeTest','Supernova138PlaybackTest','SubtitleDiscoveryTest','Supernova138UiTest','BundledNoticePagerTest','PreviewSeasonTest','Supernova139HomeEditorTest','CanonicalMatchProviderTest','MediaMatchJournalTest','MediaMatchReconciliationTest','CombinedCurrentRestoreTest','TransportReadDiagnosticsTest','LogicalBackupExporterTest','BackupSettingsControllerTest','Details139AcceptanceTest'}
     if set(evidence.get('required_0139_test_classes', [])) != required:
         raise key.SigningError('All required 0.139 regression classes must pass.')
     if evidence.get('rebuilt_ffmpeg_libraries_matched') != 24 or evidence.get('native_hashes_matched') != 88 or evidence.get('offline_licence_entries', 0) < 60:

@@ -148,7 +148,7 @@ public class PreviewMoviePageTest {
             primary.requestFocus();
             assertNotNull(PreviewPagesTest.findText(page,"SMB · server/movies/film.mkv"));assertNotNull(PreviewPagesTest.findText(page,"MKV"));
             com.archos.mediascraper.ShowTags cast=new com.archos.mediascraper.ShowTags();for(int person=1;person<=10;person++)cast.addActorIfAbsent("Fixture Person "+person,"Role "+person);page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
-            android.view.ViewGroup body=(android.view.ViewGroup)page.getChildAt(0);android.view.ViewGroup hero=(android.view.ViewGroup)body.getChildAt(0);assertTrue("Hero retains its content and lower tabs",hero.getChildCount()>1);
+            android.view.ViewGroup body=(android.view.ViewGroup)page.getChildAt(0);android.view.ViewGroup hero=(android.view.ViewGroup)body.getChildAt(0);assertNotNull("Card and connected section frame are retained",page.findViewWithTag("details.connected.frame"));
             assertNull(PreviewPagesTest.findText(page,"See All"));assertNull(PreviewPagesTest.findText(page,"Fixture Person 10"));assertNotNull(PreviewPagesTest.findText(page,"Fixture Person 8"));
             assertNull("Empty recommendations have no navigation entry",page.findViewWithTag("section:More Like This"));assertNotNull(page.findViewWithTag("section:Details"));assertNull(page.findViewWithTag("section:Extras"));
             for(int frame=0;frame<4;frame++){nav.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));nav.layout(0,0,960,540);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
