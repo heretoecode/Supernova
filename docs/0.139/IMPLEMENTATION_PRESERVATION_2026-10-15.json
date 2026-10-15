@@ -1,0 +1,21 @@
+{
+  "result": "PASS",
+  "starting_checkpoint": "c20e8e0f249cb9199514770d9b62284bfde94e06",
+  "current_code_source": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
+  "descends_from_requested_eb3e6e6": true,
+  "unchanged_git_objects": {
+    "src/main": "4e10ceed89193e239ac1287d18f3c29d687db033",
+    "assets": "e579537cb3b676cd2c362788d37b3048b6c8815c",
+    "res": "30b4e84952787c9b9bfc9c72506a7785eafbaa6e",
+    "AndroidManifest.xml": "8133d2a81087279907a628f4a3973c07ed9a34e6",
+    "build.gradle": "2932250d46390ae2298dd548c434bec870f7a7f6",
+    "gradle.properties": "1c947b0dba9f10623846e845dbca1796213eb3b7",
+    ".github/build/medialib-supernova139-playlists.patch": "dd8824733884130d0f2f1a000582162d63a0cf81",
+    ".github/build/medialib-supernova139-matches.patch": "0a603ca092dd9da8631aca461c15865af7c4d7d0",
+    ".github/build/filecore-supernova139-diagnostics.patch": "2924fe839be2bc477cd559d49d4b74603d1170f7",
+    ".github/signing/foundation_signing.py": "a4cdcaa7138fed3f3b81dd0ed79dc5370c64e5a4",
+    ".github/signing/supernova_0138_qa_signing.py": "28dd18ed72c0acd0cb2798d4182ed644250addf3",
+    ".github/workflows/supernova-0138-qa.yml": "c8d6845b68d6654eb452b26cf7746ab49c8ce2b1"
+  },
+  "limits": "Source/tree identity confirms preservation; does not establish physical signed upgrade or complete acceptance."
+}

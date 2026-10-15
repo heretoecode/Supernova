@@ -32,5 +32,6 @@
     ".github/signing/verify_supernova_0139_qa_apk.py": "be551850ac5e18cfa8f49d9bc1b76872a1fc8e57c70211f9ecc74d0c9ec76923",
     ".github/build/record-supernova-0139-conformance.py": "538a0ff53b7ef54351fed31cc1e1b10bef0341ce6099a3566dfa49283341c7d3",
     "tools/test_supernova_0139_qa.py": "0de587199134f0f43f96bde1ab7e141b3a54c101cb9e7a682000504fd77d3db9"
-  }
+  },
+  "unchanged_through_final_ci_source": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84"
 }

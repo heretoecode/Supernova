@@ -1,6 +1,6 @@
 # Supernova 0.139 — development candidate, not delivered
 
-15 October 2026. Branch `codex/supernova-0.139-implementation-2026-10-13`; [draft PR17](https://github.com/heretoecode/Supernova/pull/17). Current test/build source: `b2a17cbe5559579f58347b6ad78c45674df85e79`. Version **0.139 / code139**, package `app.supernova.player`. Existing application sources, branding and signing identity are preserved; this follow-up changes tests and prepares the139 signing route. No main merge, public release or future0.140 Details redesign is included.
+15 October 2026. Branch `codex/supernova-0.139-implementation-2026-10-13`; [draft PR17](https://github.com/heretoecode/Supernova/pull/17). Latest clean CI source: `6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84`; preceding local full source: `b2a17cbe5559579f58347b6ad78c45674df85e79`. Version **0.139 / code139**, package `app.supernova.player`. Existing application sources, branding and signing identity are preserved; this follow-up changes tests and prepares the139 signing route. No main merge, public release or future0.140 Details redesign is included.
 
 ## Changes implemented or under validation
 
@@ -13,7 +13,7 @@
 
 ## Confirmed verification and fixes
 
-The first15October full rerun executed996tests and found two failures. One was a test synchronization race: an AlertDialog click was posted, but the helper assertedRESTORE_PREVIEW while the model was stillPREPARING_RESTORE. The corrected helper waits for the expected phase, worker completion and published state. It passed17focused tests/3classes and all older Settings cases inside the fresh unfiltered full run. Product restore behavior was not changed.
+The first15October full rerun executed996tests and found two failures. One was a test synchronization race: an AlertDialog click was posted, but the helper assertedRESTORE_PREVIEW while the model was stillPREPARING_RESTORE. The corrected helper waits for the expected phase, worker completion and published state. It passed17focused tests/3classes and all older Settings cases inside the fresh full local and clean CI runs. A separate artwork pixel-test helper now waits for actual view readiness/main callback delivery instead of approximate executor counters alone;19focused cases and all9binding cases in final CI pass. Product restore and artwork behavior were not changed.
 
 Corrected full run: **996tests /208classes;995PASS,1FAIL,0errors/skips**. Release lint: **PASS,0errors/1771warnings**. R8 unsigned assembly completed; batch20m43s/exit1 correctly reflects the retained Backup layout failure. See FULL_RECHECK_FIRST_2026-10-15.json, RESTORE_WAIT_FIX_2026-10-15.json and FULL_RECHECK_CORRECTED_2026-10-15.json.
 
@@ -21,7 +21,7 @@ Connected Backup measurement passes all26 physical/ancestor bounds, complete lab
 
 Python tooling: **81PASS**, including the prepared manual-only139 signing route's wrong-source/ref/version/certificate, failed-suite and payload-change guards. Existing signing helpers/workflows remain intact. The push registration job was actuallySKIPPED; no signing or real-key preparation occurred.
 
-Four-ABI software evidence includes64paired decode cases, registry and dynamic tempo comparisons. Clean CIb2 run38725529541 completed996tests/994PASS/2FAIL: Backup plus an artwork pixel test that sampled before its UI callback. Its native step/lint/unsigned assembly passed their subchecks. A test-only readiness correction at6ded8d37 passed19focused tests/5classes; fresh full [CI38730716137](https://github.com/heretoecode/Supernova/actions/runs/38730716137) is running. No successful overallCI is inferred. Historical CI binaries were rechecked:84wrapper-manifest entries cover80unique libraries; four helper paths occur in both dependency manifests. Eight remaining libraries match the verified signed138baseline. These checks establish software/byte provenance, not Shield hardware decode, passthrough, HDR or installability.
+Four-ABI software evidence includes64paired decode cases, registry and dynamic tempo comparisons. Clean CIb2 run38725529541 completed996tests/994PASS/2FAIL: Backup plus an artwork pixel test that sampled before its UI callback. Its native step/lint/unsigned assembly passed their subchecks. A test-only readiness correction at6ded8d37 passed19focused tests/5classes; final clean [CI38730716137](https://github.com/heretoecode/Supernova/actions/runs/38730716137) completed **996tests/995PASS/1FAIL/0errors/skips**,208classes. All9artwork-binding and3older Settings cases pass. Lint0errors/1771warnings; native64pairs and unsigned assembly pass their subchecks. OverallCI remainsFAIL for640Backup. CI_FINAL_VERIFICATION_2026-10-15.json preserves actual final results; the26m41s job ended12:21:24UTC, Gradle15m30s. The positive post-Gradle conformance recorder was correctly not reached. Historical CI binaries were rechecked:84wrapper-manifest entries cover80unique libraries; four helper paths occur in both dependency manifests. Eight remaining libraries match the verified signed138baseline. These checks establish software/byte provenance, not Shield hardware decode, passthrough, HDR or installability.
 
 ## APK and delivery status
 
@@ -29,7 +29,7 @@ The current local **unsigned development** APK passed actual identity/version, n
 
 `5539f71c4b20c9558eabdde3ea5c1eb27422574e07fce22d4df0c0769c5f39ff`
 
-Preserved filename: `Supernova_0139_unsigned_b2a17cbe.apk`; receipt LOCAL_PACKAGING_RECHECK_2026-10-15.json. Earlier unsigned artifacts and failed receipts remain preserved separately. This is not the signed final filename or a delivered QA candidate.
+Preserved filename: `Supernova_0139_unsigned_b2a17cbe.apk`; receipt LOCAL_PACKAGING_RECHECK_2026-10-15.json. The final clean-CI **unsigned** APK is87672401bytes, SHA256 `e0a43fcf64351b8d92dfa8a8d47b4e60d39b5129bf28628c6699416c3da971c7`; source6ded8d37. CI_FINAL_PACKAGING_2026-10-15.json verifies actual0.139/code139/SDK23/36/non-debuggable, CRC/alignment/assets/retirement and all88native libraries (80unique rebuilt manifest libraries plus8matching baseline libraries), including24rebuiltFFmpeg byte links to64software decode pairs. Its downloaded evidence ZIP SHA8fa4ffb6b040cd0f185de2ff8e1eb872560697340243a278ba0425d8d8811047 matches GitHub metadata and CRC. Earlier unsigned artifacts and failed receipts remain preserved separately. This is not the signed final filename or a delivered QA candidate.
 
 **No signed139 APK or139 Drive delivery has been produced.** The exact-branch signing-policy request was attempted under the owner's instruction and denied **HTTP403 Resource not accessible by integration**. Readback confirms existing policies unchanged. SIGNING_POLICY_ATTEMPT_2026-10-15.json gives the exact administrator request; no old-ref/key workaround was attempted. No connected Shield/ADB endpoint is available. Whole43 acceptance remains42BLOCKED/1FAIL, with passing subchecks recorded separately.
 

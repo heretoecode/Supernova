@@ -1,0 +1,79 @@
+{
+  "result": "FAIL",
+  "run_id": 38730716137,
+  "job_id": 116407512881,
+  "source_sha": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
+  "url": "https://github.com/heretoecode/Supernova/actions/runs/38730716137",
+  "job_started_utc": "2026-10-15T11:54:43Z",
+  "job_completed_utc": "2026-10-15T12:21:24Z",
+  "gradle_duration": "15m30s",
+  "tests": 996,
+  "passed": 995,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "classes": 208,
+  "failed_tests": [
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "test": "smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels",
+      "message": "java.lang.AssertionError: AUDIO outside physical horizontal bounds\nAUDIO clipped by ancestor viewport\nDIAGNOSTICS outside physical horizontal bounds\nDIAGNOSTICS clipped by ancestor viewport\nINTEGRATIONS outside physical horizontal bounds\nINTEGRATIONS clipped by ancestor viewport\nLIBRARY outside physical horizontal bounds\nLIBRARY clipped by ancestor viewport\nNETWORK outside physical horizontal bounds\nNETWORK clipped by ancestor viewport\nSTREAMING outside physical horizontal bounds\nSTREAMING clipped by ancestor viewport\nSUBTITLES outside physical horizontal bounds\nSUBTITLES clipped by ancestor viewport\nVIDEO outside physical horizontal bounds\nVIDEO clipped by ancestor viewport\nCUSTOM_PAGES outside physical horizontal bounds\nCUSTOM_PAGES clipped by ancestor viewport\nHIDDEN outside physical horizontal bounds\nHIDDEN clipped by ancestor viewport\nMATCHES outside physical horizontal bounds\nMATCHES clipped by ancestor viewport\nPINNED outside physical horizontal bounds\nPINNED clipped by ancestor viewport\nREVIEW outside physical horizontal bounds\nREVIEW clipped by ancestor viewport\nPLAYLISTS outside physical horizontal bounds\nPLAYLISTS clipped by ancestor viewport\nWATCH_NEXT outside physical horizontal bounds\nWATCH_NEXT clipped by ancestor viewport\nCONTINUE_CHOICES outside physical horizontal bounds\nCONTINUE_CHOICES clipped by ancestor viewport\nPOSITIONS below existing44dp target role\nTITLE_PLAYBACK outside physical horizontal bounds\nTITLE_PLAYBACK clipped by ancestor viewport\nTITLE_PLAYBACK below existing44dp target role\nHISTORY outside physical horizontal bounds\nHISTORY clipped by ancestor viewport\nHISTORY below existing44dp target role\nBOOKMARKS outside physical horizontal bounds\nBOOKMARKS clipped by ancestor viewport\nBOOKMARKS below existing44dp target role\nSOURCES outside physical horizontal bounds\nSOURCES clipped by ancestor viewport\nSOURCES below existing44dp target role\nLOCATIONS outside physical horizontal bounds\nLOCATIONS clipped by ancestor viewport\nLOCATIONS below existing44dp target role\nLOCATIONS incomplete text height"
+    }
+  ],
+  "corrected_classes": {
+    "com.archos.mediacenter.video.leanback.settings.LegacySettingsBackupReviewTest": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "lint": {
+    "result": "PASS",
+    "errors": 0,
+    "warnings": 1771
+  },
+  "native_rebuild_runtime": "PASS: four ABI registries/tempo/64paired software decode cases",
+  "unsigned_assembly": "Completed",
+  "binary_receipt": "CI_FINAL_PACKAGING_2026-10-15.json",
+  "artifact": {
+    "id": 11970309241,
+    "bytes": 92314863,
+    "sha256": "8fa4ffb6b040cd0f185de2ff8e1eb872560697340243a278ba0425d8d8811047",
+    "github_digest_matches": true,
+    "zip_crc": true,
+    "safe_paths": true,
+    "entries": 307,
+    "retention_days": 14
+  },
+  "job_log_excerpt_sha256": "d5b5a544b0e37d37d9934444eff0a75307359d70b02e964f9c94aa2a00062a5c",
+  "limits": [
+    "OverallCI isFAIL; single640Backup acceptance failure remains active, not ignored or skipped.",
+    "Post-Gradle positive conformance recorder/runtime inventory verifier/Python step were not reached due set-e. Independent downloaded APK verification is separate, not a fabricated successful conformance receipt.",
+    "Both synchronization corrections pass in this full run; product restore/artwork code unchanged.",
+    "A live log fetch before completion returnedBlobNotFound; completed logs were successfully fetched. Not a persistent log access blocker.",
+    "No signed139/Shield/install/upgrade/Drive139 acceptance."
+  ],
+  "required_regression_classes_present": [
+    "BackupSettingsControllerTest",
+    "BundledNoticePagerTest",
+    "CanonicalMatchProviderTest",
+    "CombinedCurrentRestoreTest",
+    "LogicalBackupExporterTest",
+    "MediaMatchJournalTest",
+    "MediaMatchReconciliationTest",
+    "PreviewSeasonTest",
+    "SubtitleDiscoveryTest",
+    "Supernova138HomeTest",
+    "Supernova138PlaybackTest",
+    "Supernova138UiTest",
+    "Supernova139HomeEditorTest",
+    "TransportReadDiagnosticsTest"
+  ]
+}
