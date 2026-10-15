@@ -1,0 +1,8 @@
+2026-10-15T17:35:14.7520084Z BUILD SUCCESSFUL in 23m 35s
+2026-10-15T17:35:15.0994066Z Reviewed runtime artifact hashes matched: 138
+2026-10-15T17:35:21.8096663Z Actual APK rebuilt FFmpeg libraries matched: 24
+2026-10-15T17:35:27.7880954Z Ran 81 tests in 5.798s
+2026-10-15T17:35:27.7881687Z OK
+2026-10-15T17:35:33.6989374Z Public unsigned Foundation conformance evidence recorded; no APK/keys/logs published.
+2026-10-15T17:35:34.7101534Z Exact-source unsigned conformance and existing QA certificate verified; temporary key prepared.
+2026-10-15T17:35:46.7157306Z QA APK signature, identity, version and tested payload parity verified.

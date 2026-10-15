@@ -2,6 +2,14 @@
   "result": "BLOCKED",
   "items": [
     {
+      "item": "Physical Shield access",
+      "reason": "No physical Shield/ADB endpoint or owner incident media/ZIP supplied in this continuation. No physical output/focus, OS-force-stop recovery, incident reproduction or138\u2192139 signed upgrade was run."
+    }
+  ],
+  "continuation": "Signed139 QA APK and verified Drive delivery complete. Physical Shield/device install/signed upgrade and incident evidence remain outstanding. Historical emulator provisioning attempts are preserved separately and do not block QA delivery.",
+  "verified_at_utc": "2026-10-15T17:40:37.450503+00:00",
+  "historical_emulator_attempts": [
+    {
       "item": "Software Android/TV emulator provisioning",
       "reason": "Official sdkmanager provisioning with closed stdin refused unaccepted system-image licence terms. No agreement accepted and no emulator installed. This is separate from native Robolectric coverage.",
       "attempts": [
@@ -20,16 +28,6 @@
           "log_sha256": "b11de49b94fe59d30bba73112159c859da55d9c2313e7fd29f72cfc5da4d2054"
         }
       ]
-    },
-    {
-      "item": "Physical Shield access",
-      "reason": "No physical Shield/ADB endpoint or owner incident media/ZIP supplied in this continuation. No physical output/focus, OS-force-stop recovery, incident reproduction or138\u2192139 signed upgrade was run."
-    },
-    {
-      "item": "Signed139 artifact and delivery",
-      "reason": "Final-source CI38746280548 and independent unsigned artifact verification PASS. The exact139 branch is absent from the signing environment selected-branch policies; authorised POST returned403 Resource not accessible by integration. No signing dispatch/key access or signed APK. Administrator instructions are in SIGNING_ADMIN_ACTION_2026-10-15.md."
     }
-  ],
-  "continuation": "Software conformance and independent binary validation are complete for23f75b38. Continue signing/delivery after the exact branch is authorised; physical acceptance remains separate.",
-  "verified_at_utc": "2026-10-15T16:49:31.012706+00:00"
+  ]
 }

@@ -1,3 +1,5 @@
+> **Resolved on15October2026:** the owner added the exact139branch (policy63180517). Signing workflow38773230129 succeeded and the signedQA APK was delivered. The instructions below preserve the earlier blocked-state record; no further administrator action is needed for this delivery. See SIGNING_AUTHORIZATION_2026-10-15.json and RELEASE_NOTES.md.
+
 # Supernova 0.139 signing access — exact administrator action
 
 Final implementation `23f75b38b18f6b34f5ceb94c001260f08bafac09` passed [CI38746280548](https://github.com/heretoecode/Supernova/actions/runs/38746280548). The downloaded unsigned artifact independently passes package, source assets, native evidence, CRC and 16 KiB alignment checks. See CI_APPROVED_VERIFICATION_2026-10-15.json and CI_APPROVED_PACKAGING_2026-10-15.json. Signing and delivery are already owner-authorised.

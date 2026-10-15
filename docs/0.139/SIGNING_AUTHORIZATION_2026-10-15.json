@@ -75,5 +75,7 @@
   "source_commit": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
   "approved_qa_distribution": true,
   "validated_implementation": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
-  "non_documentation_source_unchanged": true
+  "non_documentation_source_unchanged": true,
+  "post_run_rules_and_policies_unchanged": true,
+  "workflow_result": "success"
 }

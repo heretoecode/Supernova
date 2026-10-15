@@ -1,5 +1,5 @@
 {
-  "release_result": "BLOCKED",
+  "release_result": "QA_DELIVERED_ACCEPTANCE_OPEN",
   "application_source": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
   "whole_workstream_results": {
     "BLOCKED": 43,
@@ -29,7 +29,7 @@
     "CI_CURRENT_NATIVE_RUNTIME.json PASS64 paired decode cases/four freshly rebuilt ABIs; CI_CURRENT_PACKAGING_VERIFICATION.json PASS unsigned identity/native/CRC/alignment",
     "CI_APPROVED_VERIFICATION_2026-10-15.json final-source PASS1007/209; Python81; lint0errors/1771warnings; 138runtime hashes; unsigned package/native/CRC/16KiB proof"
   ],
-  "limits": "Final-source automated CI conformance PASS. Whole-workstream state/render/hardware acceptance remains open. No signed139, signed upgrade or Drive139 delivery. Exact signing-policy POST remains403; no physical Shield endpoint supplied.",
+  "limits": "Signed QA APK and downloaded Drive copy verified. All43whole-workstream state/render/hardware matrices remain open. Physical Shield, actual device installation and138\u2192139signed upgrade NOT RUN.",
   "workstreams": [
     {
       "id": "C01",
@@ -581,7 +581,7 @@
     "receipt": "RELEASE_CONTINUATION_TOOLING_2026-10-15.json"
   },
   "current_unsigned_packaging_receipt": "CI_APPROVED_PACKAGING_2026-10-15.json",
-  "signing_policy_receipt": "SIGNING_CONTINUATION_RECHECK_2026-10-15.json",
+  "signing_policy_receipt": "SIGNING_AUTHORIZATION_2026-10-15.json",
   "preceding_ci": {
     "result": "FAIL",
     "run_id": 38725529541,
@@ -648,5 +648,30 @@
     "receipt": "CURRENT_DEVELOPMENT_PACKAGING_VERIFICATION.json",
     "sha256": "b21869042256357e9e8c23c0dab7166571f0821c8d86f5b341111120d68e1667",
     "signed": false
+  },
+  "delivery_result": "PASS",
+  "signing_result": "PASS",
+  "signed_apk": {
+    "filename": "Supernova_0.139.apk",
+    "sha256": "bc8d45eea2fe17c49048b48e97eaf5da228c021647675968d725237314344827",
+    "source_commit": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+    "run_id": 38773230129,
+    "receipt": "SIGNED_QA_VERIFICATION_2026-10-15.json"
+  },
+  "drive_delivery": {
+    "result": "PASS",
+    "file_id": "1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX",
+    "url": "https://drive.google.com/file/d/1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX/view?usp=drivesdk",
+    "receipt": "DRIVE_DELIVERY_VERIFICATION_2026-10-15.json"
+  },
+  "signed_workflow_conformance": {
+    "result": "PASS",
+    "source_sha": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+    "run_id": 38773230129,
+    "tests": 1007,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "receipt": "SIGNED_QA_CI_EVIDENCE_2026-10-15.json"
   }
 }

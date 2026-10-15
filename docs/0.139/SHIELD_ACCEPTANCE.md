@@ -1,6 +1,6 @@
 # NVIDIA Shield acceptance — 0.139
 
-**NOT RUN. No connected Shield or signed139 APK is available. This is a test procedure, not acceptance evidence.** The owner-approved responsive Backup and original Details changes have synthetic checks; physical validation is still required. See WORKSTREAMS.md and DESIGN_BLOCKERS.md. Do not install an unsigned development artifact as the delivered candidate.
+**NOT RUN. The signed139 QA APK is delivered; no physical Shield endpoint was supplied. This is a test procedure, not acceptance evidence.** The owner-approved responsive Backup and original Details changes have synthetic checks; physical validation is still required. See WORKSTREAMS.md and RELEASE_NOTES.md. Do not install an unsigned development artifact as the delivered candidate.
 
 Record exact source/APK SHA256, certificate, version139/code139, Shield model/OS/firmware, HDMI mode/logical viewport/font scale, remote type and attached storage. Retain baseline138 state/captures and a receiving-device backup. Use owned test fixtures and disposable configuration for selected-empty/interruption checks. Preserve existing media and authentication. Upgrade with the established certificate; do not uninstall/reset to make an upgrade pass.
 

@@ -1,0 +1,28 @@
+{
+  "result": "PASS",
+  "verified_at_utc": "2026-10-15T17:40:37.320709+00:00",
+  "filename": "Supernova_0.139.apk",
+  "file_id": "1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX",
+  "file_url": "https://drive.google.com/file/d/1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX/view?usp=drivesdk",
+  "folder_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "parent_readback": [
+    "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM"
+  ],
+  "mime_type": "application/vnd.android.package-archive",
+  "metadata_bytes": 87874512,
+  "downloaded_bytes": 87874512,
+  "downloaded_sha256": "bc8d45eea2fe17c49048b48e97eaf5da228c021647675968d725237314344827",
+  "local_signed_sha256": "bc8d45eea2fe17c49048b48e97eaf5da228c021647675968d725237314344827",
+  "complete_download_byte_comparison": true,
+  "metadata_name_verified": true,
+  "existing_0136_0137_0138_ids_names_sizes_preserved": true,
+  "one_0139_file_in_folder": true,
+  "duplicate_folder_created": false,
+  "existing_files_replaced": false,
+  "sharing_permissions_changed_by_agent": false,
+  "source_commit": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+  "run_id": 38773230129,
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false,
+  "download_url_scope": "Observed stable Google Drive file URL; no temporary authenticated file-service URL is published."
+}
