@@ -25,5 +25,12 @@
     "Current small Backup acceptance failure blocks candidate; D03/D04 unresolved.",
     "Environment branch eligibility and actual secrets authorization remain external.",
     "No signed139/install/upgrade/Shield/Drive result established."
-  ]
+  ],
+  "prepared_files_sha256": {
+    ".github/workflows/supernova-0139-qa.yml": "f2611ef1ff35f0ba651f4111cae80a6105a7dfb7176b381859368e4414620341",
+    ".github/signing/supernova_0139_qa_signing.py": "d1379e2e6753a3a4fc366e9f9c9161f21a9254facd2bf4fc92f9275207c23318",
+    ".github/signing/verify_supernova_0139_qa_apk.py": "be551850ac5e18cfa8f49d9bc1b76872a1fc8e57c70211f9ecc74d0c9ec76923",
+    ".github/build/record-supernova-0139-conformance.py": "538a0ff53b7ef54351fed31cc1e1b10bef0341ce6099a3566dfa49283341c7d3",
+    "tools/test_supernova_0139_qa.py": "0de587199134f0f43f96bde1ab7e141b3a54c101cb9e7a682000504fd77d3db9"
+  }
 }
