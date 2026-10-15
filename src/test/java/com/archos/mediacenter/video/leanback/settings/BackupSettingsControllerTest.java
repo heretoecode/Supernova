@@ -65,19 +65,30 @@ public class BackupSettingsControllerTest {
     @Test public void connectedRestoreRequiresPreviewAndExplicitConfirmationBeforeWriting()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{Settings settings=add(host.get());enter(settings);settings.backup.enter();var prefs=PreferenceManager.getDefaultSharedPreferences(model(host.get()).getApplication());prefs.edit().putInt("preview_accent41",7).commit();File file=new File(host.get().getCacheDir(),"incoming.zip");JSONObject payload=new JSONObject().put("schema",1).put("category","APPEARANCE").put("values",new JSONObject().put("preview_accent41",new JSONObject().put("type","INT").put("value",19)));LogicalBackupArchive.writeCategories(file,Map.of(BackupCategory.APPEARANCE,payload),()->false);BackupOperationModel model=model(host.get());model.open(new FileInputStream(file));await(model,BackupOperationModel.Phase.REVIEW);layout(settings.requireView());assertFalse(settings.requireView().findViewWithTag("backup.category.HISTORY").isEnabled());assertEquals(7,prefs.getInt("preview_accent41",0));settings.requireView().findViewWithTag("backup.create").performClick();await(model,BackupOperationModel.Phase.RESTORE_PREVIEW);assertEquals(7,prefs.getInt("preview_accent41",0));settings.requireView().findViewWithTag("backup.operation:Restore selected categories").performClick();await(model,BackupOperationModel.Phase.RESTORED);assertEquals(19,prefs.getInt("preview_accent41",0));assertTrue(file.exists());}finally{host.pause().stop().destroy();}
     }
+    @Test public void normalTvWorkspaceKeepsEveryCategoryWithinPhysicalBoundsWithCompleteLabels()throws Exception {
+        verifyConnectedGeometry("0139-settings-backup-normal");
+    }
     @Test @Config(qualifiers="w640dp-h360dp-land-mdpi") public void smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels()throws Exception {
+        verifyConnectedGeometry("0139-settings-backup-small");
+    }
+    private void verifyConnectedGeometry(String name)throws Exception {
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
-            Settings settings=add(host.get());enter(settings);View root=settings.requireView();layout(root);capture(root,"0139-settings-backup-small");View panel=root.findViewWithTag("backup.options");assertNotNull(panel);
+            Settings settings=add(host.get());enter(settings);View root=settings.requireView();layout(root);capture(root,name);View panel=root.findViewWithTag("backup.options");assertNotNull(panel);
             org.json.JSONObject measured=new org.json.JSONObject().put("viewportWidth",root.getWidth()).put("viewportHeight",root.getHeight()).put("panelWidth",panel.getWidth()).put("panelHeight",panel.getHeight());org.json.JSONArray items=new org.json.JSONArray();
             ViewParent parent=panel.getParent();while(parent!=null&&!(parent instanceof SharedThreePanel))parent=parent.getParent();if(parent instanceof SharedThreePanel)measured.put("sidebarWidth",((SharedThreePanel)parent).getChildAt(0).getWidth());
             for(BackupCategory category:BackupCategory.values()){TextView option=root.findViewWithTag("backup.category."+category.name());int[] location=new int[2];option.getLocationOnScreen(location);items.put(new org.json.JSONObject().put("category",category.name()).put("x",location[0]).put("y",location[1]).put("width",option.getWidth()).put("height",option.getHeight()).put("textSizePixels",option.getTextSize()).put("textBottom",option.getLayout().getLineBottom(option.getLineCount()-1)).put("usableHeight",option.getHeight()-option.getPaddingBottom()));}
-            measured.put("categories",items);java.nio.file.Files.writeString(new File("build/reports/preview-ui/0139-settings-backup-small.json").toPath(),measured.toString(2));
+            List<String> violations=new ArrayList<>();
             for(BackupCategory category:BackupCategory.values()){
                 TextView option=root.findViewWithTag("backup.category."+category.name());assertNotNull(option);int[] item=new int[2],container=new int[2];option.getLocationOnScreen(item);panel.getLocationOnScreen(container);
-                assertTrue(category+" right edge outside physical screen",item[0]+option.getWidth()<=root.getWidth());
-                assertTrue(category+" top in panel: "+(item[1]-container[1])+"; panel height="+panel.getHeight(),item[1]>=container[1]);assertTrue(category+" bottom in panel",item[1]+option.getHeight()<=container[1]+panel.getHeight());
-                assertTrue(category+" full text",option.getLayout().getLineBottom(option.getLineCount()-1)<=option.getHeight()-option.getPaddingBottom());for(int line=0;line<option.getLineCount();line++)assertEquals(0,option.getLayout().getEllipsisCount(line));
+                if(item[0]<0||item[0]+option.getWidth()>root.getWidth())violations.add(category+" outside physical horizontal bounds");
+                if(item[1]<0||item[1]+option.getHeight()>root.getHeight())violations.add(category+" outside physical vertical bounds");
+                if(item[0]<container[0]||item[0]+option.getWidth()>container[0]+panel.getWidth()||item[1]<container[1]||item[1]+option.getHeight()>container[1]+panel.getHeight())violations.add(category+" outside category panel");
+                android.graphics.Rect visible=new android.graphics.Rect();if(!option.getGlobalVisibleRect(visible)||visible.width()!=option.getWidth()||visible.height()!=option.getHeight())violations.add(category+" clipped by ancestor viewport");
+                if(option.getHeight()<MenuFoundation.dp(root.getContext(),44))violations.add(category+" below existing44dp target role");
+                if(option.getLayout().getLineBottom(option.getLineCount()-1)>option.getHeight()-option.getPaddingBottom())violations.add(category+" incomplete text height");for(int line=0;line<option.getLineCount();line++)if(option.getLayout().getEllipsisCount(line)>0)violations.add(category+" ellipsized line "+line);
             }
+            measured.put("categories",items).put("violations",new org.json.JSONArray(violations));java.nio.file.Files.writeString(new File("build/reports/preview-ui/"+name+".json").toPath(),measured.toString(2));
+            assertTrue(String.join("\n",violations),violations.isEmpty());
         }finally{host.pause().stop().destroy();}
     }
 
