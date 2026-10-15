@@ -67,7 +67,8 @@ public class Details139AcceptanceTest {
             int[] header=headerPixels(root,frame,reading);int last=-1;for(int n=0;n<150&&last!=reading.getScrollY();n++){last=reading.getScrollY();key(root,KeyEvent.KEYCODE_DPAD_DOWN);assertSame(tab,page.findFocus());assertTrue(tab.isSelected());}
             assertArrayEquals("Overflow must not paint across the fixed tab cap or headings",header,headerPixels(root,frame,reading));assertTrue("Long information actually scrolls",reading.getScrollY()>0);assertEquals(reading.getChildAt(0).getHeight()+reading.getPaddingTop()+reading.getPaddingBottom()-reading.getHeight(),reading.getScrollY());
             PreviewPagesTest.capture(root,"0139-details-overflow-bottom-"+root.getWidth()+"-"+root.getResources().getConfiguration().fontScale);
-            key(root,KeyEvent.KEYCODE_BACK);assertEquals(0,reading.getScrollY());assertSame(tab,page.findFocus());
+            int beforeBack=reading.getScrollY();assertFalse("Back must reach the existing Activity/fragment exit route",root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK)));assertEquals(beforeBack,reading.getScrollY());assertSame(tab,page.findFocus());
+            while(reading.getScrollY()>0){key(root,KeyEvent.KEYCODE_DPAD_UP);assertSame(tab,page.findFocus());}
             key(root,KeyEvent.KEYCODE_DPAD_RIGHT);View extras=page.findViewWithTag("section:Extras");assertSame(extras,page.findFocus());assertFalse(tab.isSelected());assertTrue(extras.isSelected());
             key(root,KeyEvent.KEYCODE_DPAD_DOWN);layout(root);assertEquals("Stable frame dimensions",stable.width(),frame.getWidth());assertEquals(stable.height(),frame.getHeight());assertEquals("extra:abcdefghijk",page.findFocus().getTag());assertTrue(extras.isSelected());assertFalse(extras.hasFocus());
             Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(200));layout(root);

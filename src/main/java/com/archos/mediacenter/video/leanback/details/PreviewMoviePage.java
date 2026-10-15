@@ -152,7 +152,7 @@ public final class PreviewMoviePage extends ScrollView {
     public void setVersions(int count,Runnable choose){chooseVersions=choose;versions.setText("Versions ("+count+")");versionCount=count;versions.setVisibility(count>1&&movie!=null?VISIBLE:GONE);}
     @Override public boolean dispatchKeyEvent(KeyEvent event){
         if(event.getAction()!=KeyEvent.ACTION_DOWN)return super.dispatchKeyEvent(event);
-        View focused=findFocus();int key=event.getKeyCode();if(key==KeyEvent.KEYCODE_BACK&&reading.getScrollY()>0){reading.scrollTo(0,0);focusSectionTab();return true;}String tag=focused==null?"":String.valueOf(focused.getTag());
+        View focused=findFocus();int key=event.getKeyCode();String tag=focused==null?"":String.valueOf(focused.getTag());
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_UP&&matchMetadata.getVisibility()==VISIBLE){matchMetadata.requestFocus();return true;}
         if(focused==matchMetadata){if(key==KeyEvent.KEYCODE_DPAD_DOWN){play.requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;}
         if(focused==play&&key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
