@@ -1,3 +1,5 @@
+> Historical proposal, superseded by the owner-approved record in [APPROVED_OWNER_DECISIONS_2026-10-15.md](APPROVED_OWNER_DECISIONS_2026-10-15.md). The three decisions are no longer pending.
+
 # 0.139 remaining decisions — 15 October recheck
 
 These are proposed exceptions or missing design decisions, **not approved changes**. The existing implementation, failed acceptance test and future-release boundary remain intact. Starting HEAD: `c20e8e0f249cb9199514770d9b62284bfde94e06`; test-only follow-up: `cbc0af07`. PR17 remains draft against the existing138 branch.

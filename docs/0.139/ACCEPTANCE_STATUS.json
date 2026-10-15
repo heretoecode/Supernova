@@ -1,21 +1,16 @@
 {
   "release_result": "BLOCKED",
-  "application_source": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
+  "application_source": "6b22dbbf2039661adb81e3f1b9422e95d705da3a",
   "whole_workstream_results": {
-    "BLOCKED": 42,
-    "FAIL": 1
+    "BLOCKED": 43,
+    "FAIL": 0
   },
   "definition": "Whole-workstream acceptance includes the stated state/render and Shield checks. Partial software passes are recorded separately; no unavailable-device or failing-profile row is marked PASS.",
   "current_full_run": {
-    "source_sha": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
-    "result": "FAIL",
-    "tests": 996,
-    "passed": 995,
-    "failed": 1,
-    "errors": 0,
-    "skipped": 0,
-    "classes": 208,
-    "receipt": "CI_FINAL_VERIFICATION_2026-10-15.json"
+    "source_sha": "6b22dbbf2039661adb81e3f1b9422e95d705da3a",
+    "result": "RUNNING",
+    "ci_run_id": 38744003190,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38744003190"
   },
   "staged_checks": [
     "POLICY_GENRES_VERIFICATION.json PASS64/10",
@@ -27,7 +22,7 @@
     "Python74 and runtime138 reviewed artifact hash matches",
     "CI_CURRENT_NATIVE_RUNTIME.json PASS64 paired decode cases/four freshly rebuilt ABIs; CI_CURRENT_PACKAGING_VERIFICATION.json PASS unsigned identity/native/CRC/alignment"
   ],
-  "limits": "Overlapping staged tests are not a unique total. No signed139 APK, signed upgrade or Drive139 delivery. See DESIGN_BLOCKERS.md and SHIELD_ACCEPTANCE.md.",
+  "limits": "Whole-workstream hardware/state acceptance remains separate. Full current-source regression in progress; no signed139, signed upgrade or Drive139 delivery. Exact signing-policy POST remains403; absent physical Shield.",
   "workstreams": [
     {
       "id": "C01",
@@ -367,8 +362,8 @@
       "design_reference": "DET-001/002 / Chief of War QA",
       "verification": "Movie/show/episode/remote/large-font/small-viewport action bounds/focus",
       "result": "BLOCKED",
-      "remaining_and_partial_evidence": "BLOCKED \u2014 independent source changes + regressions PASS; target geometry/key matrix and Shield open",
-      "source_and_receipts": "`f9b6a0113bf205d9ec3fbbc244099b18fa0bad55`; LIBRARY_DETAILS_STAGE_VERIFICATION.json"
+      "remaining_and_partial_evidence": "BLOCKED \u2014 independent source changes + regressions PASS; target geometry/key matrix and Shield open;15October compact/four-tab/selected-content/animated focus and production routes additionally pass focused checks",
+      "source_and_receipts": "`f9b6a0113bf205d9ec3fbbc244099b18fa0bad55`; LIBRARY_DETAILS_STAGE_VERIFICATION.json; source6b22dbbf / FOCUS_RECREATION_VERIFICATION_2026-10-15.json"
     },
     {
       "id": "D02",
@@ -378,8 +373,8 @@
       "design_reference": "DET-003 / latest tab decisions",
       "verification": "Conditional tabs / fresh title / async rebuild / initial focus",
       "result": "BLOCKED",
-      "remaining_and_partial_evidence": "BLOCKED \u2014 independent source changes + regressions PASS; target geometry/key matrix and Shield open",
-      "source_and_receipts": "`f9b6a0113bf205d9ec3fbbc244099b18fa0bad55`; LIBRARY_DETAILS_STAGE_VERIFICATION.json"
+      "remaining_and_partial_evidence": "BLOCKED \u2014 independent source changes + regressions PASS; target geometry/key matrix and Shield open;15October compact/four-tab/selected-content/animated focus and production routes additionally pass focused checks",
+      "source_and_receipts": "`f9b6a0113bf205d9ec3fbbc244099b18fa0bad55`; LIBRARY_DETAILS_STAGE_VERIFICATION.json; source6b22dbbf / FOCUS_RECREATION_VERIFICATION_2026-10-15.json"
     },
     {
       "id": "D03",
@@ -389,19 +384,19 @@
       "design_reference": "Connected panel decision",
       "verification": "Canvas/bounds screenshots all tabs/2 viewports; selected/focused distinction",
       "result": "BLOCKED",
-      "remaining_and_partial_evidence": "BLOCKED \u2014 frame remains unimplemented: explicit selected/focused design requirement plus finite readable viewport/full-content constraints unresolved; future1.4.0 redesign excluded",
-      "source_and_receipts": "DESIGN_BLOCKERS.md; UI_CONFORMANCE.md; original independently approved Details changes preserved"
+      "remaining_and_partial_evidence": "BLOCKED \u2014 connected cap/frame, persistent selection versus actual focus,4% usable insets and stable four-tab geometry PASS in native fixtures; physical Shield acceptance pending",
+      "source_and_receipts": "`6b22dbbf2039661adb81e3f1b9422e95d705da3a`; OWNER_APPROVED_UI_VERIFICATION_2026-10-15.json; FOCUS_RECREATION_VERIFICATION_2026-10-15.json; ui/owner-approved-details/"
     },
     {
       "id": "D04",
       "workstream": "Passive Details and preserved full information",
       "source_owner": "PreviewMoviePage details content",
-      "acceptance": "No scroll/focus/OK action; full synopsis and useful existing fields/8+8 people retained readably",
-      "design_reference": "Details audit 01\u201305 / handover",
-      "verification": "Rich/long metadata bounds; finite-screen constraint conflict recorded",
+      "acceptance": "Read-only non-focusable information; complete synopsis/useful fields/8+8 people; approved vertical reading overflow, preserved heading focus/selection/Back",
+      "design_reference": "Original Details audit01\u201305 +15October owner D04 decision; future0.140 excluded",
+      "verification": "Long synopsis/facts,150% text/compact/4K-density reading to actual last offset; header pixel isolation; Up/Back and content-focus routes",
       "result": "BLOCKED",
-      "remaining_and_partial_evidence": "BLOCKED \u2014 full unbounded information cannot fit a fixed readable non-scrolling viewport; no truncation/shrink/interaction chosen; Shield not run",
-      "source_and_receipts": "\u2014"
+      "remaining_and_partial_evidence": "BLOCKED \u2014 full unellipsized reading and preserved information/nav native subchecks PASS; physical Shield acceptance pending",
+      "source_and_receipts": "`6b22dbbf2039661adb81e3f1b9422e95d705da3a`; APPROVED_OWNER_DECISIONS_2026-10-15.md; OWNER_APPROVED_UI_VERIFICATION_2026-10-15.json; FOCUS_RECREATION_VERIFICATION_2026-10-15.json; ui/owner-approved-details/"
     },
     {
       "id": "D05",
@@ -411,8 +406,8 @@
       "design_reference": "DET-008 / trailers QA",
       "verification": "3-item middle-focus bounds/crop/zoom all directions/captures",
       "result": "BLOCKED",
-      "remaining_and_partial_evidence": "BLOCKED \u2014 independent source changes + regressions PASS; target geometry/key matrix and Shield open",
-      "source_and_receipts": "`f9b6a0113bf205d9ec3fbbc244099b18fa0bad55`; LIBRARY_DETAILS_STAGE_VERIFICATION.json"
+      "remaining_and_partial_evidence": "BLOCKED \u2014 independent source changes + regressions PASS; target geometry/key matrix and Shield open;15October compact/four-tab/selected-content/animated focus and production routes additionally pass focused checks",
+      "source_and_receipts": "`f9b6a0113bf205d9ec3fbbc244099b18fa0bad55`; LIBRARY_DETAILS_STAGE_VERIFICATION.json; source6b22dbbf / FOCUS_RECREATION_VERIFICATION_2026-10-15.json"
     },
     {
       "id": "D06",
@@ -444,8 +439,8 @@
       "design_reference": "DET-003 / navigation audit",
       "verification": "Root dispatch not only page calls; interactive content/Back/rebuild",
       "result": "BLOCKED",
-      "remaining_and_partial_evidence": "BLOCKED \u2014 independent source changes + regressions PASS; target geometry/key matrix and Shield open",
-      "source_and_receipts": "`f9b6a0113bf205d9ec3fbbc244099b18fa0bad55`; LIBRARY_DETAILS_STAGE_VERIFICATION.json"
+      "remaining_and_partial_evidence": "BLOCKED \u2014 independent source changes + regressions PASS; target geometry/key matrix and Shield open;15October compact/four-tab/selected-content/animated focus and production routes additionally pass focused checks",
+      "source_and_receipts": "`f9b6a0113bf205d9ec3fbbc244099b18fa0bad55`; LIBRARY_DETAILS_STAGE_VERIFICATION.json; source6b22dbbf / FOCUS_RECREATION_VERIFICATION_2026-10-15.json"
     },
     {
       "id": "S01",
@@ -498,9 +493,9 @@
       "acceptance": "Full category coverage;no-scroll list;privacy allowlist/no media or credentials;locations defaultOff;historyOn;safe selected replacement/legacy1.0/SAF/flat info pages",
       "design_reference": "Owner backup decisions + handover \u00a7\u00a72\u20133 / audit00\u201308",
       "verification": "Category/settings/privacy matrix;unknown refs/new paths;legacy artwork/schema;failure+kill recovery;SAF/cancel/readback;native UI geometry/focus",
-      "result": "FAIL",
-      "remaining_and_partial_evidence": "FAIL \u2014640\u00d7360 connected acceptance:395px inherited rail,672px virtual category panel;21 categories extend beyond physical screen and locations text has zero-height target. Larger-profile and26-codec/canonical recovery subchecks PASS. See BACKUP_SMALL_MEASURED_VERIFICATION.json; current binary/provider/OS-force-stop/historical/Shield gates remain open",
-      "source_and_receipts": "`67eda4fabf9c73b8979358ef183639077c7f13de`; SOURCES_LOCATIONS_VERIFICATION.json; MEDIA_ACKNOWLEDGEMENT_VERIFICATION.json; MEDIA_ARCHIVE_VERIFICATION.json; COMBINED_MEDIA_VERIFICATION.json; STARTUP_VIEWING_VERIFICATION.json; COMBINED_VIEWING_VERIFICATION.json; earlier category/UI receipts retained"
+      "result": "BLOCKED",
+      "remaining_and_partial_evidence": "BLOCKED \u2014 approved responsive640 geometry, all26 categories/complete labels/existing44 scaled-dp targets/four actions/remote routes PASS at640/960/1280/1920/3840; normal rail preserved. Production compact recreation/restore selection/privacy PASS. Canonical26-codec/recovery evidence retained; physical provider/OS-force-stop/historical/Shield/upgrade gates remain open",
+      "source_and_receipts": "`ad9991ef069e03980003fb124464a62fb07637a9` +`ff7ac3c992c93cbf18a74601f33008a9509830a5`; OWNER_APPROVED_UI_VERIFICATION_2026-10-15.json; FOCUS_RECREATION_VERIFICATION_2026-10-15.json; SOURCES_LOCATIONS_VERIFICATION.json; MEDIA_ACKNOWLEDGEMENT_VERIFICATION.json; COMBINED_MEDIA_VERIFICATION.json; COMBINED_VIEWING_VERIFICATION.json; ui/owner-approved-backup/"
     }
   ],
   "lint": {
@@ -547,7 +542,7 @@
     "receipt": "CI_RECHECK_FIRST_2026-10-15.json"
   },
   "artwork_test_wait_fix": "ARTWORK_READINESS_FIX_2026-10-15.json PASS19/5; fullCI OfficialTitleBindingTest9/9PASS",
-  "details_visual_recheck": "DETAILS_VISUAL_RECHECK_2026-10-15.json corroborates D03/D04 unmet target/pending design, not hardware acceptance",
+  "details_visual_recheck": "Original failure preserved in DETAILS_VISUAL_RECHECK_2026-10-15.json; approved target now implemented with native proofs in OWNER_APPROVED_UI_VERIFICATION_2026-10-15.json and FOCUS_RECREATION_VERIFICATION_2026-10-15.json. Physical acceptance remains unrun.",
   "preceding_local_full": {
     "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
     "result": "FAIL",
@@ -559,5 +554,22 @@
     "classes": 208,
     "receipt": "FULL_RECHECK_CORRECTED_2026-10-15.json"
   },
-  "implementation_preservation_receipt": "IMPLEMENTATION_PRESERVATION_2026-10-15.json"
+  "implementation_preservation_receipt": "IMPLEMENTATION_PRESERVATION_2026-10-15.json",
+  "prior_clean_full_run": {
+    "source_sha": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
+    "result": "FAIL",
+    "tests": 996,
+    "passed": 995,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 208,
+    "receipt": "CI_FINAL_VERIFICATION_2026-10-15.json"
+  },
+  "owner_decisions": {
+    "result": "APPROVED",
+    "source_sha": "84e2a2a86efbbd1e61b54fcab75934be96b40a81",
+    "record": "APPROVED_OWNER_DECISIONS_2026-10-15.md",
+    "implementation_sha": "6b22dbbf2039661adb81e3f1b9422e95d705da3a"
+  }
 }

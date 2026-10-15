@@ -1,0 +1,60 @@
+{
+  "result": "BLOCKED",
+  "observed_utc": "2026-10-15",
+  "request_method": "POST",
+  "endpoint": "/repos/heretoecode/Supernova/environments/supernova-foundation-signing/deployment-branch-policies",
+  "request": {
+    "name": "codex/supernova-0.139-implementation-2026-10-13",
+    "type": "branch"
+  },
+  "http_status": 403,
+  "response": {
+    "message": "Resource not accessible by integration",
+    "documentation_url": "https://docs.github.com/rest/deployments/branch-policies#create-a-deployment-branch-policy",
+    "status": "403"
+  },
+  "repository_account_permissions": {
+    "admin": true,
+    "maintain": true,
+    "push": true
+  },
+  "interpretation": "Repository account admin flag is true, but the integration credential is denied this environment-policy mutation. Account role does not establish token permission.",
+  "before_after_identical": true,
+  "policies": [
+    {
+      "id": 62439781,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjQzOTc4MQ==",
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "id": 62580297,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjU4MDI5Nw==",
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "id": 62672957,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjY3Mjk1Nw==",
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "id": 62775528,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2Mjc3NTUyOA==",
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "id": 62634362,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjYzNDM2Mg==",
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "administrator_action": "Repository Settings \u2192 Environments \u2192 supernova-foundation-signing \u2192 Deployment branches and tags: add Selected branch codex/supernova-0.139-implementation-2026-10-13. Preserve existing policies and certificate. Alternatively grant the integration the needed Environments write permission through an administrator-approved app configuration. Do not widen policy or use an older branch.",
+  "ready_next_action": "After exact-source passing conformance, dispatch supernova-0139-qa.yml on the exact139 branch with approved_qa_distribution=true, using the existing protected secrets/certificate.",
+  "certificate": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "signing_dispatched": false,
+  "key_access_attempted": false
+}

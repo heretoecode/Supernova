@@ -1,0 +1,70 @@
+{
+  "result": "PASS",
+  "source_sha": "ff7ac3c992c93cbf18a74601f33008a9509830a5",
+  "tests": 11,
+  "classes": 2,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": [
+    {
+      "name": "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-15T13:29:58.978Z",
+      "hostname": "976f3affce7e",
+      "time": "25.839",
+      "file": "TEST-com.archos.mediacenter.video.leanback.Details139AcceptanceTest.xml",
+      "sha256": "819509544118a48870fc5314fcb1da4acc3fd0e9120cfb35da41701246bc6755"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+      "tests": "5",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-15T13:29:58.589Z",
+      "hostname": "976f3affce7e",
+      "time": "27.11",
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest.xml",
+      "sha256": "83f81d220787332d697602f64f920ef3b0128c84d12053dc6d5c08fa7676df38"
+    }
+  ],
+  "log_sha256": "d2e36879fc6b8e6b505cfe70beeadf02df444c7324d400bd19c7a8c800833b57",
+  "scope": [
+    "Actual animated Extras focus bounds after200ms at640/960/1920/4K density; entire growing card and outline clear the new reading viewport.",
+    "Original long/full information and connected cap/nav tests continue to pass.",
+    "Actual production PrefsFragment compact recreation retains permanent sidebar/full flat page and temporary selections, explicit confirmation restores19 while protected receiving credential remains unchanged.",
+    "AndroidX AndroidViewModelFactory cached the first Application across separate Robolectric cases. A retained wrong-Application model was proven before recreation. Test setup now resets only that process factory between cases and asserts current Application identity before/after recreation. No product restore code changed."
+  ],
+  "earlier_failures_preserved": [
+    "/workspace/scratch/139-ui-final.log",
+    "/workspace/scratch/139-ui-diagnostic.log",
+    "/workspace/scratch/139-production-app-identity.log",
+    "/workspace/supernova-evidence/0.139/owner-approved-2026-10-15/diagnostic",
+    "/workspace/supernova-evidence/0.139/owner-approved-2026-10-15/application-identity-before"
+  ],
+  "python_tooling": {
+    "tests": 81,
+    "result": "PASS",
+    "log_sha256": "32307c0c3d4f666fdfce3b295cd6ba805b5bd67e3e3f96163531434ca56aad33"
+  },
+  "superseded_ci": {
+    "run_id": 38741587921,
+    "source_sha": "2a8c85dd77f9db2289ba3ca856d0a1a37e9bbe10",
+    "conclusion": "cancelled",
+    "reason": "Replaced before full acceptance after visual review identified focus outline clearance; not a native failure."
+  },
+  "full_ci": {
+    "run_id": 38743357957,
+    "source_sha": "ff7ac3c992c93cbf18a74601f33008a9509830a5",
+    "result": "CANCELLED",
+    "reason": "Replaced by6b22dbbf/CI38744003190 after reading-boundary visual correction."
+  },
+  "limits": [
+    "Synthetic native rendering/SQLite, not physical Shield or signed-upgrade acceptance."
+  ],
+  "follow_up": "HEADER_BOUNDARY_VERIFICATION_2026-10-15.json retains new6-case proof and current image hashes."
+}
