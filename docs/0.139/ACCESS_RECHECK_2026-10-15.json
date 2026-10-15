@@ -36,7 +36,11 @@
     "job_steps": [],
     "manual_dispatch_attempted": false,
     "key_access_attempted": false,
-    "policy_mutation_attempted": false
+    "policy_mutation_attempted": true,
+    "policy_request_status": 403,
+    "policy_request_error": "Resource not accessible by integration",
+    "policy_before_after_identical": true,
+    "policy_attempt_receipt": "SIGNING_POLICY_ATTEMPT_2026-10-15.json"
   },
   "drive": {
     "folder_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",

@@ -41,7 +41,7 @@ The original requirements simultaneously demand full unbounded synopsis/useful f
 
 ## Signing — precise administrative dependency and prepared engineering route
 
-15October live API recheck confirms environment `supernova-foundation-signing` uses custom branch policies; the139 implementation branch is absent. Existing138 workflow/helper reject139 ref/version. Runtime spec160 has no local signing binding; this does **not** prove Actions secrets absent. No policy change, key access or signing dispatch was attempted.
+15October live API recheck confirms environment `supernova-foundation-signing` uses custom branch policies; the139 implementation branch is absent. Existing138 workflow/helper reject139 ref/version. Runtime spec160 has no local signing binding; this does **not** prove Actions secrets absent. No key access or signing dispatch was attempted. The later exact-branch policy-write attempt below was denied.
 
 The139 variant prepared in this branch uses the same protected environment, certificate, PKCS12 preparation/cleanup, secret-free full native/application verification, exact-source APK hash and signed payload-parity checks. It runs only on explicit manual dispatch for this branch with `approved_qa_distribution=true`; push registration skips the signing job. It refuses failed/skipped/incomplete tests, historical versions/refs, changed payloads and changed certificate. Historical workflows remain unchanged.
 
@@ -51,7 +51,7 @@ After software/specification gates pass, the environment administrator must auth
 {"name":"codex/supernova-0.139-implementation-2026-10-13","type":"branch"}
 ```
 
-Endpoint: `POST /repos/heretoecode/Supernova/environments/supernova-foundation-signing/deployment-branch-policies`. No wildcard, key replacement, main merge or overwrite of existing allowed branches is required. This request has **not** been executed. Preparing the variant does not itself establish access or authorize a failing candidate.
+Endpoint: `POST /repos/heretoecode/Supernova/environments/supernova-foundation-signing/deployment-branch-policies`. No wildcard, key replacement, main merge or overwrite of existing allowed branches is required. Under the owner’s current instruction to resolve signing restrictions, this exact request was attempted on15October. GitHub returned **403 Resource not accessible by integration**. Before/after policy readback is identical; no policy changed. SIGNING_POLICY_ATTEMPT_2026-10-15.json preserves the request, denial and unchanged policies. A repository/environment administrator must perform it or supply another approved route. Preparing the variant does not itself establish access or authorize a failing candidate.
 
 QA signing must not be made circular: a signed QA APK is needed for physical signed-upgrade testing. Once software and specification gates pass and authorized signing is available, a QA build can honestly record Shield/upgrade checks as NOT RUN for owner testing. Final physical acceptance and release/merge remain separate. Current software failure still blocks QA signing.
 
