@@ -2,6 +2,12 @@
 
 ## 15 October active follow-up — read this before the older results below
 
+ACTIVE latest local session57588: full UNFILTERED foundationDependencyInventory/testNoamazonReleaseUnitTest/lintNoamazonRelease/assembleNoamazonRelease --continue atb2a17cbe5559579f58347b6ad78c45674df85e79. Log/workspace/scratch/supernova139-full-regression-corrected-20261015.log. No selectedinit/env is active. Native tasks excluded as before; original prepared XML/JNI and clean isolated dependencies preserved. Corrected focused restore run17PASS/3classes/45s is in RESTORE_WAIT_FIX_2026-10-15.json. Save actual full result before any further build.
+
+First full local8e917bd3 batch is COMPLETE:996tests/994PASS/2FAIL, no errors/skips; lint0errors/1771warnings; R8 unsigned assembly completed;19m50s/133tasks/exit1. FULL_RECHECK_FIRST_2026-10-15.json preserves both failures and hashes. FullXML/lint/unsignedAPK archived in/workspace/supernova-evidence/0.139/recheck-2026-10-15/full-before-wait-fix. The new helper correction was applied only after preserving this run. Earlier “session28203 still running” paragraphs below are historical.
+
+Remote38725529541 atsameb2source is active; superseded38724382347 is CANCELLED, not a native/runtime failure. Signing registration38724382422 is SKIPPED with zero steps. Do not dispatch signing while software/specification gates fail or attempt a ref/key workaround for the403 policy denial. Pending owner questions remain pending.
+
 Latest source updateb2a17cbe fixes a test-only synchronization race exposed by the full8e917bd3 run: LegacySettingsBackupReviewTest asserted RESTORE_PREVIEW while a queued dialog click had just entered PREPARING_RESTORE. Its helper now waits for the expected phase as well as worker/publication completion. Full8e run is still running with two failures; preserve before rerunning. Root app/main resources remain unchanged. New unsigned CI38725529541 supersedes38724382347 under concurrency cancellation. Do not push more non-doc changes unless needed; they supersede active CI.
 
 The exact139 branch-policy POST was attempted under the owner’s current instruction to resolve signing restrictions. GitHub denied it403 Resource not accessible by integration. Before/after policies are identical; no policy/key/signing action occurred. SIGNING_POLICY_ATTEMPT_2026-10-15.json is the precise external access blocker and reviewed administrator request. Earlier “not attempted” wording below is historical. Three design questions remain unanswered.
