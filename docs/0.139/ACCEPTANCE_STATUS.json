@@ -1,6 +1,6 @@
 {
   "release_result": "BLOCKED",
-  "application_source": "b2a17cbe5559579f58347b6ad78c45674df85e79",
+  "application_source": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
   "whole_workstream_results": {
     "BLOCKED": 42,
     "FAIL": 1
@@ -520,10 +520,9 @@
   },
   "current_ci": {
     "result": "IN_PROGRESS",
-    "run_id": 38725529541,
-    "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
-    "native_step": "PASS",
-    "application_step": "Still running; no overall pass inferred."
+    "run_id": 38730716137,
+    "source_sha": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
+    "receipt_pending": true
   },
   "application_content_unchanged_from": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
   "latest_tooling": {
@@ -532,5 +531,15 @@
     "receipt": "SIGNING_PREPARATION_2026-10-15.json"
   },
   "current_unsigned_packaging_receipt": "LOCAL_PACKAGING_RECHECK_2026-10-15.json",
-  "signing_policy_receipt": "SIGNING_POLICY_ATTEMPT_2026-10-15.json"
+  "signing_policy_receipt": "SIGNING_POLICY_ATTEMPT_2026-10-15.json",
+  "preceding_ci": {
+    "result": "FAIL",
+    "run_id": 38725529541,
+    "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
+    "tests": 996,
+    "passed": 994,
+    "failed": 2,
+    "receipt": "CI_RECHECK_FIRST_2026-10-15.json"
+  },
+  "artwork_test_wait_fix": "ARTWORK_READINESS_FIX_2026-10-15.json PASS19/5; newest full CI pending"
 }
