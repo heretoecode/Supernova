@@ -20,6 +20,19 @@ public final class BackupSettingsController {
     private FrameLayout frame;private View middle,help,opener;private SharedThreePanel split;
     private BackupWorkspace workspace;private boolean noticeActive;
     private Set<BackupCategory> selectedRestore;
+    private int viewportWidth;
+    private final List<Runnable> restoreRail=new ArrayList<>();
+    private void compactRail(View view){
+        int l=view.getPaddingLeft(),t=view.getPaddingTop(),r=view.getPaddingRight(),b=view.getPaddingBottom();
+        restoreRail.add(()->view.setPadding(l,t,r,b));
+        view.setPadding(dp(4),t,dp(4),b);
+        if(view instanceof TextView){
+            TextView label=(TextView)view;float size=label.getTextSize();int lines=label.getMaxLines();android.text.TextUtils.TruncateAt ellipsis=label.getEllipsize();
+            restoreRail.add(()->{label.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,size);label.setSingleLine(lines==1);label.setMaxLines(lines);label.setEllipsize(ellipsis);});
+            label.setTextSize(12);label.setSingleLine(false);label.setMaxLines(2);label.setEllipsize(null);
+        }
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)compactRail(((ViewGroup)view).getChildAt(i));
+    }
     private final List<BackupWorkspace.Paragraph> details=List.of(
         new BackupWorkspace.Paragraph("Your configuration","Choose each category independently. Media, artwork, subtitle files, credentials, accounts, access grants, Put.io associations and legacy Collections are excluded."),
         new BackupWorkspace.Paragraph("Privacy and replacement","History can reveal viewing interests. Filenames and locations is Off by default and requires explicit consent. Selected restore categories replace their owned state; selected empty categories clear it. Missing and unselected categories remain unchanged."),
@@ -39,8 +52,15 @@ public final class BackupSettingsController {
         this.split=split;this.middle=middle;this.help=help;frame=new FrameLayout(fragment.requireContext());frame.setTag("settings.backup.workspace");frame.setVisibility(View.GONE);
         split.addView(frame,new LinearLayout.LayoutParams(0,-1,.72f));model.states().observe(fragment.getViewLifecycleOwner(),state->{if(isVisible())render(state);});
     }
-    public void show(View opener){this.opener=opener;int railWidth=split.getChildAt(0).getWidth();middle.setVisibility(View.GONE);help.setVisibility(View.GONE);split.widths(.28f,0,0);LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=railWidth;rail.weight=0;split.getChildAt(0).setLayoutParams(rail);frame.setVisibility(View.VISIBLE);render(model.current());}
-    public void hide(){if(frame!=null){frame.setVisibility(View.GONE);LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=0;rail.weight=.28f;split.getChildAt(0).setLayoutParams(rail);}}
+    public void show(View opener){this.opener=opener;int railWidth=split.getChildAt(0).getWidth();
+        if(TvLayout.width(fragment.requireContext())<780&&split.getParent() instanceof HorizontalScrollView){
+            HorizontalScrollView viewport=(HorizontalScrollView)split.getParent();if(viewportWidth==0)viewportWidth=split.getLayoutParams().width;
+            split.getLayoutParams().width=Math.max(1,viewport.getWidth()-viewport.getPaddingLeft()-viewport.getPaddingRight());split.requestLayout();viewport.scrollTo(0,0);split.constrainViewport(true);
+            railWidth=TvLayout.px(fragment.requireContext(),132);
+            if(restoreRail.isEmpty())compactRail(split.getChildAt(0));
+        }
+        middle.setVisibility(View.GONE);help.setVisibility(View.GONE);split.widths(.28f,0,0);LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=railWidth;rail.weight=0;split.getChildAt(0).setLayoutParams(rail);frame.setVisibility(View.VISIBLE);render(model.current());}
+    public void hide(){if(frame!=null){frame.setVisibility(View.GONE);for(Runnable restore:restoreRail)restore.run();restoreRail.clear();if(viewportWidth!=0){split.getLayoutParams().width=viewportWidth;viewportWidth=0;split.constrainViewport(false);split.requestLayout();}LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=0;rail.weight=.28f;split.getChildAt(0).setLayoutParams(rail);}}
     public boolean isVisible(){return frame!=null&&frame.getVisibility()==View.VISIBLE;}
     public android.os.Bundle saveViewState(){
         android.os.Bundle saved=new android.os.Bundle();saved.putBoolean("visible",isVisible());

@@ -16,6 +16,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
         public final String heading,text;
         public Paragraph(String heading,String text){this.heading=heading;this.text=text;}
     }
+    private final boolean compact;
     private final SharedPreferences preferences;
     private final Consumer<Set<BackupCategory>> create;
     private final Runnable restore,sidebar;
@@ -29,7 +30,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
     private Set<BackupCategory> present,restoreSelected;
 
     public BackupWorkspace(Context context,Consumer<Set<BackupCategory>> create,Runnable restore,Runnable sidebar,List<Paragraph> details,List<Paragraph> instructions){
-        super(context);preferences=PreferenceManager.getDefaultSharedPreferences(context);this.create=create;this.restore=restore;this.sidebar=sidebar;this.details=new ArrayList<>(details);this.instructions=new ArrayList<>(instructions);
+        super(context);compact=TvLayout.width(context)<780;preferences=PreferenceManager.getDefaultSharedPreferences(context);this.create=create;this.restore=restore;this.sidebar=sidebar;this.details=new ArrayList<>(details);this.instructions=new ArrayList<>(instructions);
         setOrientation(VERTICAL);setPadding(dp(2),dp(2),dp(2),dp(2));setClipChildren(false);setClipToPadding(false);showMain();
     }
     public BackupWorkspace(Context context,Set<BackupCategory> present,Set<BackupCategory> selected,Consumer<Set<BackupCategory>> review,Runnable cancel,Runnable sidebar,List<Paragraph> details,List<Paragraph> instructions){
@@ -53,12 +54,12 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
         update(category,next);
     }
     private void decorate(TextView view,BackupCategory category){
-        android.graphics.drawable.Drawable meaning=new PreviewIcon(category.icon),check=new PreviewIcon(included(category)?"checkbox checked":"checkbox");meaning.setBounds(0,0,dp(17),dp(17));check.setBounds(0,0,dp(17),dp(17));
+        android.graphics.drawable.Drawable meaning=new PreviewIcon(category.icon),check=new PreviewIcon(included(category)?"checkbox checked":"checkbox");meaning.setBounds(0,0,dp(compact?12:17),dp(compact?12:17));check.setBounds(0,0,dp(compact?12:17),dp(compact?12:17));
         boolean available=present==null||present.contains(category);view.setEnabled(available);view.setFocusable(available);view.setFocusableInTouchMode(available);view.setAlpha(available?1f:.4f);
-        view.setCompoundDrawables(meaning,null,check,null);view.setCompoundDrawablePadding(dp(4));view.setContentDescription(category.label+". "+(included(category)?"Included. ":"Excluded. ")+category.description);
+        view.setCompoundDrawables(meaning,null,check,null);view.setCompoundDrawablePadding(dp(compact?2:4));view.setContentDescription(category.label+". "+(included(category)?"Included. ":"Excluded. ")+category.description);
     }
     private TextView option(BackupCategory category){
-        TextView view=MenuFoundation.control(getContext(),category.label,null,()->toggle(category));view.setTextSize(13*TvLayout.scale(getContext()));view.setPadding(dp(4),dp(2),dp(4),dp(2));view.setSingleLine(false);view.setEllipsize(null);view.setGravity(Gravity.CENTER_VERTICAL);view.setTag("backup.category."+category.name());toggles.put(category,view);decorate(view,category);
+        TextView view=MenuFoundation.control(getContext(),category.label,null,()->toggle(category));view.setTextSize(13*TvLayout.scale(getContext()));view.setPadding(dp(compact?2:4),dp(2),dp(compact?2:4),dp(2));view.setSingleLine(false);view.setEllipsize(null);view.setGravity(Gravity.CENTER_VERTICAL);view.setTag("backup.category."+category.name());toggles.put(category,view);decorate(view,category);
         view.setOnFocusChangeListener((v,yes)->{if(yes&&category!=BackupCategory.LOCATIONS)lastGrid=ordered.indexOf(category);});
         view.setOnKeyListener((v,key,event)->{
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
@@ -78,23 +79,23 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
     private void showMain(){
         Object restoreTag=previousFocus==null?null:previousFocus.getTag();boolean held=holdFocus();removeAllViews();toggles.clear();information=null;
         LinearLayout actions=new LinearLayout(getContext());actions.setGravity(Gravity.CENTER_VERTICAL);actions.setClipChildren(false);
-        TextView title=MenuFoundation.text(getContext(),restoreSelected==null?"Backup & Restore":"Restore Backup",22);actions.addView(title,new LayoutParams(0,-2,1));
+        TextView title=MenuFoundation.text(getContext(),restoreSelected==null?"Backup & Restore":"Restore Backup",22);actions.addView(title,new LayoutParams(0,-2,1));if(compact)title.setVisibility(GONE);
         createButton=MenuFoundation.control(getContext(),restoreSelected==null?"Create Backup":"Review Replacement","save",()->create.accept(selection()));createButton.setTag("backup.create");createButton.setTextSize(13*TvLayout.scale(getContext()));createButton.setPadding(dp(8),dp(4),dp(8),dp(4));actions.addView(createButton,new LayoutParams(-2,dp(44)));
         restoreButton=MenuFoundation.control(getContext(),restoreSelected==null?"Restore Backup":"Cancel","history",restore);restoreButton.setTag("backup.restore");restoreButton.setTextSize(13*TvLayout.scale(getContext()));restoreButton.setPadding(dp(8),dp(4),dp(8),dp(4));LayoutParams restoreSize=new LayoutParams(-2,dp(44));restoreSize.leftMargin=dp(8);actions.addView(restoreButton,restoreSize);addView(actions,new LayoutParams(-1,dp(44)));
         for(TextView button:new TextView[]{createButton,restoreButton})button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_DOWN){focus(ordered.get(v==createButton?0:COLUMNS-1));return true;}if(key==KeyEvent.KEYCODE_DPAD_UP)return true;if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(v==createButton)sidebar.run();else createButton.requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT){restoreButton.requestFocus();return true;}return false;});
-        LinearLayout options=new LinearLayout(getContext());options.setTag("backup.options");options.setOrientation(VERTICAL);options.setGravity(Gravity.CENTER_VERTICAL);options.setClipChildren(false);options.setClipToPadding(false);options.setPadding(dp(8),dp(8),dp(8),dp(20));options.setBackground(MenuFoundation.surface(getContext(),false));
+        LinearLayout options=new LinearLayout(getContext());options.setTag("backup.options");options.setOrientation(VERTICAL);options.setGravity(Gravity.CENTER_VERTICAL);options.setClipChildren(false);options.setClipToPadding(false);options.setPadding(dp(compact?2:8),dp(compact?2:8),dp(compact?2:8),dp(compact?10:20));options.setBackground(MenuFoundation.surface(getContext(),false));
         for(int index=0;index<ordered.size()-1;index+=COLUMNS){LinearLayout row=new LinearLayout(getContext());row.setClipChildren(false);row.setClipToPadding(false);
-            for(int column=0;column<COLUMNS;column++){int position=index+column;View cell=position<ordered.size()-1?cell(ordered.get(position)):new View(getContext());LayoutParams size=new LayoutParams(0,-2,1);if(column>0)size.leftMargin=dp(4);row.addView(cell,size);}
-            LayoutParams size=new LayoutParams(-1,-2);if(index>0)size.topMargin=dp(4);options.addView(row,size);
+            for(int column=0;column<COLUMNS;column++){int position=index+column;View cell=position<ordered.size()-1?cell(ordered.get(position)):new View(getContext());LayoutParams size=new LayoutParams(0,-2,1);if(column>0)size.leftMargin=dp(compact?2:4);row.addView(cell,size);}
+            LayoutParams size=new LayoutParams(-1,-2);if(index>0)size.topMargin=dp(compact?0:4);options.addView(row,size);
         }
-        LayoutParams locationsSize=new LayoutParams(-1,-2);locationsSize.topMargin=dp(4);options.addView(cell(BackupCategory.LOCATIONS),locationsSize);
-        LayoutParams optionsSize=new LayoutParams(-1,0,1);optionsSize.topMargin=dp(8);optionsSize.bottomMargin=dp(8);addView(options,optionsSize);
-        LinearLayout important=new LinearLayout(getContext());important.setTag("backup.important");important.setGravity(Gravity.BOTTOM);important.setClipChildren(false);important.setPadding(dp(8),dp(8),dp(8),dp(8));important.setBackground(MenuFoundation.surface(getContext(),false));
-        LinearLayout copy=new LinearLayout(getContext());copy.setOrientation(VERTICAL);copy.addView(MenuFoundation.text(getContext(),"Important Information",15));TextView warning=MenuFoundation.text(getContext(),restoreSelected==null?"No media, artwork or credentials.\nHistory can reveal viewing interests.":"Only present categories can be selected.\nSelected state is replaced, including empty categories.",12);warning.setTextColor(MenuFoundation.SECONDARY);copy.addView(warning);important.addView(copy,new LayoutParams(0,-2,1));
+        LayoutParams locationsSize=new LayoutParams(-1,-2);locationsSize.topMargin=dp(compact?0:4);options.addView(cell(BackupCategory.LOCATIONS),locationsSize);
+        LayoutParams optionsSize=new LayoutParams(-1,0,1);optionsSize.topMargin=dp(compact?2:8);optionsSize.bottomMargin=dp(compact?2:8);addView(options,optionsSize);
+        LinearLayout important=new LinearLayout(getContext());important.setTag("backup.important");important.setGravity(Gravity.BOTTOM);important.setClipChildren(false);important.setPadding(dp(compact?2:8),dp(compact?2:8),dp(compact?2:8),dp(compact?2:8));important.setBackground(MenuFoundation.surface(getContext(),false));
+        LinearLayout copy=new LinearLayout(getContext());copy.setOrientation(VERTICAL);copy.addView(MenuFoundation.text(getContext(),"Important Information",15));TextView warning=MenuFoundation.text(getContext(),restoreSelected==null?"No media, artwork or credentials.\nHistory can reveal viewing interests.":"Only present categories can be selected.\nSelected state is replaced, including empty categories.",12);warning.setTextColor(MenuFoundation.SECONDARY);copy.addView(warning);if(compact){((TextView)copy.getChildAt(0)).setVisibility(GONE);warning.setText("No media or credentials.\nHistory reveals interests.");warning.setTextSize(11*TvLayout.scale(getContext()));}important.addView(copy,new LayoutParams(0,-2,1));
         detailsButton=MenuFoundation.control(getContext(),"See full details","info",()->showInformation(false));detailsButton.setTag("backup.details");detailsButton.setTextSize(12*TvLayout.scale(getContext()));detailsButton.setPadding(dp(6),dp(3),dp(6),dp(3));LayoutParams detailsSize=new LayoutParams(-2,dp(44));detailsSize.leftMargin=dp(8);important.addView(detailsButton,detailsSize);
         instructionsButton=MenuFoundation.control(getContext(),"Restore instructions","list",()->showInformation(true));instructionsButton.setTag("backup.instructions");instructionsButton.setTextSize(12*TvLayout.scale(getContext()));instructionsButton.setPadding(dp(6),dp(3),dp(6),dp(3));LayoutParams instructionsSize=new LayoutParams(-2,dp(44));instructionsSize.leftMargin=dp(8);important.addView(instructionsButton,instructionsSize);
         for(TextView button:new TextView[]{detailsButton,instructionsButton})button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_UP){if(present!=null&&!present.contains(BackupCategory.LOCATIONS)){for(int i=ordered.size()-2;i>=0;i--)if(present.contains(ordered.get(i))){focus(ordered.get(i));break;}}else focus(BackupCategory.LOCATIONS);return true;}if(key==KeyEvent.KEYCODE_DPAD_DOWN)return true;if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(v==detailsButton)sidebar.run();else detailsButton.requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT){instructionsButton.requestFocus();return true;}return false;});
-        addView(important,new LayoutParams(-1,dp(76)));
+        addView(important,new LayoutParams(-1,dp(compact?48:76)));
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);if(restoreTag!=null){View target=findViewWithTag(restoreTag);if(target!=null)target.requestFocus();}else if(held)createButton.requestFocus();setFocusable(false);setFocusableInTouchMode(false);previousFocus=null;
     }
     private void showInformation(boolean instructionsPage){

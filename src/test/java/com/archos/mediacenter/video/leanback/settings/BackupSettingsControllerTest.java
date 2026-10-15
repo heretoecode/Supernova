@@ -71,6 +71,9 @@ public class BackupSettingsControllerTest {
     @Test @Config(qualifiers="w640dp-h360dp-land-mdpi") public void smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels()throws Exception {
         verifyConnectedGeometry("0139-settings-backup-small");
     }
+    @Test @Config(qualifiers="w1280dp-h720dp-land-mdpi") public void hdPhysicalBounds()throws Exception{verifyConnectedGeometry("0139-backup-1280");}
+    @Test @Config(qualifiers="w1920dp-h1080dp-land-mdpi") public void fullHdPhysicalBounds()throws Exception{verifyConnectedGeometry("0139-backup-1920");}
+    @Test @Config(qualifiers="w3840dp-h2160dp-land-mdpi") public void ultraHdPhysicalBounds()throws Exception{verifyConnectedGeometry("0139-backup-3840");}
     private void verifyConnectedGeometry(String name)throws Exception {
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
             Settings settings=add(host.get());enter(settings);View root=settings.requireView();layout(root);capture(root,name);View panel=root.findViewWithTag("backup.options");assertNotNull(panel);
@@ -89,6 +92,12 @@ public class BackupSettingsControllerTest {
             }
             measured.put("categories",items).put("violations",new org.json.JSONArray(violations));java.nio.file.Files.writeString(new File("build/reports/preview-ui/"+name+".json").toPath(),measured.toString(2));
             assertTrue(String.join("\n",violations),violations.isEmpty());
+            for(String tag:new String[]{"backup.create","backup.restore","backup.details","backup.instructions"}){View action=root.findViewWithTag(tag);android.graphics.Rect visible=new android.graphics.Rect();assertTrue(tag,action.getGlobalVisibleRect(visible));assertEquals(tag,action.getWidth(),visible.width());assertEquals(tag,action.getHeight(),visible.height());}
+            settings.backup.enter();
+            for(BackupCategory category:BackupCategory.ordered()){
+                View option=root.findViewWithTag("backup.category."+category.name());assertTrue(category.name(),option.requestFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));View focused=root.findFocus();assertNotNull(focused);android.graphics.Rect visible=new android.graphics.Rect();assertTrue(focused.getGlobalVisibleRect(visible));assertEquals(focused.getHeight(),visible.height());
+            }
+            root.findViewWithTag("backup.details").requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertTrue(root.findViewWithTag("semantic:settings:section:preview_backup_restore").hasFocus());
         }finally{host.pause().stop().destroy();}
     }
 
