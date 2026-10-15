@@ -1,6 +1,6 @@
 {
   "environment": "supernova-foundation-signing",
-  "observed_utc": "2026-10-14",
+  "observed_utc": "2026-10-15",
   "requested_branch": "codex/supernova-0.139-implementation-2026-10-13",
   "result": "BLOCKED",
   "permitted_branch_policies": [
@@ -25,6 +25,9 @@
       "type": "branch"
     }
   ],
-  "reason": "Existing signing environment uses custom deployment branch policies; current0.139 implementation branch is absent. No policy/key/signing changes or dispatch were attempted. This proves branch eligibility restriction, not absence of signing secrets.",
-  "next_step": "After implementation gates, use an owner-authorized signing route for the exact139 source. Preserve historical signing workflows/environment/key/certificate; do not silently widen policy."
+  "reason": "Live API recheck: custom branch policies still exclude139 implementation ref. Prepared139 same-environment/certificate/manual-only variant removes obsolete138 engineering pins without changing historical helpers or policy. No key access/dispatch; actual suite still fails. Runtime spec160 has no local bindings; Actions-secret absence is not inferred.",
+  "next_step": "Resolve design/automated gates; administrator authorizes exactly139 branch or supplies approved alternate route. Dispatch same-source signedQA workflow, verify package/version/cert/payload, deliver with readback; then perform physical signed upgrade/Shield acceptance.",
+  "prepared_workflow": ".github/workflows/supernova-0139-qa.yml",
+  "prepared_source": "8e917bd3a8d3f965fbf5f07843d2de1523111096",
+  "environment_policy_unchanged": true
 }

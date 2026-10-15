@@ -1,0 +1,29 @@
+{
+  "result": "PASS_PREPARATION_ONLY",
+  "source_sha": "8e917bd3a8d3f965fbf5f07843d2de1523111096",
+  "python_tests": 81,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "log_sha256": "b4fcd50a8c08bfebcd3950d261ac7b6c62bd15838c8e0fd31589aaa921530710",
+  "workflow": ".github/workflows/supernova-0139-qa.yml",
+  "environment": "supernova-foundation-signing",
+  "existing_certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "checks": [
+    "Manual dispatch and exact139ref only; push skips QA job.",
+    "Same protected environment; one secret-bearing step after complete unsigned conformance.",
+    "Exact source,139/code139,minimum996tests/no failures/errors/skips,lint0errors,24rebuiltFFmpeg/88native/60offline entries and14required classes.",
+    "Wrong branch/certificate/failed suite refused before key decode.",
+    "Changed unsigned payload/source refused; signed payload parity rejects changed code.",
+    "No release/main merge operation."
+  ],
+  "key_prepared": false,
+  "signing_dispatched": false,
+  "environment_policy_changed": false,
+  "limits": [
+    "Preparation tests use synthetic evidence and no production keys.",
+    "Current small Backup acceptance failure blocks candidate; D03/D04 unresolved.",
+    "Environment branch eligibility and actual secrets authorization remain external.",
+    "No signed139/install/upgrade/Shield/Drive result established."
+  ]
+}

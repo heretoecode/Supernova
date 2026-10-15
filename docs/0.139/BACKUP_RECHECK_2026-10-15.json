@@ -1,0 +1,52 @@
+{
+  "result": "FAIL",
+  "source_sha": "cbc0af073180cc48a28b6218ab65533f2b47286d",
+  "application_source_unchanged_from": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+  "tests": 8,
+  "passed": 7,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest"
+  ],
+  "duration": "28s",
+  "normal_profile": {
+    "result": "PASS",
+    "logical_viewport": "960x540",
+    "sidebar_pixels": 259,
+    "options_pixels": [
+      681,
+      380
+    ],
+    "categories": 26,
+    "violations": 0
+  },
+  "small_profile": {
+    "result": "FAIL",
+    "logical_viewport": "640x360",
+    "sidebar_pixels": 395,
+    "options_pixels": [
+      672,
+      223
+    ],
+    "offscreen_categories": 21,
+    "ancestor_clipped_categories": 21,
+    "targets_below_existing_role": 6,
+    "incomplete_text_categories": 1,
+    "violations": 49
+  },
+  "log_sha256": "db2bcffa9576aa198de88553410bb499fe80cdd45646a8386db4eb548cf6d27a",
+  "initial_environment_attempt": {
+    "result": "BLOCKED_BEFORE_TEST_EXECUTION",
+    "reason": "ANDROID_HOME omitted; SDK location not found. Corrected command explicitly supplies existing SDK. Older XML was not counted as a rerun.",
+    "log_sha256": "594f9435b590e019b968f2fb59a44e3d9925090d6eddbd1024bc6b22a7a6371a"
+  },
+  "evidence_sha256": {
+    "0139-settings-backup-small.json": "76d9056a653861e60b0639a828600a97df48074f43b122c19afe5a78b5bc5335",
+    "0139-settings-backup-normal.json": "1c1dfdd1c1c28202f29db907bf7a8e1109ab52a9681767c597f196349ea9886e",
+    "0139-settings-backup-small.png": "401d9e46334e7e5d2f988e3d58c38279ba5ddb25df1b003e1a6edd61b0e7b2cf",
+    "0139-settings-backup-normal.png": "3bd1b42119138c97283f833c1bdbf7c3649bceaa9c2e4c2b5f3a941b6007f9b0"
+  },
+  "limits": "Robolectric native rendering/synthetic connected preference fixture with real sidebar/controller; not physical Shield. No product layout, sidebar width or support-matrix change."
+}
