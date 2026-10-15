@@ -31,8 +31,13 @@ public class OfficialTitleBindingTest {
     @After public void teardown()throws Exception{settle();host.pause().stop().destroy();Locale.setDefault(previous);}
     private void settle()throws Exception {
         ThreadPoolExecutor io=ReflectionHelpers.getStaticField(OfficialTitleArtwork.class,"IO");long until=System.nanoTime()+TimeUnit.SECONDS.toNanos(5);
-        while(io.getActiveCount()!=0||!io.getQueue().isEmpty()){if(System.nanoTime()>until)fail("Offline artwork worker did not finish");Thread.sleep(2);}
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        // Executor counters are approximate; a dequeued task can still be awaiting its UI callback.
+        do {
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            if(io.getActiveCount()==0&&io.getQueue().isEmpty()&&(title==null||OfficialTitleArtwork.readyForFirstFrame(title)))return;
+            if(System.nanoTime()>until)fail("Offline artwork worker/view binding did not finish");
+            Thread.sleep(2);
+        } while(true);
     }
     private Movie movie(long local,long provider){Movie movie=mock(Movie.class);MovieTags tags=new MovieTags();tags.setOnlineId(provider);when(movie.getId()).thenReturn(local);when(movie.getOnlineId()).thenReturn(provider);when(movie.getFullScraperTags(any())).thenReturn(tags);return movie;}
     private void disk(String kind,long id,String language,int color)throws Exception {
