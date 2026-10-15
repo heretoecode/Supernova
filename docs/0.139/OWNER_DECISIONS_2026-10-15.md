@@ -10,7 +10,7 @@ Decision branch refreshed to `ddf4f28a04846897588f74be1a64526a30aed95f`. Read th
 
 The handover states: “Existing permanent left Settings navigation panel and its width/menu are immutable.” It also requires all actual categories simultaneously visible without scrolling, readable labels and comfortable targets, and explicitly requests measurements/responsive proposals if impossible at a supported size.
 
-Fresh connected native test at `cbc0af07`, using the actual Settings sidebar/controller:
+Fresh connected native test at `cbc0af07`, using the actual Settings sidebar/controller at default fontScale1.0 (larger-font/device checks remain separate):
 
 | Logical viewport | Sidebar | Category panel | Result |
 |---|---:|---:|---|

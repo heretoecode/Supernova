@@ -1,21 +1,21 @@
 {
   "release_result": "BLOCKED",
-  "application_source": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+  "application_source": "b2a17cbe5559579f58347b6ad78c45674df85e79",
   "whole_workstream_results": {
     "BLOCKED": 42,
     "FAIL": 1
   },
   "definition": "Whole-workstream acceptance includes the stated state/render and Shield checks. Partial software passes are recorded separately; no unavailable-device or failing-profile row is marked PASS.",
   "current_full_run": {
-    "source_sha": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+    "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
     "result": "FAIL",
-    "tests": 995,
-    "passed": 994,
+    "tests": 996,
+    "passed": 995,
     "failed": 1,
     "errors": 0,
     "skipped": 0,
     "classes": 208,
-    "receipt": "CURRENT_FULL_VERIFICATION.json"
+    "receipt": "FULL_RECHECK_CORRECTED_2026-10-15.json"
   },
   "staged_checks": [
     "POLICY_GENRES_VERIFICATION.json PASS64/10",
@@ -519,14 +519,18 @@
     "signed": false
   },
   "current_ci": {
-    "result": "FAIL",
-    "run_id": 38633930923,
-    "source_sha": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
-    "tests": 995,
-    "passed": 994,
-    "failed": 1,
-    "errors": 0,
-    "skipped": 0,
-    "receipt": "CI_CURRENT_VERIFICATION.json"
-  }
+    "result": "IN_PROGRESS",
+    "run_id": 38725529541,
+    "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
+    "native_step": "PASS",
+    "application_step": "Still running; no overall pass inferred."
+  },
+  "application_content_unchanged_from": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+  "latest_tooling": {
+    "result": "PASS",
+    "tests": 81,
+    "receipt": "SIGNING_PREPARATION_2026-10-15.json"
+  },
+  "current_unsigned_packaging_receipt": "LOCAL_PACKAGING_RECHECK_2026-10-15.json",
+  "signing_policy_receipt": "SIGNING_POLICY_ATTEMPT_2026-10-15.json"
 }
