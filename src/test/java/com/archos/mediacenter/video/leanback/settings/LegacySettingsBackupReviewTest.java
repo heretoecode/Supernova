@@ -55,8 +55,10 @@ return ReflectionHelpers.getField(common,"backupReview");
     private AlertDialog dialog(BackupReview review){return ReflectionHelpers.getField(review,"dialog");
 }
     private void await(BackupOperationModel model,BackupOperationModel.Phase expected)throws Exception{long end=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(15);
-while(model.isBusy()||model.states().getValue()!=model.current()){Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
-if(System.nanoTime()>end)throw new AssertionError("worker timeout");
+// Dialog clicks are posted to the main looper: idle-before-dispatch does not mean completion.
+while(model.isBusy()||model.current().phase!=expected||model.states().getValue()!=model.current()){Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+if(!model.isBusy()&&(model.current().phase==BackupOperationModel.Phase.FAILED||model.current().phase==BackupOperationModel.Phase.CANCELLED))break;
+if(System.nanoTime()>end)throw new AssertionError("waiting for "+expected+"; observed "+model.current().phase+"; busy="+model.isBusy());
 Thread.sleep(10);
 }Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
 assertEquals(model.current().message,expected,model.current().phase);
