@@ -1,0 +1,79 @@
+{
+  "result": "AUTHORISED",
+  "checked_at_utc": "2026-10-15T17:00:11.172278+00:00",
+  "branch": "codex/supernova-0.139-implementation-2026-10-13",
+  "environment": {
+    "id": 23840886327,
+    "node_id": "EN_kwDOUUDOZc8AAAAFjQcONw",
+    "name": "supernova-foundation-signing",
+    "url": "https://api.github.com/repos/heretoecode/Supernova/environments/supernova-foundation-signing",
+    "html_url": "https://github.com/heretoecode/Supernova/deployments/activity_log?environments_filter=supernova-foundation-signing",
+    "created_at": "2026-10-09T02:52:39Z",
+    "updated_at": "2026-10-09T02:55:10Z",
+    "can_admins_bypass": false,
+    "protection_rules": [
+      {
+        "id": 68198606,
+        "node_id": "GA_kwDOUUDOZc4EEKDO",
+        "type": "branch_policy"
+      }
+    ],
+    "deployment_branch_policy": {
+      "protected_branches": false,
+      "custom_branch_policies": true
+    }
+  },
+  "branch_policies": {
+    "total_count": 6,
+    "branch_policies": [
+      {
+        "id": 62439781,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjQzOTc4MQ==",
+        "name": "codex/foundation-release",
+        "type": "branch"
+      },
+      {
+        "id": 62580297,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjU4MDI5Nw==",
+        "name": "codex/supernova-0.135",
+        "type": "branch"
+      },
+      {
+        "id": 62672957,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjY3Mjk1Nw==",
+        "name": "codex/supernova-0.137-qa-2026-10-11",
+        "type": "branch"
+      },
+      {
+        "id": 62775528,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2Mjc3NTUyOA==",
+        "name": "codex/supernova-0.138-qa-2026-10-12",
+        "type": "branch"
+      },
+      {
+        "id": 63180517,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MzE4MDUxNw==",
+        "name": "codex/supernova-0.139-implementation-2026-10-13",
+        "type": "branch"
+      },
+      {
+        "id": 62634362,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjYzNDM2Mg==",
+        "name": "codex/supernova-next-refinement-2026-10-10",
+        "type": "branch"
+      }
+    ]
+  },
+  "previous_five_policies_preserved": true,
+  "new_exact_branch_policy_id": 63180517,
+  "signing_certificate_pin": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "security_rules_changed_by_agent": false,
+  "secrets_changed_by_agent": false,
+  "signing_identity_changed_by_agent": false,
+  "run_id": 38773230129,
+  "workflow": ".github/workflows/supernova-0139-qa.yml",
+  "source_commit": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+  "approved_qa_distribution": true,
+  "validated_implementation": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "non_documentation_source_unchanged": true
+}
