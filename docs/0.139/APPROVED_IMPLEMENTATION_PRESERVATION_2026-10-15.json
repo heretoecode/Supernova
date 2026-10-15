@@ -1,0 +1,51 @@
+{
+  "result": "PASS",
+  "starting_head": "9ab2f466199cc0459ed3314783c52864f05a3325",
+  "application_source": "6b22dbbf2039661adb81e3f1b9422e95d705da3a",
+  "original_requested_checkpoint_retained": "eb3e6e6deb01fd58adc73e5ee4833e0cbf6e4e00",
+  "changed_production_files": [
+    "src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java",
+    "src/main/java/com/archos/mediacenter/video/leanback/SharedThreePanel.java",
+    "src/main/java/com/archos/mediacenter/video/leanback/details/ConnectedDetailsPanel.java",
+    "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+    "src/main/java/com/archos/mediacenter/video/leanback/settings/BackupSettingsController.java",
+    "src/main/java/com/archos/mediacenter/video/leanback/settings/BackupWorkspace.java"
+  ],
+  "unchanged_protected_paths": [
+    "assets",
+    "res",
+    "AndroidManifest.xml",
+    "build.gradle",
+    "gradle.properties",
+    ".github/workflows",
+    ".github/build/medialib-supernova139-playlists.patch",
+    ".github/build/medialib-supernova139-matches.patch",
+    ".github/build/filecore-supernova139-diagnostics.patch",
+    ".github/signing/foundation_signing.py",
+    ".github/signing/supernova_0138_qa_signing.py",
+    ".github/signing/verify_supernova_0138_qa_apk.py"
+  ],
+  "signing_prepare_ast_sha256": "affcb33bef5f04a93c56aaf1757eb3a3948fc3babc40745c83a41a1f35786836",
+  "signing_gate_only_changes": "Minimum1007 and16mandatory classes added; same certificate/ref/key preparation/cleanup. Existing workflows and historical signing helpers unchanged.",
+  "dependency_sources": [
+    {
+      "path": "/workspace/supernova139-lists-source/MediaLib",
+      "source_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+      "clean": true
+    },
+    {
+      "path": "/workspace/supernova139-lists-source/FileCoreLibrary",
+      "source_sha": "f7f8d9055e6d5f7b84a9475d90e32dc95426a19e",
+      "clean": true
+    }
+  ],
+  "version": {
+    "name": "0.139",
+    "code": 139,
+    "application_id": "app.supernova.player"
+  },
+  "limits": [
+    "Git object/source identity is not an installed138\u2192139 upgrade test.",
+    "Build-only isolated identity XML/native inputs remain intentionally dirty; original shared dependency working copies were not changed."
+  ]
+}

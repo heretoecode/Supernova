@@ -1,16 +1,16 @@
 {
   "release_result": "BLOCKED",
-  "application_source": "6b22dbbf2039661adb81e3f1b9422e95d705da3a",
+  "application_source": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
   "whole_workstream_results": {
     "BLOCKED": 43,
     "FAIL": 0
   },
   "definition": "Whole-workstream acceptance includes the stated state/render and Shield checks. Partial software passes are recorded separately; no unavailable-device or failing-profile row is marked PASS.",
   "current_full_run": {
-    "source_sha": "6b22dbbf2039661adb81e3f1b9422e95d705da3a",
+    "source_sha": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
     "result": "RUNNING",
-    "ci_run_id": 38744003190,
-    "url": "https://github.com/heretoecode/Supernova/actions/runs/38744003190"
+    "ci_run_id": 38746280548,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38746280548"
   },
   "staged_checks": [
     "POLICY_GENRES_VERIFICATION.json PASS64/10",
@@ -570,6 +570,7 @@
     "result": "APPROVED",
     "source_sha": "84e2a2a86efbbd1e61b54fcab75934be96b40a81",
     "record": "APPROVED_OWNER_DECISIONS_2026-10-15.md",
-    "implementation_sha": "6b22dbbf2039661adb81e3f1b9422e95d705da3a"
-  }
+    "implementation_sha": "23f75b38b18f6b34f5ceb94c001260f08bafac09"
+  },
+  "navigation_correction": "23f75b38 removes the unapproved extra Back reader step. View-level Back must reach the established Activity/fragment exit route unchanged; Up reads back to the top. Current-source verification pending."
 }

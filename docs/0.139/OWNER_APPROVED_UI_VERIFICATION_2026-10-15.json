@@ -112,5 +112,6 @@
     "Full exact-source CI38741587921 is running; this is focused evidence only.",
     "Signed upgrade/physical output not run."
   ],
-  "capture_reference": "Original focused captures are pinned in commit2a8c85dd. Current capture directories include subsequent source6b22dbbf boundary/focus corrections; see HEADER_BOUNDARY_VERIFICATION_2026-10-15.json for current hashes."
+  "capture_reference": "Original focused captures are pinned in commit2a8c85dd. Current capture directories include subsequent source6b22dbbf boundary/focus corrections; see HEADER_BOUNDARY_VERIFICATION_2026-10-15.json for current hashes.",
+  "navigation_scope_superseded": "The first reader stage consumed Back to reset reading. That conflicts with the owner requirement to preserve the existing Back route.23f75b38 removes that interception; only its final-source focused/full CI proof can establish Back conformance. These earlier receipts remain valid for their other source-pinned checks."
 }
