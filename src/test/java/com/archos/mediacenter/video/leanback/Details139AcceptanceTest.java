@@ -45,6 +45,9 @@ public class Details139AcceptanceTest {
             page.focusPrimary();key(root,KeyEvent.KEYCODE_DPAD_DOWN);key(root,KeyEvent.KEYCODE_DPAD_UP);assertEquals("action:Play",page.findFocus().getTag());
         }finally{host.pause().stop().destroy();}
     }
+    private int[] headerPixels(View root,View frame,View reading){
+        Rect a=bounds(frame),b=bounds(reading);android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(a.width(),b.top-a.top,android.graphics.Bitmap.Config.ARGB_8888);android.graphics.Canvas canvas=new android.graphics.Canvas(bitmap);canvas.translate(-a.left,-a.top);root.draw(canvas);int[] pixels=new int[bitmap.getWidth()*bitmap.getHeight()];bitmap.getPixels(pixels,0,bitmap.getWidth(),0,0,bitmap.getWidth(),bitmap.getHeight());bitmap.recycle();return pixels;
+    }
     private void verify(boolean compact)throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});
@@ -61,8 +64,8 @@ public class Details139AcceptanceTest {
             assertEquals("Bottom proportional inset",page.getHeight()-Math.round((page.getHeight()-page.getPaddingTop()-page.getPaddingBottom())*.04f),stable.bottom-page.getTop());
             TextView full=page.findViewWithTag("details.full.synopsis");assertEquals(synopsis,full.getText().toString());assertNull(full.getEllipsize());assertFalse(full.isFocusable());
             TextView originalValue=(TextView)PreviewPagesTest.findText(page,original);assertNotNull(originalValue);assertNull(originalValue.getEllipsize());assertTrue(originalValue.getLineCount()>1);
-            int last=-1;for(int n=0;n<150&&last!=reading.getScrollY();n++){last=reading.getScrollY();key(root,KeyEvent.KEYCODE_DPAD_DOWN);assertSame(tab,page.findFocus());assertTrue(tab.isSelected());}
-            assertTrue("Long information actually scrolls",reading.getScrollY()>0);assertEquals(reading.getChildAt(0).getHeight()+reading.getPaddingTop()+reading.getPaddingBottom()-reading.getHeight(),reading.getScrollY());
+            int[] header=headerPixels(root,frame,reading);int last=-1;for(int n=0;n<150&&last!=reading.getScrollY();n++){last=reading.getScrollY();key(root,KeyEvent.KEYCODE_DPAD_DOWN);assertSame(tab,page.findFocus());assertTrue(tab.isSelected());}
+            assertArrayEquals("Overflow must not paint across the fixed tab cap or headings",header,headerPixels(root,frame,reading));assertTrue("Long information actually scrolls",reading.getScrollY()>0);assertEquals(reading.getChildAt(0).getHeight()+reading.getPaddingTop()+reading.getPaddingBottom()-reading.getHeight(),reading.getScrollY());
             PreviewPagesTest.capture(root,"0139-details-overflow-bottom-"+root.getWidth()+"-"+root.getResources().getConfiguration().fontScale);
             key(root,KeyEvent.KEYCODE_BACK);assertEquals(0,reading.getScrollY());assertSame(tab,page.findFocus());
             key(root,KeyEvent.KEYCODE_DPAD_RIGHT);View extras=page.findViewWithTag("section:Extras");assertSame(extras,page.findFocus());assertFalse(tab.isSelected());assertTrue(extras.isSelected());
