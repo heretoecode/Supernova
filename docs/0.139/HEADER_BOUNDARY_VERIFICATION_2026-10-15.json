@@ -56,5 +56,6 @@
   "limits": [
     "Synthetic framework/native graphics; no physical Shield or signed-upgrade pass."
   ],
-  "navigation_scope_superseded": "The first reader stage consumed Back to reset reading. That conflicts with the owner requirement to preserve the existing Back route.23f75b38 removes that interception; only its final-source focused/full CI proof can establish Back conformance. These earlier receipts remain valid for their other source-pinned checks."
+  "navigation_scope_superseded": "The first reader stage consumed Back to reset reading. That conflicts with the owner requirement to preserve the existing Back route.23f75b38 removes that interception; only its final-source focused/full CI proof can establish Back conformance. These earlier receipts remain valid for their other source-pinned checks.",
+  "capture_reference": "Source6b22dbbf captures/hashes are pinned at that commit. Current image directory additionally contains final23f75b38 navigation captures; their exact hashes are in FINAL_BACK_ROUTE_VERIFICATION_2026-10-15.json."
 }

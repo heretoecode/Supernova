@@ -1,7 +1,7 @@
 {
   "result": "PASS",
   "starting_head": "9ab2f466199cc0459ed3314783c52864f05a3325",
-  "application_source": "6b22dbbf2039661adb81e3f1b9422e95d705da3a",
+  "application_source": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
   "original_requested_checkpoint_retained": "eb3e6e6deb01fd58adc73e5ee4833e0cbf6e4e00",
   "changed_production_files": [
     "src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java",
@@ -47,5 +47,6 @@
   "limits": [
     "Git object/source identity is not an installed138\u2192139 upgrade test.",
     "Build-only isolated identity XML/native inputs remain intentionally dirty; original shared dependency working copies were not changed."
-  ]
+  ],
+  "final_navigation_change": "Only the reader Back interception was removed after6b22dbbf; existing Activity/fragment exit handlers remain unchanged."
 }

@@ -1,0 +1,52 @@
+{
+  "result": "PASS",
+  "source_sha": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "suite": {
+    "name": "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
+    "tests": "6",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-15T13:58:52.368Z",
+    "hostname": "976f3affce7e",
+    "time": "11.537"
+  },
+  "xml_sha256": "eb84472168e04679ea22e5e47f7472494fcb57d09c01340ca3990737a3aa304f",
+  "checks": [
+    "Back from scrolled read-only Details is unhandled by the view and reaches the unchanged Activity/fragment exit route; no extra Back step or focus/selection/offset mutation.",
+    "D-pad Up reads back to the actual top with heading focus retained.",
+    "Complete original synopsis/facts, last-offset reading, header pixel isolation and full growing Extras focus clearance continue to pass.",
+    "Four tabs/selected content/rebuild routes,4% usable frame bounds at compact/normal/150%-font/4K density continue to pass."
+  ],
+  "supersedes": "Only the extra Back reset portion of earlier staged proofs; their layout/data evidence remains source-pinned.",
+  "full_current_ci": {
+    "id": 38746280548,
+    "result": "RUNNING"
+  },
+  "local_lint_assembly": {
+    "result": "PASS",
+    "gradle_result": "BUILD SUCCESSFUL",
+    "duration": "6m9s",
+    "lint_errors": 0,
+    "lint_warnings": 1771,
+    "filtered_cases": 6,
+    "log_sha256": "269b021a6d4b01f1d5e065cad86fee655025844203c8af7234b1d4e2b7f8d31c",
+    "binary_receipt": "LOCAL_APPROVED_PACKAGING_2026-10-15.json"
+  },
+  "limits": [
+    "Synthetic View dispatch/native graphics, not physical Shield Back/upgrade acceptance.",
+    "Activity/fragment Back handlers are unchanged in Git; actual device exit acceptance remainsNOT RUN."
+  ],
+  "captures": {
+    "docs/0.139/ui/owner-approved-details/0139-details-four-tabs-640-1.0.png": "c8aa0e8ecb16ff481cc061fa4e7379f7e26e439852056c5aa27f6d36d6c0521d",
+    "docs/0.139/ui/owner-approved-details/0139-details-four-tabs-960-1.5.png": "23f0b75b3e1afa9916f0113c50b14cd664809a8cabab0fb6cb8f1986099330df",
+    "docs/0.139/ui/owner-approved-details/0139-details-overflow-bottom-1920-1.5.png": "f1002f4e85f614f4e55bd20a4dcd47db866fc10955403d49ab4c39fbe3ca6d0f",
+    "docs/0.139/ui/owner-approved-details/0139-details-overflow-bottom-3840-1.0.png": "0195c2dba2fd30595546783798a24897ec9d61150b088e24ad40872347d85e42",
+    "docs/0.139/ui/owner-approved-details/0139-details-overflow-bottom-640-1.0.png": "e4ebf379e96ad53dd57845652d0b759b63041e7e37cd80e95f7edaa02d19f221",
+    "docs/0.139/ui/owner-approved-details/0139-details-overflow-bottom-960-1.0.png": "968bcd4fbc3332806a75a0a5afe2c2cf62932bf495c1b75f72be7c1f05052f45",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-1920-1.5.png": "1327bdc22b6a318930cba203ae02ef41f30af862510722247d9035fc056c5310",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-3840-1.0.png": "00ff9a003360641c6fe02f8624ed879179ab35a66b857adaea42ef17744acbe5",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-640-1.0.png": "70b6bf74a5c9c1ec61f0682d90395180af579bad034e9042ec48306d97714e81",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-960-1.0.png": "640eaa0e58bfc0f58afaa58c0d2bad168e5aea6f38edb5849a231b7ef9fd3638"
+  }
+}
