@@ -1,4 +1,4 @@
-# Supernova 0.139 — candidate under verification, not delivered
+# Supernova 0.139 — automated conformance passed; signing blocked
 
 15 October2026. Version **0.139 / code139**, package **app.supernova.player**. Current implementation source **23f75b38b18f6b34f5ceb94c001260f08bafac09** on `codex/supernova-0.139-implementation-2026-10-13`, [draft PR17](https://github.com/heretoecode/Supernova/pull/17). Existing application identity, branding, signed upgrade certificate and prior implementation are preserved. No main merge, GitHub release or future0.140 Details redesign is included.
 
@@ -15,15 +15,19 @@
 
 ## Verification
 
-The preceding6b22dbbf local run passed1007tests/209classes with0failures/errors/skips and is finishing lint/unsigned assembly. Final-source [clean CI38746280548](https://github.com/heretoecode/Supernova/actions/runs/38746280548) is running after the Back route correction. Do not substitute historical995/996 results for this new source. Focused native geometry/navigation/full-reading checks pass, including header pixel isolation, animated focus clearance, production compact recreation/restore selection/privacy and all81 tooling guards. Historical failures and superseded/cancelled runs remain preserved.
+Final-source [clean CI38746280548](https://github.com/heretoecode/Supernova/actions/runs/38746280548) passed at **23f75b38b18f6b34f5ceb94c001260f08bafac09**: **1007tests/209classes,0failures/errors/skips**, lint **0errors/1771warnings**, successful unsigned R8 assembly, **81Python guards** and138reviewed runtime artifact hashes. Downloaded XML independently confirms these counts. Historical failures and superseded runs remain preserved; the two subsequent commits at initialHEADf4f0c453 are documentation/evidence only.
+
+Artifact11982055924 matches GitHub's SHA256 digest and passes safe-path/CRC checks. Independent binary checks pass app.supernova.player/0.139/code139/SDK23–36/non-debuggable, branding/assets/provider isolation,16KiB alignment,88native hashes and torrent retirement. Native evidence links24rebuiltFFmpeg libraries to64paired software decode cases/fourABIs. See CI_APPROVED_VERIFICATION_2026-10-15.json and CI_APPROVED_PACKAGING_2026-10-15.json.
+
+**Unsigned evidence only:**87675901bytes, SHA256 `a2681451a9b57c13e67d0e6a48f979d96d594e8a2d8614f007bd5050b01879c7`. This is not a signed deliverable checksum.
 
 OWNER_APPROVED_UI_VERIFICATION_2026-10-15.json, FOCUS_RECREATION_VERIFICATION_2026-10-15.json and HEADER_BOUNDARY_VERIFICATION_2026-10-15.json distinguish staged source/results. Native fixture screenshots are synthetic, not physical Shield evidence. Full43 acceptance remainsBLOCKED pending external/device checks.
 
 ## Signing and delivery
 
-**No signed139 APK or verified139 Drive delivery has been produced.** GitHub still denies the exact branch-policy POST with **403 Resource not accessible by integration**, despite the account metadata's admin flag. An administrator must add `codex/supernova-0.139-implementation-2026-10-13` under repository Settings → Environments → `supernova-foundation-signing` → selected deployment branches/tags, or grant the integration the required Environments write permission through an approved administrator configuration. Existing policies/key identity must remain.
+**No signed139 APK or verified139 Drive delivery has been produced.** GitHub still denies the exact branch-policy POST with **403 Resource not accessible by integration**, despite the account metadata's admin flag. An administrator must add `codex/supernova-0.139-implementation-2026-10-13` under repository Settings → Environments → `supernova-foundation-signing` → selected deployment branches/tags, or grant the integration the required Environments write permission through an approved administrator configuration. Existing policies/key identity must remain. Precise administrator UI/API and continuation instructions are in [SIGNING_ADMIN_ACTION_2026-10-15.md](SIGNING_ADMIN_ACTION_2026-10-15.md).
 
-After passing software conformance and authorised environment access, dispatch the prepared manual139 QA workflow with `approved_qa_distribution=true` on the exact139 branch. The existing certificate is `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. A signed QA APK is needed before physical signed-upgrade testing; that device pass is not a circular prerequisite to producing the test APK.
+Software conformance has passed. After authorised environment access, dispatch the prepared manual139 QA workflow with `approved_qa_distribution=true` on the exact139 branch. The existing certificate is `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. A signed QA APK is needed before physical signed-upgrade testing; that device pass is not a circular prerequisite to producing the test APK.
 
 Only an independently verified signed `Supernova_0.139.apk` may be uploaded to the [existing Supernova/APKs folder](https://drive.google.com/drive/folders/1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM), then downloaded/read back and hashed. The existing folder and138file parent are confirmed. No duplicate folder/file was created or unrelated file replaced. Current signed APK checksum/direct file link: **unavailable**.
 
