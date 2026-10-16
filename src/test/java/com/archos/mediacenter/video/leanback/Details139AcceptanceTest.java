@@ -66,8 +66,10 @@ public class Details139AcceptanceTest {
             assertFalse(root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK)));
             PreviewPagesTest.capture(root,"0140-details-fixed-"+root.getWidth()+"-"+root.getResources().getConfiguration().fontScale);
             key(root,KeyEvent.KEYCODE_DPAD_RIGHT);View extras=page.findViewWithTag("section:Extras");assertSame(extras,page.findFocus());key(root,KeyEvent.KEYCODE_DPAD_DOWN);layout(root);assertEquals("extra:abcdefghijk",page.findFocus().getTag());
+            PreviewPagesTest.capture(root,"0140-extras-card-"+root.getWidth()+"-"+root.getResources().getConfiguration().fontScale);
             key(root,KeyEvent.KEYCODE_DPAD_UP);layout(root);assertSame(extras,page.findFocus());assertEquals("Heading is recoverable without switching tabs",0,reading.getScrollY());
             assertTrue("Extras heading remains visible",bounds(PreviewPagesTest.findText(page,"Trailers")).height()>0);
+            PreviewPagesTest.capture(root,"0140-extras-tab-"+root.getWidth()+"-"+root.getResources().getConfiguration().fontScale);
             key(root,KeyEvent.KEYCODE_DPAD_UP);layout(root);assertTrue("Up restores the existing application navigation",root.findViewWithTag("semantic:topnav.home").isShown());assertEquals(0,page.getScrollY());
         }finally{host.pause().stop().destroy();}
     }
