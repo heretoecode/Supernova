@@ -35,9 +35,14 @@
     "warnings": 1775
   },
   "final_ci_run_id": 38959928321,
-  "final_ci_status": "running; full native/test/lint/APK conformance gates precede signing",
+  "final_ci_status": "PASS \u2014 complete exact-source native/test/lint/APK conformance, established-identity signing and payload parity",
   "local_native_build_skipped": true,
   "native_validation_location": "CI; the preceding unsigned native rebuild/runtime stage passed before its source was superseded",
   "physical_shield_verified": false,
-  "emulator_or_instrumentation_run": false
+  "emulator_or_instrumentation_run": false,
+  "final_ci_unit_tests": 1047,
+  "final_ci_unit_failures": 0,
+  "final_ci_unit_errors": 0,
+  "final_ci_unit_skips": 0,
+  "drive_delivery_verified": true
 }

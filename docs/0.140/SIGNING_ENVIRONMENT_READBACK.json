@@ -83,5 +83,6 @@
     "protection_rule_types": [
       "branch_policy"
     ]
-  }
+  },
+  "final_outcome": "PASS \u2014 exact-source signed workflow 38959928321 and independent APK/Drive verification"
 }

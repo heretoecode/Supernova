@@ -1,10 +1,10 @@
 # Supernova 0.140 release handover
 
-**Pending final validation and delivery.** This report must be completed with actual signed-artifact and Drive readback evidence; it is not presently a delivery claim.
+**Signed development / QA build delivered and verified.** [Download Supernova_0.140.apk](https://drive.google.com/file/d/1JEYAXNKw4gGPgEx0xUjATDXES1bI158T/view?usp=drivesdk) · [Verified HTML notes](https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view) · [Successful signing workflow](https://github.com/heretoecode/Supernova/actions/runs/38959928321). Physical acceptance and the external limitations below remain open.
 
 - Implementation branch: `codex/supernova-0.140-implementation-2026-10-16`.
 - [Draft PR 18](https://github.com/heretoecode/Supernova/pull/18), based on the preserved 0.139 implementation branch. No merge into main, tag or public GitHub Release.
-- Candidate APK source: `866f21f11f27dea4846ddd3cac57d98b281eecbb`.
+- Exact signed APK source: `866f21f11f27dea4846ddd3cac57d98b281eecbb`.
 - Accepted signed 0.139 baseline: `a4841c1dbaac5e1037fb19f9f11882848b435e0b`, independently verified from the full Drive APK. [Receipt](BASELINE_0139_BINARY_VERIFICATION.json).
 - Planning authority: `9f0a81efcf0a6065787186b2763439fa372aced5`; planning documents imported separately without replacing the application tree.
 - Target identity: `app.supernova.player`, version **0.140**, Android code **140**. Established upgrade certificate SHA-256: `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`.
@@ -56,8 +56,24 @@ The original ZIP was not found; all six reported quantities remain leads. [Full 
 
 ## Tests and delivery
 
-[Executed test ledger](TEST_RESULTS.md). The preceding complete local suite passed 1,047 tests, and the corrected portrait code passes its 17 affected tests plus zero-error lint (1,775 warnings). The superseded unsigned run passed native rebuild/runtime checks before deliberate cancellation. Full corrected-source gates run again inside [authorised signing workflow 38959928321](https://github.com/heretoecode/Supernova/actions/runs/38959928321); final results are pending. [Local validation receipt](LOCAL_VALIDATION.json). Earlier test/operational failures and corrective checks remain recorded, including the clock pixel test's verified failing-before/passing-after result.
+[Executed test ledger](TEST_RESULTS.md). Final exact-source CI passed **1,047 application tests, zero failures/errors/skips; all 88 tooling tests; release lint with zero errors / 1,775 warnings**. The full native stage passed 64 paired software decode cases across four ABIs; all 88 packaged native hashes and 24 rebuilt FFmpeg libraries match. Existing cold playback/recreation, resume/viewing history/Continue Watching, scan lifecycle, Settings/Backup/recovery/privacy, diagnostic, D-pad/Back/focus and responsive-render regressions are included. These are software results, not device acceptance. Earlier failures and their safe corrective outcomes remain in the ledger.
 
-Signed APK filename, size, SHA-256, workflow, independent certificate/native/payload verification and complete Drive download readback: **pending**. No 0.140 file has yet been uploaded to the existing APKs folder. The normal in-app changelog is updated in `assets/foundation/release-history.json`; HTML notes are at `docs/release-notes/Supernova Development.html`, with in-place publication to the existing Drive HTML file pending final status.
+[Public exact-source CI evidence](CI_PUBLIC_QA_EVIDENCE.json), [native runtime comparisons](CI_NATIVE_RUNTIME_REGRESSION.json), [independent APK verification](INDEPENDENT_APK_VERIFICATION.json), [full Drive readback](DRIVE_DELIVERY_VERIFICATION.json), [HTML readback](HTML_PUBLICATION_VERIFICATION.json), [branch-preservation receipt](PRESERVATION_READBACK.json). The final signed run is [38959928321](https://github.com/heretoecode/Supernova/actions/runs/38959928321) at exact `866f21f11f27dea4846ddd3cac57d98b281eecbb`; later branch commits contain documentation/evidence only.
+
+| Release field | Verified value |
+|---|---|
+| Filename | **Supernova_0.140.apk** |
+| Version / Android code | **0.140 / 140**, increasing from the independently verified 139 baseline |
+| Package / SDK / debug | `app.supernova.player`, minSdk23 / targetSdk36, non-debuggable |
+| APK bytes | **87,890,896** |
+| APK SHA-256 | `b6d59e82c03cd99844f49d4647d2f2a985c484c819d92064542eec84f33788f5` |
+| Exact source | `866f21f11f27dea4846ddd3cac57d98b281eecbb` |
+| Certificate SHA-256 | `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e` |
+| Signature / binary | v1/v2/v3, embedded source, ZIP CRC/no duplicates, 16 KiB ZIP alignment, tested unsigned payload parity, native hashes and 60 offline notices verified |
+| Drive | [Verified download](https://drive.google.com/file/d/1JEYAXNKw4gGPgEx0xUjATDXES1bI158T/view?usp=drivesdk), existing Supernova/APKs folder `1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM`; complete downloaded bytes and checksum match |
+| Previous delivery | All six earlier APK IDs/names/sizes retained; no duplicate folder or earlier APK replacement |
+| HTML | [Existing Drive file](https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view), 30,227 bytes, SHA-256 `cfc427977c65b0320ccc51973566774fb17b3f6d1a4797ab3123b4853ea773c0`; in-place update and readback preserve all older release sections |
+
+The normal in-app changelog is updated in `assets/foundation/release-history.json`. Repository HTML notes: [Supernova Development.html](../release-notes/Supernova%20Development.html). Corresponding FFmpeg source and public native proof remain in the same successful run's `supernova-0140-qa-ffmpeg-source` artifact. Archive digests and artifact IDs are recorded in [RELEASE_ARTIFACTS.json](RELEASE_ARTIFACTS.json). Main and earlier branches are preserved; PR 18 remains a draft for owner review, without a main merge, tag or public GitHub Release.
 
 No physical Shield testing, emulator/instrumentation, actual install/signed upgrade, hardware playback/resume/HDR/passthrough, real account/provider launch, multi-drive scan or SAF round trip is claimed. OMDb enablement and unavailable references/logs remain external dependencies. Unified Playback Settings, broader HUD redesign and the separate 14-finding HUD audit remain excluded for 0.141.

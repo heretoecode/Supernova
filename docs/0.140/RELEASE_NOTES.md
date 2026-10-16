@@ -1,6 +1,6 @@
-# Supernova 0.140 — development notes
+# Supernova 0.140 — signed QA delivered
 
-Version 0.140 / Android code 140. Not released. This is an implementation checkpoint, not a claim of signed APK delivery or device acceptance.
+Version **0.140 / Android code 140**. [Download the verified signed QA APK](https://drive.google.com/file/d/1JEYAXNKw4gGPgEx0xUjATDXES1bI158T/view?usp=drivesdk) · [Successful signing workflow](https://github.com/heretoecode/Supernova/actions/runs/38959928321) · [Complete release report](RELEASE_REPORT.md). This is a development/QA delivery; physical acceptance remains open.
 
 - Library Statistics uses a continuous two-row panel with nine page-scoped metrics, indexed storage totals and completed-scan evidence.
 - Details implements the approved six-region composition, fixed circular portrait grids, stable missing Reception fields and a compound active-tab border.
@@ -11,4 +11,13 @@ Version 0.140 / Android code 140. Not released. This is an implementation checkp
 - OMDb exact-ID supplementary ratings/awards support is prepared and disabled by owner instruction. No live key or entitlement is assumed; see [activation requirements](OMDB_FEASIBILITY.md).
 - Repeated diagnostic incidents share a bounded producer-time snapshot, and queue rejection counters distinguish routine and important traffic. Historical diagnostic counts are not treated as proof of current defects.
 
-The approved overall FD-033 JPEG is archived unchanged. Its separately annotated v3 PNG and FD-007 references, raw Shield diagnostics, live account/device validation and final build acceptance remain unavailable/pending. The earlier signing branch-policy rejection is resolved: the owner added the exact branch, and readback confirms all six previous rules remain unchanged. The authorised exact-source signing retry is running, with full native/test/lint/binary gates before key access. See [implementation evidence](IMPLEMENTATION.md) and [diagnostic matrix](DIAGNOSTIC_FINDINGS.md). No 0.141 Playback Settings/HUD redesign is included. No main merge.
+The approved overall FD-033 JPEG is archived unchanged. The annotated v3 PNG and FD-007 references, original Shield ZIP and live account/device validation remain unavailable. OMDb remains disabled by owner instruction. No 0.141 Playback Settings/HUD redesign or separate audit is included; no main merge.
+
+Final exact-source validation: **1,047 application tests / zero failures, errors or skips; 88 tooling tests; lint zero errors / 1,775 warnings**. Native proof covers 88 packaged libraries, 24 rebuilt FFmpeg libraries and 64 paired software decode cases. Existing certificate, embedded source, offline assets, CRC, 16 KiB ZIP alignment and tested payload parity pass. The complete Drive download matches all 87,890,896 signed bytes; earlier APKs are preserved.
+
+- Exact APK source: `866f21f11f27dea4846ddd3cac57d98b281eecbb`. Later branch commits record documentation/evidence only.
+- APK SHA-256: `b6d59e82c03cd99844f49d4647d2f2a985c484c819d92064542eec84f33788f5`.
+- [Drive delivery receipt](DRIVE_DELIVERY_VERIFICATION.json), [independent binary verification](INDEPENDENT_APK_VERIFICATION.json), [test results](TEST_RESULTS.md), [visual conformance/discrepancies](VISUAL_QA.md), [diagnostic outcomes](DIAGNOSTIC_FINDINGS.md).
+- [Updated HTML notes](https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view); repository file `docs/release-notes/Supernova Development.html`; same Drive file ID and older release history preserved.
+
+**NOT RUN:** physical NVIDIA Shield, emulator/instrumentation, actual install/139→140 upgrade, hardware playback/resume/HDR/passthrough, real multi-drive scan, SAF round trip, external provider launch and Put.io account round trip. Software/fixture passes do not close these gates.
