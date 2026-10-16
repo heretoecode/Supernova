@@ -10,7 +10,7 @@
   "current": {
     "version": "0.140",
     "version_code": 140,
-    "kind": "Development implementation \u2014 validation and release incomplete",
+    "kind": "Development / QA build \u2014 physical acceptance pending",
     "notes": [
       "Page-scoped two-row Library Statistics with nine metrics and terminal scan evidence.",
       "Six-region Details blueprint implementation, connected active-tab border and fixed portrait grids.",
@@ -19,7 +19,8 @@
       "Playback-start cached country-specific age classification overlay.",
       "Registered Put.io device linking configuration and explicit grant revocation; real account validation pending.",
       "Diagnostic capture allocation reduction and queue-rejection attribution.",
-      "OMDb, visual-reference conformance and full release validation remain blocked or incomplete; no signed 0.140 delivery yet."
+      "Compact Library Statistics text fits its cells; navigation overflow is clipped before the clock while focused actions scroll into view.",
+      "OMDb supplementary adapter is prepared with production access disabled. Missing reference assets, original Shield logs, real-account checks and device acceptance remain documented limitations."
     ]
   },
   "history": [
