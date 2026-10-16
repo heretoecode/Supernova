@@ -1,5 +1,5 @@
 {
-  "release_result": "SHIELD_CORRECTIVE_WORK_IN_PROGRESS",
+  "release_result": "FIRST_CORRECTIVE_QA_DELIVERED_FINAL_SURFACE_VALIDATION",
   "application_source": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
   "whole_workstream_results": {
     "BLOCKED": 43,
@@ -686,7 +686,7 @@
     "baseline_key_dispatch_regressions": "3 tests / 3 expected failures against unchanged baseline; local XML retained",
     "python_guards": "81 passed locally",
     "corrective_java_ui_validation": "PASS34 distinct targeted tests across6classes, zero failures/errors/skips; final12-test Backup controller pass includes closing restore review before next Export",
-    "corrective_signed_apk": "NOT_PRODUCED",
+    "corrective_signed_apk": "First signed corrective verified/delivered, SHA256cccf3119e86a33d6d8ca18bd5c1f06ca06ac8acd5935f6f191ad33eb7f000ede",
     "shield_retest": "NOT_RUN",
     "signed_upgrade": "NOT_RUN",
     "attachments": "Named video/screenshot/10 October ZIP unavailable in this context; owner instructed independent repository investigation. Historical ZIP is not a current crash log.",
@@ -694,7 +694,7 @@
     "source_commit": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3",
     "signing_run_id": 38899461080,
     "unsigned_run_id": 38899449834,
-    "ci_status": "FINAL_SOURCE_IN_PROGRESS",
+    "ci_status": "FIRST_CORRECTIVE_SUCCESS; final surface correction awaiting exact-source signing",
     "local_lint": {
       "errors": 0,
       "warnings": 1772
@@ -702,6 +702,10 @@
     "cancelled_superseded_runs": [
       38897967011,
       38897948111
-    ]
+    ],
+    "drive_file_id": "1w3tJRfyvBv0c16OKYzKFVlF22ou9SS_R",
+    "software_tv_playback": "PASS: signed update, actual service output/progress/completion and visually inspected decoded frame",
+    "saf_diagnostic_save": "NOT_RUN: no document provider in softwareTV image",
+    "final_surface_correction": "Existing MenuFoundation dialog-frame background;12controller tests PASS; new signing required"
   }
 }

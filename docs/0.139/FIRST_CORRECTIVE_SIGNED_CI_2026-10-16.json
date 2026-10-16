@@ -1,0 +1,21 @@
+{
+  "run_id": 38899461080,
+  "job_id": 116967824027,
+  "source_commit": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3",
+  "passed_lines": 1014,
+  "distinct_class_labels": 211,
+  "new_guards_present": [
+    {
+      "class": "SettingsShieldNavigationTest",
+      "passed": 5
+    },
+    {
+      "class": "PlayerControllerLaunchTest",
+      "passed": 1
+    }
+  ],
+  "python_guard_summaries": [
+    "Ran 81 tests in 5.655s"
+  ],
+  "job_result": "success"
+}

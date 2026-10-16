@@ -52,7 +52,7 @@ public final class BackupSettingsController {
     }
     public void attach(SharedThreePanel split,View middle,View help){
         if(this.split!=null)hide();this.split=split;this.middle=middle;this.help=help;
-        frame=new FrameLayout(fragment.requireContext());frame.setTag("settings.backup.workspace");
+        frame=new FrameLayout(fragment.requireContext());frame.setBackground(MenuFoundation.surface(fragment.requireContext(),false));frame.setTag("settings.backup.workspace");
         landing=new LinearLayout(fragment.requireContext());landing.setOrientation(LinearLayout.VERTICAL);landing.setTag("settings.backup.landing");landing.setVisibility(View.GONE);
         exportAction=landingAction("Export Backup","backup.action.export",()->{exportSelection=true;render(model.current());},"Choose the configuration categories to export, then save a verified ZIP using Android Files. Media, artwork and credentials are excluded. Filenames and locations are Off by default. Backups are unencrypted.");
         restoreAction=landingAction("Restore Backup","backup.action.restore",this::chooseRestore,"Choose a backup ZIP using Android Files. Review the available categories and confirm replacement before any settings change. Unselected categories remain unchanged. Reconnect sources, accounts and Android permissions separately.");
