@@ -20,12 +20,12 @@ final class PlaybackAgeOverlay extends View {
     void bind(VideoDbInfo info){
         String id=info==null?null:info.isShow?info.scraperShowId:info.scraperMovieId;
         String key=info==null?"":info.id+":"+info.isShow+":"+id;
-        if(key.equals(identity))return;identity=key;int expected=++generation;animate().cancel();setVisibility(GONE);classification="";consumed=false;output=Player.sPlayer!=null&&Player.sPlayer.hasRenderedPreviewFrame();removeCallbacks(fade);
+        if(key.equals(identity))return;identity=key;int expected=++generation;animate().cancel();setVisibility(GONE);classification="";consumed=false;output=false;removeCallbacks(fade);
         if(info==null||id==null||!id.matches("[1-9][0-9]{0,17}"))return;
         series=info.isShow;territory=StreamingRepository.country(getContext());String country=territory,kind=series?"tv":"movie";long providerId;try{providerId=Long.parseLong(id);}catch(NumberFormatException invalid){return;}
         StreamingRepository.IO.submit(()->{JSONObject cached=PreviewMetadataCache.read(getContext(),kind,providerId,kind.equals("tv")?"content_ratings":"release_dates");String value=SharedMetadata.certificate(cached==null?null:cached.optJSONObject("data"),country);post(()->{if(expected!=generation)return;classification=valid(value)?value:"";showIfReady();});});
     }
-    static boolean valid(String value){if(value==null)return false;String text=value.trim();return text.matches("[A-Za-z0-9][A-Za-z0-9 +/.-]{0,23}")&&!java.util.Arrays.asList("N/A","NA","NR","UNRATED","NOT RATED","UNKNOWN","NULL","NONE").contains(text.toUpperCase(java.util.Locale.ROOT));}
+    static boolean valid(String value){if(value==null)return false;String text=value.trim();return text.matches("[A-Za-z0-9][A-Za-z0-9 +/.-]{0,23}")&&!text.toUpperCase(java.util.Locale.ROOT).matches("N/?A|NR|UNRATED|NOT(?: [A-Z]+)* RATED|UNKNOWN|NULL|NONE|TBC|TBD|NO RATING AVAILABLE");}
     void playbackStarted(){output=true;showIfReady();}
     private void showIfReady(){if(!output||consumed||classification.isEmpty()||!isAttachedToWindow())return;consumed=true;setAlpha(0);setVisibility(VISIBLE);bringToFront();animate().alpha(1).setDuration(FADE_MS).withEndAction(()->postDelayed(fade,DWELL_MS)).start();invalidate();}
     private void fadeOut(){animate().alpha(0).setDuration(FADE_MS).withEndAction(()->setVisibility(GONE)).start();}
