@@ -1,6 +1,9 @@
 name: Supernova 0.140 unsigned conformance
 on:
   workflow_dispatch:
+  push:
+    branches: [codex/supernova-0.140-implementation-2026-10-16]
+    paths: [.github/workflows/supernova-0140-conformance.yml]
 permissions:
   contents: read
 concurrency:
@@ -8,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   conformance:
-    if: github.ref == 'refs/heads/codex/supernova-0.140-implementation-2026-10-16'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/supernova-0.140-implementation-2026-10-16'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:

@@ -3229,7 +3229,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     public void setVideoInfo(VideoDbInfo info){
         mVideoInfo = info;
-        if(ageOverlay!=null)ageOverlay.bind(info);
+        if(ageOverlay!=null){ageOverlay.bind(info);if(PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.hasEstablishedOutputFor(info))ageOverlay.playbackStarted();}
         int viewMode = VideoEffect.getDefaultMode();
         int viewType = VideoEffect.getDefaultType();
         if (mVideoInfo != null) {
@@ -4226,7 +4226,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
      */
     public class PlayerListener implements PlayerService.PlayerFrontend {
-        @Override public void onPlaybackEstablished(){runOnUiThread(()->{if(ageOverlay!=null)ageOverlay.playbackStarted();});}
+        @Override public void onPlaybackEstablished(){runOnUiThread(()->{if(ageOverlay!=null&&PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.hasEstablishedOutputFor(mVideoInfo))ageOverlay.playbackStarted();});}
 
         public void onPrepared() {
             if (log.isDebugEnabled()) log.debug("onPrepared");

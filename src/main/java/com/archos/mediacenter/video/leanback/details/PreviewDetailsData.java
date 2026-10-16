@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.content.Context;
+import com.archos.mediacenter.video.metadata.OmdbSupplement;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import org.json.*;
 import java.util.*;
@@ -9,7 +10,7 @@ import java.util.*;
 final class PreviewDetailsData {
     static final class Remote {final JSONObject title;final StreamingRepository.Provider provider;Remote(JSONObject title,StreamingRepository.Provider provider){this.title=title;this.provider=provider;}}
     static final class Extra {final String name,type,key;Extra(String name,String type,String key){this.name=name;this.type=type;this.key=key;}}
-    static final class Result {JSONObject details,credits,classification,alternatives;final List<Remote> related=new ArrayList<>();final List<Extra> extras=new ArrayList<>();final SortedMap<Integer,JSONArray> episodes=new TreeMap<>();final Map<Integer,StreamingRepository.Availability> seasonAvailability=new HashMap<>();}
+    static final class Result {OmdbSupplement.Ratings supplementary=OmdbSupplement.Ratings.EMPTY;JSONObject details,credits,classification,alternatives;final List<Remote> related=new ArrayList<>();final List<Extra> extras=new ArrayList<>();final SortedMap<Integer,JSONArray> episodes=new TreeMap<>();final Map<Integer,StreamingRepository.Availability> seasonAvailability=new HashMap<>();}
     private static JSONObject cachedSection(Context c,String kind,long id,String section){
         JSONObject envelope=com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(c,kind,id,section);
         return envelope==null?null:envelope.optJSONObject("data");
@@ -55,6 +56,10 @@ final class PreviewDetailsData {
     }
     static Result load(Context c,String kind,long id,Set<Long> localIds)throws Exception{
         Result result=new Result();result.details=StreamingRepository.metadata(c,kind,id,"");
+        if(OmdbSupplement.PRODUCTION.enabled())try{
+            JSONObject ids=StreamingRepository.metadata(c,kind,id,"external_ids");
+            result.supplementary=OmdbSupplement.PRODUCTION.load(ids.optString("imdb_id"),"tv".equals(kind)?"series":"movie");
+        }catch(Exception unavailable){/* Supplementary data must never fail the primary metadata package. */}
         try{result.classification=StreamingRepository.metadata(c,kind,id,"tv".equals(kind)?"content_ratings":"release_dates");}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("classification_metadata_unavailable");}
         try{result.alternatives=StreamingRepository.metadata(c,kind,id,"alternative_titles");}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("alternative_titles_unavailable");}
         try{result.credits=StreamingRepository.metadata(c,kind,id,"credits");}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("credits_metadata_unavailable");}

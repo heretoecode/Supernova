@@ -25,12 +25,12 @@ public final class LibraryPageHeader {
         metric(top,"Local Storage",String.valueOf(stats.localTitles),size(c,stats.localBytes,stats.unknownLocal),"Local Storage");
         metric(top,"Network / WebDAV",String.valueOf(stats.networkTitles),size(c,stats.networkBytes,stats.unknownNetwork),"Network");
         View rule=new View(c);rule.setBackgroundColor(0x337e8c99);panel.addView(rule,new LinearLayout.LayoutParams(-1,Math.max(1,dp(c,1))));bottom=row(c,panel);
-        metric(bottom,"Unwatched",String.valueOf(stats.unwatched),stats.share(stats.unwatched),"Unwatched");
+        metric(bottom,"Unwatched",String.valueOf(stats.unwatched),stats.share(stats.unwatched),"eye-off");
         metric(bottom,"In Progress",String.valueOf(stats.inProgress),stats.share(stats.inProgress),"history");
-        metric(bottom,"Added This Month",String.valueOf(stats.addedThisMonth),new java.text.SimpleDateFormat("MMMM yyyy",Locale.getDefault()).format(new Date()),"calendar");
+        metric(bottom,"Added This Month",String.valueOf(stats.addedThisMonth),new java.text.SimpleDateFormat("MMMM yyyy",Locale.getDefault()).format(new Date()),"Date Added");
         long last=LibraryScanRecord.completed(c);
         LinearLayout lastCell=metric(bottom,"Last Updated",last==0?"Unknown":android.text.format.DateFormat.getDateFormat(c).format(new Date(last)),last==0?"No completed scan recorded":android.text.format.DateFormat.getTimeFormat(c).format(new Date(last)),"history");
-        boolean busy=PreviewLibraryScan.building();LinearLayout statusCell=metric(bottom,"Library Status",busy?"Scanning library":LibraryScanRecord.problems(c)?"Scan needs attention":"No scan in progress",busy?"Scan in progress":"Indexed library",busy?"scan":"Library");
+        boolean busy=PreviewLibraryScan.building();LinearLayout statusCell=metric(bottom,"Library Status",busy?"Scanning library":LibraryScanRecord.problems(c)?"Scan needs attention":"No scan in progress",busy?"Scan in progress":"Indexed library","info");
         Runnable refresh=new Runnable(){public void run(){if(!panel.isAttachedToWindow())return;boolean active=PreviewLibraryScan.building();((TextView)statusCell.getChildAt(1)).setText(active?"Scanning library":LibraryScanRecord.problems(c)?"Scan needs attention":"No scan in progress");((TextView)statusCell.getChildAt(2)).setText(active?"Scan in progress":"Indexed library");long completed=LibraryScanRecord.completed(c);((TextView)lastCell.getChildAt(1)).setText(completed==0?"Unknown":android.text.format.DateFormat.getDateFormat(c).format(new Date(completed)));((TextView)lastCell.getChildAt(2)).setText(completed==0?"No completed scan recorded":android.text.format.DateFormat.getTimeFormat(c).format(new Date(completed)));panel.postDelayed(this,1000);}};
         panel.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){public void onViewAttachedToWindow(View view){panel.post(refresh);}public void onViewDetachedFromWindow(View view){panel.removeCallbacks(refresh);}});
     }

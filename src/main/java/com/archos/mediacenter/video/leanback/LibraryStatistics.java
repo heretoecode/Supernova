@@ -24,12 +24,12 @@ public final class LibraryStatistics {
         long month=first.getTimeInMillis()/1000,seconds=now/1000;
         result.total=titles.size();
         for(Map.Entry<String,List<Entry>> title:titles.entrySet()){
-            boolean local=false,network=false,started=false,resume=false;long added=Long.MAX_VALUE;
-            Map<String,Boolean> completed=new HashMap<>();
+            boolean local=false,network=false,started=false;long added=Long.MAX_VALUE;
+            Map<String,Boolean> completed=new HashMap<>(),resumes=new HashMap<>();
             for(Entry file:title.getValue()){
                 Video video=(Video)file.media;boolean done=PreviewSeriesJourney.completed(video);
                 String logical=PreviewVariants.logicalKey(file);completed.put(logical,completed.getOrDefault(logical,false)||done);
-                started|=done||video.isWatched()||video.getResumeMs()>0;resume|=!done&&video.getResumeMs()>0;
+                started|=done||video.isWatched()||video.getResumeMs()>0;resumes.put(logical,resumes.getOrDefault(logical,false)||!done&&video.getResumeMs()>0);
                 if(file.added>0)added=Math.min(added,file.added);
                 Uri uri=video.getFileUri();String scheme=uri==null?null:uri.getScheme();
                 boolean remote=scheme!=null&&!scheme.equalsIgnoreCase("file")&&!scheme.equalsIgnoreCase("content");
@@ -38,7 +38,7 @@ public final class LibraryStatistics {
             }
             if(local)result.localTitles++;if(network)result.networkTitles++;
             if(!title.getValue().isEmpty()&&!started)result.unwatched++;
-            if(resume&&completed.containsValue(false))result.inProgress++;
+            for(String logical:completed.keySet())if(!completed.get(logical)&&resumes.getOrDefault(logical,false)){result.inProgress++;break;}
             if(added>=month&&added<=seconds)result.addedThisMonth++;
         }
         return result;

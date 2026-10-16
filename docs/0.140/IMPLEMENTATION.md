@@ -17,8 +17,8 @@ Status: implementation in progress, not released. No main merge. No physical Shi
 | Area | Current engineering result | Acceptance still required |
 |---|---|---|
 | FD-007 | Two-row continuous panel; nine metrics; logical-title/page scope; physical indexed storage and unknown-size bounds; calendar-month added timestamp; scan completion journal | Tests, actual renders, source-reference comparison. Shows spanning sources count in both source sections. Series-added timestamp is earliest indexed episode, not latest episode arrival. |
-| FD-033 | Six fixed read-only regions; provisional v3 proportions, three Reception separators, one compound user-accent border, circular 4×2 portrait grids and one-line middle-ellipsized path | Build/tests, supported viewport fit, actual source JPEG/v3 comparison. Provider names currently stand in for unavailable approved Reception artwork. |
-| OMDb | Official API/terms audit started; no existing key/configuration found; no live request enabled | Authorised credential/entitlement and permitted-use confirmation. Stable missing-data Reception slots remain visible. |
+| FD-033 | Six fixed read-only regions; provisional v3 proportions, three Reception separators, one compound user-accent border, circular 4×2 portrait grids and one-line middle-ellipsized path | Build/tests, supported viewport fit, actual source JPEG/v3 comparison. Existing IMDb artwork reused; other provider names stand in for unavailable approved Reception artwork. |
+| OMDb | Official API/licensing feasibility audit and disabled exact-ID adapter prepared; source/type/range validation, budget seam, bounded HTTPS and attributed Reception rendering | Owner confirms no authorised account/binding. Production remains denied. Activation requirements in [OMDB_FEASIBILITY.md](OMDB_FEASIBILITY.md); no live requests. |
 | FD-001 | Cached exact-country classification overlay tied to actual playback-established callback; white outlined text/red accent, 500ms fades and ten-second full-opacity dwell; passive and omitted for missing/unrated metadata | Tests and playback/device/scene QA. No verified descriptor feed: descriptors omitted. Series scope labelled explicitly. |
 | FD-008 | Existing native account/browser architecture retained; public client 9874 configured with provider-source-verified approval URL; initial public code/pending checks pass; explicit revoke action added | Real account authorisation, browse/sync/revocation/WebDAV playback and Shield focus validation. No token obtained or account accessed. |
 | Backup & Restore | Export categories directly in main three-panel page; vertical list, existing consent/persistence model, contextual descriptions; Export starts existing verified archive flow | Regression tests, full SAF file-provider round trip and D-pad/device verification. |
@@ -26,7 +26,9 @@ Status: implementation in progress, not released. No main merge. No physical Shi
 
 ## Visual dependencies
 
-The scope and FD-033 registers explicitly state the original clean 1536×864 JPEG and annotated 2400×1680 v3 PNG were conversation-only, not archived. FD-007 also lacks its clean approved raster/annotated blueprint. Repository tree and Drive searches did not locate these files. The SVG is a geometry guide, not an approved replacement. No pixel-perfect or source-image conformance claim is made. The owner has been asked for existing links/paths while engineering continues.
+The scope and FD-033 registers explicitly state the original clean 1536×864 JPEG and annotated 2400×1680 v3 PNG were conversation-only, not archived. FD-007 also lacks its clean approved raster/annotated blueprint. Repository tree and Drive searches did not locate these files. The SVG is a geometry guide, not an approved replacement. No pixel-perfect or source-image conformance claim is made. The owner reports recovery of the clean JPEG, but the reply has no accessible binary attachment or link. Requested the actual file; see [visual register](VISUAL_QA.md). The annotated v3 PNG and FD-007 references remain separate dependencies.
+
+Draft PR: https://github.com/heretoecode/Supernova/pull/18 (base is the preserved 0.139 implementation branch; no main merge).
 
 ## External-source audit
 

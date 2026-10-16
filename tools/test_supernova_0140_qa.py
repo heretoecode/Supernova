@@ -17,7 +17,7 @@ REQUIRED = ['Supernova138HomeTest', 'Supernova138PlaybackTest', 'SubtitleDiscove
             'Supernova138UiTest', 'BundledNoticePagerTest', 'PreviewSeasonTest', 'Supernova139HomeEditorTest',
             'CanonicalMatchProviderTest', 'MediaMatchJournalTest', 'MediaMatchReconciliationTest',
             'CombinedCurrentRestoreTest', 'TransportReadDiagnosticsTest', 'LogicalBackupExporterTest',
-            'BackupSettingsControllerTest','Details139AcceptanceTest','ProductionBackupSettingsTest','LibraryStatisticsTest','LibraryStatisticsLayoutTest','BackupDirectOptionsTest','PlaybackAgeOverlayTest','DiagnosticCaptureReuseTest','PutioOAuthClientTest','PutioGrantRevokeTest','StreamingProviderFocusTest','PlayerControllerLaunchTest']
+            'BackupSettingsControllerTest','Details139AcceptanceTest','ProductionBackupSettingsTest','LibraryStatisticsTest','LibraryStatisticsLayoutTest','BackupDirectOptionsTest','PlaybackAgeOverlayTest','DiagnosticCaptureReuseTest','PutioOAuthClientTest','PutioGrantRevokeTest','StreamingProviderFocusTest','PlayerControllerLaunchTest','OmdbSupplementTest','ReceptionSupplementTest']
 
 
 class Supernova140QAGates(unittest.TestCase):
