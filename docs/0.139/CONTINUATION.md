@@ -1,3 +1,15 @@
+# Supernova 0.139 — active Shield corrective investigation
+
+16 October 2026. Continue on the existing branch and PR17. The owner physically installed the original signed 0.139 candidate and reports playback returning to Details, inaccessible diagnostics, direction-dependent Settings panes and the wrong Backup landing arrangement. Those physical reports supersede the former statement that no owner incident was supplied. Actual signed-upgrade acceptance remains unperformed.
+
+Active work and evidence scope: [SHIELD_REPAIR_2026-10-16.md](SHIELD_REPAIR_2026-10-16.md). Named video/screenshot/older ZIP are in another ChatGPT context and unavailable here; the owner explicitly instructed continuation without waiting or looking for them on Drive. The older ZIP is not a current crash log.
+
+Uncommitted corrective changes restore Advanced ancestor visibility and relinquish the About workspace on nested selection; restore Diagnostic Level with established normal/qa values and detailed default; restore the three-column Backup landing with Export Backup / Restore Backup and contextual description. Archive selection remains a deliberate operation dialog, preserving codecs, privacy and review. Regression validation is in progress; these are not yet delivered fixes or a Shield retest pass. All 81 repository Python guard tests pass locally. Playback has now reproduced a post-prepare null formatter crash in the original signed APK, with matching cold-HUD source regression; the minimal initialization-order repair is being validated. See the investigation record and retained sanitized stack. Do not claim the owner’s exact Shield root cause or physical retest without current evidence.
+
+The isolated Java/native-graphics build and software Android TV emulator are test infrastructure only. The emulator is attempting installation of the exact original signed APK with owned H.264/AAC media. The original APK installed and reached native preparation, then crashed in PlayerController HUD initialization; successful corrected output, corrective APK and new Drive delivery are not yet claimed. Finish validation, commit/push the existing branch, use the existing authorised signing workflow, verify the signed corrective artifact and upload to the existing APK folder. Preserve the original delivery receipts below as historical evidence.
+
+---
+
 # Supernova 0.139 — signed QA APK delivered; physical acceptance open
 
 15 October2026. Existing branch `codex/supernova-0.139-implementation-2026-10-13`, draftPR17. Do not reset/restart, change the approved design, merge main, tag, publish a public release or begin0.140.

@@ -1,5 +1,5 @@
 {
-  "release_result": "QA_DELIVERED_ACCEPTANCE_OPEN",
+  "release_result": "SHIELD_CORRECTIVE_WORK_IN_PROGRESS",
   "application_source": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
   "whole_workstream_results": {
     "BLOCKED": 43,
@@ -29,7 +29,7 @@
     "CI_CURRENT_NATIVE_RUNTIME.json PASS64 paired decode cases/four freshly rebuilt ABIs; CI_CURRENT_PACKAGING_VERIFICATION.json PASS unsigned identity/native/CRC/alignment",
     "CI_APPROVED_VERIFICATION_2026-10-15.json final-source PASS1007/209; Python81; lint0errors/1771warnings; 138runtime hashes; unsigned package/native/CRC/16KiB proof"
   ],
-  "limits": "Signed QA APK and downloaded Drive copy verified. All43whole-workstream state/render/hardware matrices remain open. Physical Shield, actual device installation and138\u2192139signed upgrade NOT RUN.",
+  "limits": "Original signed QA delivery is verified. Owner now reports physical installation and four defects on Shield; corrective source is in progress and has not been signed or retested on Shield. Signed upgrade, physical decode/output matrix and remaining acceptance checks remain open.",
   "workstreams": [
     {
       "id": "C01",
@@ -673,5 +673,23 @@
     "errors": 0,
     "skipped": 0,
     "receipt": "SIGNED_QA_CI_EVIDENCE_2026-10-15.json"
+  },
+  "shield_repair_2026_10_16": {
+    "record": "SHIELD_REPAIR_2026-10-16.md",
+    "baseline_signed_apk_source": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+    "owner_physical_report": {
+      "playback": "FAIL reported on Shield. Original signed APK independently reproduces a post-prepare HUD formatter null-pointer crash on software Android TV; exact Shield attribution/retest remains open.",
+      "diagnostics": "FAIL: controls inaccessible; Diagnostic Level absent in baseline source",
+      "settings": "FAIL: direction-dependent panes; ancestor visibility/About ownership regression",
+      "backup": "FAIL: landing uses category grid rather than two-action centre list and right description"
+    },
+    "baseline_key_dispatch_regressions": "3 tests / 3 expected failures against unchanged baseline; local XML retained",
+    "python_guards": "81 passed locally",
+    "corrective_java_ui_validation": "PASS33 targeted tests across6 classes, zero failures/errors/skips; includes cold-HUD first initialization/recreation and32 Settings/Backup tests",
+    "corrective_signed_apk": "NOT_PRODUCED",
+    "shield_retest": "NOT_RUN",
+    "signed_upgrade": "NOT_RUN",
+    "attachments": "Named video/screenshot/10 October ZIP unavailable in this context; owner instructed independent repository investigation. Historical ZIP is not a current crash log.",
+    "software_receipt": "SHIELD_REPAIR_SOFTWARE_VERIFICATION_2026-10-16.json"
   }
 }

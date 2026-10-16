@@ -449,6 +449,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
      */
 
     private void initControllerView(View v, boolean isMainView) {
+        // The first Preview clock update formats the already-prepared duration.
+        mFormatBuilder = new StringBuilder();
+        mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
         // next TV menu
 
         View mControlBar = v.findViewById(R.id.control_bar);
@@ -624,8 +627,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
 
         updateVolumeBar();
-        mFormatBuilder = new StringBuilder();
-        mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
         mActionBar.hide();
 

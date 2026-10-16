@@ -106,7 +106,7 @@ public final class Diagnostics {
         context=app.getApplicationContext();
         enabled=PreferenceManager.getDefaultSharedPreferences(app).getBoolean(KEY,defaultEnabled());
         installTransportReads();
-        qa=true; // One highest safe, bounded detail level for every Supernova build.
+        qa="qa".equals(PreferenceManager.getDefaultSharedPreferences(app).getString(LEVEL,"qa"));
         if(!heartbeatInstalled){heartbeatInstalled=true;HEARTBEAT.scheduleWithFixedDelay(Diagnostics::heartbeat,10,10,TimeUnit.SECONDS);}
         PreferenceManager.getDefaultSharedPreferences(app).registerOnSharedPreferenceChangeListener(CONFIG);
         sessionState=app.getSharedPreferences("supernova_diagnostic_session",Context.MODE_PRIVATE);
@@ -321,7 +321,7 @@ public final class Diagnostics {
             for(File file:DiagnosticArchive.files(dir))if((file.getName().startsWith("important-")||file.getName().startsWith("incident-"))&&file.lastModified()<oldest&&!file.delete())WRITE_ERRORS.incrementAndGet();
         }catch(IOException failure){WRITE_ERRORS.incrementAndGet();}}
     }
-    private static final SharedPreferences.OnSharedPreferenceChangeListener CONFIG=(prefs,key)->{if(key!=null&&Arrays.asList(LEVEL,"try_new_ui","remember_library_views","hide_watched","sort_ignore_articles","preview_accent41", "streaming_enabled").contains(key))event("configuration_changed","setting",key);};
+    private static final SharedPreferences.OnSharedPreferenceChangeListener CONFIG=(prefs,key)->{if(LEVEL.equals(key))qa="qa".equals(prefs.getString(LEVEL,"qa"));if(key!=null&&Arrays.asList(LEVEL,"try_new_ui","remember_library_views","hide_watched","sort_ignore_articles","preview_accent41", "streaming_enabled").contains(key))event("configuration_changed","setting",key);};
     private static final ThreadLocal<String> OPERATION_PARENT=new ThreadLocal<>();
     public static final class OperationScope implements AutoCloseable {
         private final String previous=OPERATION_PARENT.get();

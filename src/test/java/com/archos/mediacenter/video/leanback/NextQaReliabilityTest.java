@@ -29,7 +29,7 @@ public class NextQaReliabilityTest {
   try {
    host.get().setTheme(R.style.MyLeanbackTheme);
    Settings settings=new Settings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,settings).commitNow();
-   View root=settings.requireView();PreviewPagesTest.layout(root);assertNull(settings.findPreference(com.archos.mediacenter.video.diagnostics.Diagnostics.LEVEL));assertTrue(com.archos.mediacenter.video.diagnostics.Diagnostics.defaultEnabled());
+   View root=settings.requireView();PreviewPagesTest.layout(root);assertNotNull(settings.findPreference(com.archos.mediacenter.video.diagnostics.Diagnostics.LEVEL));assertTrue(com.archos.mediacenter.video.diagnostics.Diagnostics.defaultEnabled());
    for(String label:new String[]{"Playback","Video","Audio","Subtitles","Library & Metadata","Home","Appearance","Streaming","Network","Integrations","Advanced","About"}){
     View row=root.findViewWithTag("semantic:settings:category:"+label);assertNotNull(label,row);if(label.equals("Playback"))assertTrue(row.requestFocus());else root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));PreviewPagesTest.layout(root);assertSame(label,row,root.findFocus());
    }
