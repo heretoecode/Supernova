@@ -16,6 +16,8 @@ Next: wait for both exact-source workflows, retrieve artifact digests and comple
 
 **Superseding correction:** final review found Left from the new restore-review dialog retained REVIEW and could reopen it on the next Export. The new regression failed for that mode retention, then all12BackupSettingsController tests passed using the existing Back/close path. Targeted distinct total34/6classes; see SHIELD_REPAIR_FINAL_SOFTWARE_VERIFICATION_2026-10-16.json. Both38897967011 and38897948111 are now deliberately CANCELLED during native rebuild, before signing; their dispatch record above is historical. A new final-source signing/unsigned run must be used. No corrective APK has yet been produced/uploaded.
 
+**ACTIVE FINAL SOURCE/RUNS:** final code is **92eac913be5a855d23c5c63a5ab966cc2c04e8a3**. Authorized signing **38899461080**, automatic unsigned conformance **38899449834**, both in progress. These supersede the cancelled82b4862f runs. Current artifact/download/monitor directory is **/workspace/release-evidence/signing-139-corrective/**; do not confuse it with the original15October signing139 delivery or the cancelled signing139-repair attempt. Final verifier `/workspace/scratch/verify_signed_139_corrective.py` expects this source/run and1014unfiltered application tests (1007original+7new). Local targeted34distinct tests pass, finalBackupController12/0pass; lint0errors/1772warnings. Source files are committed; later checkpoint/docs commits contain them without changing app/test/build inputs.
+
 ---
 
 # Supernova 0.139 — signed QA APK delivered; physical acceptance open

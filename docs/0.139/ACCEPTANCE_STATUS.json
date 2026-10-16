@@ -691,13 +691,17 @@
     "signed_upgrade": "NOT_RUN",
     "attachments": "Named video/screenshot/10 October ZIP unavailable in this context; owner instructed independent repository investigation. Historical ZIP is not a current crash log.",
     "software_receipt": "SHIELD_REPAIR_FINAL_SOFTWARE_VERIFICATION_2026-10-16.json",
-    "source_commit": "82b4862ffc1bb24e1b77981eb84f036ed426daa0",
-    "signing_run_id": 38897967011,
-    "unsigned_run_id": 38897948111,
-    "ci_status": "Previous corrective runs CANCELLED_SUPERSEDED; final source awaiting commit/dispatch",
+    "source_commit": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3",
+    "signing_run_id": 38899461080,
+    "unsigned_run_id": 38899449834,
+    "ci_status": "FINAL_SOURCE_IN_PROGRESS",
     "local_lint": {
       "errors": 0,
       "warnings": 1772
-    }
+    },
+    "cancelled_superseded_runs": [
+      38897967011,
+      38897948111
+    ]
   }
 }
