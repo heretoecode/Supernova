@@ -1,22 +1,22 @@
 {
-  "release_result": "FIRST_CORRECTIVE_QA_DELIVERED_FINAL_SURFACE_VALIDATION",
-  "application_source": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "release_result": "SIGNED_CORRECTIVE_QA_DELIVERED_PHYSICAL_ACCEPTANCE_OPEN",
+  "application_source": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
   "whole_workstream_results": {
     "BLOCKED": 43,
     "FAIL": 0
   },
   "definition": "Whole-workstream acceptance includes the stated state/render and Shield checks. Partial software passes are recorded separately; no unavailable-device or failing-profile row is marked PASS.",
   "current_full_run": {
-    "source_sha": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+    "source_sha": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
     "result": "PASS",
-    "ci_run_id": 38746280548,
-    "url": "https://github.com/heretoecode/Supernova/actions/runs/38746280548",
-    "tests": 1007,
-    "classes": 209,
+    "ci_run_id": 38908094073,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38908094073",
+    "tests": 1014,
+    "classes": 211,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
-    "receipt": "CI_APPROVED_VERIFICATION_2026-10-15.json"
+    "receipt": "CORRECTIVE_UNSIGNED_CI_VERIFICATION_2026-10-16.json"
   },
   "staged_checks": [
     "POLICY_GENRES_VERIFICATION.json PASS64/10",
@@ -29,7 +29,7 @@
     "CI_CURRENT_NATIVE_RUNTIME.json PASS64 paired decode cases/four freshly rebuilt ABIs; CI_CURRENT_PACKAGING_VERIFICATION.json PASS unsigned identity/native/CRC/alignment",
     "CI_APPROVED_VERIFICATION_2026-10-15.json final-source PASS1007/209; Python81; lint0errors/1771warnings; 138runtime hashes; unsigned package/native/CRC/16KiB proof"
   ],
-  "limits": "Original signed QA delivery is verified. Owner now reports physical installation and four defects on Shield; corrective source is in progress and has not been signed or retested on Shield. Signed upgrade, physical decode/output matrix and remaining acceptance checks remain open.",
+  "limits": "Corrective signed QA delivery and software TV update/20s playback/D-pad checks verified. Owner reported failures on the original APK; no corrective physical Shield retest or physical138\u2192139 signed upgrade has been performed. Software TV60s copied-loop fixture stalled at its first frame; cause unresolved. Full hardware/source/format/state matrices and all43 whole-workstream rows remain open. SAF diagnostic save/readback unavailable in this TVimage. The existing translucent MenuFoundation dialog surface still permits faint underlying navigation behind its header.",
   "workstreams": [
     {
       "id": "C01",
@@ -653,26 +653,32 @@
   "signing_result": "PASS",
   "signed_apk": {
     "filename": "Supernova_0.139.apk",
-    "sha256": "bc8d45eea2fe17c49048b48e97eaf5da228c021647675968d725237314344827",
-    "source_commit": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
-    "run_id": 38773230129,
-    "receipt": "SIGNED_QA_VERIFICATION_2026-10-15.json"
+    "sha256": "9421a982296816f1ef53aa062ea608ed213dadc8475069fa9039202e5ee7898b",
+    "source_commit": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
+    "run_id": 38908109847,
+    "receipt": "CORRECTIVE_SIGNED_QA_VERIFICATION_2026-10-16.json"
   },
   "drive_delivery": {
     "result": "PASS",
-    "file_id": "1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX",
-    "url": "https://drive.google.com/file/d/1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX/view?usp=drivesdk",
-    "receipt": "DRIVE_DELIVERY_VERIFICATION_2026-10-15.json"
+    "file_id": "1CPyP8pK1ggEjTl1BPepAvDxzsrz_ocgb",
+    "url": "https://drive.google.com/file/d/1CPyP8pK1ggEjTl1BPepAvDxzsrz_ocgb/view?usp=drivesdk",
+    "receipt": "CORRECTIVE_DRIVE_DELIVERY_VERIFICATION_2026-10-16.json"
   },
   "signed_workflow_conformance": {
     "result": "PASS",
-    "source_sha": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
-    "run_id": 38773230129,
-    "tests": 1007,
+    "source_sha": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
+    "run_id": 38908109847,
+    "tests": 1014,
+    "classes": 211,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
-    "receipt": "SIGNED_QA_CI_EVIDENCE_2026-10-15.json"
+    "python_guards": 81,
+    "lint": {
+      "errors": 0,
+      "warnings": 1772
+    },
+    "receipt": "CORRECTIVE_SIGNED_CI_LOG_VERIFICATION_2026-10-16.json"
   },
   "shield_repair_2026_10_16": {
     "record": "SHIELD_REPAIR_2026-10-16.md",
@@ -686,15 +692,15 @@
     "baseline_key_dispatch_regressions": "3 tests / 3 expected failures against unchanged baseline; local XML retained",
     "python_guards": "81 passed locally",
     "corrective_java_ui_validation": "PASS34 distinct targeted tests across6classes, zero failures/errors/skips; final12-test Backup controller pass includes closing restore review before next Export",
-    "corrective_signed_apk": "First signed corrective verified/delivered, SHA256cccf3119e86a33d6d8ca18bd5c1f06ca06ac8acd5935f6f191ad33eb7f000ede",
+    "corrective_signed_apk": "PASS: 9421a982296816f1ef53aa062ea608ed213dadc8475069fa9039202e5ee7898b",
     "shield_retest": "NOT_RUN",
     "signed_upgrade": "NOT_RUN",
     "attachments": "Named video/screenshot/10 October ZIP unavailable in this context; owner instructed independent repository investigation. Historical ZIP is not a current crash log.",
     "software_receipt": "SHIELD_REPAIR_FINAL_SOFTWARE_VERIFICATION_2026-10-16.json",
-    "source_commit": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3",
-    "signing_run_id": 38899461080,
-    "unsigned_run_id": 38899449834,
-    "ci_status": "FIRST_CORRECTIVE_SUCCESS; final surface correction awaiting exact-source signing",
+    "source_commit": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
+    "signing_run_id": 38908109847,
+    "unsigned_run_id": 38908094073,
+    "ci_status": "SUCCESS_FINAL_EXACT_SOURCE",
     "local_lint": {
       "errors": 0,
       "warnings": 1772
@@ -703,9 +709,56 @@
       38897967011,
       38897948111
     ],
-    "drive_file_id": "1w3tJRfyvBv0c16OKYzKFVlF22ou9SS_R",
-    "software_tv_playback": "PASS: signed update, actual service output/progress/completion and visually inspected decoded frame",
+    "drive_file_id": "1CPyP8pK1ggEjTl1BPepAvDxzsrz_ocgb",
+    "software_tv_playback": "PASS controlled20sfixture: signed139\u2192139 update, actual advancing-media-clock service event, viewed16.917s/frame406, normal completion19458ms.60s copied-loop attempt stalled; cause unresolved.",
     "saf_diagnostic_save": "NOT_RUN: no document provider in softwareTV image",
-    "final_surface_correction": "Existing MenuFoundation dialog-frame background;12controller tests PASS; new signing required"
+    "final_surface_correction": "PASS: final signed APK shows existing MenuFoundation operation surface; Back restores Export focus",
+    "first_corrective_delivery": {
+      "source_commit": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3",
+      "signing_run_id": 38899461080,
+      "unsigned_run_id": 38899449834,
+      "drive_file_id": "1w3tJRfyvBv0c16OKYzKFVlF22ou9SS_R",
+      "corrective_signed_apk": "First signed corrective verified/delivered, SHA256cccf3119e86a33d6d8ca18bd5c1f06ca06ac8acd5935f6f191ad33eb7f000ede"
+    },
+    "final_runtime_receipts": [
+      "CORRECTIVE_RUNTIME_PLAYBACK_2026-10-16.json",
+      "CORRECTIVE_RUNTIME_SETTINGS_2026-10-16.json"
+    ],
+    "final_reverse_diagnostics": "PASS actual final APK D-pad About\u2192Diagnostics\u2192Logging; all three requested controls visible; no About workspace overlap"
+  },
+  "original_current_full_run": {
+    "source_sha": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+    "result": "PASS",
+    "ci_run_id": 38746280548,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38746280548",
+    "tests": 1007,
+    "classes": 209,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "receipt": "CI_APPROVED_VERIFICATION_2026-10-15.json"
+  },
+  "original_signed_apk": {
+    "filename": "Supernova_0.139.apk",
+    "sha256": "bc8d45eea2fe17c49048b48e97eaf5da228c021647675968d725237314344827",
+    "source_commit": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+    "run_id": 38773230129,
+    "receipt": "SIGNED_QA_VERIFICATION_2026-10-15.json"
+  },
+  "original_drive_delivery": {
+    "result": "PASS",
+    "file_id": "1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX",
+    "url": "https://drive.google.com/file/d/1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX/view?usp=drivesdk",
+    "receipt": "DRIVE_DELIVERY_VERIFICATION_2026-10-15.json"
+  },
+  "original_signed_workflow_conformance": {
+    "result": "PASS",
+    "source_sha": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+    "run_id": 38773230129,
+    "tests": 1007,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "receipt": "SIGNED_QA_CI_EVIDENCE_2026-10-15.json"
   }
 }
