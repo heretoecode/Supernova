@@ -170,7 +170,7 @@ public class SettingsShieldNavigationTest {
         assertNotNull("Centre Restore Backup action",restore);
         assertSame(export.getParent(),restore.getParent());
         assertTrue(export.getBottom()<=restore.getTop());
-        assertNull("Individual categories belong to the deliberate operation, not the landing list",root.findViewWithTag("backup.category.APPEARANCE"));
+        assertNotNull("0.140 exposes export categories directly in the vertical landing list",root.findViewWithTag("backup.category.APPEARANCE"));
         assertTrue(export.requestFocus());
         key(KeyEvent.KEYCODE_DPAD_DOWN);
         assertSame(restore,root.findFocus());

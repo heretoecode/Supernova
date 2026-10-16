@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/** Narrow, read-only public API adapter. Original-quality playback continues through WebDAV. */
+/** Narrow public API adapter: reads plus explicit Supernova-grant revocation. Original-quality playback continues through WebDAV. */
 public final class PutioReadClient {
     private static final String ROOT="https://api.put.io/v2/";
     private final String token;
@@ -47,6 +47,10 @@ public final class PutioReadClient {
             if(id<=0||used<0||total<0||name.isEmpty()||name.length()>256||!Arrays.asList("active","inactive","stranger").contains(status))throw new JSONException("Invalid account");
             return new Account(id,name,status,used,total);
         }catch(JSONException invalid){throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);}
+    }
+    /** Explicit user action: revoke this registered app grant at the provider. */
+    public void revokeSupernovaGrant()throws Unavailable {
+        request(new Request.Builder().url(ROOT+"oauth/grants/9874/delete").header("Authorization","Token "+token).post(new FormBody.Builder().build()).build(),"revoke_grant",response->{if(!"OK".equals(response.optString("status")))throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE,0);return Boolean.TRUE;});
     }
     public Page list(long parentId,String cursor)throws Unavailable {
         if(parentId<0)throw new IllegalArgumentException("Only selected account folders are supported");

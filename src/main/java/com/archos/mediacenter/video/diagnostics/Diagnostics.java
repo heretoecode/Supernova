@@ -21,6 +21,8 @@ public final class Diagnostics {
     // Producer-time routing survives delayed writers and later manual/automatic windows.
     private static long captureUntil;
     private static String captureIncident;
+    private static DiagnosticFlightRecorder.Capture captureFlight;
+    private static final java.util.concurrent.atomic.AtomicLong ROUTINE_REJECTED=new java.util.concurrent.atomic.AtomicLong(),IMPORTANT_REJECTED=new java.util.concurrent.atomic.AtomicLong();
     private static final Map<String,Long> incidentCounts=new HashMap<>();
     private static String incidentId="";
     private static volatile boolean qa;private static volatile long freezeUntil,mainAck=android.os.SystemClock.elapsedRealtime();private static volatile int foreground;private static final Set<String> COVERAGE=java.util.Collections.synchronizedSet(new TreeSet<>());
@@ -34,11 +36,11 @@ public final class Diagnostics {
     private static final Object EXPORT_LOCK=new Object();
     private static final ThreadPoolExecutor WORK=new ThreadPoolExecutor(1,1,0,TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(256),r->{Thread t=new Thread(r,"SupernovaDiagnostics");t.setDaemon(true);return t;},
-            (task,executor)->DROPPED.incrementAndGet());
+            (task,executor)->{DROPPED.incrementAndGet();ROUTINE_REJECTED.incrementAndGet();});
     // Routine focus/artwork traffic cannot occupy the important-event queue.
     private static final ThreadPoolExecutor IMPORTANT=new ThreadPoolExecutor(1,1,0,TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(512),r->{Thread t=new Thread(r,"SupernovaImportantDiagnostics");t.setDaemon(true);return t;},
-            (task,executor)->DROPPED.incrementAndGet());
+            (task,executor)->{DROPPED.incrementAndGet();IMPORTANT_REJECTED.incrementAndGet();});
     private static volatile Context context;
     private static volatile boolean enabled;
     private static volatile String playback="";
@@ -219,7 +221,7 @@ public final class Diagnostics {
         if(desired!=enabled){context=c.getApplicationContext();activatePolicy(desired);}
     }
     private static void activatePolicy(boolean value){
-        synchronized(LOCK){enabled=value;}installTransportReads();mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default",defaultEnabled()?"on":"off");
+        synchronized(LOCK){enabled=value;}installTransportReads();mainAck=android.os.SystemClock.elapsedRealtime();if(!value){FLIGHT.clear();captureUntil=0;captureIncident=null;captureFlight=null;}if(sessionState!=null)sessionState.edit().putString("process",PROCESS).putInt("pid",android.os.Process.myPid()).putBoolean("clean",!value).apply();if(value)event("logging_enabled","default",defaultEnabled()?"on":"off");
     }
     public static void disable(Context c,boolean deleteSaved){
         setEnabled(c,false);
@@ -294,11 +296,14 @@ public final class Diagnostics {
             if(!detail&&!event.startsWith("checkpoint")&&!event.equals("scanner_state")){lastOperation=safe(event);if(sessionState!=null)sessionState.edit().putString("last_operation",lastOperation).apply();}
             boolean anomaly=event.contains("error")||event.contains("failed")||event.contains("exception")||event.equals("manual_problem_marker")||event.equals("main_thread_stall_suspected")||event.equals("focus_anomaly_suspected");
             UiSnapshot failureState=anomaly?new UiSnapshot():null;
-            DiagnosticFlightRecorder.Capture failureFlight=anomaly?FLIGHT.capture(now):null;
             if(anomaly&&(event.equals("manual_problem_marker")||now>=captureUntil)){
+                captureFlight=FLIGHT.capture(now);
                 captureUntil=now+60000;
                 captureIncident=incidentFile(event.equals("manual_problem_marker"),failureState.utc);
             }
+            // Repeated incidents retain the producer-time window without copying its record array again.
+            DiagnosticFlightRecorder.Capture retainedCapture=captureFlight;
+            DiagnosticFlightRecorder.Capture failureFlight=anomaly?(retainedCapture==null?FLIGHT.capture(now):retainedCapture):null;
             final String postTarget=!anomaly&&now<captureUntil?captureIncident:null;
             if(important(event)||anomaly)IMPORTANT.execute(()->{if(!enabled)return;writeImportant(line);if(anomaly)freeze(event,failureState,failureFlight);});
             WORK.execute(()->{if(!enabled)return;if(qa||!detail)write(line,session);if(postTarget!=null)appendPostFlight(postTarget,line);});
@@ -345,7 +350,7 @@ public final class Diagnostics {
         new android.os.Handler(android.os.Looper.getMainLooper()).post(()->mainAck=android.os.SystemClock.elapsedRealtime());
         Runtime runtime=Runtime.getRuntime();long heap=runtime.totalMemory()-runtime.freeMemory(),nativeHeap=android.os.Debug.getNativeHeapAllocatedSize(),cpu=android.os.Process.getElapsedCpuTime();
         heapMin=Math.min(heapMin,heap);heapMax=Math.max(heapMax,heap);heapTotal+=heap;nativeMax=Math.max(nativeMax,nativeHeap);trendSamples++;
-        event("heartbeat","foreground",foreground,"heap_used",heap,"heap_max",runtime.maxMemory(),"native_heap",nativeHeap,"cpu_delta_ms",Math.max(0,cpu-lastCpu),"queue_depth",WORK.getQueue().size(),"dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"retention_pruned_bytes",RETENTION_PRUNED_BYTES.get(),"flight_bytes",FLIGHT.bytes(),"level",qa?"QA_SOAK":"NORMAL");lastCpu=cpu;
+        event("heartbeat","foreground",foreground,"heap_used",heap,"heap_max",runtime.maxMemory(),"native_heap",nativeHeap,"cpu_delta_ms",Math.max(0,cpu-lastCpu),"queue_depth",WORK.getQueue().size(),"dropped",DROPPED.get(),"routine_queue_rejected",ROUTINE_REJECTED.get(),"important_queue_rejected",IMPORTANT_REJECTED.get(),"write_errors",WRITE_ERRORS.get(),"retention_pruned_bytes",RETENTION_PRUNED_BYTES.get(),"flight_bytes",FLIGHT.bytes(),"level",qa?"QA_SOAK":"NORMAL");lastCpu=cpu;
         if(trendSamples>=6){android.os.Debug.MemoryInfo memory=new android.os.Debug.MemoryInfo();android.os.Debug.getMemoryInfo(memory);
             event("performance_trend","samples",trendSamples,"heap_min",heapMin,"heap_max",heapMax,"heap_average",heapTotal/trendSamples,"native_max",nativeMax,"pss_kb",memory.getTotalPss(),"gc_count",android.os.Debug.getRuntimeStat("art.gc.gc-count"),"classification","observed_trend_not_leak_diagnosis");
             heapMin=Long.MAX_VALUE;heapMax=heapTotal=nativeMax=0;trendSamples=0;

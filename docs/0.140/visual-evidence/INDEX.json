@@ -1,0 +1,120 @@
+{
+  "device_evidence": false,
+  "reference_pngs": "Populated reference renders reproduced byte-identically after the portrait compatibility fix.",
+  "statistics_and_backup_pngs": "Captured by the complete 16000713 suite; their production code is unchanged in 866f21f1.",
+  "extras_pngs": "Captured by committed acceptance fixtures at exact 866f21f1.",
+  "images": [
+    {
+      "file": "0140-backup-1280.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "b74a8d7a3c874364bd9a33db2d74e5199e75b4d2493b769c18b52b6881e34cee",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-backup-1920.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "707a325a46c3c7fdd147a52295054de3cc36485cdcfa8ba61bb6c102526fd81f",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-backup-3840.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "95f15164554efc67992b19808ec543b23706c9e3d5e00f9cd69124d6ef880b46",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-extras-card-1280-1.0.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "76fa280ed060d39100ac4dd0e33c7d3ebd2f9c82ce470401f5da4e4aab20be24",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-extras-card-3840-1.0.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "b6f2667af9ca0610014f640ebeb8c0330eae80119bfc8f85f873b156a7065b59",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-extras-tab-1920-1.0.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "d679bbc8da8ae856e11aed9c4e4c28e4313524e97574c58683e40b8c5173c31a",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-extras-tab-1920-1.5.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "f946112b4a31d6d9e5918efb8a11b575e59856aedbacb1dc116daa4dc212ae3b",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-library-statistics-1280.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "11339ba44ed752419f26c250861efd85cb5eeb095211fe4abd9add29c3eb96b0",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-library-statistics-1920.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "e29795c5139707507ba6d5502160f392889a38240f887b1a3c8519ef30da657d",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-library-statistics-3840.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "80cd816f214848e0b8b8810550e7f52a61cadba188baba2fe1a73468a09e5ba5",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-reference-fixture-1280-1.0.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "a0dea04625d488803166c8d828cd6fd788f252f4f9f4dcb97ff1b9d8b951ef52",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-reference-fixture-1920-1.0.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "945d024d51bc3965db577ab19af89b42b3b53b53125505234be2c26477c5ce02",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-reference-fixture-1920-1.5.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "a5885da9c38fc7f01e6be280e21ef62508cb13aca5dacf4969265e7bf9e44842",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "0140-reference-fixture-3840-1.0.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "8086d702e81a125fda1b7c6d484809cf67d5fd3ebaf976f36b23254e2255ae97",
+      "kind": "Robolectric native software render"
+    },
+    {
+      "file": "FD033-geometry-overlay.png",
+      "width": 1280,
+      "height": 770,
+      "sha256": "2cfb2f985067949a4fb9a6b8f41fe51fdfdc57ad5929b7bf5732294d1ae717e7",
+      "kind": "comparison plot"
+    },
+    {
+      "file": "FD033-reference-comparison.png",
+      "width": 2240,
+      "height": 728,
+      "sha256": "f7d973203de20e83eff460de067287c995a969749ab691353f6a218397245a1a",
+      "kind": "comparison plot"
+    }
+  ]
+}

@@ -49,14 +49,14 @@ public final class TopNavigation extends LinearLayout {
         setOrientation(VERTICAL);TvLayout.applyInsets(this);
         setWillNotDraw(false);
         artwork = new PreviewBackdrop(c); artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION); setBackground(artwork);
-        bar = new LinearLayout(c); bar.setClipChildren(false);bar.setClipToPadding(false); bar.setGravity(Gravity.CENTER_VERTICAL);
+        bar = new LinearLayout(c); bar.setClipChildren(true);bar.setClipToPadding(true); bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(26), 0, dp(26), 0);
         bar.setBackgroundColor(Color.TRANSPARENT);
         brand = new TextView(c);brand.setSingleLine(true);
         brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(Color.WHITE);
         brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(136), -1));
         group = new PreviewFocusRail(c);group.useUnderline();group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
-        android.widget.HorizontalScrollView rail=new android.widget.HorizontalScrollView(c);rail.setHorizontalScrollBarEnabled(false);rail.setFillViewport(true);rail.setClipToPadding(false);rail.setFocusable(false);rail.addView(group,new android.widget.FrameLayout.LayoutParams(-2,-1));bar.addView(rail,new LayoutParams(0,-1,1));
+        android.widget.HorizontalScrollView rail=new android.widget.HorizontalScrollView(c);rail.setHorizontalScrollBarEnabled(false);rail.setFillViewport(true);rail.setClipChildren(true);rail.setClipToPadding(true);rail.setFocusable(false);rail.addView(group,new android.widget.FrameLayout.LayoutParams(-2,-1));bar.addView(rail,new LayoutParams(0,-1,1));
         String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search", customLabel(c)};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
@@ -191,6 +191,8 @@ public final class TopNavigation extends LinearLayout {
         com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser=visibleBrowser(content);
         if(browser==null)action.run();else browser.requestExit(action);
     }
+    /** FD-033 lower tabs retain the selected title, without the unrelated application bar. */
+    public void setDetailsExpanded(boolean expanded){int visibility=expanded?INVISIBLE:VISIBLE;if(bar.getVisibility()!=visibility)bar.setVisibility(visibility);}
     public boolean focusNavigation() {
         if (bar.hasFocus()) return false;
         selected.requestFocus(); return true;

@@ -1953,8 +1953,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
+    /** Output evidence belongs to this service launch and exact metadata instance, never a previous player frame. */
+    public boolean hasEstablishedOutputFor(VideoDbInfo info){return info!=null&&info==mVideoInfo&&info.uri!=null&&info.uri.equals(mPlaybackSession.uri)&&mPlaybackSession.outputEstablished&&!mPlaybackSession.failed;}
     @Override public void onPlaybackEstablished(){
         mPlaybackSession.outputEstablished=true;
+        if(mPlayerFrontend!=null)mPlayerFrontend.onPlaybackEstablished();
         excludeEstablishedHero();
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_output_established","backend",mPlayer==null?-1:mPlayer.getType());
     }

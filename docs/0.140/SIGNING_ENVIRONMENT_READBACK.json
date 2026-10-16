@@ -1,0 +1,88 @@
+{
+  "environment": "supernova-foundation-signing",
+  "checked_at_utc": "2026-10-16 19:29 UTC",
+  "previous_failed_run": 38949916248,
+  "previous_attempt_http_status": 403,
+  "owner_confirmed_exact_branch_added": true,
+  "existing_rules_retained": true,
+  "before_rules": [
+    {
+      "id": 62439781,
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "id": 62580297,
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "id": 62672957,
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "id": 62775528,
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "id": 63180517,
+      "name": "codex/supernova-0.139-implementation-2026-10-13",
+      "type": "branch"
+    },
+    {
+      "id": 62634362,
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "after_rules": [
+    {
+      "id": 62439781,
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "id": 62580297,
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "id": 62672957,
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "id": 62775528,
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "id": 63180517,
+      "name": "codex/supernova-0.139-implementation-2026-10-13",
+      "type": "branch"
+    },
+    {
+      "id": 63311363,
+      "name": "codex/supernova-0.140-implementation-2026-10-16",
+      "type": "branch"
+    },
+    {
+      "id": 62634362,
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "secrets_or_signing_identity_changed": false,
+  "status": "access blocker resolved; exact-source software/native validation still running",
+  "environment_policy_readback": {
+    "checked_at_utc": "2026-10-16 19:51 UTC",
+    "custom_branch_policies": true,
+    "protected_branches": false,
+    "protection_rule_types": [
+      "branch_policy"
+    ]
+  },
+  "final_outcome": "PASS \u2014 exact-source signed workflow 38959928321 and independent APK/Drive verification"
+}

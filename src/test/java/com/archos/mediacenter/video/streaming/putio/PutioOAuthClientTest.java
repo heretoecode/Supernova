@@ -31,6 +31,10 @@ public class PutioOAuthClientTest {
             assertEquals(1,ends);
         }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,false);}
     }
+    @Test public void registeredPublicClientUsesProviderVerifiedTvLinkRoute()throws Exception{
+        assertTrue(PutioOAuthClient.configured("9874","https://app.put.io/link?code={code}"));
+        assertEquals("https://app.put.io/link?code=A%26B",PutioOAuthClient.parseCode(new JSONObject("{status:OK,code:'A&B'}"),"https://app.put.io/link?code={code}").link);
+    }
     @Test public void emptyOrUnsafeProductionConfigurationCannotStartLinking(){
         assertFalse(PutioOAuthClient.configured("",""));
         for(String template:new String[]{"http://put.io/{code}","https://other.example/{code}","https://user:password@put.io/{code}","https://put.io/{code}?token=secret","https://put.io/{code}/{code}"})assertFalse(PutioOAuthClient.configured("1",template));

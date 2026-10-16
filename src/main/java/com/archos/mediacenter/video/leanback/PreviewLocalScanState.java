@@ -27,6 +27,7 @@ final class PreviewLocalScanState {
             "count_kind","technical_rows_checked","checked",checked,"new",added,"updated",updated,"counts_known",known,"elapsed_ms",elapsed);
         summary="Local library · "+phase.replace('_',' ')+"\n"+checked+" media rows checked"+(known?" · "+added+" new · "+updated+" updated":" · new/updated counts unavailable")+" · "+elapsed/1000+" seconds";
         if(Arrays.asList("complete","partial","failed","cancelled").contains(phase)){
+            LibraryScanRecord.record(context,"local",phase);
             androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().putString("preview_local_scan_result",summary).apply();
             Diagnostics.finishOperation(state.operation,"local_import",state.started);active.remove(id);ended.add(id);if(ended.size()>64)ended.remove(ended.iterator().next());
         }

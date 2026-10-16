@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class PreviewPeopleRailTest {
     @Test public void nativePrincipalCrewRetainsIndividualNamesWithoutInformationFocus(){
         Activity activity=Robolectric.buildActivity(Activity.class).setup().visible().get();
-        PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);
+        PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);page.bindRemote(new JSONObject(),"movie",0);
         com.archos.mediascraper.MovieTags tags=new com.archos.mediascraper.MovieTags();
         tags.setDirectors(java.util.Arrays.asList("Director One","Director Two"));tags.setWriters(java.util.Collections.singletonList("Writer, Jr."));
         page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
@@ -29,7 +29,7 @@ public class PreviewPeopleRailTest {
     }
     @Test public void creditsCreateIndividualPrincipalCrewAndRemoteCast()throws Exception{
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();
-        PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);
+        PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);page.bindRemote(new JSONObject(),"movie",0);
         PreviewDetailsData.Result data=new PreviewDetailsData.Result();
         data.credits=new JSONObject("{cast:[{id:1,name:'Actor One',character:'Lead'}],crew:[{id:2,name:'Director One',job:'Director'},{id:3,name:'Director Two',job:'Director'},{id:4,name:'Crew Other',job:'Production Assistant'}]}");
         ReflectionHelpers.setField(page,"enrichment",data);ReflectionHelpers.callInstanceMethod(page,"renderEnrichedPeople");
@@ -41,9 +41,10 @@ public class PreviewPeopleRailTest {
         assertNull(page.findViewWithTag("person:Crew Other:Production Assistant"));
         assertTrue(first.getParent() instanceof LinearLayout);
         assertEquals(LinearLayout.VERTICAL,((LinearLayout)first.getParent()).getOrientation());
-        assertTrue(first instanceof LinearLayout);assertEquals(1,((LinearLayout)first).getChildCount());
-        assertTrue(((LinearLayout)first).getChildAt(0) instanceof android.widget.TextView);
-        assertEquals("Director One · Director",((android.widget.TextView)((LinearLayout)first).getChildAt(0)).getText().toString());
+        assertTrue(first instanceof LinearLayout);assertEquals(3,((LinearLayout)first).getChildCount());
+        assertTrue(((LinearLayout)first).getChildAt(0) instanceof android.widget.ImageView);
+        assertEquals("Director One",((android.widget.TextView)((LinearLayout)first).getChildAt(1)).getText().toString());
+        assertEquals("Director",((android.widget.TextView)((LinearLayout)first).getChildAt(2)).getText().toString());
         assertFalse(first.isFocusable());assertFalse(first.isClickable());
         page.setTags(null,java.util.Collections.emptyList(),java.util.Collections.emptyList());
         assertNotNull("A local tag refresh must retain cached individual crew",page.findViewWithTag("person:Director One:Director"));

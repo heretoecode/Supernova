@@ -17,6 +17,7 @@ public final class PreviewIcon extends Drawable {
   else if(kind.equals("chevrons")){line(c,8,9,12,5,16,9);line(c,8,15,12,19,16,15);}
   else if(kind.equals("arrow-up")){line(c,12,21,12,3);line(c,5,10,12,3,19,10);}
   else if(kind.equals("arrow-down")){line(c,12,3,12,21);line(c,5,14,12,21,19,14);}
+  else if(kind.equals("trophy")){line(c,6,3,18,3,17,10,15,14,9,14,7,10,6,3);line(c,6,5,2,5,2,10,7,12);line(c,18,5,22,5,22,10,17,12);line(c,12,14,12,20);line(c,8,20,16,20,17,22,7,22,8,20);}
   else if(kind.equals("history")){c.drawArc(3,3,21,21,-90,290,false,p);line(c,3,4,3,10,8,10);line(c,12,7,12,12,16,15);}
   else if(kind.equals("recommendation")){line(c,12,2,14,9,21,12,14,15,12,22,10,15,3,12,10,9,12,2);}
   else if(kind.equals("custom row")){for(int y=5;y<=19;y+=7){c.drawCircle(4,y,1,p);line(c,9,y,21,y);}}

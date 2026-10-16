@@ -43,9 +43,9 @@ public class PreviewMoviePageTest {
                 }
                 page.setSnapshot(snapshot);
                 View panel=page.findViewWithTag("semantic:details.panel.technical.information");assertNotNull(panel);
-                assertNotNull(PreviewPagesTest.findText(panel,"Library size"));
-                if(complete){assertNull(PreviewPagesTest.findText(panel,"≥ "));assertNotNull(PreviewPagesTest.findText(panel,"Average file size"));}
-                else{assertNotNull(PreviewPagesTest.findText(panel,"≥ "));assertNull(PreviewPagesTest.findText(panel,"Average file size"));}
+                assertNotNull(PreviewPagesTest.findText(panel,"Size"));
+                if(complete){assertNull(PreviewPagesTest.findText(panel,"≥ "));assertNotNull(PreviewPagesTest.findText(panel,android.text.format.Formatter.formatShortFileSize(host.get(),2000)));assertNotNull(PreviewPagesTest.findText(panel,"avg "));}
+                else{assertNotNull(PreviewPagesTest.findText(panel,"≥ "));assertNull(PreviewPagesTest.findText(panel,"avg "));}
             }
         }finally{host.pause().stop().destroy();}
     }
@@ -92,16 +92,17 @@ public class PreviewMoviePageTest {
             assertNotNull(page.findFocus());assertEquals("section:Details",page.findFocus().getTag());
         }finally{host.pause().stop().destroy();}
     }
-    @Test public void remotePanelsOmitEmptyReceptionAndLocalFileInformation() throws Exception {
+    @Test public void remotePanelsKeepSixRegionsWithHonestMissingRatings() throws Exception {
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try{
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});host.get().setContentView(page);
             page.bindRemote(new org.json.JSONObject().put("title","Remote fixture").put("tagline","A real supplied tagline").put("revenue",1234),"movie",0);
-            assertNotNull(PreviewPagesTest.findText(page,"Streaming Availability"));
-            assertNull(PreviewPagesTest.findText(page,"Technical Information"));
+            assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
+            assertNotNull(PreviewPagesTest.findText(page,"Unknown"));
             View reception=PreviewPagesTest.findText(page,"Reception");assertNotNull(reception);
-            assertEquals(View.GONE,((View)reception.getParent()).getVisibility());
-            assertNotNull(PreviewPagesTest.findText(page,"A real supplied tagline"));
+            assertEquals(View.VISIBLE,((View)reception.getParent()).getVisibility());
+            assertNotNull(PreviewPagesTest.findText(page,"No rating available"));
+            assertNotNull(PreviewPagesTest.findText(page,"Description"));
         }finally{host.pause().stop().destroy();}
     }
     @Test public void extrasHavePopulatedCategoriesOnly() throws Exception {
@@ -126,7 +127,7 @@ public class PreviewMoviePageTest {
             com.archos.mediascraper.ShowTags series=new com.archos.mediascraper.ShowTags();series.setRating(9.8f);series.addGenreIfAbsent("Drama");
             com.archos.mediascraper.EpisodeTags tags=new com.archos.mediascraper.EpisodeTags(series,1,1);tags.setRuntime(45,java.util.concurrent.TimeUnit.MINUTES);page.bind(episode);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
             assertNotNull(PreviewPagesTest.findText(page,"S1 E1"));assertNotNull(PreviewPagesTest.findText(page,"45m"));assertNotNull(PreviewPagesTest.findText(page,"Drama"));assertNull(PreviewPagesTest.findText(page,"9.8"));
-            tags.setRating(7.4f);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());assertNotNull(PreviewPagesTest.findText(page,"7.4"));assertNull(PreviewPagesTest.findText(page,"9.8"));PreviewPagesTest.layout(shell);PreviewPagesTest.capture(shell,"episode-details");
+            tags.setRating(7.4f);page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());assertNotNull(PreviewPagesTest.findText(page,"Indexed rating 7.4"));assertNull(PreviewPagesTest.findText(page,"9.8"));PreviewPagesTest.layout(shell);PreviewPagesTest.capture(shell,"episode-details");
         }finally{host.pause().stop().destroy();}
     }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void moviePageDelegatesPlaybackAndRenders() throws Exception {
@@ -162,7 +163,7 @@ public class PreviewMoviePageTest {
             assertNotNull(PreviewPagesTest.findText(page,"Key Information"));assertNotNull(PreviewPagesTest.findText(page,"Reception"));assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
             View keyPanel=page.findViewWithTag("semantic:details.panel.key.information");assertNotNull(keyPanel);assertFalse(keyPanel.requestFocus());assertSame(restored,page.findFocus());
             for(int frame=0;frame<8;frame++){page.computeScroll();PreviewPagesTest.layout(nav);}
-            android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertEquals("Entire compact information panel must be visible",keyPanel.getHeight(),visible.height());assertNotNull(PreviewPagesTest.findText(keyPanel,"Year"));
+            android.graphics.Rect visible=new android.graphics.Rect();assertTrue("Information fixture must actually show its panel",keyPanel.getGlobalVisibleRect(visible));assertEquals("Entire compact information panel must be visible",keyPanel.getHeight(),visible.height());assertNotNull(PreviewPagesTest.findText(keyPanel,"Release Date"));assertNotNull(PreviewPagesTest.findText(keyPanel,"2024"));
             PreviewPagesTest.capture(nav,"details-information-next");
         }finally{host.pause().stop().destroy();}
     }

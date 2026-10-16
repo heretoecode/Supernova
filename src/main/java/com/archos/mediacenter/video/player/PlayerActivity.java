@@ -329,6 +329,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private Context mContext;
 
     private View                mRootView;
+    private PlaybackAgeOverlay ageOverlay;
     private PlayerController    mPlayerController;
     private View                mPlayerControllerPlaceholder;
     private Player              mPlayer;
@@ -772,6 +773,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mSurfaceController.mCutBothSidesX = cutBothSidesX;
 
         mSurfaceController.setListener(mSurfaceListener);
+        ageOverlay=new PlaybackAgeOverlay(this,mSurfaceController);((ViewGroup)mRootView).addView(ageOverlay,new android.widget.RelativeLayout.LayoutParams(-1,-1));
 
         View menuAnchor = mRootView.findViewById(R.id.menu_anchor);
         mProgressView = mRootView.findViewById(R.id.progress_indicator);
@@ -1209,6 +1211,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     protected void onStop() {
+        if(ageOverlay!=null)ageOverlay.stop();
         if(previewUpNext!=null){previewUpNext.stop();previewUpNext=null;}
         super.onStop();
         if (log.isDebugEnabled()) log.debug("onStop");
@@ -3226,6 +3229,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     public void setVideoInfo(VideoDbInfo info){
         mVideoInfo = info;
+        if(ageOverlay!=null){ageOverlay.bind(info);if(PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.hasEstablishedOutputFor(info))ageOverlay.playbackStarted();}
         int viewMode = VideoEffect.getDefaultMode();
         int viewType = VideoEffect.getDefaultType();
         if (mVideoInfo != null) {
@@ -4222,6 +4226,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
      */
     public class PlayerListener implements PlayerService.PlayerFrontend {
+        @Override public void onPlaybackEstablished(){runOnUiThread(()->{if(ageOverlay!=null&&PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.hasEstablishedOutputFor(mVideoInfo))ageOverlay.playbackStarted();});}
 
         public void onPrepared() {
             if (log.isDebugEnabled()) log.debug("onPrepared");

@@ -1,0 +1,48 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "b6d59e82c03cd99844f49d4647d2f2a985c484c819d92064542eec84f33788f5",
+  "version_name": "0.140",
+  "version_code": 140,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "min_sdk": 23,
+  "target_sdk": 36,
+  "debuggable": false,
+  "offline_licence_entries": 60,
+  "result": "PASS",
+  "verified_at_utc": "2026-10-16T20:49:29.499744+00:00",
+  "filename": "Supernova_0.140.apk",
+  "apk_bytes": 87890896,
+  "source_commit": "866f21f11f27dea4846ddd3cac57d98b281eecbb",
+  "embedded_source_commit_verified": true,
+  "zip_crc_verified": true,
+  "duplicate_entries": false,
+  "native_hashes_matched": 88,
+  "rebuilt_ffmpeg_libraries_matched": 24,
+  "alignment_16k_verified": true,
+  "signature_schemes": [
+    "v1",
+    "v2",
+    "v3"
+  ],
+  "ci_signed_payload_parity_verified": true,
+  "unit_tests": 1047,
+  "unit_failures": 0,
+  "unit_errors": 0,
+  "unit_skips": 0,
+  "lint": {
+    "errors": 0,
+    "warnings": 1775
+  },
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false
+}

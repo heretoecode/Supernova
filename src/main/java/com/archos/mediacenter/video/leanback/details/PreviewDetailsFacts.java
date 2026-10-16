@@ -30,6 +30,11 @@ final class PreviewDetailsFacts {
         }
         return "";
     }
+    static String alternativeNames(JSONObject data,String country){
+        JSONArray titles=data==null?null:data.optJSONArray("titles");if(titles==null&&data!=null)titles=data.optJSONArray("results");if(titles==null)return "";
+        LinkedHashSet<String> local=new LinkedHashSet<>(),other=new LinkedHashSet<>();for(int n=0;n<titles.length();n++){JSONObject title=titles.optJSONObject(n);if(title==null)continue;String name=title.optString("title").trim();if(name.isEmpty())continue;if(country.equals(title.optString("iso_3166_1")))local.add(name);else other.add(name);}
+        java.util.List<String> names=new java.util.ArrayList<>(local.isEmpty()?other:local);return android.text.TextUtils.join(", ",names.subList(0,Math.min(3,names.size())));
+    }
     static int year(JSONObject details){
         if(details==null)return 0;String date=details.optString("release_date",details.optString("first_air_date",details.optString("air_date")));
         return date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")?Integer.parseInt(date.substring(0,4)):0;
