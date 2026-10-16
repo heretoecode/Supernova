@@ -1,6 +1,6 @@
 # TODO — Backup & Restore: surface existing export options directly
 
-**Owner QA clarification:** 16 October 2026. **Target:** next corrective release, provisionally 0.139.2. **Status:** planned, not implemented.
+**Owner QA clarification:** 16 October 2026. **Target:** Supernova 0.140 (combined release; standalone 0.139.2 cancelled by owner on 16 October 2026). **Status:** planned, not implemented.
 
 ## Observed on physical NVIDIA Shield
 - Settings → Advanced → Backup & Restore shows only **Export Backup** and **Restore Backup**.
@@ -24,6 +24,6 @@
 - [ ] Right-hand contextual help updates with focus.
 - [ ] Export and Restore actions still work with necessary file pickers/confirmations.
 - [ ] Regression-check playback, diagnostics and Continue Watching.
-- [ ] Use a unique corrective APK versionName/versionCode and update HTML release notes.
+- [ ] Use versionName 0.140 and an increasing Android versionCode and update HTML release notes.
 
 This is a QA clarification, not authorisation to start a build or modify the active 0.139 repair branch.
