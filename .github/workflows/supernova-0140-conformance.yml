@@ -123,6 +123,7 @@ jobs:
             ${{ runner.temp }}/supernova-foundation-native-wrappers.json
             ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
             nova/Video/build/reports/preview-ui/*.png
+            nova/Video/build/reports/preview-ui/*.json
             nova/Video/build/test-results/testNoamazonReleaseUnitTest/*.xml
             nova/Video/build/reports/lint-results-noamazonRelease.xml
             nova/Video/build/outputs/apk/noamazon/release/*unsigned.apk

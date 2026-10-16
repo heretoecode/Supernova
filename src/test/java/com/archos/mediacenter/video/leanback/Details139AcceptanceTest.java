@@ -59,7 +59,7 @@ public class Details139AcceptanceTest {
             page.setTags(null,List.of(new ScraperTrailer(ScraperTrailer.Type.SHOW_TRAILER,"Fixture trailer","abcdefghijk","YouTube","")),List.of());layout(root);
             View tab=page.findViewWithTag("section:Details");tab.requestFocus();key(root,KeyEvent.KEYCODE_DPAD_DOWN);layout(root);
             View frame=page.findViewWithTag("details.connected.frame");ScrollView reading=page.findViewWithTag("details.reading.overflow");
-            assertEquals(Math.round(page.getWidth()*.04f),frame.getLeft());assertEquals(page.getWidth()-Math.round(page.getWidth()*.04f),frame.getRight());assertEquals("Four percent viewport bottom inset",page.getHeight()-Math.round(page.getHeight()*.04f),bounds(frame).bottom-page.getTop());
+            assertFalse("Application navigation disappears in the approved lower-tab view",root.findViewWithTag("semantic:topnav.home").isShown());assertEquals("Reference tab-top anchor",Math.round(root.getHeight()/6f),bounds(frame).top);assertEquals(Math.round(page.getWidth()*.04f),frame.getLeft());assertEquals(page.getWidth()-Math.round(page.getWidth()*.04f),frame.getRight());assertEquals("Four percent viewport bottom inset",page.getHeight()-Math.round(page.getHeight()*.04f),bounds(frame).bottom-page.getTop());
             for(String section:List.of("Description","Key Information","Reception","Cast","Crew","Technical Information")){View region=page.findViewWithTag("details.region:"+section);if(region==null)region=page.findViewWithTag("details.region."+section);if(region==null)region=page.findViewWithTag("semantic:details.panel."+section.toLowerCase(java.util.Locale.ROOT).replace(' ','.'));assertNotNull(section,region);assertFalse(region.isFocusable());assertTrue(section+" has height",region.getHeight()>0);Rect regionBounds=bounds(region),viewport=bounds(reading);assertEquals(section+" fully visible",region.getHeight(),regionBounds.height());assertTrue(section+" stays above bottom",regionBounds.bottom<=viewport.bottom);}
             TextView full=page.findViewWithTag("details.full.synopsis");assertEquals(synopsis,full.getText().toString());assertFalse(full.isFocusable());assertNotNull("Explicit bounded long-synopsis policy",full.getEllipsize());
             for(int n=0;n<5;n++)key(root,KeyEvent.KEYCODE_DPAD_DOWN);assertSame(tab,page.findFocus());assertEquals("Details is not independently scrollable",0,reading.getScrollY());
@@ -68,6 +68,7 @@ public class Details139AcceptanceTest {
             key(root,KeyEvent.KEYCODE_DPAD_RIGHT);View extras=page.findViewWithTag("section:Extras");assertSame(extras,page.findFocus());key(root,KeyEvent.KEYCODE_DPAD_DOWN);layout(root);assertEquals("extra:abcdefghijk",page.findFocus().getTag());
             key(root,KeyEvent.KEYCODE_DPAD_UP);layout(root);assertSame(extras,page.findFocus());assertEquals("Heading is recoverable without switching tabs",0,reading.getScrollY());
             assertTrue("Extras heading remains visible",bounds(PreviewPagesTest.findText(page,"Trailers")).height()>0);
+            key(root,KeyEvent.KEYCODE_DPAD_UP);layout(root);assertTrue("Up restores the existing application navigation",root.findViewWithTag("semantic:topnav.home").isShown());assertEquals(0,page.getScrollY());
         }finally{host.pause().stop().destroy();}
     }
 }

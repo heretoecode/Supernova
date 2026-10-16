@@ -48,3 +48,7 @@
 - [ ] Commit the **2400×1680 v3 annotated PNG** to GitHub as a binary blueprint.
 - [x] Commit the text specification, explicit Reception separators and provisional sizing register to GitHub.
 - [ ] Codex implementation and visual QA on actual target devices.
+
+## Archival update — 16 October 2026
+
+The owner reattached the approved overall Goonies JPEG. Its exact received bytes are now archived at [FD-033-approved-goonies.jpg](../../0.140/references/FD-033-approved-goonies.jpg), with [provenance and SHA-256](../../0.140/references/README.md). This received copy is **1280×720**, rather than the 1536×864 master described above; no resizing/recompression was performed. The separately annotated v3 PNG and FD-007 references remain missing. Written v3 corrections and the 4% margins continue to apply. See [implementation visual QA](../../0.140/VISUAL_QA.md) for software-renderer comparisons and remaining device acceptance. This archival update does not claim physical Shield or pixel-perfect acceptance.

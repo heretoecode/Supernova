@@ -191,6 +191,8 @@ public final class TopNavigation extends LinearLayout {
         com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser=visibleBrowser(content);
         if(browser==null)action.run();else browser.requestExit(action);
     }
+    /** FD-033 lower tabs retain the selected title, without the unrelated application bar. */
+    public void setDetailsExpanded(boolean expanded){int visibility=expanded?INVISIBLE:VISIBLE;if(bar.getVisibility()!=visibility)bar.setVisibility(visibility);}
     public boolean focusNavigation() {
         if (bar.hasFocus()) return false;
         selected.requestFocus(); return true;

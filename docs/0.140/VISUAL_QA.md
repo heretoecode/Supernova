@@ -1,25 +1,41 @@
 # 0.140 visual verification register
 
-Status: implementation and regression validation in progress. Native Robolectric renders are software evidence, not NVIDIA Shield screenshots or final visual acceptance.
+Native Robolectric renders are software evidence, not NVIDIA Shield screenshots or final device acceptance. The implementation was calibrated against the recovered JPEG and approved written v3 corrections; final full-suite/native CI results are recorded separately.
 
-## Reference availability
+## Authoritative reference and evidence
 
-The owner reports recovery of the original approved Goonies JPEG and instructs its use alongside the written v3 corrections. The response received in this session contains text only: no accessible binary path, attachment ID or Drive link is present. A bounded workspace/attachment-folder search found no JPEG. Do not claim to have inspected or archived it. Await the actual file/link. The separately annotated v3 PNG and FD-007 reference images remain unrecovered; the JPEG must not substitute for them.
+- [Exact owner-attached JPEG](references/FD-033-approved-goonies.jpg): received **1280×720**, 191,790 bytes, SHA-256 `8b7ce64f4ef1cb2608081ecbc20a15d1fef061ad54533b235f4e7eeb033b3a15`. Copied without resizing/recompression. Earlier planning describes a 1536×864 copy; this is the exact received attachment, not a claim to have recovered that master.
+- [Provenance and reference interpretation](references/README.md). The separately annotated v3 PNG and FD-007 reference images remain missing; this JPEG does not replace them.
+- [Side-by-side comparison](visual-evidence/FD033-reference-comparison.png) and [geometry overlay](visual-evidence/FD033-geometry-overlay.png). The overlay is a diagnostic comparison, not a pixel-pass metric: content, artwork, background and written margin overrides differ.
+- Actual populated fixture renders and measured JSON: [720p](visual-evidence/0140-reference-fixture-1280-1.0.png), [1080p](visual-evidence/0140-reference-fixture-1920-1.0.png), [4K](visual-evidence/0140-reference-fixture-3840-1.0.png), [1080p at 150% text](visual-evidence/0140-reference-fixture-1920-1.5.png). Ratings/names in these fixtures come from illustrative reference content, not live API responses. Neutral silhouettes are intentional; no likenesses are fabricated.
 
-## FD-033 implemented measurements
+## Conformance results and final measurements
 
-- Fixed six-region panel, upper/lower height weights 56/44. Upper column weights 37.8/32.8/29.4; lower 34.4/35.3/30.3. Internal region padding 6dp horizontally and 4dp vertically; panel padding 10dp/8dp.
-- Full viewport left/right/bottom margins 4%. Continuous compound tab/panel perimeter, 1dp stroke, 4dp radius; default white, existing accent override. No line below the active tab; inactive tabs unboxed.
-- Heading 15sp bold; aligned labels/values 10sp. Description 11–14sp autosize, centred, 3dp added line spacing; long text ends with ellipsis to preserve the fixed non-scrolling panel. Path middle-ellipsized on one line with full text in content description.
-- Eight cast and eight crew maximum, each 4×2; circular portraits up to 34dp (reduced to fit compact cells), names/roles 9sp. Missing portraits use the existing placeholder, never invented faces.
-- Reception has exactly the four specified rows and three subtle separators. Existing bundled IMDb artwork is reused; text currently replaces the other unavailable approved/provider-licensed artwork. Existing source-labelled indexed/TMDb scores and votes remain visible above the four slots. Supplied supplementary numeric scores use 16sp bold primary text with smaller units/support. Missing data uses stable “No rating available”/“Unavailable” values. OMDb production binding is denied.
+| Requirement | Software result |
+|---|---|
+| Six fixed, read-only regions | Description, Key Information, Reception / Cast, Crew, Technical Information; all region bounds fit the same viewport. |
+| Retained title / no app bar | Scrolled lower view retains the selected title/available official artwork. Application navigation disappears; Up restores hero/actions/navigation. The reference's Supernova wordmark is not copied as a movie logo. |
+| Placement | Tab top = one sixth of viewport height (120 / 180 / 360px). Tab band = 5/72 of height (50 / 75 / 150px), with compact minimum. Left/right/bottom = 4%, as written; these intentionally differ from the raster's narrower margins. |
+| Border | One compound tab/panel fill and perimeter, 1dp stroke and 4dp radius; white default and user accent override. No base line under active tab, duplicate outline or boxed inactive tab. Icon and label form a centred inline group; Details minimum width 14.3% of viewport. |
+| Internal proportions | Upper/lower weights 56/44; upper columns 37.8/32.8/29.4, lower 34.4/35.3/30.3. Offset dividers preserved. Three Reception rules. |
+| Typography and padding | At 960×540 logical reference: heading 15sp bold, facts 8–10sp autosize, description 11–14sp with 3dp added leading, score up to 16sp with smaller unit/support. Region padding 6×4dp, panel 10×8dp. Lower-panel metrics scale by the available logical reference ratio, including compact 720p. Long descriptions reduce then ellipsize; long metadata/path use bounded ellipsis. |
+| Portraits | 4×2 each, up to eight cast and eight distinct crew. Circular clipping works on software and hardware paths. Nominal 34 reference dp; reduced to available cell height after actual caption ascent/descent. Name/role 9 reference sp with measured caption height. Useful portrait size and whole caption bounds verified at 720p, 1080p, 4K and 150% text. |
+| Reception | Stable four slots. Score and vote captions measured separately to prevent clipping; supplementary attribution visible once. Missing values remain “No rating available” / “Unavailable”. OMDb production access denied. |
+| Technical | Seven aligned rows; video/audio aggregates preserve available track details. Single-line middle-ellipsized safe path. Series unknown sizes remain lower bounds; averages appear only when complete. |
 
-## Details/Extras corrections
+Scale is `min(screenWidthDp/960, screenHeightDp/540)` with a lower unsupported-viewport guard; Android density and user font scale still apply. Geometry JSON records actual measured frame/region rectangles, font pixels and portrait diameter. At 720p a populated fixture exposed portrait shrinkage and Reception clipping; responsive metrics, actual caption measurement, separate score/support blocks and regression checks corrected them before final validation.
 
-Genre fallback restored from indexed metadata; redundant resolution removed from human metadata; canonical Supernova background; single compound border; hero synopsis balanced with vertical spacers. Extras use the shared Home card renderer, horizontal rails, 172dp cards with 97dp 16:9 thumbnails and 125dp rows. Heading-aware focus reveal and return-to-tab reset are covered by fixtures. Provider buttons use at least 44dp targets, explicit D-pad routing and the existing action callback. A callback fixture does not establish a provider app launch on a device.
+## Explicit visual differences / acceptance still open
 
-## Validation limits
+- Existing bundled IMDb wordmark has a different aspect ratio from the reference's square mark; it is preserved without distortion. Awards use a generic gold trophy. Rotten Tomatoes and Metacritic use text labels pending approved/provider-permitted artwork. No new logo rights are inferred from a screenshot or OMDb access.
+- Existing source-labelled indexed/TMDb ratings and votes remain visible, as required by the approved content-retention decision. This adds a compact line absent from the illustrative mock-up. Supplementary attribution is explicit.
+- The actual approved Supernova page background is retained. The mock-up's illustrative nebula, faces, scores, money/date formats and “Remux” sample do not replace actual metadata or project assets. Technical Source reflects the actual storage transport; missing Added remains Unknown.
+- Real portraits, provider app launch, overscan, hardware font rendering and Shield remote/decoder behaviour still need device QA. No pixel-perfect or physical acceptance is claimed. The annotated v3 and FD-007 image comparisons remain blocked by missing assets.
 
-Native renderer fixtures cover physical 1280×720, 1920×1080 and 3840×2160 viewports and 150% text. These checks can establish bounds, focusability, row count, margins and render output. They cannot establish source-image pixel conformance, physical overscan, TV decoder playback or Shield remote behaviour. No emulator or physical device is connected (`adb devices` empty; no KVM device). Instrumentation and real-device screenshots remain unavailable.
+## Details / Extras corrections
 
-Final per-viewport results and artifact/source references must be added after the complete passing test run. Any mismatch with the recovered JPEG must be corrected after it becomes accessible; no pixel-perfect approval is claimed here.
+Genre fallback from indexed metadata; redundant resolution removed from human metadata; canonical Supernova background; single compound border; vertically balanced hero synopsis. Extras use the actual shared Home CONTINUE card renderer, horizontal rails, 172dp width with 97dp 16:9 artwork and 125dp rail height. Focus reveals headings and resets to the active tab; Up/Down remember cards between rails. Provider buttons align with measured Play height, have at least 44dp targets and use the existing functional callback. A callback fixture does not establish a real external provider launch.
+
+## Available test boundary
+
+Native viewport/focus fixtures and enlarged text checks are available. No emulator or physical device is connected (`adb devices` empty; no KVM device). No instrumentation/device playback, signed upgrade, physical Shield screenshot or real Put.io account round trip is claimed.
