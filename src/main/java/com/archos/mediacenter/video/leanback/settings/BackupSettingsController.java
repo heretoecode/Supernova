@@ -112,7 +112,7 @@ public final class BackupSettingsController {
         return false;
     }
     public void enter(){if(isVisible()){if(operation!=null)focusFirst(frame);else exportAction.requestFocus();}}
-    private void sidebar(){if(operation!=null){exportSelection=false;dismissOperation();exportAction.requestFocus();}else if(opener!=null)opener.requestFocus();}
+    private void sidebar(){if(operation!=null)back();else if(opener!=null)opener.requestFocus();}
     public boolean back(){
         if(!isVisible())return false;if(noticeActive){render(model.current());return true;}if(workspace!=null&&workspace.back())return true;
         if(model.isBusy()){if(model.current().phase!=BackupOperationModel.Phase.RESTORING_LEGACY)model.cancel();return true;}

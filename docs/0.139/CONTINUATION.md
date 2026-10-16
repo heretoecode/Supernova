@@ -14,6 +14,8 @@ Local build `/workspace/repair139-build/Video` now has the corrected player init
 
 Next: wait for both exact-source workflows, retrieve artifact digests and complete archives, independently verify signature/certificate/identity/version/native/CRC/alignment and unsigned-to-signed parity receipt; install and exercise the signed correction with owned media plus Settings D-pad routes. Upload as Supernova_0.139.apk to existing APKs folder1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM, preserve the original artifact, download/hash the new file; finalize Markdown and existing Drive HTML17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW, preserving CSS and138/olderhistory. Published HTML before-correction remains21248bytes/SHA2281d7f7b85a1d904b80f3abd0760764d0ad869257482c24a78d725841ff9461, downloaded again to the new signing evidence directory. No new corrective APK/Drive link exists yet.
 
+**Superseding correction:** final review found Left from the new restore-review dialog retained REVIEW and could reopen it on the next Export. The new regression failed for that mode retention, then all12BackupSettingsController tests passed using the existing Back/close path. Targeted distinct total34/6classes; see SHIELD_REPAIR_FINAL_SOFTWARE_VERIFICATION_2026-10-16.json. Both38897967011 and38897948111 are now deliberately CANCELLED during native rebuild, before signing; their dispatch record above is historical. A new final-source signing/unsigned run must be used. No corrective APK has yet been produced/uploaded.
+
 ---
 
 # Supernova 0.139 — signed QA APK delivered; physical acceptance open

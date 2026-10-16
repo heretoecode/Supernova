@@ -68,6 +68,27 @@ public class BackupSettingsControllerTest {
     @Test public void connectedRestoreRequiresPreviewAndExplicitConfirmationBeforeWriting()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{Settings settings=add(host.get());enter(settings);settings.backup.enter();var prefs=PreferenceManager.getDefaultSharedPreferences(model(host.get()).getApplication());prefs.edit().putInt("preview_accent41",7).commit();File file=new File(host.get().getCacheDir(),"incoming.zip");JSONObject payload=new JSONObject().put("schema",1).put("category","APPEARANCE").put("values",new JSONObject().put("preview_accent41",new JSONObject().put("type","INT").put("value",19)));LogicalBackupArchive.writeCategories(file,Map.of(BackupCategory.APPEARANCE,payload),()->false);BackupOperationModel model=model(host.get());model.open(new FileInputStream(file));await(model,BackupOperationModel.Phase.REVIEW);layout(settings.requireView());assertFalse(operation(settings).findViewWithTag("backup.category.HISTORY").isEnabled());assertEquals(7,prefs.getInt("preview_accent41",0));operation(settings).findViewWithTag("backup.create").performClick();await(model,BackupOperationModel.Phase.RESTORE_PREVIEW);assertEquals(7,prefs.getInt("preview_accent41",0));operation(settings).findViewWithTag("backup.operation:Restore selected categories").performClick();await(model,BackupOperationModel.Phase.RESTORED);assertEquals(19,prefs.getInt("preview_accent41",0));assertTrue(file.exists());}finally{host.pause().stop().destroy();}
     }
+    @Test public void leftFromRestoreReviewClosesArchiveBeforeNextExport()throws Exception {
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try {
+            Settings settings=add(host.get());enter(settings);BackupOperationModel model=model(host.get());
+            File file=new File(host.get().getCacheDir(),"left-review.zip");
+            JSONObject payload=new JSONObject().put("schema",1).put("category","APPEARANCE").put("values",new JSONObject());
+            LogicalBackupArchive.writeCategories(file,Map.of(BackupCategory.APPEARANCE,payload),()->false);
+            model.open(new FileInputStream(file));await(model,BackupOperationModel.Phase.REVIEW);
+            Map<String,?> unchanged=PreferenceManager.getDefaultSharedPreferences(host.get()).getAll();
+            View frame=operation(settings);assertFalse(frame.findViewWithTag("backup.category.HISTORY").isEnabled());
+            assertTrue(frame.findViewWithTag("backup.category.APPEARANCE").requestFocus());
+            frame.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));
+            await(model,BackupOperationModel.Phase.IDLE);
+            View export=settings.requireView().findViewWithTag("backup.action.export");assertTrue(export.hasFocus());
+            assertEquals(unchanged,PreferenceManager.getDefaultSharedPreferences(host.get()).getAll());
+            export.performClick();frame=operation(settings);
+            assertTrue("A new export must offer categories absent from the previous restore archive",frame.findViewWithTag("backup.category.HISTORY").isEnabled());
+            assertEquals(BackupOperationModel.Phase.IDLE,model.current().phase);
+            assertTrue(file.exists());
+        } finally {host.pause().stop().destroy();}
+    }
     @Test public void normalTvWorkspaceKeepsEveryCategoryWithinPhysicalBoundsWithCompleteLabels()throws Exception {
         verifyConnectedGeometry("0139-settings-backup-normal");
     }
