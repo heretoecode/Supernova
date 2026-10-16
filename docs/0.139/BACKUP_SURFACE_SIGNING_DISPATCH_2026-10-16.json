@@ -1,0 +1,16 @@
+{
+  "source_commit": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
+  "signing_run_id": 38908109847,
+  "unsigned_run_id": 38908094073,
+  "signing_url": "https://github.com/heretoecode/Supernova/actions/runs/38908109847",
+  "unsigned_url": "https://github.com/heretoecode/Supernova/actions/runs/38908094073",
+  "reason": "Existing MenuFoundation surface on the explicit Backup operation frame restores the backdrop formerly supplied by its Settings container; no functional design, identity, codec or signing change.",
+  "status_at_dispatch": "IN_PROGRESS",
+  "first_corrective_source": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3",
+  "first_corrective_verified_apk_sha256": "cccf3119e86a33d6d8ca18bd5c1f06ca06ac8acd5935f6f191ad33eb7f000ede",
+  "first_corrective_drive_file_id": "1w3tJRfyvBv0c16OKYzKFVlF22ou9SS_R",
+  "backdrop_local_tests": 12,
+  "backdrop_local_failures": 0,
+  "physical_shield_retest": "NOT_RUN",
+  "physical138_to139_upgrade": "NOT_RUN"
+}

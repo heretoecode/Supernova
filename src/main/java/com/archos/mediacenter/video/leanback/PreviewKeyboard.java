@@ -99,6 +99,9 @@ public final class PreviewKeyboard extends LinearLayout {
         return result;
     }
 
+    public void useMenuFoundation(){
+        for(List<TextView> row:keys)for(TextView key:row)key.setBackground(MenuFoundation.controlBackground(getContext()));
+    }
     public boolean focusLastKey() { return lastKey.requestFocus(); }
     public boolean atTop() { return keys.get(0).contains(findFocus()); }
     public String focusedKey() { return String.valueOf(lastKey.getTag()).replace("semantic:keyboard:",""); }
@@ -110,7 +113,7 @@ public final class PreviewKeyboard extends LinearLayout {
     private static void replace(EditText input, String value) {
         int start = selection(input), end = Math.max(start, input.getSelectionEnd());
         input.getText().replace(start, end, value);
-        input.setSelection(start + value.length());
+        input.setSelection(Math.min(input.length(), start + value.length()));
     }
     private TextView key(String label, Runnable action) {
         TextView key = new TextView(getContext());

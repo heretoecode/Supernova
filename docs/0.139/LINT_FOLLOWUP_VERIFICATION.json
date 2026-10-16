@@ -1,0 +1,10 @@
+{
+  "source_sha": "53f1263185badb667168a9cea564e89243338fe5",
+  "result": "PASS",
+  "errors": 0,
+  "warnings": 1771,
+  "duration": "1m18s",
+  "log_sha256": "a1a293593f529c75467d518de82032f4de865fbb9896b85f80788ceda613010d",
+  "report_sha256": "79165bdb077a13a721af4c513635a681b547c910a98d93fa7f7f98b77c902b96",
+  "limits": "Release lint only; includes subsequent older Settings, artwork retry and Home font/focus changes. Does not pass native/R8/device/completeworkstream acceptance. No warnings suppressed."
+}

@@ -1,0 +1,23 @@
+{
+  "source_sha": "1aba74989cd5bfa43501e9c7b11475f85c248b60",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.TitlePlaybackJournalTest",
+    "com.archos.mediacenter.video.utils.CombinedIndexedSourcesTest",
+    "com.archos.mediacenter.video.utils.CombinedCurrentRestoreTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "log_sha256": "7697f0cd2bc5b6f94a6f0fbc38ba39018c6b85bcea6c3dd49ba92e1e7ca841da",
+  "coverage": [
+    "Current default/health/viewing/media/bookmark/indexed-source six-store transaction includes title choices and unregistered guarded match intent",
+    "Eight pre-decision death boundaries restore all exact originals",
+    "Decision plus three native acknowledgements complete intended state, retaining metadata identification/native playback/watch/receiving authentication",
+    "Existing title/match/indexed recovery regressions"
+  ],
+  "limits": "Error-injected native SQLite/Robolectric process-death simulation, not real OS force-stop. Match intent stays pending; canonical native application and codec26 are not implemented. Not final BACKUP43 acceptance.",
+  "tests": 24,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "result": "PASS"
+}

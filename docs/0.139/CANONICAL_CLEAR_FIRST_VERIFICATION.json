@@ -1,0 +1,10 @@
+{
+  "result": "FAIL",
+  "source_sha": "ae6e6d7ebbb979b103db694caa48ca55a4b5a44f",
+  "dependency_sha": "52205093f24b2a74eb3fade9339b4ec0727c01a8",
+  "failed_task": ":MediaLib:compileReleaseJavaWithJavac",
+  "tests_executed": false,
+  "duration": "16s",
+  "log_sha256": "c17c2be38478939e0b94fe4f974beba128f76b0aa0e949a966d8ac39e016cd72",
+  "reason": "Clear endpoint passed two Uri[] arrays as Uri varargs; Java compilation refused. Existing XML reports are from the prior run and not counted."
+}

@@ -12,6 +12,12 @@ public final class PreviewGenres {
     public static final String[] NAMES={"Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantasy","History","Horror","Kids","Music","Mystery","News","Reality","Romance","Science Fiction","Soap","Talk","Thriller","TV Movie","War","Western","Action & Adventure","Sci-Fi & Fantasy","War & Politics"};
     public static Set<String> parse(String value){Set<String> values=new LinkedHashSet<>();if(value!=null)for(String s:value.split("[|,;/]"))if(!s.trim().isEmpty())values.add(s.trim());return values;}
     public static boolean matches(String genres,Set<String> selected){if(selected.isEmpty())return true;Set<String> values=parse(genres);for(String genre:selected)for(String value:values)if(value.equalsIgnoreCase(genre))return true;return false;}
+    public static boolean matches(String genres,Set<String> selected,boolean all){
+        if(!all)return matches(genres,selected);
+        Set<String> available=parse(genres);
+        for(String expected:selected)if(available.stream().noneMatch(value->value.equalsIgnoreCase(expected)))return false;
+        return true;
+    }
     public static boolean known(String label){return Arrays.asList(NAMES).contains(label);}
     public static void choose(Context c,Collection<String> options,Set<String> selected,Consumer<Set<String>> accept){
         List<String> names=new ArrayList<>(new TreeSet<>(options));Set<String> result=new LinkedHashSet<>(selected);

@@ -1,0 +1,22 @@
+{
+  "source_sha": "3c9a94953f3b0b3d90074660ac44cf079575b613",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "result": "PASS",
+  "classes": 2,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest"
+  ],
+  "duration": "33s",
+  "log_sha256": "f937260fe48a85c7a329734761dca42ac664757a7ef4b1e63c522490df28e57f",
+  "coverage": [
+    "Native episode cleanup deletes last parent show and its pin, strands receiving show Collection reference, leaves other show and file bookmark exact",
+    "Rollback retains original fixture state",
+    "Guarded movie canonical/pin/null/ownership/transaction regressions"
+  ],
+  "limits": "Dependency investigation, not episode restoration. Must retain parent show ownership/pin/Collection associations when implementing canonical episode participant. MATCHES remains unregistered.",
+  "tests": 8,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

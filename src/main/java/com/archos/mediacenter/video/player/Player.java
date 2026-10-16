@@ -119,6 +119,7 @@ public class Player implements IPlayerControl,
     // of STATE_PAUSED.
     private int mCurrentState = STATE_IDLE;
     private int mTargetState  = STATE_IDLE;
+    private final com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticState playbackDiagnostics=new com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticState();
 
     private static final int SCREEN_ON_FLAGS = (
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
@@ -142,7 +143,7 @@ public class Player implements IPlayerControl,
     private boolean     mCanSeekBack;
     private boolean     mCanSeekForward;
     private boolean     mIsLocalVideo;
-    private boolean     mIsTorrent;
+
     private boolean     mWaitForNewRate;
     private final int   NUMBER_RETRIES = 5;
     private int         numberRetries = NUMBER_RETRIES;
@@ -340,7 +341,7 @@ public class Player implements IPlayerControl,
         mForceSoftwareDecoding =forceSoftwareDecoding;
         mMediaPlayer = null;
         mUri = null;
-        mIsTorrent = false;
+
         mExtraMap = null;
         mResumeCtx.reset();
         mContext = context;
@@ -433,6 +434,7 @@ public class Player implements IPlayerControl,
         // TODO used to have if (PlayerService.sPlayerService != null) PlayerService.sPlayerService.saveVideoStateIfReady();
         if (log.isDebugEnabled()) log.debug("stopPlayback");
         mHandler.removeCallbacks(mPreparedAsync);
+        outputEstablished=false;previewFrameRendered=false;
         stayAwake(false);
         if (mEffectRenderer != null) {
             mEffectRenderer.pause();
@@ -514,6 +516,7 @@ public class Player implements IPlayerControl,
         // called start() previously
         log.info("openVideo: " + mUri);
         release(false);
+        final com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackAttempt diagnosticOpen=playbackDiagnostics==null?null:playbackDiagnostics.opening();
         if (mStopPosition != -1) {
             mResumeCtx.setSeek(mStopPosition);
             mStopPosition = -1;
@@ -521,6 +524,7 @@ public class Player implements IPlayerControl,
         new Thread(() -> {
             try {
                 mMediaPlayer = MediaFactory.createPlayer(mContext, mForceSoftwareDecoding);
+                if(playbackDiagnostics!=null)playbackDiagnostics.bind(mMediaPlayer,diagnosticOpen,getType());
                 mMediaPlayer.setOnPreparedListener(this);
                 mMediaPlayer.setOnCompletionListener(this);
                 mMediaPlayer.setOnInfoListener(this);
@@ -553,11 +557,13 @@ public class Player implements IPlayerControl,
                     if (mMediaPlayer.setStartTime(mResumeCtx.getSeek()))
                         mResumeCtx.setSeek(-1);
                 }
+                if(playbackDiagnostics!=null)playbackDiagnostics.submitted(diagnosticOpen,getType());
                 mMediaPlayer.prepareAsync();
                 // we don't set the target state here either, but preserve the
                 // target state that was there before.
                 mCurrentState = STATE_PREPARING;
             } catch (NullPointerException | IOException | IllegalArgumentException | IllegalStateException ex) {
+                if(playbackDiagnostics!=null)playbackDiagnostics.failed(diagnosticOpen);
                 onError(mMediaPlayer, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, null);
                 return;
             }
@@ -584,17 +590,18 @@ public class Player implements IPlayerControl,
             }
         });
     }
-    public void setIsTorrent(boolean isTorrent){
-        mIsTorrent = isTorrent;
-    }
-    public boolean isTorrent(){
-        return mIsTorrent;
-    }
     private volatile boolean previewFrameRendered;
+    private boolean outputEstablished;
+    private void playbackOutput(){
+        if(mCurrentState!=STATE_PLAYING||mMediaPlayer==null||outputEstablished)return;
+        outputEstablished=true;previewFrameRendered=true;
+        if(playbackDiagnostics!=null)playbackDiagnostics.output(mMediaPlayer,getType());
+        if(mPlayerListener!=null)mPlayerListener.onPlaybackEstablished();
+    }
     public boolean hasRenderedPreviewFrame(){return previewFrameRendered;}
     /* TextureView.SurfaceTextureListener */
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        previewFrameRendered=true;
+        playbackOutput();
         if (log.isDebugEnabled()) log.debug("CONFIG onSurfaceTextureUpdated");
     }
 
@@ -672,6 +679,7 @@ public class Player implements IPlayerControl,
      * release the media player in any state
      */
     private void release(boolean cleartargetstate) {
+        if(playbackDiagnostics!=null)playbackDiagnostics.close(com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackOutcome.CANCELLED);
         if (mMediaPlayer != null) {
             if (mSurfaceController != null)
                 mSurfaceController.setMediaPlayer(null);
@@ -758,8 +766,7 @@ public class Player implements IPlayerControl,
             if (log.isDebugEnabled()) log.debug("pause: no listener");
         }
         /* on pause, Don't suspend when video is non local or can't seek */
-        //if (!isTorrent() && isLocalVideo() && canSeekBackward() && canSeekForward()) {
-        if (!isTorrent() && canSeekBackward() && canSeekForward()) {
+        if (canSeekBackward() && canSeekForward()) {
             if (log.isDebugEnabled()) log.debug("pause: allow to go to sleep");
             stayAwake(false);
         } else {
@@ -798,6 +805,7 @@ public class Player implements IPlayerControl,
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("seek","target_ms",msec,"state",mCurrentState);
         if (log.isDebugEnabled()) log.debug("seekTo: {} ms", msec);
         if (isInPlaybackState()) {
+            if(playbackDiagnostics!=null)playbackDiagnostics.seeking(msec,getType());
             if (mPlayerListener != null) {
                 mPlayerListener.onSeekStart(msec);
             }
@@ -1028,8 +1036,9 @@ public class Player implements IPlayerControl,
 
     /* IMediaPlayer.Listener */
     public void onPrepared(IMediaPlayer mp) {
+        if(playbackDiagnostics!=null)playbackDiagnostics.prepared(mp,getType());
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_prepared","backend",getType());
-        previewFrameRendered=false;
+        previewFrameRendered=false;outputEstablished=false;
         mCurrentState = STATE_PREPARED;
         if (mSurfaceController != null)
             mSurfaceController.setMediaPlayer(mMediaPlayer);
@@ -1187,6 +1196,7 @@ public class Player implements IPlayerControl,
     }
 
     public void onSeekComplete(IMediaPlayer mp) {
+        if(playbackDiagnostics!=null)playbackDiagnostics.seekCallback(mp,getType());
         if (log.isDebugEnabled()) log.debug("onSeekComplete");
         if (mPlayerListener != null) {
             mPlayerListener.onSeekComplete();
@@ -1194,6 +1204,7 @@ public class Player implements IPlayerControl,
     }
 
     public void onAllSeekComplete(IMediaPlayer mp) {
+        if(playbackDiagnostics!=null)playbackDiagnostics.allSeeksComplete(mp,getType());
         mIsBusy = false;
         if (mUpdateMetadata) {
             if (log.isDebugEnabled()) log.debug("onAllSeekComplete: mUpdateMetadata = true -> handleMetadata");
@@ -1215,7 +1226,7 @@ public class Player implements IPlayerControl,
         if (log.isDebugEnabled()) log.debug("onInfo: {} {}", what, extra);
         switch(what) {
         case 3: // Android MEDIA_INFO_VIDEO_RENDERING_START, also forwarded by compatible backends.
-            previewFrameRendered=true;return true;
+            if(mp==mMediaPlayer)playbackOutput();return true;
         case IMediaPlayer.MEDIA_INFO_METADATA_UPDATE:
             if (mIsBusy) {
                 if (log.isDebugEnabled()) log.debug("onInfo: mIsBusy set mUpdateMetadata = true");
@@ -1252,6 +1263,7 @@ public class Player implements IPlayerControl,
     }
 
     public boolean onError(IMediaPlayer mp, int errorCode, int errorQualCode, String msg) {
+        if(playbackDiagnostics!=null)playbackDiagnostics.failed(mp);
         // Error messages can contain network credentials; record numeric backend codes only.
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_error","code",errorCode,"qualifier",errorQualCode,"state",mCurrentState);
         log.warn("onError: Error: {},{}", errorCode, errorQualCode);
@@ -1299,6 +1311,7 @@ public class Player implements IPlayerControl,
 
     public interface Listener {
         void onPrepared();
+        default void onPlaybackEstablished() {}
         void onCompletion();
         boolean onError( int errorCode, int errorQualCode, String msg);
         void onSeekStart(int pos);

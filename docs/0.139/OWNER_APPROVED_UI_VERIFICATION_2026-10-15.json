@@ -1,0 +1,117 @@
+{
+  "result": "PASS",
+  "source_sha": "2a8c85dd77f9db2289ba3ca856d0a1a37e9bbe10",
+  "backup_source_sha": "ad9991ef069e03980003fb124464a62fb07637a9",
+  "authority_branch_sha": "84e2a2a86efbbd1e61b54fcab75934be96b40a81",
+  "authority_path": "docs/Releases/0.139-owner-decisions-2026-10-15.md",
+  "authority_copy": "APPROVED_OWNER_DECISIONS_2026-10-15.md",
+  "backup_controller": {
+    "name": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "tests": "11",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-15T13:14:12.273Z",
+    "hostname": "976f3affce7e",
+    "time": "12.607"
+  },
+  "focused_suites": [
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Details139AcceptanceTest.xml",
+      "sha256": "8ee4039006d16b7efdc2c68a0bb4adfa4d4a3cafd9f422f0c8a6c9547b444249",
+      "name": "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-15T13:17:15.751Z",
+      "hostname": "976f3affce7e",
+      "time": "16.615"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Supernova139LibraryNavigationTest.xml",
+      "sha256": "63f56505036e4b8e8da46d47d8f60c0249fba84944821298e6eaf6b8bd511240",
+      "name": "com.archos.mediacenter.video.leanback.Supernova139LibraryNavigationTest",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-15T13:17:15.511Z",
+      "hostname": "976f3affce7e",
+      "time": "30.472"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewSeasonTest.xml",
+      "sha256": "74a9ed58e49ab5092b59babf386039df6491482561ded1c650912e62c2b63472",
+      "name": "com.archos.mediacenter.video.leanback.details.PreviewSeasonTest",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-15T13:17:33.035Z",
+      "hostname": "976f3affce7e",
+      "time": "4.935"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest.xml",
+      "sha256": "3d9571b303862ee08dc8f101db1a410a04ea20c2d2d219725dc4f4c41d9b0c06",
+      "name": "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-15T13:17:46.625Z",
+      "hostname": "976f3affce7e",
+      "time": "4.377"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest.xml",
+      "sha256": "120cbec41684027a1456015307e472ce16be03974823c29f8affa25d650a8449",
+      "name": "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+      "tests": "5",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-15T13:17:38.610Z",
+      "hostname": "976f3affce7e",
+      "time": "5.539"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest.xml",
+      "sha256": "09b14c603e66f1131fc99dcaca4182e7c8b57ba3a811536e20d69cb2882858fc",
+      "name": "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-15T13:17:51.671Z",
+      "hostname": "976f3affce7e",
+      "time": "8.995"
+    }
+  ],
+  "counts_note": "Backup11 plus final focused19 cases in six classes are disjoint. Earlier UI5 also passed PreviewMoviePage9 and Supernova138Ui9; its new Details class failed before adding the required post-rebuild layout drain. Do not sum overlapping attempts.",
+  "reproduction_logs": [
+    "/workspace/scratch/139-ui-5.log",
+    "/workspace/scratch/139-ui-7.log"
+  ],
+  "observed": [
+    "All26 categories, four actions and complete labels within physical and ancestor bounds; retained existing44 scaled-dp target role.",
+    "Backup compact132dp rail and constrained physical canvas; normal sidebar unchanged; five default-mdpi profiles640/960/1280/1920/3840 plus existing xhdpi right-workspace fixture.",
+    "Connected thin monochrome cap/frame; no detached underline. Four-tab row checked at640 and enlarged text; frame stays fixed across selection.",
+    "4% usable-width sides and usable-height bottom, safe top navigation inset retained.",
+    "Long synopsis/original-title/tagline unellipsized; Down reads to actual last offset, Up reads upward; Back returns reading to heading, further Back remains original routing.",
+    "Extras retains selected cap with content owning focus; background snapshot rebuild retains selection and subsequent D-pad routes.",
+    "Local series primary\u2192tab\u2192primary, existing indexed-season/library return/production Backup lifecycle and privacy checks pass."
+  ],
+  "evidence_directories": [
+    "ui/owner-approved-backup",
+    "ui/owner-approved-details"
+  ],
+  "limitations": [
+    "Synthetic Robolectric native graphics, not physical Shield screenshots.",
+    "Full exact-source CI38741587921 is running; this is focused evidence only.",
+    "Signed upgrade/physical output not run."
+  ],
+  "capture_reference": "Original focused captures are pinned in commit2a8c85dd. Current capture directories include subsequent source6b22dbbf boundary/focus corrections; see HEADER_BOUNDARY_VERIFICATION_2026-10-15.json for current hashes.",
+  "navigation_scope_superseded": "The first reader stage consumed Back to reset reading. That conflicts with the owner requirement to preserve the existing Back route.23f75b38 removes that interception; only its final-source focused/full CI proof can establish Back conformance. These earlier receipts remain valid for their other source-pinned checks."
+}

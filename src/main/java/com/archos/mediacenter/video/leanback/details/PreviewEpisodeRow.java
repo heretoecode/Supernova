@@ -31,7 +31,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
             card.bind(name,(runtime>0?runtime+" min · ":"")+(availability==null||!offers.isEmpty()&&!exact?"Availability unknown":offers.isEmpty()?"Unavailable":offers.get(0).provider.name),still.matches("/[A-Za-z0-9._-]+")?Uri.parse("https://image.tmdb.org/t/p/w780"+still):null,exact&&!offers.isEmpty(),remote.optLong("id"),"details.episodes","episode_still");card.setTag("remote-episode:"+choice.season+":"+choice.number);
             if(exact&&!offers.isEmpty()){
                 StreamingRepository.Provider provider=offers.get(0).provider;
-                PreviewProviderIcons.bind(card.availability,provider.logo,remote.optLong("id"),"details.episodes");
+                PreviewProviderIcons.bindProvider(card.availability,provider,remote.optLong("id"),"details.episodes");
                 card.availability.setImageAlpha(205);
                 card.setOnClickListener(v->{String[] labels=new String[offers.size()];for(int i=0;i<labels.length;i++)labels[i]="Watch on "+offers.get(i).provider.name;
                     PreviewDialog.choose(activity,name,labels,0,index->StreamingRepository.IO.submit(()->{

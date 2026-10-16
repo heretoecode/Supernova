@@ -1,0 +1,23 @@
+{
+  "source_sha": "8664c4dd04144766868b87a8df2b666087dfd30f",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "FAIL",
+  "classes": 8,
+  "tests": 55,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.utils.CombinedPlaylistJournalTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest",
+    "com.archos.mediacenter.video.utils.PortableSavedPlaylistsTest"
+  ],
+  "duration": "2m 39s",
+  "log_sha256": "ca5b738ec733d12301fae0929d665e84603b856819248dbc4baa85cc399000ce",
+  "finding": "One fixture compared all preferences before preview; preparation allocated the opaque origin preference. Move origin allocation out of playlist preview and compare owned receiving aliases without requiring a mutation."
+}

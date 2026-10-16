@@ -4,6 +4,7 @@ import io
 import json
 from pathlib import Path
 import tarfile
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -23,6 +24,27 @@ class FoundationNativeGuardTests(unittest.TestCase):
             with patch.object(builder.subprocess,'run') as network:
                 with self.assertRaisesRegex(ValueError,'hash differs'):builder.download({'sha256':'0'*64},p)
                 network.assert_not_called()
+
+    def test_failed_download_never_publishes_partial_cache_entry(self):
+        with tempfile.TemporaryDirectory() as d:
+            destination=Path(d)/'source.zip'
+            def failed(command,**kwargs):
+                Path(command[command.index('--output')+1]).write_bytes(b'partial')
+                raise subprocess.CalledProcessError(92,command)
+            with patch.object(builder.subprocess,'run',side_effect=failed):
+                with self.assertRaises(subprocess.CalledProcessError):builder.download({'url':'https://example.invalid/pinned.zip','sha256':'0'*64},destination)
+            self.assertFalse(destination.exists());self.assertEqual([],list(Path(d).iterdir()))
+
+    def test_successful_download_requires_hash_before_atomic_cache_publication(self):
+        with tempfile.TemporaryDirectory() as d:
+            destination=Path(d)/'source.zip';payload=b'verified pinned source'
+            def transferred(command,**kwargs):
+                self.assertFalse(destination.exists());self.assertIn('--http1.1',command);self.assertIn('--retry-all-errors',command)
+                Path(command[command.index('--output')+1]).write_bytes(payload)
+            with patch.object(builder.subprocess,'run',side_effect=transferred) as network:
+                builder.download({'url':'https://example.invalid/pinned.zip','sha256':hashlib.sha256(payload).hexdigest()},destination)
+                self.assertEqual(payload,destination.read_bytes());builder.download({'sha256':hashlib.sha256(payload).hexdigest()},destination);self.assertEqual(1,network.call_count)
+            self.assertEqual([destination],list(Path(d).iterdir()))
 
     def test_build_path_normalization_preserves_feature_guard(self):
         with tempfile.TemporaryDirectory() as d:

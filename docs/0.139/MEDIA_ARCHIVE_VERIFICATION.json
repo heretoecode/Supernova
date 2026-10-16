@@ -1,0 +1,31 @@
+{
+  "source_sha": "dce1abec86d0c55f985b99b28e56e6e2bb8220e7",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 73,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 36s",
+  "log_sha256": "5bbf1944f233e978d39945aa61acebb324cfbf1452bd33d60476f9fafa114b05",
+  "checks": [
+    "20-category public archive roundtrip into default preferences, health, viewing SQLite and selected media pin/hidden fields",
+    "Cancellation exception retains interruption subtype and outcome; rollback completes under worker interruption before restoring interrupt flag",
+    "Native crash-boundary, corrupt journal and stale preview recovery regressions"
+  ],
+  "limits": [
+    "Error-based crash simulation; no actual Android force-stop",
+    "Unresolved hidden references remain pending; matching dependencies and legacy media viewing fields remain open",
+    "Production Backup workspace/exporter not integrated; no signed APK or Shield acceptance"
+  ]
+}

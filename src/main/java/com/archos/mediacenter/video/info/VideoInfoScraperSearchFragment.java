@@ -772,6 +772,7 @@ public class VideoInfoScraperSearchFragment extends Fragment implements  Handler
             tags.downloadPoster(context);
             // saving will trigger database change notification and reloading in
             // VideoInfoActivity
+            try{com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context,mUri);}catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);return;}
             tags.save(context, mUri);
 
             // TODO make this nicer.

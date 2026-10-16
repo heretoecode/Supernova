@@ -1,0 +1,35 @@
+{
+  "source_sha": "f16e0e16494fcf3ea2f4f4bc9af15d57e216302f",
+  "result": "PASS",
+  "classes": 4,
+  "tests": 20,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest"
+  ],
+  "log_sha256": "1f7ff099a23d2ff1930ca83edb78a4c7a7214c19a6c0d19a3fe27f50274a2bef",
+  "duration": "2m 15s",
+  "checks": [
+    "Real ScraperProvider ALL routes, native database narrow pin projection, historical orphan fixture, movie/show identity and ordered timestamps",
+    "Unique provider remapping; duplicate source/destination and unknown provider identities stay distinct and pending across export",
+    "Native SQLite pin replacement changes only Nova_pinned; file bookmarks, hidden state, metadata and associations preserved",
+    "Cancellation before and after a write and injected write failure roll back all pins",
+    "Changed provider, pin timestamp or inventory rejects stale preview before writes",
+    "Hidden-item positive schema and unfiltered native files reader, audio excluded, NULL legacy hidden treated as default false",
+    "Hidden items require validated matching; changed paths/missing/ambiguous physical references remain pending",
+    "Positive schemas reject extra credentials/media/location fields and fractional source values",
+    "Existing review/preferred-version regression checks"
+  ],
+  "limits": [
+    "Pin/Hidden Items payloads not yet registered in archive or production Settings/export/restore",
+    "Pin SQLite primitive does not journal pending preferences or coordinate cross-database recovery; no production caller",
+    "Hidden Items database replacement remains pending",
+    "Manual changes and post-index unresolved reconciliation require coordinated production hooks",
+    "No Shield/real providers/signed-upgrade acceptance"
+  ]
+}

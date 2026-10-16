@@ -456,6 +456,30 @@
       "role": "Source availability and relinking notice",
       "url": "https://github.com/heretoecode/Supernova",
       "text_asset": "foundation/legal/source-availability.txt"
+    },
+    {
+      "name": "Twemoji country flags",
+      "version": "b6b55fef1e8636b540a6d016a4729ca8cdf2e60b",
+      "licence": "Creative Commons Attribution4.0 International",
+      "role": "Explicit-region country flag artwork; unchanged source PNGs",
+      "url": "https://github.com/jdecked/twemoji",
+      "text_asset": "foundation/legal/twemoji-country-flags.txt"
+    },
+    {
+      "name": "Simple Icons provider marks",
+      "version": "4d29a35c954699b389a834aacc97dd6e7e74143c",
+      "licence": "CC0-1.0 Universal; respective brand trademarks",
+      "role": "Original provider mark paths converted to transparent white Android vectors",
+      "url": "https://github.com/simple-icons/simple-icons",
+      "text_asset": "foundation/legal/simple-icons-provider-marks.txt"
+    },
+    {
+      "name": "Additional provider logo marks",
+      "version": "Recorded Commons source revisions and checksums",
+      "licence": "Public-domain logo declarations; brand trademarks",
+      "role": "Disney+, Prime Video, BritBox2026 and HBO Max2025 original geometry in white vectors",
+      "url": "https://commons.wikimedia.org",
+      "text_asset": "foundation/legal/commons-provider-marks.txt"
     }
   ]
 }

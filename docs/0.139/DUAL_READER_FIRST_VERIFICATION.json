@@ -1,0 +1,9 @@
+{
+  "source_sha": "18edca4be3ec593942448d2c869359343ec8ab40",
+  "result": "FAIL",
+  "stage": "compileNoamazonReleaseJavaWithJavac",
+  "tests_executed": 0,
+  "duration": "17s",
+  "log_sha256": "4e5aa2d74565c87059de476b94390aa58e8cdd165404be1a02ad9d148484895d",
+  "reason": "BackupImportPreparation called package-private SafeBackup.remove across package boundary. No behavioural tests ran. Follow-up introduces a guarded public discardStage API for the app-owned legacy cache only."
+}

@@ -1,0 +1,113 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "cccf3119e86a33d6d8ca18bd5c1f06ca06ac8acd5935f6f191ad33eb7f000ede",
+  "version_name": "0.139",
+  "version_code": 139,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "result": "PASS",
+  "source_commit": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3",
+  "implementation_commit": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "run_id": 38899461080,
+  "run_url": "https://github.com/heretoecode/Supernova/actions/runs/38899461080",
+  "workflow": ".github/workflows/supernova-0139-qa.yml",
+  "apk_filename": "Supernova_0.139.apk",
+  "apk_bytes": 87874512,
+  "signature_verified": true,
+  "signature_supported_api_range": [
+    23,
+    36
+  ],
+  "signature_schemes": {
+    "v1": true,
+    "v2": true,
+    "v3": true,
+    "v3.1": false
+  },
+  "certificate_matches_signed138": true,
+  "apk_zip_crc_verified": true,
+  "duplicate_entries_absent": true,
+  "zipalign_16k_verified": true,
+  "min_sdk": 23,
+  "target_sdk": 36,
+  "debuggable": false,
+  "native_hashes_independently_matched": 88,
+  "rebuilt_ffmpeg_libraries_independently_matched": 24,
+  "software_decode_pairs": 64,
+  "original_ci_payload_parity_verified": false,
+  "local_payload_matches_preceding_validated_ci": false,
+  "preceding_ci_payload_differences": [
+    "META-INF/version-control-info.textproto",
+    "assets/dexopt/baseline.prof",
+    "assets/dexopt/baseline.profm",
+    "classes.dex",
+    "classes2.dex",
+    "classes3.dex"
+  ],
+  "preceding_ci_payload_comparison_limit": "Prior unsigned build is the original implementation23f75b38, before the documented corrective changes. Cross-build code differences are expected. Exact corrective unsigned-to-signed parity is verified inside the protected workflow.",
+  "unit_tests": 1014,
+  "unit_failures": 0,
+  "unit_errors": 0,
+  "unit_skips": 0,
+  "lint": {
+    "errors": 0,
+    "warnings": 1772
+  },
+  "unsigned_apk_sha256": "b9f51a6338fd5aa1dfa0d156a616b4647473f0769718836f8d0924b40a3c0744",
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false,
+  "actual_device_install_verified": false,
+  "static_installability_checks": "PASS: Android apksigner verification API23\u201336, package parse, expected same certificate as138, version139>138, universal ABI coverage and16KiB alignment. No device install performed.",
+  "qa_only": true,
+  "final_release_published": false,
+  "ffmpeg_source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+  "ffmpeg_source_bundle_sha256": "e8eac3cc7f334a90026041039681e8fab22d64901e40877229377fee81997372",
+  "ffmpeg_source_bundle_bytes": 11160992,
+  "signed_artifact": {
+    "id": 12047064396,
+    "name": "supernova-0139-signed-qa",
+    "size_in_bytes": 83392605,
+    "url": "https://api.github.com/repos/heretoecode/Supernova/actions/artifacts/12047064396",
+    "archive_download_url": "https://api.github.com/repos/heretoecode/Supernova/actions/artifacts/12047064396/zip",
+    "expired": false,
+    "created_at": "2026-10-16T12:55:21Z",
+    "expires_at": "2026-10-30T12:55:18Z",
+    "updated_at": "2026-10-16T12:55:21Z",
+    "digest": "sha256:feee0529c6cc91dc6541e0877ef4246b396570c9ee5d6a7d3fbcf0171f847421",
+    "workflow_run": {
+      "id": 38899461080,
+      "repository_id": 1363201637,
+      "head_repository_id": 1363201637,
+      "head_branch": "codex/supernova-0.139-implementation-2026-10-13",
+      "head_sha": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3"
+    }
+  },
+  "ffmpeg_source_artifact": {
+    "id": 12046504771,
+    "name": "supernova-0139-qa-ffmpeg-source",
+    "size_in_bytes": 11174418,
+    "url": "https://api.github.com/repos/heretoecode/Supernova/actions/artifacts/12046504771",
+    "archive_download_url": "https://api.github.com/repos/heretoecode/Supernova/actions/artifacts/12046504771/zip",
+    "expired": false,
+    "created_at": "2026-10-16T12:55:22Z",
+    "expires_at": "2026-11-15T12:55:21Z",
+    "updated_at": "2026-10-16T12:55:22Z",
+    "digest": "sha256:3e4decb4b84b4ee372772b0822af5dc96472f123741da1cde112284e7a9c1941",
+    "workflow_run": {
+      "id": 38899461080,
+      "repository_id": 1363201637,
+      "head_repository_id": 1363201637,
+      "head_branch": "codex/supernova-0.139-implementation-2026-10-13",
+      "head_sha": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3"
+    }
+  }
+}

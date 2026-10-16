@@ -1,0 +1,35 @@
+{
+  "source_sha": "40e0be9918b46ab7cc1fc8fded4b4cb26f0cb479",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 12,
+  "tests": 122,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.utils.CombinedIndexedSourcesTest",
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedPlaylistJournalTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.IndexedSourceRecoveryTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableLibrarySourcesTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "3m 5s",
+  "log_sha256": "70e0c96f3a813203436e5bb486f4344ff29417dcd9b0a095bf570d81052b2324",
+  "coverage": [
+    "Sources schema2 and declared manifest/payload schema parity; schema1 remains supported",
+    "Six-store journal schema7; all earlier schemas1 through6 remain readable",
+    "Eight pre-decision recovery boundaries and four post-decision SQLite acknowledgement boundaries",
+    "Actual ShortcutDbAdapter scanner rescan reader observes restored intent",
+    "Excluded Put.io source originals, native credentials/browser favourites, stale preview and corrupted-pair protection",
+    "Source/playlist/export/import/Settings operations and prior private-journal regression classes"
+  ],
+  "limits": "Synthetic native SQLite/provider/transport/UI fixtures and Error boundary injection, not actual force-stop. Pending-source reconciliation follows this source. Full scanner scheduling, provider/SAF lifecycle, historical owner archives, Shield, native codecs/R8/upgrade/signing and delivery remain open."
+}

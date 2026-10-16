@@ -1,0 +1,86 @@
+{
+  "source_sha": "24d951f4e0d596c2da0aab85a57699b3fb7cd00c",
+  "result": "PASS",
+  "classes": 2,
+  "tests": 7,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest",
+    "com.archos.mediacenter.video.leanback.OfficialTitleNetworkTest"
+  ],
+  "duration": "2m 8s",
+  "log_sha256": "a839e68dd62cacc382015b0c4331a250e0edc81740dafbcf83a41867ff25bd81",
+  "checks": [
+    "Native disk/memory binding changes logos when provider match changes on the same local row",
+    "Language-specific rebinding and movie/tv provider-number separation",
+    "No cached current-provider logo yields white fallback text; transparent cached image does not hide title",
+    "Actual pixel preservation in offline native fixtures; hero and Details regression classes included",
+    "Provider identity captured once when source metadata changes during binding"
+  ],
+  "limits": [
+    "Synthetic offline PNG fixtures, not genuine owner photos or live provider responses",
+    "Same-provider retry, unknown-source refresh, stale/fresh cache, full visual/font/viewport/device matrix remain pending",
+    "Targeted2-class retest; preceding broader34/8 and full732/171 receipts retained at their exact sources",
+    "No complete H03 acceptance, signed APK or physical Shield verification"
+  ],
+  "captures": [
+    {
+      "name": "official-title-bindingCapturesProviderOnceWhenSourceMetadataChangesDuringResolution-1.png",
+      "sha256": "a6cfd94bd4280872259bd2fb8b98ee9f242e943c39f910dcd9b913433ea844c5",
+      "bytes": 347,
+      "width": 240,
+      "height": 80
+    },
+    {
+      "name": "official-title-changedMovieMatchOnTheSameLocalRowRebindsTheCorrectProviderLogo-1.png",
+      "sha256": "a6cfd94bd4280872259bd2fb8b98ee9f242e943c39f910dcd9b913433ea844c5",
+      "bytes": 347,
+      "width": 240,
+      "height": 80
+    },
+    {
+      "name": "official-title-changedMovieMatchOnTheSameLocalRowRebindsTheCorrectProviderLogo-2.png",
+      "sha256": "e603749b51e948843a4089ded4c274367f5cb4a49168f8bdd88d02c06893f637",
+      "bytes": 347,
+      "width": 240,
+      "height": 80
+    },
+    {
+      "name": "official-title-localeChangeRebindsWithoutKeepingThePreviousLanguageAlias-1.png",
+      "sha256": "a6cfd94bd4280872259bd2fb8b98ee9f242e943c39f910dcd9b913433ea844c5",
+      "bytes": 347,
+      "width": 240,
+      "height": 80
+    },
+    {
+      "name": "official-title-localeChangeRebindsWithoutKeepingThePreviousLanguageAlias-2.png",
+      "sha256": "58e181ee33ad1b2be9447e202cecd55490ab605347ebb9c14f48cb7cedca769c",
+      "bytes": 347,
+      "width": 240,
+      "height": 80
+    },
+    {
+      "name": "official-title-movieAndTvWithTheSameProviderNumberKeepDistinctCacheEntriesAndArtworkPixels-1.png",
+      "sha256": "a6cfd94bd4280872259bd2fb8b98ee9f242e943c39f910dcd9b913433ea844c5",
+      "bytes": 347,
+      "width": 240,
+      "height": 80
+    },
+    {
+      "name": "official-title-movieAndTvWithTheSameProviderNumberKeepDistinctCacheEntriesAndArtworkPixels-2.png",
+      "sha256": "e603749b51e948843a4089ded4c274367f5cb4a49168f8bdd88d02c06893f637",
+      "bytes": 347,
+      "width": 240,
+      "height": 80
+    },
+    {
+      "name": "official-title-stableTransitionFallsBackToWhiteTextWhenTheNewProviderHasNoCachedLogo-1.png",
+      "sha256": "a6cfd94bd4280872259bd2fb8b98ee9f242e943c39f910dcd9b913433ea844c5",
+      "bytes": 347,
+      "width": 240,
+      "height": 80
+    }
+  ]
+}

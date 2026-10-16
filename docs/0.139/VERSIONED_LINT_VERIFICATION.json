@@ -1,0 +1,12 @@
+{
+  "source_sha": "6dd08f168d0f0e7a93c32a92e26b5766df82f07b",
+  "dependency_sha": "e0a6dadc81e9668acca91419ef9d3dd268ab295f",
+  "duration": "19m53s combined unfiltered tests/lint/unsigned packaging",
+  "log_sha256": "37c6df740154b382a66817d116a9bea166828f417cc195480502fdb185eb0cc1",
+  "result": "PASS",
+  "severity_counts": {
+    "Warning": 1771
+  },
+  "errors": 0,
+  "limits": "Existing warnings retained; exact source/dependency. No suppression added."
+}

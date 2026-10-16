@@ -75,7 +75,7 @@ public final class TopNavigation extends LinearLayout {
             });});
             tab.setOnKeyListener((v, key, event) -> {
                 if (key == KeyEvent.KEYCODE_DPAD_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    content.requestFocus(); return true;
+                    if(!focusLibraryEntry(content))content.requestFocus(); return true;
                 }
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (key == KeyEvent.KEYCODE_DPAD_UP) return true;
@@ -162,7 +162,7 @@ public final class TopNavigation extends LinearLayout {
         scrimAnimation.addUpdateListener(animation->{scrimAlpha=(int)animation.getAnimatedValue();invalidate();});scrimAnimation.start();
     }
     @Override protected boolean drawChild(android.graphics.Canvas canvas,View child,long time){
-        if(child==bar){navigationShade.invalidate();navigationShade.draw(canvas,navigationScene,getWidth(),dp(116),scrimAlpha);if(scrimAlpha>0&&navigationShade.hasPendingSample())postInvalidateDelayed(100);}
+        if(child==bar){navigationShade.invalidate();navigationShade.draw(canvas,navigationScene,getWidth(),dp(116)*.8f,scrimAlpha);if(scrimAlpha>0&&navigationShade.hasPendingSample())postInvalidateDelayed(100);}
         return super.drawChild(canvas,child,time);
     }
     @Override public void invalidateDrawable(android.graphics.drawable.Drawable who){super.invalidateDrawable(who);if(navigationShade!=null)navigationShade.invalidate();}
@@ -196,10 +196,17 @@ public final class TopNavigation extends LinearLayout {
         selected.requestFocus(); return true;
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
+        if(event.getAction()==KeyEvent.ACTION_DOWN||event.getAction()==KeyEvent.ACTION_UP)homeInput(content);
         View previous=findFocus();boolean consumed=routeKeyEvent(event);
         if(event.getAction()==KeyEvent.ACTION_DOWN)com.archos.mediacenter.video.diagnostics.Diagnostics.navigation(previous,findFocus(),event.getKeyCode(),consumed);
         return consumed;
     }
+    private static boolean focusLibraryEntry(View view){
+        if(view instanceof PreviewPages)return ((PreviewPages)view).focusFromNavigation();
+        if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)if(focusLibraryEntry(((android.view.ViewGroup)view).getChildAt(i)))return true;
+        return false;
+    }
+    private static void homeInput(View view){if(view instanceof PreviewPages){((PreviewPages)view).recordRemoteInput();return;}if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)homeInput(((android.view.ViewGroup)view).getChildAt(i));}
     private boolean routeKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP
                 && !bar.hasFocus() && firstRow.getAsBoolean()) {

@@ -52,7 +52,6 @@ import com.archos.mediacenter.filecoreextension.upnp2.MetaFileFactoryWithUpnp;
 import com.archos.mediacenter.utils.MediaUtils;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.TorrentObserverService;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.ui.NovaProgressDialog;
 import com.archos.mediaprovider.ArchosMediaIntent;
@@ -193,13 +192,13 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             // The results dialog was not visible but the progress dialog was => show the progress dialog
             mDialog.show();
         }
-        TorrentObserverService.resumed(this);
+
     }
 
     public void onPause(){
         super.onPause();
         closeDialog();
-        TorrentObserverService.paused(this);
+
     }
 
     private ArrayList<String> getSubLangValue() {

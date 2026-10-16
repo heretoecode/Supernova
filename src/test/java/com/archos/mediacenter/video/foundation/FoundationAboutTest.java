@@ -72,18 +72,20 @@ public class FoundationAboutTest {
         assertEquals(expected,new com.google.zxing.MultiFormatReader().decode(encoded).getText());
         assertNull(qr.invoke(workspace,"https://example.com/?token=private"));assertNull(qr.invoke(workspace,"https://user@example.com/"));assertNull(qr.invoke(workspace,"http://example.com/"));
     }
-    @Test public void licenceFocusAndRightNeverReadCatalogueUntilExplicitOk() throws Exception {
+    @Test public void licenceHighlightLoadsCatalogueAndDefaultNoticeWithoutStealingNavigationFocus() throws Exception {
         var host=Robolectric.buildActivity(FragmentActivity.class).setup().visible();try{
             var activity=host.get();LinearLayout split=new LinearLayout(activity),rail=new LinearLayout(activity),middle=new LinearLayout(activity),help=new LinearLayout(activity);split.addView(rail);split.addView(middle);split.addView(help);activity.setContentView(split);TextView about=new TextView(activity);about.setFocusable(true);rail.addView(about);
             var workspace=new FoundationAboutWorkspace(activity,split,middle,help,rail);workspace.show(about);workspace.openSection(1);
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             assertTrue("Licence fixture must be attached before opening",workspace.isAttachedToWindow());
             android.widget.TextView licence=(android.widget.TextView)rail.getChildAt(2);
-            java.lang.reflect.Field reader=FoundationAboutWorkspace.class.getDeclaredField("reader");reader.setAccessible(true);assertNull(reader.get(workspace));assertTrue(allText(workspace).contains("Press OK"));
-            licence.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));assertNull(reader.get(workspace));licence.performClick();assertNotNull(reader.get(workspace));
-            java.util.concurrent.ExecutorService io=(java.util.concurrent.ExecutorService)reader.get(workspace);io.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertTrue(allText(workspace),allText(workspace).contains("Components"));
-            workspace.hide();workspace.show(about);workspace.openSection(1);
-            assertTrue(allText(workspace),allText(workspace).contains("Press OK"));
+            java.lang.reflect.Field reader=FoundationAboutWorkspace.class.getDeclaredField("reader");reader.setAccessible(true);assertNotNull(reader.get(workspace));assertFalse(allText(workspace).contains("Press OK"));assertTrue(licence.hasFocus());
+            java.util.concurrent.ExecutorService io=(java.util.concurrent.ExecutorService)reader.get(workspace);
+            io.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            io.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertTrue(allText(workspace),allText(workspace).contains("Components"));assertTrue(licence.hasFocus());assertFalse(allText(workspace).contains("Press OK"));
+            licence.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));assertFalse(licence.hasFocus());assertTrue(workspace.handleBack());assertTrue(licence.hasFocus());
+            workspace.hide();workspace.show(about);workspace.openSection(1);assertFalse(allText(workspace).contains("Press OK"));assertTrue(licence.hasFocus());
         }finally{host.pause().stop().destroy();}
     }
     private String allText(View view){StringBuilder result=new StringBuilder();if(view instanceof TextView)result.append(((TextView)view).getText());if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++)result.append(allText(group.getChildAt(i)));}return result.toString();}

@@ -1,0 +1,17 @@
+{
+  "source_sha": "694ac15c2ba6d7eca16d0d92c14edbf975321392",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 11,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "46s",
+  "log_sha256": "4f585782b82121a4603c0dbc84b4bf72e877240d4177f89b97e331d9d35c3447",
+  "reason": "Activation callback still ends at scrollY0 with target488\u2013522 and padded bottom472. Next stage captures callback timing/selection via a temporary test-only trace sink, without user labels or credentials."
+}

@@ -469,7 +469,10 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        try { com.archos.mediacenter.video.utils.RestoreJournal.recover(base); }
+        try {
+            com.archos.mediacenter.video.utils.RestoreJournal.recover(base);
+            com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction.recoverAtStartup(base);
+        }
         catch(Exception recovery) { throw new IllegalStateException("Interrupted library restore requires recovery; original copies retained",recovery); }
         com.archos.filecorelibrary.sftp.SftpHostTrust.initialise(base);
         if (BuildConfig.ENABLE_BUG_REPORT) {

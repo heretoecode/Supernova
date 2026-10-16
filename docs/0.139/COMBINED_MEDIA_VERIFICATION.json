@@ -1,0 +1,34 @@
+{
+  "source_sha": "1cb89afe21cbd98b83deeb045c6d2aa4436e3fae",
+  "result": "PASS",
+  "classes": 6,
+  "tests": 57,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 31s",
+  "log_sha256": "51a7d73d7b063a52ed9c1905598cb86b2e8dab681916c18d5c159177409423d6",
+  "checks": [
+    "Native default/health/viewing/media combined recovery at all unfinished store boundaries",
+    "Durable decision before media SQLite commit replays media at startup and preserves all new stores",
+    "Durable media state with pending journal cleanup is idempotent across recovery and late cancellation",
+    "Pin and hidden SQL NULLs, file paths/bookmarks/metadata and live authentication preserved",
+    "Corrupt fourth-store image rejected before any recovery writes",
+    "Stale provider/inventory rejected before journal or preference mutation"
+  ],
+  "limits": [
+    "Error-based process-death injection, not actual Android force-stop",
+    "Media participant currently covers pins/hidden flags; media matching and legacy viewing columns remain pending",
+    "Hidden nonempty references deliberately remain pending until a validated matching dependency exists",
+    "Public archive still18 categories at this source; production Backup workspace is not integrated",
+    "No signedAPK or Shield acceptance"
+  ]
+}

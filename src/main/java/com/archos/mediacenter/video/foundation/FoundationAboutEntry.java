@@ -9,7 +9,7 @@ public final class FoundationAboutEntry {
     private FoundationAboutEntry() {}
     public static void install(PreferenceFragmentCompat fragment) {
         link(fragment,"preferences_version",0);
-        link(fragment,"preferences_video_licences",2);
+        link(fragment,"preferences_video_licences",1);
         for(String key:new String[]{"preferences_video_os","preferences_video_tmdb","preferences_video_trakt"})link(fragment,key,3);
     }
     private static void link(PreferenceFragmentCompat fragment,String key,int section) {

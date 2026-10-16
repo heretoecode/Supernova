@@ -1,0 +1,12 @@
+{
+  "result": "FAIL",
+  "source_sha": "349f79fe",
+  "dependency_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "duration": "46s",
+  "log_sha256": "9c50c000f3164af7722bf0471ebd68b443e30be5ee88e5a7de97feacf414ab11",
+  "tests": 38,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "reason": "Controller picker reached successfully. Application cache held two retained verified backups; fixture assumed global cache size one. Identify the newly created archive against the before-set instead; preserve existing backups."
+}

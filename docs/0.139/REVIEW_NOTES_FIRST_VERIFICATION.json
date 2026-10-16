@@ -1,0 +1,25 @@
+{
+  "source_sha": "372783c3fd035560c32c139d67fdebdfd1d27551",
+  "classes": 3,
+  "tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.BackupPrivacyTest"
+  ],
+  "checks": [
+    "Only deliberate incorrect-match flags exported; offline/media/problem caches omitted",
+    "Staged review replacement preserves unowned health cache keys",
+    "Different paths or provider matches stay pending and survive another export",
+    "Duplicate physical rows and missing source records get opaque distinct pending identities",
+    "Malformed/credential/location/cache field injection rejected"
+  ],
+  "limits": [
+    "Named-store codec primitive only; not registered or applied by production Backup",
+    "Physical location fingerprints do not authenticate sources/accounts or prove media contents; stronger credential/query guard is under subsequent test",
+    "Receiving unfiltered physical-data mapping and combined multi-store journal remain open"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "source_sha": "f9cf83f28ae5512959a26f1f44bbbba824bc2f59",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 4,
+  "tests": 25,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "54s",
+  "log_sha256": "ffc8cd40b7f474ec199478e3257c154fc28aef272ec7334c8d101962a66b34c4",
+  "selected_test_init_sha256": "dfa69c875cbf5fd01cac9952bd64b5012f23a8a6177cd66ba711b4959fc2dc05",
+  "coverage": [
+    "Actual full Preferences activity recreation preserves flat Details and measured permanent sidebar width",
+    "Temporary restore selection and private review survive recreation without modifying backup preferences",
+    "Explicit preview and confirmation required after recreation; unselected Audio remains omitted and receiving credentials remain intact",
+    "Native graphics captures and existing controller/model/workspace regressions",
+    "Programmatic restored entry focuses and scrolls the permanent Backup sidebar child before entering the workspace"
+  ],
+  "native_captures": [
+    {
+      "path": "docs/0.139/ui/production-backup/0139-production-backup-main-focused.png",
+      "sha256": "a952b1135dade6b7245a2675068ecfe7ea21835a508a82ddaa7ed44c29996a9c"
+    },
+    {
+      "path": "docs/0.139/ui/production-backup/0139-production-backup-recreated-details-focused.png",
+      "sha256": "9051faa2ed10a4cb0847d170196f660c03a05cf5c8c06d641c11a4d24c2fb17d"
+    }
+  ],
+  "limits": "Native Robolectric full Preferences fixtures with a blank host backdrop; not production blurred-library, physical font/picker/force-stop/Shield acceptance. Matches remains unregistered."
+}

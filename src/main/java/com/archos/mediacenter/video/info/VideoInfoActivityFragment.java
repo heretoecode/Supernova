@@ -1431,26 +1431,9 @@ public class VideoInfoActivityFragment extends Fragment implements LoaderManager
 
     public void startAsyncTasks() {
         if (log.isDebugEnabled()) log.debug("startAsyncTasks with {}", mCurrentVideo.getFilePath());
-        //do not execute file info task when torrent file
-        String getLastPathSegment = FileUtils.getName(mCurrentVideo.getFileUri());
-        if((mCurrentVideo.getFileUri() != null &&
-                getLastPathSegment != null &&
-                !getLastPathSegment.endsWith("torrent")) ||
-                mIsLaunchFromPlayer) {
-            if (log.isDebugEnabled()) log.debug("startAsyncTasks not a torrent or mIsLaunchFromPlayer starting VideoInfoTask for {}", mCurrentVideo.getFilePath());
-            if (mVideoInfoTask != null)
-                mVideoInfoTask.cancel();
-            mVideoInfoTask = new VideoInfoTask();
-            mVideoInfoTask.execute(mCurrentVideo);
-        }
-        else{
-            if (log.isDebugEnabled()) log.debug("startAsyncTasks torrent and not mIsLaunchFromPlayer removing views {}", mCurrentVideo.getFilePath());
-            if (log.isDebugEnabled()) log.debug("startAsyncTasks: hiding file info views for torrent file");
-            mFileInfoAudioVideoContainer.setVisibility(View.GONE);
-            mFileError.setVisibility(View.GONE);
-            mFileInfoContainerLoading.setVisibility(View.GONE);
-            if (log.isDebugEnabled()) log.debug("startAsyncTasks: file info loading container visibility set to GONE");
-        }
+        if (mVideoInfoTask != null) mVideoInfoTask.cancel();
+        mVideoInfoTask = new VideoInfoTask();
+        mVideoInfoTask.execute(mCurrentVideo);
         if (mSubtitleFilesListerTask != null)
             mSubtitleFilesListerTask.cancel();
         mSubtitleFilesListerTask = new SubtitleFilesListerTask(getActivity());

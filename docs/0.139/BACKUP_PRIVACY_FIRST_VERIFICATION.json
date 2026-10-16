@@ -1,0 +1,14 @@
+{
+  "source_sha": "bc8cc4e380f8d4a7d6a07efb21696a43b68f31a4",
+  "status": "FAIL",
+  "classes": 4,
+  "tests": 22,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "failure": "BackupWorkspaceTest.locationAndHistoryWarningsDefaultToCancelAndCommitOnlyExplicitPositiveChoice expected History opener after Back but observed Locations; inspecting queued OnDismiss timing",
+  "limits": [
+    "Standalone 628x468 right area only; no production sidebar/background integration",
+    "Do not claim privacy focus conformance from this failed stage"
+  ]
+}

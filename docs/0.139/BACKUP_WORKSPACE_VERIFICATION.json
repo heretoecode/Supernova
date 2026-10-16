@@ -1,0 +1,35 @@
+{
+  "source_sha": "50293d205a7afa1eceee45a4be7e3421af938d02",
+  "result": "PASS for standalone628x468 right-region geometry and routes",
+  "classes": 1,
+  "tests": 3,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "images": [
+    {
+      "file": "docs/0.139/ui/backup-workspace/0139-backup-right-main.png",
+      "sha256": "10ff3857780dc77dd30e3d7f8bdad7b5f4e672bc29ade8e4b830030e8796a606",
+      "width": 628,
+      "height": 468
+    },
+    {
+      "file": "docs/0.139/ui/backup-workspace/0139-backup-details.png",
+      "sha256": "6d427dc51ef8ebfdc85c68427139ed7338cf4cd71272bba94a1638ca1b266634",
+      "width": 628,
+      "height": 468
+    },
+    {
+      "file": "docs/0.139/ui/backup-workspace/0139-backup-instructions.png",
+      "sha256": "eef2b8bfd3a57bccb6fa51523712d1a56f578083c363d4a5937e9429f5f0db4e",
+      "width": 628,
+      "height": 468
+    }
+  ],
+  "limits": [
+    "Standalone component; production sidebar/backdrop/blur not connected or verified",
+    "Smaller and large-font profiles still pending",
+    "Privacy modal matrix and all category codecs/restore journal/SAF/legacy compatibility remain open",
+    "No whole Backup43 or Shield acceptance claim"
+  ]
+}

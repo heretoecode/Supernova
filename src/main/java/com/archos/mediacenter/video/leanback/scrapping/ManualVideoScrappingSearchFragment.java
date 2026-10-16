@@ -235,6 +235,8 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
                 // saving will trigger database change notification and reloading in
                 // VideoInfoActivity
+                try{com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(getActivity(),mVideo.getId());}
+                catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);if(getActivity()!=null)getActivity().runOnUiThread(()->{progressDialog.dismiss();com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(getActivity(),"Find a Match","The match could not be saved. Check the current match and try again.",()->{});});return;}
                 tags.save(getActivity(), mVideo.getId());
         
                 // Update Trakt
@@ -281,6 +283,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
     }
 
     static void persistAcceptedMatch(android.content.Context context,BaseTags tags,long videoId)throws IOException{
+        com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context,videoId);
         if(tags.save(context,videoId)<0)throw new IOException("Metadata persistence failed");
         context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0)
                 .edit().remove("incorrect:"+videoId).apply();

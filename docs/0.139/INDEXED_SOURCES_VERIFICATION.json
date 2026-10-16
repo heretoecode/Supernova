@@ -1,0 +1,16 @@
+{
+  "source_sha": "55103ee0cc072838aa099190cab1eb0e397d2ad9",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 1,
+  "tests": 10,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.IndexedSourceRecoveryTest"
+  ],
+  "duration": "2m 8s",
+  "log_sha256": "18d12b81d612412be42c53f8b7852ef0c2c29f7720c8309ffbea54bf7c069b04",
+  "limits": "Native indexed-folder participant and pure public codec only. Source-schema2/archive/combined-journal integration follows this exact source; no scanner service scheduling, actual force-stop, full provider lifecycle or Shield acceptance."
+}

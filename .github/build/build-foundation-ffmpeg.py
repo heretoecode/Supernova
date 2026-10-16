@@ -11,6 +11,7 @@ import shutil
 import struct
 import subprocess
 import tarfile
+import tempfile
 import zipfile
 
 ABIS = ['arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64']
@@ -24,10 +25,22 @@ def digest(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 def download(input_spec, path):
-    if not path.exists():
-        subprocess.run(['curl', '--fail', '--location', '--silent', '--show-error', input_spec['url'], '--output', str(path)], check=True)
-    if digest(path) != input_spec['sha256']:
-        raise ValueError('Pinned native source/toolchain download hash differs')
+    if path.exists():
+        if digest(path) != input_spec['sha256']:
+            raise ValueError('Pinned native source/toolchain download hash differs')
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(prefix=path.name + '.', suffix='.download', dir=path.parent, delete=False) as stream:
+        temporary = Path(stream.name)
+    try:
+        subprocess.run(['curl', '--http1.1', '--retry', '3', '--retry-all-errors', '--retry-delay', '1',
+                        '--connect-timeout', '30', '--max-time', '900', '--fail', '--location', '--silent',
+                        '--show-error', input_spec['url'], '--output', str(temporary)], check=True)
+        if digest(temporary) != input_spec['sha256']:
+            raise ValueError('Pinned native source/toolchain download hash differs')
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 def configuration(path):
     return next(value.decode() for value in Path(path).read_bytes().split(b'\0') if value.startswith(b'--cross-prefix='))

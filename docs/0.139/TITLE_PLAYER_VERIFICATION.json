@@ -1,0 +1,30 @@
+{
+  "source_sha": "def2bca72e83efbf2f1461c1da814c8c2092060c",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 45,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest",
+    "com.archos.mediacenter.video.player.HeroPlaybackOutputTest",
+    "com.archos.mediacenter.video.player.PlaybackResumePolicyTest",
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackJournalTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackOverridesTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackSessionTest"
+  ],
+  "duration": "2m 41s",
+  "log_sha256": "8139d342735fec21a75b94586d2abdde107c033c5a66b29631c9ccfdd327195b",
+  "coverage": [
+    "Actual session queues raw subtitle Off, retains UI None count and waits for both selection acknowledgements",
+    "Missing enumeration, immediate/asynchronous rejection and synchronous callback race handling",
+    "Manual track/delay supersession and stale callback protection",
+    "Real PlayerService hook/selection callback methods with synthetic backend",
+    "Prior restore journal, source/override, hero output/failure/resume policy regressions"
+  ],
+  "limits": "Unregistered at this exact tested source. Subsequent raw None fix in full subtitle callback, pending reconciliation and public registry integration await their run. Synthetic metadata/player transport fixtures, not actual decoder output or full foreground/provider/Shield acceptance."
+}

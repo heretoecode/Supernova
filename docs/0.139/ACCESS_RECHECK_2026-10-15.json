@@ -1,0 +1,65 @@
+{
+  "observed_utc": "2026-10-15",
+  "runtime": {
+    "spec_revision": "160",
+    "observations_current": true,
+    "phase": "running",
+    "network_policy": "unrestricted/enforced HTTP",
+    "capabilities": [],
+    "secrets": [],
+    "runtime_variables": [],
+    "outbound_identities": []
+  },
+  "network_snapshot": {
+    "version": 1,
+    "vpn_configured": false,
+    "http_proxy": "http://proxy:8080",
+    "http_network_policy": {
+      "type": "unrestricted"
+    },
+    "tcp_connect_proxy": "http://proxy:8088",
+    "tcp_network_access": {
+      "domains": [],
+      "ip_ranges": []
+    }
+  },
+  "adb_devices": [],
+  "kvm_present": false,
+  "signing": {
+    "environment": "supernova-foundation-signing",
+    "custom_branch_policies": true,
+    "implementation_branch_allowed": false,
+    "live_policy_receipt": "SIGNING_BRANCH_ACCESS.json",
+    "new_workflow_registered": true,
+    "push_registration_run": 38724382422,
+    "push_job_conclusion": "skipped",
+    "job_steps": [],
+    "manual_dispatch_attempted": false,
+    "key_access_attempted": false,
+    "policy_mutation_attempted": true,
+    "policy_request_status": 403,
+    "policy_request_error": "Resource not accessible by integration",
+    "policy_before_after_identical": true,
+    "policy_attempt_receipt": "SIGNING_POLICY_ATTEMPT_2026-10-15.json"
+  },
+  "drive": {
+    "folder_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+    "folder_name": "APKs",
+    "folder_parent": "1c3G--zRc7aAt_SF6KQVniyD8xv6usMmZ",
+    "known138_id": "1_KdbMEUyTDPEYjmKD-UDG4hud-EBCJlO",
+    "known138_metadata_parent_matches": true,
+    "known138_size": 103518717,
+    "metadata_source_visibility_status": "access_not_verified",
+    "folder_and_name_searches_return_no_known138": "Search omitted the independently metadata-confirmed138 file. Empty search results do not establish empty folder or unavailable files.",
+    "diagnostics_search": "Returned historical documentation; no newly supplied incident ZIP identified. Filtered recentZIP search empty, subject to same search limitation.",
+    "upload_attempted": false,
+    "write_permission_verified": false,
+    "delivery_status": "No signed139 artifact; no upload attempted. Do not claim Drive write failure or new139 file absence from search alone."
+  },
+  "limits": [
+    "No signing-secret absence inferred from runtime bindings.",
+    "No physical Shield/device/upgrade pass.",
+    "No private-network endpoints invented or scanned.",
+    "No remote access or signing policy changed."
+  ]
+}

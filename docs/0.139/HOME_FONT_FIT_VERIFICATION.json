@@ -1,0 +1,20 @@
+{
+  "source_sha": "53f1263185badb667168a9cea564e89243338fe5",
+  "result": "PASS",
+  "classes": 1,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.Supernova139HomeEditorTest"
+  ],
+  "duration": "36s",
+  "log_sha256": "b47ecaf688713d8f6c45c0a1aee56cb88051d91027a2fcce3d66236a28de8ac6",
+  "coverage": [
+    "Large-font selected Icon/Sort/Direction/Maximum labels fit measured text plus glyph/padding",
+    "All editor controls reachable with one focused target",
+    "Held key/reorder/rollback/reopen regression checks"
+  ],
+  "limits": "Synthetic native hierarchy and larger font calibration, not physical Shield or complete visual acceptance. InlineMenuSelectorTest does not exist; only the actual executed class above is claimed.",
+  "tests": 12,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

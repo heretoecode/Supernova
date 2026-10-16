@@ -111,7 +111,6 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.UiChoiceDialog;
 import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.browser.PermissionChecker;
-import com.archos.mediacenter.video.browser.TorrentObserverService;
 import com.archos.mediacenter.video.info.VideoInfoActivity;
 import com.archos.mediacenter.video.info.VideoInfoCommonClass;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
@@ -199,7 +198,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private static final int DIALOG_CODEC_NOT_SUPPORTED = 6;
     private static final int DIALOG_WRONG_DEVICE_KINDLE = 7;
     private static final int DIALOG_AUDIO_DELAY = 8;
-    private static final int DIALOG_NOT_ENOUGHT_SPACE = 9;
+
     private static final int DIALOG_AUDIO_SPEED = 10;
 
     // accessed from SubtitleSettingsDialog
@@ -221,10 +220,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     public static final String KEY_ADVANCED_VIDEO_ENABLED = "preferences_advanced_video_enabled";
 
     public static final String INDEXED_URI = "indexed_uri";
-    public static final String KEY_TORRENT="torrent";
+
     public static final String KEY_STREAMING_URI = "streaming_uri";
-    public static final String KEY_TORRENT_URL = "torrent_url";
-    public static final String KEY_TORRENT_SELECTED_FILE="torrent_seletected_file";
+
+
     public static final String LAUNCH_FROM_FLOATING_PLAYER = "launch_from_floating_player";
     public static final String KEY_FORCE_SW = "force_software_decoding";
 
@@ -260,9 +259,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private static final int NOTIFICATION_MODE_NONE = 2;
 
     private static final int MSG_PROGRESS_VISIBLE = 1;
-    private static final int MSG_TORRENT_STARTED = 2;
-    private static final int MSG_TORRENT_UPDATE = 3;
-    private static final int MSG_TORRENT_NOT_ENOUGH_SPACE = 5;
+
+
+
     private static final int MSG_ERROR_UPNP = 4;
     private static final int MSG_SLEEP = 6;
 
@@ -317,34 +316,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                         mProgressView.setVisibility(View.VISIBLE);
                     }
                     break;
-                case MSG_TORRENT_STARTED:
-                    start();
-                    break;
                 case MSG_ERROR_UPNP:
                     myShowDialog(DIALOG_ERROR);
-                    break;
-                case MSG_TORRENT_NOT_ENOUGH_SPACE:
-                    myShowDialog(DIALOG_NOT_ENOUGHT_SPACE);
-                    break;
-                case MSG_TORRENT_UPDATE :
-                    try {
-                        String toParse = (String)msg.obj;
-                        String[] parsed = toParse.split(";");
-                        String toDisplay = parsed[0]+" peers "+
-                                (Long.parseLong(parsed[1])>=0?parsed[1]+" seeds ":"")+
-                                Long.parseLong(parsed[2])/1024+" kB/s "+
-                                Long.parseLong(parsed[4])/1024/1024+"MB/"
-                                +Long.parseLong(parsed[5])/1024/1024+"MB";
-
-                        View torrent_status = mProgressView.findViewById(R.id.torrent_status);
-                        torrent_status.setVisibility(View.VISIBLE);
-                        ((TextView)torrent_status).setText(toDisplay);
-
-                    } catch(NumberFormatException e) {
-						Log.w("AVP", "Display update", e);
-                    } catch(java.lang.ArrayIndexOutOfBoundsException e) {
-                        Log.w("AVP", "Display update, out of bound", e);
-                    }
                     break;
                 case MSG_SLEEP:
                     finishWithResult();
@@ -437,8 +410,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private TVMenu mPlayModeTVMenu;
     private TVMenuItem mIntroSummaryMenuItem;
     private boolean isTVMode;
-    private TorrentObserverService mTorrent;
-    private int mTorrentFilePosition = -1;
+
+
     private Runnable r = null;
     private int mSavedMode;
     private AlertDialog ad=null;
@@ -1159,7 +1132,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     startService(new Intent(this, FloatingPlayerService.class));
                 }
                 mHasAskedFloatingPermission = false;
-                TorrentObserverService.resumed(PlayerActivity.this);
+
             }
             addNetworkListener();
             if (mPaused) {
@@ -1200,16 +1173,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             if (mPlayer.isPlaying()) {
                 if (!requestVisibleBehind(true)&&!mLaunchFloatingPlayer) {
                     // Try to play behind launcher, but if it fails, so paused.
-                    TorrentObserverService.paused(this);
+
                     removeNetworkListener();
                 }
             } else {
                 requestVisibleBehind(false);
-                TorrentObserverService.paused(this);
+
                 removeNetworkListener();
             }
         } else {
-            TorrentObserverService.paused(this);
+
             removeNetworkListener();
         }
         mPaused = true;
@@ -1230,7 +1203,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @Override
     public void onVisibleBehindCanceled() {
         mPaused = true;
-        TorrentObserverService.paused(this);
+
         super.onVisibleBehindCanceled();
     }
 
@@ -1252,10 +1225,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         if (mStopped)
             return;
-        if(mTorrent!=null){
-            if (log.isDebugEnabled()) log.debug("onStop, unbinding torrentObserver");
-        }
-
         /*
          * register a receiver that finish activity in case
          * network state is changed since a resume is not possible anymore.
@@ -2540,6 +2509,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mIndexHelper.writeVideoInfo(mVideoInfo, mNetworkBookmarksEnabled);
         }
     }
+    private void supersedeRestoredTitleChoice(){if(PlayerService.sPlayerService!=null)PlayerService.sPlayerService.manualTitleChoice(mVideoInfo);else try{com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this,mVideoInfo);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_title_choice_persistence_failed",invalid);}}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -3152,19 +3122,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     audioSpeedPickerDialog.updateSpeed(mPreferences.getFloat(getString(R.string.save_audio_speed_setting_pref_key), 1.0f));
                 mPlayerController.hide();
                 break;
-            case DIALOG_NOT_ENOUGHT_SPACE:
-                mDialog = new AlertDialog.Builder(this)
-                        .setTitle(R.string.player_err_cantplayvideo)
-                        .setMessage(R.string.error_downloading_not_enough_space)
-                        .setPositiveButton(android.R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        finish();
-                                    }
-                                })
-                        .setCancelable(false)
-                        .create();
-                break;
             case DIALOG_ERROR:
                 if (mErrorCode == IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_ALLOWED) {
                     mDialog = new AlertDialog.Builder(this)
@@ -3689,6 +3646,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mVideoInfo.subtitleDelay = delay;
         mVideoInfo.subtitleRatio = ratio;
         if (delayChanged || ratioChanged) {
+            supersedeRestoredTitleChoice();
             mSubtitleManager.clear();
             mPlayer.setSubtitleDelay(mVideoInfo.subtitleDelay);
             mPlayer.setSubtitleRatio(mVideoInfo.subtitleRatio);
@@ -3996,6 +3954,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 }
             }
         }
+        if(ret)supersedeRestoredTitleChoice();
         return ret;
     }
 
@@ -4661,16 +4620,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         public void onEnd() {
             mVideoFinished = true;
             finishWithResult();
-        }
-
-        @Override
-        public void onTorrentUpdate(String daemonString) {
-            mHandler.sendMessage(mHandler.obtainMessage(MSG_TORRENT_UPDATE , daemonString));
-        }
-
-        @Override
-        public void onTorrentNotEnoughSpace() {
-            mHandler.sendEmptyMessage(MSG_TORRENT_NOT_ENOUGH_SPACE);
         }
 
         @Override

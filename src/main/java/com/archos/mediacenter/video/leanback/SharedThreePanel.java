@@ -12,6 +12,13 @@ import android.widget.TextView;
 
 /** Common geometry and row styling for storage, Settings and Library Health workspaces. */
 public class SharedThreePanel extends LinearLayout {
+    private boolean constrainViewport;
+    /** Only the compact Backup workspace opts out of the ordinary horizontally revealed panes. */
+    public void constrainViewport(boolean value){constrainViewport=value;requestLayout();}
+    @Override protected void onMeasure(int widthSpec,int heightSpec){
+        if(constrainViewport&&getParent() instanceof View){View viewport=(View)getParent();int width=viewport.getWidth()-viewport.getPaddingLeft()-viewport.getPaddingRight();if(width>0)widthSpec=MeasureSpec.makeMeasureSpec(width,MeasureSpec.EXACTLY);}
+        super.onMeasure(widthSpec,heightSpec);
+    }
     public SharedThreePanel(Context context) {
         super(context);
         setOrientation(HORIZONTAL);

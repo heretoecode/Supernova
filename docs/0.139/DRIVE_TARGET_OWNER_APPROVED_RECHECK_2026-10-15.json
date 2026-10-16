@@ -1,0 +1,28 @@
+{
+  "result": "TARGET_METADATA_CONFIRMED",
+  "observed_utc": "2026-10-15",
+  "folder": {
+    "id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+    "name": "APKs",
+    "mime_type": "application/vnd.google-apps.folder",
+    "parent_id": "1c3G--zRc7aAt_SF6KQVniyD8xv6usMmZ",
+    "url": "https://drive.google.com/drive/folders/1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM"
+  },
+  "known_previous_apk": {
+    "id": "1_KdbMEUyTDPEYjmKD-UDG4hud-EBCJlO",
+    "name": "Supernova_0.138.apk",
+    "bytes": 103518717,
+    "parent_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM"
+  },
+  "current_candidate": {
+    "signed_apk_available": false,
+    "upload_attempted": false,
+    "verified139_file_link": null,
+    "blocker": "Existing-certificate signing environment denies exact139 branch-policy mutation403; do not upload unsigned APK under final name."
+  },
+  "limits": [
+    "Metadata response omitted requested capability/hash fields; this establishes target metadata, not an upload permission denial or grant.",
+    "No global139 file absence is inferred from incomplete search; no folder/file was created or replaced by this task.",
+    "Published release-notes HTML17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW remains unchanged."
+  ]
+}

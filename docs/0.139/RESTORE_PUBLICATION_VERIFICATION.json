@@ -1,0 +1,26 @@
+{
+  "source_sha": "42182512e63f7652dc86fb48f2bae7df5103ab29",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.RestorePublicationTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.CombinedCurrentRestoreTest",
+    "com.archos.mediacenter.video.utils.PreviewLibraryRestoreRaceTest"
+  ],
+  "duration": "45s",
+  "log_sha256": "8846f085994e043cf19bea63ac339c95ade21a026db9ac7b1d9038074adf529c",
+  "coverage": [
+    "Library memory/disk invalidation and notification occur only after every coordinated participant and journal cleanup",
+    "Rollback and committed startup recovery publish actual final state",
+    "Synthetic bad observer leaves data committed, records refresh warning instead of false restore failure",
+    "Actual native query/mapper and fresh receiving-policy fixture reject old in-flight cache publication then read unpinned current state",
+    "Model and six-store regressions"
+  ],
+  "limits": "In-process Native SQLite/ContentResolver/Robolectric; not real force-stop/provider/device/whole BACKUP43. Earlier failures remain preserved.",
+  "tests": 17,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "result": "PASS"
+}

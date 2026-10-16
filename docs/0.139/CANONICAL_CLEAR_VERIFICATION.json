@@ -1,0 +1,24 @@
+{
+  "source_sha": "90244c6524892eedb78719e7d4dc1d397f7e7f7e",
+  "dependency_sha": "66a1d42a87160069c3620ab4e4fe3859379d2210",
+  "result": "PASS",
+  "duration": "50s",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "log_sha256": "87533b15810e1c260d638c9025df775f3217f3517c34ffa3c419e88c2c17e0bd",
+  "coverage": [
+    "Native movie and episode clear hides every joined fact and retains native metadata pins Collection references and viewing state",
+    "Clear private redo reproduces exact state; view-only Native62 ->63 migration preserves baseline data and FK integrity",
+    "Existing native/schema9 recovery, legacy retirement and bounded import preparation checks"
+  ],
+  "limits": "Synthetic native SQLite/provider tests. Explicit legacy62 archive migration/failure isolation tests follow this source. Unidentified/new/cross-kind/parent creation and full production codec/reconciliation remain open.",
+  "tests": 33,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

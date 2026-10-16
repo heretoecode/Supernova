@@ -1,0 +1,54 @@
+{
+  "source_sha": "df18aadfba03a0e5ba0d1e2f363945d8d2f759e1",
+  "status": "PASS",
+  "classes": 4,
+  "tests": 22,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.HomeIntentCodecTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+    "com.archos.mediacenter.video.leanback.PortableViewingChoicesTest",
+    "com.archos.mediacenter.video.leanback.Supernova139HomeEditorTest"
+  ],
+  "checks": [
+    "Locations and history privacy warnings default to Cancel; Back/cancel preserve choices",
+    "Explicit confirmations persist only intended choice and restore opener focus after queued OnDismiss callbacks",
+    "Bookmark dependency confirmation preserves Locations Off; held OK does not repeat toggle",
+    "Actual628x468 right-area targets/labels/divider/padding and flat information-page Back checks",
+    "Custom-only Home payload preserves omitted unselected Watch Next membership",
+    "Home/viewing-choice/editor regressions"
+  ],
+  "artifacts": [
+    {
+      "path": "docs/0.139/ui/backup/0139-backup-right-main-privacy-stage.png",
+      "sha256": "cb80897ae5880ba36d9cb42aa6e23b1db0568137139e856fa1f79f2a213316c8",
+      "viewport_px": [
+        628,
+        468
+      ]
+    },
+    {
+      "path": "docs/0.139/ui/backup/0139-backup-details-privacy-stage.png",
+      "sha256": "83fb01a6df8ebce7e8a6d7f5adc1e66b4ac717c1e9c1d2ee2c38d99944e46587",
+      "viewport_px": [
+        628,
+        468
+      ]
+    },
+    {
+      "path": "docs/0.139/ui/backup/0139-backup-instructions-privacy-stage.png",
+      "sha256": "9c2eaa61ae143fc49f2a7146c97d2110619aaff52987d2540e7728bd3fb1c211",
+      "viewport_px": [
+        628,
+        468
+      ]
+    }
+  ],
+  "limits": [
+    "Retest corrects first fixture failure by processing Android dismissal callbacks; no claim of a production focus-code fix",
+    "Right-area crop only; production sidebar/backdrop, hardware density/font profiles and Shield still open",
+    "Backup is not yet connected to production logical export/restore"
+  ]
+}

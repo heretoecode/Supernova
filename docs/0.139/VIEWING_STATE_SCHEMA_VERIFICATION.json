@@ -1,0 +1,26 @@
+{
+  "source_sha": "b07108671e4fb740532fde232d3faaa28bf5d67a",
+  "classes": 4,
+  "tests": 21,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.leanback.PortableViewingStateTest",
+    "com.archos.mediacenter.video.leanback.PortableViewingChoicesTest",
+    "com.archos.mediacenter.video.player.Supernova138PlaybackTest"
+  ],
+  "checks": [
+    "History and positive-position schemas export separate fields",
+    "Selected history/position matrix preserves unselected columns",
+    "Present-empty clears selected state; negative legacy completion markers cannot resurrect selected-empty history",
+    "Unmatched fingerprints and undiscovered provider identities survive staging/re-export",
+    "Duplicate, credential/location injection and numeric coercion rejected before mutation",
+    "Existing viewing-history and playback regressions"
+  ],
+  "limits": [
+    "Pure staged replacement plus existing database regressions; new SQLite replacement primitive not included at this SHA",
+    "No production restore, cross-store journal or Shield evidence"
+  ]
+}

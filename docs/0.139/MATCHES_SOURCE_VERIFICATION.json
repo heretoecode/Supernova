@@ -1,0 +1,16 @@
+{
+  "source_sha": "e8faad187d7fac5e1529aa10d539d5d7a4d20afc",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 1,
+  "tests": 7,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PortableMediaMatchesTest"
+  ],
+  "duration": "2m 11s",
+  "log_sha256": "e8711692d97b2199d032ccedc2895767392effecccb4af594665aa6cf420c187",
+  "limits": "Media-match public schema/native source and pure ambiguity preparation only. Unregistered; receiving ownership guard, canonical native join/cleanup investigation, actual mutation, metadata refresh and journal integration follow this source."
+}

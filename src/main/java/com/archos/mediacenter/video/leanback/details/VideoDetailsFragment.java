@@ -1627,14 +1627,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             updateSubtitleRowWhenReady();
 
         }
-        //do not execute file info task when torrent file
-        if(video.getFileUri() == null || mLaunchedFromPlayer) { // avoid NPE on .getLastPathSegment()
-            mVideoInfoTask = new VideoInfoTask();
-            mVideoInfoTask.execute(video);
-        } else if(!FileUtils.getName(video.getFileUri()).endsWith("torrent")) {
-            mVideoInfoTask = new VideoInfoTask();
-            mVideoInfoTask.execute(video);
-        }
+        mVideoInfoTask = new VideoInfoTask();
+        mVideoInfoTask.execute(video);
 
         if (poster == null) {
             if (log.isDebugEnabled()) log.debug("fullyReloadVideo: no poster, generate it");
@@ -2456,24 +2450,6 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         }
         deleteUrisList = new ArrayList<>(Arrays.asList(video.getFileUri()));
         delete.startDeleteProcess(video.getFileUri());
-    }
-
-    private void deleteScraperInfo(Video video) {
-        if (log.isDebugEnabled()) log.debug("deleteScraperInfo: {}", video.getFileUri());
-        // Reset the scraper fields for this item in the medialib
-        // (set them to -1 because there is no need to search it again when running the automated task)
-        // this also deletes the scraper data
-        ContentValues values = new ContentValues(2);
-        values.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID, "-1");
-        values.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, "-1");
-        final String selection = VideoStore.MediaColumns._ID + "=?";
-        final String[] selectionArgs =new String[]{Long.toString(video.getId())};
-
-        getActivity().getContentResolver().update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, selection, selectionArgs);
-        /*delete nfo files and posters*/
-        delete = new Delete(null,getActivity());
-        deleteUrisList = Collections.singletonList(video.getFileUri());
-        delete.deleteAssociatedNfoFiles(video.getFileUri());
     }
 
     private void unindexRemoteVideo(Video video) {

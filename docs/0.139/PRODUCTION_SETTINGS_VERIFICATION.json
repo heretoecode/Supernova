@@ -1,0 +1,27 @@
+{
+  "source_sha": "2bae4a78ffa2b564c742bdde3ff93a625c4cc213",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 3,
+  "tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest"
+  ],
+  "duration": "44s",
+  "log_path": "/workspace/scratch/supernova139-production-settings-sixth.log",
+  "log_sha256": "b5d3a7a74f32779a0573f72cb4a59481803ed3c97468bf8248090eada9b66e69",
+  "selected_test_init_sha256": "dfa69c875cbf5fd01cac9952bd64b5012f23a8a6177cd66ba711b4959fc2dc05",
+  "coverage": [
+    "Actual production VideoSettingsFragment.PrefsFragment + VideoPreferencesCommon full XML/preferences/sidebar and all26 backup controls; flat Details and Back focus",
+    "Logical2.0 and legacy1.0 separate validation/readers, explicit confirmation and established authentication semantics",
+    "Android API23 logical and legacy read paths; immutable private legacy digest, provider close failure and cancellation",
+    "Owned cleanup refuses unrelated roots and does not follow internal symlinks; legacy artwork follow-up inside existing journal",
+    "Activity-owned backup operation model regressions"
+  ],
+  "limits": "Robolectric native SQLite/graphics fixtures; app Java context/logger/locale initialized without native CustomApplication decoder boot. Not actual foreground service/provider picker/force-stop/Shield acceptance.26th Matches codec remains unregistered."
+}

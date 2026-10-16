@@ -76,7 +76,6 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     private static final int STARTING_HEIGHT = 200; //in dip
     private static final float MOVE_THRESHOLD = 100;
     private static final int MSG_PROGRESS_VISIBLE = 1;
-    private static final int MSG_TORRENT_UPDATE = 2;
     private static final int MSG_HIDE_CONTROLLER = 3;
 
     private WindowManager mWindowManager;
@@ -584,26 +583,6 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
                         mProgressView.setVisibility(View.VISIBLE);
                     break;
 
-                case MSG_TORRENT_UPDATE :
-                    try {
-                        String toParse = (String)msg.obj;
-                        String[] parsed = toParse.split(";");
-                        String toDisplay = parsed[0]+" peers "+
-                                (Long.parseLong(parsed[1])>=0?parsed[1]+" seeds ":"")+
-                                Long.parseLong(parsed[2])/1024+" kB/s "+
-                                Long.parseLong(parsed[4])/1024/1024+"MB/"
-                                +Long.parseLong(parsed[5])/1024/1024+"MB";
-
-                        View torrent_status = mProgressView.findViewById(R.id.torrent_status);
-                        torrent_status.setVisibility(View.VISIBLE);
-                        ((TextView)torrent_status).setText(toDisplay);
-
-                    } catch(NumberFormatException e) {
-                        log.warn("Display update", e);
-                    } catch(java.lang.ArrayIndexOutOfBoundsException e) {
-                        log.warn("Display update, out of bound", e);
-                    }
-                    break;
             }
         }
     };
@@ -636,14 +615,6 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         stopSelf();
     }
 
-
-    @Override
-    public void onTorrentUpdate(String daemonString) {
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_TORRENT_UPDATE , daemonString));
-    }
-
-    @Override
-    public void onTorrentNotEnoughSpace() {  }
 
     @Override
     public void onFrontendDetached() {

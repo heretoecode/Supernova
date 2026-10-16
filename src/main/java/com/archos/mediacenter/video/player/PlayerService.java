@@ -67,7 +67,6 @@ import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.BootupRecommandationService;
-import com.archos.mediacenter.video.browser.TorrentObserverService;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.leanback.channels.ChannelManager;
@@ -207,7 +206,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         private long viewedMs, sampleTime;
         private PlaybackViewingCoverage coverage=new PlaybackViewingCoverage();private long coverageId=-1;
         private int samplePosition=-1;
-        private boolean seeking, hasPlayed, failed;
+        private boolean seeking, hasPlayed, failed, outputEstablished;
 
         private void reset(Uri newUri, String newLaunchGeneration) {
             uri = newUri;
@@ -219,7 +218,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             lastKnownPositionMs = LAST_POSITION_UNKNOWN;
             completed = false;
             startPositionApplied = false;
-            coverage=new PlaybackViewingCoverage();coverageId=-1;viewedMs=0;sampleTime=0;samplePosition=-1;seeking=false;hasPlayed=false;failed=false;
+            coverage=new PlaybackViewingCoverage();coverageId=-1;viewedMs=0;sampleTime=0;samplePosition=-1;seeking=false;hasPlayed=false;failed=false;outputEstablished=false;
         }
 
         private void setCandidate(ResumeSource source, int positionMs) {
@@ -287,7 +286,6 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public static final int LAST_POSITION_UNKNOWN = -1;
     public static final int LAST_POSITION_END = -2;
 
-    public static final String KEY_ORIGINAL_TORRENT_URL = "original_torrent_uri";
 
     private static final String KEY_HIDE_SUBTITLES = "subtitles_hide_default";
     private static final String KEY_NETWORK_BOOKMARKS = "network_bookmarks";
@@ -353,69 +351,6 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void setSeeking(boolean seek) {
         isSeeking = seek;
     }
-
-    /* Torrent */
-
-
-    private TorrentObserverService mTorrent;
-    private int mTorrentFilePosition;
-    private String mTorrentURL;
-    private ServiceConnection mTorrentObserverServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName arg0, IBinder binder) {
-            mTorrent  =  ((TorrentObserverService.TorrentServiceBinder) binder).getService();
-            mTorrent.setParameters(mTorrentURL, mTorrentFilePosition);
-            mTorrent.setObserver(mTorrentThreadObserver);
-            mTorrent.start();
-            // start();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mTorrent = null;
-        }
-    };
-
-
-    private TorrentObserverService.TorrentThreadObserver mTorrentThreadObserver = new TorrentObserverService.TorrentThreadObserver() {
-        @Override
-        public void setPort(int port) {
-            if(mIntent.getData()!=null){
-                mStreamingUri = Uri.parse("http://localhost:"+port+mIntent.getData().getPath());
-            }
-        } // we have to get the new port
-
-        @Override
-        public void setFilesList(ArrayList<String> files) {
-            mTorrent.selectFile(mTorrentFilePosition);
-        }
-
-        @Override
-        public void notifyDaemonStreaming() {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onDataUriOK();
-                }
-            });
-        }
-
-        @Override
-        public void onEndOfTorrentProcess() {
-        }
-
-        @Override
-        public void notifyObserver(String daemonString) {
-            if(mPlayerFrontend!=null)
-                mPlayerFrontend.onTorrentUpdate(daemonString);
-        }
-
-        @Override
-        public void warnOnNotEnoughSpace() {
-            if(mPlayerFrontend!=null)
-                mPlayerFrontend.onTorrentNotEnoughSpace();
-        }
-    };
 
     /* Everything to update playmode */
 
@@ -622,10 +557,6 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
         mUri = intent.getData();
         if(!java.util.Objects.equals(mPlaybackSession.uri,mUri))com.archos.mediacenter.video.diagnostics.Diagnostics.beginPlayback(mUri);
-        mTorrentURL = mIntent.getStringExtra(PlayerActivity.KEY_TORRENT_URL);
-        if(mIntent.hasExtra(KEY_ORIGINAL_TORRENT_URL)){
-            mUri = Uri.parse(mIntent.getStringExtra(KEY_ORIGINAL_TORRENT_URL));
-        }
         mUri = Uri.parse(removeFileSlashSlash(mUri.toString())); // we need to remove "file://"
 
         boolean hasCurrentSession = mPlaybackSession.uri != null;
@@ -691,7 +622,6 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         Object subtitleIntentVideo=intent.getSerializableExtra(VIDEO);if(subtitleIntentVideo instanceof Video)com.archos.mediacenter.video.utils.SubtitleDiscovery.playback(this,(Video)subtitleIntentVideo,com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache());
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_selection","physical_id",mVideoId,"resume_command",mResume,"explicit_position_ms",explicitPosition,"source",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mUri));
         if (log.isDebugEnabled()) log.debug("onStart mVideoId={}", mVideoId);
-        mTorrentFilePosition = mIntent.getIntExtra(PlayerActivity.KEY_TORRENT, -1);
 
         // when mVideoInfo uri is the same as intent uri -> info has already been retrieved !
         if(mVideoInfo!=null&&mVideoInfo.uri.equals(mUri)){
@@ -715,21 +645,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             mAudioSpeed = getAudioSpeedFromPreferences();
             if (log.isDebugEnabled()) log.debug("onStart: mAudioSpeed={}", mAudioSpeed);
         }
-        if(mTorrentFilePosition>=0){
-            mCallOnDataUriOKWhenVideoInfoIsSet = false;
-            mPlayer.setIsTorrent(true);
-            mPlayer.stayAwake(true);
-            if(mTorrent==null){
-                Intent connectionIntent = new Intent(this, TorrentObserverService.class);
-                bindService(connectionIntent, mTorrentObserverServiceConnection,
-                        Context.BIND_AUTO_CREATE);
-            }
-            else {
-                mTorrent.setObserver(mTorrentThreadObserver);
-                mTorrent.start();
-            }
-        }
-        else if(!"content".equals(mUri.getScheme()))
+        if(!"content".equals(mUri.getScheme()))
             onDataUriOK();
         else if(mVideoId==-1){
             Uri correctedUri = FileUtils.getRealUriFromVideoURI(this,mUri);
@@ -840,9 +756,10 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     private void updateResumeCandidates(VideoDbInfo localInfo, VideoDbInfo networkInfo) {
         if (localInfo != null) {
+            boolean restoredPosition=false;try{restoredPosition=com.archos.mediacenter.video.leanback.ViewingHistory.applyRestoredPosition(this,localInfo);}catch(java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_position_invalid",invalid);}
             boolean eligible = PlaybackResumePolicy.isDatabaseResumeEligible(
                     localInfo.lastTimePlayed, mResume, RESUME_FROM_REMOTE_POS);
-            mPlaybackSession.setCandidate(ResumeSource.LOCAL, localInfo.resume, eligible);
+            mPlaybackSession.setCandidate(ResumeSource.LOCAL, localInfo.resume, restoredPosition?com.archos.mediacenter.video.leanback.ViewingHistory.resumeEnabled(this):eligible);
             mPlaybackSession.setCandidate(ResumeSource.BOOKMARK, localInfo.bookmark, eligible);
             int traktPosition = localInfo.duration > 0
                     ? Math.abs((int) (localInfo.traktResume * (double) localInfo.duration / 100))
@@ -1022,8 +939,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     private void onStreamingUriOK() {
         if (log.isDebugEnabled()) log.debug("onStreamingUriOK");
-        if(mTorrentFilePosition==-1)
-            prepareSubs();
+        prepareSubs();
         if(mPlayerFrontend!=null)
             mPlayerFrontend.setUri(mUri, mStreamingUri);
         new Thread(() -> {
@@ -1076,14 +992,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
         void onEnd();
 
-        void onTorrentUpdate(String daemonString);
 
-        void onTorrentNotEnoughSpace();
 
         void onFrontendDetached();
 
         void onFirstPlay();
-        // mHandler.sendMessage(mHandler.obtainMessage(MSG_TORRENT_STARTED));
 
         // Called on the main thread once intro/outro segments have been fetched, so the
         // UI (e.g. the Play mode tile summary) can refresh if it is already displayed.
@@ -1192,14 +1105,15 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private void sampleJourneyTime(){
         if(mPlayer==null||!mPlaybackSession.startPositionApplied)return;
         long now=android.os.SystemClock.elapsedRealtime();int position=captureCurrentPosition(false);
-        if(mVideoInfo!=null&&mVideoInfo.id>=0&&!PrivateMode.isActive()&&mPlaybackSession.coverageId!=mVideoInfo.id){
+        if(mPlaybackSession.outputEstablished&&mVideoInfo!=null&&mVideoInfo.id>=0&&!PrivateMode.isActive()&&mPlaybackSession.coverageId!=mVideoInfo.id){
             mPlaybackSession.coverageId=mVideoInfo.id;mPlaybackSession.coverage=PlaybackViewingCoverage.decode(mPreferences.getString("supernova_viewed_ranges:"+mVideoInfo.id,"[]"));
             mPreferences.edit().putBoolean("supernova_viewed_eligible:"+mVideoInfo.id,mPlaybackSession.coverage.eligible(getEffectiveDurationMs())).apply();
         }
         if(mPlayerState==PlayerState.PLAYING&&!mPlaybackSession.seeking&&mPlaybackSession.sampleTime>0){long elapsed=now-mPlaybackSession.sampleTime;long advanced=(long)position-mPlaybackSession.samplePosition;
             if(elapsed>0&&elapsed<=5000&&advanced>0&&advanced<=elapsed*8+1000){
                 mPlaybackSession.viewedMs+=elapsed;
-                if(mVideoInfo!=null&&!PrivateMode.isActive()){
+                if(elapsed>=250&&!mPlaybackSession.outputEstablished){mPlaybackSession.outputEstablished=true;excludeEstablishedHero();com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_output_established","evidence","advancing_media_clock");}
+                if(mPlaybackSession.outputEstablished&&mVideoInfo!=null&&!PrivateMode.isActive()){
                     if(mPlaybackSession.coverageId!=mVideoInfo.id){mPlaybackSession.coverageId=mVideoInfo.id;mPlaybackSession.coverage=PlaybackViewingCoverage.decode(mPreferences.getString("supernova_viewed_ranges:"+mVideoInfo.id,"[]"));}
                     mPlaybackSession.coverage.add(mPlaybackSession.samplePosition,position);
                     mPreferences.edit().putString("supernova_viewed_ranges:"+mVideoInfo.id,mPlaybackSession.coverage.encode()).putBoolean("supernova_viewed_eligible:"+mVideoInfo.id,mPlaybackSession.coverage.eligible(getEffectiveDurationMs())).apply();
@@ -1211,9 +1125,10 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void saveVideoStateIfReady(){saveVideoStateIfReady(false);}
     private void saveVideoStateIfReady(boolean periodic){
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_attempt","periodic",periodic,"state",String.valueOf(mPlayerState),"has_played",mPlaybackSession.hasPlayed,"failed",mPlaybackSession.failed);
+        sampleJourneyTime();
+        if(!mPlaybackSession.outputEstablished){com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_skipped","reason","before_playback_established","failed",mPlaybackSession.failed);return;}
         if(mIndexHelper!=null) {
             if (mPlaybackSession.startPositionApplied && mPlaybackSession.hasPlayed && mPlayerState != PlayerState.INIT && mPlayerState != PlayerState.PREPARING) {
-                sampleJourneyTime();
                 if (log.isDebugEnabled()) log.debug("saveVideoStateIfReady");
                 int resumePosition = mPlaybackSession.completed
                         ? LAST_POSITION_END
@@ -1280,8 +1195,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             mPlayer.pause(PlayerController.STATE_OTHER);
             mPlayer.stopPlayback();
             mPlayerState = PlayerState.STOPPED;
-            TorrentObserverService.staticExitProcess();
-            TorrentObserverService.killProcess();
+
+
             if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
                 stopNowPlayingCard();
             }
@@ -1489,6 +1404,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private VideoObserver mVideoObserver;
     private boolean mHasRequestedIndexing;
     private VideoDbInfo mVideoInfo;
+    private final com.archos.mediacenter.video.utils.backup.TitlePlaybackSession restoredTitle=new com.archos.mediacenter.video.utils.backup.TitlePlaybackSession();
+    private void applyRestoredTitle(VideoMetadata metadata){try{restoredTitle.metadata(this,mVideoInfo,metadata,mPlayer);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_choice_pending",invalid);}}
+    public void manualTitleChoice(VideoDbInfo info){try{com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this,info);restoredTitle.manual(this,info);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_title_choice_persistence_failed",invalid);}}
 
     /*
         IntroDB skip intro/outro (GET only, proof of concept)
@@ -1613,6 +1531,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void setVideoInfo(VideoDbInfo videoInfo, ResumeSource resumeSource){
         if (log.isDebugEnabled()) log.debug("setVideoInfo: videoInfo.id={}, videoInfo.uri={}", (videoInfo != null ? videoInfo.id : "null"), (videoInfo != null ? videoInfo.uri : "null"));
         mVideoInfo = videoInfo;
+        try{restoredTitle.videoInfo(this,mVideoInfo);}catch(org.json.JSONException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_choice_invalid",invalid);}
         if (mVideoInfo != null) {
             if (log.isDebugEnabled()) log.debug("setVideoInfo: setLastVideoPlayed");
             CustomApplication.setLastVideoPlayedId(mVideoInfo.id);
@@ -1642,7 +1561,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
         if(mCallOnDataUriOKWhenVideoInfoIsSet)
             onDataUriOK();
-        else //when onDataUriOk has been called or when torrent file
+        else //when onDataUriOk has been called or for direct playback
             postPreparedAndVideoDb();
     }
     @Override
@@ -1666,10 +1585,6 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (log.isDebugEnabled()) log.debug("onDestroy: unregister headsetPluggedReceiver");
         unregisterReceiver(headsetPluggedReceiver);
         sPlayerService=null;
-        if(mTorrent!=null)
-            try {
-                unbindService(mTorrentObserverServiceConnection);
-            }catch(java.lang.IllegalArgumentException e) {}
         if (log.isDebugEnabled()) log.debug("onDestroy");
     }
 
@@ -1702,6 +1617,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     mPlaybackSession.selectedSource, startPosition);
             Player.sPlayer.seekTo(startPosition);
             mPlaybackSession.startPositionApplied = true;
+            excludeEstablishedHero();
             // Explicit intent positions are one-shot inputs. Keep the selected source for
             // diagnostics, but do not let a later metadata refresh seek backward again.
             mPlaybackSession.setCandidate(ResumeSource.EXPLICIT, 0);
@@ -2037,6 +1953,22 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
+    @Override public void onPlaybackEstablished(){
+        mPlaybackSession.outputEstablished=true;
+        excludeEstablishedHero();
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_output_established","backend",mPlayer==null?-1:mPlayer.getType());
+    }
+    private void excludeEstablishedHero(){
+        if(!mPlaybackSession.outputEstablished||!mPlaybackSession.startPositionApplied||mVideoInfo==null||PrivateMode.isActive())return;
+        String provider=mVideoInfo.isShow?mVideoInfo.scraperShowId:mVideoInfo.scraperMovieId;
+        String identity=provider!=null&&provider.matches("[1-9][0-9]*")?(mVideoInfo.isShow?"tv:":"movie:")+provider:!mVideoInfo.isShow?"v"+mVideoInfo.id:null;
+        if(identity==null){
+            var library=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+            if(library!=null)for(var entry:library.episodes)if(((Video)entry.media).getId()==mVideoInfo.id){identity=entry.key();break;}
+        }
+        com.archos.mediacenter.video.leanback.HeroPlaybackEligibility.established(this,identity);
+    }
+
     @Override
     public void onPlay(int state) {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_state","state","playing","reason_code",state);
@@ -2098,6 +2030,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public void onAudioMetadataUpdated(VideoMetadata vMetadata, int newAudioTrack) {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("audio_metadata","selected",newAudioTrack,"tracks",vMetadata==null?0:vMetadata.getAudioTrackNb());
+        applyRestoredTitle(vMetadata);
         /*
          * if current audio track is invalid or not supported, choose the first supported one
          */
@@ -2217,6 +2150,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onAudioTrackSelectionCompleted(int track, boolean success) {
+        try{restoredTitle.selection(this,mVideoInfo,true,track,success);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_acknowledgement_failed",invalid);}
         if (success || mVideoInfo == null || mVideoInfo.audioTrack != track) {
             return;
         }
@@ -2238,6 +2172,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int newSubtitleTrack) {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("subtitle_metadata","selected",newSubtitleTrack,"tracks",vMetadata==null?0:vMetadata.getSubtitleTrackNb());
+        applyRestoredTitle(vMetadata);
         // note: if mIsPreparingSubs = true, onSubtitleMetadataUpdated can be called even if in not final state
         // subs could be still being copied in cache directory
         // however in a replay context cache is not  updated since all the subs have already been copied
@@ -2457,7 +2392,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if (mVideoInfo.subtitleTrack >= 0 && mVideoInfo.subtitleTrack <= nbTrack) {
                 if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: newSubtitleTrack={}, mVideoInfo.subtitleTrack={}", newSubtitleTrack, mVideoInfo.subtitleTrack);
 
-                if (!mPlayer.setSubtitleTrack(mVideoInfo.subtitleTrack)) {
+                if (!mPlayer.setSubtitleTrack(mVideoInfo.subtitleTrack==nbTrack?-1:mVideoInfo.subtitleTrack)) {
                     if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: setSubtitleTrack failed, setting none track");
                     mVideoInfo.subtitleTrack = noneTrack;
                 } else {
@@ -2492,6 +2427,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onSubtitleTrackSelectionCompleted(int track, boolean success) {
+        try{restoredTitle.selection(this,mVideoInfo,false,track,success);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_acknowledgement_failed",invalid);}
         if (success || mVideoInfo == null || mVideoInfo.subtitleTrack != track) {
             return;
         }
@@ -2501,7 +2437,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mVideoInfo.subtitleTrack = noneTrack;
         mVideoInfo.subtitleLanguage = null;
         mNewSubtitleTrack = noneTrack;
-        if (track != noneTrack && !mPlayer.setSubtitleTrack(noneTrack)) {
+        if (track != -1 && !mPlayer.setSubtitleTrack(-1)) {
             log.error("onSubtitleTrackSelectionCompleted: failed to queue none-track fallback {}", noneTrack);
         }
     }

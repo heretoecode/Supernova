@@ -54,6 +54,74 @@ public final class ViewingHistory {
         Record(boolean c,boolean s,int p,int d,long t,long completion){completed=c;started=s;position=p;duration=d;played=t;completedAt=completion;}
     }
     public static Map<String,Record> read(Context c){synchronized(LOCK){Map<String,Record> records=new HashMap<>();try(Store helper=new Store(c);Cursor rows=helper.getReadableDatabase().query("history",null,null,null,null,null,null)){while(rows.moveToNext())records.put(rows.getString(0),new Record(rows.getInt(1)!=0,rows.getInt(2)!=0,rows.getInt(3),rows.getInt(4),rows.getLong(5),rows.getLong(6)));}return records;}}
+    /** Explicit restored positions bypass the native played-time gate without fabricating a timestamp. */
+    public static boolean applyRestoredPosition(Context context,VideoDbInfo info)throws java.io.IOException{
+        if(info==null||!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_positions_replaced_v2",false))return false;info.resume=0;if(!resumeEnabled(context))return true;
+        String key=identity(info.isShow,info.isShow?info.scraperShowId:info.scraperMovieId,info.scraperSeasonNr,info.scraperEpisodeNr,info.uri==null?null:info.uri.toString());if(key==null||key.startsWith("file:")&&com.archos.mediacenter.video.utils.backup.PortablePhysicalReferences.fingerprint(info.uri==null?null:info.uri.toString())==null)return true;
+        java.io.File file=context.getDatabasePath(DATABASE);if(!file.exists())return true;try(SQLiteDatabase database=SQLiteDatabase.openDatabase(file.getPath(),null,SQLiteDatabase.OPEN_READONLY);Cursor rows=database.query("history",new String[]{"position"},"identity=?",new String[]{key},null,null,null)){
+            if(database.getVersion()!=1)throw new java.io.IOException("Restored position store is incompatible");if(rows.moveToFirst()){if(rows.getType(0)!=Cursor.FIELD_TYPE_INTEGER||rows.getLong(0)< -2||rows.getLong(0)>Integer.MAX_VALUE)throw new java.io.IOException("Restored position is invalid");info.resume=Math.max(0,rows.getInt(0));}return true;
+        }catch(RuntimeException invalid){throw new java.io.IOException("Restored position could not be read safely",invalid);}
+    }
+    private static void restoreCancelled(java.util.function.BooleanSupplier cancel)throws java.io.InterruptedIOException{if(cancel.getAsBoolean()||Thread.currentThread().isInterrupted())throw new java.io.InterruptedIOException("Viewing-state restore cancelled");}
+    /** Staged database primitive only: no legacy media flags, preference journal or external sync changes. */
+    static void replacePortable(Context context,org.json.JSONObject history,org.json.JSONObject positions,java.util.function.BooleanSupplier cancel)throws java.io.IOException,org.json.JSONException{
+        if(history==null&&positions==null)throw new org.json.JSONException("No viewing category selected");
+        if(history!=null)PortableViewingState.validate(history,PortableViewingState.Kind.HISTORY);
+        if(positions!=null)PortableViewingState.validate(positions,PortableViewingState.Kind.POSITIONS);
+        restoreCancelled(cancel);if(!Thread.holdsLock(LOCK))awaitWrites();restoreCancelled(cancel);
+        synchronized(LOCK){try(Store helper=new Store(context)){
+            android.database.sqlite.SQLiteDatabase database=helper.getWritableDatabase();Map<String,Record> existing=new LinkedHashMap<>();
+            try(Cursor rows=database.query("history",null,null,null,null,null,null)){while(rows.moveToNext())existing.put(rows.getString(0),new Record(rows.getInt(1)!=0,rows.getInt(2)!=0,rows.getInt(3),rows.getInt(4),rows.getLong(5),rows.getLong(6)));}
+            Map<String,Record> prepared=PortableViewingState.prepare(existing,history,positions);restoreCancelled(cancel);
+            database.beginTransaction();
+            try(android.database.sqlite.SQLiteStatement insert=database.compileStatement("INSERT INTO history(identity,completed,started,position,duration,played,completed_at) VALUES(?,?,?,?,?,?,?)")){
+                database.delete("history",null,null);
+                for(Map.Entry<String,Record> entry:prepared.entrySet()){
+                    restoreCancelled(cancel);Record value=entry.getValue();insert.clearBindings();insert.bindString(1,entry.getKey());insert.bindLong(2,value.completed?1:0);insert.bindLong(3,value.started?1:0);insert.bindLong(4,value.position);insert.bindLong(5,value.duration);insert.bindLong(6,value.played);insert.bindLong(7,value.completedAt);insert.executeInsert();
+                }
+                restoreCancelled(cancel);database.setTransactionSuccessful();
+            }finally{database.endTransaction();}
+        }catch(android.database.sqlite.SQLiteException failure){throw new java.io.IOException("Viewing-state transaction failed; restoration must not be reported as complete",failure);}}
+    }
+    /** Strict app-private image capture. Absent stores are read as empty without creating a database. */
+    public static org.json.JSONObject captureRecovery(Context context)throws java.io.IOException,org.json.JSONException {
+        synchronized(LOCK) {
+            Map<String,Record> records=new LinkedHashMap<>();
+            if(context.getDatabasePath(DATABASE).exists()) {
+                validate(context.getDatabasePath(DATABASE));
+                try(Store helper=new Store(context);Cursor rows=helper.getReadableDatabase().query("history",new String[]{"identity","completed","started","position","duration","played","completed_at"},null,null,null,null,"identity ASC")) {
+                while(rows.moveToNext()) {
+                    if(rows.getType(0)!=Cursor.FIELD_TYPE_STRING)throw new java.io.IOException("Invalid viewing recovery identity");
+                    for(int column=1;column<7;column++)if(rows.getType(column)!=Cursor.FIELD_TYPE_INTEGER)throw new java.io.IOException("Invalid viewing recovery integer");
+                    if(rows.getLong(1)<0||rows.getLong(1)>1||rows.getLong(2)<0||rows.getLong(2)>1||
+                            rows.getLong(3)< -2||rows.getLong(3)>Integer.MAX_VALUE||rows.getLong(4)<0||rows.getLong(4)>Integer.MAX_VALUE)
+                        throw new java.io.IOException("Invalid viewing recovery range");
+                    if(records.size()>=100000)throw new java.io.IOException("Viewing recovery exceeds supported limits");
+                    records.put(rows.getString(0),new Record(rows.getInt(1)==1,rows.getInt(2)==1,rows.getInt(3),rows.getInt(4),rows.getLong(5),rows.getLong(6)));
+                }
+                }catch(RuntimeException failure){throw new java.io.IOException("Viewing recovery inventory unavailable",failure);}
+            }
+            return PortableViewingState.recoverySnapshot(records);
+        }
+    }
+    /** Combined restore callers hold LOCK and coordinate a durable journal before invoking this primitive. */
+    public static void replaceRecovery(Context context,org.json.JSONObject snapshot,java.util.function.BooleanSupplier cancel)throws java.io.IOException,org.json.JSONException {
+        Map<String,Record> prepared=PortableViewingState.validateRecoverySnapshot(snapshot);
+        restoreCancelled(cancel);if(!Thread.holdsLock(LOCK))awaitWrites();restoreCancelled(cancel);
+        synchronized(LOCK){try(Store helper=new Store(context)) {
+            if(context.getDatabasePath(DATABASE).exists())validate(context.getDatabasePath(DATABASE));
+            SQLiteDatabase database=helper.getWritableDatabase();database.beginTransaction();
+            try(android.database.sqlite.SQLiteStatement insert=database.compileStatement("INSERT INTO history(identity,completed,started,position,duration,played,completed_at) VALUES(?,?,?,?,?,?,?)")) {
+                database.delete("history",null,null);
+                for(var entry:prepared.entrySet()) {
+                    restoreCancelled(cancel);Record value=entry.getValue();insert.clearBindings();insert.bindString(1,entry.getKey());
+                    insert.bindLong(2,value.completed?1:0);insert.bindLong(3,value.started?1:0);insert.bindLong(4,value.position);
+                    insert.bindLong(5,value.duration);insert.bindLong(6,value.played);insert.bindLong(7,value.completedAt);insert.executeInsert();
+                }
+                restoreCancelled(cancel);database.setTransactionSuccessful();
+            }finally{database.endTransaction();}
+        }catch(android.database.sqlite.SQLiteException failure){throw new java.io.IOException("Viewing recovery replacement failed",failure);}}
+    }
     private static void write(Context c,String key,boolean complete,boolean started,int position,int duration,long played,boolean track,boolean resume){
         if(key==null||(!track&&!resume))return;
         synchronized(LOCK){try(Store helper=new Store(c)){SQLiteDatabase db=helper.getWritableDatabase();ContentValues values=new ContentValues();values.put("identity",key);
@@ -87,18 +155,19 @@ public final class ViewingHistory {
         android.content.SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(c);
         boolean migrate=!prefs.getBoolean("supernova_history_migrated",false);
         boolean cleared=prefs.getBoolean("supernova_history_cleared",false);
+        boolean positionsReplaced=prefs.getBoolean("supernova_positions_replaced_v2",false);
         for(PreviewLibraryLoader.Entry e:entries){
             Video v=(Video)e.media;String key=identity(e);Record previous=records.get(key);
             if(migrate&&tracking(c)&&previous==null&&(v.getLastPlayed()>0||PreviewSeriesJourney.completed(v)))
-                write(c,key,PreviewSeriesJourney.completed(v),true,v.getResumeMs(),v.getDurationMs(),v.getLastPlayed(),true,true);
+                write(c,key,PreviewSeriesJourney.completed(v),true,positionsReplaced?0:v.getResumeMs(),positionsReplaced?0:v.getDurationMs(),v.getLastPlayed(),true,true);
             else if(previous!=null){
                 v.applyIdentityHistory(previous.completed,previous.played,resumeEnabled(c)?previous.position:0);
                 e.playedAt=previous.played;
             }else if(cleared){
                 // Clear also applies to legacy/offline identities not yet migrated. Positive resume is independent.
-                int position=Math.max(0,v.getResumeMs());
+                int position=positionsReplaced?0:Math.max(0,v.getResumeMs());
                 v.applyIdentityHistory(false,0,resumeEnabled(c)?position:0);e.playedAt=0;
-            }
+            }else if(positionsReplaced){v.applyIdentityHistory(v.isWatched(),v.getLastPlayed(),0);}
         }
         prefs.edit().putBoolean("supernova_history_migrated",true).commit();return read(c);
     }
@@ -134,7 +203,12 @@ public final class ViewingHistory {
                 if(metadata.moveToFirst()){try(Cursor schema=db.rawQuery("PRAGMA table_info(android_metadata)",null)){if(schema.getCount()!=1||!schema.moveToFirst()||!"locale".equals(schema.getString(1)))throw new java.io.IOException("Unexpected history metadata");}try(Cursor locale=db.rawQuery("SELECT locale FROM android_metadata",null)){while(locale.moveToNext())if(locale.isNull(0)||!locale.getString(0).matches("[A-Za-z0-9_-]{1,40}"))throw new java.io.IOException("Invalid history locale");}}
             }
             Set<String> columns=new HashSet<>();
-            try(Cursor schema=db.rawQuery("PRAGMA table_info(history)",null)){while(schema.moveToNext())columns.add(schema.getString(1));}
+            try(Cursor schema=db.rawQuery("PRAGMA table_info(history)",null)){while(schema.moveToNext()){
+                String column=schema.getString(1);boolean identity=column.equals("identity");
+                if(!(identity?"TEXT":"INTEGER").equalsIgnoreCase(schema.getString(2))||schema.getInt(5)!=(identity?1:0)||
+                        !identity&&schema.getInt(3)!=1||!schema.isNull(4))throw new java.io.IOException("Unexpected history column contract");
+                columns.add(column);
+            }}
             if(!columns.equals(Set.of("identity","completed","started","position","duration","played","completed_at")))throw new java.io.IOException("Unexpected history fields");
             try(Cursor rows=db.rawQuery("SELECT identity,completed,started,position,duration,played,completed_at FROM history",null)) {
                 while(rows.moveToNext())if(rows.isNull(0)||!rows.getString(0).matches("tmdb:(movie:[1-9][0-9]*|tv:[1-9][0-9]*:[0-9]+:[1-9][0-9]*)|file:[0-9a-f]{64}")||rows.getInt(1)<0||rows.getInt(1)>1||rows.getInt(2)<0||rows.getInt(2)>1||rows.getLong(3)<-2||rows.getLong(3)>Integer.MAX_VALUE||rows.getLong(4)<0||rows.getLong(4)>Integer.MAX_VALUE||rows.getLong(5)<0||rows.getLong(6)<0)throw new java.io.IOException("Invalid viewing history");

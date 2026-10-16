@@ -145,8 +145,6 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     public static final String KEY_NETSHARE_CATEGORY = "netshare_category";
     public static final String KEY_ADVANCED_3D_TV_SWITCH_SUPPORTED = "preferences_tv_switch_supported";
     public static final String KEY_ADVANCED_VIDEO_QUIT = "preferences_video_advanced_quit";
-    public static final String KEY_TORRENT_BLOCKLIST = "preferences_torrent_blocklist";
-    public static final String KEY_TORRENT_PATH = "preferences_torrent_path";
     public static final String KEY_SHARED_FOLDERS= "share_folders";
     public static final String KEY_SUBTITILES_CREDENTIALS= "subtitles_credentials";
     public static final String KEY_FORCE_SW = "force_software_decoding";
@@ -327,11 +325,11 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     List<String> UiLanguageListEntries = new ArrayList<>();
     List<String> UiLanguageListEntryValues = new ArrayList<>();
 
-    private final ActivityResultLauncher<Intent> mFolderPickerLauncher;
     private final ActivityResultLauncher<Intent> mTraktAuthLauncher;
 
     private final ActivityResultLauncher<String> backupDestination;
     private final ActivityResultLauncher<String[]> backupSource;
+    private BackupReview backupReview;
 
     public VideoPreferencesCommon(PreferenceFragmentCompat preferencesFragment) {
         mPreferencesFragment = preferencesFragment;
@@ -344,33 +342,16 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         });
         backupSource = preferencesFragment.registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
             if (uri == null) return;
-            BackupReview.show(getActivity(),uri,path->{
-                Intent intent=new Intent(MediaLibraryBackupService.ACTION_IMPORT,null,getActivity(),MediaLibraryBackupService.class);
-                intent.putExtra(MediaLibraryBackupService.EXTRA_IMPORT_FILE,path);getContext().startService(intent);
-            });
+            reviewBackup(uri);
         });
-        mFolderPickerLauncher = preferencesFragment.registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                this::onFolderPickerResult);
+        preferencesFragment.getLifecycle().addObserver(new androidx.lifecycle.DefaultLifecycleObserver(){
+            @Override public void onCreate(androidx.lifecycle.LifecycleOwner owner){
+                if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(preferencesFragment.requireContext()).getBoolean("try_new_ui",false))backupReview=new BackupReview(preferencesFragment);
+            }
+        });
         mTraktAuthLauncher = preferencesFragment.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 this::onTraktAuthResult);
-    }
-
-    private void onFolderPickerResult(ActivityResult result) {
-        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-            String newPath = result.getData().getStringExtra(FolderPicker.EXTRA_SELECTED_FOLDER);
-            if (newPath != null) {
-                java.io.File f = new java.io.File(newPath);
-                if (f.isDirectory() && f.exists()) {
-                    PreferenceManager.getDefaultSharedPreferences(getActivity())
-                            .edit().putString(KEY_TORRENT_PATH, f.getAbsolutePath()).apply();
-                    TorrentPathDialogPreference pref =
-                            (TorrentPathDialogPreference) findPreference(KEY_TORRENT_PATH);
-                    if (pref != null) pref.notifyChanged();
-                }
-            }
-        }
     }
 
     private void onTraktAuthResult(ActivityResult result) {
@@ -683,10 +664,6 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
 
         addPreferencesFromResource(R.xml.preferences_video);
         mStreamingPreferences = new com.archos.mediacenter.video.streaming.StreamingPreferences(mPreferencesFragment);
-
-        TorrentPathDialogPreference torrentPref =
-                (TorrentPathDialogPreference) findPreference(KEY_TORRENT_PATH);
-        if (torrentPref != null) torrentPref.setFolderPickerLauncher(mFolderPickerLauncher);
 
         mSharedPreferences = getPreferenceManager().getSharedPreferences();
         migrateDolbyVisionPreference(mSharedPreferences);
@@ -1011,9 +988,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         });
 
         Preference exportLibraryPreference = findPreference(getString(R.string.media_library_export_prefkey));
-        exportLibraryPreference.setSummary("Settings, sources, rows and viewing history. Credentials are excluded. This unencrypted archive contains private library data.");
+        exportLibraryPreference.setSummary("Selected configuration and viewing choices. Media and credentials are excluded. Unencrypted; keep backups private.");
         exportLibraryPreference.setOnPreferenceClickListener(preference -> {
-            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This backup is unencrypted. It may expose filenames and paths, library and viewing history, settings, and source names and addresses. Passwords, tokens and login credentials are excluded. Keep it private. Reconnect protected shares and services after restore. Android storage permissions may need to be granted again.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
+            new androidx.appcompat.app.AlertDialog.Builder(getActivity()).setTitle("Back up Supernova?").setMessage("This backup is unencrypted. Selected configuration and history can reveal private viewing interests. Media, artwork, subtitle files, credentials, accounts, access grants, Put.io associations and legacy Collections are excluded. Filenames and locations are Off by default. Reconnect services, sources and Android permissions separately.").setNegativeButton("Cancel",null).setPositiveButton("Continue",(confirmation,which)->{
 
             try { backupDestination.launch("nova-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT).format(new java.util.Date()) + ".zip.in-progress"); }
             catch (android.content.ActivityNotFoundException missing) {
@@ -1496,8 +1473,6 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         PreferenceCategory prefCategorty = (PreferenceCategory) findPreference(KEY_TRAKT_CATEGORY);
         prefCategorty.removePreference(mTraktFull);
         mTraktSigninPreference.setEnabled(true);
-        findPreference(KEY_TORRENT_BLOCKLIST).setOnPreferenceClickListener(null);
-        findPreference(KEY_TORRENT_PATH).setOnPreferenceClickListener(null);
 
         mLastTraktUser = Trakt.getUserFromPreferences(mSharedPreferences);
         if (onTraktUserChange()) {
@@ -1872,25 +1847,15 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 .setTitle(R.string.media_library_import_dialog_title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    confirmImport(backupFile.getAbsolutePath());
+                    reviewBackup(android.net.Uri.fromFile(backupFile));
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
-    private void confirmImport(String importFilePath) {
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.media_library_import_confirm_title)
-                .setMessage(R.string.media_library_import_warning)
-                .setPositiveButton(R.string.media_library_import_button_confirm, (dialog, which) -> {
-                    Intent intent = new Intent(MediaLibraryBackupService.ACTION_IMPORT, null, getActivity(), MediaLibraryBackupService.class);
-                    intent.putExtra(MediaLibraryBackupService.EXTRA_IMPORT_FILE, importFilePath);
-                    getContext().startService(intent);
-                    Toast.makeText(getActivity(), R.string.media_library_import_in_progress, Toast.LENGTH_LONG).show();
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .setCancelable(true)
-                .show();
+    private void reviewBackup(android.net.Uri source) {
+        if(backupReview==null)backupReview=new BackupReview(mPreferencesFragment);
+        backupReview.open(source);
     }
 
     @Override

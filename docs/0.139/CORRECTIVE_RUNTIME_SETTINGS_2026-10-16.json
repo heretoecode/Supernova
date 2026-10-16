@@ -1,0 +1,33 @@
+{
+  "result": "PASS_CONTROLLED_DPAD_AND_BACKUP_SURFACE",
+  "source_commit": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
+  "apk_sha256": "9421a982296816f1ef53aa062ea608ed213dadc8475069fa9039202e5ee7898b",
+  "device": "owned software Android TV API28/x86, slow TCG/noKVM",
+  "captures": [
+    "settings-initial.png",
+    "backup-landing-final.png",
+    "backup-dialog-final.png",
+    "backup-back-focus-final.png",
+    "diagnostics-reverse-final.png"
+  ],
+  "capture_sha256": {
+    "settings-initial.png": "34a782ebaddfd92ba6e6cdaca4d4f75db741fae6cd4733829d3b1ec7c23e6b18",
+    "backup-landing-final.png": "5f05f2ed5486d44e5a01863565a9e2a0d12cd0a6bb161447e9a0ea88f4950359",
+    "backup-dialog-final.png": "240b6c9fb894dbebc343894f112b18fbdefc28105b491a13beb3f032f5d5457b",
+    "backup-back-focus-final.png": "4d2ca34b396a06ce072d46ab36d0db85b5dd91c893fa57a6dbdaa900af3304e9",
+    "diagnostics-reverse-final.png": "dafd1d49bcd4d09d43f42e096bfbea217875316aa22951800105ca79a62649bb"
+  },
+  "actual_final_checks": [
+    "Advanced rail focus confirmed before keys; Right, Downx5 reaches Backup",
+    "Three permanent landing panels; vertical Export/Restore; description on right",
+    "Right, OK on Export opens separate category dialog with existing MenuFoundation frame surface",
+    "Single paced Back restores centre Export Backup focus",
+    "Left from Export, Down Diagnostics, Down About, Up Diagnostics, Right reaches Logging with Advanced ancestor/three panes; Level and Export visible"
+  ],
+  "retained_functional_candidate_checks": "92eac913 signed38899461080 actual level choices Normal/DetailedQA, Exportfocus/DiagnosticExportActivity, Restore description D-pad roundtrip; same functional code as final except dialogframe background. Prior evidence preserved.",
+  "surface_limitation": "MenuFoundation surface uses alpha0xf0, not opaque. Faint underlying navigation remains visible behind operation-dialog header. Background addition is verified, total bleed-through removal is not claimed.",
+  "diagnostic_saf_save_readback": "NOT_RUN: no ACTION_CREATE_DOCUMENT provider in this TVimage",
+  "physical_shield_retest": "NOT_RUN",
+  "physical138_to139_upgrade": "NOT_RUN",
+  "no_automated_only_acceptance_claim": true
+}

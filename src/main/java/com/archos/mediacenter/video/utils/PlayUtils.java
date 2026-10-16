@@ -38,7 +38,6 @@ import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.player.ExternalPlayerService;
 import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediacenter.video.player.PlayerService;
-import com.archos.mediacenter.video.player.TorrentLoaderActivity;
 import com.archos.mediascraper.ScrapeDetailResult;
 
 import org.slf4j.Logger;
@@ -82,15 +81,11 @@ public class PlayUtils implements IndexHelper.Listener {
         public void onDownloadEnd();
     }
 
-    static public void startTorrent(Context context, MetaFile2 torrentFile, int resume) {
-        startTorrent(context, torrentFile.getUri(), torrentFile.getMimeType(),resume);
-    }
-    static public void startTorrent(Context context, Uri torrentFileUri, String mimeType, int resume) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setClass(context, TorrentLoaderActivity.class);
-        intent.setDataAndType(torrentFileUri, mimeType);
-        intent.putExtra(PlayerActivity.RESUME, resume);
-        context.startActivity(intent);
+    public static boolean unsupportedTorrent(Uri uri,String mime){
+        if("application/x-bittorrent".equalsIgnoreCase(mime))return true;
+        if(uri==null)return false;
+        if("magnet".equalsIgnoreCase(uri.getScheme()))return true;
+        String filename=uri.getLastPathSegment();return filename!=null&&filename.toLowerCase(java.util.Locale.ROOT).endsWith(".torrent");
     }
 
     /**
@@ -135,8 +130,8 @@ public class PlayUtils implements IndexHelper.Listener {
         }
 
         final String finalMimetype = mimeType;
-        if("application/x-bittorrent".equals(mimeType)){
-            startTorrent(context, video.getFileUri(), mimeType, resume);
+        if(unsupportedTorrent(video.getFileUri(),mimeType)){
+            Toast.makeText(context,"BitTorrent playback is no longer supported.",Toast.LENGTH_LONG).show();return;
         }
         else if(video.getFileUri() != null && "upnp".equals(video.getFileUri().getScheme()) &&
                         (video.getStreamingUri()==null || "upnp".equals(video.getStreamingUri().getScheme()))){ // retrieve streaming uri for external player

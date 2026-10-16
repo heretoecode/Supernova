@@ -1,0 +1,31 @@
+{
+  "result": "PASS_CONTROLLED_PLAYBACK_OUTPUT_ON_SOFTWARE_ANDROID_TV",
+  "source_commit": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
+  "apk_sha256": "9421a982296816f1ef53aa062ea608ed213dadc8475069fa9039202e5ee7898b",
+  "package": "app.supernova.player",
+  "version_name": "0.139",
+  "version_code": 139,
+  "avd": "supernova139-repair",
+  "sdk": 28,
+  "abi": "x86",
+  "same_identity_signed139_to_corrective139_update": "PASS: adb install -r Success; UID and firstInstallTime retained without uninstall/reset",
+  "pid": 7958,
+  "first_output_observed": true,
+  "service_output_established": true,
+  "visual_capture": "visual-playback-final.png",
+  "visual_capture_sha256": "867593155158c2778e4abf64bcf0819e5a43ff3f217479456505efcc483b576e",
+  "visual_evidence": "Independently viewed decoded owned H264/AAC test-pattern frame with overlay00:00:16.917/frame406; service records advancing_media_clock; no recurrence of formatter crash. Final current-PID service records normal playback_completed at19458ms.",
+  "owned_fixture_sha256": "31fc14bdeb26b6fc74ec24a76a8a7f58ec2e9d33cc2f0da2dd60ca9e5a22e144",
+  "typed_FIRST_OUTPUT_boundary_observed": false,
+  "long_clip_observation": "60s copied-loop clip displayed first decoded frame but remained at00:00:00.083 with no output-established service event during~200s; interrupted, retained under emulator-runtime-long-attempt. Cause unresolved; not called a pass.20s original fixture then records advancing output and inspected frame16.917.",
+  "harness_adjustment": "The short-run harness correctly observed actual output, then its30s adb pause command timed out before screenshot/report generation. A later independent screencap was completed and viewed; this report is based on retained output and actual pixels, not the failed harness exit.",
+  "physical_shield_verified": false,
+  "physical138_to139_signed_upgrade_verified": false,
+  "limitations": [
+    "Software Android TV API28/x86 on slow TCG, no KVM/no-audio. No audible-output or Shieldhardware/source/format matrix claim.",
+    "Longer copied-loop clip stalled; cause unresolved; do not assert full playback acceptance.",
+    "No ACTION_CREATE_DOCUMENT provider on this TVimage, so diagnostic SAF save/readback NOT_RUN.",
+    "Actual physical138\u2192139 signed upgrade and corrective Shield retest remain NOT_RUN."
+  ],
+  "normal_completion_position_ms": 19458
+}

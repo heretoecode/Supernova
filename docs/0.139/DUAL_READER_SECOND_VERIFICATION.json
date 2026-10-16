@@ -1,0 +1,29 @@
+{
+  "source_sha": "3397bf77c92e9dcd1fa3b4ed1e0c91650b511cd7",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "FAIL",
+  "classes": 6,
+  "tests": 34,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.RestoreJournalTest"
+  ],
+  "log_path": "/workspace/scratch/supernova139-dual-reader-second.log",
+  "log_sha256": "c965a7cc16f86e27d4eaa636ef0f3f40251eca599683c2dbcc634821caca5f0a",
+  "failed_tests": [
+    {
+      "class": "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+      "test": "privateLegacyTamperingRejectsBeforeNativeOrAuthenticationReplacement",
+      "reason": "java.lang.AssertionError",
+      "trace": "java.lang.AssertionError\n\tat org.junit.Assert.fail(Assert.java:87)\n\tat org.junit.Assert.fail(Assert.java:96)\n\tat com.archos.mediacenter.video.utils.BackupImportPreparationTest.privateLegacyTamperingRejectsBeforeNativeOrAuthenticationReplacement(BackupImportPreparationTest.java:33)\n\tat java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:580)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)"
+    }
+  ],
+  "duration": "2m 38s"
+}

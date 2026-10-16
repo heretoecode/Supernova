@@ -1,0 +1,15 @@
+{
+  "source_sha": "216f8053091b5b58c142568548cf91c894e575c5",
+  "result": "PASS",
+  "classes": 1,
+  "tests": 7,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PortableSavedPlaylistsTest"
+  ],
+  "duration": "2m 2s",
+  "log_sha256": "730c359b2ffe3de3efe1795b83e00e3578989dd71f9b609057dba0ea37edbe99",
+  "limits": "Native reader/public schema only; not registered or connected. Local-only Trakt policy, native selected replacement, cross-store recovery and export integration remain unfinished."
+}

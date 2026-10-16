@@ -1,0 +1,58 @@
+{
+  "source_repository": "simple-icons/simple-icons",
+  "source_sha": "4d29a35c954699b389a834aacc97dd6e7e74143c",
+  "licence": "CC0-1.0",
+  "marks": [
+    {
+      "slug": "netflix",
+      "upstream_file": "icons/netflix.svg",
+      "svg_sha256": "67dbc495988bd5667a09ed4f56e14db4070a44c7a74e297b146c229f70fd6f6e",
+      "resource": "res/drawable/provider_netflix.xml",
+      "resource_sha256": "3379773a21082775df84f6fbe074217e5aa71a9aafa654d31682e34a0dd528e5",
+      "modification": "Original path data; white fill and Android vector container; no background geometry"
+    },
+    {
+      "slug": "appletv",
+      "upstream_file": "icons/appletv.svg",
+      "svg_sha256": "49b3f33707b7487f43dbaa0bcc364a0a57fc4dd46caa575b580220323b152ea7",
+      "resource": "res/drawable/provider_appletv.xml",
+      "resource_sha256": "135d004e7cb6a1d74a7852e4be987b676d45770e35945e3c65d1bfd5dc4d1af6",
+      "modification": "Original path data; white fill and Android vector container; no background geometry"
+    },
+    {
+      "slug": "paramountplus",
+      "upstream_file": "icons/paramountplus.svg",
+      "svg_sha256": "6b8a777222266eefdb08b9737cef97cdecf10143f5402d06634f615b127851f9",
+      "resource": "res/drawable/provider_paramountplus.xml",
+      "resource_sha256": "529b3a43669d868c98e31b07c1e68da8bd70a6c70a1dec53883a40a14eb76d27",
+      "modification": "Original path data; white fill and Android vector container; no background geometry"
+    },
+    {
+      "slug": "hbo",
+      "upstream_file": "icons/hbo.svg",
+      "svg_sha256": "bbde93e1cbc6cfb145994e16aa05886e5dcde7880190676cbacc8b4a0e463519",
+      "resource": "res/drawable/provider_hbo.xml",
+      "resource_sha256": "021d4ed17128c8dbfa449b9fc0fce1be1da2074b69ae0c0ced70c0a322254c88",
+      "modification": "Original path data; white fill and Android vector container; no background geometry"
+    },
+    {
+      "slug": "mubi",
+      "upstream_file": "icons/mubi.svg",
+      "svg_sha256": "f49ca57d4efb9356a76088e0148b2f9c6d253dccb20ae5fba8d108d82b80e290",
+      "resource": "res/drawable/provider_mubi.xml",
+      "resource_sha256": "b4a4c5613b165f8498615fcf58b06dd8bb60585091929c7f80d9493d82776c3d",
+      "modification": "Original path data; white fill and Android vector container; no background geometry"
+    },
+    {
+      "slug": "crunchyroll",
+      "upstream_file": "icons/crunchyroll.svg",
+      "svg_sha256": "3b9c3d87339e18ec09f25e0c3eaffdc5ad4630df3d108fcd907e1b64c4cd13ea",
+      "resource": "res/drawable/provider_crunchyroll.xml",
+      "resource_sha256": "c8086855a008f5e5f909738f658e7f3aa6d096185b33d88c698f438493157390",
+      "modification": "Original path data; white fill and Android vector container; no background geometry"
+    }
+  ],
+  "missing_authentic_assets": [],
+  "fallback": "Neutral streaming glyph and existing provider name; never desaturated opaque catalogue tile",
+  "additional_marks": "foundation/commons-provider-mark-provenance.json"
+}

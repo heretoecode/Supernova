@@ -1,0 +1,95 @@
+{
+  "checked_at_utc": "2026-10-15T16:49:49.451789+00:00",
+  "result": "BLOCKED",
+  "environment": "supernova-foundation-signing",
+  "requested_branch": "codex/supernova-0.139-implementation-2026-10-13",
+  "request_method": "POST",
+  "endpoint": "repos/heretoecode/Supernova/environments/supernova-foundation-signing/deployment-branch-policies",
+  "exit_code": 1,
+  "response": {
+    "message": "Resource not accessible by integration",
+    "documentation_url": "https://docs.github.com/rest/deployments/branch-policies#create-a-deployment-branch-policy",
+    "status": "403"
+  },
+  "diagnostic": "gh: Resource not accessible by integration (HTTP 403)",
+  "policies_before": {
+    "total_count": 5,
+    "branch_policies": [
+      {
+        "id": 62439781,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjQzOTc4MQ==",
+        "name": "codex/foundation-release",
+        "type": "branch"
+      },
+      {
+        "id": 62580297,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjU4MDI5Nw==",
+        "name": "codex/supernova-0.135",
+        "type": "branch"
+      },
+      {
+        "id": 62672957,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjY3Mjk1Nw==",
+        "name": "codex/supernova-0.137-qa-2026-10-11",
+        "type": "branch"
+      },
+      {
+        "id": 62775528,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2Mjc3NTUyOA==",
+        "name": "codex/supernova-0.138-qa-2026-10-12",
+        "type": "branch"
+      },
+      {
+        "id": 62634362,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjYzNDM2Mg==",
+        "name": "codex/supernova-next-refinement-2026-10-10",
+        "type": "branch"
+      }
+    ]
+  },
+  "policies_after": {
+    "total_count": 5,
+    "branch_policies": [
+      {
+        "id": 62439781,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjQzOTc4MQ==",
+        "name": "codex/foundation-release",
+        "type": "branch"
+      },
+      {
+        "id": 62580297,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjU4MDI5Nw==",
+        "name": "codex/supernova-0.135",
+        "type": "branch"
+      },
+      {
+        "id": 62672957,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjY3Mjk1Nw==",
+        "name": "codex/supernova-0.137-qa-2026-10-11",
+        "type": "branch"
+      },
+      {
+        "id": 62775528,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2Mjc3NTUyOA==",
+        "name": "codex/supernova-0.138-qa-2026-10-12",
+        "type": "branch"
+      },
+      {
+        "id": 62634362,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjYzNDM2Mg==",
+        "name": "codex/supernova-next-refinement-2026-10-10",
+        "type": "branch"
+      }
+    ]
+  },
+  "existing_policies_preserved": true,
+  "signing_dispatched": false,
+  "key_accessed": false,
+  "software_conformance": "PASS CI38746280548 at23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "administrator_instructions": "SIGNING_ADMIN_ACTION_2026-10-15.md",
+  "limits": [
+    "Repository account admin:true does not establish integration Environments write permission.",
+    "No older allowed branch, weakened policy, alternate key or local-secret workaround was used.",
+    "Protected Actions secrets have not been accessed; runtime absence of secrets does not establish missing repository secrets."
+  ]
+}

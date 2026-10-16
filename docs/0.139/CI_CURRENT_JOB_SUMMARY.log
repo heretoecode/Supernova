@@ -1,0 +1,23 @@
+2026-10-14T20:40:29.9227594Z error: Unable to fully sync the tree
+2026-10-14T20:40:29.9228180Z error: Downloading network changes failed.
+2026-10-14T20:52:18.5762854Z Four ABI registries / tempo state / 64 decode comparisons passed; baseline remains untouched.
+2026-10-14T20:58:14.4611816Z PlaybackCompatibilityTest > dolbyVisionUsesActualSourceProfileAndDecoderSize STANDARD_OUT
+2026-10-14T20:58:14.7613183Z PlaybackCompatibilityTest > dolbyVisionUsesActualSourceProfileAndDecoderSize PASSED
+2026-10-14T20:59:07.0683329Z PreviewBackdropTest > sameDecodedImageDoesNotStartAnotherCrossFade STANDARD_OUT
+2026-10-14T20:59:07.0691884Z PreviewBackdropTest > sameDecodedImageDoesNotStartAnotherCrossFade PASSED
+2026-10-14T21:04:04.6711376Z BackupSettingsControllerTest > smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels FAILED
+2026-10-14T21:07:08.5651542Z StreamingRepositoryTest > extractsExactHttpsTitleLinkAndDecodesHtmlAmpersands STANDARD_OUT
+2026-10-14T21:07:08.5761479Z StreamingRepositoryTest > extractsExactHttpsTitleLinkAndDecodesHtmlAmpersands PASSED
+2026-10-14T21:11:52.0911108Z 995 tests completed, 1 failed
+2026-10-14T21:11:52.8640827Z > Task :testNoamazonReleaseUnitTest FAILED
+2026-10-14T21:12:22.9605968Z > Task :FileCoreLibrary:lintAnalyzeRelease
+2026-10-14T21:12:23.2611029Z > Task :lintAnalyzeNoamazonReleaseUnitTest
+2026-10-14T21:13:16.2641211Z > Task :MediaLib:lintAnalyzeRelease
+2026-10-14T21:14:23.8621395Z > Task :lintAnalyzeNoamazonRelease
+2026-10-14T21:16:11.9631074Z > Task :lintReportNoamazonRelease
+2026-10-14T21:16:13.4627789Z > Task :lintNoamazonRelease
+2026-10-14T21:16:51.5614718Z > Task :assembleNoamazonRelease
+2026-10-14T21:16:51.5620672Z FAILURE: Build failed with an exception.
+2026-10-14T21:16:51.5621096Z * What went wrong:
+2026-10-14T21:16:51.5621495Z Execution failed for task ':testNoamazonReleaseUnitTest'.
+2026-10-14T21:16:51.5624769Z BUILD FAILED in 22m 34s

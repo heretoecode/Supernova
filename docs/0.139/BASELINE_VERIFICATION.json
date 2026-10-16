@@ -1,0 +1,35 @@
+{
+  "source_sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "receipt_parent_sha": "16a60cb11a5dd20ebe374873db360e32b617d7b0",
+  "task": "testNoamazonReleaseUnitTest",
+  "result": "PASS",
+  "classes": 142,
+  "tests": 564,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "jdk": "Temurin21.0.12.1+1",
+  "sdk": "android-37.0",
+  "wrapper": "9.5.0",
+  "variant": "noamazonRelease",
+  "flags": [
+    "foundationVerify",
+    "supernovaQa",
+    "universal"
+  ],
+  "native_tasks_excluded_for_java_tests": [
+    ":MediaLib:ndkBuild",
+    ":FileCoreLibrary:ndkBuild"
+  ],
+  "native_build_claim": false,
+  "signed_artifact": {
+    "run": 38239064325,
+    "artifact": 11744230421,
+    "bytes": 103518717,
+    "sha256": "6f46a40c9698e9219b6e26c2f09277de93462d3b9721a9b0b2bfd64814cd04ee",
+    "signature_verified": true,
+    "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e"
+  },
+  "reproduction": "docs/0.138/BUILD_QA.md; inherited proxy plus Java system trust store; pinned modules with existing reviewed overlays and Foundation preparation.",
+  "hardware_tests": "BLOCKED \u2014 no Shield/ADB endpoint"
+}

@@ -55,6 +55,9 @@ public final class RestoreJournal {
         }
         for(int i=0;i<files.length();i++){JSONObject entry=files.getJSONObject(i);erase(new File(entry.getString("fresh")));erase(new File(entry.getString("old")));}
         journal.delete();
+        // Configuration is durable. Refresh the running recorder without changing saved logs.
+        try{com.archos.mediacenter.video.diagnostics.Diagnostics.reloadPolicy(c);}
+        catch(RuntimeException unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.error("restore_diagnostics_policy_failed",unavailable);}
     }
     private static void erase(File file)throws IOException{
         if(file.isDirectory()){File[] children=file.listFiles();if(children==null)throw new IOException("Cannot inspect restore recovery files");for(File child:children)erase(child);}

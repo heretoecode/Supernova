@@ -1,0 +1,28 @@
+{
+  "source_sha": "046ef1ef805af9b59cac1719273d0c659a53bd54",
+  "classes": 6,
+  "tests": 35,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.VerifiedBackupPublicationTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "checks": [
+    "Default and review stores share one private journal; process death after each commit recovers originals",
+    "Durable two-store completion survives interruption without rollback",
+    "Private recovery schema1 remains readable after schema2 addition",
+    "Health cache paths and auth canaries absent from selected recovery journal",
+    "16 positively registered archive codecs; selected preparation, import/publication and intent regressions"
+  ],
+  "limits": [
+    "Database-backed and default/review cross-database recovery not integrated",
+    "Preferred physical choices remain pending until the media-matching dependency is validated",
+    "Production backup/restore UI, legacy historical schema62 fixtures and real provider/Shield verification remain open"
+  ]
+}

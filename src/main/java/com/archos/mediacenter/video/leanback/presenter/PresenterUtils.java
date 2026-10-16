@@ -52,9 +52,6 @@ public class PresenterUtils {
         else if (VideoUtils.getSubtitleExtensions().contains(extension)) {
             return R.drawable.filetype_new_subtitles;
         }
-        else if (extension.equals("torrent")) {
-            return R.drawable.filetype_new_torrent;
-        }
         else if (mimeType.startsWith("image/")) {
             return R.drawable.filetype_new_image;
         }

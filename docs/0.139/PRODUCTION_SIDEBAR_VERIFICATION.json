@@ -1,0 +1,34 @@
+{
+  "source_sha": "d1504bf98df703b7d906dca1928cb5efec4c1301",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 3,
+  "tests": 11,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "46s",
+  "log_sha256": "1ffd3d286db690d735a8c25edcd36b1c6132884ead413b1a5775642022b95fec",
+  "coverage": [
+    "Full production backup opener is34/34pixels visible before/after activity recreation after real pre-draw/expansion traversal",
+    "Permanent sidebar dimensions, temporary restore choices/private review and flat Details/Back focus remain correct",
+    "Reveals account for actual viewport padding and content origin, wait for transition completion and ignore stale selections",
+    "Temporary trace sink removed; existing minimal Settings/controller regressions remain passing"
+  ],
+  "native_captures": [
+    {
+      "path": "docs/0.139/ui/production-backup/0139-production-backup-main-settled.png",
+      "sha256": "218ec5bf9bc6137e19197e20cd4646696a799d744d1584b6cd479250d5fc8844"
+    },
+    {
+      "path": "docs/0.139/ui/production-backup/0139-production-backup-recreated-details-settled.png",
+      "sha256": "15a54da4b50f0b2bdfeffd899fe9e9452e10010518d74a369fcf1c0a167d1cec"
+    }
+  ],
+  "limits": "Robolectric native graphics/SQLite, blank host backdrop. Not actual device/picker/force-stop/Shield or whole43-workstream acceptance."
+}

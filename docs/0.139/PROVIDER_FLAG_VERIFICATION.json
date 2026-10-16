@@ -1,0 +1,13 @@
+{
+  "source_sha": "5869ec6962dda2a797218cef89873d389a6f7b7e",
+  "classes": 5,
+  "tests": 14,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "limits": [
+    "Native source artwork/shape/aspect verification, not Shield UI acceptance",
+    "Unknown providers use a neutral streaming glyph with provider name",
+    "Full consumer optics/focus/localisation matrix remains open"
+  ]
+}

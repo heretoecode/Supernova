@@ -1,0 +1,40 @@
+{
+  "result": "PASS_PLAYBACK_OUTPUT_ON_SOFTWARE_ANDROID_TV",
+  "source_commit": "92eac913be5a855d23c5c63a5ab966cc2c04e8a3",
+  "apk_sha256": "cccf3119e86a33d6d8ca18bd5c1f06ca06ac8acd5935f6f191ad33eb7f000ede",
+  "package": "app.supernova.player",
+  "version_name": "0.139",
+  "version_code": 139,
+  "avd": "supernova139-repair",
+  "sdk": 28,
+  "abi": "x86",
+  "same_identity_signed139_to_corrective139_update": "PASS: adb install -r returned Success; package UID and firstInstallTime preserved; no uninstall/reset",
+  "owned_original_fixture_sha256": "31fc14bdeb26b6fc74ec24a76a8a7f58ec2e9d33cc2f0da2dd60ca9e5a22e144",
+  "original_fixture_complete_position_ms": 19333,
+  "observed_checkpoint_positions_ms": [
+    1375,
+    2625,
+    11750,
+    16166,
+    19125,
+    19125,
+    19125
+  ],
+  "visual_fixture_sha256": "2507fbbc86730256a3918b139f29551b50baf67e2d7c6fcd5c80e3ed28bc0983",
+  "visual_fixture_bytes": 5874361,
+  "first_output_observed": true,
+  "output_evidence": "Actual signed APK service player_output_established event; advancing checkpoints; normal20-second completion. Longer ownedH264/AAC fixture visually inspected: full decoded moving test pattern, displayed time00:00:03.042/frame73.",
+  "visual_capture": "visual-playback-60.png",
+  "visual_capture_sha256": "7926cbc078fa39b1eb2d53c834894691b309ab2d334686cadf31d189f6fbd546",
+  "typed_FIRST_OUTPUT_boundary_observed": false,
+  "harness_adjustment": "Initial harness waited for a typedFIRST_OUTPUT record that was not emitted although actual playback completed. It was stopped without relabelling a product failure. Service/position/completion records and independently viewed pixels establish actual output. No diagnostic record was fabricated or modified.",
+  "no_recurrence_of_formatter_crash": true,
+  "physical_shield_verified": false,
+  "physical138_to139_signed_upgrade_verified": false,
+  "limitations": [
+    "Software Android TV/API28/x86 with owned local H264/AAC only. Not Shieldhardware/source/format acceptance or physical138to139upgrade.",
+    "Emulator has no audible output sink. Hardwarepassthrough/HDR/DoVi not tested.",
+    "AVDpause causes wallclock lag; process/PID/session/elapsed correlation was used.",
+    "Actual signed Settings/Dpad/export checks are separate and in progress."
+  ]
+}

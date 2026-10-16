@@ -1,0 +1,21 @@
+{
+  "source_sha": "ce022d20e282be07adc4853a72ed8858024b27f7",
+  "classes": 6,
+  "tests": 24,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "checks": [
+    "Watch Next replaces membership while preserving Home definitions, history, positions and auth",
+    "Home and Watch Next selections compose independently despite reverse input map order",
+    "Continue Watching dismissals replace independently and preserve history/positions/queue",
+    "Unknown memberships and dismissals survive re-export; exact provider identities remap across local IDs",
+    "Present-empty selections clear their pending intent only; unsafe URI/duplicate/coerced choice payloads rejected",
+    "14 positive archive codecs; journal and Home regression tests"
+  ],
+  "limits": [
+    "No automatic post-rescan reconciliation hook yet",
+    "Database-backed categories, SAF publication and production Backup integration incomplete",
+    "Android-native synthetic preferences; no Shield or filesystem power-loss proof"
+  ]
+}

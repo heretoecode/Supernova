@@ -1,0 +1,45 @@
+{
+  "result": "FAIL",
+  "source_sha": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+  "test": "BackupSettingsControllerTest.smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels",
+  "viewport": [
+    640,
+    360
+  ],
+  "sidebar_width": 395,
+  "virtual_options_panel": [
+    672,
+    223
+  ],
+  "offscreen_categories": [
+    "AUDIO",
+    "DIAGNOSTICS",
+    "INTEGRATIONS",
+    "LIBRARY",
+    "NETWORK",
+    "STREAMING",
+    "SUBTITLES",
+    "VIDEO",
+    "CUSTOM_PAGES",
+    "HIDDEN",
+    "MATCHES",
+    "PINNED",
+    "REVIEW",
+    "PLAYLISTS",
+    "WATCH_NEXT",
+    "CONTINUE_CHOICES",
+    "TITLE_PLAYBACK",
+    "HISTORY",
+    "BOOKMARKS",
+    "SOURCES",
+    "LOCATIONS"
+  ],
+  "clipped_categories": [
+    "LOCATIONS"
+  ],
+  "capture_files": {
+    "0139-settings-backup-small.json": "0ed88a444d31ca7797a3fb709dcb77742928b4b0114e76085a46fb73914a9ab2",
+    "0139-settings-backup-small.png": "401d9e46334e7e5d2f988e3d58c38279ba5ddb25df1b003e1a6edd61b0e7b2cf"
+  },
+  "limits": "Actual native-rendered connected synthetic Settings fixture at640x360, not Shield; full run still active. Sidebar not changed to conceal the failure."
+}

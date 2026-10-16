@@ -1,0 +1,10 @@
+{
+  "source_sha": "ddcbb6a6dea822a5ce1fbd4e86fda6ac7d3fb1a6",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "FAIL",
+  "stage": "compileNoamazonReleaseJavaWithJavac",
+  "duration": "18s",
+  "tests_executed": 0,
+  "log_sha256": "61395ed53abbc7b1c1106f5910e092e63ca30db0cfac3f841cc2539f4b926532",
+  "finding": "Pending playlist loader hook called nonexistent Diagnostics.exception(String,IOException). No behavioral checks executed."
+}

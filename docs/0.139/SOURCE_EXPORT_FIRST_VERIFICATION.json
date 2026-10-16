@@ -1,0 +1,35 @@
+{
+  "source_sha": "de2b45fc48c1f8a23d85d689d02834a66702a63b",
+  "result": "FAIL",
+  "classes": 4,
+  "tests": 30,
+  "failures": 3,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableLibrarySourcesTest"
+  ],
+  "failures_detail": [
+    {
+      "class": "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+      "test": "freshAllRegisteredCategoriesCreateVerifiedArchiveWithoutCreatingDatabaseStores",
+      "message": "java.lang.AssertionError"
+    },
+    {
+      "class": "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+      "test": "sourceExportKeepsHiddenMembershipLogicalAndNeverCopiesMetadataArtworkAccountsOrLocationsByDefault",
+      "message": "java.io.IOException: Complete indexed identity inventory is unavailable; backup was not created"
+    },
+    {
+      "class": "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+      "test": "actualCatalogIncludesHiddenWatchedExcludedFilesAndOrphanShowsWithoutAudio",
+      "message": "java.io.IOException: Complete indexed identity inventory is unavailable; backup was not created"
+    }
+  ],
+  "duration": "2m 12s",
+  "log_sha256": "a3bc60cf3096dfa835ec9844fb5a2071c782b3c5b71d971cd0da1379ca794d17",
+  "correction": "Use a deferred read savepoint rather than an immediate transaction on the read-only connection. Verify instruction entry presence rather than an unrelated uppercase word in its content. Fresh verification required."
+}

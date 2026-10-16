@@ -161,7 +161,7 @@ public final class StreamingActions {
         for (int i = 0; i < offers.size(); i++) labels[i] = offers.get(i).provider.name;
         if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
             String[] names=new String[labels.length];for(int i=0;i<labels.length;i++)names[i]=labels[i].toString();
-            android.app.Dialog dialog=com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, app.getString(R.string.streaming_more)+" · "+region+" · JustWatch",names,-1,i->openOffer(offers.get(i),watchUrl,title));for(int i=0;i<offers.size();i++)PreviewProviderIcons.bind(dialog,i,offers.get(i).provider.logo);return;
+            android.app.Dialog dialog=com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, app.getString(R.string.streaming_more)+" · "+region+" · JustWatch",names,-1,i->openOffer(offers.get(i),watchUrl,title));for(int i=0;i<offers.size();i++)PreviewProviderIcons.bindProvider(dialog,i,offers.get(i).provider,"provider.choice");return;
         }
         new AlertDialog.Builder(a, com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme() ? R.style.Theme_AlertDialog_Slate : 0).setTitle(app.getString(R.string.streaming_more) + " · " + region + " · JustWatch")
                 .setItems(labels, (dialog, which) -> openOffer(offers.get(which), watchUrl, title))

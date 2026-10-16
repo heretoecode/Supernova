@@ -1,0 +1,23 @@
+{
+  "source_sha": "c6926bd459e5fd1a763fe0b457b3b0f863947f4a",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "result": "PASS",
+  "classes": 2,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+    "com.archos.mediacenter.video.leanback.HeroRotationPolicyTest"
+  ],
+  "duration": "1m14s",
+  "log_sha256": "a322f14fa7667a53ffa020fd47db345ac8696dae2e9fa6ac2e4592ea168e72ad",
+  "coverage": [
+    "Actual production hero window focus loss/resume and detach/reattach suspend/reset timer",
+    "Recorded30-second idle boundary and8-second cadence with root layout/animation",
+    "Actual root remote input resets cadence and does not scroll underlying row",
+    "Existing unique indexed-title pool/pixel/geometry and pure policy regressions"
+  ],
+  "limits": "Native Robolectric window-focus/animation fixture with offline intercepted logo transport, not physical Shield/lifecycle/decoder output or full HERO42 acceptance. FIRST\u2013THIRD failures retain exact fixture diagnoses.",
+  "tests": 13,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

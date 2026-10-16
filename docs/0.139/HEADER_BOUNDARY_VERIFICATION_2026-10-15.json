@@ -1,0 +1,61 @@
+{
+  "result": "PASS",
+  "source_sha": "6b22dbbf2039661adb81e3f1b9422e95d705da3a",
+  "suite": {
+    "name": "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
+    "tests": "6",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-15T13:35:00.580Z",
+    "hostname": "976f3affce7e",
+    "time": "10.358"
+  },
+  "xml_sha256": "8e1d45cfbe8b5b5158056607caec61c79f2bd5d506844b600ef47392d3944efa",
+  "log_sha256": "4721fc9fb9f3ffe459c029f70431b7729953f720f3e4fc9c1f3f771b030f8169",
+  "checks": [
+    "Native pixel comparison proves long vertical overflow does not paint into the fixed connected tab/header region.",
+    "Explicit viewport clipping preserves complete growing focused Extras card plus3dp perimeter clearance.",
+    "Persistent selected cap, distinct actual focus, complete text/last-offset/Up/Back, four tabs and stable proportional frame remain verified."
+  ],
+  "captures": {
+    "docs/0.139/ui/owner-approved-details/0139-details-four-tabs-640-1.0.png": "c8aa0e8ecb16ff481cc061fa4e7379f7e26e439852056c5aa27f6d36d6c0521d",
+    "docs/0.139/ui/owner-approved-details/0139-details-four-tabs-960-1.5.png": "23f0b75b3e1afa9916f0113c50b14cd664809a8cabab0fb6cb8f1986099330df",
+    "docs/0.139/ui/owner-approved-details/0139-details-overflow-bottom-1920-1.5.png": "f1002f4e85f614f4e55bd20a4dcd47db866fc10955403d49ab4c39fbe3ca6d0f",
+    "docs/0.139/ui/owner-approved-details/0139-details-overflow-bottom-3840-1.0.png": "0195c2dba2fd30595546783798a24897ec9d61150b088e24ad40872347d85e42",
+    "docs/0.139/ui/owner-approved-details/0139-details-overflow-bottom-640-1.0.png": "e4ebf379e96ad53dd57845652d0b759b63041e7e37cd80e95f7edaa02d19f221",
+    "docs/0.139/ui/owner-approved-details/0139-details-overflow-bottom-960-1.0.png": "968bcd4fbc3332806a75a0a5afe2c2cf62932bf495c1b75f72be7c1f05052f45",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-1920-1.5.png": "78142b3f9d886e2443e7a5b3292eb08c07659df8343df18cb06b921e69abdeae",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-3840-1.0.png": "36be9e680b9852540a1f5d65bc24e7a47218571307c3bead49e85c9784e2d9f3",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-640-1.0.png": "376408fea63f278a09cf761ca0cb0ebe62b92d05580125692d37038f57f9409f",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-960-1.0.png": "56fa01574bed8ae07f03097ade13977ba30fc08822b26d6f2c665c441e6b1663"
+  },
+  "superseded_runs": [
+    {
+      "id": 38741587921,
+      "source": "2a8c85dd77f9db2289ba3ca856d0a1a37e9bbe10",
+      "result": "cancelled"
+    },
+    {
+      "id": 38743357957,
+      "source": "ff7ac3c992c93cbf18a74601f33008a9509830a5",
+      "result": "cancelled"
+    }
+  ],
+  "superseded_local_full": {
+    "source_sha": "ff7ac3c992c93cbf18a74601f33008a9509830a5",
+    "result": "CANCELLED",
+    "exit_code": 143,
+    "log_sha256": "03a21bf9fc5bb696e30c8801b3fba490cb82c7ebb37faa03557624e39fe37773",
+    "reason": "Replaced after visual review found information painting above the reading viewport; no completed full-suite or binary acceptance is claimed."
+  },
+  "current_exact_source_ci": {
+    "id": 38744003190,
+    "result": "RUNNING"
+  },
+  "limits": [
+    "Synthetic framework/native graphics; no physical Shield or signed-upgrade pass."
+  ],
+  "navigation_scope_superseded": "The first reader stage consumed Back to reset reading. That conflicts with the owner requirement to preserve the existing Back route.23f75b38 removes that interception; only its final-source focused/full CI proof can establish Back conformance. These earlier receipts remain valid for their other source-pinned checks.",
+  "capture_reference": "Source6b22dbbf captures/hashes are pinned at that commit. Current image directory additionally contains final23f75b38 navigation captures; their exact hashes are in FINAL_BACK_ROUTE_VERIFICATION_2026-10-15.json."
+}

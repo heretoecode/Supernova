@@ -1,0 +1,16 @@
+{
+  "source_sha": "da1c00dfdbe24d2daaabc15734f01b1e435965b6",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "result": "FAIL",
+  "classes": 1,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PreviewLibraryRestoreRaceTest"
+  ],
+  "duration": "29s",
+  "log_sha256": "9c70c3a618a7cb0ad2b64bd3b1f322f760211fed92a864dc35a5979266461f8f",
+  "finding": "Race fixture returned null with library-read warning and no cache; no stale snapshot publication was proven. Fixture must use SQLiteQueryBuilder grouping semantics used by actual VideoProvider.",
+  "tests": 1,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0
+}

@@ -1,0 +1,8 @@
+{
+  "base_commit": "38f17a83da6eaa03d83d10267ac7b8fa9b901efc",
+  "isolated_dependency_commit": "f7f8d9055e6d5f7b84a9475d90e32dc95426a19e",
+  "patch": ".github/build/filecore-supernova139-diagnostics.patch",
+  "patch_sha256": "c17bd20d73859a3c69a11b9e06aebdd51427bc46eb4aba7c8d63b2471a99491b",
+  "apply_after": "Established0.138 FileCore preparation including filecore-next-qa.patch; original shared eight-file working state preserved untouched",
+  "scope": "Optional numeric observations in six direct Java network stream adapters; no transport factory/deletion/copy/session policy change; native and connect failures remain unobserved"
+}
