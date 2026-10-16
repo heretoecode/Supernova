@@ -15,6 +15,32 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class TopNavigationTest {
+    @Test @Config(qualifiers="w640dp-h360dp-land-xhdpi")
+    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void compactNavigationClipsOverflowBeforeTheClockAndRevealsFocusedActions() {
+        var host=Robolectric.buildActivity(Host.class).setup().visible();
+        try {
+            TopNavigation nav=new TopNavigation(host.get(),new FrameLayout(host.get()),index->{},()->true);
+            host.get().setContentView(nav);
+            for(int pass=0;pass<3;pass++){nav.measure(View.MeasureSpec.makeMeasureSpec(1280,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(720,View.MeasureSpec.EXACTLY));nav.layout(0,0,1280,720);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();}
+            android.graphics.Rect clock=new android.graphics.Rect();assertTrue(nav.findViewWithTag("preview-default-clock").getGlobalVisibleRect(clock));
+            View rail=((android.view.ViewGroup)nav.getChildAt(0)).getChildAt(1);
+            android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(1280,720,android.graphics.Bitmap.Config.ARGB_8888);
+            int[] normal=new int[clock.width()*clock.height()],withoutRail=new int[normal.length];
+            nav.draw(new android.graphics.Canvas(bitmap));bitmap.getPixels(normal,0,clock.width(),clock.left,clock.top,clock.width(),clock.height());
+            rail.setVisibility(View.INVISIBLE);bitmap.eraseColor(android.graphics.Color.TRANSPARENT);nav.draw(new android.graphics.Canvas(bitmap));bitmap.getPixels(withoutRail,0,clock.width(),clock.left,clock.top,clock.width(),clock.height());rail.setVisibility(View.VISIBLE);bitmap.recycle();
+            assertArrayEquals("Navigation must not paint into clock pixels",withoutRail,normal);
+            for(String tag:new String[]{"home","movies","tv","custom","network","search","settings"}){
+                View tab=nav.findViewWithTag("semantic:topnav."+tag);android.graphics.Rect visible=new android.graphics.Rect();
+                if(tab.getGlobalVisibleRect(visible))assertTrue("Overflow must not draw over clock: "+tag,visible.right<=clock.left);
+            }
+            assertTrue(nav.findViewWithTag("semantic:topnav.home").requestFocus());
+            for(int step=0;step<7;step++){
+                View tab=nav.findFocus();android.graphics.Rect visible=new android.graphics.Rect();assertTrue(tab.getGlobalVisibleRect(visible));assertEquals("Focused action is wholly visible",tab.getWidth(),visible.width());assertTrue("Focused action clears clock",visible.right<=clock.left);
+                nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            }
+        } finally {host.pause().stop().destroy();}
+    }
     @Before public void initialiseImageLoader() {
         try { com.squareup.picasso.Picasso.get(); }
         catch (IllegalStateException missingTestProvider) {

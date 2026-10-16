@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: supernova-0140-conformance-${{ github.ref }}
+  group: supernova-0140-conformance-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   conformance:
