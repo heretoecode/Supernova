@@ -39,3 +39,13 @@ Genre fallback from indexed metadata; redundant resolution removed from human me
 ## Available test boundary
 
 Native viewport/focus fixtures and enlarged text checks are available. No emulator or physical device is connected (`adb devices` empty; no KVM device). No instrumentation/device playback, signed upgrade, physical Shield screenshot or real Put.io account round trip is claimed.
+
+## Library and navigation review
+
+The original FD-007 raster is still unavailable. A current 720p native render exposed clipped Library Status text, early label truncation and offscreen navigation icons painting into the clock area. Metric labels, values and captions now auto-size against real cell widths without horizontal scrolling; fixed line boxes use measured maximum font metrics. The navigation scroll viewport clips overflow and retains focus-driven reveal. Regression checks require all normal-size metric text to fit without ellipsis at 720p/1080p/4K, and compact focused navigation actions to remain whole and clear of the clock. The focused 19-test group passes, including a native pixel comparison of the clock with the navigation rail visible/hidden. That pixel check failed before the parent drawing boundary correction; geometry checks alone had missed paint overflow. Fresh normal-text renders show complete metric labels, values and captions. Final full-suite results follow in release evidence. This does not claim reference-asset or device acceptance.
+
+## Additional saved native captures
+
+[Statistics 720p](visual-evidence/0140-library-statistics-1280.png), [1080p](visual-evidence/0140-library-statistics-1920.png), [4K](visual-evidence/0140-library-statistics-3840.png). [Backup main page 720p](visual-evidence/0140-backup-1280.png), [1080p](visual-evidence/0140-backup-1920.png), [4K](visual-evidence/0140-backup-3840.png). [Extras focused card 720p](visual-evidence/0140-extras-card-1280-1.0.png), [4K](visual-evidence/0140-extras-card-3840-1.0.png), [tab/heading 1080p](visual-evidence/0140-extras-tab-1920-1.0.png), [150% text](visual-evidence/0140-extras-tab-1920-1.5.png). The trailer image is an intentional offline placeholder; aspect, caption, focus outline and heading come from the actual shared renderer.
+
+[Image dimensions/checksums and source provenance](visual-evidence/INDEX.json). The AppCompat portrait compatibility fix preserves all four populated reference PNGs byte-for-byte; it resolves lint without changing their visual output. [Local validation receipt](LOCAL_VALIDATION.json). All captures remain software evidence.

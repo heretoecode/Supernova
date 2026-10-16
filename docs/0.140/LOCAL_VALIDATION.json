@@ -1,0 +1,43 @@
+{
+  "checked_at_utc": "2026-10-16T20:09:00.160987+00:00",
+  "full_local_suite": {
+    "source_commit": "16000713c76ab12a703d20fe3785a832e1934918",
+    "classes": 221,
+    "tests": 1047,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "full_suite_junit_corpus_sha256": "af5b0b4dfcd9d82a0a8fc2c1c62af1f73ec1539bd997023370b82d716e228296",
+  "tooling_suite": {
+    "source_commit": "16000713c76ab12a703d20fe3785a832e1934918",
+    "tests": 88,
+    "failures": 0,
+    "errors": 0,
+    "elapsed_seconds": 4.425
+  },
+  "corrected_source": "866f21f11f27dea4846ddd3cac57d98b281eecbb",
+  "portrait_correction_affected_tests": {
+    "tests": 17,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "reference_pngs_byte_identical": 4
+  },
+  "final_exact_source_acceptance_capture_tests": {
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "final_release_lint": {
+    "errors": 0,
+    "warnings": 1775
+  },
+  "final_ci_run_id": 38959928321,
+  "final_ci_status": "running; full native/test/lint/APK conformance gates precede signing",
+  "local_native_build_skipped": true,
+  "native_validation_location": "CI; the preceding unsigned native rebuild/runtime stage passed before its source was superseded",
+  "physical_shield_verified": false,
+  "emulator_or_instrumentation_run": false
+}
