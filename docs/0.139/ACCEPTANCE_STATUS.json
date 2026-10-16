@@ -690,6 +690,14 @@
     "shield_retest": "NOT_RUN",
     "signed_upgrade": "NOT_RUN",
     "attachments": "Named video/screenshot/10 October ZIP unavailable in this context; owner instructed independent repository investigation. Historical ZIP is not a current crash log.",
-    "software_receipt": "SHIELD_REPAIR_SOFTWARE_VERIFICATION_2026-10-16.json"
+    "software_receipt": "SHIELD_REPAIR_SOFTWARE_VERIFICATION_2026-10-16.json",
+    "source_commit": "82b4862ffc1bb24e1b77981eb84f036ed426daa0",
+    "signing_run_id": 38897967011,
+    "unsigned_run_id": 38897948111,
+    "ci_status": "IN_PROGRESS",
+    "local_lint": {
+      "errors": 0,
+      "warnings": 1772
+    }
   }
 }
