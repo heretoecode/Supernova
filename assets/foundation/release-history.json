@@ -8,19 +8,38 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.139",
-    "version_code": 139,
-    "kind": "Development candidate — implementation and acceptance incomplete",
+    "version": "0.140",
+    "version_code": 140,
+    "kind": "Development implementation — validation and release incomplete",
     "notes": [
-      "Customise Home editing, semantic icons and remote focus refinements.",
-      "Ten-title Home hero rotation and shared artwork retry improvements.",
-      "Granular logical Backup & Restore with privacy controls, independent viewing history and playback positions, and coordinated recovery.",
-      "Permanent Settings sidebar with flat backup Details and Restore Instructions.",
-      "Canonical media identification restoration, queued post-index resolution and receiving manual-choice guards. Full acceptance and signed delivery remain unfinished.",
-      "Existing package, signing identity and approved Supernova visual language preserved."
+      "Page-scoped two-row Library Statistics with nine metrics and terminal scan evidence.",
+      "Six-region Details blueprint implementation, connected active-tab border and fixed portrait grids.",
+      "Backup export choices directly on the main three-panel Settings page.",
+      "Details/Extras focus, artwork, background and synopsis corrections.",
+      "Playback-start cached country-specific age classification overlay.",
+      "Registered Put.io device linking configuration and explicit grant revocation; real account validation pending.",
+      "Diagnostic capture allocation reduction and queue-rejection attribution.",
+      "OMDb, visual-reference conformance and full release validation remain blocked or incomplete; no signed 0.140 delivery yet."
     ]
   },
   "history": [
+    {
+      "version": "0.139",
+      "version_code": 139,
+      "kind": "Corrective development / Shield QA delivery",
+      "notes": [
+        "Customise Home editing, semantic icons and remote focus refinements.",
+        "Ten-title Home hero rotation and shared artwork retry improvements.",
+        "Granular logical Backup & Restore with privacy controls, independent viewing history and playback positions, and coordinated recovery.",
+        "Permanent Settings sidebar with flat backup Details and Restore Instructions.",
+        "Canonical media identification restoration, queued post-index resolution and receiving manual-choice guards. Full acceptance and signed delivery remain unfinished.",
+        "Existing package, signing identity and approved Supernova visual language preserved.",
+        "Corrective signed QA source a4841c1dbaac5e1037fb19f9f11882848b435e0b repairs the cold formatter and Settings access; final Drive delivery is recorded separately. Full physical acceptance remains incomplete."
+      ],
+      "source_sha": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
+      "date": "2026-10-16",
+      "recorded_binary_verification": "docs/0.140/BASELINE_0139_DELIVERY_RECORD.json"
+    },
     {
       "version": "0.138",
       "version_code": 138,

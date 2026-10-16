@@ -98,13 +98,18 @@ public final class PreviewCardPresenter extends Presenter {
             super.onMeasure(widthSpec,heightSpec);
         }
         private int dp(int n) { return com.archos.mediacenter.video.leanback.PreviewDialog.dp(getContext(),n); }
-        void updateFocus() {
-            if(isFocused())com.archos.mediacenter.video.diagnostics.Diagnostics.focusedMedia(diagnosticMediaId);
+        public TextView titleView(){return title;}
+        public TextView subtitleView(){return subtitle;}
+        public ProgressBar progressView(){return progress;}
+        public void setLandscapeAspect(float ratio){if(style==Style.CONTINUE&&ratio>0){View body=getChildAt(0);body.getLayoutParams().height=Math.round(body.getLayoutParams().width/ratio);}}
+        void updateFocus(){setPresentationFocus(isFocused());}
+        public void setPresentationFocus(boolean focused) {
+            if(focused)com.archos.mediacenter.video.diagnostics.Diagnostics.focusedMedia(diagnosticMediaId);
             View unit=getChildAt(0);
-            setForeground(null);unit.setForeground(isFocused()?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
+            setForeground(null);unit.setForeground(focused?new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()):null);
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
-            image.setAlpha(1f);unit.animate().scaleX(isFocused()?1.08f:1f).scaleY(isFocused()?1.08f:1f).setDuration(140).start();
-            title.setTextColor(isFocused()?Color.WHITE:0xffc0ccd6);
+            image.setAlpha(1f);unit.animate().scaleX(focused?1.08f:1f).scaleY(focused?1.08f:1f).setDuration(140).start();
+            title.setTextColor(focused?Color.WHITE:0xffc0ccd6);
             // Poster names remain accessible without permanently covering the artwork.
             caption.setVisibility(View.VISIBLE);
         }

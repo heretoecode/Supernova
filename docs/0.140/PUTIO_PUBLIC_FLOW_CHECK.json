@@ -1,0 +1,14 @@
+{
+  "client_id": "9874",
+  "authorised_account_validation": "NOT RUN",
+  "token_obtained": false,
+  "begin_http_status": 200,
+  "begin_status": "OK",
+  "response_fields": [
+    "code",
+    "qr_code_url",
+    "status"
+  ],
+  "poll_http_status": 200,
+  "poll_pending": true
+}

@@ -24,14 +24,16 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
     private final Map<BackupCategory,TextView> toggles=new EnumMap<>(BackupCategory.class);
     private final List<BackupCategory> ordered=BackupCategory.ordered();
     private TextView createButton,restoreButton,detailsButton,instructionsButton;
-    private View previousFocus;
+    private View previousFocus,directFocus;
     private ViewGroup information;
     private int lastGrid;
     private Set<BackupCategory> present,restoreSelected;
 
-    public BackupWorkspace(Context context,Consumer<Set<BackupCategory>> create,Runnable restore,Runnable sidebar,List<Paragraph> details,List<Paragraph> instructions){
+    public static BackupWorkspace exportChoices(Context context){return new BackupWorkspace(context,selected->{},()->{},()->{},Collections.emptyList(),Collections.emptyList(),false);}
+    public BackupWorkspace(Context context,Consumer<Set<BackupCategory>> create,Runnable restore,Runnable sidebar,List<Paragraph> details,List<Paragraph> instructions){this(context,create,restore,sidebar,details,instructions,true);}
+    private BackupWorkspace(Context context,Consumer<Set<BackupCategory>> create,Runnable restore,Runnable sidebar,List<Paragraph> details,List<Paragraph> instructions,boolean initialise){
         super(context);compact=TvLayout.width(context)<780;preferences=PreferenceManager.getDefaultSharedPreferences(context);this.create=create;this.restore=restore;this.sidebar=sidebar;this.details=new ArrayList<>(details);this.instructions=new ArrayList<>(instructions);
-        setOrientation(VERTICAL);setPadding(dp(2),dp(2),dp(2),dp(2));setClipChildren(false);setClipToPadding(false);showMain();
+        setOrientation(VERTICAL);setPadding(dp(2),dp(2),dp(2),dp(2));setClipChildren(false);setClipToPadding(false);if(initialise)showMain();
     }
     public BackupWorkspace(Context context,Set<BackupCategory> present,Set<BackupCategory> selected,Consumer<Set<BackupCategory>> review,Runnable cancel,Runnable sidebar,List<Paragraph> details,List<Paragraph> instructions){
         this(context,review,cancel,sidebar,details,instructions);this.present=new LinkedHashSet<>(present);restoreSelected=new LinkedHashSet<>(selected);restoreSelected.retainAll(present);showMain();
@@ -73,6 +75,21 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
             return false;
         });return view;
     }
+    /** The same choices, consent and persistence on the main Settings page. */
+    public TextView directOption(BackupCategory category,Consumer<BackupCategory> focused,Runnable left,Runnable right){
+        TextView view=option(category);
+        view.setTextSize(17*TvLayout.scale(getContext()));view.setMinHeight(dp(54));
+        view.setPadding(dp(12),dp(12),dp(12),dp(12));view.setSingleLine(true);
+        view.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        view.setBackground(SharedThreePanel.accentFocus(getContext()));
+        view.setOnFocusChangeListener((v,yes)->{if(yes){directFocus=view;focused.accept(category);}});
+        view.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
+            if(key==KeyEvent.KEYCODE_DPAD_LEFT){left.run();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){right.run();return true;}
+            if((key==KeyEvent.KEYCODE_DPAD_CENTER||key==KeyEvent.KEYCODE_ENTER)&&event.getRepeatCount()>0)return true;
+            return false;});
+        return view;
+    }
     private void focus(BackupCategory category){if(category==BackupCategory.LOCATIONS&&present!=null&&!present.contains(category)){detailsButton.requestFocus();return;}int position=ordered.indexOf(category);for(int distance=0;distance<ordered.size();distance++){int candidate=position+distance;if(candidate<ordered.size()){TextView view=toggles.get(ordered.get(candidate));if(view!=null&&view.isEnabled()){view.requestFocus();return;}}}for(int candidate=position-1;candidate>=0;candidate--){TextView view=toggles.get(ordered.get(candidate));if(view!=null&&view.isEnabled()){view.requestFocus();return;}}createButton.requestFocus();}
     private void divider(LinearLayout parent){View line=new View(getContext());line.setBackgroundColor(MenuFoundation.DIVIDER);line.setTag("backup.divider");parent.addView(line,new LayoutParams(-1,dp(1)));}
     private LinearLayout cell(BackupCategory category){LinearLayout cell=new LinearLayout(getContext());cell.setOrientation(VERTICAL);cell.setClipChildren(false);cell.setClipToPadding(false);cell.addView(option(category),new LayoutParams(-1,-2));divider(cell);return cell;}
@@ -98,7 +115,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
         addView(important,new LayoutParams(-1,dp(compact?48:76)));
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);if(restoreTag!=null){View target=findViewWithTag(restoreTag);if(target!=null)target.requestFocus();}else if(held)createButton.requestFocus();setFocusable(false);setFocusableInTouchMode(false);previousFocus=null;
     }
-    private void showInformation(boolean instructionsPage){
+    void showInformation(boolean instructionsPage){
         previousFocus=findFocus();holdFocus();removeAllViews();information=instructionsPage?new ScrollView(getContext()):new FrameLayout(getContext());information.setBackground(MenuFoundation.surface(getContext(),false));information.setTag(instructionsPage?"backup.instructions.page":"backup.details.page");if(information instanceof ScrollView)((ScrollView)information).setFillViewport(true);information.setFocusable(true);information.setFocusableInTouchMode(true);information.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         LinearLayout content=new LinearLayout(getContext());content.setOrientation(VERTICAL);content.setPadding(dp(16),dp(14),dp(16),dp(20));TextView title=MenuFoundation.text(getContext(),instructionsPage?"Restore Instructions":"Backup & Restore Details",23);content.addView(title);
         for(Paragraph paragraph:instructionsPage?instructions:details){TextView heading=MenuFoundation.text(getContext(),paragraph.heading,16);LayoutParams headingSize=new LayoutParams(-1,-2);headingSize.topMargin=dp(12);content.addView(heading,headingSize);TextView copy=MenuFoundation.text(getContext(),paragraph.text,14);copy.setTextColor(MenuFoundation.SECONDARY);content.addView(copy,new LayoutParams(-1,-2));}
@@ -113,7 +130,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event){if(event.getAction()==KeyEvent.ACTION_DOWN){int key=event.getKeyCode();if(key==KeyEvent.KEYCODE_BACK&&back())return true;if(information!=null){if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){if(information instanceof ScrollView)information.scrollBy(0,dp(key==KeyEvent.KEYCODE_DPAD_UP?-60:60));return true;}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT||key==KeyEvent.KEYCODE_DPAD_CENTER||key==KeyEvent.KEYCODE_ENTER)return true;}}return super.dispatchKeyEvent(event);}
     private void privacy(String title,String message,String accept,Runnable confirm){
-        View opener=findFocus();android.app.Dialog dialog=new android.app.Dialog(getContext());MenuFoundation.WindowPanel panel=new MenuFoundation.WindowPanel(getContext());panel.setOrientation(VERTICAL);panel.setPadding(dp(18),dp(18),dp(18),dp(18));panel.setBackground(MenuFoundation.surface(getContext(),false));panel.addView(MenuFoundation.text(getContext(),title,22));TextView copy=MenuFoundation.text(getContext(),message,16);LayoutParams copySize=new LayoutParams(-1,-2);copySize.topMargin=dp(12);copySize.bottomMargin=dp(16);panel.addView(copy,copySize);
+        View opener=directFocus!=null?directFocus:findFocus();android.app.Dialog dialog=new android.app.Dialog(getContext());MenuFoundation.WindowPanel panel=new MenuFoundation.WindowPanel(getContext());panel.setOrientation(VERTICAL);panel.setPadding(dp(18),dp(18),dp(18),dp(18));panel.setBackground(MenuFoundation.surface(getContext(),false));panel.addView(MenuFoundation.text(getContext(),title,22));TextView copy=MenuFoundation.text(getContext(),message,16);LayoutParams copySize=new LayoutParams(-1,-2);copySize.topMargin=dp(12);copySize.bottomMargin=dp(16);panel.addView(copy,copySize);
         LinearLayout actions=new LinearLayout(getContext());actions.setClipChildren(false);TextView cancel=MenuFoundation.control(getContext(),"Cancel","cancel",dialog::dismiss),positive=MenuFoundation.control(getContext(),accept,"checkbox checked",()->{confirm.run();dialog.dismiss();});actions.addView(cancel,new LayoutParams(0,dp(44),1));LayoutParams positiveSize=new LayoutParams(0,dp(44),1);positiveSize.leftMargin=dp(12);actions.addView(positive,positiveSize);panel.addView(actions);dialog.setContentView(panel);android.view.Window window=dialog.getWindow();if(window!=null){window.setBackgroundDrawableResource(android.R.color.transparent);window.setLayout(Math.min(TvLayout.safeWidth(getContext()),dp(600)),-2);}dialog.setOnDismissListener(d->{if(opener!=null&&opener.isAttachedToWindow())opener.requestFocus();});dialog.show();if(window!=null)window.setLayout(Math.min(TvLayout.safeWidth(getContext()),dp(600)),-2);cancel.requestFocus();
 
     }

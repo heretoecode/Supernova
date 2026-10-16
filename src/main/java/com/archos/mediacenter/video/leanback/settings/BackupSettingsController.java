@@ -18,11 +18,11 @@ public final class BackupSettingsController {
     private final BackupOperationModel model;
     private final ActivityResultLauncher<Intent> savePicker,openPicker;
     private FrameLayout frame;private View middle,help,opener;private SharedThreePanel split;
-    private BackupWorkspace workspace;private boolean noticeActive,visible,exportSelection;
+    private BackupWorkspace workspace,exportChoices;private ScrollView landingScroll;private final List<TextView> landingControls=new ArrayList<>();private boolean noticeActive,visible,exportSelection;
     private LinearLayout landing;private TextView description,exportAction,restoreAction,selectedAction;private android.app.Dialog operation;
     private final Map<View,Integer> hidden=new IdentityHashMap<>();
     private Set<BackupCategory> selectedRestore;
-    private int viewportWidth;
+    private int viewportWidth;private String directInformation;
     private final List<Runnable> restoreRail=new ArrayList<>();
     private void compactRail(View view){
         int l=view.getPaddingLeft(),t=view.getPaddingTop(),r=view.getPaddingRight(),b=view.getPaddingBottom();
@@ -54,9 +54,17 @@ public final class BackupSettingsController {
         if(this.split!=null)hide();this.split=split;this.middle=middle;this.help=help;
         frame=new FrameLayout(fragment.requireContext());frame.setBackground(MenuFoundation.surface(fragment.requireContext(),false));frame.setTag("settings.backup.workspace");
         landing=new LinearLayout(fragment.requireContext());landing.setOrientation(LinearLayout.VERTICAL);landing.setTag("settings.backup.landing");landing.setVisibility(View.GONE);
-        exportAction=landingAction("Export Backup","backup.action.export",()->{exportSelection=true;render(model.current());},"Choose the configuration categories to export, then save a verified ZIP using Android Files. Media, artwork and credentials are excluded. Filenames and locations are Off by default. Backups are unencrypted.");
+        exportChoices=BackupWorkspace.exportChoices(fragment.requireContext());
+        exportAction=landingAction("Export Backup","backup.action.export",()->create(exportChoices.selection()),"Choose the configuration categories to export, then save a verified ZIP using Android Files. Media, artwork and credentials are excluded. Filenames and locations are Off by default. Backups are unencrypted.");
         restoreAction=landingAction("Restore Backup","backup.action.restore",this::chooseRestore,"Choose a backup ZIP using Android Files. Review the available categories and confirm replacement before any settings change. Unselected categories remain unchanged. Reconnect sources, accounts and Android permissions separately.");
-        ((ViewGroup)middle).addView(landing,new LinearLayout.LayoutParams(-1,-1));
+        for(BackupCategory category:BackupCategory.ordered()){
+            TextView option=exportChoices.directOption(category,focused->{selectedAction=landingControls.stream().filter(v->("backup.category."+focused.name()).equals(v.getTag())).findFirst().orElse(exportAction);description.setText(focused.label+"\n\n"+focused.description);((ScrollView)help).scrollTo(0,0);},this::sidebar,()->help.requestFocus());
+            landing.addView(option,new LinearLayout.LayoutParams(-1,-2));landingControls.add(option);SharedThreePanel.divider(landing);
+        }
+        landingAction("See full details","backup.details",()->showInformation(false),"Read the backup contents, exclusions, privacy and replacement policy.");
+        landingAction("Restore instructions","backup.instructions",()->showInformation(true),"Read the existing instructions before selecting an archive for restore.");
+        landingScroll=new ScrollView(fragment.requireContext());landingScroll.setFillViewport(true);landingScroll.setClipToPadding(false);landingScroll.setPadding(dp(4),dp(4),dp(4),dp(4));landingScroll.addView(landing);landingScroll.setVisibility(View.GONE);
+        ((ViewGroup)middle).addView(landingScroll,new LinearLayout.LayoutParams(-1,-1));
         description=SharedThreePanel.text(fragment.requireContext(),"",17);description.setTag("backup.action.description");description.setVisibility(View.GONE);
         ViewGroup helpBody=(ViewGroup)((ScrollView)help).getChildAt(0);helpBody.addView(description,new LinearLayout.LayoutParams(-1,-2));
         model.states().observe(fragment.getViewLifecycleOwner(),state->{if(isVisible())render(state);});
@@ -65,22 +73,22 @@ public final class BackupSettingsController {
     private TextView landingAction(String label,String tag,Runnable action,String explanation){
         TextView button=SharedThreePanel.text(fragment.requireContext(),label,17);button.setTag(tag);button.setPadding(dp(12),dp(12),dp(12),dp(12));button.setMinHeight(dp(54));button.setFocusable(true);button.setFocusableInTouchMode(true);button.setBackground(SharedThreePanel.accentFocus(fragment.requireContext()));button.setOnClickListener(v->action.run());
         button.setOnFocusChangeListener((v,yes)->{if(yes){selectedAction=button;description.setText(label+"\n\n"+explanation);((ScrollView)help).scrollTo(0,0);}});
-        button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_LEFT){sidebar();return true;}if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){(key==KeyEvent.KEYCODE_DPAD_UP?exportAction:restoreAction).requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT){help.requestFocus();return true;}return false;});
-        landing.addView(button,new LinearLayout.LayoutParams(-1,-2));SharedThreePanel.divider(landing);return button;
+        button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_LEFT){sidebar();return true;}if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){moveLanding(key);return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT){help.requestFocus();return true;}return false;});
+        landingControls.add(button);landing.addView(button,new LinearLayout.LayoutParams(-1,-2));SharedThreePanel.divider(landing);return button;
     }
     private void hideChildren(ViewGroup parent,View retained){for(int i=0;i<parent.getChildCount();i++){View child=parent.getChildAt(i);if(child!=retained){hidden.putIfAbsent(child,child.getVisibility());child.setVisibility(View.GONE);}}}
     public void show(View opener){this.opener=opener;visible=true;
-        hideChildren((ViewGroup)middle,landing);hideChildren((ViewGroup)((ScrollView)help).getChildAt(0),description);
+        hideChildren((ViewGroup)middle,landingScroll);hideChildren((ViewGroup)((ScrollView)help).getChildAt(0),description);
         middle.setVisibility(View.VISIBLE);help.setVisibility(View.VISIBLE);split.widths(.28f,.46f,.26f);
         if(TvLayout.width(fragment.requireContext())<780&&split.getParent() instanceof HorizontalScrollView){
             HorizontalScrollView viewport=(HorizontalScrollView)split.getParent();if(viewportWidth==0)viewportWidth=split.getLayoutParams().width;
             split.getLayoutParams().width=Math.max(1,viewport.getWidth()-viewport.getPaddingLeft()-viewport.getPaddingRight());split.requestLayout();viewport.scrollTo(0,0);split.constrainViewport(true);
             LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=TvLayout.px(fragment.requireContext(),132);rail.weight=0;split.getChildAt(0).setLayoutParams(rail);if(restoreRail.isEmpty())compactRail(split.getChildAt(0));
         }
-        landing.setVisibility(View.VISIBLE);description.setVisibility(View.VISIBLE);
+        landing.setVisibility(View.VISIBLE);landingScroll.setVisibility(View.VISIBLE);description.setVisibility(View.VISIBLE);
         if(description.length()==0)description.setText("Export Backup\n\nChoose which configuration categories to save in a verified ZIP. Media and credentials are excluded. Select Restore Backup to review an existing archive.");render(model.current());
     }
-    public void hide(){visible=false;dismissOperation();for(Runnable restore:restoreRail)restore.run();restoreRail.clear();if(viewportWidth!=0){split.getLayoutParams().width=viewportWidth;viewportWidth=0;split.constrainViewport(false);split.requestLayout();LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=0;rail.weight=.28f;split.getChildAt(0).setLayoutParams(rail);}if(landing!=null)landing.setVisibility(View.GONE);if(description!=null)description.setVisibility(View.GONE);for(Map.Entry<View,Integer> entry:hidden.entrySet())entry.getKey().setVisibility(entry.getValue());hidden.clear();}
+    public void hide(){visible=false;directInformation=null;dismissOperation();for(Runnable restore:restoreRail)restore.run();restoreRail.clear();if(viewportWidth!=0){split.getLayoutParams().width=viewportWidth;viewportWidth=0;split.constrainViewport(false);split.requestLayout();LinearLayout.LayoutParams rail=(LinearLayout.LayoutParams)split.getChildAt(0).getLayoutParams();rail.width=0;rail.weight=.28f;split.getChildAt(0).setLayoutParams(rail);}if(landing!=null)landing.setVisibility(View.GONE);if(landingScroll!=null)landingScroll.setVisibility(View.GONE);if(description!=null)description.setVisibility(View.GONE);for(Map.Entry<View,Integer> entry:hidden.entrySet())entry.getKey().setVisibility(entry.getValue());hidden.clear();}
     public boolean isVisible(){return visible;}
     private void dismissOperation(){if(operation!=null){operation.dismiss();operation=null;}}
     private void showOperation(){if(operation!=null)return;operation=new android.app.Dialog(fragment.requireContext());if(frame.getParent() instanceof ViewGroup)((ViewGroup)frame.getParent()).removeView(frame);operation.setContentView(frame);operation.setCanceledOnTouchOutside(false);operation.setOnKeyListener((dialog,key,event)->{if(key==KeyEvent.KEYCODE_BACK){if(event.getAction()==KeyEvent.ACTION_UP)back();return true;}return false;});operation.show();android.view.Window window=operation.getWindow();if(window!=null){window.setBackgroundDrawableResource(android.R.color.transparent);window.setLayout(TvLayout.safeWidth(fragment.requireContext()),Math.max(dp(280),TvLayout.px(fragment.requireContext(),TvLayout.height(fragment.requireContext())-32)));}focusFirst(frame);}
@@ -92,7 +100,7 @@ public final class BackupSettingsController {
     public void restoreViewState(android.os.Bundle saved){
         if(saved==null||!saved.getBoolean("visible",false)||frame==null)return;
         ArrayList<String> selection=saved.getStringArrayList("selection");if(selection!=null&&model.current().phase==BackupOperationModel.Phase.REVIEW){selectedRestore=EnumSet.noneOf(BackupCategory.class);for(String name:selection)if(name!=null)try{BackupCategory category=BackupCategory.valueOf(name);if(model.current().categories.contains(category))selectedRestore.add(category);}catch(IllegalArgumentException invalid){/* Ignore obsolete view-state choices. */}}
-        exportSelection=saved.getBoolean("export_selection",false);String page=saved.getString("page");View root=fragment.requireView();Runnable restore=()->{if(fragment.isAdded()&&fragment.getView()==root&&PreviewSettings.enterBackup(fragment)&&workspace!=null)workspace.restoreInformationPage(page);};
+        exportSelection=false;String page=saved.getString("page");View root=fragment.requireView();Runnable restore=()->{if(fragment.isAdded()&&fragment.getView()==root&&PreviewSettings.enterBackup(fragment)){if("backup.details.page".equals(page)||"backup.instructions.page".equals(page))showInformation("backup.instructions.page".equals(page));else if(workspace!=null)workspace.restoreInformationPage(page);}};
         if(androidx.core.view.ViewCompat.isLaidOut(root)&&root.getWidth()>0)restore.run();
         else root.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){public void onLayoutChange(View view,int left,int top,int right,int bottom,int oldLeft,int oldTop,int oldRight,int oldBottom){if(right>left){view.removeOnLayoutChangeListener(this);restore.run();}}});
     }
@@ -101,7 +109,7 @@ public final class BackupSettingsController {
         if(!isVisible()||operation!=null||event.getAction()!=KeyEvent.ACTION_DOWN)return false;
         int key=event.getKeyCode();
         if(landing.hasFocus()){
-            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){(key==KeyEvent.KEYCODE_DPAD_UP?exportAction:restoreAction).requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){moveLanding(key);return true;}
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){sidebar();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_RIGHT){help.requestFocus();return true;}
         }else if(help.hasFocus()){
@@ -111,15 +119,23 @@ public final class BackupSettingsController {
         }
         return false;
     }
+    private void moveLanding(int key){
+        View current=landing.findFocus();int index=landingControls.indexOf(current);
+        int next=Math.max(0,Math.min(landingControls.size()-1,index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1)));
+        landingControls.get(next).requestFocus();
+    }
     public void enter(){if(isVisible()){if(operation!=null)focusFirst(frame);else exportAction.requestFocus();}}
     private void sidebar(){if(operation!=null)back();else if(opener!=null)opener.requestFocus();}
     public boolean back(){
-        if(!isVisible())return false;if(noticeActive){render(model.current());return true;}if(workspace!=null&&workspace.back())return true;
+        if(!isVisible())return false;if(noticeActive){render(model.current());return true;}if(directInformation!=null){View restore=landing.findViewWithTag(directInformation);directInformation=null;workspace=null;dismissOperation();if(restore!=null)restore.requestFocus();return true;}if(workspace!=null&&workspace.back())return true;
         if(model.isBusy()){if(model.current().phase!=BackupOperationModel.Phase.RESTORING_LEGACY)model.cancel();return true;}
         if(model.current().phase!=BackupOperationModel.Phase.IDLE){selectedRestore=null;closeOperation();return true;}
-        if(operation!=null){exportSelection=false;dismissOperation();exportAction.requestFocus();}else sidebar();return true;
+        if(operation!=null){exportSelection=false;directInformation=null;dismissOperation();exportAction.requestFocus();}else sidebar();return true;
     }
     private void closeOperation(){exportSelection=false;model.closeReview();}
+    private void showInformation(boolean instructionsPage){
+        directInformation=instructionsPage?"backup.instructions":"backup.details";frame.removeAllViews();workspace=new BackupWorkspace(fragment.requireContext(),this::create,this::chooseRestore,this::sidebar,details,instructions);workspace.showInformation(instructionsPage);frame.addView(workspace,new FrameLayout.LayoutParams(-1,-1));showOperation();
+    }
     private void create(Set<BackupCategory> selected){
         List<String> unsupported=new ArrayList<>();for(BackupCategory category:selected)if(!LogicalBackupArchive.registered().contains(category))unsupported.add(category.label);
         if(!unsupported.isEmpty()){notice("Backup could not be created","The selected categories are unsupported by this build: "+android.text.TextUtils.join(", ",unsupported)+". No category was silently omitted and no backup was created.");return;}
@@ -129,7 +145,7 @@ public final class BackupSettingsController {
     private void chooseRestore(){try{openPicker.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("application/zip").addCategory(Intent.CATEGORY_OPENABLE));}catch(RuntimeException unavailable){notice("File picker unavailable","No state was changed. Connect an available document provider and try again.");}}
     private void render(BackupOperationModel.State state){
         if(!isVisible())return;
-        if(state.phase==BackupOperationModel.Phase.IDLE&&!exportSelection){selectedRestore=null;workspace=null;noticeActive=false;boolean held=operation!=null;dismissOperation();if(held)exportAction.requestFocus();return;}
+        if(state.phase==BackupOperationModel.Phase.IDLE){selectedRestore=null;workspace=null;noticeActive=false;boolean held=operation!=null;dismissOperation();if(held)exportAction.requestFocus();return;}
         boolean focused=holdFrameFocus();frame.removeAllViews();workspace=null;noticeActive=false;
         if(state.phase==BackupOperationModel.Phase.IDLE){selectedRestore=null;workspace=new BackupWorkspace(fragment.requireContext(),this::create,this::chooseRestore,this::sidebar,details,instructions);frame.addView(workspace,new FrameLayout.LayoutParams(-1,-1));}
         else if(state.phase==BackupOperationModel.Phase.EXPORT_READY){chooseSave();return;}

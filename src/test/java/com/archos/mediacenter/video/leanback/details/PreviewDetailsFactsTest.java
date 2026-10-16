@@ -10,6 +10,11 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewDetailsFactsTest {
+    @Test public void alternativeTitlesPreferMatchingTerritoryAndDeduplicateProviderValues()throws Exception{
+        assertEquals("Irish name",PreviewDetailsFacts.alternativeNames(new org.json.JSONObject("{titles:[{iso_3166_1:US,title:Other},{iso_3166_1:IE,title:'Irish name'},{iso_3166_1:IE,title:'Irish name'}]}"),"IE"));
+        assertEquals("Series name",PreviewDetailsFacts.alternativeNames(new org.json.JSONObject("{results:[{iso_3166_1:IE,title:'Series name'}]}"),"IE"));
+        assertEquals("",PreviewDetailsFacts.alternativeNames(null,"IE"));
+    }
     @Test public void classificationNeverBorrowsAnotherCountrysRating()throws Exception{
         JSONObject movie=new JSONObject("{results:[{iso_3166_1:'US',release_dates:[{certification:'R',type:3}]},{iso_3166_1:'IE',release_dates:[{certification:'18',type:4},{certification:'15A',type:3}]}]}");
         assertEquals("15A (IE)",PreviewDetailsFacts.certificate(movie,"IE"));assertEquals("",PreviewDetailsFacts.certificate(movie,"FR"));

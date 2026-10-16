@@ -1954,6 +1954,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     }
 
     @Override public void onPlaybackEstablished(){
+        if(mPlayerFrontend!=null)mPlayerFrontend.onPlaybackEstablished();
         mPlaybackSession.outputEstablished=true;
         excludeEstablishedHero();
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_output_established","backend",mPlayer==null?-1:mPlayer.getType());

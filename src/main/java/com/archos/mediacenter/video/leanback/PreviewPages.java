@@ -309,7 +309,8 @@ public final class PreviewPages extends FrameLayout {
     }
     private java.util.function.Consumer<Boolean> scrollListener=value->{};
     @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);if(h!=oldh)post(()->{if(tab==0&&!cells.isEmpty()&&cells.get(0).type==HERO)renderFeatured();});}
-    public void setNavigationInset(int inset){list.setPadding(dp(28),dp(10)+inset,dp(28),dp(12));}
+    private int navigationInset;
+    public void setNavigationInset(int inset){navigationInset=inset;list.setPadding(dp(28),inset+(tab==1||tab==2?0:dp(10)),dp(28),dp(12));}
     public void setScrollListener(java.util.function.Consumer<Boolean> listener){scrollListener=listener;notifyScroll();}
     private void notifyScroll(){scrollListener.accept(list.canScrollVertically(-1));}
     public boolean atTop() {
@@ -428,6 +429,7 @@ public final class PreviewPages extends FrameLayout {
         render("control_change");
     }
     private void render(String reason) {
+        setNavigationInset(navigationInset);
         if(tab==1||tab==2)com.archos.mediacenter.video.diagnostics.Diagnostics.libraryState(tab==1?"movies":"tv",listMode[tab]?"list":"grid",(columns[tab].sortColumn==null?"preset_"+sorts[tab]:columns[tab].sortColumn.name())+":"+((columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending)?"ascending":"descending"),genres[tab],selectedYears[tab],providers[tab],unmatched[tab]);
         else com.archos.mediacenter.video.diagnostics.Diagnostics.uiState(tab==0?"home":"network","none","grid","none","none",0);
         long started=android.os.SystemClock.elapsedRealtime();
@@ -610,7 +612,7 @@ public final class PreviewPages extends FrameLayout {
             else if(c.type==NOTICE){v.setOrientation(LinearLayout.VERTICAL);TextView title=text(c.title,18);title.setTextColor(0xff8298aa);v.addView(title);TextView status=text((String)c.value,12);status.setTextColor(0xff8298aa);v.addView(status);v.setPadding(0,dp(12),0,dp(12));}
             else if(c.type==HEADER){
                 if(Boolean.TRUE.equals(c.value)){
-                    v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(13),0,dp(18));PreviewToolbar controls=new PreviewToolbar(getContext(),true);
+                    v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,0,0,dp(18));PreviewToolbar controls=new PreviewToolbar(getContext(),true);
                     controls.addView(button("Filters"+(genres[tab].isEmpty()?"":": "+genres[tab])+(years[tab]==0?"":" · "+years[tab])+"  ▾",()->filter()));
                     String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest Ranked First":"Highest Ranked First"):(ascending[tab]?"Oldest First":"Newest First");
                     for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order,()->{quietOrder.clear();boolean value=!(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending);ascending[tab]=value;columns[tab].setAscending(value);render();}),button(listMode[tab]?"Grid View":"List View",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}

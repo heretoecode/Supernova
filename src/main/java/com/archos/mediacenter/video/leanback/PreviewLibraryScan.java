@@ -40,7 +40,7 @@ public final class PreviewLibraryScan {
                 phase=next;checked=progress.total(0);added=progress.total(1);updated=progress.total(2);completed=progress.total(3);
                 Diagnostics.event("scan_"+next,"operation_id",operation,"batch_id",batch,"trigger",trigger,"source_id",source,"checked",checked,"new",added,"updated",updated,"sources_completed",completed,"sources_total",sourcesTotal,"source_count_known",sourcesTotal>=0,"sources_failed",progress.total(4),"metadata_outcome",metadataOutcome,"elapsed_ms",SystemClock.elapsedRealtime()-requestedAt);
                 if(next.equals("complete")||next.equals("failed")||next.startsWith("batch_"))androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().putString("preview_scan_result",(progress.total(4)>0||next.equals("batch_failed")?"Partial / failed sources":phase)+" · "+checked+" checked · "+added+" new · "+updated+" updated"+(metadataOutcome.equals("metadata_failed")?" · Metadata could not be queued":"")).putLong("preview_scan_result_time",System.currentTimeMillis()).apply();
-                if(next.startsWith("batch_"))finishOperation(next);
+                if(next.startsWith("batch_")){LibraryScanRecord.record(c,"network",progress.total(4)>0||metadataOutcome.equals("metadata_failed")?"partial":next);finishOperation(next);}
             }
         }};
         IntentFilter filter=new IntentFilter(app.getPackageName()+".SCAN_LIFECYCLE");
