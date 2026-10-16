@@ -65,7 +65,7 @@ public final class PreviewMoviePage extends ScrollView {
         plot=text("",14);plot.setMaxLines(4);plot.setLineSpacing(dp(2),1);plot.setEllipsize(android.text.TextUtils.TruncateAt.END);LinearLayout.LayoutParams plotSize=new LinearLayout.LayoutParams(Math.min(dp(440),getResources().getDisplayMetrics().widthPixels-dp(84)),dp(76));plotSize.topMargin=dp(8);View synopsisSpace=new View(c);cardCopy.addView(synopsisSpace,new LinearLayout.LayoutParams(1,0,1));cardCopy.addView(plot,plotSize);
         matchMetadata=button("Match Metadata",()->{Action match=matchingAction();if(match!=null)action.accept(match);});matchMetadata.setVisibility(GONE);cardCopy.addView(matchMetadata,new LinearLayout.LayoutParams(-2,dp(38)));
         LinearLayout buttons=new LinearLayout(c);buttons.setTag("details.actions");buttons.setClipChildren(false);buttons.setPadding(0,dp(12),0,dp(10));cardCopy.addView(new View(c),new LinearLayout.LayoutParams(1,0,1));cardCopy.addView(buttons);
-        trailer=button("Play Trailer",this::chooseTrailer);trailer.setVisibility(GONE);play=button("Play",this::play);buttons.addView(play);providerActions=new LinearLayout(c);providerActions.setClipChildren(false);buttons.addView(providerActions);play.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{int target=Math.max(dp(44),b-t);for(int n=0;n<providerActions.getChildCount();n++){View provider=providerActions.getChildAt(n);ViewGroup.LayoutParams size=provider.getLayoutParams();if(size.height!=target){size.height=target;provider.setLayoutParams(size);}}});moreButton=button("More",this::more);margin(buttons,moreButton);
+        trailer=button("Play Trailer",this::chooseTrailer);trailer.setVisibility(GONE);play=button("Play",this::play);buttons.addView(play);providerActions=new LinearLayout(c);providerActions.setClipChildren(false);buttons.addView(providerActions);moreButton=button("More",this::more);margin(buttons,moreButton);
         versions=button("Versions",()->chooseVersions.run());versions.setVisibility(GONE);
         tabBar=new PreviewToolbar(c);tabBar.setClipChildren(false);LinearLayout.LayoutParams tabsSize=new LinearLayout.LayoutParams(-1,dp(44));tabsSize.topMargin=dp(14);sectionFrame=new ConnectedDetailsPanel(c);body.addView(sectionFrame,new LinearLayout.LayoutParams(-1,dp(220)));((PreviewToolbar)tabBar).setConnected(true);tabBar.setPadding(0,0,0,0);tabsSize.topMargin=0;sectionFrame.addView(tabBar,tabsSize);
         episodes=section("Episodes");cast=section("Cast");crew=section("Crew");details=section("Details");related=section("More Like This");trailers=section("Extras");
@@ -90,6 +90,10 @@ public final class PreviewMoviePage extends ScrollView {
         }
         int safeMargin=Math.round(MeasureSpec.getSize(widthSpec)*.04f);body.setPadding(safeMargin,0,safeMargin,Math.round(available*.04f));
         super.onMeasure(widthSpec,heightSpec);
+        // Resolve provider geometry during measurement so the first rendered frame matches Play.
+        int actionHeight=Math.max(dp(44),play.getMeasuredHeight());boolean changed=false;
+        for(int n=0;n<providerActions.getChildCount();n++){View provider=providerActions.getChildAt(n);ViewGroup.LayoutParams size=provider.getLayoutParams();if(size.height!=actionHeight){size.height=actionHeight;provider.setLayoutParams(size);changed=true;}}
+        if(changed)super.onMeasure(widthSpec,heightSpec);
     }
     @Override protected void onScrollChanged(int left,int top,int oldLeft,int oldTop){
         super.onScrollChanged(left,top,oldLeft,oldTop);

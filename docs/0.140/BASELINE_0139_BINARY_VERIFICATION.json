@@ -1,0 +1,24 @@
+{
+  "verified_at_utc": "2026-10-16T18:53:36.621964+00:00",
+  "source_commit": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
+  "filename": "Supernova_0.139.apk",
+  "application_id": "app.supernova.player",
+  "version_name": "0.139",
+  "version_code": 139,
+  "apk_bytes": 87874512,
+  "apk_sha256": "9421a982296816f1ef53aa062ea608ed213dadc8475069fa9039202e5ee7898b",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "signature_verified": true,
+  "signature_schemes": [
+    "v1",
+    "v2",
+    "v3"
+  ],
+  "zip_crc_verified": true,
+  "embedded_source_commit_verified": true,
+  "drive_file_id": "1CPyP8pK1ggEjTl1BPepAvDxzsrz_ocgb",
+  "drive_parent_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "matches_prior_delivery_receipt": true,
+  "signing_run_id": 38908109847,
+  "physical_shield_acceptance": false
+}

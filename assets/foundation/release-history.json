@@ -10,7 +10,7 @@
   "current": {
     "version": "0.140",
     "version_code": 140,
-    "kind": "Development implementation — validation and release incomplete",
+    "kind": "Development implementation \u2014 validation and release incomplete",
     "notes": [
       "Page-scoped two-row Library Statistics with nine metrics and terminal scan evidence.",
       "Six-region Details blueprint implementation, connected active-tab border and fixed portrait grids.",
@@ -38,7 +38,15 @@
       ],
       "source_sha": "a4841c1dbaac5e1037fb19f9f11882848b435e0b",
       "date": "2026-10-16",
-      "recorded_binary_verification": "docs/0.140/BASELINE_0139_DELIVERY_RECORD.json"
+      "recorded_binary_verification": "docs/0.140/BASELINE_0139_BINARY_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "apks": [
+        {
+          "filename": "Supernova_0.139.apk",
+          "sha256": "9421a982296816f1ef53aa062ea608ed213dadc8475069fa9039202e5ee7898b"
+        }
+      ],
+      "run_id": 38908109847
     },
     {
       "version": "0.138",
@@ -69,7 +77,7 @@
     {
       "version": "0.137",
       "version_code": 137,
-      "kind": "Development / QA — unreleased",
+      "kind": "Development / QA \u2014 unreleased",
       "notes": [
         "Settings category and remote-navigation reliability; excluded-row import paging and All Files filtering.",
         "Playback history refresh and Home-only Continue Watching.",
@@ -92,7 +100,7 @@
     {
       "version": "0.136",
       "version_code": 136,
-      "kind": "Provisional refinement QA — unreleased",
+      "kind": "Provisional refinement QA \u2014 unreleased",
       "notes": [
         "Refined Home heroes, navigation, shared library controls and live genre choices.",
         "Embedded custom Library Page creation and focused editing with a retained live preview.",
@@ -114,7 +122,7 @@
     {
       "version": "0.135",
       "version_code": 135,
-      "kind": "Development / QA — unreleased",
+      "kind": "Development / QA \u2014 unreleased",
       "notes": [
         "Shared three-panel Settings and Network & Files, plus one compact Home and TV file browser with complete breadcrumbs and persisted controls.",
         "Staged recursive library selection and exclusions, atomic Apply & Scan, and five-category Library Health that retains unavailable records and viewing progress.",
