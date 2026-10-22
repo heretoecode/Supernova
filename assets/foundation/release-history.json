@@ -36,7 +36,18 @@
         "Diagnostic capture allocation reduction and queue-rejection attribution.",
         "Compact Library Statistics text fits its cells; navigation overflow is clipped before the clock while focused actions scroll into view.",
         "OMDb supplementary adapter is prepared with production access disabled. Missing reference assets, original Shield logs, real-account checks and device acceptance remain documented limitations."
-      ]
+      ],
+      "source_sha": "866f21f11f27dea4846ddd3cac57d98b281eecbb",
+      "date": "2026-10-16",
+      "recorded_binary_verification": "docs/0.140/INDEPENDENT_APK_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "apks": [
+        {
+          "filename": "Supernova_0.140.apk",
+          "sha256": "b6d59e82c03cd99844f49d4647d2f2a985c484c819d92064542eec84f33788f5"
+        }
+      ],
+      "run_id": 38959928321
     },
     {
       "version": "0.139",

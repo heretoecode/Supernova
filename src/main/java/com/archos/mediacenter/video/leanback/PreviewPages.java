@@ -92,7 +92,7 @@ public final class PreviewPages extends FrameLayout {
         if(list.getPaddingBottom()!=desiredBottom){list.setPadding(list.getPaddingLeft(),list.getPaddingTop(),list.getPaddingRight(),desiredBottom);scheduleCentre();return;}
         int delta=Math.round((item.getTop()+item.getBottom())/2f-(list.getPaddingTop()+viewportBottom)/2f);
         if(Math.abs(delta)>1&&list.canScrollVertically(delta>0?1:-1)){
-            list.stopScroll();list.smoothScrollBy(0,delta,new android.view.animation.DecelerateInterpolator(),180);
+            list.stopScroll();list.removeCallbacks(centreLibraryRow);list.smoothScrollBy(0,delta,new android.view.animation.DecelerateInterpolator(),180);
         }
     }
 

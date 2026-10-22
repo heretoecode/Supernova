@@ -73,14 +73,14 @@ final class PreviewPlaybackMenus {
         return states;
     }
     private static void switchTab(int selected){flushNested();tab=selected;rootFocus=-1;renderTab();}
-    private static TVCardView card(int title){for(TVCardView c:adapter.previewCards())if(owner.getString(title).equals(c.previewTitle()))return c;return null;}
+    private static TVCardView card(int title){for(TVCardView c:adapter==null?Collections.<TVCardView>emptyList():adapter.previewCards())if(owner.getString(title).equals(c.previewTitle()))return c;return null;}
     private static void clear(){flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();scroll=new ScrollView(owner);scroll.setFillViewport(false);rows=new LinearLayout(owner);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);content.addView(scroll,new FrameLayout.LayoutParams(-1,-1));for(int i=0;i<4;i++)tabs.getChildAt(i).setSelected(i==tab);}
     private static void renderTab(){
         if(owner==null||closing)return;clear();backAction=null;restoreParent=PreviewPlaybackMenus::renderTab;
         if(tab==0||tab==1){TVCardView selected=card(tab==0?R.string.menu_subtitles:R.string.menu_audio);if(selected!=null)addNative(selected,true,false);else heading(tab==0?"No subtitle tracks":"No audio tracks");if(tab==0)subtitlePreferences();}
         else {
             if(tab==3){TVCardView audio=card(R.string.menu_audio);if(audio!=null&&audio.previewMenu()!=null)for(int i=0;i<audio.previewMenu().getChildCount();i++){View v=audio.previewMenu().getChildAt(i);if(v instanceof TVMenuItem&&owner.getString(R.string.player_pref_audio_speed_title).equals(((TVMenuItem)v).getText()))nativeRow((TVMenuItem)v,"Playback Speed",PreviewPlaybackMenus::renderTab);}}
-            for(TVCardView c:adapter.previewCards()){
+            for(TVCardView c:adapter==null?Collections.<TVCardView>emptyList():adapter.previewCards()){
                 String title=c.previewTitle();boolean play=owner.getString(R.string.pref_play_mode_title).equals(title);
                 if(owner.getString(R.string.menu_subtitles).equals(title)||owner.getString(R.string.menu_audio).equals(title)||owner.getString(R.string.menu_info).equals(title)||owner.getString(R.string.preferences).equals(title))continue;
                 boolean notification=owner.getString(R.string.notification_mode).equals(title);if(tab==3?!(play||notification):(play||notification))continue;
@@ -137,7 +137,7 @@ final class PreviewPlaybackMenus {
         focusContent();
     }
     static void showNested(Activity activity,TVCardDialog card){
-        if(!isShowing()){owner=activity;origin=activity.getCurrentFocus();shell();}
+        if(!isShowing()){owner=activity;origin=activity.getCurrentFocus();tab=0;shell();}
         Runnable parent=restoreParent;flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();
         if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);
         card.setAlpha(1f);card.setPadding(0,0,0,0);card.setBackgroundColor(android.graphics.Color.TRANSPARENT);compact(card,activity);nested=card;
