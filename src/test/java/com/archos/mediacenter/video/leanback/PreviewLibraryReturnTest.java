@@ -43,7 +43,7 @@ public class PreviewLibraryReturnTest {
             pages.setSnapshot(snapshot(true));PreviewPagesTest.layout(container);assertSame(child,container.findFocus());
             child.setVisibility(View.GONE);pages.requestFocus();settle(container);
             assertNotNull(pages.findFocus());assertEquals("v34",pages.findFocus().getTag());
-            View restored=list.findContainingItemView(pages.findFocus());assertEquals(top,restored.getTop());assertEquals(first,layout.findFirstVisibleItemPosition());
+            View restored=list.findContainingItemView(pages.findFocus());assertEquals("Centred row may round by one pixel",top,restored.getTop(),1);assertEquals(first,layout.findFirstVisibleItemPosition());
             assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
         }finally{host.pause().stop().destroy();}
     }

@@ -2,11 +2,18 @@
   "checked_at_utc": "2026-10-22T21:28:48.308473+00:00",
   "platform": "Android TV API28 x86 software emulator",
   "test": "tools/playback_chapter_metadata_probe.c",
-  "probe_sha256": "b02ac0ab8180266cfd4942888e98677bc219c41f6905a8c0b9518f1478cb7e07",
+  "probe_sha256": "617998a11e7f532e9d22446628bda737b8942583119c3d2c88006e413d58b0d8",
   "libavos_sha256": "2b3cce03bee3568a2feccdd591b0736b06a38eb5dc9fb76583b50f69749151af",
   "result": "PASS: actual AVOS chapter parcel, origin conversion, titles, absent and over-limit tables",
   "native_source_patch": ".github/build/avos-supernova141-chapters.patch",
   "all_four_abi_wrapper_compile_passed": true,
   "ffmpeg_inputs": "Pinned existing prebuilt inputs for this local component probe; full FFmpeg rebuild/runtime/binary gates remain required in CI. Historical rebuilt-evidence hash check refused these original prebuilt bytes; no gate was weakened.",
-  "limits": "Direct actual AVOS metadata parcel exercise. No installed 0.141 app, chapter demux fixture, decoded media, physical Shield or hardware playback acceptance."
+  "limits": "Native FFmpeg demux and actual AVOS metadata parcel component test on API28/x86. The complete player demux-to-HUD callback route, installed 0.141 app, decoded output, physical Shield and hardware playback remain separate unverified acceptance.",
+  "demux_fixture_result": "PASS: actual FFmpeg demux of generated MKV chapters into the AVOS metadata parcel (0/6000ms)\nPASS: actual AVOS chapter parcel, origin conversion, titles, absent and over-limit tables",
+  "demux_fixture": "docs/0.141/fixtures/embedded-chapters-12s.mkv",
+  "demux_fixture_sha256": "51e3fad5022e49b5ff1b1b3019a5f19acfa6b19abb32670af42c1e06ade50701",
+  "initial_probe_sha256": "f28eedda601d006e0186657f43f66a5fc7963c816e6aeb0bc20afcc51b9f6d4b",
+  "native_source_patch_sha256": "f37432c420aee54bc8f69cb63ec59bf08472d0c0ded4640cc66b3a9726473963",
+  "demux_checked_at_utc": "2026-10-22T21:39:00Z",
+  "demux_probe_executable_sha256": "f28eedda601d006e0186657f43f66a5fc7963c816e6aeb0bc20afcc51b9f6d4b"
 }

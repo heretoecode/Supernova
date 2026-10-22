@@ -2318,6 +2318,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             final TVMenu tm = tma.createTVMenu();
 
             tcv.addOtherView(tm);
+            if(mPreferences.getBoolean("try_new_ui",false))tma.setCardViewVisibility(View.GONE,tcv);
             //[/infomenu]
 
             // Scale (format) type
@@ -2634,7 +2635,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // not available. However this does not matter because this item will
         // be updated anyway after loading the video
         if (mInfoMenuItem != null) {
-            mInfoMenuItem.setVisible(mStreamingUri != null);
+            mInfoMenuItem.setVisible(mStreamingUri != null&&!(mPreferences.getBoolean("try_new_ui",false)&&isTVMode));
         }
         // The first time onPrepareOptionsMenu() is called we don't know yet if
         // the "set bookmark" item can be enabled or not. However this does not
@@ -3346,7 +3347,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mPlayerController.start();
             // Now that the video is loaded, Video info should be avalaible
             if (mInfoMenuItem != null) {
-                mInfoMenuItem.setVisible(mStreamingUri != null);
+                mInfoMenuItem.setVisible(mStreamingUri != null&&!(mPreferences.getBoolean("try_new_ui",false)&&isTVMode));
             }
             // Now that the video is loaded we know if the "set bookmark" item can be enabled or not
             if(mBookmarkMenuItem!=null) {

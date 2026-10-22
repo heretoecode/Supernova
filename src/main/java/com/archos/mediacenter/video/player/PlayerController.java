@@ -388,7 +388,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void addToMenuContainer(View v){
-        if (experimentalUi() && !splitView && mContext instanceof PlayerActivity) {
+        if (experimentalUi() && mContext instanceof PlayerActivity) {
             View card = v.findViewById(R.id.card_view);
             if (card instanceof TVCardDialog) {
                 PreviewPlaybackMenus.showNested((PlayerActivity)mContext, (TVCardDialog)card);
@@ -2835,7 +2835,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void showTVMenu(boolean show){
-        if(experimentalUi()&&!splitView){if(show&&mContext instanceof PlayerActivity){PlayerActivity a=(PlayerActivity)mContext;if(!mTVMenuAdapter.isCreated())a.createPlayerTVMenu();a.refreshPlayModeIntroSummary();PreviewPlaybackMenus.show(a,mTVMenuAdapter,null);return;}if(!show)PreviewPlaybackMenus.close();}
+        if(experimentalUi()){if(show&&mContext instanceof PlayerActivity){PlayerActivity a=(PlayerActivity)mContext;if(!mTVMenuAdapter.isCreated())a.createPlayerTVMenu();a.refreshPlayModeIntroSummary();PreviewPlaybackMenus.show(a,mTVMenuAdapter,null);return;}if(!show)PreviewPlaybackMenus.close();}
 
         if (show && mContext instanceof PlayerActivity) {
             ((PlayerActivity) mContext).refreshPlayModeIntroSummary();

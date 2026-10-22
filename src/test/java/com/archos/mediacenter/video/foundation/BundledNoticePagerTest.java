@@ -18,6 +18,9 @@ public class BundledNoticePagerTest {
             List<String> pages=BundledNoticeReader.blocks(notice);assertEquals(notice,String.join("",pages));assertFalse(pages.isEmpty());for(String page:pages)assertTrue(page.length()<=BundledNoticeReader.BLOCK_CHARS);
         }
     }
+    @Test @Config(sdk=28) public void retainedLicenceEntryLoadsFullOfflineDisclosureOnShieldEraApi()throws Exception{
+        var host=Robolectric.buildActivity(android.app.Activity.class).setup().visible();try{LicenseDisclosure disclosure=new LicenseDisclosure(host.get());host.get().setContentView(disclosure);java.util.concurrent.ExecutorService io=org.robolectric.util.ReflectionHelpers.getField(disclosure,"io");io.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();io.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertNotNull(disclosure.findViewWithTag("licence.continuous.reader"));android.widget.LinearLayout catalogue=org.robolectric.util.ReflectionHelpers.getField(disclosure,"catalogue");assertTrue(catalogue.getChildCount()>=60);}finally{host.pause().stop().destroy();}
+    }
     @Test public void pageBoundariesCannotSplitUnicodeSurrogatePairs(){String body="a".repeat(3999)+"😀"+"z".repeat(4001);List<String> pages=BundledNoticeReader.blocks(body);assertEquals(body,String.join("",pages));for(String page:pages)assertFalse(Character.isHighSurrogate(page.charAt(page.length()-1)));}
     @Test public void continuousReaderHasNoPaginationAndReturnsToCatalogue(){
         var host=Robolectric.buildActivity(android.app.Activity.class).setup().visible();

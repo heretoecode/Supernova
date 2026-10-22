@@ -45,6 +45,13 @@ public final class PreviewLanguageIcon extends Drawable {
         PreviewLanguageIcon icon=new PreviewLanguageIcon(text.getContext(),code);int size=PreviewDialog.dp(text.getContext(),20);icon.setBounds(0,0,size,size);
         android.graphics.drawable.Drawable[] existing=text.getCompoundDrawables();text.setCompoundDrawables(icon,existing[1],existing[2],existing[3]);text.setCompoundDrawablePadding(PreviewDialog.dp(text.getContext(),8));
     }
+    /** Inline icon for legacy/mixed metadata text; keep each track's own reliable locale. */
+    public static CharSequence inline(android.content.Context context,String code,CharSequence label){
+        String language=code==null?"":Locale.forLanguageTag(code.replace('_','-')).getLanguage();
+        if(!LANGUAGES.contains(language)&&!"yue".equals(language))return label;
+        PreviewLanguageIcon icon=new PreviewLanguageIcon(context,providerCode(code));int size=PreviewDialog.dp(context,18);icon.setBounds(0,0,size,size);
+        android.text.SpannableStringBuilder text=new android.text.SpannableStringBuilder("\uFFFC ");text.setSpan(new android.text.style.ImageSpan(icon,android.text.style.ImageSpan.ALIGN_BASELINE),0,1,android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);return text.append(label);
+    }
     public static void bind(Dialog dialog,int index,String code){
         if(dialog==null||dialog.getWindow()==null)return;
         View label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:"+index);

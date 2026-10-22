@@ -1,6 +1,6 @@
 # 0.141 Playback HUD audit reconciliation
 
-Source: full FD-002 audit at `663646c129ca43882827c2f42dd7e8aa7c936820`, reconciled with actual delivered 0.140 `866f21f1` / branch tip `cf257aaa`. This register records implementation intent; test results and device acceptance are separate. No legacy controls are imported merely to fill a tab.
+Source: full FD-002 audit at `663646c129ca43882827c2f42dd7e8aa7c936820`, reconciled with actual delivered 0.140 `866f21f1` / branch tip `cf257aaa`. This register records implementation intent; test results and device acceptance are separate. No legacy controls are imported merely to fill a tab. The TV dialog route also covers conditional split/stereo layouts; these retain the native playback callbacks and still require suitable hardware QA.
 
 ## Complete control/settings migration
 
@@ -52,7 +52,7 @@ Source: full FD-002 audit at `663646c129ca43882827c2f42dd7e8aa7c936820`, reconci
 | A11 | Subtitle File Information remains available in local-file workflow. |
 | A12–A14 | Delete Subtitle File review, destructive Delete and default Cancel retained. |
 | A15 | Full Settings activity escape replaced by inline S23–S27 in playback panel. |
-| A16 | Technical Information removed from TV playback UI, including keyboard shortcut; underlying information/diagnostic implementation retained for other contexts. |
+| A16 | Technical Information removed from TV playback UI, including native card/options visibility and keyboard shortcut; underlying information/diagnostic implementation retained for other contexts. |
 | A17–A18 | Report a Problem and its category chooser removed from playback UI. Underlying diagnostic/report infrastructure retained. |
 | A19–A20 | Close/Copy retained in applicable subtitle/notice workflows and diagnostic infrastructure outside removed playback entry. |
 | A21 | Display → Format conditional PiP now checks actual OS feature and returns before format selection. |

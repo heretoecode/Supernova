@@ -1,0 +1,17 @@
+{
+  "checked_at_utc": "2026-10-22T21:50:33.647360+00:00",
+  "kind": "Additional final language/retained wizard regression checks",
+  "classes": 4,
+  "tests": 28,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "test_classes": [
+    "com.archos.mediacenter.video.leanback.NextQaWizardTest",
+    "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+    "com.archos.mediacenter.video.leanback.Supernova138UiTest",
+    "com.archos.mediacenter.video.leanback.Supernova141UiTest"
+  ],
+  "lint": "Final lint in progress; prior final layout pass had zero errors",
+  "physical_device": false
+}

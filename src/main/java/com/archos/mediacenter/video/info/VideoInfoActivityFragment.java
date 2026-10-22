@@ -1162,7 +1162,7 @@ public class VideoInfoActivityFragment extends Fragment implements LoaderManager
                     if (!videoMetadata.getSubtitleTrack(i).isExternal) { //manage external subs with sub manager
                         if (log.isDebugEnabled()) log.debug("updateSubtitleInfo: int subtitleTrack {} {} {} {}", i, subTrack.name, subTrack.language, subTrack.format);
                         String format = VideoUtils.getSubtitleFormatLabel(getContext(), subTrack.format);
-                        lines.add(dirMarker + (totSubs + 1) + ": " + StringUtils.removeHtmlTags(generateTrackName(getContext(), subTrack.name, subTrack.language, format, subTrack.disposition, false)));
+                        lines.add(com.archos.mediacenter.video.leanback.PreviewLanguageIcon.inline(getContext(),subTrack.language,dirMarker + (totSubs + 1) + ": " + StringUtils.removeHtmlTags(generateTrackName(getContext(), subTrack.name, subTrack.language, format, subTrack.disposition, false))));
                         totSubs++;
                     }
                 }
@@ -1175,7 +1175,7 @@ public class VideoInfoActivityFragment extends Fragment implements LoaderManager
             }
             if (log.isDebugEnabled()) log.debug("updateSubtitleInfo: showing subtitle track with {} lines", lines.size());
             mSubtitleTrack.setVisibility(View.VISIBLE);
-            mSubtitleTrack.setText(TextUtils.join("\n", lines));
+            android.text.SpannableStringBuilder text=new android.text.SpannableStringBuilder();for(CharSequence line:lines){if(text.length()>0)text.append("\n");text.append(line);}mSubtitleTrack.setText(text);
         } else {
             if (log.isDebugEnabled()) log.debug("updateSubtitleInfo: hiding subtitle track (no subtitles found)");
             mSubtitleTrack.setVisibility(View.GONE);

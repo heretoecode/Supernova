@@ -562,8 +562,9 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                                 ((TextView) view.findViewById(R.id.video_name)).setTypeface(null, Typeface.BOLD);
                             else
                                 ((TextView) view.findViewById(R.id.video_name)).setTypeface(null, Typeface.NORMAL);
-                            if (displayLang)
-                                ((TextView) view.findViewById(R.id.lang)).setText(searchResults.get(i).getLanguage());
+                            if (displayLang) {
+                                TextView language=(TextView)view.findViewById(R.id.lang);language.setVisibility(View.VISIBLE);language.setText(searchResults.get(i).getLanguage());com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply(language,com.archos.mediacenter.video.leanback.PreviewLanguageIcon.providerCode(searchResults.get(i).getLanguage()));
+                            }
                             else view.findViewById(R.id.lang).setVisibility(View.GONE);
                             return view;
                         }

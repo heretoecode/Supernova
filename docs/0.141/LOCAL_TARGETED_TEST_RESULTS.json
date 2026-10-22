@@ -1,0 +1,32 @@
+{
+  "checked_at_utc": "2026-10-22T21:47:11.582227+00:00",
+  "kind": "Local targeted suite on final candidate working tree; full exact-source CI pending",
+  "command": "testNoamazonReleaseUnitTest -PfoundationVerify -PsupernovaQa -Puniversal; focused class includes via local init script; native Gradle rebuild tasks excluded as documented",
+  "classes": 14,
+  "tests": 58,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "test_classes": [
+    "com.archos.mediacenter.video.foundation.BundledNoticePagerTest",
+    "com.archos.mediacenter.video.leanback.LibraryStatisticsLayoutTest",
+    "com.archos.mediacenter.video.leanback.PreviewLibraryReturnTest",
+    "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+    "com.archos.mediacenter.video.leanback.PreviewNextTest",
+    "com.archos.mediacenter.video.leanback.Supernova138UiTest",
+    "com.archos.mediacenter.video.leanback.Supernova141UiTest",
+    "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
+    "com.archos.mediacenter.video.player.Playback141RenderTest",
+    "com.archos.mediacenter.video.player.PlaybackChaptersTest",
+    "com.archos.mediacenter.video.player.PlayerControllerLaunchTest",
+    "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
+    "com.archos.mediacenter.video.streaming.putio.PutioConnectionFocusTest",
+    "com.archos.mediacenter.video.utils.SubtitleReplacementTest"
+  ],
+  "tooling_tests": 95,
+  "tooling_failures": 0,
+  "tooling_errors": 0,
+  "lint": "Running; final result recorded separately",
+  "full_initial_suite": "See LOCAL_INITIAL_TEST_RESULTS.json: 1058 cases, four stale assertions since corrected; not a full pass",
+  "physical_Shield": "Unavailable; no hardware or real account acceptance claimed"
+}

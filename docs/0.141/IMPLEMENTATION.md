@@ -1,6 +1,6 @@
 # Supernova 0.141 implementation and validation ledger
 
-Status: implementation in progress; no acceptance, APK or delivery claimed.
+Status: all ten approved workstreams implemented for candidate validation. Software checks and device acceptance are tracked separately; no signed APK or physical acceptance claimed.
 
 ## Continuation baseline
 
@@ -10,27 +10,27 @@ Authority: complete handover and scope copied byte-for-byte from planning tip `3
 
 ## Requirements → implementation → evidence
 
-Every row requires physical Shield acceptance; automated evidence will be recorded separately. Pending does not mean fixed.
+Every UI row still requires physical Shield acceptance. Local evidence: 58 targeted Android tests passed (14 classes), 95 tooling tests passed; subsequent language conformance checks and exact-source full CI are recorded in the final validation report. No compilation-only fix claim.
 
 | Requirement | Code / investigation | Required evidence | Status |
 |---|---|---|---|
-| HUD transport left, slim blue seek, tooltip, remaining + finish right, no duplicate elapsed | PlayerController / experimental XML / PreviewHudTiming | seek/focus/time tests; software renders; physical playback | Pending |
-| Accurate conditional chapters; no online fetching | inspect actual decoder metadata boundary | supported metadata proof or documented omission when unavailable | Pending |
-| Right translucent popup; exact horizontal Subtitles / Audio / Display / Playback tabs; Subtitles first | PreviewPlaybackMenus | real callbacks, scroll, tab focus, Back, timer and lifecycle tests | Pending |
-| Preserve C01–C05, S01–S29, A01–A26 and I01–I07 with approved dispositions | FD-002 inventory; migrate existing handlers | per-ID migration register + regressions | Pending |
-| Remove Technical Information / Report a Problem from playback UI; preserve diagnostics | PlayerController / menus / activity | menu and key-path assertions | Pending |
-| Audit B01–B14 reconcile against 0.140 | activity/controller/pickers/downloader | finding-by-finding evidence and limits | Pending |
-| Hero overlap + smoothness; rapid reversals, repeats, boundaries, focus, art loading | PreviewPages / PreviewFeaturedCard | deterministic interrupted transition tests; hardware frame timing pending | Pending |
-| All licence pagination removed; dependency/transitive notices + required texts retained | FoundationAboutWorkspace / legal inventory / legacy entries | complete disclosure reachability; dependency inventory and hashes | Pending |
-| Global language icons: reliable region only; neutral generic; unknown/nonlanguage exclusions | PreviewLanguageIcon + all renderers | language/region/unknown/mixed + accessibility tests | Pending |
-| Statistics values centred; entire panel matches toolbar opacity | LibraryPageHeader / MenuFoundation | bounds + rendered varying values / scaling | Pending |
-| Shared keyboard one-line input; . , / \\ keys; bottom-left Caps Lock and all actions retained | PreviewKeyboard / KeyboardInput / consumers | punctuation, Caps, selection, path and D-pad tests | Pending |
-| Put.io connection focus; all controls, Back/re-entry/cancel/error/external return | PutioAccountController / AuthFlow / browser | focus tests; real account flow requires owner | Pending; release-blocking acceptance |
-| Edit Library far right, controls left; responsive and reachable | PreviewPages / PreviewToolbar | geometry + remote traversal + scaling | Pending |
-| All Library rows centre in content viewport; ends/short/fast/data refresh | PreviewPages / focus recycler | grid/list/custom row centring + repeated input | Pending |
-| Movie/TV card → tabs 20–24dp separation; surfaces and scroll retained | PreviewMoviePage (shared movie/TV) | both media types / sizes / text scale / D-pad | Pending |
-| Home/Search/Network/Library/Details/playback/backup/scan regressions | existing full test suite | build, lint, full suite + device checklist | Pending |
-| Candidate / signing / APK / Drive / notes | existing protected procedures only | exact source, original cert, checksum, full readback | Pending |
+| HUD transport left, slim blue seek, tooltip, remaining + finish right, no duplicate elapsed | PlayerController / experimental XML / PreviewHudTiming | seek/focus/time tests; software renders; physical playback | Implemented; HUD timing/cold-start and real-view checks pass; Shield pending |
+| Accurate conditional chapters; no online fetching | inspect actual decoder metadata boundary | supported metadata proof or documented omission when unavailable | Implemented; Java validation and actual embedded MKV native demux/parcel probe pass; Shield pending |
+| Right translucent popup; exact horizontal Subtitles / Audio / Display / Playback tabs; Subtitles first | PreviewPlaybackMenus | real callbacks, scroll, tab focus, Back, timer and lifecycle tests | Implemented; seven callback/focus/persistence tests and all four software tab renders pass; Shield pending |
+| Preserve C01–C05, S01–S29, A01–A26 and I01–I07 with approved dispositions | FD-002 inventory; migrate existing handlers | per-ID migration register + regressions | Complete per-ID register in PLAYBACK_MIGRATION.md; conditional hardware/workflows pending |
+| Remove Technical Information / Report a Problem from playback UI; preserve diagnostics | PlayerController / menus / activity | menu and key-path assertions | Implemented in dialog/native card/key paths; diagnostic infrastructure retained; Shield pending |
+| Audit B01–B14 reconcile against 0.140 | activity/controller/pickers/downloader | finding-by-finding evidence and limits | All 14 findings reconciled; B04 retained sentinel semantics; backend/provider/hardware QA pending |
+| Hero overlap + smoothness; rapid reversals, repeats, boundaries, focus, art loading | PreviewPages / PreviewFeaturedCard | deterministic interrupted transition tests; hardware frame timing pending | Implemented; 24 interrupted alternating inputs accepted without stale transforms; Shield frame timing pending |
+| All licence pagination removed; dependency/transitive notices + required texts retained | FoundationAboutWorkspace / legal inventory / legacy entries | complete disclosure reachability; dependency inventory and hashes | Implemented; all 60 texts losslessly partitioned; 138 runtime artifacts/64 archive notices audited; API28 reader passes; Shield pending |
+| Global language icons: reliable region only; neutral generic; unknown/nonlanguage exclusions | PreviewLanguageIcon + all renderers | language/region/unknown/mixed + accessibility tests | Implemented with shared mapping; explicit valid regions only; additional renderer checks recorded separately; Shield pending |
+| Statistics values centred; entire panel matches toolbar opacity | LibraryPageHeader / MenuFoundation | bounds + rendered varying values / scaling | Implemented; existing native statistics geometry tests pass; Shield varied-value/text-scale acceptance pending |
+| Shared keyboard one-line input; . , / \\ keys; bottom-left Caps Lock and all actions retained | PreviewKeyboard / KeyboardInput / consumers | punctuation, Caps, selection, path and D-pad tests | Implemented; punctuation, Caps active state/toggling, selection and one-line geometry pass; Shield consumers pending |
+| Put.io connection focus; all controls, Back/re-entry/cancel/error/external return | PutioAccountController / AuthFlow / browser | focus tests; real account flow requires owner | Implemented; replacement/re-entry/late-close tests pass; real authorisation and physical acceptance release-blocking |
+| Edit Library far right, controls left; responsive and reachable | PreviewPages / PreviewToolbar | geometry + remote traversal + scaling | Implemented; pinned trailing action with separately scrolling left group; normal/narrow large-text checks pass; Shield pending |
+| All Library rows centre in content viewport; ends/short/fast/data refresh | PreviewPages / focus recycler | grid/list/custom row centring + repeated input | Implemented; grid/list middle and final rows settle centred; restoration regression passes; Shield boundaries/refresh pending |
+| Movie/TV card → tabs 20–24dp separation; surfaces and scroll retained | PreviewMoviePage (shared movie/TV) | both media types / sizes / text scale / D-pad | Implemented; section lowered 22dp without shrinking card; movie/TV and 720p/1080p/4K/large-text renders pass; Shield pending |
+| Home/Search/Network/Library/Details/playback/backup/scan regressions | existing full test suite | build, lint, full suite + device checklist | Initial complete suite: 1058, four stale expectations corrected; focused corrections pass; final complete CI pending |
+| Candidate / signing / APK / Drive / notes | existing protected procedures only | exact source, original cert, checksum, full readback | Protected workflow ready; GitHub exact-branch permission denied HTTP403; unsigned conformance pending |
 
 ## Missing visual evidence
 
@@ -39,3 +39,23 @@ Exact approved 22 October HUD image and IMG_5004/IMG_5007 are absent from the re
 ## Validation boundaries
 
 No physical Shield is attached. Real Put.io account authorisation is unavailable. Successful compilation alone will never close an owner-reported defect. Record test failures and corrections; preserve original 0.140 evidence. Do not merge main or create a public release.
+
+## Investigation outcomes
+
+- Hero navigation deferred the selected index until an outgoing animation completed and rejected inputs while animating. Cached inner cards also retained transforms. Selection now advances on each input and only the incoming container animates; cached transforms reset before reuse.
+- Removing the focused Put.io inline content allowed focus to transfer to the enclosing navigation. Replacement keeps focus inside the account target, then requests the actual new control; closed generations and owned auth pollers cannot steal it back later. No authentication bypass or fabricated successful login.
+- Playback menu refresh removed a focused row before rebuilding it, allowing automatic focus to select the first tab. The selected tab now holds focus during replacement; row focus is restored afterwards. Native callbacks and persistence flushing remain attached.
+- Licence pagination was a display-layer split, not separate legal obligations. Continuous bounded blocks preserve every character of all existing texts; consolidated entry points no longer require Previous/Next page actions. A local lint error caught an API33-only read and it was corrected to bounded API23-compatible streaming.
+- Edit Library must stay visible even when the left group overflows. It has a separate fixed trailing group and explicit D-pad edge links. Details spacing moves the whole tab/content section down, retaining card dimensions.
+
+## Evidence index
+
+- `PLAYBACK_MIGRATION.md`: every audit control, action, indicator and B01–B14.
+- `LOCAL_INITIAL_TEST_RESULTS.json`: retained initial full-suite failures and lint finding; superseded, not a pass receipt.
+- `LOCAL_TARGETED_TEST_RESULTS.json`: 58 passing targeted cases and 95 passing tooling cases.
+- `NATIVE_CHAPTER_PROBE.json`, `fixtures/`: four-ABI wrapper compile and real API28 x86 embedded-MKV demux/metadata evidence, with limitations.
+- `LEGAL_INVENTORY.json`: complete current runtime/archive disclosure inventory.
+- `visual-evidence/`: actual native Android view renders; playback scene synthetic, no Shield claim.
+- `BASELINE_0140_BINARY_VERIFICATION.json`: independent whole-file verification of the preserved delivered APK.
+- `PRESERVATION_READBACK.json`: earlier remote references remain unchanged.
+- `SHIELD_QA.md`: full physical acceptance and real account/storage/hardware checklist.
