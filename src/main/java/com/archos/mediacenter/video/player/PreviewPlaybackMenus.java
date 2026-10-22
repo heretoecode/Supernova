@@ -112,7 +112,19 @@ final class PreviewPlaybackMenus {
         Object language=item.getTag(R.id.preview_track_language);
         action(label,item.isChecked(),item.isEnabled()&&item.isFocusable(),language instanceof String?(String)language:null,()->{restoreParent=parent;item.previewClick();if(nested==null&&isShowing())refreshChecks();});
     }
-    private static void refreshChecks(){if(owner!=null){View focused=current.getCurrentFocus();String key=focused==null?null:String.valueOf(focused.getTag());Runnable page=restoreParent;if(page!=null)page.run();if(key!=null){View row=content.findViewWithTag(key);if(row!=null)row.requestFocus();}}}
+    private static void refreshChecks(){
+        if(owner==null)return;
+        View focused=current.getCurrentFocus();Object key=focused==null?null:focused.getTag();int occurrence=0;
+        // Tracks may have identical metadata labels. Preserve the matching occurrence,
+        // while still following a uniquely named track when new rows precede it.
+        if(key!=null&&focused.getParent()==rows){
+            for(int i=0;i<rows.indexOfChild(focused);i++)if(Objects.equals(key,rows.getChildAt(i).getTag()))occurrence++;
+        }
+        Runnable page=restoreParent;if(page!=null)page.run();
+        if(key!=null)for(View row:content.getFocusables(View.FOCUS_FORWARD)){
+            if(Objects.equals(key,row.getTag())&&occurrence--==0){row.requestFocus();break;}
+        }
+    }
     static void refresh(Activity activity,TVCardView changed){if(isShowing()&&changed==liveCard&&nested==null)refreshChecks();}
     private static void heading(String text){TextView heading=SharedThreePanel.text(owner,text,12);heading.setTextColor(0xffb7c0cc);heading.setPadding(0,dp(12),0,dp(5));heading.setFocusable(false);rows.addView(heading);}
     private static TextView action(String label,boolean checked,boolean enabled,String code,Runnable run){

@@ -1,0 +1,26 @@
+{
+  "checked_at_utc": "2026-10-22T23:03:12.705128+00:00",
+  "root_cause": "Refresh restored by visible label only; identical track labels selected the first matching row instead of the focused occurrence.",
+  "before_fix": {
+    "tests": 8,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "case": "selectingSecondIndistinguishableTrackKeepsFocusOnItsCheckedRow"
+  },
+  "after_fix": {
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 2,
+    "existing_unique_label_insertion_test_retained": true,
+    "all_four_tab_render_retained": true
+  },
+  "implementation": "Preserve the matching label occurrence while following uniquely named tracks across inserted rows. Native callbacks, labels and supported options are unchanged.",
+  "source_file_sha256": "aa25b7c23a09f8a23ac1ebfa8bbf802cbd3f22cbbe0f4f4673343ba77182d74d",
+  "before_log_sha256": "71bd277d986b011c8e490c52794f82291763ece662aa642024045e2f96e66496",
+  "after_log_sha256": "b5cd863cb1c45cce82e0fa819022297e9b71ae295d4233e61ea31058ed90c6ae",
+  "full_candidate_validation": "Repeat complete local suite and exact-source CI required; earlier1067-case pass belongs to5109dd0c only",
+  "host_preparation": "Only new0.141 workflows select official signed Ubuntu archive instead of observed slow Azure mirror; package signatures, pins, native/test/signing gates retained. Shell syntax checked; end-to-end timing still requires CI."
+}

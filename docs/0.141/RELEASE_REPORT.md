@@ -1,6 +1,6 @@
 # Supernova 0.141 candidate report
 
-Candidate application source: `5109dd0c83082528b896a8aaa6d0d50f4a930027` on `codex/supernova-0.141-implementation-2026-10-22`. [Draft PR 19](https://github.com/heretoecode/Supernova/pull/19) continues from preserved 0.140 tip `cf257aaa59ad8d59b2ab7252d5beae174f5879c5`; the delivered baseline application source is `866f21f11f27dea4846ddd3cac57d98b281eecbb`.
+Previous candidate application source: `5109dd0c83082528b896a8aaa6d0d50f4a930027` (superseded by the duplicate-track focus correction; repeat full validation pending) on `codex/supernova-0.141-implementation-2026-10-22`. [Draft PR 19](https://github.com/heretoecode/Supernova/pull/19) continues from preserved 0.140 tip `cf257aaa59ad8d59b2ab7252d5beae174f5879c5`; the delivered baseline application source is `866f21f11f27dea4846ddd3cac57d98b281eecbb`.
 
 All ten approved implementation workstreams are represented in [the requirements ledger](IMPLEMENTATION.md). Every FD-002 control/action/indicator and B01–B14 has a disposition in [the playback migration register](PLAYBACK_MIGRATION.md). This is a development candidate, not completed physical acceptance.
 
@@ -14,8 +14,8 @@ All ten approved implementation workstreams are represented in [the requirements
 | Tooling tests | 95 passed |
 | Release lint | Zero errors, 1,785 warnings; unrelated warning remediation is outside this release |
 | Local packaging probe | R8/resource shrinking and unsigned assembly passed; all 249 region assets and 60 notice texts retained; CRC/alignment pass. **Not a candidate:** only 16/88 native libraries and old checkout metadata; see LOCAL_ASSEMBLY_PROBE.json |
-| Complete final local suite | **1,067 tests / 226 classes; zero failures, errors or skips**, BUILD SUCCESSFUL in 21m 8s; see LOCAL_FULL_TEST_RESULTS.json |
-| Exact-source unsigned CI | [Run 39861343693](https://github.com/heretoecode/Supernova/actions/runs/39861343693), attempt 2 in progress |
+| Previous complete local suite | **1,067 tests / 226 classes; zero failures, errors or skips**, BUILD SUCCESSFUL in 21m 8s; see LOCAL_FULL_TEST_RESULTS.json |
+| Previous exact-source unsigned CI | [Run 39861343693](https://github.com/heretoecode/Supernova/actions/runs/39861343693), attempt 2 in progress |
 | Native chapter component | All four wrapper ABIs compiled; actual API28/x86 FFmpeg demux and AVOS metadata parcel passed with the generated 12-second MKV; see NATIVE_CHAPTER_PROBE.json |
 | Legal disclosure | 138 runtime artifacts, 135 unique, 64 archive notices, all 60 catalogue entries retained; all notice texts losslessly partitioned |
 | Drive changelog | Updated existing HTML file in place; complete 32,785-byte readback matched; earlier history/CSS and sharing retained; see DRIVE_HTML_VERIFICATION.json |
@@ -43,3 +43,9 @@ No NVIDIA Shield is attached, and no real Put.io account authorisation is availa
 The approved HUD image and referenced owner videos/photos were not found in the repository or connected Drive searches. Implementation follows the complete approved written contract; software fixtures are not substitutes for the original evidence.
 
 Main, 0.140, the historical 4.1.7 branch and planning branch remain preserved; see PRESERVATION_READBACK.json. The separate maintenance programme has not started.
+
+## Final duplicate-label focus correction
+
+A new regression reproduced focus returning to the first track after selecting the second identically labelled track. Refresh now restores the matching occurrence; uniquely named tracks still follow insertions. The original seven menu tests, the new regression and four-tab native render pass (nine cases total). `PreviewPlaybackMenusTest` is now explicitly required by the0.141 unsigned and signing gates. See DUPLICATE_TRACK_FOCUS.json. The full local suite and exact-source CI are being repeated for this correction; the earlier1067-case result is not attributed to the new source.
+
+Only the new0.141 workflows now select Ubuntu's official signed archive for host preparation, following the observed Azure mirror slowdown. Package signature verification, dependency pins and all native/binary/test/signing gates are unchanged. No0.140 workflow is modified.

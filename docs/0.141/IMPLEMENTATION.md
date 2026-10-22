@@ -1,6 +1,6 @@
 # Supernova 0.141 implementation and validation ledger
 
-Status: all ten approved workstreams implemented for candidate validation. Software checks and device acceptance are tracked separately; no signed APK or physical acceptance claimed.
+Status: all ten approved workstreams implemented; final duplicate-track focus correction undergoing repeat candidate validation. Software checks and device acceptance are tracked separately; no signed APK or physical acceptance claimed.
 
 ## Continuation baseline
 
@@ -10,13 +10,13 @@ Authority: complete handover and scope copied byte-for-byte from planning tip `3
 
 ## Requirements → implementation → evidence
 
-Every UI row still requires physical Shield acceptance. Local complete suite: **1,067 tests across 226 classes passed, zero failures/errors/skips**, plus95 tooling tests and release lint with zero errors. Targeted and language/lifecycle passes are also retained. Exact-source full native/APK CI is pending; see RELEASE_REPORT.md. No compilation-only fix claim.
+Every UI row still requires physical Shield acceptance. Previous candidate local complete suite: **1,067 tests across 226 classes passed, zero failures/errors/skips**; final duplicate-label focus correction has nine targeted passing cases, full repeat pending, plus95 tooling tests and release lint with zero errors. Targeted and language/lifecycle passes are also retained. Exact-source full native/APK CI is pending; see RELEASE_REPORT.md. No compilation-only fix claim.
 
 | Requirement | Code / investigation | Required evidence | Status |
 |---|---|---|---|
 | HUD transport left, slim blue seek, tooltip, remaining + finish right, no duplicate elapsed | PlayerController / experimental XML / PreviewHudTiming | seek/focus/time tests; software renders; physical playback | Implemented; HUD timing/cold-start and real-view checks pass; Shield pending |
 | Accurate conditional chapters; no online fetching | inspect actual decoder metadata boundary | supported metadata proof or documented omission when unavailable | Implemented; Java validation and actual embedded MKV native demux/parcel probe pass; Shield pending |
-| Right translucent popup; exact horizontal Subtitles / Audio / Display / Playback tabs; Subtitles first | PreviewPlaybackMenus | real callbacks, scroll, tab focus, Back, timer and lifecycle tests | Implemented; seven callback/focus/persistence tests and all four software tab renders pass; Shield pending |
+| Right translucent popup; exact horizontal Subtitles / Audio / Display / Playback tabs; Subtitles first | PreviewPlaybackMenus | real callbacks, scroll, tab focus, Back, timer and lifecycle tests | Implemented; eight callback/focus/persistence tests and all four software tab renders pass; Shield pending |
 | Preserve C01–C05, S01–S29, A01–A26 and I01–I07 with approved dispositions | FD-002 inventory; migrate existing handlers | per-ID migration register + regressions | Complete per-ID register in PLAYBACK_MIGRATION.md; conditional hardware/workflows pending |
 | Remove Technical Information / Report a Problem from playback UI; preserve diagnostics | PlayerController / menus / activity | menu and key-path assertions | Implemented in dialog/native card/key paths; diagnostic infrastructure retained; Shield pending |
 | Audit B01–B14 reconcile against 0.140 | activity/controller/pickers/downloader | finding-by-finding evidence and limits | All 14 findings reconciled; B04 retained sentinel semantics; backend/provider/hardware QA pending |

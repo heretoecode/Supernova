@@ -44,6 +44,11 @@ jobs:
       - name: Prepare existing pinned NOVA dependencies without Preview identity conversion
         run: |
           set -euo pipefail
+          # The Azure mirror downloaded host packages at tens of KB/s in 0.141 QA.
+          # Keep Ubuntu's signed package verification and use its official archive.
+          if [[ -f /etc/apt/apt-mirrors.txt ]]; then
+            printf '%s\n' 'https://archive.ubuntu.com/ubuntu/' | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
           sudo apt-get update
           sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget ffmpeg python3-yaml
           sudo apt-get install -y repo

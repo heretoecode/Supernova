@@ -34,6 +34,11 @@ public class PreviewPlaybackMenusTest {
         assertSame(original,dialog());assertTrue(original.isShowing());assertTrue(french.isChecked());assertFalse(english.isChecked());assertTrue(option("French").getText().toString().startsWith("✓"));assertTrue(option("French").hasFocus());
         PreviewPlaybackMenus.back();assertTrue(opener.hasFocus());
     }
+    @Test public void selectingSecondIndistinguishableTrackKeepsFocusOnItsCheckedRow(){
+        TVMenu menu=new TVMenu(host);TVMenuItem first=menu.createAndAddTVMenuItem("English · AAC",true,true),second=menu.createAndAddTVMenuItem("English · AAC",true,false);second.setOnClickListener(v->{first.setChecked(false);second.setChecked(true);});
+        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_audio),menu),host.getString(R.string.menu_audio));Dialog original=dialog();View firstRow=option("English · AAC");ViewGroup rows=(ViewGroup)firstRow.getParent();int position=rows.indexOfChild(firstRow);View secondRow=rows.getChildAt(position+1);assertEquals(firstRow.getTag(),secondRow.getTag());assertTrue(secondRow.requestFocus());secondRow.performClick();
+        assertSame(original,dialog());assertTrue(second.isChecked());assertFalse(first.isChecked());TextView focused=(TextView)dialog().getCurrentFocus();assertNotNull(focused);assertTrue("Focus remains on the selected second track, not the first identically named track",focused.getText().toString().startsWith("✓"));
+    }
     @Test public void trackRefreshUsesNewCallbacksAndPreservesFocusedTrackAfterInsertion(){
         TVMenu menu=new TVMenu(host);menu.createAndAddTVMenuItem("English",true,true);menu.createAndAddTVMenuItem("French",true,false);TVMenuAdapter source=source(host.getString(R.string.menu_audio),menu);
         PreviewPlaybackMenus.show(host,source,host.getString(R.string.menu_audio));option("French").requestFocus();Dialog original=dialog();int[] called={0};menu.clean();menu.createAndAddTVMenuItem("German",true,false);menu.createAndAddTVMenuItem("English",true,false);menu.createAndAddTVMenuItem("French",true,true).setOnClickListener(v->called[0]++);
