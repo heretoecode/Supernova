@@ -24,7 +24,7 @@ public final class PreviewMatchSearch extends LinearLayout {
         addView(text("Find a Match",24));TextView help=text("Search by title, TMDB ID or IMDb ID",14);help.setPadding(0,dp(6),0,dp(14));addView(help);
         LinearLayout columns=new LinearLayout(context);columns.setClipChildren(false);addView(columns,new LayoutParams(-1,0,1));
         LinearLayout left=new LinearLayout(context);left.setOrientation(VERTICAL);left.setClipChildren(false);columns.addView(left,new LayoutParams(dp(360),-1));
-        input=new EditText(context);input.setTag("semantic:match.query");input.setSingleLine(true);input.setShowSoftInputOnFocus(false);input.setTextColor(Color.WHITE);input.setTextSize(17);input.setBackground(PreviewDialog.focus(context));input.setText(initial);input.setSelection(input.length());left.addView(input,new LayoutParams(-1,dp(44)));
+        input=new KeyboardInput(context);input.setTag("semantic:match.query");input.setSingleLine(true);input.setShowSoftInputOnFocus(false);input.setTextColor(Color.WHITE);input.setTextSize(17);input.setBackground(PreviewDialog.focus(context));input.setText(initial);input.setSelection(input.length());left.addView(input,new LayoutParams(-1,KeyboardInput.compactHeight(context)));
         keyboard=new PreviewKeyboard(context,input,this::focusResults);LayoutParams keys=new LayoutParams(-1,-2);keys.topMargin=dp(12);left.addView(keyboard,keys);keyboard.setLeaveDown(this::focusResults);
         LinearLayout right=new LinearLayout(context);right.setOrientation(VERTICAL);right.setClipChildren(false);LayoutParams resultArea=new LayoutParams(0,-1,1);resultArea.leftMargin=dp(32);columns.addView(right,resultArea);
         status=text("Searching…",13);status.setPadding(0,0,0,dp(10));right.addView(status);

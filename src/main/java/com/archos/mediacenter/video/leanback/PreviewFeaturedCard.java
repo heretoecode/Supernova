@@ -51,7 +51,9 @@ final class PreviewFeaturedCard extends FrameLayout {
         };image.setScaleType(backdrop?ImageView.ScaleType.CENTER_CROP:ImageView.ScaleType.FIT_CENTER);rounded(image,c);if(uri!=null)loadArtwork(image,uri,backdrop);return image;
     }
     private void loadArtwork(ImageView image,android.net.Uri uri,boolean backdrop){com.squareup.picasso.RequestCreator request=Picasso.get().load(uri).resize(dp(960),dp(540)).noFade();if(backdrop)request.centerCrop();else request.centerInside();com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(image,uri,0,"home.featured",backdrop?"backdrop":"poster",request,true);}
-    void releaseArtwork(){cancel(this);}
+    void resetMotion(){resetMotion(this);}
+    private void resetMotion(View view){view.animate().cancel();view.setTranslationX(0);view.setTranslationY(0);if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)resetMotion(((ViewGroup)view).getChildAt(i));requestLayout();}
+    void releaseArtwork(){resetMotion();cancel(this);}
     private void rounded(View v,Context c){GradientDrawable bg=new GradientDrawable();bg.setColor(0xff07131f);bg.setCornerRadius(dp(12));v.setBackground(bg);v.setClipToOutline(true);}
     private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextSize(size);t.setTextColor(Color.WHITE);t.setIncludeFontPadding(false);t.setShadowLayer(dp(3),0,dp(1),Color.BLACK);t.setEllipsize(android.text.TextUtils.TruncateAt.END);return t;}
     private TextView action(String label,Runnable run){return TvButton.create(getContext(),label,run,false);}

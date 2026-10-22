@@ -10,7 +10,7 @@ import java.util.List;
 
 /** Shared TV keyboard. Spatial movement is explicit and cannot escape through an empty result pane. */
 public final class PreviewKeyboard extends LinearLayout {
-    public static final String[] ROWS = {"1234567890", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"};
+    public static final String[] ROWS = {"1234567890", "QWERTYUIOP", "ASDFGHJKL.", "ZXCVBNM,/\\"};
     private final List<List<TextView>> keys = new ArrayList<>();
     private TextView lastKey;
     private Runnable leaveDown;

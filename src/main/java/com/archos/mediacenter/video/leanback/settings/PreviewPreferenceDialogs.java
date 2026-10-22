@@ -35,8 +35,8 @@ final class PreviewPreferenceDialogs {
   languageIcons(d[0],p,values);
  }
  private static void languageIcons(Dialog dialog,Preference preference,CharSequence[] values){
-  String key=preference.getKey();if(!"ui_lang".equals(key)&&!"favSubLang".equals(key)&&!"languages_list".equals(key))return;
-  for(int i=0;i<values.length;i++)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(dialog,i,values[i]==null?null:values[i].toString());
+  String key=preference.getKey();if(!"ui_lang".equals(key)&&!"favSubLang".equals(key)&&!"favAudioLang".equals(key)&&!com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG.equals(key)&&!"languages_list".equals(key))return;
+  for(int i=0;i<values.length;i++)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(dialog,i,values[i]==null?null:com.archos.mediacenter.video.leanback.PreviewLanguageIcon.providerCode(values[i].toString()));
  }
  private static void edit(PreferenceFragmentCompat f,EditTextPreference p){com.archos.mediacenter.video.leanback.PreviewTextInput.showValidated(f.requireContext(),String.valueOf(p.getTitle()),p.getText()==null?"":p.getText(),512,value->null,value->{if(p.callChangeListener(value))p.setText(value);});}
 }

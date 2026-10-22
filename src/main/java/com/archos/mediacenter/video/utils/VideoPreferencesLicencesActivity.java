@@ -25,7 +25,7 @@ public class VideoPreferencesLicencesActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.preferences_licences);
+        setContentView(new com.archos.mediacenter.video.foundation.LicenseDisclosure(this));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
     }

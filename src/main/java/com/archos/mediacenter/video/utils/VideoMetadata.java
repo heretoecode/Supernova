@@ -50,6 +50,8 @@ public class VideoMetadata implements Serializable {
     private AudioTrack[] mAudioTrackList;
     private SubtitleTrack[] mSubtitleTrackList;
     private int mDuration;
+    private java.util.List<com.archos.mediacenter.video.player.PlaybackChapters.Chapter> mChapters=java.util.Collections.emptyList();
+    public java.util.List<com.archos.mediacenter.video.player.PlaybackChapters.Chapter> getChapters(){return mChapters==null?java.util.Collections.emptyList():mChapters;}
     private int mVideoWidth;
     private int mVideoHeight;
     private long mFileSize;
@@ -228,6 +230,7 @@ public class VideoMetadata implements Serializable {
         mAudioTrackList = other.mAudioTrackList != null ? Arrays.copyOf(other.mAudioTrackList, other.mAudioTrackList.length) : null;
         mSubtitleTrackList = other.mSubtitleTrackList != null ? Arrays.copyOf(other.mSubtitleTrackList, other.mSubtitleTrackList.length) : null;
         mDuration = other.mDuration;
+        mChapters=other.getChapters();
         mVideoWidth = other.mVideoWidth;
         mVideoHeight = other.mVideoHeight;
         mFileSize = other.mFileSize;
@@ -238,6 +241,7 @@ public class VideoMetadata implements Serializable {
         mAudioTrackList = null;
         mSubtitleTrackList = null;
         mDuration = 0;
+        mChapters=java.util.Collections.emptyList();
         mVideoWidth = 0;
         mVideoHeight = 0;
         mFileSize = 0;
@@ -258,6 +262,7 @@ public class VideoMetadata implements Serializable {
             mFileSize = data.getLong(IMediaPlayer.METADATA_KEY_FILE_SIZE);
         if (data.has(IMediaPlayer.METADATA_KEY_DURATION))
             mDuration = data.getInt(IMediaPlayer.METADATA_KEY_DURATION);
+        mChapters=com.archos.mediacenter.video.player.PlaybackChapters.read(data,mDuration);
         if (data.has(IMediaPlayer.METADATA_KEY_VIDEO_WIDTH))
             mVideoWidth = data.getInt(IMediaPlayer.METADATA_KEY_VIDEO_WIDTH);
         if (data.has(IMediaPlayer.METADATA_KEY_VIDEO_HEIGHT))

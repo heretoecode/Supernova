@@ -31,6 +31,6 @@ public class VideoSettingsLicencesActivity extends LeanbackActivity {
             setTheme(R.style.MyLeanbackTheme_Preferences_Black);
         }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_settings_licences);
+        setContentView(new com.archos.mediacenter.video.foundation.LicenseDisclosure(this));
     }
 }

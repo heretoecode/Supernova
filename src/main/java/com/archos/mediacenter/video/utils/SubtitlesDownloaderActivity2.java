@@ -246,6 +246,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
     }
 
     private class OpenSubtitlesTask {
+        private String selectedDownloadPath;
         private final ExecutorService executor = Executors.newSingleThreadExecutor();
         private final Handler handler = new Handler(Looper.getMainLooper());
         private volatile boolean isCancelled = false;
@@ -627,6 +628,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 try {
                     if (log.isDebugEnabled()) log.debug("downloadSubtitles: test we can write to {}", sb);
                     FileEditor editor = FileEditorFactory.getFileEditorForUrl(Uri.parse(sb.toString()), SubtitlesDownloaderActivity2.this);
+                    if(editor.exists()&&!confirmReplacement())return false;
                     if (!editor.exists()) {
                     OutputStream tmp = editor.getOutputStream();
                     // on the nvidia shield canWrite is reported to be false on exfat/ntfs external HDD USB storage /storage/XXX/serie but true on deeper directory levels e.g. /storage/XXX/serie/season1
@@ -657,6 +659,9 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 sb = localSb;
             if (log.isDebugEnabled()) log.debug("downloadSubtitles: writable destination={}", canWrite);
             String srtURl = sb.toString();
+            // Confirm every pre-existing destination before writing either the sidecar or cache.
+            if(!canWrite&&FileEditorFactory.getFileEditorForUrl(Uri.parse(srtURl),SubtitlesDownloaderActivity2.this).exists()&&!confirmReplacement())return false;
+            if(canWrite&&!FileUtils.isLocal(Uri.parse(fileUrl))&&FileEditorFactory.getFileEditorForUrl(Uri.parse(localSb.toString()),SubtitlesDownloaderActivity2.this).exists()&&!confirmReplacement())return false;
             sb = null;
             OutputStream f =null;
             InputStream in = null;
@@ -706,6 +711,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                         editor.copyFileTo(Uri.parse(localSb.toString()),SubtitlesDownloaderActivity2.this);
                     }
                 }
+                selectedDownloadPath=canWrite&&!FileUtils.isLocal(Uri.parse(fileUrl))?localSb.toString():srtURl;
                 saved=true;
             } catch (FileNotFoundException e) {
                 log.warn("downloadSubtitles: destination unavailable");
@@ -794,12 +800,23 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             mHandler.post(() -> Toast.makeText(SubtitlesDownloaderActivity2.this, message, Toast.LENGTH_SHORT).show());
         }
 
+        private boolean confirmReplacement(){
+            java.util.concurrent.CountDownLatch choice=new java.util.concurrent.CountDownLatch(1);
+            java.util.concurrent.atomic.AtomicBoolean replace=new java.util.concurrent.atomic.AtomicBoolean();
+            final android.app.Dialog[] prompt={null};
+            handler.post(()->{if(isCancelled||isFinishing()||isDestroyed()){choice.countDown();return;}
+                prompt[0]=com.archos.mediacenter.video.leanback.PreviewDialog.review(SubtitlesDownloaderActivity2.this,"Replace subtitle file?","A subtitle already exists for this title and language. Replace it with the selected download?","Replace",()->{replace.set(true);choice.countDown();});
+                prompt[0].setOnDismissListener(d->handler.post(choice::countDown));
+            });
+            try{while(!choice.await(250,java.util.concurrent.TimeUnit.MILLISECONDS)){if(isCancelled||isFinishing()||isDestroyed()){handler.post(()->{if(prompt[0]!=null)prompt[0].dismiss();});return false;}}}catch(InterruptedException cancelled){Thread.currentThread().interrupt();handler.post(()->{if(prompt[0]!=null)prompt[0].dismiss();});return false;}
+            return replace.get()&&!isCancelled;
+        }
         private void finishDownload(boolean saved){
-            if(!previewUi()){setResult(saved?Activity.RESULT_OK:Activity.RESULT_CANCELED);finish();return;}
+            if(!previewUi()){setResult(saved?Activity.RESULT_OK:Activity.RESULT_CANCELED,saved?new Intent().putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,selectedDownloadPath):null);finish();return;}
             handler.post(()->{
                 dismissPreviewProgress();
                 if(isCancelled||isFinishing()||isDestroyed())return;
-                setResult(saved?Activity.RESULT_OK:Activity.RESULT_CANCELED);
+                setResult(saved?Activity.RESULT_OK:Activity.RESULT_CANCELED,saved?new Intent().putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,selectedDownloadPath):null);
                 if(saved)finish();
                 else showPreviewMessage(previewNotice==null?getString(R.string.dialog_subloader_fails):previewNotice);
             });

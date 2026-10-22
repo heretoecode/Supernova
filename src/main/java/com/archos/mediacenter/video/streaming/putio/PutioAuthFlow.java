@@ -16,7 +16,8 @@ final class PutioAuthFlow {
     private final Activity activity;private final Runnable connected;private final Handler main=new Handler(Looper.getMainLooper());
     private final Object lock=new Object();private boolean stopped;private Future<?> task;private Dialog dialog;private long started;
     private PutioAuthFlow(Activity activity,Runnable connected){this.activity=activity;this.connected=connected;}
-    static void open(Activity activity,Runnable connected){new PutioAuthFlow(activity,connected).start();}
+    static PutioAuthFlow open(Activity activity,Runnable connected){PutioAuthFlow flow=new PutioAuthFlow(activity,connected);flow.start();return flow;}
+    void close(){stop();if(dialog!=null){dialog.setOnDismissListener(null);dialog.dismiss();}}
     private void start(){
         String clientId=activity.getString(R.string.putio_registered_client_id),template=activity.getString(R.string.putio_validated_link_template);
         if(!PutioOAuthClient.configured(clientId,template)){PreviewDialog.read(activity,"Connect put.io","Account linking is awaiting the registered Supernova OAuth configuration and validated linking URL. Existing WebDAV library access and playback remain available.");return;}

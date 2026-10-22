@@ -1,6 +1,10 @@
 # Supernova — Project Status
 
-> Current record for the authorised **0.140 implementation branch**. Main and earlier release branches are preserved. The historical 4.1.7 record below remains available for lineage; its former “current work” and exclusions do not override the owner's later 0.140 handover.
+Current work: **Supernova 0.141 implementation**, isolated branch `codex/supernova-0.141-implementation-2026-10-22`, continuing from delivered0.140 source and complete PR18 tip `cf257aaa`. [Requirement/evidence ledger](docs/0.141/IMPLEMENTATION.md), [complete playback migration](docs/0.141/PLAYBACK_MIGRATION.md), [physical Shield checklist](docs/0.141/SHIELD_QA.md). Implementation/automated validation in progress; no0.141 APK delivery or physical acceptance claimed. No main merge or maintenance programme.
+
+## Preserved0.140 delivery record
+
+> Previous delivery record for the authorised **0.140 implementation branch**. Main and earlier release branches are preserved. The historical 4.1.7 record below remains available for lineage; its former “current work” and exclusions do not override the owner's later 0.140 handover.
 
 ## Current authorised development
 
@@ -10,7 +14,7 @@
 - Signed QA **delivered and verified**: [APK](https://drive.google.com/file/d/1JEYAXNKw4gGPgEx0xUjATDXES1bI158T/view?usp=drivesdk), 87,890,896 bytes, SHA-256 `b6d59e82c03cd99844f49d4647d2f2a985c484c819d92064542eec84f33788f5`. Final exact-source CI passes **1,047 application tests / zero failures, errors or skips; 88 tooling tests; lint zero errors / 1,775 warnings**, native comparisons and established-certificate/payload checks. Full Drive readback and in-place HTML update are verified. Physical acceptance remains open; this is not a public/main release.
 - [Release report](docs/0.140/RELEASE_REPORT.md), [test ledger](docs/0.140/TEST_RESULTS.md), [visual evidence](docs/0.140/VISUAL_QA.md), [diagnostic investigation](docs/0.140/DIAGNOSTIC_FINDINGS.md) and [unperformed target-device checklist](docs/0.140/SHIELD_QA.md).
 - OMDb production access remains disabled by owner instruction. No authorised account/binding/entitlement is assumed. Real Put.io/device/SAF/provider validation, the original diagnostic ZIP, annotated FD-033 v3 and FD-007 reference assets remain unavailable. The recovered overall FD-033 JPEG is archived exactly.
-- Unified Playback Settings, broader Playback HUD redesign and the separate 14-finding HUD audit remain excluded for **0.141**.
+- Unified Playback Settings, broader Playback HUD redesign and the separate 14-finding HUD audit were excluded from 0.140 and are now authorised for **0.141**.
 
 ## Preserved historical 4.1.7 project-status record
 

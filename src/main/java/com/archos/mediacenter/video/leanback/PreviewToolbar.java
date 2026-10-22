@@ -20,7 +20,7 @@ public final class PreviewToolbar extends LinearLayout {
         setPadding(0, 0, 0, PreviewDialog.dp(context, 3));
     }
     public static View viewport(PreviewToolbar toolbar){
-        Context c=toolbar.getContext();android.widget.HorizontalScrollView viewport=new android.widget.HorizontalScrollView(c);viewport.setHorizontalScrollBarEnabled(false);viewport.setFillViewport(true);viewport.setClipToPadding(false);viewport.setClipChildren(false);int outline=PreviewDialog.dp(c,3);viewport.setPadding(outline,outline,outline,outline);toolbar.setMinimumWidth(TvLayout.safeWidth(c));viewport.addView(toolbar,new android.widget.FrameLayout.LayoutParams(-2,-2));return viewport;
+        Context c=toolbar.getContext();android.widget.HorizontalScrollView viewport=new android.widget.HorizontalScrollView(c);viewport.setHorizontalScrollBarEnabled(false);viewport.setFillViewport(true);viewport.setClipToPadding(false);viewport.setClipChildren(false);int outline=PreviewDialog.dp(c,3);viewport.setPadding(outline,outline,outline,outline);toolbar.setMinimumWidth(0);viewport.addView(toolbar,new android.widget.FrameLayout.LayoutParams(-2,-2));return viewport;
     }
     @Override public void onViewAdded(View child) {
         super.onViewAdded(child);

@@ -53,6 +53,11 @@ public final class PreviewPages extends FrameLayout {
         final boolean horizontal;
         FocusRecycler(Context c,boolean horizontal){super(c);this.horizontal=horizontal;}
         @Override protected boolean focusablePosition(int p){if(horizontal)return true;if(p<0||p>=cells.size())return false;Cell c=cells.get(p);return c.type!=NOTICE&&(c.type!=HEADER||Boolean.TRUE.equals(c.value));}
+        @Override public boolean requestChildRectangleOnScreen(View child,android.graphics.Rect rect,boolean immediate){
+            int position=getChildAdapterPosition(child);
+            if(!horizontal&&(tab==1||tab==2)&&position>=0&&position<cells.size()&&cells.get(position).type==POSTER){scheduleCentre();return false;}
+            return super.requestChildRectangleOnScreen(child,rect,immediate);
+        }
         @Override public View focusSearch(View focused,int direction){
             View next=super.focusSearch(focused,direction);
             // At loaded-content boundaries retain the last valid card; do not let
@@ -73,7 +78,23 @@ public final class PreviewPages extends FrameLayout {
         if(cells.get(pos).type==RAIL){List<Entry> entries=(List<Entry>)cells.get(pos).value;for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(a.child)){a.inner=i;break;}}
         anchors[tab]=a;
     }
-    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);}}}}
+    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();scheduleCentre();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);}}}}
+
+    private void scheduleCentre(){if(list==null||tab!=1&&tab!=2)return;list.removeCallbacks(centreLibraryRow);list.postOnAnimation(centreLibraryRow);}
+    private final Runnable centreLibraryRow=this::centreFocusedLibraryRow;
+    private void centreFocusedLibraryRow(){
+        if(tab!=1&&tab!=2||!list.hasFocus()||list.hasPendingAdapterUpdates())return;
+        View focus=list.findFocus(),item=focus==null?null:list.findContainingItemView(focus);
+        int position=item==null?-1:list.getChildAdapterPosition(item);
+        if(position<0||position>=cells.size()||cells.get(position).type!=POSTER||item.getHeight()==0)return;
+        int viewportBottom=list.getHeight()-dp(12);
+        int desiredBottom=Math.max(dp(12),(viewportBottom-list.getPaddingTop()-item.getHeight())/2+dp(12));
+        if(list.getPaddingBottom()!=desiredBottom){list.setPadding(list.getPaddingLeft(),list.getPaddingTop(),list.getPaddingRight(),desiredBottom);scheduleCentre();return;}
+        int delta=Math.round((item.getTop()+item.getBottom())/2f-(list.getPaddingTop()+viewportBottom)/2f);
+        if(Math.abs(delta)>1&&list.canScrollVertically(delta>0?1:-1)){
+            list.stopScroll();list.smoothScrollBy(0,delta,new android.view.animation.DecelerateInterpolator(),180);
+        }
+    }
 
     @Override protected boolean onRequestFocusInDescendants(int direction,android.graphics.Rect rect){
         if(sharedBrowser!=null&&sharedBrowser.isShown())return sharedBrowser.browser().focusOverview();
@@ -148,12 +169,14 @@ public final class PreviewPages extends FrameLayout {
     private void changeFeatured(int direction){changeFeatured(direction,true);}
     private void changeFeatured(int direction,boolean remote){
         if(remote)recordRemoteInput();
-        if(featuredMoving||featuredCandidates().size()<2)return;
-        View card=list.findViewWithTag("semantic:featured.active");
-        featuredMoving=true;
-        int generation=carouselGeneration;
-        Runnable next=()->{if(generation!=carouselGeneration)return;featuredIndex+=direction;featuredDirection=direction;featuredMoving=false;renderFeatured();};
-        if(card!=null&&motionAllowed())card.animate().translationX(-dp(18)*direction).setDuration(120).setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator()).withEndAction(next).start();else next.run();
+        if(featuredCandidates().size()<2)return;
+        // Input commits selection immediately. Only the incoming container animates;
+        // cached inner cards must never retain an interrupted outgoing translation.
+        carouselGeneration++;
+        featuredMoving=false;
+        featuredIndex+=direction;
+        featuredDirection=direction;
+        renderFeatured();
     }
     private final android.net.Uri[] lastArtwork=new android.net.Uri[4];
     private final Map<String,String> featuredReasons=new HashMap<>();
@@ -296,7 +319,7 @@ public final class PreviewPages extends FrameLayout {
         list=new FocusRecycler(c,false); list.setClipChildren(false);list.setClipToPadding(false);setClipChildren(false); list.setPadding(dp(28),dp(10),dp(28),dp(12));
         layout=new GridLayoutManager(c,120); layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?(tab<3&&listMode[tab]?120:120/libraryColumns()):cells.get(p).type==NETWORK_PANEL?40:cells.get(p).type==STORAGE?30:120;}});
         adapter.setHasStableIds(true);
-        list.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrolled(RecyclerView rv,int dx,int dy){notifyScroll();scheduleVisibleEnrichment();}});list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
+        list.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrollStateChanged(RecyclerView rv,int state){if(state==RecyclerView.SCROLL_STATE_IDLE)scheduleCentre();}@Override public void onScrolled(RecyclerView rv,int dx,int dy){notifyScroll();scheduleVisibleEnrichment();}});list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list,"library.adapter","adapter_created",0,adapter.getItemCount(),true);
         addView(list,new FrameLayout.LayoutParams(-1,-1));
         preferences=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
@@ -308,7 +331,7 @@ public final class PreviewPages extends FrameLayout {
         if(PreviewLibraryLoader.memoryCache()==null){java.util.concurrent.ExecutorService cacheWorker=java.util.concurrent.Executors.newSingleThreadExecutor();cacheWorker.execute(()->{try{Snapshot previous=PreviewLibraryLoader.readCache(c.getApplicationContext());post(()->{if(!loaded&&previous!=null)setSnapshot(previous);});}finally{cacheWorker.shutdown();}});}
     }
     private java.util.function.Consumer<Boolean> scrollListener=value->{};
-    @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);if(h!=oldh)post(()->{if(tab==0&&!cells.isEmpty()&&cells.get(0).type==HERO)renderFeatured();});}
+    @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);if(h!=oldh)post(()->{scheduleCentre();if(tab==0&&!cells.isEmpty()&&cells.get(0).type==HERO)renderFeatured();});}
     private int navigationInset;
     public void setNavigationInset(int inset){navigationInset=inset;list.setPadding(dp(28),inset+(tab==1||tab==2?0:dp(10)),dp(28),dp(12));}
     public void setScrollListener(java.util.function.Consumer<Boolean> listener){scrollListener=listener;notifyScroll();}
@@ -373,7 +396,7 @@ public final class PreviewPages extends FrameLayout {
         int remoteKey=event.getKeyCode();
         if(tab==0&&(remoteKey==KeyEvent.KEYCODE_DPAD_LEFT||remoteKey==KeyEvent.KEYCODE_DPAD_RIGHT)){
             View focused=findFocus();String tag=focused==null?"":String.valueOf(focused.getTag());
-            if(heroOwnsHorizontal||tag.startsWith("hero:")){
+            if(heroOwnsHorizontal||tag.startsWith("hero:")||restoringFocus&&anchors[0]!=null&&anchors[0].cell.equals(HERO+":Featured")){
                 if(event.getAction()==KeyEvent.ACTION_DOWN){heroOwnsHorizontal=true;changeFeatured(remoteKey==KeyEvent.KEYCODE_DPAD_LEFT?-1:1);}
                 if(event.getAction()==KeyEvent.ACTION_UP)heroOwnsHorizontal=false;
                 return true;
@@ -565,7 +588,7 @@ public final class PreviewPages extends FrameLayout {
         for(int offset:new int[]{0,-1,1}){int index=Math.floorMod(current+offset,entries.size());Entry candidate=entries.get(index);String key=entrySignature(candidate)+"|logo:"+OfficialTitleArtwork.cachedRevision(candidate.media);if(offset==0)activeKey=key;keep.add(key);OfficialTitleArtwork.prefetch(getContext(),candidate.media);
             android.net.Uri uri=candidate.backdrop!=null?candidate.backdrop:candidate.media.getPosterUri();if(uri!=null){com.squareup.picasso.RequestCreator request=com.squareup.picasso.Picasso.get().load(uri).resize(dp(960),dp(540));if(candidate.backdrop!=null)request.centerCrop();else request.centerInside();request.fetch();}
             if(!heroWindow.containsKey(key)){PreviewFeaturedCard card=new PreviewFeaturedCard(getContext(),entries,index,()->open(candidate,cardAnchor()),()->play(candidate,cardAnchor()));card.measure(View.MeasureSpec.makeMeasureSpec(Math.max(dp(320),list.getWidth()-list.getPaddingLeft()-list.getPaddingRight()),View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(Math.max(dp(280),getHeight()-list.getPaddingTop()-dp(110)),View.MeasureSpec.EXACTLY));heroWindow.put(key,card);}}
-        java.util.Iterator<java.util.Map.Entry<String,PreviewFeaturedCard>> retained=heroWindow.entrySet().iterator();while(retained.hasNext()){java.util.Map.Entry<String,PreviewFeaturedCard> cached=retained.next();if(!keep.contains(cached.getKey())){cached.getValue().releaseArtwork();retained.remove();}}PreviewFeaturedCard card=heroWindow.get(activeKey);if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);com.archos.mediacenter.video.diagnostics.Diagnostics.event("hero_window_prepared","cards",heroWindow.size(),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-preparedAt);return card;
+        java.util.Iterator<java.util.Map.Entry<String,PreviewFeaturedCard>> retained=heroWindow.entrySet().iterator();while(retained.hasNext()){java.util.Map.Entry<String,PreviewFeaturedCard> cached=retained.next();if(!keep.contains(cached.getKey())){cached.getValue().releaseArtwork();retained.remove();}}PreviewFeaturedCard card=heroWindow.get(activeKey);card.resetMotion();if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);com.archos.mediacenter.video.diagnostics.Diagnostics.event("hero_window_prepared","cards",heroWindow.size(),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-preparedAt);return card;
     }
     private View cardAnchor(){View view=findFocus();return view==null?this:view;}
     private void openNetwork(){View parent=this;while(parent.getParent() instanceof View){parent=(View)parent.getParent();if(parent instanceof TopNavigation){((TopNavigation)parent).selectTab(3);break;}}setTab(3);}
@@ -618,7 +641,7 @@ public final class PreviewPages extends FrameLayout {
                     for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order,()->{quietOrder.clear();boolean value=!(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending);ascending[tab]=value;columns[tab].setAscending(value);render();}),button(listMode[tab]?"Grid View":"List View",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
                     if(listMode[tab]){TextView chooser=button("Columns",()->columns[tab].choose(this::refreshColumns));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(chooser,lp);}
                     String[] controlIds={"filters","sort","order","view","columns"};
-                    for(int i=0;i<controls.getChildCount();i++){View control=controls.getChildAt(i);control.setTag(customLibrary==null?"control:"+i:"custom.control."+controlIds[i]);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds[i]);}if(customLibrary!=null){TextView edit=button("Edit Library",()->customEdit.run());edit.setTag("custom.control.edit");LinearLayout.LayoutParams editSize=new LinearLayout.LayoutParams(-2,-2);editSize.leftMargin=dp(8);controls.addView(edit,editSize);}
+                    for(int i=0;i<controls.getChildCount();i++){View control=controls.getChildAt(i);control.setTag(customLibrary==null?"control:"+i:"custom.control."+controlIds[i]);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds[i]);}if(customLibrary!=null){TextView edit=button("Edit Library",()->customEdit.run());edit.setTag("custom.control.edit");controls.addView(new View(getContext()),new LinearLayout.LayoutParams(0,1,1));LinearLayout.LayoutParams editSize=new LinearLayout.LayoutParams(-2,-2);editSize.leftMargin=dp(8);controls.addView(edit,editSize);}
                     v.addView(PreviewToolbar.viewport(controls));
                     View divider=new View(getContext());divider.setBackgroundColor(0x557f8996);LinearLayout.LayoutParams dividerSize=new LinearLayout.LayoutParams(-1,dp(1));dividerSize.topMargin=dp(12);v.addView(divider,dividerSize);
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));

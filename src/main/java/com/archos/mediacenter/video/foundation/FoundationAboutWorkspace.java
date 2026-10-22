@@ -53,7 +53,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private String section = "About";
     private int selectedIndex, requestGeneration;
     private ExecutorService reader;
-    private boolean licencesOpened,licenceEntryPending;private BundledNoticePager noticePager;
+    private boolean licencesOpened,licenceEntryPending;private BundledNoticeReader noticeReader;
     private final Map<String,String> legalCache = new java.util.LinkedHashMap<String,String>() { protected boolean removeEldestEntry(Map.Entry<String,String> entry) { return size()>4; } };
 
     public FoundationAboutWorkspace(PreferenceFragmentCompat fragment, LinearLayout split,
@@ -147,7 +147,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         row.setOnKeyListener((v,key,event)->{
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){selectedNavigation.requestFocus();return true;}
-            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(noticePager!=null){noticePager.focusReader();return true;}if(detailsBody.getChildCount()>0)detailsBody.getChildAt(0).requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(noticeReader!=null){noticeReader.focusReader();return true;}if(detailsBody.getChildCount()>0)detailsBody.getChildAt(0).requestFocus();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){int next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<rows.size())rows.get(next).requestFocus();return true;}
             return false;
         });
@@ -252,7 +252,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     }
     private void showDetails(String heading,String body,String url,String logo){
         ((LayoutParams)details.getLayoutParams()).weight=.56f;details.setFillViewport(false);detailsBody.setGravity(Gravity.TOP);detailsBody.setPadding(dp(8),dp(8),dp(8),dp(16));
-        boolean restore=details.hasFocus();detailsBody.removeAllViews();noticePager=null;TextView title=text(heading,20);title.setFocusable(true);detailsBody.addView(title);
+        boolean restore=details.hasFocus();detailsBody.removeAllViews();noticeReader=null;TextView title=text(heading,20);title.setFocusable(true);detailsBody.addView(title);
         if("tmdb".equals(logo)){
             int id=R.drawable.tmdb_banner;
             if(id!=0){ImageView image=new ImageView(getContext());image.setImageResource(id);image.setContentDescription("TMDB");detailsBody.addView(image,new LayoutParams(dp(160),dp(48)));}
@@ -262,11 +262,13 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             final int generation=requestGeneration;
             reader().execute(()->{Bitmap bitmap=qr(url);post(()->{if(generation==requestGeneration&&image.getParent()==detailsBody&&isAttachedToWindow())image.setImageBitmap(bitmap);else if(bitmap!=null)bitmap.recycle();});});
         }
-        TextView text=text(section.equals(SECTIONS[1])&&licencesOpened&&body.length()>BundledNoticePager.PAGE_CHARS?"":body,14);if(section.equals(SECTIONS[1]))com.archos.mediacenter.video.leanback.PreviewIcon.apply(text,"info",16);text.setFocusable(true);text.setPadding(0,dp(12),0,0);detailsBody.addView(text);if(section.equals(SECTIONS[1])&&licencesOpened&&body.length()>BundledNoticePager.PAGE_CHARS){text.setVisibility(GONE);text.setFocusable(false);noticePager=new BundledNoticePager(getContext(),body,this::focusSelectedRow);detailsBody.addView(noticePager);}
+        boolean legal=section.equals(SECTIONS[1])&&licencesOpened;
+        TextView text=text(legal?"":body,14);text.setFocusable(!legal);text.setPadding(0,dp(12),0,0);detailsBody.addView(text);
+        if(legal){text.setVisibility(GONE);noticeReader=new BundledNoticeReader(getContext(),body,this::focusSelectedRow);detailsBody.addView(noticeReader);}
         View.OnKeyListener keys=(v,key,event)->{
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){focusSelectedRow();return true;}
-            if(key==KeyEvent.KEYCODE_DPAD_DOWN&&noticePager!=null){noticePager.focusReader();return true;}if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){details.smoothScrollBy(0,dp(key==KeyEvent.KEYCODE_DPAD_UP?-48:48));return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_DOWN&&noticeReader!=null){noticeReader.focusReader();return true;}if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){details.smoothScrollBy(0,dp(key==KeyEvent.KEYCODE_DPAD_UP?-48:48));return true;}
             return false;
         };
         title.setOnKeyListener(keys);text.setOnKeyListener(keys);details.scrollTo(0,0);details.requestLayout();if(restore)title.requestFocus();

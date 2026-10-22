@@ -103,7 +103,7 @@ public class Supernova138UiTest {
             assertTrue(rows.get(0).getText().toString().startsWith("AndroidX"));
             assertEquals("Licence component labels use the approved single-line rows",1,rows.get(0).getMaxLines());
             assertSame(rows.get(0),root.findFocus());
-            com.archos.mediacenter.video.foundation.BundledNoticePager pager=ReflectionHelpers.getField(workspace,"noticePager");
+            com.archos.mediacenter.video.foundation.BundledNoticeReader pager=ReflectionHelpers.getField(workspace,"noticeReader");
             assertNotNull("Actual large first notice opens bounded reader",pager);
             rows.get(0).dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));
             assertTrue("Right enters the actual notice reader",pager.hasFocus());

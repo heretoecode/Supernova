@@ -1,135 +1,154 @@
 package com.archos.mediacenter.video.player;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.view.*;
 import android.widget.*;
+import androidx.preference.PreferenceManager;
 import java.util.*;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.leanback.PreviewDialog;
-import com.archos.mediacenter.video.leanback.PreviewIcon;
+import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.player.tvmenu.*;
+import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
-/** Presentation over the existing menu actions, with an explicit parent/focus return path. */
+/** One playback window over the real player actions. Tabs never create a second settings stack. */
 final class PreviewPlaybackMenus {
- private static Dialog current;
- private static Runnable restoreParent;
- private static View origin;private static int rootFocus=-1;
- private static TVCardView liveCard;private static List<TVMenuItem> liveActions;private static List<Integer> liveIndices;
- private static List<String> liveShape;private static Runnable liveParent;private static boolean liveOtherLanguages;
- static boolean isShowing(){return current!=null&&current.isShowing();}
- static boolean back(){if(current==null||!current.isShowing())return false;current.cancel();return true;}
- private static void dismissCurrent(){if(current!=null){current.setOnCancelListener(null);current.dismiss();current=null;}liveCard=null;liveActions=null;liveIndices=null;liveShape=null;liveParent=null;}
- /** Native metadata refresh replaces menu-item objects. Keep visible callbacks/ticks current. */
- static void refresh(android.app.Activity activity,TVCardView card){
-  if(!isShowing()||card==null||card!=liveCard||liveActions==null)return;
-  TVMenu menu=card.previewMenu();if(menu==null)return;
-  if(!shape(menu).equals(liveShape)){
-   View focus=current.getCurrentFocus();int index=focus!=null&&focus.getTag() instanceof Integer?(Integer)focus.getTag():-1;
-   String title=index>=0&&index<liveActions.size()&&liveActions.get(index)!=null?liveActions.get(index).getText():null;
-   Runnable parent=liveParent;boolean other=liveOtherLanguages;select(activity,card,parent,index,other);
-   if(title!=null&&liveActions!=null)for(int i=0;i<liveActions.size();i++)if(liveActions.get(i)!=null&&title.equals(liveActions.get(i).getText())){
-    View label=current.getWindow().getDecorView().findViewWithTag("preview-label:"+i);if(label!=null)((View)label.getParent()).requestFocus();break;
-   }
-   return;
-  }
-  Set<Integer> checked=new HashSet<>();
-  for(int i=0;i<liveActions.size();i++){
-   int nativeIndex=liveIndices.get(i);if(nativeIndex<0)continue;
-   TVMenuItem replacement=(TVMenuItem)menu.getChildAt(nativeIndex);liveActions.set(i,replacement);
-   if(replacement.isChecked())checked.add(i);
-   Object code=replacement.getTag(R.id.preview_track_language);if(code instanceof String)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(current,i,(String)code);
-  }
-  PreviewDialog.updateChecks(current,checked);
- }
- private static List<String> shape(TVMenu menu){
-  List<String> result=new ArrayList<>();for(int i=0;i<menu.getChildCount();i++){View item=menu.getChildAt(i);result.add(item.getClass().getName()+":"+(item instanceof TVMenuItem?((TVMenuItem)item).getText():"")+":"+item.getVisibility()+":"+item.isEnabled()+":"+item.isFocusable()+":"+item.getTag());}return result;
- }
- static void close(){dismissCurrent();restoreParent=null;if(origin!=null&&origin.isAttachedToWindow())origin.requestFocus();origin=null;}
- static void show(android.app.Activity activity,TVMenuAdapter adapter,String target){
-  close();rootFocus=-1;origin=activity.getCurrentFocus();
-  if(target!=null)for(TVCardView card:adapter.previewCards())if(target.equals(card.previewTitle())){select(activity,card,null,-1,false);return;}
-  if(target!=null)for(TVCardView card:adapter.previewCards()){TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View view=menu.getChildAt(i);if(view instanceof TVMenuItem&&target.equals(((TVMenuItem)view).getText())&&view.isEnabled()){restoreParent=null;((TVMenuItem)view).previewClick();return;}}}
-  root(activity,adapter);
- }
- private static void root(android.app.Activity activity,TVMenuAdapter adapter){
-  dismissCurrent();restoreParent=null;List<TVCardView> cards=new ArrayList<>(adapter.previewCards());
-  String audio=activity.getString(R.string.menu_audio),subs=activity.getString(R.string.menu_subtitles),speed=activity.getString(R.string.player_pref_audio_speed_title);
-  cards.sort(Comparator.comparingInt(c->audio.equals(c.previewTitle())?0:subs.equals(c.previewTitle())?1:2));
-  List<String> labels=new ArrayList<>();List<Runnable> actions=new ArrayList<>();TVMenuItem speedItem=null;
-  for(TVCardView card:cards){TVMenu menu=card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++){View v=menu.getChildAt(i);if(v instanceof TVMenuItem&&speed.equals(((TVMenuItem)v).getText())&&v.isEnabled())speedItem=(TVMenuItem)v;}}
-  labels.add("— PLAYBACK");actions.add(()->{});
-  if(speedItem!=null){final TVMenuItem item=speedItem;labels.add("Playback Speed");actions.add(()->{restoreParent=()->root(activity,adapter);item.previewClick();});}
-  for(TVCardView card:cards)if(activity.getString(R.string.pref_play_mode_title).equals(card.previewTitle())){labels.add("Play Mode");actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
-  labels.add("— VIDEO");actions.add(()->{});
-  for(TVCardView card:cards){String title=card.previewTitle();if(audio.equals(title)||subs.equals(title)||activity.getString(R.string.menu_info).equals(title)||activity.getString(R.string.pref_play_mode_title).equals(title)||activity.getString(R.string.preferences).equals(title))continue;labels.add(title);actions.add(()->select(activity,card,()->root(activity,adapter),-1,false));}
-  labels.add("Technical Information");actions.add(()->((PlayerActivity)activity).showVideoInfos());
-  labels.add("Report a Problem");actions.add(()->com.archos.mediacenter.video.diagnostics.Diagnostics.reportProblem(activity));
-  current=PreviewDialog.choose(activity,"More",labels.toArray(new String[0]),rootFocus,Collections.emptySet(),false,n->{rootFocus=n;actions.get(n).run();});
-  current.setOnCancelListener(d->close());position(activity,current,true);
- }
- private static void select(android.app.Activity activity,TVCardView card,Runnable parent,int focus,boolean otherLanguages){
-  TVMenu menu=card.previewMenu();if(menu==null||menu.getChildCount()==0){dismissCurrent();card.previewClick();return;}
-  List<TVMenuItem> actions=new ArrayList<>();List<String> labels=new ArrayList<>();Set<Integer> checked=new HashSet<>();int selected=focus;boolean hasOther=false;
-  boolean subtitles=activity.getString(R.string.menu_subtitles).equals(card.previewTitle());
-  boolean audio=activity.getString(R.string.menu_audio).equals(card.previewTitle());
-  TVMenuItem settings=null;String lastGroup="";
-  for(int i=0;i<menu.getChildCount();i++){
-   View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
-   if(audio&&activity.getString(R.string.player_pref_audio_speed_title).equals(item.getText()))continue;
-   boolean other=subtitles&&Boolean.FALSE.equals(item.getTag());if(other)hasOther=true;if(otherLanguages?!other:other)continue;
-   if(subtitles&&!otherLanguages&&activity.getString(R.string.menu_player_settings).equals(item.getText())){settings=item;continue;}
-   if(audio||subtitles){String title=item.getText();String group="TRACK";
-    if(audio){if(title.equals(activity.getString(R.string.player_pref_audio_delay_title)))group="SYNC";else if(title.equals(activity.getString(R.string.pref_audio_filt_title))||title.equals(activity.getString(R.string.pref_audio_filt_night_mode))||title.equals(activity.getString(R.string.spatialization_capabilities)))group="ENHANCEMENTS";}
-    else if(title.equals(activity.getString(R.string.player_pref_subtitle_delay_title)))group="TIMING & APPEARANCE";
-    else if(title.equals(activity.getString(R.string.get_subtitles_online))||title.equals(activity.getString(R.string.get_subtitles_on_drive)))group="ADD SUBTITLES";
-    if(!group.equals(lastGroup)){labels.add("— "+group);actions.add(null);lastGroup=group;}
-   }
-   String label=androidx.core.text.HtmlCompat.fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
-   if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_online)))label="Download Subtitles";
-   if(subtitles&&item.getText().equals(activity.getString(R.string.get_subtitles_on_drive)))label="Choose Subtitles";
-   actions.add(item);labels.add(label+(item.isEnabled()&&item.isFocusable()?"":" — unavailable"));if(item.isChecked()){checked.add(actions.size()-1);if(selected<0)selected=actions.size()-1;}
-  }
-  if(hasOther&&!otherLanguages){labels.add("— TRACK");actions.add(null);actions.add(null);labels.add("Other languages");}
-  if(settings!=null){labels.add("— TIMING & APPEARANCE");actions.add(null);actions.add(settings);labels.add("Subtitle Appearance"+(settings.isEnabled()&&settings.isFocusable()?"":" — unavailable"));}
-  if(subtitles&&!otherLanguages){labels.add("Subtitle Settings");actions.add(null);}
-  if(actions.isEmpty()){dismissCurrent();card.previewClick();return;}
-  dismissCurrent();restoreParent=()->select(activity,card,parent,focus,otherLanguages);
-  current=PreviewDialog.choose(activity,otherLanguages?"Subtitles · Other languages":card.previewTitle(),labels.toArray(new String[0]),selected,checked,false,n->{
-   if(labels.get(n).startsWith("— "))return;
-   if(subtitles&&labels.get(n).equals("Subtitle Settings")){activity.startActivity(new android.content.Intent(activity,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class).putExtra("preview_settings_category","Subtitles"));return;}
-   TVMenuItem item=actions.get(n);
-   if(item!=null&&(!item.isEnabled()||!item.isFocusable()))return;
-   if(item==null){select(activity,card,()->select(activity,card,parent,n,false),-1,true);return;}
-   Dialog before=current;restoreParent=()->select(activity,card,parent,n,otherLanguages);item.previewClick();
-   // Track and switch actions update in place. A nested native picker replaces current.
-   if(current==before&&before.isShowing()){Set<Integer> updated=new HashSet<>();for(int j=0;j<actions.size();j++)if(actions.get(j)!=null&&actions.get(j).isChecked())updated.add(j);PreviewDialog.updateChecks(before,updated);}
-  });
-  if(subtitles)for(int i=0;i<actions.size();i++){
-   TVMenuItem track=actions.get(i);Object code=track==null?null:track.getTag(R.id.preview_track_language);
-   if(code instanceof String)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(current,i,(String)code);
-  }
-  current.setOnCancelListener(d->{dismissCurrent();if(parent!=null)parent.run();else close();});position(activity,current,false);
-  liveCard=card;liveActions=actions;liveParent=parent;liveOtherLanguages=otherLanguages;liveShape=shape(menu);liveIndices=new ArrayList<>();
-  for(TVMenuItem action:actions)liveIndices.add(action==null?-1:menu.indexOfChild(action));
- }
- static void showNested(android.app.Activity activity,TVCardDialog card){
-  Runnable parent=restoreParent;dismissCurrent();
-  if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);
-  Dialog dialog=PreviewDialog.create(activity);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-  card.setAlpha(1f);card.setPadding(dp(activity,12),dp(activity,10),dp(activity,12),dp(activity,10));card.setBackground(PreviewDialog.menuSurface(activity));compact(card,activity);
-  card.setPreviewDismiss(()->{dismissCurrent();if(parent!=null)parent.run();else close();});
-  dialog.setContentView(card);current=dialog;dialog.setOnCancelListener(d->card.handleBackPressed());dialog.show();
-  Window window=dialog.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);int width=dp(activity,330),maximum=activity.getResources().getDisplayMetrics().heightPixels-dp(activity,100);
-  card.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(maximum,View.MeasureSpec.AT_MOST));
-  boolean compactAdjustment=card.findViewById(R.id.audioDelayPicker)!=null||card.findViewById(R.id.audioSpeedPicker)!=null;
-  window.setLayout(width,Math.min(maximum,compactAdjustment?dp(activity,180):card.getMeasuredHeight()));position(activity,dialog,false);
- }
- private static int dp(android.app.Activity a,int n){return PreviewDialog.dp(a,n);}
- private static void compact(View view,android.app.Activity a){
-  if(view instanceof TextView){TextView text=(TextView)view;text.setTextSize(view.getId()==R.id.info_text&&view.getParent() instanceof LinearLayout&&!(view.getParent() instanceof TVMenuItem)?15:13);text.setMaxLines(2);text.setEllipsize(android.text.TextUtils.TruncateAt.END);text.setTextColor(android.graphics.Color.WHITE);text.setMinHeight(0);}
-  if(view instanceof ScrollView){ViewGroup.LayoutParams scroll=view.getLayoutParams();if(scroll!=null){scroll.height=ViewGroup.LayoutParams.WRAP_CONTENT;view.setLayoutParams(scroll);}}
-  if(view instanceof TVMenuItem){ViewGroup.LayoutParams lp=view.getLayoutParams();if(lp!=null){lp.height=dp(a,38);view.setLayoutParams(lp);}view.setBackground(PreviewDialog.focus(a));}
-  if(view instanceof ViewGroup){((ViewGroup)view).setLayoutTransition(null);for(int i=0;i<((ViewGroup)view).getChildCount();i++)compact(((ViewGroup)view).getChildAt(i),a);}
- }
- private static void position(android.app.Activity a,Dialog d,boolean right){Window w=d.getWindow();w.setDimAmount(.12f);if(origin==null)return;int[] pos=new int[2];origin.getLocationOnScreen(pos);int width=w.getAttributes().width>0?w.getAttributes().width:dp(a,290),height=w.getAttributes().height>0?w.getAttributes().height:dp(a,280);int[] fit=com.archos.mediacenter.video.leanback.PreviewMenuPlacement.place(width,height,pos[0],pos[1],pos[0]+origin.getWidth(),pos[1]+origin.getHeight(),a.getResources().getDisplayMetrics().widthPixels,a.getResources().getDisplayMetrics().heightPixels,dp(a,24),dp(a,20));WindowManager.LayoutParams p=w.getAttributes();p.gravity=Gravity.TOP|Gravity.LEFT;p.x=fit[0];p.y=fit[1];w.setAttributes(p);w.setLayout(fit[2],fit[3]);}
+    private static final String[] TABS={"Subtitles","Audio","Display","Playback"};
+    private static Dialog current;
+    private static Activity owner;
+    private static TVMenuAdapter adapter;
+    private static View origin;
+    private static LinearLayout tabs,rows;
+    private static FrameLayout content;
+    private static ScrollView scroll;
+    private static int tab,rootFocus=-1;
+    private static Runnable restoreParent,backAction;
+    private static TVCardDialog nested;
+    private static TVCardView liveCard;
+    private static boolean closing;
+    static boolean isShowing(){return current!=null&&current.isShowing();}
+    static boolean back(){if(!isShowing())return false;if(nested!=null)nested.handleBackPressed();else if(backAction!=null)backAction.run();else close();return true;}
+    static void close(){
+        closing=true;flushNested();Dialog old=current;current=null;
+        if(old!=null){old.setOnCancelListener(null);old.dismiss();}
+        if(owner instanceof PlayerActivity&&!owner.isFinishing())((PlayerActivity)owner).restorePreviewSettingsFocus(origin);else if(origin!=null&&origin.isAttachedToWindow()&&origin.isShown())origin.requestFocus();
+        origin=null;owner=null;adapter=null;liveCard=null;restoreParent=null;backAction=null;closing=false;
+    }
+    private static void flushNested(){if(nested!=null){TVCardDialog card=nested;nested=null;card.setPreviewDismiss(()->{});card.handleBackPressed();}}
+    static void show(Activity activity,TVMenuAdapter source,String target){
+        close();owner=activity;adapter=source;origin=activity.getCurrentFocus();tab=0;rootFocus=-1;
+        if(activity.getString(R.string.menu_audio).equals(target))tab=1;
+        if(activity.getString(R.string.player_pref_audio_speed_title).equals(target))tab=3;
+        int selected=tab;shell();tab=selected;renderTab();tabs.getChildAt(tab).requestFocus();
+    }
+    private static void shell(){
+        current=PreviewDialog.create(owner);current.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        LinearLayout panel=new LinearLayout(owner);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(16),dp(16),dp(16),dp(16));panel.setBackground(PreviewDialog.menuSurface(owner));
+        TextView title=SharedThreePanel.text(owner,"Playback Settings",20);title.setPadding(0,0,0,dp(12));panel.addView(title);
+        tabs=new LinearLayout(owner);tabs.setBaselineAligned(false);panel.addView(tabs,new LinearLayout.LayoutParams(-1,-2));
+        for(int i=0;i<TABS.length;i++){
+            final int index=i;TextView button=SharedThreePanel.text(owner,TABS[i],13);button.setGravity(Gravity.CENTER);button.setSingleLine(true);androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(button,10,13,1,android.util.TypedValue.COMPLEX_UNIT_SP);button.setFocusable(true);button.setFocusableInTouchMode(true);button.setPadding(dp(4),dp(10),dp(4),dp(10));button.setBackground(tabBackground());button.setTag("playback.tab:"+i);
+            button.setOnClickListener(v->switchTab(index));button.setOnFocusChangeListener((v,focused)->{if(focused&&tab!=index)switchTab(index);});
+            button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
+                if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT){int next=Math.max(0,Math.min(3,index+(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1)));tabs.getChildAt(next).requestFocus();return true;}
+                if(key==KeyEvent.KEYCODE_DPAD_DOWN){focusContent();return true;}return key==KeyEvent.KEYCODE_DPAD_UP;});
+            tabs.addView(button,new LinearLayout.LayoutParams(0,-2,1));
+        }
+        content=new FrameLayout(owner);LinearLayout.LayoutParams body=new LinearLayout.LayoutParams(-1,0,1);body.topMargin=dp(12);panel.addView(content,body);
+        current.setContentView(panel);current.setOnCancelListener(d->close());
+        current.setOnKeyListener((d,key,event)->{if(key==KeyEvent.KEYCODE_BACK||key==KeyEvent.KEYCODE_ESCAPE||key==KeyEvent.KEYCODE_BUTTON_B){if(event.getAction()==KeyEvent.ACTION_UP)back();return true;}
+            if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_MENU){tabs.getChildAt(tab).requestFocus();return true;}
+            if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_DPAD_UP&&nested!=null){View focused=current.getCurrentFocus();View next=focused==null?null:FocusFinder.getInstance().findNextFocus(nested,focused,View.FOCUS_UP);if(next==null||next==focused){tabs.getChildAt(tab).requestFocus();return true;}}
+            return false;});
+        current.show();Window window=current.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);window.setDimAmount(.12f);
+        int width=Math.min(dp(460),Math.round(TvLayout.safeWidth(owner)*.58f));int height=Math.min(dp(570),TvLayout.safeHeight(owner)-dp(40));
+        window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(width,height);
+    }
+    private static android.graphics.drawable.Drawable tabBackground(){
+        android.graphics.drawable.StateListDrawable states=new android.graphics.drawable.StateListDrawable();
+        for(int state:new int[]{android.R.attr.state_focused,android.R.attr.state_selected,0}){
+            android.graphics.drawable.GradientDrawable shape=new android.graphics.drawable.GradientDrawable();shape.setCornerRadius(dp(6));shape.setColor(state==0?android.graphics.Color.TRANSPARENT:0x343b6590);if(state!=0)shape.setStroke(Math.max(1,dp(1)),PreviewAccent.color(owner));states.addState(state==0?new int[]{}:new int[]{state},shape);
+        }
+        return states;
+    }
+    private static void switchTab(int selected){flushNested();tab=selected;rootFocus=-1;renderTab();}
+    private static TVCardView card(int title){for(TVCardView c:adapter.previewCards())if(owner.getString(title).equals(c.previewTitle()))return c;return null;}
+    private static void clear(){flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();scroll=new ScrollView(owner);scroll.setFillViewport(false);rows=new LinearLayout(owner);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);content.addView(scroll,new FrameLayout.LayoutParams(-1,-1));for(int i=0;i<4;i++)tabs.getChildAt(i).setSelected(i==tab);}
+    private static void renderTab(){
+        if(owner==null||closing)return;clear();backAction=null;restoreParent=PreviewPlaybackMenus::renderTab;
+        if(tab==0||tab==1){TVCardView selected=card(tab==0?R.string.menu_subtitles:R.string.menu_audio);if(selected!=null)addNative(selected,true,false);else heading(tab==0?"No subtitle tracks":"No audio tracks");if(tab==0)subtitlePreferences();}
+        else {
+            if(tab==3){TVCardView audio=card(R.string.menu_audio);if(audio!=null&&audio.previewMenu()!=null)for(int i=0;i<audio.previewMenu().getChildCount();i++){View v=audio.previewMenu().getChildAt(i);if(v instanceof TVMenuItem&&owner.getString(R.string.player_pref_audio_speed_title).equals(((TVMenuItem)v).getText()))nativeRow((TVMenuItem)v,"Playback Speed",PreviewPlaybackMenus::renderTab);}}
+            for(TVCardView c:adapter.previewCards()){
+                String title=c.previewTitle();boolean play=owner.getString(R.string.pref_play_mode_title).equals(title);
+                if(owner.getString(R.string.menu_subtitles).equals(title)||owner.getString(R.string.menu_audio).equals(title)||owner.getString(R.string.menu_info).equals(title)||owner.getString(R.string.preferences).equals(title))continue;
+                boolean notification=owner.getString(R.string.notification_mode).equals(title);if(tab==3?!(play||notification):(play||notification))continue;
+                action(title,false,true,null,()->select(c,PreviewPlaybackMenus::renderTab,-1,false));
+            }
+        }
+        if(rows.getChildCount()==0)heading("No available options");
+    }
+    private static void select(TVCardView selected,Runnable parent,int focus,boolean other){
+        clear();backAction=parent;restoreParent=()->select(selected,parent,focus,other);addNative(selected,false,other);if(focus>=0&&focus<rows.getChildCount())rows.getChildAt(focus).requestFocus();else focusContent();
+    }
+    private static void addNative(TVCardView selected,boolean root,boolean other){
+        liveCard=selected;TVMenu menu=selected.previewMenu();if(menu==null||menu.getChildCount()==0){heading(tab==1?"No audio tracks":"No available options");return;}
+        boolean subs=owner.getString(R.string.menu_subtitles).equals(selected.previewTitle()),audio=owner.getString(R.string.menu_audio).equals(selected.previewTitle());boolean hasOther=false;String last="";
+        for(int i=0;i<menu.getChildCount();i++){
+            View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
+            if(audio&&owner.getString(R.string.player_pref_audio_speed_title).equals(item.getText()))continue;
+            boolean otherTrack=subs&&Boolean.FALSE.equals(item.getTag());if(otherTrack)hasOther=true;if(other?!otherTrack:otherTrack)continue;
+            String label=androidx.core.text.HtmlCompat.fromHtml(item.getText(),androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
+            if(subs&&owner.getString(R.string.get_subtitles_online).equals(item.getText()))label="Download Subtitles";
+            if(subs&&owner.getString(R.string.get_subtitles_on_drive).equals(item.getText()))label="Choose Subtitles";
+            if(subs&&owner.getString(R.string.menu_player_settings).equals(item.getText()))label="Subtitle Appearance";
+            if(subs||audio){String group=(item.findViewById(R.id.info_text) instanceof android.widget.Checkable)?(audio&&item.getText().equals(owner.getString(R.string.pref_audio_filt_title))||item.getText().equals(owner.getString(R.string.pref_audio_filt_night_mode))||item.getText().equals(owner.getString(R.string.spatialization_capabilities))?"Enhancements":"Tracks"):label.contains("Subtitles")&&!label.equals("Subtitle Appearance")?"Add subtitles":"Timing & appearance";if(!group.equals(last)){heading(group);last=group;}}
+            Runnable parent=root?PreviewPlaybackMenus::renderTab:restoreParent;nativeRow(item,label,parent);
+        }
+        if(hasOther&&!other)action("Other languages",false,true,null,()->select(selected,PreviewPlaybackMenus::renderTab,-1,true));
+    }
+    private static void nativeRow(TVMenuItem item,String label,Runnable parent){
+        Object language=item.getTag(R.id.preview_track_language);
+        action(label,item.isChecked(),item.isEnabled()&&item.isFocusable(),language instanceof String?(String)language:null,()->{restoreParent=parent;item.previewClick();if(nested==null&&isShowing())refreshChecks();});
+    }
+    private static void refreshChecks(){if(owner!=null){View focused=current.getCurrentFocus();String key=focused==null?null:String.valueOf(focused.getTag());Runnable page=restoreParent;if(page!=null)page.run();if(key!=null){View row=content.findViewWithTag(key);if(row!=null)row.requestFocus();}}}
+    static void refresh(Activity activity,TVCardView changed){if(isShowing()&&changed==liveCard&&nested==null)refreshChecks();}
+    private static void heading(String text){TextView heading=SharedThreePanel.text(owner,text,12);heading.setTextColor(0xffb7c0cc);heading.setPadding(0,dp(12),0,dp(5));heading.setFocusable(false);rows.addView(heading);}
+    private static TextView action(String label,boolean checked,boolean enabled,String code,Runnable run){
+        int index=rows.getChildCount();TextView text=SharedThreePanel.text(owner,(checked?"✓  ":"")+label+(enabled?"":" — unavailable"),14);text.setTag("playback.option:"+label);text.setFocusable(enabled);text.setFocusableInTouchMode(enabled);text.setEnabled(enabled);text.setGravity(Gravity.CENTER_VERTICAL);text.setPadding(dp(10),dp(9),dp(10),dp(9));text.setMinimumHeight(dp(40));text.setBackground(SharedThreePanel.accentFocus(owner));text.setOnClickListener(v->run.run());
+        if(code!=null)PreviewLanguageIcon.apply(text,code);
+        text.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_UP){View next=FocusFinder.getInstance().findNextFocus(rows,text,View.FOCUS_UP);if(next==null||next==text){tabs.getChildAt(tab).requestFocus();return true;}}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;return false;});rows.addView(text,new LinearLayout.LayoutParams(-1,-2));return text;
+    }
+    private static SharedPreferences preferences(){return PreferenceManager.getDefaultSharedPreferences(owner);}
+    private static void subtitlePreferences(){
+        heading("Subtitle preferences");
+        action("Reading language",false,!preferences().getBoolean("subtitles_hide_default",false),null,()->languages(false));
+        action("Download languages",false,true,null,()->languages(true));
+        toggle("Prepare Subtitle Searches",com.archos.mediacenter.video.utils.SubtitleDiscovery.ENABLED,false,false);
+        toggle("Prepare Current Season",com.archos.mediacenter.video.utils.SubtitleDiscovery.PREFETCH,true,false);
+        toggle("Subtitles by Default","subtitles_hide_default",false,true);
+    }
+    private static void toggle(String label,String key,boolean initial,boolean invert){action(label,invert?!preferences().getBoolean(key,initial):preferences().getBoolean(key,initial),true,null,()->{preferences().edit().putBoolean(key,!preferences().getBoolean(key,initial)).apply();renderTab();View row=content.findViewWithTag("playback.option:"+label);if(row!=null)row.requestFocus();});}
+    private static void languages(boolean multiple){
+        clear();backAction=PreviewPlaybackMenus::renderTab;restoreParent=()->languages(multiple);heading(multiple?"Download languages":"Reading language");
+        Map<String,String> choices=VideoPreferencesCommon.subtitleLanguageChoices(owner);Set<String> selected=new HashSet<>(preferences().getStringSet("languages_list",Collections.singleton(Locale.getDefault().getLanguage())));
+        for(Map.Entry<String,String> choice:choices.entrySet()){String code=choice.getKey();boolean checked=multiple?selected.contains(code):code.equals(preferences().getString("favSubLang",Locale.getDefault().getLanguage()));action(choice.getValue(),checked,true,PreviewLanguageIcon.providerCode(code),()->{if(multiple){Set<String> values=new HashSet<>(preferences().getStringSet("languages_list",Collections.singleton(Locale.getDefault().getLanguage())));if(!values.remove(code))values.add(code);if(values.isEmpty())return;preferences().edit().putStringSet("languages_list",values).apply();}else preferences().edit().putString("favSubLang",code).apply();languages(multiple);View row=content.findViewWithTag("playback.option:"+choice.getValue());if(row!=null)row.requestFocus();});}
+        focusContent();
+    }
+    static void showNested(Activity activity,TVCardDialog card){
+        if(!isShowing()){owner=activity;origin=activity.getCurrentFocus();shell();}
+        Runnable parent=restoreParent;flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();
+        if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);
+        card.setAlpha(1f);card.setPadding(0,0,0,0);card.setBackgroundColor(android.graphics.Color.TRANSPARENT);compact(card,activity);nested=card;
+        card.setPreviewDismiss(()->{nested=null;if(!closing){if(parent!=null)parent.run();else close();}});
+        content.addView(card,new FrameLayout.LayoutParams(-1,-1));backAction=parent;
+    }
+    private static void focusContent(){if(content!=null)for(View view:content.getFocusables(View.FOCUS_FORWARD))if(view.isEnabled()&&view.isShown()&&view.requestFocus())return;}
+    private static void compact(View view,Activity activity){
+        if(view instanceof TextView){TextView text=(TextView)view;text.setTextSize(14);text.setMaxLines(3);text.setEllipsize(android.text.TextUtils.TruncateAt.END);text.setTextColor(android.graphics.Color.WHITE);text.setMinHeight(0);}
+        if(view instanceof TVMenuItem)view.setBackground(SharedThreePanel.accentFocus(activity));
+        if(view instanceof ViewGroup){((ViewGroup)view).setLayoutTransition(null);for(int i=0;i<((ViewGroup)view).getChildCount();i++)compact(((ViewGroup)view).getChildAt(i),activity);}
+    }
+    private static int dp(int n){return PreviewDialog.dp(owner,n);}
 }
