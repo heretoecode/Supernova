@@ -19,4 +19,4 @@ All cases below are **NOT RUN on physical Shield** until the owner records a res
 15. Movie and TV Details: visible22dp target gap between card and tab borders; both borders preserved; tabs/following content visible and D-pad accessible at all supported scales. Regression Extras/episodes/recommendations/Play/providers/Back.
 16. Full regression: Home Continue Watching/history, Search, Network & Files, local/network library scanning, source selection, backup export/restore/recovery/privacy, diagnostic export, playback resume/HDR/passthrough and provider launch. Preserve working0.140 behaviour and record failures with current logs.
 
-All22 original FD-002 Q cases remain relevant with the visible-control substitutions recorded in PLAYBACK_MIGRATION.md. Unsupported hardware conditions should be NOT APPLICABLE with evidence, never guessed PASS.
+All 22 original FD-002 Q cases remain relevant with the visible-control substitutions recorded in PLAYBACK_MIGRATION.md. Unsupported hardware conditions should be NOT APPLICABLE with evidence, never guessed PASS.

@@ -10,7 +10,7 @@ Authority: complete handover and scope copied byte-for-byte from planning tip `3
 
 ## Requirements → implementation → evidence
 
-Every UI row still requires physical Shield acceptance. Local evidence: 58 targeted Android tests passed (14 classes), 95 tooling tests passed; subsequent language conformance checks and exact-source full CI are recorded in the final validation report. No compilation-only fix claim.
+Every UI row still requires physical Shield acceptance. Local complete suite: **1,067 tests across 226 classes passed, zero failures/errors/skips**, plus95 tooling tests and release lint with zero errors. Targeted and language/lifecycle passes are also retained. Exact-source full native/APK CI is pending; see RELEASE_REPORT.md. No compilation-only fix claim.
 
 | Requirement | Code / investigation | Required evidence | Status |
 |---|---|---|---|
@@ -29,7 +29,7 @@ Every UI row still requires physical Shield acceptance. Local evidence: 58 targe
 | Edit Library far right, controls left; responsive and reachable | PreviewPages / PreviewToolbar | geometry + remote traversal + scaling | Implemented; pinned trailing action with separately scrolling left group; normal/narrow large-text checks pass; Shield pending |
 | All Library rows centre in content viewport; ends/short/fast/data refresh | PreviewPages / focus recycler | grid/list/custom row centring + repeated input | Implemented; grid/list middle and final rows settle centred; restoration regression passes; Shield boundaries/refresh pending |
 | Movie/TV card → tabs 20–24dp separation; surfaces and scroll retained | PreviewMoviePage (shared movie/TV) | both media types / sizes / text scale / D-pad | Implemented; section lowered 22dp without shrinking card; movie/TV and 720p/1080p/4K/large-text renders pass; Shield pending |
-| Home/Search/Network/Library/Details/playback/backup/scan regressions | existing full test suite | build, lint, full suite + device checklist | Initial complete suite: 1058, four stale expectations corrected; focused corrections pass; final complete CI pending |
+| Home/Search/Network/Library/Details/playback/backup/scan regressions | existing full test suite | build, lint, full suite + device checklist | Final local complete suite 1,067 passes without failures/errors/skips; full native/APK CI pending |
 | Candidate / signing / APK / Drive / notes | existing protected procedures only | exact source, original cert, checksum, full readback | Protected workflow ready; GitHub exact-branch permission denied HTTP403; unsigned conformance pending |
 
 ## Missing visual evidence
@@ -52,7 +52,10 @@ No physical Shield is attached. Real Put.io account authorisation is unavailable
 
 - `PLAYBACK_MIGRATION.md`: every audit control, action, indicator and B01–B14.
 - `LOCAL_INITIAL_TEST_RESULTS.json`: retained initial full-suite failures and lint finding; superseded, not a pass receipt.
-- `LOCAL_TARGETED_TEST_RESULTS.json`: 58 passing targeted cases and 95 passing tooling cases.
+- `LOCAL_FULL_TEST_RESULTS.json`: complete final 1,067-case local suite, zero failures/errors/skips.
+- `LOCAL_ASSEMBLY_PROBE.json`: local shrunken unsigned assembly and resource checks; explicitly incomplete native payload, not for distribution.
+- `LOCAL_SOURCE_READBACK.json`: candidate application-source correspondence with the expected Foundation provider rewrite.
+- `LOCAL_TARGETED_TEST_RESULTS.json`:58 targeted cases and95 tooling cases; overlapping follow-up groups in LOCAL_LANGUAGE_TEST_RESULTS.json and LOCAL_AUTH_TEST_RESULTS.json.
 - `NATIVE_CHAPTER_PROBE.json`, `fixtures/`: four-ABI wrapper compile and real API28 x86 embedded-MKV demux/metadata evidence, with limitations.
 - `LEGAL_INVENTORY.json`: complete current runtime/archive disclosure inventory.
 - `visual-evidence/`: actual native Android view renders; playback scene synthetic, no Shield claim.
