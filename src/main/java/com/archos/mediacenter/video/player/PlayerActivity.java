@@ -2067,7 +2067,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     item.setTag(previewPreferredSubtitle(i));
                     if(i>0&&mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null){
                         SubtitleTrack subtitle=mPlayer.getVideoMetadata().getSubtitleTrack(positionToSubtitleTrack(i,mVideoInfo.nbSubtitles));
-                        if(subtitle!=null)item.setTag(R.id.preview_track_language,subtitle.language==null?"":subtitle.language);
+                        if(subtitle!=null){item.setTag(R.id.preview_track_language,subtitle.language==null?"":subtitle.language);View label=item.findViewById(R.id.info_text);if(label instanceof TextView)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label,subtitle.language);}
                     }
                 }
                 mSubtitleTVMenu.createAndAddSeparator();
@@ -2124,7 +2124,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 for (int i = 0; i < mAudioInfoController.getTrackCount(); i++) {
                     TVMenuItem item=mAudioTracksTVMenu.createAndAddTVMenuItem(mAudioInfoController.getTrackNameAt(i).toString(), true, mAudioInfoController.getTrack() == i);
                     VideoMetadata metadata=mPlayer==null?null:mPlayer.getVideoMetadata();
-                    if(metadata!=null&&i<metadata.getAudioTrackNb()&&metadata.getAudioTrack(i)!=null)item.setTag(R.id.preview_track_language,metadata.getAudioTrack(i).language);
+                    if(metadata!=null&&i<metadata.getAudioTrackNb()&&metadata.getAudioTrack(i)!=null){String language=metadata.getAudioTrack(i).language;item.setTag(R.id.preview_track_language,language);View label=item.findViewById(R.id.info_text);if(label instanceof TextView)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label,language);}
                 }
 
                 mAudioTracksTVMenu.createAndAddSeparator();

@@ -26,7 +26,7 @@ public final class PreviewLanguageIcon extends Drawable {
         flag=bitmap;
     }
     static String country(String code){
-        if(code==null||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})+"))return "";
+        if(code==null||"zh-ca".equalsIgnoreCase(code)||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})+"))return "";
         Locale locale=Locale.forLanguageTag(code.replace('_','-'));
         String country=locale.getCountry().toUpperCase(Locale.ROOT);
         return LANGUAGES.contains(locale.getLanguage())&&COUNTRIES.contains(country)?country:"";

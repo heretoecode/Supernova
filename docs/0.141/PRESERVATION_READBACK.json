@@ -1,0 +1,15 @@
+{
+  "checked_at_utc": "2026-10-22T21:33:15.242902+00:00",
+  "observed_remote_refs": {
+    "refs/heads/codex/preview-4.1.7": "ff5bd83300c8efdc6aaaf4993e2b87c1c7594271",
+    "refs/heads/codex/supernova-0.140-implementation-2026-10-16": "cf257aaa59ad8d59b2ab7252d5beae174f5879c5",
+    "refs/heads/docs/project-decisions-2026-10-12": "306e1b35689104c3307cfc06b4d3193ba343be31",
+    "refs/heads/main": "75d9f012fa4f65869eef5d972ad4725df504bd9c"
+  },
+  "earlier_refs_unchanged": true,
+  "draft_pr": 19,
+  "branch": "codex/supernova-0.141-implementation-2026-10-22",
+  "base": "cf257aaa59ad8d59b2ab7252d5beae174f5879c5",
+  "main_merge": false,
+  "separate_maintenance_started": false
+}

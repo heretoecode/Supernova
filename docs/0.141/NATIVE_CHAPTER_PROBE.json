@@ -1,0 +1,12 @@
+{
+  "checked_at_utc": "2026-10-22T21:28:48.308473+00:00",
+  "platform": "Android TV API28 x86 software emulator",
+  "test": "tools/playback_chapter_metadata_probe.c",
+  "probe_sha256": "b02ac0ab8180266cfd4942888e98677bc219c41f6905a8c0b9518f1478cb7e07",
+  "libavos_sha256": "2b3cce03bee3568a2feccdd591b0736b06a38eb5dc9fb76583b50f69749151af",
+  "result": "PASS: actual AVOS chapter parcel, origin conversion, titles, absent and over-limit tables",
+  "native_source_patch": ".github/build/avos-supernova141-chapters.patch",
+  "all_four_abi_wrapper_compile_passed": true,
+  "ffmpeg_inputs": "Pinned existing prebuilt inputs for this local component probe; full FFmpeg rebuild/runtime/binary gates remain required in CI. Historical rebuilt-evidence hash check refused these original prebuilt bytes; no gate was weakened.",
+  "limits": "Direct actual AVOS metadata parcel exercise. No installed 0.141 app, chapter demux fixture, decoded media, physical Shield or hardware playback acceptance."
+}

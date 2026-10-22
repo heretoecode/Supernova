@@ -36,17 +36,18 @@ public class PreviewLibraryReturnTest {
             RecyclerView list=(RecyclerView)pages.getChildAt(0);GridLayoutManager layout=(GridLayoutManager)list.getLayoutManager();
             // 60 records sorted newest first, plus the summary and toolbar cells.
             int position=28;layout.scrollToPositionWithOffset(position,120);PreviewPagesTest.layout(container);
-            View item=list.findViewHolderForAdapterPosition(position).itemView;assertEquals("v34",item.getTag());assertTrue(item.requestFocus());PreviewPagesTest.layout(container);
+            View item=list.findViewHolderForAdapterPosition(position).itemView;assertEquals("v34",item.getTag());assertTrue(item.requestFocus());settle(container);
             int top=item.getTop();int first=layout.findFirstVisibleItemPosition();assertTrue(first>2);assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(position));
             item.performClick();assertEquals(34,opened[0]);
             child.setVisibility(View.VISIBLE);assertTrue(child.requestFocus());assertFalse(pages.hasFocus());
             pages.setSnapshot(snapshot(true));PreviewPagesTest.layout(container);assertSame(child,container.findFocus());
-            child.setVisibility(View.GONE);pages.requestFocus();PreviewPagesTest.layout(container);
+            child.setVisibility(View.GONE);pages.requestFocus();settle(container);
             assertNotNull(pages.findFocus());assertEquals("v34",pages.findFocus().getTag());
             View restored=list.findContainingItemView(pages.findFocus());assertEquals(top,restored.getTop());assertEquals(first,layout.findFirstVisibleItemPosition());
             assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
         }finally{host.pause().stop().destroy();}
     }
+    private void settle(View root){for(int i=0;i<6;i++){PreviewPagesTest.layout(root);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}}
     private Snapshot snapshot(boolean updated){
         Snapshot result=new Snapshot();
         for(int id=1;id<=60;id++){

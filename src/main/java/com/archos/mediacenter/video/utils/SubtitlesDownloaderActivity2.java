@@ -800,17 +800,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             mHandler.post(() -> Toast.makeText(SubtitlesDownloaderActivity2.this, message, Toast.LENGTH_SHORT).show());
         }
 
-        private boolean confirmReplacement(){
-            java.util.concurrent.CountDownLatch choice=new java.util.concurrent.CountDownLatch(1);
-            java.util.concurrent.atomic.AtomicBoolean replace=new java.util.concurrent.atomic.AtomicBoolean();
-            final android.app.Dialog[] prompt={null};
-            handler.post(()->{if(isCancelled||isFinishing()||isDestroyed()){choice.countDown();return;}
-                prompt[0]=com.archos.mediacenter.video.leanback.PreviewDialog.review(SubtitlesDownloaderActivity2.this,"Replace subtitle file?","A subtitle already exists for this title and language. Replace it with the selected download?","Replace",()->{replace.set(true);choice.countDown();});
-                prompt[0].setOnDismissListener(d->handler.post(choice::countDown));
-            });
-            try{while(!choice.await(250,java.util.concurrent.TimeUnit.MILLISECONDS)){if(isCancelled||isFinishing()||isDestroyed()){handler.post(()->{if(prompt[0]!=null)prompt[0].dismiss();});return false;}}}catch(InterruptedException cancelled){Thread.currentThread().interrupt();handler.post(()->{if(prompt[0]!=null)prompt[0].dismiss();});return false;}
-            return replace.get()&&!isCancelled;
-        }
+        private boolean confirmReplacement(){return SubtitleReplacement.confirm(SubtitlesDownloaderActivity2.this,handler,()->isCancelled);}
         private void finishDownload(boolean saved){
             if(!previewUi()){setResult(saved?Activity.RESULT_OK:Activity.RESULT_CANCELED,saved?new Intent().putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,selectedDownloadPath):null);finish();return;}
             handler.post(()->{

@@ -1,0 +1,14 @@
+{
+  "checked_at_utc": "2026-10-22T21:28:48.308006+00:00",
+  "drive_file_id": "1JEYAXNKw4gGPgEx0xUjATDXES1bI158T",
+  "filename": "Supernova_0.140.apk",
+  "bytes": 87890896,
+  "sha256": "b6d59e82c03cd99844f49d4647d2f2a985c484c819d92064542eec84f33788f5",
+  "matches_delivered_record": true,
+  "signature_verified": true,
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "zip_crc_verified": true,
+  "badging": "package: name='app.supernova.player' versionCode='140' versionName='0.140' platformBuildVersionName='17' platformBuildVersionCode='37' compileSdkVersion='37' compileSdkVersionCodename='17'",
+  "build_assets": [],
+  "physical_shield_verified": false
+}
