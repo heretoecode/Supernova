@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-10-22T22:55:21.647957+00:00",
+  "checked_at_utc": "2026-10-22T23:49:53.568289+00:00",
   "observed_remote_refs": {
     "refs/heads/codex/preview-4.1.7": "ff5bd83300c8efdc6aaaf4993e2b87c1c7594271",
     "refs/heads/codex/supernova-0.140-implementation-2026-10-16": "cf257aaa59ad8d59b2ab7252d5beae174f5879c5",
@@ -12,7 +12,7 @@
   "base": "cf257aaa59ad8d59b2ab7252d5beae174f5879c5",
   "main_merge": false,
   "separate_maintenance_started": false,
-  "application_source": "5109dd0c83082528b896a8aaa6d0d50f4a930027",
-  "observed_documentation_tip": "ff15db630ebe51525eab053762bede81ca6dede7",
+  "application_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "observed_documentation_tip": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
   "application_and_build_inputs_unchanged_since_tested_source": true
 }

@@ -1,9 +1,12 @@
 {
-  "checked_at_utc": "2026-10-22T22:23:57.214343+00:00",
+  "checked_at_utc": "2026-10-22T23:45:25.206549+00:00",
   "action": "Add only the exact0.141 branch to existing protected signing environment",
   "command_success": false,
   "message": "Resource not accessible by integration",
   "name": null,
   "scope": "No existing policy update/removal; no secrets read or key replacement",
-  "http_status": 403
+  "http_status": 403,
+  "final_candidate_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "public_unsigned_signing_preconditions": "PASS",
+  "after_environment_revision": "8"
 }

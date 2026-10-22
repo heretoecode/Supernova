@@ -2,51 +2,81 @@
   {
     "file": "0141-custom-toolbar-small-large-text.png",
     "sha256": "88cd8b6bbf37d450abbc3d71c30f622c00e78eb921a56ba40c412863d9ccb6b1",
-    "bytes": 40574
+    "bytes": 40574,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-custom-toolbar.png",
     "sha256": "231dd07c4da14ffec974de3f57ac3c310ef35278321b1c858a4973cf13139424",
-    "bytes": 40663
+    "bytes": 40663,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-details-gap-false.png",
     "sha256": "86f4ac56bc0cf5f9c95754639b71eef18c158361da12954966b49b8396e1af9d",
-    "bytes": 93419
+    "bytes": 93419,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-details-gap-true.png",
     "sha256": "3af4fffca8d887517a6a68b0322afade99d9fcaf3358a10e8f36fc80d0d2a51e",
-    "bytes": 96295
+    "bytes": 96295,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-hero-after-rapid-reversals.png",
     "sha256": "bc69a82a0dbffd0cf60859ab890264ef14e822ac9111cb6b54da72c278e03876",
-    "bytes": 20787
+    "bytes": 20787,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-playback-hud.png",
     "sha256": "73e5ee79232176a66b1fd7955c71b1426c76a1693ec91b0c7e02b90d7d0388da",
-    "bytes": 6602
+    "bytes": 6602,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-playback-tab-0.png",
     "sha256": "651cf7a9b30bb702c3549042a67b797c9390880c2d49dff5911e34eeac9409f6",
-    "bytes": 83881
+    "bytes": 83881,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-playback-tab-1.png",
     "sha256": "9ae6a3c66aca9bda887841a90156b1fe00509e93d032eeb8fefdbdc971f5939f",
-    "bytes": 79573
+    "bytes": 79573,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-playback-tab-2.png",
     "sha256": "83236e9ac9b48c0865b272263f84a3907d56e56a1d6e9db004ed8ae0a1ad9ec5",
-    "bytes": 69164
+    "bytes": 69164,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   },
   {
     "file": "0141-playback-tab-3.png",
     "sha256": "eede9b5ab9d68c40d8164000cbf3bd6bd393c7f6a5d21926d87510ff724b3a32",
-    "bytes": 71501
+    "bytes": 71501,
+    "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "ci_run": 39869263544,
+    "artifact_id": 12466443742
   }
 ]

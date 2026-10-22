@@ -1,6 +1,6 @@
 # Supernova 0.141 implementation and validation ledger
 
-Status: all ten approved workstreams implemented; final duplicate-track focus correction undergoing repeat candidate validation. Software checks and device acceptance are tracked separately; no signed APK or physical acceptance claimed.
+Status: all ten approved workstreams implemented. Final source `4f0937f1` passes complete local and CI validation: **1,068 tests / 226 classes, zero failures/errors/skips, 95 tooling tests, release lint zero errors**, native runtime/binary conformance and independent whole-artifact verification. Original-certificate signing/Drive APK delivery are blocked by protected-branch access; physical Shield acceptance remains open.
 
 ## Continuation baseline
 
@@ -10,7 +10,7 @@ Authority: complete handover and scope copied byte-for-byte from planning tip `3
 
 ## Requirements → implementation → evidence
 
-Every UI row still requires physical Shield acceptance. Previous candidate local complete suite: **1,067 tests across 226 classes passed, zero failures/errors/skips**; final duplicate-label focus correction has nine targeted passing cases, full repeat pending, plus95 tooling tests and release lint with zero errors. Targeted and language/lifecycle passes are also retained. Exact-source full native/APK CI is pending; see RELEASE_REPORT.md. No compilation-only fix claim.
+Every UI row still requires physical Shield acceptance. Local and independent CI results refer to the final source `4f0937f1`; previous checkpoints remain preserved. The complete CI archive and unsigned APK were independently downloaded and checked. See RELEASE_REPORT.md, CI_CONFORMANCE.json and INDEPENDENT_UNSIGNED_APK_VERIFICATION.json. No compilation-only physical fix claim.
 
 | Requirement | Code / investigation | Required evidence | Status |
 |---|---|---|---|
@@ -21,16 +21,16 @@ Every UI row still requires physical Shield acceptance. Previous candidate local
 | Remove Technical Information / Report a Problem from playback UI; preserve diagnostics | PlayerController / menus / activity | menu and key-path assertions | Implemented in dialog/native card/key paths; diagnostic infrastructure retained; Shield pending |
 | Audit B01–B14 reconcile against 0.140 | activity/controller/pickers/downloader | finding-by-finding evidence and limits | All 14 findings reconciled; B04 retained sentinel semantics; backend/provider/hardware QA pending |
 | Hero overlap + smoothness; rapid reversals, repeats, boundaries, focus, art loading | PreviewPages / PreviewFeaturedCard | deterministic interrupted transition tests; hardware frame timing pending | Implemented; 24 interrupted alternating inputs accepted without stale transforms; Shield frame timing pending |
-| All licence pagination removed; dependency/transitive notices + required texts retained | FoundationAboutWorkspace / legal inventory / legacy entries | complete disclosure reachability; dependency inventory and hashes | Implemented; all 60 texts losslessly partitioned; 138 runtime artifacts/64 archive notices audited; API28 reader passes; Shield pending |
-| Global language icons: reliable region only; neutral generic; unknown/nonlanguage exclusions | PreviewLanguageIcon + all renderers | language/region/unknown/mixed + accessibility tests | Implemented with shared mapping; explicit valid regions only; additional renderer checks recorded separately; Shield pending |
+| All licence pagination removed; dependency/transitive notices + required texts retained | FoundationAboutWorkspace / legal inventory / legacy entries | complete disclosure reachability; dependency inventory and hashes | Implemented; all 60 texts losslessly partitioned; 138 runtime artifacts/64 archive notices audited; API28 reader and all 60 packaged text hashes pass; Shield pending |
+| Global language icons: reliable region only; neutral generic; unknown/nonlanguage exclusions | PreviewLanguageIcon + all renderers | language/region/unknown/mixed + accessibility tests | Implemented with shared mapping; explicit valid regions only; all 249 region resources survive final shrinking; mixed/unknown cases pass; Shield pending |
 | Statistics values centred; entire panel matches toolbar opacity | LibraryPageHeader / MenuFoundation | bounds + rendered varying values / scaling | Implemented; existing native statistics geometry tests pass; Shield varied-value/text-scale acceptance pending |
 | Shared keyboard one-line input; . , / \\ keys; bottom-left Caps Lock and all actions retained | PreviewKeyboard / KeyboardInput / consumers | punctuation, Caps, selection, path and D-pad tests | Implemented; punctuation, Caps active state/toggling, selection and one-line geometry pass; Shield consumers pending |
 | Put.io connection focus; all controls, Back/re-entry/cancel/error/external return | PutioAccountController / AuthFlow / browser | focus tests; real account flow requires owner | Implemented; replacement/re-entry, simulated success/cancel/error and late-close tests pass; real authorisation and physical acceptance release-blocking |
 | Edit Library far right, controls left; responsive and reachable | PreviewPages / PreviewToolbar | geometry + remote traversal + scaling | Implemented; pinned trailing action with separately scrolling left group; normal/narrow large-text checks pass; Shield pending |
 | All Library rows centre in content viewport; ends/short/fast/data refresh | PreviewPages / focus recycler | grid/list/custom row centring + repeated input | Implemented; grid/list middle and final rows settle centred; restoration regression passes; Shield boundaries/refresh pending |
 | Movie/TV card → tabs 20–24dp separation; surfaces and scroll retained | PreviewMoviePage (shared movie/TV) | both media types / sizes / text scale / D-pad | Implemented; section lowered 22dp without shrinking card; movie/TV and 720p/1080p/4K/large-text renders pass; Shield pending |
-| Home/Search/Network/Library/Details/playback/backup/scan regressions | existing full test suite | build, lint, full suite + device checklist | Final local complete suite 1,067 passes without failures/errors/skips; full native/APK CI pending |
-| Candidate / signing / APK / Drive / notes | existing protected procedures only | exact source, original cert, checksum, full readback | Protected workflow ready; GitHub exact-branch permission denied HTTP403; unsigned conformance pending |
+| Home/Search/Network/Library/Details/playback/backup/scan regressions | existing full test suite | build, lint, full suite + device checklist | Local and CI 1,068 cases pass with zero failures/errors/skips; native/binary checks pass; physical regressions pending |
+| Candidate / signing / APK / Drive / notes | existing protected procedures only | exact source, original cert, checksum, full readback | Full unsigned conformance and independent download verification pass; original-certificate signing/Drive APK delivery blocked by GitHub HTTP 403 |
 
 ## Missing visual evidence
 
@@ -44,18 +44,22 @@ No physical Shield is attached. Real Put.io account authorisation is unavailable
 
 - Hero navigation deferred the selected index until an outgoing animation completed and rejected inputs while animating. Cached inner cards also retained transforms. Selection now advances on each input and only the incoming container animates; cached transforms reset before reuse.
 - Removing the focused Put.io inline content allowed focus to transfer to the enclosing navigation. Replacement keeps focus inside the account target, then requests the actual new control; closed generations and owned auth pollers cannot steal it back later. Linking owns its error/configuration dialogs and checks closure again before a queued authorisation callback; test credentials/provider responses are simulated, not a real account. No authentication bypass or fabricated successful login.
-- Playback menu refresh removed a focused row before rebuilding it, allowing automatic focus to select the first tab. The selected tab now holds focus during replacement; row focus is restored afterwards. Native callbacks and persistence flushing remain attached.
+- Playback menu refresh removed a focused row before rebuilding it, allowing automatic focus to select the first tab. The selected tab now holds focus during replacement; row focus is restored afterwards, preserving the matching occurrence when track labels repeat. The duplicate-label regression failed before this correction and passes afterwards. Native callbacks and persistence flushing remain attached.
 - Licence pagination was a display-layer split, not separate legal obligations. Continuous bounded blocks preserve every character of all existing texts; consolidated entry points no longer require Previous/Next page actions. A local lint error caught an API33-only read and it was corrected to bounded API23-compatible streaming.
 - Edit Library must stay visible even when the left group overflows. It has a separate fixed trailing group and explicit D-pad edge links. Details spacing moves the whole tab/content section down, retaining card dimensions.
 
 ## Evidence index
 
+- `CI_CONFORMANCE.json`, `CI_NATIVE_BUILD.json`, `CI_NATIVE_RUNTIME.json`, `CI_NATIVE_WRAPPERS.json`: exact-source CI receipts, 64 decode comparisons, 24 rebuilt FFmpeg libraries and 88 packaged libraries.
+- `INDEPENDENT_UNSIGNED_APK_VERIFICATION.json`: whole 104 MB archive provider digest and complete APK verification; unsigned, not a signed delivery.
+- `CONFORMANCE_REVIEW.json`: all ten workstreams, 81 audit dispositions and 22 original Q cases accounted for.
 - `PLAYBACK_MIGRATION.md`: every audit control, action, indicator and B01–B14.
 - `LOCAL_INITIAL_TEST_RESULTS.json`: retained initial full-suite failures and lint finding; superseded, not a pass receipt.
-- `LOCAL_FULL_TEST_RESULTS.json`: complete final 1,067-case local suite, zero failures/errors/skips.
+- `LOCAL_FINAL_TEST_RESULTS.json`: final 1,068-case local suite and lint, zero failures/errors/skips; source 4f0937f1.
+- `LOCAL_FULL_TEST_RESULTS.json`: previous candidate 5109dd0c complete 1,067-case local suite, zero failures/errors/skips.
 - `LOCAL_ASSEMBLY_PROBE.json`: local shrunken unsigned assembly and resource checks; explicitly incomplete native payload, not for distribution.
 - `LOCAL_SOURCE_READBACK.json`: candidate application-source correspondence with the expected Foundation provider rewrite.
-- `LOCAL_TARGETED_TEST_RESULTS.json`:58 targeted cases and95 tooling cases; overlapping follow-up groups in LOCAL_LANGUAGE_TEST_RESULTS.json and LOCAL_AUTH_TEST_RESULTS.json.
+- `LOCAL_TARGETED_TEST_RESULTS.json`: 58 targeted cases and 95 tooling cases; overlapping follow-up groups in LOCAL_LANGUAGE_TEST_RESULTS.json and LOCAL_AUTH_TEST_RESULTS.json.
 - `NATIVE_CHAPTER_PROBE.json`, `fixtures/`: four-ABI wrapper compile and real API28 x86 embedded-MKV demux/metadata evidence, with limitations.
 - `LEGAL_INVENTORY.json`: complete current runtime/archive disclosure inventory.
 - `visual-evidence/`: actual native Android view renders; playback scene synthetic, no Shield claim.
