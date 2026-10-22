@@ -26,7 +26,7 @@
   "tooling_tests": 95,
   "tooling_failures": 0,
   "tooling_errors": 0,
-  "lint": "Running; final result recorded separately",
+  "lint": "Final layout lint passed, zero errors; final language/source lint receipt in LOCAL_LANGUAGE_TEST_RESULTS.json",
   "full_initial_suite": "See LOCAL_INITIAL_TEST_RESULTS.json: 1058 cases, four stale assertions since corrected; not a full pass",
   "physical_Shield": "Unavailable; no hardware or real account acceptance claimed"
 }

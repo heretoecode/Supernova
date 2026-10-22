@@ -32,6 +32,6 @@
     "errors": 1,
     "warnings": 1785,
     "error": "LicenseDisclosure used InputStream.readAllBytes (API33), replaced with bounded API23-compatible streaming before candidate freeze",
-    "final_candidate_result": "Pending rerun"
+    "final_candidate_result": "Corrected API33 read; final candidate lint passed with zero errors, see LOCAL_LANGUAGE_TEST_RESULTS.json"
   }
 }

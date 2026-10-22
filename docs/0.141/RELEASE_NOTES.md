@@ -8,6 +8,6 @@ Implementation and validation in progress; no signed APK or delivery claimed yet
 - Hero rapid-reversal correction and prompt selection; Library row centring, Statistics value centring and shared toolbar opacity; Edit Library pinned right;22dp Details card/tab gap.
 - All notice pagination replaced by continuous searchable disclosure. Existing60 legal component texts/notices retained; current runtime inventory checked separately.
 - Central language/region icon mapping across playback and choice renderers; neutral icons for language-only codes, no arbitrary country inference. Shared keyboard gets compact one-line input and dedicated `. , / \\`, retaining bottom-left Caps Lock and all actions.
-- Put.io inline account focus replacement/re-entry and pending-auth cleanup corrected. Real account sign-in remains owner/device acceptance, a release-blocking integration gate.
+- Put.io inline account focus replacement/re-entry and pending-auth/error-dialog cleanup and queued completion-after-close corrected. Real account sign-in remains owner/device acceptance, a release-blocking integration gate.
 
 No physical Shield pass, signed upgrade, hardware output, real account/provider/SAF or full storage round trip is implied by automated tests. See [acceptance checklist](SHIELD_QA.md) and [implementation/evidence ledger](IMPLEMENTATION.md). No merge into main is authorised.

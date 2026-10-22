@@ -1,0 +1,22 @@
+{
+  "checked_at_utc": "2026-10-22T21:57:37.280788+00:00",
+  "kind": "Final Put.io lifecycle simulation and actual inline disconnected focus",
+  "classes": 1,
+  "tests": 5,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "cases": [
+    "closingPendingAccountWorkPreventsLateFocusSteal",
+    "linkingErrorDialogIsOwnedAndClosingCannotLeaveItAboveCloudServices",
+    "initialAndRepeatedDisconnectedReplacementNeverFallsToHome",
+    "cancellingPendingLinkStopsPollingAndLateCompletionCannotReenter",
+    "simulatedExternalApprovalReturnsOnceThroughSecureStore"
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 1785
+  },
+  "provider_authentication": "Simulated OAuth responses and secure-store mock; real Put.io authorisation NOT RUN",
+  "earlier_simulation_failure": "First success simulation waited on an unrelated task in the two-thread IO pool; corrected harness to await the actual operation Future. Initial full-suite run of 8e0ba16d interrupted/superseded for lifecycle correction; no pass claimed."
+}
