@@ -46,3 +46,5 @@ Credential limitation: the non-SMB correction preserves email-style usernames fo
 
 
 Form scroll verification uses the semantic Connect action container, not partial text matching against its explanatory paragraph. The initial new assertion matched that paragraph and was corrected; its failure is not evidence of a product focus defect. Existing geometric traversal is retained unless the corrected regression establishes a failure.
+
+Final form contract: choosing a protocol focuses Server / Address; keyboard Done returns to the edited field; Save/Show toggles retain their own focus. Posted focus work is fenced by the listing generation so leaving the form cannot retarget a later section. WebDAV HTTP and plain FTP explicitly disclose that the connection is unencrypted; saved-credential storage copy does not imply credentials are never sent to the selected server. These presentation/focus details preserve existing transport and persistence handlers.

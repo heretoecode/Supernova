@@ -45,7 +45,7 @@ public class Network142Test {
  @Test public void switchingSectionsRestoresLastFolder(){select("local_storage");Uri deep=Uri.parse("file:///fixture-usb/Movies");browser.open(deep);select("network_shares");select("local_storage");assertEquals(deep,browser.location());}
  @Test public void everySupportedRecoveryAliasKeepsHostPortPath(){
   for(String scheme:new String[]{"smb","smbj","webdav","webdavs","sftp","sshj","ftp","ftps"}){
-   ReflectionHelpers.callInstanceMethod(browser,"launchCredentials",ReflectionHelpers.ClassParameter.from(Uri.class,Uri.parse(scheme+"://NAS:123/Shows/Season%201")));layout();String[] fields=ReflectionHelpers.getField(browser,"connection");assertEquals(scheme,"NAS",fields[0]);assertEquals("123",fields[1]);assertEquals("/Shows/Season 1",fields[2]);assertNotNull(PreviewPagesTest.findText(browser,"Password: "));
+   ReflectionHelpers.callInstanceMethod(browser,"launchCredentials",ReflectionHelpers.ClassParameter.from(Uri.class,Uri.parse(scheme+"://NAS:123/Shows/Season%201")));layout();String[] fields=ReflectionHelpers.getField(browser,"connection");assertEquals(scheme,"NAS",fields[0]);assertEquals("123",fields[1]);assertEquals("/Shows/Season 1",fields[2]);assertNotNull(PreviewPagesTest.findText(browser,"Password: "));if(scheme.equals("webdav"))assertNotNull(PreviewPagesTest.findText(browser,"WebDAV HTTP does not encrypt"));
   }
  }
  @Test public void failedNavigationClearsOldFilesAndRetryIsUnique(){
@@ -63,7 +63,7 @@ public class Network142Test {
   androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get()).edit().putInt("supernova_browser_sort",4).commit();ReflectionHelpers.callInstanceMethod(browser,"sortFiles");assertSame(z,files.get(0));
  }
  @Test public void connectionFormRetainsRailAndAllSupportedFields()throws Exception{
-  select("network_shares");PreviewPagesTest.findText(browser,"Add Network Source").performClick();layout();PreviewPagesTest.findText(browser,"WebDAV HTTPS").performClick();layout();assertNotNull(PreviewPagesTest.findText(browser,"Server / Address: "));assertNotNull(PreviewPagesTest.findText(browser,"Save Password: On"));assertTrue(rail("network_shares").isShown());PreviewPagesTest.capture(browser,"0142-connection-form");
+  select("network_shares");PreviewPagesTest.findText(browser,"Add Network Source").performClick();layout();PreviewPagesTest.findText(browser,"WebDAV HTTPS").performClick();layout();assertNotNull(PreviewPagesTest.findText(browser,"Server / Address: "));assertSame("Protocol choice enters the first required input",PreviewPagesTest.findText(browser,"Server / Address: "),browser.findFocus());assertNotNull(PreviewPagesTest.findText(browser,"Save Password: On"));assertTrue(rail("network_shares").isShown());View username=PreviewPagesTest.findText(browser,"Username: ");username.performClick();android.app.Dialog keyboard=org.robolectric.shadows.ShadowDialog.getLatestDialog();keyboard.getWindow().getDecorView().findViewWithTag("semantic:keyboard:Done").performClick();layout();assertSame("Keyboard Done returns to the edited field",PreviewPagesTest.findText(browser,"Username: "),browser.findFocus());PreviewPagesTest.capture(browser,"0142-connection-form");
   ReflectionHelpers.setField(browser,"connectionDirty",true);select("local_storage");assertNotNull(org.robolectric.shadows.ShadowDialog.getLatestDialog());assertEquals(2,(int)ReflectionHelpers.getField(browser,"section"));
  }
  @Test public void sourceRefreshPreservesFocusAndUpdatesVolumeRows(){

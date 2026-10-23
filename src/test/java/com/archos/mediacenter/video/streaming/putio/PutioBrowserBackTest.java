@@ -17,7 +17,7 @@ public class PutioBrowserBackTest {
         try{
             PutioBrowserActivity activity=controller.get();
             activity.getOnBackPressedDispatcher().onBackPressed();
-            assertEquals(0L,(long)ReflectionHelpers.getField(activity,"folder"));assertFalse(activity.isFinishing());
+            PutioBrowserController browser=ReflectionHelpers.getField(activity,"controller");assertEquals(0L,browser.folder());assertFalse(activity.isFinishing());
             activity.getOnBackPressedDispatcher().onBackPressed();assertTrue(activity.isFinishing());
         }finally{controller.pause().stop().destroy();}
     }

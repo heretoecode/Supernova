@@ -11,14 +11,14 @@
     "version": "0.142",
     "version_code": 142,
     "date": "2026-10-23",
-    "kind": "Development candidate \u2014 release validation in progress",
+    "kind": "Development / Shield QA candidate \u2014 physical acceptance pending",
     "notes": [
       "Network & Files: six permanent destinations and one flexible workspace, four Overview cards, monochrome icons, existing global navigation and source workflows.",
       "Preserves local/USB, network protocols, saved locations, staged library changes, scanning, Library Health and Put.io account/association/read-only browsing.",
       "Network credential recovery, hostname matching, email-style non-SMB usernames, discovery ownership, stale listing and retry corrections; verification status is recorded in the 0.142 evidence.",
       "Edit Library: darker backdrop and panels across the five steps, retaining layout, Live Preview and controls.",
       "Playback HUD proposal only. Delivered playback design and implementation remain unchanged.",
-      "Not delivered: physical Shield/provider/USB, visual acceptance and signed APK verification remain release gates."
+      "Physical NVIDIA Shield, real provider/USB, visual and signed-upgrade acceptance remain separate requirements. This is not a public or main release."
     ]
   },
   "history": [
