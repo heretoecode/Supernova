@@ -20,7 +20,7 @@ Global visual authority: docs/design/GLOBAL_VISUAL_SYSTEM.md. This document supe
 R1: latest revised monochrome Overview image, generated 2026-10-23, image generation ID 40e38f25-296a-4046-a516-bed2e8ea4214. Composition reference for overall dashboard, fixed rail, four vertical cards, no Quick Actions, bare monochrome icons.
 R2: WebDAV nine-state storyboard, generation ID 80d72529-0842-471c-8ee9-9b2401bee454. Visual reference for connection list, protocol selection, form, validation, progress, success, failure, return to browsing.
 R3: Put.io nine-state storyboard, generation ID 0a2bbc04-4398-4480-ac74-0ccbd749a4c3. Visual reference for cloud account entry, device authorisation, pending/success/failure, connected account and browse.
-IMPORTANT: image generation IDs are provenance references, NOT image files. Actual reference PNG bytes must be committed to docs/design/assets/network-files/ and their SHA-256 recorded before pixel-accurate implementation. Do NOT claim that these images are currently repository assets. The mock-up names/URLs/IPs/capacities/statuses are placeholders. R3 depicts Google Drive/Dropbox/OneDrive and manual API token; these are NOT authorised features. R2's 'Test Connection' and R3's simplified authorisation screens are aspirational; validate exact backend flow and don't invent API semantics.
+IMPORTANT: Original PNGs are NOW COMMITTED under docs/design/assets/network-files/; see section 20 and the asset README for actual filenames, byte sizes and Git blob hashes. The generation IDs remain provenance references, not file paths. The mock-up names/URLs/IPs/capacities/statuses are placeholders. R3 depicts Google Drive/Dropbox/OneDrive and manual API token; these are NOT authorised features. R2's 'Test Connection' and R3's simplified authorisation screens are aspirational; validate exact backend flow and don't invent API semantics.
 
 ## 3. Coordinate and layout contract
 Canvas 1920×1080 logical px; preserve existing global top navigation, not the mock-up's simplified wordmark-only header. The screen content begins below the global nav fade/safe area, with no extra duplicate top bar.
@@ -94,7 +94,7 @@ All Files: root, nested folder, breadcrumb, filter, sort, empty, loading, retry,
 Library Health: five categories, empty, populated, actions, background scan changes.
 
 ## 13. Acceptance and evidence gate
-1. First commit actual R1/R2/R3 PNG files into docs/design/assets/network-files/ with filenames and SHA-256. Until this happens, visual references are conversation-only and exact pixel matching is NOT verifiable from GitHub.
+1. COMPLETED: R1/R2/R3 original PNGs uploaded and verified in docs/design/assets/network-files/; see the asset README for exact paths, sizes and Git blob hashes. Before pixel-perfect implementation, Codex must inspect images and compare against Android captures.
 2. Codex should derive actual XML/Compose dimensions/font family and shared token values from existing code; publish a token mapping and screenshot overlay at 1920×1080. Values above are blueprint targets; any necessary deviations require an explicit recorded reason, not guessing.
 3. Map every FD-003 control group (92), screen family (28), source-confirmed conditional issue (15), and Shield QA case (67) to preserved/replaced/retired with reason. Do not assume an image storyboard covers them all.
 4. Create screen-by-screen screenshots for R1/R2/R3 at key states and compare geometry, monochrome icon treatment, text wrapping and D-pad focus path. No visual 'pass' without side-by-side evidence.
@@ -249,5 +249,11 @@ A screenshot set must include S01 Overview; S02 local populated/empty; S03 netwo
 
 For acceptance: (1) source parity ledger complete, (2) all actionable FD-003 findings addressed or individually risk-accepted, (3) automated navigation tests, (4) real SMB/WebDAV including email-style usernames, (5) Put.io device code/association, (6) mounted/unmounted USB, (7) background scanning/focus stability, (8) owner Shield screenshots and remote tests. No claims of visual parity or implementation readiness until evidence exists.
 
-## 20. Reference asset delivery status
-The three actual PNGs exist in the ChatGPT conversation as generated images, but **are not yet present in this GitHub branch**. The IDs in §2 are not downloadable binary references for Codex. Upload is a separate required delivery gate; until completed, Codex must not claim pixel-level fidelity to them. The blueprint itself remains safely usable for technical review and planning. No APK or app source is modified by this documentation update.
+## 20. Reference asset delivery status — VERIFIED UPLOADED
+All three original PNGs have been uploaded by the owner and verified on this documentation branch. See [asset README](assets/network-files/README.md) for exact files, byte sizes and Git blob hashes.
+
+- R1 Overview: [PNG](assets/network-files/2C2FCA2A-7A91-487A-8837-DD106F93AAD2.png)
+- R2 WebDAV: [PNG](assets/network-files/75E72DD0-4878-4FF8-A4EE-8448F228A48E.png)
+- R3 Put.io: [PNG](assets/network-files/52D674B6-1502-4657-A583-551556A51FE5.png)
+
+Visual references are now available to Codex in GitHub; source capability audit, token mapping, parity ledger and Shield verification remain outstanding. This documentation update is not implementation authorisation.
