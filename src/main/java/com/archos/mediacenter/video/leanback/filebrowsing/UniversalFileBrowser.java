@@ -40,7 +40,8 @@ public final class UniversalFileBrowser extends LinearLayout {
     private static final String GRID = "supernova_browser_grid", SORT = "supernova_browser_sort";
     private final SharedPreferences prefs;
     private final BrowserSelection selection;
-    private final LinearLayout left, centre, right, toolbar, crumbs, items, actions;
+    private LinearLayout left;
+    private final LinearLayout centre, right, toolbar, crumbs, items, actions;
     private final FrameLayout itemScroll;private final ScrollView informationScroll, contextScroll;
     private final PreviewFocusRecycler fileList;private final GridLayoutManager fileLayout;private final FileAdapter fileAdapter=new FileAdapter();
     private final Map<String,int[]> listPositions=new HashMap<>();private String sourceFingerprint="";
@@ -139,6 +140,8 @@ public final class UniversalFileBrowser extends LinearLayout {
     /** Main Network & Files opts in; onboarding and writable-folder hosts retain their contracts. */
     public void networkWorkspace(){
         if(networkLayout!=null)return;
+        LinearLayout previousRail=left;PreviewFocusRail focusRail=new PreviewFocusRail(getContext());focusRail.setOrientation(VERTICAL);
+        while(previousRail.getChildCount()>0){View row=previousRail.getChildAt(0);previousRail.removeView(row);focusRail.addView(row);}left=focusRail;
         removeAllViews();networkLayout=new NetworkFilesLayout(getContext(),left,centre,right,contextScroll,itemScroll,items);
         addView(networkLayout,new LayoutParams(-1,-1));
         for(int n=0;n<3;n++)right.getChildAt(n).setVisibility(GONE);
@@ -225,7 +228,12 @@ public final class UniversalFileBrowser extends LinearLayout {
     public void directoryPicker(Consumer<Uri> selected){directoryChoice=selected;legacyRootsReady=true;toolbar.findViewWithTag("browser.all_files").setVisibility(GONE);}
     public Uri location() { return current; }
     public boolean atTop() { return !locations.isEmpty()&&locations.get(0).hasFocus(); }
-    public boolean focusOverview() { return !locations.isEmpty()&&locations.get(0).requestFocus(); }
+    public boolean focusOverview() {
+        if(networkLayout!=null&&(section!=0||current!=null||sectionChild)){
+            requestExit(()->{if(current!=null&&suppliedDock==null)sectionLocations.put(section,current);section=0;leftAnchor=overview;centreAnchor=null;showOverview();overview.requestFocus();});return true;
+        }
+        return !locations.isEmpty()&&locations.get(0).requestFocus();
+    }
     /** Providers keep their account API and item adapter, within the same panel shell. */
     public void providerDock(View dock,Uri uri) {
         workspaceMode(true);suppliedDock=dock;current=uri;
@@ -268,7 +276,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(networkLayout!=null){
             boolean rebuild=locations.size()!=6;
             if(rebuild){left.removeAllViews();locations.clear();String[] names={"Overview","Local Storage","Network Shares","Cloud Services","All Files","Library Health"};String[] tags={"overview","local_storage","network_shares","cloud_services","all_files","library_health"};String[] icons={"grid","local","network","cloud","folder","health"};
-                for(int n=0;n<names.length;n++){final int destination=n;TextView row=n==0?overview:action(names[n],()->selectSection(destination));row.setText(names[n]);row.setOnClickListener(v->selectSection(destination));row.setOnFocusChangeListener((v,yes)->{});row.setTag("semantic:network.category."+tags[n]);row.setMinHeight(dp(38));row.setTextSize(13);row.setSingleLine(false);row.setMaxLines(2);PreviewIcon.apply(row,icons[n],15);row.setCompoundDrawablePadding(dp(10));locations.add(row);LayoutParams size=new LayoutParams(-1,-2);size.bottomMargin=dp(4);left.addView(row,size);}
+                for(int n=0;n<names.length;n++){final int destination=n;TextView row=n==0?overview:action(names[n],()->selectSection(destination));row.setText(names[n]);row.setBackground(null);row.setOnClickListener(v->selectSection(destination));row.setOnFocusChangeListener((v,yes)->{});row.setTag("semantic:network.category."+tags[n]);row.setMinHeight(dp(38));row.setTextSize(13);row.setSingleLine(false);row.setMaxLines(2);PreviewIcon.apply(row,icons[n],15);row.setCompoundDrawablePadding(dp(10));locations.add(row);LayoutParams size=new LayoutParams(-1,-2);size.bottomMargin=dp(4);left.addView(row,size);}
                 leftAnchor=overview;section=0;showOverview();
             }else if(current==null&&!sectionChild&&(section==0||section==1||section==2||section==4)){
                 View focused=items.findFocus();Object identity=focused==null?null:focused.getTag();boolean contentFocused=items.hasFocus();int scroll=networkLayout.scrollPosition();

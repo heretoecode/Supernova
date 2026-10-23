@@ -16,7 +16,7 @@ Owner's 2026-10-23 instruction authorises A/B implementation and HUD proposal on
 | Rail row76 / icon30 / text25 nominal | SharedThreePanel.accentAction, PreviewIcon | 38dp minimum rows with wrap-content for font scale; icon15dp, 12.5sp at baseline density mapping; retain readable action18sp where interaction requires it |
 | Main title40 / subtitle21 | SharedThreePanel.text | 20sp heading / 11sp subtitle baseline; inherited font scaling |
 | Card radius18 / gap14 / padding22 | SharedThreePanel.decorate | Reuse dark gradient/border family, network-specific 9dp radius /7dp gap /11dp padding |
-| Focus2px, blue | PreviewAccent.color, SharedThreePanel.accentFocus | Existing accent resource/preference; no hardcoded replacement blue; monochrome icons |
+| Focus2px, blue | PreviewAccent.color, SharedThreePanel.accentFocus | Existing PreviewFocusRail with its 160ms travelling PreviewFocusGlow; existing accent resource/preference, no hardcoded replacement blue; monochrome icons |
 | S01 O10/O20/O30/O40 | Box inventory, canonical shares, Put.io enabled/token presence, PreviewLibraryScan/LibraryHealth | Four vertical cards; no fake reachability/quota/capacity. Account state without a successful probe is labelled saved connection, not connected |
 | S02 L01–L06 | Box/ExtStorageManager, UniversalFileBrowser.open | Actual volume rows in workspace, explicit OK browse; no auto inclusion or storage removal |
 | S03 W01–W13 | networkShares/discoverDevices/scanControls | Source list + supported Add/Discover/Scanning controls within workspace; no seventh rail item |
@@ -41,3 +41,8 @@ Audit L-01 is stale relative to delivered source: PreviewKeyboard already includ
 Not yet run. Physical Shield, USB and real account/provider acceptance remain separate release gates. No signed APK or fidelity claim at this checkpoint.
 
 Inline Put.io cancellation returns to Cloud Services (or a neutral cancelled reader in a host without a return callback). It must never bypass a different-account ownership decision or implicitly resume a suspended association. No account/source mutation occurs on Cancel or Finish Later.
+
+Credential limitation: the non-SMB correction preserves email-style usernames for new or re-entered credentials. It cannot safely reconstruct an already truncated username from an older stored record; affected connections need explicit credential re-entry. Existing storage schema, encryption keys, scope boundaries, path case and protocol identity remain unchanged. Save Password still follows the existing persistence semantics; Connect is not a claim of successful authentication or a durable saved browsing location.
+
+
+Form scroll verification uses the semantic Connect action container, not partial text matching against its explanatory paragraph. The initial new assertion matched that paragraph and was corrected; its failure is not evidence of a product focus defect. Existing geometric traversal is retained unless the corrected regression establishes a failure.

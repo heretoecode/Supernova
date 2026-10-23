@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-23 20:25:19 UTC",
+  "signing_dispatched": false,
+  "signed_0142_apk": null,
+  "download_link_0142": null,
+  "physical_shield_attached": false,
+  "physical_qa_cases": 67,
+  "physical_qa_passed": 0,
+  "signing_environment": "supernova-foundation-signing",
+  "new_branch_currently_permitted": false,
+  "environment_policies_changed": false,
+  "drive_apk_folder": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "existing_apks": [
+    {
+      "id": "1zl46kal8Q0x0gG5KFK_NBtfgBENrj0uC",
+      "name": "Supernova_0.141.apk",
+      "bytes": "87899088"
+    },
+    {
+      "id": "1JEYAXNKw4gGPgEx0xUjATDXES1bI158T",
+      "name": "Supernova_0.140.apk",
+      "bytes": "87890896"
+    },
+    {
+      "id": "1CPyP8pK1ggEjTl1BPepAvDxzsrz_ocgb",
+      "name": "Supernova_0.139.apk",
+      "bytes": "87874512"
+    },
+    {
+      "id": "1w3tJRfyvBv0c16OKYzKFVlF22ou9SS_R",
+      "name": "Supernova_0.139.apk",
+      "bytes": "87874512"
+    },
+    {
+      "id": "1rWpKsPTJ564oOQsvnkJSJASaRN6UbwZX",
+      "name": "Supernova_0.139.apk",
+      "bytes": "87874512"
+    },
+    {
+      "id": "1_KdbMEUyTDPEYjmKD-UDG4hud-EBCJlO",
+      "name": "Supernova_0.138.apk",
+      "bytes": "103518717"
+    },
+    {
+      "id": "1Jc1UnpDufFQdUAMHBSvbSOIeMQojRLpd",
+      "name": "Supernova_0.137.apk",
+      "bytes": "102256880"
+    },
+    {
+      "id": "1Z_dRagpHpjG1mKb3ar-41-REEuOAO13i",
+      "name": "Supernova_0.136.apk",
+      "bytes": "102248688"
+    }
+  ],
+  "existing_html": {
+    "id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+    "modified_time": "2026-10-23T11:18:07.136Z",
+    "bytes": "33743"
+  },
+  "drive_files_written": false,
+  "notes": [
+    "Existing signing certificate and established workflows retained.",
+    "No signing or APK upload before mandatory release requirements and approvals are satisfied.",
+    "Google Drive current file metadata and APK folder read successfully; this is not a new binary download verification."
+  ]
+}

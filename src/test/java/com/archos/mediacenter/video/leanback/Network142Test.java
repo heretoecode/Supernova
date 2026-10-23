@@ -50,7 +50,7 @@ public class Network142Test {
  }
  @Test public void failedNavigationClearsOldFilesAndRetryIsUnique(){
   browser.open(Uri.parse("file:///fixture-usb"));List<MetaFile2> files=ReflectionHelpers.getField(browser,"files");MetaFile2 old=mock(MetaFile2.class);when(old.getName()).thenReturn("old file");when(old.getUri()).thenReturn(Uri.parse("file:///fixture-usb/old.mkv"));files.add(old);
-  browser.open(Uri.parse("webdavs://unavailable.test/other"));assertTrue(((List<?>)ReflectionHelpers.getField(browser,"files")).isEmpty());
+  browser.open(Uri.parse("file:///unavailable-fixture/other"));assertTrue(((List<?>)ReflectionHelpers.getField(browser,"files")).isEmpty());
   for(int i=0;i<4;i++)ReflectionHelpers.callInstanceMethod(browser,"failed",ReflectionHelpers.ClassParameter.from(String.class,"Fixture failure"));
   LinearLayout actions=ReflectionHelpers.getField(browser,"actions");int retries=0;for(int n=0;n<actions.getChildCount();n++)if(actions.getChildAt(n) instanceof TextView&&((TextView)actions.getChildAt(n)).getText().equals("Retry"))retries++;assertEquals(1,retries);
  }
@@ -74,6 +74,13 @@ public class Network142Test {
  }
  @Test public void absentScanOnReturnPreferenceMatchesRuntimeOffDefault(){
   androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get()).edit().remove("auto_rescan_on_app_restart").commit();select("network_shares");PreviewPagesTest.findText(browser,"Network Scanning").performClick();layout();assertNotNull(PreviewPagesTest.findText(browser,"On Open / Return: Off"));
+ }
+ @Test public void connectionConnectActionScrollsFullyIntoViewWithRemote()throws Exception{
+  select("network_shares");PreviewPagesTest.findText(browser,"Add Network Source").performClick();layout();PreviewPagesTest.findText(browser,"WebDAV HTTPS").performClick();layout();
+  View connect=PreviewPagesTest.findText((View)ReflectionHelpers.getField(browser,"actions"),"Connect");assertNotNull(connect);StringBuilder trace=new StringBuilder();for(int n=0;n<16&&!connect.hasFocus();n++){View focus=browser.findFocus();trace.append(focus instanceof TextView?((TextView)focus).getText():focus==null?"null":focus.getClass().getSimpleName()).append(" -> ");key(KeyEvent.KEYCODE_DPAD_DOWN);}PreviewPagesTest.capture(browser,"0142-form-connect-focus");assertTrue("D-pad reaches Connect below form controls: "+trace,connect.hasFocus());android.graphics.Rect visible=new android.graphics.Rect();assertTrue(connect.getGlobalVisibleRect(visible));assertEquals("Focused action is fully revealed",connect.getHeight(),visible.height());
+ }
+ @Test public void globalEntrySelectsOverviewAndRetainsTheSectionFolderForLaterReturn(){
+  select("local_storage");Uri deep=Uri.parse("file:///fixture-usb/Movies/Series");browser.open(deep);layout();assertTrue(browser.focusOverview());layout();assertEquals(0,(int)ReflectionHelpers.getField(browser,"section"));assertSame(rail("overview"),browser.findFocus());select("local_storage");assertEquals(deep,browser.location());
  }
  @Test public void cloudAndHealthRemainReachable()throws Exception{select("cloud_services");assertNotNull(PreviewPagesTest.findText(browser,"Enabled: On"));PreviewPagesTest.capture(browser,"0142-cloud-disconnected");select("library_health");for(String name:LibraryHealthPanel.NAMES)assertNotNull(name,PreviewPagesTest.findText(browser,name));PreviewPagesTest.capture(browser,"0142-library-health");}
 }
