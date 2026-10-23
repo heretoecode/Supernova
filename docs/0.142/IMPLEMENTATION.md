@@ -38,7 +38,7 @@ Audit L-01 is stale relative to delivered source: PreviewKeyboard already includ
 
 ## Verification
 
-Not yet run. Physical Shield, USB and real account/provider acceptance remain separate release gates. No signed APK or fidelity claim at this checkpoint.
+Final application candidate: `08a896b1bee6a058053617fa7aa36c09773385d2`. The prior complete local run executed 1,094 tests with four obsolete-path/introspection failures (archived in test-runs/full-pre-final.json); the corrected paths and final form contract pass in a 51-test final-candidate rerun, zero failures/errors/skips. Final lint also completes with zero errors and 1,788 warnings. Repository tooling: 102 tests pass. Clean exact-source CI is [run 40023022572](https://github.com/heretoecode/Supernova/actions/runs/40023022572); its outcome must be recorded before claiming conformance. Capture harness `51e1ac59` changes tests only: recursive descendant invalidation prevents missing cached static text in repeated native software screenshots; all eight frames pass saved-pixel brand/rail-presence checks. Application inputs remain unchanged from `08a896b1`. Physical Shield, USB and real account/provider acceptance remain separate release gates. No signed APK or physical fidelity claim.
 
 Inline Put.io cancellation returns to Cloud Services (or a neutral cancelled reader in a host without a return callback). It must never bypass a different-account ownership decision or implicitly resume a suspended association. No account/source mutation occurs on Cancel or Finish Later.
 

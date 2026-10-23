@@ -1,5 +1,6 @@
 {
-  "application_source": "f70654be0bf184c612ea4d127acf668c3d93a14c",
+  "application_source": "08a896b1bee6a058053617fa7aa36c09773385d2",
+  "capture_harness_source": "51e1ac5983f97330c369858a75944b7a26cd445e",
   "renderer": "Native Android views / controlled fixtures",
   "physical_shield_verified": false,
   "visual_acceptance": "PENDING",
@@ -50,7 +51,7 @@
       "file": "network/0142-shell-webdav-form.png",
       "width": 1920,
       "height": 1080,
-      "sha256": "512a95df72256e904d376327747fd2b74415d7344d63fd831a6fa447cb8bac46"
+      "sha256": "2c19140e7ecc3ce21b3a9a89f059f1c0ed17abb38c67dbdc4a29190c53c14bab"
     }
   ],
   "references": [

@@ -1,11 +1,11 @@
 {
-  "application_source": "f70654be0bf184c612ea4d127acf668c3d93a14c",
+  "application_source": "08a896b1bee6a058053617fa7aa36c09773385d2",
   "prepared_git_head": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
-  "scope": "Every changed application/resource/asset input matches the frozen commit. Build copy retains provider isolation preparation and its original Git metadata; local results are not APK provenance proof.",
+  "scope": "All changed application/resource/asset/test inputs match checked_content_commit. Only Network142RenderTest differs from application_source: invalidation and glyph-presence assertions for faithful software screenshots. Application inputs remain byte-identical to application_source. Prepared build retains provider isolation and old Git metadata; local results do not prove APK provenance.",
   "files": [
     {
       "path": "assets/foundation/release-history.json",
-      "sha256": "818a9cb42afd9b5c1e521ede9196b47f074032d5fbaf7c8aee005041282c5c8f",
+      "sha256": "2d3d5247b0bb9db3ed2dd832a5c56e9e12b3fcae9733115265a7fb7f1b95cf40",
       "prepared_copy_matches": true
     },
     {
@@ -45,7 +45,7 @@
     },
     {
       "path": "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
-      "sha256": "e6c21fc8995ba416f188846e4ddd6b4adf93eef5192de961a162cc0e728868fb",
+      "sha256": "ac9a00fa1bd48d48e37fd6f1635f50385f3a743b2137e4ecc44d83b1d96a9e8e",
       "prepared_copy_matches": true
     },
     {
@@ -85,12 +85,12 @@
     },
     {
       "path": "src/test/java/com/archos/mediacenter/video/leanback/Network142RenderTest.java",
-      "sha256": "d0306fdb259b03a8338a237502c176ab1743b5d455bcafed89a56b601bf4b963",
+      "sha256": "dc345c473817ccbc8a518bcddc0b21f9726d03e74ccfd7013e774d44420c0fac",
       "prepared_copy_matches": true
     },
     {
       "path": "src/test/java/com/archos/mediacenter/video/leanback/Network142Test.java",
-      "sha256": "4c244c0127e693718bfec744f3aef6416ad0d363f8bb65b90735d06f5f4da9de",
+      "sha256": "c99046013fe4538c877f77c5307b1ea4ae8da7afc8ea2373e6560c64d50b77e4",
       "prepared_copy_matches": true
     },
     {
@@ -104,8 +104,23 @@
       "prepared_copy_matches": true
     },
     {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewPagesTest.java",
+      "sha256": "07e3f8690e3ef3be08523048560d0e80f24210ddc69ab5aee798d473aac1a5b7",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewSourceRemovalTest.java",
+      "sha256": "59d80b4c90f73a6b19f0fe45f96d323cb447a03467692ed9c0a1b4ef29a7e3e6",
+      "prepared_copy_matches": true
+    },
+    {
       "path": "src/test/java/com/archos/mediacenter/video/streaming/putio/Network142PutioTest.java",
       "sha256": "bbfb1450e58c87d07bcc05ce6e50020e88495c2988b6dd97c258a4b699fe3f18",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/streaming/putio/PutioBrowserBackTest.java",
+      "sha256": "b2e0df75afd5a6ae6a590cef01c1615eb28e6b063df96dfe81d2c3eece18fe42",
       "prepared_copy_matches": true
     },
     {
@@ -118,5 +133,6 @@
       "sha256": "0d3a1a3925160d3129199610c56343ba653d11bb07eaded7f0ae41108e808b44",
       "prepared_copy_matches": true
     }
-  ]
+  ],
+  "checked_content_commit": "51e1ac5983f97330c369858a75944b7a26cd445e"
 }

@@ -4,7 +4,7 @@
     "baseline": "Network & Files \u2192 Overview",
     "destination": "S01",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L255\u2013267](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L255-L267); [SCAN L106\u2013121](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java#L106-L121)",
     "retired_approval": "None; no retirement"
   },
@@ -13,7 +13,7 @@
     "baseline": "Local Storage parent and volume children",
     "destination": "S02",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L197\u2013228](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L197-L228)",
     "retired_approval": "None; no retirement"
   },
@@ -22,7 +22,7 @@
     "baseline": "Shared folder/file listing",
     "destination": "S05",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L270\u2013379](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L270-L379)",
     "retired_approval": "None; no retirement"
   },
@@ -31,7 +31,7 @@
     "baseline": "Selected item / current-folder Information",
     "destination": "S05",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L381\u2013413](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L381-L413)",
     "retired_approval": "None; no retirement"
   },
@@ -40,7 +40,7 @@
     "baseline": "Network Shares",
     "destination": "S03",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L202\u2013226](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L202-L226)",
     "retired_approval": "None; no retirement"
   },
@@ -49,7 +49,7 @@
     "baseline": "Add Network Source",
     "destination": "S04",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L235\u2013236](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L235-L236)",
     "retired_approval": "None; no retirement"
   },
@@ -58,7 +58,7 @@
     "baseline": "Protocol selection",
     "destination": "S04",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L235\u2013236](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L235-L236)",
     "retired_approval": "None; no retirement"
   },
@@ -67,7 +67,7 @@
     "baseline": "Shared text/secret keyboard",
     "destination": "S04",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[INPUT L24\u201333](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java#L24-L33); [KB L13\u201388](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java#L13-L88)",
     "retired_approval": "None; no retirement"
   },
@@ -76,7 +76,7 @@
     "baseline": "Discover Devices",
     "destination": "S03",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L237\u2013239](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L237-L239)",
     "retired_approval": "None; no retirement"
   },
@@ -85,7 +85,7 @@
     "baseline": "Cloud Services \u2192 put.io",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L232\u2013233](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L232-L233)",
     "retired_approval": "None; no retirement"
   },
@@ -94,7 +94,7 @@
     "baseline": "Put.io loading / disconnected / reconnect / operation error",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[AC L25\u201364](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L25-L64)",
     "retired_approval": "None; no retirement"
   },
@@ -103,7 +103,7 @@
     "baseline": "Put.io device authorisation",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[AUTH L20\u201338](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAuthFlow.java#L20-L38); [CONFIG L2\u20137](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/values/putio_configuration.xml#L2-L7)",
     "retired_approval": "None; no retirement"
   },
@@ -112,7 +112,7 @@
     "baseline": "Connected Put.io account overview",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[AC L65\u201390](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L65-L90)",
     "retired_approval": "None; no retirement"
   },
@@ -121,7 +121,7 @@
     "baseline": "Put.io association folder picker",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[AC L92\u2013108](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L92-L108)",
     "retired_approval": "None; no retirement"
   },
@@ -130,7 +130,7 @@
     "baseline": "Put.io source/account change and disconnect decisions",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[AC L62\u201362](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L62-L62); [AC L99\u2013114](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L99-L114); [AC L142\u2013142](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L142-L142)",
     "retired_approval": "None; no retirement"
   },
@@ -139,7 +139,7 @@
     "baseline": "Put.io sync / reconciliation review",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[AC L83\u2013122](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L83-L122); [SYNC L26\u201379](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioSync.java#L26-L79)",
     "retired_approval": "None; no retirement"
   },
@@ -148,7 +148,7 @@
     "baseline": "Put.io API browser",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[PB L20\u201375](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioBrowserActivity.java#L20-L75); [SURFACE L16\u201335](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/PreviewBrowserSurface.java#L16-L35)",
     "retired_approval": "None; no retirement"
   },
@@ -157,7 +157,7 @@
     "baseline": "Put.io search and file-information readers",
     "destination": "S06",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[AC L125\u2013140](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java#L125-L140); [READ L63\u201383](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/streaming/putio/PutioReadClient.java#L63-L83)",
     "retired_approval": "None; no retirement"
   },
@@ -166,7 +166,7 @@
     "baseline": "Network Scanning and Sources Included",
     "destination": "S03",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L146\u2013154](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L146-L154); [NS L14\u201349](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java#L14-L49)",
     "retired_approval": "None; no retirement"
   },
@@ -175,7 +175,7 @@
     "baseline": "Library Health overview and five review categories",
     "destination": "S07",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[HL L15\u201332](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java#L15-L32); [B L219\u2013219](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L219-L219)",
     "retired_approval": "None; no retirement"
   },
@@ -184,7 +184,7 @@
     "baseline": "Saved Locations",
     "destination": "S05",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L220\u2013221](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L220-L221); [B L406\u2013410](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L406-L410); [SAVE L21\u201322](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewFolderActions.java#L21-L22)",
     "retired_approval": "None; no retirement"
   },
@@ -193,7 +193,7 @@
     "baseline": "Unsaved library changes review",
     "destination": "S05",
     "status": "moved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L415\u2013447](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L415-L447)",
     "retired_approval": "None; no retirement"
   },
@@ -202,7 +202,7 @@
     "baseline": "Home initial-library / onboarding browser variant",
     "destination": "Home onboarding",
     "status": "preserved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[PAGES L683\u2013691](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L683-L691); [B L72\u201372](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L72-L72); [B L371\u2013413](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L371-L413)",
     "retired_approval": "None; no retirement"
   },
@@ -211,7 +211,7 @@
     "baseline": "Local writable-folder picker variant",
     "destination": "Local picker",
     "status": "preserved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[PICKER L99\u2013138](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/utils/FolderPicker.java#L99-L138); [B L396\u2013400](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L396-L400)",
     "retired_approval": "None; no retirement"
   },
@@ -220,7 +220,7 @@
     "baseline": "Legacy/compatibility NetworkRoot activity",
     "destination": "Compatibility host",
     "status": "preserved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[NR L155\u2013162](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkRootFragment.java#L155-L162); [NR L267\u2013305](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkRootFragment.java#L267-L305); [PAGES L483\u2013484](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L483-L484)",
     "retired_approval": "None; no retirement"
   },
@@ -229,7 +229,7 @@
     "baseline": "Legacy source-options and native credential modals",
     "destination": "Compatibility host",
     "status": "preserved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[ND L201\u2013253](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkShortcutDetailsFragment.java#L201-L253); [ND L289\u2013359](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkShortcutDetailsFragment.java#L289-L359); [LF L268\u2013294](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/ListingFragment.java#L268-L294); [NC L128\u2013170](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkServerCredentialsDialog.java#L128-L170)",
     "retired_approval": "None; no retirement"
   },
@@ -238,7 +238,7 @@
     "baseline": "Handoffs from browsing",
     "destination": "Details / ACTION_VIEW",
     "status": "preserved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[B L375\u2013379](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L375-L379); [PLAY L413\u2013455](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/utils/PlayUtils.java#L413-L455); [DETAILS L928\u2013951](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsFragment.java#L928-L951)",
     "retired_approval": "None; no retirement"
   },
@@ -247,7 +247,7 @@
     "baseline": "Related Settings surfaces",
     "destination": "Settings",
     "status": "preserved",
-    "test": "State fixtures + physical QA; NOT RUN",
+    "test": "Mapped control regressions below; complete physical state acceptance PENDING",
     "source": "[SETS L22\u201328](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L22-L28); [SETS L75\u201398](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L75-L98)",
     "retired_approval": "None; no retirement"
   },
