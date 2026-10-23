@@ -1,0 +1,54 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51",
+  "version_name": "0.141",
+  "version_code": 141,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "checked_at_utc": "2026-10-23T11:14:04.825191+00:00",
+  "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "embedded_source_commit_verified": true,
+  "apk_bytes": 87899088,
+  "signed": true,
+  "apk_crc_verified": true,
+  "zip_16k_alignment_verified": true,
+  "native_library_hashes_matched": 88,
+  "native_abi_elf_headers_verified": true,
+  "offline_notice_texts_byte_matched": 60,
+  "package_non_debuggable": true,
+  "min_sdk": 23,
+  "target_sdk": 36,
+  "original_unsigned_payload_parity": false,
+  "signing_run_tested_unsigned_payload_parity": true,
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false,
+  "original_unsigned_comparison": "SAME_SOURCE_REBUILD_COMPARISON.json",
+  "original_payload_equal_except_existing_build_utc_and_dependent_checksums": true,
+  "downloaded_github_artifacts": [
+    {
+      "artifact_id": 12497786073,
+      "name": "supernova-0141-signed-qa",
+      "bytes": 83418106,
+      "sha256": "9d03e2e2cc7a1695e4e8080c04a0f669288a90c4ab8513fc48031f028b24a5e9",
+      "complete_provider_digest_matched": true,
+      "complete_archive_crc_verified": true
+    },
+    {
+      "artifact_id": 12497905474,
+      "name": "supernova-0141-qa-ffmpeg-source",
+      "bytes": 11174425,
+      "sha256": "9aced751da0ab59ddd489cdd3ee42fa995c25823c6be413b7fe44930f5e8136b",
+      "complete_provider_digest_matched": true,
+      "complete_archive_crc_verified": true
+    }
+  ]
+}

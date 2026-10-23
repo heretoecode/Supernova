@@ -176,14 +176,15 @@ public class VideoInfoCommonClass {
         // Audio track(s)
         int audioTrackNb = videoMetadata.getAudioTrackNb();
         if (audioTrackNb > 0) {
-            StringBuilder sb = new StringBuilder();
+            android.text.SpannableStringBuilder lines=new android.text.SpannableStringBuilder();
             boolean isRtl = c.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             String dirMarker = isRtl ? "\u200F" : "\u200E";
 
             for (int i = 0; i < audioTrackNb; i++) {
                 if (i > 0) {
-                    sb.append("<br>");
+                    lines.append("\n");
                 }
+                StringBuilder sb=new StringBuilder();
                 sb.append(dirMarker);
                 VideoMetadata.AudioTrack audio = videoMetadata.getAudioTrack(i);
                 if (audioTrackNb == 1) {  // name of the track only if there is only one
@@ -204,8 +205,9 @@ public class VideoInfoCommonClass {
                 if (audio.vbr) {
                     sb.append(resources.getText(R.string.info_audio_vbr)).append(SEP);
                 }
+                lines.append(com.archos.mediacenter.video.leanback.PreviewLanguageIcon.inline(c,audio.language,HtmlCompat.fromHtml(sb.toString(),HtmlCompat.FROM_HTML_MODE_LEGACY)));
             }
-            return HtmlCompat.fromHtml(sb.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY);
+            return lines;
         } else {
             return null;
         }

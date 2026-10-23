@@ -1750,7 +1750,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         tvmenu.createAndAddTVMenuItem(getText(R.string.subtitle_style_text).toString(), false);
         final SubtitleDelayTVPicker tvPicker = (SubtitleDelayTVPicker)LayoutInflater.from(mContext)
                 .inflate(R.layout.subtitle_delay_tv_picker, null);
-        tvPicker.setStep(1);
+        tvPicker.setStep(100);
         tvPicker.setMin(10 * 100);
         tvPicker.setMax(100 * 100);
         // tvPicker.setHourFormat(true);
@@ -1773,6 +1773,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         });
 
         final SubtitleColorPicker colorPicker = new SubtitleColorPicker(this);
+        colorPicker.setSelectedColor(mSubtitleManager.getColor());
 
         colorPicker.setColorPickListener(new SubtitleColorPicker.ColorPickListener() {
             @Override
@@ -1790,7 +1791,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         final SubtitleDelayTVPicker tvPicker2 = (SubtitleDelayTVPicker)LayoutInflater.from(mContext)
                 .inflate(R.layout.subtitle_delay_tv_picker, null);
 
-        tvPicker2.setStep(10);
+        tvPicker2.setStep(100);
         tvPicker2.setMin(0);
         tvPicker2.setMax(255*100);
         // tvPicker.setHourFormat(true);
@@ -1840,7 +1841,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         final SubtitleDelayTVPicker tvPickerOpacity = (SubtitleDelayTVPicker) LayoutInflater.from(mContext)
                 .inflate(R.layout.subtitle_delay_tv_picker, null);
-        tvPickerOpacity.setStep(1); 
+        tvPickerOpacity.setStep(100);
         tvPickerOpacity.setMin(0);
         tvPickerOpacity.setMax(255 * 100); 
         tvmenu.addTVMenuItem(tvPickerOpacity);
@@ -2066,7 +2067,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     item.setTag(previewPreferredSubtitle(i));
                     if(i>0&&mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null){
                         SubtitleTrack subtitle=mPlayer.getVideoMetadata().getSubtitleTrack(positionToSubtitleTrack(i,mVideoInfo.nbSubtitles));
-                        if(subtitle!=null)item.setTag(R.id.preview_track_language,subtitle.language==null?"":subtitle.language);
+                        if(subtitle!=null){item.setTag(R.id.preview_track_language,subtitle.language==null?"":subtitle.language);View label=item.findViewById(R.id.info_text);if(label instanceof TextView)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label,subtitle.language);}
                     }
                 }
                 mSubtitleTVMenu.createAndAddSeparator();
@@ -2121,7 +2122,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 mPlayerController.getTVMenuAdapter().setCardViewVisibility(View.VISIBLE, mAudioTracksTVCardView);
 
                 for (int i = 0; i < mAudioInfoController.getTrackCount(); i++) {
-                    mAudioTracksTVMenu.createAndAddTVMenuItem(mAudioInfoController.getTrackNameAt(i).toString(), true, mAudioInfoController.getTrack() == i);
+                    TVMenuItem item=mAudioTracksTVMenu.createAndAddTVMenuItem(mAudioInfoController.getTrackNameAt(i).toString(), true, mAudioInfoController.getTrack() == i);
+                    VideoMetadata metadata=mPlayer==null?null:mPlayer.getVideoMetadata();
+                    if(metadata!=null&&i<metadata.getAudioTrackNb()&&metadata.getAudioTrack(i)!=null){String language=metadata.getAudioTrack(i).language;item.setTag(R.id.preview_track_language,language);View label=item.findViewById(R.id.info_text);if(label instanceof TextView)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label,language);}
                 }
 
                 mAudioTracksTVMenu.createAndAddSeparator();
@@ -2315,6 +2318,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             final TVMenu tm = tma.createTVMenu();
 
             tcv.addOtherView(tm);
+            if(mPreferences.getBoolean("try_new_ui",false))tma.setCardViewVisibility(View.GONE,tcv);
             //[/infomenu]
 
             // Scale (format) type
@@ -2335,8 +2339,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (tvmFormat.getSlaveView() != null)
                     ((TVMenu)tvmFormat.getSlaveView()).getItem(1).setVisibility(View.GONE);
             }
+            for(int index=mSurfaceController.getMax();index<getResources().getStringArray(R.array.pref_format_mode_entries).length;index++)((TVMenuItem)tvmFormat.getItem(index)).setDisabled(true);
             final View vPicInPic;
-            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N && TVUtils.isTV(this)) {
+            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N && TVUtils.isTV(this)&&getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
                 tvmFormat.createAndAddSeparator();
                 vPicInPic = tvmFormat.createAndAddTVMenuItem(getString(R.string.picture_in_picture), false, false);
             }
@@ -2358,12 +2363,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                                 mPlayerController.showTVMenu(false);
                             }
                         });
+                        return;
                     }
                     if (v instanceof TVMenuItem) {
                         int which = tvmFormat.getItemPostion(v);
                         mSurfaceController.setVideoFormat(tvmFormat.getItemPostion(v));
                         tvmFormat.unCheckAll();
-                        ((TVMenuItem)v).setChecked(true);
+                        ((TVMenuItem)tvmFormat.getItem(mSurfaceController.getCurrentFormat())).setChecked(true);
                     }
                 }
             });
@@ -2629,7 +2635,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // not available. However this does not matter because this item will
         // be updated anyway after loading the video
         if (mInfoMenuItem != null) {
-            mInfoMenuItem.setVisible(mStreamingUri != null);
+            mInfoMenuItem.setVisible(mStreamingUri != null&&!(mPreferences.getBoolean("try_new_ui",false)&&isTVMode));
         }
         // The first time onPrepareOptionsMenu() is called we don't know yet if
         // the "set bookmark" item can be enabled or not. However this does not
@@ -2974,6 +2980,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }).setNegativeButton(android.R.string.cancel, null).show();
     }
 
+    void restorePreviewSettingsFocus(View opener){if(mPlayerController!=null&&!isFinishing()&&!isDestroyed()){mPlayerController.showControlBar();if(opener!=null&&opener.isShown())opener.requestFocus();}}
     public String previewAudioLabel(){if(mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null){VideoMetadata metadata=mPlayer.getVideoMetadata();int track=mVideoInfo.audioTrack;if(track>=0&&track<metadata.getAudioTrackNb()){VideoMetadata.AudioTrack audio=metadata.getAudioTrack(track);if(audio!=null)return PreviewTrackLabel.concise(audio.language,audio.format,audio.channels,"Audio");}}if(mAudioInfoController==null||mAudioInfoController.getTrackCount()==0)return "Audio";int i=mAudioInfoController.getTrack();return i>=0&&i<mAudioInfoController.getTrackCount()?String.valueOf(mAudioInfoController.getTrackNameAt(i)):"Audio";}
     public String previewSubtitleLabel(){if(mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null){VideoMetadata metadata=mPlayer.getVideoMetadata();int track=mVideoInfo.subtitleTrack;if(track<0||track>=metadata.getSubtitleTrackNb())return "Off";SubtitleTrack subtitle=metadata.getSubtitleTrack(track);if(subtitle!=null){String language=subtitle.isExternal?getSubLanguageFromSubPathAndVideoPath(mContext,subtitle.path,mUri.toString()):subtitle.language;return PreviewTrackLabel.concise(language,"","","Subtitles");}}if(mSubtitleInfoController==null||mSubtitleInfoController.getTrackCount()==0)return "Subtitles off";int i=mSubtitleInfoController.getTrack();return i>=0&&i<mSubtitleInfoController.getTrackCount()?String.valueOf(mSubtitleInfoController.getTrackNameAt(i)):"Subtitles";}
     public boolean previewHasAudio(){return mAudioInfoController!=null&&mAudioInfoController.getTrackCount()>0;}
@@ -2981,6 +2988,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     public String previewTitle(){return mVideoInfo!=null&&mVideoInfo.isScraped&&mVideoInfo.scraperTitle!=null?mVideoInfo.scraperTitle:mTitle==null?"":mTitle;}
     public String previewEpisode(){return mVideoInfo!=null&&mVideoInfo.isShow?String.format(java.util.Locale.getDefault(),"Season %d • Episode %d",mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr)+(mVideoInfo.scraperEpisodeName==null?"":" · "+mVideoInfo.scraperEpisodeName):"";}
     void showVideoInfos() {
+        if(mPreferences!=null&&mPreferences.getBoolean("try_new_ui",false)&&isTVMode)return;
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_information_open","player_present",mPlayer!=null);
         if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){showNativeVideoInfos();return;}
         showNativeVideoInfos();
@@ -3339,7 +3347,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mPlayerController.start();
             // Now that the video is loaded, Video info should be avalaible
             if (mInfoMenuItem != null) {
-                mInfoMenuItem.setVisible(mStreamingUri != null);
+                mInfoMenuItem.setVisible(mStreamingUri != null&&!(mPreferences.getBoolean("try_new_ui",false)&&isTVMode));
             }
             // Now that the video is loaded we know if the "set bookmark" item can be enabled or not
             if(mBookmarkMenuItem!=null) {

@@ -442,6 +442,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private static void appendGroup(StringBuilder text,String heading,List<String> entries){if(!entries.isEmpty()){text.append("\n").append(heading).append("\n");for(String entry:entries)text.append(entry).append("\n");}}
     /** Back consumes folder ancestry before offering to leave. */
     public boolean back(Runnable leave) {
+        if(putioController!=null&&putioController.activeInline()){putioController.close();putioController=null;putio();focusCentre();return true;}
         if(current!=null){List<Uri> trail=ancestors(current);if(trail.size()>1){open(trail.get(trail.size()-2));return true;}}
         requestExit(leave);return true;
     }
@@ -481,6 +482,10 @@ public final class UniversalFileBrowser extends LinearLayout {
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
         if(event.getAction()!=KeyEvent.ACTION_DOWN)return super.dispatchKeyEvent(event);
         int key=event.getKeyCode();View focused=findFocus();
+        if(putioController!=null&&putioController.activeInline()&&items.hasFocus()){
+            if(key==KeyEvent.KEYCODE_BACK||key==KeyEvent.KEYCODE_ESCAPE){putioController.close();putioController=null;putio();focusCentre();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){View next=android.view.FocusFinder.getInstance().findNextFocus(items,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused)next.requestFocus();return true;}
+        }
         if(left.hasFocus()) {
             if(key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
             if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(suppliedDock!=null)suppliedDock.requestFocus();else focusCentre();return true;}

@@ -1,2 +1,3 @@
 # Patch context intentionally preserves whitespace from pinned upstream sources.
 .github/build/*-supernova135.patch -whitespace
+.github/build/avos-supernova141-chapters.patch -whitespace

@@ -19,7 +19,7 @@ public class PreviewNextTest {
         Application app=RuntimeEnvironment.getApplication();
         EditText input=new EditText(app);
         PreviewKeyboard keyboard=new PreviewKeyboard(app,input,()->{});
-        assertArrayEquals(new String[]{"1234567890","QWERTYUIOP","ASDFGHJKL","ZXCVBNM"},PreviewKeyboard.ROWS);
+        assertArrayEquals(new String[]{"1234567890","QWERTYUIOP","ASDFGHJKL.","ZXCVBNM,/\\"},PreviewKeyboard.ROWS);
         assertEquals(6,keyboard.getChildCount());
         PreviewPagesTest.findText(keyboard,"1").performClick();
         assertEquals("1",input.getText().toString());

@@ -208,22 +208,24 @@ public class SubtitlesDetailsRowPresenter extends FullWidthRowPresenter implemen
 
     private CharSequence getFormattedSubList(Context c, int number, int offset, List<VideoMetadata.SubtitleTrack> list) {
         final String SEP = "  ";
-        StringBuilder sb = new StringBuilder();
+        android.text.SpannableStringBuilder lines=new android.text.SpannableStringBuilder();
         boolean isRtl = c.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
         String dirMarker = isRtl ? "\u200F" : "\u200E";
         for (int i=0 ; i<number ; i++) {
             if (i > 0) {
-                sb.append("<br>");
+                lines.append("\n");
             }
+            StringBuilder sb=new StringBuilder();
             sb.append(dirMarker);
             int index = i + offset;
             VideoMetadata.SubtitleTrack track = list.get(index);
             String format = VideoUtils.getSubtitleFormatLabel(c, track.format);
             sb.append(Integer.toString(index + 1)).append(".").append(SEP)
               .append(generateTrackName(c, track.name, track.language, format, track.disposition, false)).append(SEP);
+            lines.append(com.archos.mediacenter.video.leanback.PreviewLanguageIcon.inline(c,track.language,HtmlCompat.fromHtml(sb.toString(),HtmlCompat.FROM_HTML_MODE_LEGACY)));
         }
 
-        return HtmlCompat.fromHtml(sb.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY);
+        return lines;
     }
 
     private CharSequence getFormattedExternalSubList(Context c, int number, int offset, List<SubtitleManager.SubtitleFile> list) {

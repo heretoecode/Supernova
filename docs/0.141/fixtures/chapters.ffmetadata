@@ -1,0 +1,12 @@
+;FFMETADATA1
+title=Supernova 0.141 synthetic chapter QA fixture
+[CHAPTER]
+TIMEBASE=1/1000
+START=0
+END=6000
+title=Opening
+[CHAPTER]
+TIMEBASE=1/1000
+START=6000
+END=12000
+title=Second chapter

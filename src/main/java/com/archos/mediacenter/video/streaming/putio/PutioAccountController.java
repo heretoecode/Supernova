@@ -15,6 +15,7 @@ public final class PutioAccountController {
     private final Activity activity;
     private final PutioTokenStore tokens;
     private Future<?> task;
+    private PutioAuthFlow auth;
     private Dialog dialog;
     private int generation;private android.widget.LinearLayout inline;
     private PutioReadClient client;
@@ -23,7 +24,7 @@ public final class PutioAccountController {
     private PutioAccountController(Activity activity){this.activity=activity;tokens=new PutioTokenStore(activity);}
     public static void open(Context context){while(context instanceof ContextWrapper&&!(context instanceof Activity))context=((ContextWrapper)context).getBaseContext();if(context instanceof Activity)new PutioAccountController((Activity)context).load();}
     public static PutioAccountController attach(Context context,android.widget.LinearLayout target){while(context instanceof ContextWrapper&&!(context instanceof Activity))context=((ContextWrapper)context).getBaseContext();if(!(context instanceof Activity))return null;PutioAccountController controller=new PutioAccountController((Activity)context);controller.inline=target;controller.load();return controller;}
-    public void close(){generation++;if(task!=null)task.cancel(true);if(dialog!=null){dialog.setOnDismissListener(null);dialog.dismiss();}inline=null;}
+    public void close(){if(auth!=null){auth.close();auth=null;}generation++;if(task!=null)task.cancel(true);if(dialog!=null){dialog.setOnDismissListener(null);dialog.dismiss();}inline=null;}
     private Dialog read(String title,String text){if(inline==null)return PreviewDialog.read(activity,title,text);Dialog view=PreviewDialog.create(activity);android.widget.LinearLayout panel=new android.widget.LinearLayout(activity);panel.setOrientation(android.widget.LinearLayout.VERTICAL);com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel,title);android.widget.TextView body=com.archos.mediacenter.video.leanback.SharedThreePanel.text(activity,text,15);body.setFocusable(true);panel.addView(body);view.setContentView(panel);return view;}
     private Dialog choose(String title,String[] labels,int selected,java.util.function.IntConsumer accepted){if(inline==null)return PreviewDialog.choose(activity,title,labels,selected,accepted);Dialog view=PreviewDialog.create(activity);android.widget.LinearLayout panel=new android.widget.LinearLayout(activity);panel.setOrientation(android.widget.LinearLayout.VERTICAL);com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel,title);for(int n=0;n<labels.length;n++){final int index=n;android.widget.TextView row=com.archos.mediacenter.video.leanback.SharedThreePanel.accentAction(activity,labels[n],()->accepted.accept(index));panel.addView(row);com.archos.mediacenter.video.leanback.SharedThreePanel.divider(panel);}view.setContentView(panel);return view;}
     private interface Work {Runnable run()throws Exception;}
@@ -32,15 +33,35 @@ public final class PutioAccountController {
         dialog.setOnDismissListener(d->{if(current==generation){generation++;if(task!=null)task.cancel(true);}});
         task=StreamingRepository.IO.submit(()->{try{Runnable update=work.run();activity.runOnUiThread(()->{if(alive(current)){generation++;update.run();}});}catch(Exception failure){
             boolean reconnect=failure instanceof java.io.IOException&&!(failure instanceof PutioReadClient.Unavailable)||failure instanceof PutioReadClient.Unavailable&&((PutioReadClient.Unavailable)failure).reason==PutioReconciliation.Failure.UNAUTHORISED;
-            activity.runOnUiThread(()->{if(alive(current)){generation++;if(reconnect)replace(choose("Reconnect put.io · your library has been kept",new String[]{"Cancel","Reconnect put.io"},0,index->{if(index==1)PutioAuthFlow.open(activity,this::load);}));else replace(read("put.io operation did not finish","Please retry or review the selected source. Completed imports may remain indexed safely. No library history has been deleted, and WebDAV playback remains independent."));}});
+            activity.runOnUiThread(()->{if(alive(current)){generation++;if(reconnect)replace(choose("Reconnect put.io · your library has been kept",new String[]{"Cancel","Reconnect put.io"},0,index->{if(index==1)connect();}));else replace(read("put.io operation did not finish","Please retry or review the selected source. Completed imports may remain indexed safely. No library history has been deleted, and WebDAV playback remains independent."));}});
         }});
     }
     private boolean alive(int current){return generation==current&&!activity.isFinishing()&&!activity.isDestroyed();}
-    private void replace(Dialog next){Dialog previous=dialog;dialog=next;if(previous!=null){previous.setOnDismissListener(null);previous.dismiss();}if(inline!=null){android.view.ViewGroup content=next.getWindow().getDecorView().findViewById(android.R.id.content);inline.removeAllViews();while(content.getChildCount()>0){android.view.View child=content.getChildAt(0);content.removeView(child);inline.addView(child,new android.widget.LinearLayout.LayoutParams(-1,-2));}}}
+    private void replace(Dialog next){
+        Dialog previous=dialog;dialog=next;
+        if(previous!=null){previous.setOnDismissListener(null);previous.dismiss();}
+        if(inline!=null){
+            android.widget.LinearLayout target=inline;
+            // Hold focus inside the destination while the focused old subtree is removed.
+            target.setFocusableInTouchMode(true);target.requestFocus();
+            android.view.ViewGroup content=next.getWindow().getDecorView().findViewById(android.R.id.content);
+            target.removeAllViews();
+            while(content.getChildCount()>0){android.view.View child=content.getChildAt(0);content.removeView(child);target.addView(child,new android.widget.LinearLayout.LayoutParams(-1,-2));}
+            focusInline(target);
+            target.post(()->{if(inline==target&&target.isAttachedToWindow()&&!target.hasFocus())focusInline(target);});
+        }
+    }
+    private static void focusInline(android.widget.LinearLayout target){
+        for(android.view.View candidate:target.getFocusables(android.view.View.FOCUS_FORWARD))
+            if(candidate!=target&&candidate.isShown()&&candidate.isEnabled()&&candidate.requestFocus())return;
+    }
+    public boolean activeInline(){return inline!=null;}
+
     private android.content.SharedPreferences selections(){return activity.getSharedPreferences("putio-library-selection-v1",0);}
     private void load(){if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("supernova_putio_enabled",true)){replace(read("put.io","Disabled. Account credentials and library associations are retained."));return;}work("put.io",()->{String token=tokens.read();if(token==null)return this::disconnected;client=new PutioReadClient(token);account=client.account();long previous=selections().getLong("account",0);if(previous>0&&previous!=account.id)return ()->accountChanged(previous);selections().edit().putLong("account",account.id).apply();return this::overview;});}
     private void accountChanged(long previous){replace(choose("Different put.io account · keep the previous library and choose discovery ownership",new String[]{"Cancel","Keep previous sources inactive","Return previous sources to generic discovery"},0,index->{if(index==0)return;work("Change account",()->{try(PutioAssociationStore store=new PutioAssociationStore(activity)){store.disconnectAccount(previous,index==1?PutioAssociationStore.DisconnectChoice.KEEP_INACTIVE:PutioAssociationStore.DisconnectChoice.REVERT_TO_GENERIC);}selections().edit().putLong("account",account.id).apply();return this::overview;});}));}
-    private void disconnected(){replace(choose("put.io",new String[]{"Connect put.io"},0,index->PutioAuthFlow.open(activity,this::load)));}
+    private void connect(){if(auth!=null)auth.close();auth=PutioAuthFlow.open(activity,()->{auth=null;load();});}
+    private void disconnected(){replace(choose("put.io",new String[]{"Connect put.io"},0,index->connect()));}
     private void overview(){work("put.io account",()->{
         StringBuilder summary=new StringBuilder("put.io · ").append(account.username).append(" · ").append(account.status).append("\nStorage used: ").append(Formatter.formatFileSize(activity,account.usedBytes)).append(" of ").append(Formatter.formatFileSize(activity,account.totalBytes));
         try(PutioAssociationStore store=new PutioAssociationStore(activity)){List<PutioAssociationStore.Scope> scopes=store.scopes(account.id);

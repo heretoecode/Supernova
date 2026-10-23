@@ -37,11 +37,11 @@ public class PlayerControllerLaunchTest {
             // Do not inject formatters: initialization must own them before its first clock update.
             View first=controllerView(activity);
             initialize(controller,first);
-            assertTrue(((TextView)first.findViewById(R.id.time)).getText().toString().startsWith("00:20 · Movie Ends "));
+            assertTrue(((TextView)first.findViewById(R.id.time)).getText().toString().startsWith("−00:00:20 · Ends at "));
             when(player.getDuration()).thenReturn(3723000);
             View recreated=controllerView(activity);
             initialize(controller,recreated);
-            assertTrue(((TextView)recreated.findViewById(R.id.time)).getText().toString().startsWith("1:02:03 · Movie Ends "));
+            assertTrue(((TextView)recreated.findViewById(R.id.time)).getText().toString().startsWith("−01:02:03 · Ends at "));
             assertFalse(((TextView)recreated.findViewById(R.id.clock)).getText().toString().contains("Ends"));
         } finally {Player.sPlayer=previous;PlayerService.sPlayerService=previousService;host.pause().stop().destroy();}
     }

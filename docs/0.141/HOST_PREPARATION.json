@@ -1,0 +1,20 @@
+{
+  "checked_at_utc": "2026-10-22T23:09:51.480463+00:00",
+  "scope": "Only the two new0.141 workflows; no0.140 workflow, package signature, dependency pin or conformance/signing gate removed",
+  "before": {
+    "run_id": 39861343693,
+    "attempt": 2,
+    "job_id": 120117598782,
+    "host_preparation_seconds": 1488,
+    "conclusion": "success"
+  },
+  "after": {
+    "source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "run_id": 39869263544,
+    "job_id": 120139828909,
+    "host_preparation_seconds": 55,
+    "conclusion": "success",
+    "archive": "https://archive.ubuntu.com/ubuntu/"
+  },
+  "measurement": "GitHub job step timestamps; preparation includes package installation and pinned repository setup on separate fresh runners. This observation is not a future throughput guarantee."
+}

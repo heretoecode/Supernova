@@ -1515,7 +1515,13 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         return -1;
     }
 
-    private void buildLanguageList(String languages, List<String> languageEntries, List<String> languageEntryValues) {
+    private void buildLanguageList(String languages,List<String> entries,List<String> values){buildLanguageList(getActivity(),languages,entries,values);}
+    public static java.util.Map<String,String> subtitleLanguageChoices(Context context){
+        List<String> entries=new java.util.ArrayList<>(),values=new java.util.ArrayList<>();
+        buildLanguageList(context,OPENSUBTITLES_LANGUAGES,entries,values);
+        java.util.Map<String,String> result=new java.util.LinkedHashMap<>();for(int i=0;i<values.size();i++)result.put(values.get(i),entries.get(i));return result;
+    }
+    private static void buildLanguageList(Context context,String languages, List<String> languageEntries, List<String> languageEntryValues) {
         String[] languageCodeArray = languages.split("\\|"); // contains 2 letters language code
 
         Locale defaultLocale = Locale.getDefault();
@@ -1537,7 +1543,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         TreeMap<String, String> sortedLanguages = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         for (String s : languageCodeArray) {
-            String currentLocaleLanguage = com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.getLanguageNameFor2LetterCode(getActivity(), s);
+            String currentLocaleLanguage = com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.getLanguageNameFor2LetterCode(context, s);
             if (currentLocaleLanguage.equalsIgnoreCase(defaultLocaleLanguage) || currentLocaleLanguage.equalsIgnoreCase(englishLocaleLanguage))
                 continue;
             sortedLanguages.put(currentLocaleLanguage, s);

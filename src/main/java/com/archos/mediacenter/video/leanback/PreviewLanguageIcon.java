@@ -10,6 +10,8 @@ import java.util.*;
 /** A country flag only for an explicitly regional locale; never infer a country from a language. */
 public final class PreviewLanguageIcon extends Drawable {
     private static final Set<String> COUNTRIES=new HashSet<>(Arrays.asList(Locale.getISOCountries()));
+    private static final Set<String> LANGUAGES=new HashSet<>();
+    static {for(String language:Locale.getISOLanguages()){LANGUAGES.add(language);try{LANGUAGES.add(new Locale(language).getISO3Language());}catch(MissingResourceException ignored){}}}
     private static final android.util.LruCache<String,Bitmap> FLAGS=new android.util.LruCache<>(32);
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
     private final PreviewIcon neutral=new PreviewIcon("language");
@@ -24,10 +26,10 @@ public final class PreviewLanguageIcon extends Drawable {
         flag=bitmap;
     }
     static String country(String code){
-        if(code==null||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})+"))return "";
+        if(code==null||"zh-ca".equalsIgnoreCase(code)||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})+"))return "";
         Locale locale=Locale.forLanguageTag(code.replace('_','-'));
         String country=locale.getCountry().toUpperCase(Locale.ROOT);
-        return COUNTRIES.contains(country)?country:"";
+        return LANGUAGES.contains(locale.getLanguage())&&COUNTRIES.contains(country)?country:"";
     }
     @Override public void draw(Canvas canvas){
         Rect bounds=getBounds();
@@ -37,6 +39,19 @@ public final class PreviewLanguageIcon extends Drawable {
     @Override public void setAlpha(int alpha){paint.setAlpha(alpha);neutral.setAlpha(alpha);invalidateSelf();}
     @Override public void setColorFilter(ColorFilter filter){neutral.setColorFilter(filter);invalidateSelf();}
     @Override public int getOpacity(){return PixelFormat.TRANSLUCENT;}
+    /** OpenSubtitles uses zh-ca for Cantonese, not a reliable Canadian region. */
+    public static String providerCode(String code){return "zh-ca".equalsIgnoreCase(code)?"yue":code;}
+    public static void apply(TextView text,String code){
+        PreviewLanguageIcon icon=new PreviewLanguageIcon(text.getContext(),code);int size=PreviewDialog.dp(text.getContext(),20);icon.setBounds(0,0,size,size);
+        android.graphics.drawable.Drawable[] existing=text.getCompoundDrawables();text.setCompoundDrawables(icon,existing[1],existing[2],existing[3]);text.setCompoundDrawablePadding(PreviewDialog.dp(text.getContext(),8));
+    }
+    /** Inline icon for legacy/mixed metadata text; keep each track's own reliable locale. */
+    public static CharSequence inline(android.content.Context context,String code,CharSequence label){
+        String language=code==null?"":Locale.forLanguageTag(code.replace('_','-')).getLanguage();
+        if(!LANGUAGES.contains(language)&&!"yue".equals(language))return label;
+        PreviewLanguageIcon icon=new PreviewLanguageIcon(context,providerCode(code));int size=PreviewDialog.dp(context,18);icon.setBounds(0,0,size,size);
+        android.text.SpannableStringBuilder text=new android.text.SpannableStringBuilder("\uFFFC ");text.setSpan(new android.text.style.ImageSpan(icon,android.text.style.ImageSpan.ALIGN_BASELINE),0,1,android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);return text.append(label);
+    }
     public static void bind(Dialog dialog,int index,String code){
         if(dialog==null||dialog.getWindow()==null)return;
         View label=dialog.getWindow().getDecorView().findViewWithTag("preview-label:"+index);

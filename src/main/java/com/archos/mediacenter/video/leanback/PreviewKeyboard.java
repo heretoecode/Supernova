@@ -10,7 +10,7 @@ import java.util.List;
 
 /** Shared TV keyboard. Spatial movement is explicit and cannot escape through an empty result pane. */
 public final class PreviewKeyboard extends LinearLayout {
-    public static final String[] ROWS = {"1234567890", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"};
+    public static final String[] ROWS = {"1234567890", "QWERTYUIOP", "ASDFGHJKL.", "ZXCVBNM,/\\"};
     private final List<List<TextView>> keys = new ArrayList<>();
     private TextView lastKey;
     private Runnable leaveDown;
@@ -18,7 +18,7 @@ public final class PreviewKeyboard extends LinearLayout {
     private Runnable confirm, cancel;
     public void setActions(Runnable select,Runnable dismiss){confirm=select;cancel=dismiss;}
     public boolean capsLocked(){return caps;}
-    private void toggleCaps(){caps=!caps;for(int r=1;r<ROWS.length;r++)for(TextView key:keys.get(r)){String value=key.getTag().toString().substring("semantic:keyboard:".length());key.setText(caps?value:value.toLowerCase(java.util.Locale.ROOT));}keys.get(4).get(0).setSelected(caps);keys.get(4).get(0).setContentDescription("Caps Lock "+(caps?"On":"Off"));}
+    private void toggleCaps(){caps=!caps;for(int r=1;r<ROWS.length;r++)for(TextView key:keys.get(r)){String value=key.getTag().toString().substring("semantic:keyboard:".length());key.setText(caps?value:value.toLowerCase(java.util.Locale.ROOT));}capsState(keys.get(4).get(0));}
     public void setLeaveDown(Runnable action) { leaveDown = action; }
 
     public PreviewKeyboard(Context context, EditText input, Runnable leaveRight) {
@@ -58,7 +58,7 @@ public final class PreviewKeyboard extends LinearLayout {
                     }
                 });
                 key.setTag("semantic:keyboard:" + label);
-                if(r>=4){key.setBackground(SharedThreePanel.control(context,10));key.setTextSize(12);key.setPadding(dp(6),0,dp(6),0);key.setGravity(Gravity.CENTER);PreviewIcon.apply(key,label,14);key.setCompoundDrawablePadding(dp(4));if(label.equals("Caps Lock")){key.setText("");key.setSelected(true);key.setContentDescription("Caps Lock On");}}
+                if(r>=4){key.setBackground(SharedThreePanel.control(context,10));key.setTextSize(12);key.setPadding(dp(6),0,dp(6),0);key.setGravity(Gravity.CENTER);PreviewIcon.apply(key,label,14);key.setCompoundDrawablePadding(dp(4));if(label.equals("Caps Lock")){key.setText("");capsState(key);}}
                 LayoutParams keySize=new LayoutParams(0,-1,1);if(r>=4){keySize=new LayoutParams(0,-1,r==4&&label.equals("Space")?3f:1f);lp.leftMargin=0;lp.rightMargin=0;}if(label.equals("Backspace")){key.setText("");key.setContentDescription("Backspace");}keySize.leftMargin=dp(2);keySize.rightMargin=dp(2);
                 key.setOnFocusChangeListener((v, focused) -> { if (focused) lastKey = (TextView) v; });
                 key.setOnKeyListener((v, code, event) -> {
@@ -99,6 +99,14 @@ public final class PreviewKeyboard extends LinearLayout {
         return result;
     }
 
+    private void capsState(TextView key){
+        key.setSelected(caps);key.setContentDescription("Caps Lock "+(caps?"On":"Off"));
+        key.setForeground(caps?new android.graphics.drawable.Drawable(){
+            private final android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+            public void draw(android.graphics.Canvas canvas){paint.setColor(PreviewAccent.color(getContext()));android.graphics.Rect bounds=getBounds();float centre=bounds.exactCenterX(),half=Math.min(dp(10),bounds.width()*.25f);canvas.drawRoundRect(centre-half,bounds.bottom-dp(5),centre+half,bounds.bottom-dp(3),dp(1),dp(1),paint);}
+            public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(android.graphics.ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
+        }:null);
+    }
     public void useMenuFoundation(){
         for(List<TextView> row:keys)for(TextView key:row)key.setBackground(MenuFoundation.controlBackground(getContext()));
     }
