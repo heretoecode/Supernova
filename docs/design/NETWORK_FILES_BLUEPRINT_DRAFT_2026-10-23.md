@@ -1,6 +1,6 @@
-# FD-003 — Network & Files visual and interaction blueprint (draft v1)
+# FD-003 — Network & Files visual and interaction blueprint (draft v2 — expanded implementation specification)
 Date: 2026-10-23
-Status: OWNER-APPROVED DIRECTION; DETAILED BLUEPRINT DRAFT — NOT IMPLEMENTATION AUTHORISATION
+Status: OWNER-APPROVED VISUAL DIRECTION; EXPANDED SPECIFICATION — ASSET/PARITY VALIDATION PENDING; NOT IMPLEMENTATION AUTHORISATION
 Target: Supernova Android TV, 1920×1080 design coordinate system; scale uniformly to viewport with safe-area adaptation.
 Baseline: delivered 0.141 app SHA 4f0937f1fe8826f50d2c0e844b0837e8a2360a46.
 Functional authority: docs/audits/FD-003-network-and-files-functionality-audit-2026-10-23.md on docs/network-files-functionality-audit-2026-10-23.
@@ -103,3 +103,151 @@ Library Health: five categories, empty, populated, actions, background scan chan
 
 ## 14. Known unresolved design questions delegated to engineering (do not invent UI)
 Actual 0.141 shared browser action inventory and exact sort labels; true device capacity APIs; provider reachability semantics; source display-name persistence; how to fit network scanning and saved locations without loss; Put.io browsing integration and existing device OAuth code/QR behaviour. Codex must investigate and resolve from actual source and report any owner-facing trade-offs before coding.
+
+## 15. Blueprint v2 — implementation geometry, no interpretation allowed
+
+### 15.1 Reference resolution and measurement
+Use 1920×1080 as the canonical screenshot coordinate system, with a content-safe inset of 32px on all sides and existing global top navigation retained. Do not stretch or crop R1–R3 to infer exact pixel values: generated images are *concept art*, not measured Android screenshots. For geometry conflicts the explicit numbers in this blueprint win; for font/brand conflicts the delivered app's approved global visual system wins. Record the resolved source resource ID for every token in the implementation mapping.
+
+| Token | Canonical 1080p target | Rule |
+|---|---:|---|
+| Horizontal content safe inset | 32px | Respect platform overscan/safe inset if larger |
+| Top global navigation reservation | Existing global component | Do not replace with mock-up's header |
+| Rail-to-content gap | 20px | Constant |
+| Rail width | 352px | Fixed at 1080p; clamp 320–400px with responsive scaling |
+| Main content width | Available width minus rail and gap | No fixed third column |
+| Outer workspace padding | 20px | All four sides |
+| Main heading baseline | 48px below workspace top | Existing Supernova typeface |
+| Main heading size | 40sp nominal | Source-token override only with recorded mapping |
+| Main subtitle size | 21sp nominal | Two lines maximum |
+| Rail label | 25sp nominal | One line with ellipsis |
+| Rail row height | 76px | Six rows + 8px gap |
+| Rail icon | 30px | Monochrome stroke, transparent canvas |
+| Rail icon-to-label gap | 20px | Horizontal |
+| Card top-level vertical gap | 14px | Consistent |
+| Card radius | 18px | No coloured icon backing |
+| Card outer horizontal padding | 22px | Both sides |
+| Card heading | 27sp nominal | White |
+| Card subtitle | 20sp nominal | Muted |
+| Data row minimum height | 66px | Expand for two-line paths |
+| Row icon | 28px | Monochrome |
+| Row status dot | 10px | Only if genuinely measured |
+| Row metadata | 18sp nominal | No ellipsis on error meaning |
+| Focus outline | 2px nominal | Use existing Supernova blue and glow |
+| Scrollbar | Existing system component | No permanent intrusive bar |
+
+Font-family rule: obtain the exact resource/typeface used by the current Supernova top navigation and approved utility screens, and reuse it; no inferred Avenir/Roboto substitute. Text is in Android sp; layout coordinates are density-independent design targets, adjusted for Android TV density and font scale. Do not implement fixed-height text containers that clip at accessibility font scales.
+
+### 15.2 Workspace placement and content density
+At 1920×1080, left rail outer x=32, width=352; workspace x=404 and right edge=1888. Workspace starts at the content origin below the *actual* global nav. Both containers fill available content height; only the workspace content scrolls. Overview cards span available workspace width; section headers and card text align on a common 20px inset. Keep card title and description on left, chevron at right, with no button-shaped background behind header icon. A card's own list rows are vertically contiguous and separated by subtle 1px dividers. When many devices/sources exist, extend card vertically and scroll the workspace; never arbitrarily truncate the underlying dataset.
+
+### 15.3 Colour and icon token rules
+No hardcoded new blue: resolve accent/focus colours from the current approved Supernova resources. Surfaces: use Space Black Blend and existing translucent dark card/rail tokens; avoid blur layers per card. White/grey icon strokes only (same colour in normal and focused states); semantic dots can be green, amber or red, but icons themselves remain monochrome. Monochrome applies to icons in **all six sections, forms, modal actions, folder rows, provider lists, error and success states**. Brand logos, including Put.io, are replaced with a monochrome representation or a text label; no bright brand logos unless owner separately approves. No icon-background circles, squares or tiles, including on empty-state illustrations.
+
+## 16. Screen-level component blueprint and interaction IDs
+
+Each identifier is a stable test/implementation reference. Never use the mock-up's fake example values as application data.
+
+### S01 Overview
+- N01–N06 rail rows: Overview, Local Storage, Network Shares, Cloud Services, All Files, Library Health.
+- O01 page title and O02 subtitle; O10 Storage card, O20 Network Shares card, O30 Cloud Services card, O40 Library Status card.
+- O11 device row: icon, name, optional safe path, optional measured capacity bar and exact units, optional measured status. O12 card header action opens Local Storage.
+- O21 source row: friendly name, protocol, path when not sensitive, status if checked; O22 card header action opens Network Shares.
+- O31 Put.io account row: state; optional actual account storage; O32 card header opens Cloud Services. No other providers without source support.
+- O41 last scan; O42 indexed items; O43 missing/unavailable; O44 current scanning state; O45 header opens Library Health.
+- Overview card header and each item row are separately focusable **only if they have distinct destinations**. If identical, make just the item rows focusable and header a non-focusable label, to avoid duplicate stops.
+- Empty state per card: 'No devices detected', 'No network locations saved', 'Put.io not connected', or 'No scan information yet' only when supported by real state; include a single contextual action where appropriate.
+- Data changes while visible update text in place without resetting focus, scroll or selected rail row.
+
+### S02 Local Storage
+- L01 page title, L02 device list, L03 device row, L04 browse action, L05 unavailable state, L06 permission-recovery action.
+- Clicking a volume opens S05 browser with current volume root; navigating back restores the exact volume row and scroll.
+- Never show 'connected' if Android reports only a stale mount. No fake USB capacity, no automatic scan/index on browse.
+
+### S03 Network Shares
+- W01 page title; W02 saved/configured location list; W03 Add Network Source; W04 Discover Devices; W05 Network Scanning settings entry; W06 source row.
+- W06 context actions: Browse, Add to Library when not already indexed, Scan Source when indexed and available, Remove from Library when indexed, Save Location/Remove Saved Location when bookmarked. Each action has a confirmation/success/error state and distinct effects.
+- If a connection is both bookmarked and indexed, display its badges/state separately, not as duplicate list entries. Preserve canonical URI identity.
+- W07 empty state includes W03 and optional W04. Discovery only exposes actual SMB and DLNA/UPnP results. FTP/SFTP are entered manually.
+- W08–W13 network scan configuration: Automatic On/Off; Frequency 15m/30m/1h/6h/24h; Scan on Open/Return; Included Sources; Last Scan/Result; Scan Now. Network scanning must remain separate from Library scanning.
+
+### S04 Add Network Source and WebDAV
+- C01 protocol picker, six exact rows in this order: SMB, WebDAV HTTPS, WebDAV HTTP, SFTP, FTP, FTP TLS.
+- C02 form: protocol (read-only summary + Change), server/address, optional port, path, username, password, Save Password, Show Password; conditional SMB Domain. The display-name field C02a is optional only after verified persistence implementation; never silently save a name in a nonpersistent UI.
+- C03 focusable Test Connection; C04 Back; C05 Save, **enabled only after an actual verified connection test if that capability has been implemented**, otherwise use existing truthful Connect/Browse wording and explain the save semantics.
+- C06 validation error immediately beneath relevant field (invalid port, missing host, malformed scheme, illegal path). Error text not colour-only.
+- C07 progress screen with phase and cancellation only if backend supports cancellation; C08 success with actual host/path and Browse/Save; C09 failure with cause, Edit, Retry, Back.
+- C10 text keyboard, C11 password keyboard: focus and punctuation support including email username; preserve text on Back; do not display secret in screenshots/logs.
+- WebDAV HTTP must be visibly distinguishable from HTTPS; warn about insecure transport where applicable, but do not invent a TLS validation bypass.
+- Connection test must verify an actual remote operation; mere URI parsing or listing launch is not success.
+
+### S05 All Files / shared browser
+- F01 source selector/roots (local, saved, network, Put.io only where actually supported); F02 breadcrumb trail; F03 toolbar; F04 file/folder list; F05 selected item contextual actions; F06 empty state; F07 loading; F08 error and Retry; F09 filter chooser; F10 sort chooser; F11 list/grid chooser.
+- Toolbar must preserve **all three existing controls** and the sort chooser **all six existing choices**; labels and exact order must be source-verified in implementation inventory, not guessed here.
+- Folder OK navigates deeper. Back returns to parent until source root, then section. On folder selection, show Add Folder to Movies Library / Add Folder to TV Shows Library / Add to Saved Locations only when source capabilities allow. File action capability gating is mandatory.
+- Maintain breadcrumbs and position after list refresh; error/empty states retain focusable Back or Retry.
+
+### S06 Cloud Services / Put.io
+- P01 page title; P02 Put.io service row; P03 enabled toggle; P04 Connect/Reconnect/Account entry; P05 auth code request; P06 QR/code/link reader; P07 waiting/polling; P08 expired/error with Retry; P09 connected account summary; P10 browse; P11 disconnect decision.
+- P12–P19 preserve eight current account actions: Library folders / Sync Now; Associate Movies; Associate TV Shows; Change Library Folders; Browse Files; Search Files; Account / Connection; Disconnect.
+- P20 association folder picker (Use This Folder, Back to Root, folder rows, Next Page when present); P21 WebDAV source selector; P22 Save & Continue/Cancel; P23 ownership/reassignment decision.
+- Authorisation code and link are obtained live; do not use screenshot placeholders. Reconnect should preserve safe inactive mappings; disconnect choices must preserve existing data safety semantics.
+- **Do not implement** Google Drive, Dropbox, OneDrive, arbitrary provider picker, manual API token or fictitious Put.io quota values from R3.
+
+### S07 Library Health
+- H01 title; H02 existing five health category rows; H03 counts and details; H04 contextual recovery actions; H05 safe confirmation; H06 success/failure; H07 empty state.
+- The five actual category names and exact actions must be copied from the 0.141 source audit, not inferred from screenshot. Focus on a category must reach its first actual focusable action; fix CS-02 non-focusable heading barrier.
+- Missing/offline media remain retained. No bulk delete action invented.
+
+## 17. Remote focus graph — mandatory tests
+
+| From | Input | Expected |
+|---|---|---|
+| Global Network & Files | OK | Open S01 with N01 focused |
+| N01–N06 | DOWN/UP | Move one rail row; boundary stays on last/first |
+| Rail item | OK | Switch section, keep rail visible, load corresponding Sxx |
+| Rail item | RIGHT | Focus first meaningful action in workspace |
+| Workspace first item | LEFT | Return to active rail item |
+| Workspace card/row | UP/DOWN | Move nearest logical focusable row without skipping |
+| Card header with no action | OK | No action; header is not focusable |
+| W03 Add Network Source | OK | Open C01, focus first protocol |
+| C01 WebDAV HTTPS | OK | Open C02, focus first required input |
+| C02 field | OK | Open keyboard; Done returns to same field/next logical field |
+| C02 form | BACK | Return to W03, with unsaved-change prompt if dirty |
+| C03 Test Connection | OK | C07; success C08 or failure C09 |
+| P04 Connect | OK | P05 then P06/P07; pending focus on Cancel only if cancellable |
+| P08 auth expired | OK Retry | Request a new code; do not reuse expired code |
+| S05 folder | OK | Open folder, preserve breadcrumb history |
+| S05 nested folder | BACK | Return parent and restore highlighted folder |
+| Any modal | BACK | Close modal, restore invoking control |
+| Async data update | No user input | Never change focused control or selected section |
+| Unplugged drive | Any | Retain stable focus or move to nearest valid row with announcement |
+
+No focus traps; no invisible focus targets; no focus reset from background network callbacks; focus highlight blue only on actual focused item.
+
+## 18. Form field and error-state matrix
+
+| Field | Required | Validation | Input |
+|---|---|---|---|
+| Protocol | Yes | One of six supported | D-pad list |
+| Host/server | Yes | Nonempty, valid host/IP; protocol-aware | Keyboard |
+| Port | No | Integer 1–65535 | Numeric keyboard |
+| Path | No | Normalised safely, do not erase valid encoded characters | Keyboard incl / % ? |
+| Username | Protocol-dependent | Allow @ and email-style names; don't SMB-split non-SMB | Keyboard |
+| Password | Protocol-dependent | Preserve whitespace, mask by default | Secret keyboard |
+| SMB Domain | SMB only | Optional domain format | Keyboard |
+| Save Password | Optional | Persist only through secure existing mechanism | Toggle |
+| Show Password | Optional | Temporary reveal, default off | Toggle |
+
+Errors: bad host, invalid port, bad credentials, TLS trust failure, remote 403/404, timeout, DNS failure, server unreachable, no listing permission, cancelled attempt, stale response after category change, offline saved source. Show user-friendly cause and recovery action; no generic 'Connected' when verification did not occur.
+
+## 19. Source parity, non-regression and QA sign-off
+
+The audit enumerates 92 control groups, 28 state families, 15 source-confirmed conditional defects and 67 Shield QA cases. A complete **parity ledger** must be generated by Codex from the audit, one row per item, with ID, baseline screen, new Sxx destination, status (preserved/moved/changed/retired), test case, source reference, and owner approval if intentionally retired. Counts alone are NOT a substitute for the ledger. This document does not assert that those 92 individual entries have already been mapped.
+
+A screenshot set must include S01 Overview; S02 local populated/empty; S03 network populated/empty; S04 protocol/form/keyboard/progress/success/failure; S05 root/folder/filter/sort/empty/error; S06 Put.io disconnected/code/pending/connected/account/association/error; S07 health populated/empty/action. Capture 1920×1080 with consistent sample fixtures, masking secrets, and provide overlays against actual R1–R3 source PNGs when available. Verify typography, focus bounds, spacing, row truncation, scroll, status truthfulness and monochrome icon treatment.
+
+For acceptance: (1) source parity ledger complete, (2) all actionable FD-003 findings addressed or individually risk-accepted, (3) automated navigation tests, (4) real SMB/WebDAV including email-style usernames, (5) Put.io device code/association, (6) mounted/unmounted USB, (7) background scanning/focus stability, (8) owner Shield screenshots and remote tests. No claims of visual parity or implementation readiness until evidence exists.
+
+## 20. Reference asset delivery status
+The three actual PNGs exist in the ChatGPT conversation as generated images, but **are not yet present in this GitHub branch**. The IDs in §2 are not downloadable binary references for Codex. Upload is a separate required delivery gate; until completed, Codex must not claim pixel-level fidelity to them. The blueprint itself remains safely usable for technical review and planning. No APK or app source is modified by this documentation update.
