@@ -1,0 +1,122 @@
+{
+  "application_source": "f70654be0bf184c612ea4d127acf668c3d93a14c",
+  "prepared_git_head": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "scope": "Every changed application/resource/asset input matches the frozen commit. Build copy retains provider isolation preparation and its original Git metadata; local results are not APK provenance proof.",
+  "files": [
+    {
+      "path": "assets/foundation/release-history.json",
+      "sha256": "818a9cb42afd9b5c1e521ede9196b47f074032d5fbaf7c8aee005041282c5c8f",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java",
+      "sha256": "bc5b8912daaefbddcc6b6c04379bbe02e8fd24143a3b6247ac67bddd940a9440",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java",
+      "sha256": "22d148da4c4f6715541f5cd3833f0f66f18a71b8fcd87af0a6a8645e7e25ee15",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewIcon.java",
+      "sha256": "601a4539f2c7173b9000aff2c43530a7e7adb2a99944442f6255ab58a9f45d34",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java",
+      "sha256": "ba26286da5148db9694ad04e7b4eaedfdb900ac124419ae5226067f91b5dd99a",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkWorkspace.java",
+      "sha256": "28da5867596ef61ff51beaefee1031f02c847a201999ac168ece6a4eeeec1d7b",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+      "sha256": "e25ed6dd50b2ea06269d5c5e8243d030c85d394bd136d8f6a92915afebcf4252",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/NetworkFilesLayout.java",
+      "sha256": "47e7b890a075cd8a565a3840436c56c03457f2884d7030244f7b2f783d6c791c",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java",
+      "sha256": "e6c21fc8995ba416f188846e4ddd6b4adf93eef5192de961a162cc0e728868fb",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAccountController.java",
+      "sha256": "476981dcc015862363fa6ebc434c956f18a306dc6ac220dbbc407a10a1b6206f",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioAuthFlow.java",
+      "sha256": "65e8998e478a153f34a6b241f4bd97170302a7b18a6ea9bc00139dbbe8311258",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioBrowserActivity.java",
+      "sha256": "df469374bbd05c2c2321d0c2a4d0ae1d1a098975072ec09ad9a2687da1b4e36b",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioBrowserController.java",
+      "sha256": "e2676274e72718d43e239c77884d8e639e00e3cfc651525fbc80643c238435c4",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/putio/PutioSyncScheduler.java",
+      "sha256": "d15f7378c7c39547dc8140c5f9223e66459264f1ae304ab6fbdc2931853ec5ae",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/Editor142RenderTest.java",
+      "sha256": "1a6940aac3e8ffd8e03f3c519da5ec9f094a93f9553fea4fa6019377c44fe3ad",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/Network142CredentialsTest.java",
+      "sha256": "06d3e5748685005769219af1bc37c3adfaa45cd2514da2ceb9e70e4dcec9cc47",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/Network142RenderTest.java",
+      "sha256": "d0306fdb259b03a8338a237502c176ab1743b5d455bcafed89a56b601bf4b963",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/Network142Test.java",
+      "sha256": "4c244c0127e693718bfec744f3aef6416ad0d363f8bb65b90735d06f5f4da9de",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/Network142WebdavTest.java",
+      "sha256": "9dcd88036d53ba77f9cc8313db0ec6c6a58cf532026f997c8134697ae502d7d1",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/PreviewNetworkSemanticsTest.java",
+      "sha256": "c001ac414474895800dc3adf55fad7212993ce804ee42073043106f5bd4b0b1d",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/streaming/putio/Network142PutioTest.java",
+      "sha256": "bbfb1450e58c87d07bcc05ce6e50020e88495c2988b6dd97c258a4b699fe3f18",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/streaming/putio/PutioConnectionFocusTest.java",
+      "sha256": "89d17b458c6d078c51ee3bb6cc1859c82590f729cc6dedea22f5a37d629be669",
+      "prepared_copy_matches": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/streaming/putio/PutioSyncSchedulerTest.java",
+      "sha256": "0d3a1a3925160d3129199610c56343ba653d11bb07eaded7f0ae41108e808b44",
+      "prepared_copy_matches": true
+    }
+  ]
+}

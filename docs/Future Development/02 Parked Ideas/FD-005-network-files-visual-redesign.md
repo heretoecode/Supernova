@@ -1,5 +1,7 @@
 # FD-005 — Network & Files visual redesign
 
+> Execution update (2026-10-23): the owner subsequently authorised this work in the current release-preparation instruction. Candidate 0.142 implementation is on `codex/supernova-0.142-implementation-2026-10-23`; see [release evidence](../../0.142/RELEASE_REPORT.md). The planning-only restrictions below are historical. Physical acceptance and signed delivery remain open; no main merge is authorised.
+
 **Status:** SCHEDULED FOR NEXT SUPERNOVA VERSION (owner decision 2026-10-23).
 **Target:** Next version after delivered 0.141 (expected 0.142, subject to release/version confirmation).
 **Scope:** Network & Files redesign, preserving all existing functionality.

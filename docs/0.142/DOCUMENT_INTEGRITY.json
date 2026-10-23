@@ -1,0 +1,12 @@
+{
+  "parity_rows": 202,
+  "controls": 92,
+  "state_families": 28,
+  "conditional_findings": 15,
+  "physical_cases": 67,
+  "duplicate_ids": 0,
+  "physical_table_columns": 4,
+  "old_release_html_preserved": true,
+  "old_release_html_sha256": "17c3c7f5140528bf2b3d1a862a14b808c95671e594354485c4ae91e0014ce316",
+  "drive_html_written": false
+}

@@ -1792,10 +1792,10 @@
   },
   {
     "id": "CS-13",
-    "baseline": "Inline Cancel/Finish Later return to owning account page without committing.",
+    "baseline": "Inline Cancel / Finish Later return safely without committing ownership or association changes.",
     "destination": "S03\u2013S07 / dependency patch",
     "status": "changed",
-    "test": "Inline Cancel/Finish Later returns account/disconnected; associated-account physical QA pending",
+    "test": "PutioConnectionFocusTest.inlineCancelDoesNotAcceptOwnershipOrResumeDecision; returns Cloud Services or neutral cancelled reader; physical associated-account QA pending",
     "source": "FD-003 \u00a79.1 CS-13",
     "retired_approval": "None"
   },
