@@ -1,0 +1,17 @@
+{
+  "checked_at_utc": "2026-10-22T23:20:45.388254+00:00",
+  "application_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "compared_files": 2191,
+  "identical_files": 2190,
+  "expected_difference": {
+    "path": "res/xml/searchable_video.xml",
+    "reason": "Existing Foundation provider-authority preparation"
+  },
+  "unexpected_differences": [],
+  "application_tree_objects": {
+    "src": "b5d17d03f44e1d80acf372a67b53c334c5e08f46",
+    "res": "6aa05f5da6bb1431d6200ffcce4e992708da7fbd",
+    "assets": "7a27c5cb2e7b8c2af3c7d4ea1e32e02389d674c4"
+  },
+  "limits": "Local build copy retains older Git checkout metadata; not a distributable exact-source APK. Source files correspond to final candidate as above; detached GitHub CI records exact binary provenance."
+}

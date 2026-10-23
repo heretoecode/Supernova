@@ -1,14 +1,19 @@
 {
-  "checked_at_utc": "2026-10-22T22:39:46.243599+00:00",
+  "checked_at_utc": "2026-10-23T11:18:35.221950+00:00",
   "file_id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
   "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view?usp=drivesdk",
   "updated_in_place": true,
   "mime_type": "text/html",
-  "bytes": 32785,
-  "sha256": "731961aa7782cc05621154f6af11edce221a7ec89a924da8a1b46e7bf013f47f",
+  "bytes": 33743,
+  "sha256": "17c3c7f5140528bf2b3d1a862a14b808c95671e594354485c4ae91e0014ce316",
   "complete_download_matches": true,
   "earlier_history_and_css_preserved_byte_for_byte": true,
   "sharing_and_folder_unchanged": true,
-  "status": "Local software checks pass; native/APK CI pending; signing access blocked; no APK delivered",
-  "apk_uploaded": false
+  "status": "Original-certificate signed QA delivered and complete Drive download verified; physical Shield acceptance pending; PR19 draft",
+  "apk_uploaded": true,
+  "candidate_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "signed_apk_sha256": "239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51",
+  "apk_url": "https://drive.google.com/file/d/1zl46kal8Q0x0gG5KFK_NBtfgBENrj0uC/view?usp=drivesdk",
+  "prior_html_bytes": 33250,
+  "prior_html_sha256": "6369ddf804d1cd4656b8724edb9a2ad4126d8a122ef4429fa24f23c201552934"
 }

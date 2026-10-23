@@ -4,6 +4,10 @@ Current work: **Supernova 0.142 development candidate**, isolated branch `codex/
 
 Latest delivered version remains **0.141**, exact application `4f0937f1`, original certificate and APK SHA-256 `239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51`. PR19 remains draft/open/unmerged. Historical text below is preserved and does not override current0.142 scope.
 
+## Preserved 0.141 delivery evidence
+
+Delivered 0.141: **Supernova 0.141 implemented and software/binary-validated**, isolated branch `codex/supernova-0.141-implementation-2026-10-22`, application source `4f0937f1fe8826f50d2c0e844b0837e8a2360a46`. [Release report](docs/0.141/RELEASE_REPORT.md), [requirements ledger](docs/0.141/IMPLEMENTATION.md), [complete playback migration](docs/0.141/PLAYBACK_MIGRATION.md), [physical Shield checklist](docs/0.141/SHIELD_QA.md). Local and exact-source CI suites: 1,068 cases/226 classes, zero failures/errors/skips; 95 tooling tests; lint zero errors. Native 64 decode comparisons, 24 rebuilt FFmpeg libraries, 88 packaged native hashes, branding/runtime/licence and complete artifact download verification pass. Original-certificate signed QA is **delivered and fully download-verified**: [Supernova_0.141.apk](https://drive.google.com/file/d/1zl46kal8Q0x0gG5KFK_NBtfgBENrj0uC/view?usp=drivesdk), 87,899,088 bytes, SHA-256 `239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51`. Signing run 39939855407 uses frozen source `4f0937f1`. PR #19 remains draft pending physical Shield testing; real Put.io sign-in and signed upgrade remain unverified. Main, 0.140 and historical branches are preserved; no main merge or maintenance programme.
+
 ## Preserved0.140 delivery record
 
 > Previous delivery record for the authorised **0.140 implementation branch**. Main and earlier release branches are preserved. The historical 4.1.7 record below remains available for lineage; its former “current work” and exclusions do not override the owner's later 0.140 handover.

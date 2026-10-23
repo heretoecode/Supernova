@@ -91,6 +91,11 @@ class Supernova141QAGates(unittest.TestCase):
         self.assertIn('inputs.approved_qa_distribution == true', job['if'])
         self.assertIn('refs/heads/codex/supernova-0.141-implementation-2026-10-22', job['if'])
         self.assertNotIn('secrets.', json.dumps(job.get('env', {})))
+        frozen = '4f0937f1fe8826f50d2c0e844b0837e8a2360a46'
+        self.assertEqual(frozen, job['env']['SUPERNOVA_QA_SOURCE'])
+        self.assertEqual(frozen, job['steps'][0]['with']['ref'])
+        self.assertIn('merge-base --is-ancestor', job['steps'][1]['run'])
+        self.assertIn('rev-parse HEAD', job['steps'][1]['run'])
         steps = job['steps']; gates = [i for i, step in enumerate(steps) if 'record-supernova-0141-conformance.py' in step.get('run', '')]
         secrets = [i for i, step in enumerate(steps) if 'secrets.' in json.dumps(step)]
         self.assertEqual(1, len(secrets)); self.assertGreater(secrets[0], gates[0])
