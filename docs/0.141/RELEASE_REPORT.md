@@ -1,6 +1,6 @@
 # Supernova 0.141 candidate report
 
-All ten approved workstreams are implemented on `codex/supernova-0.141-implementation-2026-10-22`; [draft PR 19](https://github.com/heretoecode/Supernova/pull/19) remains unmerged. The verified unsigned candidate source is **`4f0937f1fe8826f50d2c0e844b0837e8a2360a46`**. Subsequent delivery/evidence commits change documentation only.
+All ten approved workstreams are implemented on `codex/supernova-0.141-implementation-2026-10-22`; [draft PR 19](https://github.com/heretoecode/Supernova/pull/19) remains unmerged. The verified unsigned candidate source is **`4f0937f1fe8826f50d2c0e844b0837e8a2360a46`**. Application inputs remain frozen; subsequent commits record delivery evidence and pin signing to that exact source.
 
 Continuation baseline: complete preserved 0.140 tip `cf257aaa59ad8d59b2ab7252d5beae174f5879c5`, whose application source equals delivered `866f21f11f27dea4846ddd3cac57d98b281eecbb`. Main, 0.140, historical 4.1.7 and the planning branch remain preserved. No maintenance programme or main merge was started.
 
@@ -30,7 +30,7 @@ The final focus regression reproduced selection of the first row after choosing 
 | Region icons after shrinking | **All 249 source region resources retained** |
 | Identity | `app.supernova.player`, `0.141 / 141`, minSdk 23, targetSdk 36, label Supernova, non-debuggable |
 | Archive integrity | APK CRC and 16 KiB ZIP alignment passed |
-| Signing precondition | Public exact-source signing gate **PASS**; key preparation was not invoked |
+| Signing precondition | Original unsigned public gate **PASS**; subsequent protected signing and signed binary verification also **PASS** |
 | Baseline binary | Complete delivered 0.140 Drive APK, identity, CRC and original certificate independently verified |
 
 Unsigned APK: **87,701,229 bytes**. SHA-256:
@@ -47,13 +47,21 @@ The local chapter component additionally compiled all four wrapper ABIs and pass
 
 Host preparation now selects Ubuntu's official signed archive in only the two new 0.141 workflows. Measured preparation changed from 1,488 seconds on the slow Azure-mirror runner to 55 seconds on the new runner; package signature verification, dependency pins and release gates remain intact. See HOST_PREPARATION.json; this is an observed comparison, not a future speed guarantee.
 
-## Signing and delivery blocker
+## Signed QA delivery
 
-**No signed 0.141 APK or verified Drive APK delivery is available.** The existing `supernova-foundation-signing` environment permits seven earlier branches and excludes this isolated branch. Adding only `codex/supernova-0.141-implementation-2026-10-22` returned **HTTP 403: Resource not accessible by integration**. The owner must permit that exact branch under the environment's deployment branches while preserving existing entries. See SIGNING_ACCESS.json.
+The owner added the exact continuation branch to `supernova-foundation-signing`; its permission was read back before dispatch. [Signed QA run 39939855407](https://github.com/heretoecode/Supernova/actions/runs/39939855407) checks out **`4f0937f1fe8826f50d2c0e844b0837e8a2360a46`**, repeats the full original release/native/conformance gates, signs with the existing protected certificate and verifies tested unsigned payload parity. Workflow-definition commit `d5a374ee` only pins that already approved source and checks its branch ancestry; it does not change application inputs or the signing key.
 
-The original protected signing procedure and certificate pin remain unchanged: `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. No replacement key or old-branch bypass is used. Once access is available, the signed QA workflow repeats exact-source conformance before key preparation; signed payload parity, identity, certificate, native hashes, CRC/alignment and complete Drive download verification must pass before delivery is claimed.
+**[Download Supernova_0.141.apk](https://drive.google.com/file/d/1zl46kal8Q0x0gG5KFK_NBtfgBENrj0uC/view?usp=drivesdk)** from the existing Supernova/APKs folder. Size: **87,899,088 bytes**. SHA-256:
 
-The existing Drive HTML changelog is updated in place at the same file ID, with complete readback verification and unchanged earlier history/CSS, parents and sharing. It reports the signing/acceptance limits; DRIVE_HTML_VERIFICATION.json records the current bytes and hash. Earlier APKs remain untouched.
+`239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51`
+
+Original certificate SHA-256: `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`.
+
+Independent verification confirms signature/certificate, `app.supernova.player`, version `0.141 / 141`, non-debuggable release identity, all 88 native hashes and ABI headers, all 60 complete licence texts, ZIP CRC and 16 KiB alignment. The complete uploaded Drive APK was downloaded and byte-compared with the signed artifact; size and SHA-256 match. See [signed CI receipt](CI_SIGNED_QA_EVIDENCE.json), [independent signed verification](INDEPENDENT_SIGNED_APK_VERIFICATION.json) and [Drive delivery receipt](DRIVE_DELIVERY_VERIFICATION.json).
+
+The earlier unsigned CI APK and this same-source rebuild differ only in five existing UTC build-time strings, their DEX header checksums and the baseline profile’s stored DEX CRC. All other 2,404 payload entries are identical. This was investigated byte by byte rather than assuming reproducibility; [SAME_SOURCE_REBUILD_COMPARISON.json](SAME_SOURCE_REBUILD_COMPARISON.json) records the proof. The signed APK exactly matches the unsigned APK tested in its own signing run. Neither APK was altered for this comparison.
+
+The existing Drive HTML changelog is updated in place at the same file ID and completely downloaded to verify its bytes. Earlier release articles/CSS, folder and sharing are preserved. Earlier APKs remain untouched. PR #19 stays **draft and unmerged pending physical NVIDIA Shield testing**. No main merge, tag or public GitHub Release was made.
 
 ## Physical acceptance still open
 

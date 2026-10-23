@@ -1,0 +1,23 @@
+{
+  "checked_at_utc": "2026-10-23T11:15:43.416287+00:00",
+  "source_commit": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "original_unsigned_sha256": "bd3fdd4fec5ce37e1ab3c7689a7b23b416279dfe77cb86eaecda07361fed72c2",
+  "signing_run_unsigned_sha256": "3401a22d12234f0a55b364713d02dc0298006a28fd2fbe97ff4d134b00c940b8",
+  "signed_apk_sha256": "239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51",
+  "payload_entries": 2406,
+  "identical_payload_entries": 2404,
+  "changed_entries": [
+    "classes.dex",
+    "assets/dexopt/baseline.prof"
+  ],
+  "root_cause": "Existing build.gradle:254 PREVIEW_BUILD_UTC uses current UTC time; R8 inlines five copies. DEX header checksums and baseline profile DEX CRC follow those bytes.",
+  "original_build_utc": "2026-10-22 23:16",
+  "signing_run_build_utc": "2026-10-23 10:47",
+  "timestamp_occurrences": 5,
+  "dex_bytes_equal_after_only_timestamp_substitution_and_header_checksum_exclusion": true,
+  "dex_sha1_and_adler32_headers_valid": true,
+  "baseline_profile_differs_only_in_dex_zip_crc": true,
+  "all_other_payload_bytes_identical": true,
+  "signing_run_exact_tested_unsigned_payload_parity": true,
+  "apk_was_not_modified_for_this_comparison": true
+}

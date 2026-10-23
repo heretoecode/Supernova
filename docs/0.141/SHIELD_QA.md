@@ -2,6 +2,8 @@
 
 All cases below are **NOT RUN on physical Shield** until the owner records a result. Use disposable subtitle fixtures for mutation/replacement. Record candidate source/checksum, Shield model/OS, resolution/text scale and audio sink. Software tests are not device acceptance.
 
+Candidate: [Supernova_0.141.apk](https://drive.google.com/file/d/1zl46kal8Q0x0gG5KFK_NBtfgBENrj0uC/view?usp=drivesdk) · 87,899,088 bytes · source `4f0937f1fe8826f50d2c0e844b0837e8a2360a46`. SHA-256: `239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51`. Complete Drive download and original certificate verified; physical installation/upgrade remains NOT RUN. PR #19 stays draft until owner testing.
+
 1. Upgrade over signed 0.140 without uninstall/reset. Confirm package/version, settings, sources, history, backups and existing credentials retained. Cold launch Home, Search, Network & Files, all Libraries, movie/TV Details and playback; repeat after stop/re-entry.
 2. Playback: left Play/Pause, slim blue line, seek-only target tooltip, remaining and Ends at on right, no duplicate elapsed. Open Settings: right dark translucent window; exact horizontal Subtitles, Audio, Display, Playback tabs; first opens Subtitles. Exercise all tabs with D-pad, scrolling, first/last options, Back from nested adjustments and return after idle, pause and resume.
 3. Seek tap/hold/reverse/release, paused-before-seek, first initiating hidden Left/Right, EOF/start clamps and nonseekable/unknown-duration media. Verify output and AV sync, not just values. Check valid embedded chapter starts/titles against a known chapter fixture; chapterless/malformed metadata must show no invented markers. No online chapter lookup.

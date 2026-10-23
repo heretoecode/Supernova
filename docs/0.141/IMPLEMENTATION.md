@@ -1,6 +1,6 @@
 # Supernova 0.141 implementation and validation ledger
 
-Status: all ten approved workstreams implemented. Final source `4f0937f1` passes complete local and CI validation: **1,068 tests / 226 classes, zero failures/errors/skips, 95 tooling tests, release lint zero errors**, native runtime/binary conformance and independent whole-artifact verification. Original-certificate signing/Drive APK delivery are blocked by protected-branch access; physical Shield acceptance remains open.
+Status: all ten approved workstreams implemented. Final source `4f0937f1` passes complete local and CI validation: **1,068 tests / 226 classes, zero failures/errors/skips, 95 tooling tests, release lint zero errors**, native runtime/binary conformance and independent whole-artifact verification. Original-certificate signing and complete Drive APK download verification pass; physical Shield acceptance remains open and PR #19 stays draft.
 
 ## Continuation baseline
 
@@ -30,7 +30,7 @@ Every UI row still requires physical Shield acceptance. Local and independent CI
 | All Library rows centre in content viewport; ends/short/fast/data refresh | PreviewPages / focus recycler | grid/list/custom row centring + repeated input | Implemented; grid/list middle and final rows settle centred; restoration regression passes; Shield boundaries/refresh pending |
 | Movie/TV card → tabs 20–24dp separation; surfaces and scroll retained | PreviewMoviePage (shared movie/TV) | both media types / sizes / text scale / D-pad | Implemented; section lowered 22dp without shrinking card; movie/TV and 720p/1080p/4K/large-text renders pass; Shield pending |
 | Home/Search/Network/Library/Details/playback/backup/scan regressions | existing full test suite | build, lint, full suite + device checklist | Local and CI 1,068 cases pass with zero failures/errors/skips; native/binary checks pass; physical regressions pending |
-| Candidate / signing / APK / Drive / notes | existing protected procedures only | exact source, original cert, checksum, full readback | Full unsigned conformance and independent download verification pass; original-certificate signing/Drive APK delivery blocked by GitHub HTTP 403 |
+| Candidate / signing / APK / Drive / notes | existing protected procedures only | exact source, original cert, checksum, full readback | Full original-certificate signed QA conformance and complete Drive APK download verification pass; physical Shield acceptance remains pending |
 
 ## Missing visual evidence
 
@@ -66,3 +66,5 @@ No physical Shield is attached. Real Put.io account authorisation is unavailable
 - `BASELINE_0140_BINARY_VERIFICATION.json`: independent whole-file verification of the preserved delivered APK.
 - `PRESERVATION_READBACK.json`: earlier remote references remain unchanged.
 - `SHIELD_QA.md`: full physical acceptance and real account/storage/hardware checklist.
+
+Delivery receipts: CI_SIGNED_QA_EVIDENCE.json, INDEPENDENT_SIGNED_APK_VERIFICATION.json, DRIVE_DELIVERY_VERIFICATION.json, DRIVE_HTML_VERIFICATION.json. Frozen application source: `4f0937f1`; later workflow change only pins that source. PR #19 remains draft for owner Shield testing.

@@ -163,7 +163,14 @@
       "runtime_artifacts": 138,
       "independent_whole_archive_and_APK_verification": "PASS"
     },
-    "original_certificate_signing": "BLOCKED: existing protected environment excludes exact branch; integration HTTP403",
+    "original_certificate_signing": {
+      "result": "PASS",
+      "run_id": 39939855407,
+      "source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+      "apk_sha256": "239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51",
+      "drive_download_verified": true,
+      "physical_shield_verified": false
+    },
     "final_native_stage": "PASS"
   },
   "limits": "This machine check proves that the complete audit inventory is explicitly reconciled, not that physical acceptance or every conditional runtime state has passed. Requirements conformance combines the linked code/evidence ledger, tests, native/binary checks and owner Shield QA."
