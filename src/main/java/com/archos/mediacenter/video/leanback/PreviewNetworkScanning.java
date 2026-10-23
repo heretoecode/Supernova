@@ -26,14 +26,14 @@ public final class PreviewNetworkScanning {
         int period=NetworkAutoRefresh.getRescanPeriod(c);
         String[] labels={"Automatic Network Scanning: "+(period>0?"On":"Off"),
             "Frequency: "+Math.max(15,(period>0?period:prefs.getInt("preview_scan_frequency",3600000))/60000)+" minutes",
-            "Scan When Supernova Opens or Returns: "+(prefs.getBoolean("auto_rescan_on_app_restart",true)?"On":"Off"),
+            "Scan When Supernova Opens or Returns: "+(prefs.getBoolean("auto_rescan_on_app_restart",false)?"On":"Off"),
             "Sources Included","Last Scan / Result","Scan Network Sources Now"};
         PreviewDialog.choose(c,"Network Scanning",labels,0,n->{
             switch(n){
                 case 0:if(period>0)prefs.edit().putInt("preview_scan_frequency",period).apply();
                     NetworkScannerUtil.scheduleNewRescan(c,0,period>0?0:prefs.getInt("preview_scan_frequency",3600000),true);show(c);break;
                 case 1:PreviewDialog.choose(c,"Scan Frequency",new String[]{"15 minutes","30 minutes","1 hour","6 hours","24 hours"},-1,i->{int value=new int[]{900000,1800000,3600000,21600000,86400000}[i];prefs.edit().putInt("preview_scan_frequency",value).apply();if(period>0)NetworkScannerUtil.scheduleNewRescan(c,0,value,true);show(c);});break;
-                case 2:prefs.edit().putBoolean("auto_rescan_on_app_restart",!prefs.getBoolean("auto_rescan_on_app_restart",true)).apply();show(c);break;
+                case 2:prefs.edit().putBoolean("auto_rescan_on_app_restart",!prefs.getBoolean("auto_rescan_on_app_restart",false)).apply();show(c);break;
                 case 3:sources(c);break;
                 case 4:PreviewDialog.read(c,"Last Scan / Result",lastResult(c));break;
                 case 5:PreviewLibraryScan.requestNetwork(c);break;

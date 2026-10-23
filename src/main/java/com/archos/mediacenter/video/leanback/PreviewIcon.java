@@ -9,7 +9,8 @@ public final class PreviewIcon extends Drawable {
  public void focus(boolean focused,int accent){p.setColor(0xffe1e9ef);p.clearShadowLayer();invalidateSelf();}
  private void line(Canvas c,float... pts){Path q=new Path();q.moveTo(pts[0],pts[1]);for(int i=2;i<pts.length;i+=2)q.lineTo(pts[i],pts[i+1]);c.drawPath(q,p);}
  public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);
-  if(kind.equals("eye")||kind.equals("eye-off")){c.drawOval(2,6,22,18,p);c.drawCircle(12,12,3,p);if(kind.equals("eye-off"))line(c,2,2,22,22);}
+  if(kind.equals("health")){line(c,1,12,6,12,9,3,13,21,16,12,23,12);}
+  else if(kind.equals("eye")||kind.equals("eye-off")){c.drawOval(2,6,22,18,p);c.drawCircle(12,12,3,p);if(kind.equals("eye-off"))line(c,2,2,22,22);}
   else if(kind.equals("bookmark")){line(c,6,2,18,2,18,22,12,17,6,22,6,2);}
   else if(kind.equals("pin")){line(c,7,3,17,3,15,6,15,11,19,15,5,15,9,11,9,6,7,3);line(c,12,15,12,22);}
   else if(kind.equals("integration")){c.drawOval(2,7,14,15,p);c.drawOval(10,9,22,17,p);line(c,8,12,16,12);}

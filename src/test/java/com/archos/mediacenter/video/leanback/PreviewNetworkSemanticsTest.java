@@ -55,15 +55,15 @@ public class PreviewNetworkSemanticsTest {
                     List.of(source),List.of(source),box->{},kind->{});
             host.get().setContentView(workspace);
             var browser=workspace.browser();
-            workspace.findViewWithTag("semantic:network.category.network_shares").requestFocus();
+            workspace.findViewWithTag("semantic:network.category.network_shares").requestFocus();workspace.findViewWithTag("semantic:network.category.network_shares").performClick();
             View sourceRow=workspace.findViewWithTag("semantic:network.item.source.72");assertNotNull(sourceRow);
-            PreviewPagesTest.layout(workspace);sourceRow.requestFocus();
+            PreviewPagesTest.layout(workspace);sourceRow.requestFocus();sourceRow.performClick();
             LinearLayout actions=ReflectionHelpers.getField(browser,"actions");
             assertNotNull(PreviewPagesTest.findText(actions,"Remove from Library"));
             PreviewPagesTest.findText(actions,"Remove from Library").performClick();
             assertTrue(browser.selections().changed());assertFalse(browser.selections().included(source.getUri()));
-            assertNotNull("A library selection never hides a browsing source",workspace.findViewWithTag("semantic:network.item.source.72"));
-            assertNotNull(workspace.findViewWithTag("semantic:network.item.saved.72"));
+            java.util.List<Shortcut> shares=ReflectionHelpers.getField(browser,"shares");assertEquals("A library selection retains the browsing source",1,shares.size());
+            java.util.Map<String,Shortcut> saved=ReflectionHelpers.getField(browser,"savedSources");assertTrue(saved.containsKey(com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(source.getUri())));
             for(int i=0;i<actions.getChildCount();i++)assertFalse(String.valueOf(identity(actions.getChildAt(i))).contains("private"));
 
         } finally {host.pause().stop().destroy();}

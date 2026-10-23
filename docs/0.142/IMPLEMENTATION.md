@@ -39,3 +39,5 @@ Audit L-01 is stale relative to delivered source: PreviewKeyboard already includ
 ## Verification
 
 Not yet run. Physical Shield, USB and real account/provider acceptance remain separate release gates. No signed APK or fidelity claim at this checkpoint.
+
+Inline Put.io cancellation returns to Cloud Services (or a neutral cancelled reader in a host without a return callback). It must never bypass a different-account ownership decision or implicitly resume a suspended association. No account/source mutation occurs on Cancel or Finish Later.
