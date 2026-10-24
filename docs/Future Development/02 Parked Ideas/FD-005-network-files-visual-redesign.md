@@ -1,19 +1,35 @@
 # FD-005 — Network & Files visual redesign
 
-**Status:** PARKED / HISTORICAL DISCUSSION ONLY.
-**Release:** Unassigned. **Coding authorisation:** None from this record.
+> Execution update (2026-10-23): the owner subsequently authorised this work in the current release-preparation instruction. Candidate 0.142 implementation is on `codex/supernova-0.142-implementation-2026-10-23`; see [release evidence](../../0.142/RELEASE_REPORT.md). The planning-only restrictions below are historical. Physical acceptance and signed delivery remain open; no main merge is authorised.
 
-## Preserved discussion and constraints
-Owner wants editable UI workflow via iOS/web design tool; screen layout, focus, source browsing and menus remain parked. Historical mock-ups and design tool files require reconciliation; no approved replacement.
+**Status:** SCHEDULED FOR NEXT SUPERNOVA VERSION (owner decision 2026-10-23).
+**Target:** Next version after delivered 0.141 (expected 0.142, subject to release/version confirmation).
+**Scope:** Network & Files redesign, preserving all existing functionality.
+**Coding authorisation:** **NOT YET GRANTED**. Scheduling for the next version is a roadmap decision, not permission to begin implementation, merge, or issue an APK.
 
-## Evidence and references
-- [Historical future design and approval notes](../../design/PARKED_FUTURE.md)
-- [10 October future discussion backlog](../../project/SUPERNOVA_FUTURE_DISCUSSION_BACKLOG_2026-10-10.md)
-- [13 October post-0.139 feature backlog and chronological owner decisions](../../project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md)
-- [Current roadmap / active 0.139 boundary](../../project-decisions/CURRENT_ROADMAP_AND_DECISIONS.md)
+## Implementation authority and approved direction
+- [Detailed Network & Files blueprint](../../design/NETWORK_FILES_BLUEPRINT_DRAFT_2026-10-23.md) on branch `docs/network-files-blueprint-2026-10-23`.
+- [Three original uploaded visual references](../../design/assets/network-files/README.md) (Overview, Add WebDAV, Connect Put.io).
+- [FD-003 completed functionality audit](../../audits/FD-003-network-and-files-functionality-audit-2026-10-23.md) on branch `docs/network-files-functionality-audit-2026-10-23`. The audit is not necessarily present on this branch: retrieve from that explicit ref.
+- [Global visual system](../../design/GLOBAL_VISUAL_SYSTEM.md).
 
-## Visual assets and completeness
-Historical conversation mock-ups may exist but **no individual image is claimed committed for this item without an explicit verified GitHub asset path**. Preserve any future supplied images under a dedicated asset directory and link them here. Existing approved mock-ups, if applicable, remain in `docs/design/approved-mockups/` and design documents. This is a source-backed consolidation, not a verbatim export of all past conversations.
+## Locked owner-facing requirements
+1. Permanent left rail with exactly six destinations: Overview, Local Storage, Network Shares, Cloud Services, All Files, Library Health.
+2. No rigid three-panel layout; one flexible scrollable workspace.
+3. Overview four stacked sections: Storage, Network Shares, Cloud Services, Library Status; no Quick Actions bar.
+4. Monochrome icons with no background tiles; Space Black Blend and existing Supernova typography/focus language.
+5. WebDAV and Put.io flows follow approved visual references **without inventing unsupported features**.
+6. Preserve network scanning, library scanning, source/bookmark distinctions, USB, protocols, credential safety, Put.io authorisation/associations, file browser and Library Health.
+7. D-pad focus, navigation restoration, keyboard punctuation, asynchronous updates and unavailable-source safety must be tested on Shield.
 
-## Reopening rule
-Owner must explicitly reopen the discussion; do not silently add it to 0.139, Stage D or a future release.
+## Pre-implementation gates
+- Resolve source-to-blueprint typography/layout token mapping.
+- Build full FD-003 functionality/control/state/QA parity ledger, not just count-level claims.
+- Inspect actual uploaded PNGs and map all screen states, buttons and focus routes.
+- Resolve source-confirmed audit defects or document individual disposition.
+- Obtain explicit owner instruction to begin the next release; do not assume this scheduling decision authorises coding.
+
+## Historical context
+Previously PARKED / HISTORICAL DISCUSSION ONLY with unassigned release and no approved replacement. Owner reopened, approved three mock-up directions and requested the blueprint; the visual reference PNGs are now committed on the documentation branch. Preserve prior discussion provenance in linked backlog/roadmap records; this note supersedes the earlier parked status for FD-005 only.
+
+**Release discipline:** No edits to delivered 0.141 application source, no merge to main, no APK generation and no next-release implementation under this documentation update.

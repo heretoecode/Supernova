@@ -36,8 +36,8 @@ public class PreviewSourceRemovalTest {
                 bookmark?new java.util.ArrayList<>():rows,bookmark?rows:new java.util.ArrayList<>(),box->{},kind->{});
             host.get().setContentView(workspace);
             PreviewPagesTest.layout(workspace);
-            workspace.findViewWithTag("semantic:network.category.network_shares").requestFocus();
-            View sourceRow=workspace.findViewWithTag("semantic:network.item."+(bookmark?"saved.":"source.")+source.getId());assertNotNull(sourceRow);sourceRow.requestFocus();
+            workspace.findViewWithTag("semantic:network.category.network_shares").requestFocus();workspace.findViewWithTag("semantic:network.category.network_shares").performClick();
+            View sourceRow=workspace.findViewWithTag("semantic:network.item.source."+source.getId());assertNotNull(sourceRow);sourceRow.requestFocus();sourceRow.performClick();
             var browser=workspace.browser();
             if(bookmark){assertFalse(browser.selections().changed());PreviewPagesTest.findText(browser,"Remove Saved Location").performClick();android.app.Dialog confirm=ShadowDialog.getLatestDialog();View label=confirm.getWindow().getDecorView().findViewWithTag("preview-label:1");((View)label.getParent()).performClick();android.app.Dialog error=ShadowDialog.getLatestDialog();assertNotSame(confirm,error);assertTrue(error.isShowing());assertFalse(browser.selections().changed());error.dismiss();}
             else {
@@ -45,7 +45,7 @@ public class PreviewSourceRemovalTest {
                 PreviewPagesTest.findText(browser,"Save Changes & Scan").performClick();android.app.Dialog error=ShadowDialog.getLatestDialog();assertTrue(error.isShowing());
                 assertTrue("An unconfirmed commit remains editable",browser.selections().changed());error.dismiss();
             }
-            assertEquals(1,rows.size());assertSame(source,rows.get(0));assertNotNull(workspace.findViewWithTag("semantic:network.item."+(bookmark?"saved.":"source.")+source.getId()));browser.close();
+            assertEquals(1,rows.size());assertSame(source,rows.get(0));assertEquals(source.getUri(),browser.location());ReflectionHelpers.callInstanceMethod(browser,"networkShares");PreviewPagesTest.layout(workspace);assertNotNull(workspace.findViewWithTag("semantic:network.item.source."+source.getId()));browser.close();
 
         }finally{host.pause().stop().destroy();}
     }

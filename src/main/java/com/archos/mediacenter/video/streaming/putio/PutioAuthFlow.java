@@ -33,7 +33,8 @@ final class PutioAuthFlow {
         }catch(Exception failure){failed();}});
     },5000);}
     private boolean active(){synchronized(lock){return !stopped&&!closed&&!activity.isFinishing()&&!activity.isDestroyed();}}
-    private void show(Dialog next){if(dialog!=null){dialog.setOnDismissListener(null);dialog.dismiss();}dialog=next;dialog.setOnDismissListener(d->stop());}
+    private void show(Dialog next){setLinkDescription(next.getWindow().getDecorView());if(dialog!=null){dialog.setOnDismissListener(null);dialog.dismiss();}dialog=next;dialog.setOnDismissListener(d->stop());}
+    private static void setLinkDescription(android.view.View view){if(view instanceof android.widget.ImageView)view.setContentDescription("Scan to authorise Supernova with put.io using the temporary linking code");if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int n=0;n<group.getChildCount();n++)setLinkDescription(group.getChildAt(n));}}
     private void stop(){synchronized(lock){stopped=true;}main.removeCallbacksAndMessages(null);if(task!=null)task.cancel(true);}
     private void failed(){main.post(()->{if(!active())return;stop();if(dialog!=null){dialog.setOnDismissListener(null);dialog.dismiss();}show(PreviewDialog.read(activity,"Linking unavailable","The code may have expired or the connection may be unavailable. Start Connect put.io again. Your existing library has not changed."));});}
 }

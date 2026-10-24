@@ -35,13 +35,27 @@ public class PutioConnectionFocusTest {
     @Test public void cancellingPendingLinkStopsPollingAndLateCompletionCannotReenter()throws Exception{
         var host=Robolectric.buildActivity(Activity.class).setup().visible();try(var stores=mockConstruction(PutioTokenStore.class);var clients=mockConstruction(PutioOAuthClient.class,(client,context)->{when(client.begin()).thenReturn(new PutioOAuthClient.Code("fixture","https://put.io/link?code=fixture"));when(client.poll(any())).thenReturn("fixture-authorisation-only");})){
             int[] returned={0};PutioAuthFlow flow=PutioAuthFlow.open(host.get(),()->returned[0]++);drain(flow);org.robolectric.shadows.ShadowDialog.getLatestDialog().dismiss();flow.close();Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(30));drain(flow);assertEquals(0,returned[0]);verify(clients.constructed().get(0),never()).poll(any());verify(stores.constructed().get(0),never()).save(any());
-            PutioAuthFlow approved=PutioAuthFlow.open(host.get(),()->returned[0]++);drain(approved);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(5));java.util.concurrent.Future<?> completing=ReflectionHelpers.getField(approved,"task");completing.get(5,TimeUnit.SECONDS);approved.close();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertEquals(0,returned[0]);assertFalse(org.robolectric.shadows.ShadowDialog.getLatestDialog().isShowing());
+            PutioAuthFlow approved=PutioAuthFlow.open(host.get(),()->returned[0]++);drain(approved);
+            java.util.concurrent.CountDownLatch polling=new java.util.concurrent.CountDownLatch(1),release=new java.util.concurrent.CountDownLatch(1);
+            when(clients.constructed().get(1).poll(any())).thenAnswer(call->{polling.countDown();release.await(5,TimeUnit.SECONDS);return "fixture-authorisation-only";});
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(5));assertTrue(polling.await(5,TimeUnit.SECONDS));approved.close();release.countDown();drain(approved);assertEquals(0,returned[0]);verify(stores.constructed().get(1),never()).save(any());assertFalse(org.robolectric.shadows.ShadowDialog.getLatestDialog().isShowing());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void linkingErrorDialogIsOwnedAndClosingCannotLeaveItAboveCloudServices()throws Exception{
         var host=Robolectric.buildActivity(Activity.class).setup().visible();try(var stores=mockConstruction(PutioTokenStore.class);var clients=mockConstruction(PutioOAuthClient.class,(client,context)->when(client.begin()).thenThrow(new java.io.IOException("fixture-unavailable")))){
             PutioAuthFlow flow=PutioAuthFlow.open(host.get(),()->fail("Failed link cannot return as authorised"));drain(flow);Dialog error=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(error.isShowing());assertNotNull(find(error.getWindow().getDecorView(),"Linking unavailable"));flow.close();assertFalse(error.isShowing());
         }finally{host.pause().stop().destroy();}
+    }
+    @Test public void inlineCancelDoesNotAcceptOwnershipOrResumeDecision()throws Exception{
+        var host=Robolectric.buildActivity(Activity.class).setup().visible();PutioAccountController controller=null;try{
+            LinearLayout target=new LinearLayout(host.get());host.get().setContentView(target);controller=PutioAccountController.attach(host.get(),target);drain(controller);int[] accepted={0},cancelled={0};controller.cancelWith(()->cancelled[0]++);
+            ReflectionHelpers.setField(controller,"account",new PutioReadClient.Account(42,"fixture","active",0,1));
+            for(String label:new String[]{"Cancel","Finish Later"}){
+                Dialog choice=ReflectionHelpers.callInstanceMethod(controller,"choose",ReflectionHelpers.ClassParameter.from(String.class,"Ownership review"),ReflectionHelpers.ClassParameter.from(String[].class,new String[]{label,"Save & Continue"}),ReflectionHelpers.ClassParameter.from(int.class,0),ReflectionHelpers.ClassParameter.from(java.util.function.IntConsumer.class,(java.util.function.IntConsumer)index->accepted[0]++));
+                ReflectionHelpers.callInstanceMethod(controller,"replace",ReflectionHelpers.ClassParameter.from(Dialog.class,choice));find(target,label).performClick();
+            }
+            assertEquals(0,accepted[0]);assertEquals(2,cancelled[0]);
+        }finally{if(controller!=null)controller.close();host.pause().stop().destroy();}
     }
     private View find(View view,String label){if(view instanceof TextView&&label.contentEquals(((TextView)view).getText()))return view;if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++){View found=find(((ViewGroup)view).getChildAt(i),label);if(found!=null)return found;}return null;}
 }

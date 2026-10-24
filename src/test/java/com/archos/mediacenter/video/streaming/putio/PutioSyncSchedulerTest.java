@@ -23,6 +23,10 @@ public class PutioSyncSchedulerTest {
     }
     @After public void teardown(){Thread.interrupted();Diagnostics.setEnabled(app,false);}
 
+    @Test public void disabledIntegrationMakesNoAccountRequest()throws Exception{
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().putBoolean("supernova_putio_enabled",false).commit();
+        PutioReadClient client=mock(PutioReadClient.class);PutioSyncScheduler.sync(app,"manual",client);verifyNoInteractions(client);
+    }
     @Test public void transportInheritsSyncAndScopeDoesNotLeak()throws Exception{
         PutioReadClient client=mock(PutioReadClient.class);
         when(client.account()).thenAnswer(call->{Diagnostics.operation("fixture_transport");return new PutioReadClient.Account(42,"fixture","active",0,1);});

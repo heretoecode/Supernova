@@ -8,24 +8,48 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.141",
-    "version_code": 141,
-    "date": "2026-10-22",
-    "kind": "Development / Shield QA candidate",
+    "version": "0.142",
+    "version_code": 142,
+    "date": "2026-10-23",
+    "kind": "Development / Shield QA candidate \u2014 physical acceptance pending",
     "notes": [
-      "Cinematic Playback HUD with a single right-hand Settings panel: Subtitles, Audio, Display and Playback. Existing track, timing, appearance and subtitle file workflows retained.",
-      "Home hero interrupted-transition correction; Library focused-row centring, Statistics value alignment and toolbar-matched opacity; Edit Library pinned right.",
-      "Continuous, searchable offline licence disclosure replaces all paginated notice readers; bundled notices and attribution retained.",
-      "Consistent region-aware language icons; compact global keyboard with dedicated punctuation and retained bottom-left Caps Lock.",
-      "Put.io account panel focus replacement repair and cancellation cleanup; movie and TV Details card/tab separation.",
-      "Development candidate: physical NVIDIA Shield visual/focus/playback and real Put.io authorisation acceptance remain pending."
+      "Network & Files: six permanent destinations and one flexible workspace, four Overview cards, monochrome icons, existing global navigation and source workflows.",
+      "Preserves local/USB, network protocols, saved locations, staged library changes, scanning, Library Health and Put.io account/association/read-only browsing.",
+      "Network credential recovery, hostname matching, email-style non-SMB usernames, discovery ownership, stale listing and retry corrections; verification status is recorded in the 0.142 evidence.",
+      "Edit Library: darker backdrop and panels across the five steps, retaining layout, Live Preview and controls.",
+      "Playback HUD proposal only. Delivered playback design and implementation remain unchanged.",
+      "Physical NVIDIA Shield, real provider/USB, visual and signed-upgrade acceptance remain separate requirements. This is not a public or main release."
     ]
   },
   "history": [
     {
+      "version": "0.141",
+      "version_code": 141,
+      "date": "2026-10-22",
+      "kind": "Development / Shield QA candidate",
+      "notes": [
+        "Cinematic Playback HUD with a single right-hand Settings panel: Subtitles, Audio, Display and Playback. Existing track, timing, appearance and subtitle file workflows retained.",
+        "Home hero interrupted-transition correction; Library focused-row centring, Statistics value alignment and toolbar-matched opacity; Edit Library pinned right.",
+        "Continuous, searchable offline licence disclosure replaces all paginated notice readers; bundled notices and attribution retained.",
+        "Consistent region-aware language icons; compact global keyboard with dedicated punctuation and retained bottom-left Caps Lock.",
+        "Put.io account panel focus replacement repair and cancellation cleanup; movie and TV Details card/tab separation.",
+        "Development candidate: physical NVIDIA Shield visual/focus/playback and real Put.io authorisation acceptance remain pending."
+      ],
+      "source_sha": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+      "recorded_binary_verification": "docs/0.141/INDEPENDENT_SIGNED_APK_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "apks": [
+        {
+          "filename": "Supernova_0.141.apk",
+          "sha256": "239d0d5273e1b59806d56e96e3667759d49db3a1926817f2123af6ddb9045e51"
+        }
+      ],
+      "run_id": 39939855407
+    },
+    {
       "version": "0.140",
       "version_code": 140,
-      "kind": "Development / QA build — physical acceptance pending",
+      "kind": "Development / QA build \u2014 physical acceptance pending",
       "notes": [
         "Page-scoped two-row Library Statistics with nine metrics and terminal scan evidence.",
         "Six-region Details blueprint implementation, connected active-tab border and fixed portrait grids.",
@@ -103,7 +127,7 @@
     {
       "version": "0.137",
       "version_code": 137,
-      "kind": "Development / QA — unreleased",
+      "kind": "Development / QA \u2014 unreleased",
       "notes": [
         "Settings category and remote-navigation reliability; excluded-row import paging and All Files filtering.",
         "Playback history refresh and Home-only Continue Watching.",
@@ -126,7 +150,7 @@
     {
       "version": "0.136",
       "version_code": 136,
-      "kind": "Provisional refinement QA — unreleased",
+      "kind": "Provisional refinement QA \u2014 unreleased",
       "notes": [
         "Refined Home heroes, navigation, shared library controls and live genre choices.",
         "Embedded custom Library Page creation and focused editing with a retained live preview.",
@@ -148,7 +172,7 @@
     {
       "version": "0.135",
       "version_code": 135,
-      "kind": "Development / QA — unreleased",
+      "kind": "Development / QA \u2014 unreleased",
       "notes": [
         "Shared three-panel Settings and Network & Files, plus one compact Home and TV file browser with complete breadcrumbs and persisted controls.",
         "Staged recursive library selection and exclusions, atomic Apply & Scan, and five-category Library Health that retains unavailable records and viewing progress.",

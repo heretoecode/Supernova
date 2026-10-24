@@ -14,7 +14,11 @@ public final class PreviewNetworkWorkspace extends FrameLayout {
     private final UniversalFileBrowser browser;
     public PreviewNetworkWorkspace(Context c,List<Box> volumes,List<Shortcut> sources,List<Shortcut> saved,
             Consumer<Box> browseVolume,Consumer<String> browseNetwork) {
-        super(c);browser=new UniversalFileBrowser(c);addView(browser,new LayoutParams(-1,-1));
+        this(c,volumes,sources,saved,browseVolume,browseNetwork,true);
+    }
+    public PreviewNetworkWorkspace(Context c,List<Box> volumes,List<Shortcut> sources,List<Shortcut> saved,
+            Consumer<Box> browseVolume,Consumer<String> browseNetwork,boolean redesigned) {
+        super(c);browser=new UniversalFileBrowser(c);if(redesigned)browser.networkWorkspace();addView(browser,new LayoutParams(-1,-1));
         update(volumes,sources,saved,browseNetwork);
     }
     public void update(List<Box> volumes,List<Shortcut> sources,List<Shortcut> saved,Consumer<String> network){browser.locations(volumes,sources,saved,network);}

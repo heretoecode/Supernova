@@ -1,0 +1,119 @@
+[
+  {
+    "name": "com.archos.mediacenter.video.leanback.SharedDirectoryPickerTest",
+    "tests": "1",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:54:59.570Z",
+    "hostname": "e74bbe34bd10",
+    "time": "11.753",
+    "failures_detail": []
+  },
+  {
+    "name": "com.archos.mediacenter.video.leanback.Network142Test",
+    "tests": "10",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:54:54.866Z",
+    "hostname": "e74bbe34bd10",
+    "time": "32.661",
+    "failures_detail": []
+  },
+  {
+    "name": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+    "tests": "6",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:55:45.438Z",
+    "hostname": "e74bbe34bd10",
+    "time": "5.371",
+    "failures_detail": []
+  },
+  {
+    "name": "com.archos.mediacenter.video.streaming.putio.PutioSyncSchedulerTest",
+    "tests": "4",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:55:51.668Z",
+    "hostname": "e74bbe34bd10",
+    "time": "7.352",
+    "failures_detail": []
+  },
+  {
+    "name": "com.archos.mediacenter.video.streaming.putio.PutioConnectionFocusTest",
+    "tests": "5",
+    "skipped": "0",
+    "failures": "1",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:55:12.892Z",
+    "hostname": "e74bbe34bd10",
+    "time": "23.699",
+    "failures_detail": [
+      {
+        "test": {
+          "name": "cancellingPendingLinkStopsPollingAndLateCompletionCannotReenter",
+          "classname": "com.archos.mediacenter.video.streaming.putio.PutioConnectionFocusTest",
+          "time": "1.678"
+        },
+        "text": "java.lang.AssertionError: expected:<0> but was:<1>\n\tat org.junit.Assert.fail(Assert.java:89)\n\tat org.junit.Assert.failNotEquals(Assert.java:835)\n\tat org.junit.Assert.assertEquals(Assert.java:647)\n\tat org.junit.Assert.assertEquals(Assert.java:633)\n\tat com.archos.mediacenter.video.streaming.putio.PutioConnectionFocusTest.cancellingPendingLinkStopsPollingAndLateCompletionCannotReenter(PutioConnectionFocusTest.java:38)\n\tat java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:580)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)\n\tat org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)\n\tat org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:524)\n\tat org.robolectric.internal.SandboxTestRunner.executeInSandbox(SandboxTestRunner.java:494)\n\tat org.robolectric.internal.SandboxTestRunner.access$900(SandboxTestRunner.java:67)\n\tat org.robolectric.internal.SandboxTestRunner$7.evaluate(SandboxTestRunner.java:442)\n\tat org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)\n\tat org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)\n\tat org.robolectric.internal.SandboxTestRunner.access$600(SandboxTestRunner.java:67)\n\tat org.robolectric.internal.SandboxTestRunner$6.evaluate(SandboxTestRunner.java:333)\n\tat org.robolectric.internal.SandboxTestRunner$3.evaluate(SandboxTestRunner.java:233)\n\tat org.robolectric.internal.SandboxTestRunner$5.lambda$evaluate$0(SandboxTestRunner.java:317)\n\tat org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:101)\n\tat java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)\n\tat java.base/java.lang.Thread.run(Thread.java:1583)\n"
+      }
+    ]
+  },
+  {
+    "name": "com.archos.mediacenter.video.leanback.Editor142RenderTest",
+    "tests": "1",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:54:31.590Z",
+    "hostname": "e74bbe34bd10",
+    "time": "20.899",
+    "failures_detail": []
+  },
+  {
+    "name": "com.archos.mediacenter.video.leanback.Network142CredentialsTest",
+    "tests": "3",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:54:31.382Z",
+    "hostname": "e74bbe34bd10",
+    "time": "7.286",
+    "failures_detail": []
+  },
+  {
+    "name": "com.archos.mediacenter.video.leanback.NextQaWizardTest",
+    "tests": "2",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:54:40.519Z",
+    "hostname": "e74bbe34bd10",
+    "time": "16.463",
+    "failures_detail": []
+  },
+  {
+    "name": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+    "tests": "5",
+    "skipped": "0",
+    "failures": "1",
+    "errors": "0",
+    "timestamp": "2026-10-23T19:55:28.998Z",
+    "hostname": "e74bbe34bd10",
+    "time": "15.566",
+    "failures_detail": [
+      {
+        "test": {
+          "name": "actualWorkspaceKeepsContextActionsAndPrivateLocationsSemanticallyDistinct",
+          "classname": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+          "time": "8.868"
+        },
+        "text": "java.lang.AssertionError\n\tat org.junit.Assert.fail(Assert.java:87)\n\tat org.junit.Assert.assertTrue(Assert.java:42)\n\tat org.junit.Assert.assertNotNull(Assert.java:713)\n\tat org.junit.Assert.assertNotNull(Assert.java:723)\n\tat com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest.actualWorkspaceKeepsContextActionsAndPrivateLocationsSemanticallyDistinct(PreviewNetworkSemanticsTest.java:59)\n\tat java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:580)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)\n\tat org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)\n\tat org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)\n\tat org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:524)\n\tat org.robolectric.internal.SandboxTestRunner.executeInSandbox(SandboxTestRunner.java:494)\n\tat org.robolectric.internal.SandboxTestRunner.access$900(SandboxTestRunner.java:67)\n\tat org.robolectric.internal.SandboxTestRunner$7.evaluate(SandboxTestRunner.java:442)\n\tat org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)\n\tat org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)\n\tat org.robolectric.internal.SandboxTestRunner.access$600(SandboxTestRunner.java:67)\n\tat org.robolectric.internal.SandboxTestRunner$6.evaluate(SandboxTestRunner.java:333)\n\tat org.robolectric.internal.SandboxTestRunner$3.evaluate(SandboxTestRunner.java:233)\n\tat org.robolectric.internal.SandboxTestRunner$5.lambda$evaluate$0(SandboxTestRunner.java:317)\n\tat org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:101)\n\tat java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)\n\tat java.base/java.lang.Thread.run(Thread.java:1583)\n\tSuppressed: org.robolectric.android.internal.AndroidTestEnvironment$UnExecutedRunnablesException: Main looper has queued unexecuted runnables. This might be the cause of the test failure. You might need a shadowOf(Looper.getMainLooper()).idle() call.\n"
+      }
+    ]
+  }
+]

@@ -18,6 +18,11 @@ public final class PutioAccountController {
     private PutioAuthFlow auth;
     private Dialog dialog;
     private int generation;private android.widget.LinearLayout inline;
+    public interface BrowserOpener {void open(long account,long folder,String name);}
+    private BrowserOpener browserOpener;private Runnable cancelled;
+    public void cancelWith(Runnable action){cancelled=action;}
+    public void browseWith(BrowserOpener opener){browserOpener=opener;}
+    private void browseFiles(long folder,String name){if(browserOpener!=null)browserOpener.open(account.id,folder,name);else activity.startActivity(new android.content.Intent(activity,PutioBrowserActivity.class).putExtra("account",account.id).putExtra("folder",folder).putExtra("folder_name",name));}
     private PutioReadClient client;
     private PutioReadClient.Account account;
     private PutioAssociationStore.Scope changing;
@@ -26,7 +31,7 @@ public final class PutioAccountController {
     public static PutioAccountController attach(Context context,android.widget.LinearLayout target){while(context instanceof ContextWrapper&&!(context instanceof Activity))context=((ContextWrapper)context).getBaseContext();if(!(context instanceof Activity))return null;PutioAccountController controller=new PutioAccountController((Activity)context);controller.inline=target;controller.load();return controller;}
     public void close(){if(auth!=null){auth.close();auth=null;}generation++;if(task!=null)task.cancel(true);if(dialog!=null){dialog.setOnDismissListener(null);dialog.dismiss();}inline=null;}
     private Dialog read(String title,String text){if(inline==null)return PreviewDialog.read(activity,title,text);Dialog view=PreviewDialog.create(activity);android.widget.LinearLayout panel=new android.widget.LinearLayout(activity);panel.setOrientation(android.widget.LinearLayout.VERTICAL);com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel,title);android.widget.TextView body=com.archos.mediacenter.video.leanback.SharedThreePanel.text(activity,text,15);body.setFocusable(true);panel.addView(body);view.setContentView(panel);return view;}
-    private Dialog choose(String title,String[] labels,int selected,java.util.function.IntConsumer accepted){if(inline==null)return PreviewDialog.choose(activity,title,labels,selected,accepted);Dialog view=PreviewDialog.create(activity);android.widget.LinearLayout panel=new android.widget.LinearLayout(activity);panel.setOrientation(android.widget.LinearLayout.VERTICAL);com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel,title);for(int n=0;n<labels.length;n++){final int index=n;android.widget.TextView row=com.archos.mediacenter.video.leanback.SharedThreePanel.accentAction(activity,labels[n],()->accepted.accept(index));panel.addView(row);com.archos.mediacenter.video.leanback.SharedThreePanel.divider(panel);}view.setContentView(panel);return view;}
+    private Dialog choose(String title,String[] labels,int selected,java.util.function.IntConsumer accepted){if(inline==null)return PreviewDialog.choose(activity,title,labels,selected,accepted);Dialog view=PreviewDialog.create(activity);android.widget.LinearLayout panel=new android.widget.LinearLayout(activity);panel.setOrientation(android.widget.LinearLayout.VERTICAL);com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel,title);for(int n=0;n<labels.length;n++){final int index=n;android.widget.TextView row=com.archos.mediacenter.video.leanback.SharedThreePanel.accentAction(activity,labels[n],()->{if(labels[index].equals("Cancel")||labels[index].equals("Finish Later")){if(cancelled!=null)cancelled.run();else replace(read("put.io","Operation cancelled. Your library and connection settings are unchanged."));}else accepted.accept(index);});panel.addView(row);com.archos.mediacenter.video.leanback.SharedThreePanel.divider(panel);}view.setContentView(panel);return view;}
     private interface Work {Runnable run()throws Exception;}
     private void work(String title,Work work){
         int current=++generation;if(task!=null)task.cancel(true);replace(read(title,"Please wait…"));
@@ -78,7 +83,7 @@ public final class PutioAccountController {
     private void showOverview(String title){
         replace(choose(title,new String[]{"Library folders / Sync Now","Associate Movies folder","Associate TV Shows folder","Change Library Folders","Browse Files","Search Files","Account / Connection","Disconnect"},0,index->{
             changing=null;if(index==0)scopes(false);else if(index==1||index==2)chooseFolder(0,"put.io",index==1?"movie":"tv",null,Collections.emptySet());
-            else if(index==3)scopes(true);else if(index==4)activity.startActivity(new android.content.Intent(activity,PutioBrowserActivity.class).putExtra("account",account.id));else if(index==5)searchInput("");else if(index==6)replace(read("Account / Connection",account.username+"\n"+account.status+"\n\nAPI discovery and WebDAV playback use independent connections."));else disconnect();}));
+            else if(index==3)scopes(true);else if(index==4)browseFiles(0,"put.io");else if(index==5)searchInput("");else if(index==6)replace(read("Account / Connection",account.username+"\n"+account.status+"\n\nAPI discovery and WebDAV playback use independent connections."));else disconnect();}));
     }
     private void scopes(boolean changeFolder){work("Library folders",()->{
         List<PutioAssociationStore.Scope> scopes;try(PutioAssociationStore store=new PutioAssociationStore(activity)){scopes=store.scopes(account.id);}
@@ -137,7 +142,7 @@ public final class PutioAccountController {
     };});}
     private void browse(long folder,String name,List<Folder> parents){
         if(dialog!=null)dialog.dismiss();
-        activity.startActivity(new android.content.Intent(activity,PutioBrowserActivity.class).putExtra("account",account.id).putExtra("folder",folder).putExtra("folder_name",name));
+        browseFiles(folder,name);
     }
     private void disconnect(){replace(choose("Disconnect put.io? Keep media and library history.",new String[]{"Cancel","Keep associated sources inactive","Return associated sources to generic discovery","Revoke Supernova access and keep sources inactive"},0,index->{if(index==0){overview();return;}work("Disconnect put.io",()->{if(index==3)client.revokeSupernovaGrant();try(PutioAssociationStore store=new PutioAssociationStore(activity)){store.disconnectAccount(account.id,index!=2?PutioAssociationStore.DisconnectChoice.KEEP_INACTIVE:PutioAssociationStore.DisconnectChoice.REVERT_TO_GENERIC);}tokens.clear();client=null;return this::disconnected;});}));}
 }

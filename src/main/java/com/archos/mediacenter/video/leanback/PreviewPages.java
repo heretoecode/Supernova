@@ -38,7 +38,7 @@ public final class PreviewPages extends FrameLayout {
 
     private final List<Cell> cells=new ArrayList<>();
     private int tab;
-    private PreviewNetworkWorkspace sharedBrowser;
+    private PreviewNetworkWorkspace sharedBrowser,networkBrowser,homeSetupBrowser;
     private final FocusAnchor[] anchors=new FocusAnchor[4];
     private final android.os.Parcelable[] scrollStates=new android.os.Parcelable[4];
     private boolean restoringFocus, switchingTab;
@@ -682,11 +682,12 @@ public final class PreviewPages extends FrameLayout {
         }
         private void networkLayout(LinearLayout container){
             container.setOrientation(LinearLayout.HORIZONTAL);container.setGravity(Gravity.TOP);container.setClipChildren(false);container.setLayoutParams(new RecyclerView.LayoutParams(-1,Math.max(dp(360),getHeight()-list.getPaddingTop()-list.getPaddingBottom())));
-            if(sharedBrowser==null)sharedBrowser=new PreviewNetworkWorkspace(getContext(),files,librarySources,savedLocations,box->click.open(new Presenter.ViewHolder(container),box),PreviewPages.this::networkSection);
+            sharedBrowser=tab==0?homeSetupBrowser:networkBrowser;
+            if(sharedBrowser==null){sharedBrowser=new PreviewNetworkWorkspace(getContext(),files,librarySources,savedLocations,box->click.open(new Presenter.ViewHolder(container),box),PreviewPages.this::networkSection,tab!=0);if(tab==0)homeSetupBrowser=sharedBrowser;else networkBrowser=sharedBrowser;}
             else sharedBrowser.update(files,librarySources,savedLocations,PreviewPages.this::networkSection);
             if(sharedBrowser.getParent() instanceof ViewGroup)((ViewGroup)sharedBrowser.getParent()).removeView(sharedBrowser);
             int browserHeight=tab==0?Math.max(dp(260),(int)((getHeight()-list.getPaddingTop()-list.getPaddingBottom())*.65f)):Math.max(dp(360),getHeight()-list.getPaddingTop()-list.getPaddingBottom());
-            container.setLayoutParams(new RecyclerView.LayoutParams(-1,browserHeight));
+            RecyclerView.LayoutParams browserSize=new RecyclerView.LayoutParams(-1,browserHeight);if(tab==3){browserSize.leftMargin=-list.getPaddingLeft();browserSize.rightMargin=-list.getPaddingRight();}container.setLayoutParams(browserSize);
             sharedBrowser.browser().onboarding(tab==0);sharedBrowser.update(files,librarySources,savedLocations,PreviewPages.this::networkSection);container.addView(sharedBrowser,new LinearLayout.LayoutParams(-1,-1));
             if(networkEntryPending)container.post(PreviewPages.this::requestNetworkEntryFocus);
         }

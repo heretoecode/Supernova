@@ -1,5 +1,7 @@
 # Network & Files — Design and Behaviour Authority
 
+> 0.142 development supersession: the owner's 2026-10-23 implementation instruction authorises the [six-section blueprint](NETWORK_FILES_BLUEPRINT_DRAFT_2026-10-23.md) and [next-release handover](../handovers/SUPERNOVA_NEXT_RELEASE_CODEX_HANDOVER_2026-10-23.md). The three-panel/five-entry text below is preserved as delivered 0.141 design lineage, not the current candidate layout. Actual capabilities are grounded in FD-003; older idealised Scan Source/classification controls are not evidence of a reachable backend. Candidate implementation and outstanding physical acceptance are recorded in [docs/0.142](../0.142/RELEASE_REPORT.md).
+
 Status: **APPROVED/current; three-panel physical correction active**
 
 ## Core model

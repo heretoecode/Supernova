@@ -1,0 +1,83 @@
+{
+  "application_source": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
+  "capture_harness_source": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
+  "renderer": "Native Android views / controlled fixtures",
+  "physical_shield_verified": false,
+  "visual_acceptance": "PENDING",
+  "captures": [
+    {
+      "file": "network/0142-shell-all_files.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "aba90c248318541b7be3772e89e22ed10be77f38ada79685e4547378b8b26096"
+    },
+    {
+      "file": "network/0142-shell-cloud_services.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "18c17a70e8076e29b2749039ba0e3f270a75dcb5c01a36725f42ba84ef38a70d"
+    },
+    {
+      "file": "network/0142-shell-library_health.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "f50052afd75caa56adcf852b250efaa76395671922fbd0065b3fb0a4a4cecd62"
+    },
+    {
+      "file": "network/0142-shell-local_storage.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4782723f548eccdadb8d5d01135070d3d6cea428e34835edafc4330a3ad96b38"
+    },
+    {
+      "file": "network/0142-shell-network_shares.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "1693e633c16d6bed26da8598e891f9ac0c7b9f7a3b92ab52d600d9731e98e6c0"
+    },
+    {
+      "file": "network/0142-shell-overview.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "f9fd14c4db324e048896c2c6c56fe80b1314b5b1db825aeba05c5dc12a8efeff"
+    },
+    {
+      "file": "network/0142-shell-protocols.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "72ba6863a6310f5e68f5407d1b1dfa99702ed4afd0a981d0c0eb120de78312ef"
+    },
+    {
+      "file": "network/0142-shell-webdav-form.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "2c19140e7ecc3ce21b3a9a89f059f1c0ed17abb38c67dbdc4a29190c53c14bab"
+    }
+  ],
+  "references": [
+    {
+      "id": "R1",
+      "file": "../../design/assets/network-files/2C2FCA2A-7A91-487A-8837-DD106F93AAD2.png",
+      "title": "Monochrome Overview",
+      "bytes": 2040918,
+      "sha256": "d8165ba8ee11e467c7766c3f11fb7c69d423b127d893efaa9c67c6ff19c2a949",
+      "git_blob_sha": "6c6930b5f87b7c1c80e66f460a8f898942162ea5"
+    },
+    {
+      "id": "R2",
+      "file": "../../design/assets/network-files/75E72DD0-4878-4FF8-A4EE-8448F228A48E.png",
+      "title": "WebDAV storyboard",
+      "bytes": 1700553,
+      "sha256": "0fec1428f26191ed694ac168e65673d6b774a1681ddb5962f41c5d7309ac310c",
+      "git_blob_sha": "585994c522581e18715eecdd4b21593c422fb28c"
+    },
+    {
+      "id": "R3",
+      "file": "../../design/assets/network-files/52D674B6-1502-4657-A583-551556A51FE5.png",
+      "title": "Put.io storyboard",
+      "bytes": 1684512,
+      "sha256": "158353e86b378d2ef4dde6cb658afceb5b623a6ffe4130ad3c270bc2184b150e",
+      "git_blob_sha": "224536a2389572d9ae885fd6e5a2fd1d60f2be56"
+    }
+  ]
+}
