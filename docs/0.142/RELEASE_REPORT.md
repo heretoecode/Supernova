@@ -1,6 +1,6 @@
 # Supernova 0.142 release preparation
 
-Status: **software-validated development candidate; physical acceptance and signed distribution pending**.
+Status: **signed QA delivered and download-verified; physical/final acceptance pending**.
 
 Branch: `codex/supernova-0.142-implementation-2026-10-23`. Review: [draft PR #20](https://github.com/heretoecode/Supernova/pull/20). Verified delivered base: `4f0937f1fe8826f50d2c0e844b0837e8a2360a46`. Main is unmerged; the original release and authority branches are preserved.
 
@@ -31,15 +31,17 @@ The complete [202-entry parity map](PARITY_LEDGER.md) was committed before appli
 
 Evidence: [conformance receipt](CONFORMANCE_40058921765.json), [complete-suite summary](test-runs/ci-40058921765-pass.json), [independent readback](UNSIGNED_ARTIFACT_READBACK.json), [native runtime report](NATIVE_RUNTIME_40058921765.json).
 
-The unsigned review APK is 87,709,225 bytes, SHA-256 `bdfc4d4996f40efbc6dd95984530e4f2a7cfaf8aa5b1052c077b92d83b91d98e`. It is not a signed deliverable or install/upgrade certification. No signed 0.142 checksum or Drive download link exists.
+The unsigned review APK is 87,709,225 bytes, SHA-256 `bdfc4d4996f40efbc6dd95984530e4f2a7cfaf8aa5b1052c077b92d83b91d98e`. It is not a signed deliverable or install/upgrade certification. The signed delivery is recorded below; this prior unsigned artifact remains historical validation evidence.
 
 ## Signing and delivery gates
 
-Owner added only the 0.142 branch to `supernova-foundation-signing`; readback confirms all eight previous rules remain (nine total). The branch restriction is cleared. Secret values are not read, exported or logged; runtime key/password/certificate validation is not yet exercised. Existing certificate pin remains `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. Manual QA distribution approval, exact-source checks, full tests/native/binary checks, signature/payload verification and temporary-key cleanup remain in place. Signing has not been dispatched.
+Signed QA **delivered and fully download-verified**: [Supernova_0.142.apk](https://drive.google.com/file/d/1CxWm1pxf5K005ZzIO4RWKzQyPF0YQcu4/view?usp=drivesdk), 87,907,280 bytes, package `app.supernova.player`, version **0.142 / code 142**. Exact source: `b347707defdbf2ab3ae83d920ba9fa7af3936220`. APK SHA-256: `af03d26719b00601ca08da5ad562c1f196ec536c6397ac5b4603c2337d7c8514`. Existing certificate SHA-256: `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. [Signing workflow](https://github.com/heretoecode/Supernova/actions/runs/40080144690) passed the repeated tests/native/binary gates, existing-certificate signing, tested-payload parity and temporary-key cleanup. Independent signature, manifest/resources/assets, native hashes, ZIP CRC and 16 KiB alignment pass. The complete Drive copy matches the signed artifact. [Delivery receipt](SIGNED_QA_DELIVERY.json); [Shield quickcheck](QA_QUICKCHECK.md).
 
-[SHIELD_QA.md](SHIELD_QA.md) retains all 67 FD-003 cases plus five editor-step checks and one signed-upgrade extension, all PENDING. No Shield is attached and real USB/SMB/WebDAV/Put.io, long-list/performance/overscan, physical screenshot acceptance and retained-data upgrade are unverified. The HUD design remains separately deferred.
+This is a QA candidate; final acceptance, physical Shield, real provider/storage interoperability and signed upgrade remain pending. Playback HUD redesign stays deferred pending final visual approval. No main merge.
 
-The existing Drive APK folder still has eight files through 0.141 and no 0.142. Existing HTML remains 33,743 bytes, modified 2026-10-23T 11:18:07.136Z. No external HTML/APK upload, replacement, sharing change or main merge occurred. Repository release notes distinguish this candidate from delivered 0.141. See [delivery readiness](DELIVERY_READINESS.json) and [owner branch-rule readback](SIGNING_OWNER_UPDATE_READBACK.json).
+Owner added only the 0.142 branch to `supernova-foundation-signing`; all eight previous rules remain. The runtime signing step successfully exercised existing protected credentials; no key values were read or exported. Earlier Drive APKs and release history are preserved; the existing development HTML is updated in place.
+
+[SHIELD_QA.md](SHIELD_QA.md) retains all 67 original cases, five editor checks and one upgrade extension as PENDING. Software screenshots do not establish physical fidelity.
 
 ## Retained failed-run evidence
 

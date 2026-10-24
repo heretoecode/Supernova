@@ -1,8 +1,14 @@
 {
-  "checked_at": "2026-10-24 04:20:41 UTC",
-  "signing_dispatched": false,
-  "signed_0142_apk": null,
-  "download_link_0142": null,
+  "checked_at": "2026-10-24T09:44:26.706312+00:00",
+  "signing_dispatched": true,
+  "signed_0142_apk": {
+    "name": "Supernova_0.142.apk",
+    "bytes": 87907280,
+    "sha256": "af03d26719b00601ca08da5ad562c1f196ec536c6397ac5b4603c2337d7c8514",
+    "version_code": 142,
+    "source_commit": "b347707defdbf2ab3ae83d920ba9fa7af3936220"
+  },
+  "download_link_0142": "https://drive.google.com/file/d/1CxWm1pxf5K005ZzIO4RWKzQyPF0YQcu4/view?usp=drivesdk",
   "physical_shield_attached": false,
   "physical_qa_cases": 67,
   "physical_qa_passed": 0,
@@ -52,19 +58,14 @@
       "bytes": "102248688"
     }
   ],
-  "existing_html": {
-    "id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
-    "modified_time": "2026-10-23T11:18:07.136Z",
-    "bytes": "33743"
-  },
-  "drive_files_written": false,
+  "drive_files_written": true,
   "notes": [
-    "Existing signing certificate and established workflows retained.",
-    "No signing or APK upload before mandatory release requirements and approvals are satisfied.",
-    "Google Drive current file metadata and APK folder read successfully; this is not a new binary download verification.",
-    "67 original Network & Files cases plus five editor-step checks and one signed-upgrade extension remain pending.",
-    "GitHub integration cannot add the single 0.142 branch to the protected signing environment (HTTP 403); repository administrator action is required. No signing dispatched.",
-    "Owner added exactly the 0.142 branch; readback confirms all eight prior rules remain. Signing is still gated by passing conformance and mandatory physical acceptance."
+    "Existing signing certificate and established protected workflow retained.",
+    "Owner authorized signed QA distribution from the validated source; physical acceptance follows delivery.",
+    "Signing, full tests/native/binary conformance, tested-payload parity, signature verification and temporary-key cleanup passed.",
+    "Complete Drive APK and in-place release HTML readbacks verified. Earlier APKs, sharing and historical HTML preserved.",
+    "67 original cases plus five editor checks and one signed-upgrade extension remain PENDING. HUD redesign awaits final visual approval.",
+    "Historical branch-policy add attempt returned HTTP403; owner later added exactly this branch while preserving all eight prior rules."
   ],
   "physical_editor_cases": 5,
   "signed_upgrade_cases": 1,
@@ -74,17 +75,9 @@
     "message": "Resource not accessible by integration",
     "existing_policies_preserved": true
   },
-  "drive_checked_at": "2026-10-24 03:48:54 UTC",
+  "drive_checked_at": "2026-10-24T09:45:15.630706+00:00",
   "policy_change_actor": "owner",
   "environment_policies_changed_by_agent": false,
-  "drive_folder_recheck": {
-    "files": 8,
-    "contains_0142": false,
-    "html_bytes": 33743,
-    "html_modified_time": "2026-10-23T11:18:07.136Z",
-    "delivered_0141_bytes": 87899088,
-    "method": "Direct folder listing plus file metadata; no raw binary fetched in this recheck"
-  },
   "software_conformance": {
     "run_id": 40058921765,
     "source_commit": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
@@ -96,6 +89,40 @@
     "independent_unsigned_artifact_readback": "PASS"
   },
   "frozen_signing_source": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
-  "signing_key_runtime_verification": "NOT EXERCISED",
-  "release_accepted": false
+  "signing_key_runtime_verification": "PASS \u2014 existing protected credentials and pinned certificate",
+  "release_accepted": false,
+  "qa_distribution_authorized_by_owner": true,
+  "signing_run_id": 40080144690,
+  "signing_workflow_commit": "8b248f08b3afd6dd45b77a84936b3ae0f7a781f0",
+  "signing_run_state": "completed",
+  "signing_run_conclusion": "success",
+  "qa_only": true,
+  "drive_apk_readback_verified": true,
+  "drive_html_readback_verified": true,
+  "drive_html_sha256": "0f1862e4626b241c10569a223e0c7cff1ce46bc1cd159b4b82985a028a6a9a89",
+  "drive_apk_id": "1CxWm1pxf5K005ZzIO4RWKzQyPF0YQcu4",
+  "signed_delivery_receipt": "SIGNED_QA_DELIVERY.json",
+  "existing_html_before_delivery": {
+    "id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+    "modified_time": "2026-10-23T11:18:07.136Z",
+    "bytes": "33743"
+  },
+  "drive_folder_recheck_before_delivery": {
+    "files": 8,
+    "contains_0142": false,
+    "html_bytes": 33743,
+    "html_modified_time": "2026-10-23T11:18:07.136Z",
+    "delivered_0141_bytes": 87899088,
+    "method": "Direct folder listing plus file metadata; no raw binary fetched in this recheck"
+  },
+  "drive_checked_at_before_delivery": "2026-10-24 03:48:54 UTC",
+  "drive_folder_recheck": {
+    "files": 9,
+    "contains_0142": true,
+    "signed_0142_bytes": 87907280,
+    "html_bytes": 36290,
+    "html_modified_time": "2026-10-24T09:43:55.674Z",
+    "delivered_0141_bytes": 87899088,
+    "method": "Direct folder listing, metadata, complete raw APK and HTML download; SHA-256/byte equality and APK signature verified"
+  }
 }
