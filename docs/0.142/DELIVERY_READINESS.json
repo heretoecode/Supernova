@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-23 20:25:19 UTC",
+  "checked_at": "2026-10-24 03:34:13 UTC",
   "signing_dispatched": false,
   "signed_0142_apk": null,
   "download_link_0142": null,
@@ -7,8 +7,8 @@
   "physical_qa_cases": 67,
   "physical_qa_passed": 0,
   "signing_environment": "supernova-foundation-signing",
-  "new_branch_currently_permitted": false,
-  "environment_policies_changed": false,
+  "new_branch_currently_permitted": true,
+  "environment_policies_changed": true,
   "drive_apk_folder": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
   "existing_apks": [
     {
@@ -61,6 +61,20 @@
   "notes": [
     "Existing signing certificate and established workflows retained.",
     "No signing or APK upload before mandatory release requirements and approvals are satisfied.",
-    "Google Drive current file metadata and APK folder read successfully; this is not a new binary download verification."
-  ]
+    "Google Drive current file metadata and APK folder read successfully; this is not a new binary download verification.",
+    "67 original Network & Files cases plus five editor-step checks and one signed-upgrade extension remain pending.",
+    "GitHub integration cannot add the single 0.142 branch to the protected signing environment (HTTP 403); repository administrator action is required. No signing dispatched.",
+    "Owner added exactly the 0.142 branch; readback confirms all eight prior rules remain. Signing is still gated by passing conformance and mandatory physical acceptance."
+  ],
+  "physical_editor_cases": 5,
+  "signed_upgrade_cases": 1,
+  "branch_permission_request": {
+    "requested_branch": "codex/supernova-0.142-implementation-2026-10-23",
+    "http_status": 403,
+    "message": "Resource not accessible by integration",
+    "existing_policies_preserved": true
+  },
+  "drive_checked_at": "2026-10-23 20:25:19 UTC",
+  "policy_change_actor": "owner",
+  "environment_policies_changed_by_agent": false
 }

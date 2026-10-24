@@ -1,0 +1,76 @@
+{
+  "single_branch_request_status": 403,
+  "message": "Resource not accessible by integration",
+  "environment": "supernova-foundation-signing",
+  "requested_branch": "codex/supernova-0.142-implementation-2026-10-23",
+  "policies_before": [
+    {
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.139-implementation-2026-10-13",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.140-implementation-2026-10-16",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.141-implementation-2026-10-22",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "policies_after": [
+    {
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.139-implementation-2026-10-13",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.140-implementation-2026-10-16",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.141-implementation-2026-10-22",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "policies_changed": false,
+  "signing_dispatched": false
+}

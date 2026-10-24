@@ -1,0 +1,22 @@
+{
+  "application_source": "08a896b1bee6a058053617fa7aa36c09773385d2",
+  "change": "Test-only wait for published UI phase as well as worker completion; all restore behavior assertions retained",
+  "totals": {
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "tests": "12",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-24T03:34:17.470Z",
+      "hostname": "e74bbe34bd10",
+      "time": "11.511"
+    }
+  ]
+}

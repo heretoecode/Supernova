@@ -1,0 +1,30 @@
+{
+  "run_id": 40023022572,
+  "application_source": "08a896b1bee6a058053617fa7aa36c09773385d2",
+  "conclusion": "failure",
+  "artifact_id": 12533926241,
+  "artifact_bytes": 109604550,
+  "artifact_sha256": "895cdee1ede2742a71aa1b97aa8142e87a2d98a343a192ed87bf3a0e4d29bce9",
+  "totals": {
+    "tests": 1094,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": 232,
+  "failed_tests": [
+    {
+      "suite": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "test": "connectedRestoreRequiresPreviewAndExplicitConfirmationBeforeWriting",
+      "message": "java.lang.NullPointerException: Cannot invoke \"android.view.View.performClick()\" because the return value of \"android.view.View.findViewWithTag(Object)\" is null",
+      "detail": "java.lang.NullPointerException: Cannot invoke \"android.view.View.performClick()\" because the return value of \"android.view.View.findViewWithTag(Object)\" is null\n\tat com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest.connectedRestoreRequiresPreviewAndExplicitConfirmationBeforeWriting(BackupSettingsControllerTest.java:69)\n\tat java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:580)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)\n\tat org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)\n\tat org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)\n\tat org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:524)\n\tat org.robolectric.internal.SandboxTestRunner.executeInSandbox(SandboxTestRunner.java:494)\n\tat org.robolectric.internal.SandboxTestRunner.access$900(SandboxTestRunner.java:67)\n\tat org.robolectric.internal.SandboxTestRunner$7.evaluate(SandboxTestRunner.java:442)\n\tat org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)\n\tat org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)\n\tat org.robolectric.internal.SandboxTestRunner.access$600(SandboxTestRunner.java:67)\n\tat org.robolectric.internal.SandboxTestRunner$6.evaluate(SandboxTestRunner.java:333)\n\tat org.robolectric.internal.SandboxTestRunner$3.evaluate(SandboxTestRunner.java:233)\n\tat org.robolectric.internal.SandboxTestRunner$5.lambda$evaluate$0(SandboxTestRunner.java:317)\n\tat org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:101)\n\tat java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)\n\tat java.base/java.lang.Thread.run(Thread.java:1583)\n\tSuppressed: org.robolectric.android.internal.AndroidTestEnvironment$UnExecutedRunnablesException: Main looper has queued unexecuted runnables. This might be the cause of the test failure. You might need a shadowOf(Looper.getMainLooper()).idle() call.\n"
+    }
+  ],
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 1788
+  },
+  "native_stage": "PASS",
+  "assembled_unsigned_apk": "Not a deliverable; test failure prevented conformance receipt and signing"
+}

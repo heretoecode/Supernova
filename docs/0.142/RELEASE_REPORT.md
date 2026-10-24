@@ -17,10 +17,10 @@ Review: [draft PR #20](https://github.com/heretoecode/Supernova/pull/20), based 
 | Prior full local Android run | 1,094 executed; four failures in retained tests using old navigation/private Activity state; zero errors/skips. Corrections preserve behavior assertions. Archived in test-runs/full-pre-final.json; this is not a passing run |
 | Prior lint | Final candidate rerun: zero errors; 1,788 warnings (test-runs/lint-final.json) |
 | Final candidate focused regression | 51 tests pass, zero failures/errors/skips, including all four corrected paths, form focus/scroll, lifecycle, credentials, real loopback WebDAV and editor (test-runs/release-targeted.json). Separate capture validation also passes, with brand/rail glyph checks in all eight images (test-only harness `51e1ac59`; no application input changes) |
-| Clean exact-source CI | [40023022572](https://github.com/heretoecode/Supernova/actions/runs/40023022572), running at the application source above; full tests, native rebuild and unsigned APK conformance pending |
+| Clean exact-source CI | [40023022572](https://github.com/heretoecode/Supernova/actions/runs/40023022572), completed with one backup-test UI publication race: 1,094 tests, one failure, zero errors/skips; native stage and lint/assembly pass. Failed receipt archived; test-only wait correction passes all 12 affected-class tests. A fresh full run is required |
 | Reference comparison | visual-evidence/index.html pairs actual 1920×1080 software renders with all three preserved references; five editor before/after pairs. Physical acceptance pending |
 | Physical Shield / live protocols / signed upgrade | All 67 physical cases remain PENDING; no attached device or live account acceptance available |
-| Signing / Drive | Not dispatched or uploaded; protected signing environment does not currently permit the new branch |
+| Signing / Drive | Not dispatched or uploaded. Owner enabled the exact new branch after the earlier HTTP403; readback verifies all eight prior rules remain. Signing secrets/certificate have not yet been exercised. See SIGNING_OWNER_UPDATE_READBACK.json |
 
 No final passing suite, physical fidelity acceptance, signed APK, checksum or new Drive download is claimed at this checkpoint. Main and existing implementation/documentation branches remain untouched.
 
@@ -28,4 +28,4 @@ The 0.142 conformance and signed-QA workflows use the established pinned depende
 
 Drive discovery confirmed the existing Supernova folder and HTML file `17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW`. Its delivered history is preserved; the repository HTML contains an explicitly undelivered 0.142 section. External HTML/APKs are not replaced by an unvalidated candidate.
 
-Physical acceptance remains open: all 67 FD-003 Shield cases, real account/protocol/device fixtures, USB detach/reconnect, actual D-pad/navigation/focus and reference screenshot comparison. Software renders are native Android views at 1920×1080 with controlled fixtures, not physical Shield screenshots.
+Physical acceptance remains open: all 67 FD-003 Shield cases plus five editor-step checks and a signed-upgrade extension, real account/protocol/device fixtures, USB detach/reconnect, actual D-pad/navigation/focus and reference screenshot comparison. Software renders are native Android views at 1920×1080 with controlled fixtures, not physical Shield screenshots.
