@@ -1,0 +1,19 @@
+{
+  "source_commit": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
+  "run_id": 40058921765,
+  "artifact_id": 12547538056,
+  "apk_bytes": 87709225,
+  "apk_sha256": "bdfc4d4996f40efbc6dd95984530e4f2a7cfaf8aa5b1052c077b92d83b91d98e",
+  "application_id": "app.supernova.player",
+  "version_name": "0.142",
+  "version_code": 142,
+  "branding_provider_assets_verified": true,
+  "native_hashes_independently_matched": 88,
+  "rebuilt_ffmpeg_hashes_independently_matched": 24,
+  "decode_cases": 64,
+  "unsigned_signature_rejected": true,
+  "pre_key_signing_evidence_gate": "PASS (no key decoded or accessed)",
+  "physical_shield_verified": false,
+  "signed_apk": false,
+  "scope": "Downloaded complete CI ZIP; outer size/hash and CRC verified. Independent manifest/resource/asset/native/signature checks plus full-suite evidence gate. This is unsigned review evidence, not APK delivery."
+}

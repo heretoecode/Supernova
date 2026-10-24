@@ -1,6 +1,6 @@
 # Supernova 0.142 — development candidate
 
-Status: implementation under validation; no signed APK delivered and no main merge.
+Status: software-validated candidate; physical acceptance and signed distribution pending. No signed APK delivered and no main merge.
 
 - Network & Files gains Overview, Local Storage, Network Shares, Cloud Services, All Files and Library Health in a fixed rail with one flexible workspace. Overview has four information cards and no Quick Actions strip. The existing global navigation, Space Black artwork, typeface and monochrome icon language are retained.
 - Local/USB storage, six connection protocols, discovery, bookmarks, staged library membership, scan settings and Health remain accessible. File browsing keeps its toolbar, sort/filter modes, breadcrumbs and existing playback/Details handoffs.

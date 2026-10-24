@@ -10,7 +10,7 @@ These are native Android view renders with controlled fixture data, not physical
 
 ## Network & Files comparison
 
-The final `network/` capture set is produced by Network142RenderTest with the actual TopNavigation + PreviewPages + browser shell. Application inputs match `08a896b1`; capture harness `51e1ac59` adds recursive invalidation before bitmap drawing and asserts visible static brand/rail glyphs in all eight frames. This prevents intermittent omissions of cached static text in repeated Robolectric draws; no application redraw/layout change was made. The separate capture regression passes (test-runs/capture-validation.json). The fixture declares internal/USB paths and empty remote accounts; it does not assert a physical mount or successful external connection.
+The final `network/` capture set is produced by Network142RenderTest with the actual TopNavigation + PreviewPages + browser shell. Final captures are downloaded from passing CI `40058921765` at `b347707d`; application inputs remain unchanged from `08a896b1`. The capture harness (introduced in `51e1ac59`) adds recursive invalidation before bitmap drawing and asserts visible static brand/rail glyphs in all eight frames. This prevents intermittent omissions of cached static text in repeated Robolectric draws; no application redraw/layout change was made. The separate capture regression passes (test-runs/capture-validation.json). The fixture declares internal/USB paths and empty remote accounts; it does not assert a physical mount or successful external connection.
 
 | Reference | Implemented correspondence | Deliberate source-grounded differences / pending evidence |
 | --- | --- | --- |

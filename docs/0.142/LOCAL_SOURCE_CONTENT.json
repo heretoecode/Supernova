@@ -1,7 +1,8 @@
 {
   "application_source": "08a896b1bee6a058053617fa7aa36c09773385d2",
+  "checked_content_commit": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
   "prepared_git_head": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
-  "scope": "All changed application/resource/asset/test inputs match checked_content_commit. Only Network142RenderTest differs from application_source: invalidation and glyph-presence assertions for faithful software screenshots. Application inputs remain byte-identical to application_source. Prepared build retains provider isolation and old Git metadata; local results do not prove APK provenance.",
+  "scope": "All changed application/resource/asset/test inputs match checked_content_commit. Application inputs remain byte-identical to application_source. Subsequent test-only corrections invalidate cached screenshot descendants and wait for published backup UI state. Prepared provider-isolated build retains original Git metadata; local results are not APK provenance proof.",
   "files": [
     {
       "path": "assets/foundation/release-history.json",
@@ -114,6 +115,11 @@
       "prepared_copy_matches": true
     },
     {
+      "path": "src/test/java/com/archos/mediacenter/video/leanback/settings/BackupSettingsControllerTest.java",
+      "sha256": "ee026fb53aacf7d6c44f8dc17e50f4c847c3fe60ed1fd97a60807122878be85e",
+      "prepared_copy_matches": true
+    },
+    {
       "path": "src/test/java/com/archos/mediacenter/video/streaming/putio/Network142PutioTest.java",
       "sha256": "bbfb1450e58c87d07bcc05ce6e50020e88495c2988b6dd97c258a4b699fe3f18",
       "prepared_copy_matches": true
@@ -133,6 +139,5 @@
       "sha256": "0d3a1a3925160d3129199610c56343ba653d11bb07eaded7f0ae41108e808b44",
       "prepared_copy_matches": true
     }
-  ],
-  "checked_content_commit": "51e1ac5983f97330c369858a75944b7a26cd445e"
+  ]
 }

@@ -87,6 +87,10 @@ class Supernova141QAGates(unittest.TestCase):
         self.assertEqual({'branches': ['codex/supernova-0.142-implementation-2026-10-23'], 'paths': ['.github/workflows/supernova-0142-qa.yml']}, trigger['push'])
         self.assertFalse(trigger['workflow_dispatch']['inputs']['approved_qa_distribution']['default'])
         job = workflow['jobs']['qa']; self.assertEqual('supernova-foundation-signing', job['environment'])
+        frozen = 'b347707defdbf2ab3ae83d920ba9fa7af3936220'
+        self.assertEqual(frozen, job['env']['SUPERNOVA_QA_SOURCE'])
+        self.assertEqual(frozen, job['steps'][0]['with']['ref'])
+        self.assertIn('merge-base --is-ancestor', json.dumps(job['steps']))
         self.assertIn("github.event_name == 'workflow_dispatch'", job['if'])
         self.assertIn('inputs.approved_qa_distribution == true', job['if'])
         self.assertIn('refs/heads/codex/supernova-0.142-implementation-2026-10-23', job['if'])

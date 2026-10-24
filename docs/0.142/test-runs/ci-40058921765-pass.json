@@ -1,0 +1,26 @@
+{
+  "run_id": 40058921765,
+  "source_commit": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
+  "conclusion": "success",
+  "totals": {
+    "tests": 1094,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": 232,
+  "artifact_id": 12547538056,
+  "artifact_bytes": 109610082,
+  "artifact_sha256": "2a15fb5557ce71e4e939a5fb448a476f96b7908b0dc4b093d04d3344b772d02d",
+  "zip_crc_verified": true,
+  "lint": {
+    "errors": 0,
+    "warnings": 1788
+  },
+  "runtime_artifact_hashes_matched": 138,
+  "rebuilt_ffmpeg_libraries_matched": 24,
+  "native_hashes_matched": 88,
+  "unsigned_apk_sha256": "bdfc4d4996f40efbc6dd95984530e4f2a7cfaf8aa5b1052c077b92d83b91d98e",
+  "unsigned_apk_bytes": 87709225,
+  "signed_apk": false
+}

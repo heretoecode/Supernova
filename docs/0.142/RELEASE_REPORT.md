@@ -1,31 +1,46 @@
 # Supernova 0.142 release preparation
 
-Development branch: `codex/supernova-0.142-implementation-2026-10-23`.
-Base: exact delivered 0.141 application `4f0937f1fe8826f50d2c0e844b0837e8a2360a46`.
+Status: **software-validated development candidate; physical acceptance and signed distribution pending**.
 
-Implemented candidate scope: six-section Network & Files workspace and editor opacity/readability correction. Full mapping: PARITY_LEDGER.md (202 required entries). HUD: proposal only in PLAYBACK_HUD_PROPOSAL.md; no player/HUD application changes.
+Branch: `codex/supernova-0.142-implementation-2026-10-23`. Review: [draft PR #20](https://github.com/heretoecode/Supernova/pull/20). Verified delivered base: `4f0937f1fe8826f50d2c0e844b0837e8a2360a46`. Main is unmerged; the original release and authority branches are preserved.
 
-Application/test source candidate: `08a896b1bee6a058053617fa7aa36c09773385d2`.
-Review: [draft PR #20](https://github.com/heretoecode/Supernova/pull/20), based on the preserved 0.141 delivery branch. No merge is authorised or performed.
+Validated build/test source and frozen QA source: `b347707defdbf2ab3ae83d920ba9fa7af3936220`. Application inputs last changed at `08a896b1bee6a058053617fa7aa36c09773385d2`; later source changes are screenshot capture/backup-test synchronization and evidence only. The prepared signing workflow checks out the validated SHA and verifies its ancestry, following 0.141's established freeze pattern. Its workflow controls and documentation are separate from the frozen application checkout.
 
-## Verification status
+## Completed approved work
 
-| Check | Recorded outcome |
+- Six permanent Network & Files destinations and a flexible workspace, four Overview cards, monochrome icons and the existing Supernova visual system. Original storage/network/cloud/library/scan/browser handlers remain accessible; no fictional capacity, provider or connection success is introduced.
+- Connection recovery aliases, non-SMB email usernames/hostname-case credential lookup, stale listing/retry handling, discovery lifecycle, explicit inherited-exclusion restoration, scan defaults and disabled Put.io probes are covered by regression checks. The embedded Put.io browser retains read-only API behavior, account checks, pagination/ancestry and lifecycle ownership. Older already-truncated usernames still require re-entry; no credential/schema migration is claimed.
+- Edit Library uses a 97% dark backdrop and 94% panels across all five existing steps, with layout, Live Preview and controls retained. Background interference is measured at 1 versus 25 in the original editor-source fixture; physical TV readability remains pending.
+- Playback HUD: [source-grounded proposal only](PLAYBACK_HUD_PROPOSAL.md), with Subtitles, Audio, Display and Playback tabs. No player/HUD application changes. Final visual design still requires owner approval and does not block this A/B candidate.
+
+The complete [202-entry parity map](PARITY_LEDGER.md) was committed before application edits (92 controls,28 state families,15 conditional findings,67 physical cases).
+
+## Verification
+
+| Check | Outcome |
 | --- | --- |
-| Pre-implementation parity | 202 unique entries committed before application edits: 92 controls, 28 state families, 15 conditional findings, 67 physical cases |
-| Repository tooling | 102 tests pass |
-| Prior full local Android run | 1,094 executed; four failures in retained tests using old navigation/private Activity state; zero errors/skips. Corrections preserve behavior assertions. Archived in test-runs/full-pre-final.json; this is not a passing run |
-| Prior lint | Final candidate rerun: zero errors; 1,788 warnings (test-runs/lint-final.json) |
-| Final candidate focused regression | 51 tests pass, zero failures/errors/skips, including all four corrected paths, form focus/scroll, lifecycle, credentials, real loopback WebDAV and editor (test-runs/release-targeted.json). Separate capture validation also passes, with brand/rail glyph checks in all eight images (test-only harness `51e1ac59`; no application input changes) |
-| Clean exact-source CI | [40023022572](https://github.com/heretoecode/Supernova/actions/runs/40023022572), completed with one backup-test UI publication race: 1,094 tests, one failure, zero errors/skips; native stage and lint/assembly pass. Failed receipt archived; test-only wait correction passes all 12 affected-class tests. A fresh full run is required |
-| Reference comparison | visual-evidence/index.html pairs actual 1920×1080 software renders with all three preserved references; five editor before/after pairs. Physical acceptance pending |
-| Physical Shield / live protocols / signed upgrade | All 67 physical cases remain PENDING; no attached device or live account acceptance available |
-| Signing / Drive | Not dispatched or uploaded. Owner enabled the exact new branch after the earlier HTTP403; readback verifies all eight prior rules remain. Signing secrets/certificate have not yet been exercised. See SIGNING_OWNER_UPDATE_READBACK.json |
+| Clean exact-source CI | [40058921765](https://github.com/heretoecode/Supernova/actions/runs/40058921765): PASS at the frozen SHA |
+| Android suite / compilation | 1,094 tests /232 classes; zero failures, errors or skips; release compilation and unsigned assembly pass |
+| Repository tooling | 102 tests pass in CI and again locally after adding the source-freeze assertions |
+| Release lint | Zero errors /1,788 warnings |
+| Native/runtime | 64 decode comparisons across four ABIs;24 rebuilt FFmpeg libraries;88 packaged native hashes;138 reviewed runtime artifact hashes match |
+| Full artifact readback | 109,610,082-byte ZIP; SHA-256 `2a15fb5557ce71e4e939a5fb448a476f96b7908b0dc4b093d04d3344b772d02d`; downloaded hash and ZIP CRC verified |
+| Independent APK checks | Package/version/code, branding/providers/offline assets, all 88 native hashes,24 FFmpeg hashes and unsigned-signature rejection pass; pre-key evidence gate passes without key access |
+| Navigation / functional software checks | Rail activation/entry, remembered folders, scroll/focus, dialogs, error/retry, shared hosts, Put.io lifecycle and a real loopback WebDAV email-username/listing test pass; these are not live Shield/server acceptance |
+| Visual evidence | Eight actual 1920×1080 CI shell captures paired with all three preserved references; five editor before/after pairs; saved-pixel checks retain static brand/rail text. [Gallery](visual-evidence/index.html); physical fidelity pending |
 
-No final passing suite, physical fidelity acceptance, signed APK, checksum or new Drive download is claimed at this checkpoint. Main and existing implementation/documentation branches remain untouched.
+Evidence: [conformance receipt](CONFORMANCE_40058921765.json), [complete-suite summary](test-runs/ci-40058921765-pass.json), [independent readback](UNSIGNED_ARTIFACT_READBACK.json), [native runtime report](NATIVE_RUNTIME_40058921765.json).
 
-The 0.142 conformance and signed-QA workflows use the established pinned dependency/native/signature/payload verification pipeline with the new protocol-scoped credential patch. Historical workflows remain unchanged. Signing is not dispatched while mandatory release requirements remain outstanding. Existing certificate is retained; no new key or sharing/folder change is proposed.
+The unsigned review APK is 87,709,225 bytes, SHA-256 `bdfc4d4996f40efbc6dd95984530e4f2a7cfaf8aa5b1052c077b92d83b91d98e`. It is not a signed deliverable or install/upgrade certification. No signed 0.142 checksum or Drive download link exists.
 
-Drive discovery confirmed the existing Supernova folder and HTML file `17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW`. Its delivered history is preserved; the repository HTML contains an explicitly undelivered 0.142 section. External HTML/APKs are not replaced by an unvalidated candidate.
+## Signing and delivery gates
 
-Physical acceptance remains open: all 67 FD-003 Shield cases plus five editor-step checks and a signed-upgrade extension, real account/protocol/device fixtures, USB detach/reconnect, actual D-pad/navigation/focus and reference screenshot comparison. Software renders are native Android views at 1920×1080 with controlled fixtures, not physical Shield screenshots.
+Owner added only the 0.142 branch to `supernova-foundation-signing`; readback confirms all eight previous rules remain (nine total). The branch restriction is cleared. Secret values are not read, exported or logged; runtime key/password/certificate validation is not yet exercised. Existing certificate pin remains `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. Manual QA distribution approval, exact-source checks, full tests/native/binary checks, signature/payload verification and temporary-key cleanup remain in place. Signing has not been dispatched.
+
+[SHIELD_QA.md](SHIELD_QA.md) retains all 67 FD-003 cases plus five editor-step checks and one signed-upgrade extension, all PENDING. No Shield is attached and real USB/SMB/WebDAV/Put.io, long-list/performance/overscan, physical screenshot acceptance and retained-data upgrade are unverified. The HUD design remains separately deferred.
+
+The existing Drive APK folder still has eight files through 0.141 and no 0.142. Existing HTML remains 33,743 bytes, modified 2026-10-23T 11:18:07.136Z. No external HTML/APK upload, replacement, sharing change or main merge occurred. Repository release notes distinguish this candidate from delivered 0.141. See [delivery readiness](DELIVERY_READINESS.json) and [owner branch-rule readback](SIGNING_OWNER_UPDATE_READBACK.json).
+
+## Retained failed-run evidence
+
+The prior local 1,094-case run had four old-navigation/private-field test failures; corrected behavior checks pass. CI 40023022572 then had one backup-test race: worker completion was visible before the UI publication, allowing a premature confirmation click. Waiting for the published phase retains all restore assertions; the 12-case class and the fresh full 1,094-case run pass. Repeated native screenshots also required test-harness descendant invalidation to retain cached static text. Neither correction changes backup/player application behavior. Failed receipts and focused runs remain in test-runs/; none is relabeled as a pass.

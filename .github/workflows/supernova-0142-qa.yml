@@ -23,7 +23,8 @@ jobs:
     timeout-minutes: 120
     environment: supernova-foundation-signing
     env:
-      SUPERNOVA_QA_SOURCE: ${{ github.sha }}
+      # Freeze the conformance-passed source; later branch commits are delivery preparation/evidence.
+      SUPERNOVA_QA_SOURCE: b347707defdbf2ab3ae83d920ba9fa7af3936220
     defaults:
       run:
         shell: bash
@@ -31,9 +32,15 @@ jobs:
       - name: Checkout the exact QA source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          ref: b347707defdbf2ab3ae83d920ba9fa7af3936220
           path: source
           fetch-depth: 0
           persist-credentials: false
+      - name: Verify the frozen source belongs to this continuation branch
+        run: |
+          set -euo pipefail
+          test "$(git -C source rev-parse HEAD)" = "$SUPERNOVA_QA_SOURCE"
+          git -C source merge-base --is-ancestor "$SUPERNOVA_QA_SOURCE" "${{ github.sha }}"
       - name: Java for PKCS12 validation and Android build
         uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
         with:

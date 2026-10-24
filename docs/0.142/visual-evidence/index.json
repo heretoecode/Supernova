@@ -1,6 +1,6 @@
 {
-  "application_source": "08a896b1bee6a058053617fa7aa36c09773385d2",
-  "capture_harness_source": "51e1ac5983f97330c369858a75944b7a26cd445e",
+  "application_source": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
+  "capture_harness_source": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
   "renderer": "Native Android views / controlled fixtures",
   "physical_shield_verified": false,
   "visual_acceptance": "PENDING",
