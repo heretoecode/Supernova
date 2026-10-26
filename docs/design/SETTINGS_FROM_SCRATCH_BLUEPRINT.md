@@ -14,6 +14,7 @@ Build a NEW Settings interface from scratch, not a visual refurbishment of the i
 4. Only then prepare an implementation handover. No implementation approval yet.
 
 ## Eight agreed top-level categories — EXACT names and order
+Visual order of the APPROVED grid is defined in the reproducibility contract below; the following numbered list is the eight-category register, not a binding screen placement.
 Row 1:
 1. Playback & Video — playback behaviour, video presentation and controls.
 2. Audio & Subtitles — audio output, languages, subtitle behaviour.
@@ -27,14 +28,55 @@ Row 2:
 
 These eight labels supersede mistaken mock-up substitutions: NOT 'Library & Content', NOT 'Network & Files', NOT 'Resume & Continue'. Network & Files is a separate dedicated application area, not a replacement top-level Settings category. Resume and Continue are behaviours distributed within the agreed categories, not a top-level category.
 
-## Main grid — current candidate, NOT YET APPROVED
+## Main grid — APPROVED 2026-10-26
 - Full-screen 16:9 Nvidia Shield / Android TV screen, 4 columns x 2 rows, all eight cards visible without scrolling.
 - Use the **official, previously approved Supernova rebranding-release background asset**, unchanged, as the Settings background. No new generated nebula, planet, gradient or substitute background. Locate and verify the canonical asset in the repository before implementation; if missing, flag rather than recreate it.
 - Supernova brand typography; consistent simple monochrome category icons; title plus concise functional description per card.
 - Clear electric-blue focus border and modest glow; unfocused cards understated; TV-readable sizes and contrast.
 - Balanced margins and vertical position; no wasted space, extra panels, duplicate top-level navigation or decorative filler.
 - D-pad traversal predictable; Enter opens category; Back returns to grid and restores prior focused card.
-- Category descriptions are provisional editorial copy until approved. No arbitrary on-screen clock time should be treated as a functional requirement.
+- Category descriptions must match the approved eight-category intent; final exact strings below are implementation copy. No arbitrary on-screen clock time should be treated as a functional requirement.
+
+
+## Main grid reproducibility contract — APPROVED
+**Priority:** approved requirements and canonical app assets > the approved visual mock-up > numeric candidate tokens. Image generation is a visual reference, not pixel-accurate source or an approved background. Do not silently invent missing fonts, icons, assets, strings or measurements.
+
+### Exact on-screen content and ordering
+Display 4 columns in each of 2 rows, left to right:
+| Row | Column | Title | Description | Icon intent |
+|---|---:|---|---|---|
+| 1 | 1 | Playback & Video | Control how content plays, resumes and looks on screen. | Outline play triangle |
+| 1 | 2 | Audio & Subtitles | Configure audio, subtitles and related playback options. | Outline speaker/sound |
+| 1 | 3 | Library & Home | Manage your libraries, metadata and Home screen displays. | Outline filmstrip |
+| 1 | 4 | Appearance | Customise the look and feel of Supernova. | Outline display/monitor |
+| 2 | 1 | Streaming & Providers | Set up and manage streaming providers and availability preferences. | Outline cloud/service |
+| 2 | 2 | Connections & Integrations | Manage external connections, accounts and integrations. | Outline connected nodes |
+| 2 | 3 | System & Maintenance | Diagnostics, backup and other system options. | Outline gear |
+| 2 | 4 | About Supernova | Version information, credits and legal details. | Outline information circle |
+
+**Note:** The corrected image places Streaming & Providers in row 1 column 4 and Appearance in row 2 column 1, whereas the earlier written category sequence placed Appearance fourth and Streaming fifth. **The corrected approved IMAGE'S spatial arrangement wins:** row 1 = Playback & Video, Audio & Subtitles, Library & Home, Streaming & Providers; row 2 = Appearance, Connections & Integrations, System & Maintenance, About Supernova. The table above is a content-to-icon list and MUST be read with this spatial override. Do not change labels or swap cards without approval.
+
+### Implementation requirements
+- Main grid is a single landing screen. No permanent sidebar, no third pane, no scrolling at standard TV aspect ratio, no preview widgets.
+- Existing canonical Supernova background fills viewport using the app's existing scaling/crop behaviour. Do not embed the generated concept image in the application.
+- Reuse existing app wordmark/logo typography, approved font resources, palette and official background. Find their actual repository paths and record them in an asset manifest before coding. Missing assets are a blocker requiring escalation, not permission to substitute.
+- Card geometry and typographic tokens above are initial implementation targets; maintain relative composition and readable hierarchy while tuning against Shield captures. Use weighted responsive columns rather than fixed screenshot pixels.
+- Selected focus initially on Playback & Video when entering Settings fresh. On return from a category page restore its grid card. Left/right moves one column; up/down moves one row preserving column; no wrapping unless separately approved. OK opens selected category; Back exits Settings through existing app navigation.
+- Focus state must have an unmistakable blue outline and restrained surface tint; unfocused cards remain readable. Avoid focus zoom that clips the card.
+- Header: existing Supernova brand at left, thin divider, 'Settings'. If the existing app header provides a real clock, reuse it; the image's arbitrary 19:24 is NOT a hardcoded time requirement.
+- Use the exact eight labels above. No additional top-level cards, 'Network & Files', 'Resume & Continue', or 'Library & Content'.
+- Long descriptions/localisation must wrap without overlapping card borders; use dynamic text sizing only within accessibility constraints. No ellipsis on English approved strings at reference resolution.
+- Test card order, D-pad focus, restoration, back, typography, clipping, overscan, actual background and accessibility on Nvidia Shield. Capture screenshots at 1080p and 4K and compare with approved composition.
+- The eight category destinations may be stubs only during isolated grid development, but the finished Settings feature is not complete until all category pages and audit-mapped controls are approved and implemented.
+
+### Required asset and implementation evidence before Codex starts
+1. Exact official background repository path, resource name, hash and scaling mode.
+2. Actual font family names/resource paths for brand, headings and body, with fallback behaviour.
+3. Actual colour resource names/values for focus, surfaces and typography.
+4. Icon asset paths or a named consistent vector icon set with eight mapped glyphs.
+5. A screenshot reference of the approved corrected grid and the revision/date, committed to GitHub if the original can be reliably obtained.
+6. Actual Shield screenshots and focus-navigation QA results. Do not claim pixel-perfect fidelity without comparison.
+**Unverified today:** exact canonical background/font/icon paths and original image attachment availability in GitHub. This blueprint records the required identification and validation work, rather than pretending those details have been checked.
 
 ## Category page design direction — preliminary, NOT YET APPROVED
 - A selected grid card opens a dedicated category page; do not repeat all eight top-level categories in a sidebar.
@@ -44,7 +86,7 @@ These eight labels supersede mistaken mock-up substitutions: NOT 'Library & Cont
 - Exact subsection names, controls, defaults and states must be checked against the audit before mock-ups or implementation.
 
 
-## Design tokens and dimensional specification — PROPOSED, NOT YET APPROVED
+## Design tokens and dimensional specification — APPROVED VISUAL DIRECTION; NUMERIC TARGETS REQUIRE DEVICE VALIDATION
 These are measurable implementation targets for design review, NOT measurements verified from a generated image. Codex must validate against Shield screenshots, TV scaling, font assets and actual layout bounds. Use Android **dp** for geometry and **sp** for text, not raw 1920x1080 screenshot pixels. Reference canvas: 1920x1080 at 16:9, layout reference 960x540 dp equivalent at 2x scale; final dimensions adapt to device density, font scale and TV safe area.
 
 ### Typography
@@ -57,7 +99,7 @@ These are measurable implementation targets for design review, NOT measurements 
 - Secondary/help text: 14sp minimum where needed. Do not compress below comfortable TV viewing size to force content.
 - White/off-white primary; muted grey-blue secondary with accessible contrast. No decorative tracking on body copy. Exact typography and colour tokens pending actual font asset verification and visual approval.
 
-### Grid geometry — 960x540 dp reference
+### Grid geometry — 960x540 dp reference (calibration targets, not verified measurements)
 - TV-safe outer inset: 28dp left/right; 24dp top/bottom minimum; respect Android overscan/safe bounds.
 - Header horizontal start: 28dp; header top: 30dp; header baseline and vertical alignment to be checked on device. Brand/title separator: 1dp stroke, 26dp height, 18dp horizontal gaps.
 - Grid available width: 904dp (960 - 2x28). Four columns with 10dp horizontal gaps yield **218.5dp cards**. Do not hard-code fractional card widths: distribute available width with weighted columns.
@@ -97,8 +139,8 @@ These are measurable implementation targets for design review, NOT measurements 
 
 ## Approval log
 - APPROVED IN PRINCIPLE: eight names/order; ground-up approach; full-screen Space Black; no filler; category pages use left subsections + right controls; setting descriptions, toggles and separators.
-- UNDER REVIEW: main grid final visual appearance, focus and spacing; corrected eight-category mock-up has been presented; final visual approval is still pending. USER-CONFIRMED: the actual Settings background MUST be the official approved Supernova rebranding-release background, not the planet/nebula shown in concept art. Proposed design tokens/dimensions are recorded above and are not yet approved.
-- NOT APPROVED: final main grid; individual category page details; migration/implementation.
+- APPROVED 2026-10-26: main eight-card 4x2 Settings grid visual direction, monochrome icons, descriptions, restrained blue focus, spacing and structure. Mandatory background: the existing official Supernova rebranding-release background asset, NOT the generated planet/nebula concept art. The numeric dp/sp/hex specifications are documented implementation targets requiring asset checks and Shield visual validation; approval of the visual does not assert the numbers were pixel-measured.
+- NOT APPROVED: individual category page details; migration/implementation. Main grid IS approved.
 
 ## Change control / upkeep
 Treat this file as the living design blueprint. After EACH explicit user design decision, update the approval log, layout/specification and any impacted category mapping in a new documentation-only commit. Clearly mark candidate vs approved; never silently promote mock-ups to approved. Keep this file consistent with the audited inventory, and link any approved image/mock-up artefacts when a stable repository asset exists. Avoid touching release/implementation branches while design is in progress.
