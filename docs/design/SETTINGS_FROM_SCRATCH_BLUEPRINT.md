@@ -14,14 +14,14 @@ Build a NEW Settings interface from scratch, not a visual refurbishment of the i
 4. Only then prepare an implementation handover. No implementation approval yet.
 
 ## Eight agreed top-level categories — EXACT names and order
-Visual order of the APPROVED grid is defined in the reproducibility contract below; the following numbered list is the eight-category register, not a binding screen placement.
+Visual order of the APPROVED grid is defined in the reproducibility contract below.
 Row 1:
 1. Playback & Video — playback behaviour, video presentation and controls.
 2. Audio & Subtitles — audio output, languages, subtitle behaviour.
 3. Library & Home — library metadata, library display and Home rows.
-4. Appearance — language, visual preferences and presentation.
+4. Streaming & Providers — streaming services, availability and provider preferences.
 Row 2:
-5. Streaming & Providers — streaming services, availability and provider preferences.
+5. Appearance — language, visual preferences and presentation.
 6. Connections & Integrations — network connections and service integrations.
 7. System & Maintenance — backup, diagnostics, compatibility and maintenance.
 8. About Supernova — version, release notes, credits and licences.
@@ -48,13 +48,13 @@ Display 4 columns in each of 2 rows, left to right:
 | 1 | 1 | Playback & Video | Control how content plays, resumes and looks on screen. | Outline play triangle |
 | 1 | 2 | Audio & Subtitles | Configure audio, subtitles and related playback options. | Outline speaker/sound |
 | 1 | 3 | Library & Home | Manage your libraries, metadata and Home screen displays. | Outline filmstrip |
-| 1 | 4 | Appearance | Customise the look and feel of Supernova. | Outline display/monitor |
-| 2 | 1 | Streaming & Providers | Set up and manage streaming providers and availability preferences. | Outline cloud/service |
+| 2 | 1 | Appearance | Customise the look and feel of Supernova. | Outline display/monitor |
+| 1 | 4 | Streaming & Providers | Set up and manage streaming providers and availability preferences. | Outline cloud/service |
 | 2 | 2 | Connections & Integrations | Manage external connections, accounts and integrations. | Outline connected nodes |
 | 2 | 3 | System & Maintenance | Diagnostics, backup and other system options. | Outline gear |
 | 2 | 4 | About Supernova | Version information, credits and legal details. | Outline information circle |
 
-**Note:** The corrected image places Streaming & Providers in row 1 column 4 and Appearance in row 2 column 1, whereas the earlier written category sequence placed Appearance fourth and Streaming fifth. **The corrected approved IMAGE'S spatial arrangement wins:** row 1 = Playback & Video, Audio & Subtitles, Library & Home, Streaming & Providers; row 2 = Appearance, Connections & Integrations, System & Maintenance, About Supernova. The table above is a content-to-icon list and MUST be read with this spatial override. Do not change labels or swap cards without approval.
+**Approved spatial order:** row 1 = Playback & Video, Audio & Subtitles, Library & Home, Streaming & Providers; row 2 = Appearance, Connections & Integrations, System & Maintenance, About Supernova. This matches the corrected approved visual. Do not change labels or swap cards without approval.
 
 ### Implementation requirements
 - Main grid is a single landing screen. No permanent sidebar, no third pane, no scrolling at standard TV aspect ratio, no preview widgets.
