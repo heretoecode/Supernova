@@ -137,10 +137,51 @@ These are measurable implementation targets for design review, NOT measurements 
 - Do not infer exact dp/sp/hex values from image generation. The values above are deliberate **proposals**, subject to user visual approval and device verification.
 - Do not change an approved token or card layout without recording the reason and obtaining approval for visually material changes.
 
+
+## Approved selector-dialog pattern: preferred audio language — 2026-10-26
+**Status:** USER-APPROVED VISUAL DESIGN for the compact modal demonstrated as “Default audio track”; exact preference semantics/options must be reconciled with the Settings audit. The user approved the latest narrow dialog with language/locale icons, not the surrounding unverified Playback controls.
+
+### Placement and naming
+- In the final eight-category organisation, preferred/default audio track language belongs under **Audio & Subtitles**, not Playback & Video. The screenshot's Playback placement is illustrative only.
+- “Default audio track” is the approved **mock-up title**, subject to matching the real audited preference label and behaviour. Do not introduce a new preference merely to match concept copy.
+- Source of truth for actual option values, persistence, default selection and dependency: audited audio-language/track preference and implementation. Example language names and selection in the generated image are illustrative, not verified as the full available options.
+
+### Modal composition
+- Opened by OK/Select on the relevant settings row, overlaying the existing category page rather than navigating to a third permanent panel.
+- **Compact, vertically oriented modal**: noticeably narrower than the previous broad dialog; roughly **270dp wide** on the 960dp reference canvas (approximately 28% viewport), with adaptive maximum width for longer localised text and a minimum practical TV-readable width. Reference image appears ~455px wide on 1648px screenshot (~28%); image pixel estimates are not exact layout measurements.
+- Visually centred in the available settings/content workspace as in approved mock-up, not necessarily the entire physical TV width; avoid covering the left subsection navigation more than necessary.
+- Rounded dark translucent panel, subtle 1dp outline, modest shadow, ~10dp corner radius; retain official Supernova background visible behind it. Underlying screen remains visually recognisable but inactive; use restrained dimming as necessary for contrast.
+- Modal interior target: 16dp horizontal padding, 14dp top padding, 12dp bottom padding; header 21sp semibold; explanatory line 15sp regular with natural two-line wrapping and ~5dp gap below title.
+- Options form a **single-select radio list**; each row min 32–38dp tall depending on TV scaling, with a comfortable focus hit target at least 48dp high even if visible row is more compact. Radio indicator on left, optional locale/neutral icon next, language label. Subtle 1dp separators between rows.
+- Selected value shows a filled radio circle; D-pad focused row shows blue outline/tint. These states are independent: moving focus must not commit a change or falsely mark a new selection.
+- Cancel action sits at bottom right, separated from list by a subtle divider; Back cancels and restores focus to the originating setting row. Selecting an option saves through the **existing audited preference mechanism**, dismisses the modal and updates the displayed summary. Do not change persistence semantics without audit evidence.
+- For many options, scroll the list inside a height-constrained modal while keeping title and footer stationary. No clipping, overlapping rows or text truncation at standard Shield resolutions.
+- Exact row count, scrolling behaviour, choice order and default depend on the audited options. Never hardcode the screenshot's example set as the entire real list.
+
+### Flag / locale icon rules — APPROVED
+- Show a national flag **only when an option represents a specific country/locale**, e.g. English (UK) -> UK flag, English (US) -> US flag.
+- For **generic languages** (e.g. generic French, German, Spanish, Japanese), use a neutral language/globe icon; a language alone is not equivalent to a country.
+- For “Original language” use a neutral globe/language symbol. For “Auto (device language)” use a neutral automatic/device symbol. Include these special choices only if the audited preference genuinely supports them.
+- Flags are visual supplements; always display the locale name as text, with accessible labels. Do not infer flags from display names without a locale code.
+- No country flags for subtitles/audio choices that lack region-specific metadata. Preserve locale and language handling already documented in existing Settings design authority.
+
+### Acceptance and verification
+1. Compact modal width clearly smaller than previous wide mock-up; remains legible at typical TV viewing distance.
+2. Title, explanation, radio choices, neutral/flag icons, selection, focus, separators and Cancel match the approved visual hierarchy.
+3. Full D-pad traversal and scroll, selection and Back/Cancel focus restoration work on Shield.
+4. Long language names and localisation fit or wrap; no clipping at 720p, 1080p and 4K.
+5. Correct audited preference persists across navigation/relaunch; no invented option values or language flags.
+6. Reuse official approved Supernova background and actual typography assets; screenshot's artificial space image and arbitrary time are NOT implementation assets.
+7. Reuse this selector pattern where semantically suitable for other single-choice settings, but do not apply it blindly to multi-select or complex preferences.
+
+### Reference / provenance
+Approved in chat on 2026-10-26: user said “That’s perfect, update the blueprint with all details” referring to the **third, narrower Default audio track dialog mock-up with locale icons**. The image was generated in chat but is not yet a verified GitHub repository asset; attach the original as a design reference only when accessible. This text and audit are authoritative until then.
+
 ## Approval log
 - APPROVED IN PRINCIPLE: eight names/order; ground-up approach; full-screen Space Black; no filler; category pages use left subsections + right controls; setting descriptions, toggles and separators.
 - APPROVED 2026-10-26: main eight-card 4x2 Settings grid visual direction, monochrome icons, descriptions, restrained blue focus, spacing and structure. Mandatory background: the existing official Supernova rebranding-release background asset, NOT the generated planet/nebula concept art. The numeric dp/sp/hex specifications are documented implementation targets requiring asset checks and Shield visual validation; approval of the visual does not assert the numbers were pixel-measured.
-- NOT APPROVED: individual category page details; migration/implementation. Main grid IS approved.
+- APPROVED 2026-10-26: compact single-choice audio-language dialog, radio selection, blue focus, Cancel and locale-aware flags/neutral icons as specified above.
+- NOT APPROVED: full individual category page layouts and their example controls; migration/implementation. Main grid IS approved.
 
 ## Change control / upkeep
 Treat this file as the living design blueprint. After EACH explicit user design decision, update the approval log, layout/specification and any impacted category mapping in a new documentation-only commit. Clearly mark candidate vs approved; never silently promote mock-ups to approved. Keep this file consistent with the audited inventory, and link any approved image/mock-up artefacts when a stable repository asset exists. Avoid touching release/implementation branches while design is in progress.
