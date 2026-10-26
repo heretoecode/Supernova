@@ -29,7 +29,7 @@ These eight labels supersede mistaken mock-up substitutions: NOT 'Library & Cont
 
 ## Main grid — current candidate, NOT YET APPROVED
 - Full-screen 16:9 Nvidia Shield / Android TV screen, 4 columns x 2 rows, all eight cards visible without scrolling.
-- Space Black Blend backdrop: restrained and dark, not a bright nebula or giant planet distracting from navigation.
+- Use the **official, previously approved Supernova rebranding-release background asset**, unchanged, as the Settings background. No new generated nebula, planet, gradient or substitute background. Locate and verify the canonical asset in the repository before implementation; if missing, flag rather than recreate it.
 - Supernova brand typography; consistent simple monochrome category icons; title plus concise functional description per card.
 - Clear electric-blue focus border and modest glow; unfocused cards understated; TV-readable sizes and contrast.
 - Balanced margins and vertical position; no wasted space, extra panels, duplicate top-level navigation or decorative filler.
@@ -69,7 +69,7 @@ These are measurable implementation targets for design review, NOT measurements 
 - Header and grid must remain legible at 720p and 4K and when Android text scale changes; prefer constraint-based sizing and wrap rather than absolute screen pixels.
 
 ### Candidate colours (hex, review against existing Space Black Blend asset)
-- Background base #030914; card surface #06111F with ~90–94% visual opacity over background; unfocused outline #28394C.
+- Background base #030914 is a FALLBACK DESIGN REFERENCE ONLY, NOT an instruction to replace the official Supernova background asset; card surface #06111F with ~90–94% visual opacity over background; unfocused outline #28394C.
 - Primary text #F4F7FC; secondary text #BCC9D9.
 - Focus accent #00A8FF; selected card tint #08254F; focus glow uses accent at low opacity.
 - Dividers #28394C, 1dp. These values are **candidates**, not confirmed sampled app palette; align with approved Supernova design assets before implementation.
@@ -97,7 +97,7 @@ These are measurable implementation targets for design review, NOT measurements 
 
 ## Approval log
 - APPROVED IN PRINCIPLE: eight names/order; ground-up approach; full-screen Space Black; no filler; category pages use left subsections + right controls; setting descriptions, toggles and separators.
-- UNDER REVIEW: main grid final visual appearance, focus and spacing; corrected eight-category mock-up has been presented; final visual approval is still pending. Proposed design tokens/dimensions are recorded above and are not yet approved.
+- UNDER REVIEW: main grid final visual appearance, focus and spacing; corrected eight-category mock-up has been presented; final visual approval is still pending. USER-CONFIRMED: the actual Settings background MUST be the official approved Supernova rebranding-release background, not the planet/nebula shown in concept art. Proposed design tokens/dimensions are recorded above and are not yet approved.
 - NOT APPROVED: final main grid; individual category page details; migration/implementation.
 
 ## Change control / upkeep
