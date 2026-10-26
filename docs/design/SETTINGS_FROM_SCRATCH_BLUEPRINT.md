@@ -43,9 +43,61 @@ These eight labels supersede mistaken mock-up substitutions: NOT 'Library & Cont
 - No permanent third information panel or decorative preview; fewer subsections where naturally appropriate.
 - Exact subsection names, controls, defaults and states must be checked against the audit before mock-ups or implementation.
 
+
+## Design tokens and dimensional specification — PROPOSED, NOT YET APPROVED
+These are measurable implementation targets for design review, NOT measurements verified from a generated image. Codex must validate against Shield screenshots, TV scaling, font assets and actual layout bounds. Use Android **dp** for geometry and **sp** for text, not raw 1920x1080 screenshot pixels. Reference canvas: 1920x1080 at 16:9, layout reference 960x540 dp equivalent at 2x scale; final dimensions adapt to device density, font scale and TV safe area.
+
+### Typography
+- Brand wordmark: use the **existing Supernova wordmark font asset** already used by the app; do not silently substitute a different family. Exact file/family must be identified from the repo before implementation. Candidate displayed size 23sp, medium, tracking +0.20em.
+- Page title “Settings”: existing Supernova UI font family (identify exact asset/style in repository before implementation); candidate 28sp semibold.
+- Category card title: 22sp semibold, line height 27sp; two lines allowed if localised.
+- Category description: 16sp regular, line height 22sp, max 3 lines with graceful wrapping.
+- Category page subsection label: 19sp medium; selected subsection 20sp semibold.
+- Individual setting title: 19sp medium; explanation: 15sp regular, line height 21sp.
+- Secondary/help text: 14sp minimum where needed. Do not compress below comfortable TV viewing size to force content.
+- White/off-white primary; muted grey-blue secondary with accessible contrast. No decorative tracking on body copy. Exact typography and colour tokens pending actual font asset verification and visual approval.
+
+### Grid geometry — 960x540 dp reference
+- TV-safe outer inset: 28dp left/right; 24dp top/bottom minimum; respect Android overscan/safe bounds.
+- Header horizontal start: 28dp; header top: 30dp; header baseline and vertical alignment to be checked on device. Brand/title separator: 1dp stroke, 26dp height, 18dp horizontal gaps.
+- Grid available width: 904dp (960 - 2x28). Four columns with 10dp horizontal gaps yield **218.5dp cards**. Do not hard-code fractional card widths: distribute available width with weighted columns.
+- Grid top candidate: 118dp. Grid bottom candidate: 464dp. Two rows each **168dp** tall with **10dp** row gap. Center grid within safe bounds and adjust after visual inspection.
+- Card inner padding: 22dp left/right; 18dp top/bottom. Contents vertically grouped: icon -> 18dp -> title -> 7dp -> description. Content may adjust to fit without clipping.
+- Card icon: 38dp bounding box, consistent stroke ~2.5dp; use true vector drawables rather than Unicode glyphs.
+- Card corner radius: 9dp. Unfocused border: 1dp neutral low-contrast. Focus border: 2dp electric blue; outer focus glow visually restrained, must not cause neighbouring card overlap or crop.
+- Avoid scaling focused card beyond its layout bounds; any optional focus elevation/scale <=1.015 and must be tested for clipping.
+- Header and grid must remain legible at 720p and 4K and when Android text scale changes; prefer constraint-based sizing and wrap rather than absolute screen pixels.
+
+### Candidate colours (hex, review against existing Space Black Blend asset)
+- Background base #030914; card surface #06111F with ~90–94% visual opacity over background; unfocused outline #28394C.
+- Primary text #F4F7FC; secondary text #BCC9D9.
+- Focus accent #00A8FF; selected card tint #08254F; focus glow uses accent at low opacity.
+- Dividers #28394C, 1dp. These values are **candidates**, not confirmed sampled app palette; align with approved Supernova design assets before implementation.
+
+### Category detail page geometry — DIRECTIONAL ONLY
+- Same header and safe margins; content top below header, no permanent third panel.
+- Left subsection rail target width ~240dp (25% of 960dp reference); gap 18dp; right settings area fills remaining width.
+- Left rail item minimum height 52dp, vertical spacing 4–8dp, 14–18dp inset.
+- Right settings row: min height 76dp with 18dp vertical padding and 20dp horizontal padding; title and description separated by 4–6dp; separator 1dp inset to text start. Rows with longer descriptions grow naturally.
+- Toggle hit target at least 48x48dp, visually ~44x26dp, right aligned with 18dp clearance; distinguish On/Off and focus independent of colour.
+- Scroll only settings content when required; preserve focused control on return; rail scroll independently if subsections exceed height.
+- These detail dimensions will be revised during **each category's individual approval**.
+
+### Remote focus, motion and accessibility
+- D-pad left/right/up/down traversal must follow visual order; avoid focus traps and unexpected rail jumps.
+- Focus border remains visible on dark and bright background patches; text contrast target WCAG AA-equivalent where feasible (4.5:1 normal text).
+- Motion subtle, ~120–180ms focus transition candidate; avoid layout shifts, flashing, and background animation that distracts.
+- Use meaningful accessibility labels for icons and toggle states; do not rely on colour alone.
+- Test on Nvidia Shield TV Pro at 1080p and 4K output, with Android font/display scaling, long translations and Back/focus restoration.
+
+### Visual specification governance
+- Every approved mock-up should eventually have a repository asset, viewport, revision ID and token delta logged here.
+- Do not infer exact dp/sp/hex values from image generation. The values above are deliberate **proposals**, subject to user visual approval and device verification.
+- Do not change an approved token or card layout without recording the reason and obtaining approval for visually material changes.
+
 ## Approval log
 - APPROVED IN PRINCIPLE: eight names/order; ground-up approach; full-screen Space Black; no filler; category pages use left subsections + right controls; setting descriptions, toggles and separators.
-- UNDER REVIEW: main grid final visual appearance, focus and spacing; latest generated mock-up had three wrong labels and overly prominent nebula/planet. Corrected visual to be presented for approval.
+- UNDER REVIEW: main grid final visual appearance, focus and spacing; corrected eight-category mock-up has been presented; final visual approval is still pending. Proposed design tokens/dimensions are recorded above and are not yet approved.
 - NOT APPROVED: final main grid; individual category page details; migration/implementation.
 
 ## Change control / upkeep
