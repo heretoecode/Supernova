@@ -1,6 +1,6 @@
 # Supernova Settings — Ground-Up Design Blueprint
 
-Status: ACTIVE DESIGN WORKING DOCUMENT — not approved for implementation.
+Status: IMPLEMENTATION AUTHORISED by the owner on 2026-10-27. Earlier approval-boundary statements below are retained as design history; the latest full Settings authorisation supersedes their investigation-only restrictions. Current implementation and acceptance: [0.143](../0.143/README.md).
 Updated: 2026-10-26.
 Source of truth for functionality: docs/audits/settings-2026-10-26/{AUDIT,INVENTORY,NAVIGATION,ISSUES,RECOMMENDATIONS,SHIELD_QA}.md, commit 3ed6e7e8a794940ab4a0ff22fb1a1086f3e3987a.
 

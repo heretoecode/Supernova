@@ -1,0 +1,50 @@
+{
+  "checked_at": "2026-10-27T19:22:59.984627+00:00",
+  "source_commit": "6de0ff9bac8344adfd37e38f78c46244b146fe79",
+  "environment": "Isolated prepared pinned MediaLib/FileCoreLibrary; Temurin21, Gradle9.5.0, Android37, Robolectric SDK28; sibling NDK tasks excluded locally",
+  "android_focused": {
+    "tests": 40,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classes": [
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
+      "tests": "15",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+      "tests": "18",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "tooling_tests": 112,
+  "tooling_result": "PASS",
+  "lint": {
+    "errors": 0,
+    "warnings": 1794
+  },
+  "full_native_apk_conformance": "GitHub run 40567944994 in progress; no passing claim in this local report",
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false
+}

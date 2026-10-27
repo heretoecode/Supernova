@@ -1,6 +1,6 @@
 # Settings technical specification
 
-27 October 2026. Documentation/specification candidate; application implementation NOT authorised. [Master blueprint](../../design/SETTINGS_FROM_SCRATCH_BLUEPRINT.md) controls visual approval. [Mapping](../../design/SETTINGS_AUDIT_MAPPING.md), [audit](../../audits/settings-2026-10-26/AUDIT.md), [row ledger](SETTINGS_DISPOSITION.md) and [source verification](SETTINGS_VERIFICATION.json) control functional traceability. Preserve all approved visuals; numeric targets require Shield calibration. This document resolves routine architecture; it does not promote provisional category placements to owner approval.
+Historical investigation specification, 27 October 2026. Implementation was subsequently authorised in the owner’s full-development instruction; see [0.143 implementation](../../0.143/README.md). The investigation-only restrictions below describe the earlier handover state. [Master blueprint](../../design/SETTINGS_FROM_SCRATCH_BLUEPRINT.md) controls visual approval. [Mapping](../../design/SETTINGS_AUDIT_MAPPING.md), [audit](../../audits/settings-2026-10-26/AUDIT.md), [row ledger](SETTINGS_DISPOSITION.md) and [source verification](SETTINGS_VERIFICATION.json) control functional traceability. Preserve all approved visuals; numeric targets require Shield calibration. This document resolves routine architecture; it does not promote provisional category placements to owner approval.
 
 ## Architecture and state ownership
 
