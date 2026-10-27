@@ -1,0 +1,105 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "7885f505eba0d6d317e9d10178d7cd2853e8ba0b00d9dabfbe8648f14692ec55",
+  "version_name": "0.143",
+  "version_code": 143,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "source_commit": "7b826443363af00b236e5b6af309046456d719df",
+  "apk_bytes": 87936033,
+  "signature_verified": true,
+  "zip_crc_verified": true,
+  "native_hashes_independently_matched": 88,
+  "payload_matches_tested_unsigned_verified_in_ci": true,
+  "qa_only": true,
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false,
+  "final_release_accepted": false,
+  "checked_at": "2026-10-27T20:56:07.635405+00:00",
+  "branch": "codex/supernova-0.143-implementation-2026-10-27",
+  "pull_request": "https://github.com/heretoecode/Supernova/pull/23",
+  "source_frozen": true,
+  "details_pr22_preserved": true,
+  "signing_workflow_commit": "6c0e1076266d41b5d0b4455bd0d20f7ac24f2fea",
+  "conformance_run": {
+    "id": 40575357794,
+    "result": "success",
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/40575357794"
+  },
+  "signing_run": {
+    "id": 40575517211,
+    "result": "success",
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/40575517211",
+    "environment": "supernova-foundation-signing"
+  },
+  "artifacts": [
+    {
+      "id": 12769052829,
+      "name": "supernova-0143-signed-qa",
+      "bytes": 83453401,
+      "sha256": "d8aec7761837bce2f1b083d935063c90dd4ae247f487230ed43b2278a8fda0bf"
+    },
+    {
+      "id": 12769337295,
+      "name": "supernova-0143-qa-ffmpeg-source",
+      "bytes": 11174428,
+      "sha256": "38f1b5c7923bad97b13536819fbece73eed14e020160525993990177585934a5"
+    },
+    {
+      "id": 12770291145,
+      "name": "supernova-0143-unsigned-evidence",
+      "bytes": 133734839,
+      "sha256": "165b0daf5ca9163efa9b390ce57e576b19fb81e0734266155be7a64d49bcaf37"
+    }
+  ],
+  "automated": {
+    "android_tests": 1123,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "tooling_tests": 112,
+    "lint": {
+      "errors": 0,
+      "warnings": 1794
+    },
+    "runtime_artifact_hashes_matched": 138,
+    "rebuilt_ffmpeg_libraries_matched": 24,
+    "native_library_count": 88,
+    "software_renders": 18
+  },
+  "apk_filename": "Supernova_0.143.apk",
+  "drive": {
+    "id": "1b02zx7zlseN5eJQNqol1OlTp0CejPAU0",
+    "folder_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+    "download_url": "https://drive.google.com/file/d/1b02zx7zlseN5eJQNqol1OlTp0CejPAU0/view?usp=drivesdk",
+    "bytes": 87936033,
+    "sha256": "7885f505eba0d6d317e9d10178d7cd2853e8ba0b00d9dabfbe8648f14692ec55",
+    "byte_equal": true,
+    "signature_verified": true,
+    "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e"
+  },
+  "release_notes": {
+    "id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+    "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
+    "repository_path": "docs/release-notes/Supernova Development.html",
+    "bytes": 38195,
+    "sha256": "c06e911b3eb14ab513b3d748cf4d8ce274a7eb16f8075b7f1af01dfb002e4355",
+    "full_readback_byte_equal": true,
+    "historical_articles_preserved": 10,
+    "updated_existing_file_in_place": true
+  },
+  "existing_drive_apks_preserved": 9,
+  "main_merged": false,
+  "public_release_published": false,
+  "signing_key_changed": false,
+  "remaining_acceptance": "Physical Shield matrix SHIELD_QA.md including signed upgrade; no attached device"
+}

@@ -1,6 +1,7 @@
 {
   "source_commit": "7b826443363af00b236e5b6af309046456d719df",
-  "renderer": "Robolectric native graphics SDK28; code tree matching the frozen source in an isolated prepared fixture; clock and build metadata are fixture-generated",
+  "workflow_run": "https://github.com/heretoecode/Supernova/actions/runs/40575357794",
+  "renderer": "Final-source CI Robolectric native graphics SDK28; software-rendered evidence",
   "physical_shield": false,
   "renders": [
     {
@@ -91,7 +92,7 @@
       "file": "category-7.png",
       "width": 1920,
       "height": 1080,
-      "sha256": "58880080f4253e2e70cac542d751f90c6f705b78ac179f422065402b02d2414b"
+      "sha256": "432bc6af84d0f615bc4f70c74f4a2895add6b285979aa69ac48860dfbe8ec6f1"
     },
     {
       "file": "large-grid.png",
