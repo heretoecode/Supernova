@@ -40,6 +40,7 @@ import java.util.concurrent.Executors;
 /** About alone uses the approved four-child rail and flexible centre/right panels. */
 public final class FoundationAboutWorkspace extends LinearLayout {
     public static final String[] SECTIONS = {"Release Notes", "Open-source Licences", "Credits & Acknowledgements", "Technical Information"};
+    private boolean singleContent,detailOpen;private Runnable sectionReturn;
     private final View normalMiddle, normalHelp;
     private final LinearLayout rail;
     private final List<TextView> navigation = new ArrayList<>();
@@ -71,6 +72,14 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         LayoutParams right=new LayoutParams(0,-1,.56f); right.leftMargin=dp(20); addView(details,right);
         split.addView(this,new LayoutParams(0,-1,.72f));
     }
+    /** Category navigation is supplied by the new Settings rail. Catalogue and reader share one column. */
+    public void useSingleContent(Runnable sectionReturn){
+        catalogue.setVerticalScrollBarEnabled(false);details.setVerticalScrollBarEnabled(false);this.singleContent=true;this.sectionReturn=sectionReturn;setPadding(0,0,0,0);setOrientation(VERTICAL);
+        catalogue.setLayoutParams(new LayoutParams(-1,0,1));details.setLayoutParams(new LayoutParams(-1,0,1));
+        catalogue.setBackgroundColor(Color.TRANSPARENT);details.setBackgroundColor(Color.TRANSPARENT);
+    }
+    private void singleContentVisibility(){if(singleContent){boolean listing=!rows.isEmpty()&&!detailOpen;catalogue.setVisibility(listing?VISIBLE:GONE);details.setVisibility(listing?GONE:VISIBLE);}}
+    private void openDetails(){if(singleContent){detailOpen=true;singleContentVisibility();}if(noticeReader!=null)noticeReader.focusReader();else if(detailsBody.getChildCount()>0)detailsBody.getChildAt(0).requestFocus();}
     private LinearLayout column(){LinearLayout v=new LinearLayout(getContext());v.setOrientation(VERTICAL);return v;}
     private ScrollView scroll(LinearLayout body){ScrollView v=new ScrollView(getContext());v.setFillViewport(false);v.setClipToPadding(false);v.addView(body,new ScrollView.LayoutParams(-1,-2));return v;}
     private TextView text(String value,int size){TextView v=com.archos.mediacenter.video.leanback.SharedThreePanel.text(getContext(),value,size);v.setLineSpacing(dp(3),1);return v;}
@@ -113,6 +122,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     public void openSection(int index){if(index>=0&&index<navigation.size()){navigation.get(index).requestFocus();select(SECTIONS[index],navigation.get(index));}}
     public boolean navigationFocused(){for(TextView v:navigation)if(v.hasFocus())return true;return false;}
     public boolean handleBack(){
+        if(singleContent){if(detailOpen&&!rows.isEmpty()){detailOpen=false;singleContentVisibility();focusSelectedRow();return true;}return false;}
         if(details.hasFocus()){focusSelectedRow();return true;}
         if(catalogue.hasFocus()){selectedNavigation.requestFocus();return true;}
         if(navigationFocused()){parentButton.requestFocus();return true;}
@@ -122,7 +132,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         if(selectedNavigation!=null)selectedNavigation.setTextColor(Color.WHITE);
         selectedNavigation=child; child.setTextColor(Color.WHITE);
         if(name.equals(section)&&(catalogueBody.getChildCount()>0||detailsBody.getChildCount()>0))return;
-        section=name;selectedIndex=selections.getOrDefault(name,0);requestGeneration++;
+        section=name;detailOpen=false;selectedIndex=selections.getOrDefault(name,0);requestGeneration++;
         catalogueBody.removeAllViews();detailsBody.removeAllViews();detailsBody.setGravity(Gravity.TOP);detailsBody.setPadding(0,0,0,0);((LayoutParams)details.getLayoutParams()).weight=.56f;rows.clear();rowSelections.clear();
         catalogue.setVisibility(VISIBLE);details.setVisibility(VISIBLE);
         try {
@@ -132,7 +142,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             else if(name.equals(SECTIONS[2]))credits();
             else technical();
         } catch(Exception unavailable){showDetails("Information unavailable","This build could not read the bundled information.",null,null);}
-        if(!rows.isEmpty()){selectedIndex=Math.min(selectedIndex,rows.size()-1);rowSelections.get(selectedIndex).run();}
+        if(!rows.isEmpty()){selectedIndex=Math.min(selectedIndex,rows.size()-1);rowSelections.get(selectedIndex).run();}singleContentVisibility();
     }
     private void enterContentInternal(){enterContentInternal(true);}
     private void enterContentInternal(boolean confirmed){if(section.equals(SECTIONS[1])&&rows.isEmpty()){licenceEntryPending=true;return;}if(!rows.isEmpty())focusSelectedRow();else for(int i=0;i<detailsBody.getChildCount();i++)if(detailsBody.getChildAt(i).isFocusable()){detailsBody.getChildAt(i).requestFocus();break;}}
@@ -140,14 +150,14 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private TextView row(String label,Runnable select,Runnable activate){
         final int index=rows.size();TextView row=text(label,14);row.setPadding(dp(10),dp(10),dp(8),dp(10));
         row.setFocusable(true);row.setFocusableInTouchMode(true);row.setBackground(PreviewDialog.focus(getContext()));row.setTag("semantic:about:row:"+section+":"+index);
-        catalogueBody.addView(row,new LayoutParams(-1,-2));rows.add(row);
+        catalogueBody.addView(row,new LayoutParams(-1,-2));rows.add(row);if(singleContent&&!detailOpen){catalogue.setVisibility(VISIBLE);details.setVisibility(GONE);}
         Runnable selected=()->{selectedIndex=index;selections.put(section,index);select.run();};rowSelections.add(selected);
         row.setOnFocusChangeListener((v,focused)->{if(focused)selected.run();});
-        row.setOnClickListener(v->{selected.run();if(activate!=null)activate.run();});
+        row.setOnClickListener(v->{selected.run();if(activate!=null)activate.run();if(singleContent)openDetails();});
         row.setOnKeyListener((v,key,event)->{
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
-            if(key==KeyEvent.KEYCODE_DPAD_LEFT){selectedNavigation.requestFocus();return true;}
-            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(noticeReader!=null){noticeReader.focusReader();return true;}if(detailsBody.getChildCount()>0)detailsBody.getChildAt(0).requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(singleContent&&sectionReturn!=null)sectionReturn.run();else selectedNavigation.requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(singleContent){openDetails();return true;}if(noticeReader!=null){noticeReader.focusReader();return true;}if(detailsBody.getChildCount()>0)detailsBody.getChildAt(0).requestFocus();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){int next=index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=0&&next<rows.size())rows.get(next).requestFocus();return true;}
             return false;
         });
@@ -267,11 +277,11 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         if(legal){text.setVisibility(GONE);noticeReader=new BundledNoticeReader(getContext(),body,this::focusSelectedRow);detailsBody.addView(noticeReader);}
         View.OnKeyListener keys=(v,key,event)->{
             if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
-            if(key==KeyEvent.KEYCODE_DPAD_LEFT){focusSelectedRow();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(singleContent){detailOpen=false;singleContentVisibility();}focusSelectedRow();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_DOWN&&noticeReader!=null){noticeReader.focusReader();return true;}if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){details.smoothScrollBy(0,dp(key==KeyEvent.KEYCODE_DPAD_UP?-48:48));return true;}
             return false;
         };
-        title.setOnKeyListener(keys);text.setOnKeyListener(keys);details.scrollTo(0,0);details.requestLayout();if(restore)title.requestFocus();
+        title.setOnKeyListener(keys);text.setOnKeyListener(keys);details.scrollTo(0,0);details.requestLayout();singleContentVisibility();if(restore)title.requestFocus();
     }
     private Bitmap qr(String url){
         try {

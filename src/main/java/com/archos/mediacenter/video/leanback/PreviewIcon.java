@@ -9,7 +9,10 @@ public final class PreviewIcon extends Drawable {
  public void focus(boolean focused,int accent){p.setColor(0xffe1e9ef);p.clearShadowLayer();invalidateSelf();}
  private void line(Canvas c,float... pts){Path q=new Path();q.moveTo(pts[0],pts[1]);for(int i=2;i<pts.length;i+=2)q.lineTo(pts[i],pts[i+1]);c.drawPath(q,p);}
  public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);
-  if(kind.equals("health")){line(c,1,12,6,12,9,3,13,21,16,12,23,12);}
+  if(kind.startsWith("settings.radio")){c.drawCircle(12,12,8,p);if(kind.endsWith(".on")){p.setStyle(Paint.Style.FILL);c.drawCircle(12,12,4,p);p.setStyle(Paint.Style.STROKE);}}
+  else if(kind.equals("settings.nodes")){line(c,6,6,18,6,12,18,6,6);for(float[] point:new float[][]{{6,6},{18,6},{12,18}})c.drawCircle(point[0],point[1],3,p);}
+  else if(kind.equals("settings.gear")){c.drawCircle(12,12,7,p);c.drawCircle(12,12,3,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,11,1,11,5);line(c,13,1,13,5);c.restore();}}
+  else if(kind.equals("health")){line(c,1,12,6,12,9,3,13,21,16,12,23,12);}
   else if(kind.equals("eye")||kind.equals("eye-off")){c.drawOval(2,6,22,18,p);c.drawCircle(12,12,3,p);if(kind.equals("eye-off"))line(c,2,2,22,22);}
   else if(kind.equals("bookmark")){line(c,6,2,18,2,18,22,12,17,6,22,6,2);}
   else if(kind.equals("pin")){line(c,7,3,17,3,15,6,15,11,19,15,5,15,9,11,9,6,7,3);line(c,12,15,12,22);}

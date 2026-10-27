@@ -1,0 +1,1161 @@
+{
+  "schema": 1,
+  "baseline": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
+  "rows": [
+    {
+      "id": "S001",
+      "key": "preferences_version",
+      "destination": "About Supernova",
+      "subsection": "About & legal",
+      "disposition": "Route disclosure/attribution into existing Foundation About workspace, no duplicate legacy surface"
+    },
+    {
+      "id": "S002",
+      "key": "ui_lang",
+      "destination": "Appearance",
+      "subsection": "Interface & theme",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S003",
+      "key": "force_software_decoding",
+      "destination": "System & Maintenance",
+      "subsection": "Video compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S004",
+      "key": "dec_choice",
+      "destination": "System & Maintenance",
+      "subsection": "Video compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S005",
+      "key": "audio_interface_choice",
+      "destination": "System & Maintenance",
+      "subsection": "Audio compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S006",
+      "key": "audio_decoder_choice",
+      "destination": "System & Maintenance",
+      "subsection": "Audio compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S007",
+      "key": "enable_cutout_mode_short_edges",
+      "destination": "System & Maintenance",
+      "subsection": "Video compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S008",
+      "key": "enable_cutout_both_sidesx",
+      "destination": "System & Maintenance",
+      "subsection": "Video compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S009",
+      "key": "force_audio_passthrough_multiple",
+      "destination": "Audio & Subtitles",
+      "subsection": "Audio output & tracks",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S010",
+      "key": "force_passthrough",
+      "destination": "System & Maintenance",
+      "subsection": "Audio compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S011",
+      "key": "playback_speed",
+      "destination": "Playback & Video",
+      "subsection": "Playback",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S012",
+      "key": "audio_speed_audiotrack",
+      "destination": "System & Maintenance",
+      "subsection": "Audio compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S013",
+      "key": "enable_dynamic_audio_delay",
+      "destination": "System & Maintenance",
+      "subsection": "Audio compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S014",
+      "key": "player_spatialization_enabled",
+      "destination": "Audio & Subtitles",
+      "subsection": "Audio output & tracks",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S015",
+      "key": "disable_downmix",
+      "destination": "System & Maintenance",
+      "subsection": "Audio compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S016",
+      "key": "parser_sync_mode",
+      "destination": "System & Maintenance",
+      "subsection": "Video compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S017",
+      "key": "enable_downmix_androidtv",
+      "destination": "System & Maintenance",
+      "subsection": "Audio compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S018",
+      "key": "enable_tv_refreshrate_switch_mode",
+      "destination": "Playback & Video",
+      "subsection": "Video & Display",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S019",
+      "key": "dolby_vision_mode",
+      "destination": "Playback & Video",
+      "subsection": "Video & Display",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S020",
+      "key": "prefer_original_audio_track",
+      "destination": "Audio & Subtitles",
+      "subsection": "Audio output & tracks",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S021",
+      "key": "favAudioLang",
+      "destination": "Audio & Subtitles",
+      "subsection": "Audio output & tracks",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S022",
+      "key": "activate_tv_switch",
+      "destination": "Playback & Video",
+      "subsection": "Video & Display",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S023",
+      "key": "stream_buffer_size",
+      "destination": "System & Maintenance",
+      "subsection": "Network compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S024",
+      "key": "stream_max_iframe_size",
+      "destination": "System & Maintenance",
+      "subsection": "Video compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S025",
+      "key": "allow_3rd_party_player",
+      "destination": "Playback & Video",
+      "subsection": "Playback",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S026",
+      "key": "smart_recently_rows",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S027",
+      "key": "player_projector_mode_key",
+      "destination": "Playback & Video",
+      "subsection": "Playback",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S028",
+      "key": "hide_watched",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S029",
+      "key": "sort_ignore_articles",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S030",
+      "key": "uimode",
+      "destination": "Appearance",
+      "subsection": "Interface & theme",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S031",
+      "key": "uimode_leanback",
+      "destination": "Appearance",
+      "subsection": "Interface & theme",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S032",
+      "key": "ui_zoom",
+      "destination": "Appearance",
+      "subsection": "Interface & theme",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S033",
+      "key": "display_resume_box",
+      "destination": "Playback & Video",
+      "subsection": "Resume & Progress",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S034",
+      "key": "reset_brightness_on_start",
+      "destination": "Playback & Video",
+      "subsection": "Playback",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S035",
+      "key": "hide_controls_on_pause",
+      "destination": "Playback & Video",
+      "subsection": "Playback",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S036",
+      "key": "app_theme",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S037",
+      "key": "always_leanback_on_tv_key",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S038",
+      "key": "separate_anime_movie_show",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S039",
+      "key": "show_last_added_row",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S040",
+      "key": "show_last_played_row",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S041",
+      "key": "show_watching_up_next_row",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S042",
+      "key": "reset_last_played_row",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S043",
+      "key": "show_all_movies_row",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S044",
+      "key": "preferences_movie_sort_order",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S045",
+      "key": "try_new_ui",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S046",
+      "key": "show_documentaries",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S047",
+      "key": "show_all_tv_shows_row",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S048",
+      "key": "preferences_tv_show_sort_order",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S049",
+      "key": "show_all_animes_row",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S050",
+      "key": "preferences_animes_sort_order",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S051",
+      "key": "subtitles_credentials",
+      "destination": "Connections & Integrations",
+      "subsection": "OpenSubtitles",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S052",
+      "key": "subtitles_hide_default",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "One positive visible proxy S125; inverse persisted S052; repair listener F02"
+    },
+    {
+      "id": "S053",
+      "key": "favSubLang",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S054",
+      "key": "languages_list",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S055",
+      "key": "codepage",
+      "destination": "System & Maintenance",
+      "subsection": "Subtitle compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S056",
+      "key": "trakt_getfull",
+      "destination": "Connections & Integrations",
+      "subsection": "Trakt",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S057",
+      "key": "trakt_signin",
+      "destination": "Connections & Integrations",
+      "subsection": "Trakt",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S058",
+      "key": "trakt_live_scrobbling",
+      "destination": "Connections & Integrations",
+      "subsection": "Trakt",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S059",
+      "key": "trakt_sync_resume",
+      "destination": "Connections & Integrations",
+      "subsection": "Trakt",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S060",
+      "key": "trakt_force_push",
+      "destination": "Connections & Integrations",
+      "subsection": "Trakt",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S061",
+      "key": "trakt_force_pull",
+      "destination": "Connections & Integrations",
+      "subsection": "Trakt",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S062",
+      "key": "trakt_wipe",
+      "destination": "Connections & Integrations",
+      "subsection": "Trakt",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S063",
+      "key": "pref_smbj",
+      "destination": "System & Maintenance",
+      "subsection": "Network compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S064",
+      "key": "pref_smbv2",
+      "destination": "System & Maintenance",
+      "subsection": "Network compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S065",
+      "key": "pref_smb_resolv",
+      "destination": "System & Maintenance",
+      "subsection": "Network compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S066",
+      "key": "pref_smb_disable_tcp_discovery",
+      "destination": "System & Maintenance",
+      "subsection": "Network compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S067",
+      "key": "pref_smb_disable_udp_discovery",
+      "destination": "System & Maintenance",
+      "subsection": "Network compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S068",
+      "key": "pref_smb_disable_mdns_discovery",
+      "destination": "System & Maintenance",
+      "subsection": "Network compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S069",
+      "key": "pref_sshj",
+      "destination": "System & Maintenance",
+      "subsection": "Network compatibility",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S070",
+      "key": "share_folders",
+      "destination": "Connections & Integrations",
+      "subsection": "Network connections",
+      "disposition": "No Settings duplicate; retain Network & Files ownership/backend"
+    },
+    {
+      "id": "S071",
+      "key": "pref_create_remote_thumbs",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S072",
+      "key": "network_bookmarks",
+      "destination": "Playback & Video",
+      "subsection": "Resume & Progress",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S073",
+      "key": "pref_network_prefer_vpn",
+      "destination": "Connections & Integrations",
+      "subsection": "Network connections",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S074",
+      "key": "vpn_mobile",
+      "destination": "Connections & Integrations",
+      "subsection": "Network connections",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S075",
+      "key": "enable_auto_scrap_key",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S076",
+      "key": "favScraperLang",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S077",
+      "key": "network_nfo_parse",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S078",
+      "key": "scrape_from_database_key",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S079",
+      "key": "nfo_export_auto",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S080",
+      "key": "rescrap_all_prefkey",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S081",
+      "key": "rescrap_all_movies_prefkey",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S082",
+      "key": "rescrap_all_collections_prefkey",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S083",
+      "key": "recreate_sort_titles_prefkey",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S084",
+      "key": "export_manual_prefkey",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S085",
+      "key": "db_export_manual_prefkey",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S086",
+      "key": "media_library_export_prefkey",
+      "destination": "System & Maintenance",
+      "subsection": "Backup & restore",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S087",
+      "key": "media_library_import_prefkey",
+      "destination": "System & Maintenance",
+      "subsection": "Backup & restore",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S088",
+      "key": "enable_adult_scrap_key",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S089",
+      "key": "rescan_storage",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Library hidden/runtime",
+      "disposition": "No Settings duplicate; retain Network & Files ownership/backend"
+    },
+    {
+      "id": "S090",
+      "key": "preference_display_all_files",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S091",
+      "key": "enable_sponsor",
+      "destination": "About Supernova",
+      "subsection": "About & legal",
+      "disposition": "Legacy sponsor state retained; no new sponsor control; About uses Foundation workspace"
+    },
+    {
+      "id": "S092",
+      "key": "preferences_video_os",
+      "destination": "About Supernova",
+      "subsection": "About & legal",
+      "disposition": "Route disclosure/attribution into existing Foundation About workspace, no duplicate legacy surface"
+    },
+    {
+      "id": "S093",
+      "key": "preferences_video_tmdb",
+      "destination": "About Supernova",
+      "subsection": "About & legal",
+      "disposition": "Route disclosure/attribution into existing Foundation About workspace, no duplicate legacy surface"
+    },
+    {
+      "id": "S094",
+      "key": "preferences_video_trakt",
+      "destination": "About Supernova",
+      "subsection": "About & legal",
+      "disposition": "Route disclosure/attribution into existing Foundation About workspace, no duplicate legacy surface"
+    },
+    {
+      "id": "S095",
+      "key": "preferences_video_licences",
+      "destination": "About Supernova",
+      "subsection": "About & legal",
+      "disposition": "Route disclosure/attribution into existing Foundation About workspace, no duplicate legacy surface"
+    },
+    {
+      "id": "S096",
+      "key": "preferences_video_advanced_quit",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Advanced legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S097",
+      "key": "make_time_negative",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S098",
+      "key": "hide_trailer_row",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S099",
+      "key": "show_by_rating",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Hidden & legacy",
+      "disposition": "Do not render; retain persisted state and existing consumers"
+    },
+    {
+      "id": "S100",
+      "key": "remember_library_views",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S101",
+      "key": "auto_rescan_on_app_restart",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Network & Files scheduling",
+      "disposition": "No Settings duplicate; retain Network & Files ownership/backend"
+    },
+    {
+      "id": "S102",
+      "key": "supernova_subtitle_discovery",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S103",
+      "key": "supernova_subtitle_season_prefetch",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S104",
+      "key": "supernova_track_viewing_history",
+      "destination": "Library & Home",
+      "subsection": "Watch history",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S105",
+      "key": "supernova_save_resume",
+      "destination": "Playback & Video",
+      "subsection": "Resume & Progress",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S106",
+      "key": "supernova_backup_history",
+      "destination": "System & Maintenance",
+      "subsection": "Backup & restore",
+      "disposition": "Backup inclusion compatibility model only; mirror category flags, no duplicate rows"
+    },
+    {
+      "id": "S107",
+      "key": "supernova_backup_resume",
+      "destination": "System & Maintenance",
+      "subsection": "Backup & restore",
+      "disposition": "Backup inclusion compatibility model only; mirror category flags, no duplicate rows"
+    },
+    {
+      "id": "S108",
+      "key": "supernova_integration_trakt",
+      "destination": "Connections & Integrations",
+      "subsection": "Service integrations",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S109",
+      "key": "supernova_integration_opensubtitles",
+      "destination": "Connections & Integrations",
+      "subsection": "Service integrations",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S110",
+      "key": "supernova_segment_enabled",
+      "destination": "Connections & Integrations",
+      "subsection": "Service integrations",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S111",
+      "key": "preview_featured_recent",
+      "destination": "Library & Home",
+      "subsection": "Home",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S112",
+      "key": "preview_featured_trending",
+      "destination": "Library & Home",
+      "subsection": "Home",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S113",
+      "key": "preview_featured_popular",
+      "destination": "Library & Home",
+      "subsection": "Home",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S114",
+      "key": "preview_home_editor",
+      "destination": "Library & Home",
+      "subsection": "Home",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S115",
+      "key": "preview_clear_watch_next",
+      "destination": "Library & Home",
+      "subsection": "Home",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S116",
+      "key": "preview_accent_picker",
+      "destination": "Appearance",
+      "subsection": "Interface & theme",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S117",
+      "key": "supernova_clear_history",
+      "destination": "Library & Home",
+      "subsection": "Watch history",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S118",
+      "key": "preview_sftp_trust",
+      "destination": "Connections & Integrations",
+      "subsection": "Network connections",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S119",
+      "key": "preview_diagnostic_Issues Digest",
+      "destination": "System & Maintenance",
+      "subsection": "Diagnostics",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S120",
+      "key": "preview_diagnostic_Report a Problem",
+      "destination": "System & Maintenance",
+      "subsection": "Diagnostics",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S121",
+      "key": "preview_diagnostic_Show Latest Reference",
+      "destination": "System & Maintenance",
+      "subsection": "Diagnostics",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S122",
+      "key": "export_diagnostic_report",
+      "destination": "System & Maintenance",
+      "subsection": "Diagnostics",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S123",
+      "key": "supernova_diagnostic_logging",
+      "destination": "System & Maintenance",
+      "subsection": "Diagnostics",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S124",
+      "key": "supernova_diagnostic_level",
+      "destination": "System & Maintenance",
+      "subsection": "Diagnostics",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S125",
+      "key": "preview_subtitles_by_default",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "One positive visible proxy S125; inverse persisted S052; repair listener F02"
+    },
+    {
+      "id": "S126",
+      "key": "preview_scan_interval_control",
+      "destination": "REVIEW / NON-EXPOSED",
+      "subsection": "Network & Files scheduling",
+      "disposition": "No Settings duplicate; retain Network & Files ownership/backend"
+    },
+    {
+      "id": "S127",
+      "key": "supernova_segment_intro",
+      "destination": "Connections & Integrations",
+      "subsection": "IntroDB",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S128",
+      "key": "supernova_segment_recap",
+      "destination": "Connections & Integrations",
+      "subsection": "IntroDB",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S129",
+      "key": "supernova_segment_preview",
+      "destination": "Connections & Integrations",
+      "subsection": "IntroDB",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S130",
+      "key": "supernova_segment_outro",
+      "destination": "Connections & Integrations",
+      "subsection": "IntroDB",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S131",
+      "key": "supernova_segment_credits",
+      "destination": "Connections & Integrations",
+      "subsection": "IntroDB",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S132",
+      "key": "streaming_enabled",
+      "destination": "Streaming & Providers",
+      "subsection": "Streaming services",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S133",
+      "key": "streaming_country",
+      "destination": "Streaming & Providers",
+      "subsection": "Streaming services",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S134",
+      "key": "streaming_provider_search",
+      "destination": "Streaming & Providers",
+      "subsection": "Streaming services",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S135",
+      "key": "streaming_show_all",
+      "destination": "Streaming & Providers",
+      "subsection": "Streaming services",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S136",
+      "key": "streaming_providers_{country}",
+      "destination": "Streaming & Providers",
+      "subsection": "Streaming services",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S137",
+      "key": "streaming_preferred_{country}",
+      "destination": "Streaming & Providers",
+      "subsection": "Streaming services",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S138",
+      "key": "streaming_provider_status",
+      "destination": "Streaming & Providers",
+      "subsection": "Streaming services",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S139",
+      "key": "(JustWatch)",
+      "destination": "Streaming & Providers",
+      "subsection": "Streaming services",
+      "disposition": "Retain existing capability/account/advanced gate; reuse owner handler"
+    },
+    {
+      "id": "S140",
+      "key": "supernova_backup_include_appearance",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S141",
+      "key": "supernova_backup_include_audio",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S142",
+      "key": "supernova_backup_include_diagnostics",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S143",
+      "key": "supernova_backup_include_integrations",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S144",
+      "key": "supernova_backup_include_library",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S145",
+      "key": "supernova_backup_include_network",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S146",
+      "key": "supernova_backup_include_playback",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S147",
+      "key": "supernova_backup_include_streaming",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S148",
+      "key": "supernova_backup_include_subtitles",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S149",
+      "key": "supernova_backup_include_video",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S150",
+      "key": "supernova_backup_include_home",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S151",
+      "key": "supernova_backup_include_custom_pages",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S152",
+      "key": "supernova_backup_include_hidden",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S153",
+      "key": "supernova_backup_include_matches",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S154",
+      "key": "supernova_backup_include_pinned",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S155",
+      "key": "supernova_backup_include_preferred",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S156",
+      "key": "supernova_backup_include_review",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S157",
+      "key": "supernova_backup_include_playlists",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S158",
+      "key": "supernova_backup_include_watch_next",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S159",
+      "key": "supernova_backup_include_continue_choices",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S160",
+      "key": "supernova_backup_include_positions",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S161",
+      "key": "supernova_backup_include_title_playback",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S162",
+      "key": "supernova_backup_include_history",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S163",
+      "key": "supernova_backup_include_bookmarks",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S164",
+      "key": "supernova_backup_include_sources",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    },
+    {
+      "id": "S165",
+      "key": "supernova_backup_include_locations",
+      "destination": "System & Maintenance",
+      "subsection": "Backup export categories",
+      "disposition": "Nested Export Backup category; restore selections temporary until confirmation"
+    }
+  ]
+}

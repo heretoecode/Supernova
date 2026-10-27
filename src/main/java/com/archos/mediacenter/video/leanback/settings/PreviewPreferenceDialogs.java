@@ -8,7 +8,7 @@ import java.util.*;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 final class PreviewPreferenceDialogs {
  static boolean show(PreferenceFragmentCompat f,Preference p){
-  if(p instanceof ListPreference){ListPreference list=(ListPreference)p;CharSequence[] entries=list.getEntries(),values=list.getEntryValues();if(entries==null||values==null)return true;String[] labels=new String[entries.length];for(int i=0;i<labels.length;i++)labels[i]=entries[i].toString();Dialog dialog=PreviewDialog.choose(f.requireContext(),String.valueOf(p.getTitle()),labels,list.findIndexOfValue(list.getValue()),i->{String value=values[i].toString();if(list.callChangeListener(value))list.setValue(value);});languageIcons(dialog,p,values);return true;}
+  if(p instanceof ListPreference){SettingsChoiceDialog.show(f.requireContext(),(ListPreference)p);return true;}
   if(p instanceof MultiSelectListPreference){if(p.getKey()!=null&&p.getKey().startsWith("streaming_providers_")){providers(f,(MultiSelectListPreference)p);return true;}multi(f,(MultiSelectListPreference)p,new HashSet<>(((MultiSelectListPreference)p).getValues()),0);return true;}
   if(p instanceof EditTextPreference){edit(f,(EditTextPreference)p);return true;}
   return false;
