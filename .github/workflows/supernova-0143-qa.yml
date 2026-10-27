@@ -24,7 +24,7 @@ jobs:
     environment: supernova-foundation-signing
     env:
       # Freeze the conformance-passed source; later branch commits are delivery preparation/evidence.
-      SUPERNOVA_QA_SOURCE: '6de0ff9bac8344adfd37e38f78c46244b146fe79'
+      SUPERNOVA_QA_SOURCE: '7b826443363af00b236e5b6af309046456d719df'
     defaults:
       run:
         shell: bash
@@ -32,7 +32,7 @@ jobs:
       - name: Checkout the exact QA source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: '6de0ff9bac8344adfd37e38f78c46244b146fe79'
+          ref: '7b826443363af00b236e5b6af309046456d719df'
           path: source
           fetch-depth: 0
           persist-credentials: false

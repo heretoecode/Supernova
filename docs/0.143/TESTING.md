@@ -1,8 +1,8 @@
 # Automated validation and remaining device acceptance
 
-Frozen APK source: `6de0ff9bac8344adfd37e38f78c46244b146fe79`. Later branch commits contain signing preparation, software captures and delivery records; `src`, `res`, `assets` and build inputs remain identical to that source.
+Frozen APK source: `7b826443363af00b236e5b6af309046456d719df`. Later branch commits contain signing preparation, software captures and delivery records; `src`, `res`, `assets` and build inputs remain identical to that source.
 
-The local focused run passed 40 tests in four classes; release lint passed with zero errors and 1,794 warnings. The tooling suite passed 112 checks. See [machine-readable local evidence](LOCAL_VALIDATION.json). This is a prepared pinned-dependency build, with sibling NDK tasks excluded locally. Full rebuilt-native/APK conformance and signed-build proof are recorded separately after those jobs complete.
+The initial focused run passed 40 tests in four classes. The final ownership/focus and production-backup run passed 37 tests in four classes; release lint passed with zero errors and 1,794 warnings. The tooling suite passed 112 checks. See [machine-readable local evidence](LOCAL_VALIDATION.json). This is a prepared pinned-dependency build, with sibling NDK tasks excluded locally. Full rebuilt-native/APK conformance and signed-build proof are recorded separately after those jobs complete.
 
 | Area | Automated coverage | Physical acceptance still required |
 |---|---|---|

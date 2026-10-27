@@ -1,6 +1,6 @@
 {
-  "source_commit": "6de0ff9bac8344adfd37e38f78c46244b146fe79",
-  "renderer": "Robolectric native graphics, SDK28, official assets; clock/system build time is fixture-generated, not a design token",
+  "source_commit": "7b826443363af00b236e5b6af309046456d719df",
+  "renderer": "Robolectric native graphics SDK28; code tree matching the frozen source in an isolated prepared fixture; clock and build metadata are fixture-generated",
   "physical_shield": false,
   "renders": [
     {
@@ -91,7 +91,7 @@
       "file": "category-7.png",
       "width": 1920,
       "height": 1080,
-      "sha256": "aaf2ba2b2ae5bf2757931307a3d0e82aeb28e4927d30b6a87c6cbddc3fc1293a"
+      "sha256": "58880080f4253e2e70cac542d751f90c6f705b78ac179f422065402b02d2414b"
     },
     {
       "file": "large-grid.png",
