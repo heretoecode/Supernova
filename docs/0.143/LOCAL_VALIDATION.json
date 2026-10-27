@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-27T20:09:07.366850+00:00",
+  "checked_at": "2026-10-27T20:38:46.052570+00:00",
   "source_commit": "7b826443363af00b236e5b6af309046456d719df",
   "environment": "Isolated prepared pinned dependencies; Java21, Gradle9.5.0, Android37, Robolectric SDK28; sibling NDK tasks excluded locally",
   "android_focused": {
@@ -48,5 +48,14 @@
   "earlier_focused_coverage": "40 tests in original focus/selector/diagnostic run also passed; see TESTING.md",
   "full_native_apk_conformance": "Run 40575357794 in progress for corrected source; final proof recorded separately",
   "physical_shield_verified": false,
-  "signed_upgrade_verified": false
+  "signed_upgrade_verified": false,
+  "android_full": {
+    "tests": 1123,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "android_full_test_classes": 234,
+  "android_full_build_result": "BUILD SUCCESSFUL",
+  "android_full_duration": "22m 51s"
 }
