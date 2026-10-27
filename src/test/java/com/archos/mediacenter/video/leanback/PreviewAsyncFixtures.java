@@ -25,6 +25,11 @@ public final class PreviewAsyncFixtures {
   while(enrichment.submit(()->{ScheduledFuture<?> retry=ReflectionHelpers.getStaticField(PreviewEnrichmentQueue.class,"retry");if(retry!=null)retry.cancel(false);return (Boolean)ReflectionHelpers.getStaticField(PreviewEnrichmentQueue.class,"draining");}).get(15,TimeUnit.SECONDS))
    {if(System.nanoTime()>deadline)throw new AssertionError("Enrichment fixture did not finish before sandbox teardown");Thread.sleep(10);}
   enrichment.submit(()->{android.database.sqlite.SQLiteOpenHelper store=ReflectionHelpers.getStaticField(PreviewEnrichmentQueue.class,"store");if(store!=null)store.close();ReflectionHelpers.setStaticField(PreviewEnrichmentQueue.class,"store",null);}).get(15,TimeUnit.SECONDS);
+  ExecutorService details=ReflectionHelpers.getStaticField(Class.forName("com.archos.mediacenter.video.leanback.details.PreviewDetailsData"),"IO");
+  CountDownLatch idle=new CountDownLatch(2);
+  Future<?> one=details.submit(()->{idle.countDown();try{if(!idle.await(15,TimeUnit.SECONDS))throw new AssertionError("Details fixture did not finish");}catch(InterruptedException e){Thread.currentThread().interrupt();}});
+  Future<?> two=details.submit(()->{idle.countDown();try{if(!idle.await(15,TimeUnit.SECONDS))throw new AssertionError("Details fixture did not finish");}catch(InterruptedException e){Thread.currentThread().interrupt();}});
+  one.get(20,TimeUnit.SECONDS);two.get(20,TimeUnit.SECONDS);
   ViewingHistory.awaitWrites();
   if(fixtureTransport!=null)ReflectionHelpers.setField(fixtureTransport,"interceptors",previousInterceptors);
  }

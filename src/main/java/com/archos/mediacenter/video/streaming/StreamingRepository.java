@@ -73,10 +73,21 @@ public final class StreamingRepository {
         if(!(kind.equals("movie")||kind.equals("tv"))||id<=0||!(Arrays.asList("","videos","recommendations","credits","images","external_ids","release_dates","content_ratings","alternative_titles").contains(section)||kind.equals("tv")&&section.matches("season/[0-9]{1,4}")))throw new IOException("Invalid metadata request");
         return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context,kind,id,section,()->api(context,kind+"/"+id+(section.isEmpty()?"":"/"+section),null));
     }
+    /** TMDB user reviews, existing application API access only. Bounded pages; no account flow. */
+    public static JSONObject reviews(Context context,String kind,long id,int page)throws Exception{
+        if(!Arrays.asList("movie","tv").contains(kind)||id<=0||page<1||page>5)throw new IOException("Invalid review request");
+        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context,kind,id,"reviews/page_"+page,
+                ()->{JSONObject result=api(context,kind+"/"+id+"/reviews",null,page);
+                    if(result.optInt("page",0)!=page)throw new IOException("Mismatched review page");return result;});
+    }
     private static JSONObject api(Context context, String path, String country) throws Exception {
+        return api(context,path,country,0);
+    }
+    private static JSONObject api(Context context,String path,String country,int page)throws Exception{
         Uri.Builder url = Uri.parse("https://api.themoviedb.org/3/" + path).buildUpon()
                 .appendQueryParameter("api_key", context.getString(com.archos.medialib.R.string.tmdb_api_key))
                 .appendQueryParameter("language", Locale.getDefault().toLanguageTag());
+        if(page>0)url.appendQueryParameter("page",String.valueOf(page));
         if (country != null) url.appendQueryParameter("watch_region", country);
         String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_request");
         long started=android.os.SystemClock.elapsedRealtime();
@@ -108,6 +119,9 @@ public final class StreamingRepository {
         }
         String section=parts.length==2?"":parts[2];
         // Recommendation pages carry result IDs, not a top-level source-title ID.
+        if("reviews".equals(section)){
+            if(value.optLong("id",-1)!=Long.parseLong(parts[1])||value.optJSONArray("results")==null||value.optInt("page",0)<1||value.optInt("total_pages",-1)<0)throw new IOException("Invalid review page");return;
+        }
         if("recommendations".equals(section)){
             if(value.optJSONArray("results")==null)throw new IOException("Missing recommendations");return;
         }

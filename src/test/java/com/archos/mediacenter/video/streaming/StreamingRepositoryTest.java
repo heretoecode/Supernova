@@ -94,6 +94,29 @@ public class StreamingRepositoryTest {
         assertFalse(com.archos.mediacenter.video.leanback.PreviewMetadataCache.fresh(context,"movie",id,"recommendations"));
         assertNull(com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(context,"movie",id,"recommendations"));
     }
+    @Test public void detailsReviewsDoNotCacheAResponseForTheWrongRequestedPage()throws Exception{
+        okhttp3.OkHttpClient client=org.robolectric.util.ReflectionHelpers.getStaticField(StreamingRepository.class,"HTTP");List<okhttp3.Interceptor> previous=client.interceptors();
+        long id=987654321;
+        try{
+            org.robolectric.util.ReflectionHelpers.setField(client,"interceptors",List.<okhttp3.Interceptor>of(chain->{
+                assertEquals("2",chain.request().url().queryParameter("page"));
+                return new okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK").body(okhttp3.ResponseBody.create(okhttp3.MediaType.parse("application/json"),"{id:987654321,page:1,total_pages:3,results:[]}")).build();
+            }));
+            android.content.Context app=org.robolectric.RuntimeEnvironment.getApplication();
+            try{StreamingRepository.reviews(app,"movie",id,2);fail("Mismatched response accepted");}catch(java.io.IOException expected){}
+            assertNull(com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(app,"movie",id,"reviews/page_2"));
+        }finally{org.robolectric.util.ReflectionHelpers.setField(client,"interceptors",previous);}
+    }
+    @Test public void detailsReviewsValidateIdentityAndPaginationBeforeCaching()throws Exception{
+        for(String kind:new String[]{"movie","tv"}){
+            StreamingRepository.validateMetadataResponse(kind+"/42/reviews",new JSONObject("{id:42,page:1,total_pages:0,results:[]}"));
+            for(String body:new String[]{"{id:43,page:1,total_pages:1,results:[]}","{id:42,page:0,total_pages:1,results:[]}","{id:42,page:1,total_pages:1}","{id:42,page:1,total_pages:-1,results:[]}"}){
+                try{StreamingRepository.validateMetadataResponse(kind+"/42/reviews",new JSONObject(body));fail("Invalid reviews accepted");}catch(java.io.IOException expected){}
+            }
+        }
+        for(int page:new int[]{0,6})try{StreamingRepository.reviews(org.robolectric.RuntimeEnvironment.getApplication(),"movie",42,page);fail("Unbounded review page");}catch(java.io.IOException expected){}
+        try{StreamingRepository.reviews(org.robolectric.RuntimeEnvironment.getApplication(),"episode",42,1);fail("Unsupported review scope");}catch(java.io.IOException expected){}
+    }
     @Test public void emptyOptionalListsRemainValidMetadata()throws Exception{
         for(String section:new String[]{"videos","release_dates","content_ratings"})
             StreamingRepository.validateMetadataResponse("movie/42/"+section,new JSONObject("{id:42,results:[]}"));
