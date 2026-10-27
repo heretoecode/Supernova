@@ -228,6 +228,40 @@ Approved in chat on 2026-10-26: user said “That’s perfect, update the bluepr
 - **Resume & Progress**: inventory must be reviewed for actual controls and ownership; some are under Library & Metadata. Do not invent default playback mode, auto trailers, end-of-content behaviour, or resume thresholds.
 - Reconcile all remaining audited playback/video controls before final category approval; a three-row mock-up is not proof of full feature coverage.
 
+
+## Global application of approved Settings design patterns — 2026-10-27
+**Decision:** Reuse the approved design system across **all eight top-level Settings categories**. This supersedes the earlier assumption that every category's basic layout must be redesigned individually. The main grid remains the approved entry point; each category uses a consistent two-column detail page, adapted to its actual audited controls.
+
+### Global visual and interaction contract
+- Use the canonical Supernova rebranding background and existing verified app font/icon assets, shared colour tokens, safe margins, header, TV scaling and D-pad focus treatment.
+- **Left column:** category identity/title/short explanation, followed by category-specific subsections with consistent monochrome icons, concise explanations, compact vertical spacing and clear selected/focused states. Never repeat the eight top-level categories in this rail.
+- **Right column:** active subsection title and short explanation, followed by real audited settings. Use the approved setting-row hierarchy (title, meaningful supporting description, right-aligned control, subtle dividers, consistent padding and row height).
+- Toggle only genuinely Boolean preferences; show audited saved state rather than screenshot defaults. Use the approved compact radio-choice pop-up for appropriate single-choice preferences. Preserve separate interaction patterns for multi-select, account sign-in, editors, actions, dangerous operations, forms and nested flows. Do not fabricate choices or silently simplify functionality.
+- No decorative third panel, preview, artificial filler rows, large empty framed areas, duplicate navigation or generated background substitutions. Allow natural blank space if a subsection contains few settings; keep panel dimensions content-responsive where feasible.
+- Reuse approved typography, spacing, padding, corner radii, contrast, motion and focus specifications, subject to physical Shield calibration. Do not independently restyle each category.
+- Navigation: OK opens selected category/subsection/control; Back returns to prior level and restores focus; D-pad movement is predictable, and changes persist via existing preference keys and listeners. Accessibility labels and long translations remain supported.
+- Flag icons only for actual locale-specific choices; generic languages use neutral symbols, as specified in the approved language selector.
+- **Audit-first mapping:** Every real control/action from the Settings audit must be assigned an intentional home, including dependencies, conditional visibility, advanced controls and any settings reached through other areas. Record exclusions/relocations explicitly; never omit settings because a mock-up has insufficient space.
+- **No accidental scope expansion:** Existing functionality is preserved unless the user separately approves a change. The new design does not itself authorise additional capabilities or changing preference semantics.
+
+### Category-by-category adaptation, without separate full visual reinvention
+| Top-level category | Mapping/design focus |
+|---|---|
+| Playback & Video | Playback, Video & Display, and Resume & Progress are current proposed subsections; map all audited relevant controls before finalising. |
+| Audio & Subtitles | Audio output/track preferences, subtitle options and approved compact language selector; advanced compatibility may belong under System & Maintenance depending on audit mapping. |
+| Library & Home | Metadata, library preferences, watch history and Home display/row customisation; use appropriate existing editors for complex actions. |
+| Streaming & Providers | Streaming availability, regions and provider selection; support multi-select provider lists rather than forcing radio pop-ups. |
+| Appearance | Actual UI language, accent and other audited appearance controls; fewer subsections are acceptable. |
+| Connections & Integrations | Connection preferences, Trakt, OpenSubtitles, IntroDB and other audited integrations; respect sign-in/authentication flows. |
+| System & Maintenance | Diagnostics, backup/restore, advanced compatibility and maintenance; retain warnings and confirmations. |
+| About Supernova | Version, release notes, licences, credits and technical information; actions/information may be read-only rather than toggles. |
+
+### Approval boundaries and handover requirements
+- **Approved for global reuse:** structural two-column design, styling, compact subsection navigation, setting-row presentation, toggles for Boolean controls, single-choice modal pattern, and TV focus behaviour.
+- **Not automatically approved:** exact subsection inventories, labels, default states, mapping of every audit entry, category-specific flows, or unreviewed mock-up controls. The last Video & Display mock-up remains a **candidate** until explicit approval; its three audited controls are source-supported, but visual approval is not assumed.
+- Codex implementation handover requires: (1) verified asset/font manifest, (2) complete audit-to-new-category mapping with keys and behaviour, (3) interaction-type matrix and any exceptional flows, (4) UI component/token specification, (5) screenshot/focus/functional QA plan. Keep release code untouched during documentation/design.
+- Future user design changes should update this one blueprint, and all affected categories should inherit the revision unless explicitly excepted.
+
 ## Approval log
 - APPROVED IN PRINCIPLE: eight names/order; ground-up approach; full-screen Space Black; no filler; category pages use left subsections + right controls; setting descriptions, toggles and separators.
 - APPROVED 2026-10-26: main eight-card 4x2 Settings grid visual direction, monochrome icons, descriptions, restrained blue focus, spacing and structure. Mandatory background: the existing official Supernova rebranding-release background asset, NOT the generated planet/nebula concept art. The numeric dp/sp/hex specifications are documented implementation targets requiring asset checks and Shield visual validation; approval of the visual does not assert the numbers were pixel-measured.
