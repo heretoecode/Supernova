@@ -69,9 +69,12 @@ public class SettingsWorkspaceTest {
         workspace.open(5,"Service integrations");layout();tagged("settings.preference."+master).performClick();layout();workspace.open(5,"IntroDB");layout();assertNotNull(root.findViewWithTag("settings.preference."+child));assertEquals(value,((ListPreference)fragment.findPreference(child)).getValue());
     }
     @Test public void advancedUnlockReparentsNativePreferencesWithoutResettingSavedValues(){
+        workspace.open(6,"Video compatibility");layout();View original=tagged("settings.preference.force_software_decoding");original.requestFocus();
         androidx.preference.TwoStatePreference force=fragment.findPreference("force_software_decoding");assertNotNull(force);
-        for(int i=0;i<10;i++)force.performClick();layout();assertTrue(PreferenceManager.getDefaultSharedPreferences(host.get()).getBoolean(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_ADVANCED_VIDEO_ENABLED,false));
-        workspace.open(6,"Video compatibility");layout();assertNotNull(fragment.findPreference("dec_choice"));assertNull(root.findViewWithTag("settings.preference.try_new_ui"));
+        for(int i=0;i<9;i++)force.performClick();layout();assertTrue(PreferenceManager.getDefaultSharedPreferences(host.get()).getBoolean(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_ADVANCED_VIDEO_ENABLED,false));
+        assertNotNull(fragment.findPreference("dec_choice"));assertNull("Basic decoder control must leave the model after advanced unlock",fragment.findPreference("force_software_decoding"));assertNull(root.findViewWithTag("settings.preference.try_new_ui"));assertNotNull(root.findFocus());assertTrue(String.valueOf(root.findFocus().getTag()).startsWith("settings.preference."));
+        Preference quit=fragment.findPreference(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_ADVANCED_VIDEO_QUIT);assertNotNull(quit);quit.performClick();layout();
+        assertFalse(PreferenceManager.getDefaultSharedPreferences(host.get()).getBoolean(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_ADVANCED_VIDEO_ENABLED,true));assertNull(fragment.findPreference("dec_choice"));assertNotNull(fragment.findPreference("force_software_decoding"));assertNotNull(root.findFocus());
     }
     @Test public void externalRestoreReconcilesNativeValuesWithoutReplayingActions(){
         workspace.open(0,"Playback");layout();View row=tagged("settings.preference.playback_speed");row.requestFocus();TwoStatePreference nativeValue=fragment.findPreference("playback_speed");final int[] called={0};nativeValue.setOnPreferenceChangeListener((p,v)->{called[0]++;return true;});

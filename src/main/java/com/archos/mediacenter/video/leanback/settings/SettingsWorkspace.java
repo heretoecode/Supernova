@@ -138,10 +138,10 @@ final class SettingsWorkspace extends LinearLayout {
         List<String> ids=new ArrayList<>();for(SettingsRegistry.Entry e:candidates)ids.add(e.id);
         boolean same=ids.equals(new ArrayList<>(bindings.keySet()));if(same)for(SettingsRegistry.Entry e:candidates)if(bindings.get(e.id).preference!=e.resolve(fragment.getPreferenceScreen())){same=false;break;}
         if(!same||bindings.isEmpty()){
-            View focused=body.findFocus();String anchor=focused==null?anchors.get(category+":"+section):String.valueOf(focused.getTag());Map<String,Row> previous=new LinkedHashMap<>(bindings);bindings.clear();body.removeAllViews();
+            View focused=body.findFocus();int focusedIndex=new ArrayList<>(bindings.values()).indexOf(focused);String anchor=focused==null?anchors.get(category+":"+section):String.valueOf(focused.getTag());Map<String,Row> previous=new LinkedHashMap<>(bindings);bindings.clear();body.removeAllViews();
             for(SettingsRegistry.Entry e:candidates){Preference p=e.resolve(fragment.getPreferenceScreen());Row row=previous.get(e.id);if(row==null||row.preference!=p)row=new Row(e,p);bindings.put(e.id,row);body.addView(row,new LayoutParams(-1,-2));}
             if(candidates.isEmpty())body.addView(text(integrationDisabled()?"This service is disabled. Enable it in Service integrations to use its options.":"No additional options apply to this device or account. Existing saved values are retained.",16));
-            if(anchor!=null){View restore=body.findViewWithTag(anchor);if(restore!=null&&focused!=null)restore.requestFocus();}
+            if(anchor!=null){View restore=body.findViewWithTag(anchor);if(focused!=null){if(restore!=null)restore.requestFocus();else if(!bindings.isEmpty()){List<Row> remaining=new ArrayList<>(bindings.values());remaining.get(Math.max(0,Math.min(focusedIndex,remaining.size()-1))).requestFocus();}else selectedRail().requestFocus();}}
         }
         for(Row row:bindings.values())row.refresh();
     }

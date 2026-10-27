@@ -406,18 +406,21 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     private static void addOwned(androidx.preference.PreferenceGroup group,Preference item){
         if(item.getParent()==group)return;if(item.getParent()!=null)item.getParent().removePreference(item);group.addPreference(item);
     }
+    private static void removeOwned(Preference item){
+        if(item!=null&&item.getParent()!=null)item.getParent().removePreference(item);
+    }
     private void switchAdvancedPreferences() {
         PreferenceCategory prefCategory = (PreferenceCategory) findPreference("preferences_category_video");
         PreferenceCategory aboutCategory = (PreferenceCategory) findPreference(KEY_ABOUT_CATEGORY);
         PreferenceCategory netShareCategory = (PreferenceCategory) findPreference(KEY_NETSHARE_CATEGORY);
         if (!ArchosFeatures.isAndroidTV(getActivity())) { // not a TV
-            prefCategory.removePreference(mActivate3DTVSwitch);
-            prefCategory.removePreference(mEnableDownmixATV); // on TV downmix is disabled: show the option to enable it for harmonyOS
+            removeOwned(mActivate3DTVSwitch);
+            removeOwned(mEnableDownmixATV); // on TV downmix is disabled: show the option to enable it for harmonyOS
             if (REFRESHRATE_FORALL) addOwned(prefCategory,mActivateRefreshrateTVSwitch);
-            else prefCategory.removePreference(mActivateRefreshrateTVSwitch);
+            else removeOwned(mActivateRefreshrateTVSwitch);
             addOwned(prefCategory,mActivateRefreshrateTVSwitch);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-                prefCategory.removePreference(mDisableDownmix); // on old Android downmix is forced: do not show the option
+                removeOwned(mDisableDownmix); // on old Android downmix is forced: do not show the option
             else
                 addOwned(prefCategory,mDisableDownmix);
             if (MiscUtils.hasCutout) {
@@ -425,19 +428,19 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 addOwned(prefCategory,mEnableCutBothSidesX);
             }
             else {
-                prefCategory.removePreference(mEnableCutoutModeShortEdge);
-                prefCategory.removePreference(mEnableCutBothSidesX);
+                removeOwned(mEnableCutoutModeShortEdge);
+                removeOwned(mEnableCutBothSidesX);
             }
         } else {
             // note enable_downmix_androidtv and disable_downmix are the opposite same settings but only one applies to androidTV
             // this is done on purpose to respect logic of presentation and default value
             // on huawei harmonyOS seems that you need downmix otherwise you loose front channels
-            prefCategory.removePreference(mDisableDownmix); // on TV downmix for phone/tablet is disabled: do not show the option
+            removeOwned(mDisableDownmix); // on TV downmix for phone/tablet is disabled: do not show the option
             addOwned(prefCategory,mEnableDownmixATV); // on TV downmix is disabled: show the option to enable it for harmonyOS
             addOwned(prefCategory,mActivate3DTVSwitch);
             addOwned(prefCategory,mActivateRefreshrateTVSwitch);
-            prefCategory.removePreference(mEnableCutoutModeShortEdge);
-            prefCategory.removePreference(mEnableCutBothSidesX);
+            removeOwned(mEnableCutoutModeShortEdge);
+            removeOwned(mEnableCutBothSidesX);
         }
         PreferenceCategory prefScraperCategory = (PreferenceCategory) findPreference(KEY_SCRAPER_CATEGORY);
         if (mSharedPreferences.getBoolean(KEY_ADVANCED_VIDEO_ENABLED, false)) {
@@ -447,13 +450,13 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             editor.apply();
             // no need of the enable sponsor link if not installed from ggplay
             if (! ArchosUtils.isInstalledfromPlayStore(getContext())) {
-                aboutCategory.removePreference(mEnableSponsor);
+                removeOwned(mEnableSponsor);
             } else {
                 if (BuildConfig.ENABLE_SPONSOR)
                     addOwned(aboutCategory,mEnableSponsor);
-                else aboutCategory.removePreference(mEnableSponsor);
+                else removeOwned(mEnableSponsor);
             }
-            prefCategory.removePreference(mForceSwDecPreferences);
+            removeOwned(mForceSwDecPreferences);
             addOwned(prefCategory,mStreamBufferSize);
             addOwned(prefCategory,mStreamMaxIFrameSize);
             addOwned(prefCategory,mDecChoicePreferences);
@@ -471,19 +474,19 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             Editor editor = mSharedPreferences.edit();
             if(!BuildConfig.FOUNDATION&&!mSharedPreferences.getBoolean("try_new_ui",false)){editor.remove(KEY_DEC_CHOICE);editor.remove(KEY_AUDIO_INTERFACE_CHOICE);}
             editor.apply();
-            aboutCategory.removePreference(mEnableSponsor);
-            prefCategory.removePreference(mDecChoicePreferences);
-            prefCategory.removePreference(mAudioInterfaceChoicePreferences);
-            prefCategory.removePreference(mParserSyncMode);
+            removeOwned(mEnableSponsor);
+            removeOwned(mDecChoicePreferences);
+            removeOwned(mAudioInterfaceChoicePreferences);
+            removeOwned(mParserSyncMode);
             addOwned(prefCategory,mForceSwDecPreferences);
-            prefScraperCategory.removePreference(mDbExportManualPreference);
-            getPreferenceScreen().removePreference(mAdvancedPreferences);
-            prefScraperCategory.removePreference(mAdultScrape);
-            prefCategory.removePreference(mStreamBufferSize);
-            prefCategory.removePreference(mStreamMaxIFrameSize);
+            removeOwned(mDbExportManualPreference);
+            removeOwned(mAdvancedPreferences);
+            removeOwned(mAdultScrape);
+            removeOwned(mStreamBufferSize);
+            removeOwned(mStreamMaxIFrameSize);
             // not needed since for fire10hd only UDP discovery is upsetting wifi drivers
-            netShareCategory.removePreference(mSmbDisableTcpDiscovery);
-            netShareCategory.removePreference(mSmbDisableMdnsDiscovery);
+            removeOwned(mSmbDisableTcpDiscovery);
+            removeOwned(mSmbDisableMdnsDiscovery);
         }
     }
 
