@@ -177,11 +177,63 @@ These are measurable implementation targets for design review, NOT measurements 
 ### Reference / provenance
 Approved in chat on 2026-10-26: user said “That’s perfect, update the blueprint with all details” referring to the **third, narrower Default audio track dialog mock-up with locale icons**. The image was generated in chat but is not yet a verified GitHub repository asset; attach the original as a design reference only when accessible. This text and audit are authoritative until then.
 
+
+## Playback & Video — approved Playback subsection visual, 2026-10-27
+**Approval scope:** The user requested tightening the left subsection navigation and reducing the empty surrounding panel; the resulting refined screenshot was accepted by proceeding to documentation. This approval applies to the **Playback subsection layout and three audited settings only**. The Video & Display and Resume & Progress pages, and the final mapping of all audited settings, are still pending.
+
+### Structure and hierarchy
+- Entry: approved eight-card Settings overview -> **Playback & Video** -> subsection **Playback**.
+- Two content columns, **no third panel** and **no duplicate top-level category list**.
+- Header: canonical Supernova wordmark, divider, Settings; clock only if provided by real app header. Preserve approved original rebranding background, not the image-generation backdrop.
+- Left panel: category identity (play outline icon, **Playback & Video**, short explanatory description); below, exactly three **provisional subsection destinations** in order:
+  1. **Playback** — play-circle icon; “Playback speed, external players and projector mode.”
+  2. **Video & Display** — monitor icon; “Refresh-rate switching, Dolby Vision and display behaviour.”
+  3. **Resume & Progress** — circular-arrow icon; “Resume behaviour and playback progress settings.”
+- The **Playback** item has the blue focus/selection treatment in the reference. Distinguish active subsection from keyboard/remote focus in implementation. Subsection descriptions are shown on the left; selected row has a blue outline, subtle glow, dark blue tint and readable white text.
+- Right panel: heading **Playback**, description “Control general playback behaviour and how content starts, plays and ends.” Then three settings rows, with setting label above a short explanatory line, and a toggle aligned to the far right.
+- **Compact panel revision:** both columns are visually shorter than the previous full-height bordered mock-up. Avoid an oversized empty outlined rectangle beneath the three controls. The reference still shows a small amount of natural empty area below rows; do not add filler controls to eliminate it.
+- **Tighter subsection navigation:** use compact, consistent vertical spacing and subdued separators between unselected subsection rows. Preserve readability at TV distance. No extraneous categories such as Performance/Other without audited justification.
+
+### Playback subsection — verified source-backed controls
+| Order | UI label | Supporting text in approved mock-up | Control | Audited default | Audit key |
+|---|---|---|---|---|---|
+| 1 | Enable playback speed | Allow changing the playback speed during playback. | Toggle | ON | `playback_speed` (S011) |
+| 2 | Allow using another video player | Open content with an alternative video player when available. | Toggle | OFF | `allow_3rd_party_player` (S025) |
+| 3 | Enable projector mode | Optimise playback for projector setups. | Toggle | OFF | `player_projector_mode_key` (S027) |
+
+**Behavioural caveats from audit:** Playback speed is experimental and may cause choppy playback; the external player option invokes Android's compatible player choice and can affect resume/bookmarks; projector mode specifically positions video at the **top of the screen** for projector use. The approved screenshot's abbreviated help copy must not conceal these material consequences: prefer precise help text, or accessible additional detail, during implementation. The screenshot shows **audited default states**, not necessarily the current values on a user's device; always read persisted preferences.
+
+### Visual measurements — calibration targets, not screenshot-derived guarantees
+- Reference 16:9 screen. Preserve common outer TV safe margins and header from grid specification.
+- Left column candidate width ~27–29% of usable content width, right ~71–73%, with 10–14dp gap. In the refined screenshot the left rail is roughly 445px of 1540px total content (~29%).
+- Compact content panel: height determined by left subsection content / right setting rows, not full-screen forced height. Avoid truncation if descriptions or font scale increase.
+- Left category header: 20–24dp inset, ~38dp icon, 22sp semibold title, 15–16sp description, 21sp line height.
+- Left subsection rows: ~70–82dp target height when a two-line description is present; 16–20dp horizontal inset; 12–16dp vertical separation; icon 26–30dp; subsection label 18–19sp medium; description 14–15sp with 20sp line height.
+- Right header: ~20dp inset; heading 24sp semibold; explanation 15–16sp, 21sp line height; 12–16dp separation before first row.
+- Right setting rows: ~55–65dp minimum visual height on the 960x540dp reference, expanding as necessary; 14–18dp horizontal padding; title 18–19sp semibold; description 14–15sp regular with ~4dp title-description gap. Thin low-contrast row separators or borders, ~1dp, 8–10dp corner radius. Do not turn every row into a large card.
+- Toggle: ~44x26dp visible, minimum 48dp focus/touch target, right aligned with at least 12dp inset; blue for ON and muted grey for OFF. Remote focus state must be discernible from toggle value.
+- Colours, actual typefaces, backdrop, blue focus and icon set inherit the grid's canonical tokens/assets. Numeric dimensions are targets for Shield visual QA, not proof of pixel-perfect screenshot measurement.
+
+### Navigation, state and accessibility
+- Entering Playback & Video from the grid opens Playback subsection initially, unless restoring an explicitly retained subsection state. Back returns to the same focused grid card.
+- D-pad up/down traverses subsection items and setting rows predictably; left/right transitions between subsection rail and settings content; OK on a toggle changes and persists only that setting; focus must not automatically toggle.
+- Subsection change updates only the right content, with no unintended category changes or focus loss. Focus remains visible, no zoom clipping, no flashing.
+- Scroll content if longer than available screen; compact panel may grow or become scrollable for accessibility text scale.
+- TV QA: verify 1080p/4K, font scaling, long text, state persistence, category return, toggle focus, actual approved background and exact audited semantics.
+
+### Reference and outstanding work
+- Latest approved-in-context refined mock-up: image generation ID `c9071da6-b5c0-494b-a585-617cc21b83b3`, 2026-10-27, shows the compact left navigation and three real Playback controls. This is a chat image reference **not yet committed as a repository image asset**; do not claim Codex can retrieve it from GitHub. Text specification above is authoritative until an accessible asset is attached.
+- Do **not** copy the generated backdrop or mock clock; use the original approved Supernova rebranding asset.
+- **Video & Display**: design next, using verified list-valued refresh-rate switch (S018), Dolby Vision mode (S019), 3D switch (S022) and any additional mapped settings from audit. Do not depict refresh-rate mode as a Boolean toggle.
+- **Resume & Progress**: inventory must be reviewed for actual controls and ownership; some are under Library & Metadata. Do not invent default playback mode, auto trailers, end-of-content behaviour, or resume thresholds.
+- Reconcile all remaining audited playback/video controls before final category approval; a three-row mock-up is not proof of full feature coverage.
+
 ## Approval log
 - APPROVED IN PRINCIPLE: eight names/order; ground-up approach; full-screen Space Black; no filler; category pages use left subsections + right controls; setting descriptions, toggles and separators.
 - APPROVED 2026-10-26: main eight-card 4x2 Settings grid visual direction, monochrome icons, descriptions, restrained blue focus, spacing and structure. Mandatory background: the existing official Supernova rebranding-release background asset, NOT the generated planet/nebula concept art. The numeric dp/sp/hex specifications are documented implementation targets requiring asset checks and Shield visual validation; approval of the visual does not assert the numbers were pixel-measured.
 - APPROVED 2026-10-26: compact single-choice audio-language dialog, radio selection, blue focus, Cancel and locale-aware flags/neutral icons as specified above.
-- NOT APPROVED: full individual category page layouts and their example controls; migration/implementation. Main grid IS approved.
+- APPROVED VISUAL 2026-10-27: compact Playback & Video -> Playback subsection, three audited toggle rows and tighter subsection rail; precise scope and QA constraints recorded above.
+- NOT APPROVED: Video & Display, Resume & Progress, other full category pages, migration/implementation. Main grid IS approved.
 
 ## Change control / upkeep
 Treat this file as the living design blueprint. After EACH explicit user design decision, update the approval log, layout/specification and any impacted category mapping in a new documentation-only commit. Clearly mark candidate vs approved; never silently promote mock-ups to approved. Keep this file consistent with the audited inventory, and link any approved image/mock-up artefacts when a stable repository asset exists. Avoid touching release/implementation branches while design is in progress.
