@@ -262,11 +262,19 @@ Approved in chat on 2026-10-26: user said “That’s perfect, update the bluepr
 - Codex implementation handover requires: (1) verified asset/font manifest, (2) complete audit-to-new-category mapping with keys and behaviour, (3) interaction-type matrix and any exceptional flows, (4) UI component/token specification, (5) screenshot/focus/functional QA plan. Keep release code untouched during documentation/design.
 - Future user design changes should update this one blueprint, and all affected categories should inherit the revision unless explicitly excepted.
 
+## Complete audited settings mapping — 2026-10-27
+- Companion document: [SETTINGS_AUDIT_MAPPING.md](SETTINGS_AUDIT_MAPPING.md).
+- **165/165** audit definition rows accounted for in a proposed new-category and subsection mapping, including **23 hidden/legacy/runtime review** rows and **26 nested backup export categories**. This is documentation only, not final sign-off or proof of runtime completeness.
+- Proposed distribution: Playback & Video 11; Audio & Subtitles 10; Library & Home 24; Appearance 5; Streaming & Providers 8; Connections & Integrations 20; System & Maintenance 58; About Supernova 6; review/non-exposed 23.
+- Before implementation, complete the open gates in the mapping document: exact option semantics, hidden/legacy disposition, Network & Files ownership, known listener/focus defects, nested workflows, canonical assets and full Shield QA coverage.
+- The mapped categories/subsections are **provisional** until reviewed. The global design system and approved Playback screen remain approved independently of this mapping.
+
 ## Approval log
 - APPROVED IN PRINCIPLE: eight names/order; ground-up approach; full-screen Space Black; no filler; category pages use left subsections + right controls; setting descriptions, toggles and separators.
 - APPROVED 2026-10-26: main eight-card 4x2 Settings grid visual direction, monochrome icons, descriptions, restrained blue focus, spacing and structure. Mandatory background: the existing official Supernova rebranding-release background asset, NOT the generated planet/nebula concept art. The numeric dp/sp/hex specifications are documented implementation targets requiring asset checks and Shield visual validation; approval of the visual does not assert the numbers were pixel-measured.
 - APPROVED 2026-10-26: compact single-choice audio-language dialog, radio selection, blue focus, Cancel and locale-aware flags/neutral icons as specified above.
 - APPROVED VISUAL 2026-10-27: compact Playback & Video -> Playback subsection, three audited toggle rows and tighter subsection rail; precise scope and QA constraints recorded above.
+- MAPPING IN PROGRESS 2026-10-27: all 165 audit definitions classified in companion mapping document; final placement, special flows, and implementation remain unapproved.
 - NOT APPROVED: Video & Display, Resume & Progress, other full category pages, migration/implementation. Main grid IS approved.
 
 ## Change control / upkeep
