@@ -13,13 +13,13 @@ import java.util.Set;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class InlinePreferenceChoicesTest {
- @Test public void providerMembershipPersistsImmediatelyAndFocusStaysOnNextRow(){
+ @Test public void providerMembershipPersistsImmediatelyWithoutRegroupingOrMovingFocus(){
   var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
    LinearLayout target=new LinearLayout(host.get());target.setOrientation(LinearLayout.VERTICAL);host.get().setContentView(target);
    PreferenceManager manager=new PreferenceManager(host.get());PreferenceScreen screen=manager.createPreferenceScreen(host.get());MultiSelectListPreference pref=new MultiSelectListPreference(host.get());pref.setKey("streaming_providers_fixture");pref.setEntries(new String[]{"Zulu","Alpha","Beta"});pref.setEntryValues(new String[]{"z","a","b"});screen.addPreference(pref);pref.setValues(Set.of());
    InlinePreferenceChoices.show(target,pref);target.measure(View.MeasureSpec.makeMeasureSpec(400,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(600,View.MeasureSpec.EXACTLY));target.layout(0,0,400,600);
-   assertEquals("Selected Providers",((TextView)target.getChildAt(0)).getText().toString());target.findViewWithTag("a").performClick();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertEquals(Set.of("a"),pref.getValues());assertTrue(target.findViewWithTag("b").hasFocus());assertEquals(Set.of("a"),PreferenceManager.getDefaultSharedPreferences(host.get()).getStringSet(pref.getKey(),Set.of()));
-   target.findViewWithTag("a").performClick();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertTrue(pref.getValues().isEmpty());assertTrue(target.findViewWithTag("b").hasFocus());assertEquals("Selected Providers",((TextView)target.getChildAt(0)).getText().toString());
+   assertEquals("Selected Providers",((TextView)target.getChildAt(0)).getText().toString());View alpha=target.findViewWithTag("a");assertTrue(alpha.requestFocus());alpha.performClick();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertEquals(Set.of("a"),pref.getValues());assertSame(alpha,target.findViewWithTag("a"));assertTrue(alpha.hasFocus());assertEquals(Set.of("a"),PreferenceManager.getDefaultSharedPreferences(host.get()).getStringSet(pref.getKey(),Set.of()));
+   target.findViewWithTag("a").performClick();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertTrue(pref.getValues().isEmpty());assertSame(alpha,target.findViewWithTag("a"));assertTrue(alpha.hasFocus());assertEquals("Selected Providers",((TextView)target.getChildAt(0)).getText().toString());
   }finally{host.pause().stop().destroy();}
  }
  @Test public void listOptionsKeepRealNativeValuesAndChangeListenerVeto(){

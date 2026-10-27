@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-10-27T20:38:46.052570+00:00",
+  "source_commit": "7b826443363af00b236e5b6af309046456d719df",
+  "environment": "Isolated prepared pinned dependencies; Java21, Gradle9.5.0, Android37, Robolectric SDK28; sibling NDK tasks excluded locally",
+  "android_focused": {
+    "tests": 37,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classes": [
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
+      "tests": "15",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "tests": "12",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "tooling_tests": 112,
+  "tooling_result": "PASS",
+  "lint": {
+    "errors": 0,
+    "warnings": 1794
+  },
+  "regression_red_before_fix": "Advanced-mode ownership assertion failed on 6de0ff9b; the corrected ownership and focus assertions now pass",
+  "earlier_focused_coverage": "40 tests in original focus/selector/diagnostic run also passed; see TESTING.md",
+  "full_native_apk_conformance": "Run 40575357794 in progress for corrected source; final proof recorded separately",
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false,
+  "android_full": {
+    "tests": 1123,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "android_full_test_classes": 234,
+  "android_full_build_result": "BUILD SUCCESSFUL",
+  "android_full_duration": "22m 51s"
+}

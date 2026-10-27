@@ -8,20 +8,43 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.142",
-    "version_code": 142,
-    "date": "2026-10-23",
+    "version": "0.143",
+    "version_code": 143,
+    "date": "2026-10-27",
     "kind": "Development / Shield QA candidate \u2014 physical acceptance pending",
     "notes": [
-      "Network & Files: six permanent destinations and one flexible workspace, four Overview cards, monochrome icons, existing global navigation and source workflows.",
-      "Preserves local/USB, network protocols, saved locations, staged library changes, scanning, Library Health and Put.io account/association/read-only browsing.",
-      "Network credential recovery, hostname matching, email-style non-SMB usernames, discovery ownership, stale listing and retry corrections; verification status is recorded in the 0.142 evidence.",
-      "Edit Library: darker backdrop and panels across the five steps, retaining layout, Live Preview and controls.",
-      "Playback HUD proposal only. Delivered playback design and implementation remain unchanged.",
-      "Physical NVIDIA Shield, real provider/USB, visual and signed-upgrade acceptance remain separate requirements. This is not a public or main release."
+      "New Settings: approved eight-category landing grid and consistent two-column category pages using the original Supernova background and branding.",
+      "Preserves audited preferences, runtime choices, device/account gates, service accounts, logical backup/restore, diagnostics, source ownership and About disclosures.",
+      "Stable provider multi-selection focus and immediate Subtitles by Default dependency updates; retained preference values and service handlers.",
+      "Details: no Language globe, increased Cast/Crew row spacing, stable incremental metadata/artwork, and read-only TMDB movie/TV reviews in Reception.",
+      "Automated validation and signed delivery evidence are recorded separately. Physical NVIDIA Shield, real account/provider, output-chain and upgrade acceptance remain pending. This is a test build, not a public/main release."
     ]
   },
   "history": [
+    {
+      "version": "0.142",
+      "version_code": 142,
+      "date": "2026-10-23",
+      "kind": "Development / Shield QA candidate \u2014 physical acceptance pending",
+      "notes": [
+        "Network & Files: six permanent destinations and one flexible workspace, four Overview cards, monochrome icons, existing global navigation and source workflows.",
+        "Preserves local/USB, network protocols, saved locations, staged library changes, scanning, Library Health and Put.io account/association/read-only browsing.",
+        "Network credential recovery, hostname matching, email-style non-SMB usernames, discovery ownership, stale listing and retry corrections; verification status is recorded in the 0.142 evidence.",
+        "Edit Library: darker backdrop and panels across the five steps, retaining layout, Live Preview and controls.",
+        "Playback HUD proposal only. Delivered playback design and implementation remain unchanged.",
+        "Physical NVIDIA Shield, real provider/USB, visual and signed-upgrade acceptance remain separate requirements. This is not a public or main release."
+      ],
+      "source_sha": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
+      "recorded_binary_verification": "docs/0.142/SIGNED_QA_DELIVERY.json",
+      "archive_digest_verified": true,
+      "apks": [
+        {
+          "filename": "Supernova_0.142.apk",
+          "sha256": "af03d26719b00601ca08da5ad562c1f196ec536c6397ac5b4603c2337d7c8514"
+        }
+      ],
+      "run_id": 40080144690
+    },
     {
       "version": "0.141",
       "version_code": 141,

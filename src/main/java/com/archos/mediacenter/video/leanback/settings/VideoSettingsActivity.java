@@ -38,9 +38,9 @@ public class VideoSettingsActivity extends LeanbackActivity {
             setTheme(R.style.MyLeanbackTheme_Preferences_Black);
         }
         super.onCreate(savedInstanceState);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))overridePendingTransition(0,0);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
-            android.widget.FrameLayout full=new android.widget.FrameLayout(this);full.setId(R.id.settingsFragment);full.setBackgroundColor(android.graphics.Color.TRANSPARENT);com.archos.mediacenter.video.leanback.TopNavigation nav=new com.archos.mediacenter.video.leanback.TopNavigation(this,full,index->{if(index==4)return;if(index==5){startActivity(new android.content.Intent(this,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));return;}android.content.Intent intent=new android.content.Intent(this,com.archos.mediacenter.video.leanback.MainActivityLeanback.class);intent.putExtra("preview_tab",index);intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(intent);finish();},()->false);previewNavigation=nav;nav.selectTab(4);nav.setScrolled(true);setContentView(nav);new androidx.core.view.WindowInsetsControllerCompat(getWindow(),nav).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        if(SettingsWorkspace.enabled(this))overridePendingTransition(0,0);
+        if(SettingsWorkspace.enabled(this)){
+            android.widget.FrameLayout full=new android.widget.FrameLayout(this);full.setId(R.id.settingsFragment);setContentView(full);new androidx.core.view.WindowInsetsControllerCompat(getWindow(),full).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
             if(savedInstanceState==null)getSupportFragmentManager().beginTransaction().replace(R.id.settingsFragment,new VideoSettingsFragment.PrefsFragment()).commit();
         }else setContentView(R.layout.activity_video_settings);
         if (previewNavigation != null) {
@@ -56,6 +56,7 @@ public class VideoSettingsActivity extends LeanbackActivity {
             public void handleOnBackPressed() {
                 Fragment fragment = getSupportFragmentManager()
                         .findFragmentById(R.id.settingsFragment);
+                if(fragment instanceof VideoSettingsFragment.PrefsFragment&&((VideoSettingsFragment.PrefsFragment)fragment).workspace!=null){if(((VideoSettingsFragment.PrefsFragment)fragment).workspace.back())return;finish();overridePendingTransition(0,0);return;}
                 if (fragment instanceof LeanbackSettingsFragmentCompat
                         && fragment.getChildFragmentManager().popBackStackImmediate()) {
                     return;

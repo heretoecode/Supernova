@@ -50,8 +50,21 @@ public final class BackupSettingsController {
             if(result.getResultCode()==Activity.RESULT_OK&&result.getData()!=null&&result.getData().getData()!=null)model.open(result.getData().getData());
         });
     }
+    private androidx.lifecycle.Observer<BackupOperationModel.State> stateObserver;
+    private boolean twoColumn;
+    /** Same backup engine/pickers/privacy model, presented inside the new right column. */
+    public void attachTwoColumn(LinearLayout content){
+        twoColumn=true;LinearLayout helpBody=new LinearLayout(fragment.requireContext());helpBody.setOrientation(LinearLayout.VERTICAL);ScrollView information=new ScrollView(fragment.requireContext());information.addView(helpBody);
+        attach(new SharedThreePanel(fragment.requireContext()),content,information);landingScroll.setVerticalScrollBarEnabled(false);landingScroll.setSmoothScrollingEnabled(false);
+        TextView title=SharedThreePanel.text(fragment.requireContext(),"Backup & Restore",24);title.setTypeface(null,android.graphics.Typeface.BOLD);landing.addView(title,0);TextView introduction=SharedThreePanel.text(fragment.requireContext(),"Choose export categories below, or open a backup to review it before restoring. Backups are unencrypted; media and credentials are excluded.",15);introduction.setSingleLine(false);introduction.setEllipsize(null);introduction.setTextColor(0xffbcc9d9);introduction.setTag("backup.action.description");landing.addView(introduction,1);
+        for(BackupCategory category:BackupCategory.ordered()){View v=landing.findViewWithTag("backup.category."+category.name());if(v instanceof TextView){TextView row=(TextView)v;present(row,category.label,category.description);}}
+    }
+    private void present(TextView view,String title,String explanation){
+        android.text.SpannableString label=new android.text.SpannableString(title+"\n"+explanation);label.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),0,title.length(),0);label.setSpan(new android.text.style.RelativeSizeSpan(.79f),title.length()+1,label.length(),0);label.setSpan(new android.text.style.ForegroundColorSpan(0xffbcc9d9),title.length()+1,label.length(),0);view.setText(label);view.setSingleLine(false);view.setEllipsize(null);float scale=Math.max(.5f,Math.min(1.25f,Math.min(TvLayout.width(fragment.requireContext())/960f,TvLayout.height(fragment.requireContext())/540f)));view.setTextSize(19*scale);view.setPadding(dp(14*scale),dp(12*scale),dp(14*scale),dp(12*scale));view.setMinHeight(dp(64*scale));
+    }
+    public boolean hasOperation(){return operation!=null||model.current().phase!=BackupOperationModel.Phase.IDLE;}
     public void attach(SharedThreePanel split,View middle,View help){
-        if(this.split!=null)hide();this.split=split;this.middle=middle;this.help=help;
+        if(this.split!=null)hide();this.split=split;this.middle=middle;this.help=help;landingControls.clear();selectedAction=null;
         frame=new FrameLayout(fragment.requireContext());frame.setBackground(MenuFoundation.surface(fragment.requireContext(),false));frame.setTag("settings.backup.workspace");
         landing=new LinearLayout(fragment.requireContext());landing.setOrientation(LinearLayout.VERTICAL);landing.setTag("settings.backup.landing");landing.setVisibility(View.GONE);
         exportChoices=BackupWorkspace.exportChoices(fragment.requireContext());
@@ -67,13 +80,14 @@ public final class BackupSettingsController {
         ((ViewGroup)middle).addView(landingScroll,new LinearLayout.LayoutParams(-1,-1));
         description=SharedThreePanel.text(fragment.requireContext(),"",17);description.setTag("backup.action.description");description.setVisibility(View.GONE);
         ViewGroup helpBody=(ViewGroup)((ScrollView)help).getChildAt(0);helpBody.addView(description,new LinearLayout.LayoutParams(-1,-2));
-        model.states().observe(fragment.getViewLifecycleOwner(),state->{if(isVisible())render(state);});
+        if(stateObserver!=null)model.states().removeObserver(stateObserver);stateObserver=state->{if(isVisible())render(state);};model.states().observe(fragment.getViewLifecycleOwner(),stateObserver);
         fragment.getViewLifecycleOwner().getLifecycle().addObserver(new androidx.lifecycle.DefaultLifecycleObserver(){@Override public void onDestroy(androidx.lifecycle.LifecycleOwner owner){dismissOperation();}});
     }
     private TextView landingAction(String label,String tag,Runnable action,String explanation){
-        TextView button=SharedThreePanel.text(fragment.requireContext(),label,17);button.setTag(tag);button.setPadding(dp(12),dp(12),dp(12),dp(12));button.setMinHeight(dp(54));button.setFocusable(true);button.setFocusableInTouchMode(true);button.setBackground(SharedThreePanel.accentFocus(fragment.requireContext()));button.setOnClickListener(v->action.run());
+        TextView button=SharedThreePanel.text(fragment.requireContext(),label,17);button.setTag(tag);if(twoColumn){button.setText(label+"\n"+explanation);button.setSingleLine(false);}button.setPadding(dp(12),dp(12),dp(12),dp(12));button.setMinHeight(dp(54));button.setFocusable(true);button.setFocusableInTouchMode(true);button.setBackground(SharedThreePanel.accentFocus(fragment.requireContext()));button.setOnClickListener(v->action.run());
         button.setOnFocusChangeListener((v,yes)->{if(yes){selectedAction=button;description.setText(label+"\n\n"+explanation);((ScrollView)help).scrollTo(0,0);}});
-        button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_LEFT){sidebar();return true;}if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){moveLanding(key);return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT){help.requestFocus();return true;}return false;});
+        button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_LEFT){sidebar();return true;}if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){moveLanding(key);return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(!twoColumn)help.requestFocus();return true;}return false;});
+        if(twoColumn)present(button,label,explanation);
         landingControls.add(button);landing.addView(button,new LinearLayout.LayoutParams(-1,-2));SharedThreePanel.divider(landing);return button;
     }
     private void hideChildren(ViewGroup parent,View retained){for(int i=0;i<parent.getChildCount();i++){View child=parent.getChildAt(i);if(child!=retained){hidden.putIfAbsent(child,child.getVisibility());child.setVisibility(View.GONE);}}}
@@ -111,7 +125,7 @@ public final class BackupSettingsController {
         if(landing.hasFocus()){
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){moveLanding(key);return true;}
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){sidebar();return true;}
-            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){help.requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_RIGHT){if(!twoColumn)help.requestFocus();return true;}
         }else if(help.hasFocus()){
             if(key==KeyEvent.KEYCODE_DPAD_LEFT){(selectedAction==null?exportAction:selectedAction).requestFocus();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){((ScrollView)help).smoothScrollBy(0,dp(key==KeyEvent.KEYCODE_DPAD_UP?-72:72));return true;}
@@ -124,7 +138,7 @@ public final class BackupSettingsController {
         int next=Math.max(0,Math.min(landingControls.size()-1,index+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1)));
         landingControls.get(next).requestFocus();
     }
-    public void enter(){if(isVisible()){if(operation!=null)focusFirst(frame);else exportAction.requestFocus();}}
+    public void enter(){if(isVisible()){if(operation!=null)focusFirst(frame);else (twoColumn&&selectedAction!=null?selectedAction:exportAction).requestFocus();}}
     private void sidebar(){if(operation!=null)back();else if(opener!=null)opener.requestFocus();}
     public boolean back(){
         if(!isVisible())return false;if(noticeActive){render(model.current());return true;}if(directInformation!=null){View restore=landing.findViewWithTag(directInformation);directInformation=null;workspace=null;dismissOperation();if(restore!=null)restore.requestFocus();return true;}if(workspace!=null&&workspace.back())return true;

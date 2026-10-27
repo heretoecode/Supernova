@@ -65,7 +65,7 @@ public class DiagnosticsTest {
         Diagnostics.pauseUi(library);Diagnostics.resumeUi(child);assertEquals("playback",new Diagnostics.UiSnapshot().page);assertEquals(42,new Diagnostics.UiSnapshot().media);
         Diagnostics.uiState("unknown","none","unknown","unknown","none",0);library.finish();child.finish();
     }
-    @Test public void detailsRebindReportsReasonAndPerViewCountWithoutTitle()throws Exception{
+    @Test public void detailsUnchangedSnapshotAvoidsRebuildAndReportsNoPrivateTitle()throws Exception{
         android.app.Activity activity=Robolectric.buildActivity(android.app.Activity.class).setup().get();Diagnostics.setEnabled(activity,true);
         try{
             com.archos.mediacenter.video.leanback.details.PreviewMoviePage page=new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(activity,androidx.leanback.widget.ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);
@@ -75,7 +75,8 @@ public class DiagnosticsTest {
             String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());assertFalse(evidence.contains("private-fixture-title"));
             int count=0;boolean indexed=false;for(String line:evidence.split("\n")){if(line.isEmpty())continue;org.json.JSONObject row=new org.json.JSONObject(line);
                 if("ui_rebuild".equals(row.optString("event"))&&"details.information".equals(row.optString("surface"))){assertEquals(++count,row.getInt("rebuild_count"));assertFalse(row.getBoolean("adapter_recreated"));assertEquals(1,row.getInt("items"));indexed|="indexed_snapshot".equals(row.getString("reason"));}}
-            assertTrue(count>=2);assertTrue(indexed);
+            // PR #22 intentionally suppresses an identical information bind. The trace must agree.
+            assertEquals(1,count);assertFalse(indexed);
         }finally{Diagnostics.setEnabled(activity,false);activity.finish();}
     }
     @Test public void nativeConfirmationTracksModalWithoutReplacingDismissOrDeleteCallbacks()throws Exception{

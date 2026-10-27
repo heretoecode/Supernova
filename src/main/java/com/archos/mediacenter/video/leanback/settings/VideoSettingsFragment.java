@@ -83,31 +83,33 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
     }
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
+        SettingsWorkspace workspace;
+        private Bundle workspaceState;
         private BackupSettingsController backupController;
         private Bundle backupViewState;
-        @Override public void onCreate(Bundle state){super.onCreate(state);if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){backupController=new BackupSettingsController(this);backupViewState=state==null?null:state.getBundle("supernova_backup_view");}}
+        @Override public void onCreate(Bundle state){super.onCreate(state);workspaceState=state;if(SettingsWorkspace.enabled(requireContext())){backupController=new BackupSettingsController(this);backupViewState=state==null?null:state.getBundle("supernova_backup_view");}}
         @Override public void onDisplayPreferenceDialog(androidx.preference.Preference pref){
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&PreviewPreferenceDialogs.show(this,pref))return;
+            if(SettingsWorkspace.enabled(requireContext())&&PreviewPreferenceDialogs.show(this,pref))return;
             super.onDisplayPreferenceDialog(pref);
         }
 
         @Override public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
-            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.grid(requireContext()):super.onCreateRecyclerView(inflater,parent,state);
+            return SettingsWorkspace.enabled(requireContext())?PreviewSettings.grid(requireContext()):super.onCreateRecyclerView(inflater,parent,state);
         }
         @Override public android.view.View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup container,Bundle state){
             android.view.View nativeView=super.onCreateView(inflater,container,state);
-            if(!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
+            if(!SettingsWorkspace.enabled(requireContext()))return nativeView;
             androidx.recyclerview.widget.RecyclerView list=getListView();if(list.getParent() instanceof android.view.ViewGroup)((android.view.ViewGroup)list.getParent()).removeView(list);
             android.widget.FrameLayout full=new android.widget.FrameLayout(requireContext());int pad=Math.round(28*getResources().getDisplayMetrics().density);full.setPadding(pad,0,pad,pad);full.addView(list,new android.widget.FrameLayout.LayoutParams(-1,-1));return full;
         }
 
-        @Override protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen){return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.adapter(screen):super.onCreateAdapter(screen);}
+        @Override protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen){return SettingsWorkspace.enabled(requireContext())?PreviewSettings.adapter(screen):super.onCreateAdapter(screen);}
         private VideoPreferencesCommon mPreferencesCommon = new VideoPreferencesCommon(this);
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             mPreferencesCommon.onCreatePreferences(savedInstanceState, rootKey);
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.organise(this);
+            if(SettingsWorkspace.enabled(requireContext()))PreviewSettings.organise(this);
         }
 
         @Override
@@ -116,16 +118,20 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
             // Apply theme background color to the preference list (RecyclerView)
             // This colors only the right-side content area, not the entire window
             if (getListView() != null) {
-                getListView().setBackgroundColor(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?android.graphics.Color.TRANSPARENT:ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
+                getListView().setBackgroundColor(SettingsWorkspace.enabled(requireContext())?android.graphics.Color.TRANSPARENT:ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
             }
-            if (!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false)) {
+            if (!SettingsWorkspace.enabled(requireContext())&&requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false)) {
                 scrollToPreference("streaming_category");
                 requireActivity().getIntent().removeExtra("show_streaming_settings");
             }
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.sidebar(this,backupController,backupViewState!=null&&backupViewState.getBoolean("visible",false));
+            if(SettingsWorkspace.enabled(requireContext())){
+                android.view.ViewGroup host=(android.view.ViewGroup)getListView().getParent();host.setPadding(0,0,0,0);getListView().setVisibility(android.view.View.GONE);workspace=new SettingsWorkspace(this,backupController,workspaceState);host.addView(workspace,new android.widget.FrameLayout.LayoutParams(-1,-1));workspaceState=null;
+            }
             if(backupController!=null&&backupViewState!=null){backupController.restoreViewState(backupViewState);backupViewState=null;}
             // Note: Header color is now handled by the theme (MyLeanbackTheme.Preferences.Black)
         }
+
+        @Override public void onDestroyView(){if(workspace!=null){workspace.dispose();workspace=null;}super.onDestroyView();}
 
         @Override
         public void onDestroy() {
@@ -135,6 +141,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
 
         @Override
         public void onSaveInstanceState(Bundle outState) {
+            if(workspace!=null)workspace.save(outState);
             if(backupController!=null)outState.putBundle("supernova_backup_view",backupController.saveViewState());
             super.onSaveInstanceState(outState);
             mPreferencesCommon.onSaveInstanceState(outState);
