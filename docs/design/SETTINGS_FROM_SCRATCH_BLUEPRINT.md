@@ -279,3 +279,26 @@ Approved in chat on 2026-10-26: user said “That’s perfect, update the bluepr
 
 ## Change control / upkeep
 Treat this file as the living design blueprint. After EACH explicit user design decision, update the approval log, layout/specification and any impacted category mapping in a new documentation-only commit. Clearly mark candidate vs approved; never silently promote mock-ups to approved. Keep this file consistent with the audited inventory, and link any approved image/mock-up artefacts when a stable repository asset exists. Avoid touching release/implementation branches while design is in progress.
+
+## Codex handover readiness and scope — 2026-10-27
+**User direction:** The user has finished supplying design preferences for now. Codex should independently resolve routine engineering choices, request user input only for genuine personal-preference decisions or changes to agreed functionality, and avoid unnecessary repeated design reviews. This is **authorisation to prepare/verify the handover, not authorisation to edit application code or start a release**.
+
+### Authoritative handover inputs
+1. This master blueprint (approved 4×2 main grid, two-column category layout, common visual/focus patterns, approved compact choice dialog and Playback subsection).
+2. [165-entry audit mapping](SETTINGS_AUDIT_MAPPING.md), **provisional** placement, all source IDs covered, including nested backup options and hidden/legacy disposition queue.
+3. Original audit files in `docs/audits/settings-2026-10-26/`, especially `inventory.json`, `INVENTORY.md`, `AUDIT.md`, `ISSUES.md` where available. The source audit, not an image mock-up, is authoritative for keys, options, defaults, gates, and handlers.
+4. Existing approved Supernova rebranding background, app typography and branding assets (Codex must locate exact paths and verify; generated mock-up backgrounds are not assets).
+
+### Codex's next documentation-only deliverables
+- Validate all 165 mapping rows against source; produce a final disposition of hidden/legacy entries, nested controls, Network & Files-owned scheduling and dependencies. Do not turn hidden rows into visible controls without review.
+- Confirm actual option lists, runtime defaults, persistence and preference listeners, including multi-choice vs radio vs toggle, account state and gating.
+- Specify reusable UI components and exceptional screens for streaming providers, backup/restore privacy and selection, diagnostics, network credentials, integrations and About.
+- Explicitly include known My Providers focus and Subtitles by Default listener issues in the regression matrix; check the audit issue list for others.
+- Verify exact approved background/font/icon assets and annotate any design tokens that remain estimates pending Shield measurement.
+- Produce an actionable implementation sequence and Shield QA matrix covering D-pad focus, Back restoration, scrolling, saved settings, conditional states, accessibility, failures, existing features and regression tests.
+- Return only substantive unresolved preference/design choices to the user, with options and impact. Do not imply full final sign-off until these checks pass.
+
+### Safety and completion boundaries
+- **Current status:** blueprint and draft mapping are on GitHub and ready for Codex's *verification/specification* pass. Functional specification and implementation are **not yet completed**.
+- **Do not** alter active release branches, merge into main, reset work, change signing/app identity, produce an APK, or implement the Settings UI as part of this documentation handover. Obtain explicit go-ahead for implementation.
+- Record verified results and any decisions in documentation commits on this design branch, keeping this blueprint as the index. Preserve the exact existing functionality unless a change is separately approved.
