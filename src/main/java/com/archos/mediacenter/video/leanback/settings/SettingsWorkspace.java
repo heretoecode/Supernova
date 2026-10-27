@@ -147,6 +147,8 @@ final class SettingsWorkspace extends LinearLayout {
     }
     private final class Row extends LinearLayout {
         final SettingsRegistry.Entry entry;final Preference preference;final TextView title,description,value;final androidx.appcompat.widget.SwitchCompat toggle;
+        // Intentional bridge to the pinned AndroidX 1.2.1 model: preserve its native click/dependency/action semantics.
+        @android.annotation.SuppressLint("RestrictedApi")
         Row(SettingsRegistry.Entry entry,Preference preference){
             super(SettingsWorkspace.this.getContext());this.entry=entry;this.preference=preference;setOrientation(HORIZONTAL);setGravity(Gravity.CENTER_VERTICAL);setPadding(dp(14),dp(12),dp(14),dp(12));setMinimumHeight(Math.max(dp(64),Math.round(48*getResources().getDisplayMetrics().density)));setFocusable(true);setFocusableInTouchMode(true);setTag("settings.preference."+entry.actualKey(getContext()));com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(this,"settings:preference:"+entry.actualKey(getContext()));setBackground(SharedThreePanel.control(getContext(),8));
             LinearLayout copy=new LinearLayout(getContext());copy.setOrientation(VERTICAL);title=text("",19);title.setTypeface(null,android.graphics.Typeface.BOLD);description=text("",15);description.setTextColor(0xffbcc9d9);description.setPadding(0,dp(5),0,0);copy.addView(title);copy.addView(description);addView(copy,new LayoutParams(0,-2,1));
