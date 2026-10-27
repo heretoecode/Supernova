@@ -302,3 +302,7 @@ Treat this file as the living design blueprint. After EACH explicit user design 
 - **Current status:** blueprint and draft mapping are on GitHub and ready for Codex's *verification/specification* pass. Functional specification and implementation are **not yet completed**.
 - **Do not** alter active release branches, merge into main, reset work, change signing/app identity, produce an APK, or implement the Settings UI as part of this documentation handover. Obtain explicit go-ahead for implementation.
 - Record verified results and any decisions in documentation commits on this design branch, keeping this blueprint as the index. Preserve the exact existing functionality unless a change is separately approved.
+
+## Source-verification and technical handover — 2026-10-27
+
+Documentation-only investigation: [report and readiness](../investigations/handover-2026-10-27/README.md), [technical specification](../investigations/handover-2026-10-27/SETTINGS_TECHNICAL_SPEC.md), [165-row disposition](../investigations/handover-2026-10-27/SETTINGS_DISPOSITION.md), [asset verification](../investigations/handover-2026-10-27/ASSET_MANIFEST.md). Original approvals and visuals remain unchanged. Mapping/source checks pass; runtime/Shield acceptance and implementation authorisation remain outstanding. Icon-shape gaps and missing original capture evidence are recorded explicitly.
