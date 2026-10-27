@@ -1,0 +1,115 @@
+{
+  "source_commit": "6de0ff9bac8344adfd37e38f78c46244b146fe79",
+  "renderer": "Robolectric native graphics, SDK28, official assets; clock/system build time is fixture-generated, not a design token",
+  "physical_shield": false,
+  "renders": [
+    {
+      "file": "1080p-grid.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "ff94161d0f90841375ef59f642cea9c20967e743a97d59a227879294f3eb8d33"
+    },
+    {
+      "file": "1080p-playback.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "2f49c981c06a245e21ace69d2dc31d37df7c8cf64a75e4633191790ea32f58d3"
+    },
+    {
+      "file": "4k-grid.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "82a04cc161cc9bf5f8b9762b589e514b82a3aca070214383b7ec1f0ff729b105"
+    },
+    {
+      "file": "4k-playback.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "671915d55ef953075726521e50ec263c3c9378882ce4a373a011dd47d3083b1c"
+    },
+    {
+      "file": "720p-grid.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "92c7c855e8ec97ab5f981aefd51abda9c7ec091caec612ce7feb988c4b165fdc"
+    },
+    {
+      "file": "720p-playback.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "eeb3ef6fc50cdf0a840972da2f0ad03d13b9c98b14bc4aa3f6e0512d0eddbadf"
+    },
+    {
+      "file": "backup.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "a9c3df2cf1c9ba66d2584c57d68b69623d6510e7c5c8a9720de832852ca21077"
+    },
+    {
+      "file": "category-0.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "2f49c981c06a245e21ace69d2dc31d37df7c8cf64a75e4633191790ea32f58d3"
+    },
+    {
+      "file": "category-1.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "d1b65767fbb99df36093112b9c849293b41c35282520e46796c7e913a9162ba1"
+    },
+    {
+      "file": "category-2.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "976bc80b9f9187fe72e22c8d1c216ec2fe0892d2e57b1c6a8d2826dbc1a74c33"
+    },
+    {
+      "file": "category-3.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "392893084525f44c748463c58816e7b07e130a4eb206587dd245707110e0d96e"
+    },
+    {
+      "file": "category-4.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "2b184729abfe18cae1c41d01cc627dc1b42c093b46a336e72af4ee252f39521f"
+    },
+    {
+      "file": "category-5.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4f8c0644c66bb00f00ae48dcf96281b2431cb3c38d81c94113e9077ab31d5a42"
+    },
+    {
+      "file": "category-6.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "5ce652b74c41e5b7b295d45aba6919184bc4f5fddbbfa6c0cf508196194475c6"
+    },
+    {
+      "file": "category-7.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "aaf2ba2b2ae5bf2757931307a3d0e82aeb28e4927d30b6a87c6cbddc3fc1293a"
+    },
+    {
+      "file": "large-grid.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "a1fcce355011b2084c073679b20ccda3a4c88dfa5e8ea756cd511b6606cb22e1"
+    },
+    {
+      "file": "large-playback.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "3a27432c73c712905831de5d67693429bf4ca32c316737213bd166137477e2e3"
+    },
+    {
+      "file": "opensubtitles.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4f8c0644c66bb00f00ae48dcf96281b2431cb3c38d81c94113e9077ab31d5a42"
+    }
+  ]
+}
