@@ -17,3 +17,28 @@ Status: **user-requested; pending Codex implementation and Shield verification**
 
 ## Boundaries
 This is a separate **Details tab** work item, not part of the Settings blueprint's 165-entry mapping. User has specified the changes; Codex handles technical decisions, escalating only real preference/approval questions. Keep active release branches untouched until implementation is authorised.
+
+## Additional user-reported issue: Details metadata and artwork loading instability (video evidence)
+Source: user-supplied 6.57-second Shield TV recording, `IMG_5035.mp4`, showing opening the Details page for *Mortal Kombat II* from the Home hero. **Pending source investigation and physical verification; no root cause established.**
+
+### Observed in the supplied recording
+- At opening, the Home hero has title, artwork and compact metadata.
+- After navigating to Details, a largely plain blue hero/background is initially displayed while the title, synopsis, controls and compact metadata are visible.
+- Artwork fills in several seconds later, producing a conspicuous late visual change.
+- The compact metadata line also changes/reflows during this transition. The video does **not** establish whether this is delayed data, a placeholder replacement, a source merge or multiple asynchronous renders; investigate before attributing a cause.
+- User additionally reports metadata appearing/disappearing or popping in/out; treat this as a regression symptom to reproduce, not proof of a specific underlying defect.
+
+### Required investigation and outcome
+1. Trace navigation from Home hero to Details, the detail view model, artwork fetch/caching, metadata repository lookups and observer/render update sequence. Measure time to first useful Details paint, time to stable metadata and artwork readiness on Shield.
+2. Check for duplicate refreshes, repeated network queries, mismatched item IDs, stale-state renders, transient empty values and unnecessary layout rebuilds. Inspect logs rather than guessing.
+3. Ensure that metadata already available from the selected item is displayed immediately and **remains stable** while supplemental information loads. Do not blank out populated fields or overwrite reliable data with temporary placeholders.
+4. Introduce appropriate stable loading/empty/error states for genuinely missing fields and artwork, with no disruptive layout jumping or repeated flicker. Reuse artwork cache and avoid blocking D-pad navigation; do not delay the whole page merely to wait for optional external data.
+5. Verify navigation back and forth, first-open versus cached-open, slow/offline network, partial metadata, titles with/without backdrop, movie and TV series, and rapid switching between titles. Check for stale artwork/data from a previous title.
+6. Test timing, UI stability, focus retention and scrolling on physical Nvidia Shield TV Pro; capture before/after recording and evidence. Avoid modifying unrelated Home hero behaviour.
+
+### Acceptance criteria
+- Previously known metadata does not disappear or oscillate during load.
+- Details layout and focus remain stable; no conspicuous text jumping or flashing as asynchronous fields resolve.
+- Artwork resolves promptly when cached, and missing/late artwork does not cause repeated full-page reflow.
+- Optional metadata failure cannot stall the screen or erase valid fields.
+- Exact timing targets to be measured and recorded by Codex from device baseline rather than invented here.
