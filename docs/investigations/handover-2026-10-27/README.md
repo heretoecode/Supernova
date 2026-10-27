@@ -1,3 +1,5 @@
+> Historical PR #21 investigation. The owner subsequently authorised implementation and test-build delivery; see [0.143](../../0.143/README.md). Earlier approval limits below describe the investigation stage.
+
 # Supernova handover investigation — 27 October 2026
 
 Documentation-only continuation of [work queue](../../design/CODEX_WORK_QUEUE_2026-10-27.md). No application fix, Settings implementation, APK, signing change, release, main merge or workflow automation is included.
