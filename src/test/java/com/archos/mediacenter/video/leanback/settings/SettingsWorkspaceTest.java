@@ -73,6 +73,10 @@ public class SettingsWorkspaceTest {
         for(int i=0;i<10;i++)force.performClick();layout();assertTrue(PreferenceManager.getDefaultSharedPreferences(host.get()).getBoolean(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_ADVANCED_VIDEO_ENABLED,false));
         workspace.open(6,"Video compatibility");layout();assertNotNull(fragment.findPreference("dec_choice"));assertNull(root.findViewWithTag("settings.preference.try_new_ui"));
     }
+    @Test public void externalRestoreReconcilesNativeValuesWithoutReplayingActions(){
+        workspace.open(0,"Playback");layout();View row=tagged("settings.preference.playback_speed");row.requestFocus();TwoStatePreference nativeValue=fragment.findPreference("playback_speed");final int[] called={0};nativeValue.setOnPreferenceChangeListener((p,v)->{called[0]++;return true;});
+        boolean updated=!nativeValue.isChecked();PreferenceManager.getDefaultSharedPreferences(host.get()).edit().putBoolean("playback_speed",updated).putBoolean("subtitles_hide_default",true).commit();layout();assertEquals(updated,nativeValue.isChecked());assertTrue(row.hasFocus());assertEquals(0,called[0]);workspace.open(1,"Subtitles");layout();assertFalse(((TwoStatePreference)fragment.findPreference("preview_subtitles_by_default")).isChecked());assertFalse(fragment.findPreference("favSubLang").isEnabled());
+    }
     @Test public void allCategoriesRenderTheirRealContentAndRestoreGrid()throws Exception{
         for(int i=0;i<8;i++){workspace.open(i,null);layout();save("category-"+i);assertTrue(workspace.back());layout();assertTrue(tagged("settings.grid."+i).hasFocus());}
         workspace.open(6,"Backup & restore");layout();save("backup");workspace.open(5,"OpenSubtitles");layout();save("opensubtitles");

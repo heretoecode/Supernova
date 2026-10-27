@@ -51,6 +51,8 @@ jobs:
           if ! repo sync --no-manifest-update -c -d -j 4; then
             git --git-dir=.repo/projects/native/prebuilt/ffmpeg.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-ffmpeg.git 6ba0e9340cf725bede2e2f29d30c290a2ab8130e
             git --git-dir=.repo/projects/native/prebuilt/opus.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-opus.git 27544063be93ee55c6ba58a2ebb32c106eb2e37b
+            git --git-dir=.repo/projects/native/prebuilt/openssl.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-openssl.git 78631105380190806182d77943b5524e81609f65
+            git --git-dir=.repo/projects/native/prebuilt/libmysofa.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-libmysofa.git adf0d8278382a631d67dc3764d62d6ceece3789b
             repo sync --no-manifest-update -c -d -j 4
           fi
           git -C Video fetch ../../source "$SUPERNOVA_QA_SOURCE"

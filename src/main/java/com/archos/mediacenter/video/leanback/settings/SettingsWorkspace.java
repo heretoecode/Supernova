@@ -115,8 +115,24 @@ final class SettingsWorkspace extends LinearLayout {
     private String subsectionIcon(String name){String lower=name.toLowerCase(Locale.ROOT);return lower.contains("video")||lower.contains("display")?"tv":lower.contains("audio")?"audio":lower.contains("sub")?"subtitles":lower.contains("network")?"network":lower.contains("playback")?"play":lower.contains("resume")||lower.contains("history")?"history":lower.contains("home")?"home":lower.contains("backup")?"folder":lower.contains("integration")||Arrays.asList("Trakt","IntroDB").contains(name)?"settings.nodes":"info";}
     private String sectionDescription(){if(category==0&&section.equals("Playback"))return "Control general playback behaviour and how content starts, plays and ends.";if(section.toLowerCase(Locale.ROOT).contains("compatibility"))return "Existing device and advanced-mode options. Change these only when needed for your media or connection.";return "Review the current values and choose a setting to change it.";}
     private boolean integrationDisabled(){return section.equals("Trakt")&&!prefs.getBoolean("supernova_integration_trakt",true)||section.equals("IntroDB")&&!prefs.getBoolean(com.archos.mediacenter.video.player.SegmentSkippingPolicy.MASTER,true);}
+    private void refreshStoredValues(){
+        // External restores can update SharedPreferences while the native model stays alive.
+        // Setters reconcile model/dependency state, but never replay change/action listeners.
+        PreferenceScreen screen=fragment.getPreferenceScreen();
+        for(SettingsRegistry.Entry entry:registry.entries){
+            Preference p=entry.resolve(screen);if(p==null||!p.isPersistent()||p.getKey()==null||p.getPreferenceDataStore()!=null)continue;
+            SharedPreferences store=p.getSharedPreferences();if(store==null||!store.contains(p.getKey()))continue;
+            Object value=store.getAll().get(p.getKey());
+            if(p instanceof TwoStatePreference&&value instanceof Boolean)((TwoStatePreference)p).setChecked((Boolean)value);
+            else if(p instanceof ListPreference&&value instanceof String)((ListPreference)p).setValue((String)value);
+            else if(p instanceof MultiSelectListPreference&&value instanceof Set&&!((MultiSelectListPreference)p).getValues().equals(value))((MultiSelectListPreference)p).setValues(new HashSet<>((Set<String>)value));
+            else if(p instanceof EditTextPreference&&value instanceof String&&!Objects.equals(((EditTextPreference)p).getText(),value))((EditTextPreference)p).setText((String)value);
+        }
+        TwoStatePreference inverse=screen.findPreference("subtitles_hide_default"),positive=screen.findPreference("preview_subtitles_by_default");
+        if(inverse!=null&&positive!=null){positive.setChecked(!inverse.isChecked());Preference language=screen.findPreference("favSubLang");if(language!=null){language.setEnabled(!inverse.isChecked());language.setSelectable(!inverse.isChecked());}}
+    }
     private void renderRows(){
-        if(body==null||special())return;
+        if(body==null||special())return;refreshStoredValues();
         List<SettingsRegistry.Entry> candidates=new ArrayList<>();
         if(!integrationDisabled())for(SettingsRegistry.Entry e:registry.in(category,section)){Preference p=e.resolve(fragment.getPreferenceScreen());if(SettingsRegistry.visible(p,e.integration()))candidates.add(e);}
         List<String> ids=new ArrayList<>();for(SettingsRegistry.Entry e:candidates)ids.add(e.id);
