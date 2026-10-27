@@ -1,0 +1,213 @@
+{
+  "date": "2026-10-27",
+  "source_commit": "bd36ca73ee55efa21a911e28dcc8b8e148c2a0b2",
+  "baseline": "48e9cd6fbff47c120c013d5017f30cb3f3219030",
+  "android": {
+    "tests": 68,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "class_count": 16,
+    "classes": [
+      {
+        "name": "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
+        "tests": "8",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "27.406"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.Supernova139SharedCardMetadataTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "12.138"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.DetailsImprovementsTest",
+        "tests": "12",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "17.011"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "19.715"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "5.612"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewDetailsCacheTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "5.512"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewDetailsFactsTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "5.584"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewEpisodeChoiceTest",
+        "tests": "6",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "12.703"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewEpisodeFactsTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "10.186"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewExtraDurationTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.054"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewMoreActionsTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "5.874"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewPeopleRailTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "11.398"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.PreviewSeasonTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "9.701"
+      },
+      {
+        "name": "com.archos.mediacenter.video.leanback.details.ReceptionSupplementTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "6.371"
+      },
+      {
+        "name": "com.archos.mediacenter.video.streaming.StreamingProviderFocusTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "12.136"
+      },
+      {
+        "name": "com.archos.mediacenter.video.streaming.StreamingRepositoryTest",
+        "tests": "17",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "5.666"
+      }
+    ],
+    "result": "PASS",
+    "variant": "testNoamazonReleaseUnitTest, Foundation verification identity, native tasks excluded; no assemble"
+  },
+  "tooling": {
+    "tests": 102,
+    "result": "PASS",
+    "command": "python -m unittest discover -s tools -p 'test_*.py'"
+  },
+  "lint": {
+    "result": "PASS",
+    "severity_counts": {
+      "Warning": 1787
+    }
+  },
+  "source_sha256": {
+    "src/main/java/com/archos/mediacenter/video/leanback/details/DetailsBlueprintPanel.java": "6b62dd787ccf9392d9edc3a7698d09926395bef6dea037c17619149b2b43847b",
+    "src/main/java/com/archos/mediacenter/video/leanback/details/DetailsPeopleGrid.java": "92dcb14436fdb48b5002eb1cb4ccac536342feed6785644a8c57e960290762a6",
+    "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsData.java": "9dfa780cc307d7889c4646cee5816375014f4d73e8c50efb20b11254d8c973a5",
+    "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java": "81ab1248c31be62c92802827031289cabf702497c0dcc40a520dbc05e76e68e1",
+    "src/main/java/com/archos/mediacenter/video/streaming/StreamingRepository.java": "71f56b52e8f552ff85269cef873fbcfe5a78324880bd8a94a31279af6b4202b9",
+    "src/test/java/com/archos/mediacenter/video/leanback/PreviewAsyncFixtures.java": "e75cd0c4633446cc9863afce411a9f46671ba46583eb0f8ce528990fa0eb92f5",
+    "src/test/java/com/archos/mediacenter/video/leanback/details/DetailsReferenceRenderTest.java": "6fb1da53ccf3cff298052bb6030bb50bb550684ea2f470d0b5549f0dc1c48887",
+    "src/test/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeFactsTest.java": "942bfd9435cd7cd29e215286d66220882a2aa7ef0fca40e4e1ff85345796ede6",
+    "src/test/java/com/archos/mediacenter/video/streaming/StreamingRepositoryTest.java": "2ab7b9f967ab69bdffd115a14eb0a39eb222109deed7cb0dd5afd2b312151a5e",
+    "src/main/java/com/archos/mediacenter/video/leanback/details/DetailsReviews.java": "35a351ed6ce9b3a28e5cebae140899c88b49e5c815c90365f802999479b8e4bc",
+    "src/test/java/com/archos/mediacenter/video/leanback/details/DetailsImprovementsTest.java": "3c6e2100d1bed90941686e9538adde73c463f151667cbb90989c7b954bce59fe"
+  },
+  "live_review_checks": [
+    {
+      "kind": "movie",
+      "id": 550,
+      "status": 200,
+      "page": 1,
+      "reviews": 12,
+      "identity_match": true
+    },
+    {
+      "kind": "tv",
+      "id": 1399,
+      "status": 200,
+      "page": 1,
+      "reviews": 15,
+      "identity_match": true
+    }
+  ],
+  "scope_checks": {
+    "settings_resources_assets_unchanged": true,
+    "build_workflows_signing_manifest_unchanged": true,
+    "apk_count": 0
+  },
+  "limits": [
+    "No physical Shield or reproduction of owner recording",
+    "No physical timing target established",
+    "No native decoder rebuild/binary conformance/upgrade testing",
+    "Controlled software-render fixtures are not real provider/device evidence"
+  ],
+  "environment": {
+    "MediaLib": "5758074049bc153ac4967b4ecd21886469270076",
+    "FileCoreLibrary": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+    "preparation": "Existing 0.142 dependency patches and prepare-foundation.py in isolated build copy",
+    "JDK": "Temurin 21.0.13+9",
+    "Gradle": "9.5.0",
+    "SDK": "37.0",
+    "build_tools": "36.0.0"
+  },
+  "baseline_visual_tests": {
+    "tests": 4,
+    "failures": 0,
+    "result": "PASS",
+    "source": "48e9cd6fbff47c120c013d5017f30cb3f3219030"
+  },
+  "visual_evidence": "VISUAL_EVIDENCE.json"
+}

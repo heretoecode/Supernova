@@ -1,0 +1,56 @@
+{
+  "renderer": "Robolectric native software canvas",
+  "viewport_width": 3840,
+  "viewport_height": 2160,
+  "font_scale": 1,
+  "frame": {
+    "left": 154,
+    "top": 360,
+    "width": 3532,
+    "height": 1714
+  },
+  "active_tab": {
+    "left": 154,
+    "top": 360,
+    "width": 549,
+    "height": 150
+  },
+  "Description": {
+    "left": 226,
+    "top": 566,
+    "width": 1259,
+    "height": 756
+  },
+  "Key Information": {
+    "left": 1513,
+    "top": 566,
+    "width": 1093,
+    "height": 756
+  },
+  "Reception": {
+    "left": 2634,
+    "top": 566,
+    "width": 980,
+    "height": 756
+  },
+  "Cast": {
+    "left": 226,
+    "top": 1358,
+    "width": 1146,
+    "height": 651
+  },
+  "Crew": {
+    "left": 1400,
+    "top": 1358,
+    "width": 1176,
+    "height": 651
+  },
+  "Technical Information": {
+    "left": 2604,
+    "top": 1358,
+    "width": 1009,
+    "height": 651
+  },
+  "cast_name_text_px": 36,
+  "portrait_diameter_px": 127
+}
