@@ -30,3 +30,14 @@ Target version is 0.144/code 144. Not a completed or delivered release candidate
 Environment setup required installing Android SDK and JDK, configuring the existing HTTP proxy and Java CA trust. Local tests exclude sibling NDK tasks; these runs cannot establish native APK conformance. No Shield is attached (`adb devices -l` empty).
 
 Automated results, workflow URLs, source commit, APK SHA-256 and Drive readback must be recorded after actual completion. Do not reuse 0.143's APK link as 0.144 delivery. Do not mark this release complete while the above gates are pending.
+
+## Validation corrections and delivery block (2026-10-28)
+
+- Draft PR: https://github.com/heretoecode/Supernova/pull/24 .
+- Tooling suite: 120 passing checks, including tampered historical-receipt rejection.
+- Real FileCore DELETE response regression passes for 204/404 versus 401/403/405/423/500/503. Traversal completeness tests pass for empty success, null/error, stopped and depth-limited listing.
+- Focused Android run: 89 cases, 88 passed; obsolete narrow-panel render assertion corrected for the two-column structure, with final render rerun required. Source-level initial-focus helper typo corrected after compiler detection.
+- Software inspection detected vertically stretched switch thumbs; circular drawable correction and stretched-bounds regression added. Final software captures must replace preliminary captures.
+- GitHub signing run 40726725691 rejected before execution: branch is not allowed by the `supernova-foundation-signing` environment deployment branch rules. Owner must allow this branch; no protection was changed or bypassed. No APK signed/uploaded and no 0.144 checksum available.
+- Initial unsigned CI 40726695367 stopped at historical identity validation: 0.143 historical record lacked required evidence disposition. Fixed with an exact pinned, signature/payload/native-verified delivery-receipt check; archive availability is not falsely marked verified. Local source-conformance check passes. Native conformance must be rerun on final source.
+- Google Drive HTML updated in place with an explicit undelivered candidate/status entry; byte-for-byte readback passed, all 12 prior articles preserved. URL: https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view .

@@ -108,14 +108,19 @@ final class PreviewPlaybackMenus {
             if(subs&&owner.getString(R.string.get_subtitles_online).equals(item.getText()))label="Download Subtitles";
             if(subs&&owner.getString(R.string.get_subtitles_on_drive).equals(item.getText()))label="Choose Subtitles";
             if(subs&&owner.getString(R.string.menu_player_settings).equals(item.getText()))label="Subtitle Appearance";
-            if(subs||audio){String group=(item.findViewById(R.id.info_text) instanceof android.widget.Checkable)?(audio&&item.getText().equals(owner.getString(R.string.pref_audio_filt_title))||item.getText().equals(owner.getString(R.string.pref_audio_filt_night_mode))||item.getText().equals(owner.getString(R.string.spatialization_capabilities))?"Enhancements":"Tracks"):label.contains("Subtitles")&&!label.equals("Subtitle Appearance")?"Add subtitles":"Timing & appearance";if(audio&&trackRows!=null)rows=group.equals("Tracks")?trackRows:adjustmentRows;if(!group.equals(last)){heading(group);last=group;}}
+            if(subs||audio){String group=(item.findViewById(R.id.info_text) instanceof android.widget.Checkable)?(audio&&item.getText().equals(owner.getString(R.string.pref_audio_filt_title))||item.getText().equals(owner.getString(R.string.pref_audio_filt_night_mode))||item.getText().equals(owner.getString(R.string.spatialization_capabilities))?"Enhancements":(audio?"Track":"Tracks")):label.contains("Subtitles")&&!label.equals("Subtitle Appearance")?"Add subtitles":audio?"Sync":"Timing & appearance";if(audio&&trackRows!=null)rows=(group.equals("Track")||group.equals("Tracks"))?trackRows:adjustmentRows;if(!group.equals(last)){heading(group);last=group;}}
             Runnable parent=root?PreviewPlaybackMenus::renderTab:restoreParent;nativeRow(item,label,parent);
         }
         if(hasOther&&!other)action("Other languages",false,true,null,()->select(selected,PreviewPlaybackMenus::renderTab,-1,true));
     }
     private static void nativeRow(TVMenuItem item,String label,Runnable parent){
         Object language=item.getTag(R.id.preview_track_language);
-        action(label,item.isChecked(),item.isEnabled()&&item.isFocusable(),language instanceof String?(String)language:null,()->{restoreParent=parent;item.previewClick();if(nested==null&&isShowing())refreshChecks();});
+        TextView row=action(label,item.isChecked(),item.isEnabled()&&item.isFocusable(),language instanceof String?(String)language:null,()->{restoreParent=parent;item.previewClick();if(nested==null&&isShowing())refreshChecks();});
+        if(owner.getString(R.string.pref_audio_filt_night_mode).equals(item.getText())){
+            final boolean on=item.isChecked();final int accent=PreviewAccent.color(owner);row.setText(label);row.setContentDescription(label+", "+(on?"On":"Off"));
+            android.graphics.drawable.Drawable indicator=new android.graphics.drawable.Drawable(){final android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);public void draw(android.graphics.Canvas canvas){android.graphics.Rect bounds=getBounds();paint.setColor(on?accent:0xff526174);canvas.drawRoundRect(bounds.left,bounds.top,bounds.right,bounds.bottom,dp(10),dp(10),paint);paint.setColor(android.graphics.Color.WHITE);canvas.drawCircle(on?bounds.right-dp(10):bounds.left+dp(10),bounds.exactCenterY(),dp(7),paint);}public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(android.graphics.ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}};
+            indicator.setBounds(0,0,dp(36),dp(20));row.setCompoundDrawables(null,null,indicator,null);row.setCompoundDrawablePadding(dp(12));
+        }
     }
     private static void refreshChecks(){
         if(owner==null)return;

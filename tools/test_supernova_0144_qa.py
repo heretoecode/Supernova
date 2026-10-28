@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / '.github/signing'))
 qa = importlib.import_module('supernova_0144_qa_signing')
 artifact = importlib.import_module('verify_supernova_0144_qa_apk')
-REQUIRED = ['WebdavTraversalCompletenessTest','CustomLibraryPageTest','Supernova138HomeTest', 'Supernova138PlaybackTest', 'SubtitleDiscoveryTest',
+REQUIRED = ['WebdavDeleteResponseTest','WebdavTraversalCompletenessTest','CustomLibraryPageTest','Supernova138HomeTest', 'Supernova138PlaybackTest', 'SubtitleDiscoveryTest',
             'Supernova138UiTest', 'BundledNoticePagerTest', 'PreviewSeasonTest', 'Supernova139HomeEditorTest',
             'CanonicalMatchProviderTest', 'MediaMatchJournalTest', 'MediaMatchReconciliationTest',
             'CombinedCurrentRestoreTest', 'TransportReadDiagnosticsTest', 'LogicalBackupExporterTest',

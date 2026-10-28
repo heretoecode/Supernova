@@ -102,4 +102,12 @@ public class SettingsWorkspaceTest {
         assertEquals("Configure audio output, playback compatibility and preferred audio tracks.",
             (String)ReflectionHelpers.callInstanceMethod(workspace,"sectionDescription"));
     }
+    @Test public void switchThumbStaysCircularWhenCompatAssignsTallTrackBounds(){
+        SettingsSwitchThumb thumb=new SettingsSwitchThumb(host.get());int diameter=thumb.getIntrinsicWidth();
+        android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(diameter,diameter*2,android.graphics.Bitmap.Config.ARGB_8888);
+        thumb.setBounds(0,0,diameter,diameter*2);thumb.draw(new android.graphics.Canvas(image));
+        assertEquals(0,android.graphics.Color.alpha(image.getPixel(diameter/2,0)));
+        assertEquals(255,android.graphics.Color.alpha(image.getPixel(diameter/2,diameter)));
+        assertEquals(0,android.graphics.Color.alpha(image.getPixel(diameter/2,diameter*2-1)));image.recycle();
+    }
 }

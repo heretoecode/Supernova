@@ -130,7 +130,7 @@ public final class PreviewSettings {
  }
  static void styleSwitch(androidx.appcompat.widget.SwitchCompat toggle){
   android.content.Context context=toggle.getContext();
-  android.graphics.drawable.GradientDrawable thumb=new android.graphics.drawable.GradientDrawable();thumb.setShape(android.graphics.drawable.GradientDrawable.OVAL);thumb.setColor(android.graphics.Color.WHITE);thumb.setSize(PreviewDialog.dp(context,22),PreviewDialog.dp(context,22));
+  android.graphics.drawable.Drawable thumb=new SettingsSwitchThumb(context);
   android.graphics.drawable.GradientDrawable track=new android.graphics.drawable.GradientDrawable();track.setCornerRadius(PreviewDialog.dp(context,13));track.setColor(android.graphics.Color.WHITE);track.setSize(PreviewDialog.dp(context,44),PreviewDialog.dp(context,26));
   toggle.setShowText(false);toggle.setThumbDrawable(thumb);toggle.setTrackDrawable(new android.graphics.drawable.InsetDrawable(track,0,PreviewDialog.dp(context,11),0,PreviewDialog.dp(context,11)));toggle.setSplitTrack(false);toggle.setSwitchMinWidth(PreviewDialog.dp(context,44));
   toggle.setThumbTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));toggle.setTrackTintList(new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{PreviewAccent.color(context),0xff526174}));

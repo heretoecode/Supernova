@@ -100,7 +100,7 @@ public final class PreviewPages extends FrameLayout {
         if(sharedBrowser!=null&&sharedBrowser.isShown())return sharedBrowser.browser().focusOverview();
         if(restoringFocus)return false;
         if(anchors[tab]!=null){holdFocus();restoreFocus();return true;}
-        if((tab==1||tab==2)&&focusLibraryEntry())return true;
+        if((tab==1||tab==2)&&focusFromNavigation())return true;
         return super.onRequestFocusInDescendants(direction,rect);
     }
     private static boolean libraryControl(View view){

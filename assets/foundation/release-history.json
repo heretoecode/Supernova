@@ -40,9 +40,13 @@
         {
           "sha256": "7885f505eba0d6d317e9d10178d7cd2853e8ba0b00d9dabfbe8648f14692ec55",
           "size": 87936033,
-          "url": "https://drive.google.com/file/d/1b02zx7zlseN5eJQNqol1OlTp0CejPAU0/view"
+          "url": "https://drive.google.com/file/d/1b02zx7zlseN5eJQNqol1OlTp0CejPAU0/view",
+          "filename": "Supernova_0.143.apk"
         }
-      ]
+      ],
+      "recorded_binary_verification": "docs/0.143/SIGNED_QA_DELIVERY.json",
+      "archive_digest_verified": false,
+      "run_id": 40575517211
     },
     {
       "version": "0.142",
