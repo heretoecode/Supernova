@@ -20,3 +20,7 @@ No UI replacement, storage schema migration, dependency/runtime hash substitutio
 Signing blocker: `supernova-foundation-signing` deployment policies do not allow `codex/supernova-0.145-maintenance-2026-10-28`. Only the owner can authorize that branch. The new workflow retains all native rebuild, runtime, full-suite, lint, exact-source, signature and payload gates. No protection is changed or bypassed.
 
 Physical Shield, real provider/AV chain, signed upgrade/rollback and exact approved-reference visual acceptance remain pending. Original A4 reference photos and October 27 diagnostic ZIP remain unavailable. No signed 0.145 APK, Drive upload, public release or main merge is claimed.
+
+## Current validation findings
+
+Full Android run 40747266276 on source `67da778e28f8e32af7db268e9ad7f6a8d7c3d5b4` executed 1,147 cases: 1,144 passed and three new storage fixture cases failed at the Android 30 framework permission probe. The denied-access fixture is corrected at `e9da70a97`; focused rerun 40751619925 is pending. Do not treat the full suite as passed. Native conformance run 40747434294 passed FFmpeg rebuild/runtime checks and is still running on the earlier fixture source. See VALIDATION.json.

@@ -1,0 +1,31 @@
+{
+  "recorded_at": "2026-10-28T19:10:55.917766+00:00",
+  "release_complete": false,
+  "source_commit": "67da778e28f8e32af7db268e9ad7f6a8d7c3d5b4",
+  "full_android_run": 40747266276,
+  "full_android_result": "failure",
+  "tests": 1147,
+  "passed": 1144,
+  "failed": 4,
+  "skipped_events": 0,
+  "failed_cases": [
+    "StorageWriteAccessTest > deniedFolderIndexNeverMutatesMediaStore",
+    "StorageWriteAccessTest > deniedMkdirNeverMutatesMediaStore",
+    "StorageWriteAccessTest > deniedWriteNeverMutatesMediaStore",
+    "2026-10-28T19:05:30.8223193Z > Task :testNoamazonReleaseUnitTest"
+  ],
+  "source": "Complete GitHub failed-step log, not an independently retrieved XML artifact",
+  "log_sha256": "9005d9465ae192d1493550065417fb885b7d26b57ed392b134734bbb31c4e53a",
+  "fixture_correction_source": "e9da70a97",
+  "focused_correction_run": 40751619925,
+  "focused_correction_result": "in_progress",
+  "native_conformance_run": 40747434294,
+  "native_conformance_result": "in_progress on old fixture source; FFmpeg rebuild/runtime step passed",
+  "tooling_tests": 128,
+  "tooling_result": "passed",
+  "buffer_sanitizer_test": "passed",
+  "artifact_access_limit": "Execution proxy rejects Azure blob storage tunnel (HTTP 403); GitHub run-log archive retrieval and Drive APK readback work",
+  "signing": "blocked: custom deployment branch policy excludes the 0.145 branch",
+  "signed_apk": null,
+  "physical_shield_verified": false
+}
