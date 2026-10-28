@@ -45,5 +45,8 @@
   "focused_passed": 12,
   "focused_log_sha256": "dfca4ea2937c24c9b643a699d94fda6b516f4c3d81254b41f86059d1ac15b841",
   "full_corrected_source_validation": "Pending final full conformance rerun; focused success does not replace it",
-  "native_wrappers": "Earlier source built all pinned wrappers successfully; full conformance still failed its unit-test gate"
+  "native_wrappers": "Earlier source built all pinned wrappers successfully; full conformance still failed its unit-test gate",
+  "corrected_full_conformance_run": 40753216952,
+  "corrected_full_conformance_source": "c92c68d617cc6fe1e11a1f5cdd032a919811ffaa",
+  "corrected_full_conformance_result": "in_progress"
 }
