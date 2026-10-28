@@ -1,0 +1,161 @@
+a4dcf44b3 6.6.2
+940057fcd Defer control-bar notification until layout completes
+ca6a57634 ui: fix text subtitles overlapping seek bar in portrait
+68450c29b Add skip prompt countdown line and translucent pill styling
+5137c02d2 revert palette version to 1.0.0 since not compatible with minSdkVersion 23
+bc81ec9a6 Make skip prompt labels per-type translatable strings
+9c3a109f3 libs++
+3242247ea libass is 6.6.1
+2c2da1570 Fix Back not closing the color page from the TV color grid
+c1b4b58ed cleanup: fix lint warnings
+871d215da subtitles: show the position hint again when the settings open
+d0be0f116 Reopen failed network playback at the latest seek position
+df581cdf6 ui: fix text clipping and layout alignment in TV subtitle settings
+227dc29a9 tv: pin the subtitle settings sample under the card title
+ac93e2608 tv: move focus by item order inside a card's TVMenu
+9aea8fcd2 Add LICENSE Headers
+0175f16ce subtitles: rebuild style settings on the player's TV card and phone dialog
+ee367002a Add Netflix-style interactive Skip Intro/Outro/Recap button with PiP, Floating player and Leanback focus support
+170100448 Keep subtitle settings reachable so the panel can explain itself
+bb205b752 docs(subtitles): update pipeline doc for current native engine
+6885f7f5f SubtitleEngine: rename nativeSetVerticalOffset param from fraction to pixels
+25e486d1d fix lint warnings
+e7c9ceb7c Make SubtitleManager own the subtitle style defaults and restore
+43bf3cf95 Make SubtitleManager the single interpreter of the native subtitle kind
+75ebee30d Move subtitle defaults into resources; drop per-size overrides
+83c24100a Save fontScale on mobile
+c66197843 Fix SubtitleColorPicker build after rebase onto c87fa52
+432a2e05b SubtitleEngine: match native's single-pull fill API; add paused-3D push
+7633a98f3 Player: keep text subtitles clear of the playback controls
+63f11914a 3D subtitles: fix box coordinate space and stale overlay buffer size
+0e3478171 subtitle layout: fix box lifecycle, HDMI offset, stale stretch flag
+f7c715f7e SurfaceController: replay current video box to newly registered listener
+c733b6c34 player: report video's on-screen box to the native subtitle engine
+bf90415f4 Simplify subtitle font sync and fix silent OS wipes
+911e83227 Fix duplicate subtitle fonts in settings UI
+7a2b8311e docs: update SUBTITLES.md for the native libass subtitle pipeline
+c845f74ee fix lint warnings
+11c3123c7 Cleanup: Remove dead Java subtitle cue listeners
+0dbdfefa4 Skip redundant 3D overlay redraw when subtitle content is unchanged
+5c713d449 Fix 3D subtitle teardown race and unbound wakeDrawLoop() block
+c344a1520 Refactor: move subtitle setting mode labels to XML arrays
+aed86ff94 fix(subtitles): add WEBVTT to subtitles_types array
+faf26b04f Fix: 3D subtitle style changes not visible while paused
+a3508d93d SubtitileSettings: update slider range
+ef3593712 fix: save FontScale in preferences.
+35b2d9c8d subtitles: custom fonts folder (SAF) + default font picker
+dc0d2c950 Fix SubtitleEngine double-ownership and stale-surface-size bugs across minimize/resume
+0d28c4b36 subtitle: Add subtitle_use_margins preference for letterbox rendering
+d6d531fdd fix: Whitelist .sup external subtitles in UI
+4ce8b8755 subtitle: Implement dynamic layout projection
+a88f61054 subtitle: redesign TV UI and few tweaks to mobile ui.
+e2158725a fix(subtitle): add new surface in floating player
+cf95aacda SubtitleManager: code cleanup.
+8581fe97e refactor(subs): deprecate DispSubtitleThread
+e892f8063 refactor(subtitle): disconnect java subtitle rendering views
+e51467a2b subtitle: restore position hint indicator
+37b078ecc sub: add styling frontend for mobile and tv
+1e9f03f95 subtitle: update jni style bridge
+5e14fda12 subtitle: add 3d mode. hooks onto java native surface.
+8cade68f8 subtitle: add styling support for new engine
+89bd2dd06 feat(player): wire JNI boundaries for native subtitle engine
+d273346c9 Guard HDMI plug receiver against duplicate registration
+9f877ad46 crowdin sync
+46df92b40 Show a hint that the version row opens the store
+1516edb03 Decouple Leanback weblink webview from OAuth dialog
+86022144f Restore HDMI broadcast channel-count fallback
+af960c060 Restore little_star rating icon on Leanback detail screens
+ffd0eb50c Protect SearchProviderVideo with GLOBAL_SEARCH read permission
+e1a88b181 Fix FolderPicker NPE caused by getLayoutInflater in onCreate
+7506a310b Assert private listening wins over shared TV speaker/SPDIF route
+269f01bdf Retain SPDIF capabilities for shared TV speaker routes
+d522fb096 Make settings version row open the store listing
+0778a3d6e Revert crowdin syncs 947eb3c8 and 23833944 (localized updater strings)
+f29ee1ddc Revert in-app updater for GitHub (sponsor) and Google Play builds
+3f4069231 Disable dependency metadata block for sponsor builds
+e394eda85 Focus the OK button on updater information dialogs
+c5350fdf9 fix crowdin pt translation error making build fails lint
+1c70c1975 lib++
+947eb3c84 crowdin sync
+27961c401 Keep grouped browse rows stable across video deletes
+238339444 crowdin sync
+3e26a8b30 6.5.5
+d8e24aec2 Preserve ARC capabilities for shared TV speaker routes
+8112f2c0a restore external media button (bluetooth headset) support
+0c778c519 change audio speed title for settings
+7b6a3e17a Add in-app updater for GitHub (sponsor) and Google Play builds
+ce25e443f Make sort by year tie-break on release date in movie/anime browsers
+114e979f9 Filter and display genres by TMDB id instead of scrape-time name
+9aa387fa0 add license header
+5970a4dfa debug: add reversible setup for PCM speed sessions
+cab25da08 6.5.4
+dd86fef2b Wait for SMB readiness in metadata and playback workers
+4a39153aa Wait for SMB readiness in metadata and playback workers
+8ddc54e0b 6.5.3
+42209cc56 crowdin sync
+5d73519c2 Fix add to list inserting into the wrong list
+4bc4be83a Fix duplicate list rows in leanback Lists page
+386e6c29f libs++
+c87fa52b3 Fix TV card dialog swallowing back key on devices without predictive back
+64f3c33e3 crowdin sync
+1a843441a Prevent playback recovery after frontend exit
+a5ab41ba1 Avoid rebuilding playback for equivalent audio routes
+2d12ec9f9 Fix player OSD controls clipped in desktop windowing
+d4ca97593 Restore buffer preference wording to avoid translation churn
+e9151ce39 Document buffer policies and real-server validation
+f15916d18 Reconcile buffering documentation and clarify advanced settings
+3cfb712b9 crowdin play listing sync
+bf1d970bd Fix private mode not persisting in mobile UI
+e991bd8e2 crowdin sync
+f2750ca66 6.5.1
+e447255af Add preference to keep full subtitles for local-language audio
+5ec26fa0a Decode parent folder path shown in video details
+6a504447a Fix secondary displays / desktop mode scaling and toasts
+4570689d3 Revert "Logging: enable TRACE for ftp and DEBUG for StreamOverHttp/SmbProxy in logback_full.xml"
+7b34004fb Fix category list and movie adapter scaling on secondary displays / desktop mode
+4d56a285f add sonic audio speed
+0046648fb Avoid interrupting SMB work during video details reloads
+6708019b5 Logging: enable TRACE for ftp and DEBUG for StreamOverHttp/SmbProxy in logback_full.xml
+3e7077938 Prevent play mode selection from toggling skip intro/outro off
+d47848807 Fix Leanback details row inflation height and color flash on transition
+2bcd7e969 6.4.66 skipping stable google release
+224fb6ffb Fix crash obtaining display from non-visual context in PiP mode
+7cd9c1c73 Only use shared element transition for portrait cards
+769587334 Enable external-player playback buffering and document media buffers
+639dfd64a Document SMB transfer buffer and read-ahead comparisons
+330ae31ab unused
+82a63b971 Document RTL policy and PiP architecture, and suppress RtlHardcoded in FloatingPlayerService
+5f9113a88 Lock player root layouts to LTR and refine PiP transition parameters
+d23a97d1a Add documentation for video thumbnail generation architecture and debugging
+e1a3f8d85 Consolidate TV menu back navigation through OnBackPressedDispatcher
+4f12d0ddd Preserve playback across surface, audio-route and focus changes
+ead3058fd Constrain play mode phone dialog width in landscape
+7bb4ce79a Trigger intro/outro fetch on play mode toggle and dynamically update UI
+1cfa5bf0f libs++
+8c49feff2 Add bottom padding to TVCardView info_text2 technical info
+39655976c Adjust TV menu item and separator spacing to fit play mode intro summary
+881330f46 Hide fullscreen cutout button when switching to TV/keyboard playback mode
+12cdaea1e Preserve subtitle pause state and remaining display time during replay
+57e9f6e78 Lock player controller UI to LTR layout direction
+54f1c90bc Adjust TV menu separator and slide item layouts for layout consistency
+57c43bb60 Fix missing video poster in VideoInfoActivity portrait layout
+20d77806d Set subtitle search result item height to wrap_content
+d2fcf9927 Adjust TV menu item layouts to wrap_content for proper vertical spacing
+d0e7e12be Center action button text alignment in Leanback details overview
+daa250613 Lock TV menu container to LTR layout direction to fix off-screen positioning in RTL locales
+ab9434494 Fix text alignment in browser list and grid items for RTL locales
+d7b87bd2b Enable RTL bidirectional support and resolve accessibility lint warnings (Batch 8)
+c0c1ceb66 Fix typography, button case, plurals and internationalized text lint warnings (Batch 7)
+5c39b586a Resource hygiene, dimension standardization and icon remediation (Batch 6)
+406e574af Scope TrustAllX509TrustManager lint suppression to external JARs via lint.xml
+e4696b972 Audit and remediate security, network security policy, and exported component lint warnings (Batch 5)
+5efc4b9ac Fix layout performance warnings, flatten redundant view hierarchies and suppress false-positive overdraw/layout inconsistencies (Batch 4)
+9202f67cd Modernize platform APIs, targetSdk compliance, and manifest hygiene
+1e03191e8 Modernize XML layouts, widget tags, and compound drawables
+a6ad64664 Fix layout inflation and dialog lifecycle lint warnings
+c8c04c7d1 Document on-device SpeedTestTransferTest workflow
+14d9a40ff Fix D-pad navigation to/from multi-select action bar in Legacy UI
+d654aae32 Always show internal storage category regardless of connectivity
+1588c6a46 Fix preferences scrolling to top on checkbox toggle (phone TV UI)
+561f146f4 crowdin sync
+03d528ffe info: fetch full show details at actual save time, not preview time

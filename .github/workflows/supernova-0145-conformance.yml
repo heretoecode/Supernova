@@ -1,0 +1,148 @@
+name: Supernova 0.145 unsigned conformance
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/supernova-0.145-maintenance-2026-10-28]
+    paths: [.github/workflows/supernova-0145-conformance.yml]
+permissions:
+  contents: read
+concurrency:
+  group: supernova-0145-conformance-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  conformance:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/supernova-0.145-maintenance-2026-10-28'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      SUPERNOVA_QA_SOURCE: ${{ github.sha }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout the exact QA source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Java for PKCS12 validation and Android build
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          # Deliberately no Gradle/signing cache.
+
+      - name: Prepare existing pinned NOVA dependencies without Preview identity conversion
+        run: |
+          set -euo pipefail
+          # The Azure mirror downloaded host packages at tens of KB/s in 0.145 QA.
+          # Keep Ubuntu's signed package verification and use its official archive.
+          if [[ -f /etc/apt/apt-mirrors.txt ]]; then
+            printf '%s\n' 'https://archive.ubuntu.com/ubuntu/' | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl file git meson nasm ninja-build pkg-config unzip wget ffmpeg python3-yaml
+          sudo apt-get install -y repo
+          mkdir nova
+          cd nova
+          repo init -u https://github.com/nova-video-player/aos-AVP -b 9c5842b74ab180c99441ed23fdd5d508448388a7 -m v6_4.xml
+          cp ../source/.github/build/nova-ci.xml .repo/manifests/v6_4.xml
+          if ! repo sync --no-manifest-update -c -d -j 4; then
+            git --git-dir=.repo/projects/native/prebuilt/ffmpeg.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-ffmpeg.git 6ba0e9340cf725bede2e2f29d30c290a2ab8130e
+            git --git-dir=.repo/projects/native/prebuilt/opus.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-opus.git 27544063be93ee55c6ba58a2ebb32c106eb2e37b
+            git --git-dir=.repo/projects/native/prebuilt/openssl.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-openssl.git 78631105380190806182d77943b5524e81609f65
+            git --git-dir=.repo/projects/native/prebuilt/libmysofa.git fetch --depth=1 https://github.com/nova-video-player/prebuilt-libmysofa.git adf0d8278382a631d67dc3764d62d6ceece3789b
+            repo sync --no-manifest-update -c -d -j 4
+          fi
+          git -C Video fetch ../../source "$SUPERNOVA_QA_SOURCE"
+          git -C Video checkout --detach FETCH_HEAD
+          test "$(git -C Video rev-parse HEAD)" = "$SUPERNOVA_QA_SOURCE"
+          git -C MediaLib apply ../Video/.github/build/medialib-preview40.patch
+          git -C native/avos apply ../../Video/.github/build/avos-preview414.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-preview414.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-preview415.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview415.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview417.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-preview417-local.patch
+          git -C native/avos apply ../../Video/.github/build/avos-supernova135.patch
+          git -C native/avos apply ../../Video/.github/build/avos-supernova141-chapters.patch
+          git -C native/avos apply ../../Video/.github/build/avos-supernova145-buffer-limits.patch
+          cc -Wall -Wextra -Werror -fsanitize=undefined,address -I native/avos/Include native/avos/test/stream_buffer_limits.c -o "$RUNNER_TEMP/stream-buffer-test"
+          "$RUNNER_TEMP/stream-buffer-test"
+          # prepare-preview.py is intentionally NOT called for Foundation.
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova135.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-next-refinement.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-next-qa.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-next-qa.patch
+          python3 Video/.github/build/prepare-foundation.py .
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova139-playlists.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova139-matches.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova139-diagnostics.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova142-network.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova144-webdav.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova144-reconciliation.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova145-subtitle-cache.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova145-jetty-security.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova145-storage.patch
+
+      - name: Verify 0.145 provider and historical identity isolation
+        run: python3 source/.github/build/verify-next-qa.py --root nova
+
+      - name: Rebuild and compare pinned LGPL FFmpeg before replacing dependency binaries
+        run: |
+          set -euo pipefail
+          native_workspace="$RUNNER_TEMP/supernova-foundation-ffmpeg"
+          python3 source/.github/build/build-foundation-ffmpeg.py --root nova --workspace "$native_workspace"
+          python3 source/tools/verify_foundation_native_runtime.py --root nova --workspace "$native_workspace" \
+            --test-workspace "$RUNNER_TEMP/supernova-foundation-native-tests"
+          python3 source/.github/build/build-foundation-ffmpeg.py --root nova --workspace "$native_workspace" \
+            --verify-existing --install --source-bundle
+
+      - name: Repeat secret-free Foundation release tests and unsigned binary conformance
+        env:
+          OPERATION: verify
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'ndk;29.0.14206865'
+          python3 source/.github/build/build-foundation-native-wrappers.py --root nova \
+            --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
+            --output "$RUNNER_TEMP/supernova-foundation-native-wrappers.json"
+          cd nova/Video
+          chmod +x gradlew
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease --continue \
+            -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild
+          python3 .github/build/verify-foundation-runtime.py \
+            --inventory build/foundation/runtime-artifacts.json --reviewed docs/foundation/RUNTIME_SBOM.json
+          mapfile -t unsigned_apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
+          test "${#unsigned_apks[@]}" -eq 1
+          python3 .github/build/verify-next-qa.py --root .. \
+            --apk "${unsigned_apks[0]}" --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+            --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2"
+          python3 .github/build/verify-foundation-native-apk.py --apk "${unsigned_apks[0]}" \
+            --evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json"
+          # Check the complete reviewed suite and record binary proof before either operation.
+          python3 -m unittest discover -s tools -p 'test_*.py'
+          python3 .github/build/record-supernova-0145-conformance.py --root .. --apk "${unsigned_apks[0]}" \
+            --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+            --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2" \
+            --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" \
+            --native-evidence "$RUNNER_TEMP/supernova-foundation-ffmpeg/verified-native-build.json" \
+            --output "$RUNNER_TEMP/supernova-foundation-conformance.json"
+      - name: Upload public unsigned conformance and UI evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0145-unsigned-evidence
+          path: |
+            ${{ runner.temp }}/supernova-foundation-conformance.json
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/verified-native-build.json
+            ${{ runner.temp }}/supernova-foundation-native-wrappers.json
+            ${{ runner.temp }}/supernova-foundation-ffmpeg/native-runtime-regression.json
+            nova/Video/build/reports/preview-ui/*.png
+            nova/Video/build/reports/preview-ui/*.json
+            nova/Video/build/reports/settings-0144/*.png
+            nova/Video/build/test-results/testNoamazonReleaseUnitTest/*.xml
+            nova/Video/build/reports/lint-results-noamazonRelease.xml
+          if-no-files-found: warn
+          retention-days: 14

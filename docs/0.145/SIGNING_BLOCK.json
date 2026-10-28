@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-10-28T19:17:33.451718+00:00",
+  "environment": "supernova-foundation-signing",
+  "required_branch": "codex/supernova-0.145-maintenance-2026-10-28",
+  "deployment_branch_policy": {
+    "protected_branches": false,
+    "custom_branch_policies": true
+  },
+  "exact_branch_rule_present": true,
+  "owner_intervention": "Resolved by owner authorising the exact branch in the existing environment; no agent protection change.",
+  "protection_changed": false,
+  "signing_attempted": true,
+  "resolved_at": "2026-10-28T19:56:50.881511+00:00",
+  "owner_authorisation_confirmed": true,
+  "protection_changed_by_agent": false,
+  "status": "resolved",
+  "signing_run": 40762577939,
+  "signing_result": "success"
+}

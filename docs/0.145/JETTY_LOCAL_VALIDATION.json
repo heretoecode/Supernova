@@ -1,0 +1,10 @@
+{
+  "local_tests": 11,
+  "result": "passed",
+  "scope": "Actual pinned Jetty TCP/servlet and jUPnP client; Java 17 target, JRE 21 host; not Android hardware",
+  "patch_sha256": "becdf10b663e8fd64e35ff8f7c9fc148ed467d33b76517e69767bf64eb1fff79",
+  "negative_control_original_server_tests": 9,
+  "negative_control_failures": 5,
+  "dependency_versions_unchanged": true,
+  "package_advisories_cleared": false
+}

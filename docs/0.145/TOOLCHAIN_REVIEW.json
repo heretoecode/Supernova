@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-28T18:47:47.693461+00:00",
+  "jdk_ci": "21",
+  "gradle": "9.5.0",
+  "agp": "9.3.2",
+  "compile_sdk": 37,
+  "target_sdk": 36,
+  "min_sdk": 23,
+  "wrapper_distribution_checksum": "a3c4ba4aca8f0075688b9c5b18939fd28e8cb4357c227da5c1d9f38343791439",
+  "wrapper_jar_sha256": "96f793a18e056c23ffeec67c1f3bb8eccff5a4a407fc9ceac183527e7eedf4b6",
+  "official_950_wrapper_jar_sha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+  "wrapper_jar_provenance": "Tracked wrapper introduced in commit 4f3a4727d for Gradle 6.2.2; hash matches official 6.2.2 wrapper. Retained; distribution remains 9.5.0 with official checksum pin.",
+  "coordinates": [
+    "com.android.tools.build:gradle:9.3.2",
+    "io.sentry:sentry-android-gradle-plugin:6.19.0",
+    "com.github.triplet.gradle:play-publisher:4.1.1",
+    "junit:junit:4.13.2",
+    "org.mockito:mockito-core:5.23.0",
+    "org.robolectric:robolectric:4.16.1",
+    "androidx.test:core:1.7.0",
+    "org.slf4j:slf4j-api:2.0.18",
+    "ch.qos.logback:logback-classic:1.6.3"
+  ],
+  "osv_query_results": {
+    "results": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ]
+  },
+  "original_wrapper_version": "6.2.2",
+  "official_original_wrapper_sha256": "96f793a18e056c23ffeec67c1f3bb8eccff5a4a407fc9ceac183527e7eedf4b6",
+  "original_wrapper_hash_verified": true,
+  "tracked_wrapper_reads_checksum_property": true,
+  "tracked_wrapper_implements_download_checksum_verification": true
+}

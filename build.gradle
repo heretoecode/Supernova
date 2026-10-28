@@ -473,6 +473,10 @@ dependencies {
     testImplementation 'androidx.test:core:1.7.0'
     testImplementation 'org.slf4j:slf4j-api:2.0.18'
     testImplementation 'ch.qos.logback:logback-classic:1.6.3'
+    // MediaLib implementation APIs are not exposed to this module's test compiler.
+    // Match the existing runtime pins for the real-library UPnP security tests.
+    testImplementation 'javax.servlet:javax.servlet-api:4.0.1'
+    testImplementation 'org.eclipse.jetty:jetty-client:9.2.30.v20200428'
 }
 
 configurations { // try to exclude device specific libraries interfering

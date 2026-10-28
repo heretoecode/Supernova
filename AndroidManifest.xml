@@ -207,7 +207,8 @@
         <!-- Provides search suggestions for video search. -->
         <provider
             android:name="com.archos.mediacenter.video.browser.SearchProviderVideo"
-            android:authorities="browser.SearchProviderVideocommunity" />
+            android:authorities="browser.SearchProviderVideocommunity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
