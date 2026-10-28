@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -24,13 +25,16 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Insets;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.DisplayCutout;
 import android.view.RoundedCorner;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -164,6 +168,7 @@ public class MiscUtils {
         return null;
     }
 
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"})
     public static int getNavigationBarHeight(Context context) {
         int navigationBarHeight = 0;
         Resources resources = context.getResources();
@@ -199,7 +204,16 @@ public class MiscUtils {
         return 0;
     }
 
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"})
     public static int getStatusBarHeight(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            if (windowManager != null) {
+                WindowMetrics windowMetrics = windowManager.getCurrentWindowMetrics();
+                Insets insets = windowMetrics.getWindowInsets().getInsetsIgnoringVisibility(WindowInsets.Type.statusBars());
+                if (insets.top > 0) return insets.top;
+            }
+        }
         int result = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0)
@@ -207,6 +221,7 @@ public class MiscUtils {
         return result;
     }
 
+    @SuppressLint("DiscouragedApi")
     private static boolean hasNavigationBar(Resources resources) {
         int navBarId = resources.getIdentifier("config_showNavigationBar", "bool", "android");
         if (log.isDebugEnabled()) log.debug("hasNavigationBar: navBarId={}, hasNavBar={}", navBarId, resources.getBoolean(navBarId));
@@ -262,12 +277,14 @@ public class MiscUtils {
         return true;
     }
 
+    @SuppressLint("DiscouragedApi")
     public static boolean hasNavBar(Resources resources) {
         int id = resources.getIdentifier("config_showNavigationBar", "bool", "android");
         if (id > 0) return resources.getBoolean(id);
         else return false;
     }
 
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"})
     public static int getSystemBarHeight(Resources resources) {
         if (!hasNavBar(resources))
             return 0;
@@ -281,6 +298,7 @@ public class MiscUtils {
         return 0;
     }
 
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"})
     public static int getSystemBarWidth(Resources resources) {
         if (hasNavBar(resources)) return 0;
         int orientation = resources.getConfiguration().orientation;
@@ -358,8 +376,63 @@ public class MiscUtils {
     }
 
 
+    /**
+     * Safely obtains a {@link Display} instance.
+     * Checks provided views first, then falls back to {@link Context#getDisplay()} (API 30+)
+     * catching {@link UnsupportedOperationException} for non-visual contexts (e.g. Service or Application),
+     * and finally falls back to {@link DisplayManager} or {@link WindowManager#getDefaultDisplay()}.
+     */
+    @SuppressWarnings("deprecation") // getDefaultDisplay: fallback when context.getDisplay() is not supported on non-visual context
+    public static Display getDisplay(Context context, View... views) {
+        if (views != null) {
+            for (View view : views) {
+                if (view != null && view.getDisplay() != null) {
+                    return view.getDisplay();
+                }
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && context != null) {
+            try {
+                return context.getDisplay();
+            } catch (UnsupportedOperationException ignored) {
+                // Non-visual Context (such as Service or Application)
+            }
+        }
+        if (context != null) {
+            DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+            if (dm != null) {
+                Display display = dm.getDisplay(Display.DEFAULT_DISPLAY);
+                if (display != null) {
+                    return display;
+                }
+            }
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            if (wm != null) {
+                return wm.getDefaultDisplay();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a {@link Context} associated with the display the UI is running on, so that windows
+     * created from it (e.g. Toasts) show up on that display instead of the default one.
+     */
+    public static Context getDisplayContext(Context context, View... views) {
+        if (context == null) return null;
+        Display display = getDisplay(context, views);
+        return display != null ? context.createDisplayContext(display) : context;
+    }
+
+    /**
+     * Safely obtains the current display rotation.
+     */
+    public static int getRotation(Context context, View... views) {
+        Display display = getDisplay(context, views);
+        return display != null ? display.getRotation() : Surface.ROTATION_0;
+    }
+
     // this adjust margins but not view size
-    @SuppressWarnings("deprecation") // getDefaultDisplay: pre-R fallback
     public static void adjustViewLayoutForInsets(Context context, View rootView, View viewLayout, String viewName, boolean navigationBarShowing, boolean systemBarShowing, boolean actionBarShowing,
                                                  boolean controlBarShowing, boolean isNavBarOnBottom, boolean isGestureAreaShowing,
                                                  int additionalBottomMargin, int alreadyAppliedBottomMargin,
@@ -392,10 +465,8 @@ public class MiscUtils {
         int rotation;
         if (PlayerActivity.isRotationLocked()) {
             rotation = PlayerActivity.getLockedRotation();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            rotation = context.getDisplay().getRotation();
         } else {
-            rotation = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+            rotation = getRotation(context, rootView, viewLayout);
         }
 
         WindowInsets insets = rootView.getRootWindowInsets();
@@ -430,10 +501,17 @@ public class MiscUtils {
                     navigationBarInsets.left, navigationBarInsets.top, navigationBarInsets.right, navigationBarInsets.bottom,
                     statusBarInsets.left, statusBarInsets.top, statusBarInsets.right, statusBarInsets.bottom,
                     mCutoutLeft, mCutoutTop, mCutoutRight, mCutoutBottom, radius);
-            systemBarLeft = systemBarsInsets.left;
-            systemBarTop = systemBarsInsets.top;
-            systemBarRight = systemBarsInsets.right;
-            systemBarBottom = systemBarsInsets.bottom;
+            // exclude the caption bar from the system bar insets: in desktop/freeform windowing systemBars()
+            // includes the caption bar which the layout dimensions already exclude (cf. issue #1541), so adding
+            // it here would shift the controller down by the caption height a second time and clip it at the
+            // bottom. Keeping status/navigation and any other system bar inset preserves the previous top-edge
+            // protection.
+            Insets systemBarsNoCaptionInsets = insets.getInsets(
+                    WindowInsets.Type.systemBars() & ~WindowInsets.Type.captionBar());
+            systemBarLeft = systemBarsNoCaptionInsets.left;
+            systemBarTop = systemBarsNoCaptionInsets.top;
+            systemBarRight = systemBarsNoCaptionInsets.right;
+            systemBarBottom = systemBarsNoCaptionInsets.bottom;
         } else {
             WindowInsetsCompat insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets);
             androidx.core.graphics.Insets systemBarsInsets = insetsCompat.getInsets(WindowInsetsCompat.Type.systemBars());

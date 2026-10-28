@@ -55,8 +55,8 @@ import com.archos.environment.ArchosFeatures;
 import com.archos.environment.ArchosUtils;
 import com.archos.environment.NetworkState;
 import com.archos.filecorelibrary.FileUtilsQ;
+import com.archos.filecorelibrary.NetworkInitialization;
 import com.archos.filecorelibrary.jcifs.JcifsUtils;
-import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
 import com.archos.filecorelibrary.samba.SambaDiscovery;
 import com.archos.filecorelibrary.smbj.SmbjUtils;
 import com.archos.filecorelibrary.sshj.SshjUtils;
@@ -86,7 +86,6 @@ import httpimage.HttpImageManager;
 import io.sentry.SentryLevel;
 import io.sentry.android.core.SentryAndroid;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
@@ -98,8 +97,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.beans.PropertyChangeListener;
-import java.security.Provider;
-import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -139,6 +136,121 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     private static String supportedRefreshRates = "";
     private static AudioManager mAudioManager;
     private static AudioDeviceCallback mAudioDeviceCallback;
+    private static int selectedAudioDeviceId;
+    private static boolean audioRouteResolved;
+    private static final long AUDIO_ROUTE_SETTLE_MS = 500;
+    private String pendingAudioOutputSignature;
+    private final android.os.Handler audioRouteHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable notifyAudioRoute = () -> {
+        com.archos.mediacenter.video.player.Player player = com.archos.mediacenter.video.player.Player.sPlayer;
+        if (player != null) player.onAudioOutputChanged();
+    };
+
+    private void publishAudioRouteChange() {
+        String signature = getAudioOutputSignature();
+        // Repeated observations of the same configuration must not keep postponing recovery.
+        if (signature.equals(pendingAudioOutputSignature)) return;
+        pendingAudioOutputSignature = signature;
+        audioRouteHandler.removeCallbacks(notifyAudioRoute);
+        audioRouteHandler.postDelayed(notifyAudioRoute, AUDIO_ROUTE_SETTLE_MS);
+    }
+
+    private AudioDeviceInfo selectedMediaDevice(AudioDeviceInfo[] connected, String reason) {
+        AudioDeviceInfo routed = LibAvos.getRoutedAudioDevice();
+        // Policy prediction handles a device change before the old track has rerouted.
+        // A TV's speaker endpoint can represent a shared speaker/ARC output.
+        if (!"trackRoute".equals(reason) && Build.VERSION.SDK_INT >= 33) {
+            try {
+                java.util.List<AudioDeviceInfo> selected = mAudioManager.getAudioDevicesForAttributes(
+                        new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE).build());
+                if (selected.size() == 1 && !isSharedTvSpeakerRoute(selected.get(0), connected))
+                    return selected.get(0);
+            } catch (RuntimeException ignored) { }
+        }
+        if (routed != null) {
+            for (AudioDeviceInfo device : connected) {
+                if (device.getId() == routed.getId()) {
+                    if (!isSharedTvSpeakerRoute(device, connected)) return device;
+                    break;
+                }
+            }
+        }
+        // Older APIs provide no pre-play route query. Until the track reports its
+        // actual route, do not assume connected HDMI wins over private listening.
+        for (AudioDeviceInfo device : connected) {
+            int type = device.getType();
+            if (type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP || type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO
+                    || type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES || type == AudioDeviceInfo.TYPE_WIRED_HEADSET
+                    || (Build.VERSION.SDK_INT >= 26 && type == AudioDeviceInfo.TYPE_USB_HEADSET)
+                    || (Build.VERSION.SDK_INT >= 31 && (type == AudioDeviceInfo.TYPE_BLE_HEADSET
+                    || type == AudioDeviceInfo.TYPE_BLE_SPEAKER))) return device;
+        }
+        return null;
+    }
+
+    private boolean isSharedTvSpeakerRoute(AudioDeviceInfo selected, AudioDeviceInfo[] connected) {
+        if (selected.getType() != AudioDeviceInfo.TYPE_BUILTIN_SPEAKER
+                || !ArchosFeatures.isAndroidTV(this)) return false;
+        // Some TV policies route media to speaker + HDMI/SPDIF but getRoutedDevice()
+        // exposes only the speaker. Do not erase advertised ARC/SPDIF codecs and
+        // reopen a successfully created compressed track as PCM in that case.
+        // Keep explicit headphones/Bluetooth and ordinary HDMI routes exclusive.
+        for (AudioDeviceInfo device : connected) {
+            int type = device.getType();
+            if (type == AudioDeviceInfo.TYPE_HDMI_ARC
+                    || (Build.VERSION.SDK_INT >= 31 && type == AudioDeviceInfo.TYPE_HDMI_EARC)) {
+                if (hasCompressedAudioEncoding(device.getEncodings())) return true;
+            } else if (isSpdifAudioDeviceType(type, device.getEncodings(), true)) {
+                // Optical/coaxial SPDIF (some TVs report it as AUX_LINE) is a
+                // passthrough endpoint too, and often advertises no encodings at
+                // all, so it must still preserve connected-output discovery.
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String getAudioOutputSignature() {
+        // AudioTrack follows routing itself. HDMI reconnects can replace its device ID or
+        // temporarily leave it unresolved without changing the native output configuration.
+        // Rebuild only for capability/backend changes, including forced-passthrough eligibility.
+        return isPassthroughSupported() + ":" + getNativeAudioCodecsFlag() + ":" + maxAudioChannelCount
+                + ":" + Arrays.toString(hdmiChannelMasks) + ":" + isIecEncapsulationCapable
+                + ":" + isDirectPcmMultichannelCapable + ":" + getSpatializerCapabilities();
+    }
+
+    // Call only before prepare or after closing the old playback pipeline. These
+    // setters include process-wide backend selection, so they cannot run mid-write.
+    public static void applyAudioOutputToNative(Context context) {
+        if (!LibAvos.isAvailable()) return;
+        android.content.SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        int mode = isPassthroughSupported() ? Integer.parseInt(prefs.getString("force_audio_passthrough_multiple", "0")) : 0;
+        long codecs = getNativeAudioCodecsFlag();
+        if (mode != 0 && prefs.getBoolean(VideoPreferencesCommon.KEY_FORCE_AUDIO_PASSTHROUGH, false)) {
+            codecs = allHdmiAudioCodecs;
+            if (!isIecEncapsulationCapable) codecs &= ~(1L << 13);
+        }
+        LibAvos.setMaxPcmChannels(getEffectiveMaxPcmChannels());
+        LibAvos.setPcmChannelMasks(getHdmiChannelMasks());
+        LibAvos.setHdmiSupportedAudioCodecs(codecs);
+        LibAvos.setPassthrough(mode);
+        LibAvos.setMediaCodecAudioCapabilities(getMediaCodecAudioCapabilitiesFlag());
+        int spatial = getSpatializerCapabilities();
+        LibAvos.setSpatializerCapabilities(spatial);
+        boolean spatialEnabled = Build.VERSION.SDK_INT >= 32 && mode == 0
+                && prefs.getBoolean("player_spatialization_enabled", false)
+                && (spatial & CodecDiscovery.SPATIALIZER_CAP_SUPPORTED) != 0
+                && (spatial & CodecDiscovery.SPATIALIZER_CAP_AVAILABLE) != 0
+                && (spatial & (CodecDiscovery.SPATIALIZER_CAP_CAN_SPATIALIZE_5_1
+                    | CodecDiscovery.SPATIALIZER_CAP_CAN_SPATIALIZE_7_1)) != 0;
+        LibAvos.setSpatializerEnabled(spatialEnabled);
+        boolean downmix = mode == 0 && !spatialEnabled && (ArchosFeatures.isAndroidTV(context)
+                ? prefs.getBoolean("enable_downmix_androidtv", false)
+                : !(Build.VERSION.SDK_INT >= 24 && prefs.getBoolean("disable_downmix", false)));
+        LibAvos.setDownmix(downmix ? 1 : 0);
+    }
+
     private static boolean isIecEncapsulationCapable = false;
     private static boolean isDirectPcmMultichannelCapable = false;
     private static long mediaCodecAudioCapabilityFlag = 0;
@@ -270,9 +382,19 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
      * the actual audio route.
      */
     private void refreshAudioOutputCapabilities(String reason) {
+        if (android.os.Looper.myLooper() != android.os.Looper.getMainLooper()) {
+            audioRouteHandler.post(() -> refreshAudioOutputCapabilities(reason));
+            return;
+        }
         if (mAudioManager == null) return;
 
         AudioDeviceInfo[] devices = mAudioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
+        AudioDeviceInfo selected = selectedMediaDevice(devices, reason);
+        audioRouteResolved = selected != null;
+        selectedAudioDeviceId = selected == null ? 0 : selected.getId();
+        maxAudioChannelCount = 0;
+        hdmiAudioEncodingsFlags = null;
+        spdifAudioEncodingsFlags = null;
         boolean foundHdmi = false;
         boolean foundSpdif = false;
         boolean isAndroidTv = ArchosFeatures.isAndroidTV(this);
@@ -290,6 +412,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             log.debug("refreshAudioOutputCapabilities({}): {} output device(s)", reason, devices.length);
         }
         for (AudioDeviceInfo device : devices) {
+            if (selected != null && device.getId() != selected.getId()) continue;
             int type = device.getType();
             int[] encodings = device.getEncodings();
             long flags = getEncodingFlags(encodings);
@@ -374,10 +497,12 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
 
         updateIecEncapsulationCapability();
         updateDirectPcmMultichannelCapability();
+        refreshSpatializerCapabilities(reason);
+        publishAudioRouteChange();
 
         if (log != null) {
-            log.info("refreshAudioOutputCapabilities({}): hasHdmi={} (type={}) hasSpdif={} maxAudioChannelCount={} hdmiCaps={} spdifCaps={}",
-                    reason, hasHdmi, bestHdmiType, hasSpdif, maxAudioChannelCount, getSupportedAudioCodecs(hdmiAudioEncodingFlag), getSupportedAudioCodecs(spdifAudioEncodingFlag));
+            log.info("refreshAudioOutputCapabilities({}): deviceId={} resolved={} hasHdmi={} (type={}) hasSpdif={} maxAudioChannelCount={} hdmiCaps={} spdifCaps={}",
+                    reason, selectedAudioDeviceId, audioRouteResolved, hasHdmi, bestHdmiType, hasSpdif, maxAudioChannelCount, getSupportedAudioCodecs(hdmiAudioEncodingFlag), getSupportedAudioCodecs(spdifAudioEncodingFlag));
         }
     }
 
@@ -689,18 +814,12 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         // init application context to make it available to all static methods
         mContext = getApplicationContext();
         if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))com.archos.mediacenter.video.leanback.PreviewLibraryLoader.warmCache(this);
+        // restore persisted private mode state so it survives process restarts for all UIs
+        PrivateMode.init(mContext);
         // must be done after context is available
         log = LoggerFactory.getLogger(CustomApplication.class);
         configureFullLoggingAsync();
-        new Thread(() -> {
-            try {
-                setupBouncyCastle();
-                // BC now registered globally: safe to decrypt stored credentials (Blowfish)
-                NetworkCredentialsDatabase.getInstance().loadCredentials(mContext);
-            } catch (Exception e) {
-                log.warn("Network credentials init failed or cancelled: {}", e.getMessage());
-            }
-        }, "bouncycastle-credentials-init").start();
+        NetworkInitialization.start(mContext);
 
         systemLocale = Locale.getDefault();
         getDefaultLocale();
@@ -787,18 +906,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         hasManageExternalStoragePermissionInManifest = hasPermission("android.permission.MANAGE_EXTERNAL_STORAGE", mContext);
         if (log.isTraceEnabled()) log.trace("onCreate: has permission android.permission.MANAGE_EXTERNAL_STORAGE {}", hasManageExternalStoragePermissionInManifest);
 
-        // Amazon has an "optional" check that when opening IEC61937, the content is stereo
-        // It is pushed into some weird vendor callbacks, I have no idea what they are supposed to mean
-        // But anyway we can allow IEC61937 @ 8 channels by removing this thing
-        try {
-            Class<?> fireOSInit = Class.forName("com.amazon.fireos.FireOSInit");
-            Field f = fireOSInit.getDeclaredField("sVendorCallbacks");
-            f.setAccessible(true);
-            Object o = f.get(null);
-            Map<?, ?> m = (Map<?, ?>) o;
-            m.remove(Class.forName("android.media.VendorAudioTrackCallback"));
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NullPointerException e) {
-        }
+        fixAmazonAudioTrackCallback();
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -824,11 +932,30 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                 launchSambaDiscovery();
                 if (openSubtitlesApiHelper == null) openSubtitlesApiHelper = OpenSubtitlesApiHelper.getInstance();
                 upgradeActions(appContext);
-                refreshAudioOutputCapabilities("onCreate");
                 refreshMediaCodecAudioCapabilities("onCreate");
-                refreshSpatializerCapabilities("onCreate");
+                audioRouteHandler.post(() -> {
+                    registerHdmiAudioPlugReceiver();
+                    registerAudioDeviceCallback();
+                    refreshAudioOutputCapabilities("onCreate");
+                });
             }
         }.start();
+    }
+
+    @SuppressLint("PrivateApi")
+    private void fixAmazonAudioTrackCallback() {
+        // Amazon has an "optional" check that when opening IEC61937, the content is stereo
+        // It is pushed into some weird vendor callbacks, I have no idea what they are supposed to mean
+        // But anyway we can allow IEC61937 @ 8 channels by removing this thing
+        try {
+            Class<?> fireOSInit = Class.forName("com.amazon.fireos.FireOSInit");
+            java.lang.reflect.Field f = fireOSInit.getDeclaredField("sVendorCallbacks");
+            f.setAccessible(true);
+            Object o = f.get(null);
+            java.util.Map<?, ?> m = (java.util.Map<?, ?>) o;
+            m.remove(Class.forName("android.media.VendorAudioTrackCallback"));
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NullPointerException e) {
+        }
     }
 
     /**
@@ -985,8 +1112,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                 TraktService.sync(this, TraktService.FLAG_SYNC_AUTO);
             }
         } else {
-            unRegisterHdmiAudioPlugReceiver();
-            unRegisterAudioDeviceCallback();
+            // Keep audio observers active for picture-in-picture/background playback.
             if (isVideStoreImportReceiverRegistered) {
                 if (log.isDebugEnabled()) log.debug("handleForeGround: app now in BackGround unregisterReceiver for videoStoreImportReceiver");
                 ArchosUtils.addBreadcrumb(SentryLevel.INFO, "CustomApplication.handleForeGround", "app now in Background unregister videoStoreImportReceiver");
@@ -1020,6 +1146,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     private void registerAudioDeviceCallback() {
+        if (mAudioDeviceCallback != null || mAudioManager == null) return;
+        LibAvos.setAudioRouteListener(() -> refreshAudioOutputCapabilities("trackRoute"));
         mAudioDeviceCallback = new AudioDeviceCallback() {
             @Override
             public void onAudioDevicesAdded(AudioDeviceInfo[] addedDevices) {
@@ -1048,6 +1176,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     private void unRegisterAudioDeviceCallback() {
         if (mAudioDeviceCallback != null) {
             mAudioManager.unregisterAudioDeviceCallback(mAudioDeviceCallback);
+            mAudioDeviceCallback = null;
         }
     }
 
@@ -1066,12 +1195,18 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                     refreshAudioOutputCapabilities("ACTION_HDMI_AUDIO_PLUG");
                     refreshSpatializerCapabilities("ACTION_HDMI_AUDIO_PLUG");
                     // If system reports plugged but device scan didn't find HDMI, fall back to intent values.
-                    if (isPlugged && !hasHdmi) {
+                    if (isPlugged && !hasHdmi && !audioRouteResolved) {
                         hasHdmi = true;
                         hdmiAudioEncodingsFlags = intent.getIntArrayExtra(AudioManager.EXTRA_ENCODINGS);
                         hdmiAudioEncodingFlag = getEncodingFlags(hdmiAudioEncodingsFlags);
                         updateIecEncapsulationCapability();
                         updateDirectPcmMultichannelCapability();
+                        publishAudioRouteChange();
+                    }
+                    // Fall back to the broadcast-reported channel count when the device scan
+                    // did not advertise a usable HDMI channel count.
+                    if (isPlugged && maxAudioChannelCount == 0) {
+                        maxAudioChannelCount = intent.getIntExtra(AudioManager.EXTRA_MAX_CHANNEL_COUNT, 2);
                     }
                 }
 
@@ -1097,7 +1232,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     public static boolean isPassthroughSupported () {
-        return hasHdmi || hasSpdif || ArchosFeatures.isAndroidTV(mContext);
+        return hasHdmi || hasSpdif || (!audioRouteResolved && ArchosFeatures.isAndroidTV(mContext));
     }
 
     public static String[] audioEncodings = new String[] {"INVALID", "DEFAULT", "PCM_16BIT", "PCM_8BIT", "PCM_FLOAT",
@@ -1372,30 +1507,6 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             .show();
     }
 
-    private void setupBouncyCastle() {
-        try {
-            final Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
-            if (provider == null) {
-                return;
-            }
-            if (provider.getClass().equals(BouncyCastleProvider.class)) {
-                // BC with same package name, shouldn't happen in real life.
-                return;
-            }
-            // Android registers its own BC provider. As it might be outdated and might not include
-            // all needed ciphers, we substitute it with a known BC bundled in the app.
-            // Android's BC has its package rewritten to "com.android.org.bouncycastle" and because
-            // of that it's possible to have another BC implementation loaded in VM.
-            // Instantiate new provider first (heavy work) while system BC provider is still registered
-            final Provider newProvider = new BouncyCastleProvider();
-
-            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
-            Security.insertProviderAt(newProvider, 1);
-        } catch (Throwable t) {
-            log.error("setupBouncyCastle: failed to register BouncyCastleProvider", t);
-        }
-    }
-
     static boolean DBG = false;
 
     public void loadLocale() {
@@ -1422,6 +1533,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         setLocale(localeCode, getResources());
     }
 
+    @SuppressLint("AppBundleLocaleChanges")
     @SuppressWarnings("deprecation") // updateConfiguration: needed for locale injection pre-API 33
     public static void setLocale(String localeCode, Resources resources) {
         // Warning no log.debug at this stage
@@ -1460,7 +1572,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                     .apply();
             PreferenceManager.getDefaultSharedPreferences(context)
                     .edit()
-                    .putBoolean(VideoPreferencesCommon.KEY_PLAYBACK_SPEED, true)
+                    .putString(VideoPreferencesCommon.KEY_AUDIO_SPEED_MODE, VideoPreferencesCommon.AUDIO_SPEED_MODE_ATEMPO)
                     .apply();
             // disable smbj since it is now no longer faster than jcfis-ng
             PreferenceManager.getDefaultSharedPreferences(context)
@@ -1482,6 +1594,26 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                     .apply();
         }
          */
+
+        // Upgraded from 6.4.64 and below: "playback_speed" + "audio_speed_audiotrack" booleans
+        // replaced by a single "audio_speed_mode" multi-choice preference (Disabled/AudioTrack/atempo/Sonic).
+        if ((novaPreviousVersionArray[0] < 6) ||
+            (novaPreviousVersionArray[0] == 6 && novaPreviousVersionArray[1] < 4) ||
+            (novaPreviousVersionArray[0] == 6 && novaPreviousVersionArray[1] == 4 && novaPreviousVersionArray[2] <= 64)) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences.contains("playback_speed")) {
+                boolean wasEnabled = preferences.getBoolean("playback_speed", true);
+                boolean wasAudiotrack = preferences.getBoolean("audio_speed_audiotrack", false);
+                String migratedMode = !wasEnabled ? VideoPreferencesCommon.AUDIO_SPEED_MODE_DISABLED
+                        : wasAudiotrack ? VideoPreferencesCommon.AUDIO_SPEED_MODE_AUDIOTRACK
+                        : VideoPreferencesCommon.AUDIO_SPEED_MODE_ATEMPO;
+                preferences.edit()
+                        .putString(VideoPreferencesCommon.KEY_AUDIO_SPEED_MODE, migratedMode)
+                        .remove("playback_speed")
+                        .remove("audio_speed_audiotrack")
+                        .apply();
+            }
+        }
 
         // Upgraded from 6.4.31 and below: TMDb image sizes changed (posters w342->w780, stills w342->w300,
         // thumbs w154->w185). Clear download caches only — poster/still storage files are still referenced

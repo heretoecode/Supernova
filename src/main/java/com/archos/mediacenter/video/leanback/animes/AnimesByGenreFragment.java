@@ -22,6 +22,7 @@ import android.view.View;
 import android.util.SparseArray;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediascraper.GenreUtils;
 import com.archos.mediacenter.video.browser.loader.AnimesByGenreLoader;
 import com.archos.mediacenter.video.leanback.VideosByFragment;
 import com.archos.mediacenter.video.utils.SortOrder;
@@ -38,7 +39,7 @@ public class AnimesByGenreFragment extends VideosByFragment {
     static {
         sortOrderIndexer.put(0, new AnimesSortOrderEntry(R.string.sort_by_name_asc,        "name COLLATE LOCALIZED ASC"));
         sortOrderIndexer.put(1, new AnimesSortOrderEntry(R.string.sort_by_date_added_desc, VideoStore.MediaColumns.DATE_ADDED + " DESC"));
-        sortOrderIndexer.put(2, new AnimesSortOrderEntry(R.string.sort_by_year_desc,       VideoStore.Video.VideoColumns.SCRAPER_M_YEAR + " DESC"));
+        sortOrderIndexer.put(2, new AnimesSortOrderEntry(R.string.sort_by_year_desc,       VideoStore.Video.VideoColumns.SCRAPER_M_YEAR + " DESC, " + VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE + " DESC, name COLLATE NOCASE ASC"));
         sortOrderIndexer.put(3, new AnimesSortOrderEntry(R.string.sort_by_duration_asc,    SortOrder.DURATION.getAsc()));
         sortOrderIndexer.put(4, new AnimesSortOrderEntry(R.string.sort_by_rating_asc,      SortOrder.SCRAPER_M_RATING.getDesc()));
     }
@@ -80,6 +81,11 @@ public class AnimesByGenreFragment extends VideosByFragment {
     @Override
     protected boolean shouldDeferRowLoadersDuringBackgroundWork() {
         return true;
+    }
+
+    @Override
+    protected String getSubsetDisplayName(String subsetName) {
+        return GenreUtils.getGenreDisplayName(getActivity(), subsetName, false);
     }
 
 }

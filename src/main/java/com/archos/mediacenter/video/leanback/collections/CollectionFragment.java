@@ -142,8 +142,6 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
     private Overlay mOverlay;
     private int mColor;
     private Handler mHandler;
-    private int oldPos = 0;
-    private int oldSelectedSubPosition = 0;
     private boolean mHasDetailRow;
     private boolean mShouldDisplayConfirmDelete = false;
 
@@ -406,33 +404,6 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
         return Color.HSVToColor(hsv);
     }
 
-    //hack to avoid fullscreen overview
-    @Override
-    protected void onSetRowStatus(RowPresenter presenter, RowPresenter.ViewHolder viewHolder, int
-            adapterPosition, int selectedPosition, int selectedSubPosition) {
-        super.onSetRowStatus(presenter, viewHolder, adapterPosition, selectedPosition, selectedSubPosition);
-        if(selectedPosition == 0 && selectedSubPosition != 0) {
-            if (oldPos == 0 && oldSelectedSubPosition == 0) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedPosition(1);
-                    }
-                });
-            } else if (oldPos == 1) {
-                setSelectedPosition(1);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedPosition(0);
-                    }
-                });
-            }
-        }
-        oldPos = selectedPosition;
-        oldSelectedSubPosition = selectedSubPosition;
-    }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         if (log.isDebugEnabled()) log.debug("onViewCreated");
@@ -621,11 +592,11 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
                 break;
             case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
             case KeyEvent.KEYCODE_MEDIA_NEXT:
-                direction = Gravity.RIGHT;
+                direction = Gravity.END;
                 break;
             case KeyEvent.KEYCODE_MEDIA_REWIND:
             case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                direction = Gravity.LEFT;
+                direction = Gravity.START;
                 break;
         }
 
@@ -646,13 +617,13 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
                     c.moveToPosition(i);
                     Collection mc = (Collection)new CompatibleCursorMapperConverter(new CollectionCursorMapper()).convert(c);
                     if (mc.getCollectionId() == mCollection.getCollectionId()) {
-                        if (direction == Gravity.LEFT) {
+                        if (direction == Gravity.START) {
                             if (i - 1 >= 0)
                                 c.moveToPosition(i - 1);
                             else
                                 c.moveToPosition(c.getCount() - 1);
                         }
-                        else if (direction == Gravity.RIGHT) {
+                        else if (direction == Gravity.END) {
                             if (i + 1 <= c.getCount() - 1)
                                 c.moveToPosition(i + 1);
                             else
@@ -660,16 +631,16 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
                         }
                         Collection nc = (Collection)new CompatibleCursorMapperConverter(new CollectionCursorMapper()).convert(c);
                         if (nc.getCollectionId() != mc.getCollectionId())
-                            collection = nc;
+                             collection = nc;
                         break;
                     }
                 }
                 c.close();
                 if (collection != null) {
-                    if (direction == Gravity.LEFT)
-                        getActivity().getWindow().setExitTransition(new Slide(Gravity.RIGHT));
-                    else if (direction == Gravity.RIGHT)
-                        getActivity().getWindow().setExitTransition(new Slide(Gravity.LEFT));
+                    if (direction == Gravity.START)
+                        getActivity().getWindow().setExitTransition(new Slide(Gravity.END));
+                    else if (direction == Gravity.END)
+                        getActivity().getWindow().setExitTransition(new Slide(Gravity.START));
                     final Intent intent = new Intent(getActivity(), CollectionActivity.class);
                     intent.putExtra(CollectionFragment.EXTRA_COLLECTION, collection);
                     intent.putExtra(CollectionActivity.SLIDE_TRANSITION_EXTRA, true);

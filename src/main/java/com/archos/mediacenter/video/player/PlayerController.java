@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.player;
 
 import static androidx.core.content.ContextCompat.getDrawable;
 
+import android.annotation.SuppressLint;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.content.Context;
@@ -79,7 +80,6 @@ import java.util.Locale;
 
 import com.archos.environment.ArchosFeatures;
 import static com.archos.environment.ArchosFeatures.isChromeOS;
-import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_PLAYBACK_SPEED;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,6 +226,15 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
 
     private static boolean      mControlBarShowing, mSystemBarShowing, mSystemBarGone, mActionBarShowing, mVolumeBarShowing, mNavigationBarShowing, mIsNavBarOnBottom, mIsGestureAreaShowing;
     private static int          mGestureAreaHeight, mControlBarHeight;
+    // Static handle to the live control bar view, so SubtitleManager can resolve its parent
+    // for getControlBarClearanceAbove(). Cleared in detachWindow() to avoid leaking the view.
+    @SuppressLint("StaticFieldLeak")
+    private static View          sControlBarView;
+    // Tallest height control_bar reached since it was last shown. The bar's height jitters while
+    // visible (seek spinner toggling, end-time text with/without the clock glyph), and subtitles
+    // must not follow that jitter, so clearance is computed from this sticky value instead.
+    // Reset when the bar hides and on detach.
+    private static int           sControlBarMaxHeight = 0;
 
     private boolean             mVolumeBarEnabled = false;
 
@@ -259,6 +268,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private boolean             manualVisibilityChange;
     private FrameLayout         playerControllersContainer;
     private TVCardDialog tvCardDialog = null;
+
     private boolean             isTVMode = false;
     private long                mLastTouchEventTime = -1;
     private View mPlayPauseTouchZone;
@@ -285,6 +295,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         mOnControlBarVisibilityListener = listener;
     }
 
+    @SuppressLint("InflateParams") // mVideoTitle is detached view for ActionBar setCustomView
     @SuppressWarnings("deprecation") // setStatusBarColor: pre-API 35 fallback
     public PlayerController(Context context, Window window, ViewGroup playerView, SurfaceController surfaceController, Settings settings, ActionBar actionBar) {
         mContext = context;
@@ -327,6 +338,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
          */
         setRecursiveOnTouchListener(new OnTouchListener() {
             
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // TODO Auto-generated method stub
@@ -338,6 +350,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }, MiscUtils.getActionBarView(mWindow));
         mActionBar.getCustomView().setOnTouchListener(new View.OnTouchListener() {
 
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (mVolumeBar!= null && event.getX() <= mVolumeBar.getWidth()) {
@@ -500,10 +513,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         ImageButton fullscreenWithCutoutButton = (ImageButton) v.findViewById(R.id.fullscreen_cutouts);
         if (fullscreenWithCutoutButton != null) {
             //If we have a Cutout, show the Fullscreen with Cutouts Button
-            PlayerActivity playerActivity = ((PlayerActivity) mContext);
-            if (playerActivity.mCutoutLeft + playerActivity.mCutoutRight + playerActivity.mCutoutTop + playerActivity.mCutoutBottom > 0) {
+            if (hasCutout()) {
                 setFullscreenWithCutoutButtonIcon(mSurfaceController.mFullScreenWithCutout);
-                fullscreenWithCutoutButton.setVisibility(View.VISIBLE);
+                fullscreenWithCutoutButton.setVisibility((isTVMode || TVUtils.isTV(mContext)) ? View.GONE : View.VISIBLE);
                 fullscreenWithCutoutButton.setOnClickListener(fullscreenWithCutoutListener);
             } else {
                 fullscreenWithCutoutButton.setVisibility(View.GONE);
@@ -584,6 +596,32 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             this.mPlayPauseTouchZone = playPauseTouchZone;
             this.mCentralPlayIcon = centralPlayIcon;
             this.mControlBar=mControlBar;
+            sControlBarView = mControlBar;
+            if (mControlBar != null) {
+                // control_bar is GONE until first shown, so its geometry is stale when
+                // OnControlBarVisibilityListener fires on the first show. Re-notify once it
+                // has really been laid out so subtitles clear the whole bar.
+                // Deliberately NOT on every size change: the bar's height jitters during
+                // playback and notifying each time makes the subtitles bounce. Notify only when
+                //  - the bar reaches a new maximum height (first layout, or it genuinely grew), or
+                //  - it was merely translated (same height, e.g. nav bar hid/showed).
+                mControlBar.addOnLayoutChangeListener((bar, l, t, r, b, ol, ot, or_, ob) -> {
+                    int h = b - t;
+                    int oh = ob - ot;
+                    boolean grew = h > sControlBarMaxHeight;
+                    if (grew) sControlBarMaxHeight = h;
+                    boolean translated = h > 0 && h == oh && t != ot;
+                    if (grew || translated) {
+                        // View.layout() sets isLaidOut() only AFTER it has called the layout-change
+                        // listeners, so notifying here would make getControlBarClearanceAbove()
+                        // see an un-laid-out bar and return 0. Defer until layout has completed.
+                        bar.post(() -> {
+                            if (bar == sControlBarView && mOnControlBarVisibilityListener != null)
+                                mOnControlBarVisibilityListener.onControlBarVisibilityChanged(mControlBarShowing);
+                        });
+                    }
+                });
+            }
             this.mPauseButton=mPauseButton;
             this.mFormatButton=mFormatButton ;
             this.mFullscreenWithCutoutButton = fullscreenWithCutoutButton;
@@ -655,6 +693,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
 
     // setOnSystemUiVisibilityChangeListener is the only reliable way to track transient bar visibility;
     // no WindowInsetsControllerCompat equivalent exists for this use case.
+    @SuppressLint("InflateParams") // Controller views are detached before being added with custom RelativeLayout.LayoutParams to mPlayerView
     @SuppressWarnings("deprecation")
     private void attachWindow() {
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -669,12 +708,14 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         int layoutID=R.layout.player_controller;
         mControllerView = inflater.inflate(layoutID, null);
         if (mControllerView == null) return;
+        mControllerView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 
         mControllerView.setOnTouchListener(this);
         mControllerView.setOnGenericMotionListener(this);
         // twice for sidebyside and topbottom view
         mControllerViewLeft= inflater.inflate(experimentalUi() ? R.layout.player_controller_experimental : R.layout.player_controller_inside, null);
         if (mControllerViewLeft != null) {
+            mControllerViewLeft.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             mOsdLeftTextView = mControllerViewLeft.findViewById(R.id.osd_left);
             mOsdRightTextView = mControllerViewLeft.findViewById(R.id.osd_right);
             mControllerViewLeft.setOnKeyListener(new View.OnKeyListener() {
@@ -801,6 +842,47 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         return mControlBarHeight;
     }
 
+    /**
+     * Pixels the on-screen control bar reaches above the bottom edge of the given reference
+     * view, or 0 if the bar is not currently shown (or not laid out yet).
+     *
+     * Unlike getControlBarCurrentHeight() (0 unless the nav bar / gesture area happens to be
+     * showing, so unreliable on TV) this measures control_bar's real on-screen top edge, so it
+     * is correct for every layout variant. The bar's height is NOT a fixed dimen:
+     *   - land / sw500dp-notouch / sw600dp: a single row, sized by player2014_bar_width.
+     *   - default (portrait phone): a vertical LinearLayout (wrap_content) holding the seek
+     *     bar + time row AND the button row, well over 100dp tall, and never using
+     *     player2014_bar_width at all.
+     * control_bar's top is the top of everything in it (seek bar, times, buttons), so the
+     * distance from there to the reference view's bottom is the clearance text subtitles need.
+     *
+     * The bar is GONE until first shown, so its position is only valid after its first layout.
+     * This returns 0 until then; initControllerView() registers a layout listener that
+     * re-notifies OnControlBarVisibilityListener once the bar has actually been laid out, so
+     * SubtitleManager recomputes with fresh geometry.
+     *
+     * Tracks only the main pane's bar (sControlBarView is set from the isMainView branch of
+     * initControllerView()). splitView/mControlBar2 is private to PlayerController, so there
+     * is no second SubtitleManager/SubtitleEngine instance that could ask for clearance
+     * against the secondary pane's bar. If a future change wires subtitles into split-view,
+     * this will need its own reference per pane.
+     */
+    public static int getControlBarClearanceAbove(View reference) {
+        if (!mControlBarShowing || reference == null || sControlBarView == null) return 0;
+        if (sControlBarView.getVisibility() != View.VISIBLE
+                || !sControlBarView.isLaidOut() || !reference.isLaidOut()) return 0;
+        int[] barLoc = new int[2];
+        int[] refLoc = new int[2];
+        sControlBarView.getLocationOnScreen(barLoc);
+        reference.getLocationOnScreen(refLoc);
+        // The bar is bottom-anchored, so derive its top from its bottom and the sticky maximum
+        // height. This ignores transient height jitter, which would otherwise move the subtitles.
+        int barBottom = barLoc[1] + sControlBarView.getHeight();
+        int barTop = barBottom - Math.max(sControlBarView.getHeight(), sControlBarMaxHeight);
+        int refBottom = refLoc[1] + reference.getHeight();
+        return Math.max(refBottom - barTop, 0);
+    }
+
     public static boolean isControlBarShowing() {
         return mControlBarShowing;
     }
@@ -830,6 +912,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         mControllerView = null;
         mControllerViewLeft=null;
         mControllerViewRight=null;
+        sControlBarView = null;
+        sControlBarMaxHeight = 0;
     }
 
     public void setMediaPlayer(IPlayerControl player) {
@@ -925,6 +1009,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 || mControlBar.getVisibility() != (show ? View.VISIBLE : View.GONE))) {
             if (log.isDebugEnabled()) log.debug("showControlBar {}", String.valueOf(show));
             mControlBarShowing = show;
+            if (!show) sControlBarMaxHeight = 0;
             adjustView();
             setVisibility(mControlBar, show, true);
             if(experimentalUi()&&mControllerViewLeft!=null){View title=mControllerViewLeft.findViewById(R.id.preview_playback_title);if(title!=null)title.setVisibility(show?View.VISIBLE:View.GONE);refreshPreviewContext();if(show){((ViewGroup)mControlBar).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);mPauseButton.setVisibility(View.VISIBLE);mPauseButton.requestFocus();}}
@@ -1978,6 +2063,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         return false;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
         if (event == null) return false;
         return gestureDetector.onTouchEvent(event);
@@ -2348,7 +2434,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             if (event.getAction() == KeyEvent.ACTION_DOWN && mTVMenuAdapter != null) {
                 switch(keyCode) {
                     case KeyEvent.KEYCODE_ESCAPE:
-                    case KeyEvent.KEYCODE_BACK:
                     case KeyEvent.KEYCODE_MENU:
                         showTVMenu(false);
                         return true;
@@ -2610,17 +2695,25 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
     }
 
+    private boolean hasCutout() {
+        if (mContext instanceof PlayerActivity) {
+            PlayerActivity playerActivity = (PlayerActivity) mContext;
+            return (playerActivity.mCutoutLeft + playerActivity.mCutoutRight + playerActivity.mCutoutTop + playerActivity.mCutoutBottom > 0);
+        }
+        return false;
+    }
+
     private void switchMode(boolean tv) {
         if (TVUtils.isTV(mContext)) {
             tv = true;
         }
         isTVMode=tv;
-        // TODO Auto-generated method stub
         //for view not to be split before window attached
-        if(mControllerViewLeft!=null && !(tv && mControlBarShowing)){
-            if(tv)
-                setUIMode(UIMode);
-            else{
+        if(mControllerViewLeft!=null){
+            if(tv) {
+                if (!mControlBarShowing)
+                    setUIMode(UIMode);
+            } else {
                 setNormalMode();
                 showTVMenu(false);
             }
@@ -2634,6 +2727,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 mControllerViewLeft.findViewById(R.id.forward).setVisibility(experimentalUi()||tv?View.GONE:View.VISIBLE);
             if( mControllerViewLeft.findViewById(R.id.format)!=null)
                 mControllerViewLeft.findViewById(R.id.format).setVisibility(experimentalUi()?View.GONE:tv?View.INVISIBLE:View.VISIBLE);
+            if( mControllerViewLeft.findViewById(R.id.fullscreen_cutouts)!=null)
+                mControllerViewLeft.findViewById(R.id.fullscreen_cutouts).setVisibility((tv || !hasCutout())?View.GONE:View.VISIBLE);
             if(mControllerViewRight!=null){
                 if( mControllerViewRight.findViewById(R.id.pause)!=null)
                     mControllerViewRight.findViewById(R.id.pause).setVisibility(tv&&!experimentalUi()?View.INVISIBLE:View.VISIBLE);
@@ -2643,6 +2738,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                     mControllerViewRight.findViewById(R.id.forward).setVisibility(experimentalUi()||tv?View.GONE:View.VISIBLE);
                 if( mControllerViewRight.findViewById(R.id.format)!=null)
                     mControllerViewRight.findViewById(R.id.format).setVisibility(experimentalUi()?View.GONE:tv?View.INVISIBLE:View.VISIBLE);
+            if( mControllerViewRight.findViewById(R.id.fullscreen_cutouts)!=null)
+                    mControllerViewRight.findViewById(R.id.fullscreen_cutouts).setVisibility((tv || !hasCutout())?View.GONE:View.VISIBLE);
             }
             
         }
@@ -2733,9 +2830,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
     }
 
+    @SuppressLint("InflateParams") // Controller view is inflated then added into playerControllersContainer
     private void inflateRightView(){
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mControllerViewRight= inflater.inflate(R.layout.player_controller_inside, null);
+        if (mControllerViewRight != null) {
+            mControllerViewRight.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        }
         initControllerView(mControllerViewRight, false);
         playerControllersContainer.addView( mControllerViewRight);
         mTVMenuView2 = mControllerViewRight.findViewById(R.id.my_recycler_view);
@@ -2872,18 +2973,30 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
         else{
             //destroy dialogs
-            dismissTVCardDialog();
+            dismissTVCardDialog(true);
         }
         isTVMenuDisplayed=show;
     }
 
     private boolean dismissTVCardDialog() {
+        return dismissTVCardDialog(false);
+    }
+
+    /**
+     * @param force close the card whatever its levels (the TV menu is going away); otherwise Back
+     *              first lets a card with several levels go up one, and the card stays active.
+     */
+    private boolean dismissTVCardDialog(boolean force) {
         if (tvCardDialog == null || tvCardDialog.getVisibility() != View.VISIBLE)
             return false;
         log.info("Back navigation: active TV card dialog found");
         TVCardDialog dialog = tvCardDialog;
         tvCardDialog = null;
-        dialog.handleBackPressed();
+        if (force) {
+            dialog.handleBackPressed();
+        } else if (dialog.handleBack()) {
+            tvCardDialog = dialog;
+        }
         return true;
     }
 
@@ -2978,7 +3091,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
     
     public void setFullscreenWithCutoutButtonIcon(boolean isFullscreenWithCutout) {
-        if (mFullscreenWithCutoutButton != null)
+        if (mFullscreenWithCutoutButton != null) {
             mFullscreenWithCutoutButton.setImageResource(isFullscreenWithCutout ? R.drawable.video_fullscreen_cutout_on : mSurfaceController.mCutBothSidesX ? R.drawable.video_fullscreen_cutout_off_equal : R.drawable.video_fullscreen_cutout_off);
+            mFullscreenWithCutoutButton.setVisibility((isTVMode || TVUtils.isTV(mContext) || !hasCutout()) ? View.GONE : View.VISIBLE);
+        }
     }
 }

@@ -37,6 +37,7 @@ public class PlaybackNetworkRetryTest {
         verify(frontend).onSeekStart(806_892);
         // onError has already released the native player and cleared its URI.
         when(player.isInPlaybackState()).thenReturn(false);
+        when(player.hasSuspendedPosition()).thenReturn(false);
 
         assertEquals(806_892, service.prepareRetryFromCurrentPosition());
         assertEquals(806_892, get(session, "selectedStartPositionMs"));
@@ -75,7 +76,9 @@ public class PlaybackNetworkRetryTest {
         verify(player, never()).setVideoURI(any(), any());
 
         subtitles.countDown();
-        verify(player, timeout(2000)).setVideoURI(uri, null);
+        verify(handler, timeout(2000)).post(any(Runnable.class));
+        shadowOf(Looper.getMainLooper()).idle();
+        verify(player).setVideoURI(uri, null);
     }
 
     private static Object get(Object object, String name) throws Exception {

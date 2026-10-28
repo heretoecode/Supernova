@@ -1,0 +1,152 @@
+[
+  {
+    "file": "Player.java",
+    "conflict": 0,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 1,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 2,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 3,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 4,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 5,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 6,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 7,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 8,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 9,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 10,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 11,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "Player.java",
+    "conflict": 12,
+    "decision": "current lifecycle plus retained diagnostics/output contract"
+  },
+  {
+    "file": "PlayerActivity.java",
+    "conflict": 0,
+    "decision": "preserve approved controls/session policy; integrate native kind/exit/geometry"
+  },
+  {
+    "file": "PlayerActivity.java",
+    "conflict": 1,
+    "decision": "preserve approved controls/session policy; integrate native kind/exit/geometry"
+  },
+  {
+    "file": "PlayerActivity.java",
+    "conflict": 2,
+    "decision": "preserve approved controls/session policy; integrate native kind/exit/geometry"
+  },
+  {
+    "file": "PlayerActivity.java",
+    "conflict": 3,
+    "decision": "preserve approved controls/session policy; integrate native kind/exit/geometry"
+  },
+  {
+    "file": "PlayerActivity.java",
+    "conflict": 4,
+    "decision": "preserve approved controls/session policy; integrate native kind/exit/geometry"
+  },
+  {
+    "file": "PlayerActivity.java",
+    "conflict": 5,
+    "decision": "preserve approved controls/session policy; integrate native kind/exit/geometry"
+  },
+  {
+    "file": "PlayerActivity.java",
+    "conflict": 6,
+    "decision": "preserve approved controls/session policy; integrate native kind/exit/geometry"
+  },
+  {
+    "file": "PlayerActivity.java",
+    "conflict": 7,
+    "decision": "preserve approved controls/session policy; integrate native kind/exit/geometry"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 0,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 1,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 2,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 3,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 4,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 5,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 6,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 7,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  },
+  {
+    "file": "PlayerService.java",
+    "conflict": 8,
+    "decision": "retain Supernova journey/skip/torrent isolation; current route resume state"
+  }
+]

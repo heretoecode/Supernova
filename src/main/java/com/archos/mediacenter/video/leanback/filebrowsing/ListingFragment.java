@@ -51,6 +51,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -858,6 +859,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     // -----------------------------------------------------
 
+    @SuppressWarnings("unchecked")
     private void openDetailsActivity(Video video, Presenter.ViewHolder itemViewHolder) {
         if (!isAdded() || getActivity() == null || getActivity().isFinishing()) return;
         Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
@@ -871,6 +873,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         }
 
         ActivityOptionsCompat opts = detailsTransition(getActivity(),sourceView);
+        intent.putExtra(VideoDetailsFragment.EXTRA_HAS_SHARED_ELEMENT, sourceView != null && opts != null);
         infoLauncher.launch(intent, opts);
     }
 

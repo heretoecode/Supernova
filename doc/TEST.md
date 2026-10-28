@@ -209,11 +209,13 @@ An opt-in, real-network diagnostic host test that benchmarks download throughput
 
 ### Why it's opt-in
 
-The test is guarded by an `assumeTrue(...)` check in `@Before` keyed off a system property; if the property isn't set (or doesn't point to a real file), the test is reported as **SKIPPED**, not failed. This follows the same pattern already used by `RealDatabasePruningTest` in `MediaLib` (`-Dnova.test.mediaDbPath`).
+The test is skipped only when `nova.test.speedtestCsv` is absent. If explicitly
+configured, a missing, empty or malformed CSV fails. A failed transfer or integrity
+check fails the test rather than merely printing an error row.
 
 ### CSV input format
 
-One `url,user,password` row per line (comma-separated). Blank lines and lines starting with `#` are ignored. The scheme of each URL selects the implementation under test:
+One `url,user,password[,expectedBytes[,sha256]]` row per line (simple comma-separated fields; embedded commas are unsupported). Blank lines and lines starting with `#` are ignored. The scheme of each URL selects the implementation under test:
 
 ```text
 smb://host/share/path/file      -> jcifs-ng
@@ -238,8 +240,221 @@ cd Video
     -Dnova.test.speedtestCsv=/absolute/path/to/servers.csv
 ```
 
-Output is a results table printed to stdout with bytes transferred, elapsed seconds, and MB/s per row; failed rows show the exception instead.
+Output identifies each CSV row by index and scheme, with bytes, elapsed seconds,
+MiB/s, actual backend and cleanup counters. It does not print URLs or credentials
+in result summaries; backend logs may still contain sensitive information.
+The full-transfer byte count must match `expectedBytes`, or Content-Length if no independent
+length is supplied. Prefix sampling still checks file-length metadata and the requested
+sample count; a CSV full-file hash requires a full transfer. Supply a 64-character SHA-256 to check content as well as length.
+A stream without Content-Length requires an explicit expected size.
+
+### Comparing upstream buffer sizes (host only)
+
+The optional `-Dnova.test.speedtestUpstreamBufferBytes` property sets the proxy's
+`BufferedInputStream` size for every CSV row. It defaults to **81920 bytes (80 KiB)**,
+matching the general-purpose proxy default. Production playback uses up to 1 MiB for
+the primary jcifs stream; this benchmark uses its explicit size for every backend so
+comparisons remain controlled. The HTTP client buffer stays at 256 KiB and the proxy's
+socket-write buffer stays at 8 KiB. This override does not change the app's settings.
+See [buffer.md](../buffer.md) for the complete playback and buffering architecture.
+
+From the `Video` directory, compare 80 KiB and 1 MiB with the same dependency and CSV:
+
+```bash
+for size in 81920 1048576; do
+    ./gradlew :FileCoreLibrary:testDebugUnitTest --rerun-tasks --tests '*SpeedTestTransferTest' \
+        -Dnova.test.speedtestCsv=/absolute/path/to/servers.csv \
+        -Dnova.test.speedtestUpstreamBufferBytes="$size"
+done
+```
+
+For the jcifs-ng comparison, select the dependency in `FileCoreLibrary/build.gradle`:
+
+| Version | Multicredit | Read-ahead |
+| --- | --- | --- |
+| `v2.1.11-upstream` | No | No |
+| `v2.1.11-nova7` | Yes | No |
+| `v2.1.11-nova8` | Yes | Yes |
+
+Use `smb://` for jcifs-ng and `smbj://` for the smbj reference. First compare buffer sizes
+with nova7 to measure the benefit of larger caller reads. Then hold the upstream buffer
+at 1 MiB while comparing nova7 and nova8 to assess the additional benefit of read-ahead.
+The buffer size is a caller-side setting; negotiated server limits and library behavior
+can change actual SMB request sizes.
+
+Repeat runs with the same file and network conditions, reversing the comparison order
+to reduce cache/order bias. Compare transferred byte counts as well as throughput, and
+inspect warnings and failed rows: this diagnostic does not assert the expected file
+length or verify a checksum, so a passing Gradle test alone does not establish transfer
+integrity. Host measurements also need confirmation on the target Android device before
+changing production settings.
 
 ### Test Reports
 - **HTML Report**: `FileCoreLibrary/build/reports/tests/testDebugUnitTest/index.html`
 - **JUnit XML Results**: `FileCoreLibrary/build/test-results/testDebugUnitTest/`
+
+### Running on a real device
+
+The host test above runs on Robolectric, i.e. the development machine's JVM and JCE providers —
+useful for correctness, but meaningless for on-device performance questions (e.g. whether
+Conscrypt/ARM crypto extensions actually speed up SFTP/SMB transfers on a given SoC), since the
+host JVM never touches the device's ART runtime, Conscrypt provider or network stack.
+
+**Class**: `com.archos.filecorelibrary.SpeedTestTransferTest` (module `FileCoreLibrary`,
+`androidTest/java` source set) — an on-device instrumented counterpart of the host test, same
+CSV format and scheme-to-implementation mapping. It only builds/installs `FileCoreLibrary` plus
+the androidx.test runner as a small instrumentation APK (`com.archos.filecorelibrary.test`), not
+the full Nova app (no `Video` assemble required).
+
+Build the androidTest APK:
+
+```bash
+cd Video
+./gradlew :FileCoreLibrary:assembleDebugAndroidTest
+```
+
+`./gradlew :FileCoreLibrary:connectedDebugAndroidTest` (with a Gradle-level `--tests` filter or
+`-Pandroid.testInstrumentationRunnerArguments...`) does **not** work for this test: `--tests` is
+not a valid flag for `connectedDebugAndroidTest` (that's a JVM `test`-task-only option), and
+instrumented tests don't inherit `-D` JVM system properties either way. Instead, install the APK
+and drive it directly with `adb shell am instrument`, passing the CSV path as an `-e` runner
+argument:
+
+```bash
+# Install the self-instrumenting test APK
+adb install -r -t FileCoreLibrary/build/outputs/apk/androidTest/debug/FileCoreLibrary-debug-androidTest.apk
+
+# Seed the CSV into the test package's private data dir (NOT /sdcard/Android/data/<pkg>/ -
+# scoped storage rejects reads there even after chmod on some API levels/devices). run-as writes
+# it as the app's own UID so it's guaranteed readable by the test process.
+adb push /absolute/path/to/servers.csv /sdcard/Download/servers.csv
+adb shell "cat /sdcard/Download/servers.csv | run-as com.archos.filecorelibrary.test sh -c 'mkdir -p files && cat > files/servers.csv'"
+
+# Run just SpeedTestTransferTest
+adb shell am instrument -w -r \
+  -e class com.archos.filecorelibrary.SpeedTestTransferTest \
+  -e speedtestCsv /data/user/0/com.archos.filecorelibrary.test/files/servers.csv \
+  com.archos.filecorelibrary.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+This requires a connected/authorized device (`adb devices`). `compareTransferRates` output
+(`System.out.println`) is not shown by `am instrument` — read it from logcat after the run:
+
+```bash
+adb logcat -d -s System.out
+```
+
+The device benchmark accepts `-e speedtestUpstreamBufferBytes SIZE`, with the same
+81920-byte default as the host diagnostic. After installing and seeding the CSV,
+compare candidate sizes without rebuilding the APK:
+
+```bash
+for size in 262144 524288 1048576; do
+    adb shell am instrument -w -r \
+        -e class com.archos.filecorelibrary.SpeedTestTransferTest \
+        -e speedtestCsv /data/user/0/com.archos.filecorelibrary.test/files/servers.csv \
+        -e speedtestUpstreamBufferBytes "$size" \
+        com.archos.filecorelibrary.test/androidx.test.runner.AndroidJUnitRunner
+done
+adb logcat -d -s System.out
+```
+
+Each run prints its buffer sizes. Repeat in reverse order and compare complete byte
+counts and warnings as well as MiB/s. This tests backend/proxy throughput on Android;
+startup, seeking, stop/reopen, concurrent scraping, and AVOS memory/GC behavior still
+require real playback checks.
+
+Re-run after reinstalling the APK (e.g. after code changes): reinstalling wipes the app's private
+data dir, so the `run-as ... cat > files/servers.csv` seeding step must be repeated.
+
+#### Cleartext localhost networking
+
+`StreamOverHttp` (the local httpproxy `compareTransferRates` drives requests through) serves
+plaintext HTTP on `http://localhost:<port>`. A bare androidTest APK has no network security
+config, so API 28+ blocks this by default with `Cleartext HTTP traffic to localhost not
+permitted`. This is already handled by `FileCoreLibrary/androidTest/AndroidManifest.xml` +
+`FileCoreLibrary/androidTest/res/xml/network_security_config_test.xml`, which permit cleartext
+**only** to `localhost`/`127.0.0.1` (not a blanket allow) — scoped to the androidTest APK, the
+main app manifest/config is untouched.
+
+### Test Reports (on-device)
+- **HTML Report**: `FileCoreLibrary/build/reports/androidTests/connected/debug/index.html`
+- **JUnit XML Results**: `FileCoreLibrary/build/outputs/androidTest-results/connected/debug/`
+  (only populated when run via `connectedDebugAndroidTest`; `am instrument` directly does not
+  write these)
+
+
+## Buffer policy, lifecycle and native descriptor checks
+
+The host and Android transfer entrypoints share the same diagnostic implementation.
+Use `-Dnova.test.NAME=VALUE` on the host and `-e NAME VALUE` with instrumentation:
+
+| NAME | Default | Scope |
+| --- | --- | --- |
+| `speedtestUpstreamBufferBytes` | 81920 | Proxy refill, 1 byte–4 MiB; compare 65536, 81920, 131072, 262144, 524288, 1048576 |
+| `speedtestSftpDepth` | 0 (existing 16) | JSch queue / SSHJ read-ahead argument; 1–64; conservative requests remain shallow |
+| `speedtestRequestBytes` | 0 (no cap) | Cap caller reads up to 1 MiB; affects SSHJ request sizing, not JSch packet/window or SMBJ prefetch sizes |
+| `speedtestSmbjAccess` | RANDOM | RANDOM, SEQUENTIAL or UNSPECIFIED; per-handle access hint |
+| `speedtestSampleBytes` | 0 (whole file) | Read a prefix using a normal playback GET, then cancel; up to 256 MiB; reported as `kind=prefix` with a prefix SHA-256 |
+| `speedtestRepeats` | 1 | Full transfers per row, up to 100 |
+| `speedtestStressIterations` | 0 | Up to 1000 seek/stop/list/reconnect iterations after each full transfer |
+
+Stress mode expects an unchanged, nonempty file and a listable parent directory.
+It verifies range status/length/payload against direct reads, runs directory listing
+concurrently, closes an active response, requires cleanup within 35 seconds and
+retires SSH connections between iterations. Reconnect tests establish a new
+connection on the next iteration. They do not simulate a stalled real server;
+controlled stalled-backend tests run separately in `StreamOverHttpCancellationTest`.
+Library timeouts can exceed the diagnostic cleanup deadline and cause a deliberate
+failure. Server resource counts and network bytes need server or packet tracing;
+stream counters alone cannot prove that a server processed asynchronous CLOSE.
+
+```bash
+# From Video: controlled host regressions, no real servers.
+./gradlew :FileCoreLibrary:testDebugUnitTest \
+    --tests '*ReadOptionsTest' --tests '*TransferDiagnosticTest' \
+    --tests '*StreamOverHttp*Test' --tests '*SFTPSessionLifecycleTest' \
+    --tests '*SshjStreamLifecycleTest'
+
+# Opt-in server lifecycle exercise; retain your private CSV path.
+./gradlew :FileCoreLibrary:testDebugUnitTest --tests '*SpeedTestTransferTest' \
+    -Dnova.test.speedtestCsv=/absolute/path/to/servers.csv \
+    -Dnova.test.speedtestUpstreamBufferBytes=1048576 \
+    -Dnova.test.speedtestSftpDepth=16 \
+    -Dnova.test.speedtestStressIterations=20
+
+# Build device tests (requires native libraries in the usual libs locations).
+./gradlew :FileCoreLibrary:assembleDebugAndroidTest :MediaLib:assembleDebugAndroidTest
+```
+
+Install the resulting test APKs using `adb install -r`. Then run the FileCore
+controlled range/cancellation checks without a CSV:
+
+```bash
+adb shell am instrument -w -r \
+    -e class com.archos.filecorelibrary.StreamOverHttpCancellationTest,com.archos.filecorelibrary.StreamOverHttpReadPolicyTest \
+    com.archos.filecorelibrary.test/androidx.test.runner.AndroidJUnitRunner
+
+adb shell am instrument -w -r \
+    -e class com.archos.medialib.BufferDescriptorDeviceTest \
+    com.archos.medialib.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+MediaLib checks real asset offsets/bounds/closure and a pipe provider's sequential
+HTTP fallback. Its native test is skipped unless `avosFixturePath` is supplied.
+Provide a small, seekable, fast-start MP4 (under 16 MiB) inside the test app's private
+files directory, and add `-e avosFixturePath /data/user/0/com.archos.medialib.test/files/fixture.mp4`.
+The test embeds it between guard regions and exercises AVOS prepare/seek after
+Java closes the descriptor, ordinary local-file input, and pipe preparation.
+The APK must contain working AVOS libraries; native load failure fails the test.
+For physical USB/SD or an actual provider, also pass `-e avosStorageUri content://...`
+with read permission already granted to the test APK. Merely passing a URI does not
+grant access. Native seek success is not a decoded-frame or high-bitrate playback
+benchmark; validate those separately on target devices.
+
+
+The diagnostic registers temporary credentials at the server root so metadata and
+parent-directory requests use the same account as the file transfer. Proxy requests
+use the actual encoded filename, avoiding unintended subtitle discovery. Credentials
+are not persisted by the runner. Full and sampled transfers report SHA-256, allowing
+comparison across protocols when CSV rows point to the same unchanged file.

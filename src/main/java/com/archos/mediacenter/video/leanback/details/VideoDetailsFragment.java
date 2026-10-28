@@ -81,6 +81,7 @@ import com.archos.environment.ArchosUtils;
 import com.archos.environment.NetworkState;
 import com.archos.filecorelibrary.FileUtils;
 import com.archos.filecorelibrary.FileUtilsQ;
+import com.archos.filecorelibrary.NetworkInitialization;
 import com.archos.mediacenter.filecoreextension.UriUtils;
 import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
@@ -161,6 +162,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -179,6 +181,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
     public static final String EXTRA_SHOULD_LOAD_BACKDROP = "should_load_backdrop";
     public static final String EXTRA_DETAILS_LAUNCH_UPTIME_MS = "details_launch_uptime_ms";
+    public static final String EXTRA_HAS_SHARED_ELEMENT = "has_shared_element";
+    public static final String EXTRA_DETAILS_COLOR = "extra_details_color";
 
 
     public static final int REQUEST_CODE_LOCAL_RESUME_AFTER_ADS_ACTIVITY = 985;
@@ -349,8 +353,6 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     private boolean mShouldDisplayConfirmDelete = false;
 
     private boolean isFilePlayable = true;
-    private int oldPos = 0;
-    private int oldSelectedSubPosition = 0;
 
     private static final String SAVED_DELETE_URIS = "saved_delete_uris";
     private static final String SAVED_DELETE_OPERATION = "saved_delete_operation";
@@ -418,6 +420,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         mVideoMetadateCache = new HashMap<>();
         mShouldDisplayRemoveFromList = getActivity().getIntent().getLongExtra(EXTRA_LIST_ID, -1) != -1;
 
+        boolean hasSharedElement = getActivity().getIntent().getBooleanExtra(EXTRA_HAS_SHARED_ELEMENT, true);
+
         // minSdk is 23 (> 21), so Window.getSharedElementEnterTransition()/
         // Transition.addListener() - both public android.transition APIs - are always
         // available; no need for androidx.leanback's restricted TransitionHelper/
@@ -431,7 +435,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             getActivity().getWindow().setSharedElementReturnTransition(null);
         }
         Transition transition = cinematic ? null : getActivity().getWindow().getSharedElementEnterTransition();
-        if(transition!=null) {
+        if(hasSharedElement && transition!=null) {
             mAnimationIsRunning = false;
             transition.addListener(new Transition.TransitionListener() {
                 @Override
@@ -472,14 +476,16 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         mHandler = new Handler(Looper.getMainLooper());
         setTopOffsetRatio(0.5f);
         XmlDb.getInstance().addResumeChangeListener(this);
-        mColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
+        int defaultColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
+        mColor = getActivity().getIntent() != null ? getActivity().getIntent().getIntExtra(EXTRA_DETAILS_COLOR, defaultColor) : defaultColor;
+        dominantColor = mColor;
         mDescriptionPresenter = new VideoDetailsDescriptionPresenter();
         mOverviewRowPresenter = new ArchosDetailsOverviewRowPresenter(mDescriptionPresenter);
         //be aware of a hack to avoid fullscreen overview : cf onSetRowStatus
         FullWidthDetailsOverviewSharedElementHelper helper = new FullWidthDetailsOverviewSharedElementHelper();
         // The overview row is now created from the intent before the DB reload, so a short
         // layout grace period is sufficient; the former 1s timeout visibly held every open.
-        if (!cinematic) {
+        if (hasSharedElement && !cinematic) {
             helper.setSharedElementEnterTransition(getActivity(), VideoDetailsActivity.SHARED_ELEMENT_NAME, 200);
             mOverviewRowPresenter.setListener(helper);
         }
@@ -487,6 +493,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         mOverviewRowPresenter.setActionsBackgroundColor(getDarkerColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()));
         mOverviewRowPresenter.setOnActionClickedListener(mOnActionClickedListener);
         mVideoBadgePresenter = new VideoBadgePresenter(getActivity());
+        mVideoBadgePresenter.setSelectedBackgroundColor(mColor);
         mFileListAdapter = new ArrayObjectAdapter(mVideoBadgePresenter);
         mFileListRow = new SelectableListRow(new HeaderItem(getString(R.string.video_sources)),mFileListAdapter);
 
@@ -607,33 +614,6 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         Color.colorToHSV(color, hsv);
         hsv[2] *= 0.8f;
         return Color.HSVToColor(hsv);
-    }
-
-    //hack to avoid fullscreen overview
-    @Override
-    protected void onSetRowStatus(RowPresenter presenter, RowPresenter.ViewHolder viewHolder, int
-            adapterPosition, int selectedPosition, int selectedSubPosition) {
-        super.onSetRowStatus(presenter, viewHolder, adapterPosition, selectedPosition, selectedSubPosition);
-        if(selectedPosition == 0 && selectedSubPosition != 0) {
-            if (oldPos == 0 && oldSelectedSubPosition == 0) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedPosition(1);
-                    }
-                });
-            } else if (oldPos == 1) {
-                setSelectedPosition(1);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedPosition(0);
-                    }
-                });
-            }
-        }
-        oldPos = selectedPosition;
-        oldSelectedSubPosition = selectedSubPosition;
     }
 
     @Override
@@ -1614,8 +1594,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
         // Check subtitles. Better to do it before VideoInfoTask because it should be quicker and it is displayed higher in the Fragment
         if(mSubtitleListCache.get(video.getFileUri())==null) {
-            mSubtitleFilesListerTask = new SubtitleFilesListerTask(getActivity());
-            mSubtitleFilesListerTask.execute(video);
+            if (mSubtitleFilesListerTask == null || !mSubtitleFilesListerTask.isLoading(video)) {
+                if (mSubtitleFilesListerTask != null) mSubtitleFilesListerTask.cancel();
+                mSubtitleFilesListerTask = new SubtitleFilesListerTask(getActivity());
+                mSubtitleFilesListerTask.execute(video);
+            }
         } else {
             updateSubtitleRowWhenReady();
         }
@@ -1623,16 +1606,22 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         // Start the video info task only now that the DB UI is ready to setup
         // special case : for upnp:// we need the streaming uri (http)
         String path = video.getFilePath();
-        if(mVideoInfoTask!=null)
-            mVideoInfoTask.cancel();
         if(mVideoMetadateCache.containsKey(path)){
             video.setMetadata(mVideoMetadateCache.get(path));
             updateMetadataWhenReady();
             updateSubtitleRowWhenReady();
 
         }
-        mVideoInfoTask = new VideoInfoTask();
-        mVideoInfoTask.execute(video);
+        // A DB/poster reload for the same URI can reuse the provisional overview's work.
+        if (mVideoInfoTask == null || !mVideoInfoTask.isLoading(video)) {
+            if (mVideoInfoTask != null) mVideoInfoTask.cancel();
+            // Do not execute file info task when torrent file.
+            if (video.getFileUri() == null || mLaunchedFromPlayer
+                    || !FileUtils.getName(video.getFileUri()).endsWith("torrent")) {
+                mVideoInfoTask = new VideoInfoTask();
+                mVideoInfoTask.execute(video);
+            }
+        }
 
         if (poster == null) {
             if (log.isDebugEnabled()) log.debug("fullyReloadVideo: no poster, generate it");
@@ -1698,8 +1687,6 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 Bitmap result = null;
                 try {
                     if (isCancelled || Thread.currentThread().isInterrupted()) return;
-                    mColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
-                    mVideoBadgePresenter.setSelectedBackgroundColor(mColor);
 
                     Uri imageUri = null;
                     if (video.getPosterUri()!=null) {
@@ -1768,23 +1755,38 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         private final ExecutorService executor = Executors.newSingleThreadExecutor();
         private final Handler handler = new Handler(Looper.getMainLooper());
         private volatile boolean isCancelled = false;
+        // Accessed only on the main thread, including the completion callback.
+        private String startingPath;
+        private boolean isFinished;
+
+        boolean isLoading(Video video) {
+            return !isCancelled && !isFinished && Objects.equals(startingPath, video.getFilePath());
+        }
 
         void execute(Video video) {
+            startingPath = video.getFilePath();
+            final Activity activity = getActivity();
+            if (activity == null) {
+                cancel();
+                return;
+            }
+            final Context context = activity.getApplicationContext();
+            // Keep fragment cache access on the main thread.
+            final VideoMetadata cachedMetadata = mVideoMetadateCache.get(startingPath);
+            final VideoMetadata playerMetadata = mLaunchedFromPlayer ? mVideoMetadataFromPlayer : null;
+            final android.os.Bundle headersBundle = activity.getIntent().getBundleExtra("headers");
             executor.execute(() -> {
                 VideoMetadata result = null;
                 try {
                     if (isCancelled || Thread.currentThread().isInterrupted()) return;
-                    String startingPath = video.getFilePath();
-                    if(mLaunchedFromPlayer && mVideoMetadataFromPlayer!=null && mVideoMetadataFromPlayer.getVideoTrack()!=null)
-                        result = mVideoMetadataFromPlayer;
-                    else if(mVideoMetadateCache.containsKey(startingPath)){
+                    if(playerMetadata != null && playerMetadata.getVideoTrack() != null)
+                        result = playerMetadata;
+                    else if(cachedMetadata != null){
                         if (log.isDebugEnabled()) log.debug("metadata retrieved from cache {}", startingPath);
-                        result = mVideoMetadateCache.get(startingPath);
+                        result = cachedMetadata;
                     }
                     else {
                         // Pick up any HTTP headers forwarded from the external player intent (e.g. Stremio/debrid)
-                        android.os.Bundle headersBundle = getActivity() != null
-                                ? getActivity().getIntent().getBundleExtra("headers") : null;
                         java.util.Map<String, String> headers = null;
                         if (headersBundle != null && !headersBundle.isEmpty()) {
                             headers = new java.util.HashMap<>();
@@ -1796,10 +1798,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                         } else {
                             if (log.isDebugEnabled()) log.debug("VideoInfoTask: no HTTP headers in activity intent");
                         }
-                        VideoMetadata videoMetaData = VideoInfoCommonClass.retrieveMetadata(video, getActivity(), headers);
-                        if(video!=null&&video.isIndexed())
-                            videoMetaData.save(getActivity(), startingPath);
-                        mVideoMetadateCache.put(startingPath, videoMetaData);
+                        NetworkInitialization.awaitReadyForSmb(video.getFileUri(), context);
+                        if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                        VideoMetadata videoMetaData = VideoInfoCommonClass.retrieveMetadata(video, context, headers);
+                        // Cancellation may have happened during SMB I/O. Discard its result
+                        // before writing metadata back to the database or the fragment cache.
+                        if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                        if(videoMetaData != null && video.isIndexed())
+                            videoMetaData.save(context, startingPath);
                         result = videoMetaData;
                     }
                 } catch (Exception e) {
@@ -1810,10 +1816,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 if (isCancelled) return;
                 final VideoMetadata finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled) return;
+                    isFinished = true;
+                    if (isCancelled || mVideoInfoTask != this || mVideo == null
+                            || !Objects.equals(startingPath, mVideo.getFilePath())) return;
+                    if (finalResult != null) mVideoMetadateCache.put(startingPath, finalResult);
                     // Update the video object with the computed metadata
-                    if(mVideo!=null)
-                        mVideo.setMetadata(finalResult);
+                    // An initialization failure is retryable: show the existing file error,
+                    // but do not cache or persist empty metadata as a successful result.
+                    mVideo.setMetadata(finalResult != null ? finalResult : new VideoMetadata());
 
                     // Integrated subtitle list is in the metadata
                     updateSubtitleRowWhenReady();
@@ -1824,7 +1834,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
         void cancel() {
             isCancelled = true;
-            executor.shutdownNow();
+            // SMB transports are shared. Let in-flight I/O finish and discard its result.
+            executor.shutdown();
         }
     }
 
@@ -1928,7 +1939,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                         final String plot = finalTags.getPlot();
                         String genres = null;
                         if (finalTags instanceof VideoTags) {
-                            genres = ((VideoTags) finalTags).getGenresFormatted();
+                            genres = ((VideoTags) finalTags).getGenresFormatted(getActivity());
                         }
                         // Keep it simple: we do not display the row if plot==null && genres!=null (very unlikely and not a big deal)
                         if (plot != null && !plot.isEmpty()) {
@@ -2020,6 +2031,12 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         private final ExecutorService executor = Executors.newSingleThreadExecutor();
         private final Handler handler = new Handler(Looper.getMainLooper());
         private volatile boolean isCancelled = false;
+        private Uri fileUri;
+        private boolean isFinished;
+
+        boolean isLoading(Video video) {
+            return !isCancelled && !isFinished && Objects.equals(fileUri, video.getFileUri());
+        }
 
         public SubtitleFilesListerTask(Activity activity){
             mActivity = activity;
@@ -2030,17 +2047,19 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         }
 
         void execute(Video video) {
+            fileUri = video.getFileUri();
             executor.execute(() -> {
                 List<SubtitleManager.SubtitleFile> result = null;
                 try {
                     if (isCancelled || Thread.currentThread().isInterrupted()) return;
                     if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask:doInBackground starting for: {}", video.getFileUri());
                     if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask:doInBackground file name: {}", FileUtils.getName(video.getFileUri()));
+                    NetworkInitialization.awaitReadyForSmb(fileUri, mActivity.getApplicationContext());
+                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
                     SubtitleManager lister = new SubtitleManager(getActivity(), null);
                     if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask:doInBackground calling listLocalAndRemotesSubtitles");
                     List<SubtitleManager.SubtitleFile> list = lister.listLocalAndRemotesSubtitles(video.getFileUri(), true);
                     if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask:doInBackground completed, found {} subtitles", (list != null ? list.size() : 0));
-                    mSubtitleListCache.put(video.getFileUri(), list);
                     result = list;
                 } catch (Exception e) {
                     log.error("SubtitleFilesListerTask:doInBackground exception", e);
@@ -2054,7 +2073,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 }
                 final List<SubtitleManager.SubtitleFile> finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled) return;
+                    isFinished = true;
+                    if (isCancelled || mSubtitleFilesListerTask != this || mVideo == null
+                            || !Objects.equals(fileUri, mVideo.getFileUri())) return;
+                    mSubtitleListCache.put(fileUri, finalResult);
                     if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask: onPostExecute with {} subtitles", (finalResult != null ? finalResult.size() : 0));
                     mExternalSubtitles = finalResult;
 
@@ -2077,7 +2099,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
         void cancel() {
             isCancelled = true;
-            executor.shutdownNow();
+            // Listing may be using the same SMB connection as metadata or playback.
+            executor.shutdown();
         }
     }
 
@@ -2539,11 +2562,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 break;
             case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
             case KeyEvent.KEYCODE_MEDIA_NEXT:
-                direction = Gravity.RIGHT;
+                direction = Gravity.END;
                 break;
             case KeyEvent.KEYCODE_MEDIA_REWIND:
             case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                direction = Gravity.LEFT;
+                direction = Gravity.START;
                 break;
         }
 
@@ -2568,13 +2591,13 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     c.moveToPosition(i);
                     Video v = (Video)new CompatibleCursorMapperConverter(new VideoCursorMapper()).convert(c);
                     if (v.getId() == mVideo.getId()) {
-                        if (direction == Gravity.LEFT) {
+                        if (direction == Gravity.START) {
                             if (i - 1 >= 0)
                                 c.moveToPosition(i - 1);
                             else
                                 c.moveToPosition(c.getCount() - 1);
                         }
-                        else if (direction == Gravity.RIGHT) {
+                        else if (direction == Gravity.END) {
                             if (i + 1 <= c.getCount() - 1)
                                 c.moveToPosition(i + 1);
                             else
@@ -2588,10 +2611,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 }
                 c.close();
                 if (video != null) {
-                    if (direction == Gravity.LEFT)
-                        getActivity().getWindow().setExitTransition(new Slide(Gravity.RIGHT));
-                    else if (direction == Gravity.RIGHT)
-                        getActivity().getWindow().setExitTransition(new Slide(Gravity.LEFT));
+                    if (direction == Gravity.START)
+                        getActivity().getWindow().setExitTransition(new Slide(Gravity.END));
+                    else if (direction == Gravity.END)
+                        getActivity().getWindow().setExitTransition(new Slide(Gravity.START));
                     final Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
                     intent.putExtra(VideoDetailsFragment.EXTRA_VIDEO, video);
                     intent.putExtra(VideoDetailsActivity.SLIDE_TRANSITION_EXTRA, true);

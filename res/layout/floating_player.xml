@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:background="@android:color/black"
-    android:layout_width="fill_parent" 
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
 
@@ -27,6 +27,20 @@
                 android:layout_height="fill_parent"
                 android:layout_gravity="center" />
     </FrameLayout>
+
+
+
+
+        <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+        <TextureView android:id="@+id/gl_subtitle_view"
+                     android:layout_width="fill_parent"
+                     android:layout_height="fill_parent"
+                     android:layout_gravity="center" />
+        </FrameLayout>
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="@android:color/black"
@@ -149,9 +163,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/video_play"/>
 
-
-
-        <com.archos.mediacenter.utils.seekbar.ArchosProgressSlider
+    <com.archos.mediacenter.utils.seekbar.ArchosProgressSlider
             android:id="@+id/seek_progress"
             style="@style/PlayerSliderHorizontal"
             android:layout_width="fill_parent"

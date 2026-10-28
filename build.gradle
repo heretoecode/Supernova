@@ -79,10 +79,27 @@ if (sentryPropertiesFile.exists()) sentryProperties.load(new FileInputStream(sen
 
 allprojects {
     repositories {
+        // Never resolve vanilla vulnerable Jetty under the reviewed backport identity.
+        exclusiveContent {
+            forRepository { maven { url = uri(rootProject.file("build/supernova146-jetty/maven")) } }
+            filter {
+                ["util", "io", "http", "server", "client", "security", "servlet"].each {
+                    includeModule("org.eclipse.jetty", "jetty-" + it)
+                }
+            }
+        }
         google()
         mavenCentral()
         mavenLocal()
         maven { url = 'https://jitpack.io' }
+    }
+    configurations.configureEach {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == "org.eclipse.jetty" && ["jetty-util", "jetty-io", "jetty-http", "jetty-server", "jetty-client", "jetty-security", "jetty-servlet"].contains(details.requested.name)) {
+                details.useVersion("9.4.58.v20250814")
+                details.because("Pinned source backport with API23 counters; vanilla Maven bytes are excluded")
+            }
+        }
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile).tap {
@@ -476,7 +493,9 @@ dependencies {
     // MediaLib implementation APIs are not exposed to this module's test compiler.
     // Match the existing runtime pins for the real-library UPnP security tests.
     testImplementation 'javax.servlet:javax.servlet-api:4.0.1'
-    testImplementation 'org.eclipse.jetty:jetty-client:9.2.30.v20200428'
+    testImplementation 'org.eclipse.jetty:jetty-client:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-server:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-security:9.4.58.v20250814'
 }
 
 configurations { // try to exclude device specific libraries interfering

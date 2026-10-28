@@ -149,7 +149,7 @@
       "kind": "patch",
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova146-upstream.patch",
-      "sha256": "ea4483257604292e8c3243f057e1a3f239b83e12177f22947e6b4f4140e66be7"
+      "sha256": "019dbf66861fa3547593c2a71e4dbd0c8ba4ab88e0aba21395c5bff1ff50c831"
     },
     {
       "kind": "patch",

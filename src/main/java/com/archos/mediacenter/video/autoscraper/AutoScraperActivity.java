@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.autoscraper;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -276,7 +277,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
         buildFileProperties(mActivityFileCursor);
         mAdapterFileCursor = buildAdapterCursor(mActivityFileCursor);
 
-        mAdapter = new AutoScraperAdapter(getApplication(), this,
+        mAdapter = new AutoScraperAdapter(this, this,
                                           R.layout.auto_scraper_item,
                                           mAdapterFileCursor);
         mListView.setAdapter(mAdapter);
@@ -795,7 +796,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
 
         // Build a new adapter for the new list of video
         mAdapterFileCursor = buildAdapterCursor(mActivityFileCursor);
-        mAdapter = new AutoScraperAdapter(getApplication(), AutoScraperActivity.this,
+        mAdapter = new AutoScraperAdapter(AutoScraperActivity.this, AutoScraperActivity.this,
                                                                               R.layout.auto_scraper_item,
                                                                               mAdapterFileCursor);
         // Bind the new adapter to the list
@@ -1008,6 +1009,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
         }
 
         @Override
+        @SuppressLint("SetTextI18n")
         public void bindView(View view, Context context, Cursor cursor) {
             // Default values
             int duration = 0;

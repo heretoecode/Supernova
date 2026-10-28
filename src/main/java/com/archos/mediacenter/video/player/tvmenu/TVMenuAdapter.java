@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
@@ -53,6 +54,10 @@ public class TVMenuAdapter {
         this.mActivity = mActivity;
         this.mWindow = window;
         this.mView = frameLayout;
+        this.mView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        if (this.mView.getParent() instanceof View) {
+            ((View) this.mView.getParent()).setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        }
         this.mViewSlave=null;
         this.pos=0;
         this.biggest=0;
@@ -67,6 +72,7 @@ public class TVMenuAdapter {
     }
 
     public java.util.List<TVCardView> previewCards(){java.util.List<TVCardView> result=new java.util.ArrayList<>();for(View root:cards){TVCardView card=root.findViewById(R.id.card_view);if(card!=null&&card.getVisibility()==View.VISIBLE)result.add(card);}return result;}
+    @SuppressLint("InflateParams") // Root TVMenu layout is inflated detached and attached to player controller
     public TVMenu createTVMenu(){
         TVMenu tvm = (TVMenu)LayoutInflater.from(mActivity)
                 .inflate(R.layout.menu_layout, null);
@@ -307,6 +313,7 @@ public class TVMenuAdapter {
     public void initializeSlaveView(FrameLayout v){
 
         mViewSlave=v;
+        mViewSlave.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         //iterate over views to create slave views, add them to new slave view
         for(View view : cards){
             if(view.findViewById(R.id.card_view)!=null ){

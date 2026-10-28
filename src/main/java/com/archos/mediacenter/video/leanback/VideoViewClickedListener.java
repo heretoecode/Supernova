@@ -96,6 +96,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         showVideoDetails(activity, video, itemViewHolder, true, forceSelection, true, listId, null);
     }
 
+    @SuppressWarnings("unchecked")
     public static void showVideoDetails(Activity activity, Video video, Presenter.ViewHolder itemViewHolder, boolean animate, boolean forceSelection, boolean shouldLoadBackdrop, long listId, ActivityResultLauncher<Intent> launcher) {
         Intent intent = new Intent(activity, VideoDetailsActivity.class);
         intent.putExtra(VideoDetailsFragment.EXTRA_VIDEO, video);
@@ -116,10 +117,15 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         if (itemViewHolder.view instanceof com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) {
             sourceView = ((com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card)itemViewHolder.view).image;
         }
+        boolean isPortraitPoster = false;
         if (sourceView instanceof ImageView) {
             Drawable drawable = ((ImageView) sourceView).getDrawable();
-            VideoDetailsTransitionPosterCache.put(launchUptimeMs, drawable);
+            if (drawable != null && drawable.getIntrinsicWidth() > 0 && drawable.getIntrinsicHeight() >= drawable.getIntrinsicWidth()) {
+                isPortraitPoster = true;
+                VideoDetailsTransitionPosterCache.put(launchUptimeMs, drawable);
+            }
         }
+        intent.putExtra(VideoDetailsFragment.EXTRA_HAS_SHARED_ELEMENT, isPortraitPoster);
         if (activity instanceof TvshowActivity || activity instanceof TvshowMoreDetailsActivity) {
             ImageView backdropView = activity.findViewById(R.id.details_backdrop);
             java.io.File backdropFile = null;
@@ -127,8 +133,16 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
                 androidx.fragment.app.Fragment fragment = ((androidx.fragment.app.FragmentActivity) activity).getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
                 if (fragment instanceof TvshowFragment) {
                     backdropFile = ((TvshowFragment) fragment).getBackdropController().getCurrentlyDisplayedFile();
+                    int color = ((TvshowFragment) fragment).getColor();
+                    if (color != 0) {
+                        intent.putExtra(VideoDetailsFragment.EXTRA_DETAILS_COLOR, color);
+                    }
                 } else if (fragment instanceof TvshowMoreDetailsFragment) {
                     backdropFile = ((TvshowMoreDetailsFragment) fragment).getBackdropController().getCurrentlyDisplayedFile();
+                    int color = ((TvshowMoreDetailsFragment) fragment).getColor();
+                    if (color != 0) {
+                        intent.putExtra(VideoDetailsFragment.EXTRA_DETAILS_COLOR, color);
+                    }
                 }
             }
             if (backdropView != null && backdropView.getDrawable() != null) {
@@ -140,11 +154,18 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         boolean cinematic = androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false);
         if (animate && sourceView != null && !cinematic) {
             traceVideoDetailsLaunch(launchUptimeMs, "source-transition-options-start");
-            ActivityOptionsCompat opts = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    activity, sourceView, VideoDetailsActivity.SHARED_ELEMENT_NAME);
+            ActivityOptionsCompat opts;
+            if (isPortraitPoster) {
+                opts = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        activity, sourceView, VideoDetailsActivity.SHARED_ELEMENT_NAME);
+            } else {
+                opts = ActivityOptionsCompat.makeSceneTransitionAnimation(activity);
+            }
             Bundle optionsBundle = opts.toBundle();
             traceVideoDetailsLaunch(launchUptimeMs, "source-transition-options-ready");
-            traceNextSourceFrame(sourceView, launchUptimeMs);
+            if (isPortraitPoster) {
+                traceNextSourceFrame(sourceView, launchUptimeMs);
+            }
             if (launcher != null) {
                 traceVideoDetailsLaunch(launchUptimeMs, "source-before-launcher-launch");
                 launcher.launch(intent, opts);

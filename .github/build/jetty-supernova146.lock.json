@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "upstream_version": "9.4.58.v20250814",
+  "source_commit": "89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b",
+  "source_patch": "jetty-supernova146-api23-security.patch",
+  "source_patch_sha256": "1bcbaa43e7bc630a605dcf9c6a7a814327ecaa975ca767a109e29c44a67540cf",
+  "compiler": "ECJ3.41.0 Java8 target",
+  "inputs": [
+    {
+      "file": "source.tar.gz",
+      "url": "https://codeload.github.com/jetty/jetty.project/tar.gz/89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b",
+      "sha256": "017b61d774963a32930b441ae16df84cdb7d3095ed4780ba84fd5a8491e23758"
+    },
+    {
+      "file": "ecj.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jdt/ecj/3.41.0/ecj-3.41.0.jar",
+      "sha256": "47bda183cd94a8bdb704f5b35690224f75b7d2fb563c8b8f9bbcfab987c3029b"
+    },
+    {
+      "file": "jetty-util-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-util/9.4.58.v20250814/jetty-util-9.4.58.v20250814.jar",
+      "sha256": "8d591679d318d20c8fb2b1e83900562b3c4571ff7a189696be700293e0204146"
+    },
+    {
+      "file": "jetty-util-9.4.58.v20250814.pom",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-util/9.4.58.v20250814/jetty-util-9.4.58.v20250814.pom",
+      "sha256": "74d463a2ea02233728ae70131374d6b1e194f77d223c0554f44f476f40c032c5"
+    },
+    {
+      "file": "jetty-io-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-io/9.4.58.v20250814/jetty-io-9.4.58.v20250814.jar",
+      "sha256": "f55b2cc7c05244fd7b1773e99979b740002b0186e45b8a688243d89c7006fe21"
+    },
+    {
+      "file": "jetty-io-9.4.58.v20250814.pom",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-io/9.4.58.v20250814/jetty-io-9.4.58.v20250814.pom",
+      "sha256": "8a7c6cfe62b82fcabce21e93964915d0323ec4617b578de996c9d86d2854db8d"
+    },
+    {
+      "file": "jetty-http-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-http/9.4.58.v20250814/jetty-http-9.4.58.v20250814.jar",
+      "sha256": "8f49b8583fc8dbbfe3a0ba80a04c97df64ebabca2981b56ee403c989aba9d4da"
+    },
+    {
+      "file": "jetty-http-9.4.58.v20250814.pom",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-http/9.4.58.v20250814/jetty-http-9.4.58.v20250814.pom",
+      "sha256": "f64d6da0aeeb994b1efa31fac44b08ba0c56bf75d923ac01354955c015ac1868"
+    },
+    {
+      "file": "jetty-server-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-server/9.4.58.v20250814/jetty-server-9.4.58.v20250814.jar",
+      "sha256": "608dbd3e1c4184374f02c70704e5d1c9daaded45e6a31d07824f40dac6083ba9"
+    },
+    {
+      "file": "jetty-server-9.4.58.v20250814.pom",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-server/9.4.58.v20250814/jetty-server-9.4.58.v20250814.pom",
+      "sha256": "b750ef1eb4b10d00700ace9675c17619c04017cd0e757748848b894662fe5c3c"
+    },
+    {
+      "file": "jetty-client-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-client/9.4.58.v20250814/jetty-client-9.4.58.v20250814.jar",
+      "sha256": "629371e5f65f321832930538bd485e5fd637d180412ea75f592881921e2d4b83"
+    },
+    {
+      "file": "jetty-client-9.4.58.v20250814.pom",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-client/9.4.58.v20250814/jetty-client-9.4.58.v20250814.pom",
+      "sha256": "3dd442938e22114a2dd280764bf00c354332b79f931d067d26ad6a45d09bbc02"
+    },
+    {
+      "file": "jetty-security-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-security/9.4.58.v20250814/jetty-security-9.4.58.v20250814.jar",
+      "sha256": "301548ebf008551a3a4312b04df0ea0468acc2780f863b83cc9cf0d668e62252"
+    },
+    {
+      "file": "jetty-security-9.4.58.v20250814.pom",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-security/9.4.58.v20250814/jetty-security-9.4.58.v20250814.pom",
+      "sha256": "be1b66c55f9c7516308329706f8a4e0ab168651434686d8e802103eb8c2359b6"
+    },
+    {
+      "file": "jetty-servlet-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-servlet/9.4.58.v20250814/jetty-servlet-9.4.58.v20250814.jar",
+      "sha256": "1c6bb17326147e642c8a41e4657b32bca5057c8958db4da770d09c0904aefcff"
+    },
+    {
+      "file": "jetty-servlet-9.4.58.v20250814.pom",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-servlet/9.4.58.v20250814/jetty-servlet-9.4.58.v20250814.pom",
+      "sha256": "92b861dbc3c0b64866a8c4edf2393de558d810299c539e8b43414837cc6c1036"
+    },
+    {
+      "file": "jetty-jmx-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-jmx/9.4.58.v20250814/jetty-jmx-9.4.58.v20250814.jar",
+      "sha256": "00ef79cf358e937ac909ef575ec35f8558291c3097b251f8bb3d3c0e3653af24"
+    },
+    {
+      "file": "jetty-util-ajax-9.4.58.v20250814.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-util-ajax/9.4.58.v20250814/jetty-util-ajax-9.4.58.v20250814.jar",
+      "sha256": "185430a2eafcdffba18204dbf51cb18436ab4ca09b74d97c1dc13abbadd9704b"
+    },
+    {
+      "file": "javax.servlet-api-3.1.0.jar",
+      "url": "https://repo.maven.apache.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar",
+      "sha256": "af456b2dd41c4e82cf54f3e743bc678973d9fe35bd4d3071fa05c7e5333b8482"
+    },
+    {
+      "file": "slf4j-api-2.0.18.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.18/slf4j-api-2.0.18.jar",
+      "sha256": "44508fd1576500688c790b190acdd16fec4f8c79a3e0b900afd70503cf055f55"
+    }
+  ],
+  "review_status": "candidate, Android23 and independent security review pending"
+}

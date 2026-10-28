@@ -242,7 +242,7 @@ index 0000000..49b2028
 +    @Override public int update(Uri uri, ContentValues values, String s, String[] a) { throw new UnsupportedOperationException(); }
 +}
 diff --git a/build.gradle b/build.gradle
-index fe7dc6c..b52d393 100644
+index fe7dc6c..540abe0 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -4,11 +4,15 @@ repositories {
@@ -255,10 +255,10 @@ index fe7dc6c..b52d393 100644
  ext {
      groupOpen = false
 -    // jetty required by jupnp and going above 9.4.14 requires minSdkVersion 26
-+    // jUPnP 3.0.5 does not ship Jetty transitively (its POM depends only on slf4j),
-+    // so Nova pins it explicitly. 9.2.30 is the last 9.2.x line; Jetty >= 9.3 uses
-+    // java.util.concurrent.atomic.LongAdder (API 24), which breaks minSdk 23.
-+    jettyVersion = '9.2.30.v20200428'
++    // Supernova rebuilds the pinned9.4 source with reviewed security fixes and
++    // API23 atomic counters. The root exclusive repository rejects vanilla jars.
++    jettyVersion = '9.4.58.v20250814'
++
  }
  
  allprojects {

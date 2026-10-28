@@ -1,0 +1,719 @@
+diff --git a/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpChannelOverHTTP.java b/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpChannelOverHTTP.java
+index 79bf7dbf4e..fe712d0e16 100644
+--- a/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpChannelOverHTTP.java
++++ b/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpChannelOverHTTP.java
+@@ -19,7 +19,7 @@
+ package org.eclipse.jetty.client.http;
+ 
+ import java.util.Locale;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ import org.eclipse.jetty.client.HttpChannel;
+ import org.eclipse.jetty.client.HttpExchange;
+diff --git a/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpConnectionOverHTTP.java b/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpConnectionOverHTTP.java
+index fedb20afbf..765f284242 100644
+--- a/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpConnectionOverHTTP.java
++++ b/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpConnectionOverHTTP.java
+@@ -25,7 +25,7 @@ import java.util.Iterator;
+ import java.util.concurrent.TimeoutException;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicInteger;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ import org.eclipse.jetty.client.HttpChannel;
+ import org.eclipse.jetty.client.HttpConnection;
+diff --git a/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpReceiverOverHTTP.java b/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpReceiverOverHTTP.java
+index e7345f59d7..d46e7732fb 100644
+--- a/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpReceiverOverHTTP.java
++++ b/jetty-client/src/main/java/org/eclipse/jetty/client/http/HttpReceiverOverHTTP.java
+@@ -20,7 +20,7 @@ package org.eclipse.jetty.client.http;
+ 
+ import java.io.EOFException;
+ import java.nio.ByteBuffer;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ import org.eclipse.jetty.client.HttpClient;
+ import org.eclipse.jetty.client.HttpExchange;
+diff --git a/jetty-client/src/main/java/org/eclipse/jetty/client/util/DigestAuthentication.java b/jetty-client/src/main/java/org/eclipse/jetty/client/util/DigestAuthentication.java
+index 93683efd64..22ac392483 100644
+--- a/jetty-client/src/main/java/org/eclipse/jetty/client/util/DigestAuthentication.java
++++ b/jetty-client/src/main/java/org/eclipse/jetty/client/util/DigestAuthentication.java
+@@ -48,6 +48,13 @@ import org.eclipse.jetty.util.TypeUtil;
+  */
+ public class DigestAuthentication extends AbstractAuthentication
+ {
++    private static byte[] latin1(String value)
++    {
++        for (int i = 0; i < value.length(); i++)
++            if (value.charAt(i) > 255) throw new IllegalArgumentException("Digest value is not ISO-8859-1");
++        return value.getBytes(StandardCharsets.ISO_8859_1);
++    }
++
+     private final Random random;
+     private final String user;
+     private final String password;
+@@ -178,7 +185,7 @@ public class DigestAuthentication extends AbstractAuthentication
+                 return;
+ 
+             String a1 = user + ":" + realm + ":" + password;
+-            String hashA1 = toHexString(digester.digest(a1.getBytes(StandardCharsets.ISO_8859_1)));
++            String hashA1 = toHexString(digester.digest(latin1(a1)));
+ 
+             String query = request.getQuery();
+             String path = request.getPath();
+@@ -186,7 +193,7 @@ public class DigestAuthentication extends AbstractAuthentication
+             String a2 = request.getMethod() + ":" + uri;
+             if ("auth-int".equals(qop))
+                 a2 += ":" + toHexString(digester.digest(content));
+-            String hashA2 = toHexString(digester.digest(a2.getBytes(StandardCharsets.ISO_8859_1)));
++            String hashA2 = toHexString(digester.digest(latin1(a2)));
+ 
+             String nonceCount;
+             String clientNonce;
+@@ -203,7 +210,7 @@ public class DigestAuthentication extends AbstractAuthentication
+                 clientNonce = null;
+                 a3 = hashA1 + ":" + nonce + ":" + hashA2;
+             }
+-            String hashA3 = toHexString(digester.digest(a3.getBytes(StandardCharsets.ISO_8859_1)));
++            String hashA3 = toHexString(digester.digest(latin1(a3)));
+ 
+             StringBuilder value = new StringBuilder("Digest");
+             value.append(" username=\"").append(user).append("\"");
+diff --git a/jetty-http/src/main/java/org/eclipse/jetty/http/HttpParser.java b/jetty-http/src/main/java/org/eclipse/jetty/http/HttpParser.java
+index 4db6716487..754d607411 100644
+--- a/jetty-http/src/main/java/org/eclipse/jetty/http/HttpParser.java
++++ b/jetty-http/src/main/java/org/eclipse/jetty/http/HttpParser.java
+@@ -177,6 +177,10 @@ public class HttpParser
+     private long _contentPosition;
+     private int _chunkLength;
+     private int _chunkPosition;
++    private enum ChunkSizeState { SIZE, EXT_BWS, EXT_NAME_BWS_BEFORE, EXT_NAME, EXT_NAME_BWS_AFTER, EXT_VALUE_BWS_BEFORE, EXT_VALUE_OPEN_QUOTE, EXT_VALUE, EXT_VALUE_CLOSE_QUOTE }
++    private ChunkSizeState _chunkSizeState = ChunkSizeState.SIZE;
++    private int _chunkSizeDigits;
++    private boolean _chunkQuotedEscape;
+     private boolean _headResponse;
+     private boolean _cr;
+     private ByteBuffer _contentChunk;
+@@ -1739,6 +1743,9 @@ public class HttpParser
+                         case DIGIT:
+                             _chunkLength = t.getHexDigit();
+                             _chunkPosition = 0;
++                            _chunkSizeState = ChunkSizeState.SIZE;
++                            _chunkSizeDigits = 1;
++                            _chunkQuotedEscape = false;
+                             setState(State.CHUNK_SIZE);
+                             break;
+ 
+@@ -1747,6 +1754,9 @@ public class HttpParser
+                             {
+                                 _chunkLength = t.getHexDigit();
+                                 _chunkPosition = 0;
++                            _chunkSizeState = ChunkSizeState.SIZE;
++                            _chunkSizeDigits = 1;
++                            _chunkQuotedEscape = false;
+                                 setState(State.CHUNK_SIZE);
+                                 break;
+                             }
+@@ -1759,64 +1769,9 @@ public class HttpParser
+                 }
+ 
+                 case CHUNK_SIZE:
+-                {
+-                    HttpTokens.Token t = next(buffer);
+-                    if (t == null)
+-                        break;
+-
+-                    switch (t.getType())
+-                    {
+-                        case LF:
+-                            if (_chunkLength == 0)
+-                            {
+-                                setState(State.TRAILER);
+-                                if (_handler.contentComplete())
+-                                    return true;
+-                            }
+-                            else
+-                                setState(State.CHUNK);
+-                            break;
+-
+-                        case SPACE:
+-                            setState(State.CHUNK_PARAMS);
+-                            break;
+-
+-                        default:
+-                            if (t.isHexDigit())
+-                            {
+-                                if (_chunkLength > MAX_CHUNK_LENGTH)
+-                                    throw new BadMessageException(HttpStatus.PAYLOAD_TOO_LARGE_413);
+-                                _chunkLength = _chunkLength * 16 + t.getHexDigit();
+-                            }
+-                            else
+-                            {
+-                                setState(State.CHUNK_PARAMS);
+-                            }
+-                    }
+-                    break;
+-                }
+-
+                 case CHUNK_PARAMS:
+                 {
+-                    HttpTokens.Token t = next(buffer);
+-                    if (t == null)
+-                        break;
+-
+-                    switch (t.getType())
+-                    {
+-                        case LF:
+-                            if (_chunkLength == 0)
+-                            {
+-                                setState(State.TRAILER);
+-                                if (_handler.contentComplete())
+-                                    return true;
+-                            }
+-                            else
+-                                setState(State.CHUNK);
+-                            break;
+-                        default:
+-                            break; // TODO review
+-                    }
++                    if (parseChunkSize(buffer)) return true;
+                     break;
+                 }
+ 
+@@ -1884,6 +1839,194 @@ public class HttpParser
+         setState(State.CLOSE);
+     }
+ 
++    private boolean parseChunkSize(ByteBuffer buffer)
++    {
++        while (_state == State.CHUNK_SIZE && buffer.hasRemaining())
++        {
++            HttpTokens.Token t = next(buffer);
++            if (t == null)
++                break;
++
++            switch (_chunkSizeState)
++            {
++                case SIZE:
++                {
++                    if (t.getType() == HttpTokens.Type.LF)
++                    {
++                        if (chunkSizeEnd(t))
++                            return true;
++                    }
++                    else if (t.isHexDigit())
++                    {
++                        // Preserve the 9.4 bounded int chunk representation; reject overflow.
++                        if (++_chunkSizeDigits > 8 || _chunkLength > MAX_CHUNK_LENGTH)
++                            throw new BadMessageException(HttpStatus.BAD_REQUEST_400);
++                        _chunkLength = _chunkLength * 16 + t.getHexDigit();
++                        // Check for overflow.
++                        if (_chunkLength < 0)
++                            throw new BadMessageException(HttpStatus.BAD_REQUEST_400);
++                    }
++                    else if (isBWS(t))
++                        setChunkSizeState(ChunkSizeState.EXT_BWS);
++                    else if (t.getChar() == ';')
++                        setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
++                    else
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++                case EXT_BWS:
++                {
++                    if (t.getChar() == ';')
++                        setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
++                    else if (!isBWS(t))
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++                case EXT_NAME_BWS_BEFORE:
++                {
++                    if (isTchar(t))
++                        setChunkSizeState(ChunkSizeState.EXT_NAME);
++                    else if (!isBWS(t))
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++                case EXT_NAME:
++                {
++                    if (t.getType() == HttpTokens.Type.LF)
++                    {
++                        if (chunkSizeEnd(t))
++                            return true;
++                    }
++                    else if (t.getChar() == ';')
++                        setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
++                    else if (isBWS(t))
++                        setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_AFTER);
++                    else if (t.getChar() == '=')
++                        setChunkSizeState(ChunkSizeState.EXT_VALUE_BWS_BEFORE);
++                    else if (!isTchar(t))
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++                case EXT_NAME_BWS_AFTER:
++                {
++                    if (t.getChar() == ';')
++                        setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
++                    else if (t.getChar() == '=')
++                        setChunkSizeState(ChunkSizeState.EXT_VALUE_BWS_BEFORE);
++                    else if (!isBWS(t))
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++                case EXT_VALUE_BWS_BEFORE:
++                {
++                    if (t.getChar() == '"')
++                        setChunkSizeState(ChunkSizeState.EXT_VALUE_OPEN_QUOTE);
++                    else if (isTchar(t))
++                        setChunkSizeState(ChunkSizeState.EXT_VALUE);
++                    else if (!isBWS(t))
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++                case EXT_VALUE_OPEN_QUOTE:
++                {
++                    if (_chunkQuotedEscape)
++                    {
++                        if (!isQuotedPair(t))
++                            throw new IllegalCharacterException(_state, t, buffer);
++                        _chunkQuotedEscape = false;
++                    }
++                    else if (t.getChar() == '\\')
++                        _chunkQuotedEscape = true;
++                    else if (t.getChar() == '"')
++                        setChunkSizeState(ChunkSizeState.EXT_VALUE_CLOSE_QUOTE);
++                    else if (!isQdText(t))
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++                case EXT_VALUE:
++                {
++                    if (t.getType() == HttpTokens.Type.LF)
++                    {
++                        if (chunkSizeEnd(t))
++                            return true;
++                    }
++                    else if (isBWS(t))
++                        setChunkSizeState(ChunkSizeState.EXT_BWS);
++                    else if (t.getChar() == ';')
++                        setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
++                    else if (!isTchar(t))
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++                case EXT_VALUE_CLOSE_QUOTE:
++                {
++                    if (t.getType() == HttpTokens.Type.LF)
++                    {
++                        if (chunkSizeEnd(t))
++                            return true;
++                    }
++                    else if (isBWS(t))
++                        setChunkSizeState(ChunkSizeState.EXT_BWS);
++                    else if (t.getChar() == ';')
++                        setChunkSizeState(ChunkSizeState.EXT_NAME_BWS_BEFORE);
++                    else
++                        throw new IllegalCharacterException(_state, t, buffer);
++                    break;
++                }
++            }
++        }
++        return false;
++    }
++
++    private boolean chunkSizeEnd(HttpTokens.Token t)
++    {
++        setChunkSizeState(ChunkSizeState.SIZE);
++        _chunkSizeDigits = 0;
++        if (_chunkLength == 0)
++        {
++            setState(State.TRAILER);
++            return _handler.contentComplete();
++        }
++        else
++        {
++            setState(State.CHUNK);
++            return false;
++        }
++    }
++
++    /**
++     * Bad white space is defined in RFC-9110[5.6.3].
++     *
++     * @param t the token
++     * @return whether the token is a bad white space
++     */
++    private boolean isBWS(HttpTokens.Token t)
++    {
++        return t.getType() == HttpTokens.Type.SPACE || t.getType() == HttpTokens.Type.HTAB;
++    }
++
++    /**
++     * Token and token characters are defined in RFC-9110[5.6.2].
++     *
++     * @param t the token
++     * @return whether the token is a token character
++     */
++    private boolean isTchar(HttpTokens.Token t)
++    {
++        return t.getType() == HttpTokens.Type.TCHAR || t.getType() == HttpTokens.Type.DIGIT || t.getType() == HttpTokens.Type.ALPHA;
++    }
++    private boolean isQdText(HttpTokens.Token t)
++    {
++        char c = t.getChar();
++        return t.getType() == HttpTokens.Type.HTAB || t.getType() == HttpTokens.Type.SPACE || t.getType() == HttpTokens.Type.OTEXT || c == 0x21 || (c >= 0x23 && c <= 0x5B) || (c >= 0x5D && c <= 0x7E);
++    }
++    private boolean isQuotedPair(HttpTokens.Token t)
++    {
++        char c = t.getChar();
++        return c == '\t' || (c >= 0x20 && c <= 0x7E) || t.getType() == HttpTokens.Type.OTEXT;
++    }
++    private void setChunkSizeState(ChunkSizeState state) { _chunkSizeState = state; }
++
+     public void reset()
+     {
+         if (debug)
+@@ -1899,6 +2042,9 @@ public class HttpParser
+         _hasContentLength = false;
+         _hasTransferEncoding = false;
+         _contentPosition = 0;
++        _chunkSizeState = ChunkSizeState.SIZE;
++        _chunkSizeDigits = 0;
++        _chunkQuotedEscape = false;
+         _responseStatus = 0;
+         _contentChunk = null;
+         _headerBytes = 0;
+diff --git a/jetty-http/src/main/java/org/eclipse/jetty/http/HttpURI.java b/jetty-http/src/main/java/org/eclipse/jetty/http/HttpURI.java
+index 274015d0bb..f636a57562 100644
+--- a/jetty-http/src/main/java/org/eclipse/jetty/http/HttpURI.java
++++ b/jetty-http/src/main/java/org/eclipse/jetty/http/HttpURI.java
+@@ -420,6 +420,7 @@ public class HttpURI
+         boolean encodedUtf16 = false; // Is the current encoding for UTF16?
+         int encodedCharacters = 0; // partial state of parsing a % encoded character<x>
+         int encodedValue = 0; // the partial encoded value
++        boolean password = false;
+         boolean dot = false; // set to true if the path contains . or .. segments
+ 
+         for (int i = offset; i < end; i++)
+@@ -566,7 +567,7 @@ public class HttpURI
+                     switch (c)
+                     {
+                         case '/':
+-                            if (encodedCharacters > 0)
++                            if (encodedCharacters > 0 || password)
+                                 throw new IllegalArgumentException("Bad authority");
+                             _host = uri.substring(mark, i);
+                             encoded = false;
+@@ -575,15 +576,18 @@ public class HttpURI
+                             state = State.PATH;
+                             break;
+                         case ':':
++                            if (encodedCharacters > 0 || password) throw new IllegalArgumentException("Bad authority");
+                             if (i > mark)
+                                 _host = uri.substring(mark, i);
+                             mark = i + 1;
+                             state = State.PORT;
+                             break;
+                         case '@':
+-                            if (_user != null)
++                            if (_user != null || encodedCharacters > 0)
+                                 throw new IllegalArgumentException("Bad authority");
+                             _user = uri.substring(mark, i);
++                            password = false;
++                            encoded = false;
+                             _violations.add(Violation.USER_INFO);
+                             mark = i + 1;
+                             break;
+@@ -666,6 +670,7 @@ public class HttpURI
+                 {
+                     if (c == '@')
+                     {
++                        if (encodedCharacters > 0) throw new IllegalArgumentException("Bad authority");
+                         if (_user != null)
+                             throw new IllegalArgumentException("Bad authority");
+                         // It wasn't a port, but a password!
+@@ -681,6 +686,18 @@ public class HttpURI
+                         segment = i + 1;
+                         state = State.PATH;
+                     }
++                    else if (!isDigit(c))
++                    {
++                        if (isUnreservedPctEncodedOrSubDelim(c))
++                        {
++                            password = true;
++                            state = State.HOST;
++                            if (_host != null) { mark = mark - _host.length() - 1; _host = null; }
++                            i--; // validate this character, including percent encoding, as user-info.
++                            break;
++                        }
++                        throw new IllegalArgumentException("Bad authority");
++                    }
+                     break;
+                 }
+                 case PATH:
+@@ -828,6 +845,7 @@ public class HttpURI
+                 _path = uri.substring(mark, end);
+                 break;
+             case HOST:
++                if (encodedCharacters > 0 || password) throw new IllegalArgumentException("Bad authority");
+                 if (end > mark)
+                     _host = uri.substring(mark, end);
+                 break;
+diff --git a/jetty-io/src/main/java/org/eclipse/jetty/io/ConnectionStatistics.java b/jetty-io/src/main/java/org/eclipse/jetty/io/ConnectionStatistics.java
+index d02b6619a7..d8cd1e77b9 100644
+--- a/jetty-io/src/main/java/org/eclipse/jetty/io/ConnectionStatistics.java
++++ b/jetty-io/src/main/java/org/eclipse/jetty/io/ConnectionStatistics.java
+@@ -23,7 +23,7 @@ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.concurrent.ConcurrentHashMap;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ import org.eclipse.jetty.util.annotation.ManagedAttribute;
+ import org.eclipse.jetty.util.annotation.ManagedObject;
+diff --git a/jetty-jmh/src/main/java/org/eclipse/jetty/util/PoolStrategyBenchmark.java b/jetty-jmh/src/main/java/org/eclipse/jetty/util/PoolStrategyBenchmark.java
+index 2dba5ba292..714b3931f5 100644
+--- a/jetty-jmh/src/main/java/org/eclipse/jetty/util/PoolStrategyBenchmark.java
++++ b/jetty-jmh/src/main/java/org/eclipse/jetty/util/PoolStrategyBenchmark.java
+@@ -18,7 +18,7 @@
+ 
+ package org.eclipse.jetty.util;
+ 
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ import org.openjdk.jmh.annotations.Benchmark;
+ import org.openjdk.jmh.annotations.Param;
+diff --git a/jetty-security/src/main/java/org/eclipse/jetty/security/authentication/DigestAuthenticator.java b/jetty-security/src/main/java/org/eclipse/jetty/security/authentication/DigestAuthenticator.java
+index 05a6735611..c7f341805c 100644
+--- a/jetty-security/src/main/java/org/eclipse/jetty/security/authentication/DigestAuthenticator.java
++++ b/jetty-security/src/main/java/org/eclipse/jetty/security/authentication/DigestAuthenticator.java
+@@ -56,6 +56,13 @@ import org.eclipse.jetty.util.security.Credential;
+  */
+ public class DigestAuthenticator extends LoginAuthenticator
+ {
++    private static byte[] latin1(String value)
++    {
++        for (int i = 0; i < value.length(); i++)
++            if (value.charAt(i) > 255) throw new IllegalArgumentException("Digest value is not ISO-8859-1");
++        return value.getBytes(StandardCharsets.ISO_8859_1);
++    }
++
+     private static final Logger LOG = Log.getLogger(DigestAuthenticator.class);
+ 
+     private final SecureRandom _random = new SecureRandom();
+@@ -345,18 +352,18 @@ public class DigestAuthenticator extends LoginAuthenticator
+                 else
+                 {
+                     // calc A1 digest
+-                    md.update(username.getBytes(StandardCharsets.ISO_8859_1));
++                    md.update(latin1(username));
+                     md.update((byte)':');
+-                    md.update(realm.getBytes(StandardCharsets.ISO_8859_1));
++                    md.update(latin1(realm));
+                     md.update((byte)':');
+-                    md.update(password.getBytes(StandardCharsets.ISO_8859_1));
++                    md.update(latin1(password));
+                     ha1 = md.digest();
+                 }
+                 // calc A2 digest
+                 md.reset();
+-                md.update(method.getBytes(StandardCharsets.ISO_8859_1));
++                md.update(latin1(method));
+                 md.update((byte)':');
+-                md.update(uri.getBytes(StandardCharsets.ISO_8859_1));
++                md.update(latin1(uri));
+                 byte[] ha2 = md.digest();
+ 
+                 // calc digest
+@@ -368,13 +375,13 @@ public class DigestAuthenticator extends LoginAuthenticator
+ 
+                 md.update(TypeUtil.toString(ha1, 16).getBytes(StandardCharsets.ISO_8859_1));
+                 md.update((byte)':');
+-                md.update(nonce.getBytes(StandardCharsets.ISO_8859_1));
++                md.update(latin1(nonce));
+                 md.update((byte)':');
+-                md.update(nc.getBytes(StandardCharsets.ISO_8859_1));
++                md.update(latin1(nc));
+                 md.update((byte)':');
+-                md.update(cnonce.getBytes(StandardCharsets.ISO_8859_1));
++                md.update(latin1(cnonce));
+                 md.update((byte)':');
+-                md.update(qop.getBytes(StandardCharsets.ISO_8859_1));
++                md.update(latin1(qop));
+                 md.update((byte)':');
+                 md.update(TypeUtil.toString(ha2, 16).getBytes(StandardCharsets.ISO_8859_1));
+                 byte[] digest = md.digest();
+diff --git a/jetty-server/src/main/java/org/eclipse/jetty/server/ConnectorStatistics.java b/jetty-server/src/main/java/org/eclipse/jetty/server/ConnectorStatistics.java
+index c0edb5575e..223c9e1e32 100644
+--- a/jetty-server/src/main/java/org/eclipse/jetty/server/ConnectorStatistics.java
++++ b/jetty-server/src/main/java/org/eclipse/jetty/server/ConnectorStatistics.java
+@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.ConcurrentMap;
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.atomic.AtomicLong;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ import org.eclipse.jetty.io.Connection;
+ import org.eclipse.jetty.util.annotation.ManagedAttribute;
+diff --git a/jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java b/jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java
+index 65b557625b..58949e8864 100644
+--- a/jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java
++++ b/jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java
+@@ -845,6 +845,17 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
+ 
+     public void onRequest(MetaData.Request request)
+     {
++        if (request.getURI().getHost() != null && request.getFields().get(HttpHeader.HOST) != null)
++        {
++            org.eclipse.jetty.http.HostPortHttpField host = new org.eclipse.jetty.http.HostPortHttpField(request.getFields().get(HttpHeader.HOST));
++            String scheme = request.getURI().getScheme();
++            int defaultPort = HttpScheme.HTTPS.is(scheme) ? 443 : 80;
++            int uriPort = request.getURI().getPort() > 0 ? request.getURI().getPort() : defaultPort;
++            int hostPort = host.getPort() > 0 ? host.getPort() : defaultPort;
++            if (!request.getURI().getHost().equalsIgnoreCase(host.getHost()) || uriPort != hostPort)
++                throw new org.eclipse.jetty.http.BadMessageException(400, "Conflicting authority");
++        }
++
+         _requests.incrementAndGet();
+         _request.setTimeStamp(System.currentTimeMillis());
+         HttpFields fields = _response.getHttpFields();
+diff --git a/jetty-server/src/main/java/org/eclipse/jetty/server/HttpConnection.java b/jetty-server/src/main/java/org/eclipse/jetty/server/HttpConnection.java
+index b61b201d6d..a52f1ab985 100644
+--- a/jetty-server/src/main/java/org/eclipse/jetty/server/HttpConnection.java
++++ b/jetty-server/src/main/java/org/eclipse/jetty/server/HttpConnection.java
+@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
+ import java.nio.channels.WritePendingException;
+ import java.util.concurrent.RejectedExecutionException;
+ import java.util.concurrent.atomic.AtomicInteger;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ import org.eclipse.jetty.http.BadMessageException;
+ import org.eclipse.jetty.http.HttpCompliance;
+diff --git a/jetty-server/src/main/java/org/eclipse/jetty/server/handler/StatisticsHandler.java b/jetty-server/src/main/java/org/eclipse/jetty/server/handler/StatisticsHandler.java
+index 39b7d55eff..7498523b02 100644
+--- a/jetty-server/src/main/java/org/eclipse/jetty/server/handler/StatisticsHandler.java
++++ b/jetty-server/src/main/java/org/eclipse/jetty/server/handler/StatisticsHandler.java
+@@ -21,7 +21,7 @@ package org.eclipse.jetty.server.handler;
+ import java.io.IOException;
+ import java.util.concurrent.Future;
+ import java.util.concurrent.atomic.AtomicLong;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ import javax.servlet.AsyncEvent;
+ import javax.servlet.AsyncListener;
+ import javax.servlet.ServletException;
+diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/CounterStatistic.java b/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/CounterStatistic.java
+index 37432fc7f7..1441da4c29 100644
+--- a/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/CounterStatistic.java
++++ b/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/CounterStatistic.java
+@@ -19,8 +19,8 @@
+ package org.eclipse.jetty.util.statistic;
+ 
+ import java.util.concurrent.atomic.AtomicLong;
+-import java.util.concurrent.atomic.LongAccumulator;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAccumulator;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ /**
+  * <p>Statistics on a counter value.</p>
+diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/RateCounter.java b/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/RateCounter.java
+index 48a500d424..38d801f7ef 100644
+--- a/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/RateCounter.java
++++ b/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/RateCounter.java
+@@ -20,7 +20,7 @@ package org.eclipse.jetty.util.statistic;
+ 
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.atomic.AtomicLong;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ /**
+  * Counts the rate that {@link Long}s are added to this from the time of creation or the last call to {@link #reset()}.
+diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/SampleStatistic.java b/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/SampleStatistic.java
+index ccf6928c70..4de89b5219 100644
+--- a/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/SampleStatistic.java
++++ b/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/SampleStatistic.java
+@@ -19,8 +19,8 @@
+ package org.eclipse.jetty.util.statistic;
+ 
+ import java.util.concurrent.atomic.AtomicLong;
+-import java.util.concurrent.atomic.LongAccumulator;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAccumulator;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ /**
+  * <p>Statistics on a sampled value.</p>
+diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/thread/api23/LongAccumulator.java b/jetty-util/src/main/java/org/eclipse/jetty/util/thread/api23/LongAccumulator.java
+new file mode 100644
+index 0000000000..d1a0a41ee9
+--- /dev/null
++++ b/jetty-util/src/main/java/org/eclipse/jetty/util/thread/api23/LongAccumulator.java
+@@ -0,0 +1,20 @@
++package org.eclipse.jetty.util.thread.api23;
++import java.util.concurrent.atomic.AtomicLong;
++/** Android23 accumulator; function must be side-effect-free, as in the JDK API. */
++public final class LongAccumulator extends Number implements java.io.Serializable {
++ private static final long serialVersionUID = 1L;
++ public interface Operator extends java.io.Serializable { long apply(long left, long right); }
++ private final AtomicLong value;
++ private final Operator function;
++ private final long identity;
++ public LongAccumulator(Operator function, long identity) { this.function=function; this.identity=identity; value=new AtomicLong(identity); }
++ public void accumulate(long x) { long old,next; do { old=value.get(); next=function.apply(old,x); } while (!value.compareAndSet(old,next)); }
++ public long get() { return value.get(); }
++ public void reset() { value.set(identity); }
++ public long getThenReset() { return value.getAndSet(identity); }
++ public long longValue() { return get(); }
++ public int intValue() { return (int)get(); }
++ public float floatValue() { return get(); }
++ public double doubleValue() { return get(); }
++ public String toString() { return Long.toString(get()); }
++}
+diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/thread/api23/LongAdder.java b/jetty-util/src/main/java/org/eclipse/jetty/util/thread/api23/LongAdder.java
+new file mode 100644
+index 0000000000..bba5d09f56
+--- /dev/null
++++ b/jetty-util/src/main/java/org/eclipse/jetty/util/thread/api23/LongAdder.java
+@@ -0,0 +1,18 @@
++package org.eclipse.jetty.util.thread.api23;
++import java.util.concurrent.atomic.AtomicLong;
++/** Android23 atomic counter; reset has the same no-concurrent-reset requirement as LongAdder. */
++public final class LongAdder extends Number implements java.io.Serializable {
++ private static final long serialVersionUID = 1L;
++ private final AtomicLong value = new AtomicLong();
++ public void add(long delta) { value.addAndGet(delta); }
++ public void increment() { add(1); }
++ public void decrement() { add(-1); }
++ public long sum() { return value.get(); }
++ public void reset() { value.set(0); }
++ public long sumThenReset() { return value.getAndSet(0); }
++ public long longValue() { return sum(); }
++ public int intValue() { return (int)sum(); }
++ public float floatValue() { return sum(); }
++ public double doubleValue() { return sum(); }
++ public String toString() { return Long.toString(sum()); }
++}
+diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/thread/strategy/EatWhatYouKill.java b/jetty-util/src/main/java/org/eclipse/jetty/util/thread/strategy/EatWhatYouKill.java
+index 3024dee592..5c3d8b010f 100644
+--- a/jetty-util/src/main/java/org/eclipse/jetty/util/thread/strategy/EatWhatYouKill.java
++++ b/jetty-util/src/main/java/org/eclipse/jetty/util/thread/strategy/EatWhatYouKill.java
+@@ -23,7 +23,7 @@ import java.time.ZonedDateTime;
+ import java.time.format.DateTimeFormatter;
+ import java.util.concurrent.Executor;
+ import java.util.concurrent.RejectedExecutionException;
+-import java.util.concurrent.atomic.LongAdder;
++import org.eclipse.jetty.util.thread.api23.LongAdder;
+ 
+ import org.eclipse.jetty.util.annotation.ManagedAttribute;
+ import org.eclipse.jetty.util.annotation.ManagedObject;

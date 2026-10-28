@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
@@ -517,6 +518,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             return openSubtitlesQueryParams;
         }
 
+        @SuppressLint("InflateParams") // Custom title view for AlertDialog.Builder.setCustomTitle() has no parent container at inflation
         private void askSubChoice(final String videoFilePath, final ArrayList<OpenSubtitlesSearchResult> searchResults, final boolean displayLang, final boolean hasSuccess) {
             if(previewUi()){
                 if(isCancelled||isFinishing()||isDestroyed())return;
@@ -554,7 +556,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                         @Override
                         public View getView(int i, View view, ViewGroup viewGroup) {
                             if (view == null) {
-                                view = LayoutInflater.from(SubtitlesDownloaderActivity2.this).inflate(R.layout.subtitle_item_layout, null);
+                                view = LayoutInflater.from(SubtitlesDownloaderActivity2.this).inflate(R.layout.subtitle_item_layout, viewGroup, false);
                             }
                             ((TextView) view.findViewById(R.id.video_name)).setText(searchResults.get(i).getFileName());
                             // use bold font for subs with hash match

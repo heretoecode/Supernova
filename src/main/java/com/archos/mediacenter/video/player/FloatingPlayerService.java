@@ -16,6 +16,8 @@ package com.archos.mediacenter.video.player;
 
 import android.annotation.SuppressLint;
 
+import com.archos.mediacenter.utils.introdb.IntroSegments;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -24,7 +26,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -49,6 +50,9 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -58,8 +62,8 @@ import com.archos.mediacenter.utils.RepeatingImageButton;
 import com.archos.mediacenter.utils.seekbar.ArchosProgressSlider;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.utils.MiscUtils;
 import com.archos.mediacenter.video.utils.VideoMetadata;
-import com.archos.medialib.Subtitle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,8 +89,8 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     private boolean contains;
     private SurfaceController mSurfaceController;
     private SubtitleManager mSubtitleManager;
-    private int mSubtitleSizeDefault;
-    private int mSubtitleVPosDefault;
+    private SubtitleManager.Defaults mSubtitleDefaults;
+
     private WindowManager.LayoutParams mParamsF;
     private View mProgressView;
     private View mPlayerController;
@@ -114,21 +118,36 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     private BroadcastReceiver mReceiver;
     private int mLastWidth;
     private int mLastHeight;
-    private int mSubtitleColorDefault;
     private int mSize = -1;
     private int mVPos;
     private ImageView mDiscreteButton;
     private ImageView mNormalButton;
     private WindowManager.LayoutParams mNormalButtonLayoutParams;
     private Intent mStartIntent;
+    private ViewGroup mSkipButtonContainer;
+    private Button mSkipButton;
+    private IntroSegments.Type mCurrentSkipType;
+    private long mCurrentSkipTargetMs;
+    private boolean mIsSkipPromptShowing = false;
+    private SkipProgressDrawable mSkipProgress;
+    private long mSkipProgressStartMs = -1;
+    private long mSkipProgressTargetMs = -1;
+    private static final long SKIP_PROGRESS_TICK_MS = 200;
+    private final Runnable mSkipProgressTicker = new Runnable() {
+        @Override
+        public void run() {
+            if (!mIsSkipPromptShowing || mSkipProgress == null || mSkipButton == null) return;
+            updateSkipProgress();
+            mSkipButton.postDelayed(this, SKIP_PROGRESS_TICK_MS);
+        }
+    };
 
     public void onCreate() {
         super.onCreate();
         sFloatingPlayerService = this;
         mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        mSubtitleSizeDefault = getResources().getInteger(R.integer.player_pref_subtitle_size_default);
-        mSubtitleVPosDefault = getResources().getInteger(R.integer.player_pref_subtitle_vpos_default);
-        mSubtitleColorDefault = Color.parseColor(getResources().getString(R.string.subtitle_color_default));
+        mSubtitleDefaults = new SubtitleManager.Defaults(this);
+
         bindService(new Intent(this, PlayerService.class), mPlayerServiceConnection, BIND_AUTO_CREATE);
         mWindowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
         IntentFilter filter = new IntentFilter();
@@ -179,6 +198,9 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     }
     public void onDestroy(){
         super.onDestroy();
+        hideSkipPrompt();
+        mSkipButtonContainer = null;
+        mSkipButton = null;
         sFloatingPlayerService = null;
         mFloatingPlayerRootView = null;
         unbindService(mPlayerServiceConnection);
@@ -217,6 +239,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         setMusicVolume(mVolumeLevel.getProgress());
     }
 
+    @SuppressLint({"InflateParams", "RtlHardcoded"}) // Floating view attached to WindowManager; Gravity.LEFT required for absolute screen coordinates
     @SuppressWarnings("deprecation") // TYPE_PHONE deprecated API 26; already in SDK_INT < O branch; TYPE_APPLICATION_OVERLAY used on O+
     @Nullable
     public void addFloatingView() {
@@ -226,6 +249,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
 
             LayoutInflater li = LayoutInflater.from(this);
             mFloatingPlayerRootView = li.inflate(R.layout.floating_player, null);
+            mFloatingPlayerRootView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             mPlayerController = mFloatingPlayerRootView.findViewById(R.id.player_controller);
             mPausePlayButton = (ImageView) mPlayerController.findViewById(R.id.play_button);
             mFullscreenButton = (ImageView) mPlayerController.findViewById(R.id.fullscreen_button);
@@ -312,6 +336,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
             mFloatingPlayerRootView.findViewById(R.id.surface_view).setAlpha((float) 0.5);
             mWindowManager.addView(mFloatingPlayerRootView, mParamsF);
             contains = true;
+            initSkipButton();
             try {
 
                 mFloatingPlayerRootView.setOnTouchListener(new View.OnTouchListener() {
@@ -341,6 +366,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
                         return (float) Math.sqrt(x * x + y * y);
                     }
 
+                    @SuppressLint("ClickableViewAccessibility")
                     @SuppressWarnings("deprecation") // getSize/getRealSize: API 30+ uses getCurrentWindowMetrics
                     public boolean onTouch(View v, MotionEvent event) {
 
@@ -472,6 +498,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
                 e.printStackTrace();
             }
             PlayerService.sPlayerService.switchPlayerFrontend(this);
+            PlayerService.sPlayerService.setUiContext(MiscUtils.getDisplayContext(this, mFloatingPlayerRootView));
             new Player(this, null, mSurfaceController,false);
 
             PlayerService.sPlayerService.setPlayer();
@@ -553,15 +580,22 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
             } else {
                 mWindowManager.getDefaultDisplay().getRealSize(point);
             }
-            int size = (int) ((mParamsF.width / (float)(Math.max(point.y, point.x))) * mSize);
+            //int size = (int) ((mParamsF.width / (float)(Math.max(point.y, point.x))) * mSize);
             int vpos = (int) ((mParamsF.height / (float)(Math.min(point.y, point.x))) * mVPos);
-            mSubtitleManager.setSize(size);
+            //mSubtitleManager.setSize(size);
             mSubtitleManager.setVerticalPosition(vpos);
         }
     }
     public void removeFloatingView(boolean isStartingPlayerActivity) {
         if(contains) {
-
+            hideSkipPrompt();
+            if (mSkipButtonContainer != null && mFloatingPlayerRootView != null) {
+                try {
+                    ((ViewGroup) mFloatingPlayerRootView).removeView(mSkipButtonContainer);
+                } catch (Exception ignored) {}
+                mSkipButtonContainer = null;
+                mSkipButton = null;
+            }
             if (PlayerService.sPlayerService != null)
                 PlayerService.sPlayerService.removePlayerFrontend(this,isStartingPlayerActivity);
             try {
@@ -636,6 +670,140 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     }
 
     @Override
+    public void onShowSkipPrompt(final IntroSegments.Type type, final long targetMs) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                showSkipPrompt(type, targetMs);
+            }
+        });
+    }
+
+    @Override
+    public void onHideSkipPrompt() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                hideSkipPrompt();
+            }
+        });
+    }
+
+    private void initSkipButton() {
+        if (mFloatingPlayerRootView == null) return;
+        LayoutInflater inflater = LayoutInflater.from(this);
+        mSkipButtonContainer = (ViewGroup) inflater.inflate(R.layout.floating_skip_button_layout, (ViewGroup) mFloatingPlayerRootView, false);
+        mSkipButton = (Button) mSkipButtonContainer.findViewById(R.id.floating_skip_button);
+        mSkipProgress = new SkipProgressDrawable(this);
+        mSkipButton.setForeground(mSkipProgress);
+        ((ViewGroup) mFloatingPlayerRootView).addView(mSkipButtonContainer);
+        mSkipButtonContainer.bringToFront();
+
+        mSkipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                executeSkipPrompt();
+            }
+        });
+    }
+
+    private void updateSkipButtonText(IntroSegments.Type type) {
+        if (mSkipButton == null) return;
+        int textRes;
+        if (type == IntroSegments.Type.RECAP) {
+            textRes = R.string.skip_recap_button;
+        } else if (type == IntroSegments.Type.OUTRO || type == IntroSegments.Type.CREDITS) {
+            textRes = R.string.skip_credits_button;
+        } else if (type == IntroSegments.Type.PREVIEW) {
+            textRes = R.string.skip_preview_button;
+        } else {
+            textRes = R.string.skip_intro_button;
+        }
+        mSkipButton.setText(textRes);
+    }
+
+    private void executeSkipPrompt() {
+        if (mCurrentSkipTargetMs < 0) return;
+        long targetMs = mCurrentSkipTargetMs;
+        IntroSegments.Type type = mCurrentSkipType;
+        hideSkipPrompt();
+        if (PlayerService.sPlayerService != null) {
+            PlayerService.sPlayerService.executeSkip(type, targetMs);
+        }
+    }
+
+    private void showSkipPrompt(final IntroSegments.Type type, final long targetMs) {
+        if (mFloatingPlayerRootView == null || mSkipButtonContainer == null || mSkipButton == null) return;
+
+        mCurrentSkipType = type;
+        mCurrentSkipTargetMs = targetMs;
+        updateSkipButtonText(type);
+
+        mIsSkipPromptShowing = true;
+        startSkipProgress(targetMs);
+        mSkipButtonContainer.clearAnimation();
+        mSkipButtonContainer.bringToFront();
+        if (mSkipButtonContainer.getVisibility() != View.VISIBLE) {
+            mSkipButtonContainer.setVisibility(View.VISIBLE);
+            Animation fadeIn = new AlphaAnimation(0f, 1f);
+            fadeIn.setDuration(250);
+            mSkipButtonContainer.startAnimation(fadeIn);
+        } else {
+            mSkipButtonContainer.setAlpha(1f);
+        }
+    }
+
+    private void startSkipProgress(long targetMs) {
+        if (mSkipProgress == null || mSkipButton == null) return;
+        if (mSkipProgressTargetMs != targetMs) {
+            mSkipProgressTargetMs = targetMs;
+            mSkipProgressStartMs = (Player.sPlayer != null) ? Player.sPlayer.getCurrentPosition() : targetMs;
+        }
+        mSkipButton.removeCallbacks(mSkipProgressTicker);
+        updateSkipProgress();
+        mSkipButton.postDelayed(mSkipProgressTicker, SKIP_PROGRESS_TICK_MS);
+    }
+
+    private void updateSkipProgress() {
+        if (mSkipProgress == null) return;
+        final long span = mSkipProgressTargetMs - mSkipProgressStartMs;
+        if (span <= 0 || Player.sPlayer == null) {
+            mSkipProgress.setLevel(0);
+            return;
+        }
+        final long position = Player.sPlayer.getCurrentPosition();
+        float fraction = (position - mSkipProgressStartMs) / (float) span;
+        if (fraction < 0f) fraction = 0f;
+        else if (fraction > 1f) fraction = 1f;
+        mSkipProgress.setLevel(Math.round(fraction * 10000f));
+    }
+
+    private void hideSkipPrompt() {
+        mIsSkipPromptShowing = false;
+        mCurrentSkipTargetMs = -1;
+        if (mSkipButton != null) mSkipButton.removeCallbacks(mSkipProgressTicker);
+        mSkipProgressStartMs = -1;
+        mSkipProgressTargetMs = -1;
+        if (mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE) {
+            Animation fadeOut = new AlphaAnimation(1f, 0f);
+            fadeOut.setDuration(250);
+            fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (!mIsSkipPromptShowing && mSkipButtonContainer != null) {
+                        mSkipButtonContainer.setVisibility(View.GONE);
+                    }
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            mSkipButtonContainer.startAnimation(fadeOut);
+        }
+    }
+
+    @Override
     public void onPrepared() {
         mProgressView.setVisibility(View.GONE);
         updatePlayPauseButton();
@@ -656,8 +824,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
 
     @Override
     public void onSeekStart(int pos) {
-        if (mSubtitleManager != null)
-            mSubtitleManager.onSeekStart(pos);
+
     }
 
     @Override
@@ -672,16 +839,12 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
 
     @Override
     public void onPlay(int state) {
-        if (mSubtitleManager != null)
-            mSubtitleManager.onPlay();
         setProgress();
         //PlayerService.sPlayerService.startStatusbarNotification(isDiscrete());
     }
 
     @Override
     public void onPause(int state) {
-        if (mSubtitleManager != null)
-            mSubtitleManager.onPause();
         //PlayerService.sPlayerService.startStatusbarNotification(isDiscrete());
     }
 
@@ -695,11 +858,8 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
             mSubtitleManager.start();
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            mSize = preferences.getInt(PlayerActivity.KEY_SUBTITLE_SIZE, mSubtitleSizeDefault);
-            mVPos = preferences.getInt(PlayerActivity.KEY_SUBTITLE_VPOS, mSubtitleVPosDefault);
-            int color = preferences.getInt(PlayerActivity.KEY_SUBTITLE_COLOR, mSubtitleColorDefault);
-            //mSubtitleManager.setSize(mSize);
-            mSubtitleManager.setColor(color);
+            mVPos = preferences.getInt(PlayerActivity.KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos);
+            mSubtitleManager.restoreStyle(preferences);
 
         }
     }
@@ -712,12 +872,6 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
 
     @Override
     public void onBufferingUpdate(int percent) {   }
-
-    @Override
-    public void onSubtitle(Subtitle subtitle) {
-        if (mSubtitleManager != null)
-            mSubtitleManager.addSubtitle(subtitle);
-    }
 
     public void setUIExternalSurface(Surface uiSurface) {
        // mSubtitleManager.setUIExternalSurface(uiSurface); do not enable this with floating player
