@@ -17,7 +17,7 @@ final class SettingsChoiceDialog {
         LinearLayout panel=new LinearLayout(context);panel.setOrientation(LinearLayout.VERTICAL);
         int padding=dp(context,16);panel.setPadding(padding,dp(context,14),padding,dp(context,12));panel.setBackground(PreviewDialog.dialogSurface(context));
         TextView title=SharedThreePanel.text(context,String.valueOf(preference.getTitle()),21);title.setTypeface(null,android.graphics.Typeface.BOLD);panel.addView(title);
-        TextView explanation=SharedThreePanel.text(context,"Choose one option. Changes are saved when selected.",15);explanation.setTextColor(0xffbcc9d9);explanation.setPadding(0,dp(context,5),0,dp(context,10));panel.addView(explanation);
+        TextView explanation=SharedThreePanel.text(context,"",15);explanation.setVisibility(View.GONE);explanation.setTextColor(0xffbcc9d9);explanation.setPadding(0,dp(context,5),0,dp(context,10));panel.addView(explanation);
         ScrollView scroll=new ScrollView(context);scroll.setVerticalScrollBarEnabled(false);scroll.setSmoothScrollingEnabled(false);
         LinearLayout rows=new LinearLayout(context);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);panel.addView(scroll);
         int selected=preference.findIndexOfValue(preference.getValue());View initial=null;

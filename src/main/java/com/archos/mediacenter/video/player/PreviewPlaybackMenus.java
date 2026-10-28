@@ -14,12 +14,12 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 /** One playback window over the real player actions. Tabs never create a second settings stack. */
 final class PreviewPlaybackMenus {
-    private static final String[] TABS={"Subtitles","Audio","Display","Playback"};
+    private static final String[] TABS={"Audio","Subtitles","Video","More"};
     private static Dialog current;
     private static Activity owner;
     private static TVMenuAdapter adapter;
     private static View origin;
-    private static LinearLayout tabs,rows;
+    private static LinearLayout tabs,rows,trackRows,adjustmentRows;
     private static FrameLayout content;
     private static ScrollView scroll;
     private static int tab,rootFocus=-1;
@@ -37,14 +37,14 @@ final class PreviewPlaybackMenus {
     }
     private static void flushNested(){if(nested!=null){TVCardDialog card=nested;nested=null;card.setPreviewDismiss(()->{});card.handleBackPressed();}}
     static void show(Activity activity,TVMenuAdapter source,String target){
-        close();owner=activity;adapter=source;origin=activity.getCurrentFocus();tab=0;rootFocus=-1;
-        if(activity.getString(R.string.menu_audio).equals(target))tab=1;
+        close();owner=activity;adapter=source;origin=activity.getCurrentFocus();tab=1;rootFocus=-1;
+        if(activity.getString(R.string.menu_audio).equals(target))tab=0;
         if(activity.getString(R.string.player_pref_audio_speed_title).equals(target))tab=3;
         int selected=tab;shell();tab=selected;renderTab();tabs.getChildAt(tab).requestFocus();
     }
     private static void shell(){
         current=PreviewDialog.create(owner);current.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        LinearLayout panel=new LinearLayout(owner);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(16),dp(16),dp(16),dp(16));panel.setBackground(PreviewDialog.menuSurface(owner));
+        LinearLayout panel=new LinearLayout(owner);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(16),dp(16),dp(16),dp(16));android.graphics.drawable.GradientDrawable surface=new android.graphics.drawable.GradientDrawable();surface.setColor(0xe615171b);surface.setCornerRadius(dp(10));panel.setBackground(surface);
         TextView title=SharedThreePanel.text(owner,"Playback Settings",20);title.setPadding(0,0,0,dp(12));panel.addView(title);
         tabs=new LinearLayout(owner);tabs.setBaselineAligned(false);panel.addView(tabs,new LinearLayout.LayoutParams(-1,-2));
         for(int i=0;i<TABS.length;i++){
@@ -62,7 +62,7 @@ final class PreviewPlaybackMenus {
             if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_DPAD_UP&&nested!=null){View focused=current.getCurrentFocus();View next=focused==null?null:FocusFinder.getInstance().findNextFocus(nested,focused,View.FOCUS_UP);if(next==null||next==focused){tabs.getChildAt(tab).requestFocus();return true;}}
             return false;});
         current.show();Window window=current.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);window.setDimAmount(.12f);
-        int width=Math.min(dp(460),Math.round(TvLayout.safeWidth(owner)*.58f));int height=Math.min(dp(570),TvLayout.safeHeight(owner)-dp(40));
+        int width=Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f));int height=Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48));
         window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(width,height);
     }
     private static android.graphics.drawable.Drawable tabBackground(){
@@ -74,43 +74,60 @@ final class PreviewPlaybackMenus {
     }
     private static void switchTab(int selected){flushNested();tab=selected;rootFocus=-1;renderTab();}
     private static TVCardView card(int title){for(TVCardView c:adapter==null?Collections.<TVCardView>emptyList():adapter.previewCards())if(owner.getString(title).equals(c.previewTitle()))return c;return null;}
-    private static void clear(){flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();scroll=new ScrollView(owner);scroll.setFillViewport(false);rows=new LinearLayout(owner);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);content.addView(scroll,new FrameLayout.LayoutParams(-1,-1));for(int i=0;i<4;i++)tabs.getChildAt(i).setSelected(i==tab);}
+    private static void clear(){trackRows=adjustmentRows=null;flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();scroll=new ScrollView(owner);scroll.setFillViewport(false);rows=new LinearLayout(owner);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);content.addView(scroll,new FrameLayout.LayoutParams(-1,-1));for(int i=0;i<4;i++)tabs.getChildAt(i).setSelected(i==tab);}
+    private static void columns(){
+        content.removeAllViews();LinearLayout columns=new LinearLayout(owner);columns.setBaselineAligned(false);content.addView(columns,new FrameLayout.LayoutParams(-1,-1));
+        for(int i=0;i<2;i++){ScrollView pane=new ScrollView(owner);LinearLayout list=new LinearLayout(owner);list.setOrientation(LinearLayout.VERTICAL);pane.addView(list);LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,-1,1);if(i==0)size.rightMargin=dp(16);columns.addView(pane,size);if(i==0)trackRows=list;else adjustmentRows=list;}
+        rows=trackRows;
+    }
     private static void renderTab(){
         if(owner==null||closing)return;clear();backAction=null;restoreParent=PreviewPlaybackMenus::renderTab;
-        if(tab==0||tab==1){TVCardView selected=card(tab==0?R.string.menu_subtitles:R.string.menu_audio);if(selected!=null)addNative(selected,true,false);else heading(tab==0?"No subtitle tracks":"No audio tracks");if(tab==0)subtitlePreferences();}
+        if(tab==0||tab==1){TVCardView selected=card(tab==1?R.string.menu_subtitles:R.string.menu_audio);if(selected!=null){if(tab==0)columns();addNative(selected,true,false);}else heading(tab==1?"No subtitle tracks":"No audio tracks");if(tab==1)subtitlePreferences();}
         else {
+            if(tab==2)columns();
             if(tab==3){TVCardView audio=card(R.string.menu_audio);if(audio!=null&&audio.previewMenu()!=null)for(int i=0;i<audio.previewMenu().getChildCount();i++){View v=audio.previewMenu().getChildAt(i);if(v instanceof TVMenuItem&&owner.getString(R.string.player_pref_audio_speed_title).equals(((TVMenuItem)v).getText()))nativeRow((TVMenuItem)v,"Playback Speed",PreviewPlaybackMenus::renderTab);}}
             for(TVCardView c:adapter==null?Collections.<TVCardView>emptyList():adapter.previewCards()){
                 String title=c.previewTitle();boolean play=owner.getString(R.string.pref_play_mode_title).equals(title);
                 if(owner.getString(R.string.menu_subtitles).equals(title)||owner.getString(R.string.menu_audio).equals(title)||owner.getString(R.string.menu_info).equals(title)||owner.getString(R.string.preferences).equals(title))continue;
                 boolean notification=owner.getString(R.string.notification_mode).equals(title);if(tab==3?!(play||notification):(play||notification))continue;
-                action(title,false,true,null,()->select(c,PreviewPlaybackMenus::renderTab,-1,false));
+                if(tab==2&&owner.getString(R.string.pref_format_mode_title).equals(title)){rows=trackRows;heading("Format");addNative(c,true,false);}else {if(tab==2)rows=adjustmentRows;action(title,false,true,null,()->select(c,PreviewPlaybackMenus::renderTab,-1,false));}
             }
         }
-        if(rows.getChildCount()==0)heading("No available options");
+        if(trackRows!=null)rows=trackRows;if(rows.getChildCount()==0&&(adjustmentRows==null||adjustmentRows.getChildCount()==0))heading("No available options");
     }
     private static void select(TVCardView selected,Runnable parent,int focus,boolean other){
         clear();backAction=parent;restoreParent=()->select(selected,parent,focus,other);addNative(selected,false,other);if(focus>=0&&focus<rows.getChildCount())rows.getChildAt(focus).requestFocus();else focusContent();
     }
     private static void addNative(TVCardView selected,boolean root,boolean other){
-        liveCard=selected;TVMenu menu=selected.previewMenu();if(menu==null||menu.getChildCount()==0){heading(tab==1?"No audio tracks":"No available options");return;}
+        liveCard=selected;TVMenu menu=selected.previewMenu();if(menu==null||menu.getChildCount()==0){heading(tab==0?"No audio tracks":"No available options");return;}
         boolean subs=owner.getString(R.string.menu_subtitles).equals(selected.previewTitle()),audio=owner.getString(R.string.menu_audio).equals(selected.previewTitle());boolean hasOther=false;String last="";
-        for(int i=0;i<menu.getChildCount();i++){
-            View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
+        List<View> items=new ArrayList<>();for(int i=0;i<menu.getChildCount();i++)items.add(menu.getChildAt(i));
+        if(audio)items.sort(Comparator.comparingInt(PreviewPlaybackMenus::audioGroup));
+        for(View view:items){if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
             if(audio&&owner.getString(R.string.player_pref_audio_speed_title).equals(item.getText()))continue;
             boolean otherTrack=subs&&Boolean.FALSE.equals(item.getTag());if(otherTrack)hasOther=true;if(other?!otherTrack:otherTrack)continue;
             String label=androidx.core.text.HtmlCompat.fromHtml(item.getText(),androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
             if(subs&&owner.getString(R.string.get_subtitles_online).equals(item.getText()))label="Download Subtitles";
             if(subs&&owner.getString(R.string.get_subtitles_on_drive).equals(item.getText()))label="Choose Subtitles";
             if(subs&&owner.getString(R.string.menu_player_settings).equals(item.getText()))label="Subtitle Appearance";
-            if(subs||audio){String group=(item.findViewById(R.id.info_text) instanceof android.widget.Checkable)?(audio&&item.getText().equals(owner.getString(R.string.pref_audio_filt_title))||item.getText().equals(owner.getString(R.string.pref_audio_filt_night_mode))||item.getText().equals(owner.getString(R.string.spatialization_capabilities))?"Enhancements":"Tracks"):label.contains("Subtitles")&&!label.equals("Subtitle Appearance")?"Add subtitles":"Timing & appearance";if(!group.equals(last)){heading(group);last=group;}}
+            if(subs||audio){String group=(item.findViewById(R.id.info_text) instanceof android.widget.Checkable)?(audio&&item.getText().equals(owner.getString(R.string.pref_audio_filt_title))||item.getText().equals(owner.getString(R.string.pref_audio_filt_night_mode))||item.getText().equals(owner.getString(R.string.spatialization_capabilities))?"Enhancements":(audio?"Track":"Tracks")):label.contains("Subtitles")&&!label.equals("Subtitle Appearance")?"Add subtitles":audio?"Sync":"Timing & appearance";if(audio&&trackRows!=null)rows=(group.equals("Track")||group.equals("Tracks"))?trackRows:adjustmentRows;if(!group.equals(last)){heading(group);last=group;}}
             Runnable parent=root?PreviewPlaybackMenus::renderTab:restoreParent;nativeRow(item,label,parent);
         }
         if(hasOther&&!other)action("Other languages",false,true,null,()->select(selected,PreviewPlaybackMenus::renderTab,-1,true));
     }
+    private static int audioGroup(View view){
+        if(!(view instanceof TVMenuItem))return 3;TVMenuItem item=(TVMenuItem)view;String label=item.getText();
+        if(label.equals(owner.getString(R.string.pref_audio_filt_title))||label.equals(owner.getString(R.string.pref_audio_filt_night_mode))||label.equals(owner.getString(R.string.spatialization_capabilities)))return 2;
+        return item.findViewById(R.id.info_text) instanceof android.widget.Checkable?0:1;
+    }
     private static void nativeRow(TVMenuItem item,String label,Runnable parent){
         Object language=item.getTag(R.id.preview_track_language);
-        action(label,item.isChecked(),item.isEnabled()&&item.isFocusable(),language instanceof String?(String)language:null,()->{restoreParent=parent;item.previewClick();if(nested==null&&isShowing())refreshChecks();});
+        TextView row=action(label,item.isChecked(),item.isEnabled()&&item.isFocusable(),language instanceof String?(String)language:null,()->{restoreParent=parent;item.previewClick();if(nested==null&&isShowing())refreshChecks();});
+        if(owner.getString(R.string.pref_audio_filt_night_mode).equals(item.getText())){
+            final boolean on=item.isChecked();final int accent=PreviewAccent.color(owner);row.setText(label);row.setContentDescription(label+", "+(on?"On":"Off"));
+            android.graphics.drawable.Drawable indicator=new android.graphics.drawable.Drawable(){final android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);public void draw(android.graphics.Canvas canvas){android.graphics.Rect bounds=getBounds();paint.setColor(on?accent:0xff526174);canvas.drawRoundRect(bounds.left,bounds.top,bounds.right,bounds.bottom,dp(10),dp(10),paint);paint.setColor(android.graphics.Color.WHITE);canvas.drawCircle(on?bounds.right-dp(10):bounds.left+dp(10),bounds.exactCenterY(),dp(7),paint);}public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(android.graphics.ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}};
+            indicator.setBounds(0,0,dp(36),dp(20));row.setCompoundDrawables(null,null,indicator,null);row.setCompoundDrawablePadding(dp(12));
+        }
     }
     private static void refreshChecks(){
         if(owner==null)return;
@@ -130,7 +147,7 @@ final class PreviewPlaybackMenus {
     private static TextView action(String label,boolean checked,boolean enabled,String code,Runnable run){
         int index=rows.getChildCount();TextView text=SharedThreePanel.text(owner,(checked?"✓  ":"")+label+(enabled?"":" — unavailable"),14);text.setTag("playback.option:"+label);text.setFocusable(enabled);text.setFocusableInTouchMode(enabled);text.setEnabled(enabled);text.setGravity(Gravity.CENTER_VERTICAL);text.setPadding(dp(10),dp(9),dp(10),dp(9));text.setMinimumHeight(dp(40));text.setBackground(SharedThreePanel.accentFocus(owner));text.setOnClickListener(v->run.run());
         if(code!=null)PreviewLanguageIcon.apply(text,code);
-        text.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_UP){View next=FocusFinder.getInstance().findNextFocus(rows,text,View.FOCUS_UP);if(next==null||next==text){tabs.getChildAt(tab).requestFocus();return true;}}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;return false;});rows.addView(text,new LinearLayout.LayoutParams(-1,-2));return text;
+        text.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_UP){ViewGroup scope=text.getParent() instanceof ViewGroup?(ViewGroup)text.getParent():content;View next=FocusFinder.getInstance().findNextFocus(scope,text,View.FOCUS_UP);if(next==null||next==text){tabs.getChildAt(tab).requestFocus();return true;}}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT){View next=FocusFinder.getInstance().findNextFocus(content,text,key==KeyEvent.KEYCODE_DPAD_LEFT?View.FOCUS_LEFT:View.FOCUS_RIGHT);if(next!=null&&next!=text)next.requestFocus();return true;}return false;});rows.addView(text,new LinearLayout.LayoutParams(-1,-2));return text;
     }
     private static SharedPreferences preferences(){return PreferenceManager.getDefaultSharedPreferences(owner);}
     private static void subtitlePreferences(){
@@ -149,7 +166,7 @@ final class PreviewPlaybackMenus {
         focusContent();
     }
     static void showNested(Activity activity,TVCardDialog card){
-        if(!isShowing()){owner=activity;origin=activity.getCurrentFocus();tab=0;shell();}
+        if(!isShowing()){owner=activity;origin=activity.getCurrentFocus();tab=1;shell();}
         Runnable parent=restoreParent;flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();
         if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);
         card.setAlpha(1f);card.setPadding(0,0,0,0);card.setBackgroundColor(android.graphics.Color.TRANSPARENT);compact(card,activity);nested=card;

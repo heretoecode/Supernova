@@ -93,4 +93,21 @@ public class SettingsWorkspaceTest {
         save(name+"-grid");workspace.open(0,"Playback");layout();save(name+"-playback");
     }
     private void save(String name)throws Exception{android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(root.getWidth(),root.getHeight(),android.graphics.Bitmap.Config.ARGB_8888);root.draw(new android.graphics.Canvas(image));java.io.File file=new java.io.File("build/reports/settings-0143/"+name+".png");file.getParentFile().mkdirs();try(java.io.FileOutputStream out=new java.io.FileOutputStream(file)){image.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out);}image.recycle();}
+    @Test public void overviewUsesEqualGuttersAndPurposeSpecificAudioCopy(){
+        View first=tagged("settings.grid.0"),secondRow=tagged("settings.grid.4");
+        int horizontal=((LinearLayout.LayoutParams)first.getLayoutParams()).rightMargin;
+        int vertical=((LinearLayout.LayoutParams)((View)first.getParent()).getLayoutParams()).bottomMargin;
+        assertEquals(horizontal,vertical);
+        workspace.open(1,"Audio output & tracks");layout();
+        assertEquals("Configure audio output, playback compatibility and preferred audio tracks.",
+            (String)ReflectionHelpers.callInstanceMethod(workspace,"sectionDescription"));
+    }
+    @Test public void switchThumbStaysCircularWhenCompatAssignsTallTrackBounds(){
+        SettingsSwitchThumb thumb=new SettingsSwitchThumb(host.get());int diameter=thumb.getIntrinsicWidth();
+        android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(diameter,diameter*2,android.graphics.Bitmap.Config.ARGB_8888);
+        thumb.setBounds(0,0,diameter,diameter*2);thumb.draw(new android.graphics.Canvas(image));
+        assertEquals(0,android.graphics.Color.alpha(image.getPixel(diameter/2,0)));
+        assertEquals(255,android.graphics.Color.alpha(image.getPixel(diameter/2,diameter)));
+        assertEquals(0,android.graphics.Color.alpha(image.getPixel(diameter/2,diameter*2-1)));image.recycle();
+    }
 }

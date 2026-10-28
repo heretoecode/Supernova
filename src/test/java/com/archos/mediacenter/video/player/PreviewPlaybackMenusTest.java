@@ -25,7 +25,7 @@ public class PreviewPlaybackMenusTest {
     TextView option(String label){return dialog().getWindow().getDecorView().findViewWithTag("playback.option:"+label);}
     @Test public void exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries(){
         PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);View root=dialog().getWindow().getDecorView();
-        for(int i=0;i<4;i++){TextView tab=root.findViewWithTag("playback.tab:"+i);assertEquals(new String[]{"Subtitles","Audio","Display","Playback"}[i],tab.getText());assertTrue(tab.getParent() instanceof LinearLayout);assertEquals(LinearLayout.HORIZONTAL,((LinearLayout)tab.getParent()).getOrientation());tab.requestFocus();assertTrue(tab.isSelected());assertNull(option("Technical Information"));assertNull(option("Report a Problem"));}
+        for(int i=0;i<4;i++){TextView tab=root.findViewWithTag("playback.tab:"+i);assertEquals(new String[]{"Audio","Subtitles","Video","More"}[i],tab.getText());assertTrue(tab.getParent() instanceof LinearLayout);assertEquals(LinearLayout.HORIZONTAL,((LinearLayout)tab.getParent()).getOrientation());tab.requestFocus();assertTrue(tab.isSelected());assertNull(option("Technical Information"));assertNull(option("Report a Problem"));}
         assertTrue(PreviewPlaybackMenus.back());assertFalse(PreviewPlaybackMenus.isShowing());assertTrue(opener.hasFocus());
     }
     @Test public void trackChangeRebuildsChecksAndKeepsSameWindow(){
@@ -60,5 +60,22 @@ public class PreviewPlaybackMenusTest {
     }
     @Test public void subtitlePreferencesStayInsidePlaybackAndPersist(){
         PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);Dialog original=dialog();option("Subtitles by Default").performClick();assertTrue(androidx.preference.PreferenceManager.getDefaultSharedPreferences(host).getBoolean("subtitles_hide_default",false));assertFalse(option("Reading language").isEnabled());option("Download languages").performClick();assertSame(original,dialog());assertTrue(PreviewPlaybackMenus.back());assertNotNull(option("Prepare Subtitle Searches"));
+    }
+    @Test public void videoFormatsAreInlineWithOtherControlsInTheirOwnColumn(){
+        TVMenu format=new TVMenu(host);format.createAndAddTVMenuItem("Original",true,true);format.createAndAddTVMenuItem("Fullscreen",true,false);
+        TVCardView formats=mock(TVCardView.class),filters=mock(TVCardView.class);
+        when(formats.previewTitle()).thenReturn(host.getString(R.string.pref_format_mode_title));when(formats.previewMenu()).thenReturn(format);
+        when(filters.previewTitle()).thenReturn("Video filters");TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Arrays.asList(formats,filters));
+        PreviewPlaybackMenus.show(host,adapter,null);dialog().getWindow().getDecorView().findViewWithTag("playback.tab:2").performClick();
+        assertNull("No intermediate Format submenu",option(host.getString(R.string.pref_format_mode_title)));
+        assertNotNull(option("Original"));assertNotNull(option("Fullscreen"));assertNotNull(option("Video filters"));
+        assertNotSame(option("Original").getParent(),option("Video filters").getParent());
+    }
+    @Test public void audioColumnsSupportRightThenUpWithoutSearchingAnUnrelatedRoot(){
+        TVMenu menu=new TVMenu(host);menu.createAndAddTVMenuItem("English",true,true);String delay=host.getString(R.string.player_pref_audio_delay_title);menu.createAndAddTVMenuItem(delay,false,false);
+        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_audio),menu),host.getString(R.string.menu_audio));
+        View root=dialog().getWindow().getDecorView();int width=dialog().getWindow().getAttributes().width,height=dialog().getWindow().getAttributes().height;root.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));root.layout(0,0,width,height);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        option("English").requestFocus();option("English").dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertTrue(option(delay).hasFocus());
+        option(delay).dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertTrue(root.findViewWithTag("playback.tab:0").hasFocus());
     }
 }

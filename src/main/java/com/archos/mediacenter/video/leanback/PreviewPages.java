@@ -78,7 +78,7 @@ public final class PreviewPages extends FrameLayout {
         if(cells.get(pos).type==RAIL){List<Entry> entries=(List<Entry>)cells.get(pos).value;for(int i=0;i<entries.size();i++)if(entries.get(i).key().equals(a.child)){a.inner=i;break;}}
         anchors[tab]=a;
     }
-    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();scheduleCentre();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);}}}}
+    @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);if(list!=null){rememberFocus();scheduleCentre();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){artworkKeys[tab]=((Entry)cells.get(p).value).key();lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(lastArtwork[tab]);}}}}
 
     private void scheduleCentre(){if(list==null||tab!=1&&tab!=2)return;list.removeCallbacks(centreLibraryRow);list.postOnAnimation(centreLibraryRow);}
     private final Runnable centreLibraryRow=this::centreFocusedLibraryRow;
@@ -100,6 +100,7 @@ public final class PreviewPages extends FrameLayout {
         if(sharedBrowser!=null&&sharedBrowser.isShown())return sharedBrowser.browser().focusOverview();
         if(restoringFocus)return false;
         if(anchors[tab]!=null){holdFocus();restoreFocus();return true;}
+        if((tab==1||tab==2)&&focusFromNavigation())return true;
         return super.onRequestFocusInDescendants(direction,rect);
     }
     private static boolean libraryControl(View view){
@@ -179,6 +180,7 @@ public final class PreviewPages extends FrameLayout {
         renderFeatured();
     }
     private final android.net.Uri[] lastArtwork=new android.net.Uri[4];
+    private final String[] artworkKeys=new String[4];
     private final Map<String,String> featuredReasons=new HashMap<>();
     private Snapshot heroPoolSnapshot;
     private PreviewDiscovery heroPoolDiscovery;
@@ -299,8 +301,8 @@ public final class PreviewPages extends FrameLayout {
     private void requestDiscovery(){if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext())||requestedDiscovery||!isAttachedToWindow()||snapshot.movies.isEmpty()&&snapshot.shows.isEmpty())return;requestedDiscovery=true;
         worker=java.util.concurrent.Executors.newSingleThreadExecutor();worker.execute(()->{try{PreviewDiscovery result=PreviewDiscovery.load(getContext().getApplicationContext());post(()->{if(isAttachedToWindow())setDiscovery(result);});}finally{worker.shutdown();}});}
     @Override protected void onDetachedFromWindow(){sourceGeneration++;sourcesLoading=false;removeCallbacks(warmHeroes);for(PreviewFeaturedCard card:heroWindow.values())card.releaseArtwork();heroWindow.clear();removeCallbacks(rotateFeatured);heroClock.suspend();heroOwnsHorizontal=false;carouselGeneration++;removeCallbacks(providerRefresh);removeCallbacks(importRefresh);if(worker!=null)worker.shutdownNow();preferences.unregisterOnSharedPreferenceChangeListener(homeSettings);preferences.unregisterOnSharedPreferenceChangeListener(providerSettings);super.onDetachedFromWindow();}
-    private Entry featured(){List<Entry> entries=tab==1?snapshot.movies:tab==2?snapshot.shows:featuredCandidates();return entries.isEmpty()?null:entries.get(Math.floorMod(featuredIndex,entries.size()));}
-    private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(lastArtwork[tab]!=null){artwork.accept(lastArtwork[tab]);return;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==0||tab==3||entry==null?null:entry.backdrop);}
+    private Entry featured(){List<Entry> entries=tab==1||tab==2?filtered():featuredCandidates();return entries.isEmpty()?null:entries.get(tab==1||tab==2?0:Math.floorMod(featuredIndex,entries.size()));}
+    private void updateArtwork(){if((tab==1||tab==2)&&loaded){if(artworkKeys[tab]!=null){for(Entry selected:filtered())if(artworkKeys[tab].equals(selected.key())){lastArtwork[tab]=selected.backdrop;artwork.accept(selected.backdrop);return;}artworkKeys[tab]=null;lastArtwork[tab]=null;}Entry first=featured();artwork.accept(first==null?null:first.backdrop);return;}Entry entry=featured();artwork.accept(tab==0||tab==3||entry==null?null:entry.backdrop);}
     public static String displayName(Entry e){return e.media instanceof Episode?((Episode)e.media).getShowName():e.media.getName();}
     private void open(Entry e,View v){rememberFocus();if(anchors[tab]!=null)anchors[tab].token=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(v,"details");click.open(new Presenter.ViewHolder(v),e.media);}
     private void play(Entry e,View v){

@@ -49,6 +49,7 @@ public final class PreviewLibraryScan {
     }
     public static synchronized void request(Context context){
         install(context);Context app=context.getApplicationContext();
+        if(active())return;
         if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(app))return;
         LinkedHashSet<String> roots=new LinkedHashSet<>();
         for(String root:androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).getStringSet("supernova_library_roots",Collections.emptySet())){android.net.Uri uri=android.net.Uri.parse(root);if("file".equals(uri.getScheme())&&uri.getPath()!=null)roots.add(uri.getPath());}
@@ -62,7 +63,7 @@ public final class PreviewLibraryScan {
         String origin=Arrays.asList("manual","startup","resume","scheduled").contains(requestedTrigger)?requestedTrigger:"unknown";
         com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler.request(context,origin);
         // Do not confuse metadata/import activity with an active network traversal.
-        boolean busy=NetworkScannerServiceVideo.isScannerAlive()||com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()>0;
+        boolean busy=active();
         if(busy){Diagnostics.event("scan_request_coalesced","operation_id",operation,"trigger",origin);return;}
         finishOperation("superseded");requestedAt=SystemClock.elapsedRealtime();operation=Diagnostics.operation("library_scan");operationEnded=false;phase="queued";trigger=origin;checked=added=updated=completed=0;progress.clear();sourceLocation=sourceId="";
         sourcesTotal=-1;metadataOutcome="unknown";
@@ -84,6 +85,7 @@ public final class PreviewLibraryScan {
         Diagnostics.event("scan_operation_terminal","operation_id",operation,"reason",reason);
         Diagnostics.finishOperation(operation,"library_scan",requestedAt);
     }
+    public static synchronized boolean active(){return !operationEnded&&phase.equals("queued")||NetworkScannerServiceVideo.isScannerAlive()||com.archos.mediascraper.AutoScrapeService.getNetworkScanCount()>0;}
     public static boolean building() {
         return ImportState.VIDEO.isInitialImport()||ImportState.VIDEO.isRegularImport()
             ||NetworkScannerReceiver.isScannerWorking()||LoaderUtils.getScrapeInProgress();

@@ -8,19 +8,46 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.143",
-    "version_code": 143,
-    "date": "2026-10-27",
-    "kind": "Development / Shield QA candidate \u2014 physical acceptance pending",
+    "version": "0.144",
+    "version_code": 144,
+    "date": "2026-10-28",
+    "kind": "Development candidate \u2014 validation and physical acceptance pending",
     "notes": [
-      "New Settings: approved eight-category landing grid and consistent two-column category pages using the original Supernova background and branding.",
-      "Preserves audited preferences, runtime choices, device/account gates, service accounts, logical backup/restore, diagnostics, source ownership and About disclosures.",
-      "Stable provider multi-selection focus and immediate Subtitles by Default dependency updates; retained preference values and service handlers.",
-      "Details: no Language globe, increased Cast/Crew row spacing, stable incremental metadata/artwork, and read-only TMDB movie/TV reviews in Reception.",
-      "Automated validation and signed delivery evidence are recorded separately. Physical NVIDIA Shield, real account/provider, output-chain and upgrade acceptance remain pending. This is a test build, not a public/main release."
+      "WebDAV missing-file deletion and complete-scan reconciliation safety.",
+      "Library artwork follows the active displayed page and ignores stale asynchronous results.",
+      "Prominent Scan Library action with queued-request coalescing.",
+      "Settings focus-only rows, shared switches, equal gutters and purpose-specific copy.",
+      "Playback Settings structure, inline video formats and raised HUD with seek pointer.",
+      "Details ratings retained; written review entry removed; single-line metadata spacing."
     ]
   },
   "history": [
+    {
+      "version": "0.143",
+      "version_code": 143,
+      "date": "2026-10-27",
+      "kind": "Development / Shield QA candidate \u2014 physical acceptance pending",
+      "notes": [
+        "New Settings: approved eight-category landing grid and consistent two-column category pages using the original Supernova background and branding.",
+        "Preserves audited preferences, runtime choices, device/account gates, service accounts, logical backup/restore, diagnostics, source ownership and About disclosures.",
+        "Stable provider multi-selection focus and immediate Subtitles by Default dependency updates; retained preference values and service handlers.",
+        "Details: no Language globe, increased Cast/Crew row spacing, stable incremental metadata/artwork, and read-only TMDB movie/TV reviews in Reception.",
+        "Automated validation and signed delivery evidence are recorded separately. Physical NVIDIA Shield, real account/provider, output-chain and upgrade acceptance remain pending. This is a test build, not a public/main release."
+      ],
+      "source_sha": "7b826443363af00b236e5b6af309046456d719df",
+      "evidence": "docs/0.143/SIGNED_QA_DELIVERY.json",
+      "apks": [
+        {
+          "sha256": "7885f505eba0d6d317e9d10178d7cd2853e8ba0b00d9dabfbe8648f14692ec55",
+          "size": 87936033,
+          "url": "https://drive.google.com/file/d/1b02zx7zlseN5eJQNqol1OlTp0CejPAU0/view",
+          "filename": "Supernova_0.143.apk"
+        }
+      ],
+      "recorded_binary_verification": "docs/0.143/SIGNED_QA_DELIVERY.json",
+      "archive_digest_verified": false,
+      "run_id": 40575517211
+    },
     {
       "version": "0.142",
       "version_code": 142,
