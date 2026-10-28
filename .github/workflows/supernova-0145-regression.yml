@@ -1,6 +1,12 @@
 name: Supernova 0.145 Java regressions (not native conformance)
 on:
   workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Regression selection; focused ports do not clear full conformance'
+        type: choice
+        options: [all, ports]
+        default: all
   push:
     branches: [codex/supernova-0.145-maintenance-2026-10-28]
     paths: [.github/workflows/supernova-0145-regression.yml]
@@ -94,7 +100,11 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'ndk;29.0.14206865'
           cd nova/Video
           chmod +x gradlew
-          ./gradlew testNoamazonReleaseUnitTest lintNoamazonRelease --continue \
+          test_args=()
+          if [[ "${{ inputs.suite }}" == "ports" ]]; then
+            test_args=(--tests '*StorageWriteAccessTest' --tests '*SubtitlePauseTimingTest' --tests '*PlaybackNetworkRetryTest' --tests '*MediaUtilsSubsDirTest')
+          fi
+          ./gradlew testNoamazonReleaseUnitTest "${test_args[@]}" lintNoamazonRelease --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild
       - name: Upload test reports only; no APK or native clearance
         if: always()
