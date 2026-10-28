@@ -1,0 +1,136 @@
+{
+  "schema": 1,
+  "app_min_sdk": 23,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86",
+    "x86_64"
+  ],
+  "sources": [
+    {
+      "name": "ffmpeg",
+      "commit": "946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+      "tag": "n9.0.2",
+      "url": "https://codeload.github.com/FFmpeg/FFmpeg/tar.gz/946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+      "sha256": "0aa2b1de2a5698b20a23e93d539a9a8e82ca0117496c5bdf05d198805f42bb3b"
+    },
+    {
+      "name": "openssl",
+      "commit": "2f4e3a5fec05394068cfa7379890ab552483a8a6",
+      "tag": "openssl-4.1.0",
+      "url": "https://codeload.github.com/openssl/openssl/tar.gz/2f4e3a5fec05394068cfa7379890ab552483a8a6",
+      "sha256": "3eb00d3dbf2b3393dcf1cb82127a3d19ed911cec4e8315fe2ca20f3038b5ddde"
+    },
+    {
+      "name": "libass",
+      "commit": "4a05d8127f525943ebf45fdc6497c9e665947f0d",
+      "tag": "0.17.5",
+      "url": "https://codeload.github.com/libass/libass/tar.gz/4a05d8127f525943ebf45fdc6497c9e665947f0d",
+      "sha256": "3546ecc8748c62e100a9dd18e52ea2d17d7facedf89cfcad97000ad60b1bce2b"
+    },
+    {
+      "name": "zlib",
+      "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+      "tag": "v1.3.2",
+      "url": "https://codeload.github.com/madler/zlib/tar.gz/da607da739fa6047df13e66a2af6b8bec7c2a498",
+      "sha256": "b9258cf6254e7f7c37f1cd61dba943a1c5ea3cff5718c789834dac359094f5f7"
+    },
+    {
+      "name": "libpng",
+      "commit": "cd952f49f95bb27154ae77dbb103032d95f6e580",
+      "tag": "v1.6.59",
+      "url": "https://codeload.github.com/pnggroup/libpng/tar.gz/cd952f49f95bb27154ae77dbb103032d95f6e580",
+      "sha256": "ef1bccad2b2a58eb3c09e06ffe3b72b8604abda8b5011e4c4bb5391989040f26"
+    },
+    {
+      "name": "libxml2",
+      "commit": "96498992efa48d52b0e8b83058bd88dbdaf153c1",
+      "tag": "v2.15.4",
+      "url": "https://codeload.github.com/GNOME/libxml2/tar.gz/96498992efa48d52b0e8b83058bd88dbdaf153c1",
+      "sha256": "3fa264c6117569780ea0f6447d98c77f29b285cfd665ced2ec7da4f51183607f"
+    },
+    {
+      "name": "freetype",
+      "commit": "0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+      "tag": "VER-2-14-3",
+      "url": "https://codeload.github.com/freetype/freetype/tar.gz/0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+      "sha256": "11cd478953fc1d382f20a233b8e2aed6c31b47cbf0568c4bdb3334bcc1550698"
+    },
+    {
+      "name": "fribidi",
+      "commit": "b93119f5fdc7ea47672cc304c1455ffa6dfe7536",
+      "tag": "v1.0.17",
+      "url": "https://codeload.github.com/fribidi/fribidi/tar.gz/b93119f5fdc7ea47672cc304c1455ffa6dfe7536",
+      "sha256": "f309091695b3b0f2fd5f9caa7941d906ab08df9ab8f9931bf5ee674bc00b489b"
+    },
+    {
+      "name": "harfbuzz",
+      "commit": "35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+      "tag": "15.0.0",
+      "url": "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+      "sha256": "f4d39fc3216d82d01ba2a18ba03a05b69f60510585b764784224a5f51f372a38"
+    },
+    {
+      "name": "libunibreak",
+      "commit": "28a2756b864c343f438cd22537d49d394d4666a5",
+      "tag": "libunibreak_8_0",
+      "url": "https://codeload.github.com/adah1972/libunibreak/tar.gz/28a2756b864c343f438cd22537d49d394d4666a5",
+      "sha256": "4d0714d29207bfcaabe2a9376f83330bfb477673ecfb53994e47bd6d07738581"
+    },
+    {
+      "name": "fontconfig",
+      "commit": "0f236723a3c26bd9745e32ba2b3ee21e5f809295",
+      "tag": "2.18.3",
+      "git_repository": "https://gitlab.freedesktop.org/fontconfig/fontconfig.git"
+    },
+    {
+      "name": "opus",
+      "commit": "084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+      "tag": "084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+      "url": "https://codeload.github.com/xiph/opus/tar.gz/084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+      "sha256": "7c3e148376522b2ec9df636e54137d6f76ae0c585c3b01ed86b58019c34ff1fc"
+    },
+    {
+      "name": "dav1d",
+      "commit": "54706fc6bc0cdecab7e9593974a4039cc038fca7",
+      "tag": "1.5.4",
+      "url": "https://codeload.github.com/videolan/dav1d/tar.gz/54706fc6bc0cdecab7e9593974a4039cc038fca7",
+      "sha256": "9edb11a2108b375cc58370354e705feebc93430bb780130363815c1e1ac0c250"
+    },
+    {
+      "name": "libmysofa",
+      "commit": "6cc5b15a73e9bd97810d03767082edda7f315881",
+      "tag": "v1.3.5",
+      "url": "https://codeload.github.com/hoene/libmysofa/tar.gz/6cc5b15a73e9bd97810d03767082edda7f315881",
+      "sha256": "cf047bd684d28dca23d7d5b662c538b24392c620719f15d642594fc1405e24f6"
+    },
+    {
+      "name": "dlg",
+      "commit": "395ccad2c1e0daae535c4d20bb0a3f2424648e17",
+      "tag": null,
+      "url": "https://codeload.github.com/nyorain/dlg/tar.gz/395ccad2c1e0daae535c4d20bb0a3f2424648e17",
+      "sha256": "263a4a3777d9839e34cd41db988310659e0c00eab37beb7aedd30511a460133b"
+    }
+  ],
+  "ndk": {
+    "url": "https://dl.google.com/android/repository/android-ndk-r30-beta1-linux.zip",
+    "sha256": "d90fefe472186aa999942a76cb595537548aafdb449494ecd2cf455c9b3f95a5",
+    "name": "ndk"
+  },
+  "opus_git_describe": "v1.6.1-84-g084bb732",
+  "tls_policy": "Keep FFmpeg9 peer and hostname verification; no upstream TLS-disable patch",
+  "status": "build candidate, not yet runtime cleared",
+  "recipes": {
+    "acquire-supernova146-native.py": "27b8f2b83d698eb624710ada25ceed01efdfd6559215b71e86c8c1513516b6db",
+    "build-supernova146-native-stack.py": "97daa9131a7cfd9ac2426c40dbc0596965fb5112368f41cf3b7d5a08ac4fd53f",
+    "build-supernova146-openssl.py": "51e25f4713718d3a0fd1d19ac1306569caa41686c72d20036daa19f2d0e76041",
+    "build-supernova146-subtitles.py": "ceec059f5088385888697451edf9b9d0c5ffb693a0d4c7ab51f7e5331cf20699",
+    "build-supernova146-codec-dependencies.py": "20eb2520770d5f5bda4e2880d50e644a40247d316fbbfe6b3c58415fb206ae55",
+    "build-supernova146-ffmpeg.py": "c75d404477f3e91acea0f8d5d79dd63f3a6f1c0f927f947d00fbb57fdb739ff6",
+    "opus-supernova146-cmake.patch": "de9233ce58145527a473427097d897950d7ea08de8c2115bc59d348f0f46c019",
+    "ffmpeg-supernova146-opus.patch": "2263725ab111a1b4a472f00c4ee22f0eb6ae295b84d34a92aed3be05eb2735d8",
+    "ffmpeg-supernova146-atempo.patch": "cde2a563462060cf59d0f2c62de44664f9adc416957b939ea2c55bd37dc8d3d8",
+    "ffmpeg-supernova146-sofalizer.patch": "23c077087c9346260794d5cb98bec441144e414370b6d70fb008b46ba764eb4d"
+  }
+}

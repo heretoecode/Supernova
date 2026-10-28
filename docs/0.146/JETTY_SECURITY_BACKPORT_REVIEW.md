@@ -1,0 +1,18 @@
+# Jetty0.146 source remediation candidate
+
+The candidate replaces all seven9.2.30 modules with full-module rebuilds from Jetty9.4.x commit `89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b`, based on public9.4.58, plus the explicit locked patch. No duplicate-class overlay, TLS bypass, API-floor increase or advisory suppression is used. The official upstream coordinate/version remains9.4.58 for scanner visibility. `META-INF/SUPERNOVA-BACKPORT.json` records the actual source and patch. The exclusive Gradle repository prevents accidental resolution of vanilla9.4.58 jars.
+
+Fresh OSV queries of all seven9.4.58 coordinates no longer report eight of the nine0.145 findings. The ninth, CVE2024-6763, and three newer findings remain on the unmodified version and are addressed in the candidate source below. OSV still reports those version findings: source backport status must accompany the SBOM rather than pretending the upstream coordinate is fixed.
+
+| Finding | Concrete candidate change and evidence |
+|---|---|
+| CVE2024-6763 / GHSA-qh8g-58pp-2wxh | Retain upstream authority character/IPv6 validation, complete terminal percent-encoding checks and user-info/password-vs-port parsing following upstream PR12012. Direct HttpURI negative control accepts `http://host%`; patched test rejects malformed host/port/IPv6/encoding while preserving valid IPv6, encoded paths and user-info. |
+| CVE2026-2332 / GHSA-355h-qmc2-wpwf | Backport the fixed modern chunk-extension state machine to Java8 and the bounded9.4 int chunk representation. Validate token names/values, quoted text/escapes and overflow across every buffer split. Unmodified9.4.58 accepts the unterminated quote; patched tests reject it before message completion. |
+| CVE2026-6790 / GHSA-7p3p-8qv8-m2vh | Reject conflicting absolute request-target authority and Host before servlet dispatch, comparing case-insensitive hosts and normalized default ports. Unmodified real LocalConnector returns200 for mismatched authorities; patched transport returns400 and zero servlet calls. Matching/default-port forms remain accepted. |
+| CVE2026-10050 / GHSA-2fvj-hgj9-j2gr | Both server and client Digest reject non-Latin1 inputs before hashing, preventing lossy replacement with literal question marks. Valid Latin1 credentials remain supported. No unsupported UTF8 Digest feature is claimed. Separate negative controls reproduce server password collision and client header emission; patched tests reject both. |
+
+`Jetty146BackportTest` passes nine cases, including thousands of chunk-input segmentation checks and concurrent counter updates. All five vulnerability negative controls fail with the expected AssertionError against unmodified9.4.58, with only the API23 helper classes supplied to allow the same test class to load; none fails because of a missing class. The inherited11 actual TCP/servlet/jUPnP tests also pass against the rebuilt modules.
+
+JDK striped counters are replaced with AtomicLong add/max helpers because Android23 lacks LongAdder/LongAccumulator. No public Jetty signature is changed. The concurrency test verifies40000 updates, maximum and reset behavior. This trades striped-counter throughput for compatibility; actual workload performance and Android23 class loading still need measurement.
+
+**Not yet cleared:** Android23 framework execution, the full current jUPnP fork integration, IPv6 socket/provider interoperability, packaged-APK hashes/legal inventory and independent source review. The current tests establish specific reproduced fixes, not general release acceptance. The0.145 boundary protections remain applied.
