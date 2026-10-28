@@ -36,5 +36,7 @@
   },
   "original_wrapper_version": "6.2.2",
   "official_original_wrapper_sha256": "96f793a18e056c23ffeec67c1f3bb8eccff5a4a407fc9ceac183527e7eedf4b6",
-  "original_wrapper_hash_verified": true
+  "original_wrapper_hash_verified": true,
+  "tracked_wrapper_reads_checksum_property": true,
+  "tracked_wrapper_implements_download_checksum_verification": true
 }

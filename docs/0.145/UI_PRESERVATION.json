@@ -1,0 +1,54 @@
+{
+  "baseline": "43cef0529518d406e11b3ab69e61abded07a12ad",
+  "scope": "Git object equality establishes preserved source/assets only; not visual, scaling, runtime-focus or physical Shield acceptance.",
+  "objects": [
+    {
+      "path": "res",
+      "baseline_object": "89605b1f6a55adc870aaa8e46890d36d04fbec48",
+      "candidate_object": "89605b1f6a55adc870aaa8e46890d36d04fbec48",
+      "identical": true
+    },
+    {
+      "path": "assets/branding",
+      "baseline_object": "9c163b23068f662f1d78b98aee9927a4dc64f8b5",
+      "candidate_object": "9c163b23068f662f1d78b98aee9927a4dc64f8b5",
+      "identical": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+      "baseline_object": "cb1f28086ae7ea3e3bafb8f34167168e1eb0a67e",
+      "candidate_object": "cb1f28086ae7ea3e3bafb8f34167168e1eb0a67e",
+      "identical": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewBackdrop.java",
+      "baseline_object": "ee77ea0a92f11072e83d3a45ac2ce7f592984768",
+      "candidate_object": "ee77ea0a92f11072e83d3a45ac2ce7f592984768",
+      "identical": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspace.java",
+      "baseline_object": "c88a8b237ee8920b16ed9479d5b5a4a468220b88",
+      "candidate_object": "c88a8b237ee8920b16ed9479d5b5a4a468220b88",
+      "identical": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java",
+      "baseline_object": "2dc0066ed7e821e283c56e9dc47f872aeba590c2",
+      "candidate_object": "2dc0066ed7e821e283c56e9dc47f872aeba590c2",
+      "identical": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsFragment.java",
+      "baseline_object": "8e20a768c95e2a6b231221de66b0dba806ce1558",
+      "candidate_object": "8e20a768c95e2a6b231221de66b0dba806ce1558",
+      "identical": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PlayerController.java",
+      "baseline_object": "0cc5d3193e284313cb7f856ee98215e9d2bf638c",
+      "candidate_object": "0cc5d3193e284313cb7f856ee98215e9d2bf638c",
+      "identical": true
+    }
+  ]
+}
