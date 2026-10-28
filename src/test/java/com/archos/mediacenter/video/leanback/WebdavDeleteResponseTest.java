@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class WebdavDeleteResponseTest {
  @Test public void realDeleteAcceptsOnlySuccessOr404()throws Exception{
-  WebdavUtils.getInstance(RuntimeEnvironment.getApplication());
+  WebdavUtils.getInstance(RuntimeEnvironment.getApplication());com.archos.environment.ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
   for(int status:new int[]{204,404,401,403,405,423,500,503}){
    try(ServerSocket server=new ServerSocket(0,8,InetAddress.getByName("127.0.0.1"))){
     java.util.concurrent.atomic.AtomicReference<String> method=new java.util.concurrent.atomic.AtomicReference<>();
@@ -26,7 +26,10 @@ public class WebdavDeleteResponseTest {
     }catch(IOException stopped){if(!server.isClosed())throw new RuntimeException(stopped);}},"webdav-response-fixture");responder.setDaemon(true);responder.start();
     try{
      WebdavFileEditor editor=new WebdavFileEditor(Uri.parse("webdav://127.0.0.1:"+server.getLocalPort()+"/file.mkv"));
-     try{editor.delete();assertTrue("Unexpected success "+status,status==204||status==404);}
+     try{editor.delete();assertTrue("Unexpected success "+status,status==204||status==404);assertEquals(status==404,editor.wasAlreadyAbsent());
+      com.archos.mediacenter.video.browser.Delete deletion=new com.archos.mediacenter.video.browser.Delete(null,RuntimeEnvironment.getApplication());
+      var physical=deletion.getClass().getDeclaredMethod("deletePhysicalFile",android.content.Context.class,Uri.class);physical.setAccessible(true);assertEquals(Boolean.TRUE,physical.invoke(deletion,RuntimeEnvironment.getApplication(),Uri.parse("webdav://127.0.0.1:"+server.getLocalPort()+"/file.mkv")));
+      var absent=deletion.getClass().getDeclaredMethod("sourceWasAbsent");absent.setAccessible(true);assertEquals("Only 404 cleanup must skip surviving sidecars",status==404,absent.invoke(deletion));}
      catch(Exception failure){assertTrue(status!=204&&status!=404);assertEquals(status,((Number)failure.getClass().getMethod("getStatusCode").invoke(failure)).intValue());}
      assertEquals("DELETE",method.get());
     }finally{server.close();responder.join(2000);assertFalse(responder.isAlive());}

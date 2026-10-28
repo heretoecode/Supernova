@@ -1,0 +1,839 @@
+{
+  "initial_focused": {
+    "cases": [
+      {
+        "class": "CustomLibraryPageTest",
+        "test": "serializedDraftPreservesBackwardStepEditsAndValidation",
+        "result": "PASSED"
+      },
+      {
+        "class": "CustomLibraryPageTest",
+        "test": "tvWatchedFilterRequiresTheCompleteSeriesRatherThanOneCompletedEpisode",
+        "result": "PASSED"
+      },
+      {
+        "class": "CustomLibraryPageTest",
+        "test": "smartRowDynamicOffFreezesMembershipAndKeepsManualAdditions",
+        "result": "PASSED"
+      },
+      {
+        "class": "CustomLibraryPageTest",
+        "test": "oneSlotSurvivesRenameAndDeleteNeverChangesMedia",
+        "result": "PASSED"
+      },
+      {
+        "class": "CustomLibraryPageTest",
+        "test": "customPageInitialArtworkComesFromDisplayedOrderRatherThanMovies",
+        "result": "PASSED"
+      },
+      {
+        "class": "CustomLibraryPageTest",
+        "test": "genreAnyAllAndWatchedFiltersUseActualLibraryData",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "sourceRefreshPreservesFocusAndUpdatesVolumeRows",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "healthActionEntrySkipsPlainHeading",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "globalEntrySelectsOverviewAndRetainsTheSectionFolderForLaterReturn",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "failedNavigationClearsOldFilesAndRetryIsUnique",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "lateDiscoveryCannotReplaceTheSelectedOverview",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "leftAndRightPreserveDeepFolder",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationHomeRegressionTest",
+        "test": "titleHeroPoolExcludesSequentialEpisodesAndCapsUniqueIndexedTitles",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "cloudAndHealthRemainReachable",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "switchingSectionsRestoresLastFolder",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "absentScanOnReturnPreferenceMatchesRuntimeOffDefault",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "connectionConnectActionScrollsFullyIntoViewWithRemote",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "connectionFormRetainsRailAndAllSupportedFields",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "sixSectionsUseExplicitActivationAndFixedRail",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "overviewHasFourCardsAndTruthfulStatusWithoutQuickActions",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "sortUsesReturnedMetadataEvenWhenProviderDoesNotSort",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142Test",
+        "test": "everySupportedRecoveryAliasKeepsHostPortPath",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationHomeRegressionTest",
+        "test": "remoteCarouselCyclesBothDirectionsOpensSelectedDetailsAndPreservesRows",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationHomeRegressionTest",
+        "test": "actualHomeInputResetsAutomaticCadenceAndKeepsUnderlyingRowOffset",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "rejectedPortraitKeepsDisplayedLandscape",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "sameDecodedImageDoesNotStartAnotherCrossFade",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "failedReplacementKeepsDisplayedArtwork",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationHomeRegressionTest",
+        "test": "homeViewportHasEqualNeighboursSixtyPercentTeaserAndNoBackgroundDuplicate",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationHomeRegressionTest",
+        "test": "ordinaryCardArtworkPaintsPastInsetWhileAcceptedUnitStaysAligned",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationHomeRegressionTest",
+        "test": "productionHeroClockSuspendsOnWindowLossAndDetachAndResetsOnReattachment",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationHomeRegressionTest",
+        "test": "variableLogoProportionsKeepStableMetadataAndSingleAction",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationHomeRegressionTest",
+        "test": "emptyHomeRemainsNavigableAndMovieArtworkStillUsesLibraryBackdrop",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavDeleteResponseTest",
+        "test": "realDeleteAcceptsOnlySuccessOr404",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "corePublishesBeforeOptionalSeasonOrProviderLookups",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "sameTitleArtRequestRetainsDrawableAndNewIdentityClearsIt",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "partialMergeDoesNotEraseKnownDataAndSnapshotsOwnCollections",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "sameInformationRetainsViewAndOldGenerationCannotReplaceNewTitle",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "expandedDetailsPreservesTabFocusWithoutWrittenReviews",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "reviewParsingBoundsContentAndRejectsUntrustedProvenance",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "partialRemoteCacheKeepsAlreadySuppliedMetadata",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "successfulEmptyReviewsDifferFromInvalidPage",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "languageHasNoDrawableAndTextUpdatesKeepPanelAndPeople",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "peopleGridHasSharedGapFourColumnsAndNoFocusStops",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "reviewReaderRetainsContentOnFailedNextPageAndRestoresOpener",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsImprovementsTest",
+        "test": "reviewReaderShowsSuccessfulEmptyState",
+        "result": "PASSED"
+      },
+      {
+        "class": "Network142RenderTest",
+        "test": "actualGlobalShellCapturesAllSectionsAndWebdavStates",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsShieldNavigationTest",
+        "test": "diagnosticLevelDefaultsToCurrentDetailedBehaviorAndRespondsToChanges",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsShieldNavigationTest",
+        "test": "compactBackupKeepsTwoColumnsWithinThePhysicalViewport",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewLibraryReturnTest",
+        "test": "listReturnRetainsExactRowAndViewModeAfterRefresh",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsShieldNavigationTest",
+        "test": "aboutReturnsToGridAndDiagnosticsUsesOnlyItsTwoColumns",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewLibraryReturnTest",
+        "test": "gridReturnRetainsExactItemAndScrolledPositionAfterRefresh",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsShieldNavigationTest",
+        "test": "diagnosticLoggingLevelAndExportAreReachableByRootKeyDispatch",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsShieldNavigationTest",
+        "test": "backupLandingKeepsTwoColumnsAndTwoVerticalActions",
+        "result": "PASSED"
+      },
+      {
+        "class": "Playback141RenderTest",
+        "test": "actualPanelRendersFourTabsAndScrollableSubtitleOptions",
+        "result": "FAILED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "trackRefreshUsesNewCallbacksAndPreservesFocusedTrackAfterInsertion",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "nestedAdjustmentRetainsTabsAndSavesOnBackTabChangeAndProgrammaticClose",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "trackChangeRebuildsChecksAndKeepsSameWindow",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "selectingSecondIndistinguishableTrackKeepsFocusOnItsCheckedRow",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "subtitleAndAudioTracksUseCentralLanguageDrawable",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "downloadAndLocalActionsRetainCallbacks",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "subtitlePreferencesStayInsidePlaybackAndPersist",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "nullListingAndNetworkFailureAreIncomplete",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "depthLimitAndStoppedTraversalCannotAuthorizePruning",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "emptySuccessfulListingIsComplete",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsReferenceRenderTest",
+        "test": "referenceCompositionAt720p",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsReferenceRenderTest",
+        "test": "referenceCompositionAt4k",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsReferenceRenderTest",
+        "test": "populatedGridAt150PercentText",
+        "result": "PASSED"
+      },
+      {
+        "class": "DetailsReferenceRenderTest",
+        "test": "referenceCompositionAt1080p",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "positiveSubtitleProxyImmediatelyUpdatesNativeLanguageDependency",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "externalRestoreReconcilesNativeValuesWithoutReplayingActions",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "render1080p",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "providerInlineChecksKeepRowIdentityGroupAndFocus",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "integrationDisableAndReenableRetainsPolicyAndReconcilesChildren",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "render4k",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "choiceCancelAndAcceptedSelectionRestoreOpenerAndRespectVeto",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "advancedUnlockReparentsNativePreferencesWithoutResettingSavedValues",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "gridHasExactEightCardsNoWrapAndRestoresSelectedCategory",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "overviewUsesEqualGuttersAndPurposeSpecificAudioCopy",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "mapAccountsForAll165DefinitionsWithoutResurrectingHiddenState",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "togglePersistsWithoutMovingFocusAndHiddenRowsRemainAbsent",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "renderEnlargedText",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "navigationStateSurvivesRecreationWithoutReplayingAnAction",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "render720p",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "allCategoriesRenderTheirRealContentAndRestoreGrid",
+        "result": "PASSED"
+      },
+      {
+        "class": "PlaybackAgeOverlayTest",
+        "test": "establishedOutputCannotBeBorrowedFromAnotherLaunchOrMetadataInstance",
+        "result": "PASSED"
+      },
+      {
+        "class": "PlaybackAgeOverlayTest",
+        "test": "missingAndUnratedClassificationsDoNotRender",
+        "result": "PASSED"
+      },
+      {
+        "class": "PlaybackAgeOverlayTest",
+        "test": "changingTitleRequiresANewPlaybackEstablishedSignal",
+        "result": "PASSED"
+      },
+      {
+        "class": "PlaybackAgeOverlayTest",
+        "test": "outputIsRequiredAndDwellExcludesBothTransitions",
+        "result": "PASSED"
+      }
+    ],
+    "passed": 88,
+    "failed": 1,
+    "build_successful": false,
+    "log_sha256": "1667b96758a2a608e65d88e810aabac40120dd26685060b2d2004fa2d6f182a0"
+  },
+  "corrections": {
+    "cases": [
+      {
+        "class": "FoundationVersionTest",
+        "test": "literalCountersNeverRoundOrBecomeNovaSemanticVersions",
+        "result": "PASSED"
+      },
+      {
+        "class": "FoundationVersionTest",
+        "test": "invalidCountersFailWithoutSilentlyChangingIdentity",
+        "result": "PASSED"
+      },
+      {
+        "class": "Playback141RenderTest",
+        "test": "actualPanelRendersFourTabsAndScrollableSubtitleOptions",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "rejectedPortraitKeepsDisplayedLandscape",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "sameDecodedImageDoesNotStartAnotherCrossFade",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "failedReplacementKeepsDisplayedArtwork",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "libraryPageChangesAndFailedReplacementCannotRetainUnrelatedArtwork",
+        "result": "PASSED"
+      },
+      {
+        "class": "TopNavigationTest",
+        "test": "previewCardsResetRecycledStateAndClampProgress",
+        "result": "PASSED"
+      },
+      {
+        "class": "TopNavigationTest",
+        "test": "sectionsDoNotLeakIntoEachOther",
+        "result": "PASSED"
+      },
+      {
+        "class": "TopNavigationTest",
+        "test": "experimentalPlaybackLayoutKeepsNativeControlTypes",
+        "result": "PASSED"
+      },
+      {
+        "class": "TopNavigationTest",
+        "test": "topShellWorksWithNativeBrowseAndCanFocusNavigation",
+        "result": "PASSED"
+      },
+      {
+        "class": "TopNavigationTest",
+        "test": "classicBrowseRetainsItsTitle",
+        "result": "PASSED"
+      },
+      {
+        "class": "TopNavigationTest",
+        "test": "compactNavigationClipsOverflowBeforeTheClockAndRevealsFocusedActions",
+        "result": "PASSED"
+      },
+      {
+        "class": "TopNavigationTest",
+        "test": "renderPreviewHomeAndCheckRemoteTabSelection",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "positiveSubtitleProxyImmediatelyUpdatesNativeLanguageDependency",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "externalRestoreReconcilesNativeValuesWithoutReplayingActions",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "render1080p",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "providerInlineChecksKeepRowIdentityGroupAndFocus",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "integrationDisableAndReenableRetainsPolicyAndReconcilesChildren",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "render4k",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "choiceCancelAndAcceptedSelectionRestoreOpenerAndRespectVeto",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "advancedUnlockReparentsNativePreferencesWithoutResettingSavedValues",
+        "result": "PASSED"
+      },
+      {
+        "class": "PlayerControllerLaunchTest",
+        "test": "preparedDurationCanRenderDuringFirstControllerInitializationAndRecreation",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "gridHasExactEightCardsNoWrapAndRestoresSelectedCategory",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "overviewUsesEqualGuttersAndPurposeSpecificAudioCopy",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "mapAccountsForAll165DefinitionsWithoutResurrectingHiddenState",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "togglePersistsWithoutMovingFocusAndHiddenRowsRemainAbsent",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "renderEnlargedText",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "navigationStateSurvivesRecreationWithoutReplayingAnAction",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "switchThumbStaysCircularWhenCompatAssignsTallTrackBounds",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "render720p",
+        "result": "PASSED"
+      },
+      {
+        "class": "SettingsWorkspaceTest",
+        "test": "allCategoriesRenderTheirRealContentAndRestoreGrid",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "trackRefreshUsesNewCallbacksAndPreservesFocusedTrackAfterInsertion",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "nestedAdjustmentRetainsTabsAndSavesOnBackTabChangeAndProgrammaticClose",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "trackChangeRebuildsChecksAndKeepsSameWindow",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "selectingSecondIndistinguishableTrackKeepsFocusOnItsCheckedRow",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "subtitleAndAudioTracksUseCentralLanguageDrawable",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "downloadAndLocalActionsRetainCallbacks",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "subtitlePreferencesStayInsidePlaybackAndPersist",
+        "result": "PASSED"
+      }
+    ],
+    "passed": 40,
+    "failed": 0,
+    "build_successful": true,
+    "log_sha256": "cc7d601a818de082ad545b8e1c4c647b4c6d2f0727a6c6b8cdfd040a087165b2"
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 1796
+  },
+  "tooling": {
+    "checks": 120,
+    "failures": 0,
+    "log_sha256": "8da4e6b279890b854c2cfb64dadf33153c02d2aa4b107edf85b23480214438c9"
+  },
+  "limits": [
+    "Local runs exclude sibling NDK builds.",
+    "No physical Shield/real provider/account or signed upgrade acceptance.",
+    "Full final-source native/API/Android suite remains in CI; partial runs are not full-suite clearance."
+  ],
+  "playback_artwork_delta": {
+    "cases": [
+      {
+        "class": "PreviewBackdropTest",
+        "test": "rejectedPortraitKeepsDisplayedLandscape",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "sameDecodedImageDoesNotStartAnotherCrossFade",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "failedReplacementKeepsDisplayedArtwork",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "libraryPageChangesAndFailedReplacementCannotRetainUnrelatedArtwork",
+        "result": "PASSED"
+      },
+      {
+        "class": "Playback141RenderTest",
+        "test": "actualPanelRendersFourTabsAndScrollableSubtitleOptions",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "trackRefreshUsesNewCallbacksAndPreservesFocusedTrackAfterInsertion",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "nestedAdjustmentRetainsTabsAndSavesOnBackTabChangeAndProgrammaticClose",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "trackChangeRebuildsChecksAndKeepsSameWindow",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "videoFormatsAreInlineWithOtherControlsInTheirOwnColumn",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "selectingSecondIndistinguishableTrackKeepsFocusOnItsCheckedRow",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "subtitleAndAudioTracksUseCentralLanguageDrawable",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "downloadAndLocalActionsRetainCallbacks",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "subtitlePreferencesStayInsidePlaybackAndPersist",
+        "result": "PASSED"
+      }
+    ],
+    "passed": 14,
+    "failed": 0,
+    "build_successful": true,
+    "log_sha256": "8177e827ec380685f83eee7018e5c922087fb4193ef35a1520ef439ae9819bb4"
+  },
+  "webdav_scope": {
+    "cases": [
+      {
+        "class": "WebdavDeleteResponseTest",
+        "test": "realDeleteAcceptsOnlySuccessOr404",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "nullListingAndNetworkFailureAreIncomplete",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "depthLimitAndStoppedTraversalCannotAuthorizePruning",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "emptySuccessfulListingIsComplete",
+        "result": "PASSED"
+      }
+    ],
+    "passed": 4,
+    "failed": 0,
+    "build_successful": true,
+    "log_sha256": "d312e925c95076bf5bb9062b351e4b4b21a9fd65c13d88b190e967d4fab28a05"
+  },
+  "webdav_selection": {
+    "cases": [
+      {
+        "class": "WebdavReconciliationSelectionTest",
+        "test": "anyListingFailureRetainsAllFiles",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavReconciliationSelectionTest",
+        "test": "completeListingDeletesOnlyMissingFilesAndKeepsExcludedSubtreesAndPeers",
+        "result": "PASSED"
+      }
+    ],
+    "passed": 2,
+    "failed": 0,
+    "build_successful": true,
+    "log_sha256": "a31fc163dd29eeedd381660ca20fb7301eaff8e62fb6e4fc5bdaa1b4098f9b13"
+  },
+  "webdav_absence": {
+    "cases": [
+      {
+        "class": "WebdavDeleteResponseTest",
+        "test": "realDeleteAcceptsOnlySuccessOr404",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavReconciliationSelectionTest",
+        "test": "anyListingFailureRetainsAllFiles",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavReconciliationSelectionTest",
+        "test": "completeListingDeletesOnlyMissingFilesAndKeepsExcludedSubtreesAndPeers",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "nullListingAndNetworkFailureAreIncomplete",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "depthLimitAndStoppedTraversalCannotAuthorizePruning",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "emptySuccessfulListingIsComplete",
+        "result": "PASSED"
+      }
+    ],
+    "passed": 6,
+    "failed": 0,
+    "build_successful": true,
+    "log_sha256": "c9e9c55f4bdf7773ca48b432a69757ad58933944558045c0e246ed781e3f011a"
+  }
+}

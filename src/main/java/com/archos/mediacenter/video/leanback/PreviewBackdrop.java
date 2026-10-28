@@ -44,7 +44,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
             public void onPrepareLoad(Drawable placeholder){}
         };Picasso.get().load(next).resize(1600,900).centerInside().noFade().into(activeTarget);}};pending.run();
     }
-    public void release() { requestSequence++;if(activeTarget!=null)Picasso.get().cancelRequest(activeTarget);activeTarget=null;if(trace!=null)trace.cancelled();handler.removeCallbacksAndMessages(null);if(uri!=null)Picasso.get().cancelRequest(this); bitmap=previous=null; uri=null; }
+    public void release() { loading=false;requestSequence++;if(activeTarget!=null)Picasso.get().cancelRequest(activeTarget);activeTarget=null;if(trace!=null)trace.cancelled();handler.removeCallbacksAndMessages(null);if(uri!=null)Picasso.get().cancelRequest(this); bitmap=previous=null; uri=null; }
     @Override public void draw(Canvas canvas) {
         Rect b=getBounds(); float h=Math.min(b.height(),420*density);
         if(foundationHome){foundationBackground.setBounds(b);foundationBackground.draw(canvas);if(bitmap==null&&previous==null)return;}else canvas.drawColor(0xff0b1b2a);if(!foundationHome&&bitmap==null&&previous==null){android.graphics.drawable.GradientDrawable utility=PreviewAccent.utility(context);utility.setBounds(b);utility.draw(canvas);}

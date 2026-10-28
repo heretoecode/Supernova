@@ -102,7 +102,7 @@ public class Delete {
     }
 
     public void completeSystemDelete(final List<Uri> uris, final boolean isSuccess, final int operationKind, final long deletedFileSize) {
-        if (log.isDebugEnabled()) log.debug("completeSystemDelete: isSuccess {}, kind {}, deletedFileSize {}, uris {}", isSuccess, operationKind, deletedFileSize, uris);
+        if (log.isDebugEnabled()) log.debug("completeSystemDelete: isSuccess {}, kind {}, deletedFileSize {}, count {}", isSuccess, operationKind, deletedFileSize, uris==null?0:uris.size());
         if (uris == null || uris.isEmpty()) {
             return;
         }
@@ -125,14 +125,14 @@ public class Delete {
     }
 
     public void deleteOK(List<Uri> fileUris) { // flush backlog
-        if (log.isDebugEnabled()) log.debug("deleteOK: counter {}, fileUris {}", counter, fileUris);
+        if (log.isDebugEnabled()) log.debug("deleteOK: counter {}, count {}", counter, fileUris.size());
         for (Uri uri : fileUris)
             deleteOK(uri);
     }
 
     public synchronized void deleteOK(Uri fileUri) {
         counter--;
-        if (log.isDebugEnabled()) log.debug("deleteOK: {} counter {}", fileUri, counter);
+        if (log.isDebugEnabled()) log.debug("deleteOK: {} counter {}", sourceKind(fileUri), counter);
         if (counter == 0) {
             if (firstFailure != null) { Uri failed=firstFailure; mHandler.post(() -> { if(mListener!=null)mListener.onDeleteVideoFailed(failed); }); return; }
             // sometimes we will want to delete parent folder, when empty or only filled with little files like subtitles or nfo
@@ -150,23 +150,23 @@ public class Delete {
                         long shouldIDelete = getFolderSizeAndStopOnMax(FileUtils.getParentUrl(fileUri), MAX_FOLDER_SIZE, 0, 0);
                         if ((currentVideoFileToDeleteSize > MIN_FILE_SIZE || shouldIDelete == 0) && MAX_FOLDER_SIZE > shouldIDelete && shouldIDelete >= 0) {
                             mHandler.post(() -> {
-                                if (log.isDebugEnabled()) log.debug("deleteOK onVideoFileRemoved ask for folder removal {}", fileUri);
+                                if (log.isDebugEnabled()) log.debug("deleteOK onVideoFileRemoved ask for folder removal {}", sourceKind(fileUri));
                                 mListener.onVideoFileRemoved(fileUri, true, FileUtils.getParentUrl(fileUri));
                             });
                         } else {
                             mHandler.post(() -> {
-                                if (log.isDebugEnabled()) log.debug("deleteOK onVideoFileRemoved {}", fileUri);
+                                if (log.isDebugEnabled()) log.debug("deleteOK onVideoFileRemoved {}", sourceKind(fileUri));
                                 mListener.onVideoFileRemoved(fileUri, false, null);
                             });
                         }
                     } else {
                         mHandler.post(() -> {
-                            if (log.isDebugEnabled()) log.debug("deleteOK onVideoFileRemoved {}", fileUri);
+                            if (log.isDebugEnabled()) log.debug("deleteOK onVideoFileRemoved {}", sourceKind(fileUri));
                             mListener.onVideoFileRemoved(fileUri, false, null);
                         });
                     }
                     mHandler.post(() -> {
-                        if (log.isDebugEnabled()) log.debug("deleteOK onDeleteSuccess {}", fileUri);
+                        if (log.isDebugEnabled()) log.debug("deleteOK onDeleteSuccess {}", sourceKind(fileUri));
                         mListener.onDeleteSuccess();
                     });
                 }).start();
@@ -182,13 +182,13 @@ public class Delete {
     public synchronized void deleteNOK(Uri fileUri) {
         if (firstFailure == null) firstFailure = fileUri;
         counter--;
-        if (log.isDebugEnabled()) log.debug("deleteNOK: {} counter {}", fileUri, counter);
+        if (log.isDebugEnabled()) log.debug("deleteNOK: {} counter {}", sourceKind(fileUri), counter);
         if (counter == 0) {
             if (mListener != null)
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (log.isDebugEnabled()) log.debug("deleteNOK onDeleteVideoFailed {}", fileUri);
+                        if (log.isDebugEnabled()) log.debug("deleteNOK onDeleteVideoFailed {}", sourceKind(fileUri));
                         mListener.onDeleteVideoFailed(fileUri);
                     }
                 });
@@ -196,16 +196,16 @@ public class Delete {
     }
 
     public void deleteFolderOK(Uri folderUri) {
-        if (log.isDebugEnabled()) log.debug("deleteFolderOK: {} counter {}", folderUri, counter);
+        if (log.isDebugEnabled()) log.debug("deleteFolderOK: {} counter {}", sourceKind(folderUri), counter);
         if (mListener != null)
             mHandler.post(() -> {
-                if (log.isDebugEnabled()) log.debug("deleteFolder onFolderRemoved {}", folderUri);
+                if (log.isDebugEnabled()) log.debug("deleteFolder onFolderRemoved {}", sourceKind(folderUri));
                 mListener.onFolderRemoved(folderUri);
             });
     }
 
     public void startMultipleDeleteProcess(final List<Uri> toDelete) { // Uri are only video files
-        if (log.isDebugEnabled()) log.debug("startMultipleDeleteProcess: {}", ((toDelete != null) ? Arrays.toString(toDelete.toArray()) : null));
+        if (log.isDebugEnabled()) log.debug("startMultipleDeleteProcess: {}", ((toDelete != null) ? toDelete.size() : 0));
         new Thread(){
             public void run() {
                 if (toDelete != null) {
@@ -244,6 +244,12 @@ public class Delete {
         void onDeleteSuccess();
     }
 
+    private static String sourceKind(Uri uri){
+        String scheme=uri==null?null:uri.getScheme();
+        return scheme!=null&&java.util.Arrays.asList("file","content","webdav","webdavs","smb","smbj","sshj","sftp","ftp","ftps","http","https","upnp").contains(scheme.toLowerCase(java.util.Locale.ROOT))?scheme.toLowerCase(java.util.Locale.ROOT):"other";
+    }
+    private final ThreadLocal<Boolean> absentRemoteSource=new ThreadLocal<Boolean>(){@Override protected Boolean initialValue(){return false;}};
+    private boolean sourceWasAbsent(){boolean absent=Boolean.TRUE.equals(absentRemoteSource.get());absentRemoteSource.remove();return absent;}
     public Delete(DeleteListener listener, Context context){
         mHandler = new Handler(Looper.getMainLooper());
         mListener = listener;
@@ -251,7 +257,7 @@ public class Delete {
     }
 
     public void deleteAssociatedNfoFiles(final Uri fileUri){ //when deleting a description, also delete Nfo
-        if (log.isDebugEnabled()) log.debug("deleteAssociatedNfoFiles: {}", fileUri);
+        if (log.isDebugEnabled()) log.debug("deleteAssociatedNfoFiles: {}", sourceKind(fileUri));
         new Thread(){
             public void run(){
                 if(!UriUtils.isImplementedByFileCore(fileUri)||"upnp".equals(fileUri.getScheme())) //we can't delete files on upnp
@@ -266,7 +272,7 @@ public class Delete {
                                 if(!com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(mContext,uri))FileEditorFactory.getFileEditorForUrl(uri,mContext).delete();
                             }
                         } catch (Exception e) {
-                            log.error("deleteAssociatedNfoFiles: caught Exception", e);
+                            log.error("deleteAssociatedNfoFiles: error_class={}", e.getClass().getSimpleName());
                         }
                     }
                 }
@@ -275,7 +281,7 @@ public class Delete {
     }
 
     public void startDeleteProcess(final Uri fileUri){
-        if (log.isDebugEnabled()) log.debug("startDeleteProcess: {}", fileUri);
+        if (log.isDebugEnabled()) log.debug("startDeleteProcess: {}", sourceKind(fileUri));
         synchronized(this) { counter = 1; firstFailure = null; } // one fileUri
         new Thread(){
             public void run(){
@@ -285,11 +291,12 @@ public class Delete {
                 try {
                     currentVideoFileToDelete = MetaFileFactoryWithUpnp.getMetaFileForUrl(fileUri);
                 } catch (Exception e) { }
-                if (currentVideoFileToDelete==null) {
+                boolean webdav="webdav".equalsIgnoreCase(fileUri.getScheme())||"webdavs".equalsIgnoreCase(fileUri.getScheme());
+                if (currentVideoFileToDelete==null&&!webdav) {
                     deleteNOK(fileUri);
                     return;
                 }
-                currentVideoFileToDeleteSize = currentVideoFileToDelete.length();
+                currentVideoFileToDeleteSize = currentVideoFileToDelete==null?0:currentVideoFileToDelete.length();
                 // async now
                 deleteFileAndAssociatedFiles(mContext, fileUri);
             }
@@ -298,7 +305,7 @@ public class Delete {
 
     public void deleteFileAndAssociatedFiles(Context context, Uri fileUri) {
         if (! ("upnp".equals(fileUri.getScheme()) || "http".equals(fileUri.getScheme())) ) { // no delete with upnp or http
-            if (log.isDebugEnabled()) log.debug("deleteFileAndAssociatedFiles: {}", fileUri);
+            if (log.isDebugEnabled()) log.debug("deleteFileAndAssociatedFiles: {}", sourceKind(fileUri));
             new Thread() {
                 public void run() {
                     Boolean isDeleteOK;
@@ -319,13 +326,16 @@ public class Delete {
                                 // delete sidecars or announce success before its result arrives.
                                 if (isDeleteOK == null) return;
                                 if (!isDeleteOK) { deleteNOK(fileUri); return; }
+                                // Confirmed missing media only removes its own library record.
+                                // Never turn stale-entry cleanup into deletion of surviving sidecars.
+                                if (sourceWasAbsent()) { deleteOK(fileUri); return; }
                             }
-                            if (log.isDebugEnabled()) log.debug("deleteFileAndAssociatedFiles: delete achieved {}, counter {}", uri, counter);
+                            if (log.isDebugEnabled()) log.debug("deleteFileAndAssociatedFiles: delete achieved {}, counter {}", sourceKind(uri), counter);
                         } catch (Exception e) {
-                            log.error("deleteFileAndAssociatedFiles: failed to delete file {}, counter {}", uri, counter, e);
+                            log.error("deleteFileAndAssociatedFiles: failed to delete source {}, counter {}, error_class={}", sourceKind(uri), counter, e.getClass().getSimpleName());
                             if (uri == fileUri) { // if failure is on main file
                                 deleteNOK(fileUri);
-                                log.error("deleteFileAndAssociatedFiles: failed to delete main file {}, counter {}", uri, counter, e);
+                                log.error("deleteFileAndAssociatedFiles: failed to delete main source {}, counter {}, error_class={}", sourceKind(uri), counter, e.getClass().getSimpleName());
                                 return;
                             }
                         }
@@ -347,8 +357,11 @@ public class Delete {
     private Boolean deletePhysicalFile(Context context, Uri uri) throws Exception {
         synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
         if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(context,uri))return false;
+        absentRemoteSource.set(false);
         FileEditor editor = FileEditorFactory.getFileEditorForUrl(uri, context);
         Boolean result = editor.delete();
+        if(editor instanceof com.archos.filecorelibrary.webdav.WebdavFileEditor)
+            absentRemoteSource.set(((com.archos.filecorelibrary.webdav.WebdavFileEditor)editor).wasAlreadyAbsent());
         if (editor instanceof LocalStorageFileEditor) {
             if (result == null) return null;
             if (!result || new File(uri.getPath()).exists()) return false;
@@ -375,7 +388,7 @@ public class Delete {
         notifyLocalDeleted(uri);
         for (Uri associated : getAssociatedFiles(uri)) {
             try { deletePhysicalFile(mContext, associated); }
-            catch (Exception unavailable) { log.debug("Optional sidecar cleanup unavailable", unavailable); }
+            catch (Exception unavailable) { log.debug("Optional sidecar cleanup unavailable: error_class={}", unavailable.getClass().getSimpleName()); }
         }
         SubtitleManager.deleteAssociatedSubs(uri, mContext);
         XmlDb.deleteAssociatedResumeDatabase(uri);
@@ -408,7 +421,7 @@ public class Delete {
     }
 
     public void deleteFolder(final Uri uri){
-        if (log.isDebugEnabled()) log.debug("deleteFolder: {}", uri);
+        if (log.isDebugEnabled()) log.debug("deleteFolder: {}", sourceKind(uri));
         new Thread(){
             public void run() {
                 try {

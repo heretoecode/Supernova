@@ -1,6 +1,18 @@
 --- a/src/com/archos/mediaprovider/video/FileVisitor.java
 +++ b/src/com/archos/mediaprovider/video/FileVisitor.java
-@@ -67,7 +67,11 @@
+@@ -45,6 +45,11 @@
+         /** called when visiting finished */
+         void onStop(MetaFile2 root);
+ 
++        /** A skipped scope is incomplete unless the consumer explicitly protects its records. */
++        default void onDirectorySkipped(MetaFile2 directory) {
++            onListingError(directory, new IOException("Directory traversal incomplete"));
++        }
++
+         /** called when directory listing fails; default no-op */
+         default void onListingError(MetaFile2 directory, Exception exception) {
+             /* optional override */
+@@ -67,12 +72,16 @@
      }
  
      private static void recurse(MetaFile2 file, Listener listener, int recursionLimit) {
@@ -12,17 +24,23 @@
              return;
          }
          if (file != null) {
-@@ -80,7 +84,8 @@
+             if (file.isDirectory()) {
+-                if (listener.onDirectory(file) && recursionLimit > 0) {
++                if (!listener.onDirectory(file)) {listener.onDirectorySkipped(file);} else if (recursionLimit > 0) {
+                     try {
+                         List<MetaFile2> files  = file.getRawListerInstance().getFileList();
+                         if (files != null) {
+@@ -80,7 +89,8 @@
                                  for (MetaFile2 subFile : files) {
                                      recurse(subFile, listener, recursionLimit - 1);
                                  }
 -                        }
-+                            else listener.onListingError(file, new IOException("Listing stopped"));
++                            else listener.onDirectorySkipped(file);
 +                        } else listener.onListingError(file, new IOException("Incomplete listing"));
                      } catch (IOException e) {
                          if (log.isTraceEnabled()) log.error("recurse: IOException for {}", file.getName(), e);
                          else log.error("recurse: IOException for {}", file.getName());
-@@ -98,11 +103,12 @@
+@@ -98,11 +108,12 @@
                          else log.error("recurse: JSchException for {}", file.getName());
                          listener.onListingError(file, e);
                      }
@@ -38,7 +56,24 @@
      }
 --- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 +++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
-@@ -1142,8 +1142,13 @@
+@@ -1127,6 +1127,16 @@
+         }
+ 
+         @Override
++        public void onDirectorySkipped(MetaFile2 directory) {
++            if(directory==null||directory.getUri()==null){onListingError(directory,new java.io.IOException("Unknown skipped scope"));return;}
++            String scope=SupernovaLibraryPolicy.canonical(directory.getUri());
++            for(PrescanItem item:mPrescanItemsMap.values()){
++                String path=SupernovaLibraryPolicy.canonical(Uri.parse(item._data));
++                if(path.equals(scope)||path.startsWith(scope.endsWith("/")?scope:scope+"/"))item.needsDelete=false;
++            }
++        }
++
++        @Override
+         public void onOtherType(MetaFile2 file) {
+             // ignored
+         }
+@@ -1142,8 +1152,13 @@
                  for(PrescanItem item:mPrescanItemsMap.values()) {
                      if(item.needsDelete&&!mHadListingError&&!SupernovaLibraryPolicy.excluded(mService,Uri.parse(item._data)))
                          SupernovaLibraryPolicy.availability(mService,item._id + ArchosMediaCommon.SCANNED_ID_OFFSET,Uri.parse(item._data),true);
@@ -54,3 +89,14 @@
                  if(root!=null){if(!mHadListingError)SupernovaLibraryPolicy.sourceAvailable(mService,root.getUri(),true);else if(mUnknownListingError||failedDirectories.contains(SupernovaLibraryPolicy.canonical(root.getUri())))SupernovaLibraryPolicy.sourceAvailable(mService,root.getUri(),false);}
              }
              // Count total files that need deletion
+@@ -1193,6 +1208,10 @@
+ 
+             // force execution of all pending operations
+             mBulkHandler.executePending();
++            if(SupernovaLibraryPolicy.retainsRecords(mService)){
++                String scheme=root==null?"":root.getUri().getScheme();boolean webdav="webdav".equalsIgnoreCase(scheme)||"webdavs".equalsIgnoreCase(scheme);
++                log.info("Library reconciliation: source={}, complete={}, removed={}",webdav?"webdav":"other",!mHadListingError&&!Thread.currentThread().isInterrupted(),mBulkHandler.getDeletesHandled());
++            }
+         }
+ 
+         @Override

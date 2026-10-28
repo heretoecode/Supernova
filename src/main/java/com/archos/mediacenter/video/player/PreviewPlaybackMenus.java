@@ -84,15 +84,16 @@ final class PreviewPlaybackMenus {
         if(owner==null||closing)return;clear();backAction=null;restoreParent=PreviewPlaybackMenus::renderTab;
         if(tab==0||tab==1){TVCardView selected=card(tab==1?R.string.menu_subtitles:R.string.menu_audio);if(selected!=null){if(tab==0)columns();addNative(selected,true,false);}else heading(tab==1?"No subtitle tracks":"No audio tracks");if(tab==1)subtitlePreferences();}
         else {
+            if(tab==2)columns();
             if(tab==3){TVCardView audio=card(R.string.menu_audio);if(audio!=null&&audio.previewMenu()!=null)for(int i=0;i<audio.previewMenu().getChildCount();i++){View v=audio.previewMenu().getChildAt(i);if(v instanceof TVMenuItem&&owner.getString(R.string.player_pref_audio_speed_title).equals(((TVMenuItem)v).getText()))nativeRow((TVMenuItem)v,"Playback Speed",PreviewPlaybackMenus::renderTab);}}
             for(TVCardView c:adapter==null?Collections.<TVCardView>emptyList():adapter.previewCards()){
                 String title=c.previewTitle();boolean play=owner.getString(R.string.pref_play_mode_title).equals(title);
                 if(owner.getString(R.string.menu_subtitles).equals(title)||owner.getString(R.string.menu_audio).equals(title)||owner.getString(R.string.menu_info).equals(title)||owner.getString(R.string.preferences).equals(title))continue;
                 boolean notification=owner.getString(R.string.notification_mode).equals(title);if(tab==3?!(play||notification):(play||notification))continue;
-                if(tab==2&&owner.getString(R.string.pref_format_mode_title).equals(title))addNative(c,true,false);else action(title,false,true,null,()->select(c,PreviewPlaybackMenus::renderTab,-1,false));
+                if(tab==2&&owner.getString(R.string.pref_format_mode_title).equals(title)){rows=trackRows;heading("Format");addNative(c,true,false);}else {if(tab==2)rows=adjustmentRows;action(title,false,true,null,()->select(c,PreviewPlaybackMenus::renderTab,-1,false));}
             }
         }
-        if(trackRows!=null)rows=trackRows;if(rows.getChildCount()==0)heading("No available options");
+        if(trackRows!=null)rows=trackRows;if(rows.getChildCount()==0&&(adjustmentRows==null||adjustmentRows.getChildCount()==0))heading("No available options");
     }
     private static void select(TVCardView selected,Runnable parent,int focus,boolean other){
         clear();backAction=parent;restoreParent=()->select(selected,parent,focus,other);addNative(selected,false,other);if(focus>=0&&focus<rows.getChildCount())rows.getChildAt(focus).requestFocus();else focusContent();
@@ -100,8 +101,9 @@ final class PreviewPlaybackMenus {
     private static void addNative(TVCardView selected,boolean root,boolean other){
         liveCard=selected;TVMenu menu=selected.previewMenu();if(menu==null||menu.getChildCount()==0){heading(tab==0?"No audio tracks":"No available options");return;}
         boolean subs=owner.getString(R.string.menu_subtitles).equals(selected.previewTitle()),audio=owner.getString(R.string.menu_audio).equals(selected.previewTitle());boolean hasOther=false;String last="";
-        for(int i=0;i<menu.getChildCount();i++){
-            View view=menu.getChildAt(i);if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
+        List<View> items=new ArrayList<>();for(int i=0;i<menu.getChildCount();i++)items.add(menu.getChildAt(i));
+        if(audio)items.sort(Comparator.comparingInt(PreviewPlaybackMenus::audioGroup));
+        for(View view:items){if(!(view instanceof TVMenuItem)||view.getVisibility()!=View.VISIBLE)continue;TVMenuItem item=(TVMenuItem)view;
             if(audio&&owner.getString(R.string.player_pref_audio_speed_title).equals(item.getText()))continue;
             boolean otherTrack=subs&&Boolean.FALSE.equals(item.getTag());if(otherTrack)hasOther=true;if(other?!otherTrack:otherTrack)continue;
             String label=androidx.core.text.HtmlCompat.fromHtml(item.getText(),androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
@@ -112,6 +114,11 @@ final class PreviewPlaybackMenus {
             Runnable parent=root?PreviewPlaybackMenus::renderTab:restoreParent;nativeRow(item,label,parent);
         }
         if(hasOther&&!other)action("Other languages",false,true,null,()->select(selected,PreviewPlaybackMenus::renderTab,-1,true));
+    }
+    private static int audioGroup(View view){
+        if(!(view instanceof TVMenuItem))return 3;TVMenuItem item=(TVMenuItem)view;String label=item.getText();
+        if(label.equals(owner.getString(R.string.pref_audio_filt_title))||label.equals(owner.getString(R.string.pref_audio_filt_night_mode))||label.equals(owner.getString(R.string.spatialization_capabilities)))return 2;
+        return item.findViewById(R.id.info_text) instanceof android.widget.Checkable?0:1;
     }
     private static void nativeRow(TVMenuItem item,String label,Runnable parent){
         Object language=item.getTag(R.id.preview_track_language);
@@ -140,7 +147,7 @@ final class PreviewPlaybackMenus {
     private static TextView action(String label,boolean checked,boolean enabled,String code,Runnable run){
         int index=rows.getChildCount();TextView text=SharedThreePanel.text(owner,(checked?"✓  ":"")+label+(enabled?"":" — unavailable"),14);text.setTag("playback.option:"+label);text.setFocusable(enabled);text.setFocusableInTouchMode(enabled);text.setEnabled(enabled);text.setGravity(Gravity.CENTER_VERTICAL);text.setPadding(dp(10),dp(9),dp(10),dp(9));text.setMinimumHeight(dp(40));text.setBackground(SharedThreePanel.accentFocus(owner));text.setOnClickListener(v->run.run());
         if(code!=null)PreviewLanguageIcon.apply(text,code);
-        text.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_UP){View next=FocusFinder.getInstance().findNextFocus(rows,text,View.FOCUS_UP);if(next==null||next==text){tabs.getChildAt(tab).requestFocus();return true;}}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT){View next=FocusFinder.getInstance().findNextFocus(content,text,key==KeyEvent.KEYCODE_DPAD_LEFT?View.FOCUS_LEFT:View.FOCUS_RIGHT);if(next!=null&&next!=text)next.requestFocus();return true;}return false;});rows.addView(text,new LinearLayout.LayoutParams(-1,-2));return text;
+        text.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_UP){ViewGroup scope=text.getParent() instanceof ViewGroup?(ViewGroup)text.getParent():content;View next=FocusFinder.getInstance().findNextFocus(scope,text,View.FOCUS_UP);if(next==null||next==text){tabs.getChildAt(tab).requestFocus();return true;}}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT){View next=FocusFinder.getInstance().findNextFocus(content,text,key==KeyEvent.KEYCODE_DPAD_LEFT?View.FOCUS_LEFT:View.FOCUS_RIGHT);if(next!=null&&next!=text)next.requestFocus();return true;}return false;});rows.addView(text,new LinearLayout.LayoutParams(-1,-2));return text;
     }
     private static SharedPreferences preferences(){return PreferenceManager.getDefaultSharedPreferences(owner);}
     private static void subtitlePreferences(){

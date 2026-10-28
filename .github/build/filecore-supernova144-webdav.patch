@@ -1,15 +1,30 @@
 --- a/src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java
 +++ b/src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java
-@@ -168,7 +168,12 @@
+@@ -46,6 +46,8 @@
+     private OkHttpSardine mSardine;
+     private OkHttpClient mHttpClient;
+     private long mLength = -1;
++    private boolean alreadyAbsent;
++    public boolean wasAlreadyAbsent(){return alreadyAbsent;}
+ 
+     public WebdavFileEditor(Uri uri) {
+         super(uri);
+@@ -167,8 +169,18 @@
+ 
      @Override
      public Boolean delete() throws Exception {
++        alreadyAbsent=false;
          var u = WebdavFile2.uriToHttp(mUri);
 -        mSardine.delete(u.toString());
-+        try { mSardine.delete(u.toString()); }
++        try { mSardine.delete(u.toString());log.info("WebDAV delete: outcome=deleted"); }
 +        catch (com.thegrizzlylabs.sardineandroid.impl.SardineException failure) {
 +            // DELETE is idempotent only for authoritative absence. Propagate every other failure.
++            log.info("WebDAV delete: http_status={}",failure.getStatusCode());
 +            if (failure.getStatusCode() != 404) throw failure;
++            alreadyAbsent=true;
 +            log.info("WebDAV delete: already absent (HTTP 404)");
++        } catch (java.io.IOException failure) {
++            log.info("WebDAV delete: error_class={}",failure.getClass().getSimpleName());throw failure;
 +        }
          return null;
      }

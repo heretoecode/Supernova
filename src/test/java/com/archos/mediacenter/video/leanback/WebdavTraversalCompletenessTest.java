@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class WebdavTraversalCompletenessTest {
-    private FileVisitor.Listener listener(){FileVisitor.Listener l=mock(FileVisitor.Listener.class);when(l.onDirectory(any())).thenReturn(true);when(l.onFilesList(any())).thenReturn(true);return l;}
+    private FileVisitor.Listener listener(){FileVisitor.Listener l=mock(FileVisitor.Listener.class,CALLS_REAL_METHODS);when(l.onDirectory(any())).thenReturn(true);when(l.onFilesList(any())).thenReturn(true);return l;}
     private MetaFile2 directory(RawLister lister){MetaFile2 file=mock(MetaFile2.class);when(file.isDirectory()).thenReturn(true);when(file.getRawListerInstance()).thenReturn(lister);return file;}
     @Test public void emptySuccessfulListingIsComplete()throws Exception{
         RawLister raw=mock(RawLister.class);when(raw.getFileList()).thenReturn(Collections.emptyList());MetaFile2 root=directory(raw);FileVisitor.Listener l=listener();

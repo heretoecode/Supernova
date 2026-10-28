@@ -1,0 +1,72 @@
+[
+  {
+    "file": "settings-720p-grid.png",
+    "sha256": "982c4838a490e6d55b818efd4ce53546e6d58bc3dfac4139c32e2822355a7fe5",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-720p-playback.png",
+    "sha256": "19afa749d6fbf45d1e321ad8f5882b6214058131cb8a05259eba1276717a3ae0",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-1080p-grid.png",
+    "sha256": "fc351bb2e4417b87c8b2f18b388db97e863de57c10285e2bc637e67554558098",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-1080p-playback.png",
+    "sha256": "7441415c41adfc7a2dc8bf982e2e61fda891c34bbd379d25bd1c2eea43281925",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-4k-grid.png",
+    "sha256": "922f6bc5bddac9bcf822eb1557313bdc4d76aaee7642760d3c8e7136769d97ed",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-4k-playback.png",
+    "sha256": "68a2ce0ea2b632d68393be485058bfd80d668084d1bc45cab23d2d6762910ae7",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-large-grid.png",
+    "sha256": "c7870c113863dc8de1826f14be487ec713ba206f12fdc77dc59e0160d7a264aa",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-large-playback.png",
+    "sha256": "556e07195d5a186b624a3708d6d36b0cf6cd7674ed52d449a304ebd62bcda245",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-category-1.png",
+    "sha256": "4bd73f80f4ad82b7aa204639296aee9d0af2e62d60f8b8e296627e7b2930bad8",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "settings-category-6.png",
+    "sha256": "46065f34f9cf262d7743f84729b4be1a5775e049f72479ea58d03a2bd90f8524",
+    "kind": "native Robolectric software render; synthetic fixture; physical QA pending"
+  },
+  {
+    "file": "playback-audio.png",
+    "sha256": "8effbbada4859d0cc007dda9c1364407242ac2fb2780579fd24536ff2be92a09",
+    "kind": "native Robolectric software render; synthetic fixture; original A4 images unavailable; physical QA pending"
+  },
+  {
+    "file": "playback-subtitles.png",
+    "sha256": "fef4da3094707c3c7065a094f02e1e064ca37fdff7a592b9909d405a195b9851",
+    "kind": "native Robolectric software render; synthetic fixture; original A4 images unavailable; physical QA pending"
+  },
+  {
+    "file": "playback-video.png",
+    "sha256": "17b028a859f35cb28dc031d496893981b577aab5ecd390ec5d57ad971834709e",
+    "kind": "native Robolectric software render; synthetic fixture; original A4 images unavailable; physical QA pending"
+  },
+  {
+    "file": "playback-more.png",
+    "sha256": "77c30961289496c37030a4fb8d6f11458cfb133b6ccfe5143e6a390a0e1f8503",
+    "kind": "native Robolectric software render; synthetic fixture; original A4 images unavailable; physical QA pending"
+  }
+]
