@@ -88,7 +88,11 @@
   "html_release_notes": {
     "id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
     "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
-    "readback_verified": false,
-    "previous_articles_preserved": 12
-  }
+    "readback_verified": true,
+    "previous_articles_preserved": 12,
+    "bytes": 41328,
+    "sha256": "a87cbf77fc7cc8df5fa86f1e74b8bf5dcc4511b4f3267452b78e0c4ad7f9ac45"
+  },
+  "previous_apk_files_preserved": 10,
+  "apk_folder_files_after_delivery": 11
 }

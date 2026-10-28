@@ -10,7 +10,7 @@ Every item remains **not visually Shield-verified**. Implementation and automate
 
 | Requirement | Source / outcome | Regression evidence / remaining gate |
 |---|---|---|
-| WebDAV deletion | `filecore-supernova144-webdav.patch`: only DELETE 404 is idempotent success; other failures propagate. Existing app removal follows remote success. | MockWebServer response matrix added to FileCore `WebdavSecurityAndRangeTest`; execution pending. Real server pending. |
+| WebDAV deletion | `filecore-supernova144-webdav.patch`: only DELETE 404 is idempotent success; other failures propagate. Existing app removal follows remote success. | Executed app-level real HTTP matrix in `WebdavDeleteResponseTest`, including the actual patched editor and app absence/sidecar decision. Real server pending. |
 | Local removal versus remote delete | `VideoDetailsFragment`: explicit keep-file library removal uses the existing hidden-by-user path; source deletion has a separate permanent-delete confirmation. | Existing source/provider protection retained; real remote deletion pending. |
 | Safe reconciliation | `medialib-supernova144-reconciliation.patch`: WebDAV pruning only after complete directory traversal, retaining all records on listing errors, null lists, stops, interruption and depth limits. Other storage retention preserved. | `WebdavTraversalCompletenessTest`; real multiple-file/alternate-version database acceptance pending. |
 | Scan Library | Overview header action in `UniversalFileBrowser`, live Scanning label/status, existing pipeline; queued race coalesced in `PreviewLibraryScan`. | Existing scan/network suites plus manual/real-source QA pending. |

@@ -20,7 +20,7 @@ Independent signature/certificate, version/identity, ZIP CRC, 16 KB alignment, a
 
 [Delivery receipt](SIGNED_QA_DELIVERY.json), [signed public proof](SIGNED_PUBLIC_QA_EVIDENCE.json), [unsigned conformance](CONFORMANCE_40735286063.json), [independent checks](INDEPENDENT_APK_VERIFICATION.json) and native evidence files record provenance. The corresponding FFmpeg source artifact was retrieved and its archive digest verified.
 
-The existing [Drive HTML notes](https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view) are being finalized with this delivery. All 12 historical articles and ten earlier APK files remain preserved.
+The existing [Drive HTML notes](https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view) were updated in place with this delivery and complete HTML readback passed. All 12 historical articles and ten earlier APK files remain preserved.
 
 ## Evidence limits and unresolved items
 
