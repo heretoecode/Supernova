@@ -75,9 +75,7 @@ public class PlaybackNetworkRetryTest {
         verify(player, never()).setVideoURI(any(), any());
 
         subtitles.countDown();
-        verify(handler, timeout(2000)).post(any(Runnable.class));
-        shadowOf(Looper.getMainLooper()).idle();
-        verify(player).setVideoURI(uri, null);
+        verify(player, timeout(2000)).setVideoURI(uri, null);
     }
 
     private static Object get(Object object, String name) throws Exception {
