@@ -50,5 +50,7 @@
       "candidate_object": "0cc5d3193e284313cb7f856ee98215e9d2bf638c",
       "identical": true
     }
-  ]
+  ],
+  "candidate_source_commit": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "release_history_asset_changes": "assets/foundation/release-history.json changes version and QA notes; it is outside the unchanged branding and UI scope."
 }

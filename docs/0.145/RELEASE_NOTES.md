@@ -1,11 +1,13 @@
-# Supernova 0.145 / 145 — undelivered maintenance candidate
+# Supernova 0.145 / 145 — signed QA candidate
 
-Preserves Supernova's interface, application identity, saved libraries and settings on the verified 0.144 baseline. Draft PR: https://github.com/heretoecode/Supernova/pull/25 .
+[Download verified signed APK](https://drive.google.com/file/d/10HmVAOilIRsT8iRcyLyOktz_vgS7uCeM/view?usp=drivesdk) · [Protected QA run](https://github.com/heretoecode/Supernova/actions/runs/40762577939) · [Draft PR #25](https://github.com/heretoecode/Supernova/pull/25).
 
-Compatible NOVA ports address network playback reopening/latest-seek retention, paused subtitle replay timing, duplicate HDMI receiver registration, private media suggestions, internal subtitle-cache fallback, legacy MediaStore write access and native buffer-allocation overflow.
+Preserves Supernova's custom interface, stored libraries/settings, application identity and existing signing certificate on the independently verified 0.144 baseline. NOVA stable target: v6.6.2; seven compatible ports improve failed-network reopening/latest seek, paused subtitle timing, HDMI registration, private suggestions, cache fallback, MediaStore write guards and native buffer overflow safety. Gradle download checksum pinned.
 
-Local verification: 128 tooling cases and sanitized C boundary tests pass. The initial full Android suite passed 1,144 of 1,147 tests; three new storage fixture cases failed. Corrected-source focused CI passed all 12 new port cases and lint. FFmpeg rebuild/runtime checks and wrapper builds passed on the earlier source, but its unit failures correctly prevented conformance clearance. Corrected-source full conformance is pending. These are software checks; physical Shield, real sources and AV chain, exact-reference visual comparison, signed upgrade and rollback remain pending.
+Safe UPnP mitigations reject ambiguous framing, hide private error details and validate discovered endpoint scheme/host before legacy Jetty. All nine Jetty advisories are reviewed individually; the old library remains version-affected and compatible transport migration/backports remain deferred. [Security dispositions](JETTY_SECURITY_DISPOSITION.md).
 
-The [upstream matrix](UPSTREAM_MATRIX.md) distinguishes included/adapted changes from deferred and excluded work. Review of the new native subtitle stack and other upstream deltas is unfinished. [Security findings](SECURITY_REVIEW.md) include nine Jetty advisories; no security clearance is claimed.
+Final-source validation: 1,158 Android tests, zero failures/errors/skips; 128 tooling checks; 11 Jetty integration cases; sanitized native buffer regression; zero lint errors/1,795 warnings; native/runtime/hash conformance and exact tested-payload signing parity. Full Drive APK readback, certificate, identity/version, CRC, native hashes and alignment independently verified.
 
-Signing is blocked by the existing environment's branch allowlist. No signed 0.145 APK, checksum, Drive APK link, public release or main merge exists. The existing Drive HTML notes were updated in place with this candidate status, all 13 earlier articles preserved, and full-byte readback verified.
+Source `d6e106ffa27fce88cbfb4ebbfe305954c7e73f60`. APK SHA-256 `1cd4d3c6dcbe9c8c02c3abae26ba4fb37b99d73e0fc68e6a0cf0ca43c2b0c2c8`. Certificate SHA-256 `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`.
+
+Physical Shield, real providers/storage/AV-chain, signed upgrade/rollback, exact unavailable reference comparisons and performance/memory profiling remain pending. Native subtitle/libass/FFmpeg9/OpenSSL4.1 and unported upstream changes remain explicitly deferred in the [matrix](UPSTREAM_MATRIX.md). [Full release report](RELEASE_REPORT.md). This is a private QA delivery; main is unmerged and no public release was published.
