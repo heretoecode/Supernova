@@ -149,19 +149,19 @@
       "kind": "patch",
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova146-upstream.patch",
-      "sha256": "019dbf66861fa3547593c2a71e4dbd0c8ba4ab88e0aba21395c5bff1ff50c831"
+      "sha256": "5493eeafb07adbeeddc3e1b144ae24ccd59bb5481456abeb85bf33f8264c046f"
     },
     {
       "kind": "patch",
       "module": "FileCoreLibrary",
       "path": ".github/build/filecorelibrary-supernova146-upstream.patch",
-      "sha256": "cdfb6721aed2bc3827a2b8358ae6cd1d981ed960576228a3c1a083611146a198"
+      "sha256": "301cc3453217659f7d1479a1514d58fb5bffafa33fb6fb206b7734d4a2b25913"
     },
     {
       "kind": "patch",
       "module": "native/avos",
       "path": ".github/build/avos-supernova146-upstream.patch",
-      "sha256": "28588691aa818add6718c153d4ae2e6aa80d80b5331d862c3fc08573827dbbe6"
+      "sha256": "a327de0d8c5f8ffae947dabd5d7536f7919d45d5a62b836e8b6d498e06abf424"
     }
   ]
 }

@@ -758,6 +758,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     @Override
     public void onCreate() {
         super.onCreate();
+        com.archos.medialib.NativeTrustRoots.initialize(this);
         com.archos.mediacenter.video.foundation.FoundationUiPolicy.apply(this);
         com.archos.mediacenter.video.diagnostics.Diagnostics.install(this);
 

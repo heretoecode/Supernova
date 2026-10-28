@@ -197,7 +197,7 @@ index 0000000..a5e9d32
 +    </domain-config>
 +</network-security-config>
 diff --git a/build.gradle b/build.gradle
-index b241438..2967600 100644
+index b241438..688d967 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -34,9 +34,14 @@ android {
@@ -278,7 +278,7 @@ index b241438..2967600 100644
      // desugar is needed no avoid  commons-net java.time.Duration ClassNotFoundException after 3.8.0
      implementation 'commons-net:commons-net:3.13.0'
      implementation 'com.jakewharton.threetenabp:threetenabp:1.4.9'
-@@ -146,22 +173,30 @@ dependencies {
+@@ -146,22 +173,38 @@ dependencies {
      // Exclude BouncyCastle from sshj (which requests 1.80) to avoid duplicate class conflicts with smbj (1.85.2).
      // sshj's 1.80 bcpkix dependency pins bcutil-jdk18on to [1.80, 1.81), leading to duplicate IANAObjectIdentifiers
      // classes between bcutil-jdk18on-1.80.2 and bcprov-jdk18on-1.85.2.
@@ -317,6 +317,14 @@ index b241438..2967600 100644
 +    androidTestImplementation 'androidx.test:core:1.7.0'
 +    androidTestImplementation 'androidx.test:runner:1.7.0'
 +    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
++}
++
++// Release unit suites must be explicitly enabled under AGP9 for unsigned
++// Foundation verification; the application gate never selects debug variants.
++androidComponents {
++    beforeVariants(selector().withBuildType("release")) { variant ->
++        if (rootProject.hasProperty("foundationVerify")) variant.enableUnitTest = true
++    }
  }
 diff --git a/res/values-ar/strings.xml b/res/values-ar/strings.xml
 index a29d855..2686159 100644

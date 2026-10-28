@@ -242,7 +242,7 @@ index 0000000..49b2028
 +    @Override public int update(Uri uri, ContentValues values, String s, String[] a) { throw new UnsupportedOperationException(); }
 +}
 diff --git a/build.gradle b/build.gradle
-index fe7dc6c..540abe0 100644
+index fe7dc6c..afcf225 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -4,11 +4,15 @@ repositories {
@@ -328,7 +328,7 @@ index fe7dc6c..540abe0 100644
      implementation 'org.json:json:20260814'
      // see https://github.com/UweTrottmann/trakt-java?tab=readme-ov-file for threetenabp instead of threetenbp
      //implementation ('com.github.nova-video-player:trakt-java:0.0.1') {
-@@ -171,31 +187,32 @@ dependencies {
+@@ -171,31 +187,40 @@ dependencies {
      api ('org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.2') {
          exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common'
      }
@@ -381,6 +381,14 @@ index fe7dc6c..540abe0 100644
 +    testImplementation 'org.robolectric:robolectric:4.17'
      testImplementation 'androidx.test:core:1.7.0'
  }
++
++// Release unit suites must be explicitly enabled under AGP9 for unsigned
++// Foundation verification; the application gate never selects debug variants.
++androidComponents {
++    beforeVariants(selector().withBuildType("release")) { variant ->
++        if (rootProject.hasProperty("foundationVerify")) variant.enableUnitTest = true
++    }
++}
 diff --git a/doc/IN-OUTRO.md b/doc/IN-OUTRO.md
 index 834722d..692bf97 100644
 --- a/doc/IN-OUTRO.md
@@ -1744,7 +1752,7 @@ index 74a252c..918d344 100644
      public static final int METADATA_KEY_SUBTITLE_TRACK_LANGUAGE = 4;
      public static final int METADATA_KEY_SUBTITLE_TRACK_DISPOSITION = 5;
 diff --git a/src/com/archos/medialib/LibAvos.java b/src/com/archos/medialib/LibAvos.java
-index a13c678..961bd73 100644
+index a13c678..f311cba 100644
 --- a/src/com/archos/medialib/LibAvos.java
 +++ b/src/com/archos/medialib/LibAvos.java
 @@ -18,6 +18,7 @@ import java.io.File;
@@ -1875,7 +1883,15 @@ index a13c678..961bd73 100644
      public interface AudioTransformer {
  	    float[] transformAudio(float[] samples);
      }
-@@ -324,17 +438,20 @@ public class LibAvos {
+@@ -197,6 +311,7 @@ public class LibAvos {
+         //We do not need to use any external codec packs
+         //installExtLibs(ctx, armHasNeon);
+ 
++        NativeTrustRoots.initialize(ctx);
+         loadLibrary(ctx, "dav1d", armHasNeon, false);
+         loadLibrary(ctx, "avutil", armHasNeon, false);
+         loadLibrary(ctx, "avcodec", armHasNeon, false);
+@@ -324,17 +439,20 @@ public class LibAvos {
          nativeEnableAudioSpeed(enable);
      }
  
@@ -1899,7 +1915,7 @@ index a13c678..961bd73 100644
          Log.d(TAG, "setStreamBufferSize " + size);
          nativeSetStreamBufferSize(size);
      }
-@@ -393,7 +510,7 @@ public class LibAvos {
+@@ -393,7 +511,7 @@ public class LibAvos {
  
      private static native void nativeEnableAudioSpeed(boolean enable);
  
@@ -1908,6 +1924,94 @@ index a13c678..961bd73 100644
  
      private static native void nativeParserSyncMode(int mode);
  
+diff --git a/src/com/archos/medialib/NativeTrustRoots.java b/src/com/archos/medialib/NativeTrustRoots.java
+new file mode 100644
+index 0000000..dd67335
+--- /dev/null
++++ b/src/com/archos/medialib/NativeTrustRoots.java
+@@ -0,0 +1,82 @@
++// Copyright 2026 Supernova contributors
++// SPDX-License-Identifier: Apache-2.0
++package com.archos.medialib;
++
++import android.content.Context;
++import android.system.Os;
++import android.util.AtomicFile;
++import android.util.Base64;
++import java.io.*;
++import java.nio.charset.StandardCharsets;
++import java.security.KeyStore;
++import java.security.cert.CertificateFactory;
++import java.security.cert.X509Certificate;
++import javax.net.ssl.*;
++
++/** App-scoped system+bundled trust for API23 Java HTTPS and the native TLS stack.
++ * No process-global Java socket factory or hostname verifier is replaced.
++ */
++public final class NativeTrustRoots {
++    private static SSLSocketFactory sockets;
++    private static IOException failure;
++    private static boolean initialized;
++    private NativeTrustRoots() {}
++
++    public static synchronized void initialize(Context context) {
++        if (initialized) return;
++        initialized = true;
++        try {
++            TrustManagerFactory platform = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
++            platform.init((KeyStore)null);
++            KeyStore anchors = KeyStore.getInstance(KeyStore.getDefaultType()); anchors.load(null);
++            int count = 0;
++            for (TrustManager manager : platform.getTrustManagers()) {
++                if (manager instanceof X509TrustManager) {
++                    for (X509Certificate cert : ((X509TrustManager)manager).getAcceptedIssuers())
++                        anchors.setCertificateEntry("system-" + count++, cert);
++                }
++            }
++            // These are the same roots explicitly trusted by network_security_config.
++            for (String name : new String[]{"isrg_root_x1", "isrg_root_x2"}) {
++                int id = context.getResources().getIdentifier(name, "raw", context.getPackageName());
++                if (id != 0) try (InputStream in = context.getResources().openRawResource(id)) {
++                    anchors.setCertificateEntry(name, CertificateFactory.getInstance("X.509").generateCertificate(in));
++                }
++            }
++            if (anchors.size() == 0) throw new java.security.KeyStoreException("No trusted anchors available");
++            TrustManagerFactory trusted = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()); trusted.init(anchors);
++            SSLContext tls = SSLContext.getInstance("TLS"); tls.init(null, trusted.getTrustManagers(), null);
++            File directory = new File(context.getNoBackupFilesDir(), "native-ca");
++            if (!directory.isDirectory() && !directory.mkdirs()) throw new IOException("Cannot prepare native trust directory");
++            Os.chmod(directory.getAbsolutePath(), 0700);
++            File bundle = new File(directory, "anchors.pem"); AtomicFile atomic = new AtomicFile(bundle);
++            FileOutputStream output = atomic.startWrite();
++            try {
++                java.util.Enumeration<String> aliases = anchors.aliases();
++                while (aliases.hasMoreElements()) {
++                    byte[] encoded = anchors.getCertificate(aliases.nextElement()).getEncoded();
++                    output.write("-----BEGIN CERTIFICATE-----\n".getBytes(StandardCharsets.US_ASCII));
++                    output.write(Base64.encode(encoded, Base64.DEFAULT));
++                    output.write("-----END CERTIFICATE-----\n".getBytes(StandardCharsets.US_ASCII));
++                }
++                atomic.finishWrite(output); output = null;
++            } finally { if (output != null) atomic.failWrite(output); }
++            Os.chmod(bundle.getAbsolutePath(), 0600);
++            // OpenSSL defaults consume this for direct and nested HLS HTTPS opens.
++            // FFmpeg9's certificate AND hostname verification defaults remain enabled.
++            Os.setenv("SSL_CERT_FILE", bundle.getAbsolutePath(), true);
++            sockets = tls.getSocketFactory();
++        } catch (Exception error) {
++            failure = new IOException("Application TLS trust initialization failed", error);
++            // Local playback may continue. Java TLS fails closed; native TLS has no
++            // packaged fallback CA bypass and retains peer/hostname verification.
++        }
++    }
++
++    public static synchronized void configure(HttpsURLConnection connection) throws IOException {
++        if (!initialized || failure != null || sockets == null)
++            throw new IOException("Application TLS trust is unavailable", failure);
++        connection.setSSLSocketFactory(sockets);
++        // The platform hostname verifier remains in force for this connection.
++    }
++}
 diff --git a/src/com/archos/medialib/SmbProxy.java b/src/com/archos/medialib/SmbProxy.java
 index 0533ab0..9331c3a 100644
 --- a/src/com/archos/medialib/SmbProxy.java
@@ -3213,6 +3317,38 @@ index 0000000..7da3778
 +        return value.replace("'", "''");
 +    }
 +}
+diff --git a/src/com/archos/mediascraper/HttpDownloadWrapper.java b/src/com/archos/mediascraper/HttpDownloadWrapper.java
+index f49c2de..0c13008 100644
+--- a/src/com/archos/mediascraper/HttpDownloadWrapper.java
++++ b/src/com/archos/mediascraper/HttpDownloadWrapper.java
+@@ -63,21 +63,19 @@ public class HttpDownloadWrapper implements Closeable {
+      * @throws IOException
+      */
+     public InputStream getInputStream(@Nullable Map<String, String> extraHeaders) throws IOException {
+-        if (log.isDebugEnabled()) log.debug("getInputStream: Downloading [{}]", mUrl);
++        if (log.isDebugEnabled()) log.debug("getInputStream: starting download");
+ 
+         if (mUrlConnection != null) {
+             throw new IllegalStateException("getInputStream: Cannot call getInputStream more than once.");
+         }
+ 
+         URL url = new URL(mUrl);
+-        // See https://github.com/nova-video-player/aos-AVP/issues/1154
+-        // on old Android versions (before 7.0) the ssl certification check is based on the platform one that is not anymore up to date leading to problems
+-        // thus let's trust image.tmdb.org to fix posters download
+-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+-            //TrustLetsEncryptCertificates.trustLetsEncryptCertificates(context);
+-            TrustAllCertificates.trustAllCertificates();
+-        }
+         mUrlConnection = (HttpURLConnection) url.openConnection();
++        if (mUrlConnection instanceof javax.net.ssl.HttpsURLConnection) {
++            android.content.Context trustContext = com.archos.environment.ArchosUtils.getGlobalContext();
++            if (trustContext != null) com.archos.medialib.NativeTrustRoots.initialize(trustContext);
++            com.archos.medialib.NativeTrustRoots.configure((javax.net.ssl.HttpsURLConnection)mUrlConnection);
++        }
+         mUrlConnection.setConnectTimeout(20000);
+         mUrlConnection.setReadTimeout(40000);
+         mUrlConnection.setInstanceFollowRedirects(true);
 diff --git a/src/com/archos/mediascraper/ImageScaler.java b/src/com/archos/mediascraper/ImageScaler.java
 index 0c3dd39..6dcf861 100644
 --- a/src/com/archos/mediascraper/ImageScaler.java
@@ -3435,6 +3571,78 @@ index 149f700..9dbac23 100644
                      sTag.setStudiosFormatted(studiosMS);
  
                      String coverS =getStringCol(cur, cols.coverS);
+diff --git a/src/com/archos/mediascraper/TrustAllCertificates.java b/src/com/archos/mediascraper/TrustAllCertificates.java
+deleted file mode 100644
+index d63cbff..0000000
+--- a/src/com/archos/mediascraper/TrustAllCertificates.java
++++ /dev/null
+@@ -1,66 +0,0 @@
+-// Copyright 2017 Archos SA
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//      http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package com.archos.mediascraper;
+-
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+-
+-import java.security.cert.X509Certificate;
+-import javax.net.ssl.HostnameVerifier;
+-import javax.net.ssl.HttpsURLConnection;
+-import javax.net.ssl.SSLContext;
+-import javax.net.ssl.SSLSession;
+-import javax.net.ssl.TrustManager;
+-import javax.net.ssl.X509TrustManager;
+-
+-public class TrustAllCertificates {
+-
+-    private static final Logger log = LoggerFactory.getLogger(TrustAllCertificates.class);
+-
+-    public static void trustAllCertificates() {
+-        try {
+-            TrustManager[] trustAllCerts = new TrustManager[]{
+-                new X509TrustManager() {
+-                    public X509Certificate[] getAcceptedIssuers() {
+-                        return new X509Certificate[]{};
+-                    }
+-
+-                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
+-                    }
+-
+-                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+-                    }
+-                }
+-            };
+-
+-            SSLContext sc = SSLContext.getInstance("SSL");
+-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+-
+-            // Create all-trusting host name verifier
+-            HostnameVerifier allHostsValid = new HostnameVerifier() {
+-                public boolean verify(String hostname, SSLSession session) {
+-                    return true;
+-                }
+-            };
+-
+-            // Install the all-trusting host verifier
+-            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+-        } catch (Exception e) {
+-            log.error("Error while trusting all certificates", e);
+-        }
+-    }
+-}
+-
 diff --git a/src/com/archos/mediascraper/VideoTags.java b/src/com/archos/mediascraper/VideoTags.java
 index c7147da..864b816 100644
 --- a/src/com/archos/mediascraper/VideoTags.java
