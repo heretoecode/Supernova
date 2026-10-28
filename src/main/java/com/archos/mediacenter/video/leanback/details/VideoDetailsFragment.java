@@ -937,9 +937,13 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 }
                 if (mPreviewMovie != null) {
                     com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
-                            getString(R.string.confirm_delete), new String[]{getString(android.R.string.cancel), getString(R.string.delete)},
+                            "Remove or delete file", new String[]{getString(android.R.string.cancel), "Remove from Library (keep file)", "Delete source file"},
                             0, choice -> {
-                                if (choice == 1 && isAdded()) deleteFile_async(mVideo);
+                                if (!isAdded()) return;
+                                if (choice == 1) DbUtils.markAsHiddenByUser(getActivity(), mVideo);
+                                if (choice == 2) com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
+                                    "Delete source file permanently?",new String[]{getString(android.R.string.cancel),"Delete source file"},0,
+                                    confirm->{if(confirm==1&&isAdded())deleteFile_async(mVideo);});
                             });
                     return;
                 }

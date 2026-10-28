@@ -30,4 +30,15 @@ public class CustomLibraryPageTest {
  }
  @Test public void serializedDraftPreservesBackwardStepEditsAndValidation(){CustomLibraryPage page=new CustomLibraryPage();page.name="Custom";page.type="movies";page.genres.add("Drama");page.view="list";page.descending=true;CustomLibraryPage restored=CustomLibraryPage.decode(page.encode());assertEquals(page.encode(),restored.encode());assertNull(restored.validation());restored.name=" ";assertNotNull(restored.validation());}
  @Test public void smartRowDynamicOffFreezesMembershipAndKeepsManualAdditions(){Application c=RuntimeEnvironment.getApplication();Snapshot library=new Snapshot();Entry one=movie(1,"One",2000,"Drama",false),two=movie(2,"Two",2001,"Comedy",false);library.movies.add(one);library.movies.add(two);PreviewHomeRows model=new PreviewHomeRows(c);PreviewHomeRows.Row row=new PreviewHomeRows.Row("custom:test","Test");model.rows.add(row);row.dynamic=true;row.genreRule="Drama";row.members.add(two.key());assertEquals(2,model.members(row,library).size());model.setDynamic(row,false,library);library.movies.add(movie(3,"Three",2002,"Drama",false));assertEquals(2,model.members(row,library).size());model.setDynamic(row,true,library);assertEquals(3,model.members(row,library).size());row.visible=false;assertEquals(3,model.members(row,library).size());}
+ @Test public void customPageInitialArtworkComesFromDisplayedOrderRatherThanMovies(){
+  Application c=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().clear().putBoolean("supernova_onboarding_complete",true).commit();
+  try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException absent){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(c).build());}
+  Snapshot library=new Snapshot();library.movies.add(movie(1,"Movie",2000,"Drama",false));
+  Entry doc=movie(2,"Documentary",2001,"Documentary",false);library.movies.add(doc);
+  CustomLibraryPage page=new CustomLibraryPage();page.name="Documentaries";page.type="movies";page.genres.add("Documentary");
+  PreviewPages pages=new PreviewPages(c,(holder,item)->{});pages.configureCustomLibrary(page,()->{});pages.setSnapshot(library);
+  assertSame(doc,org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages,"featured"));
+  page.genres.clear();page.genres.add("No matches");pages.configureCustomLibrary(page,()->{});
+  assertNull(org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages,"featured"));
+ }
 }

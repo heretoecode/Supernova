@@ -77,12 +77,12 @@ public class DetailsImprovementsTest {
         assertNotNull(find(page,"English"));assertNotNull(find(page,"2h"));
         ReflectionHelpers.callInstanceMethod(page,"freshTitle",ReflectionHelpers.ClassParameter.from(String.class,"other"));
     }
-    @Test public void reviewsAreReachableFromExpandedDetailsAndUpReturnsToTab()throws Exception{
+    @Test public void expandedDetailsPreservesTabFocusWithoutWrittenReviews()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},u->{});TopNavigation root=new TopNavigation(host.get(),page,i2->{},page::atTop);host.get().setContentView(root);
             page.bindRemote(new JSONObject("{title:'Movie',id:42}"),"movie",42);
             for(int i2=0;i2<3;i2++){root.measure(View.MeasureSpec.makeMeasureSpec(1920,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY));root.layout(0,0,1920,1080);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();}
-            View tab=page.findViewWithTag("section:Details");assertTrue(tab.requestFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(tab,root.findFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(page.findViewWithTag("details.reviews"),root.findFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertSame(tab,root.findFocus());
+            View tab=page.findViewWithTag("section:Details");assertTrue(tab.requestFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(tab,root.findFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertNull(page.findViewWithTag("details.reviews"));assertSame(tab,root.findFocus());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void sameTitleArtRequestRetainsDrawableAndNewIdentityClearsIt(){

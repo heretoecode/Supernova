@@ -1,0 +1,41 @@
+--- a/src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java
++++ b/src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java
+@@ -168,7 +168,12 @@
+     @Override
+     public Boolean delete() throws Exception {
+         var u = WebdavFile2.uriToHttp(mUri);
+-        mSardine.delete(u.toString());
++        try { mSardine.delete(u.toString()); }
++        catch (com.thegrizzlylabs.sardineandroid.impl.SardineException failure) {
++            // DELETE is idempotent only for authoritative absence. Propagate every other failure.
++            if (failure.getStatusCode() != 404) throw failure;
++            log.info("WebDAV delete: already absent (HTTP 404)");
++        }
+         return null;
+     }
+ 
+--- a/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
++++ b/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
+@@ -534,4 +534,22 @@
+             assertEquals("http://" + server.getHostName() + ":" + server.getPort() + "/remote.php/webdav/Movies/video.mkv", httpUri.toString());
+         }
+     }
++    @org.junit.Test public void deleteIsIdempotentOnlyForConfirmed404() throws Exception {
++        try (MockWebServer server = new MockWebServer()) {
++            server.start();
++            for (int code : new int[]{204,404,401,403,405,423,500,503}) {
++                server.enqueue(new MockResponse().setResponseCode(code));
++                Uri uri=Uri.parse(server.url("/missing.mkv").toString().replace("http://","webdav://"));
++                WebdavFileEditor editor=new WebdavFileEditor(uri);
++                try {
++                    editor.delete();
++                    org.junit.Assert.assertTrue("Unexpected success: "+code,code==204||code==404);
++                } catch (com.thegrizzlylabs.sardineandroid.impl.SardineException failure) {
++                    org.junit.Assert.assertEquals(code,failure.getStatusCode());
++                    org.junit.Assert.assertTrue(code!=204&&code!=404);
++                }
++                org.junit.Assert.assertEquals("DELETE",server.takeRequest().getMethod());
++            }
++        }
++    }
+ }

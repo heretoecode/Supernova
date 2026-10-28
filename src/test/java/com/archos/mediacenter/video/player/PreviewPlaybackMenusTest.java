@@ -25,7 +25,7 @@ public class PreviewPlaybackMenusTest {
     TextView option(String label){return dialog().getWindow().getDecorView().findViewWithTag("playback.option:"+label);}
     @Test public void exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries(){
         PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);View root=dialog().getWindow().getDecorView();
-        for(int i=0;i<4;i++){TextView tab=root.findViewWithTag("playback.tab:"+i);assertEquals(new String[]{"Subtitles","Audio","Display","Playback"}[i],tab.getText());assertTrue(tab.getParent() instanceof LinearLayout);assertEquals(LinearLayout.HORIZONTAL,((LinearLayout)tab.getParent()).getOrientation());tab.requestFocus();assertTrue(tab.isSelected());assertNull(option("Technical Information"));assertNull(option("Report a Problem"));}
+        for(int i=0;i<4;i++){TextView tab=root.findViewWithTag("playback.tab:"+i);assertEquals(new String[]{"Audio","Subtitles","Video","More"}[i],tab.getText());assertTrue(tab.getParent() instanceof LinearLayout);assertEquals(LinearLayout.HORIZONTAL,((LinearLayout)tab.getParent()).getOrientation());tab.requestFocus();assertTrue(tab.isSelected());assertNull(option("Technical Information"));assertNull(option("Report a Problem"));}
         assertTrue(PreviewPlaybackMenus.back());assertFalse(PreviewPlaybackMenus.isShowing());assertTrue(opener.hasFocus());
     }
     @Test public void trackChangeRebuildsChecksAndKeepsSameWindow(){

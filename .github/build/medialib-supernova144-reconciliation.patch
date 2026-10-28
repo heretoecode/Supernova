@@ -1,0 +1,56 @@
+--- a/src/com/archos/mediaprovider/video/FileVisitor.java
++++ b/src/com/archos/mediaprovider/video/FileVisitor.java
+@@ -67,7 +67,11 @@
+     }
+ 
+     private static void recurse(MetaFile2 file, Listener listener, int recursionLimit) {
++        if (Thread.currentThread().isInterrupted()) {
++            listener.onListingError(file, new IOException("Scan interrupted"));return;
++        }
+         if (recursionLimit < 0) {
++            listener.onListingError(file, new IOException("Scan depth limit"));
+             return;
+         }
+         if (file != null) {
+@@ -80,7 +84,8 @@
+                                 for (MetaFile2 subFile : files) {
+                                     recurse(subFile, listener, recursionLimit - 1);
+                                 }
+-                        }
++                            else listener.onListingError(file, new IOException("Listing stopped"));
++                        } else listener.onListingError(file, new IOException("Incomplete listing"));
+                     } catch (IOException e) {
+                         if (log.isTraceEnabled()) log.error("recurse: IOException for {}", file.getName(), e);
+                         else log.error("recurse: IOException for {}", file.getName());
+@@ -98,11 +103,12 @@
+                         else log.error("recurse: JSchException for {}", file.getName());
+                         listener.onListingError(file, e);
+                     }
+-                }
++                } else listener.onListingError(file, new IOException("Directory traversal incomplete"));
+             } else if (file.isFile()) {
+                 listener.onFile(file);
+             } else {
+                 listener.onOtherType(file);
++                listener.onListingError(file, new IOException("Unresolved entry"));
+             }
+         }
+     }
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -1142,8 +1142,13 @@
+                 for(PrescanItem item:mPrescanItemsMap.values()) {
+                     if(item.needsDelete&&!mHadListingError&&!SupernovaLibraryPolicy.excluded(mService,Uri.parse(item._data)))
+                         SupernovaLibraryPolicy.availability(mService,item._id + ArchosMediaCommon.SCANNED_ID_OFFSET,Uri.parse(item._data),true);
+-                    item.needsDelete=false;
+-                }
++                    String scheme=root==null?"":root.getUri().getScheme();
++                    boolean webdav="webdav".equalsIgnoreCase(scheme)||"webdavs".equalsIgnoreCase(scheme);
++                    // A failed or deliberately bounded traversal retains ALL records.
++                    boolean complete=webdav&&root.isDirectory()&&!mHadListingError&&!Thread.currentThread().isInterrupted();
++                    if(!complete||SupernovaLibraryPolicy.excluded(mService,Uri.parse(item._data)))item.needsDelete=false;
++                }
++                log.info("Library reconciliation: listingComplete={}", !mHadListingError);
+                 if(root!=null){if(!mHadListingError)SupernovaLibraryPolicy.sourceAvailable(mService,root.getUri(),true);else if(mUnknownListingError||failedDirectories.contains(SupernovaLibraryPolicy.canonical(root.getUri())))SupernovaLibraryPolicy.sourceAvailable(mService,root.getUri(),false);}
+             }
+             // Count total files that need deletion

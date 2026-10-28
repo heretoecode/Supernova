@@ -21,7 +21,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
     private boolean requestedArtwork;
     PreviewPlaybackLoading(Context context, Intent intent) {
         super(context);setId(R.id.progress_indicator);setVisibility(VISIBLE);
-        setBackgroundColor(0xff091725);setFocusable(false);setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        setBackground(new com.archos.mediacenter.video.leanback.PreviewUtilityBackground(context));setFocusable(false);setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         artwork=new ImageView(context);artwork.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(artwork,new LayoutParams(-1,-1));
         View shade=new View(context);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0xee071522,0x99071522,0x66071522}));addView(shade,new LayoutParams(-1,-1));
         LinearLayout labels=new LinearLayout(context);labels.setOrientation(LinearLayout.VERTICAL);
@@ -43,7 +43,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         episode.setVisibility(episode.length()==0?GONE:VISIBLE);
     }
     private boolean waitingForFrame;private int generation;
-    void begin(){generation++;waitingForFrame=false;animate().cancel();setAlpha(1f);setVisibility(VISIBLE);}
+    void begin(){if(cachedArtwork==null){Picasso.get().cancelRequest(artwork);artwork.setImageDrawable(null);}generation++;waitingForFrame=false;animate().cancel();setAlpha(1f);setVisibility(VISIBLE);}
     void waitForFrame(View root){
         if(waitingForFrame||getVisibility()!=VISIBLE)return;waitingForFrame=true;
         final long started=android.os.SystemClock.uptimeMillis();final int expected=generation;
@@ -67,7 +67,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         title.setText(info.isScraped&&info.scraperTitle!=null?info.scraperTitle:fallback);
         boolean show=info.isShow&&info.scraperSeasonNr>=0&&info.scraperEpisodeNr>=0;
         long id=0;try{id=Long.parseLong(info.isShow?info.scraperShowId:info.scraperMovieId);}catch(Exception unavailable){}episode.setText(PreviewTaglines.cached(getContext(),info.isShow,id,info.scraperSeasonNr,info.scraperEpisodeNr));episode.setVisibility(episode.length()==0?GONE:VISIBLE);
-        if(info.uri!=null&&!info.uri.equals(source)&&!info.uri.equals(fileSource)){cachedArtwork=null;Picasso.get().cancelRequest(artwork);artwork.setImageDrawable(null);}
+        if(info.uri!=null&&!info.uri.equals(source)&&!info.uri.equals(fileSource)){requestedArtwork=false;cachedArtwork=null;Picasso.get().cancelRequest(artwork);artwork.setImageDrawable(null);}
     }
     @Override protected void onVisibilityChanged(View changed,int visibility){
         super.onVisibilityChanged(changed,visibility);

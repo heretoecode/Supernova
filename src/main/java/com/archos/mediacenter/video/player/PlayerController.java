@@ -1517,8 +1517,12 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         bubble.setText(Player.sPlayer!=null?PreviewHudTiming.timestamp(position)+(chapter.isEmpty()?"":"\n"+chapter):mCurrentTime==null?"":mCurrentTime.getText());
         if(mProgress.getWidth()>0)bubble.setMaxWidth(mProgress.getWidth());
         ChapterMarkers markers=mControllerViewLeft.findViewById(R.id.preview_chapter_markers);if(markers!=null)markers.bind(chapters,Player.sPlayer==null?0:Player.sPlayer.getDuration(),mProgress.getPaddingLeft(),mProgress.getPaddingRight());
-        android.graphics.drawable.GradientDrawable pill=new android.graphics.drawable.GradientDrawable();pill.setColor(0xee152738);pill.setCornerRadius(6*mContext.getResources().getDisplayMetrics().density);pill.setStroke(1,0xffbccbd4);bubble.setBackground(pill);
-        bubble.measure(View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));float fraction=mProgress.getMax()>0?(float)mProgress.getProgress()/mProgress.getMax():0;float x=mProgress.getPaddingLeft()+fraction*(mProgress.getWidth()-mProgress.getPaddingLeft()-mProgress.getPaddingRight())-bubble.getMeasuredWidth()/2f;bubble.setTranslationX(PreviewHudTiming.pillLeft(x,mProgress.getWidth(),bubble.getMeasuredWidth()));
+
+        bubble.measure(View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));float fraction=mProgress.getMax()>0?(float)mProgress.getProgress()/mProgress.getMax():0;float x=mProgress.getPaddingLeft()+fraction*(mProgress.getWidth()-mProgress.getPaddingLeft()-mProgress.getPaddingRight())-bubble.getMeasuredWidth()/2f;float left=PreviewHudTiming.pillLeft(x,mProgress.getWidth(),bubble.getMeasuredWidth());bubble.setTranslationX(left);
+        float density=mContext.getResources().getDisplayMetrics().density;
+        bubble.setBackground(new SeekTooltipDrawable(density,x+bubble.getMeasuredWidth()/2f-left));
+        bubble.setTranslationY(mProgress.getY()+mProgress.getHeight()/2f-bubble.getMeasuredHeight()-2*density);
+        if(mControlBar.getLayoutParams() instanceof ViewGroup.MarginLayoutParams){ViewGroup.MarginLayoutParams safe=(ViewGroup.MarginLayoutParams)mControlBar.getLayoutParams();int inset=Math.max(Math.round(16*density),Math.round(mControllerViewLeft.getHeight()*.04f));if(safe.bottomMargin!=inset){safe.bottomMargin=inset;mControlBar.setLayoutParams(safe);}}
     }
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {

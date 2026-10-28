@@ -60,8 +60,8 @@ public final class UniversalFileBrowser extends LinearLayout {
     private View leftAnchor, centreAnchor;
     private ListingEngine engine;
     private int generation,listingRenderGeneration;
-    private boolean closed, listingFailed;private TextView scanOverview;private final android.os.Handler scanHandler=new android.os.Handler(android.os.Looper.getMainLooper());
-    private final Runnable scanRefresh=new Runnable(){public void run(){if(scanOverview!=null&&isAttachedToWindow())scanOverview.setText(networkLayout!=null&&section==0?dashboardLibraryStatus():PreviewLibraryScan.overview(getContext()));if(isAttachedToWindow())scanHandler.postDelayed(this,1000);}};
+    private boolean closed, listingFailed;private TextView scanOverview,scanButton;private final android.os.Handler scanHandler=new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable scanRefresh=new Runnable(){public void run(){if(scanButton!=null)scanButton.setText(PreviewLibraryScan.active()?"Scanning…":"Scan Library");if(scanOverview!=null&&isAttachedToWindow())scanOverview.setText(networkLayout!=null&&section==0?dashboardLibraryStatus():PreviewLibraryScan.overview(getContext()));if(isAttachedToWindow())scanHandler.postDelayed(this,1000);}};
     private Consumer<String> networkAction = ignored -> {};
     private Consumer<Exception> credentials;
     private Consumer<Uri> locationChanged = ignored -> {};
@@ -356,7 +356,9 @@ public final class UniversalFileBrowser extends LinearLayout {
         stopDiscovery();
         if(networkLayout!=null){
             sectionChild=false;workspaceMode(false);remember();current=null;stopListing();indexed.clear();files.clear();items.removeAllViews();crumbs.removeAllViews();toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);status.setText("");actions.removeAllViews();
-            TextView title=SharedThreePanel.text(getContext(),"Overview",20);items.addView(title);
+            LinearLayout header=new LinearLayout(getContext());header.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            TextView title=SharedThreePanel.text(getContext(),"Overview",20);header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
+            TextView scan=action("Scan Library",()->{PreviewLibraryScan.request(getContext());if(scanOverview!=null)scanOverview.setText(dashboardLibraryStatus());});scanButton=scan;scan.setTag("semantic:network.scan_library");header.addView(scan);items.addView(header);
             TextView subtitle=SharedThreePanel.text(getContext(),"Your storage, connections and library at a glance",12);subtitle.setTextColor(0xffb7bdc6);items.addView(subtitle);
             dashboardCard("Storage","Internal and mounted storage devices","local",()->selectSection(1),card->volumeRows(card));
             dashboardCard("Network Shares","Configured network locations · status not checked","network",()->selectSection(2),card->{if(shares.isEmpty())card.addView(SharedThreePanel.text(getContext(),"No network locations saved",13));for(Shortcut source:shares){TextView row=action(source.getName()+" · "+PreviewNetworkWorkspace.protocol(source.getUri()),()->{section=2;leftAnchor=locations.get(2);open(source.getUri());focusCentre();});card.addView(row);}});

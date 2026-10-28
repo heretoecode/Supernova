@@ -43,7 +43,7 @@ public class VideoSettingsActivity extends LeanbackActivity {
             android.widget.FrameLayout full=new android.widget.FrameLayout(this);full.setId(R.id.settingsFragment);setContentView(full);new androidx.core.view.WindowInsetsControllerCompat(getWindow(),full).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
             if(savedInstanceState==null)getSupportFragmentManager().beginTransaction().replace(R.id.settingsFragment,new VideoSettingsFragment.PrefsFragment()).commit();
         }else setContentView(R.layout.activity_video_settings);
-        if (previewNavigation != null) {
+        if (SettingsWorkspace.enabled(this) || previewNavigation != null) {
             overridePendingTransition(0,0);
         } else if (Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.slide_in_from_right, 0);
