@@ -13,6 +13,8 @@ Compatible ports in this candidate:
 
 Additional compatible ports: MediaLib `cf75fdcd85822d1f58d90ec35d72f9a59e4a6672` uses the internal app cache when external subtitle cache creation fails (raw-path logging removed); FileCore `868496a9ab` rejects unsupported MediaStore `_data` mutations without legacy/all-files access. Four cache and three storage production regressions are added.
 
+Native safety port: AVOS `96d5f4fb55` guards stream-buffer allocation arithmetic before narrowing to int, including ring overlap, double-copy capacity and parser prebuffer scaling. It applies on the patched Supernova native baseline. Upstream C boundary regression passes locally with AddressSanitizer/UBSan and is required in both new workflows. The wrappers will be rebuilt from patched source; FFmpeg/runtime pins remain unchanged.
+
 No UI replacement, storage schema migration, dependency/runtime hash substitution or native ABI replacement is included. The release is **not complete**: per-commit compatibility/security review, native subtitle/FFmpeg/OpenSSL integration assessment, performance profiling and full automated validation remain open. UPSTREAM_DELTA.json is an investigation inventory, not integration clearance. All unported changes remain deferred pending review; none is declared safe or irrelevant by omission.
 
 Signing blocker: `supernova-foundation-signing` deployment policies do not allow `codex/supernova-0.145-maintenance-2026-10-28`. Only the owner can authorize that branch. The new workflow retains all native rebuild, runtime, full-suite, lint, exact-source, signature and payload gates. No protection is changed or bypassed.

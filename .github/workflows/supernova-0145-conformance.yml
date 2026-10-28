@@ -67,6 +67,9 @@ jobs:
           git -C MediaLib apply ../Video/.github/build/medialib-preview417-local.patch
           git -C native/avos apply ../../Video/.github/build/avos-supernova135.patch
           git -C native/avos apply ../../Video/.github/build/avos-supernova141-chapters.patch
+          git -C native/avos apply ../../Video/.github/build/avos-supernova145-buffer-limits.patch
+          cc -Wall -Wextra -Werror -fsanitize=undefined,address -I native/avos/Include native/avos/test/stream_buffer_limits.c -o "$RUNNER_TEMP/stream-buffer-test"
+          "$RUNNER_TEMP/stream-buffer-test"
           # prepare-preview.py is intentionally NOT called for Foundation.
           git -C MediaLib apply ../Video/.github/build/medialib-supernova135.patch
           git -C MediaLib apply ../Video/.github/build/medialib-next-refinement.patch
