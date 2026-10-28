@@ -94,6 +94,8 @@ jobs:
           git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova142-network.patch
           git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova144-webdav.patch
           git -C MediaLib apply ../Video/.github/build/medialib-supernova144-reconciliation.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova145-subtitle-cache.patch
+          git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova145-storage.patch
 
       - name: Verify 0.145 provider and historical identity isolation
         run: python3 source/.github/build/verify-next-qa.py --root nova
