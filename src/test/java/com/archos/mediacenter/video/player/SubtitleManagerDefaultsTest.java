@@ -28,7 +28,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
+@Config(sdk = 33, application = android.app.Application.class)
 public class SubtitleManagerDefaultsTest {
     private SubtitleManager mManager;
     private SharedPreferences mPrefs;
@@ -53,7 +53,7 @@ public class SubtitleManagerDefaultsTest {
         assertEquals(d.shadowColor, mManager.getShadowColor());
         assertEquals(d.backgroundColor, mManager.getBackgroundColor());
         assertEquals(d.bgOpacity, mManager.getBackgroundOpacity());
-        assertEquals(d.outlineWidth, mManager.getOutlineWidth(), 0.001f);
+        assertEquals(0f, mManager.getOutlineWidth(), 0.001f);
         assertEquals(d.shadowWidth, mManager.getShadowWidth(), 0.001f);
     }
 

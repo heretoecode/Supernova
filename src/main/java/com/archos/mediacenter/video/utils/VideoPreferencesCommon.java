@@ -343,7 +343,6 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     List<String> UiLanguageListEntries = new ArrayList<>();
     List<String> UiLanguageListEntryValues = new ArrayList<>();
 
-    private final ActivityResultLauncher<Intent> mFolderPickerLauncher;
     private final ActivityResultLauncher<Intent> mFontsFolderTreeLauncher;
     private final ActivityResultLauncher<Intent> mTraktAuthLauncher;
 
@@ -369,31 +368,12 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(preferencesFragment.requireContext()).getBoolean("try_new_ui",false))backupReview=new BackupReview(preferencesFragment);
             }
         });
-        mFolderPickerLauncher = preferencesFragment.registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                this::onFolderPickerResult);
         mFontsFolderTreeLauncher = preferencesFragment.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 this::onFontsFolderTreeResult);
         mTraktAuthLauncher = preferencesFragment.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 this::onTraktAuthResult);
-    }
-
-    private void onFolderPickerResult(ActivityResult result) {
-        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-            String newPath = result.getData().getStringExtra(FolderPicker.EXTRA_SELECTED_FOLDER);
-            if (newPath != null) {
-                java.io.File f = new java.io.File(newPath);
-                if (f.isDirectory() && f.exists()) {
-                    PreferenceManager.getDefaultSharedPreferences(getActivity())
-                            .edit().putString(KEY_TORRENT_PATH, f.getAbsolutePath()).apply();
-                    TorrentPathDialogPreference pref =
-                            (TorrentPathDialogPreference) findPreference(KEY_TORRENT_PATH);
-                    if (pref != null) pref.notifyChanged();
-                }
-            }
-        }
     }
 
     // Handles the result of FontsFolderSafPreference's ACTION_OPEN_DOCUMENT_TREE launch.

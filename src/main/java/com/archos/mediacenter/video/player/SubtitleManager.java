@@ -231,7 +231,7 @@ public class SubtitleManager {
         setColor(prefs.getInt(KEY_COLOR, d.color));
         setOverrideMode(prefs.getInt(KEY_OVERRIDE_MODE, d.overrideMode));
         setBgMode(prefs.getInt(KEY_BG_MODE, prefs.getBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND, false) ? BG_MODE_BOXED_LINE : d.bgMode));
-        if (prefs.contains(KEY_FONT_SIZE_PT)) {
+        if (prefs.contains(KEY_FONT_SIZE_PT) && !prefs.contains(PlayerActivity.KEY_SUBTITLE_SIZE)) {
             mLegacySize = nativePtToLegacySize(prefs.getInt(KEY_FONT_SIZE_PT, d.fontSizePt), mContext.getResources().getDisplayMetrics(), getScreenShortSide());
             mUseLegacySize = false;
             setFontSizePt(prefs.getInt(KEY_FONT_SIZE_PT, d.fontSizePt));

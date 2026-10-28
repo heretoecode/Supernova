@@ -120,8 +120,9 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
             super.onViewCreated(view, savedInstanceState);
             // Apply theme background color to the preference list (RecyclerView)
             // This colors only the right-side content area, not the entire window
-            if (getListView() != null) {
-                getListView().setBackgroundColor(SettingsWorkspace.enabled(requireContext())?android.graphics.Color.TRANSPARENT:ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
+            final RecyclerView list = getListView();
+            if (list != null) {
+                list.setBackgroundColor(SettingsWorkspace.enabled(requireContext())?android.graphics.Color.TRANSPARENT:ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
             }
             if (!SettingsWorkspace.enabled(requireContext())&&requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false)) {
                 scrollToPreference("streaming_category");

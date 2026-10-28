@@ -242,7 +242,7 @@ index 0000000..49b2028
 +    @Override public int update(Uri uri, ContentValues values, String s, String[] a) { throw new UnsupportedOperationException(); }
 +}
 diff --git a/build.gradle b/build.gradle
-index fe7dc6c..afcf225 100644
+index fe7dc6c..953c322 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -4,11 +4,15 @@ repositories {
@@ -303,7 +303,16 @@ index fe7dc6c..afcf225 100644
          exclude 'META-INF/NOTICE.txt'
          exclude 'META-INF/beans.xml'
          exclude 'META-INF/maven'
-@@ -131,7 +148,6 @@ tasks.register('ndkBuild', Exec) {
+@@ -105,6 +122,8 @@ android {
+         unitTests.includeAndroidResources = true
+         unitTests.all {
+             forkEvery = 1
++            // Robolectric API37 FileDescriptor bridge on JDK21.
++            jvmArgs "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED"
+             systemProperty 'nova.test.mediaDbPath', System.getProperty('nova.test.mediaDbPath')
+             testLogging {
+                 events "passed", "skipped", "failed", "standardOut", "standardError"
+@@ -131,7 +150,6 @@ tasks.register('ndkBuild', Exec) {
      // Let GNU Make manage native C/C++ dependency checking
      List<String> myCmd = new ArrayList<String>()
      myCmd.add("make")
@@ -311,7 +320,7 @@ index fe7dc6c..afcf225 100644
      myCmd.add("native_libnativehelper")
      myCmd.add("native_avos_full")
      myCmd.add("native_torrentd")
-@@ -154,13 +170,13 @@ dependencies {
+@@ -154,13 +172,13 @@ dependencies {
      implementation project(':FileCoreLibrary')
      implementation 'androidx.lifecycle:lifecycle-process:2.11.0'
      coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
@@ -328,7 +337,7 @@ index fe7dc6c..afcf225 100644
      implementation 'org.json:json:20260814'
      // see https://github.com/UweTrottmann/trakt-java?tab=readme-ov-file for threetenabp instead of threetenbp
      //implementation ('com.github.nova-video-player:trakt-java:0.0.1') {
-@@ -171,31 +187,40 @@ dependencies {
+@@ -171,31 +189,40 @@ dependencies {
      api ('org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.2') {
          exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common'
      }
@@ -2647,7 +2656,7 @@ index 46c32b0..7f7e7e3 100644
       * Rebuilds artwork tables so the same physical image may be referenced by
       * multiple metadata owners. Only rows are duplicated; image files remain
 diff --git a/src/com/archos/mediaprovider/video/VideoOpenHelper.java b/src/com/archos/mediaprovider/video/VideoOpenHelper.java
-index 350818e..79ea7ab 100644
+index 350818e..8e6f563 100644
 --- a/src/com/archos/mediaprovider/video/VideoOpenHelper.java
 +++ b/src/com/archos/mediaprovider/video/VideoOpenHelper.java
 @@ -1541,6 +1541,24 @@ public class VideoOpenHelper extends DeleteOnDowngradeSQLiteOpenHelper {
@@ -2675,10 +2684,12 @@ index 350818e..79ea7ab 100644
      // ------------- ---##[ Video Thumbnails     ]## ---------------------------
      public static final String VIDEOTHUMBNAIL_TABLE_NAME = "videothumbnails";
      // Identification can be cleared without deleting unselected logical pins/Collection owners.
-@@ -1720,6 +1738,44 @@ public class VideoOpenHelper extends DeleteOnDowngradeSQLiteOpenHelper {
+@@ -1719,7 +1737,45 @@ public class VideoOpenHelper extends DeleteOnDowngradeSQLiteOpenHelper {
+         // TODO: test if that is good for us or not.
          db.enableWriteAheadLogging();
          // turn on foreign key support used in scraper tables
-         db.execSQL("PRAGMA foreign_keys = ON");
+-        db.execSQL("PRAGMA foreign_keys = ON");
++        db.setForeignKeyConstraintsEnabled(true);
 +        ensureGenreIdExtension(db);
 +    }
 +
@@ -4582,22 +4593,29 @@ index 0000000..8df1f99
 +    }
 +}
 diff --git a/test/java/com/archos/mediaprovider/video/DatabaseMigrationTest.java b/test/java/com/archos/mediaprovider/video/DatabaseMigrationTest.java
-index f1cbe71..1847256 100644
+index f1cbe71..dd18b08 100644
 --- a/test/java/com/archos/mediaprovider/video/DatabaseMigrationTest.java
 +++ b/test/java/com/archos/mediaprovider/video/DatabaseMigrationTest.java
-@@ -152,6 +152,51 @@ public class DatabaseMigrationTest {
+@@ -152,6 +152,58 @@ public class DatabaseMigrationTest {
          context.deleteDatabase(dbName);
      }
  
 +    @Test
-+    public void testMigrationV62AddsGenreIdsAndBackfills() {
++    public void testSchema63GenreExtensionBackfillsWithoutVersionBump() {
 +        Context context = ApplicationProvider.getApplicationContext();
-+        String dbName = "test_migration_v62.db";
++        String dbName = "test_schema63_genre_extension.db";
 +        context.deleteDatabase(dbName);
 +
-+        VideoOpenHelper helper61 = new VideoOpenHelper(context, dbName, 61);
++        VideoOpenHelper helper61 = new VideoOpenHelper(context, dbName, 63) {
++            @Override public void onOpen(SQLiteDatabase db) {
++                // Exact pre-extension schema63 shape: existing collections and
++                // match-kind isolation, with no genre extension applied yet.
++                db.enableWriteAheadLogging();
++                db.setForeignKeyConstraintsEnabled(true);
++            }
++        };
 +        SQLiteDatabase db = helper61.getWritableDatabase();
-+        db.execSQL("PRAGMA foreign_keys = OFF");
++        db.setForeignKeyConstraintsEnabled(false);
 +        db.execSQL("INSERT INTO files (_id, remote_id, _data, title, date_added, media_type, volume_hidden, Archos_smbserver) VALUES (1, 1, '/storage/usb/Anime-movie.mkv', 'Anime movie', 1000, 3, 0, 0)");
 +        db.execSQL("INSERT INTO files (_id, remote_id, _data, title, date_added, media_type, volume_hidden, Archos_smbserver) VALUES (2, 2, '/storage/usb/Unknown-movie.mkv', 'Unknown movie', 1000, 3, 0, 0)");
 +        db.execSQL("INSERT INTO movie (_id, video_id, name_movie, m_genres) VALUES (1, 1, 'Anime movie', 'Animazione, Azione')");
@@ -4605,10 +4623,10 @@ index f1cbe71..1847256 100644
 +        db.execSQL("INSERT INTO show (_id, name_show, s_genres) VALUES (1, 'Anime show', 'Animazione')");
 +        db.close();
 +
-+        VideoOpenHelper helper62 = new VideoOpenHelper(context, dbName, 62);
++        VideoOpenHelper helper62 = new VideoOpenHelper(context, dbName, 63);
 +        SQLiteDatabase upgraded = helper62.getWritableDatabase();
 +
-+        assertEquals(62, upgraded.getVersion());
++        assertEquals(63, upgraded.getVersion());
 +        assertTrue(columnExists(upgraded, "movie", ScraperStore.Movie.GENRE_IDS));
 +        assertTrue(columnExists(upgraded, "show", ScraperStore.Show.GENRE_IDS));
 +        assertTrue(columnExists(upgraded, "video", VideoStore.Video.VideoColumns.SCRAPER_M_GENRE_IDS));
@@ -4637,6 +4655,41 @@ index f1cbe71..1847256 100644
      @Test
      public void testMigrationV60AddsSortNameColumnsIndexesAndBackfills() {
          Context context = ApplicationProvider.getApplicationContext();
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkScannerServiceVideoTest.java b/test/java/com/archos/mediaprovider/video/NetworkScannerServiceVideoTest.java
+index 435e27c..a41ea7f 100644
+--- a/test/java/com/archos/mediaprovider/video/NetworkScannerServiceVideoTest.java
++++ b/test/java/com/archos/mediaprovider/video/NetworkScannerServiceVideoTest.java
+@@ -50,7 +50,7 @@ public class NetworkScannerServiceVideoTest {
+ 
+     @Test
+     public void duplicateQueuedRequestReleasesItsBatchSlot() throws Exception {
+-        NetworkScannerServiceVideo service = new NetworkScannerServiceVideo();
++        NetworkScannerServiceVideo service = org.robolectric.Robolectric.buildService(NetworkScannerServiceVideo.class).get();
+         Uri uri = Uri.parse("smb://server/share");
+         queuedRequests(service).put(uri.toString(), new Object());
+         long batchId = AutoScrapeService.startNetworkScanBatch(1);
+diff --git a/test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java b/test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java
+index 280920e..b892973 100644
+--- a/test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java
++++ b/test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java
+@@ -91,7 +91,7 @@ public class VideoStoreImportReconciliationTest {
+         MatrixCursor imported = importedCursor(43L, PRIMARY + "/Movies/Missing.mkv");
+         MatrixCursor media = new MatrixCursor(MEDIA_COLUMNS);
+         stubQueries(resolver, imported, media);
+-        when(resolver.delete(eq(VideoStoreInternal.FILES_IMPORT), eq("_id=?"),
++        when(resolver.delete(eq(VideoStoreInternal.FILES_IMPORT), eq("_id IN (?)"),
+                 any(String[].class))).thenReturn(1);
+ 
+         VideoStoreImportImpl.LocalReconciliationResult result =
+@@ -99,7 +99,7 @@ public class VideoStoreImportReconciliationTest {
+ 
+         assertEquals(0, result.updated);
+         assertEquals(1, result.removed);
+-        verify(resolver).delete(eq(VideoStoreInternal.FILES_IMPORT), eq("_id=?"),
++        verify(resolver).delete(eq(VideoStoreInternal.FILES_IMPORT), eq("_id IN (?)"),
+                 any(String[].class));
+         verify(resolver, never()).applyBatch(anyString(), any());
+     }
 diff --git a/test/java/com/archos/mediascraper/GenreUtilsTest.java b/test/java/com/archos/mediascraper/GenreUtilsTest.java
 new file mode 100644
 index 0000000..9e7d71e
@@ -4755,3 +4808,32 @@ index 0000000..9e7d71e
 +        assertTrue(sql.contains("'Animazione'"));
 +    }
 +}
+diff --git a/test/java/com/archos/mediascraper/ShowTagsPersistenceTest.java b/test/java/com/archos/mediascraper/ShowTagsPersistenceTest.java
+index f06fefd..a019bb7 100644
+--- a/test/java/com/archos/mediascraper/ShowTagsPersistenceTest.java
++++ b/test/java/com/archos/mediascraper/ShowTagsPersistenceTest.java
+@@ -55,10 +55,10 @@ public class ShowTagsPersistenceTest {
+                     MatrixCursor cursor = new MatrixCursor(projection);
+                     if (ScraperStore.Show.URI.ALL.equals(uri) && projection.length == 2) {
+                         cursor.addRow(new Object[] { 31L, 2252L });
+-                    } else if (ScraperStore.Show.URI.ALL.equals(uri) && projection.length == 10) {
++                    } else if (ScraperStore.Show.URI.ALL.equals(uri) && projection.length == 14) {
+                         cursor.addRow(new Object[] {
+                                 31L, null, 0f, null, null, "tt0103514", 2252L, -1L, -1L,
+-                                null
++                                null, "und", "", "", "und"
+                         });
+                     } else if (projection.length == 1) {
+                         cursor.addRow(new Object[] { 0 });
+@@ -100,9 +100,9 @@ public class ShowTagsPersistenceTest {
+                     String[] projection = invocation.getArgument(1);
+                     MatrixCursor cursor = new MatrixCursor(projection);
+                     if (insertAttempted.get() && ScraperStore.Show.URI.ALL.equals(uri)
+-                            && projection.length == 10) {
++                            && projection.length == 14) {
+                         cursor.addRow(new Object[] {
+-                                77L, null, 0f, null, null, null, 5678L, -1L, -1L, null
++                                77L, null, 0f, null, null, null, 5678L, -1L, -1L, null, "und", "", "", "und"
+                         });
+                     }
+                     return cursor;

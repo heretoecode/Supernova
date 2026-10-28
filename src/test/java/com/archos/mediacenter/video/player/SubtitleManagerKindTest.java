@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
  * (SUB_KIND in native sub_kind.h). These tests pin that interpretation.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
+@Config(sdk = 33, application = android.app.Application.class)
 public class SubtitleManagerKindTest {
 
     private SubtitleManager mManager;

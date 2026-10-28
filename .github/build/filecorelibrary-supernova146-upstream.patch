@@ -5067,10 +5067,10 @@ index 0000000..8821491
 +}
 diff --git a/test/java/com/archos/filecorelibrary/samba/NetworkCredentialsDatabaseCredentialTest.java b/test/java/com/archos/filecorelibrary/samba/NetworkCredentialsDatabaseCredentialTest.java
 new file mode 100644
-index 0000000..7b50ce7
+index 0000000..92a182a
 --- /dev/null
 +++ b/test/java/com/archos/filecorelibrary/samba/NetworkCredentialsDatabaseCredentialTest.java
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,68 @@
 +// Copyright 2026 Courville Software
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -5093,6 +5093,8 @@ index 0000000..7b50ce7
 +
 +import org.junit.Test;
 +
++@org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner.class)
++@org.robolectric.annotation.Config(sdk=28)
 +public class NetworkCredentialsDatabaseCredentialTest {
 +
 +    @Test
@@ -5320,10 +5322,18 @@ index 0000000..0ba7e6c
 +    }
 +}
 diff --git a/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java b/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
-index d452773..eb40f79 100644
+index d452773..35317ec 100644
 --- a/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
 +++ b/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
-@@ -197,9 +197,12 @@ public class WebdavSecurityAndRangeTest {
+@@ -65,6 +65,7 @@ public class WebdavSecurityAndRangeTest {
+     public void setUp() {
+         mContext = ApplicationProvider.getApplicationContext();
+         WebdavUtils.getInstance(mContext);
++        com.archos.environment.ArchosUtils.setGlobalContext(mContext);
+     }
+ 
+     private DavResource createDavResource(String href, boolean isDirectory) throws Exception {
+@@ -197,9 +198,12 @@ public class WebdavSecurityAndRangeTest {
      @Test
      public void testRedirectWithBasePathPreservation() throws Exception {
          try (MockWebServer server = new MockWebServer()) {
@@ -5336,7 +5346,7 @@ index d452773..eb40f79 100644
              server.start();
  
              Uri originalUri = Uri.parse("webdav://" + server.getHostName() + ":" + server.getPort() + "/sub/file.txt");
-@@ -213,6 +216,45 @@ public class WebdavSecurityAndRangeTest {
+@@ -213,6 +217,45 @@ public class WebdavSecurityAndRangeTest {
          }
      }
  
@@ -5382,7 +5392,7 @@ index d452773..eb40f79 100644
      @Test
      public void testHttpsToHttpRedirectBlocked() throws Exception {
          HeldCertificate localhostCertificate = new HeldCertificate.Builder()
-@@ -300,12 +342,14 @@ public class WebdavSecurityAndRangeTest {
+@@ -300,12 +343,14 @@ public class WebdavSecurityAndRangeTest {
          try (MockWebServer server1 = new MockWebServer();
               MockWebServer server2 = new MockWebServer()) {
  
@@ -5399,7 +5409,7 @@ index d452773..eb40f79 100644
              server2.enqueue(new MockResponse()
                  .setResponseCode(401)
                  .setHeader("WWW-Authenticate", "Basic realm=\"target-realm\"")
-@@ -333,14 +377,18 @@ public class WebdavSecurityAndRangeTest {
+@@ -333,14 +378,18 @@ public class WebdavSecurityAndRangeTest {
                  assertEquals(401, se.getStatusCode());
              }
  
@@ -5421,7 +5431,7 @@ index d452773..eb40f79 100644
          }
      }
  
-@@ -434,8 +482,8 @@ public class WebdavSecurityAndRangeTest {
+@@ -434,8 +483,8 @@ public class WebdavSecurityAndRangeTest {
                  + "  </D:response>\n"
                  + "</D:multistatus>";
  
@@ -5432,7 +5442,7 @@ index d452773..eb40f79 100644
              // 2nd request: PROPFIND used by fromUri
              server.enqueue(new MockResponse()
                  .setResponseCode(207)
-@@ -451,9 +499,9 @@ public class WebdavSecurityAndRangeTest {
+@@ -451,9 +500,9 @@ public class WebdavSecurityAndRangeTest {
              assertEquals("video.mkv", metaFile.getName());
              assertEquals(1048576L, metaFile.length());
  
@@ -5445,7 +5455,7 @@ index d452773..eb40f79 100644
  
              // 2nd request was PROPFIND (fromUri)
              RecordedRequest propfindReq = server.takeRequest();
-@@ -485,8 +533,8 @@ public class WebdavSecurityAndRangeTest {
+@@ -485,8 +534,8 @@ public class WebdavSecurityAndRangeTest {
                  + "  </D:response>\n"
                  + "</D:multistatus>";
  
@@ -5456,7 +5466,7 @@ index d452773..eb40f79 100644
              // 2nd request: selective PROPFIND returns 405 Method Not Allowed
              server.enqueue(new MockResponse().setResponseCode(405));
              // 3rd request: fallback allprop PROPFIND returns 207 Multi-Status
-@@ -504,7 +552,7 @@ public class WebdavSecurityAndRangeTest {
+@@ -504,7 +553,7 @@ public class WebdavSecurityAndRangeTest {
              assertEquals("video.mkv", metaFile.getName());
              assertEquals(2097152L, metaFile.length());
  
@@ -5465,7 +5475,7 @@ index d452773..eb40f79 100644
              RecordedRequest selectiveReq = server.takeRequest(); // 1st PROPFIND (selective)
              assertEquals("PROPFIND", selectiveReq.getMethod());
              assertTrue("Selective PROPFIND must have custom prop body", selectiveReq.getBody().readUtf8().contains("resourcetype"));
-@@ -519,10 +567,11 @@ public class WebdavSecurityAndRangeTest {
+@@ -519,10 +568,11 @@ public class WebdavSecurityAndRangeTest {
      @Test
      public void testUriToHttpDeduplicatesMountPath() throws Exception {
          try (MockWebServer server = new MockWebServer()) {
@@ -5478,6 +5488,15 @@ index d452773..eb40f79 100644
  
              server.start();
  
+@@ -538,7 +588,7 @@ public class WebdavSecurityAndRangeTest {
+         try (MockWebServer server = new MockWebServer()) {
+             server.start();
+             for (int code : new int[]{204,404,401,403,405,423,500,503}) {
+-                server.enqueue(new MockResponse().setResponseCode(code));
++                server.enqueue(new MockResponse().setResponseCode(code).setHeader("Retry-After", "120"));
+                 Uri uri=Uri.parse(server.url("/missing.mkv").toString().replace("http://","webdav://"));
+                 WebdavFileEditor editor=new WebdavFileEditor(uri);
+                 try {
 diff --git a/test/java/com/hierynomus/msfscc/fileinformation/SmbjFileLengthTest.java b/test/java/com/hierynomus/msfscc/fileinformation/SmbjFileLengthTest.java
 new file mode 100644
 index 0000000..29b6f5b
@@ -5686,10 +5705,10 @@ index 0000000..79a4362
 +}
 diff --git a/testCommon/java/com/archos/filecorelibrary/ProxyCancellationChecks.java b/testCommon/java/com/archos/filecorelibrary/ProxyCancellationChecks.java
 new file mode 100644
-index 0000000..a2306de
+index 0000000..4be3a71
 --- /dev/null
 +++ b/testCommon/java/com/archos/filecorelibrary/ProxyCancellationChecks.java
-@@ -0,0 +1,239 @@
+@@ -0,0 +1,246 @@
 +// Copyright 2026 Courville Software
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -5731,6 +5750,13 @@ index 0000000..a2306de
 +
 +    @Before public void setUp() throws Exception {
 +        context = ApplicationProvider.getApplicationContext();
++        com.archos.environment.ArchosUtils.setGlobalContext(context);
++        // These cancellation fixtures use fake backends with an already-ready
++        // network precondition. Crypto initialization has its own suite.
++        BackgroundInitialization ready = new BackgroundInitialization(() -> null, Runnable::run);
++        ready.start();
++        Field initialization = NetworkInitialization.class.getDeclaredField("initialization");
++        initialization.setAccessible(true); initialization.set(null, ready);
 +        // The singleton outlives Robolectric's application between test methods.
 +        Field smbContext = SmbjUtils.class.getDeclaredField("mContext");
 +        smbContext.setAccessible(true);

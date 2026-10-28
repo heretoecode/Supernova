@@ -82633,18 +82633,40 @@ index 0000000..8a1c86d
 +added in aos-Video#216 are no longer required; if kept, they become redundant
 +insurance rather than the actual fix.
 diff --git a/jni/Android.mk b/jni/Android.mk
-index f6935e4..61a1f70 100644
+index f6935e4..c584a24 100644
 --- a/jni/Android.mk
 +++ b/jni/Android.mk
-@@ -13,7 +13,7 @@
+@@ -13,7 +13,8 @@
  # limitations under the License.
  
  LOCAL_PATH := $(call my-dir)
 -
 +include $(LOCAL_PATH)/libass_prebuilt.mk
++include $(LOCAL_PATH)/media_prebuilt.mk
  AVOS_JNI_DIR := $(LOCAL_PATH)
  AVOS_DIR := $(LOCAL_PATH)/..
  EXTERNAL_DIR := $(AVOS_DIR)/external
+diff --git a/jni/Application.mk b/jni/Application.mk
+index 217bf01..263a3c0 100644
+--- a/jni/Application.mk
++++ b/jni/Application.mk
+@@ -12,14 +12,14 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-APP_ALLOW_MISSING_DEPS=true
++APP_ALLOW_MISSING_DEPS=false
+ APP_CFLAGS :=
+ ifeq (,$(NDK_APP_ABI))
+ APP_ABI := armeabi-v7a
+ else
+ APP_ABI := $(NDK_APP_ABI)
+ endif
+-APP_PLATFORM := android-21
++APP_PLATFORM := android-23
+ APP_STL := c++_static
+ 
+ ifeq (1,$(ASAN))
 diff --git a/jni/libass_prebuilt.mk b/jni/libass_prebuilt.mk
 new file mode 100644
 index 0000000..22dc05d
@@ -83442,6 +83464,65 @@ index 69beaaa..c513af1 100644
  	jclass ClassLoaderClazz;
  	jobject myClassLoader;
  	jmethodID FindClassMethod;
+diff --git a/jni/media_prebuilt.mk b/jni/media_prebuilt.mk
+new file mode 100644
+index 0000000..bf3725a
+--- /dev/null
++++ b/jni/media_prebuilt.mk
+@@ -0,0 +1,53 @@
++# Copyright2026 Supernova contributors
++# SPDX-License-Identifier: Apache-2.0
++# Explicit source-built runtime modules; no APP_ALLOW_MISSING_DEPS escape hatch.
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libavutil
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libavutil.so
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libswresample
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libswresample.so
++LOCAL_SHARED_LIBRARIES := libavutil
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libswscale
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libswscale.so
++LOCAL_SHARED_LIBRARIES := libavutil
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libdav1d
++LOCAL_SRC_FILES := ../../prebuilt/dav1d/lib/$(TARGET_ARCH_ABI)/libdav1d.so
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libopus
++LOCAL_SRC_FILES := ../../prebuilt/opus/lib/$(TARGET_ARCH_ABI)/libopus.so
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libmysofa
++LOCAL_SRC_FILES := ../../prebuilt/libmysofa/lib/$(TARGET_ARCH_ABI)/libmysofa.so
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libavcodec
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libavcodec.so
++LOCAL_SHARED_LIBRARIES := libswresample libavutil libdav1d libopus
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libavformat
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libavformat.so
++LOCAL_SHARED_LIBRARIES := libavcodec libavutil
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libavfilter
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libavfilter.so
++LOCAL_SHARED_LIBRARIES := libswscale libavformat libavcodec libswresample libavutil libmysofa
++include $(PREBUILT_SHARED_LIBRARY)
 diff --git a/main.mk b/main.mk
 index 0dfa22c..9388d10 100644
 --- a/main.mk
@@ -83469,7 +83550,7 @@ index 0dfa22c..9388d10 100644
 -DEFINES += -DCONFIG_LIBYUV
 -endif
 diff --git a/ndkbuild.mk b/ndkbuild.mk
-index e08e131..726bd8b 100644
+index e08e131..e49a1e6 100644
 --- a/ndkbuild.mk
 +++ b/ndkbuild.mk
 @@ -29,13 +29,6 @@ include $(AVOS_DIR)/common.mk
@@ -83486,7 +83567,18 @@ index e08e131..726bd8b 100644
  ### libavos ###
  
  include $(CLEAR_VARS)
-@@ -62,8 +55,8 @@ LOCAL_LDLIBS := -L$(TARGET_OUT) -lz \
+@@ -54,7 +47,9 @@ LOCAL_CFLAGS := $(CFLAGS) $(DEFINES)
+ 
+ LOCAL_LDFLAGS := $(LDFLAGS)
+ 
+-LOCAL_SHARED_LIBRARIES := $(patsubst -l%,lib%, $(addsuffix $(AVOS_LIBS_SUFFIX), $(AVOS_SHARED_LIBS)))
++# System libraries stay in LOCAL_LDLIBS; every application shared dependency
++# has an explicit module so a missing archive can never be silently ignored.
++LOCAL_SHARED_LIBRARIES := $(filter-out libEGL libGLESv2 libandroid libjnigraphics,$(patsubst -l%,lib%, $(addsuffix $(AVOS_LIBS_SUFFIX), $(AVOS_SHARED_LIBS))))
+ 
+ LOCAL_LDLIBS := -L$(TARGET_OUT) -lz \
+ 	$(SHARED_LIBS) \
+@@ -62,8 +57,8 @@ LOCAL_LDLIBS := -L$(TARGET_OUT) -lz \
  	-llog
  
  LOCAL_STATIC_LIBRARIES := $(sort $(addsuffix $(AVOS_LIBS_SUFFIX), $(AVOS_STATIC_LIBS))) \
