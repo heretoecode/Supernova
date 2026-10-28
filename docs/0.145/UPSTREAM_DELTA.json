@@ -6233,8 +6233,63 @@
     },
     {
       "project": "prebuilt-opus",
-      "error": "Command '['gh', 'api', 'repos/nova-video-player/prebuilt-opus/compare/27544063be93ee55c6ba58a2ebb32c106eb2e37b...bd2b8d8867fb4c8d964300c5e981933140fb3170']' returned non-zero exit status 1.",
-      "disposition": "unverified; blocks complete integration clearance"
+      "disposition": "deferred: prebuilt history rewritten; source-builder comparison is authoritative, no binary substitution",
+      "baseline": "27544063be93ee55c6ba58a2ebb32c106eb2e37b",
+      "observed_release_time_tip": "bd2b8d8867fb4c8d964300c5e981933140fb3170",
+      "status": "no common ancestor; complete blob tree comparison",
+      "changed_blobs": [
+        {
+          "path": "LICENSE",
+          "baseline_blob": null,
+          "target_blob": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+        },
+        {
+          "path": "include/opus/opus.h",
+          "baseline_blob": null,
+          "target_blob": "802be9f957b44ea188e1758926c1715eebc516e5"
+        },
+        {
+          "path": "include/opus/opus_defines.h",
+          "baseline_blob": null,
+          "target_blob": "4a61406dbba60021c09b745d0737a5828e129823"
+        },
+        {
+          "path": "include/opus/opus_multistream.h",
+          "baseline_blob": null,
+          "target_blob": "81fb2bb709134cd90f1f55dd7a12eefded91db5b"
+        },
+        {
+          "path": "include/opus/opus_projection.h",
+          "baseline_blob": null,
+          "target_blob": "26f3cbb4811e8a3d6d0dfe939833e8f24a4fdfb9"
+        },
+        {
+          "path": "include/opus/opus_types.h",
+          "baseline_blob": null,
+          "target_blob": "7cf675580ffb0ad9ba7b040a5c03eb2828910486"
+        },
+        {
+          "path": "lib/arm64-v8a/libopus.so",
+          "baseline_blob": "3a25ba2dfe25da588ac2a27276ce373a38686904",
+          "target_blob": "f464cc84a1321f16b0bc155d3478643037683732"
+        },
+        {
+          "path": "lib/armeabi-v7a/libopus.so",
+          "baseline_blob": "1974c8e44fe03da3c3ebd4ff642f23419592d330",
+          "target_blob": "923c3881cad8020cc634df5bcf44fcfab4e8cc2a"
+        },
+        {
+          "path": "lib/x86/libopus.so",
+          "baseline_blob": "50ed1256e08f7632ddd2f8a802467771b45982f2",
+          "target_blob": "9c78c7ba430862ad4e103fa2e5ccb0c82eae1c2d"
+        },
+        {
+          "path": "lib/x86_64/libopus.so",
+          "baseline_blob": "1957397e508197f47cc275fde4d2aa255353492d",
+          "target_blob": "df9d1ad38bb2a30c8c2ddfc636b98ebcc13f6abd"
+        }
+      ],
+      "compare_error": "Command '['gh', 'api', 'repos/nova-video-player/prebuilt-opus/compare/27544063be93ee55c6ba58a2ebb32c106eb2e37b...bd2b8d8867fb4c8d964300c5e981933140fb3170']' returned non-zero exit status 1."
     },
     {
       "project": "prebuilt-dav1d",

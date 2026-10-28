@@ -452,7 +452,7 @@ Every commit returned by the release-time component comparisons is listed below.
 | torrentd-nobin | `e56f4e4db5296b0c6793ed011a33071df95de830` | Migrate torrentd to libtorrent 2.1 and C++17 | excluded: retired torrent runtime must remain absent; no feature reintroduction |
 | torrentd-nobin | `0a3e55d0e256725a8694c7fe3c23a8a927301152` | Guard unavailable torrent metadata and invalid file selections | excluded: retired torrent runtime must remain absent; no feature reintroduction |
 | prebuilt-ffmpeg | `699cb5c1a51ca3327f4507b1381b367a3999841a` | Prebuilt FFmpeg 9.0.2 | deferred: binaries cannot replace source-rebuilt/hash-reviewed native inputs without provenance and ABI validation |
-| prebuilt-opus | `unresolved` | new component or comparison unavailable | unverified; blocks complete integration clearance |
+| prebuilt-opus | `bd2b8d8867fb4c8d964300c5e981933140fb3170` | no common ancestor; complete blob tree comparison | deferred: prebuilt history rewritten; source-builder comparison is authoritative, no binary substitution |
 | prebuilt-dav1d | `f89559d62f671881431146b94c4364e568a623c8` | identical | No commit delta returned; no binary equivalence claim |
 | prebuilt-openssl | `a115df3031d7154de5048d15a0f75d7e047b4114` | Prebuilt OpenSSL 4.1.0 | deferred: binaries cannot replace source-rebuilt/hash-reviewed native inputs without provenance and ABI validation |
 | prebuilt-libmysofa | `ee9ba48ad4fb347c77d016662bc4744f5b677367` | Prebuilt 1.3.5 | deferred: binaries cannot replace source-rebuilt/hash-reviewed native inputs without provenance and ABI validation |
