@@ -20,7 +20,7 @@ jobs:
       - name: Install compiler and renderer dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential clang libclang-rt-18-dev pkg-config libass-dev fonts-dejavu-core
+          sudo apt-get install -y build-essential clang libclang-rt-18-dev pkg-config libass-dev fonts-dejavu-core libavformat-dev libavcodec-dev libavutil-dev
       - name: Prepare pinned dependency source and reviewed patches
         run: |
           set -euo pipefail

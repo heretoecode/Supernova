@@ -93475,10 +93475,10 @@ index 0000000..b83afd8
 +    unittest.main()
 diff --git a/test/test_atempo_missing_state.py b/test/test_atempo_missing_state.py
 new file mode 100644
-index 0000000..187decb
+index 0000000..db2f63c
 --- /dev/null
 +++ b/test/test_atempo_missing_state.py
-@@ -0,0 +1,90 @@
+@@ -0,0 +1,91 @@
 +"""Missing optional FFmpeg accessors must not manufacture media spans."""
 +import os
 +from pathlib import Path
@@ -93521,7 +93521,8 @@ index 0000000..187decb
 +static void legacy(AVFilterContext *c,int *ring,int64_t *a,int64_t *b,
 +    int64_t *in,int64_t *out,double *tempo) {
 +    (void)c;(void)a;(void)b;(void)out;(void)tempo;
-+    if(ring)*ring=100; if(in)*in=1100;
++    if (ring) { *ring = 100; }
++    if (in) { *in = 1100; }
 +}
 +static void extended(AVFilterContext *c,int *ring,int64_t *a,int64_t *b,
 +    int64_t *in,int64_t *out,double *tempo,int64_t *media) {
@@ -95603,7 +95604,7 @@ index 0000000..b654718
 +    unittest.main()
 diff --git a/test/test_pause_resume_policy.py b/test/test_pause_resume_policy.py
 new file mode 100644
-index 0000000..93d1d45
+index 0000000..2a33c0d
 --- /dev/null
 +++ b/test/test_pause_resume_policy.py
 @@ -0,0 +1,247 @@
@@ -95620,7 +95621,7 @@ index 0000000..93d1d45
 +#include <assert.h>
 +#include <stdio.h>
 +#include <string.h>
-+#define DBG if (0)
++#define DBG
 +#define DBG3 if (0)
 +#define serprintf printf
 +static int64_t now_ms = 10000;
@@ -95762,7 +95763,7 @@ index 0000000..93d1d45
 +        run_c(r'''
 +#include <assert.h>
 +#define AUDIO_WRITE_RETRY -99
-+#define DBG if (0)
++#define DBG
 +#define LOG(...) ((void)0)
 +struct track { int track_paused; unsigned pause_generation; };
 +static int classify(struct track *at,int ret,int write_started_paused,unsigned write_pause_generation) {
@@ -95796,7 +95797,7 @@ index 0000000..93d1d45
 +#include <assert.h>
 +#include <stdio.h>
 +#include <string.h>
-+#define DBG if (0)
++#define DBG
 +#define DBG3 if (0)
 +#define serprintf printf
 +static int scenario, capacity_calls, write_calls, accepted, waits, aborted;
