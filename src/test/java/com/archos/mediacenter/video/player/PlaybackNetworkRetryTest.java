@@ -37,7 +37,6 @@ public class PlaybackNetworkRetryTest {
         verify(frontend).onSeekStart(806_892);
         // onError has already released the native player and cleared its URI.
         when(player.isInPlaybackState()).thenReturn(false);
-        when(player.hasSuspendedPosition()).thenReturn(false);
 
         assertEquals(806_892, service.prepareRetryFromCurrentPosition());
         assertEquals(806_892, get(session, "selectedStartPositionMs"));
@@ -57,10 +56,10 @@ public class PlaybackNetworkRetryTest {
         set(service, "mStreamingUri", uri);
         set(service, "mIsPreparingSubs", true);
         set(service, "mSubtitlesReadyLatch", subtitles);
-        when(player.hasSuspendedPosition()).thenReturn(true);
         when(player.getCurrentPosition()).thenReturn(428_941);
         Object session = get(service, "mPlaybackSession");
         set(session, "startPositionApplied", true);
+        set(session, "lastKnownPositionMs", 428_941);
 
         assertEquals(428_941, service.prepareRetryFromCurrentPosition());
         // PlayerActivity.stop() pauses the frontend before requesting the reopen.

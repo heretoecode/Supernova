@@ -1,6 +1,6 @@
 # Supernova 0.145 maintenance candidate — work in progress
 
-Baseline branch tip: `43cef0529518d406e11b3ab69e61abded07a12ad`; frozen delivered 0.144 app source: `4e6f1f8f5691c34cd429c17421f92b6290ce3539`. PR #24 and signing run 40735286063 verified through the GitHub API. Baseline artifact download returned HTTP 403 in this environment, so its bytes have not been independently rechecked in this run. Prior signed-delivery receipts are preserved.
+Baseline branch tip: `43cef0529518d406e11b3ab69e61abded07a12ad`; frozen delivered 0.144 app source: `4e6f1f8f5691c34cd429c17421f92b6290ce3539`. PR #24 and signing run 40735286063 verified through the GitHub API. GitHub artifact download returned HTTP 403; complete Drive APK readback subsequently succeeded. All 87,940,129 bytes match SHA-256 `a841b6bcb49296b8968a40eef1b305178bfadb5f26aff759e5ee6aef5552ea61`; ZIP CRC and independent apksig verification pass with the existing certificate. Prior signed-delivery receipts are preserved.
 
 Latest official stable release at investigation: NOVA v6.6.2, AVP `5c5d4ec81b47ba59be8f91c9d877b49b0ab1c01e`, published October 27. AVP gitlinks still point at older 6.4.29 source; v6_6.xml selects mutable branches. The inventory records branch tips at release publication, not a falsely exact frozen upstream release manifest. Video's 6.6.2 version commit is `a4dcf44b3`.
 
