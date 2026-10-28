@@ -33,6 +33,20 @@ def verified_143_delivery_record(video, entry):
         and entry.get('run_id')==proof.get('signing_run',{}).get('id')==40575517211
         and len(entry.get('apks',[]))==1 and entry['apks'][0]['sha256']==proof['apk_sha256'])
 
+def verified_144_delivery_record(video, entry):
+    # Preserve the immutable prior delivery receipt when its CI archive is no longer downloadable.
+    if entry.get('version')!='0.144' or entry.get('recorded_binary_verification')!='docs/0.144/SIGNED_QA_DELIVERY.json':return False
+    proof=json.loads((video/entry['recorded_binary_verification']).read_text())
+    return (entry.get('source_sha')==proof.get('source_commit')=='4e6f1f8f5691c34cd429c17421f92b6290ce3539'
+        and proof.get('apk_sha256')=='a841b6bcb49296b8968a40eef1b305178bfadb5f26aff759e5ee6aef5552ea61'
+        and proof.get('certificate_sha256')=='79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e'
+        and proof.get('signature_verified') is True and proof.get('zip_crc_verified') is True
+        and proof.get('payload_matches_tested_unsigned_verified_in_ci') is True
+        and proof.get('native_hashes_independently_matched')==88
+        and proof.get('application_id')=='app.supernova.player' and proof.get('version_code')==144 and proof.get('version_name')=='0.144'
+        and entry.get('run_id')==proof.get('signing_run',{}).get('id')==40735286063
+        and len(entry.get('apks',[]))==1 and entry['apks'][0]['sha256']==proof['apk_sha256'])
+
 def verified_135_ci_record(video, entry):
     if entry.get('version')!='0.135' or entry.get('recorded_ci_verification')!='docs/0.135/SIGNED_QA_VERIFICATION.json' or entry.get('apks') or entry.get('archive_digest_verified') is not False:return False
     proof=json.loads((video/entry['recorded_ci_verification']).read_text())
@@ -57,7 +71,7 @@ def sources(root, ready=False):
     if [x['version'] for x in reversed(history['history'])] != expected or history['current']['version'] != f'0.{len(expected)+1}' or history['current']['version_code'] != len(expected)+1:
         raise ValueError('Literal Foundation version counter is inconsistent')
     for entry in history['history']:
-        if verified_135_ci_record(video,entry) or verified_136_ci_record(video,entry) or verified_143_delivery_record(video,entry):continue
+        if verified_135_ci_record(video,entry) or verified_136_ci_record(video,entry) or verified_143_delivery_record(video,entry) or verified_144_delivery_record(video,entry):continue
         if not (entry.get('archive_digest_verified') is True or verified_baseline_record(video,entry)) or not entry.get('apks') or not all(re.fullmatch('[0-9a-f]{64}',a['sha256']) for a in entry['apks']):
             raise ValueError('Historical APK binary evidence is incomplete')
     licences=json.loads((video/'assets/foundation/licences.json').read_text())

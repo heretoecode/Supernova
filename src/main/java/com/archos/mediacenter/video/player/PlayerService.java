@@ -1091,6 +1091,15 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         return position;
     }
 
+    /** Reopen after a network error without losing the live retry position. */
+    public void retryPlayback() {
+        firstTimeAudioCalled = true;
+        firstTimeSubCalled = true;
+        mPlayOnResume = true;
+        mPlayerState = PlayerState.PREPARING;
+        onStreamingUriOK();
+    }
+
     public void persistVideoInfoFromFrontend(VideoDbInfo videoInfo) {
         if (videoInfo == null || mIndexHelper == null) return;
         if (Objects.equals(mPlaybackSession.uri, videoInfo.uri) && mPlaybackSession.startPositionApplied && mPlaybackSession.hasPlayed) {
@@ -1930,6 +1939,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onSeekStart(int pos) {
+        // Native error teardown can clear the source before onError arrives.
+        mPlaybackSession.lastKnownPositionMs = Math.max(pos, 0);
         sampleJourneyTime();mPlaybackSession.seeking=true;
         if(mPlayerFrontend!=null) {
             mPlayerFrontend.onSeekStart(pos);

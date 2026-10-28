@@ -8,20 +8,45 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.144",
-    "version_code": 144,
+    "version": "0.145",
+    "version_code": 145,
     "date": "2026-10-28",
-    "kind": "Development candidate \u2014 validation and physical acceptance pending",
+    "kind": "Development candidate \u2014 integration and validation in progress; not delivered",
     "notes": [
-      "WebDAV missing-file deletion and complete-scan reconciliation safety.",
-      "Library artwork follows the active displayed page and ignores stale asynchronous results.",
-      "Prominent Scan Library action with queued-request coalescing.",
-      "Settings focus-only rows, shared switches, equal gutters and purpose-specific copy.",
-      "Playback Settings structure, inline video formats and raised HUD with seek pointer.",
-      "Details ratings retained; written review entry removed; single-line metadata spacing."
+      "Port compatible NOVA playback network recovery and subtitle pause timing fixes.",
+      "Avoid duplicate HDMI receiver registration; keep library suggestions private.",
+      "Preserve Supernova interface, data and signing identity.",
+      "Native subtitle engine and remaining upstream audit pending; no release clearance."
     ]
   },
   "history": [
+    {
+      "version": "0.144",
+      "version_code": 144,
+      "date": "2026-10-28",
+      "kind": "Development candidate \u2014 validation and physical acceptance pending",
+      "notes": [
+        "WebDAV missing-file deletion and complete-scan reconciliation safety.",
+        "Library artwork follows the active displayed page and ignores stale asynchronous results.",
+        "Prominent Scan Library action with queued-request coalescing.",
+        "Settings focus-only rows, shared switches, equal gutters and purpose-specific copy.",
+        "Playback Settings structure, inline video formats and raised HUD with seek pointer.",
+        "Details ratings retained; written review entry removed; single-line metadata spacing."
+      ],
+      "source_sha": "4e6f1f8f5691c34cd429c17421f92b6290ce3539",
+      "evidence": "docs/0.144/SIGNED_QA_DELIVERY.json",
+      "recorded_binary_verification": "docs/0.144/SIGNED_QA_DELIVERY.json",
+      "archive_digest_verified": false,
+      "run_id": 40735286063,
+      "apks": [
+        {
+          "sha256": "a841b6bcb49296b8968a40eef1b305178bfadb5f26aff759e5ee6aef5552ea61",
+          "size": 87940129,
+          "url": "https://drive.google.com/file/d/1bDjcD3Fkl-X3FBxaQ7meVv8VLv6UpwZl/view?usp=drivesdk",
+          "filename": "Supernova_0.144.apk"
+        }
+      ]
+    },
     {
       "version": "0.143",
       "version_code": 143,
