@@ -1,0 +1,9 @@
+{
+  "environment": "supernova-foundation-signing",
+  "branch": "codex/supernova-0.146-upstream-completion-2026-10-28",
+  "exact_rule_present": false,
+  "existing_145_rule_present": true,
+  "protection_changed": false,
+  "signing_attempted": false,
+  "status": "owner branch authorisation needed before final signing; independent implementation continues"
+}

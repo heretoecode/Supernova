@@ -1,0 +1,12 @@
+{
+  "baseline_tip": "b04938a804ba192e51a6707cbffc1b46cc97bcff",
+  "signed_source": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "signed_run": 40762577939,
+  "result": "success",
+  "drive_file_id": "10HmVAOilIRsT8iRcyLyOktz_vgS7uCeM",
+  "full_drive_readback_verified": true,
+  "apk_sha256": "1cd4d3c6dcbe9c8c02c3abae26ba4fb37b99d73e0fc68e6a0cf0ca43c2b0c2c8",
+  "apk_bytes": 87940129,
+  "signature_verified": true,
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e"
+}
