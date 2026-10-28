@@ -68,5 +68,15 @@
     "file": "playback-more.png",
     "sha256": "77c30961289496c37030a4fb8d6f11458cfb133b6ccfe5143e6a390a0e1f8503",
     "kind": "native Robolectric software render; synthetic fixture; original A4 images unavailable; physical QA pending"
+  },
+  {
+    "file": "movie-details.png",
+    "sha256": "7963246dbd94299dd542fca8e841420cc01022b6abab9c6b21b58442a8ad703c",
+    "kind": "native Robolectric software render; synthetic metadata/artwork; relevant Details inputs unchanged since first implementation commit"
+  },
+  {
+    "file": "details-information-next.png",
+    "sha256": "bb58b2283bb2748da6072ad66379b5e90d011f36b32f3d8dab4aa0560ef1d3da",
+    "kind": "native Robolectric software render; synthetic metadata/artwork; relevant Details inputs unchanged since first implementation commit"
   }
 ]

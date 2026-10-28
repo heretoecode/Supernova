@@ -25,7 +25,7 @@ Every item remains **not visually Shield-verified**. Implementation and automate
 
 ## Release gates
 
-Target version is 0.144/code 144. Not a completed or delivered release candidate yet. All previous history and certificate pins remain intact. Branch-specific conformance/signing workflows retain native rebuild, runtime hashes, full tests/lint, exact-source/payload parity and protected-key checks. No signing gate may be bypassed to accommodate a local build without rebuilt native libraries.
+Version is 0.144/code 144. Signed QA candidate delivered; physical and missing-reference acceptance remain open. All previous history and certificate pins remain intact. Branch-specific conformance/signing workflows retain native rebuild, runtime hashes, full tests/lint, exact-source/payload parity and protected-key checks. No signing gate may be bypassed to accommodate a local build without rebuilt native libraries.
 
 Environment setup required installing Android SDK and JDK, configuring the existing HTTP proxy and Java CA trust. Local tests exclude sibling NDK tasks; these runs cannot establish native APK conformance. No Shield is attached (`adb devices -l` empty).
 
@@ -50,3 +50,7 @@ Automated results, workflow URLs, source commit, APK SHA-256 and Drive readback 
 - Final-source conformance/signing now requires at least 1,135 Android cases and all new WebDAV regression classes, in addition to the existing native/runtime/branding/lint/signature/payload gates.
 - The owner allowed this branch in the existing signing environment. API readback confirms the exact branch rule; the earlier signing rejection is resolved. Final signed QA is pending.
 - Software captures under `software-renders/` were inspected for round On/Off switches, readable playback columns, rendered explicit-region PNG flags and inline formats. They are synthetic native renders, not Shield captures or A4 reference comparisons.
+
+## Final delivery outcome
+
+Frozen application source `4e6f1f8f5691c34cd429c17421f92b6290ce3539` passed protected run 40735286063: 1,135 Android tests with zero failures/errors/skips, 120 tooling checks and lint zero errors/1,796 warnings. All runtime/native/signature/payload gates passed; independent checks and complete Drive APK readback passed. Earlier pending/failure entries above describe corrected investigation history, not the current validation state. See RELEASE_REPORT.md and SIGNED_QA_DELIVERY.json for the current artifact and remaining external-reference/hardware gates.

@@ -835,5 +835,124 @@
     "failed": 0,
     "build_successful": true,
     "log_sha256": "c9e9c55f4bdf7773ca48b432a69757ad58933944558045c0e246ed781e3f011a"
-  }
+  },
+  "final_release_gates": {
+    "cases": [
+      {
+        "class": "Network142WebdavTest",
+        "test": "actualDavListingSendsIntactEmailUsernameAndReadsEncodedNames",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "rejectedPortraitKeepsDisplayedLandscape",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "sameDecodedImageDoesNotStartAnotherCrossFade",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "failedReplacementKeepsDisplayedArtwork",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewBackdropTest",
+        "test": "libraryPageChangesAndFailedReplacementCannotRetainUnrelatedArtwork",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavDeleteResponseTest",
+        "test": "realDeleteAcceptsOnlySuccessOr404",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavReconciliationSelectionTest",
+        "test": "anyListingFailureRetainsAllFiles",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavReconciliationSelectionTest",
+        "test": "completeListingDeletesOnlyMissingFilesAndKeepsExcludedSubtreesAndPeers",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "nullListingAndNetworkFailureAreIncomplete",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "depthLimitAndStoppedTraversalCannotAuthorizePruning",
+        "result": "PASSED"
+      },
+      {
+        "class": "WebdavTraversalCompletenessTest",
+        "test": "emptySuccessfulListingIsComplete",
+        "result": "PASSED"
+      },
+      {
+        "class": "Playback141RenderTest",
+        "test": "actualPanelRendersFourTabsAndScrollableSubtitleOptions",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "trackRefreshUsesNewCallbacksAndPreservesFocusedTrackAfterInsertion",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "nestedAdjustmentRetainsTabsAndSavesOnBackTabChangeAndProgrammaticClose",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "trackChangeRebuildsChecksAndKeepsSameWindow",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "videoFormatsAreInlineWithOtherControlsInTheirOwnColumn",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "audioColumnsSupportRightThenUpWithoutSearchingAnUnrelatedRoot",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "selectingSecondIndistinguishableTrackKeepsFocusOnItsCheckedRow",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "subtitleAndAudioTracksUseCentralLanguageDrawable",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "downloadAndLocalActionsRetainCallbacks",
+        "result": "PASSED"
+      },
+      {
+        "class": "PreviewPlaybackMenusTest",
+        "test": "subtitlePreferencesStayInsidePlaybackAndPersist",
+        "result": "PASSED"
+      }
+    ],
+    "passed": 22,
+    "failed": 0,
+    "build_successful": true,
+    "log_sha256": "1cc66e6802fcf57e6e43521e446b133ae1744b62ef927df937b38d81c35ec77b"
+  },
+  "frozen_application_source": "4e6f1f8f5691c34cd429c17421f92b6290ce3539"
 }

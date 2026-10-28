@@ -1,0 +1,14 @@
+# Visual review — software evidence only
+
+Reviewed the actual native Robolectric screenshots in [the capture manifest](software-renders/manifest.json). These are Android view renders using synthetic data, not web mock-ups or Nvidia Shield captures.
+
+| Area | Observed evidence | Limits |
+|---|---|---|
+| Settings | 720p, 1080p, 4K and 150% text fixtures; equal grid gutter regression; clean right-hand rows and separators; blue/grey switch tracks with circular thumbs at opposite ends. A first render exposed vertically stretched thumbs; the corrected captures and stretched-bounds test verify the correction. | Real Shield font/overscan/focus calibration pending. |
+| Audio playback settings | Compact dark surface, Audio/Subtitles/Video/More tabs; Track left and Sync/Enhancements right; inline Night Mode switch; actual bundled GB PNG visible for explicit en-GB fixture. | Current values remain source-driven. Original Concept A4 Audio image is inaccessible, so exact proportions/pixel comparison is blocked. Generic language-only entries intentionally retain neutral icons. |
+| Video playback settings | Format choices appear inline in the left column with a selected-state tick; separate right column for supported additional controls. Dedicated regression populates a Video filters row and verifies it has a different parent from formats. | The screenshot fixture has no supported right-side video actions, so its right column is empty. Original Concept A4 Video reference is inaccessible. |
+| Details hero | Single-line metadata, retained technical badges, additional title separation and visible action positions in the movie fixture. | Original Slow Horses/Michael photographs are inaccessible; real title logos and Shield typography pending. |
+| Details information | Retained Description/Key Information/Reception over Cast/Crew/Technical composition; ratings or honest unavailable states remain; no written-review entry. Compared retained composition with the later approved owner reference preserved in [0.140's FD-033 comparison](../0.140/visual-evidence/FD033-reference-comparison.png), rather than replacing it with the older text-only atlas layout. | Fixture portraits/ratings are not live service evidence. Real cast/crew photos, optional data and hardware acceptance pending. |
+| HUD/preparation/age overlay | Source and automated behavior checks cover responsive bottom inset, seek clamping/pointer, official neutral preparation background, established-output gating, regional certificate suppression and dwell/fade behavior. | No new physical playback capture; no claim that the original textured-art recording was reproduced or that real subtitle/HUD overlap is accepted. |
+
+No exact A4 visual parity or physical Shield verification is claimed. The named source images and diagnostic ZIP must be supplied through an accessible artifact location before those blocked comparisons/investigations can close.
