@@ -27,6 +27,8 @@ public final class PreviewBackdrop extends Drawable implements Target {
     }
     private int motionDirection,pendingDirection;
     private boolean foundationHome;
+    private boolean strictLibraryArtwork;private int pageIdentity=-1;
+    public void setPage(int page){boolean library=page==1||page==2||page==6;if(library&&page!=pageIdentity){release();invalidateSelf();}pageIdentity=page;strictLibraryArtwork=library;}
     private PreviewUtilityBackground foundationBackground;
     public void setFoundationHome(boolean value){foundationHome=value;if(value&&foundationBackground==null)foundationBackground=new PreviewUtilityBackground(context);invalidateSelf();}
     public void setMotionDirection(int direction){pendingDirection=Integer.signum(direction);}
@@ -67,7 +69,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     @Override public void onBitmapFailed(Exception e,Drawable d){
         loading=false;pendingDirection=0;
         // A failed replacement must not turn the already displayed Home artwork into a blank frame.
-        if(bitmap==null)bitmap=previous;previous=null;fadeStart=0;motionDirection=0;
+        if(strictLibraryArtwork){bitmap=null;previous=null;}else if(bitmap==null)bitmap=previous;previous=null;fadeStart=0;motionDirection=0;
         if(trace!=null)trace.failed(e==null?"invalid_aspect":e.getClass().getSimpleName(),bitmap!=null);
         invalidateSelf();
     }

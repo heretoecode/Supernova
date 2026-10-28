@@ -34,4 +34,12 @@ public class PreviewBackdropTest {
         backdrop.onBitmapLoaded(image,Picasso.LoadedFrom.MEMORY);backdrop.onBitmapLoaded(image,Picasso.LoadedFrom.MEMORY);
         assertNull(ReflectionHelpers.getField(backdrop,"previous"));
     }
+    @org.junit.Test public void libraryPageChangesAndFailedReplacementCannotRetainUnrelatedArtwork(){
+        PreviewBackdrop backdrop=new PreviewBackdrop(RuntimeEnvironment.getApplication());backdrop.setPage(1);
+        Bitmap movie=Bitmap.createBitmap(160,90,Bitmap.Config.ARGB_8888);backdrop.onBitmapLoaded(movie,Picasso.LoadedFrom.MEMORY);
+        backdrop.setPage(1);assertSame(movie,ReflectionHelpers.getField(backdrop,"bitmap"));
+        backdrop.setPage(6);assertNull(ReflectionHelpers.getField(backdrop,"bitmap"));
+        backdrop.onBitmapLoaded(movie,Picasso.LoadedFrom.MEMORY);backdrop.onBitmapFailed(new IOException("missing artwork"),null);
+        assertNull(ReflectionHelpers.getField(backdrop,"bitmap"));assertNull(ReflectionHelpers.getField(backdrop,"previous"));
+    }
 }
