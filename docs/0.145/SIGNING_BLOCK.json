@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-28T19:17:33.451718+00:00",
+  "environment": "supernova-foundation-signing",
+  "required_branch": "codex/supernova-0.145-maintenance-2026-10-28",
+  "deployment_branch_policy": {
+    "protected_branches": false,
+    "custom_branch_policies": true
+  },
+  "exact_branch_rule_present": false,
+  "owner_intervention": "Allow this exact branch in the existing environment deployment branch rules; keep secrets, certificate and all signing gates unchanged.",
+  "protection_changed": false,
+  "signing_attempted": false
+}

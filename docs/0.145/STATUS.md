@@ -23,4 +23,8 @@ Physical Shield, real provider/AV chain, signed upgrade/rollback and exact appro
 
 ## Current validation findings
 
-Full Android run 40747266276 on source `67da778e28f8e32af7db268e9ad7f6a8d7c3d5b4` executed 1,147 cases: 1,144 passed and three new storage fixture cases failed at the Android 30 framework permission probe. The denied-access fixture is corrected at `e9da70a97`; focused rerun 40751619925 is pending. Do not treat the full suite as passed. Native conformance run 40747434294 passed FFmpeg rebuild/runtime checks and is still running on the earlier fixture source. See VALIDATION.json.
+Complete Android run 40747266276 on source `67da778e28f8e32af7db268e9ad7f6a8d7c3d5b4`: 1,147 cases, 1,144 passed, three failed storage fixture cases. The Android 30 fixture is corrected at `e9da70a97f720ab1ba4703a5ca3bbd7fdfac1ce5`. Focused run 40751619925 **passed all 12 new port cases and lint**, including the three corrected storage cases. This is not full-suite clearance.
+
+Full conformance run 40747434294 on the earlier fixture source passed FFmpeg rebuild/runtime checks and native wrapper compilation, then failed the same three unit cases. Lint and unsigned assembly completed, but conformance clearance was correctly refused. Corrected-source full conformance must be rerun. Local tooling: 128 passing checks. See VALIDATION.json.
+
+`SIGNING_BLOCK.json` records the live enabled custom-branch policy and missing exact 0.145 rule. The owner must allow the branch before signing. No protection was changed and no signing was attempted. Full maintenance remains incomplete: upstream/native migration review, Jetty remediation, profiling, original-reference and physical Shield acceptance remain open. Source/UI equality and measured software checks do not substitute for those gates.

@@ -143,6 +143,5 @@ jobs:
             nova/Video/build/reports/settings-0144/*.png
             nova/Video/build/test-results/testNoamazonReleaseUnitTest/*.xml
             nova/Video/build/reports/lint-results-noamazonRelease.xml
-            nova/Video/build/outputs/apk/noamazon/release/*unsigned.apk
           if-no-files-found: warn
           retention-days: 14
