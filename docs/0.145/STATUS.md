@@ -30,3 +30,7 @@ Full conformance run 40747434294 on the earlier fixture source passed FFmpeg reb
 `SIGNING_BLOCK.json` records the live enabled custom-branch policy and missing exact 0.145 rule. The owner must allow the branch before signing. No protection was changed and no signing was attempted. Full maintenance remains incomplete: upstream/native migration review, Jetty remediation, profiling, original-reference and physical Shield acceptance remain open. Source/UI equality and measured software checks do not substitute for those gates.
 
 Corrected-source full conformance is running at https://github.com/heretoecode/Supernova/actions/runs/40753216952 on frozen source `c92c68d617cc6fe1e11a1f5cdd032a919811ffaa`. Its result is not yet verified. Later documentation commits only record this source/run and readback receipt.
+
+## Signing continuation
+
+Owner-authorised branch access is verified. Corrected full conformance 40753216952 passed on `c92c68d617cc6fe1e11a1f5cdd032a919811ffaa`. All nine Jetty advisories have individual dispositions; safe UPnP framing, error-disclosure and endpoint mitigations add 11 real-library tests. Final-source protected QA/signing will require at least 1,158 Android cases and all original native/runtime/lint/payload/certificate gates. No signed delivery is claimed before that workflow passes.

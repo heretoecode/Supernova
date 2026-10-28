@@ -11,12 +11,12 @@
     "version": "0.145",
     "version_code": 145,
     "date": "2026-10-28",
-    "kind": "Development candidate \u2014 integration and validation in progress; not delivered",
+    "kind": "Development / QA candidate \u2014 physical acceptance pending",
     "notes": [
-      "Port compatible NOVA playback network recovery and subtitle pause timing fixes.",
-      "Avoid duplicate HDMI receiver registration; keep library suggestions private.",
-      "Preserve Supernova interface, data and signing identity.",
-      "Native subtitle engine and remaining upstream audit pending; no release clearance."
+      "Compatible NOVA maintenance fixes for network playback recovery, seek retention and subtitle pause timing.",
+      "Safer subtitle-cache fallback, storage write access and native buffer sizing.",
+      "UPnP request framing and endpoint validation, with private error responses. Legacy Jetty dependency risks remain documented.",
+      "Preserves Supernova interface, saved libraries, settings and application identity. Physical Shield and real provider/AV-chain acceptance remain pending."
     ]
   },
   "history": [

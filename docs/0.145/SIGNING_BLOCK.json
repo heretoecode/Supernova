@@ -6,8 +6,11 @@
     "protected_branches": false,
     "custom_branch_policies": true
   },
-  "exact_branch_rule_present": false,
+  "exact_branch_rule_present": true,
   "owner_intervention": "Allow this exact branch in the existing environment deployment branch rules; keep secrets, certificate and all signing gates unchanged.",
   "protection_changed": false,
-  "signing_attempted": false
+  "signing_attempted": false,
+  "resolved_at": "2026-10-28T19:56:50.881511+00:00",
+  "owner_authorisation_confirmed": true,
+  "protection_changed_by_agent": false
 }

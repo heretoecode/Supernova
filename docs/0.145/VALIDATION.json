@@ -24,7 +24,7 @@
   "tooling_result": "passed",
   "buffer_sanitizer_test": "passed",
   "artifact_access_limit": "Execution proxy rejects Azure blob storage tunnel (HTTP 403); GitHub run-log archive retrieval and Drive APK readback work",
-  "signing": "blocked: custom deployment branch policy excludes the 0.145 branch",
+  "signing": "Branch authorisation confirmed; protected final-source QA/signing pending",
   "signed_apk": null,
   "physical_shield_verified": false,
   "focused_correction_source": "e9da70a97f720ab1ba4703a5ca3bbd7fdfac1ce5",
@@ -48,5 +48,7 @@
   "native_wrappers": "Earlier source built all pinned wrappers successfully; full conformance still failed its unit-test gate",
   "corrected_full_conformance_run": 40753216952,
   "corrected_full_conformance_source": "c92c68d617cc6fe1e11a1f5cdd032a919811ffaa",
-  "corrected_full_conformance_result": "in_progress"
+  "corrected_full_conformance_result": "success",
+  "jetty_security_local_tests": 11,
+  "final_required_android_minimum": 1158
 }

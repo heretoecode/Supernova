@@ -9,3 +9,7 @@ Upstream `e4696b972` mostly documents/suppresses lint findings and exports the s
 Native buffer arithmetic port `96d5f4fb55` is included and passes sanitizer boundary tests locally. Native FFmpeg 9, OpenSSL 4.1 and libass migration are not treated as drop-in compatible replacements for the reviewed FFmpeg 8 runtime. Upstream inventory includes their exact observed revisions. ABI, native regression, licenses/SBOM, subtitle styles/settings and all four Android architectures need coordinated review before replacement.
 
 No physical device, installed application, LAN provider or AV chain is available. No startup/playback/memory profiling numbers are invented. The work remains a draft maintenance candidate.
+
+## Continuation after signing authorisation
+
+All nine advisories now have an individual reachability/disposition review in [JETTY_SECURITY_DISPOSITION.md](JETTY_SECURITY_DISPOSITION.md). Safe UPnP-boundary framing, opaque-error and outgoing-endpoint mitigations are implemented and locally tested (11 cases). The bundled Jetty version is unchanged and still scan-affected; do not interpret these mitigations as nine package fixes.

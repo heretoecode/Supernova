@@ -89,6 +89,7 @@ jobs:
           git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova144-webdav.patch
           git -C MediaLib apply ../Video/.github/build/medialib-supernova144-reconciliation.patch
           git -C MediaLib apply ../Video/.github/build/medialib-supernova145-subtitle-cache.patch
+          git -C MediaLib apply ../Video/.github/build/medialib-supernova145-jetty-security.patch
           git -C FileCoreLibrary apply ../Video/.github/build/filecore-supernova145-storage.patch
 
       - name: Verify 0.145 provider and historical identity isolation
@@ -102,7 +103,7 @@ jobs:
           chmod +x gradlew
           test_args=()
           if [[ "${{ inputs.suite }}" == "ports" ]]; then
-            test_args=(--tests '*StorageWriteAccessTest' --tests '*SubtitlePauseTimingTest' --tests '*PlaybackNetworkRetryTest' --tests '*MediaUtilsSubsDirTest')
+            test_args=(--tests '*Jetty145SecurityTest' --tests '*StorageWriteAccessTest' --tests '*SubtitlePauseTimingTest' --tests '*PlaybackNetworkRetryTest' --tests '*MediaUtilsSubsDirTest')
           fi
           ./gradlew testNoamazonReleaseUnitTest "${test_args[@]}" lintNoamazonRelease --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild
