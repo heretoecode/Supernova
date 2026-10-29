@@ -37,7 +37,7 @@ android {
  packaging { resources.excludes += ['META-INF/LICENSE*','META-INF/NOTICE*','META-INF/DEPENDENCIES','META-INF/beans.xml'] }
 }
 dependencies {
- coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+ coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.1.5'
  implementation fileTree(dir:'libs',include:['*.jar'])
  androidTestImplementation 'androidx.test:runner:1.7.0'
  androidTestImplementation 'androidx.test:rules:1.7.0'

@@ -89,10 +89,10 @@ def export(inventory, legal):
             licence, destination = 'MIT', 'https://www.slf4j.org/'
         elif module == 'oro':
             licence, destination = 'Apache-1.1', 'https://attic.apache.org/projects/jakarta-oro.html'
-        elif module == 'desugar_jdk_libs':
+        elif module in ('desugar_jdk_libs', 'desugar_jdk_libs_nio'):
             family, licence = 'OpenJDK desugared libraries', 'GPL-2.0-only WITH Classpath-exception-2.0'
             supplement = ['DesugarLICENSE.txt', 'DesugarAdditional.txt', 'DesugarAssembly.txt']
-        elif module == 'desugar_jdk_libs_configuration':
+        elif module in ('desugar_jdk_libs_configuration', 'desugar_jdk_libs_configuration_nio'):
             family, licence = 'OpenJDK desugaring configuration', 'Apache-2.0'
         if licence == 'Apache-2.0':
             if not labels and not texts and module not in ('core', 'listenablefuture'):

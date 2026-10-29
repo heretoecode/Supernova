@@ -149,13 +149,13 @@
       "kind": "patch",
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova146-upstream.patch",
-      "sha256": "8fa17ece829533b5e8a617f18ef16c1300e054367a50c1eddebd89190f20c5d7"
+      "sha256": "6dddea39b77c5102cccb1db4165fbd017ff4edbd014fa9c125550178f154c27a"
     },
     {
       "kind": "patch",
       "module": "FileCoreLibrary",
       "path": ".github/build/filecorelibrary-supernova146-upstream.patch",
-      "sha256": "493a48105b15b69c6df330706f458fd4b46054b9499b44b063f996ca853f8572"
+      "sha256": "3196a8925bf5b7fa0c6af59eebf976e7db96ff6fb649e53ea84cefa5d156b64c"
     },
     {
       "kind": "patch",

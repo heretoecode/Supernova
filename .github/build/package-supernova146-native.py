@@ -44,6 +44,6 @@ def main():
    filename='lib'+name.removeprefix('lib')+'.so';shutil.copyfile(pre/name/'lib'/abi/filename,dest/filename)
   for module in ['MediaLib','FileCoreLibrary']:
    for f in sorted((root/module/'libs'/abi).glob('*.so')):libraries.append({'path':str(f.relative_to(root)),'sha256':sha(f),'bytes':f.stat().st_size})
- receipt={'schema':1,'native_artifact_run':review['run_id'],'source_commit':subprocess.check_output(['git','-C',str(video),'rev-parse','HEAD'],text=True).strip(),'ndk':lock['ndk'],'android_api':23,'build':'DEBUG','native_lock_sha256':sha(here/'native-supernova146.lock.json'),'avos_patch_sha256':sha(here/'avos-supernova146-upstream.patch'),'abis':native,'libraries':libraries}
+ receipt={'schema':1,'native_artifact_run':review['run_id'],'source_commit':subprocess.check_output(['git','-c','safe.directory='+str(video),'-C',str(video),'rev-parse','HEAD'],text=True).strip(),'ndk':lock['ndk'],'android_api':23,'build':'DEBUG','native_lock_sha256':sha(here/'native-supernova146.lock.json'),'avos_patch_sha256':sha(here/'avos-supernova146-upstream.patch'),'abis':native,'libraries':libraries}
  (work/'packaging-inputs.json').write_text(json.dumps(receipt,indent=2)+'\n');print('Verified four-ABI native archives and staged current JNI packaging inputs')
 if __name__=='__main__':main()

@@ -46,7 +46,7 @@
       "returncode": 1,
       "passed": true,
       "output": "",
-      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x5504bcc100] error:0A000086:SSL routines::certificate verify failed\n[hls @ 0x5504bdc000] Error when loading first segment 'https://127.0.0.1:35769/mpeg2-ac3.ts'\n"
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x5504bcc100] error:0A000086:SSL routines::certificate verify failed\n[hls @ 0x5504bdc000] Error when loading first segment 'https://127.0.0.1:38711/mpeg2-ac3.ts'\n"
     },
     {
       "abi": "arm64-v8a",
@@ -127,7 +127,7 @@
       "returncode": 1,
       "passed": true,
       "output": "",
-      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x3dc93060] error:0A000086:SSL routines::certificate verify failed\n[hls @ 0x3dcd2000] Error when loading first segment 'https://127.0.0.1:35769/mpeg2-ac3.ts'\n"
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x3dc93060] error:0A000086:SSL routines::certificate verify failed\n[hls @ 0x3dcd2000] Error when loading first segment 'https://127.0.0.1:38711/mpeg2-ac3.ts'\n"
     },
     {
       "abi": "armeabi-v7a",
@@ -208,7 +208,7 @@
       "returncode": 1,
       "passed": true,
       "output": "",
-      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x3d28b060] error:0A000086:SSL routines::certificate verify failed\n[hls @ 0x3d2d6000] Error when loading first segment 'https://127.0.0.1:35769/mpeg2-ac3.ts'\n"
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x3d28b060] error:0A000086:SSL routines::certificate verify failed\n[hls @ 0x3d2d6000] Error when loading first segment 'https://127.0.0.1:38711/mpeg2-ac3.ts'\n"
     },
     {
       "abi": "x86",
@@ -262,7 +262,7 @@
       "returncode": 1,
       "passed": true,
       "output": "",
-      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x7f58218cc200] error:0A000086:SSL routines::certificate verify failed\n"
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x7f3a82c8c200] error:0A000086:SSL routines::certificate verify failed\n"
     },
     {
       "abi": "x86_64",
@@ -271,7 +271,7 @@
       "returncode": 1,
       "passed": true,
       "output": "",
-      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x7fe59b58c200] error:0A000086:SSL routines::certificate verify failed\n"
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x7f8185ccc200] error:0A000086:SSL routines::certificate verify failed\n"
     },
     {
       "abi": "x86_64",
@@ -289,7 +289,7 @@
       "returncode": 1,
       "passed": true,
       "output": "",
-      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x7f15f108c500] error:0A000086:SSL routines::certificate verify failed\n[hls @ 0x7f15f1095000] Error when loading first segment 'https://127.0.0.1:35769/mpeg2-ac3.ts'\n"
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n[tls @ 0x7f4bfc1cc500] error:0A000086:SSL routines::certificate verify failed\n[hls @ 0x7f4bfc1d5000] Error when loading first segment 'https://127.0.0.1:38711/mpeg2-ac3.ts'\n"
     },
     {
       "abi": "x86_64",
@@ -328,5 +328,6 @@
       "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
     }
   ],
-  "all_passed": true
+  "all_passed": true,
+  "native_artifact_run": 40843685431
 }

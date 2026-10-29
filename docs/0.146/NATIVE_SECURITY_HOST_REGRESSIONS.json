@@ -1,0 +1,78 @@
+{
+  "sanitizers": "AddressSanitizer+UndefinedBehaviorSanitizer",
+  "source_scope": "Pinned FFmpeg9.0.2/FreeType2.14.3/zlib1.3.2 versus reviewed native security patches; independent host builds",
+  "cases": [
+    {
+      "variant": "original",
+      "case": "empty-needle",
+      "exit_code": 124,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outcome": "timeout"
+    },
+    {
+      "variant": "original",
+      "case": "hdr-roundtrip",
+      "exit_code": -6,
+      "log_sha256": "748076bd38638c9a9d126e74cb02827f02b4de6892d77cb4bbffb68762517ab3",
+      "outcome": "failure"
+    },
+    {
+      "variant": "original",
+      "case": "deep-free",
+      "exit_code": 1,
+      "log_sha256": "c54fdcb3b93adc319c871ccfba6e2a143eb92ef6ae5564ccdbd8d0d406280451",
+      "outcome": "failure"
+    },
+    {
+      "variant": "original",
+      "case": "freetype-var-coordinates",
+      "exit_code": 1,
+      "log_sha256": "af678f83e4e0b401545ead860e4ba0e55398ec34ba068a7f5ed1c610940f17d9",
+      "outcome": "failure"
+    },
+    {
+      "variant": "original",
+      "case": "zlib-nonblocking-write",
+      "exit_code": 1,
+      "log_sha256": "cc0fdba587fda65e1ff30e6b06f8866d90659588e79b5cb976566d04bf06fc6b",
+      "outcome": "failure"
+    },
+    {
+      "variant": "patched",
+      "case": "empty-needle",
+      "exit_code": 0,
+      "log_sha256": "c26de83abdc9496cd1301470918ec39ecca1cf389ef0ae1c6504da1800d1c431",
+      "outcome": "pass"
+    },
+    {
+      "variant": "patched",
+      "case": "hdr-roundtrip",
+      "exit_code": 0,
+      "log_sha256": "c26de83abdc9496cd1301470918ec39ecca1cf389ef0ae1c6504da1800d1c431",
+      "outcome": "pass"
+    },
+    {
+      "variant": "patched",
+      "case": "deep-free",
+      "exit_code": 0,
+      "log_sha256": "c26de83abdc9496cd1301470918ec39ecca1cf389ef0ae1c6504da1800d1c431",
+      "outcome": "pass"
+    },
+    {
+      "variant": "patched",
+      "case": "freetype-var-coordinates",
+      "exit_code": 0,
+      "log_sha256": "c26de83abdc9496cd1301470918ec39ecca1cf389ef0ae1c6504da1800d1c431",
+      "outcome": "pass"
+    },
+    {
+      "variant": "patched",
+      "case": "zlib-nonblocking-write",
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outcome": "pass"
+    }
+  ],
+  "zlib_fixture_source": "https://gist.github.com/thesmartshadow/e0b9481792afb7c31e86fee1ff084490",
+  "variable_font_sha256": "9b523f7d82593df0107173849ebb8c817471a1df4b4fb2c3cbf40cfd810c8281"
+}

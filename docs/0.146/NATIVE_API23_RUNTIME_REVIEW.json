@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "candidate_native_run": 40780058727,
+  "candidate_native_run": 40843685431,
   "baseline_app_source": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
   "runtime": "Official Android23 bionic; x86_64 native, remaining ABIs QEMU user. No framework/hardware/Shield acceptance implied.",
   "corpus": [
@@ -28,7 +28,7 @@
     },
     {
       "file": "hevc.mkv",
-      "sha256": "374ee886909523c690fc746a75bc6467051f7fc325e80a31df6fba6d12012c03",
+      "sha256": "1810480bca0ee385a8248b3eed808881fa6c5208f38e88cea6c4d86d6464f86e",
       "generation_arguments": [
         "-f",
         "lavfi",
@@ -44,7 +44,7 @@
     },
     {
       "file": "av1.mkv",
-      "sha256": "b8555ec1262cd2f767ad77bda8130285ac5436fc0d4238fa8316a995b99403af",
+      "sha256": "7e677df11acec6c9f61682ae2ae650bb7e3332ba4fbdca05777614c3fe2ba13f",
       "generation_arguments": [
         "-f",
         "lavfi",
@@ -62,7 +62,7 @@
     },
     {
       "file": "vp9-opus.webm",
-      "sha256": "2cd580715f17def82eff70bcf99bcb29b9073f69575dae974b811a89d2adc29d",
+      "sha256": "96381945398fdf8687e432c44398a249114aa8c10db271fe1ce480ceee9284d6",
       "generation_arguments": [
         "-f",
         "lavfi",
@@ -106,7 +106,7 @@
     },
     {
       "file": "opus.ogg",
-      "sha256": "1d85c580565e3fd5720133989ce2085e3fb09e1529d116ab20e694f57fe71fb8",
+      "sha256": "be7552acd16facec35b6cba80179403450b6a8d0e653ea65dbba467db74fd079",
       "generation_arguments": [
         "-f",
         "lavfi",
@@ -118,7 +118,7 @@
     },
     {
       "file": "vorbis.ogg",
-      "sha256": "aaeeb673245b3f8f6485847c51c59e984b9378123cf2bcfeb290200978101403",
+      "sha256": "4d30570a04cfadc967a44edbd49dbea6d6ad5d37f79e80fd26fd97a062a776c1",
       "generation_arguments": [
         "-f",
         "lavfi",
@@ -477,92 +477,32 @@
         "output": "atempo-state\t0\t480\t480\t0\t480\t0\t1.25\t-1\natempo-state\t1\t960\t960\t0\t960\t0\t1.25\t-1\natempo-state\t2\t1440\t1440\t0\t1440\t0\t1.25\t-1\natempo-state\t3\t1920\t1920\t0\t1920\t0\t1.25\t-1\natempo-state\t4\t2400\t2400\t1024\t2400\t768\t1.25\t1281\natempo-state\t5\t2880\t2880\t1024\t2880\t768\t1.25\t1281\natempo-state\t6\t3360\t3360\t1024\t3360\t768\t1.25\t1281\natempo-state\t7\t3840\t3840\t2048\t3840\t1920\t1.25\t2562\natempo-state\t8\t4320\t4320\t2048\t4320\t1920\t1.25\t2562\natempo-state\t9\t4800\t4800\t2048\t4800\t1920\t1.25\t2562\natempo-state\t10\t5280\t5280\t3072\t5280\t3072\t1.25\t3843\natempo-state\t11\t5760\t5760\t3072\t5760\t3072\t1.25\t3843\natempo-state\t12\t6144\t6240\t4096\t6240\t3840\t1.25\t5124\natempo-state\t13\t6144\t6720\t4096\t6720\t3840\t1.25\t5124\natempo-state\t14\t6144\t7200\t4096\t7200\t3840\t1.25\t5124\natempo-state\t15\t6144\t7680\t5120\t7680\t4992\t1.25\t6405\natempo-state\t16\t6144\t8160\t5120\t8160\t4992\t1.25\t6405\natempo-state\t17\t6144\t8640\t5120\t8640\t4992\t1.25\t6405\natempo-state\t18\t6144\t9120\t6144\t9120\t6144\t1.25\t7686\natempo-state\t19\t6144\t9600\t6144\t9600\t6144\t1.25\t7686\natempo-state\t20\t6144\t10080\t7168\t10080\t6912\t1.25\t8967\natempo-state\t21\t6144\t10560\t7168\t10560\t6912\t1.25\t8967\natempo-state\t22\t6144\t11040\t7168\t11040\t6912\t1.25\t8967\natempo-state\t23\t6144\t11520\t8192\t11520\t8064\t1.25\t10248\natempo-state\t24\t6144\t12000\t8192\t12000\t8064\t1.25\t10248\natempo-state\t25\t6144\t12480\t8192\t12480\t8064\t1.25\t10248\natempo-state\t26\t6144\t12960\t9216\t12960\t9216\t1.25\t11529\natempo-state\t27\t6144\t13440\t9216\t13440\t9216\t1.25\t11529\natempo-state\t28\t6144\t13920\t10240\t13920\t9984\t1.25\t12810\natempo-state\t29\t6144\t14400\t10240\t14400\t9984\t1.25\t12810\natempo-state\t30\t6144\t14880\t10240\t14880\t9984\t1.25\t12810\natempo-state\t31\t6144\t15360\t11264\t15360\t11136\t1.25\t14091\natempo-state\t32\t6144\t15840\t11264\t15840\t11136\t1.25\t14091\natempo-state\t33\t6144\t16320\t11264\t16320\t11136\t1.25\t14091\natempo-state\t34\t6144\t16800\t12288\t16800\t12288\t1.25\t15372\natempo-state\t35\t6144\t17280\t12288\t17280\t12288\t1.25\t15372\natempo-state\t36\t6144\t17760\t13312\t17760\t13056\t1.25\t16653\natempo-state\t37\t6144\t18240\t13312\t18240\t13056\t1.25\t16653\natempo-state\t38\t6144\t18720\t13312\t18720\t13056\t1.25\t16653\natempo-state\t39\t6144\t19200\t14336\t19200\t14208\t1.25\t17934\natempo-state\t40\t6144\t19680\t14336\t19680\t14208\t1.25\t17934\natempo-state\t41\t6144\t20160\t14336\t20160\t14208\t1.25\t17934\natempo-state\t42\t6144\t20640\t15360\t20640\t15360\t1.25\t19215\natempo-state\t43\t6144\t21120\t15360\t21120\t15360\t1.25\t19215\natempo-state\t44\t6144\t21600\t16384\t21600\t16128\t1.25\t20496\natempo-state\t45\t6144\t22080\t16384\t22080\t16128\t1.25\t20496\natempo-state\t46\t6144\t22560\t16384\t22560\t16128\t1.25\t20496\natempo-state\t47\t6144\t23040\t17408\t23040\t17280\t1.25\t21777\natempo-state\t48\t6144\t23520\t17408\t23520\t17280\t1.25\t21777\natempo-state\t49\t6144\t24000\t17408\t24000\t17280\t1.25\t21777\natempo-state\t50\t6144\t24480\t18432\t24480\t18304\t0.75\t23058\natempo-state\t51\t6144\t24960\t19456\t24960\t18944\t0.75\t23568\natempo-state\t52\t6144\t25440\t20480\t25440\t20224\t0.75\t24335\natempo-state\t53\t6144\t25920\t20480\t25920\t20224\t0.75\t24335\natempo-state\t54\t6144\t26400\t21504\t26400\t21504\t0.75\t25102\natempo-state\t55\t6144\t26880\t21504\t26880\t21504\t0.75\t25102\natempo-state\t56\t6144\t27360\t22528\t27360\t22144\t0.75\t25869\natempo-state\t57\t6144\t27840\t23552\t27840\t23424\t0.75\t26636\natempo-state\t58\t6144\t28320\t23552\t28320\t23424\t0.75\t26636\natempo-state\t59\t6144\t28800\t24576\t28800\t24064\t0.75\t27403\natempo-state\t60\t6144\t29280\t25600\t29280\t25344\t0.75\t28170\natempo-state\t61\t6144\t29760\t25600\t29760\t25344\t0.75\t28170\natempo-state\t62\t6144\t30240\t26624\t30240\t26624\t0.75\t28937\natempo-state\t63\t6144\t30720\t26624\t30720\t26624\t0.75\t28937\natempo-state\t64\t6144\t31200\t27648\t31200\t27264\t0.75\t29704\natempo-state\t65\t6144\t31680\t28672\t31680\t28544\t0.75\t30471\natempo-state\t66\t6144\t32160\t28672\t32160\t28544\t0.75\t30471\natempo-state\t67\t6144\t32640\t29696\t32640\t29184\t0.75\t31238\natempo-state\t68\t6144\t33120\t30720\t33120\t30464\t0.75\t32005\natempo-state\t69\t6144\t33600\t30720\t33600\t30464\t0.75\t32005\natempo-state\t70\t6144\t34080\t31744\t34080\t31744\t0.75\t32772\natempo-state\t71\t6144\t34560\t31744\t34560\t31744\t0.75\t32772\natempo-state\t72\t6144\t35040\t32768\t35040\t32384\t0.75\t33539\natempo-state\t73\t6144\t35520\t33792\t35520\t33664\t0.75\t34306\natempo-state\t74\t6144\t36000\t33792\t36000\t33664\t0.75\t34306\natempo-state\t75\t6144\t36480\t34816\t36480\t34784\t2.00\t35073\natempo-state\t76\t6144\t36960\t34816\t36960\t34784\t2.00\t35073\natempo-state\t77\t6144\t37440\t34816\t37440\t34784\t2.00\t35073\natempo-state\t78\t6144\t37920\t34816\t37920\t34784\t2.00\t35073\natempo-state\t79\t6144\t38400\t34816\t38400\t34784\t2.00\t35073\natempo-state\t80\t6144\t38880\t35840\t38880\t35744\t2.00\t37718\natempo-state\t81\t6144\t39360\t35840\t39360\t35744\t2.00\t37718\natempo-state\t82\t6144\t39840\t35840\t39840\t35744\t2.00\t37718\natempo-state\t83\t6144\t40320\t35840\t40320\t35744\t2.00\t37718\natempo-state\t84\t6144\t40800\t35840\t40800\t35744\t2.00\t37718\natempo-state\t85\t6144\t41280\t36864\t41280\t36704\t2.00\t40027\natempo-state\t86\t6144\t41760\t36864\t41760\t36704\t2.00\t40027\natempo-state\t87\t6144\t42240\t36864\t42240\t36704\t2.00\t40027\natempo-state\t88\t6144\t42720\t36864\t42720\t36704\t2.00\t40027\natempo-state\t89\t6144\t43200\t36864\t43200\t36704\t2.00\t40027\natempo-state\t90\t6144\t43680\t37888\t43680\t37664\t2.00\t42336\natempo-state\t91\t6144\t44160\t37888\t44160\t37664\t2.00\t42336\natempo-state\t92\t6144\t44640\t37888\t44640\t37664\t2.00\t42336\natempo-state\t93\t6144\t45120\t37888\t45120\t37664\t2.00\t42336\natempo-state\t94\t6144\t45600\t38912\t45600\t38864\t2.00\t44388\natempo-state\t95\t6144\t46080\t38912\t46080\t38864\t2.00\t44388\natempo-state\t96\t6144\t46560\t38912\t46560\t38864\t2.00\t44388\natempo-state\t97\t6144\t47040\t38912\t47040\t38864\t2.00\t44388\natempo-state\t98\t6144\t47520\t39936\t47520\t39824\t2.00\t46440\natempo-state\t99\t6144\t48000\t39936\t48000\t39824\t2.00\t46440\natempo-state\t100\t6144\t48000\t40725\t48000\t40725\t2.00\t47904\natempo-output\t40725\t86729aa1\n",
         "stderr": "WARNING: linker: /test/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /test/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n",
         "returncode": 0,
-        "elapsed_seconds": 0.23227492300065933
+        "elapsed_seconds": 0.21834935500010033
       },
       "atempo_new": {
         "output": "atempo-state\t0\t480\t480\t0\t480\t0\t1.25\t-1\natempo-state\t1\t960\t960\t0\t960\t0\t1.25\t-1\natempo-state\t2\t1440\t1440\t0\t1440\t0\t1.25\t-1\natempo-state\t3\t1920\t1920\t0\t1920\t0\t1.25\t-1\natempo-state\t4\t2400\t2400\t1024\t2400\t768\t1.25\t987\natempo-state\t5\t2880\t2880\t1024\t2880\t768\t1.25\t987\natempo-state\t6\t3360\t3360\t1024\t3360\t768\t1.25\t987\natempo-state\t7\t3840\t3840\t2048\t3840\t1920\t1.25\t2424\natempo-state\t8\t4320\t4320\t2048\t4320\t1920\t1.25\t2424\natempo-state\t9\t4800\t4800\t2048\t4800\t1920\t1.25\t2424\natempo-state\t10\t5280\t5280\t3072\t5280\t3072\t1.25\t3843\natempo-state\t11\t5760\t5760\t3072\t5760\t3072\t1.25\t3843\natempo-state\t12\t6144\t6240\t4096\t6240\t3840\t1.25\t4830\natempo-state\t13\t6144\t6720\t4096\t6720\t3840\t1.25\t4830\natempo-state\t14\t6144\t7200\t4096\t7200\t3840\t1.25\t4830\natempo-state\t15\t6144\t7680\t5120\t7680\t4992\t1.25\t6267\natempo-state\t16\t6144\t8160\t5120\t8160\t4992\t1.25\t6267\natempo-state\t17\t6144\t8640\t5120\t8640\t4992\t1.25\t6267\natempo-state\t18\t6144\t9120\t6144\t9120\t6144\t1.25\t7686\natempo-state\t19\t6144\t9600\t6144\t9600\t6144\t1.25\t7686\natempo-state\t20\t6144\t10080\t7168\t10080\t6912\t1.25\t8673\natempo-state\t21\t6144\t10560\t7168\t10560\t6912\t1.25\t8673\natempo-state\t22\t6144\t11040\t7168\t11040\t6912\t1.25\t8673\natempo-state\t23\t6144\t11520\t8192\t11520\t8064\t1.25\t10110\natempo-state\t24\t6144\t12000\t8192\t12000\t8064\t1.25\t10110\natempo-state\t25\t6144\t12480\t8192\t12480\t8064\t1.25\t10110\natempo-state\t26\t6144\t12960\t9216\t12960\t9216\t1.25\t11529\natempo-state\t27\t6144\t13440\t9216\t13440\t9216\t1.25\t11529\natempo-state\t28\t6144\t13920\t10240\t13920\t9984\t1.25\t12516\natempo-state\t29\t6144\t14400\t10240\t14400\t9984\t1.25\t12516\natempo-state\t30\t6144\t14880\t10240\t14880\t9984\t1.25\t12516\natempo-state\t31\t6144\t15360\t11264\t15360\t11136\t1.25\t13953\natempo-state\t32\t6144\t15840\t11264\t15840\t11136\t1.25\t13953\natempo-state\t33\t6144\t16320\t11264\t16320\t11136\t1.25\t13953\natempo-state\t34\t6144\t16800\t12288\t16800\t12288\t1.25\t15372\natempo-state\t35\t6144\t17280\t12288\t17280\t12288\t1.25\t15372\natempo-state\t36\t6144\t17760\t13312\t17760\t13056\t1.25\t16359\natempo-state\t37\t6144\t18240\t13312\t18240\t13056\t1.25\t16359\natempo-state\t38\t6144\t18720\t13312\t18720\t13056\t1.25\t16359\natempo-state\t39\t6144\t19200\t14336\t19200\t14208\t1.25\t17796\natempo-state\t40\t6144\t19680\t14336\t19680\t14208\t1.25\t17796\natempo-state\t41\t6144\t20160\t14336\t20160\t14208\t1.25\t17796\natempo-state\t42\t6144\t20640\t15360\t20640\t15360\t1.25\t19215\natempo-state\t43\t6144\t21120\t15360\t21120\t15360\t1.25\t19215\natempo-state\t44\t6144\t21600\t16384\t21600\t16128\t1.25\t20202\natempo-state\t45\t6144\t22080\t16384\t22080\t16128\t1.25\t20202\natempo-state\t46\t6144\t22560\t16384\t22560\t16128\t1.25\t20202\natempo-state\t47\t6144\t23040\t17408\t23040\t17280\t1.25\t21639\natempo-state\t48\t6144\t23520\t17408\t23520\t17280\t1.25\t21639\natempo-state\t49\t6144\t24000\t17408\t24000\t17280\t1.25\t21639\natempo-state\t50\t6144\t24480\t18432\t24480\t18048\t0.75\t22595\natempo-state\t51\t6144\t24960\t19456\t24960\t19328\t0.75\t23460\natempo-state\t52\t6144\t25440\t20480\t25440\t19968\t0.75\t23952\natempo-state\t53\t6144\t25920\t20480\t25920\t19968\t0.75\t23952\natempo-state\t54\t6144\t26400\t21504\t26400\t21248\t0.75\t24884\natempo-state\t55\t6144\t26880\t21504\t26880\t21248\t0.75\t24884\natempo-state\t56\t6144\t27360\t22528\t27360\t22528\t0.75\t25869\natempo-state\t57\t6144\t27840\t23552\t27840\t23168\t0.75\t26331\natempo-state\t58\t6144\t28320\t23552\t28320\t23168\t0.75\t26331\natempo-state\t59\t6144\t28800\t24576\t28800\t24448\t0.75\t27285\natempo-state\t60\t6144\t29280\t25600\t29280\t25088\t0.75\t27787\natempo-state\t61\t6144\t29760\t25600\t29760\t25088\t0.75\t27787\natempo-state\t62\t6144\t30240\t26624\t30240\t26368\t0.75\t28719\natempo-state\t63\t6144\t30720\t26624\t30720\t26368\t0.75\t28719\natempo-state\t64\t6144\t31200\t27648\t31200\t27648\t0.75\t29704\natempo-state\t65\t6144\t31680\t28672\t31680\t28288\t0.75\t30166\natempo-state\t66\t6144\t32160\t28672\t32160\t28288\t0.75\t30166\natempo-state\t67\t6144\t32640\t29696\t32640\t29568\t0.75\t31120\natempo-state\t68\t6144\t33120\t30720\t33120\t30208\t0.75\t31622\natempo-state\t69\t6144\t33600\t30720\t33600\t30208\t0.75\t31622\natempo-state\t70\t6144\t34080\t31744\t34080\t31488\t0.75\t32554\natempo-state\t71\t6144\t34560\t31744\t34560\t31488\t0.75\t32554\natempo-state\t72\t6144\t35040\t32768\t35040\t32768\t0.75\t33539\natempo-state\t73\t6144\t35520\t33792\t35520\t33408\t0.75\t34001\natempo-state\t74\t6144\t36000\t33792\t36000\t33408\t0.75\t34001\natempo-state\t75\t6144\t36480\t34816\t36480\t34752\t2.00\t35011\natempo-state\t76\t6144\t36960\t34816\t36960\t34752\t2.00\t35011\natempo-state\t77\t6144\t37440\t34816\t37440\t34752\t2.00\t35011\natempo-state\t78\t6144\t37920\t34816\t37920\t34752\t2.00\t35011\natempo-state\t79\t6144\t38400\t34816\t38400\t34752\t2.00\t35011\natempo-state\t80\t6144\t38880\t35840\t38880\t35712\t2.00\t37528\natempo-state\t81\t6144\t39360\t35840\t39360\t35712\t2.00\t37528\natempo-state\t82\t6144\t39840\t35840\t39840\t35712\t2.00\t37528\natempo-state\t83\t6144\t40320\t35840\t40320\t35712\t2.00\t37528\natempo-state\t84\t6144\t40800\t35840\t40800\t35712\t2.00\t37528\natempo-state\t85\t6144\t41280\t36864\t41280\t36672\t2.00\t39727\natempo-state\t86\t6144\t41760\t36864\t41760\t36672\t2.00\t39727\natempo-state\t87\t6144\t42240\t36864\t42240\t36672\t2.00\t39727\natempo-state\t88\t6144\t42720\t36864\t42720\t36672\t2.00\t39727\natempo-state\t89\t6144\t43200\t36864\t43200\t36672\t2.00\t39727\natempo-state\t90\t6144\t43680\t37888\t43680\t37872\t2.00\t42319\natempo-state\t91\t6144\t44160\t37888\t44160\t37872\t2.00\t42319\natempo-state\t92\t6144\t44640\t37888\t44640\t37872\t2.00\t42319\natempo-state\t93\t6144\t45120\t37888\t45120\t37872\t2.00\t42319\natempo-state\t94\t6144\t45600\t38912\t45600\t38832\t2.00\t44293\natempo-state\t95\t6144\t46080\t38912\t46080\t38832\t2.00\t44293\natempo-state\t96\t6144\t46560\t38912\t46560\t38832\t2.00\t44293\natempo-state\t97\t6144\t47040\t38912\t47040\t38832\t2.00\t44293\natempo-state\t98\t6144\t47520\t39936\t47520\t39792\t2.00\t46247\natempo-state\t99\t6144\t48000\t39936\t48000\t39792\t2.00\t46247\natempo-state\t100\t6144\t48000\t40725\t48000\t40725\t2.00\t47904\natempo-output\t40725\t86729aa1\n",
         "stderr": "WARNING: linker: /test/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /test/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n",
         "returncode": 0,
-        "elapsed_seconds": 0.22521822599992447
+        "elapsed_seconds": 0.20149848199980624
       },
       "performance_median_seconds": {
         "h264-aac.mp4": {
-          "baseline": 0.23019952200047555,
-          "candidate": 0.22502066300148726
+          "baseline": 0.19527758499953052,
+          "candidate": 0.21213857800012192
         },
         "hevc.mkv": {
-          "baseline": 0.1822260989993083,
-          "candidate": 0.17388431200015475
+          "baseline": 0.15938689699942188,
+          "candidate": 0.16535860800013324
         },
         "av1.mkv": {
-          "baseline": 0.1924594200008869,
-          "candidate": 0.1851054929993552
+          "baseline": 0.17473626300034084,
+          "candidate": 0.16764616099953855
         },
         "ac3-51.ac3": {
-          "baseline": 0.18512158200064732,
-          "candidate": 0.18841787400015164
+          "baseline": 0.17177330300000904,
+          "candidate": 0.1693066509997152
         }
-      },
-      "registry_removed_after_codec_id_normalization": [
-        [
-          "codec",
-          "sonic",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v308",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v408",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v410",
-          "1",
-          "0"
-        ],
-        [
-          "input-protocol",
-          "hls"
-        ]
-      ],
-      "registry_added_after_codec_id_normalization": [
-        [
-          "codec",
-          "webp_anim",
-          "1",
-          "0"
-        ],
-        [
-          "demuxer",
-          "hxvs"
-        ],
-        [
-          "demuxer",
-          "jpegxs_pipe"
-        ],
-        [
-          "demuxer",
-          "webp_anim"
-        ],
-        [
-          "filter",
-          "premultiply_dynamic"
-        ],
-        [
-          "input-protocol",
-          "shared"
-        ]
-      ],
-      "tempo_decoded_audio_exact_match": true,
-      "tempo_state_change_reason": "New companion patch reports only the media frontier actually emitted; decoded tempo audio matches0.145 exactly."
+      }
     },
     {
       "abi": "armeabi-v7a",
@@ -815,92 +755,32 @@
         "output": "atempo-state\t0\t480\t480\t0\t480\t0\t1.25\t-1\natempo-state\t1\t960\t960\t0\t960\t0\t1.25\t-1\natempo-state\t2\t1440\t1440\t0\t1440\t0\t1.25\t-1\natempo-state\t3\t1920\t1920\t0\t1920\t0\t1.25\t-1\natempo-state\t4\t2400\t2400\t1024\t2400\t768\t1.25\t1281\natempo-state\t5\t2880\t2880\t1024\t2880\t768\t1.25\t1281\natempo-state\t6\t3360\t3360\t1024\t3360\t768\t1.25\t1281\natempo-state\t7\t3840\t3840\t2048\t3840\t1920\t1.25\t2562\natempo-state\t8\t4320\t4320\t2048\t4320\t1920\t1.25\t2562\natempo-state\t9\t4800\t4800\t2048\t4800\t1920\t1.25\t2562\natempo-state\t10\t5280\t5280\t3072\t5280\t3072\t1.25\t3843\natempo-state\t11\t5760\t5760\t3072\t5760\t3072\t1.25\t3843\natempo-state\t12\t6144\t6240\t4096\t6240\t3840\t1.25\t5124\natempo-state\t13\t6144\t6720\t4096\t6720\t3840\t1.25\t5124\natempo-state\t14\t6144\t7200\t4096\t7200\t3840\t1.25\t5124\natempo-state\t15\t6144\t7680\t5120\t7680\t4992\t1.25\t6405\natempo-state\t16\t6144\t8160\t5120\t8160\t4992\t1.25\t6405\natempo-state\t17\t6144\t8640\t5120\t8640\t4992\t1.25\t6405\natempo-state\t18\t6144\t9120\t6144\t9120\t6144\t1.25\t7686\natempo-state\t19\t6144\t9600\t6144\t9600\t6144\t1.25\t7686\natempo-state\t20\t6144\t10080\t7168\t10080\t6912\t1.25\t8967\natempo-state\t21\t6144\t10560\t7168\t10560\t6912\t1.25\t8967\natempo-state\t22\t6144\t11040\t7168\t11040\t6912\t1.25\t8967\natempo-state\t23\t6144\t11520\t8192\t11520\t8064\t1.25\t10248\natempo-state\t24\t6144\t12000\t8192\t12000\t8064\t1.25\t10248\natempo-state\t25\t6144\t12480\t8192\t12480\t8064\t1.25\t10248\natempo-state\t26\t6144\t12960\t9216\t12960\t9216\t1.25\t11529\natempo-state\t27\t6144\t13440\t9216\t13440\t9216\t1.25\t11529\natempo-state\t28\t6144\t13920\t10240\t13920\t9984\t1.25\t12810\natempo-state\t29\t6144\t14400\t10240\t14400\t9984\t1.25\t12810\natempo-state\t30\t6144\t14880\t10240\t14880\t9984\t1.25\t12810\natempo-state\t31\t6144\t15360\t11264\t15360\t11136\t1.25\t14091\natempo-state\t32\t6144\t15840\t11264\t15840\t11136\t1.25\t14091\natempo-state\t33\t6144\t16320\t11264\t16320\t11136\t1.25\t14091\natempo-state\t34\t6144\t16800\t12288\t16800\t12288\t1.25\t15372\natempo-state\t35\t6144\t17280\t12288\t17280\t12288\t1.25\t15372\natempo-state\t36\t6144\t17760\t13312\t17760\t13056\t1.25\t16653\natempo-state\t37\t6144\t18240\t13312\t18240\t13056\t1.25\t16653\natempo-state\t38\t6144\t18720\t13312\t18720\t13056\t1.25\t16653\natempo-state\t39\t6144\t19200\t14336\t19200\t14208\t1.25\t17934\natempo-state\t40\t6144\t19680\t14336\t19680\t14208\t1.25\t17934\natempo-state\t41\t6144\t20160\t14336\t20160\t14208\t1.25\t17934\natempo-state\t42\t6144\t20640\t15360\t20640\t15360\t1.25\t19215\natempo-state\t43\t6144\t21120\t15360\t21120\t15360\t1.25\t19215\natempo-state\t44\t6144\t21600\t16384\t21600\t16128\t1.25\t20496\natempo-state\t45\t6144\t22080\t16384\t22080\t16128\t1.25\t20496\natempo-state\t46\t6144\t22560\t16384\t22560\t16128\t1.25\t20496\natempo-state\t47\t6144\t23040\t17408\t23040\t17280\t1.25\t21777\natempo-state\t48\t6144\t23520\t17408\t23520\t17280\t1.25\t21777\natempo-state\t49\t6144\t24000\t17408\t24000\t17280\t1.25\t21777\natempo-state\t50\t6144\t24480\t18432\t24480\t18304\t0.75\t23058\natempo-state\t51\t6144\t24960\t19456\t24960\t18944\t0.75\t23568\natempo-state\t52\t6144\t25440\t20480\t25440\t20224\t0.75\t24335\natempo-state\t53\t6144\t25920\t20480\t25920\t20224\t0.75\t24335\natempo-state\t54\t6144\t26400\t21504\t26400\t21504\t0.75\t25102\natempo-state\t55\t6144\t26880\t21504\t26880\t21504\t0.75\t25102\natempo-state\t56\t6144\t27360\t22528\t27360\t22144\t0.75\t25869\natempo-state\t57\t6144\t27840\t23552\t27840\t23424\t0.75\t26636\natempo-state\t58\t6144\t28320\t23552\t28320\t23424\t0.75\t26636\natempo-state\t59\t6144\t28800\t24576\t28800\t24064\t0.75\t27403\natempo-state\t60\t6144\t29280\t25600\t29280\t25344\t0.75\t28170\natempo-state\t61\t6144\t29760\t25600\t29760\t25344\t0.75\t28170\natempo-state\t62\t6144\t30240\t26624\t30240\t26624\t0.75\t28937\natempo-state\t63\t6144\t30720\t26624\t30720\t26624\t0.75\t28937\natempo-state\t64\t6144\t31200\t27648\t31200\t27264\t0.75\t29704\natempo-state\t65\t6144\t31680\t28672\t31680\t28544\t0.75\t30471\natempo-state\t66\t6144\t32160\t28672\t32160\t28544\t0.75\t30471\natempo-state\t67\t6144\t32640\t29696\t32640\t29184\t0.75\t31238\natempo-state\t68\t6144\t33120\t30720\t33120\t30464\t0.75\t32005\natempo-state\t69\t6144\t33600\t30720\t33600\t30464\t0.75\t32005\natempo-state\t70\t6144\t34080\t31744\t34080\t31744\t0.75\t32772\natempo-state\t71\t6144\t34560\t31744\t34560\t31744\t0.75\t32772\natempo-state\t72\t6144\t35040\t32768\t35040\t32384\t0.75\t33539\natempo-state\t73\t6144\t35520\t33792\t35520\t33664\t0.75\t34306\natempo-state\t74\t6144\t36000\t33792\t36000\t33664\t0.75\t34306\natempo-state\t75\t6144\t36480\t34816\t36480\t34784\t2.00\t35073\natempo-state\t76\t6144\t36960\t34816\t36960\t34784\t2.00\t35073\natempo-state\t77\t6144\t37440\t34816\t37440\t34784\t2.00\t35073\natempo-state\t78\t6144\t37920\t34816\t37920\t34784\t2.00\t35073\natempo-state\t79\t6144\t38400\t34816\t38400\t34784\t2.00\t35073\natempo-state\t80\t6144\t38880\t35840\t38880\t35744\t2.00\t37718\natempo-state\t81\t6144\t39360\t35840\t39360\t35744\t2.00\t37718\natempo-state\t82\t6144\t39840\t35840\t39840\t35744\t2.00\t37718\natempo-state\t83\t6144\t40320\t35840\t40320\t35744\t2.00\t37718\natempo-state\t84\t6144\t40800\t35840\t40800\t35744\t2.00\t37718\natempo-state\t85\t6144\t41280\t36864\t41280\t36704\t2.00\t40027\natempo-state\t86\t6144\t41760\t36864\t41760\t36704\t2.00\t40027\natempo-state\t87\t6144\t42240\t36864\t42240\t36704\t2.00\t40027\natempo-state\t88\t6144\t42720\t36864\t42720\t36704\t2.00\t40027\natempo-state\t89\t6144\t43200\t36864\t43200\t36704\t2.00\t40027\natempo-state\t90\t6144\t43680\t37888\t43680\t37664\t2.00\t42336\natempo-state\t91\t6144\t44160\t37888\t44160\t37664\t2.00\t42336\natempo-state\t92\t6144\t44640\t37888\t44640\t37664\t2.00\t42336\natempo-state\t93\t6144\t45120\t37888\t45120\t37664\t2.00\t42336\natempo-state\t94\t6144\t45600\t38912\t45600\t38864\t2.00\t44388\natempo-state\t95\t6144\t46080\t38912\t46080\t38864\t2.00\t44388\natempo-state\t96\t6144\t46560\t38912\t46560\t38864\t2.00\t44388\natempo-state\t97\t6144\t47040\t38912\t47040\t38864\t2.00\t44388\natempo-state\t98\t6144\t47520\t39936\t47520\t39824\t2.00\t46440\natempo-state\t99\t6144\t48000\t39936\t48000\t39824\t2.00\t46440\natempo-state\t100\t6144\t48000\t40725\t48000\t40725\t2.00\t47904\natempo-output\t40725\t1a5a841c\n",
         "stderr": "WARNING: linker: /test/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /test/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n",
         "returncode": 0,
-        "elapsed_seconds": 0.16955975999917428
+        "elapsed_seconds": 0.16643646099964826
       },
       "atempo_new": {
         "output": "atempo-state\t0\t480\t480\t0\t480\t0\t1.25\t-1\natempo-state\t1\t960\t960\t0\t960\t0\t1.25\t-1\natempo-state\t2\t1440\t1440\t0\t1440\t0\t1.25\t-1\natempo-state\t3\t1920\t1920\t0\t1920\t0\t1.25\t-1\natempo-state\t4\t2400\t2400\t1024\t2400\t768\t1.25\t987\natempo-state\t5\t2880\t2880\t1024\t2880\t768\t1.25\t987\natempo-state\t6\t3360\t3360\t1024\t3360\t768\t1.25\t987\natempo-state\t7\t3840\t3840\t2048\t3840\t1920\t1.25\t2424\natempo-state\t8\t4320\t4320\t2048\t4320\t1920\t1.25\t2424\natempo-state\t9\t4800\t4800\t2048\t4800\t1920\t1.25\t2424\natempo-state\t10\t5280\t5280\t3072\t5280\t3072\t1.25\t3843\natempo-state\t11\t5760\t5760\t3072\t5760\t3072\t1.25\t3843\natempo-state\t12\t6144\t6240\t4096\t6240\t3840\t1.25\t4830\natempo-state\t13\t6144\t6720\t4096\t6720\t3840\t1.25\t4830\natempo-state\t14\t6144\t7200\t4096\t7200\t3840\t1.25\t4830\natempo-state\t15\t6144\t7680\t5120\t7680\t4992\t1.25\t6267\natempo-state\t16\t6144\t8160\t5120\t8160\t4992\t1.25\t6267\natempo-state\t17\t6144\t8640\t5120\t8640\t4992\t1.25\t6267\natempo-state\t18\t6144\t9120\t6144\t9120\t6144\t1.25\t7686\natempo-state\t19\t6144\t9600\t6144\t9600\t6144\t1.25\t7686\natempo-state\t20\t6144\t10080\t7168\t10080\t6912\t1.25\t8673\natempo-state\t21\t6144\t10560\t7168\t10560\t6912\t1.25\t8673\natempo-state\t22\t6144\t11040\t7168\t11040\t6912\t1.25\t8673\natempo-state\t23\t6144\t11520\t8192\t11520\t8064\t1.25\t10110\natempo-state\t24\t6144\t12000\t8192\t12000\t8064\t1.25\t10110\natempo-state\t25\t6144\t12480\t8192\t12480\t8064\t1.25\t10110\natempo-state\t26\t6144\t12960\t9216\t12960\t9216\t1.25\t11529\natempo-state\t27\t6144\t13440\t9216\t13440\t9216\t1.25\t11529\natempo-state\t28\t6144\t13920\t10240\t13920\t9984\t1.25\t12516\natempo-state\t29\t6144\t14400\t10240\t14400\t9984\t1.25\t12516\natempo-state\t30\t6144\t14880\t10240\t14880\t9984\t1.25\t12516\natempo-state\t31\t6144\t15360\t11264\t15360\t11136\t1.25\t13953\natempo-state\t32\t6144\t15840\t11264\t15840\t11136\t1.25\t13953\natempo-state\t33\t6144\t16320\t11264\t16320\t11136\t1.25\t13953\natempo-state\t34\t6144\t16800\t12288\t16800\t12288\t1.25\t15372\natempo-state\t35\t6144\t17280\t12288\t17280\t12288\t1.25\t15372\natempo-state\t36\t6144\t17760\t13312\t17760\t13056\t1.25\t16359\natempo-state\t37\t6144\t18240\t13312\t18240\t13056\t1.25\t16359\natempo-state\t38\t6144\t18720\t13312\t18720\t13056\t1.25\t16359\natempo-state\t39\t6144\t19200\t14336\t19200\t14208\t1.25\t17796\natempo-state\t40\t6144\t19680\t14336\t19680\t14208\t1.25\t17796\natempo-state\t41\t6144\t20160\t14336\t20160\t14208\t1.25\t17796\natempo-state\t42\t6144\t20640\t15360\t20640\t15360\t1.25\t19215\natempo-state\t43\t6144\t21120\t15360\t21120\t15360\t1.25\t19215\natempo-state\t44\t6144\t21600\t16384\t21600\t16128\t1.25\t20202\natempo-state\t45\t6144\t22080\t16384\t22080\t16128\t1.25\t20202\natempo-state\t46\t6144\t22560\t16384\t22560\t16128\t1.25\t20202\natempo-state\t47\t6144\t23040\t17408\t23040\t17280\t1.25\t21639\natempo-state\t48\t6144\t23520\t17408\t23520\t17280\t1.25\t21639\natempo-state\t49\t6144\t24000\t17408\t24000\t17280\t1.25\t21639\natempo-state\t50\t6144\t24480\t18432\t24480\t18048\t0.75\t22595\natempo-state\t51\t6144\t24960\t19456\t24960\t19328\t0.75\t23460\natempo-state\t52\t6144\t25440\t20480\t25440\t19968\t0.75\t23952\natempo-state\t53\t6144\t25920\t20480\t25920\t19968\t0.75\t23952\natempo-state\t54\t6144\t26400\t21504\t26400\t21248\t0.75\t24884\natempo-state\t55\t6144\t26880\t21504\t26880\t21248\t0.75\t24884\natempo-state\t56\t6144\t27360\t22528\t27360\t22528\t0.75\t25869\natempo-state\t57\t6144\t27840\t23552\t27840\t23168\t0.75\t26331\natempo-state\t58\t6144\t28320\t23552\t28320\t23168\t0.75\t26331\natempo-state\t59\t6144\t28800\t24576\t28800\t24448\t0.75\t27285\natempo-state\t60\t6144\t29280\t25600\t29280\t25088\t0.75\t27787\natempo-state\t61\t6144\t29760\t25600\t29760\t25088\t0.75\t27787\natempo-state\t62\t6144\t30240\t26624\t30240\t26368\t0.75\t28719\natempo-state\t63\t6144\t30720\t26624\t30720\t26368\t0.75\t28719\natempo-state\t64\t6144\t31200\t27648\t31200\t27648\t0.75\t29704\natempo-state\t65\t6144\t31680\t28672\t31680\t28288\t0.75\t30166\natempo-state\t66\t6144\t32160\t28672\t32160\t28288\t0.75\t30166\natempo-state\t67\t6144\t32640\t29696\t32640\t29568\t0.75\t31120\natempo-state\t68\t6144\t33120\t30720\t33120\t30208\t0.75\t31622\natempo-state\t69\t6144\t33600\t30720\t33600\t30208\t0.75\t31622\natempo-state\t70\t6144\t34080\t31744\t34080\t31488\t0.75\t32554\natempo-state\t71\t6144\t34560\t31744\t34560\t31488\t0.75\t32554\natempo-state\t72\t6144\t35040\t32768\t35040\t32768\t0.75\t33539\natempo-state\t73\t6144\t35520\t33792\t35520\t33408\t0.75\t34001\natempo-state\t74\t6144\t36000\t33792\t36000\t33408\t0.75\t34001\natempo-state\t75\t6144\t36480\t34816\t36480\t34752\t2.00\t35011\natempo-state\t76\t6144\t36960\t34816\t36960\t34752\t2.00\t35011\natempo-state\t77\t6144\t37440\t34816\t37440\t34752\t2.00\t35011\natempo-state\t78\t6144\t37920\t34816\t37920\t34752\t2.00\t35011\natempo-state\t79\t6144\t38400\t34816\t38400\t34752\t2.00\t35011\natempo-state\t80\t6144\t38880\t35840\t38880\t35712\t2.00\t37528\natempo-state\t81\t6144\t39360\t35840\t39360\t35712\t2.00\t37528\natempo-state\t82\t6144\t39840\t35840\t39840\t35712\t2.00\t37528\natempo-state\t83\t6144\t40320\t35840\t40320\t35712\t2.00\t37528\natempo-state\t84\t6144\t40800\t35840\t40800\t35712\t2.00\t37528\natempo-state\t85\t6144\t41280\t36864\t41280\t36672\t2.00\t39727\natempo-state\t86\t6144\t41760\t36864\t41760\t36672\t2.00\t39727\natempo-state\t87\t6144\t42240\t36864\t42240\t36672\t2.00\t39727\natempo-state\t88\t6144\t42720\t36864\t42720\t36672\t2.00\t39727\natempo-state\t89\t6144\t43200\t36864\t43200\t36672\t2.00\t39727\natempo-state\t90\t6144\t43680\t37888\t43680\t37872\t2.00\t42319\natempo-state\t91\t6144\t44160\t37888\t44160\t37872\t2.00\t42319\natempo-state\t92\t6144\t44640\t37888\t44640\t37872\t2.00\t42319\natempo-state\t93\t6144\t45120\t37888\t45120\t37872\t2.00\t42319\natempo-state\t94\t6144\t45600\t38912\t45600\t38832\t2.00\t44293\natempo-state\t95\t6144\t46080\t38912\t46080\t38832\t2.00\t44293\natempo-state\t96\t6144\t46560\t38912\t46560\t38832\t2.00\t44293\natempo-state\t97\t6144\t47040\t38912\t47040\t38832\t2.00\t44293\natempo-state\t98\t6144\t47520\t39936\t47520\t39792\t2.00\t46247\natempo-state\t99\t6144\t48000\t39936\t48000\t39792\t2.00\t46247\natempo-state\t100\t6144\t48000\t40725\t48000\t40725\t2.00\t47904\natempo-output\t40725\t1a5a841c\n",
         "stderr": "WARNING: linker: /test/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /test/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n",
         "returncode": 0,
-        "elapsed_seconds": 0.16367546199944627
+        "elapsed_seconds": 0.16878857800020342
       },
       "performance_median_seconds": {
         "h264-aac.mp4": {
-          "baseline": 0.21003864200065436,
-          "candidate": 0.20115391600120347
+          "baseline": 0.2060737669999071,
+          "candidate": 0.2443202439999368
         },
         "hevc.mkv": {
-          "baseline": 0.17272024700105248,
-          "candidate": 0.1536145120007859
+          "baseline": 0.1672178709995933,
+          "candidate": 0.18628191700008756
         },
         "av1.mkv": {
-          "baseline": 0.16079115699903923,
-          "candidate": 0.16422296199925768
+          "baseline": 0.17229683000005025,
+          "candidate": 0.21460958500028937
         },
         "ac3-51.ac3": {
-          "baseline": 0.1670092679996742,
-          "candidate": 0.16215956099949835
+          "baseline": 0.16723974399974395,
+          "candidate": 0.17599745400002575
         }
-      },
-      "registry_removed_after_codec_id_normalization": [
-        [
-          "codec",
-          "sonic",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v308",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v408",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v410",
-          "1",
-          "0"
-        ],
-        [
-          "input-protocol",
-          "hls"
-        ]
-      ],
-      "registry_added_after_codec_id_normalization": [
-        [
-          "codec",
-          "webp_anim",
-          "1",
-          "0"
-        ],
-        [
-          "demuxer",
-          "hxvs"
-        ],
-        [
-          "demuxer",
-          "jpegxs_pipe"
-        ],
-        [
-          "demuxer",
-          "webp_anim"
-        ],
-        [
-          "filter",
-          "premultiply_dynamic"
-        ],
-        [
-          "input-protocol",
-          "shared"
-        ]
-      ],
-      "tempo_decoded_audio_exact_match": true,
-      "tempo_state_change_reason": "New companion patch reports only the media frontier actually emitted; decoded tempo audio matches0.145 exactly."
+      }
     },
     {
       "abi": "x86",
@@ -1153,92 +1033,32 @@
         "output": "atempo-state\t0\t480\t480\t0\t480\t0\t1.25\t-1\natempo-state\t1\t960\t960\t0\t960\t0\t1.25\t-1\natempo-state\t2\t1440\t1440\t0\t1440\t0\t1.25\t-1\natempo-state\t3\t1920\t1920\t0\t1920\t0\t1.25\t-1\natempo-state\t4\t2400\t2400\t1024\t2400\t768\t1.25\t1281\natempo-state\t5\t2880\t2880\t1024\t2880\t768\t1.25\t1281\natempo-state\t6\t3360\t3360\t1024\t3360\t768\t1.25\t1281\natempo-state\t7\t3840\t3840\t2048\t3840\t1920\t1.25\t2562\natempo-state\t8\t4320\t4320\t2048\t4320\t1920\t1.25\t2562\natempo-state\t9\t4800\t4800\t2048\t4800\t1920\t1.25\t2562\natempo-state\t10\t5280\t5280\t3072\t5280\t3072\t1.25\t3843\natempo-state\t11\t5760\t5760\t3072\t5760\t3072\t1.25\t3843\natempo-state\t12\t6144\t6240\t4096\t6240\t3840\t1.25\t5124\natempo-state\t13\t6144\t6720\t4096\t6720\t3840\t1.25\t5124\natempo-state\t14\t6144\t7200\t4096\t7200\t3840\t1.25\t5124\natempo-state\t15\t6144\t7680\t5120\t7680\t4992\t1.25\t6405\natempo-state\t16\t6144\t8160\t5120\t8160\t4992\t1.25\t6405\natempo-state\t17\t6144\t8640\t5120\t8640\t4992\t1.25\t6405\natempo-state\t18\t6144\t9120\t6144\t9120\t6144\t1.25\t7686\natempo-state\t19\t6144\t9600\t6144\t9600\t6144\t1.25\t7686\natempo-state\t20\t6144\t10080\t7168\t10080\t6912\t1.25\t8967\natempo-state\t21\t6144\t10560\t7168\t10560\t6912\t1.25\t8967\natempo-state\t22\t6144\t11040\t7168\t11040\t6912\t1.25\t8967\natempo-state\t23\t6144\t11520\t8192\t11520\t8064\t1.25\t10248\natempo-state\t24\t6144\t12000\t8192\t12000\t8064\t1.25\t10248\natempo-state\t25\t6144\t12480\t8192\t12480\t8064\t1.25\t10248\natempo-state\t26\t6144\t12960\t9216\t12960\t9216\t1.25\t11529\natempo-state\t27\t6144\t13440\t9216\t13440\t9216\t1.25\t11529\natempo-state\t28\t6144\t13920\t10240\t13920\t9984\t1.25\t12810\natempo-state\t29\t6144\t14400\t10240\t14400\t9984\t1.25\t12810\natempo-state\t30\t6144\t14880\t10240\t14880\t9984\t1.25\t12810\natempo-state\t31\t6144\t15360\t11264\t15360\t11136\t1.25\t14091\natempo-state\t32\t6144\t15840\t11264\t15840\t11136\t1.25\t14091\natempo-state\t33\t6144\t16320\t11264\t16320\t11136\t1.25\t14091\natempo-state\t34\t6144\t16800\t12288\t16800\t12288\t1.25\t15372\natempo-state\t35\t6144\t17280\t12288\t17280\t12288\t1.25\t15372\natempo-state\t36\t6144\t17760\t13312\t17760\t13056\t1.25\t16653\natempo-state\t37\t6144\t18240\t13312\t18240\t13056\t1.25\t16653\natempo-state\t38\t6144\t18720\t13312\t18720\t13056\t1.25\t16653\natempo-state\t39\t6144\t19200\t14336\t19200\t14208\t1.25\t17934\natempo-state\t40\t6144\t19680\t14336\t19680\t14208\t1.25\t17934\natempo-state\t41\t6144\t20160\t14336\t20160\t14208\t1.25\t17934\natempo-state\t42\t6144\t20640\t15360\t20640\t15360\t1.25\t19215\natempo-state\t43\t6144\t21120\t15360\t21120\t15360\t1.25\t19215\natempo-state\t44\t6144\t21600\t16384\t21600\t16128\t1.25\t20496\natempo-state\t45\t6144\t22080\t16384\t22080\t16128\t1.25\t20496\natempo-state\t46\t6144\t22560\t16384\t22560\t16128\t1.25\t20496\natempo-state\t47\t6144\t23040\t17408\t23040\t17280\t1.25\t21777\natempo-state\t48\t6144\t23520\t17408\t23520\t17280\t1.25\t21777\natempo-state\t49\t6144\t24000\t17408\t24000\t17280\t1.25\t21777\natempo-state\t50\t6144\t24480\t18432\t24480\t18304\t0.75\t23058\natempo-state\t51\t6144\t24960\t19456\t24960\t18944\t0.75\t23568\natempo-state\t52\t6144\t25440\t20480\t25440\t20224\t0.75\t24335\natempo-state\t53\t6144\t25920\t20480\t25920\t20224\t0.75\t24335\natempo-state\t54\t6144\t26400\t21504\t26400\t21504\t0.75\t25102\natempo-state\t55\t6144\t26880\t21504\t26880\t21504\t0.75\t25102\natempo-state\t56\t6144\t27360\t22528\t27360\t22144\t0.75\t25869\natempo-state\t57\t6144\t27840\t23552\t27840\t23424\t0.75\t26636\natempo-state\t58\t6144\t28320\t23552\t28320\t23424\t0.75\t26636\natempo-state\t59\t6144\t28800\t24576\t28800\t24064\t0.75\t27403\natempo-state\t60\t6144\t29280\t25600\t29280\t25344\t0.75\t28170\natempo-state\t61\t6144\t29760\t25600\t29760\t25344\t0.75\t28170\natempo-state\t62\t6144\t30240\t26624\t30240\t26624\t0.75\t28937\natempo-state\t63\t6144\t30720\t26624\t30720\t26624\t0.75\t28937\natempo-state\t64\t6144\t31200\t27648\t31200\t27264\t0.75\t29704\natempo-state\t65\t6144\t31680\t28672\t31680\t28544\t0.75\t30471\natempo-state\t66\t6144\t32160\t28672\t32160\t28544\t0.75\t30471\natempo-state\t67\t6144\t32640\t29696\t32640\t29184\t0.75\t31238\natempo-state\t68\t6144\t33120\t30720\t33120\t30464\t0.75\t32005\natempo-state\t69\t6144\t33600\t30720\t33600\t30464\t0.75\t32005\natempo-state\t70\t6144\t34080\t31744\t34080\t31744\t0.75\t32772\natempo-state\t71\t6144\t34560\t31744\t34560\t31744\t0.75\t32772\natempo-state\t72\t6144\t35040\t32768\t35040\t32384\t0.75\t33539\natempo-state\t73\t6144\t35520\t33792\t35520\t33664\t0.75\t34306\natempo-state\t74\t6144\t36000\t33792\t36000\t33664\t0.75\t34306\natempo-state\t75\t6144\t36480\t34816\t36480\t34784\t2.00\t35073\natempo-state\t76\t6144\t36960\t34816\t36960\t34784\t2.00\t35073\natempo-state\t77\t6144\t37440\t34816\t37440\t34784\t2.00\t35073\natempo-state\t78\t6144\t37920\t34816\t37920\t34784\t2.00\t35073\natempo-state\t79\t6144\t38400\t34816\t38400\t34784\t2.00\t35073\natempo-state\t80\t6144\t38880\t35840\t38880\t35744\t2.00\t37718\natempo-state\t81\t6144\t39360\t35840\t39360\t35744\t2.00\t37718\natempo-state\t82\t6144\t39840\t35840\t39840\t35744\t2.00\t37718\natempo-state\t83\t6144\t40320\t35840\t40320\t35744\t2.00\t37718\natempo-state\t84\t6144\t40800\t35840\t40800\t35744\t2.00\t37718\natempo-state\t85\t6144\t41280\t36864\t41280\t36704\t2.00\t40027\natempo-state\t86\t6144\t41760\t36864\t41760\t36704\t2.00\t40027\natempo-state\t87\t6144\t42240\t36864\t42240\t36704\t2.00\t40027\natempo-state\t88\t6144\t42720\t36864\t42720\t36704\t2.00\t40027\natempo-state\t89\t6144\t43200\t36864\t43200\t36704\t2.00\t40027\natempo-state\t90\t6144\t43680\t37888\t43680\t37664\t2.00\t42336\natempo-state\t91\t6144\t44160\t37888\t44160\t37664\t2.00\t42336\natempo-state\t92\t6144\t44640\t37888\t44640\t37664\t2.00\t42336\natempo-state\t93\t6144\t45120\t37888\t45120\t37664\t2.00\t42336\natempo-state\t94\t6144\t45600\t38912\t45600\t38864\t2.00\t44388\natempo-state\t95\t6144\t46080\t38912\t46080\t38864\t2.00\t44388\natempo-state\t96\t6144\t46560\t38912\t46560\t38864\t2.00\t44388\natempo-state\t97\t6144\t47040\t38912\t47040\t38864\t2.00\t44388\natempo-state\t98\t6144\t47520\t39936\t47520\t39824\t2.00\t46440\natempo-state\t99\t6144\t48000\t39936\t48000\t39824\t2.00\t46440\natempo-state\t100\t6144\t48000\t40725\t48000\t40725\t2.00\t47904\natempo-output\t40725\t1a5a841c\n",
         "stderr": "WARNING: linker: /test/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /test/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n",
         "returncode": 0,
-        "elapsed_seconds": 0.23261632699905022
+        "elapsed_seconds": 0.2944687859999249
       },
       "atempo_new": {
         "output": "atempo-state\t0\t480\t480\t0\t480\t0\t1.25\t-1\natempo-state\t1\t960\t960\t0\t960\t0\t1.25\t-1\natempo-state\t2\t1440\t1440\t0\t1440\t0\t1.25\t-1\natempo-state\t3\t1920\t1920\t0\t1920\t0\t1.25\t-1\natempo-state\t4\t2400\t2400\t1024\t2400\t768\t1.25\t987\natempo-state\t5\t2880\t2880\t1024\t2880\t768\t1.25\t987\natempo-state\t6\t3360\t3360\t1024\t3360\t768\t1.25\t987\natempo-state\t7\t3840\t3840\t2048\t3840\t1920\t1.25\t2424\natempo-state\t8\t4320\t4320\t2048\t4320\t1920\t1.25\t2424\natempo-state\t9\t4800\t4800\t2048\t4800\t1920\t1.25\t2424\natempo-state\t10\t5280\t5280\t3072\t5280\t3072\t1.25\t3843\natempo-state\t11\t5760\t5760\t3072\t5760\t3072\t1.25\t3843\natempo-state\t12\t6144\t6240\t4096\t6240\t3840\t1.25\t4830\natempo-state\t13\t6144\t6720\t4096\t6720\t3840\t1.25\t4830\natempo-state\t14\t6144\t7200\t4096\t7200\t3840\t1.25\t4830\natempo-state\t15\t6144\t7680\t5120\t7680\t4992\t1.25\t6267\natempo-state\t16\t6144\t8160\t5120\t8160\t4992\t1.25\t6267\natempo-state\t17\t6144\t8640\t5120\t8640\t4992\t1.25\t6267\natempo-state\t18\t6144\t9120\t6144\t9120\t6144\t1.25\t7686\natempo-state\t19\t6144\t9600\t6144\t9600\t6144\t1.25\t7686\natempo-state\t20\t6144\t10080\t7168\t10080\t6912\t1.25\t8673\natempo-state\t21\t6144\t10560\t7168\t10560\t6912\t1.25\t8673\natempo-state\t22\t6144\t11040\t7168\t11040\t6912\t1.25\t8673\natempo-state\t23\t6144\t11520\t8192\t11520\t8064\t1.25\t10110\natempo-state\t24\t6144\t12000\t8192\t12000\t8064\t1.25\t10110\natempo-state\t25\t6144\t12480\t8192\t12480\t8064\t1.25\t10110\natempo-state\t26\t6144\t12960\t9216\t12960\t9216\t1.25\t11529\natempo-state\t27\t6144\t13440\t9216\t13440\t9216\t1.25\t11529\natempo-state\t28\t6144\t13920\t10240\t13920\t9984\t1.25\t12516\natempo-state\t29\t6144\t14400\t10240\t14400\t9984\t1.25\t12516\natempo-state\t30\t6144\t14880\t10240\t14880\t9984\t1.25\t12516\natempo-state\t31\t6144\t15360\t11264\t15360\t11136\t1.25\t13953\natempo-state\t32\t6144\t15840\t11264\t15840\t11136\t1.25\t13953\natempo-state\t33\t6144\t16320\t11264\t16320\t11136\t1.25\t13953\natempo-state\t34\t6144\t16800\t12288\t16800\t12288\t1.25\t15372\natempo-state\t35\t6144\t17280\t12288\t17280\t12288\t1.25\t15372\natempo-state\t36\t6144\t17760\t13312\t17760\t13056\t1.25\t16359\natempo-state\t37\t6144\t18240\t13312\t18240\t13056\t1.25\t16359\natempo-state\t38\t6144\t18720\t13312\t18720\t13056\t1.25\t16359\natempo-state\t39\t6144\t19200\t14336\t19200\t14208\t1.25\t17796\natempo-state\t40\t6144\t19680\t14336\t19680\t14208\t1.25\t17796\natempo-state\t41\t6144\t20160\t14336\t20160\t14208\t1.25\t17796\natempo-state\t42\t6144\t20640\t15360\t20640\t15360\t1.25\t19215\natempo-state\t43\t6144\t21120\t15360\t21120\t15360\t1.25\t19215\natempo-state\t44\t6144\t21600\t16384\t21600\t16128\t1.25\t20202\natempo-state\t45\t6144\t22080\t16384\t22080\t16128\t1.25\t20202\natempo-state\t46\t6144\t22560\t16384\t22560\t16128\t1.25\t20202\natempo-state\t47\t6144\t23040\t17408\t23040\t17280\t1.25\t21639\natempo-state\t48\t6144\t23520\t17408\t23520\t17280\t1.25\t21639\natempo-state\t49\t6144\t24000\t17408\t24000\t17280\t1.25\t21639\natempo-state\t50\t6144\t24480\t18432\t24480\t18048\t0.75\t22595\natempo-state\t51\t6144\t24960\t19456\t24960\t19328\t0.75\t23460\natempo-state\t52\t6144\t25440\t20480\t25440\t19968\t0.75\t23952\natempo-state\t53\t6144\t25920\t20480\t25920\t19968\t0.75\t23952\natempo-state\t54\t6144\t26400\t21504\t26400\t21248\t0.75\t24884\natempo-state\t55\t6144\t26880\t21504\t26880\t21248\t0.75\t24884\natempo-state\t56\t6144\t27360\t22528\t27360\t22528\t0.75\t25869\natempo-state\t57\t6144\t27840\t23552\t27840\t23168\t0.75\t26331\natempo-state\t58\t6144\t28320\t23552\t28320\t23168\t0.75\t26331\natempo-state\t59\t6144\t28800\t24576\t28800\t24448\t0.75\t27285\natempo-state\t60\t6144\t29280\t25600\t29280\t25088\t0.75\t27787\natempo-state\t61\t6144\t29760\t25600\t29760\t25088\t0.75\t27787\natempo-state\t62\t6144\t30240\t26624\t30240\t26368\t0.75\t28719\natempo-state\t63\t6144\t30720\t26624\t30720\t26368\t0.75\t28719\natempo-state\t64\t6144\t31200\t27648\t31200\t27648\t0.75\t29704\natempo-state\t65\t6144\t31680\t28672\t31680\t28288\t0.75\t30166\natempo-state\t66\t6144\t32160\t28672\t32160\t28288\t0.75\t30166\natempo-state\t67\t6144\t32640\t29696\t32640\t29568\t0.75\t31120\natempo-state\t68\t6144\t33120\t30720\t33120\t30208\t0.75\t31622\natempo-state\t69\t6144\t33600\t30720\t33600\t30208\t0.75\t31622\natempo-state\t70\t6144\t34080\t31744\t34080\t31488\t0.75\t32554\natempo-state\t71\t6144\t34560\t31744\t34560\t31488\t0.75\t32554\natempo-state\t72\t6144\t35040\t32768\t35040\t32768\t0.75\t33539\natempo-state\t73\t6144\t35520\t33792\t35520\t33408\t0.75\t34001\natempo-state\t74\t6144\t36000\t33792\t36000\t33408\t0.75\t34001\natempo-state\t75\t6144\t36480\t34816\t36480\t34752\t2.00\t35011\natempo-state\t76\t6144\t36960\t34816\t36960\t34752\t2.00\t35011\natempo-state\t77\t6144\t37440\t34816\t37440\t34752\t2.00\t35011\natempo-state\t78\t6144\t37920\t34816\t37920\t34752\t2.00\t35011\natempo-state\t79\t6144\t38400\t34816\t38400\t34752\t2.00\t35011\natempo-state\t80\t6144\t38880\t35840\t38880\t35712\t2.00\t37528\natempo-state\t81\t6144\t39360\t35840\t39360\t35712\t2.00\t37528\natempo-state\t82\t6144\t39840\t35840\t39840\t35712\t2.00\t37528\natempo-state\t83\t6144\t40320\t35840\t40320\t35712\t2.00\t37528\natempo-state\t84\t6144\t40800\t35840\t40800\t35712\t2.00\t37528\natempo-state\t85\t6144\t41280\t36864\t41280\t36672\t2.00\t39727\natempo-state\t86\t6144\t41760\t36864\t41760\t36672\t2.00\t39727\natempo-state\t87\t6144\t42240\t36864\t42240\t36672\t2.00\t39727\natempo-state\t88\t6144\t42720\t36864\t42720\t36672\t2.00\t39727\natempo-state\t89\t6144\t43200\t36864\t43200\t36672\t2.00\t39727\natempo-state\t90\t6144\t43680\t37888\t43680\t37872\t2.00\t42319\natempo-state\t91\t6144\t44160\t37888\t44160\t37872\t2.00\t42319\natempo-state\t92\t6144\t44640\t37888\t44640\t37872\t2.00\t42319\natempo-state\t93\t6144\t45120\t37888\t45120\t37872\t2.00\t42319\natempo-state\t94\t6144\t45600\t38912\t45600\t38832\t2.00\t44293\natempo-state\t95\t6144\t46080\t38912\t46080\t38832\t2.00\t44293\natempo-state\t96\t6144\t46560\t38912\t46560\t38832\t2.00\t44293\natempo-state\t97\t6144\t47040\t38912\t47040\t38832\t2.00\t44293\natempo-state\t98\t6144\t47520\t39936\t47520\t39792\t2.00\t46247\natempo-state\t99\t6144\t48000\t39936\t48000\t39792\t2.00\t46247\natempo-state\t100\t6144\t48000\t40725\t48000\t40725\t2.00\t47904\natempo-output\t40725\t1a5a841c\n",
         "stderr": "WARNING: linker: /test/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /test/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n",
         "returncode": 0,
-        "elapsed_seconds": 0.19964260500091768
+        "elapsed_seconds": 0.2261011820000931
       },
       "performance_median_seconds": {
         "h264-aac.mp4": {
-          "baseline": 0.22496770799989463,
-          "candidate": 0.2076087980003649
+          "baseline": 0.22581188899948756,
+          "candidate": 0.31388941800014436
         },
         "hevc.mkv": {
-          "baseline": 0.172282143999837,
-          "candidate": 0.1606058170000324
+          "baseline": 0.183358582999972,
+          "candidate": 0.38081241700001556
         },
         "av1.mkv": {
-          "baseline": 0.17610718899959465,
-          "candidate": 0.17014944900074624
+          "baseline": 0.19162728799983597,
+          "candidate": 0.39574404700033483
         },
         "ac3-51.ac3": {
-          "baseline": 0.18720345300062036,
-          "candidate": 0.1747521239994967
+          "baseline": 0.2242703749998327,
+          "candidate": 0.4187857550004992
         }
-      },
-      "registry_removed_after_codec_id_normalization": [
-        [
-          "codec",
-          "sonic",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v308",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v408",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v410",
-          "1",
-          "0"
-        ],
-        [
-          "input-protocol",
-          "hls"
-        ]
-      ],
-      "registry_added_after_codec_id_normalization": [
-        [
-          "codec",
-          "webp_anim",
-          "1",
-          "0"
-        ],
-        [
-          "demuxer",
-          "hxvs"
-        ],
-        [
-          "demuxer",
-          "jpegxs_pipe"
-        ],
-        [
-          "demuxer",
-          "webp_anim"
-        ],
-        [
-          "filter",
-          "premultiply_dynamic"
-        ],
-        [
-          "input-protocol",
-          "shared"
-        ]
-      ],
-      "tempo_decoded_audio_exact_match": true,
-      "tempo_state_change_reason": "New companion patch reports only the media frontier actually emitted; decoded tempo audio matches0.145 exactly."
+      }
     },
     {
       "abi": "x86_64",
@@ -1491,92 +1311,32 @@
         "output": "atempo-state\t0\t480\t480\t0\t480\t0\t1.25\t-1\natempo-state\t1\t960\t960\t0\t960\t0\t1.25\t-1\natempo-state\t2\t1440\t1440\t0\t1440\t0\t1.25\t-1\natempo-state\t3\t1920\t1920\t0\t1920\t0\t1.25\t-1\natempo-state\t4\t2400\t2400\t1024\t2400\t768\t1.25\t1281\natempo-state\t5\t2880\t2880\t1024\t2880\t768\t1.25\t1281\natempo-state\t6\t3360\t3360\t1024\t3360\t768\t1.25\t1281\natempo-state\t7\t3840\t3840\t2048\t3840\t1920\t1.25\t2562\natempo-state\t8\t4320\t4320\t2048\t4320\t1920\t1.25\t2562\natempo-state\t9\t4800\t4800\t2048\t4800\t1920\t1.25\t2562\natempo-state\t10\t5280\t5280\t3072\t5280\t3072\t1.25\t3843\natempo-state\t11\t5760\t5760\t3072\t5760\t3072\t1.25\t3843\natempo-state\t12\t6144\t6240\t4096\t6240\t3840\t1.25\t5124\natempo-state\t13\t6144\t6720\t4096\t6720\t3840\t1.25\t5124\natempo-state\t14\t6144\t7200\t4096\t7200\t3840\t1.25\t5124\natempo-state\t15\t6144\t7680\t5120\t7680\t4992\t1.25\t6405\natempo-state\t16\t6144\t8160\t5120\t8160\t4992\t1.25\t6405\natempo-state\t17\t6144\t8640\t5120\t8640\t4992\t1.25\t6405\natempo-state\t18\t6144\t9120\t6144\t9120\t6144\t1.25\t7686\natempo-state\t19\t6144\t9600\t6144\t9600\t6144\t1.25\t7686\natempo-state\t20\t6144\t10080\t7168\t10080\t6912\t1.25\t8967\natempo-state\t21\t6144\t10560\t7168\t10560\t6912\t1.25\t8967\natempo-state\t22\t6144\t11040\t7168\t11040\t6912\t1.25\t8967\natempo-state\t23\t6144\t11520\t8192\t11520\t8064\t1.25\t10248\natempo-state\t24\t6144\t12000\t8192\t12000\t8064\t1.25\t10248\natempo-state\t25\t6144\t12480\t8192\t12480\t8064\t1.25\t10248\natempo-state\t26\t6144\t12960\t9216\t12960\t9216\t1.25\t11529\natempo-state\t27\t6144\t13440\t9216\t13440\t9216\t1.25\t11529\natempo-state\t28\t6144\t13920\t10240\t13920\t9984\t1.25\t12810\natempo-state\t29\t6144\t14400\t10240\t14400\t9984\t1.25\t12810\natempo-state\t30\t6144\t14880\t10240\t14880\t9984\t1.25\t12810\natempo-state\t31\t6144\t15360\t11264\t15360\t11136\t1.25\t14091\natempo-state\t32\t6144\t15840\t11264\t15840\t11136\t1.25\t14091\natempo-state\t33\t6144\t16320\t11264\t16320\t11136\t1.25\t14091\natempo-state\t34\t6144\t16800\t12288\t16800\t12288\t1.25\t15372\natempo-state\t35\t6144\t17280\t12288\t17280\t12288\t1.25\t15372\natempo-state\t36\t6144\t17760\t13312\t17760\t13056\t1.25\t16653\natempo-state\t37\t6144\t18240\t13312\t18240\t13056\t1.25\t16653\natempo-state\t38\t6144\t18720\t13312\t18720\t13056\t1.25\t16653\natempo-state\t39\t6144\t19200\t14336\t19200\t14208\t1.25\t17934\natempo-state\t40\t6144\t19680\t14336\t19680\t14208\t1.25\t17934\natempo-state\t41\t6144\t20160\t14336\t20160\t14208\t1.25\t17934\natempo-state\t42\t6144\t20640\t15360\t20640\t15360\t1.25\t19215\natempo-state\t43\t6144\t21120\t15360\t21120\t15360\t1.25\t19215\natempo-state\t44\t6144\t21600\t16384\t21600\t16128\t1.25\t20496\natempo-state\t45\t6144\t22080\t16384\t22080\t16128\t1.25\t20496\natempo-state\t46\t6144\t22560\t16384\t22560\t16128\t1.25\t20496\natempo-state\t47\t6144\t23040\t17408\t23040\t17280\t1.25\t21777\natempo-state\t48\t6144\t23520\t17408\t23520\t17280\t1.25\t21777\natempo-state\t49\t6144\t24000\t17408\t24000\t17280\t1.25\t21777\natempo-state\t50\t6144\t24480\t18432\t24480\t18304\t0.75\t23058\natempo-state\t51\t6144\t24960\t19456\t24960\t18944\t0.75\t23568\natempo-state\t52\t6144\t25440\t20480\t25440\t20224\t0.75\t24335\natempo-state\t53\t6144\t25920\t20480\t25920\t20224\t0.75\t24335\natempo-state\t54\t6144\t26400\t21504\t26400\t21504\t0.75\t25102\natempo-state\t55\t6144\t26880\t21504\t26880\t21504\t0.75\t25102\natempo-state\t56\t6144\t27360\t22528\t27360\t22144\t0.75\t25869\natempo-state\t57\t6144\t27840\t23552\t27840\t23424\t0.75\t26636\natempo-state\t58\t6144\t28320\t23552\t28320\t23424\t0.75\t26636\natempo-state\t59\t6144\t28800\t24576\t28800\t24064\t0.75\t27403\natempo-state\t60\t6144\t29280\t25600\t29280\t25344\t0.75\t28170\natempo-state\t61\t6144\t29760\t25600\t29760\t25344\t0.75\t28170\natempo-state\t62\t6144\t30240\t26624\t30240\t26624\t0.75\t28937\natempo-state\t63\t6144\t30720\t26624\t30720\t26624\t0.75\t28937\natempo-state\t64\t6144\t31200\t27648\t31200\t27264\t0.75\t29704\natempo-state\t65\t6144\t31680\t28672\t31680\t28544\t0.75\t30471\natempo-state\t66\t6144\t32160\t28672\t32160\t28544\t0.75\t30471\natempo-state\t67\t6144\t32640\t29696\t32640\t29184\t0.75\t31238\natempo-state\t68\t6144\t33120\t30720\t33120\t30464\t0.75\t32005\natempo-state\t69\t6144\t33600\t30720\t33600\t30464\t0.75\t32005\natempo-state\t70\t6144\t34080\t31744\t34080\t31744\t0.75\t32772\natempo-state\t71\t6144\t34560\t31744\t34560\t31744\t0.75\t32772\natempo-state\t72\t6144\t35040\t32768\t35040\t32384\t0.75\t33539\natempo-state\t73\t6144\t35520\t33792\t35520\t33664\t0.75\t34306\natempo-state\t74\t6144\t36000\t33792\t36000\t33664\t0.75\t34306\natempo-state\t75\t6144\t36480\t34816\t36480\t34784\t2.00\t35073\natempo-state\t76\t6144\t36960\t34816\t36960\t34784\t2.00\t35073\natempo-state\t77\t6144\t37440\t34816\t37440\t34784\t2.00\t35073\natempo-state\t78\t6144\t37920\t34816\t37920\t34784\t2.00\t35073\natempo-state\t79\t6144\t38400\t34816\t38400\t34784\t2.00\t35073\natempo-state\t80\t6144\t38880\t35840\t38880\t35744\t2.00\t37718\natempo-state\t81\t6144\t39360\t35840\t39360\t35744\t2.00\t37718\natempo-state\t82\t6144\t39840\t35840\t39840\t35744\t2.00\t37718\natempo-state\t83\t6144\t40320\t35840\t40320\t35744\t2.00\t37718\natempo-state\t84\t6144\t40800\t35840\t40800\t35744\t2.00\t37718\natempo-state\t85\t6144\t41280\t36864\t41280\t36704\t2.00\t40027\natempo-state\t86\t6144\t41760\t36864\t41760\t36704\t2.00\t40027\natempo-state\t87\t6144\t42240\t36864\t42240\t36704\t2.00\t40027\natempo-state\t88\t6144\t42720\t36864\t42720\t36704\t2.00\t40027\natempo-state\t89\t6144\t43200\t36864\t43200\t36704\t2.00\t40027\natempo-state\t90\t6144\t43680\t37888\t43680\t37664\t2.00\t42336\natempo-state\t91\t6144\t44160\t37888\t44160\t37664\t2.00\t42336\natempo-state\t92\t6144\t44640\t37888\t44640\t37664\t2.00\t42336\natempo-state\t93\t6144\t45120\t37888\t45120\t37664\t2.00\t42336\natempo-state\t94\t6144\t45600\t38912\t45600\t38864\t2.00\t44388\natempo-state\t95\t6144\t46080\t38912\t46080\t38864\t2.00\t44388\natempo-state\t96\t6144\t46560\t38912\t46560\t38864\t2.00\t44388\natempo-state\t97\t6144\t47040\t38912\t47040\t38864\t2.00\t44388\natempo-state\t98\t6144\t47520\t39936\t47520\t39824\t2.00\t46440\natempo-state\t99\t6144\t48000\t39936\t48000\t39824\t2.00\t46440\natempo-state\t100\t6144\t48000\t40725\t48000\t40725\t2.00\t47904\natempo-output\t40725\t1a5a841c\n",
         "stderr": "WARNING: linker: /test/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /test/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n",
         "returncode": 0,
-        "elapsed_seconds": 0.05177172900039295
+        "elapsed_seconds": 0.12448604800010798
       },
       "atempo_new": {
         "output": "atempo-state\t0\t480\t480\t0\t480\t0\t1.25\t-1\natempo-state\t1\t960\t960\t0\t960\t0\t1.25\t-1\natempo-state\t2\t1440\t1440\t0\t1440\t0\t1.25\t-1\natempo-state\t3\t1920\t1920\t0\t1920\t0\t1.25\t-1\natempo-state\t4\t2400\t2400\t1024\t2400\t768\t1.25\t987\natempo-state\t5\t2880\t2880\t1024\t2880\t768\t1.25\t987\natempo-state\t6\t3360\t3360\t1024\t3360\t768\t1.25\t987\natempo-state\t7\t3840\t3840\t2048\t3840\t1920\t1.25\t2424\natempo-state\t8\t4320\t4320\t2048\t4320\t1920\t1.25\t2424\natempo-state\t9\t4800\t4800\t2048\t4800\t1920\t1.25\t2424\natempo-state\t10\t5280\t5280\t3072\t5280\t3072\t1.25\t3843\natempo-state\t11\t5760\t5760\t3072\t5760\t3072\t1.25\t3843\natempo-state\t12\t6144\t6240\t4096\t6240\t3840\t1.25\t4830\natempo-state\t13\t6144\t6720\t4096\t6720\t3840\t1.25\t4830\natempo-state\t14\t6144\t7200\t4096\t7200\t3840\t1.25\t4830\natempo-state\t15\t6144\t7680\t5120\t7680\t4992\t1.25\t6267\natempo-state\t16\t6144\t8160\t5120\t8160\t4992\t1.25\t6267\natempo-state\t17\t6144\t8640\t5120\t8640\t4992\t1.25\t6267\natempo-state\t18\t6144\t9120\t6144\t9120\t6144\t1.25\t7686\natempo-state\t19\t6144\t9600\t6144\t9600\t6144\t1.25\t7686\natempo-state\t20\t6144\t10080\t7168\t10080\t6912\t1.25\t8673\natempo-state\t21\t6144\t10560\t7168\t10560\t6912\t1.25\t8673\natempo-state\t22\t6144\t11040\t7168\t11040\t6912\t1.25\t8673\natempo-state\t23\t6144\t11520\t8192\t11520\t8064\t1.25\t10110\natempo-state\t24\t6144\t12000\t8192\t12000\t8064\t1.25\t10110\natempo-state\t25\t6144\t12480\t8192\t12480\t8064\t1.25\t10110\natempo-state\t26\t6144\t12960\t9216\t12960\t9216\t1.25\t11529\natempo-state\t27\t6144\t13440\t9216\t13440\t9216\t1.25\t11529\natempo-state\t28\t6144\t13920\t10240\t13920\t9984\t1.25\t12516\natempo-state\t29\t6144\t14400\t10240\t14400\t9984\t1.25\t12516\natempo-state\t30\t6144\t14880\t10240\t14880\t9984\t1.25\t12516\natempo-state\t31\t6144\t15360\t11264\t15360\t11136\t1.25\t13953\natempo-state\t32\t6144\t15840\t11264\t15840\t11136\t1.25\t13953\natempo-state\t33\t6144\t16320\t11264\t16320\t11136\t1.25\t13953\natempo-state\t34\t6144\t16800\t12288\t16800\t12288\t1.25\t15372\natempo-state\t35\t6144\t17280\t12288\t17280\t12288\t1.25\t15372\natempo-state\t36\t6144\t17760\t13312\t17760\t13056\t1.25\t16359\natempo-state\t37\t6144\t18240\t13312\t18240\t13056\t1.25\t16359\natempo-state\t38\t6144\t18720\t13312\t18720\t13056\t1.25\t16359\natempo-state\t39\t6144\t19200\t14336\t19200\t14208\t1.25\t17796\natempo-state\t40\t6144\t19680\t14336\t19680\t14208\t1.25\t17796\natempo-state\t41\t6144\t20160\t14336\t20160\t14208\t1.25\t17796\natempo-state\t42\t6144\t20640\t15360\t20640\t15360\t1.25\t19215\natempo-state\t43\t6144\t21120\t15360\t21120\t15360\t1.25\t19215\natempo-state\t44\t6144\t21600\t16384\t21600\t16128\t1.25\t20202\natempo-state\t45\t6144\t22080\t16384\t22080\t16128\t1.25\t20202\natempo-state\t46\t6144\t22560\t16384\t22560\t16128\t1.25\t20202\natempo-state\t47\t6144\t23040\t17408\t23040\t17280\t1.25\t21639\natempo-state\t48\t6144\t23520\t17408\t23520\t17280\t1.25\t21639\natempo-state\t49\t6144\t24000\t17408\t24000\t17280\t1.25\t21639\natempo-state\t50\t6144\t24480\t18432\t24480\t18048\t0.75\t22595\natempo-state\t51\t6144\t24960\t19456\t24960\t19328\t0.75\t23460\natempo-state\t52\t6144\t25440\t20480\t25440\t19968\t0.75\t23952\natempo-state\t53\t6144\t25920\t20480\t25920\t19968\t0.75\t23952\natempo-state\t54\t6144\t26400\t21504\t26400\t21248\t0.75\t24884\natempo-state\t55\t6144\t26880\t21504\t26880\t21248\t0.75\t24884\natempo-state\t56\t6144\t27360\t22528\t27360\t22528\t0.75\t25869\natempo-state\t57\t6144\t27840\t23552\t27840\t23168\t0.75\t26331\natempo-state\t58\t6144\t28320\t23552\t28320\t23168\t0.75\t26331\natempo-state\t59\t6144\t28800\t24576\t28800\t24448\t0.75\t27285\natempo-state\t60\t6144\t29280\t25600\t29280\t25088\t0.75\t27787\natempo-state\t61\t6144\t29760\t25600\t29760\t25088\t0.75\t27787\natempo-state\t62\t6144\t30240\t26624\t30240\t26368\t0.75\t28719\natempo-state\t63\t6144\t30720\t26624\t30720\t26368\t0.75\t28719\natempo-state\t64\t6144\t31200\t27648\t31200\t27648\t0.75\t29704\natempo-state\t65\t6144\t31680\t28672\t31680\t28288\t0.75\t30166\natempo-state\t66\t6144\t32160\t28672\t32160\t28288\t0.75\t30166\natempo-state\t67\t6144\t32640\t29696\t32640\t29568\t0.75\t31120\natempo-state\t68\t6144\t33120\t30720\t33120\t30208\t0.75\t31622\natempo-state\t69\t6144\t33600\t30720\t33600\t30208\t0.75\t31622\natempo-state\t70\t6144\t34080\t31744\t34080\t31488\t0.75\t32554\natempo-state\t71\t6144\t34560\t31744\t34560\t31488\t0.75\t32554\natempo-state\t72\t6144\t35040\t32768\t35040\t32768\t0.75\t33539\natempo-state\t73\t6144\t35520\t33792\t35520\t33408\t0.75\t34001\natempo-state\t74\t6144\t36000\t33792\t36000\t33408\t0.75\t34001\natempo-state\t75\t6144\t36480\t34816\t36480\t34752\t2.00\t35011\natempo-state\t76\t6144\t36960\t34816\t36960\t34752\t2.00\t35011\natempo-state\t77\t6144\t37440\t34816\t37440\t34752\t2.00\t35011\natempo-state\t78\t6144\t37920\t34816\t37920\t34752\t2.00\t35011\natempo-state\t79\t6144\t38400\t34816\t38400\t34752\t2.00\t35011\natempo-state\t80\t6144\t38880\t35840\t38880\t35712\t2.00\t37528\natempo-state\t81\t6144\t39360\t35840\t39360\t35712\t2.00\t37528\natempo-state\t82\t6144\t39840\t35840\t39840\t35712\t2.00\t37528\natempo-state\t83\t6144\t40320\t35840\t40320\t35712\t2.00\t37528\natempo-state\t84\t6144\t40800\t35840\t40800\t35712\t2.00\t37528\natempo-state\t85\t6144\t41280\t36864\t41280\t36672\t2.00\t39727\natempo-state\t86\t6144\t41760\t36864\t41760\t36672\t2.00\t39727\natempo-state\t87\t6144\t42240\t36864\t42240\t36672\t2.00\t39727\natempo-state\t88\t6144\t42720\t36864\t42720\t36672\t2.00\t39727\natempo-state\t89\t6144\t43200\t36864\t43200\t36672\t2.00\t39727\natempo-state\t90\t6144\t43680\t37888\t43680\t37872\t2.00\t42319\natempo-state\t91\t6144\t44160\t37888\t44160\t37872\t2.00\t42319\natempo-state\t92\t6144\t44640\t37888\t44640\t37872\t2.00\t42319\natempo-state\t93\t6144\t45120\t37888\t45120\t37872\t2.00\t42319\natempo-state\t94\t6144\t45600\t38912\t45600\t38832\t2.00\t44293\natempo-state\t95\t6144\t46080\t38912\t46080\t38832\t2.00\t44293\natempo-state\t96\t6144\t46560\t38912\t46560\t38832\t2.00\t44293\natempo-state\t97\t6144\t47040\t38912\t47040\t38832\t2.00\t44293\natempo-state\t98\t6144\t47520\t39936\t47520\t39792\t2.00\t46247\natempo-state\t99\t6144\t48000\t39936\t48000\t39792\t2.00\t46247\natempo-state\t100\t6144\t48000\t40725\t48000\t40725\t2.00\t47904\natempo-output\t40725\t1a5a841c\n",
         "stderr": "WARNING: linker: /test/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /test/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n",
         "returncode": 0,
-        "elapsed_seconds": 0.04269175800072844
+        "elapsed_seconds": 0.16106050100006541
       },
       "performance_median_seconds": {
         "h264-aac.mp4": {
-          "baseline": 0.05431248000058986,
-          "candidate": 0.05474425899956259
+          "baseline": 0.1237262410004405,
+          "candidate": 0.1178361379998023
         },
         "hevc.mkv": {
-          "baseline": 0.05507397499968647,
-          "candidate": 0.0443276429996331
+          "baseline": 0.17334136299996317,
+          "candidate": 0.12848310699973808
         },
         "av1.mkv": {
-          "baseline": 0.04888221599867393,
-          "candidate": 0.046594645998993656
+          "baseline": 0.12734803600051237,
+          "candidate": 0.1331592639999144
         },
         "ac3-51.ac3": {
-          "baseline": 0.045255982999151456,
-          "candidate": 0.048103434999575256
+          "baseline": 0.11955237399979524,
+          "candidate": 0.1268862609995267
         }
-      },
-      "registry_removed_after_codec_id_normalization": [
-        [
-          "codec",
-          "sonic",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v308",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v408",
-          "1",
-          "0"
-        ],
-        [
-          "codec",
-          "v410",
-          "1",
-          "0"
-        ],
-        [
-          "input-protocol",
-          "hls"
-        ]
-      ],
-      "registry_added_after_codec_id_normalization": [
-        [
-          "codec",
-          "webp_anim",
-          "1",
-          "0"
-        ],
-        [
-          "demuxer",
-          "hxvs"
-        ],
-        [
-          "demuxer",
-          "jpegxs_pipe"
-        ],
-        [
-          "demuxer",
-          "webp_anim"
-        ],
-        [
-          "filter",
-          "premultiply_dynamic"
-        ],
-        [
-          "input-protocol",
-          "shared"
-        ]
-      ],
-      "tempo_decoded_audio_exact_match": true,
-      "tempo_state_change_reason": "New companion patch reports only the media frontier actually emitted; decoded tempo audio matches0.145 exactly."
+      }
     }
   ]
 }

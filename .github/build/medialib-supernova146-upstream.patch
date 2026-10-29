@@ -242,7 +242,7 @@ index 0000000..49b2028
 +    @Override public int update(Uri uri, ContentValues values, String s, String[] a) { throw new UnsupportedOperationException(); }
 +}
 diff --git a/build.gradle b/build.gradle
-index fe7dc6c..953c322 100644
+index fe7dc6c..050f2eb 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -4,11 +4,15 @@ repositories {
@@ -320,11 +320,13 @@ index fe7dc6c..953c322 100644
      myCmd.add("native_libnativehelper")
      myCmd.add("native_avos_full")
      myCmd.add("native_torrentd")
-@@ -154,13 +172,13 @@ dependencies {
+@@ -153,14 +171,14 @@ if (useSan)
+ dependencies {
      implementation project(':FileCoreLibrary')
      implementation 'androidx.lifecycle:lifecycle-process:2.11.0'
-     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 -    implementation 'androidx.core:core:1.19.0'
++    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.1.5'
 +    implementation 'androidx.core:core:1.19.1'
      implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
      implementation 'androidx.media:media:1.8.0'
