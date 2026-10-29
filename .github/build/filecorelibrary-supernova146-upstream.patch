@@ -6410,10 +6410,10 @@ index 0000000..74a9e86
 +}
 diff --git a/testCommon/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyCases.java b/testCommon/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyCases.java
 new file mode 100644
-index 0000000..466e1ab
+index 0000000..d2b3598
 --- /dev/null
 +++ b/testCommon/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyCases.java
-@@ -0,0 +1,51 @@
+@@ -0,0 +1,52 @@
 +package com.archos.filecorelibrary.ftp;
 +
 +import static org.junit.Assert.*;
@@ -6437,9 +6437,10 @@ index 0000000..466e1ab
 +    static SSLContext serverContext(String bytes) throws Exception {KeyStore keys=KeyStore.getInstance("PKCS12");keys.load(new ByteArrayInputStream(hex(bytes)),"test-only".toCharArray());KeyManagerFactory factory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());factory.init(keys,"test-only".toCharArray());SSLContext context=SSLContext.getInstance("TLS");context.init(factory.getKeyManagers(),null,null);return context;}
 +    static class Peer implements AutoCloseable {
 +        final ServerSocket listener=new ServerSocket(0,1,InetAddress.getByName("127.0.0.1"));
-+        final SSLContext control,data;final ExecutorService worker=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"fixture-ftps");t.setDaemon(true);return t;});final Future<?> future;
++        final SSLContext control,data;final boolean expectedRejection;final ExecutorService worker=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"fixture-ftps");t.setDaemon(true);return t;});final Future<?> future;
 +        volatile boolean dataRequested;
-+        Peer(boolean badControl,boolean badData) throws Exception {control=serverContext(badControl?WRONG:VALID);data=serverContext(badData?WRONG:VALID);future=worker.submit(()->serve());}
++        Peer(boolean badControl,boolean badData) throws Exception {this(badControl,badData,false);}
++        Peer(boolean badControl,boolean badData,boolean rejectPrivateRoot) throws Exception {expectedRejection=badControl||badData||rejectPrivateRoot;control=serverContext(badControl?WRONG:VALID);data=serverContext(badData?WRONG:VALID);future=worker.submit(()->serve());}
 +        void serve(){
 +            try(Socket plain=listener.accept()){
 +                plain.setSoTimeout(3000);BufferedReader first=new BufferedReader(new InputStreamReader(plain.getInputStream(),StandardCharsets.US_ASCII));Writer greeting=new OutputStreamWriter(plain.getOutputStream(),StandardCharsets.US_ASCII);send(greeting,"220 fixture");if(!"AUTH TLS".equals(first.readLine()))throw new IOException("AUTH expected");send(greeting,"234 continue");
@@ -6453,7 +6454,7 @@ index 0000000..466e1ab
 +                        else send(output,"200 accepted");
 +                    }}finally{if(passive!=null)passive.close();}
 +                }
-+            }catch(SSLException|EOFException expectedPeerRejection){}catch(IOException failure){if(!listener.isClosed())throw new UncheckedIOException(failure);}
++            }catch(SSLException|EOFException expectedPeerRejection){}catch(SocketException peerClosed){if(!expectedRejection&&!listener.isClosed())throw new UncheckedIOException(peerClosed);}catch(IOException failure){if(!listener.isClosed())throw new UncheckedIOException(failure);}
 +        }
 +        static void send(Writer output,String line) throws IOException {output.write(line+"\r\n");output.flush();}
 +        public void close() throws Exception {listener.close();try{future.get(8,TimeUnit.SECONDS);}finally{worker.shutdownNow();}}
@@ -6461,7 +6462,7 @@ index 0000000..466e1ab
 +    static void connect(FTPSClient client,Peer server) throws Exception {client.setConnectTimeout(3000);client.setDefaultTimeout(3000);client.connect("127.0.0.1",server.listener.getLocalPort());client.execPBSZ(0);client.execPROT("P");client.enterLocalPassiveMode();}
 +    @Test public void legacyDefaultsAcceptPrivateCaAndWrongHost() throws Exception {try(Peer server=new Peer(true,true)){FTPSClient client=new FTPSClient("TLS",false);try{connect(client,server);try(InputStream in=client.retrieveFileStream("/fixture")){assertNotNull(in);while(in.read()!=-1){} }assertTrue(client.completePendingCommand());assertTrue(server.dataRequested);}finally{client.disconnect();}}}
 +    @Test public void trustedControlAndDataTransfer() throws Exception {try(Peer server=new Peer(false,false)){FTPSClient client=FtpsTlsPolicy.newClient(anchors());try{connect(client,server);try(InputStream in=client.retrieveFileStream("/fixture")){assertNotNull(in);ByteArrayOutputStream bytes=new ByteArrayOutputStream();byte[] buffer=new byte[32];for(int n;(n=in.read(buffer))!=-1;)bytes.write(buffer,0,n);assertEquals("fixture media",new String(bytes.toByteArray(),StandardCharsets.US_ASCII));}assertTrue(client.completePendingCommand());}finally{client.disconnect();}}}
-+    @Test public void platformTrustRejectsPrivateCaBeforeLogin() throws Exception {try(Peer server=new Peer(false,false)){FTPSClient client=FtpsTlsPolicy.newClient();try{assertThrows(IOException.class,()->connect(client,server));assertFalse(server.dataRequested);}finally{client.disconnect();}}}
++    @Test public void platformTrustRejectsPrivateCaBeforeLogin() throws Exception {try(Peer server=new Peer(false,false,true)){FTPSClient client=FtpsTlsPolicy.newClient();try{assertThrows(IOException.class,()->connect(client,server));assertFalse(server.dataRequested);}finally{client.disconnect();}}}
 +    @Test public void trustedCaWrongControlHostnameRejected() throws Exception {try(Peer server=new Peer(true,false)){FTPSClient client=FtpsTlsPolicy.newClient(anchors());try{assertThrows(IOException.class,()->connect(client,server));assertFalse(server.dataRequested);}finally{client.disconnect();}}}
 +    @Test public void trustedCaWrongDataHostnameRejected() throws Exception {try(Peer server=new Peer(false,true)){FTPSClient client=FtpsTlsPolicy.newClient(anchors());try{connect(client,server);assertThrows(IOException.class,()->client.retrieveFileStream("/fixture"));assertTrue(server.dataRequested);}finally{client.disconnect();}}}
 +}
