@@ -1,0 +1,56 @@
+{
+  "source_commit": "f4abf7cb880243ba00481f82beee19d20bc72e33",
+  "conformance_run": 40945894870,
+  "focused_run": 40945894979,
+  "conformance_conclusion": "success",
+  "focused_conclusion": "success",
+  "independent_junit_readback": {
+    "Video": {
+      "classes": 250,
+      "tests": 1221,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "MediaLib": {
+      "classes": 39,
+      "tests": 200,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "FileCoreLibrary": {
+      "classes": 19,
+      "tests": 104,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    }
+  },
+  "tooling_tests": 134,
+  "tooling_result": "PASS locally and required successful CI step",
+  "focused_tests": 88,
+  "focused_failures": 0,
+  "focused_errors": 0,
+  "focused_skips": 0,
+  "artifacts": [
+    {
+      "id": 12930169101,
+      "name": "supernova-0147-unsigned-candidate",
+      "sha256": "c5dd04673926f9a0dcf62c2f939e7ccda66844eb8d4a019671792382ecd96a22"
+    },
+    {
+      "id": 12929604805,
+      "name": "supernova-0147-conformance-evidence",
+      "sha256": "6b19d9fd8161b7ce38ab49c8b37b40604555665487344656693d7e852af6fdc1"
+    },
+    {
+      "id": 12930276206,
+      "name": "supernova-0147-ui-evidence",
+      "sha256": "13775250f7160a556011abba219e0b9a8d3aeabe82e6c939ef6016b702380d27"
+    }
+  ],
+  "all_archives_complete_crc_and_sha_verified": true,
+  "new_signing_performed": false,
+  "physical_shield_verified": false
+}

@@ -19,6 +19,9 @@
     "aa28f7dacd4cd6ec99b1bcf51c9b116ff55f121cebb2d000d5822b88e2013e16",
     "69c12b124db1e6153418842dd1329ed1e00c0b21a6922704529b20fc4c1350df"
   ],
-  "published_update": false,
-  "reason": "Development draft; conformance and signed QA not complete"
+  "published_update": true,
+  "reason": "Existing Drive HTML updated in place after exact-source software conformance; signed 0.147 delivery blocked and physical acceptance pending",
+  "uploaded_sha256": "2038ecf3e5ff2c981fc304fd3353957a0795d5a7eefbaa7a110ddc0536f23ca3",
+  "uploaded_bytes": 51426,
+  "complete_uploaded_raw_readback_verified": true
 }
