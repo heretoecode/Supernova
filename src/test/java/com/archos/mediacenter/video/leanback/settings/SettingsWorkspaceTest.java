@@ -114,7 +114,6 @@ public class SettingsWorkspaceTest {
         ViewGroup old=(ViewGroup)root.getParent();old.removeView(root);
         TopNavigation nav=new TopNavigation(host.get(),root,index->{},workspace::atNavigationBoundary);nav.selectTab(4);host.get().setContentView(nav);
         nav.measure(View.MeasureSpec.makeMeasureSpec(1920,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY));nav.layout(0,0,1920,1080);
-        com.archos.mediacenter.video.leanback.PreviewPagesTest.capture(nav,"0147-settings-global-grid");
         tagged("settings.grid.2").requestFocus();nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));
         assertTrue(nav.findViewWithTag("semantic:topnav.settings").hasFocus());
         nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertTrue(tagged("settings.grid.2").hasFocus());
@@ -124,5 +123,19 @@ public class SettingsWorkspaceTest {
             nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertTrue(workspace.atNavigationBoundary());
             assertTrue(workspace.back());
         }
+    }
+    private void invalidateAll(View view){view.invalidate();if(view instanceof ViewGroup)for(int n=0;n<((ViewGroup)view).getChildCount();n++)invalidateAll(((ViewGroup)view).getChildAt(n));}
+    @Test public void productionActivityRendersTheSharedHeaderOnGridAndCategory()throws Exception{
+        var activity=Robolectric.buildActivity(VideoSettingsActivity.class).setup().visible();try{
+            activity.get().getSupportFragmentManager().executePendingTransactions();Shadows.shadowOf(Looper.getMainLooper()).idle();
+            View nav=((ViewGroup)activity.get().findViewById(android.R.id.content)).getChildAt(0);assertTrue(nav instanceof TopNavigation);
+            for(int n=0;n<4;n++){nav.measure(View.MeasureSpec.makeMeasureSpec(1920,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY));nav.layout(0,0,1920,1080);Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
+            invalidateAll(nav);PreviewPagesTest.capture(nav,"0147-settings-global-grid");
+            android.graphics.Bitmap pixels=android.graphics.BitmapFactory.decodeFile("build/reports/preview-ui/0147-settings-global-grid.png");int bright=0;for(int y=35;y<76;y++)for(int x=52;x<266;x++){int colour=pixels.getPixel(x,y);if(android.graphics.Color.red(colour)>180&&android.graphics.Color.green(colour)>180&&android.graphics.Color.blue(colour)>180)bright++;}assertTrue("Rendered SUPERNOVA brand remains visible",bright>100);
+            assertNotNull(nav.findViewWithTag("semantic:topnav.home"));assertNotNull(nav.findViewWithTag("semantic:topnav.network"));
+            var actual=(VideoSettingsFragment.PrefsFragment)activity.get().getSupportFragmentManager().findFragmentById(com.archos.mediacenter.video.R.id.settingsFragment);actual.workspace.open(1,null);
+            for(int n=0;n<3;n++){nav.measure(View.MeasureSpec.makeMeasureSpec(1920,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY));nav.layout(0,0,1920,1080);Shadows.shadowOf(Looper.getMainLooper()).idle();}
+            invalidateAll(nav);PreviewPagesTest.capture(nav,"0147-settings-global-category");assertNotNull(nav.findViewWithTag("semantic:topnav.settings"));
+        }finally{activity.pause().stop().destroy();}
     }
 }

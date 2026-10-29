@@ -1,0 +1,105 @@
+{
+  "source": "7e7b5ee7adbe407d2486782df880a8bdb7b4b9b2",
+  "run": 40933776276,
+  "result": "success",
+  "classes": [
+    {
+      "class": "com.archos.mediacenter.video.leanback.PreviewSourceRemovalTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.streaming.putio.Network142PutioTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.Network142WebdavTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioBrowserBackTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.Network142Test",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.Network142RenderTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.Network142CredentialsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.player.PlaybackAgeOverlayTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.TopNavigationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ]
+}

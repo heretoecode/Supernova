@@ -16,3 +16,6 @@ This checklist supplements all 67 FD-003 cases in TRACEABILITY.json. All physica
 Software renders are Android/Robolectric output, not Shield captures. Test counts and exact source must be read from the completed run; prior 0.146 counts are historical only. No signed 0.147 APK, live-provider pass or installed upgrade is claimed before its evidence exists.
 
 The inherited 0.146 signing entry point explicitly rejects any branch/version other than its authorized 0.146 candidate. It must not be used for 0.147. Any later 0.147 protected-signing proposal must retain environment branch controls and bind the exact successful unsigned payload; this development task does not change environment protections or expose keys.
+
+## Protected signing preparation
+The new version-specific `supernova-0147-qa.yml` retains the same protected environment, certificate pin, exact successful-run/source checks, report-only ancestry rule, no-rebuild signing, payload parity verification and mandatory private-material cleanup. It has not been dispatched. The live deployment policy lists 13 branches including 0.146 and does not authorize `codex/supernova-0.147-implementation-2026-10-29`. Only the owner may change that environment policy. No environment mutation was made.
