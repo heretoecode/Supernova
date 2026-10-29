@@ -89,7 +89,6 @@ public class CredentialsEditorDialog extends DialogFragment {
         })
         .setNegativeButton(getText(android.R.string.cancel), null)
         .create();
-        dialog.setOnDismissListener(mOnDismissListener);
         dialog.setOnShowListener(ignored -> com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(dialog));
         return dialog;
     }

@@ -28,6 +28,10 @@ def main():
     evidence=conformance.binary(args.apk,args.apkanalyzer,video,args.aapt2)
     if evidence['version_name']!='0.146' or evidence['version_code']!=146:raise ValueError('Exact146 version is required')
     actual_manifest=ET.fromstring(subprocess.check_output([args.apkanalyzer,'manifest','print',str(args.apk)],text=True))
+    android='{http://schemas.android.com/apk/res/android}'
+    services={node.get(android+'name'):node for node in actual_manifest.findall('.//service')}
+    for name in ['com.archos.mediacenter.video.player.PlayerService','com.archos.mediaprovider.MediaRetrieverService']:
+        if name not in services or services[name].get(android+'exported')!='false':raise ValueError('Internal service exposed to other applications: '+name)
     uses_sdk=actual_manifest.find('uses-sdk')
     if uses_sdk is None or uses_sdk.get('{http://schemas.android.com/apk/res/android}minSdkVersion')!='23':raise ValueError('API23 minimum must be preserved')
     api23=json.loads((video/'docs/0.146/ANDROID23_TRANSPORT_TRUST.json').read_text())

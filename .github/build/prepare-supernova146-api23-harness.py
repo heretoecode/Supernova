@@ -56,7 +56,7 @@ main.mkdir(parents=True,exist_ok=True);(main/'AndroidManifest.xml').write_text('
 libs=out/'libs';libs.mkdir(exist_ok=True);inventory=json.loads((review/'inventory.json').read_text());selected=[]
 for item in inventory:
  coordinate=item['coordinate'];group,module,version=coordinate.split(':')
- if group=='org.eclipse.jetty' or group=='javax.servlet' or group=='org.slf4j' or (group=='com.github.nova-video-player.jupnp' and module=='org.jupnp') or group in ['commons-net','com.squareup.okhttp3','com.squareup.okio','org.jetbrains.kotlin','org.jetbrains'] :
+ if group=='org.eclipse.jetty' or group=='javax.servlet' or group=='org.slf4j' or (group=='com.github.nova-video-player.jupnp' and module=='org.jupnp') or group in ['commons-net','commons-io','org.apache.commons','com.squareup.okhttp3','com.squareup.okio','org.jetbrains.kotlin','org.jetbrains'] :
   source=review/item['file']
   if hashlib.sha256(source.read_bytes()).hexdigest()!=item['sha256']:raise ValueError('Runtime archive changed: '+coordinate)
   if source.suffix=='.aar':
