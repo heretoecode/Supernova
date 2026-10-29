@@ -52,7 +52,8 @@
     "signed_apk_drive_url": null,
     "signed_apk_sha256": null,
     "signed_apk_certificate_verified": false,
-    "required_certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e"
+    "required_certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+    "public_gate_actual_payload_passed": true
   },
   "draft_pr": "https://github.com/heretoecode/Supernova/pull/26",
   "main_merged": false,

@@ -1,0 +1,17 @@
+{
+  "url": "https://github.com/heretoecode/Supernova/pull/26",
+  "title": "Supernova 0.146: NOVA upstream completion and API 23 security remediation",
+  "draft": true,
+  "base": "codex/supernova-0.145-maintenance-2026-10-28",
+  "head": "codex/supernova-0.146-upstream-completion-2026-10-28",
+  "readback_head_sha": "69cb0cf7e15e0a6ca03c798082d37ce39f75bdd5",
+  "body_readback_matches": true,
+  "checked_at": "2026-10-29T14:49:35.422322+00:00",
+  "application_source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+  "public_signing_gate_actual_payload_passed": true,
+  "signing_key_accessed": false,
+  "post_source_changes_only_docs": true,
+  "main_merged": false,
+  "public_release_published": false,
+  "body_sha256": "d87d6353137b48906234b4b3a334762e31de297252d5c051dbac2baca03fe1b9"
+}
