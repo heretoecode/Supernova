@@ -389,10 +389,58 @@ index 4db6716487..754d607411 100644
          _contentChunk = null;
          _headerBytes = 0;
 diff --git a/jetty-http/src/main/java/org/eclipse/jetty/http/HttpURI.java b/jetty-http/src/main/java/org/eclipse/jetty/http/HttpURI.java
-index 274015d0bb..f636a57562 100644
+index 274015d0bb..644e890685 100644
 --- a/jetty-http/src/main/java/org/eclipse/jetty/http/HttpURI.java
 +++ b/jetty-http/src/main/java/org/eclipse/jetty/http/HttpURI.java
-@@ -420,6 +420,7 @@ public class HttpURI
+@@ -279,6 +279,7 @@ public class HttpURI
+     public HttpURI(String scheme, String host, int port, String path, String param, String query, String fragment)
+     {
+         _scheme = scheme;
++        validateNetworkHost(host);
+         _host = host;
+         _port = port;
+         if (path != null)
+@@ -334,6 +335,8 @@ public class HttpURI
+         _uri = null;
+         _scheme = uri.getScheme();
+         _host = uri.getHost();
++        if (uri.getRawAuthority() != null && _host == null) throw new IllegalArgumentException("Bad authority");
++        validateNetworkHost(_host);
+         if (_host == null && uri.getRawSchemeSpecificPart().startsWith("//"))
+             _host = "";
+         _port = uri.getPort();
+@@ -349,6 +352,7 @@ public class HttpURI
+     {
+         _uri = null;
+         _scheme = scheme;
++        validateNetworkHost(host);
+         _host = host;
+         _port = port;
+         if (pathQuery != null)
+@@ -411,6 +415,22 @@ public class HttpURI
+         parse(State.START, uri, offset, end);
+     }
+ 
++    private static void validateNetworkHost(String host)
++    {
++        if (host == null || host.isEmpty()) return;
++        if (host.charAt(0) == '[')
++        {
++            URIUtil.validateInetAddress(host);
++            return;
++        }
++        for (int i = 0; i < host.length(); i++)
++        {
++            char c = host.charAt(i);
++            if (c <= 0x20 || c >= 0x7F || c == '%' || c == '\\' || c == '/' || c == '?' || c == '#' || c == '@' || c == '[' || c == ']' || c == ':')
++                throw new IllegalArgumentException("Bad authority");
++        }
++    }
++
+     private void parse(State state, final String uri, final int offset, final int end)
+     {
+         int mark = offset; // the start of the current section being parsed
+@@ -420,6 +440,7 @@ public class HttpURI
          boolean encodedUtf16 = false; // Is the current encoding for UTF16?
          int encodedCharacters = 0; // partial state of parsing a % encoded character<x>
          int encodedValue = 0; // the partial encoded value
@@ -400,7 +448,7 @@ index 274015d0bb..f636a57562 100644
          boolean dot = false; // set to true if the path contains . or .. segments
  
          for (int i = offset; i < end; i++)
-@@ -566,7 +567,7 @@ public class HttpURI
+@@ -566,7 +587,7 @@ public class HttpURI
                      switch (c)
                      {
                          case '/':
@@ -409,7 +457,7 @@ index 274015d0bb..f636a57562 100644
                                  throw new IllegalArgumentException("Bad authority");
                              _host = uri.substring(mark, i);
                              encoded = false;
-@@ -575,15 +576,18 @@ public class HttpURI
+@@ -575,15 +596,18 @@ public class HttpURI
                              state = State.PATH;
                              break;
                          case ':':
@@ -429,7 +477,29 @@ index 274015d0bb..f636a57562 100644
                              _violations.add(Violation.USER_INFO);
                              mark = i + 1;
                              break;
-@@ -666,6 +670,7 @@ public class HttpURI
+@@ -638,7 +662,8 @@ public class HttpURI
+                             i++;
+                             String host = uri.substring(mark, i);
+                             URIUtil.validateInetAddress(host);
+-                            _host = host;
++                            validateNetworkHost(host);
++        _host = host;
+                             if (i == end)
+                                 break;
+                             c = uri.charAt(i);
+@@ -653,6 +678,11 @@ public class HttpURI
+                                 state = State.PATH;
+                             }
+                             break;
++                        case '%':
++                            int closing = uri.indexOf(']', i);
++                            if (closing < 0) throw new IllegalArgumentException("Bad authority");
++                            i = closing - 1; // Full literal and zone validated at the closing bracket.
++                            break;
+                         case ':':
+                             break;
+                         default:
+@@ -666,6 +696,7 @@ public class HttpURI
                  {
                      if (c == '@')
                      {
@@ -437,7 +507,7 @@ index 274015d0bb..f636a57562 100644
                          if (_user != null)
                              throw new IllegalArgumentException("Bad authority");
                          // It wasn't a port, but a password!
-@@ -681,6 +686,18 @@ public class HttpURI
+@@ -681,6 +712,18 @@ public class HttpURI
                          segment = i + 1;
                          state = State.PATH;
                      }
@@ -456,7 +526,7 @@ index 274015d0bb..f636a57562 100644
                      break;
                  }
                  case PATH:
-@@ -828,6 +845,7 @@ public class HttpURI
+@@ -828,6 +871,7 @@ public class HttpURI
                  _path = uri.substring(mark, end);
                  break;
              case HOST:
@@ -464,6 +534,22 @@ index 274015d0bb..f636a57562 100644
                  if (end > mark)
                      _host = uri.substring(mark, end);
                  break;
+@@ -854,6 +898,7 @@ public class HttpURI
+                 throw new IllegalStateException(state.toString());
+         }
+ 
++        validateNetworkHost(_host);
+         if (!encoded && !dot)
+         {
+             if (_param == null)
+@@ -1167,6 +1212,7 @@ public class HttpURI
+     {
+         if (host != null && !isPathValidForAuthority(_path))
+             throw new IllegalArgumentException("Relative path with authority");
++        validateNetworkHost(host);
+         _host = host;
+         _port = port;
+         _uri = null;
 diff --git a/jetty-io/src/main/java/org/eclipse/jetty/io/ConnectionStatistics.java b/jetty-io/src/main/java/org/eclipse/jetty/io/ConnectionStatistics.java
 index d02b6619a7..d8cd1e77b9 100644
 --- a/jetty-io/src/main/java/org/eclipse/jetty/io/ConnectionStatistics.java
@@ -564,7 +650,7 @@ index c0edb5575e..223c9e1e32 100644
  import org.eclipse.jetty.io.Connection;
  import org.eclipse.jetty.util.annotation.ManagedAttribute;
 diff --git a/jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java b/jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java
-index 65b557625b..58949e8864 100644
+index 65b557625b..f22b7b07dc 100644
 --- a/jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java
 +++ b/jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java
 @@ -845,6 +845,17 @@ public class HttpChannel implements Runnable, HttpOutput.Interceptor
@@ -578,7 +664,7 @@ index 65b557625b..58949e8864 100644
 +            int defaultPort = HttpScheme.HTTPS.is(scheme) ? 443 : 80;
 +            int uriPort = request.getURI().getPort() > 0 ? request.getURI().getPort() : defaultPort;
 +            int hostPort = host.getPort() > 0 ? host.getPort() : defaultPort;
-+            if (!request.getURI().getHost().equalsIgnoreCase(host.getHost()) || uriPort != hostPort)
++            if (!org.eclipse.jetty.util.URIUtil.normalizeScopedHost(request.getURI().getHost()).equalsIgnoreCase(org.eclipse.jetty.util.URIUtil.normalizeScopedHost(host.getHost())) || uriPort != hostPort)
 +                throw new org.eclipse.jetty.http.BadMessageException(400, "Conflicting authority");
 +        }
 +
@@ -611,6 +697,82 @@ index 39b7d55eff..7498523b02 100644
  import javax.servlet.AsyncEvent;
  import javax.servlet.AsyncListener;
  import javax.servlet.ServletException;
+diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/SocketAddressResolver.java b/jetty-util/src/main/java/org/eclipse/jetty/util/SocketAddressResolver.java
+index b6b0ef5552..081b6453a2 100644
+--- a/jetty-util/src/main/java/org/eclipse/jetty/util/SocketAddressResolver.java
++++ b/jetty-util/src/main/java/org/eclipse/jetty/util/SocketAddressResolver.java
+@@ -61,7 +61,7 @@ public interface SocketAddressResolver
+         {
+             try
+             {
+-                InetAddress[] addresses = InetAddress.getAllByName(host);
++                InetAddress[] addresses = InetAddress.getAllByName(URIUtil.normalizeScopedHost(host));
+ 
+                 List<InetSocketAddress> result = new ArrayList<>(addresses.length);
+                 for (InetAddress address : addresses)
+@@ -167,7 +167,7 @@ public interface SocketAddressResolver
+                 try
+                 {
+                     long start = System.nanoTime();
+-                    InetAddress[] addresses = InetAddress.getAllByName(host);
++                    InetAddress[] addresses = InetAddress.getAllByName(URIUtil.normalizeScopedHost(host));
+                     long elapsed = System.nanoTime() - start;
+                     if (LOG.isDebugEnabled())
+                         LOG.debug("Resolved {} in {} ms", host, TimeUnit.NANOSECONDS.toMillis(elapsed));
+diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/URIUtil.java b/jetty-util/src/main/java/org/eclipse/jetty/util/URIUtil.java
+index cfbf63f306..76408f8ced 100644
+--- a/jetty-util/src/main/java/org/eclipse/jetty/util/URIUtil.java
++++ b/jetty-util/src/main/java/org/eclipse/jetty/util/URIUtil.java
+@@ -1358,16 +1358,45 @@ public class URIUtil
+      * @param inetAddress the address to validate
+      * @throws IllegalArgumentException if the address is not valid
+      */
++    /** Decode the RFC6874 zone delimiter only for a bracketed IPv6 literal. */
++    public static String normalizeScopedHost(String host)
++    {
++        if (host != null && host.startsWith("[") && host.endsWith("]") && host.indexOf(':') > 0)
++        {
++            int zone = host.indexOf("%25");
++            if (zone > 0) return host.substring(0, zone) + "%" + host.substring(zone + 3);
++        }
++        return host;
++    }
++
+     public static void validateInetAddress(String inetAddress)
+     {
+-        try
++        if (inetAddress == null || !inetAddress.startsWith("[") || !inetAddress.endsWith("]"))
++            throw new IllegalArgumentException("Bad [IPv6] address");
++        String literal = normalizeScopedHost(inetAddress);
++        literal = literal.substring(1, literal.length() - 1);
++        int scope = literal.indexOf('%');
++        if (scope >= 0)
+         {
+-            InetAddress ignored = InetAddress.getByName(inetAddress);
++            if (scope == literal.length() - 1) throw new IllegalArgumentException("Bad IPv6 zone");
++            for (int i = scope + 1; i < literal.length(); i++)
++            {
++                char c = literal.charAt(i);
++                if (!(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == '-' || c == '.' || c == '_' || c == '~'))
++                    throw new IllegalArgumentException("Bad IPv6 zone");
++            }
++            literal = literal.substring(0, scope);
+         }
+-        catch (Throwable e)
++        // No DNS lookup or machine-specific interface lookup during URI validation.
++        if (literal.indexOf(':') < 0) throw new IllegalArgumentException("Bad [IPv6] address");
++        for (int i = 0; i < literal.length(); i++)
+         {
+-            throw new IllegalArgumentException("Bad [IPv6] address", e);
++            char c = literal.charAt(i);
++            if (!(c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F' || c >= '0' && c <= '9' || c == ':' || c == '.'))
++                throw new IllegalArgumentException("Bad [IPv6] address");
+         }
++        try { InetAddress.getByName(literal); }
++        catch (Exception error) { throw new IllegalArgumentException("Bad [IPv6] address", error); }
+     }
+ 
+     /**
 diff --git a/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/CounterStatistic.java b/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/CounterStatistic.java
 index 37432fc7f7..1441da4c29 100644
 --- a/jetty-util/src/main/java/org/eclipse/jetty/util/statistic/CounterStatistic.java

@@ -3,7 +3,7 @@
   "upstream_version": "9.4.58.v20250814",
   "source_commit": "89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b",
   "source_patch": "jetty-supernova146-api23-security.patch",
-  "source_patch_sha256": "1bcbaa43e7bc630a605dcf9c6a7a814327ecaa975ca767a109e29c44a67540cf",
+  "source_patch_sha256": "1c21b3dcfb9727b862f09b9ec2909b6c0761d06f60840f18e42fde0b313ed69a",
   "compiler": "ECJ3.41.0 Java8 target with pinned Temurin8u504 boot classes",
   "inputs": [
     {

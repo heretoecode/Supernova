@@ -49,10 +49,29 @@ public class Jetty146BackportTest {
         for(String size:new String[]{"ffffffff","100000000","ffffffffffffffff"}) assertTrue(parse(size+"\r\n",1).status>=400);
     }
     @Test public void malformedAuthorityIsRejectedByHttpUriItself() {
-        for(String value:new String[]{"http://host%/","http://host%2/","http://host%","http://host%2","http://host\\bad/","http://host:pass/","http://host:12%/","http://[xyz]/","http://user%2@host/"}) {
+        for(String value:new String[]{"http://browser.check%23%40vulndetector.com/","http://browser.check%5c/","http://host%20name/path","http://host%/","http://host%2/","http://host%","http://host%2","http://host\\bad/","http://host:pass/","http://host:12%/","http://[xyz]/","http://user%2@host/"}) {
             try {new HttpURI(value);fail(value);}catch(IllegalArgumentException expected){}
         }
-        for(String value:new String[]{"http://host_name:123/a%20b","http://user:password@host/path","http://[::1]:123/callback","http://[::ffff:127.0.0.1]:123/","http://host%20name/path"}) assertNotNull(new HttpURI(value).getHost());
+        for(String value:new String[]{"http://host_name:123/a%20b","http://user:password@host/path","http://[::1]:123/callback","http://[::ffff:127.0.0.1]:123/"}) assertNotNull(new HttpURI(value).getHost());
+    }
+    @Test public void componentBuildersCannotBypassAuthorityChecks() {
+        for(String host:new String[]{"host%2einvalid","host\\bad","host@other","host/path","host?query"}) {
+            try {new HttpURI("http",host,80,"/",null,null,null);fail(host);}catch(IllegalArgumentException expected){}
+            try {HttpURI uri=new HttpURI();uri.setAuthority(host,80);fail(host);}catch(IllegalArgumentException expected){}
+        }
+    }
+    @Test public void ipv6ScopeIdsRemainValidAndResolveWithoutEncodedZoneConfusion() {
+        for(String host:new String[]{"[fe80::1%251]","[fe80::1%1]","[fe80::1%25wlan0]"}) assertEquals(host,new HttpURI("http://"+host+":123/upnp").getHost());
+        for(String host:new String[]{"[fe80::1%25]","[fe80::1%25bad/path]","[fe80::1%25bad%40host]"}) {
+            try {new HttpURI("http://"+host+"/");fail(host);}catch(IllegalArgumentException expected){}
+        }
+        java.util.concurrent.atomic.AtomicReference<java.util.List<java.net.InetSocketAddress>> addresses=new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.atomic.AtomicReference<Throwable> failure=new java.util.concurrent.atomic.AtomicReference<>();
+        new org.eclipse.jetty.util.SocketAddressResolver.Sync().resolve("[fe80::1%251]",123,new org.eclipse.jetty.util.Promise<java.util.List<java.net.InetSocketAddress>>() {
+            public void succeeded(java.util.List<java.net.InetSocketAddress> result){addresses.set(result);}
+            public void failed(Throwable error){failure.set(error);}
+        });
+        assertNull(failure.get());assertNotNull(addresses.get());assertEquals(1,((java.net.Inet6Address)addresses.get().get(0).getAddress()).getScopeId());
     }
     @Test public void absoluteTargetAndHostMustAgreeBeforeServletDispatch() throws Exception {
         Server server=new Server();LocalConnector connector=new LocalConnector(server);server.addConnector(connector);

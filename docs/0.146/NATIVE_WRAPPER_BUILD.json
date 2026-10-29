@@ -1,0 +1,441 @@
+{
+  "ndk": "30.0.14904198-beta1",
+  "android_api": 23,
+  "allow_missing_dependencies": false,
+  "native_artifact_run": 40780058727,
+  "avos_patch_sha256": "b93cdec561a1068be5ce3c892e0a114fff742654c9c77a2569e6f51683915977",
+  "libraries": [
+    {
+      "abi": "armeabi-v7a",
+      "file": "libaudiocompress.so",
+      "sha256": "4a48070362ba6f269686bad27b81464f1ec3631ff26096adfa4f6bdb15c8056b",
+      "bytes": 5000
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libavcodec.so",
+      "sha256": "3d9b185821200321d0b2316d724c17aa4b0d56aaa39736a5aed154de5e0c3017",
+      "bytes": 8379300
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libavfilter.so",
+      "sha256": "019338a5eeccf2d0e11775ffb72664c9f0d0c2090f28e73f9cba92bf84d375f6",
+      "bytes": 2554248
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libavformat.so",
+      "sha256": "6d663357161acfecc6cefd1b52841c5ac5a149d4ce830561b7a9ec21db0e4368",
+      "bytes": 5015500
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libavos.so",
+      "sha256": "690f794086e434bb48d133c7e36808ff4044a9e3de3361fc14010d666a8ad721",
+      "bytes": 5420004
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libavos_android.so",
+      "sha256": "692212ddfd8a56e026a4e227cfe54d373886f95d6890108a7471c22cb39346f0",
+      "bytes": 7464
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libavosjni.so",
+      "sha256": "4fc5de7af154a0725c917ebf844557cbba9d146d550354b2f5ce2077419d14ea",
+      "bytes": 34892
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libavutil.so",
+      "sha256": "9413a23f19d63599bdf32d93bb4717cba0c3a974abab677a1529fc4378fa7385",
+      "bytes": 518764
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libcputest.so",
+      "sha256": "347c27268c8a1f67b442dfdf6393a2a1a0b224fe3f674bb91394228e695ca287",
+      "bytes": 7536
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libdav1d.so",
+      "sha256": "cff98bf7b109d639b65ffca1df4ace2e0888afb9e4fe3494cc85d430ae7e8883",
+      "bytes": 739684
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libdeinterlace.so",
+      "sha256": "6ac7582a6354b66b0e84f23f8d8618e26da8943712eed3bb9fe5e5bc2137c420",
+      "bytes": 9000
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libmysofa.so",
+      "sha256": "51cf172d7beca945f3f9179813a3937cfc7eef56a63aafdd5ca7cad9c3512e5e",
+      "bytes": 73244
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libnvpnativehelper.so",
+      "sha256": "75576a9fbe333635d9336e3120782c313441ef6b37028fa0d49bffba4bb65bbe",
+      "bytes": 116728
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libopus.so",
+      "sha256": "a36ad77dec6cc94a3018133be78bb6eb8f4fa2a0b485d6c0b2b0fa28c8498f39",
+      "bytes": 333448
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libsfdec.core.21.so",
+      "sha256": "26a0358cce0a543f241abeb738d5c5bf530a9048fe02b955228b6042d3c0b834",
+      "bytes": 62140
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libsfdec.so",
+      "sha256": "0b8fe0d5c5fd666d578a2ed0aa631d73b41ce4114259737fb1c10478e71bd8fa",
+      "bytes": 5704
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libswresample.so",
+      "sha256": "9978af35ff1ae0b3e2a72e3745c4faed8f281e253642e486ef0eab8f26ff3147",
+      "bytes": 74444
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "libswscale.so",
+      "sha256": "ffb6f9864aebec7f5a11543e5de09d81ef939d8656da8bca50d545efa0beaac2",
+      "bytes": 643236
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libaudiocompress.so",
+      "sha256": "60c53d0a3db47f84d1935c58ed07d590a66918110ea29ddf50a3ac4b35eaa03d",
+      "bytes": 5640
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libavcodec.so",
+      "sha256": "c90f047da6ef0d9ba514e7e5d5b3d98dd06726cf1b321acb34291afe0517aa55",
+      "bytes": 10949544
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libavfilter.so",
+      "sha256": "433b564c042b58cf303b985ed6bd78df4028fbd46a44ebb964b5cc7d777c3ae8",
+      "bytes": 3958400
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libavformat.so",
+      "sha256": "c256cace1e5fc2a0006576e8bcb2f4679ad6f0de743352025d654b6d3ef95860",
+      "bytes": 7312560
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libavos.so",
+      "sha256": "1ab8db3a7f112f14a193a7b178684c86da839032f234669df77f9664fb1cd312",
+      "bytes": 5786336
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libavos_android.so",
+      "sha256": "c52ba41de8fe315558e442ecbac27335c879d03120d2ae6a9c76eebc422e82a0",
+      "bytes": 10568
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libavosjni.so",
+      "sha256": "2bfa75d89451921b26460d4263a71c8633604b65a12997fb7d620e65e0a46bd6",
+      "bytes": 48232
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libavutil.so",
+      "sha256": "ce4e2f27a9ea2fedd552731beea57df1c40a274c5d8c96a3a911a60c5c71e109",
+      "bytes": 733712
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libcputest.so",
+      "sha256": "4fe3ef8be869dfb2c9aade79c79e594e352f72918b835e9302c490498b86ba6c",
+      "bytes": 7792
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libdav1d.so",
+      "sha256": "0aa6c7f3b010a76cf81c3f1686686107bf675663785e1d5bfc0753bd00547a3d",
+      "bytes": 779488
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libdeinterlace.so",
+      "sha256": "662156ac03b5e1e34aa4b1fc06f093277384c7c703a1050f91e034458a03b7ac",
+      "bytes": 9280
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libmysofa.so",
+      "sha256": "6279cbccee8aed2120da216fff603f2a6bdd6b7000f1f3804e9dbb4b52ffb419",
+      "bytes": 94216
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libnvpnativehelper.so",
+      "sha256": "f959a248b4303faab0a4040977d4959afd7fa98416fa4876124cced2edf61e5d",
+      "bytes": 183256
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libopus.so",
+      "sha256": "785fe94c7a5bbe0972301de410213c3ef974d29ecc5b5a0a046418bd24ff3965",
+      "bytes": 454800
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libsfdec.core.21.so",
+      "sha256": "c112528db497644e05d91078ca1eb4d3a3a5fbf9b1f9c7b8d75ede744d42d08c",
+      "bytes": 99656
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libsfdec.so",
+      "sha256": "3e24186c359895da2926e91bcd5ab5ba3113a0ca8078639bb1a9b09fa4df031b",
+      "bytes": 8016
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libswresample.so",
+      "sha256": "a1a2019fc7c0f89e098ea2e7fab0a42a271f17feae72b7a96e65c283da4bb0ef",
+      "bytes": 97624
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "libswscale.so",
+      "sha256": "474dd7f343457cf0565d931132112486eb5a53358eb064f0f327a38c1c75996a",
+      "bytes": 1233576
+    },
+    {
+      "abi": "x86",
+      "file": "libaudiocompress.so",
+      "sha256": "b260fe436639c9d3a60988437fdbbfb4011b655e846b09706e7d304897263ea9",
+      "bytes": 5224
+    },
+    {
+      "abi": "x86",
+      "file": "libavcodec.so",
+      "sha256": "3357303ecc9dccd06412e87d71766ea6abe20e12431e52781700baafe3d0fd77",
+      "bytes": 12779728
+    },
+    {
+      "abi": "x86",
+      "file": "libavfilter.so",
+      "sha256": "185b06b0c1664c6a137d1eb7f07bc28c5c119589199aceff78320a6de8067149",
+      "bytes": 4600600
+    },
+    {
+      "abi": "x86",
+      "file": "libavformat.so",
+      "sha256": "adf86301d74dfe37764509168719c4f8a975d133cab446466f23f146e4b89507",
+      "bytes": 6377664
+    },
+    {
+      "abi": "x86",
+      "file": "libavos.so",
+      "sha256": "f256a95bed0702f4c932f627d7420b892e4c8e0d221e0254deb324bca8a42639",
+      "bytes": 6026060
+    },
+    {
+      "abi": "x86",
+      "file": "libavos_android.so",
+      "sha256": "69a871f84897fb1866250c6c7466cb853239c0b7c6724bb199d41a99c4eba016",
+      "bytes": 9012
+    },
+    {
+      "abi": "x86",
+      "file": "libavosjni.so",
+      "sha256": "4a9475030d980db777957ccd5ba10ef35fc0f247e9e0abe56d4dc0cb1ad35d6b",
+      "bytes": 43188
+    },
+    {
+      "abi": "x86",
+      "file": "libavutil.so",
+      "sha256": "7328d4067005024d40bba38a35aae8f01ab8ba08844710b571e7e6037b2082b3",
+      "bytes": 756464
+    },
+    {
+      "abi": "x86",
+      "file": "libcputest.so",
+      "sha256": "b411fd9dfd77fc1142bafbd515ed0ed0653651d302d7882f44020e78db45f81a",
+      "bytes": 6720
+    },
+    {
+      "abi": "x86",
+      "file": "libdav1d.so",
+      "sha256": "a6811a9340aae27cf61fcb690764d7b4451c4219dec4c2cb6b4c2a8298024549",
+      "bytes": 1016116
+    },
+    {
+      "abi": "x86",
+      "file": "libdeinterlace.so",
+      "sha256": "e50b3cd799b130fd433e78003418f17eccb472cf532a58929d6dd0e78c35b490",
+      "bytes": 9412
+    },
+    {
+      "abi": "x86",
+      "file": "libmysofa.so",
+      "sha256": "970865f0a5571580c01d83ec436dcbdea23204dd93429927b553c17eda4d2494",
+      "bytes": 97552
+    },
+    {
+      "abi": "x86",
+      "file": "libnvpnativehelper.so",
+      "sha256": "309f7bada3a87ec20930cc8079a4b66f1c556345a54c58eb095d7c89f4b7bb25",
+      "bytes": 156264
+    },
+    {
+      "abi": "x86",
+      "file": "libopus.so",
+      "sha256": "6355b3e0f3cdd6d105121a2fd50f23d88f7d42fa3457638ec8094bc9fb1aa5de",
+      "bytes": 526836
+    },
+    {
+      "abi": "x86",
+      "file": "libsfdec.core.21.so",
+      "sha256": "0cd57f8f80bcb3b9e91a8f0af7ac092b7014f656e563c802f290e1d49a1fe6bf",
+      "bytes": 82076
+    },
+    {
+      "abi": "x86",
+      "file": "libsfdec.so",
+      "sha256": "6e2dff8b85d88f5e1b80c291578fa50b304a67cb097fad677ded74a05c7f36ad",
+      "bytes": 7720
+    },
+    {
+      "abi": "x86",
+      "file": "libswresample.so",
+      "sha256": "b71364fd45f2edc6eaf2da7a20e94066229fc46047df7becb5277678fbd6297d",
+      "bytes": 115732
+    },
+    {
+      "abi": "x86",
+      "file": "libswscale.so",
+      "sha256": "d800694557fe2f55eebf4ebf8cc23789a45df87fd253aabaf102b61f3d2ce74c",
+      "bytes": 1425648
+    },
+    {
+      "abi": "x86_64",
+      "file": "libaudiocompress.so",
+      "sha256": "bc367dede7e1957d8c15d1846953eab443c787353c4572a3b8dc93a8828db17b",
+      "bytes": 6264
+    },
+    {
+      "abi": "x86_64",
+      "file": "libavcodec.so",
+      "sha256": "b4d49ac6a388a7d6ebc2642bc9449b1f2aaba77993f878545fdd92a5c261be48",
+      "bytes": 14105224
+    },
+    {
+      "abi": "x86_64",
+      "file": "libavfilter.so",
+      "sha256": "b1f143ee993401ee381d8eadd21772aef559a9fb3da1971d9ae003c00ccca07c",
+      "bytes": 4953424
+    },
+    {
+      "abi": "x86_64",
+      "file": "libavformat.so",
+      "sha256": "45b554092b49f6e6cfacba4df4ed3b71db5bc91645db2c139bf75d1baca124b0",
+      "bytes": 7669328
+    },
+    {
+      "abi": "x86_64",
+      "file": "libavos.so",
+      "sha256": "4dcee02ffd5651a2223adc00855e4c4a419288fc37f9d155fd0624a7f2eadddd",
+      "bytes": 5984896
+    },
+    {
+      "abi": "x86_64",
+      "file": "libavos_android.so",
+      "sha256": "87d104d9c79c36542980b0d0404f3b5d6aeccd9061fb380a836b2ceb9a9a8c98",
+      "bytes": 10248
+    },
+    {
+      "abi": "x86_64",
+      "file": "libavosjni.so",
+      "sha256": "c4a876c6bd53d5e90defc4abcb657936c2b77f1e28a16be4c7c18b7f72d63e6f",
+      "bytes": 45800
+    },
+    {
+      "abi": "x86_64",
+      "file": "libavutil.so",
+      "sha256": "30a0613ac311d0e5b95f9e0ebc16df748cf95e86f0608f86815b4e2b172b40e7",
+      "bytes": 885024
+    },
+    {
+      "abi": "x86_64",
+      "file": "libcputest.so",
+      "sha256": "0bef8b534aad67be08bafcec83755a319bc202c58c322217dc26ca2c3d160211",
+      "bytes": 7752
+    },
+    {
+      "abi": "x86_64",
+      "file": "libdav1d.so",
+      "sha256": "7f13247669fff199b8c5e415c390b2ab2469bc3f25d1b2c8cb4ee0f619382510",
+      "bytes": 1681480
+    },
+    {
+      "abi": "x86_64",
+      "file": "libdeinterlace.so",
+      "sha256": "e9dfe5fd8af2e91c89ac215b60410e240e39104b0eba86723e9230ed4f75d555",
+      "bytes": 10816
+    },
+    {
+      "abi": "x86_64",
+      "file": "libmysofa.so",
+      "sha256": "dd1f294da0e042acc2dbabe224c981bb74a40d1f5ab56079cc9df9e400dd548f",
+      "bytes": 100464
+    },
+    {
+      "abi": "x86_64",
+      "file": "libnvpnativehelper.so",
+      "sha256": "1bfeb511083201e5bd92e5e172de80a6e6ccc443aa68572586a539242dc2249e",
+      "bytes": 172848
+    },
+    {
+      "abi": "x86_64",
+      "file": "libopus.so",
+      "sha256": "052e3165545df94fa29e9a0c61f65296ec1d955aefec569261eddfa051a219c8",
+      "bytes": 530328
+    },
+    {
+      "abi": "x86_64",
+      "file": "libsfdec.core.21.so",
+      "sha256": "56c78a928bbddd1245b98ce0e98346f051358e37907b5c8788029402257c407d",
+      "bytes": 94512
+    },
+    {
+      "abi": "x86_64",
+      "file": "libsfdec.so",
+      "sha256": "ffb7c9d6264e4531d45a1c23523a10894a012b2e8954ebfeac54f2fd5acba38d",
+      "bytes": 7984
+    },
+    {
+      "abi": "x86_64",
+      "file": "libswresample.so",
+      "sha256": "403e14f56a4a67b0dcdc8b69379b245afb52907fd4c21eda40ec4906ad41b35e",
+      "bytes": 138808
+    },
+    {
+      "abi": "x86_64",
+      "file": "libswscale.so",
+      "sha256": "deca1181c08830648347189e3109774761abd57715e782560a0d1ff5bada1d10",
+      "bytes": 1677480
+    }
+  ]
+}
