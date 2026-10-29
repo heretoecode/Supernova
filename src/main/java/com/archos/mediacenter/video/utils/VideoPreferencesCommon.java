@@ -771,9 +771,21 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         }
     }
 
+    /** Retained Supernova switches own enablement and AudioTrack selection; the new
+     * PCM selector adds Sonic without migrating or deleting either saved boolean. */
+    public static String audioSpeedMode(SharedPreferences preferences) {
+        if (BuildConfig.FOUNDATION) {
+            if (!preferences.getBoolean("playback_speed",true)) return AUDIO_SPEED_MODE_DISABLED;
+            if (preferences.getBoolean("audio_speed_audiotrack",false)) return AUDIO_SPEED_MODE_AUDIOTRACK;
+            return AUDIO_SPEED_MODE_SONIC.equals(preferences.getString("supernova_pcm_speed_engine",AUDIO_SPEED_MODE_ATEMPO))
+                    ? AUDIO_SPEED_MODE_SONIC : AUDIO_SPEED_MODE_ATEMPO;
+        }
+        return preferences.getString(KEY_AUDIO_SPEED_MODE,AUDIO_SPEED_MODE_ATEMPO);
+    }
+
     public static boolean isAudioSpeedEnabled(SharedPreferences preferences) {
         if (preferences == null) return false;
-        if (AUDIO_SPEED_MODE_DISABLED.equals(preferences.getString(KEY_AUDIO_SPEED_MODE, AUDIO_SPEED_MODE_ATEMPO))) return false;
+        if (AUDIO_SPEED_MODE_DISABLED.equals(audioSpeedMode(preferences))) return false;
         try {
             if (Integer.parseInt(preferences.getString("force_audio_passthrough_multiple", "0")) > 0) return false;
         } catch (NumberFormatException e) {}

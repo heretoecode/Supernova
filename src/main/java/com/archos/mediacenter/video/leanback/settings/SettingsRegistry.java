@@ -26,7 +26,7 @@ final class SettingsRegistry {
         read(context,"foundation/settings-map.json",ids);
         if(entries.size()!=165)throw new IllegalStateException("Incomplete baseline settings definition map");
         read(context,"foundation/settings-map-0146.json",ids);
-        if(entries.size()!=168)throw new IllegalStateException("Incomplete native subtitle settings extension");
+        if(entries.size()!=170)throw new IllegalStateException("Incomplete native subtitle settings extension");
     }
     private void read(Context context,String asset,Set<String> ids){
         try(java.io.InputStream stream=context.getAssets().open(asset)){

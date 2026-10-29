@@ -22,6 +22,20 @@
       "destination": "Audio & Subtitles",
       "subsection": "Subtitles",
       "disposition": "Native subtitle policy and SAF fonts, using the existing Supernova settings workspace"
+    },
+    {
+      "id": "N14604",
+      "key": "subtitle_use_margins",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "Native renderer letterbox placement, preserving existing subtitle position controls"
+    },
+    {
+      "id": "N14605",
+      "key": "supernova_pcm_speed_engine",
+      "destination": "Audio & Subtitles",
+      "subsection": "Audio Compatibility",
+      "disposition": "Adds Sonic/atempo PCM choice; retained playback_speed/audio_speed_audiotrack switches remain authoritative"
     }
   ]
 }

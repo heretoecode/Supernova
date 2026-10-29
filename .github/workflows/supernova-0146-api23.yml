@@ -52,6 +52,7 @@ jobs:
       - name: Build and execute actual Android23 framework transport and trust tests
         run: |
           set -euo pipefail
+          export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
           sudo chmod 666 /dev/kvm
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'platform-tools' 'emulator' 'system-images;android-23;default;x86_64'
           printf 'no\n' | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd --force --name supernova146-api23 --package 'system-images;android-23;default;x86_64'

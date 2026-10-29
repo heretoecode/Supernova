@@ -101,6 +101,14 @@
             android:summary="@string/preferences_audio_speed_audiotrack_summary"
             android:title="@string/preferences_audio_speed_audiotrack"
             app:iconSpaceReserved="false"/>
+        <ListPreference
+            android:key="supernova_pcm_speed_engine"
+            android:title="PCM playback speed engine"
+            android:defaultValue="2"
+            android:entries="@array/supernova_pcm_speed_engines"
+            android:entryValues="@array/supernova_pcm_speed_engine_values"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="enable_dynamic_audio_delay"
@@ -410,6 +418,13 @@
             android:key="subtitles_hide_default"
             android:summary="@string/subtitles_hide_default_summary"
             android:title="@string/subtitles_hide_default"
+            app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="subtitle_use_margins"
+            android:summary="@string/subtitle_use_margins_summary"
+            android:title="@string/subtitle_use_margins_title"
             app:iconSpaceReserved="false"/>
 
         <com.archos.mediacenter.video.utils.FontsFolderSafPreference

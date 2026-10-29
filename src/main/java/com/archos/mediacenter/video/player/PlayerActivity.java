@@ -1045,7 +1045,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
             LibAvos.setStreamMaxIframeSize(finalSize);
             LibAvos.enableAudioSpeed(VideoPreferencesCommon.isAudioSpeedEnabled(mPreferences));
-            String audioSpeedMode = mPreferences.getString(VideoPreferencesCommon.KEY_AUDIO_SPEED_MODE, VideoPreferencesCommon.AUDIO_SPEED_MODE_ATEMPO);
+            String audioSpeedMode = VideoPreferencesCommon.audioSpeedMode(mPreferences);
             // Native backend: 0=atempo, 1=AudioTrack PlaybackParams, 2=Sonic
             int audioSpeedBackend = 0;
             if (VideoPreferencesCommon.AUDIO_SPEED_MODE_AUDIOTRACK.equals(audioSpeedMode)) {
