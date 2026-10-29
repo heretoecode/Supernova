@@ -163,6 +163,8 @@ public final class TopNavigation extends LinearLayout {
         scrimAnimation.addUpdateListener(animation->{scrimAlpha=(int)animation.getAnimatedValue();invalidate();});scrimAnimation.start();
     }
     @Override protected boolean drawChild(android.graphics.Canvas canvas,View child,long time){
+        if(child==stage){com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser=visibleBrowser(content);if(browser!=null){int visibility=browser.ownsScanStatus()?GONE:VISIBLE;if(scanStatus.getVisibility()!=visibility)scanStatus.setVisibility(visibility);}}
+
         if(child==bar){navigationShade.invalidate();navigationShade.draw(canvas,navigationScene,getWidth(),dp(116)*.8f,scrimAlpha);if(scrimAlpha>0&&navigationShade.hasPendingSample())postInvalidateDelayed(100);}
         return super.drawChild(canvas,child,time);
     }

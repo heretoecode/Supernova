@@ -372,8 +372,9 @@ public final class PreviewPages extends FrameLayout {
     }
     private void requestNetworkEntryFocus(){
         if(!networkEntryPending||tab!=3||!isAttachedToWindow())return;
-        View overview=list.findViewWithTag("semantic:network.category.overview");
-        if(overview!=null&&overview.requestFocus())networkEntryPending=false;
+        if(sharedBrowser!=null&&sharedBrowser.isShown()){
+            networkEntryPending=false;sharedBrowser.browser().enterNetworkLanding();
+        }
     }
     public void setSnapshot(Snapshot s) { if(s==null)return;
         quietOrder.clear();

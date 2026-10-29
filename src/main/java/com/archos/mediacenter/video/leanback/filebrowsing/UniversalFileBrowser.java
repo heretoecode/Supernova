@@ -79,7 +79,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private void networkLanding(){
         if(current!=null&&suppliedDock==null)sectionLocations.put(landingSelection,current);
         stopDiscovery();stopListing();clearProvider();if(putioController!=null){putioController.close();putioController=null;}
-        section=0;sectionChild=false;centreAnchor=null;
+        section=0;sectionChild=false;centreAnchor=null;scanOverview=null;scanButton=null;
         LinearLayout grid=new LinearLayout(getContext()){
             @Override protected void onMeasure(int w,int h){int available=MeasureSpec.getSize(h);float font=getResources().getConfiguration().fontScale;int required=font>1.2f?dp(Math.round(440*font)):available;super.onMeasure(w,MeasureSpec.makeMeasureSpec(Math.max(available,required),MeasureSpec.EXACTLY));}
         };grid.setOrientation(VERTICAL);grid.setTag("network.landing");grid.setPadding(dp(12),dp(8),dp(12),dp(8));
@@ -271,6 +271,8 @@ public final class UniversalFileBrowser extends LinearLayout {
     public void directoryPicker(Consumer<Uri> selected){directoryChoice=selected;legacyRootsReady=true;toolbar.findViewWithTag("browser.all_files").setVisibility(GONE);}
     public Uri location() { return current; }
     public boolean atTop() { if(networkLayout!=null)return networkLayout.back.hasFocus()||networkLayout.landing()&&landingCards.indexOf(findFocus())>=0&&landingCards.indexOf(findFocus())<3;return !locations.isEmpty()&&locations.get(0).hasFocus(); }
+    public void enterNetworkLanding(){if(networkLayout!=null)requestExit(this::networkLanding);else focusOverview();}
+    public boolean ownsScanStatus(){return scanOverview!=null&&scanOverview.isShown();}
     public boolean focusOverview() {
         if(networkLayout!=null){if(networkLayout.landing())landingCards.get(landingSelection).requestFocus();else focusCentre();return true;}
         return !locations.isEmpty()&&locations.get(0).requestFocus();
