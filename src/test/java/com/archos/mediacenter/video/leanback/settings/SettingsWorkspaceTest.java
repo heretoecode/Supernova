@@ -110,4 +110,18 @@ public class SettingsWorkspaceTest {
         assertEquals(255,android.graphics.Color.alpha(image.getPixel(diameter/2,diameter)));
         assertEquals(0,android.graphics.Color.alpha(image.getPixel(diameter/2,diameter*2-1)));image.recycle();
     }
+    @Test public void sharedNavigationRetainsEightCardsAndAllCategoryFocusPaths(){
+        ViewGroup old=(ViewGroup)root.getParent();old.removeView(root);
+        TopNavigation nav=new TopNavigation(host.get(),root,index->{},workspace::atNavigationBoundary);nav.selectTab(4);host.get().setContentView(nav);
+        nav.measure(View.MeasureSpec.makeMeasureSpec(1920,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY));nav.layout(0,0,1920,1080);
+        tagged("settings.grid.2").requestFocus();nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));
+        assertTrue(nav.findViewWithTag("semantic:topnav.settings").hasFocus());
+        nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertTrue(tagged("settings.grid.2").hasFocus());
+        for(int n=0;n<8;n++){
+            workspace.open(n,null);layout();assertTrue(workspace.atNavigationBoundary());
+            nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertTrue(nav.findViewWithTag("semantic:topnav.settings").hasFocus());
+            nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertTrue(workspace.atNavigationBoundary());
+            assertTrue(workspace.back());
+        }
+    }
 }

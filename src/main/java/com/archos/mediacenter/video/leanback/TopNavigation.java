@@ -15,6 +15,7 @@ import java.util.function.BooleanSupplier;
 
 /** Optional navigation shell; the same native BrowseSupportFragment owns all library rows. */
 public final class TopNavigation extends LinearLayout {
+    public interface ContentFocus { boolean focusFromNavigation(); }
     private final LinearLayout bar;
     private final TextView brand;
     private final android.widget.TextClock clock;
@@ -204,6 +205,7 @@ public final class TopNavigation extends LinearLayout {
         return consumed;
     }
     private static boolean focusLibraryEntry(View view){
+        if(view instanceof ContentFocus)return ((ContentFocus)view).focusFromNavigation();
         if(view instanceof PreviewPages)return ((PreviewPages)view).focusFromNavigation();
         if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)if(focusLibraryEntry(((android.view.ViewGroup)view).getChildAt(i)))return true;
         return false;

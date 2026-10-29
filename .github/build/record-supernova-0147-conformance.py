@@ -51,11 +51,11 @@ def main():
     for name,attribute in [('unit_tests','tests'),('unit_failures','failures'),('unit_errors','errors'),('unit_skips','skipped')]:
         evidence[name]=sum(int(suite.get(attribute,0)) for suite in suites)
     if evidence['unit_tests']<1209 or any(evidence[name] for name in ['unit_failures','unit_errors','unit_skips']):
-        raise ValueError('Complete 0.146 unit suite must pass without skips')
+        raise ValueError('Complete 0.147 unit suite must pass without skips')
     required={'Jetty145SecurityTest','MediaUtilsSubsDirTest','StorageWriteAccessTest','PlaybackNetworkRetryTest','SubtitleLegacyPreferencesTest','AudioSpeedSettingsTest','Jetty146BackportTest','WebdavReconciliationSelectionTest','WebdavDeleteResponseTest','WebdavTraversalCompletenessTest','CustomLibraryPageTest','Supernova138HomeTest','Supernova138PlaybackTest','SubtitleDiscoveryTest','Supernova138UiTest','BundledNoticePagerTest','PreviewSeasonTest','Supernova139HomeEditorTest','CanonicalMatchProviderTest','MediaMatchJournalTest','MediaMatchReconciliationTest','CombinedCurrentRestoreTest','TransportReadDiagnosticsTest','LogicalBackupExporterTest','BackupSettingsControllerTest','Details139AcceptanceTest','ProductionBackupSettingsTest','LibraryStatisticsTest','LibraryStatisticsLayoutTest','BackupDirectOptionsTest','PlaybackAgeOverlayTest','DiagnosticCaptureReuseTest','PutioOAuthClientTest','PutioGrantRevokeTest','StreamingProviderFocusTest','PlayerControllerLaunchTest','OmdbSupplementTest','ReceptionSupplementTest','DetailsReferenceRenderTest','Supernova141UiTest','PutioConnectionFocusTest','PlaybackChaptersTest','Playback141RenderTest','PreviewPlaybackMenusTest','SubtitleReplacementTest','Network142Test','Network142CredentialsTest','Network142WebdavTest','Network142RenderTest','Editor142RenderTest','Network142PutioTest','DetailsImprovementsTest','SettingsWorkspaceTest','SettingsShieldNavigationTest'}
     present={suite.get('name','').split('.')[-1] for suite in suites if int(suite.get('tests','0'))>0}
-    if not required.issubset(present):raise ValueError('Complete 0.146 regression classes are required')
-    evidence['required_0146_test_classes']=sorted(required)
+    if not required.issubset(present):raise ValueError('Complete 0.147 regression classes are required')
+    evidence['required_0147_test_classes']=sorted(required)
     evidence['library_suites']={}
     for module,minimum in [('MediaLib',200),('FileCoreLibrary',104)]:
         reports=[ET.parse(file).getroot() for file in (args.root.resolve()/module/'build/test-results/testReleaseUnitTest').glob('TEST-*.xml')]

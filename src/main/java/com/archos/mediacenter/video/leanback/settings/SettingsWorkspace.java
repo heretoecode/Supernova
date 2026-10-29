@@ -12,7 +12,7 @@ import com.archos.mediacenter.video.foundation.FoundationAboutWorkspace;
 import java.util.*;
 
 /** New grid/category presentation. The preference hierarchy is a retained model, never the visible UI. */
-final class SettingsWorkspace extends LinearLayout {
+final class SettingsWorkspace extends LinearLayout implements TopNavigation.ContentFocus {
     private final VideoSettingsFragment.PrefsFragment fragment;
     private final BackupSettingsController backup;
     private final SettingsRegistry registry;
@@ -54,6 +54,10 @@ final class SettingsWorkspace extends LinearLayout {
         else if(legacy!=null){if(Arrays.asList("Playback","Video").contains(legacy))requested=0;else if(Arrays.asList("Audio","Subtitles").contains(legacy))requested=1;else if(Arrays.asList("Home","Library & Metadata","Library").contains(legacy))requested=2;else if(legacy.equals("Appearance"))requested=4;else if(Arrays.asList("Network","Integrations").contains(legacy))requested=5;else if(legacy.equals("Advanced")){requested=6;requestedSection="Diagnostics";}else if(legacy.equals("About"))requested=7;}
         fragment.requireActivity().getIntent().removeExtra("preview_settings_category");fragment.requireActivity().getIntent().removeExtra("show_streaming_settings");
         if(requested>=0&&requested<8)open(requested,requestedSection);else showGrid();
+    }
+    @Override public boolean focusFromNavigation(){
+        if(category<0)return !cards.isEmpty()&&cards.get(Math.max(0,Math.min(7,gridSelection))).requestFocus();
+        return selectedRail().requestFocus();
     }
     boolean atNavigationBoundary(){
         View focused=findFocus();

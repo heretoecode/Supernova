@@ -58,7 +58,9 @@ final class NetworkFilesLayout extends LinearLayout {
         }else{
             listing.addView(items,new FrameLayout.LayoutParams(-1,-2));
             centre.removeView(listing);centre.addView(listing,new LayoutParams(-1,-2));
-            body.addView(centre,new LayoutParams(-1,-2));body.addView(right,new LayoutParams(-1,-2));
+            body.setOrientation(HORIZONTAL);body.setBaselineAligned(false);
+            LayoutParams fields=new LayoutParams(0,-2,.66f);fields.rightMargin=dp(18);
+            body.addView(centre,fields);body.addView(right,new LayoutParams(0,-2,.34f));
             workspace.addView(scroll,new FrameLayout.LayoutParams(-1,-1));
         }
         // Action scrolling belongs to the workspace on forms, and to details while browsing.

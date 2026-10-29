@@ -79,7 +79,9 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(current!=null&&suppliedDock==null)sectionLocations.put(landingSelection,current);
         stopDiscovery();stopListing();clearProvider();if(putioController!=null){putioController.close();putioController=null;}
         section=0;sectionChild=false;centreAnchor=null;
-        LinearLayout grid=column();grid.setTag("network.landing");grid.setPadding(dp(12),dp(8),dp(12),dp(8));
+        LinearLayout grid=new LinearLayout(getContext()){
+            @Override protected void onMeasure(int w,int h){int available=MeasureSpec.getSize(h);float font=getResources().getConfiguration().fontScale;int required=font>1.2f?dp(Math.round(440*font)):available;super.onMeasure(w,MeasureSpec.makeMeasureSpec(Math.max(available,required),MeasureSpec.EXACTLY));}
+        };grid.setOrientation(VERTICAL);grid.setTag("network.landing");grid.setPadding(dp(12),dp(8),dp(12),dp(8));
         TextView title=SharedThreePanel.text(getContext(),"Network & Files",28);grid.addView(title);
         String[] labels={"Local Storage","Network Locations","Add Connection","Manage Connections","Network Scanning","Advanced Options"};
         String[] copy={"Browse internal storage, USB drives and all files.","Saved locations, discovered devices and Put.io.","Set up SMB, WebDAV, SFTP or FTP access.","Review saved locations and library membership.","Configure automatic checks and scan your library.","Library Health, file browsing and compatibility."};
@@ -94,7 +96,8 @@ public final class UniversalFileBrowser extends LinearLayout {
                 card.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;int next=index;if(key==KeyEvent.KEYCODE_DPAD_LEFT&&cIndex(index)>0)next--;else if(key==KeyEvent.KEYCODE_DPAD_RIGHT&&cIndex(index)<2)next++;else if(key==KeyEvent.KEYCODE_DPAD_UP){if(index<3)return false;next-=3;}else if(key==KeyEvent.KEYCODE_DPAD_DOWN&&index<3)next+=3;else if(key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;landingCards.get(next).requestFocus();return true;});
             }
         }
-        networkLayout.landing(grid);landingCards.get(landingSelection).requestFocus();
+        ScrollView landingScroll=new ScrollView(getContext());landingScroll.setFillViewport(true);landingScroll.setVerticalScrollBarEnabled(false);landingScroll.addView(grid,new ScrollView.LayoutParams(-1,-1));
+        networkLayout.landing(landingScroll);landingCards.get(landingSelection).requestFocus();
     }
     private static int cIndex(int index){return index%3;}
     private void openLandingCard(int index){

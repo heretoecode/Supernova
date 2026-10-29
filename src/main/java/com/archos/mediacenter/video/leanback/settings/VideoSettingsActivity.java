@@ -62,7 +62,7 @@ public class VideoSettingsActivity extends LeanbackActivity {
             public void handleOnBackPressed() {
                 Fragment fragment = getSupportFragmentManager()
                         .findFragmentById(R.id.settingsFragment);
-                if(fragment instanceof VideoSettingsFragment.PrefsFragment&&((VideoSettingsFragment.PrefsFragment)fragment).workspace!=null){if(((VideoSettingsFragment.PrefsFragment)fragment).workspace.back())return;finish();overridePendingTransition(0,0);return;}
+                if(fragment instanceof VideoSettingsFragment.PrefsFragment&&((VideoSettingsFragment.PrefsFragment)fragment).workspace!=null){if(((VideoSettingsFragment.PrefsFragment)fragment).workspace.back())return;if(previewNavigation!=null&&previewNavigation.focusNavigation())return;finish();overridePendingTransition(0,0);return;}
                 if (fragment instanceof LeanbackSettingsFragmentCompat
                         && fragment.getChildFragmentManager().popBackStackImmediate()) {
                     return;
