@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-10-29T14:34:31.148362+00:00",
+  "checked_at": "2026-10-29T17:37:20.899312+00:00",
   "environment": "supernova-foundation-signing",
   "required_exact_branch": "codex/supernova-0.146-upstream-completion-2026-10-28",
   "deployment_branch_policy": {
     "protected_branches": false,
     "custom_branch_policies": true
   },
-  "authorized": false,
+  "authorized": true,
   "branch_policies": [
     {
       "id": 62439781,
@@ -75,12 +75,20 @@
       "type": "branch"
     },
     {
+      "id": 64803247,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDgwMzI0Nw==",
+      "name": "codex/supernova-0.146-upstream-completion-2026-10-28",
+      "type": "branch"
+    },
+    {
       "id": 62634362,
       "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjYzNDM2Mg==",
       "name": "codex/supernova-next-refinement-2026-10-10",
       "type": "branch"
     }
   ],
-  "protection_changed": false,
-  "signing_attempted": false
+  "signing_attempted": true,
+  "authorization_by": "owner",
+  "assistant_changed_protections": false,
+  "signing_run": 40896722823
 }

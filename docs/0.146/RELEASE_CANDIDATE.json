@@ -1,5 +1,5 @@
 {
-  "status": "Unsigned candidate validated; signing blocked by missing exact environment branch policy",
+  "status": "Signed QA APK delivered and independently verified; physical/device acceptance pending",
   "application_source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
   "branch": "codex/supernova-0.146-upstream-completion-2026-10-28",
   "version_name": "0.146",
@@ -40,20 +40,27 @@
   },
   "html_release_notes": {
     "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
-    "sha256": "4260de3cddf7c221749db3f4040c1dd6b69f8a8694ba357effc6685d4c73d762",
+    "sha256": "c8ed82559f7adf9fa2b1e1d5f7711fbf86d7e442972aefcc72cab620b8ffaa34",
     "historical_articles_preserved": 14,
     "full_drive_readback_verified": true
   },
   "signing": {
     "environment": "supernova-foundation-signing",
-    "exact_branch_authorized": false,
-    "protection_changed": false,
-    "attempted": false,
-    "signed_apk_drive_url": null,
-    "signed_apk_sha256": null,
-    "signed_apk_certificate_verified": false,
+    "exact_branch_authorized": true,
+    "attempted": true,
+    "signed_apk_drive_url": "https://drive.google.com/file/d/100G08JITx7byXjN4BvfLSm2imB7FOXin/view?usp=drivesdk",
+    "signed_apk_sha256": "79829e5181d22d69400157b6da234c7327bfb4b7dfe36a4997a24db29dc86ca7",
+    "signed_apk_certificate_verified": true,
     "required_certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
-    "public_gate_actual_payload_passed": true
+    "public_gate_actual_payload_passed": true,
+    "protection_changed_by_assistant": false,
+    "run_id": 40896722823,
+    "run_url": "https://github.com/heretoecode/Supernova/actions/runs/40896722823",
+    "conclusion": "success",
+    "signed_apk_bytes": 95569591,
+    "tested_payload_parity_verified": true,
+    "full_drive_readback_verified": true,
+    "private_signing_cleanup_verified": true
   },
   "draft_pr": "https://github.com/heretoecode/Supernova/pull/26",
   "main_merged": false,

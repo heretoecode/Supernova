@@ -4,14 +4,19 @@
   "draft": true,
   "base": "codex/supernova-0.145-maintenance-2026-10-28",
   "head": "codex/supernova-0.146-upstream-completion-2026-10-28",
-  "readback_head_sha": "69cb0cf7e15e0a6ca03c798082d37ce39f75bdd5",
+  "readback_head_sha": "57bd7af47e9bc042b6bc950d9fb39de12cd440ac",
   "body_readback_matches": true,
-  "checked_at": "2026-10-29T14:49:35.422322+00:00",
+  "checked_at": "2026-10-29T17:38:11.368333+00:00",
   "application_source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
   "public_signing_gate_actual_payload_passed": true,
-  "signing_key_accessed": false,
   "post_source_changes_only_docs": true,
   "main_merged": false,
   "public_release_published": false,
-  "body_sha256": "d87d6353137b48906234b4b3a334762e31de297252d5c051dbac2baca03fe1b9"
+  "body_sha256": "e7a5d6ff07563b97dc196b2297701480ff72cadf15b8a49f6c6640e7bbf7001c",
+  "signing_key_accessed_only_in_protected_runner": true,
+  "private_signing_cleanup_verified": true,
+  "signing_run": 40896722823,
+  "signed_apk_sha256": "79829e5181d22d69400157b6da234c7327bfb4b7dfe36a4997a24db29dc86ca7",
+  "signed_apk_drive_url": "https://drive.google.com/file/d/100G08JITx7byXjN4BvfLSm2imB7FOXin/view?usp=drivesdk",
+  "readback_scope": "PR body/draft/base verified before final report-only commit; application source remains frozen"
 }

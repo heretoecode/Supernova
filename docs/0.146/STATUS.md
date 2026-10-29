@@ -1,4 +1,4 @@
-# Supernova0.146 validated unsigned candidate
+# Supernova0.146 signed QA delivery
 
 The preserved0.145 delivery was independently reverified: source d6e106ffa27fce88cbfb4ebbfe305954c7e73f60, protected run40762577939, complete Drive APK checksum and original certificate. No source work was reset or discarded. Work continues on codex/supernova-0.146-upstream-completion-2026-10-28; draft PR26 remains stacked on0.145, with no main merge/public release.
 
@@ -8,4 +8,6 @@ Complete conformance40876969463 passed at8ead283:1209 application tests,200Media
 
 Actual Android23 run40884866451 passed28 tests, including five real local FTPS/TLS cases, against the exact final FileCore patch after correcting the rejected-peer test-server close race. Native font fallback additionally passes12 cases asUID10000 without HOME/XDG or writable caches. Physical Shield, GL/HDMI, real providers and installed signed upgrade/rollback remain explicit QA limitations.
 
-The existing signing environment has selected branch policies but lacks the exact0.146 branch. No rule was changed, no protected signing attempted and no signed0.146 APK/certificate/checksum/Drive delivery is claimed. Complete corresponding source is uploaded and fully streamed back; HTML notes/report and exact unsigned proof are updated. Only the explicit environment-policy approval blocks signing/delivery.
+Protected signing [40896722823](https://github.com/heretoecode/Supernova/actions/runs/40896722823) succeeded for exact application source `938885ac2a84a5efecb1674b3e9f1032a56740ed`. [Signed Supernova 0.146 APK](https://drive.google.com/file/d/100G08JITx7byXjN4BvfLSm2imB7FOXin/view?usp=drivesdk) is 95,569,591 bytes; SHA-256 `79829e5181d22d69400157b6da234c7327bfb4b7dfe36a4997a24db29dc86ca7`. Independent signature verification confirms the existing certificate `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. Every tested unsigned payload entry is unchanged, embedded source identity and all 84 native hashes match, and the complete Drive download passes the same checks. Private signing-material cleanup passed in the protected runner. Physical/device and installed signed upgrade/rollback acceptance remain pending.
+
+Complete corresponding source and updated HTML notes have full Drive readback verification. Draft PR26 remains draft, stacked on0.145; main is unmerged and no public release was published.

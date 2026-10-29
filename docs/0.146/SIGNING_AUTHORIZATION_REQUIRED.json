@@ -7,6 +7,10 @@
     "name": "codex/supernova-0.146-upstream-completion-2026-10-28",
     "type": "branch"
   },
-  "applied": false,
-  "reason": "The user-provided handover forbids changing signing protections without approval; completed unsigned/source/QA evidence is ready for review. No other environment protection or signing identity change is requested."
+  "applied": true,
+  "reason": "Owner authorized the exact 0.146 branch; live policy verified and protected signing completed successfully. The assistant did not change environment protections.",
+  "status": "resolved_by_owner",
+  "applied_by_assistant": false,
+  "observed_policy_id": 64803247,
+  "remaining_owner_action": null
 }

@@ -1,6 +1,6 @@
 {
-  "before_sha256": "285586bfa6cc5d69c1927a784133f4113e9a115493550d71ddb2252281f033f2",
-  "after_sha256": "4260de3cddf7c221749db3f4040c1dd6b69f8a8694ba357effc6685d4c73d762",
+  "before_sha256": "4260de3cddf7c221749db3f4040c1dd6b69f8a8694ba357effc6685d4c73d762",
+  "after_sha256": "c8ed82559f7adf9fa2b1e1d5f7711fbf86d7e442972aefcc72cab620b8ffaa34",
   "historical_articles_preserved": 14,
   "historical_article_sha256": [
     "de945d48682a45b78f0f5e8b46c96ba520c40a1c207de348a5680481dcc94e90",
@@ -20,11 +20,15 @@
   ],
   "source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
   "conformance_run": 40886034550,
-  "signed_apk_delivered": false,
-  "scope": "New candidate article and top status only; all14 historical article byte strings identical",
+  "signing_run": 40896722823,
+  "signed_apk_delivered": true,
+  "signed_apk_url": "https://drive.google.com/file/d/100G08JITx7byXjN4BvfLSm2imB7FOXin/view?usp=drivesdk",
+  "signed_apk_sha256": "79829e5181d22d69400157b6da234c7327bfb4b7dfe36a4997a24db29dc86ca7",
+  "scope": "Existing 0.146 article and top notice updated; all 14 historical article byte strings identical",
   "file_id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
   "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
-  "bytes": 48405,
+  "bytes": 48858,
   "full_drive_readback_verified": true,
-  "readback_sha256": "4260de3cddf7c221749db3f4040c1dd6b69f8a8694ba357effc6685d4c73d762"
+  "readback_sha256": "c8ed82559f7adf9fa2b1e1d5f7711fbf86d7e442972aefcc72cab620b8ffaa34",
+  "checked_at": "2026-10-29T17:37:20.899312+00:00"
 }

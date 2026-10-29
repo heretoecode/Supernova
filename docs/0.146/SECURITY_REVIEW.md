@@ -1,6 +1,6 @@
 # 0.146 security disposition
 
-The candidate retains `app.supernova.player`, API23, private providers, the existing installation-certificate pin and the0.145 library/credential protections. No signing protection was changed, no key was read, and no public release or main merge occurred.
+The candidate retains `app.supernova.player`, API23, private providers, the existing installation-certificate pin and the0.145 library/credential protections. The owner authorized the exact0.146 branch; the assistant did not change signing protections. The existing key was used only in the protected runner, whose private-material cleanup step passed. The original certificate is independently verified on the delivered APK. No public release or main merge occurred.
 
 The final runtime inventory has139 exact resolved archives/POMs, independently checked against CI40846173069. The offline catalogue contains64 complete legal entries. Matching source-built Jetty artifacts have explicit source/patch/optional-feature markers. Sentry8.61.1 families are aligned, rather than mixing Java SDK8.53 with newer Android modules; stable NOVA browser/core/fragment/OkHttp/BC families are integrated. Runtime coordinates, hashes, POM licences and source notices are recorded in the SBOM.
 
