@@ -4,7 +4,7 @@
 This harness has its own QA application ID/debug key. It never signs or replaces
 Supernova and never receives the protected production signing environment.
 """
-import argparse,json,hashlib,shutil
+import argparse,json,hashlib,shutil,zipfile
 from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 for name in ['video','medialib','review','output']:p.add_argument('--'+name,type=Path,required=True)
@@ -50,10 +50,13 @@ main.mkdir(parents=True,exist_ok=True);(main/'AndroidManifest.xml').write_text('
 libs=out/'libs';libs.mkdir(exist_ok=True);inventory=json.loads((review/'inventory.json').read_text());selected=[]
 for item in inventory:
  coordinate=item['coordinate'];group,module,version=coordinate.split(':')
- if group=='org.eclipse.jetty' or group=='javax.servlet' or group=='org.slf4j' or (group=='com.github.nova-video-player.jupnp' and module=='org.jupnp'):
+ if group=='org.eclipse.jetty' or group=='javax.servlet' or group=='org.slf4j' or (group=='com.github.nova-video-player.jupnp' and module=='org.jupnp') or group in ['commons-net','com.squareup.okhttp3','com.squareup.okio','org.jetbrains.kotlin','org.jetbrains'] :
   source=review/item['file']
   if hashlib.sha256(source.read_bytes()).hexdigest()!=item['sha256']:raise ValueError('Runtime archive changed: '+coordinate)
-  shutil.copyfile(source,libs/source.name);selected.append({'coordinate':coordinate,'sha256':item['sha256']})
+  if source.suffix=='.aar':
+   with zipfile.ZipFile(source) as archive:(libs/(module+'-'+version+'.jar')).write_bytes(archive.read('classes.jar'))
+  else:shutil.copyfile(source,libs/source.name)
+  selected.append({'coordinate':coordinate,'sha256':item['sha256']})
 if len([x for x in selected if x['coordinate'].startswith('org.eclipse.jetty:')])!=8:raise ValueError('All eight resolved Jetty modules are required')
 for name in ['NovaJettyServletContainer','ValidatingJettyStreamClient']:
  source=media/('src/com/archos/mediacenter/filecoreextension/upnp2/'+name+'.java');dest=main/'java/com/archos/mediacenter/filecoreextension/upnp2'/source.name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,dest)
@@ -67,6 +70,10 @@ for name in ['Jetty145SecurityTest','Jetty146BackportTest']:
     }
     private static final String SECRET''')
  (test/source.name).write_text(text)
+filecore=media.parent/'FileCoreLibrary'
+for source,base in [(filecore/'src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java',main/'java'),(filecore/'testCommon/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyCases.java',out/'src/androidTest/java')]:
+ dest=base/'com/archos/filecorelibrary/ftp'/source.name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,dest)
+(out/'src/androidTest/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyAndroid23Test.java').write_text('package com.archos.filecorelibrary.ftp;\n@org.junit.runner.RunWith(androidx.test.runner.AndroidJUnit4.class)\npublic class FtpsTlsPolicyAndroid23Test extends FtpsTlsPolicyCases { }\n')
 raw=main/'res/raw';raw.mkdir(parents=True,exist_ok=True)
 for source in (video/'res/raw').glob('isrg_root_x*'):shutil.copyfile(source,raw/source.name)
 (test/'NativeTrustRootsAndroid23Test.java').write_text('''package com.archos.mediacenter.filecoreextension.upnp2;
@@ -101,4 +108,4 @@ public class NativeTrustRootsAndroid23Test {
  }
 }
 ''')
-(out/'harness-inputs.json').write_text(json.dumps({'purpose':'Test-only API23 harness; separate app/debug identity, no Supernova signing secrets','libraries':selected,'production_sources':[str(p.relative_to(media)) for p in [media/'src/com/archos/medialib/NativeTrustRoots.java']]},indent=2)+'\n');print('Prepared separate API23 transport/trust test harness with',len(selected),'verified runtime archives')
+(out/'harness-inputs.json').write_text(json.dumps({'purpose':'Test-only API23 harness; separate app/debug identity, no Supernova signing secrets','libraries':selected,'production_sources':[str(p.relative_to(media)) for p in [media/'src/com/archos/medialib/NativeTrustRoots.java']], 'filecore_patch_sha256':hashlib.sha256((video/'.github/build/filecorelibrary-supernova146-upstream.patch').read_bytes()).hexdigest()},indent=2)+'\n');print('Prepared separate API23 transport/trust test harness with',len(selected),'verified runtime archives')

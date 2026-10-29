@@ -30,9 +30,9 @@ def gate(evidence, apk, source):
         raise key.SigningError('All required 0.146 regression classes must pass.')
     if evidence.get('rebuilt_ffmpeg_libraries_matched') != 24 or evidence.get('native_hashes_matched') != 84 or evidence.get('offline_licence_entries', 0) < 60:
         raise key.SigningError('QA compiled native and offline licence evidence is missing.')
-    if evidence.get('actual_android23_transport_and_trust_tests') != 23 or evidence.get('native_security_artifact_run') != 40843685431:
+    if evidence.get('actual_android23_transport_and_trust_tests') != 28 or evidence.get('native_security_artifact_run') != 40843685431:
         raise key.SigningError('API23 transport/native security validation is incomplete.')
-    for module,minimum in [('MediaLib',200),('FileCoreLibrary',99)]:
+    for module,minimum in [('MediaLib',200),('FileCoreLibrary',104)]:
         proof=evidence.get('library_suites',{}).get(module,{})
         if proof.get('tests',0)<minimum or proof.get('failures')!=0 or proof.get('errors')!=0 or proof.get('skipped')!=2:
             raise key.SigningError('Complete reviewed library suites are required.')

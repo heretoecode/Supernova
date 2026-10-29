@@ -2305,8 +2305,71 @@ index 0000000..8d935f2
 +        return -1;
 +    }
 +}
+diff --git a/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java b/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java
+new file mode 100644
+index 0000000..6a509dd
+--- /dev/null
++++ b/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java
+@@ -0,0 +1,57 @@
++package com.archos.filecorelibrary.ftp;
++
++import java.io.IOException;
++import java.net.Socket;
++import java.security.GeneralSecurityException;
++import java.security.KeyStore;
++import javax.net.ssl.HostnameVerifier;
++import javax.net.ssl.SSLPeerUnverifiedException;
++import javax.net.ssl.SSLSocket;
++import org.apache.commons.net.ftp.FTPSClient;
++import org.apache.commons.net.util.TrustManagerUtils;
++import okhttp3.OkHttpClient;
++
++/** Verified explicit FTPS, with the same identity on its control and data channels. */
++final class FtpsTlsPolicy {
++    // Use OkHttp's public configured-verifier API; do not replace a process-global verifier.
++    private static final HostnameVerifier HOSTS = new OkHttpClient().hostnameVerifier();
++
++    static FTPSClient newClient() throws IOException { return newClient(null); }
++
++    // A dedicated trust store is used only by the private-CA regression fixture.
++    static FTPSClient newClient(KeyStore anchors) throws IOException {
++        FTPSClient client = new FTPSClient("TLS", false) {
++            private Socket pendingData;
++            @Override protected void _prepareDataSocket_(Socket socket) { pendingData = socket; }
++            @Override protected void _connectAction_() throws IOException {
++                try { super._connectAction_(); }
++                catch (IOException | RuntimeException failure) {
++                    try { disconnect(); } catch (IOException ignored) { }
++                    throw failure;
++                }
++            }
++            @Override protected Socket _openDataConnection_(String command, String argument) throws IOException {
++                try {
++                Socket socket = super._openDataConnection_(command, argument);
++                if (socket == null) return null;
++                // PROT P is required by Session. Verify the original control hostname,
++                // not a PASV address or reverse-DNS name, after the data TLS handshake.
++                if (!(socket instanceof SSLSocket) || !HOSTS.verify(_hostname_, ((SSLSocket) socket).getSession())) {
++                    try { socket.close(); } catch (IOException ignored) { }
++                    throw new SSLPeerUnverifiedException("FTPS data peer identity verification failed");
++                }
++                return socket;
++                } catch (IOException | RuntimeException failure) {
++                    if (pendingData != null) try { pendingData.close(); } catch (IOException ignored) { }
++                    throw failure;
++                } finally { pendingData = null; }
++            }
++        };
++        try { client.setTrustManager(TrustManagerUtils.getDefaultTrustManager(anchors)); }
++        catch (GeneralSecurityException failure) { throw new IOException("FTPS trust initialization failed", failure); }
++        client.setEndpointCheckingEnabled(true);
++        client.setHostnameVerifier(HOSTS);
++        return client;
++    }
++    private FtpsTlsPolicy() { }
++}
 diff --git a/src/com/archos/filecorelibrary/ftp/Session.java b/src/com/archos/filecorelibrary/ftp/Session.java
-index 1ce0b17..4d9bd8a 100644
+index 1ce0b17..376fa8b 100644
 --- a/src/com/archos/filecorelibrary/ftp/Session.java
 +++ b/src/com/archos/filecorelibrary/ftp/Session.java
 @@ -16,8 +16,7 @@ package com.archos.filecorelibrary.ftp;
@@ -2550,10 +2613,12 @@ index 1ce0b17..4d9bd8a 100644
          // Use default port if not set
          int port = path.getPort();
          if (port < 0) port = 21; // default port
-@@ -175,99 +196,68 @@ public class Session {
+@@ -174,100 +195,69 @@ public class Session {
+             username = cred.getUsername();
          }
  
-         FTPSClient ftp = new FTPSClient("TLS", false);
+-        FTPSClient ftp = new FTPSClient("TLS", false);
++        FTPSClient ftp = FtpsTlsPolicy.newClient();
 +        setupClientLogging(ftp);
 +        ftp.setDefaultTimeout(CONNECT_TIMEOUT_MS);
 +        ftp.setConnectTimeout(CONNECT_TIMEOUT_MS);
@@ -5067,6 +5132,21 @@ index 0000000..8821491
 +        assertEquals(374700068L, size);
 +    }
 +}
+diff --git a/test/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyTest.java b/test/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyTest.java
+new file mode 100644
+index 0000000..087b28c
+--- /dev/null
++++ b/test/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyTest.java
+@@ -0,0 +1,9 @@
++package com.archos.filecorelibrary.ftp;
++
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application=android.app.Application.class,sdk=28)
++public class FtpsTlsPolicyTest extends FtpsTlsPolicyCases { }
 diff --git a/test/java/com/archos/filecorelibrary/samba/NetworkCredentialsDatabaseCredentialTest.java b/test/java/com/archos/filecorelibrary/samba/NetworkCredentialsDatabaseCredentialTest.java
 new file mode 100644
 index 0000000..92a182a
@@ -6326,4 +6406,61 @@ index 0000000..74a9e86
 +        if (input.read() != -1) throw new CheckFailure("Range exceeded bound");
 +        return bytes;
 +    }
++}
+diff --git a/testCommon/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyCases.java b/testCommon/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyCases.java
+new file mode 100644
+index 0000000..466e1ab
+--- /dev/null
++++ b/testCommon/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyCases.java
+@@ -0,0 +1,51 @@
++package com.archos.filecorelibrary.ftp;
++
++import static org.junit.Assert.*;
++import java.io.*;
++import java.net.*;
++import java.nio.charset.StandardCharsets;
++import java.security.*;
++import java.security.cert.*;
++import java.util.concurrent.*;
++import javax.net.ssl.*;
++import org.apache.commons.net.ftp.FTPSClient;
++import org.junit.Test;
++
++/** Local, synthetic FTPS peers; all fixture keys are public test-only material. */
++public abstract class FtpsTlsPolicyCases {
++    private static byte[] hex(String text) { byte[] out=new byte[text.length()/2];for(int i=0;i<out.length;i++)out[i]=(byte)Integer.parseInt(text.substring(i*2,i*2+2),16);return out; }
++    private static final String ROOT="3082032d30820215a003020102021449e965a38756292dd13d0e88287bc6df4f29fe2a300d06092a864886f70d01010b050030263124302206035504030c1b53757065726e6f76612073796e74686574696320514120726f6f74301e170d3236313032393037343634315a170d3236313033313037343634315a30263124302206035504030c1b53757065726e6f76612073796e74686574696320514120726f6f7430820122300d06092a864886f70d01010105000382010f003082010a0282010100c8b1482f357f0dcae2fd8f58ac33b20c3d846ca58964dc87b10c5140c8df8fc06577f2eb9271c8a1353cc18769cae2a992fb21c3e45a61fb6e012558568fa44af137ecbeb352af9e28476ace39c33e6b35bb6c398683b9aac67edc962bd073d111341189fbea8891287ff00f8d0a6b77a2e8c480daefb34ac1004138da1a85ff76d51b6ceb58cdc048d2d97348566b2fa03ed926560f576099ed1945f6d7abcb4dd54b57b4a464fa6cb7518be11425cfdb89fb1e0d0737ddbc4bcca06579b74c12afadd2f987466ae9fdf664d71d35ec2b25d99d8468693568c1b85ef4347629d1fcf89d2ec58cfb8a55146d649c25138bc0686d761232a57b04f236170e6c310203010001a3533051301d0603551d0e04160414a66924b4ad02eed78bfa4f99c408b0bbe68c9c01301f0603551d23041830168014a66924b4ad02eed78bfa4f99c408b0bbe68c9c01300f0603551d130101ff040530030101ff300d06092a864886f70d01010b05000382010100989537b1ff68c4c1f328a57090c25fa8d63b99a7a9c27f29130a9d34bcd187922530029a066e244980ac6d39bf2d13d1f2b122aa760eab2d317c005c942097be4e73f5cf300e9ea11c5863879fefb36cef66bf310acddbf4fa5f4f13ce8c6f8dc956ac4966eb23d6339125203919ad10527d32fb92c297daddee76d21e19feb9b1fce80bfdd94659e5791d3e5c37617a68f106631dd550fd73be2d4e23c6a37d9ce68845d29bdc9d96bcdf0cd09a02862dce12b715f746906941d25326a474db80bb7aa9b4458dab0787c9bed6227770bffee4210ef659e3603ed52850a4c9eed8c0c55b87d09a2bb7ad6150d408874be157a53ca294195fb55fb6c536388913";
++    private static final String VALID="30820d2402010330820cea06092a864886f70d010701a0820cdb04820cd730820cd33082076706092a864886f70d010706a0820758308207540201003082074d06092a864886f70d010701301c060a2a864886f70d010c0106300e0408afa230f2f42749ae0202080080820720b3b32396ba8824026886d4554a178d2599daf47a92c0cdb1c2bf06bf459baffea478125fb856843100ec781da3e9e20eebc7c75c16c745f6bd62618aae321afbfccd0a5c8a8441aea78aeb2ebc1872eb4fc049faa3229c042c1fd59c96c429b19abde57e9d4678004161022f9defb9ed42374c62030add5379aec19f7f44a0c97df16207789cd6262673bb025a460bb754e43e9a503868598816972d43bccee1b7869d808554e66cc2b8b1feb756ae975cfdd7a94f9befdb4978667a6f651e7ad69c5b35f06dd868b0e585e415c018f6bd4adfd7be3f15420a3368769b26fbb73fb03aa3d8ccac701cbcc772819352fbf218a12db7fb7ab829c72b08f5edf4741606dbd267107f4308adc93e9d5ad9b07b1e7f386134be1bdb5487ae225233262ca9aa7cad9ab2e60b420668711dd5f5cfebeb928d94a08a434faa7920a5e505f7e56c31ee11b80c6aaae1bef165f0c4a0d818991b82cc82760d6c61ea01a5c41c0503b51827666f33d47e721a2e0a1777618f3e46691d3e108d36ed0cf285bc1f352302b385d1c4554a7f99738a6e96cbecb5e96f2276e5254cdfefca03911acd08a5068150e8c4faf61e2e45ea4f7cce553ffa6592dd040506f9af7f76ccb3a5b7228a2e02949969b075ee6b86e8e30ead0739d091496e73b96797910ea4fb2be030205c79500754eeb8308726a14c6482be85095253b791537955d06000a10e5c2ac18bcc9694c01e64d9a3b98231ea772f04a718704502f71730a7a5d2d07e1d2592f6e01b7261ef42996cd879c28bbcb34118181b35547b01a9769b88abdeea1a0bc9437061d1f2e3ceaa5864f3f03cafedde39e11d76e333edaea57e67cac6448614fc942df907d38708a5971658f423491dfe5bfe8f3e507008f5c08f3f170eb134989e3e1cf929065a631f58a9fbfca2b25b65c4e438cd6374bf9f20755bd549426d567c123c30ff02e4dfb45dfd468329e6673c98a49fd0e9bc1291df94bf4026060d7b165b9b0930fe79b983078e50c82ec7c506f37a404f7581d54f85df8952cc5099da1069284b310227034323c4686f99c0a8cbfb80ff4478608cde470d6e76300c38e17a2add47fc719dd9817a5dd5fa191a621b41962eff452190c4ba67b181c00ec6b193c28375989934e57bb7d5e671a2cb64ad466e9f3c09979a3a8db3226bfbf42d14c0d4737893f8986b174d26a93da4167e6ae98adfdde28e5768fc46cf0bbb813f4bf2eda6bced7232fc0e7747dafea83fb01b98303aac191e4ff2eab59144bae000b7e7fa5f6a9f937879771f1e65c5a9a4944102850bcd1e76095ac7cb42245bf72eb634b875814962217d30d0e98b99366f42cfdf275e95f742cf7dfacdb4d7bdb5af438d72446c9e31a0086f8d514d5b6e0c7a8bcee4352438340185b51977835ab4b33e676098148cbc6de130830b05bdf137e1abc85ba2f6582b122b5a86c4730dfc0a109f04a9e19c4428bd6f3b454a89cb258038846a63edd059fc63bb2a15b6d439f40735376bd9116e6e1cc41209fdadd19881839a43ef20848548c70f1918bdcb5c860d8e86070b9b1a62ad13c9045168c7620579f41d87158fe6fa4fd856da9d62986e0dcb2913706c8dc1700937ce8b35e38347cb547f6afb4624943a87d4bb6ab141dfbd6b7b3425bdc65ea19dcb77aba57ab12995786ba0aa35116f71d3f562d0d4819b3b2559046343db7af0be82d4c241beabcfc1cb92842660e4c5102f5106c0212e874b6900d77737573c303bcb133fd74327cf9a68fd6e25ceac3bfb013ecf08252ffb0737648900a5947c50caacab1eb6f4512fc589790ced66869fb153ba0a0c23b6c8d7e9c2413453e7856a288dc5b5a092d9ea912f0597cc34c468e2df71c08eb7eb0c2707bda1c4e3c6d640980002d4c9fc4ab8a8151f7d26e317a0baa70440543097b6f65b30a7b06fc67e4dbb998c54ac53ccbb511ae6342fdf64fae7c48c78a907e0a809828da86e29f575c383e39feb7562ca61ed92040a643d67437253b5b843f3c038ffaabcc39cf85a5fc207b326570c5c528c8f7a0b923d4ce781cc48904ca672237ba0599372d0e144c07eb4f7ad9df762e8b5ddecdb04632ed197a03e9486188f54c24c70ef5a066a1e4ea4b1515eb9c8af1427720e2093699493f58df0066b254834047cbb120f1e29f92243ac548998527f1741a5cc28c40eb02dc588e673b3369547d58617decee3f449ae33bef175bea436a03cfa0c0440fca658c88da124aa3a2dc185b366284a006fe43ba9d3a5a74e967268087b61a2d774ed6cbbc66f6d13e5e039de9114891934eff48e53db5624a84b1964347d892e790a2f2e184f6cd5b17a9c6e2ce2ccb540cb8eb7cbd734fec45713c0fa903aa094850173326d9df76b67191ba297f841b7967c9d939b4eef2791a148c79ad36aabe7b4fffab180e290890cfffed8419f0bc6ddf33d360011157ee2eb5a081233fac0bbb10aac2009fc76a78854a1542141ec455dd884cc863d9238c89b799958f8048717c88e4a26b1df6dfd1d0887878e05a74431a07d062cd9a0264614ffbdf4e28b3bd71752541a3082056406092a864886f70d010701a0820555048205513082054d30820549060b2a864886f70d010c0a0102a08204ee308204ea301c060a2a864886f70d010c0103300e04087375478d14dc691c02020800048204c8bf7deb6bd17ff1cc30170fb5e6ac5f7a88f198f5ca3898e52fdb514c4e76971bd35516bbc64fa569591221e19b3d55ad8a605a3919f11032c4da08c8befb1caf1a47b0a69cbf095605e031148b0b24f1a3301cef5a3c2bdb230159c03e3dd72c4302d739434346ea1a8392ce297f138ef840f4e5538cac134142be0eb4a2193c5c1c58a345996c130d84f120ede448c6435f831c806fa19b550138a51c0d6d0d716e3cbdfa49d64a3c9d1109ecadc35f2f228f9dd1b8559f131cc7ea02557b3c5a888770acf6d8a40b43288e5e5143f8a142a6baea17df6ac884381e9033876d632fb99f2e064bc5765d3f9097760f4603265a1e5edcf0ca2160cb2460a561d0832ab00c1e4186648e5d0d3b2ab0fe3bbd29d7e0a7f8ef7a57b3e9fd4085d69f4a8903352ffa0cd0a6bee86887190a15ddfef6c7cdb16dd53dad9610e29b9aa1ef2b0a14da9b8b9b5f1d26a8f6a19f963f75335c4739e131526f719c851874d4f6fd7f82eee71c3a990ff5f7abec6606ac6b0121036e7eb33d19b98269b751215a420182c1769f0b90bcc8259b69bb5cdb01cff5697c8e5550ffc8b1d9fc85500fc9289000b181a2f353398b7db650cdb0fd6e4ec24c51052de1611ae3cc39408edb056f70d1beab60166df2370dd10676ea281d716dbb3d1def6a2053cee1be394fe5d37ba0abe7477c306d602d660839697a59c9bdfb90da0f07b1a496c97738e17337985bf1f866a2e4735080920a188f332bf8e168a3a7d04de318e714c1f5ba5e213ea89c59ddaac47610dd2794c9546c02cf62fba5dc09b88d8a73555c930e61f11cb3c2323bccf8cf293311753ad38df0dec358f7654767274246911a499d0db9392e0b9cb5cdcb69c7a6739cb62812146853fc0cb6d3141b4bcf7f86a2589beb05d892654651766c4b58662cfeb225cddbb40273d89c65f1f9bef26384f4016c28ebeaa1bd58df9a12dfe62b78213a3a744d95dedd20d106a6b35c0bd78d7f2750ee1203c0381343a41f24eaffac9f4fb0b165e7b155b83f435dab202d230f78401b41bc208b89465fba77802d0428ae64d7a9269c7552e570e0fa729f7b378a3bba3d3f5e6902916c3604852678e758c78f0117d761c78df3e8bdf5401742f978b51410ef33075f46c4b84581188f9999c570f9005c66c4289e954ed9cce22648c26096c9eb9ad518eaa7905c5731ef2546266aec9122eb8923634100b413405f4541276157e1a8ef68d82f64e9e96142693b0dcf000fc36cac1e5f1a156c690c1018667697e5ded8bb8bf40496ead661434124c789d6694308aca5c8fa861d47a669ff1af9718079fd3c9bf8533c57db32cd536e26d8e5bfa5e665a42d4b3c9d79656640845a743555f52bde45f8ce4619b20f54ba27e086c39b31572df72f604820537b77d54f5ed58aaa7be3e43f6e0329155d7af7849d93b737a2d239867a51851f0f45178765dec72ebbda3291002320b64f68f6c25ee69d3702b38c6c33efa4e8c50f2c13bbdc89e6d1487dab0736260c2c47a97325135854715630e3040ea5b4f10b5e0ffc230af8459142a0cf37ea2357ea0e43bf1a753bef2b95e123f79410df51c2f83d11428d80007c25d1e396bbe9d74516ac5cb005c7dec7d46d6f308f644aa9c96980fa3324f21a723d65f99f74321e12cb633d80f128cd24a7a230affae67d50e2493c1bf91c3ce37ace67b85a040a47f650246c7779b0a72724810b3148302106092a864886f70d01091431141e120074006500730074002d006f006e006c0079302306092a864886f70d01091531160414f07f3ba78d975bd833f53f1eb0536c8b0d3fbd2930313021300906052b0e03021a05000414dbb4abd6a8f11620c8ff7a118a928dd97830cb8304087211f4edccad1d4002020800";
++    private static final String WRONG="30820d2c02010330820cf206092a864886f70d010701a0820ce304820cdf30820cdb3082076f06092a864886f70d010706a08207603082075c0201003082075506092a864886f70d010701301c060a2a864886f70d010c0106300e04082e54e706eab647cf0202080080820728ea167956f351b642a3f641ec40ec749ee708f741c3f0c64e393e8325152f561ea50f36e99095ee73ec3c5d268d25a6579bf55cd9043acc022f24cd995116f7fa2965bee87bc3025da76fae83e61df82440b3a2e690e82c3d9f377974a1ef69162a4969ad5326a13079b50e81e28df50ac5b1468537914966968422f37e81729596ecc482fa614e104aceb0815a6fe241f010747064654eef99ce0a478a3100755177fd0dba4c85cef656afd39aa2af7693d22f961e4338ad90ce152eda20d9c73bd0b7776cdf80980bb482a8fa7dc7e7e6a8789877f24bc0e73286371cb60cfef8efd8183ae7c44d6ad9118f6cd368656d2c37abda444887be0b38f25e071ed7dabdc43f9a021684c18c23591e484bfc9f1fc01c4955c467cdc4f4e935c9fb781a6a17655ff1ccd148edf292bde3e8bc1dd26a7a7ddf3ea2b0c26accdfb9381a65995debe2b7ea9b5bbfb2fdb9c30bbe4bfa95563798eca8ac434244ce353c6007b9536fec1db197675bea841b9544646d0527ad308b4f207b93073c2dbabbe0313862bdd053c884a4808d260d3141bdec43e766ccfb9f73b81e07d3cb81a7f99940214e17292e939b4cf99b08399548c3e26f60b92d8c10f266213c5f9811de019d18e061362a0c79b47ea61e7da4a8bc6154be478b8901719e5e2d3356e61a7108ea1042b19cb55c0a7c4bfa85098c54d0881fc4adae43fa4a6003e2fdff32a5ea4126c703407e95af62cf551b63c459af1249d8347418fba90991226dd7d2781717e2db202e0ad8732b96953ff509de53a4bb5a5114879db469261f295924631ef7c49787dd02a0f13c94a18646c4709bfb3731585e24ae44950c7f23f6f8faf8a1cc39ce100f2bb6cec17cceb5f7bf248bfb90a966bdabcaaa0def8fcf07485399de9215410cfd09458c75be24cf11b229108c7791e628b1f7bf387ed0d2454dda9ba154c2564b808542d2239c689ac4acf999c490ebf67f0e98ba22ad1184bd965448080f7f62629f82175a2658dc8cc7c332d66728a3d54caeb932abcc6efa486aec529007718dc2efcb7e36f3e566a74b84e5525b35f8f8e625116521b6fa55548130638bd72de0383c95aa8fa42b5ec6af4c2d568edfd5c6ce1ce4e05745fa7280f870e8080559ea15c7e9f54c0357b05d2af7157cca61bf03c18d9a800d1e6a688107cdc0b58c98f766416a88027d8937b20e28c5b054c9f6422cedd75102723e9612176d3ce1b1095a80b6026a95a60272d767a983c8ad370eba5764d68565641bc7e2c1585553a74d72a4443036ebd9f7fab34f543cbfd7d97e19a54da915a8fc163fe17ff15aee80f1d95df627832dd776f568192ed7d6785b2256dbb05603e3a747f9429424d54bfa7878078ba20dbbce070611632d17501a072fdd0735686b72311c6971b66bd29dcc6d2e298d80a8df560ade5f668af80e1770eabf4973c4ff9666cebe1729c481791dc78e2a9bd4f63f46d06b9b1e7008c69ba97332fceb8f64d5e60f6bc60dc2eae354ccc77b2462bbc1609577333fbe0a66f9314a12af498379bfab003a13f48c884776fef0de93c5825c030c2fdffbc0076aca87c404bd59a6eb6139cd791c2525dc39728a3c9e259f1e26f5873a0e25187713ca08dc45f3eba41741099731a9441e51ebca0ed1688d1bdb4a2dce0070cb62b6313033cefc138cb976b71d4ac4bc8f75aef55638a721267c48fea59b6b6d5f2cc42f1019ec96b7db42e0964128fa25e6f6a0053cbc50343afca77bca2c2a40468c0b7f2bfd0300a2459c6109346a38928506e0bef963aa7de7dfbe8023fc1ed097ca792b63f0e14ad6efd48fe31924cc00d2333aa3c4f2726e30d81656feeb960875e91fe789291f7a39a1b06cc6c047154c73bc709a8bb05c45ebe0678ab9b80ba68adcdcbf26926b58d027df3f5c9777ccb747e1d85519d10b31be12dd1c1d1a46080b75ff5e5c164e538ec5f3c0b27f1a7d3df6123001362239ec8b997aa167f32a92f287f6510ad6fcb76e5536d257591031817f32813b4d7cccedebaec28db8944fd8d09c42be27358e612ee23d886374829f7ff323070582bb1c5afeb3cddfd75af117517e0e8e4b213a1a07e0b164dc149526d3dcbf2a733841d2381956a0473c2d941c8c0ff8f266763029c0cc58f8869761df117a101f4ca2da8c4eb9bbc7a617bfa2230c86f5926042ff6338bae54e555644e8a3facebb1a58a63da223130d84896409b91d8432e0ffc2bdc0f484601f7cf1787783975af06beeec84a64badc5bfced3fb25c1bac19b94098c149933755154474f258affb8782517140f352b4f0384328a8d0846391d5bbb022ceb2c84f4c2e19124370944a97dfc9326d855d7b71600095a6461be45a546f921f0aafa1b8416783ee21f06f1ea60cb9a72653ae70a2cd304c342ec9086c23e1431efbe1693a4e8283ea08df0690c8f054c8086e7d78386d0107cfdf3bb745c9124dedcc586fa2157c1682c8437b4d3814dec4d3820b16b195d025bdc9f50b73120def64d94fb69ab2cdf7a5c2b94a160caaecd1d352ed5253f8092188b8762b51d2b065ac15f72e5ef3b422d083cefea7e15c83082056406092a864886f70d010701a0820555048205513082054d30820549060b2a864886f70d010c0a0102a08204ee308204ea301c060a2a864886f70d010c0103300e0408ac5fbb37593215b702020800048204c8c87ae6bf298949d44cfc40ef593efa7de4b17cb414db90e6fb2cdcd173ce8bba242703e1f4834fec50847ecfbd4a10d0e994c166c2cb797e723a2d971201056b43dc68e000bc21fa517dc54c95cb935b410c14ec15bf8bdcbdaecbb29d384ee642b9f259b47d70418fa7d92ad6c3b8c43ca5d2ff94afb2ba2a912814a9993e35ab3ee1e1e8324df1e1b950574c33d15e4b44930a4119041a2ce9326aaa431f045b2c21875967a5c8e75109c96bd1dd8e341995fd884512a5d403c92cc38f81c91c0c3cca631d218917075ac2e80ac11906db182341315c8adef2a4efe194fe9056d726f08d3dd8933d8a30b3a24dce27d1d9b24be07c914742a9cb61e0f778fe76cc73ae3547796bf51cb344810057041bf3470e46d76263fa1d441f3eb241b004d0e950ffaf1af134be808a29d7e4d32a727dac30da998143e27a829ae4432a43dc6acd3e89c53a6fa86e67e2ca490e2369c126b703ac0f3827f89eaa09c22044433b9485ac675d95eb2a02896b72ffeb49032f5b0999dccfa52cabb17d2eb23165cce405e470b5f356fe8b80c438e4719893519cc9e062937797237f22f2bdf1519a1dd71c09e6cff2b87284cdf123ed2888a9942ca59a9b35e0c3e57419f4e3b7664c7f1f5a51ada18c338c6b49b640013a440dd02d8d046c8b524bbb886d9b9d507b0ae5982955304ccfed11806d01399f690dee7c51eb9c19ce35377770bbd3c6c05a0a673104899ee1bfe6a931330a4a20f9bdf6c995a8f20f605cfd03fccd00fe34302ae1c9187b6d53c86a2fdaf20edf3a6fe62f454a8d66389723ab1583b37685cc6e86e1945f19ef77e4ca6fdee31b87dd9c344d59077997b97468e2ca36b8556c94458d8035017cf674659c8c4df70aabbc5a508349d104b38dc86352f36317e8c4e94ea9f3064b70de6550afa4ff5605f34a22699c68db39e270547424008efc53d2b27f23545c62fbe7e05c1e6d4ac8533d20088eba8c39fbc1120e121650439b7fc18bbb72f72772fe79145036a0856235e0d1590086c41c846b79a06cb73bd440f6dd02ca76ef88fa0c072bfb11c4404c975436aea90112dc7acbc3ee7acb48f8906e90783b19b4d463d72b98538c24a0e1cec18980fc73381a734cabace28ffd4811e36833d3c974310d417709b427e948aba6f8c7d9077d4661dffc698a7959c969b2a2bd358a14e96387aa71566fece2b1a01ecc257c206f997e7134416abfbc100f9803eb77af339b9d5b7ea6c1dbc9b14a21e4fa8ba535a17f12e84832023d54e21dd6649d3922b35479936c674b94109f756e3ede3cd722ded2768cf8a06a859c6961162e3f9476b3065521dfe528befe9cc7f4587c677c383f41f47229f2a1e5709723e390b3041424d086bbc834c4a1c02d12751ad369ddf51559be1d3e424260c4886f95799442a5d49d183a5a45f9ea15864155cd2acb821217849ae569ce71046b5a98ec094fcad3b2156c6a08373770b2d6f851dda96c616b0e4e389e3593ec17fd18341f7f5952a2dd727f82337888ec70bc064ec857bbf46e883fa998a7f211ea1a341e70d1a08b2c35f22f870d704e351d124a8481fb9c60daaea5434eaad181ac78a6c8fee589b8f626680f28e2fec33b8443301411a3eaeeaa1e675591a4a74562b91fc15acf85e6ecc5a5c25287e721f48b840acd38e74db5754383e4bdc3b0d705095cf5aae9814169c1feb013e41f15399a1b881af3cf3148302106092a864886f70d01091431141e120074006500730074002d006f006e006c0079302306092a864886f70d01091531160414b5d18d131df9b612c6dfbcd76ad205b68072a42a30313021300906052b0e03021a05000414aeaec5e2d969812536c1dae4605c8e50474020db040883cb2809190ba16a02020800";
++    static KeyStore anchors() throws Exception {KeyStore keys=KeyStore.getInstance(KeyStore.getDefaultType());keys.load(null,null);keys.setCertificateEntry("fixture",CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(hex(ROOT))));return keys;}
++    static SSLContext serverContext(String bytes) throws Exception {KeyStore keys=KeyStore.getInstance("PKCS12");keys.load(new ByteArrayInputStream(hex(bytes)),"test-only".toCharArray());KeyManagerFactory factory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());factory.init(keys,"test-only".toCharArray());SSLContext context=SSLContext.getInstance("TLS");context.init(factory.getKeyManagers(),null,null);return context;}
++    static class Peer implements AutoCloseable {
++        final ServerSocket listener=new ServerSocket(0,1,InetAddress.getByName("127.0.0.1"));
++        final SSLContext control,data;final ExecutorService worker=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"fixture-ftps");t.setDaemon(true);return t;});final Future<?> future;
++        volatile boolean dataRequested;
++        Peer(boolean badControl,boolean badData) throws Exception {control=serverContext(badControl?WRONG:VALID);data=serverContext(badData?WRONG:VALID);future=worker.submit(()->serve());}
++        void serve(){
++            try(Socket plain=listener.accept()){
++                plain.setSoTimeout(3000);BufferedReader first=new BufferedReader(new InputStreamReader(plain.getInputStream(),StandardCharsets.US_ASCII));Writer greeting=new OutputStreamWriter(plain.getOutputStream(),StandardCharsets.US_ASCII);send(greeting,"220 fixture");if(!"AUTH TLS".equals(first.readLine()))throw new IOException("AUTH expected");send(greeting,"234 continue");
++                try(SSLSocket tls=(SSLSocket)control.getSocketFactory().createSocket(plain,"127.0.0.1",plain.getPort(),true)){
++                    tls.setUseClientMode(false);tls.setSoTimeout(3000);tls.startHandshake();BufferedReader input=new BufferedReader(new InputStreamReader(tls.getInputStream(),StandardCharsets.US_ASCII));Writer output=new OutputStreamWriter(tls.getOutputStream(),StandardCharsets.US_ASCII);
++                    SSLServerSocket passive=null;
++                    try{for(String line;(line=input.readLine())!=null;){
++                        if(line.startsWith("PASV")){passive=(SSLServerSocket)data.getServerSocketFactory().createServerSocket(0,1,InetAddress.getByName("127.0.0.1"));passive.setSoTimeout(3000);int p=passive.getLocalPort();send(output,"227 passive (127,0,0,1,"+(p/256)+","+(p%256)+")");}
++                        else if(line.startsWith("RETR")){dataRequested=true;send(output,"150 data");try(SSLSocket stream=(SSLSocket)passive.accept()){stream.setSoTimeout(3000);stream.startHandshake();stream.getOutputStream().write("fixture media".getBytes(StandardCharsets.US_ASCII));stream.getOutputStream().flush();}send(output,"226 done");}
++                        else if(line.startsWith("QUIT")){send(output,"221 bye");break;}
++                        else send(output,"200 accepted");
++                    }}finally{if(passive!=null)passive.close();}
++                }
++            }catch(SSLException|EOFException expectedPeerRejection){}catch(IOException failure){if(!listener.isClosed())throw new UncheckedIOException(failure);}
++        }
++        static void send(Writer output,String line) throws IOException {output.write(line+"\r\n");output.flush();}
++        public void close() throws Exception {listener.close();try{future.get(8,TimeUnit.SECONDS);}finally{worker.shutdownNow();}}
++    }
++    static void connect(FTPSClient client,Peer server) throws Exception {client.setConnectTimeout(3000);client.setDefaultTimeout(3000);client.connect("127.0.0.1",server.listener.getLocalPort());client.execPBSZ(0);client.execPROT("P");client.enterLocalPassiveMode();}
++    @Test public void legacyDefaultsAcceptPrivateCaAndWrongHost() throws Exception {try(Peer server=new Peer(true,true)){FTPSClient client=new FTPSClient("TLS",false);try{connect(client,server);try(InputStream in=client.retrieveFileStream("/fixture")){assertNotNull(in);while(in.read()!=-1){} }assertTrue(client.completePendingCommand());assertTrue(server.dataRequested);}finally{client.disconnect();}}}
++    @Test public void trustedControlAndDataTransfer() throws Exception {try(Peer server=new Peer(false,false)){FTPSClient client=FtpsTlsPolicy.newClient(anchors());try{connect(client,server);try(InputStream in=client.retrieveFileStream("/fixture")){assertNotNull(in);ByteArrayOutputStream bytes=new ByteArrayOutputStream();byte[] buffer=new byte[32];for(int n;(n=in.read(buffer))!=-1;)bytes.write(buffer,0,n);assertEquals("fixture media",new String(bytes.toByteArray(),StandardCharsets.US_ASCII));}assertTrue(client.completePendingCommand());}finally{client.disconnect();}}}
++    @Test public void platformTrustRejectsPrivateCaBeforeLogin() throws Exception {try(Peer server=new Peer(false,false)){FTPSClient client=FtpsTlsPolicy.newClient();try{assertThrows(IOException.class,()->connect(client,server));assertFalse(server.dataRequested);}finally{client.disconnect();}}}
++    @Test public void trustedCaWrongControlHostnameRejected() throws Exception {try(Peer server=new Peer(true,false)){FTPSClient client=FtpsTlsPolicy.newClient(anchors());try{assertThrows(IOException.class,()->connect(client,server));assertFalse(server.dataRequested);}finally{client.disconnect();}}}
++    @Test public void trustedCaWrongDataHostnameRejected() throws Exception {try(Peer server=new Peer(false,true)){FTPSClient client=FtpsTlsPolicy.newClient(anchors());try{connect(client,server);assertThrows(IOException.class,()->client.retrieveFileStream("/fixture"));assertTrue(server.dataRequested);}finally{client.disconnect();}}}
 +}

@@ -31,8 +31,9 @@ def main():
     uses_sdk=actual_manifest.find('uses-sdk')
     if uses_sdk is None or uses_sdk.get('{http://schemas.android.com/apk/res/android}minSdkVersion')!='23':raise ValueError('API23 minimum must be preserved')
     api23=json.loads((video/'docs/0.146/ANDROID23_TRANSPORT_TRUST.json').read_text())
-    if api23['statistics']!={'tests':23,'failures':0,'errors':0,'skipped':0} or api23['jetty_lock_sha256']!=hashlib.sha256((video/'.github/build/jetty-supernova146.lock.json').read_bytes()).hexdigest() or api23['medialib_patch_sha256']!=hashlib.sha256((video/'.github/build/medialib-supernova146-upstream.patch').read_bytes()).hexdigest():raise ValueError('Matching actual Android23 transport proof required')
-    evidence['actual_android23_transport_and_trust_tests']=23
+    if api23['statistics']!={'tests':28,'failures':0,'errors':0,'skipped':0} or api23['jetty_lock_sha256']!=hashlib.sha256((video/'.github/build/jetty-supernova146.lock.json').read_bytes()).hexdigest() or api23['medialib_patch_sha256']!=hashlib.sha256((video/'.github/build/medialib-supernova146-upstream.patch').read_bytes()).hexdigest():raise ValueError('Matching actual Android23 transport proof required')
+    if api23.get('filecore_patch_sha256')!=hashlib.sha256((video/'.github/build/filecorelibrary-supernova146-upstream.patch').read_bytes()).hexdigest():raise ValueError('Matching actual Android23 FTPS proof required')
+    evidence['actual_android23_transport_and_trust_tests']=28
     evidence['native_security_artifact_run']=40843685431
     signature=subprocess.run([args.apksigner,'verify',str(args.apk)],capture_output=True,text=True)
     if signature.returncode == 0:
@@ -52,7 +53,7 @@ def main():
     if not required.issubset(present):raise ValueError('Complete 0.146 regression classes are required')
     evidence['required_0146_test_classes']=sorted(required)
     evidence['library_suites']={}
-    for module,minimum in [('MediaLib',200),('FileCoreLibrary',99)]:
+    for module,minimum in [('MediaLib',200),('FileCoreLibrary',104)]:
         reports=[ET.parse(file).getroot() for file in (args.root.resolve()/module/'build/test-results/testReleaseUnitTest').glob('TEST-*.xml')]
         stats={name:sum(int(report.get(attribute,0)) for report in reports) for name,attribute in [('tests','tests'),('failures','failures'),('errors','errors'),('skipped','skipped')]}
         stats['skipped_cases']=[report.get('name')+'.'+case.get('name') for report in reports for case in report.findall('testcase') if case.find('skipped') is not None]
@@ -61,6 +62,10 @@ def main():
             'FileCoreLibrary':{'com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest.compareMinimalPropertiesWithAllprop','com.archos.filecorelibrary.SpeedTestTransferTest.compareTransferRates'},
         }
         if stats['tests']<minimum or stats['failures'] or stats['errors'] or stats['skipped']!=2 or set(stats['skipped_cases'])!=allowed[module]:raise ValueError('Complete library suite required: '+module)
+        if module=='FileCoreLibrary':
+            expected={'legacyDefaultsAcceptPrivateCaAndWrongHost','trustedControlAndDataTransfer','platformTrustRejectsPrivateCaBeforeLogin','trustedCaWrongControlHostnameRejected','trustedCaWrongDataHostnameRejected'}
+            cases={case.get('name') for report in reports if report.get('name')=='com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest' for case in report.findall('testcase')}
+            if cases!=expected:raise ValueError('Complete FTPS TLS regression cases required')
         evidence['library_suites'][module]=stats
     issues=ET.parse(build/'reports/lint-results-noamazonRelease.xml').getroot().findall('issue')
     evidence['lint']={'errors':sum(issue.get('severity') in ['Error','Fatal'] for issue in issues),'warnings':sum(issue.get('severity')=='Warning' for issue in issues)}
