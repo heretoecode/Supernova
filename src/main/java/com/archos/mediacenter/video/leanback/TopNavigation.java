@@ -67,7 +67,9 @@ public final class TopNavigation extends LinearLayout {
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
             if(index==6){tab.setMaxWidth(dp(140));tab.setEllipsize(android.text.TextUtils.TruncateAt.END);}
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
-            tab.setPadding(dp(7), dp(6), dp(7), dp(6));
+            // Compact gutters keep complete icon targets inside the 720p rail after pixel rounding.
+            int horizontal=TvLayout.width(c)<780?6:7;
+            tab.setPadding(dp(horizontal), dp(6), dp(horizontal), dp(6));
             styleTab(tab);
             tab.setOnClickListener(v -> {if(index==6&&getContext() instanceof CustomLibraryActivity)return;requestBrowserExit(content, () -> {
                 if(index==6){if(getContext() instanceof CustomLibraryActivity)return;Runnable open=()->getContext().startActivity(new android.content.Intent(getContext(),CustomLibraryActivity.class));open.run();return;}
