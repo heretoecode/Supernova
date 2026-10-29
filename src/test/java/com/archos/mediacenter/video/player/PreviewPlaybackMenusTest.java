@@ -23,10 +23,14 @@ public class PreviewPlaybackMenusTest {
     TVMenuAdapter source(String title,TVMenu menu){TVCardView card=mock(TVCardView.class);when(card.previewTitle()).thenReturn(title);when(card.previewMenu()).thenReturn(menu);TVMenuAdapter source=mock(TVMenuAdapter.class);when(source.previewCards()).thenReturn(Collections.singletonList(card));return source;}
     Dialog dialog(){return org.robolectric.shadows.ShadowDialog.getLatestDialog();}
     TextView option(String label){return dialog().getWindow().getDecorView().findViewWithTag("playback.option:"+label);}
-    @Test public void exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries(){
+    @Test public void exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries() throws Exception {
         PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);View root=dialog().getWindow().getDecorView();
         for(int i=0;i<4;i++){TextView tab=root.findViewWithTag("playback.tab:"+i);assertEquals(new String[]{"Audio","Subtitles","Video","More"}[i],tab.getText());assertTrue(tab.getParent() instanceof LinearLayout);assertEquals(LinearLayout.HORIZONTAL,((LinearLayout)tab.getParent()).getOrientation());tab.requestFocus();assertTrue(tab.isSelected());assertNull(option("Technical Information"));assertNull(option("Report a Problem"));}
         assertTrue(PreviewPlaybackMenus.back());assertFalse(PreviewPlaybackMenus.isShowing());assertTrue(opener.hasFocus());
+        for(String fieldName:new String[]{"current","owner","adapter","origin","tabs","rows","trackRows","adjustmentRows","content","scroll","restoreParent","backAction","nested","liveCard"}){
+            java.lang.reflect.Field field=PreviewPlaybackMenus.class.getDeclaredField(fieldName);field.setAccessible(true);
+            assertNull("Closed playback settings must release Activity-owned "+fieldName,field.get(null));
+        }
     }
     @Test public void trackChangeRebuildsChecksAndKeepsSameWindow(){
         TVMenu menu=new TVMenu(host);TVMenuItem english=menu.createAndAddTVMenuItem("English",true,true),french=menu.createAndAddTVMenuItem("French",true,false);
