@@ -23,7 +23,11 @@ def main():
  for name in ORDER:
   prefix=prefixes[name];prefix.mkdir(parents=True,exist_ok=True)
   s=work/(name+'-source');build=work/(name+'-build');build.mkdir(exist_ok=True)
-  if not s.exists():shutil.copytree(src/name,s,ignore=shutil.ignore_patterns('.git'))
+  if not s.exists():
+   shutil.copytree(src/name,s,ignore=shutil.ignore_patterns('.git'))
+   if name in ('freetype','zlib'):
+    patch=Path(__file__).resolve().parent/(name+'-supernova146-security.patch')
+    subprocess.run(['patch','--forward','--batch','--fuzz=0','-p1','-i',str(patch)],cwd=s,check=True)
   if name=='freetype' and not (s/'subprojects/dlg/include/dlg/dlg.h').exists():
    shutil.copytree(src/'dlg',s/'subprojects/dlg',dirs_exist_ok=True)
   log=work/(name+'.log')
@@ -43,7 +47,7 @@ def main():
      else:run(['autoreconf','-fiv','-Wno-obsolete'],s)
     if name=='zlib':flags=['--prefix='+str(prefix),'--libdir='+str(prefix/'lib'/a.abi),'--static']
     if name=='freetype':flags+=['--without-harfbuzz','--with-png=yes','--with-zlib=yes','--without-bzip2','--without-brotli']
-    if name=='libxml2':flags+=['--without-python','--without-icu','--without-iconv','--with-zlib']
+    if name=='libxml2':flags+=['--without-python','--without-icu','--without-iconv','--with-zlib','--without-html','--without-xinclude','--without-xptr','--without-output','--without-writer','--without-c14n']
     if name=='libass':
      flags+=['--enable-fontconfig','--enable-libunibreak']+(['--disable-asm'] if a.abi=='x86' else [])
      env['LIBUNIBREAK_CFLAGS']='-I'+str(prefixes['libunibreak']/'include');env['LIBUNIBREAK_LIBS']='-L'+str(prefixes['libunibreak']/'lib'/a.abi)+' -lunibreak'

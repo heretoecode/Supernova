@@ -985,7 +985,7 @@
     <string name="media_library_export_in_progress">Exporting media library, credentials, and shortcuts</string>
     <string name="media_library_import_in_progress">Importing media library, credentials, and shortcuts</string>
     <string name="media_library_export_success">Media library, credentials, and shortcuts exported successfully to:\n%s</string>
-    <string name="media_library_import_success">Media library, credentials, and shortcuts imported successfully. Restarting app...</string>
+    <string name="media_library_import_success">Media library, credentials, and shortcuts imported successfully. Restarting app&#8230;</string>
     <string name="media_library_import_error">Error importing media library</string>
     <string name="media_library_export_error">Error exporting media library</string>
     <string name="media_library_export_dir_not_found">Export directory not found</string>
@@ -1032,7 +1032,7 @@
     <string name="supported_refresh_rates">Supported refresh rates:</string>
 
     <string name="upgrade_info">Upgrade information</string>
-    <string name="v5_v6_upgrade_info">WARNING: this Nova major update requires to rescan all video collection for multimedia information re-aquisition.
+    <string name="v5_v6_upgrade_info">WARNING: this Nova major update requires to rescan all video collection for multimedia information re-acquisition.
         It is strongly advised to restart from a clean install to avoid problems. Please check FAQ for details.</string>
 
     <string name="external_player_service_title">External player playback</string>

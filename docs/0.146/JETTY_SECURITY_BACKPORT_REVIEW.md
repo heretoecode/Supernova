@@ -1,6 +1,6 @@
 # Jetty0.146 source remediation candidate
 
-The candidate replaces all seven9.2.30 modules with full-module rebuilds from Jetty9.4.x commit `89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b`, based on public9.4.58, plus the explicit locked patch. No duplicate-class overlay, TLS bypass, API-floor increase or advisory suppression is used. The official upstream coordinate/version remains9.4.58 for scanner visibility. `META-INF/SUPERNOVA-BACKPORT.json` records the actual source and patch. The exclusive Gradle repository prevents accidental resolution of vanilla9.4.58 jars.
+The candidate replaces all seven9.2.30 modules with full-module rebuilds from Jetty9.4.x commit `89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b`, based on public9.4.58, plus the explicit locked patch. No duplicate-class overlay, TLS bypass, API-floor increase or advisory suppression is used. The official upstream coordinate/version remains9.4.58 for scanner visibility. `META-INF/SUPERNOVA-BACKPORT/jetty-<module>.json` records the actual source and patch. The exclusive Gradle repository prevents accidental resolution of vanilla9.4.58 jars.
 
 Fresh OSV queries of all seven9.4.58 coordinates no longer report eight of the nine0.145 findings. The ninth, CVE2024-6763, and three newer findings remain on the unmodified version and are addressed in the candidate source below. OSV still reports those version findings: source backport status must accompany the SBOM rather than pretending the upstream coordinate is fixed.
 

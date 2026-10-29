@@ -125,12 +125,15 @@
     "acquire-supernova146-native.py": "27b8f2b83d698eb624710ada25ceed01efdfd6559215b71e86c8c1513516b6db",
     "build-supernova146-native-stack.py": "97daa9131a7cfd9ac2426c40dbc0596965fb5112368f41cf3b7d5a08ac4fd53f",
     "build-supernova146-openssl.py": "51e25f4713718d3a0fd1d19ac1306569caa41686c72d20036daa19f2d0e76041",
-    "build-supernova146-subtitles.py": "ceec059f5088385888697451edf9b9d0c5ffb693a0d4c7ab51f7e5331cf20699",
+    "build-supernova146-subtitles.py": "8abfdcd6ee31f27250aa92b4fe2aa4195d2595aee8963d327c42dca7b5d6ff57",
     "build-supernova146-codec-dependencies.py": "20eb2520770d5f5bda4e2880d50e644a40247d316fbbfe6b3c58415fb206ae55",
-    "build-supernova146-ffmpeg.py": "c75d404477f3e91acea0f8d5d79dd63f3a6f1c0f927f947d00fbb57fdb739ff6",
+    "build-supernova146-ffmpeg.py": "7b1d4a7d5b449e9aa8818a6be5ac81010bd4946fad7c75ab171aba4ffc2336de",
     "opus-supernova146-cmake.patch": "de9233ce58145527a473427097d897950d7ea08de8c2115bc59d348f0f46c019",
     "ffmpeg-supernova146-opus.patch": "2263725ab111a1b4a472f00c4ee22f0eb6ae295b84d34a92aed3be05eb2735d8",
     "ffmpeg-supernova146-atempo.patch": "cde2a563462060cf59d0f2c62de44664f9adc416957b939ea2c55bd37dc8d3d8",
-    "ffmpeg-supernova146-sofalizer.patch": "23c077087c9346260794d5cb98bec441144e414370b6d70fb008b46ba764eb4d"
+    "ffmpeg-supernova146-sofalizer.patch": "23c077087c9346260794d5cb98bec441144e414370b6d70fb008b46ba764eb4d",
+    "ffmpeg-supernova146-security.patch": "94a0df14870fc7803188997ff913622422e26265227f8e00c3b06950008411b4",
+    "freetype-supernova146-security.patch": "fe2af0c24e737f06b98c718b1958194587f8c6f6a97d6025023dd94cfd2dfce5",
+    "zlib-supernova146-security.patch": "4e69433578dfdb9044b399b7cfc8332fce66f6c001d4ab0dd276bd5408d0424d"
   }
 }

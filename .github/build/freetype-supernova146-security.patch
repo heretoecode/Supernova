@@ -1,0 +1,79 @@
+--- a/src/truetype/ttgxvar.c
++++ b/src/truetype/ttgxvar.c
+@@ -3453,9 +3453,7 @@
+     TT_Face       ttface = (TT_Face)face;
+     FT_Error      error  = FT_Err_Ok;
+     GX_Blend      blend;
+-    FT_MM_Var*    mmvar;
+-    FT_Var_Axis*  a;
+-    FT_UInt       i, nc;
++    FT_UInt       i;
+ 
+ 
+     if ( !ttface->blend )
+@@ -3474,30 +3472,29 @@
+         return error;
+     }
+ 
+-    nc = num_coords;
+     if ( num_coords > blend->num_axis )
+     {
+       FT_TRACE2(( "TT_Get_Var_Design:"
+                   " only using first %u of %u coordinates\n",
+                   blend->num_axis, num_coords ));
+-      nc = blend->num_axis;
+-    }
+-
+-    mmvar = blend->mmvar;
+-    a     = mmvar->axis;
++
++      FT_ARRAY_ZERO( coords + blend->num_axis, num_coords - blend->num_axis );
++      num_coords = blend->num_axis;
++    }
++
+     if ( ttface->doblend )
+     {
+-      for ( i = 0; i < nc; i++, a++ )
++      for ( i = 0; i < num_coords; i++ )
+         coords[i] = blend->coords[i];
+     }
+     else
+     {
+-      for ( i = 0; i < nc; i++, a++ )
++      FT_Var_Axis*  a = blend->mmvar->axis;
++
++
++      for ( i = 0; i < num_coords; i++, a++ )
+         coords[i] = a->def;
+     }
+-
+-    for ( ; i < num_coords; i++, a++ )
+-      coords[i] = a->def;
+ 
+     return FT_Err_Ok;
+   }
+--- a/src/cid/cidload.c
++++ b/src/cid/cidload.c
+@@ -517,6 +517,7 @@
+     CID_Subrs      subr;
+     FT_UInt        max_offsets = 0;
+     FT_ULong*      offsets = NULL;
++    FT_ULong       cum_len = 0;
+     PSAux_Service  psaux = (PSAux_Service)face->psaux;
+ 
+ 
+@@ -584,6 +585,14 @@
+       /* now, compute the size of subrs charstrings, */
+       /* allocate, and read them                     */
+       data_len = offsets[num_subrs] - offsets[0];
++      cum_len += data_len;
++
++      if ( cum_len / 4 > stream->size )
++      {
++        FT_ERROR(( "cid_read_subrs: excessive overlaps\n" ));
++        error = FT_THROW( Invalid_File_Format );
++        goto Fail;
++      }
+ 
+       if ( FT_QNEW_ARRAY( subr->code, num_subrs + 1 ) ||
+            FT_QALLOC( subr->code[0], data_len )       )

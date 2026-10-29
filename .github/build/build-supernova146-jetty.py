@@ -66,7 +66,7 @@ def main():
   with zipfile.ZipFile(inputs/filename) as archive:
    for path in archive.namelist():
     if not path.endswith('/') and not path.endswith('.class') and not path.upper().endswith(('.SF','.RSA','.DSA')):entries[path]=archive.read(path)
-  entries['META-INF/SUPERNOVA-BACKPORT.json']=(json.dumps({'upstream_coordinate':'org.eclipse.jetty:'+name+':'+version,'source_commit':lock['source_commit'],'patch_sha256':sha(patch),'android_api_floor':23},sort_keys=True)+'\n').encode()
+  entries['META-INF/SUPERNOVA-BACKPORT/'+name+'.json']=(json.dumps({'upstream_coordinate':'org.eclipse.jetty:'+name+':'+version,'source_commit':lock['source_commit'],'patch_sha256':sha(patch),'android_api_floor':23},sort_keys=True)+'\n').encode()
   with zipfile.ZipFile(dest,'w',zipfile.ZIP_DEFLATED) as archive:
    for path,data in sorted(entries.items()):
     info=zipfile.ZipInfo(path,(2026,10,28,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;info.external_attr=0o644<<16;archive.writestr(info,data)

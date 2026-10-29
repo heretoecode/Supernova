@@ -10,8 +10,8 @@ def main():
  sources,ndk,work,pre=[v.resolve() for v in (a.sources,a.ndk,a.workspace,a.prebuilt)];work.mkdir(parents=True,exist_ok=True);source=work/'source';here=Path(__file__).resolve().parent
  if not source.exists():
   shutil.copytree(sources/'ffmpeg',source)
-  for name in ['opus','atempo','sofalizer']:
-   patch=here/('ffmpeg-supernova146-'+name+'.patch');subprocess.run(['patch','--batch','--fuzz=0','-p1','-i',str(patch)],cwd=source,check=True)
+  for name in ['opus','atempo','sofalizer','security']:
+   patch=here/('ffmpeg-supernova146-'+name+'.patch');subprocess.run(['patch','--forward','--batch','--fuzz=0','-p1','-i',str(patch)],cwd=source,check=True)
  # Reject the upstream TLS-verification-disabling patch, including nested opens.
  tls=(source/'libavformat/tls.h').read_text()
  for key in ['tls_verify','verify']:
