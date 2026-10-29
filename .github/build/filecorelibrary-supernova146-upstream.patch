@@ -2307,10 +2307,10 @@ index 0000000..8d935f2
 +}
 diff --git a/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java b/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java
 new file mode 100644
-index 0000000..6a509dd
+index 0000000..34a63f6
 --- /dev/null
 +++ b/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,58 @@
 +package com.archos.filecorelibrary.ftp;
 +
 +import java.io.IOException;
@@ -2362,7 +2362,8 @@ index 0000000..6a509dd
 +        };
 +        try { client.setTrustManager(TrustManagerUtils.getDefaultTrustManager(anchors)); }
 +        catch (GeneralSecurityException failure) { throw new IOException("FTPS trust initialization failed", failure); }
-+        client.setEndpointCheckingEnabled(true);
++        // Android23 lacks SSLParameters.setEndpointIdentificationAlgorithm.
++        // FTPSClient invokes this strict verifier after the control TLS handshake.
 +        client.setHostnameVerifier(HOSTS);
 +        return client;
 +    }
