@@ -33,6 +33,7 @@ public class Network142Test {
   if(name.equals("cloud_services"))PreviewPagesTest.findText(browser,"Put.io · Account and Files").performClick();
   if(name.equals("library_health"))PreviewPagesTest.findText(browser,"Library Health").performClick();layout();
  }
+ private View exactText(View view,String text){if(view instanceof TextView&&text.contentEquals(((TextView)view).getText()))return view;if(view instanceof ViewGroup)for(int n=0;n<((ViewGroup)view).getChildCount();n++){View found=exactText(((ViewGroup)view).getChildAt(n),text);if(found!=null)return found;}return null;}
  private void key(int code){browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,code));layout();}
  @Test public void sixCardsHaveApprovedOrderAndExplicitActivation()throws Exception{
   String[] expected={"Local Storage","Network Locations","Add Connection","Manage Connections","Network Scanning","Advanced Options"};
@@ -82,7 +83,7 @@ public class Network142Test {
  }
  @Test public void connectionConnectActionScrollsFullyIntoViewWithRemote()throws Exception{
   select("network_shares");PreviewPagesTest.findText(browser,"Add Network Source").performClick();layout();PreviewPagesTest.findText(browser,"WebDAV HTTPS").performClick();layout();
-  View connect=PreviewPagesTest.findText(browser,"Connect");assertNotNull(connect);StringBuilder trace=new StringBuilder();for(int n=0;n<16&&!connect.hasFocus();n++){View focus=browser.findFocus();trace.append(focus instanceof TextView?((TextView)focus).getText():focus==null?"null":focus.getClass().getSimpleName()).append(" -> ");key(KeyEvent.KEYCODE_DPAD_DOWN);}PreviewPagesTest.capture(browser,"0142-form-connect-focus");assertTrue("D-pad reaches Connect below form controls: "+trace,connect.hasFocus());android.graphics.Rect visible=new android.graphics.Rect();assertTrue(connect.getGlobalVisibleRect(visible));assertEquals("Focused action is fully revealed",connect.getHeight(),visible.height());
+  View connect=exactText(browser,"Connect");assertNotNull(connect);StringBuilder trace=new StringBuilder();for(int n=0;n<16&&!connect.hasFocus();n++){View focus=browser.findFocus();trace.append(focus instanceof TextView?((TextView)focus).getText():focus==null?"null":focus.getClass().getSimpleName()).append(" -> ");key(KeyEvent.KEYCODE_DPAD_DOWN);}PreviewPagesTest.capture(browser,"0142-form-connect-focus");assertTrue("D-pad reaches Connect below form controls: "+trace,connect.hasFocus());android.graphics.Rect visible=new android.graphics.Rect();assertTrue(connect.getGlobalVisibleRect(visible));assertEquals("Focused action is fully revealed",connect.getHeight(),visible.height());
  }
  @Test public void navigationEntryPreservesTheOpenFolder(){
   select("local_storage");Uri deep=Uri.parse("file:///fixture-usb/Movies/Series");browser.open(deep);layout();assertTrue(browser.focusOverview());layout();assertEquals(deep,browser.location());
