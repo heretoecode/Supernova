@@ -171,7 +171,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         detailsBody.addView(logo,new LayoutParams(dp(116),dp(116)));
         TextView wordmark=text("SUPERNOVA",28);wordmark.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));wordmark.setGravity(Gravity.CENTER);
         detailsBody.addView(wordmark,new LayoutParams(-1,-2));
-        TextView info=text("Version "+BuildConfig.VERSION_NAME+"\n\nBased on Nova Video Player 6.4.64\n\nApplication: "+BuildConfig.APPLICATION_ID+"\nBuilt (UTC): "+BuildConfig.PREVIEW_BUILD_UTC,16);
+        TextView info=text("Version "+BuildConfig.VERSION_NAME+"\n\nBased on Nova Video Player 6.6.2\n\nApplication: "+BuildConfig.APPLICATION_ID+"\nBuilt (UTC): "+BuildConfig.PREVIEW_BUILD_UTC,16);
         info.setPadding(0,dp(20),0,0);info.setGravity(Gravity.START);info.setFocusable(true);
         detailsBody.addView(info,new LayoutParams(-2,-2));
         wordmark.setFocusable(true);wordmark.setOnKeyListener((v,key,event)->{if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_DPAD_LEFT){selectedNavigation.requestFocus();return true;}return false;});
@@ -245,7 +245,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         }
     }
     private void technical(){
-        row("Application & Build",()->showDetails("Application & Build","Version: "+BuildConfig.VERSION_NAME+"\nVersion code: "+BuildConfig.VERSION_CODE+"\nApplication ID: "+BuildConfig.APPLICATION_ID+"\nBuild type: "+BuildConfig.BUILD_TYPE+"\nSource: "+BuildConfig.PREVIEW_GIT_SHA+"\nBuilt (UTC): "+BuildConfig.PREVIEW_BUILD_UTC+"\nUpstream: Nova Video Player 6.4.64",null,null),null);
+        row("Application & Build",()->showDetails("Application & Build","Version: "+BuildConfig.VERSION_NAME+"\nVersion code: "+BuildConfig.VERSION_CODE+"\nApplication ID: "+BuildConfig.APPLICATION_ID+"\nBuild type: "+BuildConfig.BUILD_TYPE+"\nSource: "+BuildConfig.PREVIEW_GIT_SHA+"\nBuilt (UTC): "+BuildConfig.PREVIEW_BUILD_UTC+"\nUpstream: Nova Video Player 6.6.2",null,null),null);
         row("Device & Android TV",()->showDetails("Device & Android TV","Manufacturer: "+Build.MANUFACTURER+"\nModel: "+Build.MODEL+"\nAndroid: "+Build.VERSION.RELEASE+"\nAPI: "+Build.VERSION.SDK_INT+"\nDevice ABIs: "+android.text.TextUtils.join(", ",Build.SUPPORTED_ABIS),null,null),null);
         row("Playback & Media Capabilities",()->{
             Set<String> types=new java.util.TreeSet<>();try{for(android.media.MediaCodecInfo codec:new android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS).getCodecInfos())if(!codec.isEncoder())java.util.Collections.addAll(types,codec.getSupportedTypes());}catch(RuntimeException unavailable){types.clear();}
