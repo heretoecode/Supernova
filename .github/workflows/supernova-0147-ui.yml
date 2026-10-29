@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [codex/supernova-0.147-implementation-2026-10-29]
-    paths: [.github/workflows/supernova-0147-ui.yml]
+    paths: [.github/workflows/supernova-0147-ui.yml, 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0147*', .github/build/record-supernova-0147-conformance.py]
 permissions:
   contents: read
   actions: read

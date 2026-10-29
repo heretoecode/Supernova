@@ -108,7 +108,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(current!=null&&suppliedDock==null)sectionLocations.put(landingSelection,current);
         landingSelection=index;section=index+1;detailParent=null;centreAnchor=null;workspaceMode(false);
         switch(index){case 0:if(sectionLocations.containsKey(index)){open(sectionLocations.get(index));break;}localStorage();centreAction("All Files",this::allLocations);break;
-            case 1:networkShares();centreAction("Put.io · Account and Files",this::putio);break;
+            case 1:if(sectionLocations.containsKey(index)){open(sectionLocations.get(index));break;}networkShares();centreAction("Put.io · Account and Files",this::putio);break;
             case 2:beginConnection();break;
             case 3:networkShares();centreAction("Put.io · Account and Library Associations",this::putio);break;
             case 4:scanControls();break;

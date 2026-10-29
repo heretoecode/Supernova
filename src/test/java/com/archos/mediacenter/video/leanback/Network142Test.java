@@ -47,7 +47,7 @@ public class Network142Test {
  @Test public void leftAndRightPreserveDeepFolder()throws Exception{
   select("local_storage");Uri deep=Uri.parse("file:///fixture-usb/Movies/Collection");browser.open(deep);layout();rail("local_storage").requestFocus();key(KeyEvent.KEYCODE_DPAD_RIGHT);assertEquals(deep,browser.location());key(KeyEvent.KEYCODE_DPAD_LEFT);assertEquals(deep,browser.location());
  }
- @Test public void switchingSectionsRestoresLastFolder(){select("local_storage");Uri deep=Uri.parse("file:///fixture-usb/Movies");browser.open(deep);select("network_shares");select("local_storage");assertEquals(deep,browser.location());}
+ @Test public void switchingSectionsRestoresLastFolder(){select("local_storage");Uri deep=Uri.parse("file:///fixture-usb/Movies");browser.open(deep);select("network_shares");Uri remote=Uri.parse("smb://fixture/Movies/Collection");browser.open(remote);select("local_storage");assertEquals(deep,browser.location());select("network_shares");assertEquals(remote,browser.location());}
  @Test public void everySupportedRecoveryAliasKeepsHostPortPath(){
   for(String scheme:new String[]{"smb","smbj","webdav","webdavs","sftp","sshj","ftp","ftps"}){
    ReflectionHelpers.callInstanceMethod(browser,"launchCredentials",ReflectionHelpers.ClassParameter.from(Uri.class,Uri.parse(scheme+"://NAS:123/Shows/Season%201")));layout();String[] fields=ReflectionHelpers.getField(browser,"connection");assertEquals(scheme,"NAS",fields[0]);assertEquals("123",fields[1]);assertEquals("/Shows/Season 1",fields[2]);assertNotNull(PreviewPagesTest.findText(browser,"Password: "));if(scheme.equals("webdav"))assertNotNull(PreviewPagesTest.findText(browser,"WebDAV HTTP does not encrypt"));
