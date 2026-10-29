@@ -32,7 +32,21 @@
         "Jetty/jUPnP transport uses an explicit source backport and API23 NIO support; all23 Android23 transport/trust cases pass. Version findings remain visible with source-level dispositions.",
         "Physical Shield/HDMI routes, real NAS/provider interoperability, GL subtitle visuals and an installed signed upgrade require device QA. The retired experimental Sonic compressed-audio codec is distinct from supported Sonic PCM speed."
       ],
-      "source_sha": "938885ac2a84a5efecb1674b3e9f1032a56740ed"
+      "source_sha": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+      "evidence": "docs/0.146/SIGNED_ARTIFACT_VERIFICATION.json",
+      "recorded_binary_verification": "docs/0.146/INDEPENDENT_SIGNED_APK_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "4adc37c19d712e46f720dbcbdd8d2972a2384a10a68314f6c8a3c11b558daafc",
+      "artifact_id": 12906343972,
+      "run_id": 40896722823,
+      "apks": [
+        {
+          "sha256": "79829e5181d22d69400157b6da234c7327bfb4b7dfe36a4997a24db29dc86ca7",
+          "size": 95569591,
+          "url": "https://drive.google.com/file/d/100G08JITx7byXjN4BvfLSm2imB7FOXin/view?usp=drivesdk",
+          "filename": "Supernova_0.146.apk"
+        }
+      ]
     },
     {
       "version": "0.145",

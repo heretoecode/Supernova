@@ -35,6 +35,8 @@ jobs:
           python3 nova/Video/.github/build/prepare-supernova146-workspace.py --root nova
           python3 nova/Video/.github/build/package-supernova146-native.py --root nova --artifacts native-artifacts --workspace "$RUNNER_TEMP/native146-packaging" 2>&1 | tee native146-packaging.log
           python3 nova/Video/.github/build/build-supernova146-jetty.py --workspace nova/Video/build/supernova146-jetty
+      - name: Validate preserved release history and source contracts before compiling
+        run: python3 nova/Video/.github/build/verify-next-qa.py --root nova
       - name: Compile and test changed UI and playback contracts
         run: |
           set -euo pipefail
