@@ -873,8 +873,8 @@ androidx.asynclayoutinflater:asynclayoutinflater:1.0.0
 Archive SHA-256: f7eab60c57addd94bb06275832fe7600611beaaae1a1ec597c231956faf96c8b
 Licence: Apache-2.0
 
-androidx.browser:browser:1.9.0
-Archive SHA-256: b6aa2d575d27252233aee98fd93575e8327715f2ebd1dc14ad7ea4a7d2ec4592
+androidx.browser:browser:1.10.0
+Archive SHA-256: fb40d1ee5fd910c9d112200868a9534156a7a999abc28fbb3c6815a2e3ac5150
 Licence: Apache-2.0
 
 Archive META-INF/androidx/browser/browser/LICENSE.txt
@@ -1921,8 +1921,8 @@ androidx.coordinatorlayout:coordinatorlayout:1.1.0
 Archive SHA-256: 44a9e30abf56af1025c52a0af506fee9c4131aa55efda52f9fd9451211c5e8cb
 Licence: Apache-2.0
 
-androidx.core:core-ktx:1.19.0
-Archive SHA-256: db1ae24b15c36358ad46497d561b19c325642565432d56479ebe47ee3baa0d7e
+androidx.core:core-ktx:1.19.1
+Archive SHA-256: 9a3e2919e64026ad18b42bf9931e8fea90a6a70e95e13a26519841e926fe5913
 Licence: Apache-2.0
 
 Archive META-INF/androidx/core/core-ktx/LICENSE.txt
@@ -2439,8 +2439,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-androidx.core:core:1.19.0
-Archive SHA-256: 55445ad0ff025963929892569a0bfc6b4c68e60d8b7c965dcffba09048c36c8e
+androidx.core:core:1.19.1
+Archive SHA-256: 08108ea780205bd54603088a62a6dd5378f63bd25542674be24cd4cdb8191a09
 Licence: Apache-2.0
 
 Archive META-INF/androidx/core/core/LICENSE.txt
@@ -2698,8 +2698,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-androidx.core:core:1.19.0
-Archive SHA-256: 55445ad0ff025963929892569a0bfc6b4c68e60d8b7c965dcffba09048c36c8e
+androidx.core:core:1.19.1
+Archive SHA-256: 08108ea780205bd54603088a62a6dd5378f63bd25542674be24cd4cdb8191a09
 Licence: Apache-2.0
 
 androidx.cursoradapter:cursoradapter:1.0.0
@@ -3252,8 +3252,8 @@ androidx.exifinterface:exifinterface:1.0.0
 Archive SHA-256: ee48be10aab8f54efff4c14b77d11e10b9eeee4379d5ef6bf297a2923c55cc11
 Licence: Apache-2.0
 
-androidx.fragment:fragment-ktx:1.9.0
-Archive SHA-256: 824dc0f8c399a859bb8a3e181d5ee4ba6c4dee6f3154f2a1d8560a9cf191217d
+androidx.fragment:fragment-ktx:1.9.1
+Archive SHA-256: 83045658fc4cf0d4e3be235d7f249aee02ee847659003d663d1fdc887b22cbf4
 Licence: Apache-2.0
 
 Archive META-INF/androidx/fragment/fragment-ktx/LICENSE.txt
@@ -3511,8 +3511,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-androidx.fragment:fragment:1.9.0
-Archive SHA-256: 8e9070295de026efd015ef9cc6156caacd2509300fdf0bc9c7ccbc78c476ab4b
+androidx.fragment:fragment:1.9.1
+Archive SHA-256: 72f70815c0a4d502f15c57e5e6bc861e64c5338ea06de75aed83969b17a2a727
 Licence: Apache-2.0
 
 Archive META-INF/androidx/fragment/fragment/LICENSE.txt

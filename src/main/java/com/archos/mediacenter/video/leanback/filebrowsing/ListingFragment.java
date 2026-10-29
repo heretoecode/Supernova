@@ -825,6 +825,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     public void onListingFatalError(Exception e, ListingEngine.ErrorEnum errorCode) {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("browser_listing_failed","code",String.valueOf(errorCode));
         if(e!=null)com.archos.mediacenter.video.diagnostics.Diagnostics.error("browser_listing_exception",e);
+        if(previewSurface!=null){previewSurface.failure(errorCode);return;}
         mErrorMessage.setText(ListingEngine.getErrorStringResId(errorCode));
         mErrorMessage.setVisibility(View.VISIBLE);
         mActionButton.setVisibility(View.GONE);

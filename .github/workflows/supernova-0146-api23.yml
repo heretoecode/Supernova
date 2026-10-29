@@ -53,9 +53,14 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+          export ANDROID_AVD_HOME="$RUNNER_TEMP/supernova146-avd"
+          export ANDROID_USER_HOME="$RUNNER_TEMP/supernova146-android"
+          mkdir -p "$ANDROID_AVD_HOME" "$ANDROID_USER_HOME"
           sudo chmod 666 /dev/kvm
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'platform-tools' 'emulator' 'system-images;android-23;default;x86_64'
-          printf 'no\n' | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd --force --name supernova146-api23 --package 'system-images;android-23;default;x86_64'
+          printf 'no\n' | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd --force --name supernova146-api23 --path "$ANDROID_AVD_HOME/supernova146-api23.avd" --package 'system-images;android-23;default;x86_64'
+          "$ANDROID_HOME/emulator/emulator" -list-avds | tee avds.txt
+          grep -qx supernova146-api23 avds.txt
           "$ANDROID_HOME/emulator/emulator" -avd supernova146-api23 -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -accel on > emulator.log 2>&1 &
           emulator_pid=$!
           trap 'kill "$emulator_pid" || true' EXIT

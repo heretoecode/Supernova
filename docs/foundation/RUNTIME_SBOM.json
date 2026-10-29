@@ -135,11 +135,11 @@
       "legal_family": "AndroidX"
     },
     {
-      "coordinate": "androidx.browser:browser:1.9.0",
-      "filename": "browser-1.9.0.aar",
-      "sha256": "b6aa2d575d27252233aee98fd93575e8327715f2ebd1dc14ad7ea4a7d2ec4592",
+      "coordinate": "androidx.browser:browser:1.10.0",
+      "filename": "browser-1.10.0.aar",
+      "sha256": "fb40d1ee5fd910c9d112200868a9534156a7a999abc28fbb3c6815a2e3ac5150",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "49a0f19913eb6b5a8bca0017ad6379aad87cf0a03da897233dfe6380e48485d7",
+      "pom_sha256": "254a898df892f733d06524225039cb5e2324f07e5a0fe90a63ddaf42bff8d8c4",
       "declared_licences": [
         "The Apache Software License, Version 2.0"
       ],
@@ -241,11 +241,11 @@
       "legal_family": "AndroidX"
     },
     {
-      "coordinate": "androidx.core:core-ktx:1.19.0",
-      "filename": "core-ktx-1.19.0.aar",
-      "sha256": "db1ae24b15c36358ad46497d561b19c325642565432d56479ebe47ee3baa0d7e",
+      "coordinate": "androidx.core:core-ktx:1.19.1",
+      "filename": "core-ktx-1.19.1.aar",
+      "sha256": "9a3e2919e64026ad18b42bf9931e8fea90a6a70e95e13a26519841e926fe5913",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "b8fe1568a1cb462c99c660cebaf80348c2dd1881054be5d9659c1a2589cc3ba8",
+      "pom_sha256": "df7efd0c621fa87d23e02b4354fc40e82935ae3b746b5aa246cc74a84472a3ba",
       "declared_licences": [
         "The Apache Software License, Version 2.0"
       ],
@@ -273,11 +273,11 @@
       "legal_family": "AndroidX"
     },
     {
-      "coordinate": "androidx.core:core:1.19.0",
-      "filename": "core-1.19.0.aar",
-      "sha256": "55445ad0ff025963929892569a0bfc6b4c68e60d8b7c965dcffba09048c36c8e",
+      "coordinate": "androidx.core:core:1.19.1",
+      "filename": "core-1.19.1.aar",
+      "sha256": "08108ea780205bd54603088a62a6dd5378f63bd25542674be24cd4cdb8191a09",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "1a99fe690775ed0e84788d5895f4a55664479176737ca0986336319ecfce8538",
+      "pom_sha256": "71341cd4c4d8d3b50c890852bacd373d9ce319b5f9c05aa2bd7a5b5610f33d6b",
       "declared_licences": [
         "The Apache Software License, Version 2.0"
       ],
@@ -289,11 +289,11 @@
       "legal_family": "AndroidX"
     },
     {
-      "coordinate": "androidx.core:core:1.19.0",
-      "filename": "core-1.19.0.aar",
-      "sha256": "55445ad0ff025963929892569a0bfc6b4c68e60d8b7c965dcffba09048c36c8e",
+      "coordinate": "androidx.core:core:1.19.1",
+      "filename": "core-1.19.1.aar",
+      "sha256": "08108ea780205bd54603088a62a6dd5378f63bd25542674be24cd4cdb8191a09",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "1a99fe690775ed0e84788d5895f4a55664479176737ca0986336319ecfce8538",
+      "pom_sha256": "71341cd4c4d8d3b50c890852bacd373d9ce319b5f9c05aa2bd7a5b5610f33d6b",
       "declared_licences": [
         "The Apache Software License, Version 2.0"
       ],
@@ -451,11 +451,11 @@
       "legal_family": "AndroidX"
     },
     {
-      "coordinate": "androidx.fragment:fragment-ktx:1.9.0",
-      "filename": "fragment-ktx-1.9.0.aar",
-      "sha256": "824dc0f8c399a859bb8a3e181d5ee4ba6c4dee6f3154f2a1d8560a9cf191217d",
+      "coordinate": "androidx.fragment:fragment-ktx:1.9.1",
+      "filename": "fragment-ktx-1.9.1.aar",
+      "sha256": "83045658fc4cf0d4e3be235d7f249aee02ee847659003d663d1fdc887b22cbf4",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "4b9a10e5a817da657c51e61e29a93236519fab3200a24fe057c39ce04f8a2488",
+      "pom_sha256": "97f829c4e29f97fa55a2f766053416d93d0037d4e9f7d1e093bdc831d5a18c33",
       "declared_licences": [
         "The Apache Software License, Version 2.0"
       ],
@@ -467,11 +467,11 @@
       "legal_family": "AndroidX"
     },
     {
-      "coordinate": "androidx.fragment:fragment:1.9.0",
-      "filename": "fragment-1.9.0.aar",
-      "sha256": "8e9070295de026efd015ef9cc6156caacd2509300fdf0bc9c7ccbc78c476ab4b",
+      "coordinate": "androidx.fragment:fragment:1.9.1",
+      "filename": "fragment-1.9.1.aar",
+      "sha256": "72f70815c0a4d502f15c57e5e6bc861e64c5338ea06de75aed83969b17a2a727",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "a2b4948913bb9a8fbaa29b599dcc4567e84b1756a22ee2a26db553c50a3d2999",
+      "pom_sha256": "a85cd6d57de5f9ee3415f9ea38e24286de9d6939b5e2a1d0b94e7f1f4c011ab4",
       "declared_licences": [
         "The Apache Software License, Version 2.0"
       ],
@@ -1191,11 +1191,50 @@
       "legal_family": "android-observablescrollview"
     },
     {
-      "coordinate": "com.github.nova-video-player:jcifs-ng:v2.1.11-nova3",
-      "filename": "jcifs-ng-v2.1.11-nova3.jar",
-      "sha256": "a7ba741cc23103921425ce6b9886de13a4ac8d78102f833054659ad38a17ec95",
+      "coordinate": "com.github.nova-video-player.jupnp:org.jupnp.android:3.0.5-nova3",
+      "filename": "org.jupnp.android-3.0.5-nova3.jar",
+      "sha256": "8fe7e18312a80dd28ba5ddb989528859bee6da2a3df979b18fbebcc659b1217b",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "37619c2fc388c22a11a92d096d5a732cfac66d73ba7b19063eff79e214816749",
+      "pom_sha256": "6b7a7c7295d8fde3c5a724bfee416ae80612ee8ecf613ef7e9ba5759cec13135",
+      "declared_licences": [],
+      "licence": "CDDL-1.0",
+      "official_url": "https://github.com/nova-video-player/jupnp",
+      "archive_notices": [],
+      "legal_family": "JUPnP",
+      "pom_parent": "com.github.nova-video-player.jupnp:bundles:3.0.5-nova3"
+    },
+    {
+      "coordinate": "com.github.nova-video-player.jupnp:org.jupnp.support:3.0.5-nova3",
+      "filename": "org.jupnp.support-3.0.5-nova3.jar",
+      "sha256": "d0ae63485f84aa057c7ce4732855d8e41036002da19d909bb0ac03676716815d",
+      "configuration": "noamazonReleaseRuntimeClasspath",
+      "pom_sha256": "470692112c55c5f4c691e614849cc957e7174a2241d5e5dca419e4afeebb3b21",
+      "declared_licences": [],
+      "licence": "CDDL-1.0",
+      "official_url": "https://github.com/nova-video-player/jupnp",
+      "archive_notices": [],
+      "legal_family": "JUPnP",
+      "pom_parent": "com.github.nova-video-player.jupnp:bundles:3.0.5-nova3"
+    },
+    {
+      "coordinate": "com.github.nova-video-player.jupnp:org.jupnp:3.0.5-nova3",
+      "filename": "org.jupnp-3.0.5-nova3.jar",
+      "sha256": "ecd80fa2b163032e7688fdcf9b30c50ebfc755c9b3ac0b3db03d749b5927c72d",
+      "configuration": "noamazonReleaseRuntimeClasspath",
+      "pom_sha256": "eb0f10ae2dd98265f0e31ef916dc1f84ede507fe45e5bc63f658552f5d661507",
+      "declared_licences": [],
+      "licence": "CDDL-1.0",
+      "official_url": "https://github.com/nova-video-player/jupnp",
+      "archive_notices": [],
+      "legal_family": "JUPnP",
+      "pom_parent": "com.github.nova-video-player.jupnp:bundles:3.0.5-nova3"
+    },
+    {
+      "coordinate": "com.github.nova-video-player:jcifs-ng:v2.1.11-nova12",
+      "filename": "jcifs-ng-v2.1.11-nova12.jar",
+      "sha256": "5d75842fc939c9d9f35f443b5a69f3856a6a78b22320234f498014c5e301b86e",
+      "configuration": "noamazonReleaseRuntimeClasspath",
+      "pom_sha256": "1307fb7d61c5360d23f5182a9d5b56742c5fa2c054968ee47d49df1f20c39311",
       "declared_licences": [
         "LGPL"
       ],
@@ -1205,11 +1244,11 @@
       "legal_family": "jcifs-ng"
     },
     {
-      "coordinate": "com.github.nova-video-player:jsch-mwiede:jsch-2.28.7-readahead2",
-      "filename": "jsch-mwiede-jsch-2.28.7-readahead2.jar",
-      "sha256": "c5c34a3eb075fa93ad6e3f69bd23213f601d70ca9377468592f6928217048074",
+      "coordinate": "com.github.nova-video-player:jsch-mwiede:jsch-2.28.7-readahead3",
+      "filename": "jsch-mwiede-jsch-2.28.7-readahead3.jar",
+      "sha256": "968cfd89301028ae092faf12271c4c8aebed163edb235db5718c4bd40ee6350b",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "9540c2b020d1d2fc6d828ab4f02de2fae03f47a7a9badc6c366b20d914a0b438",
+      "pom_sha256": "4ab4341f1585321da5f756a67579c0ad514827d7530c8ed018456805c2af98b6",
       "declared_licences": [
         "Revised BSD",
         "Revised BSD",
@@ -1351,11 +1390,11 @@
       "legal_family": "asn-one"
     },
     {
-      "coordinate": "com.hierynomus:sshj:0.40.0",
-      "filename": "sshj-0.40.0.jar",
-      "sha256": "a6a5533f6580e0418dfcacbb5396680186698585c325fa950c788e749f24d1e2",
+      "coordinate": "com.hierynomus:sshj:0.41.2",
+      "filename": "sshj-0.41.2.jar",
+      "sha256": "48a85a0067196a7b47dfb5c1d22c4ca6ed76c84a232af9ad29f1ba7aaf5c4614",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "73bd675b33423639195d723b87db481ae4a5292c3e8b35aa4fec22a4a894be2e",
+      "pom_sha256": "ab0317a53c99b106f0da8c2a26500d7f9e58d02bb969384ca97eb89c2df240e3",
       "declared_licences": [
         "The Apache License, Version 2.0"
       ],
@@ -1379,11 +1418,11 @@
       "legal_family": "threetenabp"
     },
     {
-      "coordinate": "com.squareup.okhttp3:logging-interceptor:5.5.0",
-      "filename": "logging-interceptor-5.5.0.jar",
-      "sha256": "ef9c93cea95f764a44c140a9f252ecf4f45358ec929f31c911d94f209ac54fab",
+      "coordinate": "com.squareup.okhttp3:logging-interceptor:5.5.1",
+      "filename": "logging-interceptor-5.5.1.jar",
+      "sha256": "26e45873bfead71a617cf75f8672938721608b39785140eb7e4a4bb9fb353b07",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "83243a709a5900ef503470b3ded21d4948fd20ef99cdc5cfe923cae27eef868e",
+      "pom_sha256": "251cc3706022b60b7ab8248353ea7f3ecad1050a470d9fabbf4a58865333c55e",
       "declared_licences": [
         "The Apache Software License, Version 2.0"
       ],
@@ -1393,11 +1432,11 @@
       "legal_family": "OkHttp"
     },
     {
-      "coordinate": "com.squareup.okhttp3:okhttp-android:5.5.0",
+      "coordinate": "com.squareup.okhttp3:okhttp-android:5.5.1",
       "filename": "okhttp.aar",
-      "sha256": "6c7fd12f092e64ca2eae0b8a8023900c0d7ffec57888cf8abc8085c6f42e1dcc",
+      "sha256": "ce00fd7751cf7e4f28ba73a0287b3cc0c62b8b83f038e428592eeef189513ee1",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "9e707dd79d04b92a6da7f3fdd135ac6f55ff97e462e0c4daed29c6e894c965b4",
+      "pom_sha256": "d9aa6a615a54146f08ce0e298b382e79ebe310161992040b07ed52ed29de8c3b",
       "declared_licences": [
         "The Apache Software License, Version 2.0"
       ],
@@ -1491,11 +1530,11 @@
       "legal_family": "trakt-java"
     },
     {
-      "coordinate": "commons-codec:commons-codec:1.22.1",
-      "filename": "commons-codec-1.22.1.jar",
-      "sha256": "78a5d732fbd715e2d10bd7150d2f8030bae57267f8aacc5c88f642cb6c2e5d3f",
+      "coordinate": "commons-codec:commons-codec:1.23.0",
+      "filename": "commons-codec-1.23.0.jar",
+      "sha256": "47504a3ce71d73a1b0af07675546b8d8c5af87f82ef12b6381f9eb3c17dd5a5b",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "4cfc5aa20112d131c6949f80bb1e8adce39ffea9a5a935b4c9a37b7c9aab1c91",
+      "pom_sha256": "8c234370108606fee866044f5795124d941708ff4e70bfe7208e6b3d4d304031",
       "declared_licences": [],
       "licence": "Apache-2.0",
       "official_url": "https://commons.apache.org/proper/commons-codec/",
@@ -1504,7 +1543,7 @@
         "META-INF/NOTICE.txt"
       ],
       "legal_family": "commons-codec",
-      "pom_parent": "org.apache.commons:commons-parent:103"
+      "pom_parent": "org.apache.commons:commons-parent:105"
     },
     {
       "coordinate": "commons-io:commons-io:2.21.0",
@@ -1539,11 +1578,11 @@
       "pom_parent": "org.apache.commons:commons-parent:97"
     },
     {
-      "coordinate": "io.sentry:sentry-android-core:8.53.0",
-      "filename": "sentry-android-core-8.53.0.aar",
-      "sha256": "04e09eda5de4b0cae77c8427b4d6ea99844fdc9be4670ab70545a29f052f568b",
+      "coordinate": "io.sentry:sentry-android-core:8.61.1",
+      "filename": "sentry-android-core-8.61.1.aar",
+      "sha256": "c664e2d360673f6885304543fe2542b2f85d5bc689e34219069d9bb5a17e11bd",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "caa0d713885a48d81f34e826f6f61a7d62ddf2d4b020937a37a0c29e5bd533ef",
+      "pom_sha256": "ab0d2a83616c2a85872853acf76618b3be176aeb321f6d2479aee784959e2b2e",
       "declared_licences": [
         "MIT"
       ],
@@ -1553,11 +1592,11 @@
       "legal_family": "Sentry"
     },
     {
-      "coordinate": "io.sentry:sentry-android-ndk:8.53.0",
-      "filename": "sentry-android-ndk-8.53.0.aar",
-      "sha256": "030c337c03d44b43f5b076a1ad55df3e3482d2933203560f50ab7c817a59b1ac",
+      "coordinate": "io.sentry:sentry-android-ndk:8.61.1",
+      "filename": "sentry-android-ndk-8.61.1.aar",
+      "sha256": "823dbeacaf7ef9874c7ea3b76333ec82b9968568a6a1a4feb26c4284da6ef6fc",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "76793c4080fdab665672f63d9eda55cf837cf790567d351dc12d68081e6bccb2",
+      "pom_sha256": "a277e7a906ef2d93dc46ee68a88b42726002a3c23f5b263569c33e070653f632",
       "declared_licences": [
         "MIT"
       ],
@@ -1567,11 +1606,11 @@
       "legal_family": "Sentry"
     },
     {
-      "coordinate": "io.sentry:sentry-android-replay:8.53.0",
-      "filename": "sentry-android-replay-8.53.0.aar",
-      "sha256": "3a27708ad6a041eea256345efa42ad3310ab1a0e1cca6f1613cfb43eef4e1c6e",
+      "coordinate": "io.sentry:sentry-android-replay:8.61.1",
+      "filename": "sentry-android-replay-8.61.1.aar",
+      "sha256": "6b813daf15687aaa44a75113e82cc49645e346c2b29b9b1a02b77edfb2e39c78",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "fbe42aa2d6ec8fb09893705961604668a89aaaaaa72038a770a79a6105028e1e",
+      "pom_sha256": "98ba09046d3e0f952b894e3959b28c2147977df829453227488e10d96459ca7f",
       "declared_licences": [
         "MIT"
       ],
@@ -1581,11 +1620,11 @@
       "legal_family": "Sentry"
     },
     {
-      "coordinate": "io.sentry:sentry-android:8.53.0",
-      "filename": "sentry-android-8.53.0.aar",
+      "coordinate": "io.sentry:sentry-android:8.61.1",
+      "filename": "sentry-android-8.61.1.aar",
       "sha256": "42500f64bf20434990d16e97199dbdc1e649810ea09d684df382eeaaed7add15",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "1d05efb3a09b9152666ecf97c1e2caac7b2f7b07a4d7252737c87c84821f730d",
+      "pom_sha256": "aa5794bc81de303777e924dfe0625740797b029293ec1c18a9474f27f463ece7",
       "declared_licences": [
         "MIT"
       ],
@@ -1595,11 +1634,11 @@
       "legal_family": "Sentry"
     },
     {
-      "coordinate": "io.sentry:sentry-native-ndk:0.16.2",
-      "filename": "sentry-native-ndk-0.16.2.aar",
-      "sha256": "5ff4d3daf2dd0163a1c85afdd24c1b994d1644043d2bd7f9638010c49e6e8432",
+      "coordinate": "io.sentry:sentry-native-ndk:0.17.4",
+      "filename": "sentry-native-ndk-0.17.4.aar",
+      "sha256": "1bbb49a73d20c587f463bff38767913a7d258d2fc5ac1cab00822f0b876916b1",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "68f391f0d71ec22afe138af52e3dd1e9af610e55e239c58b6ad534ba33175465",
+      "pom_sha256": "812f8cf75c680b4c5e578c986141c9c75be4fafbeebabd443ecae1ba510bcffe",
       "declared_licences": [
         "MIT"
       ],
@@ -1609,11 +1648,11 @@
       "legal_family": "Sentry"
     },
     {
-      "coordinate": "io.sentry:sentry:8.53.0",
-      "filename": "sentry-8.53.0.jar",
-      "sha256": "887bad27465d9f446419888205e32327b8a31c6cf9b9bf7c5a855d1764d953e7",
+      "coordinate": "io.sentry:sentry:8.61.1",
+      "filename": "sentry-8.61.1.jar",
+      "sha256": "3df180f4e0fd85ff2245eb25d5dda0ef39a7318dc0ece3aaa853c79dea67ae01",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "8611236b45ba1e02a8508be4d87a401d5388d4759475020bdd7017c439b286af",
+      "pom_sha256": "c5e4b4ca3377d6eecc67b3c65d06fe14a0997d7e1644295e64d39b6cca3b16ba",
       "declared_licences": [
         "MIT"
       ],
@@ -1688,11 +1727,11 @@
       "pom_parent": "org.apache.commons:commons-parent:93"
     },
     {
-      "coordinate": "org.apache.httpcomponents.core5:httpcore5:5.4.3",
-      "filename": "httpcore5-5.4.3.jar",
-      "sha256": "18bfbbabb478dfb67f31aeaf428c387f3c3df654582e1309f708ee1f3086830a",
+      "coordinate": "org.apache.httpcomponents.core5:httpcore5:5.4.4",
+      "filename": "httpcore5-5.4.4.jar",
+      "sha256": "b08e3c3a440fec2029e89980134c7c787dd6796454641ad1eafb81478d7e8b0b",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "a483ef99599cc5fe2c6105a91e2aa7ac46c1c357b559beb76c7045326dcbd3d1",
+      "pom_sha256": "f9bdd181a02c97958b913f5cb47a4595f1193a962ad4964a3d0c56d965732daa",
       "declared_licences": [],
       "licence": "Apache-2.0",
       "official_url": "https://hc.apache.org/",
@@ -1701,7 +1740,7 @@
         "META-INF/NOTICE"
       ],
       "legal_family": "httpcore5",
-      "pom_parent": "org.apache.httpcomponents.core5:httpcore5-parent:5.4.3"
+      "pom_parent": "org.apache.httpcomponents.core5:httpcore5-parent:5.4.4"
     },
     {
       "coordinate": "org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.2",
@@ -1720,11 +1759,11 @@
       "pom_parent": "org.apache.oltu.oauth2:org.apache.oltu.oauth2.parent:1.0.2"
     },
     {
-      "coordinate": "org.bouncycastle:bcpkix-jdk18on:1.85",
-      "filename": "bcpkix-jdk18on-1.85.jar",
-      "sha256": "c9f82b2d4e99c4bbdfccf684e52cc06ea06a0b567bfd0d08f9c5a3f417055996",
+      "coordinate": "org.bouncycastle:bcpkix-jdk18on:1.86",
+      "filename": "bcpkix-jdk18on-1.86.jar",
+      "sha256": "8d8b41a4b149bdae8d331f059a578870954d1e3ff29f8269a9eb3ee19a7e4ef7",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "9b052b0cb85cb7d8bb0956afcc74f31c814f1c67e03498e1ca74f8fe8611d957",
+      "pom_sha256": "44989844fb17b39eb08eabeaf81e1fd16ac50c994d5c02119f891220c3ac5878",
       "declared_licences": [],
       "licence": "MIT",
       "official_url": "https://www.bouncycastle.org/",
@@ -1734,11 +1773,11 @@
       "legal_family": "Bouncy Castle"
     },
     {
-      "coordinate": "org.bouncycastle:bcprov-jdk18on:1.85.2",
-      "filename": "bcprov-jdk18on-1.85.2.jar",
-      "sha256": "986b0fb92ec10e0c66b43e036ce0077e6150cfaecd1db9fb92b56672e157afe5",
+      "coordinate": "org.bouncycastle:bcprov-jdk18on:1.86",
+      "filename": "bcprov-jdk18on-1.86.jar",
+      "sha256": "2af190b300cbb0b35e248ccf5f4a06b6072030aeb3da7a98ec73abe5b4cb371f",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "774ffb514ef342d7e7543805944fec32e4da2c4292ba5d7d8560f05a65a7c2dd",
+      "pom_sha256": "970b70cb75a184639b6fb9ba3c465aca6a4e1a5f3fff4d65ce8574b2fd79ef38",
       "declared_licences": [],
       "licence": "MIT",
       "official_url": "https://www.bouncycastle.org/",
@@ -1748,11 +1787,11 @@
       "legal_family": "Bouncy Castle"
     },
     {
-      "coordinate": "org.bouncycastle:bcutil-jdk18on:1.85",
-      "filename": "bcutil-jdk18on-1.85.jar",
-      "sha256": "590f55ed5d68529239898a4a5c4f730b6e37f45d1cfa3fbe51f8485abe32c42d",
+      "coordinate": "org.bouncycastle:bcutil-jdk18on:1.86",
+      "filename": "bcutil-jdk18on-1.86.jar",
+      "sha256": "1c268e15f785aafb1e4670d8d6e5f856f69475e96c162dadcd1ff9b350e9139f",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "9f1c79a12a7c03d78860e05750dcc44e855e20205c7af7cffbf29a69448d85ea",
+      "pom_sha256": "2209b3e5d1eb2bb3c593b824c1b8f142b05dea8e9df7400b0f33f2b91a0741fa",
       "declared_licences": [],
       "licence": "MIT",
       "official_url": "https://www.bouncycastle.org/",
@@ -1762,95 +1801,132 @@
       "legal_family": "Bouncy Castle"
     },
     {
-      "coordinate": "org.eclipse.jetty:jetty-client:9.2.30.v20200428",
-      "filename": "jetty-client-9.2.30.v20200428.jar",
-      "sha256": "e774bdbcc5209400666c7e4200ef5fcb55caa0cad18abb24679f21ff6fc077e7",
+      "coordinate": "org.eclipse.jetty:jetty-client:9.4.58.v20250814",
+      "filename": "jetty-client-9.4.58.v20250814.jar",
+      "sha256": "eb08a30a5e241743e13ad8e9d21fd050ccf0a931ef5f4a052d800874d26449a5",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "9cd5d972b9783a8326b0756bc4549ea86d7e032520b3e8be99103f3d6d02c790",
+      "pom_sha256": "3dd442938e22114a2dd280764bf00c354332b79f931d067d26ad6a45d09bbc02",
       "declared_licences": [],
       "licence": "Apache-2.0 OR EPL-1.0",
       "official_url": "https://jetty.org/",
-      "archive_notices": [],
+      "archive_notices": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE.txt"
+      ],
       "legal_family": "Jetty",
-      "pom_parent": "org.eclipse.jetty:jetty-project:9.2.30.v20200428"
+      "pom_parent": "org.eclipse.jetty:jetty-project:9.4.58.v20250814"
     },
     {
-      "coordinate": "org.eclipse.jetty:jetty-http:9.2.30.v20200428",
-      "filename": "jetty-http-9.2.30.v20200428.jar",
-      "sha256": "9b6e6cd6b57572887d116237b0118561d4967b5b8aca056f863b5dfc2dab4784",
+      "coordinate": "org.eclipse.jetty:jetty-http:9.4.58.v20250814",
+      "filename": "jetty-http-9.4.58.v20250814.jar",
+      "sha256": "b08f6fb9a63bcc70e0c8560f73e759a90df3b622fd33a8da1ae4fd59d08bbd61",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "0ca40171fcbaaa882fb57aa6e235df32d21f3173f9131c75461c20471093086f",
+      "pom_sha256": "f64d6da0aeeb994b1efa31fac44b08ba0c56bf75d923ac01354955c015ac1868",
       "declared_licences": [],
       "licence": "Apache-2.0 OR EPL-1.0",
       "official_url": "https://jetty.org/",
-      "archive_notices": [],
+      "archive_notices": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE.txt"
+      ],
       "legal_family": "Jetty",
-      "pom_parent": "org.eclipse.jetty:jetty-project:9.2.30.v20200428"
+      "pom_parent": "org.eclipse.jetty:jetty-project:9.4.58.v20250814"
     },
     {
-      "coordinate": "org.eclipse.jetty:jetty-io:9.2.30.v20200428",
-      "filename": "jetty-io-9.2.30.v20200428.jar",
-      "sha256": "7595d586784111b3364d291dbe560f460cb58e6cfdc8d1ed3b756105d3f7e1c2",
+      "coordinate": "org.eclipse.jetty:jetty-io:9.4.58.v20250814",
+      "filename": "jetty-io-9.4.58.v20250814.jar",
+      "sha256": "850b756156cf340d99af272b012a8b434aa2ea626a0e7f478a56bbfd00e50f8a",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "717c39d592e2d3e6c194c1af745d0f3ddc0bb9b01d816f201065736793a23d54",
+      "pom_sha256": "8a7c6cfe62b82fcabce21e93964915d0323ec4617b578de996c9d86d2854db8d",
       "declared_licences": [],
       "licence": "Apache-2.0 OR EPL-1.0",
       "official_url": "https://jetty.org/",
-      "archive_notices": [],
+      "archive_notices": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE.txt"
+      ],
       "legal_family": "Jetty",
-      "pom_parent": "org.eclipse.jetty:jetty-project:9.2.30.v20200428"
+      "pom_parent": "org.eclipse.jetty:jetty-project:9.4.58.v20250814"
     },
     {
-      "coordinate": "org.eclipse.jetty:jetty-security:9.2.30.v20200428",
-      "filename": "jetty-security-9.2.30.v20200428.jar",
-      "sha256": "f6ab2b5ac0f2473a177197b45677f4c30c1a2afe3131b3758285a50129530d0f",
+      "coordinate": "org.eclipse.jetty:jetty-security:9.4.58.v20250814",
+      "filename": "jetty-security-9.4.58.v20250814.jar",
+      "sha256": "466e95a4b4311324608caf7c56e7ebb21d9c016f6eb31bebb796c2e8809b2519",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "bd7ab3d40ff9fef8c9614ebc518c1e198ff3b36ed543a851e7e7782ef51e308d",
+      "pom_sha256": "be1b66c55f9c7516308329706f8a4e0ab168651434686d8e802103eb8c2359b6",
       "declared_licences": [],
       "licence": "Apache-2.0 OR EPL-1.0",
       "official_url": "https://jetty.org/",
-      "archive_notices": [],
+      "archive_notices": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE.txt"
+      ],
       "legal_family": "Jetty",
-      "pom_parent": "org.eclipse.jetty:jetty-project:9.2.30.v20200428"
+      "pom_parent": "org.eclipse.jetty:jetty-project:9.4.58.v20250814"
     },
     {
-      "coordinate": "org.eclipse.jetty:jetty-server:9.2.30.v20200428",
-      "filename": "jetty-server-9.2.30.v20200428.jar",
-      "sha256": "87dee21c8bcae8aba81306987f33b65efb7e8ea839697a02d440a5f702ccbea5",
+      "coordinate": "org.eclipse.jetty:jetty-server:9.4.58.v20250814",
+      "filename": "jetty-server-9.4.58.v20250814.jar",
+      "sha256": "d33464a0b883614a387027db8364f5ca7cacfd8c98e4e201d77a47e4432644cd",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "833d3dce768def0de43941073ae481e491bee555653f9efd56fd845ec5411ca7",
+      "pom_sha256": "b750ef1eb4b10d00700ace9675c17619c04017cd0e757748848b894662fe5c3c",
       "declared_licences": [],
       "licence": "Apache-2.0 OR EPL-1.0",
       "official_url": "https://jetty.org/",
-      "archive_notices": [],
+      "archive_notices": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE.txt"
+      ],
       "legal_family": "Jetty",
-      "pom_parent": "org.eclipse.jetty:jetty-project:9.2.30.v20200428"
+      "pom_parent": "org.eclipse.jetty:jetty-project:9.4.58.v20250814"
     },
     {
-      "coordinate": "org.eclipse.jetty:jetty-servlet:9.2.30.v20200428",
-      "filename": "jetty-servlet-9.2.30.v20200428.jar",
-      "sha256": "4f937d14f05129d382ea63546aa7bd0f690e5dda2b13cda3d89a007b59484252",
+      "coordinate": "org.eclipse.jetty:jetty-servlet:9.4.58.v20250814",
+      "filename": "jetty-servlet-9.4.58.v20250814.jar",
+      "sha256": "9f20aef2577ea5b19a859897f598971c89b317cbf5fda10a43a0a42a195f279d",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "27629564076962d667d07b899002894b175229baf3fa9ecaec7fc838f27e72a6",
+      "pom_sha256": "92b861dbc3c0b64866a8c4edf2393de558d810299c539e8b43414837cc6c1036",
       "declared_licences": [],
       "licence": "Apache-2.0 OR EPL-1.0",
       "official_url": "https://jetty.org/",
-      "archive_notices": [],
+      "archive_notices": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE.txt"
+      ],
       "legal_family": "Jetty",
-      "pom_parent": "org.eclipse.jetty:jetty-project:9.2.30.v20200428"
+      "pom_parent": "org.eclipse.jetty:jetty-project:9.4.58.v20250814"
     },
     {
-      "coordinate": "org.eclipse.jetty:jetty-util:9.2.30.v20200428",
-      "filename": "jetty-util-9.2.30.v20200428.jar",
-      "sha256": "da11cf0d3dce4faf883a1ea4e6811f0e3e992c58eab005120e1f9bb7aace6528",
+      "coordinate": "org.eclipse.jetty:jetty-util-ajax:9.4.58.v20250814",
+      "filename": "jetty-util-ajax-9.4.58.v20250814.jar",
+      "sha256": "185430a2eafcdffba18204dbf51cb18436ab4ca09b74d97c1dc13abbadd9704b",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "b898aa3fe6a9da2a85f4a008ac363af6316a26494d617e6eadd86fc34f8ed270",
+      "pom_sha256": "9fb635f45ce3121b7d8bb40eaff2f64cf2cca3ffd0f7d8933f0a5abc05cc122a",
       "declared_licences": [],
       "licence": "Apache-2.0 OR EPL-1.0",
       "official_url": "https://jetty.org/",
-      "archive_notices": [],
+      "archive_notices": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE.txt"
+      ],
       "legal_family": "Jetty",
-      "pom_parent": "org.eclipse.jetty:jetty-project:9.2.30.v20200428"
+      "pom_parent": "org.eclipse.jetty:jetty-project:9.4.58.v20250814"
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-util:9.4.58.v20250814",
+      "filename": "jetty-util-9.4.58.v20250814.jar",
+      "sha256": "eae0f2b02e81260ac2621b3ae36573751921ba2f78800f2affe28785a1407be4",
+      "configuration": "noamazonReleaseRuntimeClasspath",
+      "pom_sha256": "74d463a2ea02233728ae70131374d6b1e194f77d223c0554f44f476f40c032c5",
+      "declared_licences": [],
+      "licence": "Apache-2.0 OR EPL-1.0",
+      "official_url": "https://jetty.org/",
+      "archive_notices": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE.txt"
+      ],
+      "legal_family": "Jetty",
+      "pom_parent": "org.eclipse.jetty:jetty-project:9.4.58.v20250814"
     },
     {
       "coordinate": "org.jetbrains.kotlin:kotlin-stdlib:2.2.21",
@@ -1937,45 +2013,6 @@
       "legal_family": "jspecify"
     },
     {
-      "coordinate": "org.jupnp:org.jupnp.android:3.0.5",
-      "filename": "org.jupnp.android-3.0.5.jar",
-      "sha256": "1091e2df649b8992d384d9cbb5915068570ca1cde7a5206cbb23fa94c6c6f307",
-      "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "5f6abeee76ad62845e400aef0172bd868fb68c62660d7e1d6fd469ec5a0ad53d",
-      "declared_licences": [],
-      "licence": "CDDL-1.0",
-      "official_url": "https://github.com/jupnp/jupnp",
-      "archive_notices": [],
-      "legal_family": "JUPnP",
-      "pom_parent": "org.jupnp.pom:bundles:3.0.5"
-    },
-    {
-      "coordinate": "org.jupnp:org.jupnp.support:3.0.5",
-      "filename": "org.jupnp.support-3.0.5.jar",
-      "sha256": "b3f41b88dd3c28497959e2ee2e5cca146e53322bf7212043671d9ce078c5c652",
-      "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "adb5b33182dfe7d954ae77dda6e4f61771a9d7e2f231447b8257fac8ecf877a6",
-      "declared_licences": [],
-      "licence": "CDDL-1.0",
-      "official_url": "https://github.com/jupnp/jupnp",
-      "archive_notices": [],
-      "legal_family": "JUPnP",
-      "pom_parent": "org.jupnp.pom:bundles:3.0.5"
-    },
-    {
-      "coordinate": "org.jupnp:org.jupnp:3.0.5",
-      "filename": "org.jupnp-3.0.5.jar",
-      "sha256": "a6f76dc1baa3d4a4e14c55bcaa93a1bd1915b2040c1ed52e25bdbd8892daa1eb",
-      "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "ecfa7f579ab678bf9a32bb99e002c8d070b4096cc12fbf13992a63aa26aed5a4",
-      "declared_licences": [],
-      "licence": "CDDL-1.0",
-      "official_url": "https://github.com/jupnp/jupnp",
-      "archive_notices": [],
-      "legal_family": "JUPnP",
-      "pom_parent": "org.jupnp.pom:bundles:3.0.5"
-    },
-    {
       "coordinate": "org.simpleframework:simple-xml:2.7.1",
       "filename": "simple-xml-2.7.1.jar",
       "sha256": "7a43d2d5e488e0dac57a6de0284df4413a4733365239649309c4b693f4e429f9",
@@ -1990,11 +2027,11 @@
       "legal_family": "simple-xml"
     },
     {
-      "coordinate": "org.slf4j:slf4j-api:2.0.18",
-      "filename": "slf4j-api-2.0.18.jar",
-      "sha256": "44508fd1576500688c790b190acdd16fec4f8c79a3e0b900afd70503cf055f55",
+      "coordinate": "org.slf4j:slf4j-api:2.0.20",
+      "filename": "slf4j-api-2.0.20.jar",
+      "sha256": "7e1446499b359675d8aabe6af2de86b85e72ae8a2a932c0b40d0e5ba57097439",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "6c2c7f2c02774cc2b7b619fbd2df7873cdad29718926e44754b87f70d1eb43cb",
+      "pom_sha256": "2e625c3f553cddd49f8554cea9926cbf70673b3d6833464f0c5a02f4d9130594",
       "declared_licences": [],
       "licence": "MIT",
       "official_url": "https://www.slf4j.org/",
@@ -2002,7 +2039,7 @@
         "META-INF/LICENSE.txt"
       ],
       "legal_family": "slf4j-api",
-      "pom_parent": "org.slf4j:slf4j-parent:2.0.18"
+      "pom_parent": "org.slf4j:slf4j-parent:2.0.20"
     },
     {
       "coordinate": "org.threeten:threetenbp:1.7.1",
@@ -2056,17 +2093,21 @@
       "sha256": "a44eb7b5caf5534c6ef536b21edb40b4d6babf91bf97d9d45596868618b2c6fb",
       "source": "https://raw.githubusercontent.com/google/desugar_jdk_libs/73170c345e6a762fc6a1f0301bb15218850023ef/ASSEMBLY_EXCEPTION"
     },
+    "CDDL-1.0.txt": {
+      "sha256": "fde9ef48461569987d09cac803379245dfda04e7751075f39b578a0ce927d470",
+      "source": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/CDDL-1.0.txt"
+    },
     "JCIFS.txt": {
       "sha256": "9b872a8a070b8ad329c4bd380fb1bf0000f564c75023ec8e1e6803f15364b9e9",
-      "source": "https://raw.githubusercontent.com/nova-video-player/jcifs-ng/v2.1.11-nova3/LICENSE"
+      "source": "https://raw.githubusercontent.com/nova-video-player/jcifs-ng/v2.1.11-nova12/LICENSE"
     },
     "Sentry.txt": {
       "sha256": "c90147c075a17f4aecfea27a56510ddf7c76508c8488df533623402008b9d052",
-      "source": "https://raw.githubusercontent.com/getsentry/sentry-java/8.53.0/LICENSE"
+      "source": "https://raw.githubusercontent.com/getsentry/sentry-java/8.61.1/LICENSE"
     },
     "SentryNative.txt": {
       "sha256": "5ef07a3d95f1f779c1597c0fbaecbb7ba242128ff0587ed1e3214c7ac6154523",
-      "source": "https://raw.githubusercontent.com/getsentry/sentry-native/0.16.2/LICENSE"
+      "source": "https://raw.githubusercontent.com/getsentry/sentry-native/0.17.4/LICENSE"
     },
     "CDDL-1.1.txt": {
       "sha256": "b5bbb5ac38b5cb76862a7f410ca567e4b32d7c22f22622ebff10ba434827bb78",
@@ -2089,12 +2130,8 @@
       "source": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/EPL-1.0.txt"
     },
     "JettyNotice.txt": {
-      "sha256": "90c5a5629679760807a40577a1ce79b98ff6feeeda1f6727f3c6464878a21f86",
-      "source": "https://raw.githubusercontent.com/jetty/jetty.project/jetty-9.2.30.v20200428/NOTICE.txt"
-    },
-    "CDDL-1.0.txt": {
-      "sha256": "fde9ef48461569987d09cac803379245dfda04e7751075f39b578a0ce927d470",
-      "source": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/CDDL-1.0.txt"
+      "sha256": "e8d2cde5a8a11be8bce3f7b3b1e91a38f485d8bd0624a835b85e8dccaef2c0dd",
+      "source": "https://raw.githubusercontent.com/jetty/jetty.project/89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b/NOTICE.txt"
     },
     "ThreeTenBP.txt": {
       "sha256": "d1bc53b493a3ab387b42717ed5c4b1976a5048996f81154278100bff86d39331",

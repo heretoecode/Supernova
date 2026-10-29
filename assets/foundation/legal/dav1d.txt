@@ -1,8 +1,8 @@
-dav1d
-1.5.4-0-g54706fc6 (header)
-Shared AV1 decoder.
+dav1d 1.5.4
+Exact source: 54706fc6bc0cdecab7e9593974a4039cc038fca7
 
-https://raw.githubusercontent.com/videolan/dav1d/54706fc6/COPYING
+
+COPYING
 
 Copyright © 2018-2025, VideoLAN and dav1d authors
 All rights reserved.

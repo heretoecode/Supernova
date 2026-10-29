@@ -156,7 +156,7 @@ public class NetworkCredentialFlowTest {
         assertEquals(testPass, passEt.getText().toString());
         assertEquals("home.courville.org", remoteEt.getText().toString());
         assertEquals("5006", portEt.getText().toString());
-        assertEquals(UriUtils.getUriType(Uri.parse(TEST_WEBDAV_URI)).intValue(), typeSp.getSelectedItemPosition());
+        assertEquals("WebDAV (HTTPS)",typeSp.getSelectedItem().toString());
 
         dialog.dismiss();
         controller.destroy();
@@ -226,7 +226,8 @@ public class NetworkCredentialFlowTest {
         assertEquals(ListingEngine.ErrorEnum.ERROR_AUTHENTICATION, fragment.lastFatalErrorCode);
 
         // Check error message TextView is visible
-        TextView errorMessage = fragment.getView().findViewById(R.id.error);
+        TextView errorMessage = fragment.getView().findViewWithTag("browser.status");
+        assertNotNull(errorMessage);
         assertEquals(View.VISIBLE, errorMessage.getVisibility());
         assertEquals(mContext.getString(R.string.error_credentials), errorMessage.getText().toString());
 

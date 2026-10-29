@@ -64,8 +64,8 @@ def export(inventory, legal):
         elif group.startswith('org.eclipse.jetty'):
             family, destination, licence = 'Jetty', 'https://jetty.org/', 'Apache-2.0 OR EPL-1.0'
             supplement = ['Apache-2.0.txt', 'EPL-1.0.txt', 'JettyNotice.txt']
-        elif group == 'org.jupnp':
-            family, destination, licence = 'JUPnP', 'https://github.com/jupnp/jupnp', 'CDDL-1.0'
+        elif group in ('org.jupnp', 'com.github.nova-video-player.jupnp'):
+            family, destination, licence = 'JUPnP', 'https://github.com/nova-video-player/jupnp', 'CDDL-1.0'
             supplement = ['CDDL-1.0.txt']
         elif group == 'io.sentry':
             family, destination, licence = 'Sentry', 'https://github.com/getsentry/sentry-java', 'MIT'
