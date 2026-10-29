@@ -15,7 +15,7 @@
 	               android:layout_marginTop="@dimen/video_list_thumbnail_margin_top"
 	               android:layout_marginBottom="@dimen/video_list_thumbnail_margin_bottom"
 	               android:layout_marginLeft="@dimen/video_list_thumbnail_margin_left"
-	               android:layout_marginRight="@dimen/content_list_space_between_thumbnail_and_name"/>
+	               android:layout_marginRight="@dimen/content_list_space_between_thumbnail_and_name" android:contentDescription="@null"/>
 
         <LinearLayout android:id="@+id/file_info"
                       android:layout_width="match_parent"

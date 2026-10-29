@@ -79,10 +79,27 @@ if (sentryPropertiesFile.exists()) sentryProperties.load(new FileInputStream(sen
 
 allprojects {
     repositories {
+        // Never resolve vanilla vulnerable Jetty under the reviewed backport identity.
+        exclusiveContent {
+            forRepository { maven { url = uri(rootProject.file("build/supernova146-jetty/maven")) } }
+            filter {
+                ["util", "io", "http", "server", "client", "security", "servlet"].each {
+                    includeModule("org.eclipse.jetty", "jetty-" + it)
+                }
+            }
+        }
         google()
         mavenCentral()
         mavenLocal()
         maven { url = 'https://jitpack.io' }
+    }
+    configurations.configureEach {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == "org.eclipse.jetty" && ["jetty-util", "jetty-io", "jetty-http", "jetty-server", "jetty-client", "jetty-security", "jetty-servlet"].contains(details.requested.name)) {
+                details.useVersion("9.4.58.v20250814")
+                details.because("Pinned source backport with API23 counters; vanilla Maven bytes are excluded")
+            }
+        }
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile).tap {
@@ -372,6 +389,8 @@ android {
             // Native graphics and SQLite loaders keep process state across Robolectric sandboxes.
             // Isolate classes so rendering and real database tests cannot contaminate each other.
             forkEvery = 1
+            // Robolectric API37 FileDescriptor bridge on JDK21.
+            jvmArgs "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED"
             maxParallelForks = 2
             testLogging {
                 events "passed", "skipped", "failed", "standardOut", "standardError"
@@ -434,25 +453,25 @@ dependencies {
     // Reuse MediaLib's existing TMDb client for progressive person portraits.
     implementation 'com.uwetrottmann.tmdb2:tmdb-java:2.13.0'
     // CustomApplication imports the provider directly; library implementation dependencies are not exposed.
-    implementation 'org.bouncycastle:bcprov-jdk18on:1.85'
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.86'
     implementation 'androidx.lifecycle:lifecycle-process:2.11.0'
     // needed for old Android versions when using java 17
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.1.5'
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.4.9'
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'androidx.tvprovider:tvprovider:1.1.0'
     implementation 'androidx.media:media:1.8.0'
-    implementation 'androidx.core:core:1.19.0'
+    implementation 'androidx.core:core:1.19.1'
     implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
     implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
-    implementation 'androidx.fragment:fragment:1.9.0'
+    implementation 'androidx.fragment:fragment:1.9.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.8.0'
     // Uses the installed browser for OAuth without embedding a browser engine.
-    implementation 'androidx.browser:browser:1.9.0'
+    implementation 'androidx.browser:browser:1.10.0'
     implementation 'androidx.preference:preference:1.2.1'
     implementation ('com.github.ksoichiro:android-observablescrollview:1.6.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
@@ -462,21 +481,24 @@ dependencies {
     implementation 'androidx.leanback:leanback:1.2.0'
     implementation 'androidx.leanback:leanback-preference:1.2.0'
     implementation 'androidx.tvprovider:tvprovider:1.1.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.5.1'
     implementation 'com.github.tony19:logback-android:3.0.0'
-    implementation 'io.sentry:sentry-android:8.53.0'
-    implementation 'io.sentry:sentry:8.53.0'
+    implementation 'io.sentry:sentry-android:8.61.1'
+    implementation 'io.sentry:sentry:8.61.1'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.23.0'
-    testImplementation 'org.robolectric:robolectric:4.16.1'
+    testImplementation 'org.mockito:mockito-core:5.24.0'
+    testImplementation 'org.robolectric:robolectric:4.17'
     testImplementation 'androidx.test:core:1.7.0'
-    testImplementation 'org.slf4j:slf4j-api:2.0.18'
-    testImplementation 'ch.qos.logback:logback-classic:1.6.3'
+    testImplementation 'org.slf4j:slf4j-api:2.0.20'
+    testImplementation 'ch.qos.logback:logback-classic:1.6.6'
     // MediaLib implementation APIs are not exposed to this module's test compiler.
     // Match the existing runtime pins for the real-library UPnP security tests.
     testImplementation 'javax.servlet:javax.servlet-api:4.0.1'
-    testImplementation 'org.eclipse.jetty:jetty-client:9.2.30.v20200428'
+    testImplementation 'org.eclipse.jetty:jetty-client:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-server:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-servlet:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-security:9.4.58.v20250814'
 }
 
 configurations { // try to exclude device specific libraries interfering

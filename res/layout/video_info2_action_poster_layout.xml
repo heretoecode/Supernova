@@ -15,7 +15,7 @@
             android:gravity="bottom"
 
             android:id="@+id/posterCard"
-            >
+             android:baselineAligned="false">
 
             <FrameLayout
                 android:layout_weight="1"

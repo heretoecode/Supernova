@@ -1,0 +1,163 @@
+[
+  {
+    "path": "Source/stream_audio.c",
+    "ours_sha256": "ee64de4532134a1b30e2d25c5bc5271a1ea3e78ae884149ae7093c3e8f983a88",
+    "upstream_sha256": "ac88e24efa8a54887e84996f5d21727bd06107926e47986f8b55d4db8f0b2795",
+    "selected": "upstream",
+    "reason": "Use upstream atomic pause requests, PCM sink failure handling, bounded output draining and epoch reset; supersedes the earlier partial Supernova recovery port."
+  },
+  {
+    "path": "Source/stream_audio.c",
+    "ours_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstream_sha256": "c25a6593f848f8827ab7f151f74f78603ad9284baa79b532adfc56553a274475",
+    "selected": "upstream",
+    "reason": "Use upstream atomic pause requests, PCM sink failure handling, bounded output draining and epoch reset; supersedes the earlier partial Supernova recovery port."
+  },
+  {
+    "path": "Source/stream_audio.c",
+    "ours_sha256": "b1b984b0314bf98d0ef30e7e47dc1318179a327c68c1fe0af59927786a5b44e4",
+    "upstream_sha256": "f783f9e24fe3521381849a9975627e8aff254b0764d9a5f8800a0373682d0f2d",
+    "selected": "upstream",
+    "reason": "Use upstream atomic pause requests, PCM sink failure handling, bounded output draining and epoch reset; supersedes the earlier partial Supernova recovery port."
+  },
+  {
+    "path": "Source/stream_audio.c",
+    "ours_sha256": "5777fe9a91e8ba8d4abf11a8e245d9a177cca0afc0972c2c4dee2041f36992b1",
+    "upstream_sha256": "c5f17b97498dfc6c5308eb6e2efb0a5b6c936d0e6cff4b9455c900e162f6e1ef",
+    "selected": "upstream",
+    "reason": "Use upstream atomic pause requests, PCM sink failure handling, bounded output draining and epoch reset; supersedes the earlier partial Supernova recovery port."
+  },
+  {
+    "path": "Source/stream_audio.c",
+    "ours_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstream_sha256": "608d22f4df5a59063dbe38eeab90a897fde856d9057fea3421121073dc666038",
+    "selected": "upstream",
+    "reason": "Use upstream atomic pause requests, PCM sink failure handling, bounded output draining and epoch reset; supersedes the earlier partial Supernova recovery port."
+  },
+  {
+    "path": "Source/stream_audio.c",
+    "ours_sha256": "28f09465c4fd7f977a5c24d1930c53ce1011562959b0206741cffbe5e6aac9ad",
+    "upstream_sha256": "80a2e43ca1b500b757c2fcc348e2d62726cd9318c207ab5b153f8c6a75199ce8",
+    "selected": "upstream",
+    "reason": "Use upstream atomic pause requests, PCM sink failure handling, bounded output draining and epoch reset; supersedes the earlier partial Supernova recovery port."
+  },
+  {
+    "path": "Source/stream_audio.c",
+    "ours_sha256": "cf397231e2af82c2886a0bd82827f587624328a66ad447fd77b8e27f0c4ac02f",
+    "upstream_sha256": "24b04e6f5ad1d1b2be0bc103d3f2af6f24583980bdeb60a5a3789b3cd7f5b125",
+    "selected": "upstream",
+    "reason": "Use upstream atomic pause requests, PCM sink failure handling, bounded output draining and epoch reset; supersedes the earlier partial Supernova recovery port."
+  },
+  {
+    "path": "Source/stream_audio.c",
+    "ours_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstream_sha256": "5e7cde21666737a275f8a12876a4a64d1e5400518cd1ebcfdde48259d4a7be2e",
+    "selected": "upstream",
+    "reason": "Use upstream atomic pause requests, PCM sink failure handling, bounded output draining and epoch reset; supersedes the earlier partial Supernova recovery port."
+  },
+  {
+    "path": "Source/stream.c",
+    "ours_sha256": "79581874d6287867f5ce56b7278ba322fcbd8f5085d64456562d3e59cbe4a38c",
+    "upstream_sha256": "7305691b412b9a350a82b43d7dffc78dc6a9bcbfdb76d42363523ec7c20ee933",
+    "selected": "upstream",
+    "reason": "Preserve upstream drained-commit handling and aborted-state gate."
+  },
+  {
+    "path": "Source/stream_video.c",
+    "ours_sha256": "acada8fec04930e3f354b1dfb862457c5921c041209ba4dbb9ad005a27719477",
+    "upstream_sha256": "bd44e35902c6223b47865a7e2b12d4672c029f9d23d6bc5d62d09eff4c29c62b",
+    "selected": "upstream",
+    "reason": "Use int64 monotonic pause/commit wall clocks to prevent long-uptime overflow."
+  },
+  {
+    "path": "Source/stream_video.c",
+    "ours_sha256": "30119e647611b4f71c8c0bf3978ba821fbefd9e7fc4d820003fdb35c29db8b9e",
+    "upstream_sha256": "4f2e6288c6cbc19b62cf997e11924683b1120d1c20759bf69034688c1eef8556",
+    "selected": "upstream",
+    "reason": "Use int64 monotonic pause/commit wall clocks to prevent long-uptime overflow."
+  },
+  {
+    "path": "Source/stream_sync.c",
+    "ours_sha256": "3a22da7c5ccb773491513ff70186a831a5fcb8ef59e0b79cb85614a288fc7696",
+    "upstream_sha256": "6fb3ba9f9cf89f3ab3b2a163c75b5a0b8538884d40a960711ef489e012fcfccc",
+    "selected": "upstream",
+    "reason": "Use coherent AudioTrack epoch reset and latest seek-calibration frontier contract."
+  },
+  {
+    "path": "Source/stream_sync.c",
+    "ours_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstream_sha256": "f7cf1dd9abec19197644729423f1b29cf56e2ac222c7e0d9d55e064fa696982b",
+    "selected": "upstream",
+    "reason": "Use coherent AudioTrack epoch reset and latest seek-calibration frontier contract."
+  },
+  {
+    "path": "Source/stream_sync.c",
+    "ours_sha256": "aed5e23c4b51484ef48ab26d5a61fb9aea23799b48b6cd5a9afb650922d2a00c",
+    "upstream_sha256": "50d6cc396fd39b1999415170630029c87fe45ff6cb4b5efbfa3a431c18e101cb",
+    "selected": "upstream",
+    "reason": "Use coherent AudioTrack epoch reset and latest seek-calibration frontier contract."
+  },
+  {
+    "path": "Source/stream_parser_ffmpeg.c",
+    "ours_sha256": "a5c320fe99205023e04f6298f01542d79d7e04d40f6bc34cc54a695b69730ba2",
+    "upstream_sha256": "23c24eb4428764d49b9399d67b00d9fcadd21202bcb4785d3137701592d4f53d",
+    "selected": "upstream",
+    "reason": "Use explicit WAIT/END/ERROR outcomes, retained IO failure causes, cancelled-packet discard and bounded backward-keyframe/EOF seeking."
+  },
+  {
+    "path": "Source/stream_parser_ffmpeg.c",
+    "ours_sha256": "1c4b4e503ebbaad1f93cfb92126333fb2cbdc91075f009c5b3b287bf24837696",
+    "upstream_sha256": "306285819331d9faaeba4535127437375bcf10d9c8230d1b329a7a716170cb0f",
+    "selected": "upstream",
+    "reason": "Use explicit WAIT/END/ERROR outcomes, retained IO failure causes, cancelled-packet discard and bounded backward-keyframe/EOF seeking."
+  },
+  {
+    "path": "Source/stream_parser_ffmpeg.c",
+    "ours_sha256": "08b10b237b6467c250d9a437f5b59b1c012da172f2e891723f7e0ab620b6d442",
+    "upstream_sha256": "3cf991cf4de560891ab89eb0c409639a58896b91a6a7576d1cc1c960daf51656",
+    "selected": "upstream",
+    "reason": "Use explicit WAIT/END/ERROR outcomes, retained IO failure causes, cancelled-packet discard and bounded backward-keyframe/EOF seeking."
+  },
+  {
+    "path": "Source/codec_sfdec2.c",
+    "ours_sha256": "ba974f10a7a6d32eda3b5be459ff6858ed23befbe0cf00bc6ffd358ab1e912e5",
+    "upstream_sha256": "9f675e33bd793dab824922eb2367e66e3c55316960bf2e633c66ec9a045bdc2b",
+    "selected": "upstream",
+    "reason": "Use int64 pause timing and preserve qualified Mode1 sample phase across repeated pauses."
+  },
+  {
+    "path": "Source/codec_sfdec2.c",
+    "ours_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstream_sha256": "97832552e4649a4a334075ecdd7eb58ae4957c6ee8ac807b65522b6e640a6448",
+    "selected": "upstream",
+    "reason": "Use int64 pause timing and preserve qualified Mode1 sample phase across repeated pauses."
+  },
+  {
+    "path": "Source/codec_sfdec2.c",
+    "ours_sha256": "5494da35b9106abf2611e1219f23516ebe82270e2ed41148e6b9f6f7dd6c6720",
+    "upstream_sha256": "fd2b8a725a3616e9b72d93010bf86f07d22d06c90772d591ae647eb396737939",
+    "selected": "upstream",
+    "reason": "Use int64 pause timing and preserve qualified Mode1 sample phase across repeated pauses."
+  },
+  {
+    "path": "Include/audio_interface.h",
+    "ours_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstream_sha256": "19b9fbe4b18305f8bb413a253289baeb411f65cfc8ac7849a5907a262c9cb1d1",
+    "selected": "upstream",
+    "reason": "Keep the new zero-accepted-byte output-recreated signal so PCM epoch recovery is explicit."
+  },
+  {
+    "path": "Include/stream.h",
+    "ours_sha256": "388772855974c2a76583a5a0bb5287715bc7dafa8e9e351e83ec21a50a95f2ac",
+    "upstream_sha256": "b3fd7d36c8e93b716bf8ca5189d8509414e062a6f1ce6f132443bebc6e749bbb",
+    "selected": "upstream",
+    "reason": "Match the 64-bit pause monotonic clock used by the updated video code."
+  },
+  {
+    "path": "doc/sync_anchoring_rules.md",
+    "ours_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstream_sha256": "e91c213e2427e8c803ec752009c2a122deda99871ba10717e383069f1e59cab3",
+    "selected": "upstream",
+    "reason": "Retain upstream ownership documentation for explicit pause/resume phase correction."
+  }
+]

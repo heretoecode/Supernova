@@ -37,6 +37,7 @@ public class PlaybackNetworkRetryTest {
         verify(frontend).onSeekStart(806_892);
         // onError has already released the native player and cleared its URI.
         when(player.isInPlaybackState()).thenReturn(false);
+        when(player.hasSuspendedPosition()).thenReturn(false);
 
         assertEquals(806_892, service.prepareRetryFromCurrentPosition());
         assertEquals(806_892, get(session, "selectedStartPositionMs"));
@@ -74,8 +75,13 @@ public class PlaybackNetworkRetryTest {
         assertEquals(false, get(session, "startPositionApplied"));
         verify(player, never()).setVideoURI(any(), any());
 
+        CountDownLatch sourcePosted = new CountDownLatch(1);
+        doAnswer(call -> {Object result=call.callRealMethod();sourcePosted.countDown();return result;})
+                .when(handler).post(any(Runnable.class));
         subtitles.countDown();
-        verify(player, timeout(2000)).setVideoURI(uri, null);
+        assertTrue("Source-open worker did not post",sourcePosted.await(2,java.util.concurrent.TimeUnit.SECONDS));
+        shadowOf(Looper.getMainLooper()).idle();
+        verify(player).setVideoURI(uri, null);
     }
 
     private static Object get(Object object, String name) throws Exception {

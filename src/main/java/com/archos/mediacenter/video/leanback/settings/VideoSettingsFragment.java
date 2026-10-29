@@ -16,12 +16,15 @@ package com.archos.mediacenter.video.leanback.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
 import androidx.leanback.preference.LeanbackSettingsFragmentCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.utils.ThemeManager;
@@ -117,8 +120,9 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
             super.onViewCreated(view, savedInstanceState);
             // Apply theme background color to the preference list (RecyclerView)
             // This colors only the right-side content area, not the entire window
-            if (getListView() != null) {
-                getListView().setBackgroundColor(SettingsWorkspace.enabled(requireContext())?android.graphics.Color.TRANSPARENT:ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
+            final RecyclerView list = getListView();
+            if (list != null) {
+                list.setBackgroundColor(SettingsWorkspace.enabled(requireContext())?android.graphics.Color.TRANSPARENT:ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
             }
             if (!SettingsWorkspace.enabled(requireContext())&&requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false)) {
                 scrollToPreference("streaming_category");
@@ -129,6 +133,31 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
             }
             if(backupController!=null&&backupViewState!=null){backupController.restoreViewState(backupViewState);backupViewState=null;}
             // Note: Header color is now handled by the theme (MyLeanbackTheme.Preferences.Black)
+
+            // Fix for #1898: on phones (touch input), tapping a row never gives it Android
+            // view focus, so the leanback GridLayoutManager has no focused child to anchor
+            // its scroll position to and snaps back to the top on the next layout pass
+            // (e.g. after a CheckBoxPreference toggle). On Android TV this does not happen
+            // since dpad navigation always keeps a row focused. Requesting focus on the
+            // touched row restores that anchor without affecting dpad navigation.
+            if (list != null) {
+                list.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+                    @Override
+                    public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent event) {
+                        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                            View child = recyclerView.findChildViewUnder(event.getX(), event.getY());
+                            if (child != null && !child.hasFocus()) child.requestFocus();
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public void onTouchEvent(RecyclerView recyclerView, MotionEvent event) {}
+
+                    @Override
+                    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+                });
+            }
         }
 
         @Override public void onDestroyView(){if(workspace!=null){workspace.dispose();workspace=null;}super.onDestroyView();}

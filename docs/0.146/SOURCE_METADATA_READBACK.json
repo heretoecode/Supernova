@@ -1,0 +1,41 @@
+{
+  "source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+  "folder_id": "1KwxezR3qdquBXun9MD3PMMenEG0jTk1h",
+  "files": [
+    {
+      "file": "Supernova_0.146_Source_README.txt",
+      "drive_id": "1sv1VM4tNxbOqCQ2hWNc5JuG7aeTf-R28",
+      "bytes": 2800,
+      "sha256": "90387fc3e844e54f89d620f766e9c765b48b13a451a3803499743ed967e2c8dc",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Source_SHA256SUMS.txt",
+      "drive_id": "11ws40kY7-PE87RGDVMbhLVK5vsYMkQYX",
+      "bytes": 818,
+      "sha256": "988c7a7461764991672bb8addcdbb4ebe9a1ca3b99f0aff504b871fec77cc70e",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Source_Verification.json",
+      "drive_id": "1JqFHqz7O1rZPXcDnJeYdREbleEvnsgyH",
+      "bytes": 11383,
+      "sha256": "85f6de392154cd1b18064a68bb0eec425773e42f37d97a962974a51bb73d1f4d",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Source_Drive_Readback.json",
+      "drive_id": "1a1bz5zNzdgjNxzFQ4t9lW1CljoN_LbDw",
+      "bytes": 2135,
+      "sha256": "2f065ad4b636d1d04a36fe0ec3b6c9e771fa09ab4e50186308dcaf0fc41109cf",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Source_Delivery.json",
+      "drive_id": "1tDsNFoWwBcCPsC21dSf6mcXabn363A7p",
+      "bytes": 14398,
+      "sha256": "e0fb37c151756f7eda3354de4261fb1f1d2f748405f4ee58c8393627966b5270",
+      "complete_readback_verified": true
+    }
+  ]
+}

@@ -17,6 +17,7 @@ import com.archos.mediacenter.video.BuildConfig;
 
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.PictureInPictureParams;
@@ -39,6 +40,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Insets;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -57,6 +59,7 @@ import android.provider.Settings.SettingNotFoundException;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Rational;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -72,7 +75,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.view.WindowMetrics;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -93,6 +100,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.loader.app.LoaderManager;
 import androidx.preference.PreferenceManager;
@@ -139,7 +147,6 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.medialib.IMediaPlayer;
 import com.archos.medialib.LibAvos;
-import com.archos.medialib.Subtitle;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.ScrapeDetailResult;
 
@@ -165,7 +172,6 @@ import com.archos.mediacenter.utils.ISO639codes;
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.DEFAULT_MAX_IFRAME_SIZE;
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.DEFAULT_STREAM_BUFFER_SIZE;
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_PARSER_SYNC_MODE;
-import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_PLAYBACK_SPEED;
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_STREAM_BUFFER_SIZE;
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_STREAM_MAX_IFRAME_SIZE;
 
@@ -201,13 +207,35 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     private static final int DIALOG_AUDIO_SPEED = 10;
 
-    // accessed from SubtitleSettingsDialog
+    // Stable legacy aliases used by Supernova controls and saved preferences.
     public static final String KEY_SUBTITLE_BACKGROUND = "subtitle_background";
-    public static final String KEY_SUBTITLE_BG_OPACITY = "subtitle_bg_opacity";
-    /* package */ public static final String KEY_SUBTITLE_SIZE = "pref_play_subtitle_size_key";
-    /* package */ public static final String KEY_SUBTITLE_VPOS = "pref_play_subtitle_vpos_key";
     public static final String KEY_SUBTITLE_OUTLINE = "pref_play_subtitle_outline_key";
-    public static final String KEY_SUBTITLE_COLOR = "pref_play_subtitle_color_key";
+    public static final String KEY_SUBTITLE_SIZE = "pref_play_subtitle_size_key";
+
+    // accessed from SubtitleSettingsDialog
+    public static final String KEY_SUBTITLE_BG_OPACITY = SubtitleManager.KEY_BG_OPACITY;
+    /* package */ public static final String KEY_SUBTITLE_VPOS = SubtitleManager.KEY_VPOS;
+    public static final String KEY_SUBTITLE_COLOR = SubtitleManager.KEY_COLOR;
+
+    // --- NEW: libass styling system additions ---
+    // KEY_SUBTITLE_BG_MODE uses -1 as a sentinel default meaning "not yet migrated";
+    // see restorePreferences()/savePreferences() for the one-time migration from the
+    // legacy KEY_SUBTITLE_OUTLINE / KEY_SUBTITLE_BACKGROUND booleans.
+    public static final String KEY_SUBTITLE_BG_MODE = SubtitleManager.KEY_BG_MODE;
+    public static final String KEY_SUBTITLE_OVERRIDE_MODE = SubtitleManager.KEY_OVERRIDE_MODE;
+    public static final String KEY_SUBTITLE_BOLD = SubtitleManager.KEY_BOLD;
+    public static final String KEY_SUBTITLE_OUTLINE_COLOR = SubtitleManager.KEY_OUTLINE_COLOR;
+    public static final String KEY_SUBTITLE_SHADOW_COLOR = SubtitleManager.KEY_SHADOW_COLOR;
+    public static final String KEY_SUBTITLE_BACKGROUND_COLOR = SubtitleManager.KEY_BACKGROUND_COLOR;
+    public static final String KEY_SUBTITLE_OUTLINE_WIDTH = SubtitleManager.KEY_OUTLINE_WIDTH;
+    public static final String KEY_SUBTITLE_SHADOW_WIDTH = SubtitleManager.KEY_SHADOW_WIDTH;
+    public static final String KEY_SUBTITLE_FONT_SIZE_PT = SubtitleManager.KEY_FONT_SIZE_PT;
+    public static final String KEY_SUBTITLE_FONT_SCALE = SubtitleManager.KEY_FONT_SCALE;
+    // When true, plain-text (SRT/VTT) and bitmap (VobSub/PGS) subtitles are allowed to render
+    // into top/bottom letterbox bars (mpv's sub-use-margins equivalent). Left/right bars are
+    // never used, regardless of this setting -- see SurfaceController.updateSurface().
+    public static final String KEY_SUBTITLE_USE_MARGINS = "subtitle_use_margins";
+
     private static final String KEY_PLAYER_FORMAT = "player_pref_format_key";
     private static final String KEY_PLAYER_AUTO_FORMAT = "player_pref_auto_format_key";
     private static final String KEY_PLAYER_PROJECTOR_MODE = "player_projector_mode_key";
@@ -389,10 +417,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     // Specific player settings used for demo mode
     private boolean mForceExitOnTouch;
 
-    private int mSubtitleSizeDefault;
-    private int mSubtitleVPosDefault;
-    private int mSubtitleColorDefault;
-    private boolean mSubtitleOutlineDefault;
+    private SubtitleManager.Defaults mSubtitleDefaults;
     private boolean mAudioSubtitleNeedUpdate = false;
     private int mNewSubtitleTrack = -1;
     private int mNewAudioTrack = -1;
@@ -403,13 +428,33 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private boolean mCling = false;
 
     private TVMenu mSubtitleTVMenu;
-    private TVMenuItem mSubtitleSettingsMenuItem;
     private TVMenuItem mSubtitleDelayMenuItem;
     private TVCardView mSubtitleTVCardView;
     private TVCardView mAudioTracksTVCardView;
+    private TVCardView mPlayModeTVCardView;
     private TVMenu mAudioTracksTVMenu;
     private TVMenu mPlayModeTVMenu;
+    private TVMenuItem mPlayModeAutoSkipMenuItem;
     private TVMenuItem mIntroSummaryMenuItem;
+    private View mIntroSummarySeparator;
+    private TextView mPhonePlayModeIntroFooter;
+    private ViewGroup mSkipButtonContainer;
+    private Button mSkipButton;
+    private IntroSegments.Type mCurrentSkipType;
+    private long mCurrentSkipTargetMs;
+    private boolean mIsSkipPromptShowing = false;
+    private SkipProgressDrawable mSkipProgress;
+    private long mSkipProgressStartMs = -1;
+    private long mSkipProgressTargetMs = -1;
+    private static final long SKIP_PROGRESS_TICK_MS = 200;
+    private final Runnable mSkipProgressTicker = new Runnable() {
+        @Override
+        public void run() {
+            if (!mIsSkipPromptShowing || mSkipProgress == null || mSkipButton == null) return;
+            updateSkipProgress();
+            mSkipButton.postDelayed(this, SKIP_PROGRESS_TICK_MS);
+        }
+    };
     private boolean isTVMode;
 
 
@@ -663,6 +708,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if(previewUpNext!=null&&previewUpNext.cancelFocused())return;
                 if (mPlayerController != null && mPlayerController.handleBackPressed()) {
                     // The player controller dismisses a nested TV card before the main TV menu.
+                    if (isTVMode && mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE && !isMenuOrDialogDisplayed()) {
+                        mSkipButton.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                requestSkipButtonFocus();
+                            }
+                        });
+                    }
+                } else if (mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE) {
+                    hideSkipPrompt();
                 } else {
                     setEnabled(false);
                     com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_exit_requested","reason","user_back");
@@ -688,7 +743,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         WindowManager.LayoutParams attributes = getWindow().getAttributes();
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        
+
         // cutout mode: display below cutout
         boolean cutBothSidesX = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -713,6 +768,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         else getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setContentView(R.layout.player);
         mRootView = findViewById(R.id.root);
+        mRootView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 
         mRootView.setOnApplyWindowInsetsListener( new View.OnApplyWindowInsetsListener() {
             @Override
@@ -764,10 +820,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
         });
 
-        mSubtitleSizeDefault = getResources().getInteger(R.integer.player_pref_subtitle_size_default);
-        mSubtitleVPosDefault = getResources().getInteger(R.integer.player_pref_subtitle_vpos_default);
-        mSubtitleColorDefault = Color.parseColor(getResources().getString(R.string.subtitle_color_default));
-        mSubtitleOutlineDefault = false;
+        mSubtitleDefaults = new SubtitleManager.Defaults(this);
+
         mSurfaceController = new SurfaceController(mRootView);
         mSurfaceController.mFullScreenWithCutout = mFullScreenWithCutout;
         mSurfaceController.mCutBothSidesX = cutBothSidesX;
@@ -794,6 +848,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             if (mSubtitleManager != null) {
                 mSubtitleManager.onControlBarVisibilityChanged();
             }
+            if (!visible && isTVMode && mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE && !isMenuOrDialogDisplayed()) {
+                requestSkipButtonFocus();
+            }
         });
         mSubtitleInfoController = new TrackInfoController(mContext, getLayoutInflater(), menuAnchor, actionBar);
         mSubtitleInfoController.setListener(this);
@@ -801,6 +858,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mResumeFromLast = false;
 
         mPlayer = new Player(mContext, getWindow(), mSurfaceController, false);
+        initSkipButton();
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N_MR1){ //detect any kind of rotation, even from 270 to 90°
             mDisplayListener = new DisplayManager.DisplayListener() {
@@ -949,41 +1007,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         setLockRotation(mLockRotation);
         mSurfaceController.setVideoFormat(Integer.parseInt(mPreferences.getString(KEY_PLAYER_FORMAT, "-1")),
                 Integer.parseInt(mPreferences.getString(KEY_PLAYER_AUTO_FORMAT, "-1")));
-        
+
         //Set up projector mode if we need it, otherwise dont even call.
         mSurfaceController.setProjectorMode(mPreferences.getBoolean(KEY_PLAYER_PROJECTOR_MODE, false));
         
         if (log.isDebugEnabled()) log.debug("onStart: Setting audio transformer");
         if (LibAvos.isAvailable()) {
             VideoPreferencesCommon.resetPassthroughPref(mPreferences); // note this resets the audio_speed if in passthrough to 1.0f in prefs
-            // enable passthrough only if HDMI is connected and enabled in options
-            // Use effective max PCM channels
-            int maxPcmChannels = CustomApplication.getEffectiveMaxPcmChannels();
-            log.info("onStart: PCM diagnostic - maxPcmChannels={} hasHdmi={} isIecCapable={} isDirectPcmCapable={} maxAudioChannelCount={}",
-                    maxPcmChannels,
-                    CustomApplication.isHdmiConnected(),
-                    CustomApplication.isIecEncapsulationCapable(),
-                    CustomApplication.isDirectPcmMultichannelCapable(),
-                    CustomApplication.getMaxAudioChannelCount());
-            LibAvos.setMaxPcmChannels(maxPcmChannels);
-            log.info("onStart: Set max PCM channels to {}", maxPcmChannels);
-            LibAvos.setPcmChannelMasks(CustomApplication.getHdmiChannelMasks());
-            int passthroughMode = CustomApplication.isPassthroughSupported() ? Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple","0") ) : 0;
-            LibAvos.setPassthrough(passthroughMode);
+            int passthroughMode = CustomApplication.isPassthroughSupported()
+                    ? Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0")) : 0;
             resetUnsupportedPassthroughAudioDelayPreset();
-            if (mPreferences.getBoolean(VideoPreferencesCommon.KEY_FORCE_AUDIO_PASSTHROUGH, false)) {
-                long forcedFlags = CustomApplication.allHdmiAudioCodecs;
-                if (!CustomApplication.isIecEncapsulationCapable()) {
-                    // Don't fake IEC support on devices that never advertised it; otherwise
-                    // mode 3 fallback gets forced back into IEC and fails on IEC-less eARC.
-                    forcedFlags &= ~(1L << 13); // clear AVOS_ENCODING_IEC61937
-                }
-                LibAvos.setHdmiSupportedAudioCodecs(forcedFlags);
-            } else {
-                LibAvos.setHdmiSupportedAudioCodecs(CustomApplication.getNativeAudioCodecsFlag());
-            }
-            LibAvos.setMediaCodecAudioCapabilities(CustomApplication.getMediaCodecAudioCapabilitiesFlag());
-            LibAvos.setSpatializerCapabilities(CustomApplication.getSpatializerCapabilities());
             mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             applySpatializationPreferenceToAvos();
             // note enable_downmix_androidtv and disable_downmix are the opposite same settings but only one applies to androidTV
@@ -1012,7 +1045,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
             LibAvos.setStreamMaxIframeSize(finalSize);
             LibAvos.enableAudioSpeed(VideoPreferencesCommon.isAudioSpeedEnabled(mPreferences));
-            LibAvos.disableAtempoFilter(mPreferences.getBoolean(VideoPreferencesCommon.KEY_AUDIO_SPEED_AUDIOTRACK, false));
+            String audioSpeedMode = VideoPreferencesCommon.audioSpeedMode(mPreferences);
+            // Native backend: 0=atempo, 1=AudioTrack PlaybackParams, 2=Sonic
+            int audioSpeedBackend = 0;
+            if (VideoPreferencesCommon.AUDIO_SPEED_MODE_AUDIOTRACK.equals(audioSpeedMode)) {
+                audioSpeedBackend = 1;
+            } else if (VideoPreferencesCommon.AUDIO_SPEED_MODE_SONIC.equals(audioSpeedMode)) {
+                audioSpeedBackend = 2;
+            }
+            LibAvos.setAudioSpeedBackend(audioSpeedBackend);
             LibAvos.setAudioSpeed(audioSpeed); // set audio speed playback (does nothing if audio speed not enabled)
             LibAvos.setDynamicAudioDelay(mPreferences.getBoolean(VideoPreferencesCommon.KEY_ENABLE_DYNAMIC_AUDIO_DELAY, true)); // AVOS applies it only when the active sink path can use dynamic delay.
             LibAvos.parserSyncMode(Integer.parseInt(mPreferences.getString(KEY_PARSER_SYNC_MODE,"0"))); // set lavc parser sync mode (0: PTS, 1 samples)
@@ -1099,6 +1140,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         intent.putExtra(ExternalResumeIntent.EXTERNAL_PLAYER_LAUNCH, mIsExternalPlayer);
 
         PlayerService.sPlayerService.switchPlayerFrontend(mPlayerListener);
+        PlayerService.sPlayerService.setUiContext(this);
         Player.sPlayer = mPlayer;
         PlayerService.sPlayerService.setPlayer();
         if(mPermissionChecker.hasExternalPermission(this)) {
@@ -1115,6 +1157,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         super.onPictureInPictureModeChanged(isInPict);
         if(isInPict)
             mWasInPictureInPicture = true;
+        adjustSkipButtonForPiP(isInPict);
     }
 
     @Override
@@ -1127,6 +1170,24 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             registerReceiver(mClockReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
         }
         PlayerBrightnessManager.getInstance().restoreBrightness(this);
+
+        // Safety net for the rare case where Android genuinely killed the process while
+        // backgrounded (memory pressure) and a fresh Player/SubtitleEngine had to be created:
+        // gl_subtitle_view's SurfaceTexture is window-scoped and may not redeliver
+        // onSurfaceTextureAvailable/SizeChanged on every resume, so proactively re-push the
+        // known surface size. No-op-safe to call unconditionally.
+        if (mPlayer != null && mPlayer.getSubtitleEngine() != null) {
+            mPlayer.getSubtitleEngine().resyncSurfaceSize();
+        }
+
+        // Re-apply subtitle layout mode (category + use-margins) on resume: the use-margins
+        // preference (KEY_SUBTITLE_USE_MARGINS) is otherwise only re-read on a subtitle track
+        // event (onTrackSelected()/onSubtitleMetadataUpdated()) -- if the user backgrounds the
+        // player, changes it in Settings, and returns without switching tracks, the running
+        // SurfaceController never learns about it until the next unrelated track change.
+        // Safe to call unconditionally, same as resyncSurfaceSize() above.
+        updateSubtitleLayoutMode();
+
         if(!mWasInPictureInPicture){
             mPermissionChecker.checkAndRequestPermission(this);
             if (!isFinishing() && !isDestroyed()) {
@@ -1141,7 +1202,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 mPaused = false;
                 mPlayer.checkSubtitles();
                 // Ensure mPlayOnResume stays false if player is paused
-                if (mPlayer.isPaused() && PlayerService.sPlayerService != null) {
+                if (mPlayer.isPauseRequested() && PlayerService.sPlayerService != null) {
                     if (log.isDebugEnabled()) log.debug("onResume: player is paused, ensuring mPlayOnResume = false and mUserPausedVideo = true");
                     mUserPausedVideo = true;
                     PlayerService.sPlayerService.setPlayOnResume(false);
@@ -1164,6 +1225,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @SuppressWarnings("deprecation") // requestVisibleBehind: deprecated API 26, no replacement for Android TV
     @Override
     protected void onPause() {
+        // Also cover framework-driven finishing paths which bypass our finish() override.
+        if (isFinishing() && !mLaunchFloatingPlayer && mPlayer != null) mPlayer.beginPlaybackExit();
         super.onPause();
         if (log.isDebugEnabled()) log.debug("onPause");
 
@@ -1194,7 +1257,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
 
         // If player is paused when activity pauses (screen off), preserve pause state
-        if (mPlayer != null && mPlayer.isPaused() && PlayerService.sPlayerService != null) {
+        if (mPlayer != null && mPlayer.isPauseRequested() && PlayerService.sPlayerService != null) {
             if (log.isDebugEnabled()) log.debug("onPause (activity): player is paused, setting mPlayOnResume = false");
             PlayerService.sPlayerService.setPlayOnResume(false);
         }
@@ -1237,14 +1300,33 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         stopDialog();
 
+        hideSkipPrompt();
+
         mPlayerController.hide();
 
         stop();
-        if(PlayerService.sPlayerService !=null)
-            PlayerService.sPlayerService.removePlayerFrontend(mPlayerListener, mLaunchFloatingPlayer);
 
-        if(FloatingPlayerService.sFloatingPlayerService!=null&&!mLaunchFloatingPlayer)
-            FloatingPlayerService.sFloatingPlayerService.stopSelf();
+        // Only tear down the shared PlayerService binding when we're actually leaving this
+        // playback session for good (finishing, or handing off to the floating player, which
+        // has its own dedicated handoff path via mLaunchFloatingPlayer/prepareForSurfaceSwitch).
+        // A plain minimize (home button) also reaches onStop(), but mResumeFromLast=true below
+        // already assumes we're coming right back to the SAME Player/SubtitleEngine instance --
+        // unbindService() here let Android destroy PlayerService while backgrounded (nothing
+        // else was bound to it), so PlayerService.onCreate() -> setPlayer() would race
+        // PlayerActivity.postOnPlayerServiceBind() -> "Player.sPlayer = mPlayer" on resume and
+        // often win, silently allocating a throwaway Player (and thus a throwaway
+        // SubtitleEngine/native sub_engine with no known surface size) instead of reusing the
+        // real one. Keeping the binding alive across a plain minimize avoids that race entirely.
+        boolean isLeavingForGood = isFinishing() || mLaunchFloatingPlayer;
+        if (isLeavingForGood) {
+            if(PlayerService.sPlayerService !=null)
+                PlayerService.sPlayerService.removePlayerFrontend(mPlayerListener, mLaunchFloatingPlayer);
+
+            if(FloatingPlayerService.sFloatingPlayerService!=null&&!mLaunchFloatingPlayer)
+                FloatingPlayerService.sFloatingPlayerService.stopSelf();
+        } else {
+            if (log.isDebugEnabled()) log.debug("onStop: plain background transition, keeping PlayerService binding and Player.sPlayer alive for resume");
+        }
         mLaunchFloatingPlayer = false;
         mResumeFromLast = true;
 
@@ -1252,7 +1334,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         editor.putInt("lastintent", getIntent().hashCode());
         editor.apply();
         unregisterReceiver(mReceiver);
-        unbindService(mPlayerServiceConnection);
+        if (isLeavingForGood) {
+            unbindService(mPlayerServiceConnection);
+        }
         removeNetworkListener();
     }
 
@@ -1296,6 +1380,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         super.onDestroy();
     }
 
+    private void updateSubtitleLayoutMode() {
+        // The track kind is decided in native and interpreted in exactly one place,
+        // SubtitleManager (see its KIND_* docs). This method only forwards the answer.
+        syncSubtitleKind();
+        int category = mSubtitleManager != null
+                ? mSubtitleManager.getLayoutCategory()
+                : SurfaceController.SUBTITLE_CATEGORY_PLAIN_TEXT;
+        boolean useMargins = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(KEY_SUBTITLE_USE_MARGINS, true);
+        if (mSurfaceController != null) {
+            mSurfaceController.setSubtitleLayoutMode(category, useMargins);
+        }
+    }
+
     @SuppressWarnings("deprecation") // getRealSize/getSize: API 30+ uses getCurrentWindowMetrics
     private void updateSizes() {
         boolean isInPictureInPictureMode = Build.VERSION.SDK_INT>=Build.VERSION_CODES.N&&isInPictureInPictureMode();
@@ -1316,8 +1414,25 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         Point point = new Point();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // In API 30+ use currentWindowMetrics bounds minus insets for the usable area
-            Rect bounds = getWindowManager().getCurrentWindowMetrics().getBounds();
-            point.set(bounds.width(), bounds.height());
+            WindowMetrics windowMetrics = getWindowManager().getCurrentWindowMetrics();
+            Rect bounds = windowMetrics.getBounds();
+            WindowInsets rootInsets = getWindow().getDecorView().getRootWindowInsets();
+            // getBounds() reports the window size including all system bar areas whereas the app content is
+            // laid out below the freeform caption bar. Only the caption bar (desktop windowing) is subtracted
+            // here to keep the legacy usable area on phones; navigation bars and cutout are already handled as
+            // margins by MiscUtils.adjustViewLayoutForInsets() and must not be subtracted twice, otherwise the
+            // OSD controls and subtitles are laid out past the window edge and get clipped at the bottom
+            // cf. issue #1541. Status bar is intentionally not subtracted: the content is drawn edge-to-edge
+            // behind it (setDecorFitsSystemWindows(false)) and adjustViewLayoutForInsets shifts the views.
+            // The caption bar is a local inset of the task flagged FORCE_CONSUMING: WindowMetrics.getWindowInsets()
+            // reports it as empty, so query the decor view root insets. It is empty when no caption bar can be
+            // shown (fullscreen/split-screen/phone) so it is safe to always subtract it.
+            Insets captionInsets = Insets.NONE;
+            if (isInMultiWindowMode && rootInsets != null) {
+                captionInsets = rootInsets.getInsets(WindowInsets.Type.captionBar());
+            }
+            point.set(bounds.width() - captionInsets.left - captionInsets.right,
+                    bounds.height() - captionInsets.top - captionInsets.bottom);
         } else {
             getWindowManager().getDefaultDisplay().getSize(point);
         }
@@ -1331,14 +1446,14 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         //Find the screen density.
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-        
+
         //Set the Floating Player Size, 45% of the smallest side, or 2 inches on Tablet etc.
         int smallestSide = (isPortrait ? displayWidth : displayHeight);
         int smallestSideLayout = (isPortrait ? layoutWidth : layoutHeight);
         mPlayerController.floatingPlayerSize =  (int) ( smallestSide / metrics.densityDpi < 3 ?
                 (int) (smallestSideLayout * 0.45):
                 metrics.densityDpi * 2);
-                
+
         //Update the Strecth X /Y Icon
         mPlayerController.setStretchXYIcon();
 
@@ -1346,7 +1461,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mPlayerController.setFullscreenWithCutoutButtonIcon(mFullScreenWithCutout);
 
         // hack to fix fullscreen height on chromeos pixelbook (and more?) since it reports 2400x1440 instead of 2400x1600 but ok in multiWindow
-        if(isChromeOS(mContext)&&(layoutWidth == displayWidth)&&(layoutHeight != displayHeight)) {
+        // restricted to fullscreen: in freeform windowing the height difference can come from the caption bar
+        // already subtracted above (cf. issue #1541), which this hack would otherwise cancel
+        if(isChromeOS(mContext)&&!isInMultiWindowMode&&(layoutWidth == displayWidth)&&(layoutHeight != displayHeight)) {
             log.warn("CONFIG updateSizes: hack correcting on chromeOS layoutHeight from {} to {}", layoutHeight, displayHeight);
             layoutHeight = displayHeight;
         }
@@ -1390,15 +1507,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mAudioInfoController.resetPopup();
             mSubtitleInfoController.resetPopup();
         }
-        int size = mPreferences.getInt(KEY_SUBTITLE_SIZE, mSubtitleSizeDefault);
-        int vpos = mPreferences.getInt(KEY_SUBTITLE_VPOS, mSubtitleVPosDefault);
-        if(isInPictureInPictureMode||isInMultiWindowMode) { //proportional size
-            size = (int) ((layoutWidth / (float)(displayHeight<displayWidth?displayWidth:displayHeight)) * size);
+        int vpos = mPreferences.getInt(KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos);
+        if(isInPictureInPictureMode||isInMultiWindowMode) {
             // note that in multiwindow mode chromeos returns correct height but not in full screen thus it works here
             vpos = (int) ((layoutHeight / (float)(displayHeight<displayWidth?displayHeight:displayWidth)) * vpos);
         }
-        if (log.isDebugEnabled()) log.debug("CONFIG updateSizes: mSubtitleManager.setSize({}), vpos={}", size, vpos);
-        mSubtitleManager.setSize(size);
+        if (log.isDebugEnabled()) log.debug("CONFIG updateSizes: vpos={}", vpos);
         setSubtitleVpos(vpos, "updateSizes");
     }
 
@@ -1553,8 +1667,26 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         switch (keyCode) {
 
             case KeyEvent.KEYCODE_DPAD_UP:
+                if (mSkipButton != null && (mSkipButton.hasFocus() || mSkipButton.isFocused())) {
+                    if (mPlayerControllerPlaceholder != null) {
+                        mPlayerControllerPlaceholder.requestFocus();
+                    }
+                    if (mPlayerController != null) {
+                        return mPlayerController.onKey(keyCode, event);
+                    }
+                    return true;
+                }
                 if(mPlayerController!=null){
-                    return mPlayerController.onKey(keyCode, event); 
+                    return mPlayerController.onKey(keyCode, event);
+                }
+                break;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                if (isTVMode && mPlayerControllerPlaceholder != null && mPlayerControllerPlaceholder.hasFocus()
+                        && mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE
+                        && !isMenuOrDialogDisplayed()) {
+                    if (mSkipButton != null && mSkipButton.requestFocus()) {
+                        return true;
+                    }
                 }
                 break;
             case KeyEvent.KEYCODE_I:
@@ -1640,6 +1772,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     // TV Menu
 
+    @SuppressLint("InflateParams")
     private void createTVTimerDialog(){
         View dialogMainView = (View)LayoutInflater.from(mContext)
                 .inflate(R.layout.card_dialog_layout, null);
@@ -1678,6 +1811,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         tvPicker.requestFocus();
     }
 
+    @SuppressLint("InflateParams")
     private void createTVSubtitleDialog() {
         View dialogMainView = LayoutInflater.from(mContext)
                 .inflate(R.layout.card_dialog_layout, null);
@@ -1723,7 +1857,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
         });
         ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).addOtherView(tvmenu);
-        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {     
+        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {
             @Override
             public void onResult(int code) {
                 mPlayerController.getTVMenuAdapter().setDiscrete(false);
@@ -1863,7 +1997,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {     
             @Override
             public void onResult(int code) {
-                mPreferences.edit().putInt(PlayerActivity.KEY_SUBTITLE_SIZE, mSubtitleManager.getSize()).apply();
+                mPreferences.edit().putInt(PlayerActivity.KEY_SUBTITLE_SIZE, mSubtitleManager.getSize())
+                        .putInt(SubtitleManager.KEY_FONT_SIZE_PT, mSubtitleManager.getFontSizePt())
+                        .putFloat(SubtitleManager.KEY_OUTLINE_WIDTH, mSubtitleManager.getOutlineWidth())
+                        .putInt(SubtitleManager.KEY_BG_MODE, mSubtitleManager.getBgMode()).apply();
                 mPreferences.edit().putInt( PlayerActivity.KEY_SUBTITLE_VPOS, mSubtitleManager.getVerticalPosition()).apply();
                 mPreferences.edit().putInt( PlayerActivity.KEY_SUBTITLE_COLOR, mSubtitleManager.getColor()).apply();
                 mPreferences.edit().putBoolean(PlayerActivity.KEY_SUBTITLE_OUTLINE, mSubtitleManager.getOutlineState()).apply();
@@ -1960,6 +2097,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         tvPicker.requestFocus();
     }
 
+    @SuppressLint("InflateParams")
     private void createTVAudioSpeedDialog() {
         View dialogContainer = (View)LayoutInflater.from(mContext).inflate(R.layout.card_dialog_layout, null);
         View dialogView = dialogContainer.findViewById(R.id.card_view);
@@ -2028,7 +2166,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             return "ABC";
         else if (size<50)
             return "AB";
-        else 
+        else
             return "A";
     }
 
@@ -2083,16 +2221,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (log.isDebugEnabled()) log.debug("refreshSubtitleTVMenu: isCurrentSubtrackNone={}", isCurrentSubtrackNone());
                 disableSubtitleDelayTVMenuItem(isCurrentSubtrackNone());
 
-                mSubtitleSettingsMenuItem = mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.menu_player_settings).toString(), false, false);
-                mSubtitleSettingsMenuItem.setOnClickListener(new View.OnClickListener() {
+                // Never disabled: the panel explains when settings cannot apply (no track, image or unsupported format).
+                mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.menu_player_settings).toString(), false, false).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         createTVSubtitleSettingsDialog();
                     }
                 });
-
-                if (log.isDebugEnabled()) log.debug("refreshSubtitleTVMenu: isCurrentSubtrackGfx={}", isCurrentSubtrackGfx());
-                disableSubtitleSettingsMenuItem(isCurrentSubtrackGfx() || isCurrentSubtrackNone());
             }
             mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.get_subtitles_online).toString(), false, false).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -2202,9 +2337,14 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (mPlayModeTVMenu == null||BuildConfig.FOUNDATION) return;
         IntroSegments segments = (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
         String summary = (segments != null) ? segments.toSummaryString(PlayerService.introLabels(this), getString(R.string.introdb_segment_end)) : null;
-        if (summary == null) return;
+        if (summary == null) {
+            if (mIntroSummaryMenuItem != null) mIntroSummaryMenuItem.setVisibility(View.GONE);
+            if (mIntroSummarySeparator != null) mIntroSummarySeparator.setVisibility(View.GONE);
+            triggerPlayModeTVCardViewReFocus();
+            return;
+        }
         if (mIntroSummaryMenuItem == null) {
-            mPlayModeTVMenu.createAndAddSeparator();
+            mIntroSummarySeparator = mPlayModeTVMenu.createAndAddSeparator();
             mIntroSummaryMenuItem = mPlayModeTVMenu.createAndAddTVMenuItem(summary, false);
             ViewGroup.LayoutParams lp = mIntroSummaryMenuItem.getLayoutParams();
             if (lp != null) {
@@ -2214,11 +2354,287 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         } else {
             mIntroSummaryMenuItem.setText(summary);
         }
+        if (mIntroSummarySeparator != null) mIntroSummarySeparator.setVisibility(View.VISIBLE);
+        mIntroSummaryMenuItem.setVisibility(View.VISIBLE);
         TextView summaryText = (TextView) mIntroSummaryMenuItem.findViewById(R.id.info_text);
         if (summaryText != null) {
             summaryText.setSingleLine(false);
             summaryText.setMaxLines(6);
             summaryText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        }
+        triggerPlayModeTVCardViewReFocus();
+    }
+
+    private void triggerPlayModeTVCardViewReFocus() {
+        if (mPlayModeTVCardView != null && mPlayModeTVCardView.hasFocus()) {
+            mPlayModeTVCardView.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mPlayModeTVCardView != null && mPlayModeTVCardView.hasFocus()) {
+                        mPlayModeTVCardView.focus(true);
+                    }
+                }
+            });
+        }
+    }
+
+    private void refreshPhonePlayModeIntroSummary() {
+        if (mPhonePlayModeIntroFooter == null) return;
+        boolean enabled = mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED);
+        if (!enabled) {
+            mPhonePlayModeIntroFooter.setVisibility(View.GONE);
+            return;
+        }
+        IntroSegments segments = (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
+        String summary = (segments != null) ? segments.toSummaryString(PlayerService.introLabels(this), getString(R.string.introdb_segment_end)) : null;
+        if (summary != null) {
+            mPhonePlayModeIntroFooter.setText(summary);
+            mPhonePlayModeIntroFooter.setVisibility(View.VISIBLE);
+        } else {
+            mPhonePlayModeIntroFooter.setVisibility(View.GONE);
+        }
+    }
+
+    private void initSkipButton() {
+        if (BuildConfig.FOUNDATION) return;
+        LayoutInflater inflater = getLayoutInflater();
+        mSkipButtonContainer = (ViewGroup) inflater.inflate(R.layout.skip_button_layout, (ViewGroup) mRootView, false);
+        mSkipButton = (Button) mSkipButtonContainer.findViewById(R.id.skip_button);
+        mSkipProgress = new SkipProgressDrawable(this);
+        mSkipButton.setForeground(mSkipProgress);
+        ((ViewGroup) mRootView).addView(mSkipButtonContainer);
+        mSkipButtonContainer.bringToFront();
+
+        mSkipButton.setNextFocusDownId(R.id.player_controller_placeholder);
+
+        mSkipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                executeSkipPrompt();
+            }
+        });
+
+        mSkipButton.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_DOWN:
+                            if (mPlayerControllerPlaceholder != null) {
+                                mPlayerControllerPlaceholder.requestFocus();
+                            }
+                            if (mPlayerController != null) {
+                                mPlayerController.showControlBar();
+                            }
+                            return true;
+                        case KeyEvent.KEYCODE_DPAD_UP:
+                            if (mPlayerControllerPlaceholder != null) {
+                                mPlayerControllerPlaceholder.requestFocus();
+                            }
+                            if (mPlayerController != null) {
+                                return mPlayerController.onKey(keyCode, event);
+                            }
+                            return true;
+                        case KeyEvent.KEYCODE_DPAD_LEFT:
+                        case KeyEvent.KEYCODE_DPAD_RIGHT:
+                            if (mPlayerController != null) {
+                                return mPlayerController.onKey(keyCode, event);
+                            }
+                            return true;
+                        case KeyEvent.KEYCODE_BACK:
+                            hideSkipPrompt();
+                            return true;
+                    }
+                } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_LEFT:
+                        case KeyEvent.KEYCODE_DPAD_RIGHT:
+                            if (mPlayerController != null) {
+                                return mPlayerController.onKey(keyCode, event);
+                            }
+                            return true;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+    private boolean isMenuOrDialogDisplayed() {
+        if (mPlayerController != null && (mPlayerController.isTVMenuDisplayed() || mPlayerController.isShowing())) {
+            return true;
+        }
+        if (mShowingDialogId != DIALOG_NO) {
+            return true;
+        }
+        if (mDialog != null && mDialog.isShowing()) {
+            return true;
+        }
+        return false;
+    }
+
+    private void requestSkipButtonFocus() {
+        if (!isTVMode || mSkipButton == null || mSkipButtonContainer == null) return;
+        if (mSkipButtonContainer.getVisibility() != View.VISIBLE) return;
+        if (isMenuOrDialogDisplayed()) return;
+
+        if (hasWindowFocus()) {
+            boolean focused = mSkipButton.requestFocus();
+            if (!focused) {
+                mSkipButton.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isTVMode && hasWindowFocus() && !isMenuOrDialogDisplayed()
+                                && mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE) {
+                            mSkipButton.requestFocus();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    private void updateSkipButtonText(IntroSegments.Type type) {
+        if (mSkipButton == null) return;
+        int textRes;
+        if (type == IntroSegments.Type.RECAP) {
+            textRes = R.string.skip_recap_button;
+        } else if (type == IntroSegments.Type.OUTRO || type == IntroSegments.Type.CREDITS) {
+            textRes = R.string.skip_credits_button;
+        } else if (type == IntroSegments.Type.PREVIEW) {
+            textRes = R.string.skip_preview_button;
+        } else {
+            textRes = R.string.skip_intro_button;
+        }
+        mSkipButton.setText(textRes);
+    }
+
+    private void executeSkipPrompt() {
+        if (mCurrentSkipTargetMs < 0) return;
+        long targetMs = mCurrentSkipTargetMs;
+        IntroSegments.Type type = mCurrentSkipType;
+        hideSkipPrompt();
+        if (PlayerService.sPlayerService != null) {
+            PlayerService.sPlayerService.executeSkip(type, targetMs);
+        }
+    }
+
+    private void adjustSkipButtonForPiP(boolean isPiP) {
+        if (mSkipButtonContainer == null || mSkipButton == null) return;
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mSkipButtonContainer.getLayoutParams();
+        float density = getResources().getDisplayMetrics().density;
+        if (lp != null) {
+            int margin = isPiP ? (int) (8 * density) : (int) (32 * density);
+            int bottomMargin = isPiP ? (int) (8 * density) : (int) (90 * density);
+            lp.setMarginEnd(margin);
+            lp.bottomMargin = bottomMargin;
+            mSkipButtonContainer.setLayoutParams(lp);
+        }
+        if (isPiP) {
+            mSkipButton.setTextSize(10);
+            int padH = (int) (8 * density);
+            int padTop = (int) (4 * density);
+            int padBottom = (int) (14 * density);
+            mSkipButton.setPadding(padH, padTop, padH, padBottom);
+            mSkipButton.setMinHeight((int) (28 * density));
+            mSkipButton.setMinWidth((int) (60 * density));
+        } else {
+            mSkipButton.setTextSize(15);
+            int padH = (int) (20 * density);
+            int padTop = (int) (10 * density);
+            int padBottom = (int) (14 * density);
+            mSkipButton.setPadding(padH, padTop, padH, padBottom);
+            mSkipButton.setMinHeight((int) (44 * density));
+            mSkipButton.setMinWidth((int) (140 * density));
+        }
+    }
+
+    private void showSkipPrompt(final IntroSegments.Type type, final long targetMs) {
+        if (isFinishing() || isDestroyed() || mStopped) return;
+        if (mSkipButtonContainer == null || mSkipButton == null) return;
+
+        boolean isPiP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode();
+        adjustSkipButtonForPiP(isPiP);
+
+        mCurrentSkipType = type;
+        mCurrentSkipTargetMs = targetMs;
+        updateSkipButtonText(type);
+
+        mIsSkipPromptShowing = true;
+        startSkipProgress(targetMs);
+        mSkipButtonContainer.clearAnimation();
+        mSkipButtonContainer.bringToFront();
+        if (mSkipButtonContainer.getVisibility() != View.VISIBLE) {
+            mSkipButtonContainer.setVisibility(View.VISIBLE);
+            Animation fadeIn = new AlphaAnimation(0f, 1f);
+            fadeIn.setDuration(250);
+            mSkipButtonContainer.startAnimation(fadeIn);
+        } else {
+            mSkipButtonContainer.setAlpha(1f);
+        }
+
+        if (isTVMode && !isMenuOrDialogDisplayed()) {
+            requestSkipButtonFocus();
+        }
+    }
+
+    private void startSkipProgress(long targetMs) {
+        if (mSkipProgress == null || mSkipButton == null) return;
+        if (mSkipProgressTargetMs != targetMs) {
+            mSkipProgressTargetMs = targetMs;
+            mSkipProgressStartMs = (Player.sPlayer != null) ? Player.sPlayer.getCurrentPosition() : targetMs;
+        }
+        mSkipButton.removeCallbacks(mSkipProgressTicker);
+        updateSkipProgress();
+        mSkipButton.postDelayed(mSkipProgressTicker, SKIP_PROGRESS_TICK_MS);
+    }
+
+    private void updateSkipProgress() {
+        if (mSkipProgress == null) return;
+        final long span = mSkipProgressTargetMs - mSkipProgressStartMs;
+        if (span <= 0 || Player.sPlayer == null) {
+            mSkipProgress.setLevel(0);
+            return;
+        }
+        final long position = Player.sPlayer.getCurrentPosition();
+        float fraction = (position - mSkipProgressStartMs) / (float) span;
+        if (fraction < 0f) fraction = 0f;
+        else if (fraction > 1f) fraction = 1f;
+        mSkipProgress.setLevel(Math.round(fraction * 10000f));
+    }
+
+    private void hideSkipPrompt() {
+        mIsSkipPromptShowing = false;
+        mCurrentSkipTargetMs = -1;
+        if (mSkipButton != null) mSkipButton.removeCallbacks(mSkipProgressTicker);
+        mSkipProgressStartMs = -1;
+        mSkipProgressTargetMs = -1;
+        if (mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE) {
+            boolean buttonHadFocus = mSkipButton != null && (mSkipButton.hasFocus() || mSkipButton.isFocused());
+            if (buttonHadFocus && isTVMode && mPlayerControllerPlaceholder != null) {
+                mPlayerControllerPlaceholder.requestFocus();
+            }
+            Animation fadeOut = new AlphaAnimation(1f, 0f);
+            fadeOut.setDuration(250);
+            fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (!mIsSkipPromptShowing && mSkipButtonContainer != null) {
+                        mSkipButtonContainer.setVisibility(View.GONE);
+                    }
+                    if (isTVMode && mPlayerControllerPlaceholder != null && !isMenuOrDialogDisplayed()) {
+                        View currentFocus = getCurrentFocus();
+                        if (currentFocus == null || currentFocus == mSkipButton || currentFocus == mSkipButtonContainer) {
+                            mPlayerControllerPlaceholder.requestFocus();
+                        }
+                    }
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            mSkipButtonContainer.startAnimation(fadeOut);
         }
     }
 
@@ -2314,7 +2730,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     }, 20);
                 }
             });
-		
+
             final TVMenu tm = tma.createTVMenu();
 
             tcv.addOtherView(tm);
@@ -2352,17 +2768,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
                     if(v == vPicInPic){
-                        if (Build.VERSION.SDK_INT>=26)
-                            enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
-                        else
-                            if (Build.VERSION.SDK_INT>=24)
-                                enterPictureInPictureMode();
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mPlayerController.showTVMenu(false);
+                        if (Build.VERSION.SDK_INT >= 26) {
+                            PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
+                            if (mPlayer != null && mPlayer.getVideoWidth() > 0 && mPlayer.getVideoHeight() > 0) {
+                                double ratio = (double)mPlayer.getVideoWidth()/mPlayer.getVideoHeight();
+                                if (ratio >= 1.0/2.39 && ratio <= 2.39)
+                                    builder.setAspectRatio(new Rational(mPlayer.getVideoWidth(),mPlayer.getVideoHeight()));
                             }
-                        });
+                            View target = mSurfaceController != null ? mSurfaceController.getView() : mRootView;
+                            if (target != null) { Rect bounds = new Rect(); target.getGlobalVisibleRect(bounds); builder.setSourceRectHint(bounds); }
+                            enterPictureInPictureMode(builder.build());
+                        } else if (Build.VERSION.SDK_INT >= 24) enterPictureInPictureMode();
+                        mHandler.post(() -> mPlayerController.showTVMenu(false));
                         return;
                     }
                     if (v instanceof TVMenuItem) {
@@ -2380,14 +2797,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             tcv = tma.createAndAddView(null, ResourcesCompat.getDrawable(getResources(), R.drawable.tv_playmode, null),
                                        getResources().getString(R.string.pref_play_mode_title));
             final TVMenu tvmPlayMode = tma.createTVMenu();
+            final int playModeCount = getResources().getTextArray(R.array.pref_play_mode_entries).length;
             tvmPlayMode.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (v instanceof TVMenuItem) {
-                        tvmPlayMode.unCheckAll();
-                        ((TVMenuItem) v).toggle();
                         int which = tvmPlayMode.getItemPostion(v);
-                        if (which > -1) {
+                        if (which >= 0 && which < playModeCount) {
+                            for (int i = 0; i < playModeCount; i++) {
+                                View item = tvmPlayMode.getItem(i);
+                                if (item instanceof Checkable) {
+                                    ((Checkable) item).setChecked(item == v);
+                                }
+                            }
                             PlayerService.sPlayerService.menuChangePlayMode(which);
                         }
                     }
@@ -2406,11 +2828,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     boolean enabled=BuildConfig.FOUNDATION?!PlayerService.sPlayerService.segmentSkippingEnabled():!mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED);
                     if(BuildConfig.FOUNDATION)PlayerService.sPlayerService.segmentOverride(enabled);else mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, enabled).apply();
                     tvmAutoSkip.setChecked(enabled);
+                    if (enabled && PlayerService.sPlayerService != null) {
+                        PlayerService.sPlayerService.fetchIntroDbIfNeeded();
+                    }
+                    refreshPlayModeIntroSummary();
                 }
             });
 
             mPlayModeTVMenu = tvmPlayMode;
+            mPlayModeTVCardView = tcv;
             mIntroSummaryMenuItem = null;
+            mIntroSummarySeparator = null;
+            mPlayModeAutoSkipMenuItem = tvmAutoSkip;
             tcv.addOtherView(tvmPlayMode);
             refreshPlayModeIntroSummary();
             //[/playmode]
@@ -2767,7 +3196,24 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 ScrollView scroll = new ScrollView(mContext);
                 scroll.addView(content);
                 adb.setView(scroll);
-                adb.create().show();
+                adb.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        mPhonePlayModeIntroFooter = null;
+                    }
+                });
+                AlertDialog dialog = adb.create();
+                dialog.show();
+
+                Window window = dialog.getWindow();
+                if (window != null) {
+                    DisplayMetrics dm = getResources().getDisplayMetrics();
+                    int maxWidth = (int) (380 * dm.density);
+                    if (dm.widthPixels > maxWidth) {
+                        int width = Math.min(maxWidth, (int) (dm.widthPixels * 0.85f));
+                        window.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    }
+                }
 
                 return true;
             }
@@ -2805,7 +3251,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 				});
 				return sb;
 			} else if (position == 1) {
-                            Switch tb = new Switch(mContext);
+                            SwitchCompat tb = new SwitchCompat(mContext);
                             tb.setText(R.string.pref_audio_filt_title);
                             tb.setPadding(20,20, 20, 20);
                             tb.setChecked( PlayerService.sPlayerService.mAudioFilt>0);
@@ -2819,7 +3265,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                             return tb;
                         }
                         else {
-                            Switch tb = new Switch(mContext);
+                            SwitchCompat tb = new SwitchCompat(mContext);
                             tb.setText(R.string.pref_audio_filt_night_mode);
                             tb.setPadding(20,20, 20, 20);
                             tb.setChecked(PlayerService.sPlayerService.mNightModeOn);
@@ -2868,7 +3314,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (!isStereoEffectOn()) return true;
 
                 AlertDialog.Builder adb = new AlertDialog.Builder(this);
-                Switch tb = new Switch(mContext);
+                SwitchCompat tb = new SwitchCompat(mContext);
                 tb.setText(R.string.pref_s3d_mode_title);
                 tb.setTextSize(25);
                 tb.setPadding(20,20, 20, 20);
@@ -2879,7 +3325,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (!isPluggedOnTv()) {
                     menuId = R.array.pref_s3d_mode_entries_dive;
                 }
-                final CharSequence[] t = mContext.getResources().getTextArray(menuId);          
+                final CharSequence[] t = mContext.getResources().getTextArray(menuId);
                 final ArrayList<RadioButton>rbs = new  ArrayList<RadioButton>();
                 final int menuId2= menuId;
                 adb.setAdapter(new ArrayAdapter<View>(mContext, R.layout.menu_item_layout){
@@ -2919,7 +3365,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 , new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
-                });              
+                });
                 ad = adb.create();
                 ad.show();
 
@@ -3220,6 +3666,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // this is called when systembar gets implicitly visible
         // when top menu gets visible
         super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && isTVMode && mSkipButtonContainer != null
+                && mSkipButtonContainer.getVisibility() == View.VISIBLE
+                && !isMenuOrDialogDisplayed()) {
+            mSkipButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    requestSkipButtonFocus();
+                }
+            });
+        }
     }
 
     @Override
@@ -3659,7 +4115,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mVideoInfo.subtitleRatio = ratio;
         if (delayChanged || ratioChanged) {
             supersedeRestoredTitleChoice();
-            mSubtitleManager.clear();
+            mSubtitleManager.setActiveTrack(null);
             mPlayer.setSubtitleDelay(mVideoInfo.subtitleDelay);
             mPlayer.setSubtitleRatio(mVideoInfo.subtitleRatio);
             // Save the subtitle delay and ratio to the database for persistence across resume
@@ -3813,12 +4269,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     newSubtitleTrack, newSubtitlePosition, playerPosition);
             if (mPlayer.setSubtitleTrack(playerPosition)) {
                 mVideoInfo.subtitleTrack = newSubtitleTrack;
-                mSubtitleManager.clear();
                 mSubtitleInfoController.setTrack(subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles)); // +1 since none track is at position 0, for UI only
                 if (mSubtitleInfoController.getTrack() == 0) { // 0 is nonePosition
                     if (log.isDebugEnabled()) log.debug("switchSubtitleTrack: disableSubtitleDelayTVMenuItem(true) because nonePosition");
                     disableSubtitleDelayTVMenuItem(true);
-                    disableSubtitleSettingsMenuItem(true);
                 }
                 refreshSubtitleTVMenu();
                 CharSequence subTrackName = mSubtitleInfoController.getTrackNameAt(subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles));
@@ -3851,13 +4305,24 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
     }
 
-    public boolean isCurrentSubtrackGfx() {
+    /** The selected subtitle track, or null for "None"/unselected/out of range. */
+    private SubtitleTrack currentSubtitleTrack() {
         if (mPlayer == null || mPlayer.getVideoMetadata() == null || mVideoInfo == null ||
-                mVideoInfo.subtitleTrack == -1 || mVideoInfo.subtitleTrack >= mVideoInfo.nbSubtitles) {
-            return false;
+                mVideoInfo.subtitleTrack < 0 || mVideoInfo.subtitleTrack >= mVideoInfo.nbSubtitles) {
+            return null;
         }
-        VideoMetadata.SubtitleTrack sub = mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
-        return sub != null && sub.isGfx;
+        return mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
+    }
+
+    /**
+     * Pushes the selected track to SubtitleManager, which applies it (layout category, bitmap
+     * margins, native offset). Only the places that APPLY state call this (layout mode, vertical
+     * position).
+     */
+    private void syncSubtitleKind() {
+        if (mSubtitleManager != null) {
+            mSubtitleManager.setActiveTrack(currentSubtitleTrack());
+        }
     }
 
     public boolean isCurrentSubtrackNone() {
@@ -3869,21 +4334,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void setSubtitleVpos(String caller) {
-        setSubtitleVpos(PreferenceManager.getDefaultSharedPreferences(PlayerActivity.this).getInt(KEY_SUBTITLE_VPOS, mSubtitleVPosDefault), caller);
+        setSubtitleVpos(PreferenceManager.getDefaultSharedPreferences(PlayerActivity.this).getInt(KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos), caller);
     }
 
     private void setSubtitleVpos(int vpos, String caller) {
+        // Sync first: this runs on track selection before updateSubtitleLayoutMode(), and the
+        // manager must already know the new track's kind when it applies the position.
+        syncSubtitleKind();
         if (mVideoInfo == null || mVideoInfo.subtitleTrack == -1 || mVideoInfo.subtitleTrack >= mVideoInfo.nbSubtitles) return;
-        VideoMetadata.SubtitleTrack subtitleTrack = mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
-        if (subtitleTrack != null && subtitleTrack.isGfx) {
-            if (log.isDebugEnabled()) log.debug("{}: set vpos to 0, mVideoInfo={}", caller, ((mVideoInfo == null) ? "null" : "noNull" + ", subtitleTrack=" + ((mVideoInfo == null) ? "null" : mVideoInfo.subtitleTrack)));
-            mSubtitleManager.setVerticalPosition(0);
-            disableSubtitleSettingsMenuItem(true);
-        } else {
-            if (log.isDebugEnabled()) log.debug("{}: set vpos to {}, subtitleTrack={}", caller, vpos, mVideoInfo.subtitleTrack);
-            mSubtitleManager.setVerticalPosition(vpos);
-            disableSubtitleSettingsMenuItem(false);
-        }
+        if (log.isDebugEnabled()) log.debug("{}: set vpos to {}, subtitleTrack={}, kind={}", caller, vpos, mVideoInfo.subtitleTrack, mSubtitleManager.getSubtitleKind());
+        // Always hand over the user's value: for bitmap tracks the manager applies offset 0 by
+        // itself and keeps the saved value intact (the old code passed 0 and lost it).
+        mSubtitleManager.setVerticalPosition(vpos);
     }
 
     private void disableSubtitleDelayTVMenuItem(boolean disable) {
@@ -3891,14 +4353,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mSubtitleInfoController.enableSettings(SUBTITLE_MENU_DELAY, !disable, disable);
         if (mSubtitleDelayMenuItem != null) {
             mSubtitleDelayMenuItem.setDisabled(disable);
-        }
-    }
-
-    private void disableSubtitleSettingsMenuItem(boolean disable) {
-        if (log.isDebugEnabled()) log.debug("disableSubtitleSettingsMenuItem: {}", disable);
-        mSubtitleInfoController.enableSettings(SUBTITLE_MENU_SETTINGS, !disable, disable);
-        if (mSubtitleSettingsMenuItem != null) {
-            mSubtitleSettingsMenuItem.setDisabled(disable);
         }
     }
 
@@ -3930,7 +4384,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (log.isDebugEnabled()) log.debug("onTrackSelected: position={}, old mVideoInfo.subtitleTrack={}", position, mVideoInfo.subtitleTrack);
                 ret = mPlayer.setSubtitleTrack(positionToPlayerSubtitleTrack(position, mVideoInfo.nbSubtitles));
                 if (ret) {
-                    mSubtitleManager.clear();
                     mVideoInfo.subtitleTrack = positionToSubtitleTrack(position, mVideoInfo.nbSubtitles);
                     if (log.isDebugEnabled()) log.debug("onTrackSelected: -> mVideoInfo.subtitleTrack={}", mVideoInfo.subtitleTrack);
                     // Extract and save the subtitle language for track validation on re-enumeration
@@ -3953,13 +4406,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     // Save the subtitle track selection to the database for persistence across resume
                     persistVideoInfo();
                     if (log.isDebugEnabled()) log.debug("onTrackSelected: saved subtitleTrack {} to database", mVideoInfo.subtitleTrack);
+                    updateSubtitleLayoutMode();
                 } else {
                     if (log.isDebugEnabled()) log.debug("onTrackSelected: player failed to get to subtitletrack {}", positionToSubtitleTrack(position, mVideoInfo.nbSubtitles));
                 }
                 if (mVideoInfo.subtitleTrack >= 0) {
                     String trackName = mSubtitleInfoController.getTrackNameAt(subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles)).toString();
                     disableSubtitleDelayTVMenuItem(position == 0);
-                    disableSubtitleSettingsMenuItem(position == 0 || isCurrentSubtrackGfx());
                     if (log.isDebugEnabled()) log.debug("onTrackSelected: position={}, mSubtitleInfoController.getTrackNameAt({}) mVideoInfo.subtitleTrack={}", position, trackName, mVideoInfo.subtitleTrack);
                 } else {
                     if (log.isDebugEnabled()) log.debug("onTrackSelected: position={}, None mVideoInfo.subtitleTrack={}", position, mVideoInfo.subtitleTrack);
@@ -4218,6 +4671,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     public void finish() {
+        // Home/PiP do not finish this activity. A floating-player handoff keeps its session.
+        if (!mLaunchFloatingPlayer && mPlayer != null) mPlayer.beginPlaybackExit();
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_activity_finish","completed",mVideoFinished,"error_code",mErrorCode,"changing_configuration",isChangingConfigurations());
         log.info("Playback Activity finish: completed={} error={} changingConfiguration={}",mVideoFinished,mErrorCode,isChangingConfigurations());
         // Send result before finishing if we haven't already
@@ -4292,8 +4747,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
 
         public void onSeekStart(int pos) {
-            if (mSubtitleManager != null)
-                mSubtitleManager.onSeekStart(pos);
+        //no-op
         }
 
         public void onSeekComplete() {
@@ -4307,8 +4761,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
 
         public void onPlay(int state) {
-            if (mSubtitleManager != null)
-                mSubtitleManager.onPlay();
             sendVideoStateChanged();
             //mPlayerController.hide();
 
@@ -4329,16 +4781,30 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
         public void onIntroDbReady() {
             refreshPlayModeIntroSummary();
+            refreshPhonePlayModeIntroSummary();
+        }
+        public void onShowSkipPrompt(final IntroSegments.Type type, final long targetMs) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showSkipPrompt(type, targetMs);
+                }
+            });
+        }
+        public void onHideSkipPrompt() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    hideSkipPrompt();
+                }
+            });
         }
         public void onPause(int state) {
-
-            if (mSubtitleManager != null)
-                mSubtitleManager.onPause();
             sendVideoStateChanged();
 
-            // Set mPlayOnResume to false for user-initiated pause (STATE_NORMAL)
-            // so that video doesn't auto-play when screen turns back on
-            if (state == PlayerController.STATE_NORMAL && PlayerService.sPlayerService != null) {
+            // Preserve explicit and permanent-focus pauses through Activity recreation.
+            // Transient focus pauses retain the play request and may resume on gain.
+            if (mPlayer.isPauseRequested() && PlayerService.sPlayerService != null) {
                 if (log.isDebugEnabled()) log.debug("onPause: user paused, setting mPlayOnResume = false and mUserPausedVideo = true");
                 mUserPausedVideo = true;
                 PlayerService.sPlayerService.setPlayOnResume(false);
@@ -4458,18 +4924,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 mSubtitleManager.start();
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(PlayerActivity.this);
-                int size = preferences.getInt(KEY_SUBTITLE_SIZE, mSubtitleSizeDefault);
-                int vpos = preferences.getInt(KEY_SUBTITLE_VPOS, mSubtitleVPosDefault);
-                int color = preferences.getInt(KEY_SUBTITLE_COLOR, mSubtitleColorDefault);
-                boolean outline = preferences.getBoolean(KEY_SUBTITLE_OUTLINE, mSubtitleOutlineDefault);
-                mSubtitleManager.setSize(size);
-                mSubtitleManager.setColor(color);
-                setSubtitleVpos(vpos, "onSubtitleMetadataUpdated");
-                mSubtitleManager.setOutlineState(outline);
-                boolean background = preferences.getBoolean(KEY_SUBTITLE_BACKGROUND, false);
-                int bgOpacity = preferences.getInt(KEY_SUBTITLE_BG_OPACITY, 128);
-                mSubtitleManager.setBackgroundState(background);
-                mSubtitleManager.setBackgroundOpacity(bgOpacity);
+                mSubtitleManager.restoreStyle(preferences);
+                setSubtitleVpos(preferences.getInt(KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos), "onSubtitleMetadataUpdated");
+
                 // mVideoInfo.subtitleTrack is the track number with the none track 0<=mVideoInfo.subtitleTrack<=nbTrack, nbTrack for none track
                 // but mSubtitleInfoController is the track number with the none track (i.e. nbTrack + 1) at position 0
                 // at this point mVideoInfo.subtitleTrack is the track number to be used
@@ -4478,9 +4935,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (mSubtitleInfoController.getTrack() == nonePosition) {
                     if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: disableSubtitleDelayTVMenuItem(true) because nonePosition");
                     disableSubtitleDelayTVMenuItem(true);
-                    disableSubtitleSettingsMenuItem(true);
                 }
             }
+            updateSubtitleLayoutMode();
 
             // A chooser request is a user action, not inferred metadata selection. Clear before
             // applying so a synchronous engine callback cannot repeat it.
@@ -4501,15 +4958,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
         }
 
+        @SuppressLint("SetTextI18n")
         public void onBufferingUpdate(int percent) {
             if (!mPlayer.isInPlaybackState()) {
                 mBufferView.setText(" "+percent+"%");
             }
-        }
-
-        public void onSubtitle(Subtitle subtitle) {
-            if (mSubtitleManager != null)
-                mSubtitleManager.addSubtitle(subtitle);
         }
 
         @Override

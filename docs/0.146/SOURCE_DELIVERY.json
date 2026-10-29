@@ -1,0 +1,313 @@
+{
+  "file": "Supernova_0.146_Corresponding_Source.tar.xz",
+  "source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+  "sha256": "6579930f7f5699c8b9699e3f8fea6dc71c1103d8cff0a4380acf6f1ecd0b089b",
+  "bytes": 507860792,
+  "contents": {
+    "schema": 1,
+    "source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+    "source_lock_sha256": "a1197ab90201ea5f3bcd7be11223265a28f84440c22272c06299ddc1b1e9064f",
+    "archives": [
+      {
+        "file": "modules/application.tar",
+        "sha256": "a60af165017f7b5a9b43af1ba378f2437ffd337ef357c751b5b2a96b26bbe46e",
+        "kind": "exact committed application source"
+      },
+      {
+        "file": "native-inputs/ffmpeg.tar.gz",
+        "source_commit": "946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+        "sha256": "0aa2b1de2a5698b20a23e93d539a9a8e82ca0117496c5bdf05d198805f42bb3b",
+        "input": {
+          "name": "ffmpeg",
+          "commit": "946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+          "tag": "n9.0.2",
+          "url": "https://codeload.github.com/FFmpeg/FFmpeg/tar.gz/946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+          "sha256": "0aa2b1de2a5698b20a23e93d539a9a8e82ca0117496c5bdf05d198805f42bb3b"
+        }
+      },
+      {
+        "file": "native-inputs/openssl.tar.gz",
+        "source_commit": "2f4e3a5fec05394068cfa7379890ab552483a8a6",
+        "sha256": "3eb00d3dbf2b3393dcf1cb82127a3d19ed911cec4e8315fe2ca20f3038b5ddde",
+        "input": {
+          "name": "openssl",
+          "commit": "2f4e3a5fec05394068cfa7379890ab552483a8a6",
+          "tag": "openssl-4.1.0",
+          "url": "https://codeload.github.com/openssl/openssl/tar.gz/2f4e3a5fec05394068cfa7379890ab552483a8a6",
+          "sha256": "3eb00d3dbf2b3393dcf1cb82127a3d19ed911cec4e8315fe2ca20f3038b5ddde"
+        }
+      },
+      {
+        "file": "native-inputs/libass.tar.gz",
+        "source_commit": "4a05d8127f525943ebf45fdc6497c9e665947f0d",
+        "sha256": "3546ecc8748c62e100a9dd18e52ea2d17d7facedf89cfcad97000ad60b1bce2b",
+        "input": {
+          "name": "libass",
+          "commit": "4a05d8127f525943ebf45fdc6497c9e665947f0d",
+          "tag": "0.17.5",
+          "url": "https://codeload.github.com/libass/libass/tar.gz/4a05d8127f525943ebf45fdc6497c9e665947f0d",
+          "sha256": "3546ecc8748c62e100a9dd18e52ea2d17d7facedf89cfcad97000ad60b1bce2b"
+        }
+      },
+      {
+        "file": "native-inputs/zlib.tar.gz",
+        "source_commit": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+        "sha256": "b9258cf6254e7f7c37f1cd61dba943a1c5ea3cff5718c789834dac359094f5f7",
+        "input": {
+          "name": "zlib",
+          "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+          "tag": "v1.3.2",
+          "url": "https://codeload.github.com/madler/zlib/tar.gz/da607da739fa6047df13e66a2af6b8bec7c2a498",
+          "sha256": "b9258cf6254e7f7c37f1cd61dba943a1c5ea3cff5718c789834dac359094f5f7"
+        }
+      },
+      {
+        "file": "native-inputs/libpng.tar.gz",
+        "source_commit": "cd952f49f95bb27154ae77dbb103032d95f6e580",
+        "sha256": "ef1bccad2b2a58eb3c09e06ffe3b72b8604abda8b5011e4c4bb5391989040f26",
+        "input": {
+          "name": "libpng",
+          "commit": "cd952f49f95bb27154ae77dbb103032d95f6e580",
+          "tag": "v1.6.59",
+          "url": "https://codeload.github.com/pnggroup/libpng/tar.gz/cd952f49f95bb27154ae77dbb103032d95f6e580",
+          "sha256": "ef1bccad2b2a58eb3c09e06ffe3b72b8604abda8b5011e4c4bb5391989040f26"
+        }
+      },
+      {
+        "file": "native-inputs/libxml2.tar.gz",
+        "source_commit": "96498992efa48d52b0e8b83058bd88dbdaf153c1",
+        "sha256": "3fa264c6117569780ea0f6447d98c77f29b285cfd665ced2ec7da4f51183607f",
+        "input": {
+          "name": "libxml2",
+          "commit": "96498992efa48d52b0e8b83058bd88dbdaf153c1",
+          "tag": "v2.15.4",
+          "url": "https://codeload.github.com/GNOME/libxml2/tar.gz/96498992efa48d52b0e8b83058bd88dbdaf153c1",
+          "sha256": "3fa264c6117569780ea0f6447d98c77f29b285cfd665ced2ec7da4f51183607f"
+        }
+      },
+      {
+        "file": "native-inputs/freetype.tar.gz",
+        "source_commit": "0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+        "sha256": "11cd478953fc1d382f20a233b8e2aed6c31b47cbf0568c4bdb3334bcc1550698",
+        "input": {
+          "name": "freetype",
+          "commit": "0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+          "tag": "VER-2-14-3",
+          "url": "https://codeload.github.com/freetype/freetype/tar.gz/0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+          "sha256": "11cd478953fc1d382f20a233b8e2aed6c31b47cbf0568c4bdb3334bcc1550698"
+        }
+      },
+      {
+        "file": "native-inputs/fribidi.tar.gz",
+        "source_commit": "b93119f5fdc7ea47672cc304c1455ffa6dfe7536",
+        "sha256": "f309091695b3b0f2fd5f9caa7941d906ab08df9ab8f9931bf5ee674bc00b489b",
+        "input": {
+          "name": "fribidi",
+          "commit": "b93119f5fdc7ea47672cc304c1455ffa6dfe7536",
+          "tag": "v1.0.17",
+          "url": "https://codeload.github.com/fribidi/fribidi/tar.gz/b93119f5fdc7ea47672cc304c1455ffa6dfe7536",
+          "sha256": "f309091695b3b0f2fd5f9caa7941d906ab08df9ab8f9931bf5ee674bc00b489b"
+        }
+      },
+      {
+        "file": "native-inputs/harfbuzz.tar.gz",
+        "source_commit": "35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+        "sha256": "f4d39fc3216d82d01ba2a18ba03a05b69f60510585b764784224a5f51f372a38",
+        "input": {
+          "name": "harfbuzz",
+          "commit": "35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+          "tag": "15.0.0",
+          "url": "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+          "sha256": "f4d39fc3216d82d01ba2a18ba03a05b69f60510585b764784224a5f51f372a38"
+        }
+      },
+      {
+        "file": "native-inputs/libunibreak.tar.gz",
+        "source_commit": "28a2756b864c343f438cd22537d49d394d4666a5",
+        "sha256": "4d0714d29207bfcaabe2a9376f83330bfb477673ecfb53994e47bd6d07738581",
+        "input": {
+          "name": "libunibreak",
+          "commit": "28a2756b864c343f438cd22537d49d394d4666a5",
+          "tag": "libunibreak_8_0",
+          "url": "https://codeload.github.com/adah1972/libunibreak/tar.gz/28a2756b864c343f438cd22537d49d394d4666a5",
+          "sha256": "4d0714d29207bfcaabe2a9376f83330bfb477673ecfb53994e47bd6d07738581"
+        }
+      },
+      {
+        "file": "native-inputs/fontconfig.tar",
+        "source_commit": "0f236723a3c26bd9745e32ba2b3ee21e5f809295",
+        "sha256": "3ac1094bcd432933928a65fcec464d84453864b974eddb7082d80e71f8559575",
+        "input": {
+          "name": "fontconfig",
+          "commit": "0f236723a3c26bd9745e32ba2b3ee21e5f809295",
+          "tag": "2.18.3",
+          "git_repository": "https://gitlab.freedesktop.org/fontconfig/fontconfig.git"
+        }
+      },
+      {
+        "file": "native-inputs/opus.tar.gz",
+        "source_commit": "084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+        "sha256": "7c3e148376522b2ec9df636e54137d6f76ae0c585c3b01ed86b58019c34ff1fc",
+        "input": {
+          "name": "opus",
+          "commit": "084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+          "tag": "084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+          "url": "https://codeload.github.com/xiph/opus/tar.gz/084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+          "sha256": "7c3e148376522b2ec9df636e54137d6f76ae0c585c3b01ed86b58019c34ff1fc"
+        }
+      },
+      {
+        "file": "native-inputs/dav1d.tar.gz",
+        "source_commit": "54706fc6bc0cdecab7e9593974a4039cc038fca7",
+        "sha256": "9edb11a2108b375cc58370354e705feebc93430bb780130363815c1e1ac0c250",
+        "input": {
+          "name": "dav1d",
+          "commit": "54706fc6bc0cdecab7e9593974a4039cc038fca7",
+          "tag": "1.5.4",
+          "url": "https://codeload.github.com/videolan/dav1d/tar.gz/54706fc6bc0cdecab7e9593974a4039cc038fca7",
+          "sha256": "9edb11a2108b375cc58370354e705feebc93430bb780130363815c1e1ac0c250"
+        }
+      },
+      {
+        "file": "native-inputs/libmysofa.tar.gz",
+        "source_commit": "6cc5b15a73e9bd97810d03767082edda7f315881",
+        "sha256": "cf047bd684d28dca23d7d5b662c538b24392c620719f15d642594fc1405e24f6",
+        "input": {
+          "name": "libmysofa",
+          "commit": "6cc5b15a73e9bd97810d03767082edda7f315881",
+          "tag": "v1.3.5",
+          "url": "https://codeload.github.com/hoene/libmysofa/tar.gz/6cc5b15a73e9bd97810d03767082edda7f315881",
+          "sha256": "cf047bd684d28dca23d7d5b662c538b24392c620719f15d642594fc1405e24f6"
+        }
+      },
+      {
+        "file": "native-inputs/dlg.tar.gz",
+        "source_commit": "395ccad2c1e0daae535c4d20bb0a3f2424648e17",
+        "sha256": "263a4a3777d9839e34cd41db988310659e0c00eab37beb7aedd30511a460133b",
+        "input": {
+          "name": "dlg",
+          "commit": "395ccad2c1e0daae535c4d20bb0a3f2424648e17",
+          "tag": null,
+          "url": "https://codeload.github.com/nyorain/dlg/tar.gz/395ccad2c1e0daae535c4d20bb0a3f2424648e17",
+          "sha256": "263a4a3777d9839e34cd41db988310659e0c00eab37beb7aedd30511a460133b"
+        }
+      },
+      {
+        "file": "jetty/jetty-source.tar.gz",
+        "sha256": "017b61d774963a32930b441ae16df84cdb7d3095ed4780ba84fd5a8491e23758",
+        "source_commit": "89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b"
+      },
+      {
+        "file": "runtime-copyleft-sources/PROVENANCE.json",
+        "sha256": "ec9d089d9df57b506032a01933b2ec7fb7c9f8f256459e2b180f24b4167df957"
+      },
+      {
+        "file": "runtime-copyleft-sources/REBUILD_FOUNDATION.md",
+        "sha256": "fe0cb67a57b867b87a9cc5fa0f2401f9d22d21fdb980300d1dba3bc6ba61b1e7"
+      },
+      {
+        "file": "runtime-copyleft-sources/desugar-jdk-libs-source.tar.gz",
+        "sha256": "4cd2faa88ecb2450522fd4f0dcd11d6df878d7197b2276fb35532c50267f7a64"
+      },
+      {
+        "file": "runtime-copyleft-sources/javax.servlet-api-4.0.1-sources.jar",
+        "sha256": "a2826761ae88535afb0a3a049eacc846494e22627a1dcf14de37b956ca8748d6"
+      },
+      {
+        "file": "runtime-copyleft-sources/jcifs-ng-source.tar.gz",
+        "sha256": "c2d307d965450d75575ff7438227058001002c84d06b4a0a18c795a8516db5bd"
+      },
+      {
+        "file": "runtime-copyleft-sources/jupnp-source.tar.gz",
+        "sha256": "2a431bc989b1678a15fb02b96ee3f0b561b26fdd2aeb5081192a8422e1ec4604"
+      }
+    ],
+    "modules": [
+      {
+        "path": "MediaLib",
+        "base_commit": "5758074049bc153ac4967b4ecd21886469270076",
+        "archive_sha256": "ae67bbb9093541b193eb648a62afdf7f3d4a2716e8c5e0612b279c2c71c1661e",
+        "source_files": 549,
+        "scope": "Complete patched source tree; original Git metadata and generated build outputs excluded"
+      },
+      {
+        "path": "FileCoreLibrary",
+        "base_commit": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+        "archive_sha256": "455b84166942b0f7f5c293713299bca21e6a873e1fcb9040aea3d41d853d3b5f",
+        "source_files": 258,
+        "scope": "Complete patched source tree; original Git metadata and generated build outputs excluded"
+      },
+      {
+        "path": "native/avos",
+        "base_commit": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+        "archive_sha256": "593c14ba7494fee85c1fceafc0aeb0f77c8044216212167926c49d9b8a54e174",
+        "source_files": 897,
+        "scope": "Complete patched source tree; original Git metadata and generated build outputs excluded"
+      },
+      {
+        "path": "native/audiocompress",
+        "base_commit": "3a3f9324d2550bd305060e1c52b803121ea09aad",
+        "archive_sha256": "7a2b4b8b1211f048d7950041224566f9ddba80392f82fe18b9642c6b74692702",
+        "source_files": 11,
+        "scope": "Complete patched source tree; original Git metadata and generated build outputs excluded"
+      },
+      {
+        "path": "native/libnativehelper",
+        "base_commit": "ab46fb536b594b25f93611ad7ef0f27b8fc24edb",
+        "archive_sha256": "ff62ab4af5987dee0b1ecc80895bf771118150090e70355247927741729efe6c",
+        "source_files": 33,
+        "scope": "Complete patched source tree; original Git metadata and generated build outputs excluded"
+      }
+    ]
+  },
+  "instructions_sha256": "fe0cb67a57b867b87a9cc5fa0f2401f9d22d21fdb980300d1dba3bc6ba61b1e7",
+  "delivery_parts": [
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-01",
+      "id": "1HdA4m02robMdZ5V30NFVa8hB7GPPXrhK",
+      "bytes": 100663296,
+      "sha256": "026ad18412a8fe17bf46c4f87b3ac485ee0e4f9201f641c829c2fa5a48f819aa",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-02",
+      "id": "1YP30dFJ21L9AnjaRp2yqp5aUqPAHq4eg",
+      "bytes": 100663296,
+      "sha256": "56f0ca12e8812b5566999106d80dbe07581ef66be5aa4bda6fa6cb0858c09e5d",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-03",
+      "id": "1mMq4b9ZNRdbMZKXlqIIhuZLue_N2v2ah",
+      "bytes": 100663296,
+      "sha256": "c93e106393b4e165c2254284f7720e766e19dfb6fe5f8ab722b83ce482470560",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-04",
+      "id": "1Hqz2fjh5nZi9EjWU2r7lmBi8Pyts7_Ef",
+      "bytes": 100663296,
+      "sha256": "be8ff21c412105394159cfb07df46a26edbcd3f610c1498db2319a6f69a2be78",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-05",
+      "id": "1pIsMfahNf8qY25nRIa-xqFEk0agMcAXr",
+      "bytes": 100663296,
+      "sha256": "51b37170f7027a51442b30d6b6cabf65c8339a1299fd7b6efbc85e7f33c8ac3e",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-06",
+      "id": "1IAv2BRpdVMOZZFcx5wwlgkxbyu_fauN7",
+      "bytes": 4544312,
+      "sha256": "58a58fa593735d31a5c40fafd023bff0885959034a12c82f2d08de4e23e584fd",
+      "complete_readback_verified": true
+    }
+  ],
+  "drive_folder_id": "1KwxezR3qdquBXun9MD3PMMenEG0jTk1h",
+  "drive_folder_url": "https://drive.google.com/drive/folders/1KwxezR3qdquBXun9MD3PMMenEG0jTk1h",
+  "delivery_status": "All six uploaded parts and complete ordered concatenation independently read back and verified",
+  "delivery_constraint": "Connected Drive transfer refuses files above104857600 bytes. Six ordered binary parts reconstruct the exact verified archive; no source omitted.",
+  "full_ordered_drive_readback_verified": true
+}

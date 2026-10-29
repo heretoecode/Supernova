@@ -92,16 +92,16 @@ public class VideoInfoPosterChooserFragment extends Fragment implements
        // setRetainInstance(VideoInfoActivity2.KEEP_FRAGMENT_INSTANCE);
 
         // init the adapter here so it does not get recreated when rotating and it keeps the list
-        // using application context here since we keep the adapter around for longer and keeping
-        // a reference to the whole activity could prevent GC
-        mAdapter = new PosterAdapter(getActivity().getApplicationContext(), null);
+        // use the activity context so rows are inflated with the display the activity runs on
+        // (multi-display/desktop mode), not the default display resources
+        mAdapter = new PosterAdapter(requireContext(), null);
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.video_info_poster_chooser, null);
+        mView = inflater.inflate(R.layout.video_info_poster_chooser, container, false);
         return mView;
     }
     @Override

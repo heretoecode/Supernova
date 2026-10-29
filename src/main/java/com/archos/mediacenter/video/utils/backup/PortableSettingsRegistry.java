@@ -21,7 +21,7 @@ public final class PortableSettingsRegistry {
         rules(Category.APPEARANCE,Type.LANGUAGE,"ui_lang");
         rules(Category.APPEARANCE,Type.CHOICE,"app_theme");
         rules(Category.AUDIO,Type.BOOLEAN,"force_passthrough audio_speed_audiotrack enable_dynamic_audio_delay player_spatialization_enabled disable_downmix enable_downmix_androidtv prefer_original_audio_track");
-        rules(Category.AUDIO,Type.CHOICE,"audio_interface_choice audio_decoder_choice force_audio_passthrough_multiple");
+        rules(Category.AUDIO,Type.CHOICE,"audio_interface_choice audio_decoder_choice force_audio_passthrough_multiple supernova_pcm_speed_engine");
         rules(Category.AUDIO,Type.LANGUAGE,"favAudioLang");
         rules(Category.AUDIO,Type.FLOAT,"save_audio_speed_setting_pref_key");
         rules(Category.AUDIO,Type.INT,"pref_audio_filt_int_key");
@@ -40,7 +40,7 @@ public final class PortableSettingsRegistry {
         rules(Category.PLAYBACK,Type.BOOLEAN,"pref_lock_rotation");
         rules(Category.STREAMING,Type.BOOLEAN,"streaming_enabled");
         rules(Category.STREAMING,Type.COUNTRY,"streaming_country");
-        rules(Category.SUBTITLES,Type.BOOLEAN,"subtitles_hide_default pref_play_subtitle_outline_key subtitle_background supernova_subtitle_discovery supernova_subtitle_season_prefetch");
+        rules(Category.SUBTITLES,Type.BOOLEAN,"subtitles_hide_default subtitles_show_full_for_local_audio subtitle_use_margins pref_play_subtitle_outline_key subtitle_background supernova_subtitle_discovery supernova_subtitle_season_prefetch");
         rules(Category.SUBTITLES,Type.INT,"pref_play_subtitle_color_key pref_play_subtitle_size_key pref_play_subtitle_vpos_key subtitle_bg_opacity");
         rules(Category.SUBTITLES,Type.LANGUAGE,"favSubLang");
         rules(Category.SUBTITLES,Type.LANGUAGES,"languages_list");
@@ -51,7 +51,7 @@ public final class PortableSettingsRegistry {
     private static final Map<String,Set<String>> CHOICES=new HashMap<>();
     private static void choices(String key,String values){CHOICES.put(key,new HashSet<>(Arrays.asList(values.split("\\|",-1))));}
     static {
-        choices("app_theme","blue|black|slate");choices("dec_choice","0|4|1|-1");
+        choices("supernova_pcm_speed_engine","2|3");choices("app_theme","blue|black|slate");choices("dec_choice","0|4|1|-1");
         choices("audio_interface_choice","0|1|2");choices("audio_decoder_choice","0|1|2");
         choices("force_audio_passthrough_multiple","0|1|2|3");choices("parser_sync_mode","0|1");
         choices("enable_tv_refreshrate_switch_mode","0|1|2");choices("dolby_vision_mode","auto|off|force");

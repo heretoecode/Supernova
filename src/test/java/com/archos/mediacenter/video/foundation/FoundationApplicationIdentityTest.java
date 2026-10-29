@@ -31,6 +31,9 @@ public class FoundationApplicationIdentityTest {
     }
     @Test public void foundationCounterDoesNotRunLegacyPreferenceResetMigrations() throws Exception {
         org.junit.Assume.assumeTrue(BuildConfig.FOUNDATION);
+        Context manifestContext=RuntimeEnvironment.getApplication();
+        for(String service:new String[]{"com.archos.mediacenter.video.player.PlayerService","com.archos.mediaprovider.MediaRetrieverService"})
+            assertFalse("Internal service must reject external application callers: "+service,manifestContext.getPackageManager().getServiceInfo(new android.content.ComponentName(manifestContext,service),0).exported);
         Context context=RuntimeEnvironment.getApplication();SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context);
         preferences.edit().putBoolean("force_audio_passthrough",true).putBoolean("enable_dynamic_audio_delay",false).putBoolean("playback_speed",false).putBoolean(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_SMBJ,true).commit();
         java.util.Map<String,?> before=preferences.getAll();

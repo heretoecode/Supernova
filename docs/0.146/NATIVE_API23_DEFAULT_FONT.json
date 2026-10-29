@@ -1,0 +1,111 @@
+{
+  "native_artifact_run": 40843685431,
+  "scope": "UID10000 without HOME/XDG or writable system caches. Default native font loading with no fonts_dir, no default_font_name, no FONTCONFIG_FILE/PATH and a system-font Roboto Flex fixture; actual Android23bionic, no real EGL/ART or Shield acceptance implied",
+  "fixtures": [
+    {
+      "file": "qa.srt",
+      "sha256": "508f4daf0523df160b7f0112db7db9edefb90d81254ee55b368e5f17d4d0e65b"
+    },
+    {
+      "file": "qa.vtt",
+      "sha256": "6bbf85db1609561b67a36cd00cb2830ec90a80049a348ea8f61d9d51b791edc2"
+    },
+    {
+      "file": "qa.ass",
+      "sha256": "c4564bd6c3e56d84b4d7c53e8b95eb92debf35bd19ffabd0d947d324f9c46236"
+    },
+    {
+      "file": "qa.sup",
+      "sha256": "ac9a1721d39f909e38ac180672e9167f5febd0f1f7c128ceebae4bb946669f87"
+    }
+  ],
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "file": "qa.srt",
+      "returncode": 0,
+      "output": "PASS codec=srt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "qa.vtt",
+      "returncode": 0,
+      "output": "PASS codec=webvtt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "qa.ass",
+      "returncode": 0,
+      "output": "PASS codec=ssa rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "qa.srt",
+      "returncode": 0,
+      "output": "PASS codec=srt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "qa.vtt",
+      "returncode": 0,
+      "output": "PASS codec=webvtt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "qa.ass",
+      "returncode": 0,
+      "output": "PASS codec=ssa rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "x86",
+      "file": "qa.srt",
+      "returncode": 0,
+      "output": "PASS codec=srt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "x86",
+      "file": "qa.vtt",
+      "returncode": 0,
+      "output": "PASS codec=webvtt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "x86",
+      "file": "qa.ass",
+      "returncode": 0,
+      "output": "PASS codec=ssa rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "x86_64",
+      "file": "qa.srt",
+      "returncode": 0,
+      "output": "PASS codec=srt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "x86_64",
+      "file": "qa.vtt",
+      "returncode": 0,
+      "output": "PASS codec=webvtt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    },
+    {
+      "abi": "x86_64",
+      "file": "qa.ass",
+      "returncode": 0,
+      "output": "PASS codec=ssa rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\nFontconfig error: Cannot load default config file: File not found\nFontconfig error: Cannot load default config file: File not found\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n\nFontconfig error: No writable cache directories\n\t/usr/local/var/cache/fontconfig\n\t/.cache/fontconfig\n"
+    }
+  ],
+  "tested_uid": 10000,
+  "font_sha256": "9b523f7d82593df0107173849ebb8c817471a1df4b4fb2c3cbf40cfd810c8281",
+  "fallback_review": "All12 cases pass with HOME/XDG unset, default fonts.conf absent and fontconfig explicitly reporting no writable cache directories. Built-in Android system-font discovery still renders, expires and seek-flushes cues. Test-private DSOs/corpus are owned byUID10000, matching an app private directory; system fonts are root-owned/readable."
+}

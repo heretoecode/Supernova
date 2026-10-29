@@ -230,8 +230,6 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     private int mColor;
     private static int dominantColor = 0;
     private Handler mHandler;
-    private int oldPos = 0;
-    private int oldSelectedSubPosition = 0;
     private boolean mHasDetailRow;
 
     private void setmTvshow(long id) {
@@ -441,33 +439,6 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         Color.colorToHSV(color, hsv);
         hsv[2] *= 0.8f;
         return Color.HSVToColor(hsv);
-    }
-
-    //hack to avoid fullscreen overview
-    @Override
-    protected void onSetRowStatus(RowPresenter presenter, RowPresenter.ViewHolder viewHolder, int
-            adapterPosition, int selectedPosition, int selectedSubPosition) {
-        super.onSetRowStatus(presenter, viewHolder, adapterPosition, selectedPosition, selectedSubPosition);
-        if(selectedPosition == 0 && selectedSubPosition != 0) {
-            if (oldPos == 0 && oldSelectedSubPosition == 0) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedPosition(1);
-                    }
-                });
-            } else if (oldPos == 1) {
-                setSelectedPosition(1);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedPosition(0);
-                    }
-                });
-            }
-        }
-        oldPos = selectedPosition;
-        oldSelectedSubPosition = selectedSubPosition;
     }
 
     @Override
@@ -852,11 +823,11 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                 break;
             case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
             case KeyEvent.KEYCODE_MEDIA_NEXT:
-                direction = Gravity.RIGHT;
+                direction = Gravity.END;
                 break;
             case KeyEvent.KEYCODE_MEDIA_REWIND:
             case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                direction = Gravity.LEFT;
+                direction = Gravity.START;
                 break;
         }
 
@@ -877,13 +848,13 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                     c.moveToPosition(i);
                     Tvshow t = (Tvshow)new CompatibleCursorMapperConverter(new TvshowCursorMapper()).convert(c);
                     if (t.getTvshowId() == mTvshow.getTvshowId()) {
-                        if (direction == Gravity.LEFT) {
+                        if (direction == Gravity.START) {
                             if (i - 1 >= 0)
                                 c.moveToPosition(i - 1);
                             else
                                 c.moveToPosition(c.getCount() - 1);
                         }
-                        else if (direction == Gravity.RIGHT) {
+                        else if (direction == Gravity.END) {
                             if (i + 1 <= c.getCount() - 1)
                                 c.moveToPosition(i + 1);
                             else
@@ -897,10 +868,10 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                 }
                 c.close();
                 if (tvshow != null) {
-                    if (direction == Gravity.LEFT)
-                        getActivity().getWindow().setExitTransition(new Slide(Gravity.RIGHT));
-                    else if (direction == Gravity.RIGHT)
-                        getActivity().getWindow().setExitTransition(new Slide(Gravity.LEFT));
+                    if (direction == Gravity.START)
+                        getActivity().getWindow().setExitTransition(new Slide(Gravity.END));
+                    else if (direction == Gravity.END)
+                        getActivity().getWindow().setExitTransition(new Slide(Gravity.START));
                     final Intent intent = new Intent(getActivity(), TvshowActivity.class);
                     intent.putExtra(TvshowFragment.EXTRA_TVSHOW, tvshow);
                     intent.putExtra(TvshowActivity.SLIDE_TRANSITION_EXTRA, true);
@@ -1005,6 +976,10 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             isCancelled = true;
             executor.shutdownNow();
         }
+    }
+
+    public int getColor() {
+        return mColor != 0 ? mColor : dominantColor;
     }
 
     public static int getDominantColor() {

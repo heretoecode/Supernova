@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-29T17:37:20.899312+00:00",
+  "signing_run": 40896722823,
+  "conclusion": "success",
+  "workflow_head": "57bd7af47e9bc042b6bc950d9fb39de12cd440ac",
+  "application_source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+  "artifact_id": 12906343972,
+  "artifact_bytes": 90996898,
+  "artifact_sha256": "4adc37c19d712e46f720dbcbdd8d2972a2384a10a68314f6c8a3c11b558daafc",
+  "zip_crc_verified": true,
+  "entries": [
+    "Supernova_0.146.apk",
+    "public-qa-evidence.json"
+  ],
+  "private_signing_cleanup_step": "success",
+  "independent_signed_apk_verification": "INDEPENDENT_SIGNED_APK_VERIFICATION.json"
+}

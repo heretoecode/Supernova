@@ -27,7 +27,7 @@
 
             android:layout_marginTop="@dimen/video_list_thumbnail_margin_top"
             app:srcCompat="@drawable/filetype_video_folder_indexed"
-            />
+             android:contentDescription="@null"/>
 
     </RelativeLayout>
 
@@ -47,7 +47,7 @@
         android:paddingLeft="10dip"
         android:paddingRight="10dip"
         android:background="@drawable/list_selector_holo_dark"
-        app:srcCompat="@drawable/label_refresh" />
+        app:srcCompat="@drawable/label_refresh"  android:contentDescription="@string/refresh"/>
 
     <!--
          Bottom area = progressbar + info icons

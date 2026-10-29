@@ -84,16 +84,16 @@ public class VideoInfoBackdropChooserFragment extends Fragment implements
                     : (Base) getActivity().getIntent().getSerializableExtra(VideoInfoPosterBackdropActivity.EXTRA_VIDEO));
 
         // init the adapter here so it does not get recreated when rotating and it keeps the list
-        // using application context here since we keep the adapter around for longer and keeping
-        // a reference to the whole activity could prevent GC
-        mAdapter = new BackdropAdapter(getActivity().getApplicationContext(), null);
+        // use the activity context so rows are inflated with the display the activity runs on
+        // (multi-display/desktop mode), not the default display resources
+        mAdapter = new BackdropAdapter(requireContext(), null);
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.video_info_backdrop_chooser, null);
+        mView = inflater.inflate(R.layout.video_info_backdrop_chooser, container, false);
         return mView;
     }
     @Override

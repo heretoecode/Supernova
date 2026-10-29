@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "baseline_app_source": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "upstream_tag": "v6.6.2",
+  "upstream_manifest_commit": "5c5d4ec81b47ba59be8f91c9d877b49b0ab1c01e",
+  "operations": [
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-preview40.patch",
+      "sha256": "950bee38e69121a198da44e8bd0fef3ef0e6dbf27591ac12802688687cdb77fc"
+    },
+    {
+      "kind": "patch",
+      "module": "native/avos",
+      "path": ".github/build/avos-preview414.patch",
+      "sha256": "7a78c780673367bf6fbdcfdba55b306f3408ba0b164597edba31edc18fdde072"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-preview414.patch",
+      "sha256": "1981fcd319913f761d1150dbb862d69d86505e710c3a24a132dbd066b178b9e5"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-preview415.patch",
+      "sha256": "c4301acfad3bb585731a27e35af52f57abb29ea9ef676083868ec2b6c9a0ec4a"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-preview415.patch",
+      "sha256": "b37af24655908980bf69e1e2308745d07e2e308bdc0939acfe6ab70822df6946"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-preview417.patch",
+      "sha256": "5fd0510dd08dd8ceb1a3fe848649fb0863b3e9952ff34e72fee4e7a408c04455"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-preview417-local.patch",
+      "sha256": "d263f6e550a35daced82069664123d3a1d60a26a04251ec3cc640f7d065aafcd"
+    },
+    {
+      "kind": "patch",
+      "module": "native/avos",
+      "path": ".github/build/avos-supernova135.patch",
+      "sha256": "f4585443b3d1205442f4f53452b4e8fb11b0e2d4b7aad8b5efa0da5fa7c47580"
+    },
+    {
+      "kind": "patch",
+      "module": "native/avos",
+      "path": ".github/build/avos-supernova141-chapters.patch",
+      "sha256": "f37432c420aee54bc8f69cb63ec59bf08472d0c0ded4640cc66b3a9726473963"
+    },
+    {
+      "kind": "patch",
+      "module": "native/avos",
+      "path": ".github/build/avos-supernova145-buffer-limits.patch",
+      "sha256": "6a61fbbfe1c6513fb4305af7d0d2fa6d34498e8018138c59cc36cf8846a3a985"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova135.patch",
+      "sha256": "23aa0e069e77b35212f3abe2cae511e503adfc8038cce6c5fe4ddfa16be01551"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-next-refinement.patch",
+      "sha256": "7389eed0a4f0c2af51ace7ae4c4bc3b936bef0eb8ede5b06e62f7024a1a61632"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-next-qa.patch",
+      "sha256": "5112be685d87fd76f4da43bdf8bebbeb5489ed379cd9d2d25384e8a9b58fd69b"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-next-qa.patch",
+      "sha256": "17f883e03d81484eba3e7416c85c18a291c98852f90667d41b5e609235813618"
+    },
+    {
+      "kind": "foundation_identity"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova139-playlists.patch",
+      "sha256": "362305f0bba7dfccff58058e9cd1b4a2650674bdede355b6d88c0f46643f629e"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova139-matches.patch",
+      "sha256": "9d0c9e30758f0b409d76b47361026a1f917611ee31b8b3d1d905aed346075c6c"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova139-diagnostics.patch",
+      "sha256": "c17bd20d73859a3c69a11b9e06aebdd51427bc46eb4aba7c8d63b2471a99491b"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova142-network.patch",
+      "sha256": "2620199e60a093164c29c1bfe8bbc27aa23a9ab6df52c059e3a86c880033014e"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova144-webdav.patch",
+      "sha256": "1448c3f6463097c83a81c5cc19605d86b146d8a5bb4d08d764190d08d9e8eb34"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova144-reconciliation.patch",
+      "sha256": "f68802bbdafba97157219279f90ed455cfde759ce47a3e0b4977ee375634a97c"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova145-subtitle-cache.patch",
+      "sha256": "941d175cb03a59d424d4a8667e05a657049144b801b4bdb4ac0072994eceda64"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova145-jetty-security.patch",
+      "sha256": "becdf10b663e8fd64e35ff8f7c9fc148ed467d33b76517e69767bf64eb1fff79"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova145-storage.patch",
+      "sha256": "298d48576a0d159d2018e643a486960c5b7c010d5287f1139f53a6825ec12295"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova146-upstream.patch",
+      "sha256": "6dddea39b77c5102cccb1db4165fbd017ff4edbd014fa9c125550178f154c27a"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecorelibrary-supernova146-upstream.patch",
+      "sha256": "bace303c452b19e284ddadda2270630fcd0296146da4260c8e4a3fa7980de700"
+    },
+    {
+      "kind": "patch",
+      "module": "native/avos",
+      "path": ".github/build/avos-supernova146-upstream.patch",
+      "sha256": "b93cdec561a1068be5ce3c892e0a114fff742654c9c77a2569e6f51683915977"
+    }
+  ]
+}

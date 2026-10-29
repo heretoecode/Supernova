@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.leanback.collections;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediascraper.GenreUtils;
 import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 
@@ -60,7 +62,7 @@ public class CollectionsIconBuilder {
                 VideoStore.Video.VideoColumns.SCRAPER_COVER + " IS NOT NULL AND " +
                 VideoStore.Video.VideoColumns.SCRAPER_C_ID + " > '0' AND " +
                 VideoStore.Video.VideoColumns.SCRAPER_C_POSTER_LARGE_FILE + " IS NOT NULL AND " +
-                VideoStore.Video.VideoColumns.SCRAPER_M_GENRES + " NOT LIKE '%" + mContext.getString(com.archos.medialib.R.string.movie_genre_animation) + "%'" +
+                GenreUtils.getAnimeSelection(mContext, false, false) +
                 ") GROUP BY (" + VideoStore.Video.VideoColumns.SCRAPER_C_ID;
         mWidth  = context.getResources ().getDimensionPixelSize(R.dimen.all_collections_icon_width);
         mHeight  = context.getResources ().getDimensionPixelSize(R.dimen.all_collections_icon_height);
@@ -118,6 +120,7 @@ public class CollectionsIconBuilder {
         return list;
     }
 
+    @SuppressLint("InflateParams") // Offscreen view inflation for canvas bitmap rendering
     private Bitmap composeBitmap(List<String> posters) {
 
         View compositionView  = LayoutInflater.from(mContext).inflate(R.layout.all_collections_icon, null);

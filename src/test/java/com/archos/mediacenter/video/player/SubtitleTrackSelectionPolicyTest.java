@@ -42,7 +42,7 @@ import java.util.Locale;
  * defined in Video/doc/SUBTITLES.md.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
+@Config(application = android.app.Application.class, sdk = 33)
 public class SubtitleTrackSelectionPolicyTest {
 
     private Locale mOriginalLocale;
@@ -52,6 +52,11 @@ public class SubtitleTrackSelectionPolicyTest {
     @Before
     public void setUp() throws Exception {
         mOriginalLocale = Locale.getDefault();
+        // Track policy uses an attached service/context, not deferred production
+        // discovery/HDMI startup that can outlive a Robolectric test sandbox.
+        android.app.Application app = org.robolectric.RuntimeEnvironment.getApplication();
+        com.archos.environment.ArchosUtils.setGlobalContext(app);
+        org.robolectric.util.ReflectionHelpers.setStaticField(com.archos.mediacenter.video.CustomApplication.class,"mContext",app);
         mService = Robolectric.buildService(PlayerService.class).get();
         mMockPlayer = Mockito.mock(Player.class);
         Mockito.when(mMockPlayer.setAudioTrack(Mockito.anyInt())).thenReturn(true);
@@ -92,6 +97,32 @@ public class SubtitleTrackSelectionPolicyTest {
         );
         int sub = runSubtitleSelection(vMetadata, 0, "en", "en", false);
         assertEquals("English native with full subtitles only must select none", -1, sub);
+    }
+
+    @Test
+    public void testSpecTable_Row2_ShowFullSubsForLocalAudioEnabled_SelectsFullTrack() throws Exception {
+        // Same fixture as Row 2, but with "Show subtitles for local-language audio" enabled:
+        // the native-speaker suppression is skipped, falling through to the normal favSubLang scan.
+        VideoMetadata vMetadata = createMetadata(
+                new AudioFixture("English", "eng", 1, true),
+                new SubFixture("English Full", "eng", "", 0, false, 0)
+        );
+        VideoDbInfo videoInfo = new VideoDbInfo();
+        videoInfo.audioTrack = 0;
+        videoInfo.subtitleTrack = -1;
+        videoInfo.subtitleLanguage = null;
+        Locale.setDefault(Locale.forLanguageTag("en"));
+        Mockito.when(mMockPlayer.getVideoMetadata()).thenReturn(vMetadata);
+        setPrivateField(mService, "mVideoInfo", videoInfo);
+        setPrivateField(mService, "mSubsFavoriteLanguage", "en");
+        setPrivateField(mService, "mHideSubtitles", false);
+        setPrivateField(mService, "mShowFullSubsForLocalAudio", true);
+        setPrivateField(mService, "firstTimeSubCalled", true);
+        setPrivateField(mService, "mIsPreparingSubs", false);
+
+        mService.onSubtitleMetadataUpdated(vMetadata, -1);
+
+        assertEquals("Enabling the preference must select the full track instead of none", 0, videoInfo.subtitleTrack);
     }
 
     @Test
@@ -482,7 +513,8 @@ public class SubtitleTrackSelectionPolicyTest {
             setFinalField(track, "name", s.name);
             setFinalField(track, "path", s.path);
             setFinalField(track, "isExternal", (s.path != null && !s.path.isEmpty()));
-            setFinalField(track, "isGfx", s.isGfx);
+            // isGfx is no longer a field: native sends a kind (SUB_KIND).
+            setFinalField(track, "kind", s.isGfx ? SubtitleManager.KIND_GRAPHIC : SubtitleManager.KIND_PLAIN_TEXT);
             setFinalField(track, "format", s.format);
             setFinalField(track, "language", s.lang);
             setFinalField(track, "disposition", s.disposition);

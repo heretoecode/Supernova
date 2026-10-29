@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "source_commit": "89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b",
+  "patch_sha256": "1c21b3dcfb9727b862f09b9ec2909b6c0761d06f60840f18e42fde0b313ed69a",
+  "libraries": [
+    {
+      "module": "jetty-util",
+      "sha256": "b89dc5027828b9cb5f4c1be33a8e74df9a21c950755bba1b735307f61bb0bedf",
+      "classes": 324,
+      "bytes": 525006
+    },
+    {
+      "module": "jetty-io",
+      "sha256": "17435e8c739081127e1768f5be3d43314fff8bec836eab7d5112f33918dc01a2",
+      "classes": 105,
+      "bytes": 163899
+    },
+    {
+      "module": "jetty-http",
+      "sha256": "c2d03da3bcb494785e998d989a32b77d4bfe4e4997a67822c1e1ec8b9598663b",
+      "classes": 107,
+      "bytes": 231783
+    },
+    {
+      "module": "jetty-server",
+      "sha256": "3dfc3db2abf5732a329aec6721da30ba8c1a37520d7fbd315c77de1dd36fa5ec",
+      "classes": 337,
+      "bytes": 651707
+    },
+    {
+      "module": "jetty-client",
+      "sha256": "4a0203ed8cf1d86f836f7c1bc33a67f79f124deb0b291818c023d35cc4bd30b9",
+      "classes": 197,
+      "bytes": 293452
+    },
+    {
+      "module": "jetty-security",
+      "sha256": "23c7eb4664261baa66be39fba41998df5d20db26e323feacd57b1ea28f060eb7",
+      "classes": 61,
+      "bytes": 106725
+    },
+    {
+      "module": "jetty-servlet",
+      "sha256": "6bdf14f9c303a4a021e580be5ee923fc26847c1e250715054577018a0ec49557",
+      "classes": 66,
+      "bytes": 128145
+    }
+  ],
+  "lock_sha256": "4cdc5a1b53a8ecebfaed26060b6b11e10ede5b78f7899fd7971b14e9b75a32a2",
+  "api23_excluded_optional_sources": [
+    "jetty-util/src/main/java/org/eclipse/jetty/util/ModuleLocation.java",
+    "jetty-server/src/main/java/org/eclipse/jetty/server/CustomRequestLog.java",
+    "jetty-server/src/main/java/org/eclipse/jetty/server/ForwardedRequestCustomizer.java",
+    "jetty-servlet/src/main/java/org/eclipse/jetty/servlet/DecoratingListener.java"
+  ],
+  "independent_builds": 2,
+  "all_seven_module_hashes_identical": true,
+  "tests_per_build": 22,
+  "actual_android23_workflow": 40846176706,
+  "actual_android23_transport_and_trust_tests": 23,
+  "actual_android23_result": "success"
+}

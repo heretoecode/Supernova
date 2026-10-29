@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <dimen name="subtitle_panel_header_height">44dp</dimen>
+  <dimen name="subtitle_panel_preview_height">70dp</dimen>
+</resources>

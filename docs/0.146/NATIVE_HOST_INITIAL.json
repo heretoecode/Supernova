@@ -1,0 +1,34 @@
+{
+  "source": "upstream AVOS95a9e6b plus preserved chapter/HDR hooks",
+  "host_renderer": "Ubuntu24.04 libass package; exact0.17.5 still required",
+  "initial_ubsan": {
+    "passed": 11,
+    "failed": 2,
+    "cause": "Linux harness omitted -lm for lroundf; link failed before rendering"
+  },
+  "correction": "test/host/test_host_native.py link libm explicitly",
+  "corrected_ubsan": {
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+  },
+  "asan_ubsan": {
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+  },
+  "logs": {
+    "ubsan.log": "30019be8a8bfb19add980252a6f85ce688eabe95737bc8f37f38a9cbad5c270f",
+    "ubsan-corrected.log": "8c1ce61da62ad8c7e14a41b7033bae2334fe88853076630b5086b434ddd6d09f",
+    "asan-ubsan.log": "2e8edf511932d91400b52b4e71ac2df131ecf7d5f8d6ef20832076e6ca0410b3",
+    "tsan-runtime.log": "ba91fd039b8980ba9bc4f606903cd135bc5f38418bd4aed1e42f4d094022b2a4"
+  },
+  "physical_device": false,
+  "thread_sanitizer": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "toolchain": "Clang18 with libclang-rt-18-dev",
+    "initial_setup_failure": "TSan runtime archive absent; installed the runtime, then all seven concurrency cases passed"
+  }
+}

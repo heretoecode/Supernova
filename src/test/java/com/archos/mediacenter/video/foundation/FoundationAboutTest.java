@@ -41,7 +41,7 @@ public class FoundationAboutTest {
         FoundationAboutWorkspace workspace=new FoundationAboutWorkspace(prefs,split,middle,help,rail);TextView about=new TextView(activity);rail.addView(about);workspace.show(about);
         String text=allText(workspace);
         assertTrue(text.contains(com.archos.mediacenter.video.BuildConfig.VERSION_NAME));
-        assertTrue(text.contains("Based on Nova Video Player 6.4.64"));
+        assertTrue(text.contains("Based on Nova Video Player 6.6.2"));
         assertFalse(text.contains("Check for Updates"));assertFalse(text.contains("Upstream SHA"));
     }
     @Test public void releaseExpansionPersistsAndCurrentReleaseDoesNotCollapse() throws Exception {

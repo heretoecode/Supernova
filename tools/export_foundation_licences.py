@@ -64,8 +64,8 @@ def export(inventory, legal):
         elif group.startswith('org.eclipse.jetty'):
             family, destination, licence = 'Jetty', 'https://jetty.org/', 'Apache-2.0 OR EPL-1.0'
             supplement = ['Apache-2.0.txt', 'EPL-1.0.txt', 'JettyNotice.txt']
-        elif group == 'org.jupnp':
-            family, destination, licence = 'JUPnP', 'https://github.com/jupnp/jupnp', 'CDDL-1.0'
+        elif group in ('org.jupnp', 'com.github.nova-video-player.jupnp'):
+            family, destination, licence = 'JUPnP', 'https://github.com/nova-video-player/jupnp', 'CDDL-1.0'
             supplement = ['CDDL-1.0.txt']
         elif group == 'io.sentry':
             family, destination, licence = 'Sentry', 'https://github.com/getsentry/sentry-java', 'MIT'
@@ -89,10 +89,10 @@ def export(inventory, legal):
             licence, destination = 'MIT', 'https://www.slf4j.org/'
         elif module == 'oro':
             licence, destination = 'Apache-1.1', 'https://attic.apache.org/projects/jakarta-oro.html'
-        elif module == 'desugar_jdk_libs':
+        elif module in ('desugar_jdk_libs', 'desugar_jdk_libs_nio'):
             family, licence = 'OpenJDK desugared libraries', 'GPL-2.0-only WITH Classpath-exception-2.0'
             supplement = ['DesugarLICENSE.txt', 'DesugarAdditional.txt', 'DesugarAssembly.txt']
-        elif module == 'desugar_jdk_libs_configuration':
+        elif module in ('desugar_jdk_libs_configuration', 'desugar_jdk_libs_configuration_nio'):
             family, licence = 'OpenJDK desugaring configuration', 'Apache-2.0'
         if licence == 'Apache-2.0':
             if not labels and not texts and module not in ('core', 'listenablefuture'):

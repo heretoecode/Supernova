@@ -1,5 +1,5 @@
-com.hierynomus:sshj:0.40.0
-Archive SHA-256: a6a5533f6580e0418dfcacbb5396680186698585c325fa950c788e749f24d1e2
+com.hierynomus:sshj:0.41.2
+Archive SHA-256: 48a85a0067196a7b47dfb5c1d22c4ca6ed76c84a232af9ad29f1ba7aaf5c4614
 Licence: Apache-2.0
 
 Apache License

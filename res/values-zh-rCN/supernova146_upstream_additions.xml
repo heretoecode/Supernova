@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="preferences_audio_speed_mode_title">音频速度</string>
+  <string name="preferences_audio_speed_mode_summary">选择用于更改播放速度的音频速度滤镜。⚠ 实验性功能，可能会出现视频卡顿或音频失真</string>
+  <string name="audio_speed_mode_disabled">关闭</string>
+  <string name="audio_speed_mode_audiotrack">系统原生 (AudioTrack)</string>
+  <string name="audio_speed_mode_atempo">平衡模式 (FFmpeg atempo)</string>
+  <string name="audio_speed_mode_sonic">声音 &amp; 语音 (Sonic)</string>
+  <string name="subtitles_show_full_for_local_audio_title">显示本地语言音频的字幕</string>
+  <string name="subtitles_show_full_for_local_audio_summary">默认关闭，因此仅强制字幕会在音频与字幕语言匹配时自动选中；开启后完整字幕也可自动选中</string>
+  <string name="ui_choice_title">您似乎正在电视上使用Nova视频播放器。\n如果情况确实如此，我们建议使用我们的新电视用户界面</string>
+  <string name="ui_choice_tv">电视界面</string>
+  <string name="ui_choice_tablet">平板界面</string>
+  <string name="ui_choice_help">您可以稍后在应用程序设置中更改您的选择</string>
+  <string name="workgroup">工作组</string>
+</resources>

@@ -1,5 +1,5 @@
-org.apache.httpcomponents.core5:httpcore5:5.4.3
-Archive SHA-256: 18bfbbabb478dfb67f31aeaf428c387f3c3df654582e1309f708ee1f3086830a
+org.apache.httpcomponents.core5:httpcore5:5.4.4
+Archive SHA-256: b08e3c3a440fec2029e89980134c7c787dd6796454641ad1eafb81478d7e8b0b
 Licence: Apache-2.0
 
 Archive META-INF/LICENSE

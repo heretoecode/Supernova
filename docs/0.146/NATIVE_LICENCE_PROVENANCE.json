@@ -1,0 +1,218 @@
+{
+  "schema": 1,
+  "native_lock_sha256": "a1197ab90201ea5f3bcd7be11223265a28f84440c22272c06299ddc1b1e9064f",
+  "components": [
+    {
+      "name": "ffmpeg",
+      "commit": "946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+      "input": "https://codeload.github.com/FFmpeg/FFmpeg/tar.gz/946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+      "licence_files": [
+        {
+          "path": "LICENSE.md",
+          "sha256": "2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af"
+        },
+        {
+          "path": "COPYING.LGPLv2.1",
+          "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30"
+        }
+      ],
+      "text_asset": "foundation/legal/ffmpeg.txt"
+    },
+    {
+      "name": "openssl",
+      "commit": "2f4e3a5fec05394068cfa7379890ab552483a8a6",
+      "input": "https://codeload.github.com/openssl/openssl/tar.gz/2f4e3a5fec05394068cfa7379890ab552483a8a6",
+      "licence_files": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+        }
+      ],
+      "text_asset": "foundation/legal/openssl.txt"
+    },
+    {
+      "name": "libass",
+      "commit": "4a05d8127f525943ebf45fdc6497c9e665947f0d",
+      "input": "https://codeload.github.com/libass/libass/tar.gz/4a05d8127f525943ebf45fdc6497c9e665947f0d",
+      "licence_files": [
+        {
+          "path": "COPYING",
+          "sha256": "f7e30699d02798351e7f839e3d3bfeb29ce65e44efa7735c225464c4fd7dfe9c"
+        }
+      ],
+      "text_asset": "foundation/legal/libass.txt"
+    },
+    {
+      "name": "zlib",
+      "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+      "input": "https://codeload.github.com/madler/zlib/tar.gz/da607da739fa6047df13e66a2af6b8bec7c2a498",
+      "licence_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2"
+        }
+      ],
+      "text_asset": "foundation/legal/zlib.txt"
+    },
+    {
+      "name": "libpng",
+      "commit": "cd952f49f95bb27154ae77dbb103032d95f6e580",
+      "input": "https://codeload.github.com/pnggroup/libpng/tar.gz/cd952f49f95bb27154ae77dbb103032d95f6e580",
+      "licence_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526"
+        }
+      ],
+      "text_asset": "foundation/legal/libpng.txt"
+    },
+    {
+      "name": "libxml2",
+      "commit": "96498992efa48d52b0e8b83058bd88dbdaf153c1",
+      "input": "https://codeload.github.com/GNOME/libxml2/tar.gz/96498992efa48d52b0e8b83058bd88dbdaf153c1",
+      "licence_files": [
+        {
+          "path": "Copyright",
+          "sha256": "5d4873884a890122a4b9b20ad56ac6f7da1d796a5bfcf04a427970ac96217626"
+        }
+      ],
+      "text_asset": "foundation/legal/libxml2.txt"
+    },
+    {
+      "name": "freetype",
+      "commit": "0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+      "input": "https://codeload.github.com/freetype/freetype/tar.gz/0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+      "licence_files": [
+        {
+          "path": "LICENSE.TXT",
+          "sha256": "bd36c8b474855fa294c2ec5c184544478ef3720aad37d65a6296a4f264fd2d3b"
+        },
+        {
+          "path": "docs/FTL.TXT",
+          "sha256": "5a5ee54c5001bbad1cdc1a57cc3dd4c42199b2da09d39c7ee41fab002d02967f"
+        }
+      ],
+      "text_asset": "foundation/legal/freetype.txt"
+    },
+    {
+      "name": "fribidi",
+      "commit": "b93119f5fdc7ea47672cc304c1455ffa6dfe7536",
+      "input": "https://codeload.github.com/fribidi/fribidi/tar.gz/b93119f5fdc7ea47672cc304c1455ffa6dfe7536",
+      "licence_files": [
+        {
+          "path": "COPYING",
+          "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+        }
+      ],
+      "text_asset": "foundation/legal/fribidi.txt"
+    },
+    {
+      "name": "harfbuzz",
+      "commit": "35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+      "input": "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+      "licence_files": [
+        {
+          "path": "COPYING",
+          "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64"
+        }
+      ],
+      "text_asset": "foundation/legal/harfbuzz.txt"
+    },
+    {
+      "name": "libunibreak",
+      "commit": "28a2756b864c343f438cd22537d49d394d4666a5",
+      "input": "https://codeload.github.com/adah1972/libunibreak/tar.gz/28a2756b864c343f438cd22537d49d394d4666a5",
+      "licence_files": [
+        {
+          "path": "LICENCE",
+          "sha256": "0c57e2ec42ece17791a75d2f9b2f8e0663181be008667a507f765b3ef22522db"
+        }
+      ],
+      "text_asset": "foundation/legal/libunibreak.txt"
+    },
+    {
+      "name": "fontconfig",
+      "commit": "0f236723a3c26bd9745e32ba2b3ee21e5f809295",
+      "input": "https://gitlab.freedesktop.org/fontconfig/fontconfig.git",
+      "licence_files": [
+        {
+          "path": "COPYING",
+          "sha256": "51a51aa9823704fd90bccc616cdd17ebabb5b2b3e9cbde886ca02c7002288067"
+        }
+      ],
+      "text_asset": "foundation/legal/fontconfig.txt"
+    },
+    {
+      "name": "opus",
+      "commit": "084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+      "input": "https://codeload.github.com/xiph/opus/tar.gz/084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+      "licence_files": [
+        {
+          "path": "COPYING",
+          "sha256": "01e1167d54a096d123cf6dfbbeb19587278845c6481d2d66d545669846079551"
+        },
+        {
+          "path": "LICENSE_PLEASE_READ.txt",
+          "sha256": "7efb4989e0cd1b256229bdf2f09300c5d14e35db0e7476bfb87fac243498273d"
+        }
+      ],
+      "text_asset": "foundation/legal/opus.txt"
+    },
+    {
+      "name": "dav1d",
+      "commit": "54706fc6bc0cdecab7e9593974a4039cc038fca7",
+      "input": "https://codeload.github.com/videolan/dav1d/tar.gz/54706fc6bc0cdecab7e9593974a4039cc038fca7",
+      "licence_files": [
+        {
+          "path": "COPYING",
+          "sha256": "dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5"
+        }
+      ],
+      "text_asset": "foundation/legal/dav1d.txt"
+    },
+    {
+      "name": "libmysofa",
+      "commit": "6cc5b15a73e9bd97810d03767082edda7f315881",
+      "input": "https://codeload.github.com/hoene/libmysofa/tar.gz/6cc5b15a73e9bd97810d03767082edda7f315881",
+      "licence_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "9c8713ccc5d6d93d20c7a1cfcb876e64baf551bfbe67faa4e60d39cda9ffd023"
+        }
+      ],
+      "text_asset": "foundation/legal/libmysofa.txt",
+      "vendored_notices": "Retain baseline full Speex resampler/kdtree notices, reviewed against unchanged pinned1.3.5 source headers; no old binary/version claim imported.",
+      "text_asset_sha256": "10e6a4dc8c58666846558c0d1a3d1b4f1b84ba6b4137bd059caf50a57d833239"
+    },
+    {
+      "name": "dlg",
+      "commit": "395ccad2c1e0daae535c4d20bb0a3f2424648e17",
+      "input": "https://codeload.github.com/nyorain/dlg/tar.gz/395ccad2c1e0daae535c4d20bb0a3f2424648e17",
+      "licence_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+        }
+      ],
+      "text_asset": "foundation/legal/dlg.txt"
+    }
+  ],
+  "removed_from_catalogue": [
+    "libyuv: no longer linked; FFmpeg swscale replaces it",
+    "libtorrent/Boost: retired runtime excluded fromAPK"
+  ],
+  "security_patches": [
+    {
+      "file": ".github/build/ffmpeg-supernova146-security.patch",
+      "sha256": "94a0df14870fc7803188997ff913622422e26265227f8e00c3b06950008411b4"
+    },
+    {
+      "file": ".github/build/freetype-supernova146-security.patch",
+      "sha256": "fe2af0c24e737f06b98c718b1958194587f8c6f6a97d6025023dd94cfd2dfce5"
+    },
+    {
+      "file": ".github/build/zlib-supernova146-security.patch",
+      "sha256": "4e69433578dfdb9044b399b7cfc8332fce66f6c001d4ab0dd276bd5408d0424d"
+    }
+  ]
+}

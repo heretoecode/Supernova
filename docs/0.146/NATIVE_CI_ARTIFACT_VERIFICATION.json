@@ -1,0 +1,39 @@
+{
+  "run_id": 40843685431,
+  "supersedes_initial_run": 40780058727,
+  "scope": "Includes native security backports and restricted fontconfig XML features",
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "artifact_sha256": "d7a94336c9fd1d4e3a8b24bc32955a5ad20db8114fd7303de999b263da5b3daa",
+      "archive_sha256": "02305ffdbf02056b3d6c4a883d10531b4dba1e0e149936ea53c753b361b14453",
+      "files": 647,
+      "native_source_commit": "e2ff14b954459dba40328baa5e00fe5b588dcb34",
+      "lock_sha256": "a1197ab90201ea5f3bcd7be11223265a28f84440c22272c06299ddc1b1e9064f"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "artifact_sha256": "f7807095dbe92201f14a65e1487ee31907acf073dc79fcf3cd8980719fe58b64",
+      "archive_sha256": "79d715471a754eb3f975feb5c1a9c1790e63b86653b32922363e7e2280a29d63",
+      "files": 647,
+      "native_source_commit": "e2ff14b954459dba40328baa5e00fe5b588dcb34",
+      "lock_sha256": "a1197ab90201ea5f3bcd7be11223265a28f84440c22272c06299ddc1b1e9064f"
+    },
+    {
+      "abi": "x86",
+      "artifact_sha256": "31ec226e28cfcd193493189177f575aea22f65235ec76f07f2cc195300df6691",
+      "archive_sha256": "344b84b22a5b6406fb9dd2e61cad5cef62ff900dd25dadd71c9176d703f1bf22",
+      "files": 647,
+      "native_source_commit": "e2ff14b954459dba40328baa5e00fe5b588dcb34",
+      "lock_sha256": "a1197ab90201ea5f3bcd7be11223265a28f84440c22272c06299ddc1b1e9064f"
+    },
+    {
+      "abi": "x86_64",
+      "artifact_sha256": "f2663047f126b5910b3e1cfa41d774052f1efeeb11736bd153d5c618d65513cc",
+      "archive_sha256": "85c5edb34a69cec2ab8373a6b09c706d727b977145e61ac34f7295002b28f61e",
+      "files": 647,
+      "native_source_commit": "e2ff14b954459dba40328baa5e00fe5b588dcb34",
+      "lock_sha256": "a1197ab90201ea5f3bcd7be11223265a28f84440c22272c06299ddc1b1e9064f"
+    }
+  ]
+}

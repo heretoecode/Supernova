@@ -33,7 +33,10 @@ final class PreviewPlaybackMenus {
         closing=true;flushNested();Dialog old=current;current=null;
         if(old!=null){old.setOnCancelListener(null);old.dismiss();}
         if(owner instanceof PlayerActivity&&!owner.isFinishing())((PlayerActivity)owner).restorePreviewSettingsFocus(origin);else if(origin!=null&&origin.isAttachedToWindow()&&origin.isShown())origin.requestFocus();
-        origin=null;owner=null;adapter=null;liveCard=null;restoreParent=null;backAction=null;closing=false;
+        origin=null;owner=null;adapter=null;liveCard=null;restoreParent=null;backAction=null;
+        // Detached views still retain their Activity context; release the entire window tree.
+        tabs=null;rows=null;trackRows=null;adjustmentRows=null;content=null;scroll=null;
+        closing=false;
     }
     private static void flushNested(){if(nested!=null){TVCardDialog card=nested;nested=null;card.setPreviewDismiss(()->{});card.handleBackPressed();}}
     static void show(Activity activity,TVMenuAdapter source,String target){

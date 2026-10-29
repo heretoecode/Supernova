@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.leanback.animes;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediascraper.GenreUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 import java.io.IOException;
@@ -62,7 +64,7 @@ public class AllAnimesIconBuilder {
                         VideoStore.Video.VideoColumns.SCRAPER_MOVIE_ID + " IS NOT NULL AND " +
                         VideoStore.Video.VideoColumns.SCRAPER_M_IMDB_ID + " IS NOT NULL AND " +  
                         VideoStore.Video.VideoColumns.SCRAPER_COVER + " IS NOT NULL AND " +
-                        VideoStore.Video.VideoColumns.SCRAPER_M_GENRES + " LIKE '%" + mContext.getString(com.archos.medialib.R.string.movie_genre_animation) + "%'";
+                        GenreUtils.getAnimeSelection(mContext, false, true);
     }
 
     public Bitmap buildNewBitmap() {
@@ -117,6 +119,7 @@ public class AllAnimesIconBuilder {
         return list;
     }
 
+    @SuppressLint("InflateParams") // Offscreen view inflation for canvas bitmap rendering
     private Bitmap composeBitmap(List<String> posters) {
 
         View compositionView  = LayoutInflater.from(mContext).inflate(R.layout.all_movies_icon, null);

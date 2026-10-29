@@ -25,6 +25,7 @@ public final class PreviewBrowserSurface extends BrowseFrameLayout {
     }
     public UniversalFileBrowser browser(){return browser;}
     void credentials(Consumer<Exception> handler,Consumer<Uri> changed){browser.credentials(handler,changed);}
+    void failure(com.archos.filecorelibrary.ListingEngine.ErrorEnum code){browser.listingFailure(code);}
     void open(Uri uri){browser.open(uri);}
     void focusItem(Object item,Runnable action){if(item instanceof com.archos.mediacenter.video.browser.adapters.object.Video)browser.focusVideo((com.archos.mediacenter.video.browser.adapters.object.Video)item);}
     public void providerItem(String title,String details,boolean folder,Runnable action){browser.providerInformation(title,details,folder,action);}

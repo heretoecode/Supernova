@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+import android.media.AudioManager;
 import android.annotation.SuppressLint;
 
 import android.app.NotificationChannel;
@@ -36,6 +37,7 @@ import android.os.Bundle;
 import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
+import android.view.KeyEvent;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -70,10 +72,10 @@ import com.archos.mediacenter.video.browser.BootupRecommandationService;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.leanback.channels.ChannelManager;
+import com.archos.mediacenter.video.utils.MiscUtils;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.mediacenter.video.utils.AdditionalServiceSingleton;
-import com.archos.medialib.Subtitle;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediaprovider.video.VideoStoreImportImpl;
 import com.archos.mediascraper.BaseTags;
@@ -95,8 +97,6 @@ import static com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.
 import static com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager.getSubLanguageFromSubPathAndVideoPath;
 import com.archos.medialib.LibAvos;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
-import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_AUDIO_SPEED_AUDIOTRACK;
-import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_PLAYBACK_SPEED;
 import static com.archos.mediascraper.StringUtils.stringContainsForced;
 
 import org.slf4j.Logger;
@@ -263,6 +263,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public static PlayerService sPlayerService;
     private SharedPreferences mPreferences;
     private PlayerFrontend mPlayerFrontend;
+    // Display-aware context of the current player UI so that Toasts show up on the display the
+    // video is playing on instead of the default one. Null when no UI frontend is attached.
+    private Context mUiContext;
     private Handler mHandler;
     private Player mPlayer;
     public static final String KEY_STREAMING_URI = "streaming_uri";
@@ -288,6 +291,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
 
     private static final String KEY_HIDE_SUBTITLES = "subtitles_hide_default";
+    private static final String KEY_SHOW_FULL_SUBTITLES_FOR_LOCAL_AUDIO = "subtitles_show_full_for_local_audio";
     private static final String KEY_NETWORK_BOOKMARKS = "network_bookmarks";
     private static final String KEY_SUBTITLES_FAVORITE_LANGUAGE = "favSubLang";
     private static final String KEY_AUDIO_TRACK_FAVORITE_LANGUAGE = "favAudioLang";
@@ -304,6 +308,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private boolean firstTimeAudioCalled = true;
 
     private boolean mHideSubtitles = false;
+    private boolean mShowFullSubsForLocalAudio = false;
     private int mNewSubtitleTrack;
     private boolean mAudioSubtitleNeedUpdate;
     private Intent mIntent;
@@ -324,6 +329,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private boolean mDestroyed;
     private Runnable mAutoSaveTask;
     private CountDownLatch mSubtitlesReadyLatch = null;
+    private int mSourceRequestGeneration;
     private static final long SUBTITLE_ENUMERATION_TIMEOUT_MS = 5000; // 5 second timeout for subtitle enumeration before starting video
 
     public enum PlayerState {
@@ -499,8 +505,10 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
 
         if (log.isDebugEnabled()) log.debug("onCreate: register headsetPluggedReceiver");
-        if (Build.VERSION.SDK_INT >= 33) registerReceiver(headsetPluggedReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG), Context.RECEIVER_NOT_EXPORTED);
-        else registerReceiver(headsetPluggedReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+        IntentFilter outputFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        outputFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        if (Build.VERSION.SDK_INT >= 33) registerReceiver(headsetPluggedReceiver, outputFilter, Context.RECEIVER_NOT_EXPORTED);
+        else registerReceiver(headsetPluggedReceiver, outputFilter);
         setPlayer();
         Intent intent = new Intent(PLAYER_SERVICE_STARTED);
         intent.setPackage(ArchosUtils.getGlobalContext().getPackageName());
@@ -538,6 +546,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mNightModeOn = mPreferences.getBoolean(KEY_AUDIO_FILT_NIGHT, false);
         mForceSingleRepeatMode = isDemoMode;
         mHideSubtitles = mPreferences.getBoolean(KEY_HIDE_SUBTITLES, false);
+        mShowFullSubsForLocalAudio = mPreferences.getBoolean(KEY_SHOW_FULL_SUBTITLES_FOR_LOCAL_AUDIO, false);
         mPlayMode = mPreferences.getInt(KEY_PLAY_MODE, PLAYMODE_SINGLE);
         // Any start clears the binge-transition flag; onCompletion re-sets it when auto-advancing.
         mArrivedViaBingeTransition = false;mSegmentOverride=null;mSegmentPrompt=null;
@@ -591,6 +600,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             continuingSession = false;
         }
         if (!continuingSession) {
+            ++mSourceRequestGeneration;
             mPlaybackSession.reset(mUri, launchGeneration);
         }
         PlaybackResumePolicy.StartupSource startupSource = PlaybackResumePolicy.chooseStartupSource(
@@ -668,11 +678,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if (log.isDebugEnabled()) log.debug("onStart: mVideoInfo != null, call mPlayerFrontend.onVideoDb");
             mPlayerFrontend.onVideoDb(mVideoInfo, null);
         }
-        if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
+        if (!PrivateMode.isActive()) {
             setNowPlayingCard();
         }
         mPlayerState = PlayerState.PREPARING;
-        if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
+        if (!PrivateMode.isActive()) {
             updateNowPlayingState();
         }
     }
@@ -942,13 +952,17 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         prepareSubs();
         if(mPlayerFrontend!=null)
             mPlayerFrontend.setUri(mUri, mStreamingUri);
+        final int generation = ++mSourceRequestGeneration;
+        final Player player = mPlayer;
+        final Uri uri = mStreamingUri;
+        final CountDownLatch subtitlesReady = mSubtitlesReadyLatch;
         new Thread(() -> {
             // Wait for subtitle enumeration to complete before starting video playback
             // This prevents glitches caused by subtitle track selection during playback
-            if (mSubtitlesReadyLatch != null) {
+            if (subtitlesReady != null) {
                 try {
                     if (log.isDebugEnabled()) log.debug("onStreamingUriOK: waiting for subtitles enumeration (timeout={}ms)", SUBTITLE_ENUMERATION_TIMEOUT_MS);
-                    boolean finished = mSubtitlesReadyLatch.await(SUBTITLE_ENUMERATION_TIMEOUT_MS, java.util.concurrent.TimeUnit.MILLISECONDS);
+                    boolean finished = subtitlesReady.await(SUBTITLE_ENUMERATION_TIMEOUT_MS, java.util.concurrent.TimeUnit.MILLISECONDS);
                     if (finished) {
                         if (log.isDebugEnabled()) log.debug("onStreamingUriOK: subtitles enumeration completed successfully");
                     } else {
@@ -957,9 +971,13 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 } catch (InterruptedException e) {
                     log.error("onStreamingUriOK: interrupted while waiting for subtitles", e);
                     Thread.currentThread().interrupt();
+                    return;
                 }
             }
-            mPlayer.setVideoURI(mStreamingUri, null);
+            mHandler.post(() -> {
+                if (!mDestroyed && generation == mSourceRequestGeneration && player == mPlayer)
+                    player.setVideoURI(uri, null);
+            });
         }).start();
     }
 
@@ -1001,6 +1019,20 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         // Called on the main thread once intro/outro segments have been fetched, so the
         // UI (e.g. the Play mode tile summary) can refresh if it is already displayed.
         void onIntroDbReady();
+
+        void onShowSkipPrompt(IntroSegments.Type type, long targetMs);
+        void onHideSkipPrompt();
+    }
+
+    /**
+     * Called by the player UI so that service Toasts are shown on the display hosting the player.
+     */
+    public void setUiContext(Context context) {
+        mUiContext = context != null ? MiscUtils.getDisplayContext(context) : null;
+    }
+
+    private Context getUiContext() {
+        return mUiContext != null ? mUiContext : getApplicationContext();
     }
 
     public void removePlayerFrontend(PlayerFrontend playerFrontend, boolean prepareForSurfaceSwitch) {
@@ -1011,6 +1043,13 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mPlayerFrontend = null;
         stopAndSaveVideoState();
         Player.sPlayer.setListener(null);
+        if (!prepareForSurfaceSwitch) {
+            // Genuinely done with this Player (not handing it off to the floating player) --
+            // this is the ONE place a live Player is discarded, so it's the one place
+            // responsible for releasing it. See Player.releasePlayer() for why routing every
+            // discard through here is what keeps at most one SubtitleEngine alive at a time.
+            Player.sPlayer.releasePlayer();
+        }
         Player.sPlayer = null;
         playerFrontend.onFrontendDetached();
         if (!prepareForSurfaceSwitch) {
@@ -1028,6 +1067,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     ? mPlayer.getCurrentPosition()
                     : mPlayer.getRelativePosition();
         }
+        if (!capturedFromPlayer && mPlayer != null && mPlayer.hasSuspendedPosition())
+            position = mPlayer.getCurrentPosition();
         if (position < 0) position = 0;
         if (capturedFromPlayer && rewindForResume && position > 3000) position -= 1000;
         mPlaybackSession.lastKnownPositionMs = position;
@@ -1182,6 +1223,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     }
 
     public void stopAndSaveVideoState(){
+        ++mSourceRequestGeneration;
         if (log.isDebugEnabled()) log.debug("stopAndSaveVideoState");
         if(mIndexHelper!=null) {
             mIndexHelper.abort(); //too late : do not retrieve db info
@@ -1201,6 +1243,12 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 mHandler.removeCallbacks(mAutoSaveTask);
             if (mAutoSkipTask != null)
                 mHandler.removeCallbacks(mAutoSkipTask);
+            if (mIsSkipPromptShowing) {
+                mIsSkipPromptShowing = false;
+                if (mPlayerFrontend != null) {
+                    mPlayerFrontend.onHideSkipPrompt();
+                }
+            }
             mPlayer.pause(PlayerController.STATE_OTHER);
             mPlayer.stopPlayback();
             mPlayerState = PlayerState.STOPPED;
@@ -1427,8 +1475,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public static final boolean DEFAULT_INTRODB_ENABLED = false;
     // how often the auto-skip task checks the playback position against the fetched segments
     private static final long AUTO_SKIP_INTERVAL = 1000;
-    // Safety buffer (ms) subtracted from segment end so skipping lands slightly before intro ends
-    private static final int AUTO_SKIP_BUFFER_MS = 2000;
+    // Safety buffer (ms) subtracted from segment end (0ms so skip lands at segment end)
+    private static final int AUTO_SKIP_BUFFER_MS = 0;
     // If a skip target lands within this margin of the media end, treat it as end-of-video
     // (seeking right to EOF fails and breaks playback) and complete naturally instead.
     private static final int AUTO_SKIP_END_MARGIN_MS = 5000;
@@ -1448,6 +1496,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public SegmentPrompt segmentPrompt(){return mSegmentPrompt!=null&&SystemClock.elapsedRealtime()<mSegmentPrompt.expires?mSegmentPrompt:null;}
     public void skipPrompt(){SegmentPrompt prompt=segmentPrompt();if(prompt!=null&&Player.sPlayer!=null&&isSafeAutoSkipTarget(prompt.target,Player.sPlayer.getDuration())){Player.sPlayer.seekTo((int)prompt.target);mSegmentPrompt=null;}}
 
+    // end (ms) of the last segment we prompted to skip
+    private long mLastPromptedEndMs = -1;
+    private boolean mIsSkipPromptShowing = false;
     // true when the current episode was reached by auto-advancing from the previous one (binge),
     // not by the user manually starting it. Recap auto-skip only fires when this is set.
     private boolean mArrivedViaBingeTransition = false;
@@ -1500,7 +1551,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         mIndexHelper.writeVideoInfo(mVideoInfo, true);
                     }
 
-                    if (ArchosFeatures.isAndroidTV(PlayerService.this) && !PrivateMode.isActive())
+                    if (!PrivateMode.isActive())
                         updateNowPlayingMetadata();
                     // check if it has been scraped
                 }
@@ -1521,7 +1572,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 }
                 else
                     mScraperTag = result.tag; // save it, it will be retrieved when index has worked
-                if (ArchosFeatures.isAndroidTV(PlayerService.this) && !PrivateMode.isActive())
+                if (!PrivateMode.isActive())
                 updateNowPlayingMetadata();
             }*/
         }
@@ -1565,7 +1616,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
         mUri = mVideoInfo.uri;
         mIntent.setData(mUri);
-        if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
+        if (!PrivateMode.isActive()) {
             updateNowPlayingMetadata();
         }
         if(mCallOnDataUriOKWhenVideoInfoIsSet)
@@ -1638,7 +1689,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 mPlayerFrontend.onFirstPlay();
                 if (log.isDebugEnabled()) log.debug("postPreparedAndVideoDb: player start PlayerController.STATE_NORMAL");
                 Player.sPlayer.start(PlayerController.STATE_NORMAL);
-                PlayerService.sPlayerService.mPlayerState = PlayerService.PlayerState.PLAYING;
+                // onPlay/onPause records the result, including refused audio focus.
             }
             if(mAudioSubtitleNeedUpdate){ // when we have info about subs or audio track BEFORE mVideoInfo is set
                 if (log.isDebugEnabled()) log.debug("postPreparedAndVideoDb: audiotrack onAudioMetadataUpdated {}", mNewAudioTrack);
@@ -1662,20 +1713,34 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
      * (GET only, no api key). Runs at most once per video on a background thread; the fused,
      * provider-agnostic result is cached in mIntroSegments for the auto-skip check in the tick.
      */
-    private void fetchIntroDbIfNeeded() {
+    public void fetchIntroDbIfNeeded() {
         if (mVideoInfo == null) return;
         if (BuildConfig.FOUNDATION?!segmentSkippingEnabled():!mPreferences.getBoolean(KEY_INTRODB_ENABLED, DEFAULT_INTRODB_ENABLED)) return;
         if (!mVideoInfo.isScraped) {
             if (log.isDebugEnabled()) log.debug("fetchIntroDbIfNeeded: not scraped, skipping");
+            if (mIsSkipPromptShowing) {
+                mIsSkipPromptShowing = false;
+                if (mPlayerFrontend != null) mPlayerFrontend.onHideSkipPrompt();
+            }
             return;
         }
         final Uri uri = mVideoInfo.uri;
         if (uri == null) return;
+        // If already fetched and cached, simply notify the frontend so the UI updates
+        if (mIntroSegments != null) {
+            if (mPlayerFrontend != null) mPlayerFrontend.onIntroDbReady();
+            return;
+        }
         // already fetched (or fetch in flight) for this video
         if (uri.equals(mIntroDbFetchedUri)) return;
         mIntroDbFetchedUri = uri;
         mIntroSegments = null; // drop any stale data from the previous video
         mLastAutoSkippedEndMs = -1;
+        mLastPromptedEndMs = -1;
+        mIsSkipPromptShowing = false;
+        if (mPlayerFrontend != null) {
+            mPlayerFrontend.onHideSkipPrompt();
+        }
 
         final IntroDbQueryParams query = buildIntroDbQuery();
         if (query == null) return;
@@ -1740,18 +1805,24 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
      */
     private void showIntroDbDebugToast(final String message) {
         if (!log.isTraceEnabled() || message == null || message.isEmpty()) return;
-        mHandler.post(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show());
+        mHandler.post(() -> Toast.makeText(getUiContext(), message, Toast.LENGTH_LONG).show());
     }
 
     /**
-     * Auto-skip check, run periodically while playing. If the current position falls inside an
-     * intro or recap segment, seek to the end of that segment. Credits/outro/preview are
-     * intentionally left out of the proof of concept (skipping them could jump to end of media).
+     * Periodic check during playback. If the current position falls inside an
+     * intro, recap, outro, or credits segment, prompts the user with a Netflix-style
+     * skip button via PlayerFrontend.
      */
     private void autoSkipIfNeeded() {
         IntroSegments segments = mIntroSegments;
         if (segments == null) {
             if (log.isTraceEnabled()) log.trace("autoSkipIfNeeded: no data yet");
+            if (mIsSkipPromptShowing) {
+                mIsSkipPromptShowing = false;
+                if (mPlayerFrontend != null) {
+                    mPlayerFrontend.onHideSkipPrompt();
+                }
+            }
             return;
         }
         boolean playing = mPlayer != null && Player.sPlayer != null && mPlayer.isPlaying();
@@ -1762,13 +1833,16 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (mPlayer == null || Player.sPlayer == null || !mPlayer.isPlaying()) return;
         if(BuildConfig.FOUNDATION){applySegmentPolicies(segments,position,Player.sPlayer.getDuration());return;}
         boolean introEnabled = mPreferences.getBoolean(KEY_INTRODB_ENABLED, DEFAULT_INTRODB_ENABLED);
-        if (!introEnabled) return;
-        // Recap has no separate toggle: it is additionally skipped only while actually
-        // binge-watching, i.e. in binge mode on an episode we auto-advanced into (so the very
-        // first episode of the binge keeps its recap).
-        boolean recapEnabled = mPlayMode == PLAYMODE_BINGE && mArrivedViaBingeTransition;
+        if (!introEnabled) {
+            if (mIsSkipPromptShowing) {
+                mIsSkipPromptShowing = false;
+                if (mPlayerFrontend != null) mPlayerFrontend.onHideSkipPrompt();
+            }
+            return;
+        }
         if (position < 0) return;
         int duration = Player.sPlayer.getDuration();
+        boolean recapEnabled = mPlayMode == PLAYMODE_BINGE && mArrivedViaBingeTransition;
         IntroSegments.Skip skip = segments.findSkip(position, duration, introEnabled, recapEnabled);
         if (skip == null) return;
         // Up Next owns the decision to leave the credits; Cancel must keep the current file.
@@ -1784,9 +1858,16 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("auto_skip_declined", "target_ms", targetMs, "duration_ms", duration);
             return;
         }
-        if (log.isDebugEnabled()) log.debug("autoSkipIfNeeded: skipping {} from {} to {} (segment end {})", skip.type, position, targetMs, skip.endMs);
+        if (log.isDebugEnabled()) log.debug("executeSkip: skipping {} to {}", skip.type, targetMs);
         Player.sPlayer.seekTo((int) targetMs);
         showAutoSkipToast(skip.type);
+    }
+
+    public void executeSkip(IntroSegments.Type type, long targetMs) {
+        if (BuildConfig.FOUNDATION) { skipPrompt(); return; }
+        if (Player.sPlayer == null || !isSafeAutoSkipTarget(targetMs, Player.sPlayer.getDuration())) return;
+        Player.sPlayer.seekTo((int)targetMs);
+        showAutoSkipToast(type);
     }
 
     private void applySegmentPolicies(IntroSegments segments,int position,int duration){
@@ -1814,7 +1895,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         Map<IntroSegments.Type, String> labels = new EnumMap<>(IntroSegments.Type.class);
         labels.put(IntroSegments.Type.INTRO, ctx.getString(R.string.introdb_segment_intro));
         labels.put(IntroSegments.Type.RECAP, ctx.getString(R.string.introdb_segment_recap));
-        labels.put(IntroSegments.Type.OUTRO, ctx.getString(R.string.introdb_segment_outro));
+        labels.put(IntroSegments.Type.OUTRO, ctx.getString(R.string.introdb_segment_credits));
         labels.put(IntroSegments.Type.CREDITS, ctx.getString(R.string.introdb_segment_credits));
         labels.put(IntroSegments.Type.PREVIEW, ctx.getString(R.string.introdb_segment_preview));
         return labels;
@@ -1851,7 +1932,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_state","state","prepared","source",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mStreamingUri),"decoder",diagnosticMetadata==null||diagnosticMetadata.getVideoTrack()==null?-1:diagnosticMetadata.getVideoTrack().decoder);
         if (log.isDebugEnabled()) log.debug("onPrepared()");
         mPlayerState = PlayerState.PREPARED;
-        if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
+        if (!PrivateMode.isActive()) {
             updateNowPlayingState();
         }
         if(mPlayerFrontend!=null) {
@@ -1874,7 +1955,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (log.isDebugEnabled()) log.debug("onCompletion");
         mPlayerState = PlayerState.STOPPED;
 
-        if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
+        if (!PrivateMode.isActive()) {
             updateNowPlayingState();
         }
         mPlaybackSession.completed = completed && realViewingEligible();
@@ -1928,7 +2009,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mPlaybackSession.failed=true;
         saveVideoStateIfReady();
         mPlayerState = PlayerState.STOPPED;
-        if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
+        if (!PrivateMode.isActive()) {
             updateNowPlayingState();
         }
         if(mPlayerFrontend!=null) {
@@ -1942,6 +2023,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         // Native error teardown can clear the source before onError arrives.
         mPlaybackSession.lastKnownPositionMs = Math.max(pos, 0);
         sampleJourneyTime();mPlaybackSession.seeking=true;
+        mSegmentPrompt=null;
+        mLastPromptedEndMs=-1;
+        if(pos<=0)mLastAutoSkippedEndMs=-1;
         if(mPlayerFrontend!=null) {
             mPlayerFrontend.onSeekStart(pos);
         }
@@ -1952,6 +2036,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if(mPlayerFrontend!=null) {
             mPlayerFrontend.onSeekComplete();
         }
+        autoSkipIfNeeded();
     }
 
     @Override
@@ -1990,13 +2075,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mPlayerState = PlayerState.PLAYING;
         mPlaybackSession.hasPlayed=true;mPlaybackSession.failed=false;
         if(mVideoInfo!=null&&!PrivateMode.isActive()){android.content.SharedPreferences.Editor edit=mPreferences.edit();if(!mVideoInfo.isShow)edit.remove("preview_cw_dismiss:v"+mVideoInfo.id);else{com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library=com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();if(library!=null)for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e:library.episodes)if(((Video)e.media).getId()==mVideoInfo.id){edit.remove("preview_cw_dismiss:"+e.key());break;}}edit.apply();}mPlaybackSession.sampleTime=0;sampleJourneyTime();
+        mPlayOnResume = true;
         if (state == PlayerController.STATE_NORMAL) {
             if (log.isDebugEnabled()) log.debug("onPlay: PlayerController.STATE_NORMAL -> startTrakt()");
             startTrakt();
         } else {
             if (log.isDebugEnabled()) log.debug("onPlay: !PlayerController.STATE_NORMAL -> not startTrakt()!");
         }
-        if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
+        if (!PrivateMode.isActive()) {
             updateNowPlayingState();
         }
         if(mPlayerFrontend!=null) {
@@ -2009,6 +2095,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_state","state","paused","reason_code",state);
         if (log.isDebugEnabled()) log.debug("onPause");
         sampleJourneyTime();mPlayerState = PlayerState.PAUSED;
+        if (mPlayer != null && mPlayer.isPauseRequested()) mPlayOnResume = false;
         // pauseTrakt() must run before saveVideoStateIfReady() so that it sets
         // mVideoInfo.traktResume = -progress synchronously before the async DB write captures it
         if (state == PlayerController.STATE_NORMAL) {
@@ -2018,7 +2105,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if (log.isDebugEnabled()) log.debug("onPause: other/seek state thus not doing pauseTrakt()!");
         }
         saveVideoStateIfReady();
-        if (ArchosFeatures.isAndroidTV(this) && !PrivateMode.isActive()) {
+        if (!PrivateMode.isActive()) {
             updateNowPlayingState();
         }
         if(mPlayerFrontend!=null){
@@ -2239,7 +2326,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     Integer forcedTrack = selectForcedSubtitleTrack(vMetadata);
                     mVideoInfo.subtitleTrack = Objects.requireNonNullElse(forcedTrack, noneTrack);
                     if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: hide regular subtitles -> selected forced track {}", mVideoInfo.subtitleTrack);
-                } else if (selectedAudioIsInCurrentLocale
+                } else if (!mShowFullSubsForLocalAudio && selectedAudioIsInCurrentLocale
                         && ISO639codes.isFavoriteLanguageMatch(mSubsFavoriteLanguage, currentLocaleLanguage)) {
                     Integer forcedTrack = selectForcedSubtitleTrack(vMetadata);
                     mVideoInfo.subtitleTrack = Objects.requireNonNullElse(forcedTrack,
@@ -2620,19 +2707,13 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
-    @Override
-    public void onSubtitle(Subtitle subtitle) {
-        if(mPlayerFrontend!=null) {
-            mPlayerFrontend.onSubtitle(subtitle);
-        }
-    }
-
     public VideoDbInfo getVideoInfo() {
         return mVideoInfo;
     }
 
     /**
-     * displays now playing card on android TV
+     * creates the media session that backs the now playing card and routes
+     * external media buttons (bluetooth headsets, remotes) to the player
      */
     private void setNowPlayingCard() {
         /**
@@ -2665,6 +2746,12 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         Player.sPlayer.pause(PlayerController.STATE_OTHER);
                         updateNowPlayingState();
                     }
+                }
+
+                @Override
+                public boolean onMediaButtonEvent(Intent mediaButtonIntent) {
+                    if (handleMediaButton(mediaButtonIntent)) return true;
+                    return super.onMediaButtonEvent(mediaButtonIntent);
                 }
             };
             mSession.setCallback(mediaSessionCallback);
@@ -2744,6 +2831,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
      * Update title and pic on now playing card
      */
     private void updateNowPlayingMetadata() {
+        if (mSession == null || mVideoInfo == null) return;
         MediaMetadata.Builder metadataBuilder = new MediaMetadata.Builder();
         String title = mVideoInfo.scraperTitle!=null?mVideoInfo.scraperTitle:mVideoInfo.title!=null?mVideoInfo.title:FileUtils.getFileNameWithoutExtension(mUri);
         metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE,
@@ -2910,6 +2998,29 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (Player.sPlayer != null && Player.sPlayer.isPaused()) Player.sPlayer.start(PlayerController.STATE_NORMAL);
     }
 
+    private boolean handleMediaButton(Intent mediaButtonIntent) {
+        if (mediaButtonIntent == null || !Intent.ACTION_MEDIA_BUTTON.equals(mediaButtonIntent.getAction()))
+            return false;
+        KeyEvent event = IntentCompat.getParcelableExtra(mediaButtonIntent, Intent.EXTRA_KEY_EVENT, KeyEvent.class);
+        if (event == null || event.getAction() != KeyEvent.ACTION_DOWN)
+            return false;
+        if (log.isDebugEnabled()) log.debug("handleMediaButton: keyCode {}", event.getKeyCode());
+        switch (event.getKeyCode()) {
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
+                playPausePlayer();
+                return true;
+            case KeyEvent.KEYCODE_MEDIA_PLAY:
+                startPlayer();
+                return true;
+            case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                pausePlayer();
+                return true;
+            default:
+                return false;
+        }
+    }
+
     // Pause when wired headset is disconnected
     private final BroadcastReceiver headsetPluggedReceiver = new BroadcastReceiver() {
         private static final int UNPLUGGED = 0;
@@ -2920,13 +3031,15 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 // intent received just after started reflects only the current state do not process it
                 return;
             }
-            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                if (mPlayer != null) mPlayer.onAudioBecomingNoisy();
+            } else if (Intent.ACTION_HEADSET_PLUG.equals(intent.getAction())) {
                 int state = intent.getIntExtra("state", -1);
                 if (log.isDebugEnabled()) log.debug("headsetPluggedReceiver: headset plug event: {}", state);
                 if (state != -1) {
                     if (state == UNPLUGGED) {
                         if (log.isDebugEnabled()) log.debug("headsetPluggedReceiver: headset unplugged during playback");
-                        if (mPlayer != null && mPlayer.isPlaying()) mPlayer.pause(PlayerController.STATE_NORMAL);
+                        if (mPlayer != null) mPlayer.onAudioBecomingNoisy();
                     } else if (state == PLUGGED) {
                         if (log.isDebugEnabled()) log.debug("headsetPluggedReceiver: headset plugged during playback");
                     }

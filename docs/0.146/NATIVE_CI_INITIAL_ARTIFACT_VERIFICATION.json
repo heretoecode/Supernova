@@ -1,0 +1,37 @@
+{
+  "run_id": 40780058727,
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "artifact_sha256": "73b80411605f1a55a780d51c3d91ce8672ba2fe31a86e1ed20babb1ec3acd785",
+      "archive_sha256": "cb46a5e586615cb75303eca0a8eee0e33d06c335241a2edaaca41932546703d8",
+      "files": 648,
+      "native_source_commit": "35af33fb7e1d36eda82ec992909c5b1f562afa73",
+      "lock_sha256": "b28c44a13fb2a55082799c3bf60e5e777eba47e57b16d2cbcd06f5b937b98c76"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "artifact_sha256": "17310677b170199b6cd8331c764b4d26e23d9c525e0f4dbd229ce5a43deba060",
+      "archive_sha256": "4b0bc10eb715bf2573f1a65fc24a655253cca3b0b9a091d2f18c9ae02f859f37",
+      "files": 648,
+      "native_source_commit": "35af33fb7e1d36eda82ec992909c5b1f562afa73",
+      "lock_sha256": "b28c44a13fb2a55082799c3bf60e5e777eba47e57b16d2cbcd06f5b937b98c76"
+    },
+    {
+      "abi": "x86",
+      "artifact_sha256": "29b6a1cc0ac351ffe82d985b9e32cc1f713e70c79e54c2240f914b83a8750f1d",
+      "archive_sha256": "eb9228ee6ceb6760590c84a9816e4249b95e4a3c8e1265a9671e563cc9438db1",
+      "files": 648,
+      "native_source_commit": "35af33fb7e1d36eda82ec992909c5b1f562afa73",
+      "lock_sha256": "b28c44a13fb2a55082799c3bf60e5e777eba47e57b16d2cbcd06f5b937b98c76"
+    },
+    {
+      "abi": "x86_64",
+      "artifact_sha256": "22ecb2f87ca765dd2611d145e6fb2b9f73213144fe68569123f643ff80cc38ed",
+      "archive_sha256": "ee27c02998a862698b1292e08d846cc8121ce483d5917cdc74a983a9226a50a9",
+      "files": 648,
+      "native_source_commit": "35af33fb7e1d36eda82ec992909c5b1f562afa73",
+      "lock_sha256": "b28c44a13fb2a55082799c3bf60e5e777eba47e57b16d2cbcd06f5b937b98c76"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-com.android.tools:desugar_jdk_libs:2.1.5
+com.android.tools:desugar_jdk_libs_nio:2.1.5
 Archive SHA-256: d8044befae095781b9a80bf1faa92edc30382d75d437476784c1bf991598a976
 Licence: GPL-2.0-only WITH Classpath-exception-2.0
 

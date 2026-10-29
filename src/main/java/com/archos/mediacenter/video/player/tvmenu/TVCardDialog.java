@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -54,10 +55,18 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
     private OnDialogResultListener onResult;
     private Runnable previewDismiss;
     public void setPreviewDismiss(Runnable callback) { previewDismiss = callback; }
+    private OnBackListener onBackListener;
+    private View header;   // pinned under the title, outside the scrolling content
     
     
     public interface OnDialogResultListener{
         public void onResult(int code);
+    }
+
+    /** Lets a card with several levels (a page inside the card) take Back before the card closes. */
+    public interface OnBackListener {
+        /** @return true if Back was used to go up one level inside the card: the card stays open */
+        boolean onBack();
     }
     
    
@@ -110,6 +119,11 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
             this.slaveView.setText(text);
             this.slaveView.setSlaveMasterStatus(true);
             this.slaveView.setFocusable(false);
+            // the copy is as wide as the card it mirrors (a card may be wider than the layout's own width)
+            android.view.ViewGroup.LayoutParams own = getLayoutParams();
+            android.view.ViewGroup.LayoutParams copy = this.slaveView.getLayoutParams();
+            if (own != null && copy != null && own.width > 0)
+                copy.width = own.width;
             for(View v:others){
                 if(v instanceof TVSlaveView){
                     if(((TVSlaveView)v).getSlaveView()==null)
@@ -117,6 +131,11 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
                     this.slaveView.addOtherView(((TVSlaveView)v).getSlaveView());
                     
                 }
+            }
+            if (header instanceof TVSlaveView) {
+                if (((TVSlaveView) header).getSlaveView() == null)
+                    ((TVSlaveView) header).createSlaveView();
+                this.slaveView.setHeaderView(((TVSlaveView) header).getSlaveView());
             }
             ((TVScrollView)findViewById(R.id.contentScrollView)).setOnScrollListener(new TVOnScrollListener() {
                 @Override
@@ -144,6 +163,21 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
         }
     }
 
+    public void setOnBackListener(OnBackListener onBackListener) {
+        this.onBackListener = onBackListener;
+    }
+
+    /**
+     * Back, B and Escape: first the card's own levels (OnBackListener), then the card closes.
+     * @return true if Back stayed inside the card, false if the card was dismissed
+     */
+    public boolean handleBack() {
+        if (onBackListener != null && onBackListener.onBack())
+            return true;
+        handleBackPressed();
+        return false;
+    }
+
     public void handleBackPressed() {
         log.info("Back navigation: dismissing TV card dialog");
         if (onResult != null)
@@ -160,15 +194,35 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
 
             return true;
         }
-        else if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_ESCAPE || keyCode == KeyEvent.KEYCODE_BUTTON_B) {
-            handleBackPressed();
+        else if (keyCode == KeyEvent.KEYCODE_ESCAPE || keyCode == KeyEvent.KEYCODE_BUTTON_B) {
+            handleBack();
             return true;
+        }
+        else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // Do not consume BACK here. On devices without predictive back support
+            // (API < 33, e.g. Amazon Fire TV) the key must fall through to the activity
+            // so it reaches the OnBackPressedDispatcher, which dismisses this dialog once.
+            return false;
         }
         
         //handle focus on dialog
        
         else if (keyCode == KeyEvent.KEYCODE_DPAD_UP||keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                
+
+            // A menu inside the card moves focus by its own item order, not by screen geometry. The
+            // geometric search looks at the whole window: on a long, scrolled card the best match for
+            // Down can be a view outside the card (or a row past the screen edge is outranked by one),
+            // which is dropped below, so the last rows were never reached from a stepper or a pill.
+            // At the first / last item the key is consumed: focus stays in the card.
+            if (findFocus() != null) {
+                for (View other : others) {
+                    if (other instanceof TVMenu && other.hasFocus()) {
+                        ((TVMenu) other).onKeyDown(keyCode, event);
+                        return true;
+                    }
+                }
+            }
+
             View focused = findFocus();
             if (focused == null) { requestFocus(); return true; }
             View v = focused.focusSearch(keyCode == KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);
@@ -209,6 +263,20 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
                 this.slaveView.addOtherView(((TVSlaveView)view).getSlaveView());
             }
 
+    }
+
+    /**
+     * Pins a view under the title, outside the scrolling content: it stays where it is while the rows
+     * scroll (like the title does). If it is a TVSlaveView the 3D copy of the card gets its copy too.
+     */
+    public void setHeaderView(View view) {
+        header = view;
+        ((LinearLayout) findViewById(R.id.inside)).addView(view, 1); // after the title, before the scroll view
+        if (!isSlaveView && slaveView != null && view instanceof TVSlaveView) {
+            if (((TVSlaveView) view).getSlaveView() == null)
+                ((TVSlaveView) view).createSlaveView();
+            slaveView.setHeaderView(((TVSlaveView) view).getSlaveView());
+        }
     }
 
     public void setText(String txt) {
@@ -295,9 +363,10 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
         
     }
     
+    @SuppressLint("InflateParams")
     @Override
     public View createSlaveView() {
-        // TODO Auto-generated method stub
+        // Detached template view created for secondary display/slave mirroring
         View v = (View)LayoutInflater.from(mContext).inflate(R.layout.card_dialog_layout, null);
         TVCardDialog tvcv =(TVCardDialog) v.findViewById(R.id.card_view);
 
@@ -314,6 +383,8 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
                 ((TVSlaveView)v).removeSlaveView();
             }
         }
+        if (header instanceof TVSlaveView)
+            ((TVSlaveView) header).removeSlaveView();
         Log.d("cardview","removing");
         slaveView=null;
     }

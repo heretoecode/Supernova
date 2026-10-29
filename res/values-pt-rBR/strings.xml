@@ -209,11 +209,11 @@
     <!-- To be translated only in case there is a localized IMDB -->
     <string name="storage">Armazenamento</string>
     <string name="rescan_storage">Verificar armazenamento</string>
-    <string name="rescanning">Verificando novamente dispositivos de armazenamento...</string>
-    <string name="rescan_storage_summary">Verifique novamente os dispositivos de armazenamento interno, cartão SD e USB</string>
+    <string name="rescanning">Verificando novamente dispositivos de armazenamento&#8230;</string>
+    <string name="rescan_storage_summary">Verifique novamente os dispositivos de armazenamento interno, cartão SD e USB.</string>
     <string name="preference_display_all_files">Exibir todos os arquivos no explorador</string>
     <string name="preference_display_all_files_summary">Exibe também arquivos que não são de vídeo.</string>
-    <string name="info_processing">Verificando propriedades de mídia...</string>
+    <string name="info_processing">Verificando propriedades de mídia&#8230;</string>
     <string name="info_audio">Áudio</string>
     <string name="info_audio_vbr">VBR</string>
     <string name="info_subtitle">Legendas</string>
@@ -528,7 +528,7 @@
     <string name="UiLang_title">Idioma da interface</string>
     <string name="UiLang_summary">Defina o idioma da interface do Nova. Escolha \"Sistema\" para usar o padrão do sistema.</string>
     <string name="ui_mode_title">Modo de interface</string>
-    <string name="ui_mode_summary">Escolha entre interface de TV e Tablet/Celular.</string>
+    <string name="ui_mode_summary">Escolha entre a interface para TV e a interface para Tablet/Celular.</string>
     <string name="theme_selection_title">Tema de cores</string>
     <string name="theme_selection_summary">Selecione sua cor preferida.</string>
     <string name="theme_blue">Azul</string>
@@ -675,14 +675,14 @@
     <string name="status_multichannel">Multicanal</string>
     <string name="preferences_user_interface">Interface de usuário</string>
     <string name="preferences_sort_ignore_articles_title">Ignorar artigos iniciais ao ordenar</string>
-    <string name="preferences_sort_ignore_articles_summary">Ignorar artigos principais como \"The\", \"A\", \"Le\", \"Das\" quando classificar títulos em ordem alfabética</string>
+    <string name="preferences_sort_ignore_articles_summary">Ignora artigos iniciais como \"The\", \"A\", \"Le\", \"Das\" ao ordenar títulos em ordem alfabética.</string>
     <string name="preferences_display_resume_box_summary">Mostre ou oculte o botão de retomar o vídeo mais recente na tela principal.</string>
     <string name="preferences_display_resume_box">Mostrar caixa de retomada</string>
     <string name="reset_brightness_on_start">Lembrar brilho do vídeo</string>
     <string name="reset_brightness_on_start_summary">Lembra o último ajuste de brilho usado ao abrir o aplicativo. Desative para usar o brilho do sistema.</string>
     <string name="hide_controls_on_pause">Ocultar controles ao pausar</string>
     <string name="hide_controls_on_pause_summary">Oculte controles do player após 5 segundos com o vídeo pausado.</string>
-    <string name="preferences_leanback_user_interface">Interface de TV</string>
+    <string name="preferences_leanback_user_interface">Interface para TV</string>
     <string name="preferences_separate_animation_from_movies_summary">Marque para separar vídeos de animação de filmes e séries, adicionando uma lista de animações.</string>
     <string name="preferences_separate_animation_from_movies">Separar animações de filmes e séries</string>
     <string name="preferences_show_watching_up_next_row_summary">Marque para mostrar uma lista com os vídeos que você está assistindo no momento e os próximos.</string>
@@ -777,7 +777,7 @@
     <string name="trakt_toast_syncing">Sincronizando com o Trakt&#8230;</string>
     <string name="trakt_device_auth_step1">1. No celular ou computador, acesse:</string>
     <string name="trakt_device_auth_step2">2. Insira este código:</string>
-    <string name="trakt_device_auth_waiting">Aguardando autorização...</string>
+    <string name="trakt_device_auth_waiting">Aguardando autorização&#8230;</string>
     <string name="trakt_device_auth_success">Conectado com sucesso!</string>
     <string name="trakt_device_auth_error">Falha na autenticação. Por favor, tente novamente.</string>
     <string name="trakt_device_auth_invalid_code">Falha ao obter um código de dispositivo válido do Trakt. Por favor, tente novamente.</string>
@@ -832,8 +832,8 @@
     <string name="leanback_hint_long_press_on_back">DICA: manter o botão VOLTAR pressionado fecha o explorador de arquivos</string>
     <string name="leanback_archos_video_webview">Nova Video WebView</string>
     <string name="file_access_error">Não foi possível acessar o arquivo</string>
-    <string name="always_leanback_on_tv">Sempre iniciar na interface de TV</string>
-    <string name="always_leanback_on_tv_summary">Sempre iniciar na interface de TV. Desative para usar a interface clássica.</string>
+    <string name="always_leanback_on_tv">Sempre iniciar na interface para TV</string>
+    <string name="always_leanback_on_tv_summary">Sempre iniciar o aplicativo na interface para TV. Desative se quiser iniciar na interface clássica na TV.</string>
     <string name="interface_size">Tamanho da interface</string>
     <string name="interface_size_summary">Alterar caso a interface esteja pequena ou grande demais</string>
     <string name="interface_size_very_small">Muito pequeno (mdpi)</string>
@@ -850,7 +850,7 @@
     <string name="rescan_error_wifi">Erro: o Wi-Fi estava desligado durante a verificação</string>
     <string name="rescan_error_wifi_click_for_more_info">clique para mais informações</string>
     <string name="rescan_error_server">Erro: não foi possível conectar ao servidor</string>
-    <string name="scan_running">Verificando...</string>
+    <string name="scan_running">Verificando&#8230;</string>
     <string name="scheduled_rescan">Verificação agendada</string>
     <string name="scheduled_rescan_period">Intervalo de verificação</string>
     <string name="scheduled_rescan_period_no">Nenhuma</string>
@@ -876,7 +876,7 @@
     <string name="rescrap_all_movies_title">Atualizar informações de todos os filmes</string>
     <string name="rescrap_all_collections_title">Atualizar informações de todas as coleções</string>
     <string name="recreate_sort_titles_title">Recriar títulos de ordenação</string>
-    <string name="recreate_sort_titles_summary">Recalcular ordenar títulos para filmes, programas de TV e coleções</string>
+    <string name="recreate_sort_titles_summary">Recalcula os títulos de ordenação para filmes, séries e coleções.</string>
     <string name="recreate_sort_titles_in_progress">Recriando títulos de ordenação em progresso</string>
     <string name="recreate_sort_titles_done">Ordenar títulos recriados</string>
     <string name="nfo_export_manual_title">Exportar vídeos com metadados</string>
@@ -885,13 +885,13 @@
     <string name="db_export_manual_summary">Exportar arquivo media.db para /sdcard para fins de diagnóstico</string>
     <string name="db_export_in_progress">Exportação da base de dados em andamento</string>
     <string name="media_library_export_title">Exportar biblioteca de mídia + credenciais + atalhos</string>
-    <string name="media_library_export_summary">Exporte o media.db, credenciais de rede (SMB/FTP/SFTP), atalhos de rede e todas as imagens em cache como um arquivo zip</string>
+    <string name="media_library_export_summary">Exporte o media.db, credenciais de rede (SMB/FTP/SFTP), atalhos de rede e todas as imagens em cache como um arquivo zip.</string>
     <string name="media_library_import_title">Importar biblioteca de mídia + credenciais + atalhos</string>
     <string name="media_library_import_summary">Importe o media.db, credenciais de rede, atalhos de rede e imagens em cache a partir de um arquivo zip exportado anteriormente.</string>
     <string name="media_library_export_in_progress">Exportando biblioteca de mídia, credenciais e atalhos</string>
     <string name="media_library_import_in_progress">Importando biblioteca de mídia, credenciais e atalhos</string>
     <string name="media_library_export_success">Biblioteca de mídia, credenciais e atalhos exportados com sucesso para:\n%s</string>
-    <string name="media_library_import_success">Biblioteca de mídia, credenciais e atalhos importados com sucesso. Reiniciando o aplicativo...</string>
+    <string name="media_library_import_success">Biblioteca de mídia, credenciais e atalhos importados com sucesso. Reiniciando o aplicativo&#8230;</string>
     <string name="media_library_import_error">Erro ao importar biblioteca de mídia</string>
     <string name="media_library_export_error">Erro ao exportar biblioteca de mídia</string>
     <string name="media_library_export_dir_not_found">Diretório de exportação não encontrado</string>

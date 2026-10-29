@@ -68,7 +68,7 @@ public class PreviewScanLifecycleTest {
         for(int n=0;n<4;n++){assertEquals(batch,rows.get(n).getStringExtra("batch_id"));assertEquals(phases[n],rows.get(n).getStringExtra("phase"));assertEquals("resume",rows.get(n).getStringExtra("trigger"));}
     }
     @Test public void localMetadataQueueReportsActualServiceAcceptance(){
-        Context context=mock(Context.class);when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());
+        Context context=mock(Context.class);when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());when(context.getContentResolver()).thenReturn(RuntimeEnvironment.getApplication().getContentResolver());
         when(context.startService(any(Intent.class))).thenReturn(null);
         assertFalse(AutoScrapeService.requestService(context));
         when(context.startService(any(Intent.class))).thenReturn(new ComponentName("test","Metadata"));
@@ -139,7 +139,7 @@ public class PreviewScanLifecycleTest {
         }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(context,false);}
     }
     @Test public void metadataQueueDistinguishesAcceptedNullAndRestrictedStarts(){
-        Context context=mock(Context.class);when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());
+        Context context=mock(Context.class);when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());when(context.getContentResolver()).thenReturn(RuntimeEnvironment.getApplication().getContentResolver());
         when(context.getPackageName()).thenReturn(RuntimeEnvironment.getApplication().getPackageName());
         var app=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().putBoolean("supernova_onboarding_complete",true).commit();when(context.getSharedPreferences(anyString(),anyInt())).thenAnswer(call->app.getSharedPreferences(call.getArgument(0),call.getArgument(1)));
         when(context.startService(any(Intent.class))).thenReturn(new ComponentName("test","Metadata"));

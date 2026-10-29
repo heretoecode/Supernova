@@ -91,12 +91,14 @@ public class SubtitlesWizardActivity extends AppCompatActivity implements OnItem
         helpMessageHeader.setText(helpMessage);
 
         // Inflate the view to show if no subtitles files are found
-        mEmptyView = (TextView) LayoutInflater.from(this).inflate(R.layout.browser_empty_item, null);
+        ViewGroup root = (ViewGroup) findViewById(R.id.root);
+        mEmptyView = (TextView) LayoutInflater.from(this).inflate(R.layout.browser_empty_item, root, false);
+        root.addView(mEmptyView);
 
         mListView = (ListView) findViewById(R.id.list_items);
         mListView.setEmptyView(mEmptyView);
 
-        SubtitlesWizardAdapter adapter = new SubtitlesWizardAdapter(getApplication(), this);
+        SubtitlesWizardAdapter adapter = new SubtitlesWizardAdapter(this, this);
         mListView.setAdapter(adapter);
         mListView.setCacheColorHint(0);
         mListView.setOnItemClickListener(this);

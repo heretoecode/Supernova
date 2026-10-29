@@ -109,7 +109,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         crumbs = new LinearLayout(c); breadcrumbScroll = new HorizontalScrollView(c);
         breadcrumbScroll.setHorizontalScrollBarEnabled(false); breadcrumbScroll.addView(crumbs);
         centre.addView(breadcrumbScroll,new LayoutParams(-1,dp(50)));
-        status = SharedThreePanel.text(c,"",15); status.setMinHeight(dp(26));LinearLayout progress=new LinearLayout(c);progress.setGravity(android.view.Gravity.CENTER_VERTICAL);loading=new ProgressBar(c);loading.setIndeterminateDrawable(new com.archos.mediacenter.video.foundation.DoubleRingDrawable());loading.setVisibility(INVISIBLE);progress.addView(loading,new LayoutParams(dp(26),dp(26)));progress.addView(status,new LayoutParams(0,-2,1));centre.addView(progress);
+        status = SharedThreePanel.text(c,"",15);status.setTag("browser.status"); status.setMinHeight(dp(26));LinearLayout progress=new LinearLayout(c);progress.setGravity(android.view.Gravity.CENTER_VERTICAL);loading=new ProgressBar(c);loading.setIndeterminateDrawable(new com.archos.mediacenter.video.foundation.DoubleRingDrawable());loading.setVisibility(INVISIBLE);progress.addView(loading,new LayoutParams(dp(26),dp(26)));progress.addView(status,new LayoutParams(0,-2,1));centre.addView(progress);
         items = column();itemScroll=new FrameLayout(c);itemScroll.addView(items,new FrameLayout.LayoutParams(-1,-1));
         fileList=new PreviewFocusRecycler(c);fileLayout=new GridLayoutManager(c,prefs.getBoolean(GRID,false)?2:1);fileList.setLayoutManager(fileLayout);fileList.setAdapter(fileAdapter);fileList.setItemAnimator(null);fileList.setClipToPadding(false); centre.addView(itemScroll,new LayoutParams(-1,0,1));
         SharedThreePanel.heading(right,"Information");heading = SharedThreePanel.text(c,"Overview",21); right.addView(heading);SharedThreePanel.divider(right);
@@ -427,6 +427,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             if(directoryChoice==null&&!onboarding)metadata.execute(()->loadIndexed(target,token));
         } catch(RuntimeException failure){failed("This location could not be opened. Your library records are retained.");}
     }
+    public void listingFailure(ListingEngine.ErrorEnum code){failed(getContext().getString(ListingEngine.getErrorStringResId(code)));}
     private void sortFiles(){
         int order=Math.max(0,Math.min(5,prefs.getInt(SORT,0)));Comparator<MetaFile2> values=order<2?Comparator.comparing(MetaFile2::getName,String.CASE_INSENSITIVE_ORDER):order<4?Comparator.comparingLong(MetaFile2::lastModified):Comparator.comparingLong(MetaFile2::length);
         if(order%2==1)values=values.reversed();files.sort(Comparator.comparing((MetaFile2 file)->!file.isDirectory()).thenComparing(values));

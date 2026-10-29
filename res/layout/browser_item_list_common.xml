@@ -24,7 +24,7 @@
         android:paddingLeft="30dip"
         android:paddingRight="@dimen/list_expanded_padding"
         android:background="@drawable/list_selector_holo_dark"
-        app:srcCompat="@drawable/label_infoarrow" />
+        app:srcCompat="@drawable/label_infoarrow"  android:contentDescription="@null"/>
 
     <!--
          Bottom area = progressbar + info icons 

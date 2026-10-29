@@ -1,0 +1,111 @@
+name: Supernova 0.146 protected signed QA
+on:
+  push:
+    branches: [codex/supernova-0.146-upstream-completion-2026-10-28]
+    paths: [.github/workflows/supernova-0146-qa.yml]
+  workflow_dispatch:
+    inputs:
+      conformance_run_id:
+        description: Successful exact-source 0.146 unsigned conformance run
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: supernova-0146-signing
+  cancel-in-progress: false
+jobs:
+  qa:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/supernova-0.146-upstream-completion-2026-10-28'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: supernova-foundation-signing
+    steps:
+      - name: Checkout authorized continuation branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Download exact tested unsigned payload and receipt
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: supernova-0146-unsigned-candidate
+          path: unsigned
+          run-id: ${{ inputs.conformance_run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify successful conformance source and permit only subsequent report updates
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_RUN: ${{ inputs.conformance_run_id }}
+        run: |
+          set -euo pipefail
+          [[ "$CANDIDATE_RUN" =~ ^[0-9]+$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$CANDIDATE_RUN" > "$RUNNER_TEMP/conformance-run.json"
+          python3 - <<'PY'
+          import json,os,re,subprocess
+          from pathlib import Path
+          run=json.load(open(os.environ['RUNNER_TEMP']+'/conformance-run.json'))
+          proof=json.load(open('unsigned/unsigned-conformance.json'));sha=proof['source_commit']
+          if not re.fullmatch('[0-9a-f]{40}',sha) or run['head_sha']!=sha or run['conclusion']!='success' or run['path']!='.github/workflows/supernova-0146-conformance.yml' or run['head_branch']!='codex/supernova-0.146-upstream-completion-2026-10-28':raise ValueError('Successful exact-source candidate conformance is required')
+          subprocess.run(['git','-C','source','merge-base','--is-ancestor',sha,os.environ['GITHUB_SHA']],check=True)
+          changes=subprocess.check_output(['git','-C','source','diff','--name-only',sha,os.environ['GITHUB_SHA']],text=True).splitlines()
+          if any(not name.startswith('docs/0.146/') for name in changes):raise ValueError('Code/assets/build inputs changed after conformance; rebuild and retest')
+          subprocess.run(['git','-C','source','checkout','--detach',sha],check=True)
+          with open(os.environ['GITHUB_ENV'],'a') as env:env.write('SUPERNOVA_QA_SOURCE='+sha+'\n')
+          PY
+      - name: Java21 for existing PKCS12 identity validation
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install pinned Android APK verification tools
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'build-tools;36.0.0'
+      - name: Sign the exact tested payload with the existing upgrade certificate
+        env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG || vars.ACTIONS_STEP_DEBUG }}
+          SUPERNOVA_P12_BASE64: ${{ secrets.SUPERNOVA_P12_BASE64 }}
+          SUPERNOVA_STORE_PASSWORD: ${{ secrets.SUPERNOVA_STORE_PASSWORD }}
+          SUPERNOVA_KEY_ALIAS: ${{ secrets.SUPERNOVA_KEY_ALIAS }}
+          SUPERNOVA_KEY_PASSWORD: ${{ secrets.SUPERNOVA_KEY_PASSWORD }}
+          SUPERNOVA_CERT_SHA256: 79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e
+        run: |
+          set +x
+          set -euo pipefail
+          signing_dir="$RUNNER_TEMP/supernova-foundation-signing"
+          signing_log="$RUNNER_TEMP/supernova-0146-signing.log"
+          trap 'rm -rf -- "$signing_dir"; rm -f -- "$signing_log"' EXIT
+          python3 source/.github/signing/supernova_0146_qa_signing.py --evidence unsigned/unsigned-conformance.json --apk unsigned/Supernova_0.146_unsigned.apk
+          unset SUPERNOVA_P12_BASE64
+          build_tools="$ANDROID_HOME/build-tools/36.0.0"
+          "$build_tools/zipalign" -c -P 16 4 unsigned/Supernova_0.146_unsigned.apk
+          if ! "$build_tools/apksigner" sign --ks "$signing_dir/foundation.p12" --ks-type PKCS12 \
+            --ks-pass env:SUPERNOVA_STORE_PASSWORD --ks-key-alias "$SUPERNOVA_KEY_ALIAS" --key-pass env:SUPERNOVA_KEY_PASSWORD \
+            --out "$RUNNER_TEMP/supernova-0146-qa.apk" unsigned/Supernova_0.146_unsigned.apk > "$signing_log" 2>&1; then
+            echo 'QA signing failed; secret-scope diagnostics are withheld.'
+            exit 1
+          fi
+      - name: Independently verify signed identity, payload parity and certificate
+        run: |
+          set -euo pipefail
+          build_tools="$ANDROID_HOME/build-tools/36.0.0"
+          python3 source/.github/signing/verify_supernova_0146_qa_apk.py \
+            --apk "$RUNNER_TEMP/supernova-0146-qa.apk" --unsigned unsigned/Supernova_0.146_unsigned.apk --evidence unsigned/unsigned-conformance.json \
+            --source source --apksigner "$build_tools/apksigner" --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
+            --aapt2 "$build_tools/aapt2" --publish "$RUNNER_TEMP/supernova-0146-qa-publish"
+      - name: Always remove private signing material and secret-scope logs
+        if: always()
+        run: |
+          python3 source/.github/signing/foundation_signing.py cleanup
+          rm -f -- "$RUNNER_TEMP/supernova-0146-signing.log"
+      - name: Preserve signed QA APK and public verification receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0146-signed-qa
+          path: |
+            ${{ runner.temp }}/supernova-0146-qa-publish/Supernova_0.146.apk
+            ${{ runner.temp }}/supernova-0146-qa-publish/public-qa-evidence.json
+          if-no-files-found: error
+          retention-days: 14

@@ -14,7 +14,8 @@
 
 package com.archos.mediacenter.video.leanback.presenter;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
+import androidx.annotation.RequiresApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -99,13 +100,14 @@ public class WebPageLinkPresenter extends Presenter {
             }
         }
 
+        @SuppressLint("SetJavaScriptEnabled")
         private void initWebView() {
             mWebView.setFocusable(false);
             mWebView.setInitialScale(80);
             mWebView.getSettings().setJavaScriptEnabled(true);
             mWebView.setWebViewClient(new WebViewClient() {
                 // this one is for Android API 24+
-                @TargetApi(Build.VERSION_CODES.N)
+                @RequiresApi(Build.VERSION_CODES.N)
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                     final String url = request.getUrl().toString();

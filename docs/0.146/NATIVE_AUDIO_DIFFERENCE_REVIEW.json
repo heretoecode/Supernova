@@ -1,0 +1,90 @@
+[
+  {
+    "abi": "arm64-v8a",
+    "file": "h264-aac.mp4",
+    "sample_format": "f32",
+    "baseline_samples": 48128,
+    "candidate_samples": 48000,
+    "matching_prefix_bytes": false,
+    "max_absolute_sample_difference": 1.4901161193847656e-08,
+    "rms_difference": 1.076238505601189e-10,
+    "snr_db": 178.22628798477368
+  },
+  {
+    "abi": "arm64-v8a",
+    "file": "opus.ogg",
+    "sample_format": "s16",
+    "baseline_samples": 48000,
+    "candidate_samples": 48000,
+    "matching_prefix_bytes": false,
+    "max_absolute_sample_difference": 1,
+    "rms_difference": 0.014433756729740645,
+    "snr_db": 106.05631352410992
+  },
+  {
+    "abi": "armeabi-v7a",
+    "file": "h264-aac.mp4",
+    "sample_format": "f32",
+    "baseline_samples": 48128,
+    "candidate_samples": 48000,
+    "matching_prefix_bytes": true,
+    "max_absolute_sample_difference": 0.0,
+    "rms_difference": 0.0,
+    "snr_db": null
+  },
+  {
+    "abi": "armeabi-v7a",
+    "file": "opus.ogg",
+    "sample_format": "s16",
+    "baseline_samples": 48000,
+    "candidate_samples": 48000,
+    "matching_prefix_bytes": true,
+    "max_absolute_sample_difference": 0,
+    "rms_difference": 0.0,
+    "snr_db": null
+  },
+  {
+    "abi": "x86",
+    "file": "h264-aac.mp4",
+    "sample_format": "f32",
+    "baseline_samples": 48128,
+    "candidate_samples": 48000,
+    "matching_prefix_bytes": true,
+    "max_absolute_sample_difference": 0.0,
+    "rms_difference": 0.0,
+    "snr_db": null
+  },
+  {
+    "abi": "x86",
+    "file": "opus.ogg",
+    "sample_format": "s16",
+    "baseline_samples": 48000,
+    "candidate_samples": 48000,
+    "matching_prefix_bytes": true,
+    "max_absolute_sample_difference": 0,
+    "rms_difference": 0.0,
+    "snr_db": null
+  },
+  {
+    "abi": "x86_64",
+    "file": "h264-aac.mp4",
+    "sample_format": "f32",
+    "baseline_samples": 48128,
+    "candidate_samples": 48000,
+    "matching_prefix_bytes": true,
+    "max_absolute_sample_difference": 0.0,
+    "rms_difference": 0.0,
+    "snr_db": null
+  },
+  {
+    "abi": "x86_64",
+    "file": "opus.ogg",
+    "sample_format": "s16",
+    "baseline_samples": 48000,
+    "candidate_samples": 48000,
+    "matching_prefix_bytes": true,
+    "max_absolute_sample_difference": 0,
+    "rms_difference": 0.0,
+    "snr_db": null
+  }
+]

@@ -1,5 +1,5 @@
-com.github.nova-video-player:jcifs-ng:v2.1.11-nova3
-Archive SHA-256: a7ba741cc23103921425ce6b9886de13a4ac8d78102f833054659ad38a17ec95
+com.github.nova-video-player:jcifs-ng:v2.1.11-nova12
+Archive SHA-256: 5d75842fc939c9d9f35f443b5a69f3856a6a78b22320234f498014c5e301b86e
 Licence: LGPL-2.1-or-later
 
 GNU LESSER GENERAL PUBLIC LICENSE

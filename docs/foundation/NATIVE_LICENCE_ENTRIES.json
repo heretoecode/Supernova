@@ -1,19 +1,11 @@
 [
   {
     "name": "NOVA / Archos and local modules",
-    "version": "Nova Video Player 6.4.64; pinned modules",
+    "version": "NOVA6.6.2 release-time source integration; Supernova0.146 patches",
     "licence": "Apache-2.0",
     "role": "Upstream application, database/file modules and native player; original copyright and modified sources remain available in the public repository",
     "url": "https://github.com/nova-video-player/aos-Video",
     "text_asset": "foundation/legal/nova-archos-and-local-modules.txt"
-  },
-  {
-    "name": "FFmpeg",
-    "version": "8.0.1; rebuilt from verified n8.0.1 source",
-    "licence": "LGPL-2.1-or-later",
-    "role": "Shared media libraries",
-    "url": "https://ffmpeg.org/legal.html",
-    "text_asset": "foundation/legal/ffmpeg.txt"
   },
   {
     "name": "AudioCompress",
@@ -25,71 +17,135 @@
   },
   {
     "name": "VideoLAN deinterlace / NEON routines",
-    "version": "2cf21c48 source",
+    "version": "native AVOS6.6.2 source integration",
     "licence": "LGPL-2.1-or-later AND MIT",
     "role": "Native deinterlacing and NEON pixel routines",
     "url": "https://github.com/nova-video-player/aos-avos",
     "text_asset": "foundation/legal/videolan-deinterlace-neon-routines.txt"
   },
   {
+    "name": "FFmpeg",
+    "version": "n9.0.2 with reviewed security backports",
+    "licence": "LGPL-2.1-or-later",
+    "role": "Shared media libraries; LGPL2.1 build, GPL/version3/nonfree disabled",
+    "url": "https://ffmpeg.org/legal.html",
+    "text_asset": "foundation/legal/ffmpeg.txt"
+  },
+  {
+    "name": "OpenSSL",
+    "version": "openssl-4.1.0",
+    "licence": "Apache-2.0",
+    "role": "Static native TLS/crypto with system and bundled trust roots; verification required",
+    "url": "https://openssl.org/",
+    "text_asset": "foundation/legal/openssl.txt"
+  },
+  {
+    "name": "libass",
+    "version": "0.17.5",
+    "licence": "ISC",
+    "role": "Native ASS/SSA subtitle renderer",
+    "url": "https://github.com/libass/libass",
+    "text_asset": "foundation/legal/libass.txt"
+  },
+  {
+    "name": "zlib",
+    "version": "v1.3.2 with reviewed security backports",
+    "licence": "Zlib",
+    "role": "Static subtitle compression support",
+    "url": "https://zlib.net/",
+    "text_asset": "foundation/legal/zlib.txt"
+  },
+  {
+    "name": "libpng",
+    "version": "v1.6.59",
+    "licence": "Libpng AND BSD-3-Clause",
+    "role": "Static FreeType PNG support",
+    "url": "https://libpng.org/pub/png/libpng.html",
+    "text_asset": "foundation/legal/libpng.txt"
+  },
+  {
+    "name": "libxml2",
+    "version": "v2.15.4",
+    "licence": "MIT",
+    "role": "Static fontconfig XML support",
+    "url": "https://gitlab.gnome.org/GNOME/libxml2",
+    "text_asset": "foundation/legal/libxml2.txt"
+  },
+  {
+    "name": "FreeType",
+    "version": "VER-2-14-3 with reviewed security backports",
+    "licence": "FTL",
+    "role": "Static font parsing/rasterization; FreeType License selected",
+    "url": "https://freetype.org/",
+    "text_asset": "foundation/legal/freetype.txt"
+  },
+  {
+    "name": "FriBidi",
+    "version": "v1.0.17",
+    "licence": "LGPL-2.1-or-later",
+    "role": "Static bidirectional subtitle layout; corresponding source and rebuild recipes supplied",
+    "url": "https://github.com/fribidi/fribidi",
+    "text_asset": "foundation/legal/fribidi.txt"
+  },
+  {
+    "name": "HarfBuzz",
+    "version": "15.0.0",
+    "licence": "MIT",
+    "role": "Static subtitle text shaping",
+    "url": "https://harfbuzz.github.io/",
+    "text_asset": "foundation/legal/harfbuzz.txt"
+  },
+  {
+    "name": "libunibreak",
+    "version": "libunibreak_8_0",
+    "licence": "Zlib",
+    "role": "Static Unicode subtitle line breaking",
+    "url": "https://github.com/adah1972/libunibreak",
+    "text_asset": "foundation/legal/libunibreak.txt"
+  },
+  {
+    "name": "fontconfig",
+    "version": "2.18.3",
+    "licence": "MIT",
+    "role": "Static native font discovery",
+    "url": "https://www.freedesktop.org/wiki/Software/fontconfig/",
+    "text_asset": "foundation/legal/fontconfig.txt"
+  },
+  {
+    "name": "Opus",
+    "version": "1.6.1-84-g084bb732",
+    "licence": "BSD-3-Clause",
+    "role": "Shared Opus audio codec",
+    "url": "https://opus-codec.org/",
+    "text_asset": "foundation/legal/opus.txt"
+  },
+  {
     "name": "dav1d",
-    "version": "1.5.4-0-g54706fc6 (header)",
+    "version": "1.5.4",
     "licence": "BSD-2-Clause",
     "role": "Shared AV1 decoder",
     "url": "https://code.videolan.org/videolan/dav1d",
     "text_asset": "foundation/legal/dav1d.txt"
   },
   {
-    "name": "Opus",
-    "version": "libopus 1.6.1-9-g2d862ea1 (ELF marker)",
-    "licence": "BSD-3-Clause",
-    "role": "Shared audio codec",
-    "url": "https://opus-codec.org/",
-    "text_asset": "foundation/legal/opus.txt"
-  },
-  {
     "name": "libmysofa",
-    "version": "1.3.3 (actual exported function disassembly)",
+    "version": "v1.3.5",
     "licence": "BSD-3-Clause",
-    "role": "Shared spatial-audio/SOFA processing library; prebuilt commit declares this source version",
+    "role": "Shared spatial audio/SOFA processing",
     "url": "https://github.com/hoene/libmysofa",
     "text_asset": "foundation/legal/libmysofa.txt"
   },
   {
-    "name": "OpenSSL",
-    "version": "3.5.7 (headers / ELF)",
-    "licence": "Apache-2.0",
-    "role": "Crypto/TLS statically linked into native media/torrent components",
-    "url": "https://openssl.org/",
-    "text_asset": "foundation/legal/openssl.txt"
-  },
-  {
-    "name": "libyuv",
-    "version": "1883 (header); 65096347 source",
-    "licence": "BSD-3-Clause",
-    "role": "Pixel conversion statically linked in the native player",
-    "url": "https://chromium.googlesource.com/libyuv/libyuv/",
-    "text_asset": "foundation/legal/libyuv.txt"
-  },
-  {
-    "name": "Boost",
-    "version": "1.92.0 (embedded source paths)",
-    "licence": "BSL-1.0",
-    "role": "Header/static C++ components in torrentd",
-    "url": "https://www.boost.org/",
-    "text_asset": "foundation/legal/boost.txt"
-  },
-  {
-    "name": "libtorrent",
-    "version": "2.0.14.0 (actual ELF marker)",
-    "licence": "BSD-3-Clause",
-    "role": "Torrent engine statically linked into torrentd",
-    "url": "https://www.libtorrent.org/",
-    "text_asset": "foundation/legal/libtorrent.txt"
+    "name": "dlg",
+    "version": "395ccad2c1e0",
+    "licence": "MIT",
+    "role": "Static FreeType diagnostic helper",
+    "url": "https://github.com/nyorain/dlg",
+    "text_asset": "foundation/legal/dlg.txt"
   },
   {
     "name": "Android NDK / libc++",
-    "version": "NDK 29.0.14206865 and FFmpeg toolchain 30.0.14904198-beta1",
+    "version": "NDK30.0.14904198-beta1",
     "licence": "Apache-2.0 WITH LLVM-exception AND additional notices",
     "role": "Native toolchain runtime, compiler support and cpufeatures",
     "url": "https://developer.android.com/ndk",
@@ -97,7 +153,7 @@
   },
   {
     "name": "Sentry native bundled libraries",
-    "version": "sentry-native 0.16.2; pinned vendored sources",
+    "version": "sentry-native0.17.4; exact vendored notices reviewed separately",
     "licence": "Apache-2.0 / BSD / MIT / public-domain alternatives; original notices below",
     "role": "Native diagnostics unwinding and bundled helpers",
     "url": "https://github.com/getsentry/sentry-native",
@@ -105,7 +161,7 @@
   },
   {
     "name": "Source availability & library modification",
-    "version": "Foundation candidate 0.133",
+    "version": "Supernova0.146",
     "licence": "Component-specific terms; LGPL/GPL source and modification information",
     "role": "Source availability and relinking notice",
     "url": "https://github.com/heretoecode/Supernova",

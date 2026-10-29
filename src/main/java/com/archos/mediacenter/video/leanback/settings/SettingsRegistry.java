@@ -14,7 +14,7 @@ final class SettingsRegistry {
     static final class Entry {
         final String id,key,category,section,disposition;
         Entry(JSONObject value){id=value.optString("id");key=value.optString("key");category=value.optString("destination");section=value.optString("subsection");disposition=value.optString("disposition");}
-        boolean nested(){return id.compareTo("S140")>=0;}
+        boolean nested(){return id.startsWith("S")&&id.compareTo("S140")>=0;}
         boolean excluded(){return category.equals("REVIEW / NON-EXPOSED")||Arrays.asList("S052","S070","S091","S106","S107").contains(id);}
         boolean integration(){return Arrays.asList("S108","S109","S110").contains(id);}
         String actualKey(Context context){return key.replace("{country}",StreamingRepository.country(context));}
@@ -22,11 +22,20 @@ final class SettingsRegistry {
     }
     final List<Entry> entries=new ArrayList<>();
     SettingsRegistry(Context context){
-        try(java.io.InputStream stream=context.getAssets().open("foundation/settings-map.json")){
-            java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();byte[] buffer=new byte[4096];int n;while((n=stream.read(buffer))!=-1)bytes.write(buffer,0,n);
-            JSONArray rows=new JSONObject(bytes.toString("UTF-8")).getJSONArray("rows");Set<String> ids=new HashSet<>();for(int i=0;i<rows.length();i++){Entry e=new Entry(rows.getJSONObject(i));if(!ids.add(e.id))throw new IllegalStateException("Duplicate settings definition");entries.add(e);}if(entries.size()!=165)throw new IllegalStateException("Incomplete settings definition map");
-        }catch(Exception error){throw new IllegalStateException("Settings definition map unavailable",error);}
+        Set<String> ids=new HashSet<>();
+        read(context,"foundation/settings-map.json",ids);
+        if(entries.size()!=165)throw new IllegalStateException("Incomplete baseline settings definition map");
+        read(context,"foundation/settings-map-0146.json",ids);
+        if(entries.size()!=170)throw new IllegalStateException("Incomplete native subtitle settings extension");
     }
+    private void read(Context context,String asset,Set<String> ids){
+        try(java.io.InputStream stream=context.getAssets().open(asset)){
+            java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();byte[] buffer=new byte[4096];int n;while((n=stream.read(buffer))!=-1)bytes.write(buffer,0,n);
+            JSONArray rows=new JSONObject(bytes.toString("UTF-8")).getJSONArray("rows");
+            for(int i=0;i<rows.length();i++){Entry e=new Entry(rows.getJSONObject(i));if(e.id.isEmpty()||e.key.isEmpty()||!ids.add(e.id))throw new IllegalStateException("Invalid or duplicate settings definition");entries.add(e);}
+        }catch(Exception error){throw new IllegalStateException("Settings definition map unavailable: "+asset,error);}
+    }
+
     List<String> sections(int category){
         if(category==7)return Arrays.asList("App information","Release Notes","Open-source Licences","Credits & Acknowledgements","Technical Information");
         LinkedHashSet<String> values=new LinkedHashSet<>();

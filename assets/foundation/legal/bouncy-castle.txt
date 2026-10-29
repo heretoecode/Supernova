@@ -1,5 +1,5 @@
-org.bouncycastle:bcpkix-jdk18on:1.85
-Archive SHA-256: c9f82b2d4e99c4bbdfccf684e52cc06ea06a0b567bfd0d08f9c5a3f417055996
+org.bouncycastle:bcpkix-jdk18on:1.86
+Archive SHA-256: 8d8b41a4b149bdae8d331f059a578870954d1e3ff29f8269a9eb3ee19a7e4ef7
 Licence: MIT
 
 Archive META-INF/LICENSE.md
@@ -19,10 +19,10 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FO
 DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
 OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.**
 
-org.bouncycastle:bcprov-jdk18on:1.85.2
-Archive SHA-256: 986b0fb92ec10e0c66b43e036ce0077e6150cfaecd1db9fb92b56672e157afe5
+org.bouncycastle:bcprov-jdk18on:1.86
+Archive SHA-256: 2af190b300cbb0b35e248ccf5f4a06b6072030aeb3da7a98ec73abe5b4cb371f
 Licence: MIT
 
-org.bouncycastle:bcutil-jdk18on:1.85
-Archive SHA-256: 590f55ed5d68529239898a4a5c4f730b6e37f45d1cfa3fbe51f8485abe32c42d
+org.bouncycastle:bcutil-jdk18on:1.86
+Archive SHA-256: 1c268e15f785aafb1e4670d8d6e5f856f69475e96c162dadcd1ff9b350e9139f
 Licence: MIT

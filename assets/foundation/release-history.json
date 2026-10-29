@@ -8,18 +8,46 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.145",
-    "version_code": 145,
-    "date": "2026-10-28",
-    "kind": "Development / QA candidate \u2014 physical acceptance pending",
+    "version": "0.146",
+    "version_code": 146,
+    "date": "2026-10-29",
+    "kind": "QA candidate \u2014 upstream and security maintenance; device acceptance pending",
     "notes": [
-      "Compatible NOVA maintenance fixes for network playback recovery, seek retention and subtitle pause timing.",
-      "Safer subtitle-cache fallback, storage write access and native buffer sizing.",
-      "UPnP request framing and endpoint validation, with private error responses. Legacy Jetty dependency risks remain documented.",
-      "Preserves Supernova interface, saved libraries, settings and application identity. Physical Shield and real provider/AV-chain acceptance remain pending."
+      "Integrated the NOVA6.6.2 release-time source changes while retaining Supernova screens, libraries, credentials and saved preferences.",
+      "Rebuilt FFmpeg9.0.2, OpenSSL4.1, libass0.17.5 and supporting codecs/fonts for four ABIs with reviewed security backports; native TLS verification stays enabled.",
+      "Native subtitles retain existing controls and size settings, with added SAF fonts, letterbox placement and local-language subtitle policy. PCM speed adds Sonic while retaining the original switches.",
+      "Jetty/jUPnP transport uses an explicit source backport and API23 NIO support; all23 Android23 transport/trust cases pass. Version findings remain visible with source-level dispositions.",
+      "Physical Shield/HDMI routes, real NAS/provider interoperability, GL subtitle visuals and an installed signed upgrade require device QA. The retired experimental Sonic compressed-audio codec is distinct from supported Sonic PCM speed."
     ]
   },
   "history": [
+    {
+      "version": "0.145",
+      "version_code": 145,
+      "date": "2026-10-28",
+      "kind": "Development / QA candidate \u2014 physical acceptance pending",
+      "notes": [
+        "Compatible NOVA maintenance fixes for network playback recovery, seek retention and subtitle pause timing.",
+        "Safer subtitle-cache fallback, storage write access and native buffer sizing.",
+        "UPnP request framing and endpoint validation, with private error responses. Legacy Jetty dependency risks remain documented.",
+        "Preserves Supernova interface, saved libraries, settings and application identity. Physical Shield and real provider/AV-chain acceptance remain pending."
+      ],
+      "source_sha": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+      "evidence": "docs/0.145/SIGNED_QA_DELIVERY.json",
+      "recorded_binary_verification": "docs/0.145/SIGNED_QA_DELIVERY.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "af6d0e9e038daaa763696ef73dab5f4ae2d7949fe7b0d6691bf6138c1a7f8be5",
+      "artifact_id": 12849678765,
+      "run_id": 40762577939,
+      "apks": [
+        {
+          "sha256": "1cd4d3c6dcbe9c8c02c3abae26ba4fb37b99d73e0fc68e6a0cf0ca43c2b0c2c8",
+          "size": 87940129,
+          "url": "https://drive.google.com/file/d/10HmVAOilIRsT8iRcyLyOktz_vgS7uCeM/view?usp=drivesdk",
+          "filename": "Supernova_0.145.apk"
+        }
+      ]
+    },
     {
       "version": "0.144",
       "version_code": 144,

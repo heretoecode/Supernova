@@ -1,0 +1,31 @@
+{
+  "source_commit": "6574132911d37b21fa676bf06a659f70bf3ba531",
+  "scope": "Real local FTPS/TLS on host JRE21, exact production policy/shared test source, public OkHttp5.5.1 JVM variant; actual Android proof is separate. Three trials after correcting expected rejected-peer close race.",
+  "test_count_per_trial": 5,
+  "failures": 0,
+  "trials": [
+    {
+      "output": "JUnit version 4.13.2\n.....\nTime: 1.075\n\nOK (5 tests)\n\n",
+      "stderr": ""
+    },
+    {
+      "output": "JUnit version 4.13.2\n.....\nTime: 1.165\n\nOK (5 tests)\n\n",
+      "stderr": ""
+    },
+    {
+      "output": "JUnit version 4.13.2\n.....\nTime: 1.133\n\nOK (5 tests)\n\n",
+      "stderr": ""
+    }
+  ],
+  "sources": [
+    {
+      "file": "src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java",
+      "sha256": "8ed61e78d5155a60b2edef20ac3f2c21efb0a1f786d8e44a64fd626423dd714c"
+    },
+    {
+      "file": "testCommon/java/com/archos/filecorelibrary/ftp/FtpsTlsPolicyCases.java",
+      "sha256": "13898028041ab3fad99dadb7261026b9126c32afab3ff29806d91f99768a517d"
+    }
+  ],
+  "host_okhttp_jvm_sha256": "4039527bd1f2e40b66e20b0e52c689cf56074b938ea02678141495f5160f1047"
+}

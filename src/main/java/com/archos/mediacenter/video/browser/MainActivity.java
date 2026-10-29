@@ -410,7 +410,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
         }
 
         ViewGroup globalLayout = (ViewGroup) getWindow().getDecorView();
-        mGlobalBackdrop = getLayoutInflater().inflate(R.layout.browser_main_video_backdrop, null);
+        mGlobalBackdrop = getLayoutInflater().inflate(R.layout.browser_main_video_backdrop, globalLayout, false);
         globalLayout.addView(mGlobalBackdrop, 0);
         if(Trakt.isTraktV1Enabled(this,PreferenceManager.getDefaultSharedPreferences(this)))
         {
@@ -755,7 +755,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
                 if (!PrivateMode.isActive() && PrivateMode.canShowDialog(this)) {
                     PrivateMode.showDialog(this);
                 }
-                PrivateMode.toggle();
+                PrivateMode.toggle(this);
                 setBackground();
                 //setHomeButton();
                 break;
@@ -905,6 +905,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
         private final ExecutorService executor = Executors.newSingleThreadExecutor();
         private final Handler handler = new Handler(Looper.getMainLooper());
 
+        @SuppressLint("ClickableViewAccessibility") // GlobalResumeView touch handling for focus highlight returns false
         void execute() {
             executor.execute(() -> {
                 try {
@@ -1053,6 +1054,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
                         // Allow to draw a specific image on top of the
                         // "resume global"
                         // area when it is pressed
+                        @SuppressLint("ClickableViewAccessibility")
                         public boolean onTouch(View v, MotionEvent event) {
                             ImageView resumeGlobalFocusView = (ImageView) findViewById(R.id.global_resume_focus);
                             int action = event.getAction();

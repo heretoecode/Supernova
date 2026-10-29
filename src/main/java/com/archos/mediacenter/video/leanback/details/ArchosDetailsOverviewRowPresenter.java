@@ -74,6 +74,9 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
         }
         updateBackgroundColor(getBackgroundColor());
         updateActionsBackgroundColor(getActionsBackgroundColor());
+
+        onLayoutOverviewFrame(mViewHolder, mViewHolder.getState(), true);
+        onLayoutLogo(mViewHolder, mViewHolder.getState(), true);
     }
 
     @Override
@@ -81,6 +84,12 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
         View v = viewHolder.getLogoViewHolder().view;
         ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)
                 v.getLayoutParams();
+        if (lp.width <= 0) {
+            lp.width = v.getResources().getDimensionPixelSize(R.dimen.details_poster_width);
+        }
+        if (lp.height <= 0) {
+            lp.height = v.getResources().getDimensionPixelSize(R.dimen.details_poster_height);
+        }
         switch (getAlignmentMode()) {
             case ALIGN_MODE_START:
             default:
@@ -108,6 +117,9 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
             int frameMarginStart;
             int descriptionMarginStart = 0;
             int logoWidth = viewHolder.getLogoViewHolder().view.getLayoutParams().width;
+            if (logoWidth <= 0) {
+                logoWidth = res.getDimensionPixelSize(R.dimen.details_poster_width);
+            }
             switch (getAlignmentMode()) {
                 case ALIGN_MODE_START:
                 default:
@@ -133,10 +145,12 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
                     }
                     break;
             }
-            MarginLayoutParams lpRoot =
-                    (MarginLayoutParams) ((ViewGroup)viewHolder.getOverviewView().getParent()).getLayoutParams();
-            lpRoot.leftMargin = res.getDimensionPixelSize(androidx.leanback.R.dimen.lb_details_overview_margin_start);
-            lpRoot.rightMargin = res.getDimensionPixelSize(androidx.leanback.R.dimen.lb_details_overview_margin_end);
+            ViewGroup parent = (ViewGroup) viewHolder.getOverviewView().getParent();
+            if (parent != null && parent.getLayoutParams() instanceof MarginLayoutParams) {
+                MarginLayoutParams lpRoot = (MarginLayoutParams) parent.getLayoutParams();
+                lpRoot.leftMargin = res.getDimensionPixelSize(androidx.leanback.R.dimen.lb_details_overview_margin_start);
+                lpRoot.rightMargin = res.getDimensionPixelSize(androidx.leanback.R.dimen.lb_details_overview_margin_end);
+            }
             MarginLayoutParams lpFrame =
                     (MarginLayoutParams) viewHolder.getOverviewView().getLayoutParams();
             lpFrame.topMargin = isBanner ? 0

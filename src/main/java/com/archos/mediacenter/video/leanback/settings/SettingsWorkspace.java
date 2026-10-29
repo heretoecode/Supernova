@@ -129,7 +129,7 @@ final class SettingsWorkspace extends LinearLayout {
             else if(p instanceof EditTextPreference&&value instanceof String&&!Objects.equals(((EditTextPreference)p).getText(),value))((EditTextPreference)p).setText((String)value);
         }
         TwoStatePreference inverse=screen.findPreference("subtitles_hide_default"),positive=screen.findPreference("preview_subtitles_by_default");
-        if(inverse!=null&&positive!=null){positive.setChecked(!inverse.isChecked());Preference language=screen.findPreference("favSubLang");if(language!=null){language.setEnabled(!inverse.isChecked());language.setSelectable(!inverse.isChecked());}}
+        if(inverse!=null&&positive!=null){positive.setChecked(!inverse.isChecked());for(String key:new String[]{"favSubLang","subtitles_show_full_for_local_audio"}){Preference dependent=screen.findPreference(key);if(dependent!=null){dependent.setEnabled(!inverse.isChecked());dependent.setSelectable(!inverse.isChecked());}}}
     }
     private void renderRows(){
         if(body==null||special())return;refreshStoredValues();

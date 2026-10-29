@@ -1,5 +1,5 @@
-com.squareup.okhttp3:logging-interceptor:5.5.0
-Archive SHA-256: ef9c93cea95f764a44c140a9f252ecf4f45358ec929f31c911d94f209ac54fab
+com.squareup.okhttp3:logging-interceptor:5.5.1
+Archive SHA-256: 26e45873bfead71a617cf75f8672938721608b39785140eb7e4a4bb9fb353b07
 Licence: Apache-2.0
 
 Apache License
@@ -76,6 +76,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-com.squareup.okhttp3:okhttp-android:5.5.0
-Archive SHA-256: 6c7fd12f092e64ca2eae0b8a8023900c0d7ffec57888cf8abc8085c6f42e1dcc
+com.squareup.okhttp3:okhttp-android:5.5.1
+Archive SHA-256: ce00fd7751cf7e4f28ba73a0287b3cc0c62b8b83f038e428592eeef189513ee1
 Licence: Apache-2.0

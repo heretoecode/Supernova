@@ -55,7 +55,7 @@ category, and contents.
                 android:src="@drawable/ic_incognito"
                 android:visibility="gone"
                 android:alpha="0.6"
-                android:importantForAccessibility="no" />
+                android:importantForAccessibility="no"  android:contentDescription="@null"/>
 
         </RelativeLayout>
 

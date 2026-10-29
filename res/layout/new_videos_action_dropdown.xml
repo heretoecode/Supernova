@@ -25,12 +25,12 @@
                 android:id="@+id/icon1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/category_video_movie" />
+                app:srcCompat="@drawable/category_video_movie"  android:contentDescription="@null"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/category_video_tvshow" />
+                app:srcCompat="@drawable/category_video_tvshow"  android:contentDescription="@null"/>
         </LinearLayout>
 
         <TextView

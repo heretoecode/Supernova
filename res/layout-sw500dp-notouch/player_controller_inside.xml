@@ -4,14 +4,14 @@
     android:id="@+id/playerControllers"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
-    android:layout_weight="1" >
+    android:layout_weight="1"  android:layoutDirection="ltr">
 
     <include layout="@layout/clock" />
 
     <FrameLayout
         android:id="@+id/tv_menu_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"  android:layoutDirection="ltr">
 
         <FrameLayout
             android:id="@+id/my_recycler_view"
@@ -60,7 +60,7 @@
             android:paddingRight="@dimen/player_button_padding_small"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            ads:srcCompat="@drawable/video_play_selector" />
+            ads:srcCompat="@drawable/video_play_selector"  android:contentDescription="@string/play_selection"/>
 
         <ImageButton
             android:id="@+id/backward"
@@ -69,7 +69,7 @@
             android:paddingRight="@dimen/player_button_padding_half"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            ads:srcCompat="@drawable/video_backward_selector" />
+            ads:srcCompat="@drawable/video_backward_selector"  android:contentDescription="@null"/>
 
         <RelativeLayout
             android:layout_width="0dip"
@@ -137,7 +137,7 @@
             android:paddingRight="@dimen/player_button_padding_small"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            ads:srcCompat="@drawable/video_forward_selector" />
+            ads:srcCompat="@drawable/video_forward_selector"  android:contentDescription="@null"/>
         
         <ImageButton
             android:id="@+id/fullscreen_cutouts"
@@ -147,7 +147,7 @@
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:visibility="gone"
-            ads:srcCompat="@drawable/video_fullscreen_cutout_off" />
+            ads:srcCompat="@drawable/video_fullscreen_cutout_off"  android:contentDescription="@null"/>
 
         <ImageButton
             android:id="@+id/format"
@@ -156,7 +156,7 @@
             android:paddingRight="@dimen/player_button_padding_full"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            ads:srcCompat="@drawable/video_format_0" />
+            ads:srcCompat="@drawable/video_format_0"  android:contentDescription="@null"/>
 
     </LinearLayout>
 

@@ -23,13 +23,16 @@ public class WebdavReconciliationSelectionTest {
  }
  @Test public void completeListingDeletesOnlyMissingFilesAndKeepsExcludedSubtreesAndPeers()throws Exception{check(false);}
  @Test public void anyListingFailureRetainsAllFiles()throws Exception{check(true);}
+ private HashMap<String,Object> decodedIndex(HashMap<String,Object> records){
+  HashMap<String,Object> decoded=new HashMap<>();for(Object item:records.values()){String path=ReflectionHelpers.getField(item,"_data");decoded.put(com.archos.filecorelibrary.FileUtils.decodeUri(Uri.parse(path)),item);}return decoded;
+ }
  private void check(boolean failed)throws Exception{
   Application app=RuntimeEnvironment.getApplication();com.archos.environment.ArchosUtils.setGlobalContext(app);androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().clear().putBoolean("supernova_onboarding_complete",true).commit();
   NetworkScannerServiceVideo service=Robolectric.buildService(NetworkScannerServiceVideo.class).get();assertTrue(SupernovaLibraryPolicy.retainsRecords(service));
   HashMap<String,Object> records=new HashMap<>();records.put("a",record(1,"webdav://fixture/root/missing-a.mkv",false));records.put("b",record(2,"webdav://fixture/root/missing-b.mkv",false));records.put("present",record(3,"webdav://fixture/root/alternate.mkv",true));records.put("excluded",record(4,"webdav://fixture/root/skip/private.mkv",false));records.put("peer",record(5,"webdav://fixture/root/skip-peer/missing.mkv",false));
   Class<?> bulkType=Class.forName("com.archos.mediaprovider.video.NetworkScannerServiceVideo$BulkOperationHandler");Object bulk=mock(bulkType);
-  Class<?> listenerType=Class.forName("com.archos.mediaprovider.video.NetworkScannerServiceVideo$FileVisitListener");var constructor=listenerType.getDeclaredConstructors()[0];constructor.setAccessible(true);
-  FileVisitor.Listener listener=(FileVisitor.Listener)constructor.newInstance(mock(Blacklist.class),records,false,bulk,0L,service);
+  Class<?> listenerType=Class.forName("com.archos.mediaprovider.video.NetworkScannerServiceVideo$FileVisitListener");var constructor=listenerType.getDeclaredConstructor(Blacklist.class,HashMap.class,HashMap.class,boolean.class,bulkType,long.class,NetworkScannerServiceVideo.class);constructor.setAccessible(true);
+  FileVisitor.Listener listener=(FileVisitor.Listener)constructor.newInstance(mock(Blacklist.class),records,decodedIndex(records),false,bulk,0L,service);
   MetaFile2 skipped=mock(MetaFile2.class);when(skipped.getUri()).thenReturn(Uri.parse("webdav://fixture/root/skip"));listener.onDirectorySkipped(skipped);
   assertFalse((Boolean)ReflectionHelpers.getField(records.get("excluded"),"needsDelete"));assertTrue((Boolean)ReflectionHelpers.getField(records.get("peer"),"needsDelete"));
   MetaFile2 root=mock(MetaFile2.class);when(root.getUri()).thenReturn(Uri.parse("webdav://fixture/root"));when(root.isDirectory()).thenReturn(true);

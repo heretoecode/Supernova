@@ -1,5 +1,5 @@
-org.jupnp:org.jupnp.android:3.0.5
-Archive SHA-256: 1091e2df649b8992d384d9cbb5915068570ca1cde7a5206cbb23fa94c6c6f307
+com.github.nova-video-player.jupnp:org.jupnp.android:3.0.5-nova3
+Archive SHA-256: 8fe7e18312a80dd28ba5ddb989528859bee6da2a3df979b18fbebcc659b1217b
 Licence: CDDL-1.0
 
 COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL)
@@ -122,10 +122,10 @@ This License represents the complete agreement concerning subject matter hereof.
 
 As between Initial Developer and the Contributors, each party is responsible for claims and damages arising, directly or indirectly, out of its utilization of rights under this License and You agree to work with Initial Developer and Contributors to distribute such responsibility on an equitable basis. Nothing herein is intended or shall be deemed to constitute any admission of liability.
 
-org.jupnp:org.jupnp.support:3.0.5
-Archive SHA-256: b3f41b88dd3c28497959e2ee2e5cca146e53322bf7212043671d9ce078c5c652
+com.github.nova-video-player.jupnp:org.jupnp.support:3.0.5-nova3
+Archive SHA-256: d0ae63485f84aa057c7ce4732855d8e41036002da19d909bb0ac03676716815d
 Licence: CDDL-1.0
 
-org.jupnp:org.jupnp:3.0.5
-Archive SHA-256: a6f76dc1baa3d4a4e14c55bcaa93a1bd1915b2040c1ed52e25bdbd8892daa1eb
+com.github.nova-video-player.jupnp:org.jupnp:3.0.5-nova3
+Archive SHA-256: ecd80fa2b163032e7688fdcf9b30c50ebfc755c9b3ac0b3db03d749b5927c72d
 Licence: CDDL-1.0

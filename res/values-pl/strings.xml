@@ -89,7 +89,7 @@
     <string name="all_collections_format">Wszystkie kolekcje -  %d</string>
     <string name="not_watched_movies_format">Nieobejrzane - %d</string>
     <string name="not_watched_animes_format">Nieobejrzane - %d</string>
-    <string name="movies_by_alpha">Filmy wg nazwy</string>
+    <string name="movies_by_alpha">Filmy wg tytułu</string>
     <string name="movies_by_genre">Filmy wg gatunku</string>
     <string name="movies_by_rating">Filmy wg oceny</string>
     <string name="movie_collections">Kolekcje</string>
@@ -100,7 +100,7 @@
     <string name="all_animes">Wszystkie filmy animowane</string>
     <string name="all_animes_row">Wszystkie animacje</string>
     <string name="all_animeshows">Wszystkie seriale animowane</string>
-    <string name="animes_by_alpha">Filmy animowane wg nazwy</string>
+    <string name="animes_by_alpha">Filmy animowane wg tytułu</string>
     <string name="animes_by_genre">Filmy animowane wg gatunku</string>
     <string name="animes_by_rating">Filmy animowane wg oceny</string>
     <string name="animes_by_year">Filmy animowane wg roku premiery</string>
@@ -109,10 +109,10 @@
     <string name="all_animeshows_format">Seriale animowane  -  %d</string>
     <string name="not_watched_animeshows_format">Nieobejrzane - %d</string>
     <string name="all_seasons">Wszystkie sezony</string>
-    <string name="tvshows_by_alpha">Seriale wg nazwy</string>
+    <string name="tvshows_by_alpha">Seriale wg tytułu</string>
     <string name="tvshows_by_genre">Seriale wg gatunku</string>
     <string name="tvshows_by_rating">Seriale wg oceny</string>
-    <string name="animation_shows_by_alpha">Filmy animowane wg nazwy</string>
+    <string name="animation_shows_by_alpha">Filmy animowane wg tytułu</string>
     <string name="episodes_by_date">Odcinki wg daty emisji</string>
     <string name="date_view_week">Tydzień</string>
     <string name="date_view_month">Miesiąc</string>
@@ -265,7 +265,7 @@
     <string name="player_subtitle_track_toast">Napisy:</string>
     <string name="player_bookmark_set">Zakładka na</string>
     <string name="player_pref_subtitle_delay_title">Opóźnienie</string>
-    <string name="player_pref_audio_speed_title">Szybkość odtwarzania</string>
+    <string name="player_pref_audio_speed_title">Prędkość odtwarzania</string>
     <string name="floating_player_restore">Przywróć</string>
     <string name="floating_player_play">Odtwórz</string>
     <string name="floating_player_pause">Wstrzymaj</string>
@@ -278,7 +278,7 @@
     <string name="pref_play_mode_entry_repeat_folder">Powtórz folder</string>
     <string name="pref_play_mode_entry_repeat_single">Potwórz pojedynczy</string>
     <string name="pref_play_mode_entry_binge">Odcinek po odcinku</string>
-    <string name="pref_introdb_autoskip_title">Pomiń wstęp/zakończenie</string>
+    <string name="pref_introdb_autoskip_title">Pomiń in/out</string>
     <string name="introdb_autoskip">Autopomijanie</string>
     <string name="introdb_segment_intro">Wstęp</string>
     <string name="introdb_segment_recap">Podsumowanie</string>
@@ -368,7 +368,7 @@
     <string name="subtitles_wizard_delete">Usuń ten plik</string>
     <string name="subtitles_wizard_empty_list">Nie znaleziono pliku</string>
     <string name="subtitles_wizard_add_files">Możesz skopiować więcej plików napisów do tego folderu, aby powiązać je z tym filmem.</string>
-    <string name="subtitles_wizard_help">Wybierz dowolny z dostępnych plików napisów, aby powiązać je z filmem %s. Nazwa pliku zostanie zmieniona zgodnie z filmem.</string>
+    <string name="subtitles_wizard_help">Wybierz dowolny plik napisów, aby powiązać go z filmem %s. Nazwa pliku zostanie zmieniona zgodnie z filmem.</string>
     <string name="subtitles_wizard_empty_list_help">Nie znaleziono plików napisów. Musisz skopiować co najmniej jeden plik napisów do tego folderu, aby powiązać go z filmem %s.</string>
     <string name="subtitles_wizard_cache">Pamięć podręczna</string>
     <!-- Subloader -->
@@ -493,7 +493,7 @@
     <string name="preferences_enable_dynamic_audio_delay_title">Dynamiczne szacowanie opóźnienia audio/wideo</string>
     <string name="preferences_enable_dynamic_audio_delay_summary">Użyj dynamicznego szacowania opóźnienia dla lepszej synchronizacji audio/wideo (dla połączenia BT). Wyłącz, jeśli występują problemy z synchronizacją</string>
     <string name="preferences_enable_spatialization_title">Przestrzenność</string>
-    <string name="preferences_enable_spatialization_summary">Użyj spatializera do renderowania wielokanałowego dźwięku zamiast wymuszanego stereo (wymaga kompatybilnego urządzenia i wyjścia audio). Można przełączyć również w menu odtwarzania dźwięku.</string>
+    <string name="preferences_enable_spatialization_summary">Użyj spatializera do renderowania wielokanałowego dźwięku zamiast wymuszanego stereo (wymaga kompatybilnego sprzętu). Można przełączyć również w menu odtwarzania dźwięku.</string>
     <string name="preferences_disable_downmix_title">Wyłącz wymuszanie dźwięku stereo</string>
     <string name="preferences_disable_downmix_summary">Zawsze dekoduj wszystkie kanały i niech Android decyduje o sposobie miksowania (możliwa utrata kanałów dialogowych)</string>
     <string name="preferences_enable_downmix_androidtv_title">Wymuś dźwięk stereo</string>
@@ -629,8 +629,8 @@
     <string name="zipped_library_mail_subject">Zrzut Nova Video Database</string>
     <string name="zipped_library_mail_text">Proszę opisać problem, którego doświadczasz\n\n</string>
     <string name="sort_mode">Porządek sortowania</string>
-    <string name="sort_by_name_asc">Sortuj wg nazwy (A - Z)</string>
-    <string name="sort_by_name_desc">Sortuj wg nazwy (Z - A)</string>
+    <string name="sort_by_name_asc">Sortuj wg tytułu (A - Z)</string>
+    <string name="sort_by_name_desc">Sortuj wg tytułu (Z - A)</string>
     <string name="sort_by_release_date_desc">Sortuj wg daty premiery (najpierw nowsze)</string>
     <string name="sort_by_year_asc">Sortuj wg daty premiery (najpierw starsze)</string>
     <string name="sort_by_year_desc">Sortuj wg daty premiery (najpierw nowsze)</string>
@@ -686,8 +686,8 @@
     <string name="preferences_sort_ignore_articles_summary">Podczas sortowania alfabetycznego zignoruj ​​przedimki, takie jak „The”, „A”, „Le”, „Das”</string>
     <string name="preferences_display_resume_box_summary">Wyświetl lub ukryj przycisk wznawiający najnowsze wideo na ekranie głównym</string>
     <string name="preferences_display_resume_box">Wyświetl pole wznowienia</string>
-    <string name="reset_brightness_on_start">Zapamiętaj jasność wideo.</string>
-    <string name="reset_brightness_on_start_summary">Zapamiętaj ostatnio używane ustawienie jasności podczas otwierania aplikacji. Wyłącz, aby użyć jasności systemowej.</string>
+    <string name="reset_brightness_on_start">Zapamiętaj jasność wideo</string>
+    <string name="reset_brightness_on_start_summary">Zapamiętaj ostatnio używane ustawienie jasności podczas otwierania aplikacji. Wyłącz, aby użyć jasności systemowej</string>
     <string name="hide_controls_on_pause">Ukryj elementy sterujące podczas pauzy</string>
     <string name="hide_controls_on_pause_summary">Ukryj elementy sterujące odtwarzacza po 5 sekundach, gdy wideo jest wstrzymane</string>
     <string name="preferences_leanback_user_interface">Interfejs użytkownika</string>
@@ -899,7 +899,7 @@
     <string name="media_library_export_in_progress">Eksportuj bibliotekę multimediów, dane uwierzytelniające i skróty</string>
     <string name="media_library_import_in_progress">Importuj bibliotekę multimediów, dane uwierzytelniające i skróty</string>
     <string name="media_library_export_success">Biblioteka multimediów, dane uwierzytelniające i skróty wyeksportowane pomyślnie do:\n%s</string>
-    <string name="media_library_import_success">Biblioteka multimediów, dane uwierzytelniające, i skróty zaimportowane pomyślnie. Trwa ponowne uruchamianie aplikacji...</string>
+    <string name="media_library_import_success">Biblioteka multimediów, dane uwierzytelniające, i skróty zaimportowane pomyślnie. Trwa ponowne uruchamianie aplikacji&#8230;</string>
     <string name="media_library_import_error">Błąd podczas importowania biblioteki multimediów</string>
     <string name="media_library_export_error">Błąd podczas eksportowania biblioteki multimediów</string>
     <string name="media_library_export_dir_not_found">Nie znaleziono katalogu eksportu</string>

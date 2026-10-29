@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,7 +23,6 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -206,21 +206,8 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
             return true;
         }
                
-        //else, we send it to parent
-        ViewParent p;
-        View v = this;
-        while((p=v.getParent())!=null){
-            if(p instanceof TVCardView)
-                return ((TVCardView)p).onKeyDown(keyCode, event);
-            else if(p instanceof TVCardDialog)
-                return ((TVCardDialog)p).onKeyDown(keyCode, event);
-            else if(p instanceof View)
-                v=(View)p;
-            else 
-                break;
-        }
-        return false;
-        
+        //else, we send it to the enclosing card
+        return TVUtils.dispatchToCardParent(this, keyCode, event);
     }
     @Override
     public boolean   onKeyUp(int keyCode,  KeyEvent event){
@@ -353,10 +340,10 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
         updatePreviousDrawable((getDelay()!=mMin||!hasMin)?R.drawable.arrow_left:-1);
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View createSlaveView() {
-        // TODO Auto-generated method stub
-    
+        // Detached template view created for secondary display/slave mirroring
         setSlaveView((SubtitleDelayTVPicker)LayoutInflater.from(mContext)
                 .inflate(R.layout.subtitle_delay_tv_picker, null));
         return slaveView;

@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:layout_width="fill_parent" 
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" android:layoutDirection="ltr">
 
 
     <!-- Anchor for Subtitle/Audio Tracks PopupMenu, yes dirty -->
@@ -29,6 +29,15 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
         <SurfaceView android:id="@+id/surface_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center" />
+    </FrameLayout>
+
+    <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+            <TextureView android:id="@+id/gl_subtitle_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center" />
