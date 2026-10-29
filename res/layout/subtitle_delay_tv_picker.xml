@@ -50,7 +50,7 @@
             android:layout_marginRight="16dip"
             android:layout_gravity="center_vertical"
             android:padding="4dip"
-            app:srcCompat="@drawable/arrow_left" />
+            app:srcCompat="@drawable/arrow_left"  android:contentDescription="@null"/>
 
         <TextView
             android:id="@+id/text_delay"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="4dip"
-            app:srcCompat="@drawable/arrow_right" />
+            app:srcCompat="@drawable/arrow_right"  android:contentDescription="@null"/>
     </LinearLayout>
 
 </com.archos.mediacenter.video.player.tvmenu.SubtitleDelayTVPicker>

@@ -21,7 +21,7 @@
             android:layout_marginLeft="32dip"
             android:layout_alignParentLeft="true"
             android:padding="4dip"
-            app:srcCompat="@drawable/arrow_left" />
+            app:srcCompat="@drawable/arrow_left"  android:contentDescription="@null"/>
 
         <TextView
             android:id="@+id/text_speed"
@@ -41,7 +41,7 @@
             android:layout_marginRight="32dip"
             android:layout_alignParentRight="true"
             android:padding="4dip"
-            app:srcCompat="@drawable/arrow_right" />
+            app:srcCompat="@drawable/arrow_right"  android:contentDescription="@null"/>
 
     </RelativeLayout>
 

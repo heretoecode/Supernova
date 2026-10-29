@@ -4,7 +4,7 @@
     android:id="@+id/root"
     android:background="@android:color/black"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" android:layoutDirection="ltr">
 
 
 
@@ -123,7 +123,7 @@
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@+id/discrete_button"
             android:layout_toLeftOf="@+id/discrete_button"
-            />
+             android:contentDescription="@null"/>
         <ImageView
             android:id="@+id/discrete_button"
             android:layout_width="30dip"
@@ -134,7 +134,7 @@
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@+id/fullscreen_button"
             android:layout_toLeftOf="@+id/fullscreen_button"
-            />
+             android:contentDescription="@null"/>
         <ImageView
             android:id="@+id/fullscreen_button"
             android:layout_width="30dip"
@@ -145,7 +145,7 @@
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@+id/exit_button"
             android:layout_toLeftOf="@+id/exit_button"
-            />
+             android:contentDescription="@string/player_window_mode"/>
         <ImageView
             android:id="@+id/exit_button"
             android:layout_width="30dip"
@@ -155,13 +155,13 @@
             android:layout_marginRight="3dip"
             android:layout_alignParentTop="true"
             android:layout_alignEnd="@+id/seek_progress"
-            android:layout_alignRight="@+id/seek_progress"/>
+            android:layout_alignRight="@+id/seek_progress" android:contentDescription="@null"/>
         <ImageView
             android:id="@+id/play_button"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/video_play"/>
+            android:src="@drawable/video_play" android:contentDescription="@string/play_selection"/>
 
     <com.archos.mediacenter.utils.seekbar.ArchosProgressSlider
             android:id="@+id/seek_progress"

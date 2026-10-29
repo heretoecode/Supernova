@@ -42,7 +42,7 @@
                 android:id="@+id/thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"  android:contentDescription="@null"/>
 
             <TextView
                 android:id="@+id/episode_number_badge"
@@ -69,7 +69,7 @@
             android:layout_marginBottom="@dimen/video_3d_label_margin_grid"
             android:layout_marginRight="@dimen/video_3d_label_margin_grid"
             card_view:srcCompat="@drawable/label_3d"
-            android:visibility="gone" />
+            android:visibility="gone"  android:contentDescription="@null"/>
 
         <ImageView
             android:id="@+id/trakt_watched"
@@ -78,7 +78,7 @@
             android:layout_alignRight="@id/thumbnail_container"
             android:layout_alignTop="@id/thumbnail_container"
             card_view:srcCompat="@drawable/watched_icon_corner"
-            android:visibility="gone" />
+            android:visibility="gone"  android:contentDescription="@null"/>
 
         <ImageView
             android:id="@+id/trakt_library"
@@ -88,7 +88,7 @@
             android:layout_alignTop="@id/thumbnail_container"
             android:layout_marginLeft="@dimen/video_trakt_library_margin_left"
             card_view:srcCompat="@drawable/label_trakt_library"
-            android:visibility="gone" />
+            android:visibility="gone"  android:contentDescription="@null"/>
         <include
             layout="@layout/video_occurencies"
             android:layout_width="wrap_content"
@@ -192,7 +192,7 @@
                 android:paddingLeft="4dip"
                 android:paddingRight="14dip"
                 android:paddingTop="2dip"
-                card_view:srcCompat="@drawable/label_infoarrow" />
+                card_view:srcCompat="@drawable/label_infoarrow"  android:contentDescription="@null"/>
         </RelativeLayout>
 
     </RelativeLayout>

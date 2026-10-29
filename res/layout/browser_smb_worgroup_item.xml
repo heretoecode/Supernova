@@ -28,7 +28,7 @@
         android:layout_width="70dip"
         android:layout_height="70dip"
         android:layout_gravity="center_vertical"
-/>
+ android:contentDescription="@null"/>
 
     <!-- Center vertically the lines of text in the area on right of the icon -->
 

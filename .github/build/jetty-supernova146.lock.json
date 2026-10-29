@@ -112,5 +112,11 @@
       "sha256": "52dcd578baca1d3e449ea86768a9129c0ee04d7b22565695498353cc66940c61"
     }
   ],
-  "review_status": "candidate, Android23 and independent security review pending"
+  "review_status": "candidate, Android23 and independent security review pending",
+  "api23_excluded_optional_sources": [
+    "jetty-util/src/main/java/org/eclipse/jetty/util/ModuleLocation.java",
+    "jetty-server/src/main/java/org/eclipse/jetty/server/CustomRequestLog.java",
+    "jetty-server/src/main/java/org/eclipse/jetty/server/ForwardedRequestCustomizer.java",
+    "jetty-servlet/src/main/java/org/eclipse/jetty/servlet/DecoratingListener.java"
+  ]
 }

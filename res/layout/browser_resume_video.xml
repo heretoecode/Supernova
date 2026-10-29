@@ -24,7 +24,7 @@ access to last video played. -->
         android:layout_marginRight="@dimen/global_resume_icon_padding_right"
         android:background="@drawable/nowplaying_btn_background"
         app:srcCompat="@drawable/nowplaying_play"
-        />
+         android:contentDescription="@null"/>
 
     <TextView
         android:id="@+id/global_resume_text"
@@ -43,6 +43,6 @@ access to last video played. -->
         android:layout_height="match_parent"
         android:background="@drawable/now_playing_tile_pressed"
         android:visibility="gone"
-        />
+         android:contentDescription="@null"/>
 
 </com.archos.mediacenter.utils.GlobalResumeView>

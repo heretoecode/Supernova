@@ -26,7 +26,7 @@
         android:layout_marginRight="@dimen/video_grid_poster_margin_right"
         android:layout_marginTop="@dimen/video_grid_poster_margin_top"
         android:background="@color/default_icon_background"
-        android:scaleType="center" />
+        android:scaleType="center"  android:contentDescription="@null"/>
 
    
 

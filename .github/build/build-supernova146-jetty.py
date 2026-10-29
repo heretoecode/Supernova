@@ -60,18 +60,19 @@ def main():
  for module in MODULES:
   name='jetty-'+module;filename=name+'-'+version+'.jar';directory=maven/name/version;directory.mkdir(parents=True,exist_ok=True);dest=directory/filename;entries={}
   for f in (source/(name+'/src/main/java')).rglob('*.java'):
+   if str(f.relative_to(source)) in lock.get('api23_excluded_optional_sources',[]):continue
    text=f.read_text();package=text.split('package ',1)[1].split(';',1)[0].strip().replace('.','/')
    for compiled in [classes/package/(f.stem+'.class'),*(classes/package).glob(f.stem+'$*.class')]:
     if compiled.is_file():entries[str(compiled.relative_to(classes))]=compiled.read_bytes()
   with zipfile.ZipFile(inputs/filename) as archive:
    for path in archive.namelist():
     if not path.endswith('/') and not path.endswith('.class') and not path.upper().endswith(('.SF','.RSA','.DSA')):entries[path]=archive.read(path)
-  entries['META-INF/SUPERNOVA-BACKPORT/'+name+'.json']=(json.dumps({'upstream_coordinate':'org.eclipse.jetty:'+name+':'+version,'source_commit':lock['source_commit'],'patch_sha256':sha(patch),'android_api_floor':23},sort_keys=True)+'\n').encode()
+  entries['META-INF/SUPERNOVA-BACKPORT/'+name+'.json']=(json.dumps({'upstream_coordinate':'org.eclipse.jetty:'+name+':'+version,'source_commit':lock['source_commit'],'patch_sha256':sha(patch),'android_api_floor':23,'excluded_optional_sources':lock.get('api23_excluded_optional_sources',[])},sort_keys=True)+'\n').encode()
   with zipfile.ZipFile(dest,'w',zipfile.ZIP_DEFLATED) as archive:
    for path,data in sorted(entries.items()):
     info=zipfile.ZipInfo(path,(2026,10,28,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;info.external_attr=0o644<<16;archive.writestr(info,data)
   shutil.copyfile(inputs/(name+'-'+version+'.pom'),directory/(name+'-'+version+'.pom'))
   records.append({'module':name,'sha256':sha(dest),'classes':sum(path.endswith('.class') for path in entries),'bytes':dest.stat().st_size})
- (work/'evidence.json').write_text(json.dumps({'schema':1,'source_commit':lock['source_commit'],'patch_sha256':sha(patch),'libraries':records,'lock_sha256':sha(here/'jetty-supernova146.lock.json')},indent=2)+'\n')
+ (work/'evidence.json').write_text(json.dumps({'schema':1,'source_commit':lock['source_commit'],'patch_sha256':sha(patch),'libraries':records,'lock_sha256':sha(here/'jetty-supernova146.lock.json'),'api23_excluded_optional_sources':lock.get('api23_excluded_optional_sources',[])},indent=2)+'\n')
  print('Built seven Jetty modules from exact pinned source and patch; Android runtime validation is separate.')
 if __name__=='__main__':main()

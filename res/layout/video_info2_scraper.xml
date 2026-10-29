@@ -71,7 +71,7 @@
                     android:padding="5dip"
                     android:layout_height="fill_parent"
                     android:background="@drawable/transparent_ripple"
-                    card_view:srcCompat="@drawable/tvdb_logo" />
+                    card_view:srcCompat="@drawable/tvdb_logo"  android:contentDescription="TheTVDB"/>
 
                 <ImageButton
                     android:id="@+id/scrap_link_tmdb"
@@ -79,7 +79,7 @@
                     android:padding="5dip"
                     android:layout_height="fill_parent"
                     android:background="@drawable/transparent_ripple"
-                    card_view:srcCompat="@drawable/tmdb_banner" />
+                    card_view:srcCompat="@drawable/tmdb_banner"  android:contentDescription="TMDb"/>
 
                 <ImageButton
                     android:id="@+id/scrap_link_imdb"
@@ -88,7 +88,7 @@
                     android:background="@drawable/transparent_ripple"
                     android:layout_height="fill_parent"
                     android:padding="5dip"
-                    card_view:srcCompat="@drawable/imdb_logo" />
+                    card_view:srcCompat="@drawable/imdb_logo"  android:contentDescription="IMDb"/>
             </LinearLayout>
             <LinearLayout
 
