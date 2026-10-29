@@ -36,6 +36,12 @@ android {
  }
  packaging { resources.excludes += ['META-INF/LICENSE*','META-INF/NOTICE*','META-INF/DEPENDENCIES','META-INF/beans.xml'] }
 }
+// Verified runtime Kotlin/annotations jars are supplied in libs. Avoid adding
+// AGP/test-runner Maven copies with a second version of the same classes/resources.
+configurations.configureEach {
+ exclude group:'org.jetbrains.kotlin',module:'kotlin-stdlib'
+ exclude group:'org.jetbrains',module:'annotations'
+}
 dependencies {
  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.1.5'
  implementation fileTree(dir:'libs',include:['*.jar'])
