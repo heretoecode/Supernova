@@ -42,7 +42,7 @@ import java.util.Locale;
  * defined in Video/doc/SUBTITLES.md.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
+@Config(application = android.app.Application.class, sdk = 33)
 public class SubtitleTrackSelectionPolicyTest {
 
     private Locale mOriginalLocale;
@@ -52,6 +52,11 @@ public class SubtitleTrackSelectionPolicyTest {
     @Before
     public void setUp() throws Exception {
         mOriginalLocale = Locale.getDefault();
+        // Track policy uses an attached service/context, not deferred production
+        // discovery/HDMI startup that can outlive a Robolectric test sandbox.
+        android.app.Application app = org.robolectric.RuntimeEnvironment.getApplication();
+        com.archos.environment.ArchosUtils.setGlobalContext(app);
+        org.robolectric.util.ReflectionHelpers.setStaticField(com.archos.mediacenter.video.CustomApplication.class,"mContext",app);
         mService = Robolectric.buildService(PlayerService.class).get();
         mMockPlayer = Mockito.mock(Player.class);
         Mockito.when(mMockPlayer.setAudioTrack(Mockito.anyInt())).thenReturn(true);
