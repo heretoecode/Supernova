@@ -1,0 +1,12 @@
+{
+  "environment": "supernova-foundation-signing",
+  "requested_action": "Authorize only the exact0.146 branch in the existing selected branch policy",
+  "method": "POST",
+  "endpoint": "/repos/heretoecode/Supernova/environments/supernova-foundation-signing/deployment-branch-policies",
+  "body": {
+    "name": "codex/supernova-0.146-upstream-completion-2026-10-28",
+    "type": "branch"
+  },
+  "applied": false,
+  "reason": "The user-provided handover forbids changing signing protections without approval; completed unsigned/source/QA evidence is ready for review. No other environment protection or signing identity change is requested."
+}

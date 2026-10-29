@@ -1,6 +1,6 @@
 # Release lint review
 
-Successful complete run40876969463 reports zero errors and1492 warnings, versus1795 warnings in the preserved0.145 report. Final post-fix conformance is a separate gate. No warning severity or advisory was suppressed to obtain this result.
+Successful complete run40876969463 reports zero errors and1492 warnings, versus1795 warnings in the preserved0.145 report. Final post-fix40886034550 passes with zero errors/1489 warnings,306 fewer than the0.145 count. The three additional reductions are two exported internal services and the credential-fragment dismiss warning. No warning severity or advisory was suppressed to obtain this result.
 
 The review found and fixed meaningful issues: six static playback-settings views retained their Activity after close; Java FTPS used permissive certificate defaults; two internal player/metadata services were exported without a caller contract; and a credential DialogFragment overwrote its framework dismissal listener even though its existing onDismiss already forwards the callback. The final APK gate verifies the merged service flags and existing dialog tests assert released references. FTPS has five real TLS regression cases on both host and Android23.
 

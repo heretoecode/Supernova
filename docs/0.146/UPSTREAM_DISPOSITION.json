@@ -3,7 +3,7 @@
   "baseline": "Verified signed0.145 source d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
   "upstream": "NOVA6.6.2 release-time component snapshots; no frozen upstream binary manifest was published",
   "inventory_method": "Complete git ls-tree and first-parent diff-tree; no GitHub300-file cap. Exact current/upstream file blobs and raw change-tree hashes retained.",
-  "validation_state": "Four-ABI native security builds,12 sanitizer/control cases,23 actual Android23 transport/trust tests and native runtime/font stress pass. Final APK conformance is running; dispositions do not claim physical QA clearance.",
+  "validation_state": "Final complete conformance40886034550 success at938885ac2:1209/200/104 cases, zero failures/errors, four named library skips;131 tooling; lint0errors/1489warnings.28 actual Android23 cases and36 exact-APK native cases pass. Source delivery fully read back. Signing blocked by unchanged exact-branch policy; physical acceptance pending.",
   "commit_count": 438,
   "projects": [
     {

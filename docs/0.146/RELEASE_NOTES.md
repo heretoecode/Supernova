@@ -8,7 +8,7 @@ Native subtitles use the existing TV/phone controls and saved sizing, with addit
 
 The UPnP transport replaces Jetty9.2.30 with an explicitly identified source-built9.4 transport fork, parser/authority/Digest fixes and API23 NIO support. Four unused optional MethodHandle-based features are excluded. The139-artifact SBOM keeps version findings visible with source/feature dispositions, and64 offline legal entries retain full notices.
 
-Software evidence includes all-ABI native source builds and loading,64 decode cases,36 TLS/HLS/raw-video cases,16 subtitle-format/backend cases, font/PSSH stress tests, native sanitizers and28 actual Android23 transport/trust/FTPS cases. The final APK conformance run determines the exact tested source/payload; signing and delivery cannot be claimed until that gate and the existing signing-environment branch policy permit them.
+Software evidence includes all-ABI native source builds and loading,64 decode cases,36 TLS/HLS/raw-video cases,16 subtitle-format/backend cases, font/PSSH stress tests, native sanitizers and28 actual Android23 transport/trust/FTPS cases. Final conformance40886034550 passes for source938885ac2a84a5efecb1674b3e9f1032a56740ed, with1209 application/200MediaLib/104FileCore cases, four explicit fixture skips,131 tooling and zero lint errors/1489warnings.36 further native cases use the exact APK libraries. Signing/delivery require the missing branch authorization in the existing environment.
 
 Physical Shield/HDMI/ARC/SPDIF/private-listening paths, real NAS/UPnP providers, GL/3D subtitle visuals and installed signed upgrade/rollback remain pending. The original incident ZIP and some visual reference attachments are unavailable. No main merge or public release is authorized.
 
