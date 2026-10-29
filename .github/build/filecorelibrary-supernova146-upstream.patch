@@ -5322,7 +5322,7 @@ index 0000000..0ba7e6c
 +    }
 +}
 diff --git a/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java b/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
-index d452773..35317ec 100644
+index d452773..70e67d6 100644
 --- a/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
 +++ b/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
 @@ -65,6 +65,7 @@ public class WebdavSecurityAndRangeTest {
@@ -5488,15 +5488,41 @@ index d452773..35317ec 100644
  
              server.start();
  
-@@ -538,7 +588,7 @@ public class WebdavSecurityAndRangeTest {
-         try (MockWebServer server = new MockWebServer()) {
-             server.start();
-             for (int code : new int[]{204,404,401,403,405,423,500,503}) {
+@@ -535,20 +585,29 @@ public class WebdavSecurityAndRangeTest {
+         }
+     }
+     @org.junit.Test public void deleteIsIdempotentOnlyForConfirmed404() throws Exception {
+-        try (MockWebServer server = new MockWebServer()) {
+-            server.start();
+-            for (int code : new int[]{204,404,401,403,405,423,500,503}) {
 -                server.enqueue(new MockResponse().setResponseCode(code));
-+                server.enqueue(new MockResponse().setResponseCode(code).setHeader("Retry-After", "120"));
++        // A stable endpoint also answers legitimate client retries; a one-entry
++        // response queue instead times out on a follow-up and hides its status.
++        for (int code : new int[]{204,404,401,403,405,423,500,503}) {
++            try (MockWebServer server = new MockWebServer()) {
++                server.setDispatcher(new okhttp3.mockwebserver.Dispatcher() {
++                    @Override public MockResponse dispatch(RecordedRequest request) {
++                        return new MockResponse().setResponseCode(code).setHeader("Retry-After", "120");
++                    }
++                });
++                server.start();
                  Uri uri=Uri.parse(server.url("/missing.mkv").toString().replace("http://","webdav://"));
                  WebdavFileEditor editor=new WebdavFileEditor(uri);
                  try {
+                     editor.delete();
+                     org.junit.Assert.assertTrue("Unexpected success: "+code,code==204||code==404);
++                    org.junit.Assert.assertEquals(code==404,editor.wasAlreadyAbsent());
+                 } catch (com.thegrizzlylabs.sardineandroid.impl.SardineException failure) {
+                     org.junit.Assert.assertEquals(code,failure.getStatusCode());
+                     org.junit.Assert.assertTrue(code!=204&&code!=404);
+                 }
+-                org.junit.Assert.assertEquals("DELETE",server.takeRequest().getMethod());
++                RecordedRequest request=server.takeRequest(5,java.util.concurrent.TimeUnit.SECONDS);
++                org.junit.Assert.assertNotNull("No DELETE for status "+code,request);
++                org.junit.Assert.assertEquals("DELETE",request.getMethod());
+             }
+         }
+     }
 diff --git a/test/java/com/hierynomus/msfscc/fileinformation/SmbjFileLengthTest.java b/test/java/com/hierynomus/msfscc/fileinformation/SmbjFileLengthTest.java
 new file mode 100644
 index 0000000..29b6f5b

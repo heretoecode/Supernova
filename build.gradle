@@ -495,6 +495,7 @@ dependencies {
     testImplementation 'javax.servlet:javax.servlet-api:4.0.1'
     testImplementation 'org.eclipse.jetty:jetty-client:9.4.58.v20250814'
     testImplementation 'org.eclipse.jetty:jetty-server:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-servlet:9.4.58.v20250814'
     testImplementation 'org.eclipse.jetty:jetty-security:9.4.58.v20250814'
 }
 

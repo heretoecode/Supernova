@@ -4,7 +4,7 @@
   "source_commit": "89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b",
   "source_patch": "jetty-supernova146-api23-security.patch",
   "source_patch_sha256": "1bcbaa43e7bc630a605dcf9c6a7a814327ecaa975ca767a109e29c44a67540cf",
-  "compiler": "ECJ3.41.0 Java8 target",
+  "compiler": "ECJ3.41.0 Java8 target with pinned Temurin8u504 boot classes",
   "inputs": [
     {
       "file": "source.tar.gz",
@@ -105,6 +105,11 @@
       "file": "slf4j-api-2.0.18.jar",
       "url": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.18/slf4j-api-2.0.18.jar",
       "sha256": "44508fd1576500688c790b190acdd16fec4f8c79a3e0b900afd70503cf055f55"
+    },
+    {
+      "file": "jre8.tar.gz",
+      "url": "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u504-b01/OpenJDK8U-jre_x64_linux_hotspot_8u504b01.tar.gz",
+      "sha256": "52dcd578baca1d3e449ea86768a9129c0ee04d7b22565695498353cc66940c61"
     }
   ],
   "review_status": "candidate, Android23 and independent security review pending"

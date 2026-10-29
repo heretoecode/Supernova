@@ -46,6 +46,9 @@ jobs:
           chmod +x gradlew
           ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | tee build/supernova146-source-validation.log
+      - name: Collect exact resolved archives and POMs for independent review
+        if: always()
+        run: python3 nova/Video/.github/build/collect-supernova146-runtime.py --video nova/Video
       - name: Preserve full compiler, test, lint and dependency evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -58,6 +61,7 @@ jobs:
             nova/Video/build/test-results/**
             nova/Video/build/reports/lint-results*.*
             nova/Video/build/foundation/**
+            nova/Video/build/supernova146-runtime-review/**
             nova/MediaLib/build/test-results/**
             nova/FileCoreLibrary/build/test-results/**
             nova/supernova146-source-preparation.json

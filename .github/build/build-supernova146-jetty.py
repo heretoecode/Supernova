@@ -27,17 +27,32 @@ def main():
    for member in archive.getmembers():
     member.name='/'.join(member.name.split('/')[1:])
     if member.name:archive.extract(member,source,filter='data')
-  subprocess.run(['git','apply','--check',str(patch)],cwd=source,check=True)
-  subprocess.run(['git','apply',str(patch)],cwd=source,check=True)
+  subprocess.run(['patch','--dry-run','--batch','--fuzz=0','-p1','-i',str(patch)],cwd=source,check=True)
+  subprocess.run(['patch','--batch','--fuzz=0','-p1','-i',str(patch)],cwd=source,check=True)
  else:
   # Refuse stale source rather than silently using an older patch on rerun.
   if not (work/'source-patch.sha256').exists() or (work/'source-patch.sha256').read_text().strip()!=sha(patch):raise ValueError('Use a fresh workspace for a changed patch')
+ # Refuse a no-op/skipped patch before compilation or packaging.
+ checks={
+  'jetty-http/src/main/java/org/eclipse/jetty/http/HttpParser.java':'private enum ChunkSizeState',
+  'jetty-server/src/main/java/org/eclipse/jetty/server/HttpChannel.java':'Conflicting authority',
+  'jetty-security/src/main/java/org/eclipse/jetty/security/authentication/DigestAuthenticator.java':'Digest value is not ISO-8859-1',
+  'jetty-util/src/main/java/org/eclipse/jetty/util/thread/api23/LongAdder.java':'class LongAdder',
+ }
+ for name,expected in checks.items():
+  if not (source/name).is_file() or expected not in (source/name).read_text():raise ValueError('Jetty source backport missing: '+name)
  (work/'source-patch.sha256').write_text(sha(patch)+'\n')
+ jre=work/'boot-jre8'
+ if not jre.exists():
+  jre.mkdir()
+  with tarfile.open(inputs/'jre8.tar.gz') as archive:archive.extractall(jre,filter='data')
+ boot=list(jre.rglob('rt.jar'))
+ if len(boot)!=1:raise ValueError('Pinned JRE8 boot classes missing')
  classes=work/'classes'
  if classes.exists():shutil.rmtree(classes)
- classes.mkdir();version=lock['upstream_version'];jars=list(inputs.glob('*.jar'));jars.remove(inputs/'ecj.jar')
- sources=[f for module in MODULES for f in (source/('jetty-'+module+'/src/main/java')).rglob('*.java')]
- args=['-8','-proc:none','-cp',os.pathsep.join(map(str,jars)),'-d',str(classes)]+list(map(str,sources))
+ classes.mkdir();version=lock['upstream_version'];jars=sorted(inputs.glob('*.jar'));jars.remove(inputs/'ecj.jar')
+ sources=sorted(f for module in MODULES for f in (source/('jetty-'+module+'/src/main/java')).rglob('*.java'))
+ args=['-8','-proc:none','-bootclasspath',str(boot[0]),'-cp',os.pathsep.join(map(str,jars)),'-d',str(classes)]+list(map(str,sources))
  # An argument file avoids command-length limits. Paths are controlled workspace paths.
  argfile=work/'compile.args';argfile.write_text('\n'.join('"'+arg.replace('\\','\\\\').replace('"','\\"')+'"' for arg in args)+'\n')
  with (work/'compile.log').open('w') as log:subprocess.run(['java','-jar',str(inputs/'ecj.jar'),'@'+str(argfile)],stdout=log,stderr=subprocess.STDOUT,check=True)
