@@ -42,6 +42,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
     SettingsWorkspace(VideoSettingsFragment.PrefsFragment fragment,BackupSettingsController backup,Bundle state){
         super(fragment.requireContext());this.fragment=fragment;this.backup=backup;registry=new SettingsRegistry(getContext());prefs=PreferenceManager.getDefaultSharedPreferences(getContext());
         setTag("settings.workspace");setOrientation(VERTICAL);setBackground(new PreviewUtilityBackground(getContext()));setPadding(dp(28),dp(20),dp(28),dp(20));setClipChildren(false);
+        addView(text("Settings",28),new LayoutParams(-1,-2));
         stage=new FrameLayout(getContext());LayoutParams area=new LayoutParams(-1,0,1);area.topMargin=dp(4);addView(stage,area);
         prefs.registerOnSharedPreferenceChangeListener(preferenceObserver);
         post(()->{if(disposed)return;observed=fragment.getListView().getAdapter();if(observed!=null)observed.registerAdapterDataObserver(observer);});

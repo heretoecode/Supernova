@@ -5,7 +5,6 @@ import android.graphics.*;
 import android.view.View;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.leanback.PreviewMetadataCache;
-import com.archos.mediacenter.video.leanback.SharedMetadata;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import org.json.JSONObject;
 

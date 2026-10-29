@@ -17,7 +17,6 @@ final class NetworkFilesLayout extends LinearLayout {
     private final LinearLayout items;
     private boolean browsing,initialised,landing;
     final TextView back;
-    private View landingGrid;
 
     NetworkFilesLayout(Context c, LinearLayout rail, LinearLayout centre, LinearLayout right,
                        ScrollView details, FrameLayout listing, LinearLayout items) {
@@ -37,7 +36,7 @@ final class NetworkFilesLayout extends LinearLayout {
         mode(false);
     }
     void landing(View grid){
-        landing=true;landingGrid=grid;back.setVisibility(GONE);workspace.removeAllViews();
+        landing=true;back.setVisibility(GONE);workspace.removeAllViews();
         detach(grid);workspace.addView(grid,new FrameLayout.LayoutParams(-1,-1));
     }
     boolean landing(){return landing;}
