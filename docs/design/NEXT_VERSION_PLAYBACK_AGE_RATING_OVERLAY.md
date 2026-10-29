@@ -20,3 +20,6 @@
 
 ## Release workflow
 Include in next-version Codex handover and release notes when implemented. This is a planning record only; no application code, APK or main branch modified.
+
+## 2026-10-29 owner reconfirmation
+Owner explicitly requests inclusion in the upcoming version alongside the Network & Files Settings-style redesign and shared global top-navigation correction. Retain the exact approved appearance and 10-second behaviour above; do not reinterpret the request as a new design or claim it has been implemented. Include in the same next-version Codex scope, with independent playback verification and release-note entry.
