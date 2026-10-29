@@ -1,5 +1,5 @@
 org.eclipse.jetty:jetty-client:9.4.58.v20250814
-Archive SHA-256: da419e5be0f96e2c41f2caaaa74fbf8e527171644a241544f48d09ddf5070d60
+Archive SHA-256: 4a0203ed8cf1d86f836f7c1bc33a67f79f124deb0b291818c023d35cc4bd30b9
 Licence: Apache-2.0 OR EPL-1.0
 
 Archive META-INF/LICENSE
@@ -794,23 +794,23 @@ for non-commercial or commercial purposes and without fee is
 granted provided that the copyright notice appears in all copies.
 
 org.eclipse.jetty:jetty-http:9.4.58.v20250814
-Archive SHA-256: 7ec9264337f38a0afa2a24989d2635f0d8b9cfe2134792c55262864bbd6d7409
+Archive SHA-256: c2d03da3bcb494785e998d989a32b77d4bfe4e4997a67822c1e1ec8b9598663b
 Licence: Apache-2.0 OR EPL-1.0
 
 org.eclipse.jetty:jetty-io:9.4.58.v20250814
-Archive SHA-256: d25d75f4e816f84d51855023e3e82ebe45d0bdd8dcb41b9f8db141a5d6ec6702
+Archive SHA-256: 17435e8c739081127e1768f5be3d43314fff8bec836eab7d5112f33918dc01a2
 Licence: Apache-2.0 OR EPL-1.0
 
 org.eclipse.jetty:jetty-security:9.4.58.v20250814
-Archive SHA-256: d178cc046207de5290a2474c319cc1c4346a6b06f5f3bf370582612e7d5254d4
+Archive SHA-256: 23c7eb4664261baa66be39fba41998df5d20db26e323feacd57b1ea28f060eb7
 Licence: Apache-2.0 OR EPL-1.0
 
 org.eclipse.jetty:jetty-server:9.4.58.v20250814
-Archive SHA-256: 319ddb6452bf1b2d8937045ccc57c95d6a3f9cf6f403b667ece82ea4dd2c9186
+Archive SHA-256: 3dfc3db2abf5732a329aec6721da30ba8c1a37520d7fbd315c77de1dd36fa5ec
 Licence: Apache-2.0 OR EPL-1.0
 
 org.eclipse.jetty:jetty-servlet:9.4.58.v20250814
-Archive SHA-256: 1a99d1e8f4c07284665b540aab93aef4e8fe86cd62cb6fca230765b0d649906c
+Archive SHA-256: 6bdf14f9c303a4a021e580be5ee923fc26847c1e250715054577018a0ec49557
 Licence: Apache-2.0 OR EPL-1.0
 
 org.eclipse.jetty:jetty-util-ajax:9.4.58.v20250814
@@ -818,5 +818,5 @@ Archive SHA-256: 185430a2eafcdffba18204dbf51cb18436ab4ca09b74d97c1dc13abbadd9704
 Licence: Apache-2.0 OR EPL-1.0
 
 org.eclipse.jetty:jetty-util:9.4.58.v20250814
-Archive SHA-256: 86485e30d16c92264b0ef7a6483cce630e222fd18867a382f01094a3a7461608
+Archive SHA-256: b89dc5027828b9cb5f4c1be33a8e74df9a21c950755bba1b735307f61bb0bedf
 Licence: Apache-2.0 OR EPL-1.0

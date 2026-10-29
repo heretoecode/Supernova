@@ -10,12 +10,14 @@
   "current": {
     "version": "0.146",
     "version_code": 146,
-    "date": "2026-10-28",
-    "kind": "Development candidate — upstream completion in progress; validation pending",
+    "date": "2026-10-29",
+    "kind": "QA candidate \u2014 upstream and security maintenance; device acceptance pending",
     "notes": [
-      "Coordinated NOVA native, subtitle and network integration under implementation.",
-      "Security, four-ABI and API23 validation are required before signed QA distribution.",
-      "Supernova interface, signing identity, saved libraries and settings are retained; physical acceptance remains pending."
+      "Integrated the NOVA6.6.2 release-time source changes while retaining Supernova screens, libraries, credentials and saved preferences.",
+      "Rebuilt FFmpeg9.0.2, OpenSSL4.1, libass0.17.5 and supporting codecs/fonts for four ABIs with reviewed security backports; native TLS verification stays enabled.",
+      "Native subtitles retain existing controls and size settings, with added SAF fonts, letterbox placement and local-language subtitle policy. PCM speed adds Sonic while retaining the original switches.",
+      "Jetty/jUPnP transport uses an explicit source backport and API23 NIO support; all23 Android23 transport/trust cases pass. Version findings remain visible with source-level dispositions.",
+      "Physical Shield/HDMI routes, real NAS/provider interoperability, GL subtitle visuals and an installed signed upgrade require device QA. The retired experimental Sonic compressed-audio codec is distinct from supported Sonic PCM speed."
     ]
   },
   "history": [
@@ -23,7 +25,7 @@
       "version": "0.145",
       "version_code": 145,
       "date": "2026-10-28",
-      "kind": "Development / QA candidate — physical acceptance pending",
+      "kind": "Development / QA candidate \u2014 physical acceptance pending",
       "notes": [
         "Compatible NOVA maintenance fixes for network playback recovery, seek retention and subtitle pause timing.",
         "Safer subtitle-cache fallback, storage write access and native buffer sizing.",
@@ -50,7 +52,7 @@
       "version": "0.144",
       "version_code": 144,
       "date": "2026-10-28",
-      "kind": "Development candidate — validation and physical acceptance pending",
+      "kind": "Development candidate \u2014 validation and physical acceptance pending",
       "notes": [
         "WebDAV missing-file deletion and complete-scan reconciliation safety.",
         "Library artwork follows the active displayed page and ignores stale asynchronous results.",
@@ -77,7 +79,7 @@
       "version": "0.143",
       "version_code": 143,
       "date": "2026-10-27",
-      "kind": "Development / Shield QA candidate — physical acceptance pending",
+      "kind": "Development / Shield QA candidate \u2014 physical acceptance pending",
       "notes": [
         "New Settings: approved eight-category landing grid and consistent two-column category pages using the original Supernova background and branding.",
         "Preserves audited preferences, runtime choices, device/account gates, service accounts, logical backup/restore, diagnostics, source ownership and About disclosures.",
@@ -103,7 +105,7 @@
       "version": "0.142",
       "version_code": 142,
       "date": "2026-10-23",
-      "kind": "Development / Shield QA candidate — physical acceptance pending",
+      "kind": "Development / Shield QA candidate \u2014 physical acceptance pending",
       "notes": [
         "Network & Files: six permanent destinations and one flexible workspace, four Overview cards, monochrome icons, existing global navigation and source workflows.",
         "Preserves local/USB, network protocols, saved locations, staged library changes, scanning, Library Health and Put.io account/association/read-only browsing.",
@@ -150,7 +152,7 @@
     {
       "version": "0.140",
       "version_code": 140,
-      "kind": "Development / QA build — physical acceptance pending",
+      "kind": "Development / QA build \u2014 physical acceptance pending",
       "notes": [
         "Page-scoped two-row Library Statistics with nine metrics and terminal scan evidence.",
         "Six-region Details blueprint implementation, connected active-tab border and fixed portrait grids.",
@@ -228,7 +230,7 @@
     {
       "version": "0.137",
       "version_code": 137,
-      "kind": "Development / QA — unreleased",
+      "kind": "Development / QA \u2014 unreleased",
       "notes": [
         "Settings category and remote-navigation reliability; excluded-row import paging and All Files filtering.",
         "Playback history refresh and Home-only Continue Watching.",
@@ -251,7 +253,7 @@
     {
       "version": "0.136",
       "version_code": 136,
-      "kind": "Provisional refinement QA — unreleased",
+      "kind": "Provisional refinement QA \u2014 unreleased",
       "notes": [
         "Refined Home heroes, navigation, shared library controls and live genre choices.",
         "Embedded custom Library Page creation and focused editing with a retained live preview.",
@@ -273,7 +275,7 @@
     {
       "version": "0.135",
       "version_code": 135,
-      "kind": "Development / QA — unreleased",
+      "kind": "Development / QA \u2014 unreleased",
       "notes": [
         "Shared three-panel Settings and Network & Files, plus one compact Home and TV file browser with complete breadcrumbs and persisted controls.",
         "Staged recursive library selection and exclusions, atomic Apply & Scan, and five-category Library Health that retains unavailable records and viewing progress.",

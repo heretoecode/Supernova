@@ -1,0 +1,35 @@
+{
+  "scope": "Actual Android23bionic, rebuilt AVOS/libass/FreeType/fontconfig stack; variable-font discovery and glyph rasterization. No GL surface/device visual acceptance implied.",
+  "native_artifact_run": 40843685431,
+  "font_sha256": "9b523f7d82593df0107173849ebb8c817471a1df4b4fb2c3cbf40cfd810c8281",
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "returncode": 0,
+      "output": "PASS fontconfig SAX discovery; FreeType variation coordinates; libass glyph images=2 covered=5269\n",
+      "stderr": "WARNING: linker: /test/font-stack-probe: unsupported flags DT_FLAGS_1=0x8000001\nPHASE fontconfig init\nPHASE fontconfig match\nPHASE freetype\nPHASE freetype cleanup\nPHASE libass init\n[ass] libass API version: 0x1705000\n[ass] libass source: tarball: 0.17.5\n[ass] Shaper: FriBidi 1.0.17 (SIMPLE) HarfBuzz-ng 15.0.0 (COMPLEX)\n[ass] Using font provider fontconfig\nPHASE libass track\n[ass] Added subtitle file: <memory> (2 styles, 1 events)\n[ass] fontselect: (Roboto Flex, 400, 0) -> /test/fonts/RobotoFlex.ttf, 0, RobotoFlex-Regular\n",
+      "prohibited_xml_symbols": []
+    },
+    {
+      "abi": "armeabi-v7a",
+      "returncode": 0,
+      "output": "PASS fontconfig SAX discovery; FreeType variation coordinates; libass glyph images=2 covered=5269\n",
+      "stderr": "WARNING: linker: /test/font-stack-probe: unsupported flags DT_FLAGS_1=0x8000001\nPHASE fontconfig init\nPHASE fontconfig match\nPHASE freetype\nPHASE freetype cleanup\nPHASE libass init\n[ass] libass API version: 0x1705000\n[ass] libass source: tarball: 0.17.5\n[ass] Shaper: FriBidi 1.0.17 (SIMPLE) HarfBuzz-ng 15.0.0 (COMPLEX)\n[ass] Using font provider fontconfig\nPHASE libass track\n[ass] Added subtitle file: <memory> (2 styles, 1 events)\n[ass] fontselect: (Roboto Flex, 400, 0) -> /test/fonts/RobotoFlex.ttf, 0, RobotoFlex-Regular\n",
+      "prohibited_xml_symbols": []
+    },
+    {
+      "abi": "x86",
+      "returncode": 0,
+      "output": "PASS fontconfig SAX discovery; FreeType variation coordinates; libass glyph images=2 covered=5269\n",
+      "stderr": "WARNING: linker: /test/font-stack-probe: unsupported flags DT_FLAGS_1=0x8000001\nPHASE fontconfig init\nPHASE fontconfig match\nPHASE freetype\nPHASE freetype cleanup\nPHASE libass init\n[ass] libass API version: 0x1705000\n[ass] libass source: tarball: 0.17.5\n[ass] Shaper: FriBidi 1.0.17 (SIMPLE) HarfBuzz-ng 15.0.0 (COMPLEX)\n[ass] Using font provider fontconfig\nPHASE libass track\n[ass] Added subtitle file: <memory> (2 styles, 1 events)\n[ass] fontselect: (Roboto Flex, 400, 0) -> /test/fonts/RobotoFlex.ttf, 0, RobotoFlex-Regular\n",
+      "prohibited_xml_symbols": []
+    },
+    {
+      "abi": "x86_64",
+      "returncode": 0,
+      "output": "PASS fontconfig SAX discovery; FreeType variation coordinates; libass glyph images=2 covered=5269\n",
+      "stderr": "WARNING: linker: /test/font-stack-probe: unsupported flags DT_FLAGS_1=0x8000001\nPHASE fontconfig init\nPHASE fontconfig match\nPHASE freetype\nPHASE freetype cleanup\nPHASE libass init\n[ass] libass API version: 0x1705000\n[ass] libass source: tarball: 0.17.5\n[ass] Shaper: FriBidi 1.0.17 (SIMPLE) HarfBuzz-ng 15.0.0 (COMPLEX)\n[ass] Using font provider fontconfig\nPHASE libass track\n[ass] Added subtitle file: <memory> (2 styles, 1 events)\n[ass] fontselect: (Roboto Flex, 400, 0) -> /test/fonts/RobotoFlex.ttf, 0, RobotoFlex-Regular\n",
+      "prohibited_xml_symbols": []
+    }
+  ]
+}

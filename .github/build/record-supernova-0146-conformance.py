@@ -30,6 +30,10 @@ def main():
     actual_manifest=ET.fromstring(subprocess.check_output([args.apkanalyzer,'manifest','print',str(args.apk)],text=True))
     uses_sdk=actual_manifest.find('uses-sdk')
     if uses_sdk is None or uses_sdk.get('{http://schemas.android.com/apk/res/android}minSdkVersion')!='23':raise ValueError('API23 minimum must be preserved')
+    api23=json.loads((video/'docs/0.146/ANDROID23_TRANSPORT_TRUST.json').read_text())
+    if api23['statistics']!={'tests':23,'failures':0,'errors':0,'skipped':0} or api23['jetty_lock_sha256']!=hashlib.sha256((video/'.github/build/jetty-supernova146.lock.json').read_bytes()).hexdigest() or api23['medialib_patch_sha256']!=hashlib.sha256((video/'.github/build/medialib-supernova146-upstream.patch').read_bytes()).hexdigest():raise ValueError('Matching actual Android23 transport proof required')
+    evidence['actual_android23_transport_and_trust_tests']=23
+    evidence['native_security_artifact_run']=40843685431
     signature=subprocess.run([args.apksigner,'verify',str(args.apk)],capture_output=True,text=True)
     if signature.returncode == 0:
         raise ValueError('Unsigned conformance must not accept a signed APK')
@@ -41,7 +45,7 @@ def main():
     suites=[ET.parse(file).getroot() for file in (build/'test-results/testNoamazonReleaseUnitTest').glob('TEST-*.xml')]
     for name,attribute in [('unit_tests','tests'),('unit_failures','failures'),('unit_errors','errors'),('unit_skips','skipped')]:
         evidence[name]=sum(int(suite.get(attribute,0)) for suite in suites)
-    if evidence['unit_tests']<1207 or any(evidence[name] for name in ['unit_failures','unit_errors','unit_skips']):
+    if evidence['unit_tests']<1209 or any(evidence[name] for name in ['unit_failures','unit_errors','unit_skips']):
         raise ValueError('Complete 0.146 unit suite must pass without skips')
     required={'Jetty145SecurityTest','MediaUtilsSubsDirTest','StorageWriteAccessTest','PlaybackNetworkRetryTest','SubtitleLegacyPreferencesTest','AudioSpeedSettingsTest','Jetty146BackportTest','WebdavReconciliationSelectionTest','WebdavDeleteResponseTest','WebdavTraversalCompletenessTest','CustomLibraryPageTest','Supernova138HomeTest','Supernova138PlaybackTest','SubtitleDiscoveryTest','Supernova138UiTest','BundledNoticePagerTest','PreviewSeasonTest','Supernova139HomeEditorTest','CanonicalMatchProviderTest','MediaMatchJournalTest','MediaMatchReconciliationTest','CombinedCurrentRestoreTest','TransportReadDiagnosticsTest','LogicalBackupExporterTest','BackupSettingsControllerTest','Details139AcceptanceTest','ProductionBackupSettingsTest','LibraryStatisticsTest','LibraryStatisticsLayoutTest','BackupDirectOptionsTest','PlaybackAgeOverlayTest','DiagnosticCaptureReuseTest','PutioOAuthClientTest','PutioGrantRevokeTest','StreamingProviderFocusTest','PlayerControllerLaunchTest','OmdbSupplementTest','ReceptionSupplementTest','DetailsReferenceRenderTest','Supernova141UiTest','PutioConnectionFocusTest','PlaybackChaptersTest','Playback141RenderTest','PreviewPlaybackMenusTest','SubtitleReplacementTest','Network142Test','Network142CredentialsTest','Network142WebdavTest','Network142RenderTest','Editor142RenderTest','Network142PutioTest','DetailsImprovementsTest','SettingsWorkspaceTest','SettingsShieldNavigationTest'}
     present={suite.get('name','').split('.')[-1] for suite in suites if int(suite.get('tests','0'))>0}
@@ -52,7 +56,11 @@ def main():
         reports=[ET.parse(file).getroot() for file in (args.root.resolve()/module/'build/test-results/testReleaseUnitTest').glob('TEST-*.xml')]
         stats={name:sum(int(report.get(attribute,0)) for report in reports) for name,attribute in [('tests','tests'),('failures','failures'),('errors','errors'),('skipped','skipped')]}
         stats['skipped_cases']=[report.get('name')+'.'+case.get('name') for report in reports for case in report.findall('testcase') if case.find('skipped') is not None]
-        if stats['tests']<minimum or stats['failures'] or stats['errors'] or stats['skipped']!=2:raise ValueError('Complete library suite required: '+module)
+        allowed={
+            'MediaLib':{'com.archos.mediaprovider.video.RealDatabasePruningTest.syntheticUsbBacklogIsPrunedAndLeavesDatabaseConsistent','com.archos.mediaprovider.video.RealDatabasePruningTest.realDatabaseUpgradesCleanlyAndPassesIntegrityCheck'},
+            'FileCoreLibrary':{'com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest.compareMinimalPropertiesWithAllprop','com.archos.filecorelibrary.SpeedTestTransferTest.compareTransferRates'},
+        }
+        if stats['tests']<minimum or stats['failures'] or stats['errors'] or stats['skipped']!=2 or set(stats['skipped_cases'])!=allowed[module]:raise ValueError('Complete library suite required: '+module)
         evidence['library_suites'][module]=stats
     issues=ET.parse(build/'reports/lint-results-noamazonRelease.xml').getroot().findall('issue')
     evidence['lint']={'errors':sum(issue.get('severity') in ['Error','Fatal'] for issue in issues),'warnings':sum(issue.get('severity')=='Warning' for issue in issues)}

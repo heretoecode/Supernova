@@ -1147,25 +1147,11 @@
       "legal_family": "epitaph"
     },
     {
-      "coordinate": "com.android.tools:desugar_jdk_libs:2.1.5",
-      "filename": "desugar_jdk_libs-2.1.5.jar",
-      "sha256": "d8044befae095781b9a80bf1faa92edc30382d75d437476784c1bf991598a976",
+      "coordinate": "com.android.tools:desugar_jdk_libs_configuration_nio:2.1.5",
+      "filename": "desugar_jdk_libs_configuration_nio-2.1.5.jar",
+      "sha256": "7db51661cd07d1fd5cf12769a75ba201910624bb3801c09363dd3cb28e31c51b",
       "configuration": "coreLibraryDesugaring",
-      "pom_sha256": "2e195880f15d4545c8d60b2d2cac52201ccf98db7a29db2577ad5826a930fcca",
-      "declared_licences": [
-        "GNU General Public License, version 2, with the Classpath Exception"
-      ],
-      "licence": "GPL-2.0-only WITH Classpath-exception-2.0",
-      "official_url": "https://github.com/google/desugar_jdk_libs",
-      "archive_notices": [],
-      "legal_family": "OpenJDK desugared libraries"
-    },
-    {
-      "coordinate": "com.android.tools:desugar_jdk_libs_configuration:2.1.5",
-      "filename": "desugar_jdk_libs_configuration-2.1.5.jar",
-      "sha256": "7bc9051b3a1ec19806311dcb6aa9b9ba7ef9c22caa6f4810da55bde285fb7770",
-      "configuration": "coreLibraryDesugaring",
-      "pom_sha256": "b2099735b93905d6f01b52e136d1364280cd6a72c6e7ea3be274a6c67703f2b4",
+      "pom_sha256": "6e5e9ec6db8093d26c469c18b9231b033e670333a770852debda90c222fa4835",
       "declared_licences": [
         "BSD-3-Clause"
       ],
@@ -1175,6 +1161,20 @@
         "LICENSE"
       ],
       "legal_family": "OpenJDK desugaring configuration"
+    },
+    {
+      "coordinate": "com.android.tools:desugar_jdk_libs_nio:2.1.5",
+      "filename": "desugar_jdk_libs_nio-2.1.5.jar",
+      "sha256": "d8044befae095781b9a80bf1faa92edc30382d75d437476784c1bf991598a976",
+      "configuration": "coreLibraryDesugaring",
+      "pom_sha256": "1ba5db067a494d09f5c4a94f4cb4d58fc6fd33e0a55417e0e46d3b288328f3bc",
+      "declared_licences": [
+        "GNU General Public License, version 2, with the Classpath Exception"
+      ],
+      "licence": "GPL-2.0-only WITH Classpath-exception-2.0",
+      "official_url": "https://github.com/google/desugar_jdk_libs",
+      "archive_notices": [],
+      "legal_family": "OpenJDK desugared libraries"
     },
     {
       "coordinate": "com.github.ksoichiro:android-observablescrollview:1.6.0",
@@ -1803,7 +1803,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-client:9.4.58.v20250814",
       "filename": "jetty-client-9.4.58.v20250814.jar",
-      "sha256": "da419e5be0f96e2c41f2caaaa74fbf8e527171644a241544f48d09ddf5070d60",
+      "sha256": "4a0203ed8cf1d86f836f7c1bc33a67f79f124deb0b291818c023d35cc4bd30b9",
       "configuration": "noamazonReleaseRuntimeClasspath",
       "pom_sha256": "3dd442938e22114a2dd280764bf00c354332b79f931d067d26ad6a45d09bbc02",
       "declared_licences": [],
@@ -1819,7 +1819,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-http:9.4.58.v20250814",
       "filename": "jetty-http-9.4.58.v20250814.jar",
-      "sha256": "7ec9264337f38a0afa2a24989d2635f0d8b9cfe2134792c55262864bbd6d7409",
+      "sha256": "c2d03da3bcb494785e998d989a32b77d4bfe4e4997a67822c1e1ec8b9598663b",
       "configuration": "noamazonReleaseRuntimeClasspath",
       "pom_sha256": "f64d6da0aeeb994b1efa31fac44b08ba0c56bf75d923ac01354955c015ac1868",
       "declared_licences": [],
@@ -1835,7 +1835,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-io:9.4.58.v20250814",
       "filename": "jetty-io-9.4.58.v20250814.jar",
-      "sha256": "d25d75f4e816f84d51855023e3e82ebe45d0bdd8dcb41b9f8db141a5d6ec6702",
+      "sha256": "17435e8c739081127e1768f5be3d43314fff8bec836eab7d5112f33918dc01a2",
       "configuration": "noamazonReleaseRuntimeClasspath",
       "pom_sha256": "8a7c6cfe62b82fcabce21e93964915d0323ec4617b578de996c9d86d2854db8d",
       "declared_licences": [],
@@ -1851,7 +1851,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-security:9.4.58.v20250814",
       "filename": "jetty-security-9.4.58.v20250814.jar",
-      "sha256": "d178cc046207de5290a2474c319cc1c4346a6b06f5f3bf370582612e7d5254d4",
+      "sha256": "23c7eb4664261baa66be39fba41998df5d20db26e323feacd57b1ea28f060eb7",
       "configuration": "noamazonReleaseRuntimeClasspath",
       "pom_sha256": "be1b66c55f9c7516308329706f8a4e0ab168651434686d8e802103eb8c2359b6",
       "declared_licences": [],
@@ -1867,7 +1867,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-server:9.4.58.v20250814",
       "filename": "jetty-server-9.4.58.v20250814.jar",
-      "sha256": "319ddb6452bf1b2d8937045ccc57c95d6a3f9cf6f403b667ece82ea4dd2c9186",
+      "sha256": "3dfc3db2abf5732a329aec6721da30ba8c1a37520d7fbd315c77de1dd36fa5ec",
       "configuration": "noamazonReleaseRuntimeClasspath",
       "pom_sha256": "b750ef1eb4b10d00700ace9675c17619c04017cd0e757748848b894662fe5c3c",
       "declared_licences": [],
@@ -1883,7 +1883,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-servlet:9.4.58.v20250814",
       "filename": "jetty-servlet-9.4.58.v20250814.jar",
-      "sha256": "1a99d1e8f4c07284665b540aab93aef4e8fe86cd62cb6fca230765b0d649906c",
+      "sha256": "6bdf14f9c303a4a021e580be5ee923fc26847c1e250715054577018a0ec49557",
       "configuration": "noamazonReleaseRuntimeClasspath",
       "pom_sha256": "92b861dbc3c0b64866a8c4edf2393de558d810299c539e8b43414837cc6c1036",
       "declared_licences": [],
@@ -1915,7 +1915,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-util:9.4.58.v20250814",
       "filename": "jetty-util-9.4.58.v20250814.jar",
-      "sha256": "86485e30d16c92264b0ef7a6483cce630e222fd18867a382f01094a3a7461608",
+      "sha256": "b89dc5027828b9cb5f4c1be33a8e74df9a21c950755bba1b735307f61bb0bedf",
       "configuration": "noamazonReleaseRuntimeClasspath",
       "pom_sha256": "74d463a2ea02233728ae70131374d6b1e194f77d223c0554f44f476f40c032c5",
       "declared_licences": [],

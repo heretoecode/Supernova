@@ -1,8 +1,8 @@
 {
-  "queried_at": "2026-10-29T08:19:05.333390+00:00",
+  "queried_at": "2026-10-29T09:05:30.302444+00:00",
   "scope": "All139 resolved runtime archives plus6 upstream fork lineage queries; version results remain visible for reviewed Jetty source backports. No assertion of zero vulnerabilities.",
-  "runtime_artifact_run": 40839698860,
-  "source_commit": "82315f7e033d0ca0343069264973e1e8ccd667f5",
+  "runtime_artifact_run": 40846173069,
+  "source_commit": "9f836021532d6e4291e23f6436ce72a0c99e48ef",
   "records": [
     {
       "coordinate": "androidx.activity:activity-ktx:1.9.0",
@@ -461,15 +461,15 @@
       "result": {}
     },
     {
-      "coordinate": "com.android.tools:desugar_jdk_libs:2.1.5",
+      "coordinate": "com.android.tools:desugar_jdk_libs_configuration_nio:2.1.5",
       "kind": "resolved-coordinate",
-      "archive_sha256": "d8044befae095781b9a80bf1faa92edc30382d75d437476784c1bf991598a976",
+      "archive_sha256": "7db51661cd07d1fd5cf12769a75ba201910624bb3801c09363dd3cb28e31c51b",
       "result": {}
     },
     {
-      "coordinate": "com.android.tools:desugar_jdk_libs_configuration:2.1.5",
+      "coordinate": "com.android.tools:desugar_jdk_libs_nio:2.1.5",
       "kind": "resolved-coordinate",
-      "archive_sha256": "7bc9051b3a1ec19806311dcb6aa9b9ba7ef9c22caa6f4810da55bde285fb7770",
+      "archive_sha256": "d8044befae095781b9a80bf1faa92edc30382d75d437476784c1bf991598a976",
       "result": {}
     },
     {
@@ -733,13 +733,13 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-client:9.4.58.v20250814",
       "kind": "resolved-coordinate",
-      "archive_sha256": "eb08a30a5e241743e13ad8e9d21fd050ccf0a931ef5f4a052d800874d26449a5",
+      "archive_sha256": "4a0203ed8cf1d86f836f7c1bc33a67f79f124deb0b291818c023d35cc4bd30b9",
       "result": {}
     },
     {
       "coordinate": "org.eclipse.jetty:jetty-http:9.4.58.v20250814",
       "kind": "resolved-coordinate",
-      "archive_sha256": "b08f6fb9a63bcc70e0c8560f73e759a90df3b622fd33a8da1ae4fd59d08bbd61",
+      "archive_sha256": "c2d03da3bcb494785e998d989a32b77d4bfe4e4997a67822c1e1ec8b9598663b",
       "result": {
         "vulns": [
           {
@@ -756,13 +756,13 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-io:9.4.58.v20250814",
       "kind": "resolved-coordinate",
-      "archive_sha256": "850b756156cf340d99af272b012a8b434aa2ea626a0e7f478a56bbfd00e50f8a",
+      "archive_sha256": "17435e8c739081127e1768f5be3d43314fff8bec836eab7d5112f33918dc01a2",
       "result": {}
     },
     {
       "coordinate": "org.eclipse.jetty:jetty-security:9.4.58.v20250814",
       "kind": "resolved-coordinate",
-      "archive_sha256": "466e95a4b4311324608caf7c56e7ebb21d9c016f6eb31bebb796c2e8809b2519",
+      "archive_sha256": "23c7eb4664261baa66be39fba41998df5d20db26e323feacd57b1ea28f060eb7",
       "result": {
         "vulns": [
           {
@@ -775,7 +775,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-server:9.4.58.v20250814",
       "kind": "resolved-coordinate",
-      "archive_sha256": "d33464a0b883614a387027db8364f5ca7cacfd8c98e4e201d77a47e4432644cd",
+      "archive_sha256": "3dfc3db2abf5732a329aec6721da30ba8c1a37520d7fbd315c77de1dd36fa5ec",
       "result": {
         "vulns": [
           {
@@ -788,7 +788,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-servlet:9.4.58.v20250814",
       "kind": "resolved-coordinate",
-      "archive_sha256": "9f20aef2577ea5b19a859897f598971c89b317cbf5fda10a43a0a42a195f279d",
+      "archive_sha256": "6bdf14f9c303a4a021e580be5ee923fc26847c1e250715054577018a0ec49557",
       "result": {}
     },
     {
@@ -800,7 +800,7 @@
     {
       "coordinate": "org.eclipse.jetty:jetty-util:9.4.58.v20250814",
       "kind": "resolved-coordinate",
-      "archive_sha256": "eae0f2b02e81260ac2621b3ae36573751921ba2f78800f2affe28785a1407be4",
+      "archive_sha256": "b89dc5027828b9cb5f4c1be33a8e74df9a21c950755bba1b735307f61bb0bedf",
       "result": {}
     },
     {

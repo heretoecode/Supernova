@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "native_lock_sha256": "b28c44a13fb2a55082799c3bf60e5e777eba47e57b16d2cbcd06f5b937b98c76",
+  "native_lock_sha256": "a1197ab90201ea5f3bcd7be11223265a28f84440c22272c06299ddc1b1e9064f",
   "components": [
     {
       "name": "ffmpeg",
@@ -198,5 +198,19 @@
   "removed_from_catalogue": [
     "libyuv: no longer linked; FFmpeg swscale replaces it",
     "libtorrent/Boost: retired runtime excluded fromAPK"
+  ],
+  "security_patches": [
+    {
+      "file": ".github/build/ffmpeg-supernova146-security.patch",
+      "sha256": "94a0df14870fc7803188997ff913622422e26265227f8e00c3b06950008411b4"
+    },
+    {
+      "file": ".github/build/freetype-supernova146-security.patch",
+      "sha256": "fe2af0c24e737f06b98c718b1958194587f8c6f6a97d6025023dd94cfd2dfce5"
+    },
+    {
+      "file": ".github/build/zlib-supernova146-security.patch",
+      "sha256": "4e69433578dfdb9044b399b7cfc8332fce66f6c001d4ab0dd276bd5408d0424d"
+    }
   ]
 }
