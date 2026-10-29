@@ -62,7 +62,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private ListingEngine engine;
     private int generation,listingRenderGeneration;
     private boolean closed, listingFailed;private TextView scanOverview,scanButton;private final android.os.Handler scanHandler=new android.os.Handler(android.os.Looper.getMainLooper());
-    private final Runnable scanRefresh=new Runnable(){public void run(){if(scanButton!=null)scanButton.setText(PreviewLibraryScan.active()?"Scanning…":"Scan Library");if(scanOverview!=null&&isAttachedToWindow())scanOverview.setText(networkLayout!=null&&section==0?dashboardLibraryStatus():PreviewLibraryScan.overview(getContext()));if(isAttachedToWindow())scanHandler.postDelayed(this,1000);}};
+    private final Runnable scanRefresh=new Runnable(){public void run(){if(scanButton!=null)scanButton.setText(PreviewLibraryScan.active()?"Scanning…":"Scan Library");if(scanOverview!=null&&isAttachedToWindow())scanOverview.setText(networkLayout!=null?networkScanSummary():PreviewLibraryScan.overview(getContext()));if(isAttachedToWindow())scanHandler.postDelayed(this,1000);}};
     private Consumer<String> networkAction = ignored -> {};
     private Consumer<Exception> credentials;
     private Consumer<Uri> locationChanged = ignored -> {};
@@ -76,23 +76,26 @@ public final class UniversalFileBrowser extends LinearLayout {
     private int landingSelection;
     private Runnable detailParent;
     private final List<View> landingCards=new ArrayList<>();
+    private float gridScale(){return Math.max(.5f,Math.min(1.25f,Math.min(getResources().getConfiguration().screenWidthDp/960f,getResources().getConfiguration().screenHeightDp/540f)));}
+    private int gridDp(int value){return Math.max(1,Math.round(value*gridScale()*getResources().getDisplayMetrics().density));}
+    private TextView gridText(String value,int size){TextView text=SharedThreePanel.text(getContext(),value,size);text.setTextSize(size*gridScale());return text;}
     private void networkLanding(){
-        if(current!=null&&suppliedDock==null)sectionLocations.put(landingSelection,current);
+        if(current!=null&&suppliedDock==null){remember();sectionLocations.put(landingSelection,current);}
         stopDiscovery();stopListing();clearProvider();if(putioController!=null){putioController.close();putioController=null;}
         section=0;sectionChild=false;centreAnchor=null;scanOverview=null;scanButton=null;
         LinearLayout grid=new LinearLayout(getContext()){
-            @Override protected void onMeasure(int w,int h){int available=MeasureSpec.getSize(h);float font=getResources().getConfiguration().fontScale;int required=font>1.2f?dp(Math.round(440*font)):available;super.onMeasure(w,MeasureSpec.makeMeasureSpec(Math.max(available,required),MeasureSpec.EXACTLY));}
-        };grid.setOrientation(VERTICAL);grid.setTag("network.landing");grid.setPadding(dp(12),dp(8),dp(12),dp(8));
-        TextView title=SharedThreePanel.text(getContext(),"Network & Files",28);grid.addView(title);
+            @Override protected void onMeasure(int w,int h){int available=MeasureSpec.getSize(h);float font=getResources().getConfiguration().fontScale;int required=font>1.2f?gridDp(Math.round(440*font)):available;super.onMeasure(w,MeasureSpec.makeMeasureSpec(Math.max(available,required),MeasureSpec.EXACTLY));}
+        };grid.setOrientation(VERTICAL);grid.setTag("network.landing");grid.setPadding(gridDp(12),gridDp(8),gridDp(12),gridDp(8));
+        TextView title=gridText("Network & Files",28);grid.addView(title);
         String[] labels={"Local Storage","Network Locations","Add Connection","Manage Connections","Network Scanning","Advanced Options"};
         String[] copy={"Browse internal storage, USB drives and all files.","Saved locations, discovered devices and Put.io.","Set up SMB, WebDAV, SFTP or FTP access.","Review saved locations and library membership.","Configure automatic checks and scan your library.","Library Health, file browsing and compatibility."};
         String[] icons={"local","network","plus","settings.nodes","refresh","settings"};
         landingCards.clear();
-        for(int r=0;r<2;r++){LinearLayout line=new LinearLayout(getContext());line.setBaselineAligned(false);LayoutParams row=new LayoutParams(-1,0,1);row.topMargin=dp(12);grid.addView(line,row);
-            for(int c=0;c<3;c++){final int index=r*3+c;LinearLayout card=column();card.setGravity(Gravity.CENTER_VERTICAL);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(dp(16),dp(14),dp(16),dp(14));card.setBackground(SharedThreePanel.control(getContext(),9));card.setTag("network.card."+index);card.setContentDescription(labels[index]+". "+copy[index]);
-                ImageView icon=new ImageView(getContext());icon.setImageDrawable(new PreviewIcon(icons[index]));card.addView(icon,new LayoutParams(dp(30),dp(30)));
-                TextView name=SharedThreePanel.text(getContext(),labels[index],20);name.setTypeface(null,android.graphics.Typeface.BOLD);card.addView(name);TextView description=SharedThreePanel.text(getContext(),copy[index],15);description.setTextColor(0xffbcc9d9);card.addView(description);
-                LayoutParams size=new LayoutParams(0,-1,1);if(c<2)size.rightMargin=dp(12);line.addView(card,size);landingCards.add(card);
+        for(int r=0;r<2;r++){LinearLayout line=new LinearLayout(getContext());line.setBaselineAligned(false);LayoutParams row=new LayoutParams(-1,0,1);row.topMargin=gridDp(12);grid.addView(line,row);
+            for(int c=0;c<3;c++){final int index=r*3+c;LinearLayout card=column();card.setGravity(Gravity.CENTER_VERTICAL);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(gridDp(16),gridDp(14),gridDp(16),gridDp(14));card.setBackground(SharedThreePanel.control(getContext(),9));card.setTag("network.card."+index);card.setContentDescription(labels[index]+". "+copy[index]);
+                ImageView icon=new ImageView(getContext());icon.setImageDrawable(new PreviewIcon(icons[index]));card.addView(icon,new LayoutParams(gridDp(30),gridDp(30)));
+                TextView name=gridText(labels[index],20);name.setTypeface(null,android.graphics.Typeface.BOLD);LayoutParams nameSize=new LayoutParams(-1,-2);nameSize.topMargin=gridDp(10);card.addView(name,nameSize);TextView description=gridText(copy[index],15);description.setTextColor(0xffbcc9d9);LayoutParams descriptionSize=new LayoutParams(-1,-2);descriptionSize.topMargin=gridDp(6);card.addView(description,descriptionSize);
+                LayoutParams size=new LayoutParams(0,-1,1);if(c<2)size.rightMargin=gridDp(12);line.addView(card,size);landingCards.add(card);
                 card.setOnFocusChangeListener((v,yes)->{if(yes)landingSelection=index;});card.setOnClickListener(v->openLandingCard(index));
                 card.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;int next=index;if(key==KeyEvent.KEYCODE_DPAD_LEFT&&cIndex(index)>0)next--;else if(key==KeyEvent.KEYCODE_DPAD_RIGHT&&cIndex(index)<2)next++;else if(key==KeyEvent.KEYCODE_DPAD_UP){if(index<3)return false;next-=3;}else if(key==KeyEvent.KEYCODE_DPAD_DOWN&&index<3)next+=3;else if(key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;landingCards.get(next).requestFocus();return true;});
             }
@@ -253,7 +256,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private void scanControls(){
         sectionChild=true;requestExit(()->{
             stopDiscovery();workspaceMode(false);right.setVisibility(VISIBLE);
-            toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);remember();current=null;stopListing();items.removeAllViews();crumbs.removeAllViews();scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(false);scanOverview.setFocusableInTouchMode(false);scanOverview.setBackground(null);items.addView(scanOverview);
+            toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);remember();current=null;stopListing();items.removeAllViews();crumbs.removeAllViews();scanOverview=SharedThreePanel.text(getContext(),networkLayout!=null?networkScanSummary():PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(false);scanOverview.setFocusableInTouchMode(false);scanOverview.setBackground(null);items.addView(scanOverview);
             facts.setVisibility(GONE);heading.setText("Network Scanning");information.setText("Automatic checks use the existing scanner. Scans continue when you leave this page.");actions.removeAllViews();
             int period=com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(getContext());
             addAction("Automatic: "+(period>0?"On":"Off"),()->{if(period>0)prefs.edit().putInt("preview_scan_frequency",period).apply();com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(getContext(),0,period>0?0:prefs.getInt("preview_scan_frequency",3600000),true);scanControls();actions.getChildAt(0).requestFocus();});
@@ -410,10 +413,11 @@ public final class UniversalFileBrowser extends LinearLayout {
         addAction("Scan Library",()->PreviewLibraryScan.request(getContext()));
         addAction("Network Scanning",this::scanControls);
         addAction("Library Health",()->health(-1));
-        scanOverview=SharedThreePanel.text(getContext(),PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(false);scanOverview.setFocusableInTouchMode(false);scanOverview.setBackground(null);items.addView(scanOverview,new LayoutParams(-1,-2));
+        scanOverview=SharedThreePanel.text(getContext(),networkLayout!=null?networkScanSummary():PreviewLibraryScan.overview(getContext()),16);scanOverview.setFocusable(false);scanOverview.setFocusableInTouchMode(false);scanOverview.setBackground(null);items.addView(scanOverview,new LayoutParams(-1,-2));
         items.addView(SharedThreePanel.text(getContext(),"Select a location to browse its files and folders.",16));
     }
 
+    private String networkScanSummary(){return PreviewLibraryScan.overview(getContext())+"\n\n"+dashboardLibraryStatus();}
     private String dashboardLibraryStatus(){
         long completed=prefs.getLong("preview_scan_result_time",0);
         PreviewLibraryLoader.Snapshot snapshot=PreviewLibraryLoader.memoryCache();int unavailable=0;
