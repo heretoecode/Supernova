@@ -21,5 +21,5 @@ class Signing147Test(unittest.TestCase):
   with self.assertRaises(qa.key.SigningError):qa.gate(self.evidence,self.apk,self.source)
  def testUnapprovedBranchIsRejectedBeforeAnyKeystoreAccess(self):
   receipt=Path(self.directory.name)/'proof.json';receipt.write_text(json.dumps(self.evidence))
-  for branch in ['refs/heads/main','refs/heads/codex/supernova-0.145-maintenance-2026-10-28','refs/heads/codex/supernova-0.147-maintenance-2026-10-28']:
+  for branch in ['refs/heads/codex/supernova-0.146-upstream-completion-2026-10-28','refs/heads/main','refs/heads/codex/supernova-0.145-maintenance-2026-10-28','refs/heads/codex/supernova-0.147-maintenance-2026-10-28']:
    with self.subTest(branch=branch),self.assertRaises(qa.key.SigningError):qa.prepare(receipt,self.apk,{'SUPERNOVA_QA_SOURCE':self.source,'GITHUB_REF':branch})

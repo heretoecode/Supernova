@@ -54,7 +54,7 @@ public final class TopNavigation extends LinearLayout {
         bar.setPadding(dp(26), 0, dp(26), 0);
         bar.setBackgroundColor(Color.TRANSPARENT);
         brand = new TextView(c);brand.setSingleLine(true);
-        brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19); brand.setTextColor(Color.WHITE);
+        brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19*TvLayout.scale(c)); brand.setTextColor(Color.WHITE);
         brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(136), -1));
         group = new PreviewFocusRail(c);group.useUnderline();group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
         android.widget.HorizontalScrollView rail=new android.widget.HorizontalScrollView(c);rail.setHorizontalScrollBarEnabled(false);rail.setFillViewport(true);rail.setClipChildren(true);rail.setClipToPadding(true);rail.setFocusable(false);rail.addView(group,new android.widget.FrameLayout.LayoutParams(-2,-1));bar.addView(rail,new LayoutParams(0,-1,1));
@@ -63,7 +63,7 @@ public final class TopNavigation extends LinearLayout {
             final int index = i;
             TextView tab = new TextView(c); tabs[i] = tab;
             tab.setText(labels[i]); tab.setContentDescription(labels[i]); tab.setTag("semantic:topnav." + new String[]{"home","movies","tv","network","settings","search","custom"}[index]);
-            tab.setTextColor(Color.WHITE); tab.setTextSize(19); tab.setGravity(Gravity.CENTER);
+            tab.setTextColor(Color.WHITE); tab.setTextSize(19*TvLayout.scale(c)); tab.setGravity(Gravity.CENTER);
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
             if(index==6){tab.setMaxWidth(dp(140));tab.setEllipsize(android.text.TextUtils.TruncateAt.END);}
             tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
@@ -105,7 +105,7 @@ public final class TopNavigation extends LinearLayout {
         group.removeView(tabs[5]);group.addView(tabs[5],group.indexOfChild(tabs[4]),new LayoutParams(-2,dp(36)));
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(64), dp(46)));
-        clock=new android.widget.TextClock(c);clock.setSingleLine(true);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19);clock.setTextColor(Color.WHITE);clock.setGravity(Gravity.CENTER_VERTICAL|Gravity.END);clock.setIncludeFontPadding(tabs[0].getIncludeFontPadding());clock.setPadding(0,dp(6),0,dp(6));status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        clock=new android.widget.TextClock(c);clock.setSingleLine(true);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19*TvLayout.scale(c));clock.setTextColor(Color.WHITE);clock.setGravity(Gravity.CENTER_VERTICAL|Gravity.END);clock.setIncludeFontPadding(tabs[0].getIncludeFontPadding());clock.setPadding(0,dp(6),0,dp(6));status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
         updateCustomPage();selected = tabs[0]; selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
         stage=new android.widget.FrameLayout(c);

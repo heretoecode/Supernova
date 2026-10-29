@@ -44,6 +44,7 @@ public class Network142RenderTest {
    float density=nav.getResources().getDisplayMetrics().density;int w=Math.round(nav.getResources().getConfiguration().screenWidthDp*density),h=Math.round(nav.getResources().getConfiguration().screenHeightDp*density);
    for(int n=0;n<4;n++){nav.measure(View.MeasureSpec.makeMeasureSpec(w,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(h,View.MeasureSpec.EXACTLY));nav.layout(0,0,w,h);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
    for(int n=0;n<6;n++){View card=nav.findViewWithTag("network.card."+n);assertNotNull(card);assertTrue(card.getWidth()>0&&card.getHeight()>0);int[] xy=new int[2];card.getLocationOnScreen(xy);assertTrue("Safe horizontal bounds",xy[0]>=0&&xy[0]+card.getWidth()<=w);assertTrue("Cards fit vertically",xy[1]>=0&&xy[1]+card.getHeight()<=h);}
+   for(String tab:new String[]{"home","movies","tv","network","search","settings"}){View control=nav.findViewWithTag("semantic:topnav."+tab);android.graphics.Rect visible=new android.graphics.Rect();assertTrue(tab,control.getGlobalVisibleRect(visible));assertEquals("Complete navigation control at "+suffix+": "+tab,control.getWidth(),visible.width());}
    invalidateCapture(nav);PreviewPagesTest.capture(nav,"0147-network-"+suffix);
   }finally{browser.close();host.pause().stop().destroy();}
  }

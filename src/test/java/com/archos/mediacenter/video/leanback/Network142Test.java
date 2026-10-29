@@ -87,5 +87,5 @@ public class Network142Test {
  @Test public void navigationEntryPreservesTheOpenFolder(){
   select("local_storage");Uri deep=Uri.parse("file:///fixture-usb/Movies/Series");browser.open(deep);layout();assertTrue(browser.focusOverview());layout();assertEquals(deep,browser.location());
  }
- @Test public void cloudAndHealthRemainReachable()throws Exception{select("cloud_services");assertNotNull(PreviewPagesTest.findText(browser,"Enabled: On"));PreviewPagesTest.capture(browser,"0142-cloud-disconnected");select("library_health");for(String name:LibraryHealthPanel.NAMES)assertNotNull(name,PreviewPagesTest.findText(browser,name));PreviewPagesTest.capture(browser,"0142-library-health");}
+ @Test public void cloudAndHealthRemainReachable()throws Exception{select("cloud_services");assertNotNull(PreviewPagesTest.findText(browser,"Enabled: On"));View enabled=(View)PreviewPagesTest.findText(browser,"Enabled: On").getParent();enabled.requestFocus();enabled.performClick();layout();assertTrue(((View)PreviewPagesTest.findText(browser,"Enabled: Off").getParent()).hasFocus());PreviewPagesTest.capture(browser,"0142-cloud-disconnected");select("library_health");for(String name:LibraryHealthPanel.NAMES)assertNotNull(name,PreviewPagesTest.findText(browser,name));PreviewPagesTest.capture(browser,"0142-library-health");}
 }

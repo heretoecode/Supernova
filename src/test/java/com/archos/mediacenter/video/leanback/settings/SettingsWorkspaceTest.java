@@ -126,6 +126,8 @@ public class SettingsWorkspaceTest {
     }
     private void invalidateAll(View view){view.invalidate();if(view instanceof ViewGroup)for(int n=0;n<((ViewGroup)view).getChildCount();n++)invalidateAll(((ViewGroup)view).getChildAt(n));}
     @Test public void productionActivityRendersTheSharedHeaderOnGridAndCategory()throws Exception{
+        // As in existing production-Activity fixtures, model AndroidX's installed signature permission.
+        Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
         var activity=Robolectric.buildActivity(VideoSettingsActivity.class).setup().visible();try{
             activity.get().getSupportFragmentManager().executePendingTransactions();Shadows.shadowOf(Looper.getMainLooper()).idle();
             View nav=((ViewGroup)activity.get().findViewById(android.R.id.content)).getChildAt(0);assertTrue(nav instanceof TopNavigation);

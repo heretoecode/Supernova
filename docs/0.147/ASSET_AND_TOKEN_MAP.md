@@ -10,3 +10,5 @@
 The three historical network storyboard Git blobs exactly match their asset README: R1 6c6930b5f87b7c1c80e66f460a8f898942162ea5; R2 585994c522581e18715eecdd4b21593c422fb28c; R3 224536a2389572d9ae885fd6e5a2fd1d60f2be56. Their left rail, sample credentials/providers, capacities and test/save semantics are superseded or illustrative; they are not screenshot geometry targets for the newly approved six-card layout.
 
 Software screenshot comparisons and physical calibration remain separate acceptance gates. No pixel-perfect or Shield visual pass is asserted from these source tokens.
+
+Software 720p inspection found clipping in the inherited global bar because text stayed at 19sp while its geometry scaled. TopNavigation now applies the existing TvLayout viewport scale to its 19sp text; the 960x540 reference remains unchanged. Responsive render checks require the full visible width of Home, Movies, TV Shows, Network & Files, Search and Settings.

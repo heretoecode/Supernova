@@ -24,9 +24,9 @@ public class PlaybackAgeOverlayTest {
     }
     @Test public void territorySelectionNeverFallsBackToAnotherRegion()throws Exception{
         var data=new org.json.JSONObject("{\"results\":[{\"iso_3166_1\":\"US\",\"rating\":\"TV-MA\"},{\"iso_3166_1\":\"GB\",\"rating\":\"15\"}]}");
-        assertEquals("15",com.archos.mediacenter.video.leanback.SharedMetadata.certificate(data,"GB"));
-        assertEquals("TV-MA",com.archos.mediacenter.video.leanback.SharedMetadata.certificate(data,"US"));
-        assertEquals("",com.archos.mediacenter.video.leanback.SharedMetadata.certificate(data,"FR"));
+        assertEquals("15",PlaybackAgeOverlay.certificate(data,"GB"));
+        assertEquals("TV-MA",PlaybackAgeOverlay.certificate(data,"US"));
+        assertEquals("",PlaybackAgeOverlay.certificate(data,"FR"));
     }
     @Test public void rapidUnindexedFileSwitchResetsOutputEvenWhenDatabaseIdsMatch(){
         PlaybackAgeOverlay view=new PlaybackAgeOverlay(RuntimeEnvironment.getApplication(),null);
