@@ -3755,6 +3755,24 @@ index b802b89..f34c5ad 100644
  
  	void		*priv;
  } STREAM_FILTER_AUDIO;
+diff --git a/Include/stream_hls_compat.h b/Include/stream_hls_compat.h
+new file mode 100644
+index 0000000..0750a30
+--- /dev/null
++++ b/Include/stream_hls_compat.h
+@@ -0,0 +1,12 @@
++// Copyright2026 Supernova contributors
++// SPDX-License-Identifier: Apache-2.0
++#ifndef SUPERNOVA_STREAM_HLS_COMPAT_H
++#define SUPERNOVA_STREAM_HLS_COMPAT_H
++#include <string.h>
++/* FFmpeg9 retired the hls+ protocol alias. Preserve the source URI/bookmark;
++ * strip only the backend transport alias and force the maintained HLS demuxer. */
++static inline int stream_hls_compat_url(const char **url) {
++    if (url && *url && !strncmp(*url, "hls+", 4)) { *url += 4; return 1; }
++    return 0;
++}
++#endif
 diff --git a/Include/stream_queue.h b/Include/stream_queue.h
 deleted file mode 100644
 index 36ebb87..0000000
@@ -25901,7 +25919,7 @@ index 0889f8f..754ccbe 100644
  
  // ***********************************************************
 diff --git a/Source/stream_parser_ffmpeg.c b/Source/stream_parser_ffmpeg.c
-index 090d59a..77872e9 100644
+index 090d59a..c08cc98 100644
 --- a/Source/stream_parser_ffmpeg.c
 +++ b/Source/stream_parser_ffmpeg.c
 @@ -32,6 +32,11 @@
@@ -25972,7 +25990,7 @@ index 090d59a..77872e9 100644
  	int 		need_key;
  	int 		last_audio_time;
  
-@@ -192,6 +213,75 @@ typedef struct FF_PRIV
+@@ -192,6 +213,78 @@ typedef struct FF_PRIV
  } FF_PRIV;
  
  
@@ -26023,9 +26041,12 @@ index 090d59a..77872e9 100644
 +	}
 +}
 +
++#include "stream_hls_compat.h"
++
 +static int ffmpeg_open_input(FF_PRIV *priv, const char *url, AVDictionary **options)
 +{
-+	if (strncmp(url, "fd://", 5)) return avformat_open_input(&priv->fmt, url, NULL, options);
++    const AVInputFormat *input_format = stream_hls_compat_url(&url) ? av_find_input_format("hls") : NULL;
++	if (strncmp(url, "fd://", 5)) return avformat_open_input(&priv->fmt, url, input_format, options);
 +	int fd;
 +	int64_t offset, length;
 +	if (stream_fd_parse_url(url, &fd, &offset, &length)) return AVERROR(EINVAL);
@@ -26042,13 +26063,13 @@ index 090d59a..77872e9 100644
 +	if (!priv->fd_io) { av_free(buffer); return AVERROR(ENOMEM); }
 +	priv->fmt->pb = priv->fd_io;
 +	priv->fmt->flags |= AVFMT_FLAG_CUSTOM_IO;
-+	return avformat_open_input(&priv->fmt, NULL, NULL, options);
++	return avformat_open_input(&priv->fmt, NULL, input_format, options);
 +}
 +
  static int ff_force_seek = 1;
  
  DECLARE_DEBUG_PARAM( "fffs", ff_force_seek );
-@@ -328,6 +418,47 @@ static int get_ff_format( int id, UINT32 *fourcc )
+@@ -328,6 +421,47 @@ static int get_ff_format( int id, UINT32 *fourcc )
  	return 0;
  }
  
@@ -26096,7 +26117,7 @@ index 090d59a..77872e9 100644
  // ************************************************************
  //
  //	_parse_format
-@@ -341,7 +472,9 @@ static int _parse_format( int etype, FF_PRIV *priv )
+@@ -341,7 +475,9 @@ static int _parse_format( int etype, FF_PRIV *priv )
  DBGP serprintf("format   [%s]\r\n", fmt->iformat->name );
  
  	if( fmt->pb ) {
@@ -26107,7 +26128,7 @@ index 090d59a..77872e9 100644
  DBGP serprintf("size     %lld\r\n", priv->size );
  	}
  	if( fmt->duration != AV_NOPTS_VALUE && etype != ETYPE_MPEG_TS ) {
-@@ -467,6 +600,10 @@ serprintf( "untouched (!?) vrate=%d; vscale=%d\n", video->rate, video->scale );
+@@ -467,6 +603,10 @@ serprintf( "untouched (!?) vrate=%d; vscale=%d\n", video->rate, video->scale );
  					// libavformat used to skip the first 4 bytes in av1 private data but not anymore
  					// for AV1 both sfdec android hw codecs and dav1d do not want this thus skip it
  					int offset = ( video->format == VIDEO_FORMAT_AV1 ) ? 4 : 0;
@@ -26118,7 +26139,7 @@ index 090d59a..77872e9 100644
  					if( codecpar->extradata_size <= sizeof( video->extraData ) ) {
  						// Add debug output to investigate the extradata
  						DBGP {
-@@ -598,7 +735,9 @@ serprintf("FF: parse H264 SPS\n");
+@@ -598,7 +738,9 @@ serprintf("FF: parse H264 SPS\n");
                              }
  
                              if (video->dv_profile) {
@@ -26128,7 +26149,7 @@ index 090d59a..77872e9 100644
                                  force_dovi = (dovi_decoder != NULL);
                              }
  
-@@ -767,6 +906,24 @@ DBGP serprintf("srate=%d; sscale=%d\n", sub->rate, sub->scale);
+@@ -767,6 +909,24 @@ DBGP serprintf("srate=%d; sscale=%d\n", sub->rate, sub->scale);
  				sub->extraData2     = codecpar->extradata;
  				sub->extraDataSize2 = codecpar->extradata_size;
  
@@ -26153,7 +26174,7 @@ index 090d59a..77872e9 100644
  				if (title) {
  					int n = snprintf(sub->name, AV_NAME_LEN, "%s", title->value);
  					if (n >= AV_NAME_LEN) sub->name[AV_NAME_LEN - 1] = '\0';
-@@ -791,6 +948,46 @@ DBGP serprintf("srate=%d; sscale=%d\n", sub->rate, sub->scale);
+@@ -791,6 +951,46 @@ DBGP serprintf("srate=%d; sscale=%d\n", sub->rate, sub->scale);
  					"maximum of %d subtitle tracks reached\n",
  					i, SUB_TRACK_MAX);
  			}
@@ -26200,7 +26221,7 @@ index 090d59a..77872e9 100644
  		}
  DISCARD_STREAM:
  		if( discard ) {
-@@ -867,7 +1064,7 @@ DBGS serprintf("FFMPEG: open: %s, buffer_size: %d\r\n", s->src.url, buffer_size)
+@@ -867,7 +1067,7 @@ DBGS serprintf("FFMPEG: open: %s, buffer_size: %d\r\n", s->src.url, buffer_size)
  	
  	stream_parser_clear_chunks( s );
  
@@ -26209,7 +26230,7 @@ index 090d59a..77872e9 100644
  
  	av_log_set_callback(av_log_cb);
  	if( log_debug ) {
-@@ -880,6 +1077,7 @@ serprintf("FFMPEG: cannot init network");
+@@ -880,6 +1080,7 @@ serprintf("FFMPEG: cannot init network");
      	}
  	
  	ff_p->fmt = avformat_alloc_context();
@@ -26217,7 +26238,7 @@ index 090d59a..77872e9 100644
  
  	// set max_delay here, we need that for proper RTSP, all other demuxers ignore it ...
  	ff_p->fmt->max_delay = max_delay;
-@@ -930,7 +1128,7 @@ DBGP serprintf("max_delay: %d\n", ff_p->fmt->max_delay);
+@@ -930,7 +1131,7 @@ DBGP serprintf("max_delay: %d\n", ff_p->fmt->max_delay);
  	ffmpeg_set_http_options(&ff_p->fmt_opts, &s->src);
  DBGP serprintf("FFMPEG: opening url [%s]\r\n", s->src.url);
  
@@ -26226,7 +26247,7 @@ index 090d59a..77872e9 100644
  serprintf("FFMPEG: cannot open file [%s]\r\n", s->src.url);
  		goto ErrorExit4;
  	}
-@@ -971,7 +1169,7 @@ DBGP serprintf("info\r\n");
+@@ -971,7 +1172,7 @@ DBGP serprintf("info\r\n");
  		}
  	}
  
@@ -26235,7 +26256,7 @@ index 090d59a..77872e9 100644
  
  	memcpy( &s->av, &ff_p->av, sizeof( AV_PROPERTIES ) );
  
-@@ -981,10 +1179,12 @@ DBGP serprintf("info\r\n");
+@@ -981,10 +1182,12 @@ DBGP serprintf("info\r\n");
  	LinkedList_init( &ff_p->aq.list );
  	LinkedList_init( &ff_p->vq.list );
  	LinkedList_init( &ff_p->sq.list );
@@ -26248,7 +26269,7 @@ index 090d59a..77872e9 100644
  
  	// make lavf parser use this sync mode! 0 is for STREAM_SYNC_CDATA (PTS) and 1 for STREAM_SYNC_SAMPLES
  	//s->sync_mode = STREAM_SYNC_SAMPLES;
-@@ -1005,6 +1205,8 @@ DBGP serprintf("info\r\n");
+@@ -1005,6 +1208,8 @@ DBGP serprintf("info\r\n");
  
  ErrorExit4:
  ErrorExit3:
@@ -26257,7 +26278,7 @@ index 090d59a..77872e9 100644
  	av_dict_free(&ff_p->fmt_opts);
  	avformat_network_deinit();
  
-@@ -1036,9 +1238,17 @@ serprintf("FFMPEG: not open!\r\n" );
+@@ -1036,9 +1241,17 @@ serprintf("FFMPEG: not open!\r\n" );
  		}
  
  
@@ -26275,7 +26296,7 @@ index 090d59a..77872e9 100644
  
  		av_dict_free(&ff_p->fmt_opts);
  
-@@ -1064,18 +1274,62 @@ static void _dispose_packet( AVPacket *packet )
+@@ -1064,18 +1277,62 @@ static void _dispose_packet( AVPacket *packet )
  //	_add_packet
  //
  // ************************************************************
@@ -26340,7 +26361,7 @@ index 090d59a..77872e9 100644
  	q->packets  ++;
  	pthread_mutex_unlock( &q->mutex );
  	return 0;
-@@ -1100,7 +1354,7 @@ static AVPacket *_get_packet( AVQueue *q, AVPacket *packet )
+@@ -1100,7 +1357,7 @@ static AVPacket *_get_packet( AVQueue *q, AVPacket *packet )
  	*packet = node->packet;
  	afree( node );
  	
@@ -26349,7 +26370,7 @@ index 090d59a..77872e9 100644
  	q->packets  --;
  	
  	pthread_mutex_unlock( &q->mutex );
-@@ -1148,6 +1402,167 @@ DBGP serprintf("[%4d|%8d]\r\n", q->packets, q->mem_used );
+@@ -1148,6 +1405,167 @@ DBGP serprintf("[%4d|%8d]\r\n", q->packets, q->mem_used );
  	return 0;
  }
  
@@ -26517,7 +26538,7 @@ index 090d59a..77872e9 100644
  extern int stream_drive_wake_sleep;
  
  // audio_speed > 1 means that parsers are outputting audio/video quicker with smaller time units yielding smaller timestamps
-@@ -1161,16 +1576,21 @@ extern int stream_drive_wake_sleep;
+@@ -1161,16 +1579,21 @@ extern int stream_drive_wake_sleep;
  
  // ************************************************************
  //
@@ -26544,7 +26565,7 @@ index 090d59a..77872e9 100644
  }
  
  // ************************************************************
-@@ -1207,9 +1627,79 @@ static int _get_subtitle_time( STREAM *s, AVPacket *packet )
+@@ -1207,9 +1630,79 @@ static int _get_subtitle_time( STREAM *s, AVPacket *packet )
  //	_parse_once
  //
  // ************************************************************
@@ -26624,7 +26645,7 @@ index 090d59a..77872e9 100644
  	
  	if( ff_p->sleeping ) {
  		// we are sleeping, decide whether to wake up
-@@ -1218,54 +1708,72 @@ static int _parse_once( STREAM *s, int *timestamp)
+@@ -1218,54 +1711,72 @@ static int _parse_once( STREAM *s, int *timestamp)
  DBGP serprintf("FFMPEG: wake\r\n");
  			ff_p->sleeping = 0;
  		} else {
@@ -26718,7 +26739,7 @@ index 090d59a..77872e9 100644
  	}
  
  	int stream = packet.stream_index;
-@@ -1302,8 +1810,8 @@ DBGP {
+@@ -1302,8 +1813,8 @@ DBGP {
  		if( ff_p->aq.packets == 0 && mem_used > ff_p->buffer_size ) {
  			// This packet arrived while searching past buffer_size for audio
  			// (see audio_starved above / the video routing branch below).
@@ -26729,7 +26750,7 @@ index 090d59a..77872e9 100644
  		}
  		DBG serprintf("FFMPEG:AUDIO pkt st=%d pts=%lld dts=%lld pos=%lld size=%d seek=%d\n",
  			stream,
-@@ -1315,7 +1823,16 @@ DBGP		serprintf("AUDIO_SEARCH_HIT: overflow=%d bytes vq=%d/%d\n",
+@@ -1315,7 +1826,16 @@ DBGP		serprintf("AUDIO_SEARCH_HIT: overflow=%d bytes vq=%d/%d\n",
  DBGP2 serprintf("     AUDIO dts/pts %8lld/%8lld     %02X %02X %02X %02X\r\n", GET_AUDIO_TS( packet.dts ), GET_AUDIO_TS( packet.pts ), packet.data[0], packet.data[1],packet.data[2],packet.data[3] );
  DBGC1 serprintf("     AUDIO dts/pts %8lld/%8lld     %02X %02X %02X %02X  %d\r\n", GET_AUDIO_TS( packet.dts ), GET_AUDIO_TS( packet.pts ), packet.data[0], packet.data[1],packet.data[2],packet.data[3], packet.size );
  		// add audio packet
@@ -26747,7 +26768,7 @@ index 090d59a..77872e9 100644
  		if( timestamp )
  			*timestamp = GET_AUDIO_TS( packet.pts );
  	} else if( s->video->valid && stream == s->video->stream ) {
-@@ -1324,28 +1841,20 @@ DBGP2 serprintf("VIDEO      dts/pts %8lld/%8lld  %s  %02X %02X %02X %02X\r\n", G
+@@ -1324,28 +1844,20 @@ DBGP2 serprintf("VIDEO      dts/pts %8lld/%8lld  %s  %02X %02X %02X %02X\r\n", G
  										packet.data[0], packet.data[1],packet.data[2],packet.data[3]  );
  DBGC4 serprintf("VIDEO      dts/pts %8lld/%8lld  %s  %02X %02X %02X %02X\r\n", GET_VIDEO_TS( packet.dts ), GET_VIDEO_TS( packet.pts ), (packet.flags & AV_PKT_FLAG_KEY) ? "I" : " ",
  										packet.data[0], packet.data[1],packet.data[2],packet.data[3]  );
@@ -26789,7 +26810,7 @@ index 090d59a..77872e9 100644
  	} else {
  		_rt_discard_pkts++;
  		// A packet that doesn't match any known stream index. Should be rare
-@@ -1366,7 +1875,10 @@ DBGP2 serprintf("\r\n");
+@@ -1366,7 +1878,10 @@ DBGP2 serprintf("\r\n");
  	// discard packet
  	av_packet_unref(&packet);
  
@@ -26801,7 +26822,7 @@ index 090d59a..77872e9 100644
  }
  
  // ************************************************************
-@@ -1403,17 +1915,13 @@ static int _pauseable( STREAM *s )
+@@ -1403,17 +1918,13 @@ static int _pauseable( STREAM *s )
  //	_seekable
  //
  // ************************************************************
@@ -26825,7 +26846,7 @@ index 090d59a..77872e9 100644
  }
  
  // ************************************************************
-@@ -1435,7 +1943,8 @@ DBGP serprintf("FFMPEG: seek: time %8d  pos %5d  dir %d\r\n", time, pos, dir);
+@@ -1435,7 +1946,8 @@ DBGP serprintf("FFMPEG: seek: time %8d  pos %5d  dir %d\r\n", time, pos, dir);
  	INT64 new_pos;
  	if( time == -1 ) {
  		// seek to pos
@@ -26835,7 +26856,7 @@ index 090d59a..77872e9 100644
  		av_flags |= AVSEEK_FLAG_BYTE;
  		
  		if( new_pos > s->size ) {
-@@ -1453,20 +1962,39 @@ DBGP serprintf("FFMPEG: seek: time %8d  pos %5d  dir %d\r\n", time, pos, dir);
+@@ -1453,20 +1965,39 @@ DBGP serprintf("FFMPEG: seek: time %8d  pos %5d  dir %d\r\n", time, pos, dir);
  DBGP serprintf("FFMPEG: new pos: %lld\r\n", new_pos );
  	} else {
  		// TODO: start_time is ts: bug mixing time domains
@@ -26882,7 +26903,7 @@ index 090d59a..77872e9 100644
  
  	if( ret < 0 ) {
  serprintf("FFMPEG: seek error\r\n"); 
-@@ -1475,11 +2003,14 @@ serprintf("FFMPEG: seek error\r\n");
+@@ -1475,11 +2006,14 @@ serprintf("FFMPEG: seek error\r\n");
  	
  	s->audio_parse_end = 0;
  	s->video_parse_end = 0;
@@ -26897,7 +26918,7 @@ index 090d59a..77872e9 100644
  
  	ff_p->sleeping = 0;
  	
-@@ -1492,13 +2023,27 @@ serprintf("FFMPEG: seek error\r\n");
+@@ -1492,13 +2026,27 @@ serprintf("FFMPEG: seek error\r\n");
  		ignore_first = 1;
  	}
  
@@ -26929,7 +26950,7 @@ index 090d59a..77872e9 100644
  		if( packet ) {
  			int ts = _get_video_time( s, packet ); // returns ts
  			DBG2 serprintf( "stream_parser_ffmpeg:_seek time %d, pos %d, rt=%d -> ts=%d\n", time, pos, (int)( audio_interface_get_audio_speed() * ts ), ts );
-@@ -1509,6 +2054,7 @@ DBGP serprintf("ignore! %d\n", ts);
+@@ -1509,6 +2057,7 @@ DBGP serprintf("ignore! %d\n", ts);
  					ignore_first--;
  				} else if( ts != -1 ) {
  					sc->time = ts; // stream chunk is ts
@@ -26937,7 +26958,7 @@ index 090d59a..77872e9 100644
  					break;
  				}
  			} else {
-@@ -1518,6 +2064,12 @@ DBGP serprintf("nokey!  %d\n", ts);
+@@ -1518,6 +2067,12 @@ DBGP serprintf("nokey!  %d\n", ts);
  			_dispose_packet( packet );			
  		}
  	}
@@ -26950,7 +26971,7 @@ index 090d59a..77872e9 100644
  DBGP serprintf("FFMPEG: seek to time %8d  pos %5d  dir %d -> %d/%lld  (took %d)\r\n", time, pos, dir, sc->time, sc->pos, atime() - start ); 
  	if( s->audio->valid ) {
  		while( 1 ) {
-@@ -1573,9 +2125,15 @@ static int _get_audio_cdata( STREAM *s, CLEVER_BUFFER *audio_buffer, STREAM_CDAT
+@@ -1573,9 +2128,15 @@ static int _get_audio_cdata( STREAM *s, CLEVER_BUFFER *audio_buffer, STREAM_CDAT
  		return 1;
  	}
  
@@ -26969,7 +26990,7 @@ index 090d59a..77872e9 100644
  			return 1;
  		}
  	}
-@@ -1600,6 +2158,7 @@ static int _get_audio_cdata( STREAM *s, CLEVER_BUFFER *audio_buffer, STREAM_CDAT
+@@ -1600,6 +2161,7 @@ static int _get_audio_cdata( STREAM *s, CLEVER_BUFFER *audio_buffer, STREAM_CDAT
  	
  DBGC2  serprintf(" A   siz %6d  pos %8lld   tim %8d  pkt %6d  %8d\r\n", packet->size, packet->pos, cdata->time, ff_p->aq.packets, ff_p->aq.mem_used );
  	memcpy( audio_buffer->data, packet->data, packet->size );
@@ -26977,7 +26998,7 @@ index 090d59a..77872e9 100644
  	
  	cdata->valid = CHUNK_VALID;
  
-@@ -1641,10 +2200,26 @@ static int _get_video_cdata( STREAM *s, CBE *cbe, STREAM_CDATA *cdata )
+@@ -1641,10 +2203,26 @@ static int _get_video_cdata( STREAM *s, CBE *cbe, STREAM_CDATA *cdata )
  	}
  	
  	AVPacket _packet;
@@ -27005,7 +27026,7 @@ index 090d59a..77872e9 100644
  	memset( cdata, 0, sizeof( STREAM_CDATA ) );
  	
  	if( ff_p->need_key ) {
-@@ -1659,7 +2234,10 @@ static int _get_video_cdata( STREAM *s, CBE *cbe, STREAM_CDATA *cdata )
+@@ -1659,7 +2237,10 @@ static int _get_video_cdata( STREAM *s, CBE *cbe, STREAM_CDATA *cdata )
  	// copy relevant chunk info:
  	cdata->type 	  = 0;
  	cdata->key   	  = (packet->flags & AV_PKT_FLAG_KEY) ? 1 : 0;
@@ -27017,7 +27038,7 @@ index 090d59a..77872e9 100644
  	cdata->frame      = 0;
  	cdata->pos        = packet->pos;
  DBGC8  serprintf("V    siz %6d  pos %8lld %d tim %8d  pkt %6d  %8d\r\n", packet->size, packet->pos, cdata->key, cdata->time, ff_p->vq.packets, ff_p->vq.mem_used );
-@@ -1699,73 +2277,16 @@ ErrorExit:
+@@ -1699,73 +2280,16 @@ ErrorExit:
  	_dispose_packet( packet );
  
  	return 0;
@@ -27099,7 +27120,7 @@ index 090d59a..77872e9 100644
  
  // ************************************************************
  //
-@@ -1779,15 +2300,25 @@ static int _get_subtitle_cdata( STREAM *s, CLEVER_BUFFER *sub_buffer, STREAM_CDA
+@@ -1779,15 +2303,25 @@ static int _get_subtitle_cdata( STREAM *s, CLEVER_BUFFER *sub_buffer, STREAM_CDA
  	}
  
  	AVPacket _packet;
@@ -27129,7 +27150,7 @@ index 090d59a..77872e9 100644
  			return 1;
  		}
  	}
-@@ -1806,10 +2337,26 @@ DBGC32 serprintf("  S  siz %6d  pos %8lld   tim %8d  pkt %6d  %8d\r\n", packet->
+@@ -1806,10 +2340,26 @@ DBGC32 serprintf("  S  siz %6d  pos %8lld   tim %8d  pkt %6d  %8d\r\n", packet->
  	
  	int duration_rst = GET_SUB_TS( packet->duration );
  	int duration_ts = RST_TO_TS_DELTA(duration_rst, int);
@@ -27160,7 +27181,7 @@ index 090d59a..77872e9 100644
  	} else {
  		memcpy( sub_buffer->data, packet->data, packet->size );
  	}
-@@ -1966,6 +2513,7 @@ static STREAM_PARSER stream_parser_FFMPEG = {
+@@ -1966,6 +2516,7 @@ static STREAM_PARSER stream_parser_FFMPEG = {
  	_get_index,
  	NULL,		// start_next
  	_get_stats,
@@ -27168,7 +27189,7 @@ index 090d59a..77872e9 100644
  };
  
  #ifndef CONFIG_LIVE555_RTSP
-@@ -1983,87 +2531,133 @@ STREAM_REGISTER_IO( proto, _dummy_new, STREAM_IO_NONLOCAL, ETYPE_RTSP );
+@@ -1983,87 +2534,133 @@ STREAM_REGISTER_IO( proto, _dummy_new, STREAM_IO_NONLOCAL, ETYPE_RTSP );
  //	get_info_FFMPEG
  //
  // *****************************************************************************

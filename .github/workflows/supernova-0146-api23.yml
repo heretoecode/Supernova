@@ -1,0 +1,81 @@
+name: Supernova 0.146 actual API23 transport and trust
+on:
+  push:
+    branches: [codex/supernova-0.146-upstream-completion-2026-10-28]
+    paths: [.github/workflows/supernova-0146-api23.yml]
+  workflow_dispatch:
+    inputs:
+      runtime_run_id:
+        description: 'Android integration run containing exact resolved runtime review archives'
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  api23:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: nova/Video
+          persist-credentials: false
+      - name: Java21
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Download exact resolved libraries from the selected integration run
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: supernova-0146-android-source-integration
+          path: review
+          run-id: ${{ inputs.runtime_run_id }}
+          github-token: ${{ github.token }}
+      - name: Prepare exact patched MediaLib sources
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          repos={'MediaLib':('heretoecode/aos-MediaLib','5758074049bc153ac4967b4ecd21886469270076'),'FileCoreLibrary':('nova-video-player/aos-FileCoreLibrary','c4b760c55102c72d45f68b0d16999fc1f4f013a7'),'native/avos':('nova-video-player/aos-avos','2cf21c486c7bf244c49b78d2220197a6d75396dd')}
+          for name,(repo,sha) in repos.items():
+              dest=Path('nova')/name;dest.parent.mkdir(parents=True,exist_ok=True)
+              subprocess.run(['git','clone','--filter=blob:none','--no-checkout','https://github.com/'+repo+'.git',str(dest)],check=True)
+              subprocess.run(['git','-C',str(dest),'checkout','--detach',sha],check=True)
+          PY
+          python3 nova/Video/.github/build/prepare-supernova146-dependencies.py --root nova
+          python3 nova/Video/.github/build/prepare-supernova146-api23-harness.py --video nova/Video --medialib nova/MediaLib --review review/Video/build/supernova146-runtime-review --output harness
+      - name: Build and execute actual Android23 framework transport and trust tests
+        run: |
+          set -euo pipefail
+          sudo chmod 666 /dev/kvm
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' 'platform-tools' 'emulator' 'system-images;android-23;default;x86_64'
+          printf 'no\n' | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd --force --name supernova146-api23 --package 'system-images;android-23;default;x86_64'
+          "$ANDROID_HOME/emulator/emulator" -avd supernova146-api23 -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -accel on > emulator.log 2>&1 &
+          emulator_pid=$!
+          trap 'kill "$emulator_pid" || true' EXIT
+          timeout 300 adb wait-for-device
+          for attempt in $(seq 1 90); do
+            if [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" == 1 ]]; then break; fi
+            sleep 2
+          done
+          test "$(adb shell getprop ro.build.version.sdk | tr -d '\r')" = 23
+          cd harness
+          chmod +x gradlew
+          ./gradlew connectedDebugAndroidTest --no-daemon --no-build-cache --max-workers=2 2>&1 | tee api23-test.log
+      - name: Preserve actual API23 evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0146-api23-transport-trust
+          path: |
+            harness/build/outputs/androidTest-results/**
+            harness/build/reports/androidTests/**
+            harness/harness-inputs.json
+            harness/api23-test.log
+            emulator.log
+          if-no-files-found: warn

@@ -161,7 +161,7 @@
       "kind": "patch",
       "module": "native/avos",
       "path": ".github/build/avos-supernova146-upstream.patch",
-      "sha256": "08648c11443796acf780a347b2e25e8fdd906ee4ff3ff8ebadaa5895d983647c"
+      "sha256": "b93cdec561a1068be5ce3c892e0a114fff742654c9c77a2569e6f51683915977"
     }
   ]
 }

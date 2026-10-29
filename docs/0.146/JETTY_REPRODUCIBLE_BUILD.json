@@ -1,0 +1,58 @@
+{
+  "independent_workspaces_match": true,
+  "evidence": {
+    "schema": 1,
+    "source_commit": "89d2ac7c7792e51cd4b5b633f249fc4c32e5c67b",
+    "patch_sha256": "1bcbaa43e7bc630a605dcf9c6a7a814327ecaa975ca767a109e29c44a67540cf",
+    "libraries": [
+      {
+        "module": "jetty-util",
+        "sha256": "a766a0ad880714429b9531e12c1e7b9517eaf5f7f932c6242f29727ded84330b",
+        "classes": 325,
+        "bytes": 526402
+      },
+      {
+        "module": "jetty-io",
+        "sha256": "4dc672cb67558e84ac63994ca80e02f916129329e5b90732d200827c9a3add9d",
+        "classes": 105,
+        "bytes": 163747
+      },
+      {
+        "module": "jetty-http",
+        "sha256": "0f09333e0f996f6b9f52047d1a1a53f989a3455c0ee1d85676894595116787ea",
+        "classes": 107,
+        "bytes": 231304
+      },
+      {
+        "module": "jetty-server",
+        "sha256": "2bce1451c0fce2d9d47eded0621e957794852b1471ff6585c1c8d41a921c6be6",
+        "classes": 343,
+        "bytes": 672617
+      },
+      {
+        "module": "jetty-client",
+        "sha256": "5b6eeee0b9828869dba478e6c78be21454d2e3ec6b1300aee5318a21fd90d3ae",
+        "classes": 197,
+        "bytes": 293292
+      },
+      {
+        "module": "jetty-security",
+        "sha256": "a467423959eaf47cfcf061e5b7780adfb0bf65199dda940735251857d0833729",
+        "classes": 61,
+        "bytes": 106562
+      },
+      {
+        "module": "jetty-servlet",
+        "sha256": "8317271415018250e3e646fdb87cba69edfd98fe72e0a709446c6687188c8788",
+        "classes": 68,
+        "bytes": 130616
+      }
+    ],
+    "lock_sha256": "3774aed21cad980ec972d2c143cb003db3a63aa2a4a21f4892ee30a571ae23d3"
+  },
+  "tests": {
+    "real_tcp_jupnp_existing": 11,
+    "security_counter_backports": 9,
+    "result": "20 passed against this exact rebuild and jUPnP3.0.5-nova3"
+  }
+}
