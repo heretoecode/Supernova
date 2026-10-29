@@ -30,6 +30,6 @@ public class Network142PutioTest {
   controller=new PutioBrowserController(host.get(),browser,42,0,"put.io",()->{},()->{},client);assertTrue(started.await(5,TimeUnit.SECONDS));controller.close();release.countDown();drain();assertNull(browser.findViewWithTag("semantic:putio.file.10"));Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(dialog==null||!dialog.isShowing());
  }
  @Test public void providerOptionsAreReachableAndCloseOwnsTheDialog()throws Exception{
-  PutioReadClient client=mock(PutioReadClient.class);when(client.list(0,null)).thenReturn(new PutioReadClient.Page(List.of(),null,0));controller=new PutioBrowserController(host.get(),browser,42,0,"put.io",()->{},()->{},client);drain();browser.findViewWithTag("browser.provider_options").performClick();Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(dialog.isShowing());controller.close();assertFalse(dialog.isShowing());
+  PutioReadClient client=mock(PutioReadClient.class);when(client.list(0,null)).thenReturn(new PutioReadClient.Page(List.of(),null,0));controller=new PutioBrowserController(host.get(),browser,42,0,"put.io",()->{},()->{},client);drain();browser.focusOverview();assertTrue("Navigation re-entry chooses the visible provider toolbar control",browser.findViewWithTag("browser.provider_options").hasFocus());browser.findViewWithTag("browser.provider_options").performClick();Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertTrue(dialog.isShowing());controller.close();assertFalse(dialog.isShowing());
  }
 }

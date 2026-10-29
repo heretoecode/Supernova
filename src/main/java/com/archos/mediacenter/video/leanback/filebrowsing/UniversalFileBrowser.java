@@ -633,7 +633,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             View row=fileList.findContainingItemView(centreAnchor);int position=row==null?-1:fileList.getChildAdapterPosition(row);
             if((row==null||position>=0&&position<files.size()&&files.get(position).getUri().toString().equals(row.getTag()))&&centreAnchor.requestFocus())return;
         }
-        if(toolbar.getVisibility()==VISIBLE){toolbar.getChildAt(0).requestFocus();return;}
+        if(toolbar.getVisibility()==VISIBLE)for(int n=0;n<toolbar.getChildCount();n++){View control=toolbar.getChildAt(n);if(control.getVisibility()==VISIBLE&&control.isFocusable()&&control.requestFocus())return;}
         for(View item:items.getFocusables(FOCUS_FORWARD))if(item!=items&&item.isShown()&&item.isEnabled()&&item.requestFocus())return;
         if(current!=null&&fileAdapter.getItemCount()>0){fileList.post(()->{RecyclerView.ViewHolder first=fileList.findViewHolderForAdapterPosition(0);if(first!=null)first.itemView.requestFocus();});return;}
         focusActions();
