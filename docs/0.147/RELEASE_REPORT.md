@@ -1,6 +1,6 @@
 # Supernova 0.147 development QA — 29 October 2026
 
-The three approved priorities are implemented and exact-source software conformance passes. [Draft PR #27](https://github.com/heretoecode/Supernova/pull/27) remains stacked on unmerged 0.146. No main merge, tag, public release, signing-environment change or signed 0.147 delivery was performed.
+The three approved priorities are implemented and exact-source software conformance passes. [Draft PR #27](https://github.com/heretoecode/Supernova/pull/27) remains stacked on unmerged 0.146. Signed QA delivery is now complete after the owner authorized the branch. No main merge, tag, public release, application rebuild or signing-protection change was performed.
 
 ## Source and authority
 
@@ -52,12 +52,16 @@ Receipts: [full conformance](UNSIGNED_CONFORMANCE.json), [artifact and JUnit rea
 
 Earlier validation failures were resolved before freezing: a screenshot helper visibility error, missing receiver permission in the test fixture, a genuine compact-header clipping defect, missing preserved 0.146 delivery fields in the source-history gate, and a test selector that confused the Add Connection heading with the exact Connect action. Required gates were not relaxed. Earlier runs are historical checkpoints, not acceptance for this source.
 
-## Genuine blocker and outstanding acceptance
+## Signed QA delivery and outstanding acceptance
 
-The existing protected signing environment `supernova-foundation-signing` authorizes 13 selected branches through 0.146 and does **not** authorize this implementation branch. Only the owner can authorize it under that environment policy. No policy mutation or 0.147 signing dispatch was attempted. This prevents signed 0.147 QA APK delivery and an installed upgrade test.
+The initial branch-policy blocker was resolved by the owner. Live verification confirms the exact implementation branch is now one of 14 selected branches in `supernova-foundation-signing`; custom branch restrictions remain enabled and administrator bypass remains disabled. No protection policy was changed by this task. [Authorization readback](SIGNING_AUTHORIZATION.json) records the observed policy.
 
-The prepared version-specific protected workflow preserves certificate pin, successful exact-source receipt, report-only ancestry, checkout of the tested source, no-rebuild signing, unsigned/signed payload parity and private-material cleanup. It is ready for later authorized use; it has not produced an APK. Do not install the unsigned CI candidate as an upgrade.
+[Protected signing run 40955806102](https://github.com/heretoecode/Supernova/actions/runs/40955806102) succeeded at workflow branch head `c4c077197fc882c6dba02ae458b74f6d5e5375f1`. Its source/ancestry gate checked out the frozen application source and signed the exact previously tested unsigned artifact from run 40945894870, without rebuilding or modifying the application. Existing certificate pin, successful-run/source checks, report-only ancestry, payload parity and mandatory signing-material cleanup all passed. No signing keys were downloaded locally.
+
+Delivered [Supernova_0.147.apk](https://drive.google.com/file/d/1TetN852eP2_lMfUuIV6S9Xv6zASprOm8/view?usp=drivesdk) to the existing Drive APK folder: **95,573,687 bytes**. SHA-256: `50cfb990af2ecc5273e90e11195fb73c7e1c457fad39ef6ee1375d36287f0453`. Exact application source: `f4abf7cb880243ba00481f82beee19d20bc72e33`.
+
+Independent local verification confirms v1/v2/v3 cryptographic signatures for the existing certificate `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`, application identity/version, embedded exact source, complete ZIP integrity, all 2,445 non-signature payload entries identical to the validated unsigned APK, all 84 retained native hashes and native ELF load alignment. The complete Drive copy was downloaded and byte-compared to this verified APK. All 14 prior folder entries remain present; no sharing settings or existing APKs were changed. See [public signing receipt](SIGNED_QA_EVIDENCE.json), [independent verification](INDEPENDENT_SIGNED_APK_VERIFICATION.json), [signing steps](SIGNING_RUN.json) and [Drive delivery readback](DRIVE_APK_DELIVERY.json).
 
 Physical Shield appearance/overscan, D-pad and keyboard, HDMI/video/subtitle composition, playback-start/resume timing, real SMB/WebDAV/SFTP/FTP/FTPS, disposable USB unplug/replug, live Put.io OAuth/account lifecycle, offline/partial scans, user-data preservation and signed 0.146→0.147 upgrade remain pending. Follow [QA preparation](QA_PREPARATION.md) and the 67 physical ledger cases. The user's report that 0.146 opens on Shield is retained as context, not a 0.147 acceptance result.
 
-The HTML notes preserve all 15 prior articles byte-for-byte. Their 0.147 entry reports unsigned development QA and the signing/device boundary, retaining 0.146 as the latest delivered signed build. Drive update/readback status is recorded separately in `DRIVE_HTML_UPDATE.json`.
+The HTML notes preserve all 15 prior articles byte-for-byte. Their 0.147 entry now identifies the verified signed QA delivery and retains explicit pending physical/device acceptance. The top notice identifies 0.147 as the latest delivered signed build. Drive update/readback status is recorded separately in `DRIVE_HTML_UPDATE.json`.

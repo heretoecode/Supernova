@@ -51,6 +51,9 @@
     }
   ],
   "all_archives_complete_crc_and_sha_verified": true,
-  "new_signing_performed": false,
-  "physical_shield_verified": false
+  "new_signing_performed": true,
+  "physical_shield_verified": false,
+  "protected_signing_run": 40955806102,
+  "signed_qa_delivery_receipt": "DRIVE_APK_DELIVERY.json",
+  "application_rebuilt_for_signing": false
 }

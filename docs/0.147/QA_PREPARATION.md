@@ -13,9 +13,13 @@ This checklist supplements all 67 FD-003 cases in TRACEABILITY.json. All physica
 8. Play movies and TV episodes with known configured-region ratings. Verify upper-left white text, thin black outline and slim red accent without a panel; no focus capture or subtitle/HUD interference. Time ten seconds from established output then gentle fade. Cover resume, restart, same-file relaunch, unindexed rapid switching, missing metadata, foreign-only ratings and conflicting regional ratings.
 
 ## Evidence boundaries
-Software renders are Android/Robolectric output, not Shield captures. Test counts and exact source must be read from the completed run; prior 0.146 counts are historical only. No signed 0.147 APK, live-provider pass or installed upgrade is claimed before its evidence exists.
+Software renders are Android/Robolectric output, not Shield captures. Test counts and exact source must be read from the completed run; prior 0.146 counts are historical only. The signed 0.147 QA APK is now delivered and independently verified. No live-provider pass or installed upgrade is claimed.
 
-The inherited 0.146 signing entry point explicitly rejects any branch/version other than its authorized 0.146 candidate. It must not be used for 0.147. Any later 0.147 protected-signing proposal must retain environment branch controls and bind the exact successful unsigned payload; this development task does not change environment protections or expose keys.
+The inherited 0.146 signing entry point explicitly rejects any branch/version other than its authorized 0.146 candidate. It must not be used for 0.147. The separate 0.147 protected workflow retains branch controls and binds the exact successful unsigned payload. Environment protections and signing keys remain protected.
 
-## Protected signing preparation
-The new version-specific `supernova-0147-qa.yml` retains the same protected environment, certificate pin, exact successful-run/source checks, report-only ancestry rule, no-rebuild signing, payload parity verification and mandatory private-material cleanup. It has not been dispatched. The live deployment policy lists 13 branches including 0.146 and does not authorize `codex/supernova-0.147-implementation-2026-10-29`. Only the owner may change that environment policy. No environment mutation was made.
+## Protected signing and delivery
+The owner authorized the exact implementation branch in `supernova-foundation-signing`. The live policy has 14 selected branches, custom branch restrictions enabled and administrator bypass disabled. The task did not mutate it.
+
+Protected signing run 40955806102 passed with the original certificate, exact successful unsigned run/source checks, report-only ancestry, checkout of `f4abf7cb880243ba00481f82beee19d20bc72e33`, no-rebuild signing, complete payload parity and mandatory private-material cleanup. The signed APK has been delivered to the existing Drive folder and downloaded completely for byte comparison. [Delivery details](DRIVE_APK_DELIVERY.json) and [independent verification](INDEPENDENT_SIGNED_APK_VERIFICATION.json) bind the actual bytes.
+
+Use the verified signed 0.147 APK for the retained-data 0.146 upgrade checklist above. Signing and delivery do not close installed-upgrade or physical Shield acceptance; all 67 physical cases remain NOT RUN.

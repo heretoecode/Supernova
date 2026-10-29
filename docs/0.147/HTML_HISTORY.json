@@ -20,8 +20,10 @@
     "69c12b124db1e6153418842dd1329ed1e00c0b21a6922704529b20fc4c1350df"
   ],
   "published_update": true,
-  "reason": "Existing Drive HTML updated in place after exact-source software conformance; signed 0.147 delivery blocked and physical acceptance pending",
-  "uploaded_sha256": "2038ecf3e5ff2c981fc304fd3353957a0795d5a7eefbaa7a110ddc0536f23ca3",
-  "uploaded_bytes": 51426,
-  "complete_uploaded_raw_readback_verified": true
+  "reason": "Signed 0.147 QA delivery verified and published to existing Drive HTML; all 15 historical articles unchanged, physical acceptance pending",
+  "uploaded_sha256": "080e60bb679df651e46033848fce6156912901a5fe8728abf29ca40fd19d20e2",
+  "uploaded_bytes": 52183,
+  "complete_uploaded_raw_readback_verified": true,
+  "prior_software_only_uploaded_sha256": "2038ecf3e5ff2c981fc304fd3353957a0795d5a7eefbaa7a110ddc0536f23ca3",
+  "latest_delivered_signed_qa": "0.147"
 }
