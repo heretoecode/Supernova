@@ -1286,7 +1286,7 @@
   {
     "id": "C080",
     "baseline": "Legacy network tiles: Library Sources / Saved Locations / SMB / UPnP / Add",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Retained compatibility NetworkRoot activity \u2192 Library Sources / Saved Locations / SMB / UPnP / Add",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[NR L308\u2013415](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkRootFragment.java#L308-L415); [PAGES L483\u2013484](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java#L483-L484)",
@@ -1298,7 +1298,7 @@
   {
     "id": "C081",
     "baseline": "Legacy source Open / Scan / Add / Remove",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Retained compatibility source-options dialog \u2192 Open / Scan / Add / Remove",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[ND L201\u2013253](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkShortcutDetailsFragment.java#L201-L253); [ND L289\u2013359](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkShortcutDetailsFragment.java#L289-L359)",
@@ -1310,7 +1310,7 @@
   {
     "id": "C082",
     "baseline": "Legacy generic / SMB / FTP credential dialogs",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Retained native generic / SMB / FTP credential dialogs in compatibility hosts",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[NC L128\u2013170](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkServerCredentialsDialog.java#L128-L170); [NC L191\u2013239](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/network/NetworkServerCredentialsDialog.java#L191-L239); [LF L268\u2013271](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/ListingFragment.java#L268-L271)",
@@ -1322,7 +1322,7 @@
   {
     "id": "C083",
     "baseline": "Standard reader Close / Copy; finite-choice rows; multi-select Back",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Shared reader, choice and multiselect overlays reached from their owning Network / Settings page",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[DIALOG L18\u201343](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L18-L43); [DIALOG L85\u2013134](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java#L85-L134)",
@@ -1334,7 +1334,7 @@
   {
     "id": "C084",
     "baseline": "Settings Display All Files in Browser",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Settings \u2192 Library & Home \u2192 Library & metadata \u2192 Display All Files in Browser",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[SETS L75\u201375](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L75-L75); [B L463\u2013463](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L463-L463); [PREF L674\u2013678](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/xml/preferences_video.xml#L674-L678)",
@@ -1346,7 +1346,7 @@
   {
     "id": "C085",
     "baseline": "Settings Create remote thumbnails / network resume bookmarks",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Settings \u2192 Library & Home \u2192 Library & metadata \u2192 remote thumbnails; Playback & Video \u2192 Resume & Progress \u2192 network bookmarks",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[SETS L74\u201375](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L74-L75); [PREF L558\u2013569](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/xml/preferences_video.xml#L558-L569)",
@@ -1358,7 +1358,7 @@
   {
     "id": "C086",
     "baseline": "Advanced Network Compatibility: alternate SMB / SMBv2 / resolver / TCP, UDP, mDNS discovery / newer SFTP / stream buffer",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Advanced Options \u2192 Network Compatibility \u2192 Settings \u2192 System & Maintenance \u2192 Network compatibility",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[SETS L77\u201382](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L77-L82); [PREF L502\u2013549](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/xml/preferences_video.xml#L502-L549)",
@@ -1370,7 +1370,7 @@
   {
     "id": "C087",
     "baseline": "Network SFTP server identities; each host; Cancel / Reset identity",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Advanced Options \u2192 Connection Preferences \u2192 Settings \u2192 Connections & Integrations \u2192 Network connections \u2192 SFTP server identities",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[SETS L22\u201328](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java#L22-L28); [P415 L82\u2013114](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/.github/build/filecore-preview415.patch#L82-L114)",
@@ -1382,7 +1382,7 @@
   {
     "id": "C088",
     "baseline": "Details Delete / Cancel (handoff only)",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Dedicated browser \u2192 indexed file \u2192 Details \u2192 existing Delete / Cancel handoff",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[DETAILS L934\u2013951](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/details/VideoDetailsFragment.java#L934-L951)",
@@ -1394,7 +1394,7 @@
   {
     "id": "C089",
     "baseline": "Prefer VPN network",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Advanced Options \u2192 Connection Preferences \u2192 Settings \u2192 Connections & Integrations \u2192 Network connections \u2192 Prefer VPN network",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "pref_network_prefer_vpn, XML default false; SambaDiscovery explicitly selects its interface using this preference; real VPN/LAN reachability still needs testing. No VPN configuration wizard is supplied here. [DISC L542\u2013550](https://github.com/nova-video-player/aos-FileCoreLibrary/blob/c4b760c55102c72d45f68b0d16999fc1f4f013a7/src/com/archos/filecorelibrary/samba/SambaDiscovery.java#L542-L550) [PREF L572\u2013577](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/xml/preferences_video.xml#L572-L577)",
@@ -1406,7 +1406,7 @@
   {
     "id": "C090",
     "baseline": "Enable network share on mobile connection",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Settings \u2192 Connections & Integrations \u2192 Network connections \u2192 mobile network permission preference",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "vpn_mobile, default false; NetworkState permits connected mobile-network route when enabled. Intended for configured VPN; does not itself create VPN/tunnel. [PREF L579\u2013584](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/xml/preferences_video.xml#L579-L584); [NETWORKSTATE L165\u2013180](https://github.com/nova-video-player/aos-FileCoreLibrary/blob/c4b760c55102c72d45f68b0d16999fc1f4f013a7/src/com/archos/environment/NetworkState.java#L165-L180)",
@@ -1418,7 +1418,7 @@
   {
     "id": "C091",
     "baseline": "Automatic identification / scraper language / Process .nfo files / database-assisted scraping / automatic NFO export",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Settings \u2192 Library & Home \u2192 Library & metadata \u2192 identification, language, NFO and database-assisted scraping",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "Preserve underlying keys and server write permissions; do not treat Scan Library as only a filesystem listing. [PREF L590\u2013620](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/xml/preferences_video.xml#L590-L620); [STR L691\u2013692](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/values/strings.xml#L691-L692)",
@@ -1430,7 +1430,7 @@
   {
     "id": "C092",
     "baseline": "Rescrape all / movies / collections; Export already scraped videos; Export media database",
-    "destination": "Existing host / Settings / Details",
+    "destination": "Settings \u2192 Library & Home \u2192 Library & metadata \u2192 rescrape and NFO/database export actions",
     "status": "preserved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "These are cross-workspace handoffs, not new Network & Files file-manager actions. Export NFO can write remote/local metadata where supported; never run these against owner's library merely to audit UI. [VPREF L872\u2013908](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/utils/VideoPreferencesCommon.java#L872-L908); [PREF L622\u2013657](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/res/xml/preferences_video.xml#L622-L657)",
@@ -1442,7 +1442,7 @@
   {
     "id": "QA-F01",
     "baseline": "Global entry/reselect",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Global Network & Files entry/reselect \u2192 six-card landing; first-row Up and navigation Down round trip",
     "status": "changed",
     "test": "FD-003 QA-F01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Correct tab and Overview entry; no activation of retained native source grids; sensible remembered/Overview focus. Capture full screen and key sequence.",
@@ -1453,7 +1453,7 @@
   {
     "id": "QA-F02",
     "baseline": "Left rail containment",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Six-card grid edges; nested Back/content edges (permanent left rail superseded)",
     "status": "changed",
     "test": "FD-003 QA-F02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Up/Down traverse only visible enabled rail rows; top escape follows global navigation rule, bottom does not jump into centre. Recheck historical OR-01.",
@@ -1464,7 +1464,7 @@
   {
     "id": "QA-F03",
     "baseline": "Three-pane round trip",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Nested field/help and dedicated file/context workspaces \u2192 focus round trips; no category rail",
     "status": "changed",
     "test": "FD-003 QA-F03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Each intended pane is reachable; focus is visible and scrolls into view. Record CS-02 separately for populated Health.",
@@ -1475,7 +1475,7 @@
   {
     "id": "QA-F04",
     "baseline": "Deep folder / rail return",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Local Storage / Network Locations \u2192 deep folder \u2192 Back/navigation \u2192 exact folder return",
     "status": "changed",
     "test": "FD-003 QA-F04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record current root-reopening behaviour CS-04 versus prior breadcrumb/selection; do not treat this audit as approval to change the interaction.",
@@ -1486,7 +1486,7 @@
   {
     "id": "QA-F05",
     "baseline": "List/grid edges",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Dedicated browser \u2192 list/grid edge containment and visible toolbar focus",
     "status": "changed",
     "test": "FD-003 QA-F05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "No unintentional pane escape inside grid rows; boundaries move intentionally; last item and toolbar remain reachable.",
@@ -1497,7 +1497,7 @@
   {
     "id": "QA-F06",
     "baseline": "Scroll/selection restoration",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Dedicated browser \u2192 selected item and scroll restoration after navigation/rebind",
     "status": "changed",
     "test": "FD-003 QA-F06; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Selected URI or documented nearby fallback restored, scroll retained where applicable; no focus assigned to detached row.",
@@ -1508,7 +1508,7 @@
   {
     "id": "QA-F07",
     "baseline": "Breadcrumb / empty folder",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Dedicated browser \u2192 breadcrumb ancestors and empty-folder recovery",
     "status": "changed",
     "test": "FD-003 QA-F07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Real ancestors open; empty listing gives reachable toolbar/fallback; Back eventually follows guarded workspace exit, no loop.",
@@ -1519,7 +1519,7 @@
   {
     "id": "QA-F08",
     "baseline": "Pending changes / all exits",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Dedicated browser \u2192 staged changes \u2192 every exit \u2192 Discard / Continue / Save",
     "status": "changed",
     "test": "FD-003 QA-F08; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Discard reverts draft; Continue Editing returns safely; Save Changes & Scan commits intended set once and schedules work. Record any exit path bypass.",
@@ -1530,7 +1530,7 @@
   {
     "id": "QA-F09",
     "baseline": "Provider dock / Back",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Network Locations \u2192 Put.io \u2192 API browser / Browser Options \u2192 Back/account",
     "status": "changed",
     "test": "FD-003 QA-F09; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Provider dock has valid focus, no generic-list crash, ancestor stack and account/cloud return work. No hidden options menu assumed (CS-14).",
@@ -1541,7 +1541,7 @@
   {
     "id": "QA-F10",
     "baseline": "Keyboard and dialogs",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Add Connection \u2192 field keyboard / validation / confirmation dialogs \u2192 safe return",
     "status": "changed",
     "test": "FD-003 QA-F10; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Initial focus, Caps Lock, Done/Cancel, validation and opener restoration are explicit; modal navigation does not escape into Home. Also exercise CS-13.",
@@ -1552,7 +1552,7 @@
   {
     "id": "QA-F11",
     "baseline": "Lifecycle focus",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
+    "destination": "Active nested page/form/provider \u2192 activity/lifecycle refresh \u2192 stable focus",
     "status": "changed",
     "test": "FD-003 QA-F11; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Late callbacks must not attach stale views or steal focus; cancelled auth must not complete in a closed host. Record any crash and sanitised stack trace.",
@@ -1585,7 +1585,7 @@
   {
     "id": "QA-B03",
     "baseline": "Toolbar / filtering",
-    "destination": "All Files / dedicated file browser filesystem browser",
+    "destination": "Dedicated browser \u2192 List/Grid, Sort and All Files controls",
     "status": "changed",
     "test": "FD-003 QA-B03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Shared persisted state and visible label agree; actual MIME/hidden-file changes recorded per engine. A folder with only videos is not a sufficient test.",
@@ -1596,7 +1596,7 @@
   {
     "id": "QA-B04",
     "baseline": "Sort / view persistence",
-    "destination": "All Files / dedicated file browser filesystem browser",
+    "destination": "Dedicated browser \u2192 six sort choices and persisted view choice",
     "status": "changed",
     "test": "FD-003 QA-B04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Persisted mode/order, exact order and selected URI recorded; verify DLNA separately for CS-08 and tie ordering.",
@@ -1607,7 +1607,7 @@
   {
     "id": "QA-B05",
     "baseline": "Bookmarks vs library",
-    "destination": "All Files / dedicated file browser filesystem browser",
+    "destination": "Manage Connections / dedicated browser \u2192 saved bookmark versus indexed root actions",
     "status": "changed",
     "test": "FD-003 QA-B05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Bookmark and library indicators correspond to different stores; bookmark removal confirmed before rail removal; no physical files deleted.",
@@ -1629,7 +1629,7 @@
   {
     "id": "QA-B07",
     "baseline": "File activation / Details",
-    "destination": "All Files / dedicated file browser filesystem browser",
+    "destination": "Dedicated browser \u2192 indexed Details versus unindexed ACTION_VIEW",
     "status": "changed",
     "test": "FD-003 QA-B07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Folders browse, indexed media opens Details, other files hand off appropriately; document remote no-handler feedback differences. No accidental library membership.",
@@ -1816,7 +1816,7 @@
   {
     "id": "QA-E01",
     "baseline": "Recovery dispatch",
-    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
+    "destination": "Dedicated browser recovery \u2192 transport-specific Connect form preserving URI",
     "status": "changed",
     "test": "FD-003 QA-E01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Connect opens an editor only where wired; document four omitted aliases CS-01 and any scheme-specific engine callback differences.",
@@ -1827,7 +1827,7 @@
   {
     "id": "QA-E02",
     "baseline": "Retry / stale rows",
-    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
+    "destination": "Dedicated browser listing failure \u2192 Retry without stale prior-location rows",
     "status": "changed",
     "test": "FD-003 QA-E02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record breadcrumb/row mismatch CS-06 and duplicate actions CS-07; protect real media by using disposable paths.",
@@ -1838,7 +1838,7 @@
   {
     "id": "QA-E03",
     "baseline": "Network lost/restored",
-    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
+    "destination": "Network Locations \u2192 active source browser \u2192 network loss/recovery",
     "status": "changed",
     "test": "FD-003 QA-E03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Clear error/offline state, retry possible, no record/history deletion; reappearance clears availability state when scan succeeds.",
@@ -1849,7 +1849,7 @@
   {
     "id": "QA-E04",
     "baseline": "Permission and missing path",
-    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
+    "destination": "Local Storage / source browser \u2192 missing path or permission failure",
     "status": "changed",
     "test": "FD-003 QA-E04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Distinguish authentication, forbidden/missing path and connectivity; no incorrect successful-empty import or irreversible library pruning.",
@@ -1860,7 +1860,7 @@
   {
     "id": "QA-E05",
     "baseline": "VPN/mobile routing",
-    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
+    "destination": "Settings \u2192 Connections & Integrations \u2192 Network connections \u2192 VPN/mobile routing",
     "status": "changed",
     "test": "FD-003 QA-E05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record actual selected interface/discovery/server reachability; controls do not create a VPN. Mark unsupported physical setup N/A with reason.",
@@ -1871,7 +1871,7 @@
   {
     "id": "QA-E06",
     "baseline": "Slow or malformed listing",
-    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
+    "destination": "Dedicated browser \u2192 slow/malformed listing cancellation and retry",
     "status": "changed",
     "test": "FD-003 QA-E06; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "30-second timeout/abort and generation guards operate without stale metadata, ANR or hidden action accumulation.",
@@ -1882,7 +1882,7 @@
   {
     "id": "QA-E07",
     "baseline": "Startup preference / process",
-    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
+    "destination": "Global Network & Files \u2192 process/startup preference and restoration paths",
     "status": "changed",
     "test": "FD-003 QA-E07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Display and actual scheduling compared; capture CS-10 absent-key discrepancy without clearing owner's app.",
@@ -2124,7 +2124,7 @@
   {
     "id": "QA-V01",
     "baseline": "Actual screen atlas",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
+    "destination": "All six Network cards, nested forms/browser/provider/health and Settings screenshot atlas",
     "status": "changed",
     "test": "FD-003 QA-V01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Images labelled state ID, app version, viewport/font setting and focus; redact private hosts/usernames/link codes.",
@@ -2135,7 +2135,7 @@
   {
     "id": "QA-V02",
     "baseline": "TV sizes / text scale",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
+    "destination": "Shared navigation and landing/detail pages at 720p, 1080p, 4K and enlarged text",
     "status": "changed",
     "test": "FD-003 QA-V02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Safe area, 31/42/27 widths, narrow horizontal fallback and long labels/URI scrolling readable; no assumed screenshot-based certification.",
@@ -2146,7 +2146,7 @@
   {
     "id": "QA-V03",
     "baseline": "Large dataset / metadata",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
+    "destination": "Dedicated browser \u2192 large dataset, long paths and partial/missing metadata",
     "status": "changed",
     "test": "FD-003 QA-V03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record frame/ANR evidence for H-04; no arbitrary performance pass without measurements.",
@@ -2157,7 +2157,7 @@
   {
     "id": "QA-V04",
     "baseline": "Shared surfaces",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
+    "destination": "Shared Settings card/row/toggle/help surfaces; common TopNavigation and background",
     "status": "changed",
     "test": "FD-003 QA-V04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Same shared component contracts still work; no new artwork, colour, branding or layout chosen in this audit.",
@@ -2168,7 +2168,7 @@
   {
     "id": "QA-V05",
     "baseline": "Release identity / report linkage",
-    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
+    "destination": "Development release identity, exact-source receipts, draft PR and pending physical acceptance",
     "status": "changed",
     "test": "FD-003 QA-V05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Attach redacted identity evidence; version label alone is weaker than binary hash. All test results explicitly PASS/FAIL/BLOCKED/N/A with reason.",
