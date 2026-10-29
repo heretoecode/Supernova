@@ -37,4 +37,16 @@ public class Network142RenderTest {
    PreviewPagesTest.findText(browser,"Protocol: WebDAV HTTPS").performClick();layout(nav);capture(nav,"0142-shell-protocols");
   }finally{if(browser!=null)browser.close();host.pause().stop().destroy();}
  }
+ private void responsiveLanding(String suffix)throws Exception{
+  var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();UniversalFileBrowser browser=new UniversalFileBrowser(host.get());try{
+   browser.networkWorkspace();browser.locations(List.of(),List.of(),List.of(),kind->{});
+   TopNavigation nav=new TopNavigation(host.get(),browser,index->{},browser::atTop);nav.selectTab(3);host.get().setContentView(nav);
+   float density=nav.getResources().getDisplayMetrics().density;int w=Math.round(nav.getResources().getConfiguration().screenWidthDp*density),h=Math.round(nav.getResources().getConfiguration().screenHeightDp*density);
+   for(int n=0;n<4;n++){nav.measure(View.MeasureSpec.makeMeasureSpec(w,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(h,View.MeasureSpec.EXACTLY));nav.layout(0,0,w,h);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}
+   for(int n=0;n<6;n++){View card=nav.findViewWithTag("network.card."+n);assertNotNull(card);assertTrue(card.getWidth()>0&&card.getHeight()>0);int[] xy=new int[2];card.getLocationOnScreen(xy);assertTrue("Safe horizontal bounds",xy[0]>=0&&xy[0]+card.getWidth()<=w);assertTrue("Cards fit vertically",xy[1]>=0&&xy[1]+card.getHeight()<=h);}
+   invalidateCapture(nav);PreviewPagesTest.capture(nav,"0147-network-"+suffix);
+  }finally{browser.close();host.pause().stop().destroy();}
+ }
+ @Test @Config(qualifiers="w640dp-h360dp-land-xhdpi") public void landingAt720p()throws Exception{responsiveLanding("720p");}
+ @Test @Config(qualifiers="w960dp-h540dp-land-xxxhdpi") public void landingAt4k()throws Exception{responsiveLanding("4k");}
 }

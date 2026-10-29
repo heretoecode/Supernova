@@ -386,7 +386,7 @@
   {
     "id": "C005",
     "baseline": "Network Shares category and each saved/indexed source row",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L202\u2013226](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L202-L226)",
@@ -398,7 +398,7 @@
   {
     "id": "C006",
     "baseline": "Add Network Source rail / centre / right",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L215\u2013226](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L215-L226)",
@@ -410,7 +410,7 @@
   {
     "id": "C007",
     "baseline": "Discover Devices category and each discovered device",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L237\u2013239](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L237-L239)",
@@ -434,7 +434,7 @@
   {
     "id": "C009",
     "baseline": "Network Scanning category",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L146\u2013154](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L146-L154); [B L449\u2013457](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L449-L457)",
@@ -674,7 +674,7 @@
   {
     "id": "C029",
     "baseline": "Overview Scan Library",
-    "destination": "S07 Scan Library action",
+    "destination": "Network Scanning \u2192 Scan Library; Advanced Options \u2192 Library Health \u2192 Scan Library",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[SCAN L50\u201373](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java#L50-L73)",
@@ -686,7 +686,7 @@
   {
     "id": "C030",
     "baseline": "Scan settings Automatic On/Off",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L150\u2013151](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L150-L151); [NU L48\u2013104](https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediaprovider/video/NetworkScannerUtil.java#L48-L104)",
@@ -698,7 +698,7 @@
   {
     "id": "C031",
     "baseline": "Scan Frequency; 15m / 30m / 1h / 6h / 24h",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L152\u2013152](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L152-L152)",
@@ -710,7 +710,7 @@
   {
     "id": "C032",
     "baseline": "Scan On Open / Return",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L153\u2013153](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L153-L153); [APP L1215\u20131232](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/CustomApplication.java#L1215-L1232)",
@@ -722,7 +722,7 @@
   {
     "id": "C033",
     "baseline": "Sources Included; each checkbox",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[NS L43\u201349](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java#L43-L49)",
@@ -734,7 +734,7 @@
   {
     "id": "C034",
     "baseline": "Scan Now",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L154\u2013154](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L154-L154); [SCAN L58\u201373](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java#L58-L73); [UDB L218\u2013237](https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java#L218-L237)",
@@ -782,7 +782,7 @@
   {
     "id": "C038",
     "baseline": "Source Problem Scan Library",
-    "destination": "S07 Scan Library action",
+    "destination": "Advanced Options \u2192 Library Health Scan Library action",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[HL L28\u201328](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java#L28-L28)",
@@ -986,7 +986,7 @@
   {
     "id": "C055",
     "baseline": "Discovery Refresh",
-    "destination": "S03/S04",
+    "destination": "Network Locations / Manage Connections/Add Connection",
     "status": "moved",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "[B L237\u2013239](https://github.com/heretoecode/Supernova/blob/4f0937f1fe8826f50d2c0e844b0837e8a2360a46/src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java#L237-L239)",
@@ -1442,7 +1442,7 @@
   {
     "id": "QA-F01",
     "baseline": "Global entry/reselect",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Correct tab and Overview entry; no activation of retained native source grids; sensible remembered/Overview focus. Capture full screen and key sequence.",
@@ -1453,7 +1453,7 @@
   {
     "id": "QA-F02",
     "baseline": "Left rail containment",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Up/Down traverse only visible enabled rail rows; top escape follows global navigation rule, bottom does not jump into centre. Recheck historical OR-01.",
@@ -1464,7 +1464,7 @@
   {
     "id": "QA-F03",
     "baseline": "Three-pane round trip",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Each intended pane is reachable; focus is visible and scrolls into view. Record CS-02 separately for populated Health.",
@@ -1475,7 +1475,7 @@
   {
     "id": "QA-F04",
     "baseline": "Deep folder / rail return",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record current root-reopening behaviour CS-04 versus prior breadcrumb/selection; do not treat this audit as approval to change the interaction.",
@@ -1486,7 +1486,7 @@
   {
     "id": "QA-F05",
     "baseline": "List/grid edges",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "No unintentional pane escape inside grid rows; boundaries move intentionally; last item and toolbar remain reachable.",
@@ -1497,7 +1497,7 @@
   {
     "id": "QA-F06",
     "baseline": "Scroll/selection restoration",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F06; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Selected URI or documented nearby fallback restored, scroll retained where applicable; no focus assigned to detached row.",
@@ -1508,7 +1508,7 @@
   {
     "id": "QA-F07",
     "baseline": "Breadcrumb / empty folder",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Real ancestors open; empty listing gives reachable toolbar/fallback; Back eventually follows guarded workspace exit, no loop.",
@@ -1519,7 +1519,7 @@
   {
     "id": "QA-F08",
     "baseline": "Pending changes / all exits",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F08; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Discard reverts draft; Continue Editing returns safely; Save Changes & Scan commits intended set once and schedules work. Record any exit path bypass.",
@@ -1530,7 +1530,7 @@
   {
     "id": "QA-F09",
     "baseline": "Provider dock / Back",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F09; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Provider dock has valid focus, no generic-list crash, ancestor stack and account/cloud return work. No hidden options menu assumed (CS-14).",
@@ -1541,7 +1541,7 @@
   {
     "id": "QA-F10",
     "baseline": "Keyboard and dialogs",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F10; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Initial focus, Caps Lock, Done/Cancel, validation and opener restoration are explicit; modal navigation does not escape into Home. Also exercise CS-13.",
@@ -1552,7 +1552,7 @@
   {
     "id": "QA-F11",
     "baseline": "Lifecycle focus",
-    "destination": "S01\u2013S07 / global navigation",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / global navigation",
     "status": "changed",
     "test": "FD-003 QA-F11; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Late callbacks must not attach stale views or steal focus; cancelled auth must not complete in a closed host. Record any crash and sanitised stack trace.",
@@ -1563,7 +1563,7 @@
   {
     "id": "QA-B01",
     "baseline": "All connection fields",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Only SMB shows domain; passwords masked by default and cleared from form after Connect; toggles have visible state. Validate actual persistence after app restart.",
@@ -1574,7 +1574,7 @@
   {
     "id": "QA-B02",
     "baseline": "Validation / key inventory",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Invalid inputs produce actionable feedback; secret spaces retained, ordinary fields trim as coded. Document remote punctuation limitation L-01; do not post secrets.",
@@ -1585,7 +1585,7 @@
   {
     "id": "QA-B03",
     "baseline": "Toolbar / filtering",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Shared persisted state and visible label agree; actual MIME/hidden-file changes recorded per engine. A folder with only videos is not a sufficient test.",
@@ -1596,7 +1596,7 @@
   {
     "id": "QA-B04",
     "baseline": "Sort / view persistence",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Persisted mode/order, exact order and selected URI recorded; verify DLNA separately for CS-08 and tie ordering.",
@@ -1607,7 +1607,7 @@
   {
     "id": "QA-B05",
     "baseline": "Bookmarks vs library",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Bookmark and library indicators correspond to different stores; bookmark removal confirmed before rail removal; no physical files deleted.",
@@ -1618,7 +1618,7 @@
   {
     "id": "QA-B06",
     "baseline": "Discovery navigation race",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B06; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Observe CS-03 timing; no stale redraw after actual stop/closed lifecycle; record rail selection and centre title in one capture.",
@@ -1629,7 +1629,7 @@
   {
     "id": "QA-B07",
     "baseline": "File activation / Details",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Folders browse, indexed media opens Details, other files hand off appropriately; document remote no-handler feedback differences. No accidental library membership.",
@@ -1640,7 +1640,7 @@
   {
     "id": "QA-B08",
     "baseline": "Write-directory picker",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B08; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Only eligible local writable directory accepted; selection returns to caller without adding a library source or altering pending membership.",
@@ -1651,7 +1651,7 @@
   {
     "id": "QA-B09",
     "baseline": "Retained entry handoffs",
-    "destination": "S05 filesystem browser",
+    "destination": "All Files / dedicated file browser filesystem browser",
     "status": "changed",
     "test": "FD-003 QA-B09; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record which native controls are really reachable; do not use undocumented adb intents as proof of normal-user reachability.",
@@ -1662,7 +1662,7 @@
   {
     "id": "QA-P01",
     "baseline": "Mounted internal storage",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Permission denial is visible; root removal is logical and fixture files remain; media record/history preservation checked.",
@@ -1673,7 +1673,7 @@
   {
     "id": "QA-P02",
     "baseline": "USB / adopted or removable volume",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Mount identities/permissions recorded; missing source distinguished from removed library; no universal rename/UUID identity guarantee assumed.",
@@ -1684,7 +1684,7 @@
   {
     "id": "QA-P03",
     "baseline": "SMB direct / JCIFS",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Actual negotiated/backend path documented, protected listing/play/scan works or precise error captured; host browsing need not use same backend as share browsing.",
@@ -1695,7 +1695,7 @@
   {
     "id": "QA-P04",
     "baseline": "SMBJ direct",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Validate supported server dialects and auth recovery; expect source gap CS-01 for smbj. Record protocol settings, not just visible SMB label.",
@@ -1706,7 +1706,7 @@
   {
     "id": "QA-P05",
     "baseline": "SMB discovery variants",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Discovered devices route to real shares; direct entry remains possible when multicast discovery is absent. No claim every NAS advertises.",
@@ -1717,7 +1717,7 @@
   {
     "id": "QA-P06",
     "baseline": "WebDAV HTTPS",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P06; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Origin-scoped credentials, correct listing and redirect policy; note webdavs auth recovery CS-01. Capture status codes without Authorization headers.",
@@ -1728,7 +1728,7 @@
   {
     "id": "QA-P07",
     "baseline": "WebDAV HTTP",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Cleartext is permitted by current configuration; document actual empty-username convention L-08 and server response.",
@@ -1739,7 +1739,7 @@
   {
     "id": "QA-P08",
     "baseline": "WebDAV identities / redirects",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P08; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Check CS-09 and CS-15; credentials must not leak to another origin/downgraded HTTPS route. Record redacted username and hostname, never password.",
@@ -1750,7 +1750,7 @@
   {
     "id": "QA-P09",
     "baseline": "SFTP JSch",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P09; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Confirm transport-specific authentication and listing/error handling; do not apply SSHJ host-pin claims to uninspected JSch behaviour.",
@@ -1761,7 +1761,7 @@
   {
     "id": "QA-P10",
     "baseline": "SFTP SSHJ / host identity",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P10; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "First-use pin retained; changed key rejected; reset confirmation scope correct; no silent trust-all. Also check CS-01 recovery.",
@@ -1772,7 +1772,7 @@
   {
     "id": "QA-P11",
     "baseline": "FTP",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P11; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Actual list/play/scan support and cleartext limitations recorded; email-style login probes CS-09; errors preserve records.",
@@ -1783,7 +1783,7 @@
   {
     "id": "QA-P12",
     "baseline": "FTP TLS",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P12; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Confirm explicit FTPS interoperability and PROT P; do not assume implicit TLS port 990 is supported.",
@@ -1794,7 +1794,7 @@
   {
     "id": "QA-P13",
     "baseline": "DLNA / UPnP",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P13; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Confirm object IDs and URI/playback resolution; sort limitation CS-08; do not infer filesystem editing or generic indexed-root equivalence.",
@@ -1805,7 +1805,7 @@
   {
     "id": "QA-P14",
     "baseline": "Unsupported / framework-only URI boundaries",
-    "destination": "S02\u2013S06 protocol/provider",
+    "destination": "Local Storage\u2013Network Locations \u2192 Put.io protocol/provider",
     "status": "changed",
     "test": "FD-003 QA-P14; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "No NFS/Google Drive/Dropbox/OneDrive storage sign-in invented; content/zip factory availability and streaming availability remain separate capabilities.",
@@ -1816,7 +1816,7 @@
   {
     "id": "QA-E01",
     "baseline": "Recovery dispatch",
-    "destination": "S03/S04/S05 error/reconnect",
+    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
     "status": "changed",
     "test": "FD-003 QA-E01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Connect opens an editor only where wired; document four omitted aliases CS-01 and any scheme-specific engine callback differences.",
@@ -1827,7 +1827,7 @@
   {
     "id": "QA-E02",
     "baseline": "Retry / stale rows",
-    "destination": "S03/S04/S05 error/reconnect",
+    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
     "status": "changed",
     "test": "FD-003 QA-E02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record breadcrumb/row mismatch CS-06 and duplicate actions CS-07; protect real media by using disposable paths.",
@@ -1838,7 +1838,7 @@
   {
     "id": "QA-E03",
     "baseline": "Network lost/restored",
-    "destination": "S03/S04/S05 error/reconnect",
+    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
     "status": "changed",
     "test": "FD-003 QA-E03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Clear error/offline state, retry possible, no record/history deletion; reappearance clears availability state when scan succeeds.",
@@ -1849,7 +1849,7 @@
   {
     "id": "QA-E04",
     "baseline": "Permission and missing path",
-    "destination": "S03/S04/S05 error/reconnect",
+    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
     "status": "changed",
     "test": "FD-003 QA-E04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Distinguish authentication, forbidden/missing path and connectivity; no incorrect successful-empty import or irreversible library pruning.",
@@ -1860,7 +1860,7 @@
   {
     "id": "QA-E05",
     "baseline": "VPN/mobile routing",
-    "destination": "S03/S04/S05 error/reconnect",
+    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
     "status": "changed",
     "test": "FD-003 QA-E05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record actual selected interface/discovery/server reachability; controls do not create a VPN. Mark unsupported physical setup N/A with reason.",
@@ -1871,7 +1871,7 @@
   {
     "id": "QA-E06",
     "baseline": "Slow or malformed listing",
-    "destination": "S03/S04/S05 error/reconnect",
+    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
     "status": "changed",
     "test": "FD-003 QA-E06; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "30-second timeout/abort and generation guards operate without stale metadata, ANR or hidden action accumulation.",
@@ -1882,7 +1882,7 @@
   {
     "id": "QA-E07",
     "baseline": "Startup preference / process",
-    "destination": "S03/S04/S05 error/reconnect",
+    "destination": "Network Locations / Manage Connections/Add Connection/All Files / dedicated file browser error/reconnect",
     "status": "changed",
     "test": "FD-003 QA-E07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Display and actual scheduling compared; capture CS-10 absent-key discrepancy without clearing owner's app.",
@@ -1893,7 +1893,7 @@
   {
     "id": "QA-D01",
     "baseline": "Selection hierarchy",
-    "destination": "S05/S07 library/scan",
+    "destination": "All Files / dedicated file browser/Advanced Options \u2192 Library Health library/scan",
     "status": "changed",
     "test": "FD-003 QA-D01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Root collapsing and exact-boundary containment correct; ancestor-excluded child Add reproduces CS-05; no physical deletions.",
@@ -1904,7 +1904,7 @@
   {
     "id": "QA-D02",
     "baseline": "Scan triggers / frequency",
-    "destination": "S05/S07 library/scan",
+    "destination": "All Files / dedicated file browser/Advanced Options \u2192 Library Health library/scan",
     "status": "changed",
     "test": "FD-003 QA-D02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Single generic worker/coalescing and one follow-up behave as coded; counts/status are not mistaken for independent concurrent scans.",
@@ -1915,7 +1915,7 @@
   {
     "id": "QA-D03",
     "baseline": "Sources Included",
-    "destination": "S05/S07 library/scan",
+    "destination": "All Files / dedicated file browser/Advanced Options \u2192 Library Health library/scan",
     "status": "changed",
     "test": "FD-003 QA-D03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Demonstrate which roots are traversed for manual/automatic triggers; API association scheduler independence L-05 explicitly recorded.",
@@ -1926,7 +1926,7 @@
   {
     "id": "QA-D04",
     "baseline": "Removal / reconnect history",
-    "destination": "S05/S07 library/scan",
+    "destination": "All Files / dedicated file browser/Advanced Options \u2192 Library Health library/scan",
     "status": "changed",
     "test": "FD-003 QA-D04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Compare media IDs/history/presentation; retained records and missing/offline flags verified, not inferred from a success toast.",
@@ -1937,7 +1937,7 @@
   {
     "id": "QA-D05",
     "baseline": "Health categories",
-    "destination": "S05/S07 library/scan",
+    "destination": "All Files / dedicated file browser/Advanced Options \u2192 Library Health library/scan",
     "status": "changed",
     "test": "FD-003 QA-D05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Only intended warnings shown; import suppression works; View Details/Find a Match/Match Is Correct/Scan Library actions reachable or CS-02 recorded.",
@@ -1948,7 +1948,7 @@
   {
     "id": "QA-D06",
     "baseline": "Commit interruption",
-    "destination": "S05/S07 library/scan",
+    "destination": "All Files / dedicated file browser/Advanced Options \u2192 Library Health library/scan",
     "status": "changed",
     "test": "FD-003 QA-D06; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record rollback, persisted roots, flags and draft loss separately; no claim of cross-store atomicity from source alone. Skip if instrumentation unavailable.",
@@ -1959,7 +1959,7 @@
   {
     "id": "QA-D07",
     "baseline": "Stable identity / alias",
-    "destination": "S05/S07 library/scan",
+    "destination": "All Files / dedicated file browser/Advanced Options \u2192 Library Health library/scan",
     "status": "changed",
     "test": "FD-003 QA-D07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Measure media IDs/duplicates/watch history for each operation; do not declare universal identity preservation.",
@@ -1970,7 +1970,7 @@
   {
     "id": "QA-D08",
     "baseline": "Read/write side effects",
-    "destination": "S05/S07 library/scan",
+    "destination": "All Files / dedicated file browser/Advanced Options \u2192 Library Health library/scan",
     "status": "changed",
     "test": "FD-003 QA-D08; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Inventory exact files written and failures; Scan/metadata writes understood. Never execute bulk export/debug DB upload against owner's library merely for audit.",
@@ -1981,7 +1981,7 @@
   {
     "id": "QA-C01",
     "baseline": "Disabled/disconnected",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Enabled state remains separate from account connection; Off does not silently erase token/history.",
@@ -1992,7 +1992,7 @@
   {
     "id": "QA-C02",
     "baseline": "Real OAuth approval / focus",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Registered client/link valid; first meaningful focus owned through loading/QR/success; no Home escape. This is the missing physical test for OR-04.",
@@ -2003,7 +2003,7 @@
   {
     "id": "QA-C03",
     "baseline": "OAuth failure/cancel",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Actionable failure; cancelled host not reopened; no token stored from a closed flow. Capture redacted timings only.",
@@ -2014,7 +2014,7 @@
   {
     "id": "QA-C04",
     "baseline": "Token lifecycle",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Keystore-backed credential survives permitted lifecycle, unauthorised path prompts reconnect, WebDAV authentication stays independent.",
@@ -2025,7 +2025,7 @@
   {
     "id": "QA-C05",
     "baseline": "Account/API browser/search",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Provider rows/pagination/parent return correct; files are information-only in API browser; CS-14 menu gap recorded.",
@@ -2036,7 +2036,7 @@
   {
     "id": "QA-C06",
     "baseline": "Folder association",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C06; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "No implicit credential bypass; no association on Cancel; real mapping corresponds to same folder. Record inline Cancel no-op CS-13.",
@@ -2047,7 +2047,7 @@
   {
     "id": "QA-C07",
     "baseline": "Complete snapshot",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C07; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Only complete successful snapshot accepted; partial/error traversal does not mass-delete history or misflag all missing.",
@@ -2058,7 +2058,7 @@
   {
     "id": "QA-C08",
     "baseline": "Reconciliation review",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C08; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Media IDs/history preserved as designed; exact counts recorded, no duplicate playback path; Finish Later behaviour CS-13 captured.",
@@ -2069,7 +2069,7 @@
   {
     "id": "QA-C09",
     "baseline": "Change/resume association",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C09; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Journal/generation fences prevent dual discovery or destructive partial transition; previous source choice honoured.",
@@ -2080,7 +2080,7 @@
   {
     "id": "QA-C10",
     "baseline": "Disabled scheduler request",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C10; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Check CS-11 account probe while full sync guard remains Off; do not mistake a probe for successful import.",
@@ -2091,7 +2091,7 @@
   {
     "id": "QA-C11",
     "baseline": "Disconnect variants",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C11; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Local ownership and discovery eligibility match selected choice; history/files retained; revoke affects grant, not physical files or WebDAV password.",
@@ -2102,7 +2102,7 @@
   {
     "id": "QA-C12",
     "baseline": "Playback and deletion boundary",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C12; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Original-quality playback path independent of API listing; destructive WebDAV action blocked for managed source. Do not delete owner media.",
@@ -2113,7 +2113,7 @@
   {
     "id": "QA-C13",
     "baseline": "Accessibility / inline return",
-    "destination": "S06 Put.io",
+    "destination": "Network Locations \u2192 Put.io Put.io",
     "status": "changed",
     "test": "FD-003 QA-C13; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record CS-12 wrong QR description and CS-13 no-op branches; each flow has a safe escape and visible focus.",
@@ -2124,7 +2124,7 @@
   {
     "id": "QA-V01",
     "baseline": "Actual screen atlas",
-    "destination": "S01\u2013S07 / retained shared hosts",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
     "status": "changed",
     "test": "FD-003 QA-V01; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Images labelled state ID, app version, viewport/font setting and focus; redact private hosts/usernames/link codes.",
@@ -2135,7 +2135,7 @@
   {
     "id": "QA-V02",
     "baseline": "TV sizes / text scale",
-    "destination": "S01\u2013S07 / retained shared hosts",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
     "status": "changed",
     "test": "FD-003 QA-V02; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Safe area, 31/42/27 widths, narrow horizontal fallback and long labels/URI scrolling readable; no assumed screenshot-based certification.",
@@ -2146,7 +2146,7 @@
   {
     "id": "QA-V03",
     "baseline": "Large dataset / metadata",
-    "destination": "S01\u2013S07 / retained shared hosts",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
     "status": "changed",
     "test": "FD-003 QA-V03; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Record frame/ANR evidence for H-04; no arbitrary performance pass without measurements.",
@@ -2157,7 +2157,7 @@
   {
     "id": "QA-V04",
     "baseline": "Shared surfaces",
-    "destination": "S01\u2013S07 / retained shared hosts",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
     "status": "changed",
     "test": "FD-003 QA-V04; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Same shared component contracts still work; no new artwork, colour, branding or layout chosen in this audit.",
@@ -2168,7 +2168,7 @@
   {
     "id": "QA-V05",
     "baseline": "Release identity / report linkage",
-    "destination": "S01\u2013S07 / retained shared hosts",
+    "destination": "Landing / Network Scanning summary\u2013Advanced Options \u2192 Library Health / retained shared hosts",
     "status": "changed",
     "test": "FD-003 QA-V05; adapt rail-specific steps to landing/back button and full-width workspace",
     "source": "Attach redacted identity evidence; version label alone is weaker than binary hash. All test results explicitly PASS/FAIL/BLOCKED/N/A with reason.",
@@ -2179,7 +2179,7 @@
   {
     "id": "CS-01",
     "baseline": "Change recovery dispatcher to include all actual transport aliases; test host/port/path preservation.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-01",
@@ -2191,7 +2191,7 @@
   {
     "id": "CS-02",
     "baseline": "Resolve first focusable descendant rather than action child zero; test Health actions.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-02",
@@ -2203,7 +2203,7 @@
   {
     "id": "CS-03",
     "baseline": "Stop discovery on every section transition and ignore callbacks from old discovery generation.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-03",
@@ -2215,7 +2215,7 @@
   {
     "id": "CS-04",
     "baseline": "Six fixed rail rows activate on OK; Left never reopens roots. Preserve folder/item/scroll.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-04",
@@ -2227,7 +2227,7 @@
   {
     "id": "CS-05",
     "baseline": "Do not broaden an excluded parent silently. Explain inherited exclusion and offer exact ancestor restoration explicitly.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-05",
@@ -2239,7 +2239,7 @@
   {
     "id": "CS-06",
     "baseline": "Clear rows on new location; failed location never exposes previous-folder files.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-06",
@@ -2251,7 +2251,7 @@
   {
     "id": "CS-07",
     "baseline": "Deduplicate failure Retry/Connect controls; test repeated failures.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-07",
@@ -2263,7 +2263,7 @@
   {
     "id": "CS-08",
     "baseline": "Apply provider-independent sort to returned rows using existing metadata; retain six labels.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-08",
@@ -2275,7 +2275,7 @@
   {
     "id": "CS-09",
     "baseline": "Protocol-scope SMB username parsing in pinned dependency patch; no credential schema/key migration.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-09",
@@ -2287,7 +2287,7 @@
   {
     "id": "CS-10",
     "baseline": "Use actual runtime default false in scan UI and chooser.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-10",
@@ -2299,7 +2299,7 @@
   {
     "id": "CS-11",
     "baseline": "Guard disabled Put.io before token/account access and inside sync worker.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-11",
@@ -2311,7 +2311,7 @@
   {
     "id": "CS-12",
     "baseline": "Set auth-specific QR accessibility description, retain diagnostics QR description.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-12",
@@ -2323,7 +2323,7 @@
   {
     "id": "CS-13",
     "baseline": "Inline Cancel / Finish Later return safely without committing ownership or association changes.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-13",
@@ -2335,7 +2335,7 @@
   {
     "id": "CS-14",
     "baseline": "Expose existing provider Refresh/Account callback in workspace.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-14",
@@ -2347,7 +2347,7 @@
   {
     "id": "CS-15",
     "baseline": "Canonicalise hostname for new credential URI; preserve existing lookup via fallback matching without rewriting saved records.",
-    "destination": "S03\u2013S07 / dependency patch",
+    "destination": "Network Locations / Manage Connections\u2013Advanced Options \u2192 Library Health / dependency patch",
     "status": "changed",
     "test": "Network142Test / Network142RenderTest / SettingsWorkspaceTest / retained protocol-provider regression suite",
     "source": "FD-003 \u00a79.1 CS-15",

@@ -110,10 +110,11 @@ public class SettingsWorkspaceTest {
         assertEquals(255,android.graphics.Color.alpha(image.getPixel(diameter/2,diameter)));
         assertEquals(0,android.graphics.Color.alpha(image.getPixel(diameter/2,diameter*2-1)));image.recycle();
     }
-    @Test public void sharedNavigationRetainsEightCardsAndAllCategoryFocusPaths(){
+    @Test public void sharedNavigationRetainsEightCardsAndAllCategoryFocusPaths()throws Exception{
         ViewGroup old=(ViewGroup)root.getParent();old.removeView(root);
         TopNavigation nav=new TopNavigation(host.get(),root,index->{},workspace::atNavigationBoundary);nav.selectTab(4);host.get().setContentView(nav);
         nav.measure(View.MeasureSpec.makeMeasureSpec(1920,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY));nav.layout(0,0,1920,1080);
+        com.archos.mediacenter.video.leanback.PreviewPagesTest.capture(nav,"0147-settings-global-grid");
         tagged("settings.grid.2").requestFocus();nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));
         assertTrue(nav.findViewWithTag("semantic:topnav.settings").hasFocus());
         nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertTrue(tagged("settings.grid.2").hasFocus());
