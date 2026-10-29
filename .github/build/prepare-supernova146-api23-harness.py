@@ -9,7 +9,7 @@ from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 for name in ['video','medialib','review','output']:p.add_argument('--'+name,type=Path,required=True)
 a=p.parse_args();video=a.video.resolve();media=a.medialib.resolve();review=a.review.resolve();out=a.output.resolve();out.mkdir(parents=True,exist_ok=True)
-for name in ['gradlew','gradlew.bat','gradle']: 
+for name in ['gradlew','gradle']: 
  source=video/name
  if source.is_dir():shutil.copytree(source,out/name,dirs_exist_ok=True)
  else:shutil.copyfile(source,out/name)
