@@ -25,7 +25,7 @@ class Settings143Mapping(unittest.TestCase):
             self.assertEqual(expected,hashlib.sha256((ROOT/path).read_bytes()).hexdigest())
     def test_release_history_preserves_previous_delivered_identity(self):
         history=json.loads((ROOT/'assets/foundation/release-history.json').read_text())
-        self.assertEqual(('0.146',146),(history['current']['version'],history['current']['version_code']))
+        self.assertEqual(('0.147',147),(history['current']['version'],history['current']['version_code']))
         prior=next(item for item in history['history'] if item['version']=='0.142');self.assertEqual('0.142',prior['version'])
         self.assertEqual('b347707defdbf2ab3ae83d920ba9fa7af3936220',prior['source_sha'])
         self.assertEqual('af03d26719b00601ca08da5ad562c1f196ec536c6397ac5b4603c2337d7c8514',prior['apks'][0]['sha256'])

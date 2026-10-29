@@ -8,35 +8,42 @@ import android.widget.*;
 import com.archos.mediacenter.video.leanback.SharedThreePanel;
 import com.archos.mediacenter.video.leanback.TvLayout;
 
-/** Fixed category rail and one flexible workspace. Only file browsing needs a detail split. */
+/** Full-width Settings-style landing and dedicated browser workspace; no persistent rail. */
 final class NetworkFilesLayout extends LinearLayout {
     final FrameLayout workspace;
     private final LinearLayout centre, right, body;
     private final ScrollView details, scroll;
     private final FrameLayout listing;
     private final LinearLayout items;
-    private boolean browsing,initialised;
+    private boolean browsing,initialised,landing;
+    final TextView back;
+    private View landingGrid;
 
     NetworkFilesLayout(Context c, LinearLayout rail, LinearLayout centre, LinearLayout right,
                        ScrollView details, FrameLayout listing, LinearLayout items) {
         super(c); this.centre=centre; this.right=right; this.details=details;
         this.listing=listing; this.items=items;
-        setOrientation(HORIZONTAL); setClipChildren(false); setClipToPadding(false);
+        setOrientation(VERTICAL); setClipChildren(false); setClipToPadding(false);
         setPadding(dp(16),dp(7),dp(16),dp(8));
         detach(rail); detach(centre); detach(details);
-        ScrollView navigation=new ScrollView(c); navigation.setFillViewport(true); navigation.addView(rail);
-        surface(navigation,10); rail.setPadding(dp(7),dp(10),dp(7),dp(10));
-        LayoutParams railSize=new LayoutParams(Math.round(dp(176)*TvLayout.scale(c)),-1);railSize.rightMargin=dp(10);
-        addView(navigation,railSize);
+        back=SharedThreePanel.accentAction(c,"Network & Files  ‹",()->{});
+        back.setTag("network.back");addView(back,new LayoutParams(-1,-2));
         workspace=new FrameLayout(c);surface(workspace,10);workspace.setPadding(dp(10),dp(10),dp(10),dp(10));
-        addView(workspace,new LayoutParams(0,-1,1));
+        addView(workspace,new LayoutParams(-1,0,1));
         centre.setBackground(null);centre.setPadding(0,0,0,0);details.setBackground(null);details.setPadding(0,0,0,0);
         right.setPadding(0,0,0,0);
         body=new LinearLayout(c);body.setOrientation(VERTICAL);
         scroll=new ScrollView(c);scroll.setFillViewport(true);scroll.setFocusable(false);scroll.addView(body);
         mode(false);
     }
+    void landing(View grid){
+        landing=true;landingGrid=grid;back.setVisibility(GONE);workspace.removeAllViews();
+        detach(grid);workspace.addView(grid,new FrameLayout.LayoutParams(-1,-1));
+    }
+    boolean landing(){return landing;}
     void mode(boolean value) {
+        if(landing){landing=false;initialised=false;back.setVisibility(VISIBLE);}
+
         if(initialised&&browsing==value)return;initialised=true;browsing=value;
         detach(centre);detach(right);detach(details);detach(items);detach(scroll);
         listing.removeAllViews();workspace.removeAllViews();body.removeAllViews();

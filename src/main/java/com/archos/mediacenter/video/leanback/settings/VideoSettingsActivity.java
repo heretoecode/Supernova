@@ -40,7 +40,13 @@ public class VideoSettingsActivity extends LeanbackActivity {
         super.onCreate(savedInstanceState);
         if(SettingsWorkspace.enabled(this))overridePendingTransition(0,0);
         if(SettingsWorkspace.enabled(this)){
-            android.widget.FrameLayout full=new android.widget.FrameLayout(this);full.setId(R.id.settingsFragment);setContentView(full);new androidx.core.view.WindowInsetsControllerCompat(getWindow(),full).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            android.widget.FrameLayout full=new android.widget.FrameLayout(this);full.setId(R.id.settingsFragment);
+            previewNavigation=new com.archos.mediacenter.video.leanback.TopNavigation(this,full,index->{
+                if(index==4)return;
+                if(index==5)startActivity(new android.content.Intent(this,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+                else {startActivity(new android.content.Intent(this,com.archos.mediacenter.video.leanback.MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP));finish();}
+            },()->{Fragment f=getSupportFragmentManager().findFragmentById(R.id.settingsFragment);return f instanceof VideoSettingsFragment.PrefsFragment&&((VideoSettingsFragment.PrefsFragment)f).workspace!=null&&((VideoSettingsFragment.PrefsFragment)f).workspace.atNavigationBoundary();});
+            previewNavigation.selectTab(4);setContentView(previewNavigation);new androidx.core.view.WindowInsetsControllerCompat(getWindow(),full).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
             if(savedInstanceState==null)getSupportFragmentManager().beginTransaction().replace(R.id.settingsFragment,new VideoSettingsFragment.PrefsFragment()).commit();
         }else setContentView(R.layout.activity_video_settings);
         if (SettingsWorkspace.enabled(this) || previewNavigation != null) {

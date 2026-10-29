@@ -42,8 +42,7 @@ final class SettingsWorkspace extends LinearLayout {
     SettingsWorkspace(VideoSettingsFragment.PrefsFragment fragment,BackupSettingsController backup,Bundle state){
         super(fragment.requireContext());this.fragment=fragment;this.backup=backup;registry=new SettingsRegistry(getContext());prefs=PreferenceManager.getDefaultSharedPreferences(getContext());
         setTag("settings.workspace");setOrientation(VERTICAL);setBackground(new PreviewUtilityBackground(getContext()));setPadding(dp(28),dp(20),dp(28),dp(20));setClipChildren(false);
-        LinearLayout header=new LinearLayout(getContext());header.setGravity(Gravity.CENTER_VERTICAL);TextView brand=text("SUPERNOVA",23);brand.setLetterSpacing(.20f);header.addView(brand);View divider=new View(getContext());divider.setBackgroundColor(0x557b8793);LayoutParams separator=new LayoutParams(dp(1),dp(26));separator.setMargins(dp(18),0,dp(18),0);header.addView(divider,separator);header.addView(text("Settings",28));Space gap=new Space(getContext());header.addView(gap,new LayoutParams(0,1,1));TextClock clock=new TextClock(getContext());clock.setTextColor(Color.WHITE);clock.setTextSize(18*scale());clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");header.addView(clock);addView(header,new LayoutParams(-1,-2));
-        stage=new FrameLayout(getContext());LayoutParams area=new LayoutParams(-1,0,1);area.topMargin=dp(18);addView(stage,area);
+        stage=new FrameLayout(getContext());LayoutParams area=new LayoutParams(-1,0,1);area.topMargin=dp(4);addView(stage,area);
         prefs.registerOnSharedPreferenceChangeListener(preferenceObserver);
         post(()->{if(disposed)return;observed=fragment.getListView().getAdapter();if(observed!=null)observed.registerAdapterDataObserver(observer);});
         Bundle saved=state==null?null:state.getBundle("supernova_settings_workspace");
@@ -55,6 +54,12 @@ final class SettingsWorkspace extends LinearLayout {
         else if(legacy!=null){if(Arrays.asList("Playback","Video").contains(legacy))requested=0;else if(Arrays.asList("Audio","Subtitles").contains(legacy))requested=1;else if(Arrays.asList("Home","Library & Metadata","Library").contains(legacy))requested=2;else if(legacy.equals("Appearance"))requested=4;else if(Arrays.asList("Network","Integrations").contains(legacy))requested=5;else if(legacy.equals("Advanced")){requested=6;requestedSection="Diagnostics";}else if(legacy.equals("About"))requested=7;}
         fragment.requireActivity().getIntent().removeExtra("preview_settings_category");fragment.requireActivity().getIntent().removeExtra("show_streaming_settings");
         if(requested>=0&&requested<8)open(requested,requestedSection);else showGrid();
+    }
+    boolean atNavigationBoundary(){
+        View focused=findFocus();
+        if(category<0)return cards.indexOf(focused)>=0&&cards.indexOf(focused)<4;
+        if(!railButtons.isEmpty()&&focused==railButtons.get(0))return true;
+        return false;
     }
     private float scale(){return Math.max(.5f,Math.min(1.25f,Math.min(getResources().getConfiguration().screenWidthDp/960f,getResources().getConfiguration().screenHeightDp/540f)));}
     private int dp(float value){return Math.max(1,Math.round(value*scale()*getResources().getDisplayMetrics().density));}

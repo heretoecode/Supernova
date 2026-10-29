@@ -8,19 +8,32 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.146",
-    "version_code": 146,
+    "version": "0.147",
+    "version_code": 147,
     "date": "2026-10-29",
-    "kind": "QA candidate \u2014 upstream and security maintenance; device acceptance pending",
+    "kind": "Development \u2014 implementation and QA in progress",
     "notes": [
-      "Integrated the NOVA6.6.2 release-time source changes while retaining Supernova screens, libraries, credentials and saved preferences.",
-      "Rebuilt FFmpeg9.0.2, OpenSSL4.1, libass0.17.5 and supporting codecs/fonts for four ABIs with reviewed security backports; native TLS verification stays enabled.",
-      "Native subtitles retain existing controls and size settings, with added SAF fonts, letterbox placement and local-language subtitle policy. PCM speed adds Sonic while retaining the original switches.",
-      "Jetty/jUPnP transport uses an explicit source backport and API23 NIO support; all23 Android23 transport/trust cases pass. Version findings remain visible with source-level dispositions.",
-      "Physical Shield/HDMI routes, real NAS/provider interoperability, GL subtitle visuals and an installed signed upgrade require device QA. The retired experimental Sonic compressed-audio codec is distinct from supported Sonic PCM speed."
+      "Network & Files uses a six-card Settings-style landing and full-width detail pages. Put.io and Library Health retain explicit routes.",
+      "Global navigation restored above Settings landing and categories. Existing preferences and native actions are retained.",
+      "Playback age rating uses configured region, shows only available certification, and fades after ten seconds from established playback output.",
+      "Physical Shield, live network/provider and signed upgrade verification remain pending."
     ]
   },
   "history": [
+    {
+      "version": "0.146",
+      "version_code": 146,
+      "date": "2026-10-29",
+      "kind": "QA candidate \u2014 upstream and security maintenance; device acceptance pending",
+      "notes": [
+        "Integrated the NOVA6.6.2 release-time source changes while retaining Supernova screens, libraries, credentials and saved preferences.",
+        "Rebuilt FFmpeg9.0.2, OpenSSL4.1, libass0.17.5 and supporting codecs/fonts for four ABIs with reviewed security backports; native TLS verification stays enabled.",
+        "Native subtitles retain existing controls and size settings, with added SAF fonts, letterbox placement and local-language subtitle policy. PCM speed adds Sonic while retaining the original switches.",
+        "Jetty/jUPnP transport uses an explicit source backport and API23 NIO support; all23 Android23 transport/trust cases pass. Version findings remain visible with source-level dispositions.",
+        "Physical Shield/HDMI routes, real NAS/provider interoperability, GL subtitle visuals and an installed signed upgrade require device QA. The retired experimental Sonic compressed-audio codec is distinct from supported Sonic PCM speed."
+      ],
+      "source_sha": "938885ac2a84a5efecb1674b3e9f1032a56740ed"
+    },
     {
       "version": "0.145",
       "version_code": 145,

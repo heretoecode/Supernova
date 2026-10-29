@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.view.KeyEvent;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -72,6 +73,43 @@ public final class UniversalFileBrowser extends LinearLayout {
     private boolean onboarding,configurationActive;
     private NetworkFilesLayout networkLayout;
     private int section;private boolean sectionChild;
+    private int landingSelection;
+    private final List<View> landingCards=new ArrayList<>();
+    private void networkLanding(){
+        if(current!=null&&suppliedDock==null)sectionLocations.put(landingSelection,current);
+        stopDiscovery();stopListing();clearProvider();if(putioController!=null){putioController.close();putioController=null;}
+        section=0;sectionChild=false;centreAnchor=null;
+        LinearLayout grid=column();grid.setTag("network.landing");grid.setPadding(dp(12),dp(8),dp(12),dp(8));
+        TextView title=SharedThreePanel.text(getContext(),"Network & Files",28);grid.addView(title);
+        String[] labels={"Local Storage","Network Locations","Add Connection","Manage Connections","Network Scanning","Advanced Options"};
+        String[] copy={"Browse internal storage, USB drives and all files.","Saved locations, discovered devices and Put.io.","Set up SMB, WebDAV, SFTP or FTP access.","Review saved locations and library membership.","Configure automatic checks and scan your library.","Library Health, file browsing and compatibility."};
+        String[] icons={"local","network","plus","settings.nodes","refresh","settings"};
+        landingCards.clear();
+        for(int r=0;r<2;r++){LinearLayout line=new LinearLayout(getContext());line.setBaselineAligned(false);LayoutParams row=new LayoutParams(-1,0,1);row.topMargin=dp(12);grid.addView(line,row);
+            for(int c=0;c<3;c++){final int index=r*3+c;LinearLayout card=column();card.setGravity(Gravity.CENTER_VERTICAL);card.setFocusable(true);card.setFocusableInTouchMode(true);card.setPadding(dp(16),dp(14),dp(16),dp(14));card.setBackground(SharedThreePanel.control(getContext(),9));card.setTag("network.card."+index);card.setContentDescription(labels[index]+". "+copy[index]);
+                ImageView icon=new ImageView(getContext());icon.setImageDrawable(new PreviewIcon(icons[index]));card.addView(icon,new LayoutParams(dp(30),dp(30)));
+                TextView name=SharedThreePanel.text(getContext(),labels[index],20);name.setTypeface(null,android.graphics.Typeface.BOLD);card.addView(name);TextView description=SharedThreePanel.text(getContext(),copy[index],15);description.setTextColor(0xffbcc9d9);card.addView(description);
+                LayoutParams size=new LayoutParams(0,-1,1);if(c<2)size.rightMargin=dp(12);line.addView(card,size);landingCards.add(card);
+                card.setOnFocusChangeListener((v,yes)->{if(yes)landingSelection=index;});card.setOnClickListener(v->openLandingCard(index));
+                card.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;int next=index;if(key==KeyEvent.KEYCODE_DPAD_LEFT&&cIndex(index)>0)next--;else if(key==KeyEvent.KEYCODE_DPAD_RIGHT&&cIndex(index)<2)next++;else if(key==KeyEvent.KEYCODE_DPAD_UP){if(index<3)return false;next-=3;}else if(key==KeyEvent.KEYCODE_DPAD_DOWN&&index<3)next+=3;else if(key!=KeyEvent.KEYCODE_DPAD_LEFT&&key!=KeyEvent.KEYCODE_DPAD_RIGHT&&key!=KeyEvent.KEYCODE_DPAD_DOWN)return false;landingCards.get(next).requestFocus();return true;});
+            }
+        }
+        networkLayout.landing(grid);landingCards.get(landingSelection).requestFocus();
+    }
+    private static int cIndex(int index){return index%3;}
+    private void openLandingCard(int index){
+        if(current!=null&&suppliedDock==null)sectionLocations.put(landingSelection,current);
+        landingSelection=index;section=index+1;centreAnchor=null;workspaceMode(false);
+        switch(index){case 0:if(sectionLocations.containsKey(index)){open(sectionLocations.get(index));break;}localStorage();centreAction("All Files",this::allLocations);break;
+            case 1:networkShares();centreAction("Put.io · Account and Files",this::putio);break;
+            case 2:beginConnection();break;
+            case 3:networkShares();centreAction("Put.io · Account and Library Associations",this::putio);break;
+            case 4:scanControls();break;
+            default:command("Advanced Options","Review library health or open existing connection preferences.","",()->{});centreHeading("Advanced Options");centreAction("Library Health",this::healthHome);centreAction("All Files",this::allLocations);centreAction("Connection Preferences",()->getContext().startActivity(new Intent(getContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class).putExtra("supernova_settings_category",5).putExtra("supernova_settings_section","Network connections")));centreAction("Network Compatibility",()->getContext().startActivity(new Intent(getContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class).putExtra("supernova_settings_category",6).putExtra("supernova_settings_section","Network compatibility")));break;
+        }
+        focusCentre();
+    }
+
     private final Map<Integer,Integer> sectionScroll=new HashMap<>();
     private final List<Box> mountedVolumes=new ArrayList<>();
     private final List<Shortcut> bookmarks=new ArrayList<>();
@@ -145,6 +183,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         removeAllViews();networkLayout=new NetworkFilesLayout(getContext(),left,centre,right,contextScroll,itemScroll,items);
         addView(networkLayout,new LayoutParams(-1,-1));
         for(int n=0;n<3;n++)right.getChildAt(n).setVisibility(GONE);
+        networkLayout.back.setOnClickListener(v->requestExit(this::networkLanding));
         sourceFingerprint="";
         status.addTextChangedListener(new android.text.TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int b,int c){}public void onTextChanged(CharSequence s,int a,int b,int c){((View)status.getParent()).setVisibility(s.length()==0?GONE:VISIBLE);}public void afterTextChanged(android.text.Editable s){}});((View)status.getParent()).setVisibility(GONE);
     }
@@ -168,7 +207,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private void volumeRows(LinearLayout target){
         if(mountedVolumes.isEmpty())target.addView(SharedThreePanel.text(getContext(),"No devices detected",16));
         for(Box box:mountedVolumes){String path=box.getPath();Uri uri=Uri.fromFile(new java.io.File(path==null?android.os.Environment.getExternalStorageDirectory().getPath():path));
-            TextView row=action((box.getBoxId()==Box.ID.FOLDERS?"Internal Storage":box.getName())+"\n"+uri.getPath(),()->{if(networkLayout!=null&&section==0){section=1;leftAnchor=locations.get(1);}open(uri);focusCentre();});
+            TextView row=action((box.getBoxId()==Box.ID.FOLDERS?"Internal Storage":box.getName())+"\n"+uri.getPath(),()->{if(networkLayout!=null&&section==0)section=1;open(uri);focusCentre();});
             row.setTag("storage:"+uri);PreviewIcon.apply(row,"local",16);row.setTextSize(12);row.setLineSpacing(dp(2),1);row.setMinHeight(dp(33));target.addView(row,new LayoutParams(-1,-2));}
     }
     private void allLocations(){sectionChild=false;command("All Files","Choose a device or saved location. Browser filtering remains controlled by All Files On/Off.","",()->{});centreHeading("All Files");volumeRows(items);
@@ -227,11 +266,9 @@ public final class UniversalFileBrowser extends LinearLayout {
     /** Local directory result contract, sharing listing, breadcrumbs, focus and geometry. */
     public void directoryPicker(Consumer<Uri> selected){directoryChoice=selected;legacyRootsReady=true;toolbar.findViewWithTag("browser.all_files").setVisibility(GONE);}
     public Uri location() { return current; }
-    public boolean atTop() { return !locations.isEmpty()&&locations.get(0).hasFocus(); }
+    public boolean atTop() { if(networkLayout!=null)return networkLayout.back.hasFocus()||networkLayout.landing()&&landingCards.indexOf(findFocus())>=0&&landingCards.indexOf(findFocus())<3;return !locations.isEmpty()&&locations.get(0).hasFocus(); }
     public boolean focusOverview() {
-        if(networkLayout!=null&&(section!=0||current!=null||sectionChild)){
-            requestExit(()->{if(current!=null&&suppliedDock==null)sectionLocations.put(section,current);section=0;leftAnchor=overview;centreAnchor=null;showOverview();overview.requestFocus();});return true;
-        }
+        if(networkLayout!=null){if(networkLayout.landing())landingCards.get(landingSelection).requestFocus();else focusCentre();return true;}
         return !locations.isEmpty()&&locations.get(0).requestFocus();
     }
     /** Providers keep their account API and item adapter, within the same panel shell. */
@@ -274,17 +311,12 @@ public final class UniversalFileBrowser extends LinearLayout {
         Object anchorTag=leftAnchor==null?null:leftAnchor.getTag();boolean leftFocused=left.hasFocus();
         shares.clear();Set<String> knownShares=new HashSet<>();for(Shortcut source:sources)if(knownShares.add(BrowserSelection.canonical(source.getUri())))shares.add(source);for(Shortcut source:saved)if(knownShares.add(BrowserSelection.canonical(source.getUri())))shares.add(source);if(!onboarding&&!prefs.getBoolean("supernova_library_policy_initialized",false)){List<Uri> existing=new ArrayList<>();for(Shortcut source:sources)existing.add(source.getUri());selection.seedExisting(existing);}savedSources.clear();for(Shortcut source:saved)savedSources.put(BrowserSelection.canonical(source.getUri()),source);
         if(networkLayout!=null){
-            boolean rebuild=locations.size()!=6;
-            if(rebuild){left.removeAllViews();locations.clear();String[] names={"Overview","Local Storage","Network Shares","Cloud Services","All Files","Library Health"};String[] tags={"overview","local_storage","network_shares","cloud_services","all_files","library_health"};String[] icons={"grid","local","network","cloud","folder","health"};
-                for(int n=0;n<names.length;n++){final int destination=n;TextView row=n==0?overview:action(names[n],()->selectSection(destination));row.setText(names[n]);row.setBackground(null);row.setOnClickListener(v->selectSection(destination));row.setOnFocusChangeListener((v,yes)->{});row.setTag("semantic:network.category."+tags[n]);row.setMinHeight(dp(38));row.setTextSize(13);row.setSingleLine(false);row.setMaxLines(2);PreviewIcon.apply(row,icons[n],15);row.setCompoundDrawablePadding(dp(10));locations.add(row);LayoutParams size=new LayoutParams(-1,-2);size.bottomMargin=dp(4);left.addView(row,size);}
-                leftAnchor=overview;section=0;showOverview();
-            }else if(current==null&&!sectionChild&&(section==0||section==1||section==2||section==4)){
-                View focused=items.findFocus();Object identity=focused==null?null:focused.getTag();boolean contentFocused=items.hasFocus();int scroll=networkLayout.scrollPosition();
-                if(contentFocused){items.setFocusableInTouchMode(true);items.requestFocus();}
-                if(section==0)showOverview();else if(section==1)localStorage();else if(section==2)networkShares();else allLocations();
-                networkLayout.restoreScroll(scroll);
-                if(contentFocused){View target=identity==null?null:items.findViewWithTag(identity);if(target==null||!target.requestFocus())focusCentre();}
+            if(landingCards.isEmpty())networkLanding();
+            else if(!networkLayout.landing()&&current==null&&!sectionChild&&landingSelection==0){
+                View focused=items.findFocus();Object tag=focused==null?null:focused.getTag();localStorage();centreAction("All Files",this::allLocations);
+                if(focused!=null){View restore=tag==null?null:items.findViewWithTag(tag);if(restore==null||!restore.requestFocus())focusCentre();}
             }
+            // Async inventory changes update the model without rebuilding the active form or stealing focus.
             return;
         }
         for(int i=left.getChildCount()-1;i>2;i--)left.removeViewAt(i);
@@ -315,7 +347,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private void toggleHealth(){healthExpanded=!healthExpanded;if(healthExpanded&&localExpanded)toggleLocal();healthParent.setText("Library Health  "+(healthExpanded?"⌄":"›"));for(TextView child:healthChildren)child.setVisibility(healthExpanded?VISIBLE:GONE);healthParent.requestFocus();}
     private void health(int category){sectionChild=category>=0;workspaceMode(false);right.setVisibility(VISIBLE);centreScrolling(true);stopDiscovery();remember();current=null;stopListing();toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);status.setText("");facts.setVisibility(GONE);poster.setVisibility(GONE);information.setText("");heading.setText("Library Health");healthPanel=new LibraryHealthPanel(getContext(),items,actions,PreviewLibraryLoader.memoryCache());healthPanel.show(category);if(networkLayout!=null&&category>=0){centreAction("Back to Library Health",this::healthHome);}}
     private void centreHeading(String title){centreScrolling(true);items.setTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic,null);items.removeAllViews();if(networkLayout!=null){TextView text=SharedThreePanel.text(getContext(),title,20);text.setPadding(0,0,0,dp(8));items.addView(text);}else SharedThreePanel.heading(items,title);}
-    private void centreAction(String label,Runnable run){TextView row=action(label,run);if(networkLayout!=null){row.setTextSize(13);row.setMinHeight(dp(33));row.setPadding(dp(8),dp(4),dp(8),dp(4));items.addView(row,new LayoutParams(-1,-2));View line=new View(getContext());line.setBackgroundColor(0x337f8996);LayoutParams size=new LayoutParams(-1,dp(1));size.topMargin=dp(3);size.bottomMargin=dp(3);items.addView(line,size);}else{items.addView(row,new LayoutParams(-1,dp(42)));SharedThreePanel.divider(items);}}
+    private void centreAction(String label,Runnable run){TextView row=action(label,run);if(networkLayout!=null){row.setTextSize(19*TvLayout.scale(getContext()));row.setMinHeight(dp(52));row.setPadding(dp(14),dp(12),dp(14),dp(12));items.addView(row,new LayoutParams(-1,-2));View line=new View(getContext());line.setBackgroundColor(0x337f8996);LayoutParams size=new LayoutParams(-1,dp(1));size.topMargin=dp(3);size.bottomMargin=dp(3);items.addView(line,size);}else{items.addView(row,new LayoutParams(-1,dp(42)));SharedThreePanel.divider(items);}}
     private void cloud(){putio();}
     private void putio(){sectionChild=false;command("put.io","Enabled state is independent of account connection. Disabling retains credentials and library associations. Registered OAuth client configuration is required for a new connection.","Account / Connection",()->{openPutioAccount();});centreHeading(networkLayout!=null?"Cloud Services · put.io":"put.io");boolean enabled=prefs.getBoolean("supernova_putio_enabled",true);centreAction("Enabled: "+(enabled?"On":"Off"),()->{prefs.edit().putBoolean("supernova_putio_enabled",!enabled).apply();putio();});if(enabled){centreAction("Account / Connection",()->{openPutioAccount();});}else{actions.removeAllViews();information.setText("Disabled. Saved account connection and library associations are retained.");}}
 
@@ -341,7 +373,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         open(uri);
     }
     private void command(String title,String description,String label,Runnable action){
-        stopDiscovery();workspaceMode(false);centreScrolling(true);toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);remember();current=null;stopListing();items.removeAllViews();crumbs.removeAllViews();status.setText("");facts.setVisibility(GONE);heading.setText(title);information.setText(description);actions.removeAllViews();if(!label.isEmpty()){right.setVisibility(VISIBLE);addAction(label,action);}
+        stopDiscovery();workspaceMode(false);centreScrolling(true);toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);remember();current=null;stopListing();items.removeAllViews();crumbs.removeAllViews();status.setText("");facts.setVisibility(GONE);heading.setText(title);information.setText(description);actions.removeAllViews();right.setVisibility(VISIBLE);if(!label.isEmpty())addAction(label,action);
     }
     private TextView location(String name,Runnable show) {
         TextView row=action(name,show);SharedThreePanel.rowSeparator(row); locations.add(row); left.addView(row,new LayoutParams(-1,dp(50)));
@@ -354,18 +386,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
     private void showOverview() {
         stopDiscovery();
-        if(networkLayout!=null){
-            sectionChild=false;workspaceMode(false);remember();current=null;stopListing();indexed.clear();files.clear();items.removeAllViews();crumbs.removeAllViews();toolbar.setVisibility(GONE);breadcrumbScroll.setVisibility(GONE);status.setText("");actions.removeAllViews();
-            LinearLayout header=new LinearLayout(getContext());header.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            TextView title=SharedThreePanel.text(getContext(),"Overview",20);header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-            TextView scan=action("Scan Library",()->{PreviewLibraryScan.request(getContext());if(scanOverview!=null)scanOverview.setText(dashboardLibraryStatus());});scanButton=scan;scan.setTag("semantic:network.scan_library");header.addView(scan);items.addView(header);
-            TextView subtitle=SharedThreePanel.text(getContext(),"Your storage, connections and library at a glance",12);subtitle.setTextColor(0xffb7bdc6);items.addView(subtitle);
-            dashboardCard("Storage","Internal and mounted storage devices","local",()->selectSection(1),card->volumeRows(card));
-            dashboardCard("Network Shares","Configured network locations · status not checked","network",()->selectSection(2),card->{if(shares.isEmpty())card.addView(SharedThreePanel.text(getContext(),"No network locations saved",13));for(Shortcut source:shares){TextView row=action(source.getName()+" · "+PreviewNetworkWorkspace.protocol(source.getUri()),()->{section=2;leftAnchor=locations.get(2);open(source.getUri());focusCentre();});card.addView(row);}});
-            dashboardCard("Cloud Services","put.io account integration","cloud",()->selectSection(3),card->{card.addView(SharedThreePanel.text(getContext(),prefs.getBoolean("supernova_putio_enabled",true)?"put.io · Open account to check connection":"put.io · Disabled",13));});
-            dashboardCard("Library Status","Latest scan and library information","health",()->selectSection(5),card->{scanOverview=SharedThreePanel.text(getContext(),dashboardLibraryStatus(),13);card.addView(scanOverview);});
-            return;
-        }
+        if(networkLayout!=null){networkLanding();return;}
 
         if(current!=null&&selection.changed()) { // Category changes leave the browser section.
             requestExit(()->{current=null;showOverview();}); return;
@@ -562,7 +583,7 @@ public final class UniversalFileBrowser extends LinearLayout {
 
         if(!selection.changed()){leave.run();return;}
         Dialog dialog=PreviewDialog.create(getContext(),"review");
-        View opener=getRootView().findFocus();boolean[] leaving={false};dialog.setOnDismissListener(ignored->{if(!leaving[0]){if(opener!=null&&opener.isAttachedToWindow())opener.requestFocus();else if(centreAnchor!=null&&centreAnchor.isAttachedToWindow())centreAnchor.requestFocus();else if(leftAnchor!=null)leftAnchor.requestFocus();}});
+        View opener=getRootView().findFocus();boolean[] leaving={false};dialog.setOnDismissListener(ignored->{if(!leaving[0]){if(opener!=null&&opener.isAttachedToWindow())opener.requestFocus();else if(centreAnchor!=null&&centreAnchor.isAttachedToWindow())centreAnchor.requestFocus();else if(networkLayout!=null)networkLayout.back.requestFocus();else if(leftAnchor!=null)leftAnchor.requestFocus();}});
         LinearLayout panel=column();panel.setPadding(dp(24),dp(20),dp(24),dp(20));SharedThreePanel.decorate(panel);
         panel.addView(SharedThreePanel.text(getContext(),"Unsaved library changes",22));
         ScrollView scroll=new ScrollView(getContext());TextView description=SharedThreePanel.text(getContext(),reviewText(),16);scroll.addView(description);panel.addView(scroll,new LayoutParams(-1,0,1));
@@ -582,7 +603,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if(putioBrowser!=null){putioBrowser.back();return true;}
         if(putioController!=null&&putioController.activeInline()){putioController.close();putioController=null;putio();focusCentre();return true;}
         if(current!=null){List<Uri> trail=ancestors(current);if(trail.size()>1){open(trail.get(trail.size()-2));return true;}}
-        if(networkLayout!=null&&(current!=null||sectionChild||!left.hasFocus())){requestExit(()->{current=null;sectionLocations.remove(section);if(section==1)localStorage();else if(section==2)networkShares();else if(section==3)cloud();else if(section==4)allLocations();else if(section==5)healthHome();else showOverview();leftAnchor.requestFocus();});return true;}
+        if(networkLayout!=null&&!networkLayout.landing()){requestExit(this::networkLanding);return true;}
         requestExit(leave);return true;
     }
     private void focusActions(){for(View target:actions.getFocusables(FOCUS_FORWARD))if(target!=actions&&target.isShown()&&target.isEnabled()&&target.requestFocus())return;}
@@ -622,6 +643,11 @@ public final class UniversalFileBrowser extends LinearLayout {
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
         if(event.getAction()!=KeyEvent.ACTION_DOWN)return super.dispatchKeyEvent(event);
         int key=event.getKeyCode();View focused=findFocus();
+        if(networkLayout!=null&&networkLayout.landing())return super.dispatchKeyEvent(event);
+        if(networkLayout!=null&&networkLayout.back.hasFocus()){
+            if(key==KeyEvent.KEYCODE_DPAD_DOWN){focusCentre();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_UP)return super.dispatchKeyEvent(event);
+        }
         if(putioController!=null&&putioController.activeInline()&&items.hasFocus()){
             if(key==KeyEvent.KEYCODE_BACK||key==KeyEvent.KEYCODE_ESCAPE){putioController.close();putioController=null;putio();focusCentre();return true;}
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){View next=android.view.FocusFinder.getInstance().findNextFocus(items,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused)next.requestFocus();return true;}
@@ -632,8 +658,8 @@ public final class UniversalFileBrowser extends LinearLayout {
             List<TextView> visible=new ArrayList<>();for(TextView row:locations)if(row.isShown()&&row.isEnabled()&&row.isFocusable())visible.add(row);View locationFocus=focused;while(locationFocus!=null&&locationFocus.getParent()!=left)locationFocus=locationFocus.getParent() instanceof View?(View)locationFocus.getParent():null;int position=visible.indexOf(locationFocus);if(position>=0&&(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN)){int next=position+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next<0&&key==KeyEvent.KEYCODE_DPAD_UP)return super.dispatchKeyEvent(event);if(next>=0&&next<visible.size())visible.get(next).requestFocus();return true;}
         }
         if(networkLayout!=null&&!networkLayout.browsing()&&!left.hasFocus()){
-            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(leftAnchor!=null)leftAnchor.requestFocus();return true;}
-            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){View next=android.view.FocusFinder.getInstance().findNextFocus(networkLayout.workspace,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused){next.requestFocus();networkLayout.reveal(next);}return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(networkLayout!=null)networkLayout.back.requestFocus();else if(leftAnchor!=null)leftAnchor.requestFocus();return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){View next=android.view.FocusFinder.getInstance().findNextFocus(networkLayout.workspace,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused){next.requestFocus();networkLayout.reveal(next);}else if(key==KeyEvent.KEYCODE_DPAD_UP)networkLayout.back.requestFocus();return true;}
         }
         if(centre.hasFocus()) {
             centreAnchor=focused;
@@ -650,12 +676,12 @@ public final class UniversalFileBrowser extends LinearLayout {
                 ViewGroup horizontal=toolbar.hasFocus()?toolbar:crumbs.hasFocus()?crumbs:suppliedDock instanceof ViewGroup?(ViewGroup)suppliedDock:fileList.hasFocus()?fileList:centre;
                 View next=android.view.FocusFinder.getInstance().findNextFocus(horizontal,focused,key==KeyEvent.KEYCODE_DPAD_LEFT?FOCUS_LEFT:FOCUS_RIGHT);
                 if(next!=null&&next!=focused){int[] a=new int[2],b=new int[2];focused.getLocationInWindow(a);next.getLocationInWindow(b);if(key==KeyEvent.KEYCODE_DPAD_LEFT?b[0]<a[0]:b[0]>a[0]){next.requestFocus();return true;}}
-                if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(leftAnchor!=null)leftAnchor.requestFocus();}
+                if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(networkLayout!=null)networkLayout.back.requestFocus();else if(leftAnchor!=null)leftAnchor.requestFocus();}
                 else focusActions();return true;
             }
         }
         if(right.hasFocus()) {
-            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(centreAnchor==null||!centreAnchor.isAttachedToWindow()||!centreAnchor.isShown()||!centreAnchor.requestFocus())focusCentre();if(!centre.hasFocus()){if(leftAnchor!=null)leftAnchor.requestFocus();else overview.requestFocus();}return true;}
+            if(key==KeyEvent.KEYCODE_DPAD_LEFT){if(centreAnchor==null||!centreAnchor.isAttachedToWindow()||!centreAnchor.isShown()||!centreAnchor.requestFocus())focusCentre();if(!centre.hasFocus()){if(networkLayout!=null)networkLayout.back.requestFocus();else if(leftAnchor!=null)leftAnchor.requestFocus();else overview.requestFocus();}return true;}
             if(key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
             if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){
                 if(addressScroll.hasFocus()){int direction=key==KeyEvent.KEYCODE_DPAD_UP?-1:1;if(addressScroll.canScrollVertically(direction))addressScroll.scrollBy(0,direction*dp(48));else if(direction>0){if(information.getText().length()>0)informationScroll.requestFocus();else focusActions();}return true;}

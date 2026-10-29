@@ -15,19 +15,24 @@ final class PlaybackAgeOverlay extends View {
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final SurfaceController surface;
     private final Runnable fade=this::fadeOut;
-    private String identity="",classification="",territory="";private boolean series,output,consumed;private int generation;
+    private String identity="",classification="",territory="";private boolean series,output,consumed;private int generation;private long outputAt;
     PlaybackAgeOverlay(Context c,SurfaceController surface){super(c);this.surface=surface;setFocusable(false);setClickable(false);setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);setVisibility(GONE);setTag("playback.age.classification");}
     void bind(VideoDbInfo info){
         String id=info==null?null:info.isShow?info.scraperShowId:info.scraperMovieId;
-        String key=info==null?"":info.id+":"+info.isShow+":"+id;
+        String key=info==null?"":info.id+":"+info.uri+":"+info.isShow+":"+id+":"+(PlayerService.sPlayerService==null?0:PlayerService.sPlayerService.playbackLaunchGeneration());
         if(key.equals(identity))return;identity=key;int expected=++generation;animate().cancel();setVisibility(GONE);classification="";consumed=false;output=false;removeCallbacks(fade);
         if(info==null||id==null||!id.matches("[1-9][0-9]{0,17}"))return;
         series=info.isShow;territory=StreamingRepository.country(getContext());String country=territory,kind=series?"tv":"movie";long providerId;try{providerId=Long.parseLong(id);}catch(NumberFormatException invalid){return;}
         StreamingRepository.IO.submit(()->{JSONObject cached=PreviewMetadataCache.read(getContext(),kind,providerId,kind.equals("tv")?"content_ratings":"release_dates");String value=SharedMetadata.certificate(cached==null?null:cached.optJSONObject("data"),country);post(()->{if(expected!=generation)return;classification=valid(value)?value:"";showIfReady();});});
     }
     static boolean valid(String value){if(value==null)return false;String text=value.trim();return text.matches("[A-Za-z0-9][A-Za-z0-9 +/.-]{0,23}")&&!text.toUpperCase(java.util.Locale.ROOT).matches("N/?A|NR|UNRATED|NOT(?: [A-Z]+)* RATED|UNKNOWN|NULL|NONE|TBC|TBD|NO RATING AVAILABLE");}
-    void playbackStarted(){output=true;showIfReady();}
-    private void showIfReady(){if(!output||consumed||classification.isEmpty()||!isAttachedToWindow())return;consumed=true;setAlpha(0);setVisibility(VISIBLE);bringToFront();animate().alpha(1).setDuration(FADE_MS).withEndAction(()->postDelayed(fade,DWELL_MS)).start();invalidate();}
+    void playbackStarted(){if(!output)outputAt=android.os.SystemClock.uptimeMillis();output=true;showIfReady();}
+    private void showIfReady(){
+        if(!output||consumed||classification.isEmpty()||!isAttachedToWindow())return;
+        long remaining=DWELL_MS-(android.os.SystemClock.uptimeMillis()-outputAt);
+        consumed=true;if(remaining<=0)return;
+        setAlpha(1);setVisibility(VISIBLE);bringToFront();postDelayed(fade,remaining);invalidate();
+    }
     private void fadeOut(){animate().alpha(0).setDuration(FADE_MS).withEndAction(()->setVisibility(GONE)).start();}
     void stop(){generation++;animate().cancel();removeCallbacks(fade);setVisibility(GONE);consumed=true;}
     @Override protected void onDetachedFromWindow(){stop();super.onDetachedFromWindow();}

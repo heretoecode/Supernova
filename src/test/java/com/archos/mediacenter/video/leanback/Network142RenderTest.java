@@ -24,15 +24,16 @@ public class Network142RenderTest {
   invalidateCapture(root);PreviewPagesTest.capture(root,name);
   android.graphics.Bitmap bitmap=android.graphics.BitmapFactory.decodeFile("build/reports/preview-ui/"+name+".png");
   assertTrue("Capture retains the static global brand: "+name,brightPixels(bitmap,52,35,266,76)>100);
-  assertTrue("Capture retains the persistent Overview rail label: "+name,brightPixels(bitmap,112,195,320,228)>50);
+  assertNotNull("Global navigation retained",root.findViewWithTag("semantic:topnav.network"));
  }
  private int brightPixels(android.graphics.Bitmap bitmap,int left,int top,int right,int bottom){int count=0;for(int y=top;y<bottom;y++)for(int x=left;x<right;x++){int pixel=bitmap.getPixel(x,y);if(android.graphics.Color.red(pixel)>180&&android.graphics.Color.green(pixel)>180&&android.graphics.Color.blue(pixel)>180)count++;}return count;}
  @Test public void actualGlobalShellCapturesAllSectionsAndWebdavStates()throws Exception{
   var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();UniversalFileBrowser browser=null;try{
    PreviewPages pages=new PreviewPages(host.get(),(holder,item)->{});ReflectionHelpers.setField(pages,"sourcesLoading",true);TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);host.get().setContentView(nav);pages.setSnapshot(new PreviewLibraryLoader.Snapshot());pages.setFiles(List.of(new Box(Box.ID.FOLDERS,"Internal Storage",0,"/fixture/internal"),new Box(Box.ID.USB,"USB fixture",0,"/fixture/usb")));pages.setTab(3);nav.selectTab(3);layout(nav);
    PreviewNetworkWorkspace workspace=ReflectionHelpers.getField(pages,"sharedBrowser");browser=workspace.browser();
-   for(String name:new String[]{"overview","local_storage","network_shares","cloud_services","all_files","library_health"}){View row=nav.findViewWithTag("semantic:network.category."+name);assertNotNull(row);row.requestFocus();row.performClick();layout(nav);assertTrue(row.isShown());capture(nav,"0142-shell-"+name);}
-   View network=nav.findViewWithTag("semantic:network.category.network_shares");network.requestFocus();network.performClick();layout(nav);PreviewPagesTest.findText(browser,"Add Network Source").performClick();ReflectionHelpers.setField(browser,"protocol",1);ReflectionHelpers.callInstanceMethod(browser,"connectionForm");layout(nav);capture(nav,"0142-shell-webdav-form");
+   capture(nav,"0147-shell-landing");
+   for(int n=0;n<6;n++){browser.findViewWithTag("network.card."+n).performClick();layout(nav);capture(nav,"0147-shell-card-"+n);ReflectionHelpers.setField(browser,"connectionDirty",false);ReflectionHelpers.callInstanceMethod(browser,"networkLanding");layout(nav);}
+   browser.findViewWithTag("network.card.2").performClick();layout(nav);PreviewPagesTest.findText(browser,"WebDAV HTTPS").performClick();layout(nav);capture(nav,"0147-shell-webdav-form");
    PreviewPagesTest.findText(browser,"Protocol: WebDAV HTTPS").performClick();layout(nav);capture(nav,"0142-shell-protocols");
   }finally{if(browser!=null)browser.close();host.pause().stop().destroy();}
  }
