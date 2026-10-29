@@ -180,7 +180,9 @@
           "sha256": "9c8713ccc5d6d93d20c7a1cfcb876e64baf551bfbe67faa4e60d39cda9ffd023"
         }
       ],
-      "text_asset": "foundation/legal/libmysofa.txt"
+      "text_asset": "foundation/legal/libmysofa.txt",
+      "vendored_notices": "Retain baseline full Speex resampler/kdtree notices, reviewed against unchanged pinned1.3.5 source headers; no old binary/version claim imported.",
+      "text_asset_sha256": "10e6a4dc8c58666846558c0d1a3d1b4f1b84ba6b4137bd059caf50a57d833239"
     },
     {
       "name": "dlg",
