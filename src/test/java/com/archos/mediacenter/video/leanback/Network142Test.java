@@ -78,7 +78,7 @@ public class Network142Test {
   var discovery=mock(com.archos.filecorelibrary.samba.SambaDiscovery.class);ReflectionHelpers.setField(browser,"discovery",discovery);select("network_shares");select("overview");ReflectionHelpers.callInstanceMethod(browser,"renderDiscovered");assertNotNull(browser.findViewWithTag("network.landing"));verify(discovery).abort();
  }
  @Test public void absentScanOnReturnPreferenceMatchesRuntimeOffDefault(){
-  androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get()).edit().remove("auto_rescan_on_app_restart").commit();select("network_shares");PreviewPagesTest.findText(browser,"Network Scanning").performClick();layout();assertNotNull(PreviewPagesTest.findText(browser,"On Open / Return: Off"));
+  androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get()).edit().remove("auto_rescan_on_app_restart").commit();select("network_shares");PreviewPagesTest.findText(browser,"Network Scanning").performClick();layout();assertNotNull(PreviewPagesTest.findText(browser,"On Open / Return: Off"));View toggle=(View)PreviewPagesTest.findText(browser,"On Open / Return: Off").getParent();toggle.requestFocus();toggle.performClick();layout();assertTrue(androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get()).getBoolean("auto_rescan_on_app_restart",false));assertTrue(((View)PreviewPagesTest.findText(browser,"On Open / Return: On").getParent()).hasFocus());
  }
  @Test public void connectionConnectActionScrollsFullyIntoViewWithRemote()throws Exception{
   select("network_shares");PreviewPagesTest.findText(browser,"Add Network Source").performClick();layout();PreviewPagesTest.findText(browser,"WebDAV HTTPS").performClick();layout();
