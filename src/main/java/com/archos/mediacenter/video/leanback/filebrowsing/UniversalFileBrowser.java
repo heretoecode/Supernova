@@ -232,7 +232,8 @@ public final class UniversalFileBrowser extends LinearLayout {
             if(owner instanceof Activity)putioBrowser=new com.archos.mediacenter.video.streaming.putio.PutioBrowserController((Activity)owner,this,account,folder,name,()->{clearProvider();putio();focusCentre();},()->{clearProvider();putio();openPutioAccount();});
         });}
     }
-    public boolean railFocused(){return left.hasFocus();}
+    /** Provider callbacks respect both the retained rail and the new navigation destinations. */
+    public boolean railFocused(){View focused=getRootView().findFocus();return left.hasFocus()||networkLayout!=null&&networkLayout.back.hasFocus()||focused!=null&&String.valueOf(focused.getTag()).startsWith("semantic:topnav.");}
     public void providerOptions(Runnable options){for(int n=0;n<toolbar.getChildCount();n++)toolbar.getChildAt(n).setVisibility(GONE);TextView row=action("Browser Options",options);row.setTag("browser.provider_options");toolbar.addView(row);toolbar.setVisibility(VISIBLE);}
     private void clearProvider(){View options=toolbar.findViewWithTag("browser.provider_options");if(options!=null)toolbar.removeView(options);for(int n=0;n<toolbar.getChildCount();n++)toolbar.getChildAt(n).setVisibility(VISIBLE);if(putioBrowser!=null){putioBrowser.close();putioBrowser=null;}if(suppliedDock!=null){NetworkFilesLayout.detach(suppliedDock);suppliedDock=null;if(itemScroll.getParent()==null)centre.addView(itemScroll,new LayoutParams(-1,0,1));}current=null;}
 
