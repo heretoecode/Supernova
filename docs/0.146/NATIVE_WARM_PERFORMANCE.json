@@ -1,0 +1,299 @@
+{
+  "scope": "Wall clock inside an already running Android23 process; one warm-up decode then twenty measured decodes, three trials. QEMU remains for non-x86_64 ABIs; software only, no Shield or hardware performance acceptance.",
+  "source_sha256": "69c18bad8abbcef47f316175e0f9b7705b91a408e22c1be0d604cdb22ebd268d",
+  "native_artifact_run": 40843685431,
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "measurements": {
+        "baseline": {
+          "h264-aac.mp4": {
+            "twenty_decodes_seconds": [
+              0.636028814,
+              0.632700379,
+              0.640804891
+            ],
+            "median_per_decode_seconds": 0.0318014407
+          },
+          "hevc.mkv": {
+            "twenty_decodes_seconds": [
+              0.190196267,
+              0.183224924,
+              0.197218388
+            ],
+            "median_per_decode_seconds": 0.00950981335
+          },
+          "av1.mkv": {
+            "twenty_decodes_seconds": [
+              0.240849501,
+              0.246931953,
+              0.235350425
+            ],
+            "median_per_decode_seconds": 0.01204247505
+          },
+          "ac3-51.ac3": {
+            "twenty_decodes_seconds": [
+              1.122691134,
+              1.182462506,
+              1.127390766
+            ],
+            "median_per_decode_seconds": 0.0563695383
+          }
+        },
+        "candidate": {
+          "h264-aac.mp4": {
+            "twenty_decodes_seconds": [
+              0.680896474,
+              0.641640962,
+              0.840102913
+            ],
+            "median_per_decode_seconds": 0.0340448237
+          },
+          "hevc.mkv": {
+            "twenty_decodes_seconds": [
+              0.215432736,
+              0.191019257,
+              0.159302064
+            ],
+            "median_per_decode_seconds": 0.00955096285
+          },
+          "av1.mkv": {
+            "twenty_decodes_seconds": [
+              0.229759202,
+              0.230576792,
+              0.240366992
+            ],
+            "median_per_decode_seconds": 0.0115288396
+          },
+          "ac3-51.ac3": {
+            "twenty_decodes_seconds": [
+              1.175974842,
+              1.124411182,
+              1.11562001
+            ],
+            "median_per_decode_seconds": 0.0562205591
+          }
+        }
+      }
+    },
+    {
+      "abi": "armeabi-v7a",
+      "measurements": {
+        "baseline": {
+          "h264-aac.mp4": {
+            "twenty_decodes_seconds": [
+              0.830836309,
+              0.736655968,
+              0.755918231
+            ],
+            "median_per_decode_seconds": 0.03779591155
+          },
+          "hevc.mkv": {
+            "twenty_decodes_seconds": [
+              0.224644922,
+              0.209166402,
+              0.221125629
+            ],
+            "median_per_decode_seconds": 0.01105628145
+          },
+          "av1.mkv": {
+            "twenty_decodes_seconds": [
+              0.250683568,
+              0.250908215,
+              0.233519157
+            ],
+            "median_per_decode_seconds": 0.012534178400000002
+          },
+          "ac3-51.ac3": {
+            "twenty_decodes_seconds": [
+              0.876407011,
+              0.856128373,
+              0.863282828
+            ],
+            "median_per_decode_seconds": 0.0431641414
+          }
+        },
+        "candidate": {
+          "h264-aac.mp4": {
+            "twenty_decodes_seconds": [
+              0.696830816,
+              0.731723668,
+              0.749362807
+            ],
+            "median_per_decode_seconds": 0.0365861834
+          },
+          "hevc.mkv": {
+            "twenty_decodes_seconds": [
+              0.225366251,
+              0.186493527,
+              0.217446551
+            ],
+            "median_per_decode_seconds": 0.01087232755
+          },
+          "av1.mkv": {
+            "twenty_decodes_seconds": [
+              0.244782386,
+              0.222538842,
+              0.222855192
+            ],
+            "median_per_decode_seconds": 0.0111427596
+          },
+          "ac3-51.ac3": {
+            "twenty_decodes_seconds": [
+              0.921042771,
+              0.892362292,
+              0.854794958
+            ],
+            "median_per_decode_seconds": 0.044618114599999995
+          }
+        }
+      }
+    },
+    {
+      "abi": "x86",
+      "measurements": {
+        "baseline": {
+          "h264-aac.mp4": {
+            "twenty_decodes_seconds": [
+              0.752392459,
+              0.682003103,
+              0.736893491
+            ],
+            "median_per_decode_seconds": 0.03684467455
+          },
+          "hevc.mkv": {
+            "twenty_decodes_seconds": [
+              0.260923539,
+              0.274713479,
+              0.294871508
+            ],
+            "median_per_decode_seconds": 0.01373567395
+          },
+          "av1.mkv": {
+            "twenty_decodes_seconds": [
+              0.345244359,
+              0.371010718,
+              0.323597962
+            ],
+            "median_per_decode_seconds": 0.01726221795
+          },
+          "ac3-51.ac3": {
+            "twenty_decodes_seconds": [
+              1.442109472,
+              1.351285669,
+              1.288832358
+            ],
+            "median_per_decode_seconds": 0.06756428345
+          }
+        },
+        "candidate": {
+          "h264-aac.mp4": {
+            "twenty_decodes_seconds": [
+              0.725095547,
+              0.737322013,
+              0.752634999
+            ],
+            "median_per_decode_seconds": 0.03686610065
+          },
+          "hevc.mkv": {
+            "twenty_decodes_seconds": [
+              0.23425778,
+              0.246733452,
+              0.241937568
+            ],
+            "median_per_decode_seconds": 0.0120968784
+          },
+          "av1.mkv": {
+            "twenty_decodes_seconds": [
+              0.330422809,
+              0.304833476,
+              0.313988614
+            ],
+            "median_per_decode_seconds": 0.0156994307
+          },
+          "ac3-51.ac3": {
+            "twenty_decodes_seconds": [
+              1.403234206,
+              1.238721827,
+              1.274749895
+            ],
+            "median_per_decode_seconds": 0.06373749475
+          }
+        }
+      }
+    },
+    {
+      "abi": "x86_64",
+      "measurements": {
+        "baseline": {
+          "h264-aac.mp4": {
+            "twenty_decodes_seconds": [
+              0.062020975,
+              0.064037725,
+              0.105605593
+            ],
+            "median_per_decode_seconds": 0.00320188625
+          },
+          "hevc.mkv": {
+            "twenty_decodes_seconds": [
+              0.02996387,
+              0.028282352,
+              0.031093011
+            ],
+            "median_per_decode_seconds": 0.0014981935
+          },
+          "av1.mkv": {
+            "twenty_decodes_seconds": [
+              0.022255366,
+              0.026522817,
+              0.023250978
+            ],
+            "median_per_decode_seconds": 0.0011625488999999999
+          },
+          "ac3-51.ac3": {
+            "twenty_decodes_seconds": [
+              0.054839281,
+              0.054942485,
+              0.052140589
+            ],
+            "median_per_decode_seconds": 0.0027419640499999997
+          }
+        },
+        "candidate": {
+          "h264-aac.mp4": {
+            "twenty_decodes_seconds": [
+              0.062321595,
+              0.056086247,
+              0.054813682
+            ],
+            "median_per_decode_seconds": 0.00280431235
+          },
+          "hevc.mkv": {
+            "twenty_decodes_seconds": [
+              0.020211216,
+              0.02130974,
+              0.020379949
+            ],
+            "median_per_decode_seconds": 0.0010189974500000002
+          },
+          "av1.mkv": {
+            "twenty_decodes_seconds": [
+              0.0213426,
+              0.022629577,
+              0.022120885
+            ],
+            "median_per_decode_seconds": 0.00110604425
+          },
+          "ac3-51.ac3": {
+            "twenty_decodes_seconds": [
+              0.051117818,
+              0.047597546,
+              0.046901984
+            ],
+            "median_per_decode_seconds": 0.0023798773
+          }
+        }
+      }
+    }
+  ]
+}

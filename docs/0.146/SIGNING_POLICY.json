@@ -1,9 +1,86 @@
 {
+  "checked_at": "2026-10-29T13:50:59.863278+00:00",
   "environment": "supernova-foundation-signing",
-  "branch": "codex/supernova-0.146-upstream-completion-2026-10-28",
-  "exact_rule_present": false,
-  "existing_145_rule_present": true,
+  "required_exact_branch": "codex/supernova-0.146-upstream-completion-2026-10-28",
+  "deployment_branch_policy": {
+    "protected_branches": false,
+    "custom_branch_policies": true
+  },
+  "authorized": false,
+  "branch_policies": [
+    {
+      "id": 62439781,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjQzOTc4MQ==",
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "id": 62580297,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjU4MDI5Nw==",
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "id": 62672957,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjY3Mjk1Nw==",
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "id": 62775528,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2Mjc3NTUyOA==",
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "id": 63180517,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MzE4MDUxNw==",
+      "name": "codex/supernova-0.139-implementation-2026-10-13",
+      "type": "branch"
+    },
+    {
+      "id": 63311363,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MzMxMTM2Mw==",
+      "name": "codex/supernova-0.140-implementation-2026-10-16",
+      "type": "branch"
+    },
+    {
+      "id": 64078070,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDA3ODA3MA==",
+      "name": "codex/supernova-0.141-implementation-2026-10-22",
+      "type": "branch"
+    },
+    {
+      "id": 64160739,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDE2MDczOQ==",
+      "name": "codex/supernova-0.142-implementation-2026-10-23",
+      "type": "branch"
+    },
+    {
+      "id": 64554584,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDU1NDU4NA==",
+      "name": "codex/supernova-0.143-implementation-2026-10-27",
+      "type": "branch"
+    },
+    {
+      "id": 64692799,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDY5Mjc5OQ==",
+      "name": "codex/supernova-0.144-implementation-2026-10-28",
+      "type": "branch"
+    },
+    {
+      "id": 64706508,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDcwNjUwOA==",
+      "name": "codex/supernova-0.145-maintenance-2026-10-28",
+      "type": "branch"
+    },
+    {
+      "id": 62634362,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjYzNDM2Mg==",
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
   "protection_changed": false,
-  "signing_attempted": false,
-  "status": "owner branch authorisation needed before final signing; independent implementation continues"
+  "signing_attempted": false
 }

@@ -1,0 +1,11 @@
+from pathlib import Path
+import subprocess,json,hashlib
+root=Path('/workspace/security146/nova');work=Path('/workspace/native146-runtime');tc=Path('/workspace/native146-toolchain/android-ndk-r30-beta1/toolchains/llvm/prebuilt/linux-x86_64/bin');results=[]
+for abi,triple in [('arm64-v8a','aarch64-linux-android'),('armeabi-v7a','armv7a-linux-androideabi'),('x86','i686-linux-android'),('x86_64','x86_64-linux-android')]:
+ pre=root/'native/prebuilt';android='/android-'+abi;lib='lib64' if abi in ['arm64-v8a','x86_64'] else 'lib';qemu='' if abi=='x86_64' else '/usr/bin/qemu-static ';binary=work/abi/'subtitle-format-probe'
+ command=[str(tc/(triple+'23-clang')),'/workspace/Supernova/docs/0.146/qa/native_subtitle_probe.c','-I'+str(root/'native/avos/Include'),'-I'+str(pre/'ffmpeg'/('dist-full-'+abi)/'include'),'-L'+str(root/'native/avos/libs'/abi),'-lavformat','-lavcodec','-lavutil','-ldl','-Wl,--allow-shlib-undefined','-o',str(binary)];subprocess.run(command,check=True)
+ subprocess.run(['docker','cp',str(binary),'supernova146-runtime:'+android+'/test/subtitle-format-probe'],check=True)
+ for name in ['qa.srt','qa.vtt','qa.ass','qa.sup']:
+  subprocess.run(['docker','cp',str(work/'corpus'/name),'supernova146-runtime:'+android+'/corpus/'+name],check=True)
+  p=subprocess.run(['docker','exec','supernova146-runtime','sh','-c',f'FONTCONFIG_FILE=/test/fonts.conf FONTCONFIG_PATH=/test LD_LIBRARY_PATH=/test/lib:/system/{lib} chroot {android} {qemu}/test/subtitle-format-probe /corpus/'+name],capture_output=True,text=True,timeout=60);results.append({'abi':abi,'file':name,'returncode':p.returncode,'output':p.stdout,'stderr':p.stderr});print(abi,name,p.returncode,p.stdout,p.stderr[-400:],flush=True);assert p.returncode==0
+Path('/workspace/Supernova/docs/0.146/NATIVE_API23_SUBTITLE_FORMATS.json').write_text(json.dumps({'native_artifact_run':40843685431,'scope':'Actual Android23bionic FFmpeg subtitle decoding followed by the compiled AVOS SRT/SSA/GFX backend; frame rasterization, expiry/PGS clear and seek flush; no real EGL/ART or Shield visual acceptance implied','fixtures':[{ 'file':n,'sha256':hashlib.sha256((work/'corpus'/n).read_bytes()).hexdigest()} for n in ['qa.srt','qa.vtt','qa.ass','qa.sup']],'results':results},indent=2)+'\n')
