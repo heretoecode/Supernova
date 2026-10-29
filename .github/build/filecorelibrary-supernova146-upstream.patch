@@ -5322,7 +5322,7 @@ index 0000000..0ba7e6c
 +    }
 +}
 diff --git a/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java b/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
-index d452773..70e67d6 100644
+index d452773..7f9b93b 100644
 --- a/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
 +++ b/test/java/com/archos/filecorelibrary/webdav/WebdavSecurityAndRangeTest.java
 @@ -65,6 +65,7 @@ public class WebdavSecurityAndRangeTest {
@@ -5488,7 +5488,7 @@ index d452773..70e67d6 100644
  
              server.start();
  
-@@ -535,20 +585,29 @@ public class WebdavSecurityAndRangeTest {
+@@ -535,20 +585,33 @@ public class WebdavSecurityAndRangeTest {
          }
      }
      @org.junit.Test public void deleteIsIdempotentOnlyForConfirmed404() throws Exception {
@@ -5502,6 +5502,8 @@ index d452773..70e67d6 100644
 +            try (MockWebServer server = new MockWebServer()) {
 +                server.setDispatcher(new okhttp3.mockwebserver.Dispatcher() {
 +                    @Override public MockResponse dispatch(RecordedRequest request) {
++                        if ("OPTIONS".equals(request.getMethod())) return new MockResponse().setResponseCode(200)
++                                .setHeader("DAV", "1, 2").setHeader("Allow", "OPTIONS, DELETE");
 +                        return new MockResponse().setResponseCode(code).setHeader("Retry-After", "120");
 +                    }
 +                });
@@ -5518,6 +5520,8 @@ index d452773..70e67d6 100644
                  }
 -                org.junit.Assert.assertEquals("DELETE",server.takeRequest().getMethod());
 +                RecordedRequest request=server.takeRequest(5,java.util.concurrent.TimeUnit.SECONDS);
++                if (request != null && "OPTIONS".equals(request.getMethod()))
++                    request=server.takeRequest(5,java.util.concurrent.TimeUnit.SECONDS);
 +                org.junit.Assert.assertNotNull("No DELETE for status "+code,request);
 +                org.junit.Assert.assertEquals("DELETE",request.getMethod());
              }

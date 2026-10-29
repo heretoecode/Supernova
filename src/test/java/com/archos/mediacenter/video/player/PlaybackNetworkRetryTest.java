@@ -75,8 +75,11 @@ public class PlaybackNetworkRetryTest {
         assertEquals(false, get(session, "startPositionApplied"));
         verify(player, never()).setVideoURI(any(), any());
 
+        CountDownLatch sourcePosted = new CountDownLatch(1);
+        doAnswer(call -> {Object result=call.callRealMethod();sourcePosted.countDown();return result;})
+                .when(handler).post(any(Runnable.class));
         subtitles.countDown();
-        verify(handler, timeout(2000)).post(any(Runnable.class));
+        assertTrue("Source-open worker did not post",sourcePosted.await(2,java.util.concurrent.TimeUnit.SECONDS));
         shadowOf(Looper.getMainLooper()).idle();
         verify(player).setVideoURI(uri, null);
     }

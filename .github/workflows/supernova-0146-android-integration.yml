@@ -1,6 +1,11 @@
 name: Supernova 0.146 Android source integration
 on:
   workflow_dispatch:
+    inputs:
+      focused:
+        description: Run the integration-failure subset before the complete release suite
+        type: boolean
+        default: false
   push:
     branches: [codex/supernova-0.146-upstream-completion-2026-10-28]
     paths: [.github/workflows/supernova-0146-android-integration.yml]
@@ -39,12 +44,18 @@ jobs:
       - name: Build exact Jetty source backport
         run: python3 nova/Video/.github/build/build-supernova146-jetty.py --workspace nova/Video/build/supernova146-jetty
       - name: Compile and run application and both library suites; collect lint and dependency inventory
+        env:
+          FOCUSED: ${{ inputs.focused }}
         run: |
           set -euo pipefail
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0'
           cd nova/Video
           chmod +x gradlew
-          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease --continue \
+          filters=()
+          if [[ "$FOCUSED" == true ]]; then
+            for test in '*Settings*Test' '*NetworkCredentialFlowTest' '*Network142WebdavTest' '*WebdavReconciliationSelectionTest' '*SupernovaNetworkAvailabilityTest' '*PreviewScanLifecycleTest' '*PlaybackNetworkRetryTest' '*Jetty*Test' '*SubtitleLegacyPreferencesTest'; do filters+=(--tests "$test"); done
+          fi
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest "${filters[@]}" :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | tee build/supernova146-source-validation.log
       - name: Collect exact resolved archives and POMs for independent review
         if: always()

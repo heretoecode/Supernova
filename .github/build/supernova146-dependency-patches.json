@@ -155,7 +155,7 @@
       "kind": "patch",
       "module": "FileCoreLibrary",
       "path": ".github/build/filecorelibrary-supernova146-upstream.patch",
-      "sha256": "5ee7c062797e9a78c4f642ae180850ad01402df43a9e5b667368ed0aed72eb55"
+      "sha256": "493a48105b15b69c6df330706f458fd4b46054b9499b44b063f996ca853f8572"
     },
     {
       "kind": "patch",

@@ -1,0 +1,29 @@
+{
+  "scope": "Android23 bionic RTLD_NOW loading; no JVM/GL/real-device acceptance implied",
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "returncode": 0,
+      "output": "PASS libdav1d.so\nPASS libavutil.so\nPASS libavcodec.so\nPASS libavformat.so\nPASS libswscale.so\nPASS libswresample.so\nPASS libavfilter.so\nPASS libdeinterlace.so\nPASS libaudiocompress.so\nPASS libsfdec.so\nPASS libavos_android.so\nPASS libavos.so\nPASS libavosjni.so\nPASS libfilecoreutils.so\n",
+      "stderr": "WARNING: linker: /test/native-load-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "returncode": 0,
+      "output": "PASS libdav1d.so\nPASS libavutil.so\nPASS libavcodec.so\nPASS libavformat.so\nPASS libswscale.so\nPASS libswresample.so\nPASS libavfilter.so\nPASS libdeinterlace.so\nPASS libaudiocompress.so\nPASS libsfdec.so\nPASS libavos_android.so\nPASS libavos.so\nPASS libavosjni.so\nPASS libfilecoreutils.so\n",
+      "stderr": "WARNING: linker: /test/native-load-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86",
+      "returncode": 0,
+      "output": "PASS libdav1d.so\nPASS libavutil.so\nPASS libavcodec.so\nPASS libavformat.so\nPASS libswscale.so\nPASS libswresample.so\nPASS libavfilter.so\nPASS libdeinterlace.so\nPASS libaudiocompress.so\nPASS libsfdec.so\nPASS libavos_android.so\nPASS libavos.so\nPASS libavosjni.so\nPASS libfilecoreutils.so\n",
+      "stderr": "WARNING: linker: /test/native-load-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86_64",
+      "returncode": 0,
+      "output": "PASS libdav1d.so\nPASS libavutil.so\nPASS libavcodec.so\nPASS libavformat.so\nPASS libswscale.so\nPASS libswresample.so\nPASS libavfilter.so\nPASS libdeinterlace.so\nPASS libaudiocompress.so\nPASS libsfdec.so\nPASS libavos_android.so\nPASS libavos.so\nPASS libavosjni.so\nPASS libfilecoreutils.so\n",
+      "stderr": "WARNING: linker: /test/native-load-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    }
+  ]
+}

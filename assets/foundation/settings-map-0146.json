@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "baseline": "Additive 0.146 extension; original 165 definitions remain unchanged",
+  "rows": [
+    {
+      "id": "N14601",
+      "key": "subtitles_show_full_for_local_audio",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "Native subtitle policy and SAF fonts, using the existing Supernova settings workspace"
+    },
+    {
+      "id": "N14602",
+      "key": "subtitle_fonts_folder_uri",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "Native subtitle policy and SAF fonts, using the existing Supernova settings workspace"
+    },
+    {
+      "id": "N14603",
+      "key": "subtitle_default_font",
+      "destination": "Audio & Subtitles",
+      "subsection": "Subtitles",
+      "disposition": "Native subtitle policy and SAF fonts, using the existing Supernova settings workspace"
+    }
+  ]
+}
