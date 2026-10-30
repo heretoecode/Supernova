@@ -20,10 +20,13 @@ public final class PreviewGenres {
     }
     public static boolean known(String label){return Arrays.asList(NAMES).contains(label);}
     public static void choose(Context c,Collection<String> options,Set<String> selected,Consumer<Set<String>> accept){
-        List<String> names=new ArrayList<>(new TreeSet<>(options));Set<String> result=new LinkedHashSet<>(selected);
+        choose(c,options,selected,false,accept);
+    }
+    public static void choose(Context c,Collection<String> options,Set<String> selected,boolean matchAll,Consumer<Set<String>> accept){
+        TreeSet<String> available=new TreeSet<>(options);available.addAll(selected);List<String> names=new ArrayList<>(available);Set<String> result=new LinkedHashSet<>(selected);
         List<String> labels=new ArrayList<>();labels.add("All Genres");labels.addAll(names);
         Set<Integer> checks=new HashSet<>();if(result.isEmpty())checks.add(0);for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i+1);
-        Dialog[] menu={null};menu[0]=PreviewDialog.choose(c,"Genres · Match Any Selected",labels.toArray(new String[0]),-1,checks,false,n->{
+        Dialog[] menu={null};menu[0]=PreviewDialog.choose(c,"Genres · Match "+(matchAll?"All":"Any")+" Selected",labels.toArray(new String[0]),-1,checks,false,n->{
             if(n==0)result.clear();else if(!result.add(names.get(n-1)))result.remove(names.get(n-1));
             checks.clear();if(result.isEmpty())checks.add(0);for(int i=0;i<names.size();i++)if(result.contains(names.get(i)))checks.add(i+1);
             PreviewDialog.updateChecks(menu[0],checks);accept.accept(new LinkedHashSet<>(result));
