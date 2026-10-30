@@ -2,6 +2,8 @@
 
 **Authority:** This document captures the owner's iterative design decisions and the source audit in draft PR #28. It is a **draft design specification, NOT implementation authorisation**. The supplied generated mock-ups are illustrations only and contain fabricated fields, sample counts, artwork and values. Codex MUST NOT implement anything solely because it appears in an image. Any conflicting prior five-step/three-panel design is superseded **for proposed UI geometry only**, not underlying persisted behaviour.
 
+**PR #29 continuation:** source-backed four-section structure/parity and behavioural fixes are authorised using the existing shared tokens. New candidate geometry/type/card/grid values remain draft. Retaining current Both, Delete and in-panel Save conventions needs no additional decision. See the continuation boundary at the end.
+
 **Read first:** `docs/design/EDIT_LIBRARY_SOURCE_AUDIT_AND_REDESIGN_PROPOSAL_2026-10-30.md` on branch `docs/edit-library-audit-and-proposal-2026-10-30` (draft PR #28), maintenance-investigation mapping, current 0.147 delivered source and existing GLOBAL_VISUAL_SYSTEM / shared controls. The audit is the authoritative parity inventory and defect analysis. Do not rebuild the already-working custom library feature, alter media/index/backup schema, or change main/PR #27.
 
 ## A. Owner decisions already confirmed

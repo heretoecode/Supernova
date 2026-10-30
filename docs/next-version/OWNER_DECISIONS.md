@@ -54,7 +54,7 @@ Recommended proposed layout for all four approved sections: 960 × 540 logical, 
 
 Recommended label: **Both**, preserving current naming. No footer Previous/Next/Cancel. Form Back → rail; rail Back → guarded exit; preview Left/Back → last valid semantic field; rail Right → first active field (Review → Save); terminal keys retained. Explicit global tab exit runs its requested continuation after Save/Discard; Continue retains draft.
 
-Owner approval needed for: proposed geometry/type/spacing and normal/large/narrow annotated designs; Pages 3/4; pinned Review Save; retaining Delete in section 1; label Both; exact statistics above. Only the proposed new visual metrics remain unapproved. The source-backed four-section structure, parity, Save, retained Delete location, Both naming and actual preview are implemented using existing shared tokens. That does not silently approve the new 22/35/43 geometry or poster-grid proposal.
+Current optional owner choices are limited to adopting the proposed new geometry/type/spacing/card/grid treatment or moving Delete. Four-section source parity, retaining pinned in-panel Review Save, Delete in section 1, Both naming and existing truthful statistics do not require another approval under the continuation instruction. Only the proposed new visual metrics remain unapproved. The source-backed four-section structure, parity, Save, retained Delete location, Both naming and actual preview are implemented using existing shared tokens. That does not silently approve the new 22/35/43 geometry or poster-grid proposal.
 
 ## ChaptersDB prerequisite decision
 

@@ -1,6 +1,8 @@
 # Supernova — Playback HUD implementation blueprint
 **Date:** 30 October 2026. **Status:** Owner-approved composition, detailed written implementation contract; exact existing theme tokens/source-level focus graph pending Codex source measurement. Documentation only; not a code-change authorisation.
 
+**PR #29 continuation:** implementation is now authorised; the owner delegated measured HUD/D-pad engineering to existing conventions. The earlier documentation-only/engineering-sign-off language below is historical and superseded by the continuation instruction at the end. Approved visual composition remains authoritative.
+
 ## Authority and precedence
 This document supersedes **visual composition** in older four-button HUD concepts, including `PLAYBACK_HUD_0.135_APPROVED_2026-10-10.md` and the HUD sections of `PLAYBACK.md`. It does **not** remove supported playback functionality or remote shortcuts. In-player Settings remains the approved Concept A4 Audio / Subtitles / Video / More panel, a separate design task. Read maintenance mapping, source audit and `NEXT_VERSION_PLAYBACK_PREPARATION_AND_HUD_REFINEMENTS.md` before changes. Source of truth for current app visual assets and tokens: `GLOBAL_VISUAL_SYSTEM.md` and existing shared components. **Do not copy pixel positions, fake chapter labels, poster art or film metadata from generated mock-up**; it is visual reference only, not an exact UI implementation source.
 
