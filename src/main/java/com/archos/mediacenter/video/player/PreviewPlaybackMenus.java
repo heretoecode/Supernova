@@ -130,11 +130,12 @@ final class PreviewPlaybackMenus {
     private static void nativeRow(TVMenuItem item,String label,Runnable parent){
         Object language=item.getTag(R.id.preview_track_language);
         TextView row=action(label,item.isChecked(),item.isEnabled()&&item.isFocusable(),language instanceof String?(String)language:null,()->{restoreParent=parent;item.previewClick();if(nested==null&&isShowing())refreshChecks();});
-        if(owner.getString(R.string.pref_audio_filt_night_mode).equals(item.getText())){
-            final boolean on=item.isChecked();final int accent=PreviewAccent.color(owner);row.setText(label);row.setContentDescription(label+", "+(on?"On":"Off"));
+        if(item.isSwitchable()||owner.getString(R.string.pref_audio_filt_night_mode).equals(item.getText()))switchState(row,label,item.isChecked());
+    }
+    private static void switchState(TextView row,String label,boolean on){
+        final int accent=PreviewAccent.color(owner);row.setText(label+"  "+(on?"On":"Off"));row.setContentDescription(label+", "+(on?"On":"Off"));
             android.graphics.drawable.Drawable indicator=new android.graphics.drawable.Drawable(){final android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);public void draw(android.graphics.Canvas canvas){android.graphics.Rect bounds=getBounds();paint.setColor(on?accent:0xff526174);canvas.drawRoundRect(bounds.left,bounds.top,bounds.right,bounds.bottom,dp(10),dp(10),paint);paint.setColor(android.graphics.Color.WHITE);canvas.drawCircle(on?bounds.right-dp(10):bounds.left+dp(10),bounds.exactCenterY(),dp(7),paint);}public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(android.graphics.ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}};
             indicator.setBounds(0,0,dp(36),dp(20));row.setCompoundDrawables(null,null,indicator,null);row.setCompoundDrawablePadding(dp(12));
-        }
     }
     private static void refreshChecks(){
         if(owner==null)return;
@@ -165,7 +166,7 @@ final class PreviewPlaybackMenus {
         toggle("Prepare Current Season",com.archos.mediacenter.video.utils.SubtitleDiscovery.PREFETCH,true,false);
         toggle("Subtitles by Default","subtitles_hide_default",false,true);
     }
-    private static void toggle(String label,String key,boolean initial,boolean invert){action(label,invert?!preferences().getBoolean(key,initial):preferences().getBoolean(key,initial),true,null,()->{preferences().edit().putBoolean(key,!preferences().getBoolean(key,initial)).apply();renderTab();View row=content.findViewWithTag("playback.option:"+label);if(row!=null)row.requestFocus();});}
+    private static void toggle(String label,String key,boolean initial,boolean invert){TextView toggleRow=action(label,invert?!preferences().getBoolean(key,initial):preferences().getBoolean(key,initial),true,null,()->{preferences().edit().putBoolean(key,!preferences().getBoolean(key,initial)).apply();renderTab();View row=content.findViewWithTag("playback.option:"+label);if(row!=null)row.requestFocus();});switchState(toggleRow,label,invert?!preferences().getBoolean(key,initial):preferences().getBoolean(key,initial));}
     private static void languages(boolean multiple){
         LinearLayout target=expandUnderInvoker();if(target==null)return;LinearLayout previous=rows;rows=target;restoreParent=PreviewPlaybackMenus::renderTab;heading(multiple?"Download languages":"Reading language");
         Map<String,String> choices=VideoPreferencesCommon.subtitleLanguageChoices(owner);Set<String> selected=new HashSet<>(preferences().getStringSet("languages_list",Collections.singleton(Locale.getDefault().getLanguage())));
