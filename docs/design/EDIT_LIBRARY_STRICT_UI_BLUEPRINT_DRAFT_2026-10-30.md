@@ -83,3 +83,9 @@ Image contains fake title/poster associations, “Release Year 2020–2026”, �
 - Whether Delete Page is in Review or retained in Page Details; source currently has it in Page Details. **Do not move without owner sign-off.**
 - Whether “Both” or “Mixed (Movies & TV Shows)” is displayed.
 - Exact stats fields where existing data supports them.
+
+## Owner review checkpoint — 2026-10-30, Page 1 and Page 2
+- **Page 1 (Page Details & Content Type):** owner likes and accepts the proposed screen in principle. This is **layout/content direction approval**, not approval of candidate pixel metrics or implementation.
+- **Page 2 (Filters):** STRICT feature parity with the CURRENT Edit Library filter implementation. This release is a **structural/visual redesign**, not an expansion of filter functionality. Preserve existing genre multi-select and Any/All matching, single-year/All, watched status, minimum rating, original language and studio/network selectors and existing conditional behaviour. No new facets, ranges, exclude rules, subfolder/special-feature switches or other generated-image inventions. Improvements permitted: grouping, spacing, labelling accuracy, accessible selection/focus, navigation and responsive layout, without altering filtering semantics or saved data.
+- Future filter expansion is a separate possible later discussion, **not approved** for this redesign.
+- Pages 3 and 4 and precise visual tokens remain subject to review. Do not infer final implementation authorisation from this checkpoint.
