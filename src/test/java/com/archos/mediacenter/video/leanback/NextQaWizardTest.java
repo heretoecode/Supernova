@@ -25,4 +25,10 @@ public class NextQaWizardTest {
   }finally{host.pause().stop().destroy();}
  }
 
+ @Test public void previewFrameStaysOutsideScrollAndSemanticReturnSurvivesRebuild() throws Exception {
+  var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{View root=host.get().findViewById(android.R.id.content);PreviewPagesTest.layout(root);Object workspace=ReflectionHelpers.getField(host.get(),"workspace");View name=root.findViewWithTag("wizard.option.0.Name");assertNotNull(name);name.requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));View frame=root.findViewWithTag("wizard.preview");assertTrue(frame.hasFocus());assertNotNull(frame.getForeground());android.widget.ScrollView scroll=ReflectionHelpers.getField(workspace,"wizardPreview");assertSame(frame,scroll.getParent());assertNull(scroll.getForeground());
+   ReflectionHelpers.callInstanceMethod(workspace,"render");PreviewPagesTest.layout(root);assertNotSame(name,root.findViewWithTag("wizard.option.0.Name"));root.findViewWithTag("wizard.preview").requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertSame(root.findViewWithTag("wizard.option.0.Name"),root.findFocus());
+  }finally{host.pause().stop().destroy();}
+ }
+
 }
