@@ -28,3 +28,6 @@ Original video is a chat attachment and is NOT claimed uploaded to GitHub.
 Use a new dedicated next-release implementation branch based on verified current release ancestry. Regression tests and real Shield QA required. Preserve user libraries, custom page settings, scan/source links and all saved state. Do not treat mockups or software renders as physical verification.
 
 Related next-release findings: NEXT_RELEASE_0_147_SHIELD_FINDINGS_AND_LIBRARY_BACKGROUND_2026-10-30.md; NEXT_RELEASE_ADDITIONAL_SHIELD_QA_2026-10-30.md.
+
+## Clarification — reuse maintenance mapping first (2026-10-30)
+Before any new inventory, Codex MUST search the repository's existing maintenance release mapping, feature registers, requirements and implementation notes for Edit Library/custom-page editing. Reuse and cite existing entries, then perform only a gap analysis for missing functionality and current Shield UI defects. The 0.147 FD-003 traceability is specifically Network & Files, not proof of a whole-app Edit Library map. Produce an audit/findings report and proposed information architecture; DO NOT implement a redesign before owner approval. Do not repeat completed mapping without identifying concrete gaps.
