@@ -1,6 +1,6 @@
 # Supernova Settings — Ground-Up Design Blueprint
 
-Status: IMPLEMENTATION AUTHORISED by the owner on 2026-10-27. Earlier approval-boundary statements below are retained as design history; the latest full Settings authorisation supersedes their investigation-only restrictions. Current implementation and acceptance: [0.143](../0.143/README.md).
+Status: ACTIVE DESIGN WORKING DOCUMENT — not approved for implementation.
 Updated: 2026-10-26.
 Source of truth for functionality: docs/audits/settings-2026-10-26/{AUDIT,INVENTORY,NAVIGATION,ISSUES,RECOMMENDATIONS,SHIELD_QA}.md, commit 3ed6e7e8a794940ab4a0ff22fb1a1086f3e3987a.
 
@@ -302,11 +302,3 @@ Treat this file as the living design blueprint. After EACH explicit user design 
 - **Current status:** blueprint and draft mapping are on GitHub and ready for Codex's *verification/specification* pass. Functional specification and implementation are **not yet completed**.
 - **Do not** alter active release branches, merge into main, reset work, change signing/app identity, produce an APK, or implement the Settings UI as part of this documentation handover. Obtain explicit go-ahead for implementation.
 - Record verified results and any decisions in documentation commits on this design branch, keeping this blueprint as the index. Preserve the exact existing functionality unless a change is separately approved.
-
-## Source-verification and technical handover — 2026-10-27
-
-Documentation-only investigation: [report and readiness](../investigations/handover-2026-10-27/README.md), [technical specification](../investigations/handover-2026-10-27/SETTINGS_TECHNICAL_SPEC.md), [165-row disposition](../investigations/handover-2026-10-27/SETTINGS_DISPOSITION.md), [asset verification](../investigations/handover-2026-10-27/ASSET_MANIFEST.md). Original approvals and visuals remain unchanged. Mapping/source checks pass; runtime/Shield acceptance and implementation authorisation remain outstanding. Icon-shape gaps and missing original capture evidence are recorded explicitly.
-
-## Implementation authorisation — 2026-10-27
-
-The owner explicitly authorised full Settings implementation and the next signed test APK, preserving the approved design system, all 165 definitions and PR #22. Earlier documentation-only gates are historical and are superseded for this continuation. Work proceeds on `codex/supernova-0.143-implementation-2026-10-27`, descended from PR #22 / 0cf393c5 and the verified 0.142 tip. Main remains untouched; physical Shield acceptance is still required.

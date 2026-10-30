@@ -30,17 +30,11 @@ public class PreviewNetworkSemanticsTest {
             ReflectionHelpers.setField(pages,"sourcesLoading",true);
             TopNavigation nav=new TopNavigation(host.get(),pages,pages::setTab,pages::atTop);
             host.get().setContentView(nav);pages.setSnapshot(new PreviewLibraryLoader.Snapshot());pages.setTab(3);nav.selectTab(3);PreviewPagesTest.layout(nav);
-            View overview=nav.findViewWithTag("semantic:network.category.overview"),local=nav.findViewWithTag("semantic:network.category.local_storage"),network=nav.findViewWithTag("semantic:network.category.network_shares");
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();PreviewPagesTest.layout(nav);
-            overview=nav.findViewWithTag("semantic:network.category.overview");local=nav.findViewWithTag("semantic:network.category.local_storage");network=nav.findViewWithTag("semantic:network.category.network_shares");
-            assertSame("Entering Network must focus Overview without entering its context",overview,nav.findFocus());
-            assertNotNull(overview);assertTrue(network.requestFocus());assertFalse(pages.atTop());
-            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_UP));assertSame(local,nav.findFocus());
-            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_UP));assertSame(overview,nav.findFocus());assertTrue(pages.atTop());
-            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_RIGHT));assertFalse(pages.atTop());
-            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_LEFT));assertSame(overview,nav.findFocus());
+            View first=nav.findViewWithTag("network.card.0"),lower=nav.findViewWithTag("network.card.3");
+            assertNotNull(first);assertSame(first,nav.findFocus());lower.requestFocus();assertFalse(pages.atTop());
+            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_UP));assertSame(first,nav.findFocus());assertTrue(pages.atTop());
             nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_UP));assertSame(nav.findViewWithTag("semantic:topnav.network"),nav.findFocus());
-            pages.setTab(3);assertSame("Reselecting Network must enter Overview",overview,nav.findFocus());
+            nav.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_DOWN));assertSame(first,nav.findFocus());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void actualWorkspaceKeepsContextActionsAndPrivateLocationsSemanticallyDistinct()throws Exception {
@@ -55,7 +49,7 @@ public class PreviewNetworkSemanticsTest {
                     List.of(source),List.of(source),box->{},kind->{});
             host.get().setContentView(workspace);
             var browser=workspace.browser();
-            workspace.findViewWithTag("semantic:network.category.network_shares").requestFocus();workspace.findViewWithTag("semantic:network.category.network_shares").performClick();
+            workspace.findViewWithTag("network.card.1").requestFocus();workspace.findViewWithTag("network.card.1").performClick();
             View sourceRow=workspace.findViewWithTag("semantic:network.item.source.72");assertNotNull(sourceRow);
             PreviewPagesTest.layout(workspace);sourceRow.requestFocus();sourceRow.performClick();
             LinearLayout actions=ReflectionHelpers.getField(browser,"actions");

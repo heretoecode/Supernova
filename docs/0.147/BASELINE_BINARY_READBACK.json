@@ -1,0 +1,9 @@
+{
+  "artifact_id": 12906343972,
+  "archive_sha256": "4adc37c19d712e46f720dbcbdd8d2972a2384a10a68314f6c8a3c11b558daafc",
+  "archive_crc_verified": true,
+  "apk_sha256": "79829e5181d22d69400157b6da234c7327bfb4b7dfe36a4997a24db29dc86ca7",
+  "apk_bytes": 95569591,
+  "recorded_signing_certificate": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "scope": "Independent complete artifact/APK byte readback matches the existing cryptographic verification receipt; signing keys not accessed"
+}

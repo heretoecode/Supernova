@@ -128,7 +128,7 @@ public final class PreviewSettings {
   };
   androidx.recyclerview.widget.GridLayoutManager layout=new androidx.recyclerview.widget.GridLayoutManager(c,1);layout.setSpanSizeLookup(new androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup(){public int getSpanSize(int position){if(!(list.getAdapter() instanceof PreferenceGroupAdapter))return 1;return ((PreferenceGroupAdapter)list.getAdapter()).getItem(position) instanceof PreferenceCategory?1:1;}});list.setLayoutManager(layout);list.setClipToPadding(false);return list;
  }
- static void styleSwitch(androidx.appcompat.widget.SwitchCompat toggle){
+ public static void styleSwitch(androidx.appcompat.widget.SwitchCompat toggle){
   android.content.Context context=toggle.getContext();
   android.graphics.drawable.Drawable thumb=new SettingsSwitchThumb(context);
   android.graphics.drawable.GradientDrawable track=new android.graphics.drawable.GradientDrawable();track.setCornerRadius(PreviewDialog.dp(context,13));track.setColor(android.graphics.Color.WHITE);track.setSize(PreviewDialog.dp(context,44),PreviewDialog.dp(context,26));

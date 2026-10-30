@@ -2050,6 +2050,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     }
 
     /** Output evidence belongs to this service launch and exact metadata instance, never a previous player frame. */
+    String playbackLaunchGeneration(){return mPlaybackSession.launchGeneration;}
     public boolean hasEstablishedOutputFor(VideoDbInfo info){return info!=null&&info==mVideoInfo&&info.uri!=null&&info.uri.equals(mPlaybackSession.uri)&&mPlaybackSession.outputEstablished&&!mPlaybackSession.failed;}
     @Override public void onPlaybackEstablished(){
         mPlaybackSession.outputEstablished=true;

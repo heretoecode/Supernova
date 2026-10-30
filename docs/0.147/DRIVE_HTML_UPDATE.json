@@ -1,0 +1,30 @@
+{
+  "drive_file_id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+  "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
+  "same_existing_file_and_parent": true,
+  "parent_id": "1c3G--zRc7aAt_SF6KQVniyD8xv6usMmZ",
+  "before_sha256": "2038ecf3e5ff2c981fc304fd3353957a0795d5a7eefbaa7a110ddc0536f23ca3",
+  "after_sha256": "080e60bb679df651e46033848fce6156912901a5fe8728abf29ca40fd19d20e2",
+  "bytes": 52183,
+  "complete_raw_readback_equals_local": true,
+  "historical_articles_unchanged": 15,
+  "current_0147_article_updated_to_signed_delivery": true,
+  "modified_time": "2026-10-29T21:18:21.718Z",
+  "signed_0147_apk_uploaded": true,
+  "latest_delivered_signed_qa": "0.147",
+  "previous_software_only_update": {
+    "drive_file_id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+    "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
+    "same_existing_file_and_parent": true,
+    "parent_id": "1c3G--zRc7aAt_SF6KQVniyD8xv6usMmZ",
+    "before_sha256": "c8ed82559f7adf9fa2b1e1d5f7711fbf86d7e442972aefcc72cab620b8ffaa34",
+    "after_sha256": "2038ecf3e5ff2c981fc304fd3353957a0795d5a7eefbaa7a110ddc0536f23ca3",
+    "bytes": 51426,
+    "complete_raw_readback_equals_local": true,
+    "historical_articles_unchanged": 15,
+    "new_articles": 1,
+    "modified_time": "2026-10-29T21:00:51.905Z",
+    "signed_0147_apk_uploaded": false,
+    "latest_delivered_signed_qa_remains": "0.146"
+  }
+}

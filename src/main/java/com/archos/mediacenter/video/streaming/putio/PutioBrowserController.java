@@ -27,6 +27,8 @@ public final class PutioBrowserController implements AutoCloseable {
         rows=new LinearLayout(activity);rows.setOrientation(LinearLayout.VERTICAL);rows.setClipChildren(false);rows.setClipToPadding(false);
         ScrollView listing=new ScrollView(activity);listing.setClipChildren(false);listing.setClipToPadding(false);listing.addView(rows);
         browser.providerDock(listing,android.net.Uri.parse("putio://put.io/"));browser.providerOptions(this::options);
+        // Own initial loading focus before replacing the account subtree; later navigation is user-owned.
+        rows.setFocusableInTouchMode(true);rows.requestFocus();
         folder=initialFolder;title=initialTitle==null?"put.io":initialTitle;load(null,-1);
     }
     public long folder(){return folder;} public String title(){return title;}
