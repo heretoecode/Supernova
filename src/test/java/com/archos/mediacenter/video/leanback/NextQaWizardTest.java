@@ -21,7 +21,7 @@ public class NextQaWizardTest {
   var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{
    Object workspace=ReflectionHelpers.getField(host.get(),"workspace");CustomLibraryPage draft=ReflectionHelpers.getField(workspace,"draft");draft.name="";int[] exits={0};
    ((PageExitGuard)workspace).requestExit(()->exits[0]++);View decor=org.robolectric.shadows.ShadowDialog.getLatestDialog().getWindow().getDecorView();PreviewPagesTest.findText(decor,"Save Page").performClick();assertEquals(0,exits[0]);assertTrue(ReflectionHelpers.getField(workspace,"editing"));assertNull(CustomLibraryPage.load(host.get()));
-   org.robolectric.shadows.ShadowDialog.getLatestDialog().dismiss();((PageExitGuard)workspace).requestExit(()->exits[0]++);decor=org.robolectric.shadows.ShadowDialog.getLatestDialog().getWindow().getDecorView();PreviewPagesTest.findText(decor,"Discard Changes").performClick();assertEquals(1,exits[0]);assertNull(CustomLibraryPage.load(host.get()));
+   org.robolectric.shadows.ShadowDialog.getLatestDialog().dismiss();((PageExitGuard)workspace).requestExit(()->exits[0]++);decor=org.robolectric.shadows.ShadowDialog.getLatestDialog().getWindow().getDecorView();PreviewPagesTest.findText(decor,"Discard Changes").performClick();assertEquals(1,exits[0]);assertNull(CustomLibraryPage.load(host.get()));CustomLibraryPage clean=ReflectionHelpers.getField(workspace,"draft");assertFalse(clean.name.isEmpty());assertEquals(ReflectionHelpers.getField(workspace,"original"),clean.encode());
   }finally{host.pause().stop().destroy();}
  }
 
