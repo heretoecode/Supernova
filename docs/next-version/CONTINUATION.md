@@ -24,11 +24,17 @@ Observed contract fixtures in src/test/resources/chaptersdb are sanitised real G
 
 The four-section structure and source parity are implemented using existing shared tokens. The proposed **new** 22/35/43 region proportions, different font/spacing/card treatment and alternative poster-grid geometry are not approved. They remain a visual revision choice; current source-backed shared geometry is retained. Moving Delete from Page Details to Review would be a separate owner choice; it has not been moved. Both naming and existing pinned in-panel Review Save are preserved, so no confirmation is needed to retain them.
 
-Physical Shield, Concept A4 image parity and installed signed upgrade: NOT RUN. New automated results will be recorded after actual completion; prior receipts must not be read as testing this checkpoint. No signing, Drive write, main merge, version identity change or replacement branch.
+Physical Shield, Concept A4 image parity and installed signed upgrade: NOT RUN. Current automated validation is complete below; historical receipts must not be read as testing this checkpoint. No signing, Drive write, main merge, version identity change or replacement branch.
 
-## Validation progress
+## Completed validation
 
-Current source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: focused [41137713734](https://github.com/heretoecode/Supernova/actions/runs/41137713734) passes **183 tests**, zero failures/skips; archive SHA/CRC and JUnit independently checked (continuation/FOCUSED_VALIDATION.json). Full conformance [41137713737](https://github.com/heretoecode/Supernova/actions/runs/41137713737), **attempt 2**, is running. Attempt 1 stopped before application compilation because downloading a pinned Jetty input returned HTTP 429. The same exact source and dependency hashes are retried; no input/check bypass. Isolated library [41137713712](https://github.com/heretoecode/Supernova/actions/runs/41137713712) passes all six cases; downloaded SHA/CRC and JUnit results independently checked (continuation/LIBRARY_FIXTURE_VALIDATION.json). Local 134 tooling tests and parsing of 1,103 Java files pass. No current-source APK acceptance yet.
+Exact source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: [full 41137713737, attempt 2](https://github.com/heretoecode/Supernova/actions/runs/41137713737) **PASS**, completed **23:02:45 UTC**. Independently downloaded/read: **1,258 app + 300 library tests pass**, four retained library skips, **zero lint errors / 1,496 warnings**, 312 JUnit XML files. The focused [41137713734](https://github.com/heretoecode/Supernova/actions/runs/41137713734) passes **183** and isolated library [41137713712](https://github.com/heretoecode/Supernova/actions/runs/41137713712) passes **six**; subsets are not added to full totals. Local **134 tooling tests** and **1,103-file parse** pass. New real-navigation assertions remain unchanged and pass.
+
+Both evidence/candidate ZIP SHA and CRC checks, APK digest/CRC, all **84 native libraries** with independent input/runtime-AAR provenance, and **139 runtime inventory records / 136 distinct archives** with POM/SBOM matching pass. The existing 28-case Android 23 proof is reused for unchanged transport/native inputs; no physical rerun. Receipts and exact source trees: continuation/FINAL_VALIDATION.json, FOCUSED_VALIDATION.json, LIBRARY_FIXTURE_VALIDATION.json, UNSIGNED_CONFORMANCE.json, INDEPENDENT_UNSIGNED_APK_VERIFICATION.json and PRESERVATION.json. No original native/build/signing input changed.
+
+Unsigned inspection APK **95,382,168 bytes**, SHA-256 `ab335395cf25743e5506662feb187e77a99c9ceb8066d41d9f17df9b49d3ff5f`; baseline **0.147 / 147** remains. It requires signing before Android installation. Delivery details: APK_DELIVERY.md. No signed QA build, Drive write, merge, tag or release. All physical/Concept A4/signed-upgrade acceptance remains NOT RUN.
+
+Attempt 1 failed before app compilation on HTTP 429 downloading a pinned Jetty build input. The same exact source/hashes passed on attempt 2 without bypass. One extra SetTextI18n warning remains versus 7011e87; no lint suppression/baseline was added.
 
 | Preceding checkpoint | Actual outcome / correction |
 |---|---|
@@ -56,7 +62,7 @@ HUD XML dimensions below are logical Android dp converted once by resource densi
 | Editor content | 21sp headings, 18sp actions, at least existing 50dp target with wrap-content rows; independent rail/form/preview scrolling; only Review has the retained in-panel Save; Delete remains Page Details |
 | Preview | Existing statistics model; real indexed items, 20-item cap; 50×75dp aspect-preserving poster thumbnail and 15sp label with existing neutral fallback; fixed heading, separately scrolling statistics/items, stationary outer focus frame |
 
-No final visual approval of the optional new editor proportions/font/card/grid proposal is asserted. Actual current-source captures must come from a passing run and retain source/artifact hashes; earlier proposal diagrams remain labelled historical proposals.
+No final visual approval of the optional new editor proportions/font/card/grid proposal is asserted. Current-source captures come from the passing 183-test run and retain source/artifact hashes; earlier proposal diagrams remain labelled historical proposals.
 
 The final editor-state audit also marks/focuses the actual current choice in existing Year/watched/rating/View/Sort/indexed-facet pickers. Labels/options and filter semantics are unchanged; unsupported saved values remain visible in the invoking field/context rather than being silently replaced or invented as new options. A retained-year regression covers selection, focus and parent restoration.
 

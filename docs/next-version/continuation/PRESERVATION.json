@@ -26,5 +26,13 @@
     ".github/build/next-medialib-test-fixtures.patch": "8ca9f52e81a1c93f76b8f15f937800757505ad66004c7a67148c2aac691e50c4",
     ".github/build/next-filecore-test-fixtures.patch": "1cd857d81162250c888ac3edcd65d3f8f23a1c52e70b90c2f8fe5695e8a2b948"
   },
-  "physical_shield": "NOT RUN"
+  "physical_shield": "NOT RUN",
+  "protected_remote_refs_checked_at": "2026-10-30T23:00:49Z",
+  "protected_remote_refs_unchanged": true,
+  "protected_remote_refs": {
+    "main": "75d9f012fa4f65869eef5d972ad4725df504bd9c",
+    "docs/network-files-settings-design-next-version-2026-10-29": "83a600fec22a6de93f0a0e8fd26805600e72bbb7",
+    "PR27": "b4a6ee7a010c9b5b6af8731108f3973477bfc7f5",
+    "PR28": "7dda992cfad86250c92135b91ae945c5acaa9565"
+  }
 }

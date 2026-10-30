@@ -13,6 +13,12 @@ Not a release announcement. Version/code remain at baseline until the complete c
 - Global Settings: immediate single rail boundary and persistent selected check replace competing selection outlines; native switch states remain preserved. Hardware ghost/visibility acceptance is still required.
 - Connections & Integrations: Service integrations first, followed by OpenSubtitles and Trakt; native preference/dependency/account owners unchanged.
 
+## Validated continuation
+
+Exact source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: full run **41137713737 attempt 2 PASS**; **1,258 app + 300 library tests pass**, four existing library skips; **zero lint errors / 1,496 warnings**. Focused 183 and isolated library six pass (subsets); local 134 tooling tests and 1,103-file Java parse pass. The real card → global navigation → same card regression passes with the attached global focus observer; it is removed on detach. Source-backed editor and all existing capabilities remain.
+
+Downloaded evidence/payload digests/CRC, all 84 native input/runtime-AAR hashes and 139 runtime inventory/POM/SBOM records verified independently. Unsigned inspection APK is available; signed installable QA and physical testing remain separate. Exact receipts: continuation/FINAL_VALIDATION.json and related files; delivery: APK_DELIVERY.md. No original build/native/signing input or version identity changed.
+
 ## Open work and acceptance
 
 HUD visual and four-tab interaction approvals are retained. Engineering measurements/remote policy and strict ChaptersDB suppression are resolved. Four-section source parity is implemented; only optional adoption of new editor proportions/type/card/grid treatment or moving Delete would require a personal design choice.
@@ -25,4 +31,4 @@ All Nvidia Shield testing and installed upgrade/retention acceptance remain NOT 
 
 Exact source `7011e877d026e745a079846827ababe03c2af798`: full unsigned conformance run 41118855808 passes; 1,233 app tests, 198 MediaLib and 102 FileCore tests pass, with four retained library skips. Release lint has zero errors and 1,495 warnings. Independent evidence/APK/runtime/native verification receipts are retained. Signed/installed physical acceptance is still pending. APK_DELIVERY.md links the unsigned development artefact; no next-version release is declared.
 
-Current continuation source and running validation: CONTINUATION.md. Prior receipts remain historical and are not reused as evidence for changed source.
+Completed continuation scope and validation: CONTINUATION.md. Prior receipts remain historical and are not reused as evidence for changed source.

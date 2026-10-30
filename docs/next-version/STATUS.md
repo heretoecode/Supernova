@@ -1,13 +1,11 @@
 # Next-version implementation — 30 October 2026
 
-## Active continuation after PR #29 review
+## Validated continuation after PR #29 review
 
-Current source `f5e2924` uses the attached global focus observer for real media-page escape/return and includes the corrected HUD indentation. Focused **41137713734** passes all **183 tests**, zero failures/skips, with independent readback. Full **41137713737 attempt 2** is running after attempt 1 hit HTTP 429 while downloading a pinned build input before application compilation. Exact source and dependency hashes remain unchanged. Isolated library **41137713712** passes all six cases with independently verified evidence. Local 134 tooling tests and 1,103-file Java parse pass. Prior 83aede9 UI/library tests pass; its full tests pass but release lint failed. Preceding results are historical, not current-source acceptance. See CONTINUATION.md.
-
-The owner has authorised HUD engineering details within the approved visual design and confirmed strict ChaptersDB matching: **unverified sets stay hidden**. The new source checkpoint implements the one-row HUD, four-section editor using retained shared geometry, core-cache-first Details delivery and settled-focus prefetch, single-boundary Settings rail, and bounded ChaptersDB acquisition with strict suppression, explicitly focusable HUD targets, and a single selected/check versus focus boundary in Settings. The completed validation below describes the **previous** checkpoint `7011e87`, not these new changes. See CONTINUATION.md.
+Current application source `f5e2924` passes full conformance, focused regressions and isolated library checks with independently downloaded evidence. The approved HUD, four-tab inline Settings, source-backed four-section editor, core-first Details delivery and real global-focus preparation lifecycle are implemented. Settings has one immediate rail boundary with a separate selected check. ChaptersDB acquisition/cache/strict ID paths are wired; the owner chose **unverified sets stay hidden**, and current v1 data lacks cut/runtime proof, so no visible external coverage is claimed.
 
 Dedicated branch: `codex/supernova-next-implementation-2026-10-30`.
-Base: verified PR #27 tip `b4a6ee7a010c9b5b6af8731108f3973477bfc7f5`; application frozen at `f4abf7cb880243ba00481f82beee19d20bc72e33`. GitHub branch/PR audit found no newer implementation. Main and all existing development/documentation branches are untouched. Documentation branch `83a600f` contains older application source and was therefore not used as the application base. Its new design/requirement documents and PR #28 audit are carried here without replacing newer baseline documents.
+Base: verified PR #27 tip `b4a6ee7a010c9b5b6af8731108f3973477bfc7f5`; delivered 0.147 application checkpoint `f4abf7cb880243ba00481f82beee19d20bc72e33`. The initial GitHub branch/PR audit found no newer implementation. Main and all existing development/documentation branches are untouched. Documentation branch `83a600f` contains older application source and was therefore not used as the application base. Its new design/requirement documents and PR #28 audit are carried here without replacing newer baseline documents.
 
 Authority: complete consolidated handover in `docs/handovers/`, latest locked HUD composition, all-four-tab inline interaction decision, strict draft Edit Library blueprint and PR #28 source audit. Existing global design system, playback behaviour, release reports, build architecture and retained source contracts govern unchanged capabilities. Physical evidence attachments are not available locally.
 
@@ -15,7 +13,7 @@ Authority: complete consolidated handover in `docs/handovers/`, latest locked HU
 
 | Requirement | Source / regression coverage | Current status |
 |---|---|---|
-| HUD single row, title, persistent bubble | PlayerController, PlayerActivity, PreviewHudTiming, PreviewSeekPolicy, player_controller_experimental / PlayerControlsRelativeLayout | Implemented approved one-row composition, seek-first/source-convention graph, measured tooltip and constrained title fitting; no further engineering approval gate; current CI/device acceptance separate |
+| HUD single row, title, persistent bubble | PlayerController, PlayerActivity, PreviewHudTiming, PreviewSeekPolicy, player_controller_experimental / PlayerControlsRelativeLayout | Implemented approved one-row composition, seek-first/source-convention graph, measured tooltip and constrained title fitting; no further engineering approval gate; focused/full automated validation passes; physical acceptance remains open |
 | Compact settings Audio/Subtitles/Video/More | PreviewPlaybackMenus, PlayerActivity native menus, PreviewPlaybackMenusTest | Implemented inline expansion under parent, collapse/focus restore and direct toggle state; native capability owners preserved; visual/Shield acceptance pending |
 | Movie/episode ChaptersDB | Official site /api, published JS, retained live probes | Movie/episode acquisition, normalisation, cache/backoff and strict ID paths wired. Official API explicitly permits integration. Owner chose unverified sets hidden; current v1 lacks cut/runtime proof and therefore supplies no visible external markers |
 | Embedded chapters / IntroDB | PlayerActivity/Controller, native avos chapters patch, existing chapter and intro tests | Already present; preserve, no chapter auto-skip added |
@@ -33,6 +31,27 @@ Authority: complete consolidated handover in `docs/handovers/`, latest locked HU
 | Network & Files | 0.147 TRACEABILITY and preserved tests | Already shipped six-tile redesign; do not repeat; physical regressions remain open |
 | Home clipping and row controls | PreviewPages, retained refinement register | Existing controls preserved; physical evidence still needed |
 | Preparation artwork flashes | PreviewPlaybackLoading, 0.144 release evidence | Neutral official fallback already shipped; physical reproduction outstanding |
+
+## Completed continuation validation
+
+Exact source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: full unsigned conformance [41137713737, attempt 2](https://github.com/heretoecode/Supernova/actions/runs/41137713737) **PASS**, completed 30 October 2026 at **23:02:45 UTC**. Later commits change documentation only; tested tree objects and preserved inputs are recorded in continuation/PRESERVATION.json.
+
+| Check | Actual read-back result |
+|---|---|
+| Complete application suite | **1,258 passed**, zero failures/errors/skips |
+| Complete library suites | **198 MediaLib + 102 FileCoreLibrary passed**; four existing database/benchmark skips retained |
+| Focused UI/playback 41137713734 | **183 passed**, zero failures/skips; subset of the full suite |
+| Isolated scraper/FTPS 41137713712 | **Six passed**; subset of the library suites |
+| Release lint | **Zero errors; 1,496 warnings**. One extra SetTextI18n warning versus 7011e87; no new suppression or baseline |
+| Local tooling / parser | **134 tests passed; 1,103 Java files parsed; zero syntax errors** |
+| Independent evidence / payload | Both ZIP SHA-256 and CRC checks; 312 JUnit XML files and lint read back; all **84** packaged native libraries traced to pinned inputs/runtime AARs; **139 inventory records / 136 distinct runtime archives** and POM hashes match the reviewed SBOM |
+| Android 23 evidence | Existing 28-case proof reused for unchanged transport/native inputs; not rerun on hardware here |
+
+Receipts: [FINAL_VALIDATION](continuation/FINAL_VALIDATION.json), [FOCUSED_VALIDATION](continuation/FOCUSED_VALIDATION.json), [LIBRARY_FIXTURE_VALIDATION](continuation/LIBRARY_FIXTURE_VALIDATION.json), [UNSIGNED_CONFORMANCE](continuation/UNSIGNED_CONFORMANCE.json), [independent APK verification](continuation/INDEPENDENT_UNSIGNED_APK_VERIFICATION.json). Unmodified current-source software captures: [HUD/editor/global Settings/all four playback tabs](continuation/software-captures-f5e2924/README.md).
+
+The independently verified **unsigned inspection APK** is 95,382,168 bytes, SHA-256 `ab335395cf25743e5506662feb187e77a99c9ceb8066d41d9f17df9b49d3ff5f`, identity **0.147 / 147**. Android requires signing before installation. [APK_DELIVERY.md](APK_DELIVERY.md) links the exact payload, expiry and receipts. No signed installable QA build or Drive delivery occurred.
+
+Attempt 1 stopped before application compilation on HTTP 429 downloading a pinned Jetty input. Attempt 2 used the same source and dependency hashes and passed. Intermediate failed/cancelled runs remain diagnostic; no result is inferred from cancellation. Physical Nvidia Shield, original Concept A4 comparison and signed installed upgrade: **NOT RUN**.
 
 ## Prior completed validation and delivery — before continuation
 
