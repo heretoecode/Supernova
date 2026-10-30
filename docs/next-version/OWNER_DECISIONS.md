@@ -57,3 +57,13 @@ Owner approval needed for: proposed geometry/type/spacing and normal/large/narro
 Official API page and its loaded script were inspected 2026-10-30. Published routes support movie and episode lookups, but the documented examples currently return empty/404 responses (retained JSON probes). Documentation lists free/no-auth access but no verified data reuse licence, caching/rate-limit policy or structured runtime, season/episode and edition fields. `note` free text and votes cannot establish exact cut alignment. `/terms` returns the SPA shell, and the application's route table has no terms/licence page. This is limited evidence, not proof the service has no terms elsewhere.
 
 Required before production wiring: an authoritative provider licence/usage policy and working movie/episode examples with reliable edition/runtime/episode identity information. No substitute provider, title-only guess, highest-voted auto-selection or new preference has been added. Owner may supply those provider agreements/examples or authorise contacting the provider separately. Integration remains approved but blocked on these prerequisites; embedded chapters/IntroDB remain unchanged.
+
+## Annotated section diagrams
+
+[Section 1](design-proposals/edit-section-1-normal.svg) · [Filters](design-proposals/edit-section-2-normal.svg) · [Display Options](design-proposals/edit-section-3-normal.svg) · [Review](design-proposals/edit-section-4-normal.svg).
+
+Each has a `-large.svg` counterpart for expanded text annotations. These are explicitly labelled design diagrams, with no fabricated media/counts and no screenshot or final typography claim. They supplement the measured table; they do not fulfil physical/production screenshot acceptance. The real global navigation is outside this diagram crop. Narrow screens retain the documented focus-revealed viewport proposal.
+
+### Live coverage follow-up
+
+The examples in the documentation are absent, but **the service is not generally unavailable**. `/api/shows/recent` led to approved public sets; `/api/v1/show/bad-times-at-the-el-royale` returned a movie with IMDb `tt6628394`, and `/api/v1/show/star-trek-voyager` plus its first episode's chapters endpoint returned TV data. Sanitised evidence is in `CHAPTERSDB_LIVE_SETS_2026-10-30.json`. Arrays arrive out of timestamp order; the movie's edition note is null, the TV pilot is a long combined DVD chapter set with no structured runtime, and its TVDB episode identifier is empty. These observations substantiate the edition/runtime/episode matching blocker even though both content types have some coverage. They do not establish global uptime or coverage. No application provider integration has been enabled.

@@ -1,0 +1,14 @@
+{
+  "base": "b4a6ee7a010c9b5b6af8731108f3973477bfc7f5",
+  "application_checkpoint": "aa7a575973ced2a1080f16eb7f7aea97b8d1866d",
+  "unchanged": {
+    "AndroidManifest.xml": true,
+    "build.gradle": true,
+    "settings.gradle": true,
+    "gradle.properties": true,
+    "assets/foundation": true,
+    "res/xml": true,
+    ".github/signing": true,
+    ".github/build": true
+  }
+}

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 960 540">
+<rect width="960" height="540" fill="#0b121d"/>
+<text x="28" y="28" font-family="sans-serif" font-size="12" fill="#99bbdd">PROPOSED DESIGN DIAGRAM — requires owner approval; not an app screenshot</text>
+<text x="28" y="57" font-family="sans-serif" font-size="22" fill="#ffffff">Edit Library — Page Details &amp; Content Type</text>
+<rect x="28" y="80" width="192" height="424" rx="16" fill="#15171b" stroke="#7f8996"/>
+<rect x="236" y="80" width="305" height="424" rx="16" fill="#15171b" stroke="#7f8996"/>
+<rect x="557" y="80" width="375" height="424" rx="16" fill="#15171b" stroke="#7f8996"/>
+<text x="46" y="115" font-family="sans-serif" font-size="18" fill="#69b4ff">Page Details &amp;</text>
+<text x="46" y="164" font-family="sans-serif" font-size="18" fill="#69b4ff">Content Type</text>
+<text x="46" y="213" font-family="sans-serif" font-size="18" fill="#ffffff">Filters</text>
+<text x="46" y="262" font-family="sans-serif" font-size="18" fill="#ffffff">Display Options</text>
+<text x="46" y="311" font-family="sans-serif" font-size="18" fill="#ffffff">Review</text>
+<text x="254" y="111" font-family="sans-serif" font-size="18" fill="#ffffff">Editing workspace</text>
+<defs><clipPath id="fields"><rect x="250" y="126" width="280" height="300"/></clipPath></defs><g clip-path="url(#fields)">
+<text x="254" y="147" font-family="sans-serif" font-size="14" fill="#ffffff">Library Name — existing 1–40</text>
+<text x="254" y="166" font-family="sans-serif" font-size="14" fill="#ffffff">character validation</text>
+<line x1="254" y1="185" x2="523" y2="185" stroke="#46515d"/>
+<text x="254" y="200" font-family="sans-serif" font-size="14" fill="#ffffff">Content Type: Movies / TV Shows</text>
+<text x="254" y="219" font-family="sans-serif" font-size="14" fill="#ffffff">/ Both</text>
+<line x1="254" y1="238" x2="523" y2="238" stroke="#46515d"/>
+<text x="254" y="253" font-family="sans-serif" font-size="14" fill="#ffffff">Delete Page — existing pages;</text>
+<text x="254" y="272" font-family="sans-serif" font-size="14" fill="#ffffff">confirmation required</text>
+<line x1="254" y1="291" x2="523" y2="291" stroke="#46515d"/>
+</g>
+<text x="254" y="474" font-family="sans-serif" font-size="12" fill="#99bbdd">Form scrolls independently</text>
+<text x="575" y="111" font-family="sans-serif" font-size="18" fill="#ffffff">Live Preview</text>
+<text x="575" y="140" font-family="sans-serif" font-size="14" fill="#ffffff">Matching movie/show counts</text>
+<text x="575" y="166" font-family="sans-serif" font-size="14" fill="#ffffff">Indexed bytes · local/network</text>
+<text x="575" y="192" font-family="sans-serif" font-size="12" fill="#99bbdd">Loading / error / empty are distinct</text>
+<rect x="575" y="220" width="68" height="102" rx="5" fill="none" stroke="#7f8996"/>
+<text x="580" y="266" font-family="sans-serif" font-size="11" fill="#ffffff">Indexed</text>
+<text x="580" y="283" font-family="sans-serif" font-size="11" fill="#ffffff">artwork</text>
+<rect x="659" y="220" width="68" height="102" rx="5" fill="none" stroke="#7f8996"/>
+<text x="664" y="266" font-family="sans-serif" font-size="11" fill="#ffffff">Indexed</text>
+<text x="664" y="283" font-family="sans-serif" font-size="11" fill="#ffffff">artwork</text>
+<rect x="743" y="220" width="68" height="102" rx="5" fill="none" stroke="#7f8996"/>
+<text x="748" y="266" font-family="sans-serif" font-size="11" fill="#ffffff">Indexed</text>
+<text x="748" y="283" font-family="sans-serif" font-size="11" fill="#ffffff">artwork</text>
+<rect x="827" y="220" width="68" height="102" rx="5" fill="none" stroke="#7f8996"/>
+<text x="832" y="266" font-family="sans-serif" font-size="11" fill="#ffffff">Indexed</text>
+<text x="832" y="283" font-family="sans-serif" font-size="11" fill="#ffffff">artwork</text>
+<text x="575" y="354" font-family="sans-serif" font-size="12" fill="#ffffff">First 20 actual matches in draft order</text>
+<text x="575" y="379" font-family="sans-serif" font-size="12" fill="#ffffff">Fixed outer focus frame; inner scrolling</text>
+<text x="28" y="530" font-family="sans-serif" font-size="12" fill="#99bbdd">28dp safe side inset · 16dp gaps · 22/35/43 candidate widths · normal text diagram</text>
+</svg>
