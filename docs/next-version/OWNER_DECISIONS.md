@@ -60,7 +60,7 @@ Required before production wiring: an authoritative provider licence/usage polic
 
 ## Annotated section diagrams
 
-[Section 1](design-proposals/edit-section-1-normal.svg) · [Filters](design-proposals/edit-section-2-normal.svg) · [Display Options](design-proposals/edit-section-3-normal.svg) · [Review](design-proposals/edit-section-4-normal.svg).
+[Section 1](design-proposals/edit-section-1-normal.png) · [Filters](design-proposals/edit-section-2-normal.png) · [Display Options](design-proposals/edit-section-3-normal.png) · [Review](design-proposals/edit-section-4-normal.png).
 
 Each has a `-large.svg` counterpart for expanded text annotations. These are explicitly labelled design diagrams, with no fabricated media/counts and no screenshot or final typography claim. They supplement the measured table; they do not fulfil physical/production screenshot acceptance. The real global navigation is outside this diagram crop. Narrow screens retain the documented focus-revealed viewport proposal.
 
