@@ -2,6 +2,8 @@
 
 ## Active continuation after PR #29 review
 
+Latest source `7584247` also clears Details preparation on actual page focus loss, with a real global-navigation return regression. New focused/full/library runs are 41136565935 / 41136566257 / 41136565929; results are pending. The `83aede9` results below are the preceding checkpoint.
+
 The owner has authorised HUD engineering details within the approved visual design and confirmed strict ChaptersDB matching: **unverified sets stay hidden**. The new source checkpoint implements the one-row HUD, four-section editor using retained shared geometry, core-cache-first Details delivery and settled-focus prefetch, single-boundary Settings rail, and bounded ChaptersDB acquisition with strict suppression, explicitly focusable HUD targets, and a single selected/check versus focus boundary in Settings. The completed validation below describes the **previous** checkpoint `7011e87`, not these new changes. Frozen checkpoint `83aede9` passes all 182 focused tests in 41133244888 with independently verified evidence. Full conformance 41133244918 remains in progress. Isolated library run 41133245160 passes all six cases with independently verified evidence. See CONTINUATION.md.
 
 Dedicated branch: `codex/supernova-next-implementation-2026-10-30`.
