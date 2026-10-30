@@ -192,7 +192,11 @@ final class PreviewPlaybackMenus {
     }
     private static void focusExpansion(){if(expansion!=null)for(View view:expansion.getFocusables(View.FOCUS_FORWARD))if(view.isEnabled()&&view.requestFocus())return;}
     private static void collapseExpansion(boolean focus){
-        View anchor=expansionAnchor;flushNested();
+        View anchor=expansionAnchor;
+        // Removing a focused subtree otherwise lets Android choose tab 0, whose focus
+        // listener changes the active tab before the parent can be restored.
+        if(expansion!=null&&expansion.hasFocus()){if(anchor!=null&&anchor.isAttachedToWindow()&&anchor.isFocusable())anchor.requestFocus();else if(tabs!=null)tabs.getChildAt(tab).requestFocus();}
+        flushNested();
         if(expansion!=null&&expansion.getParent() instanceof ViewGroup)((ViewGroup)expansion.getParent()).removeView(expansion);
         expansion=null;expansionAnchor=null;backAction=null;
         if(focus&&anchor!=null&&anchor.isAttachedToWindow())anchor.requestFocus();

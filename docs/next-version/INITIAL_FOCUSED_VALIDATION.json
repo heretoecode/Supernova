@@ -1,0 +1,21 @@
+{
+  "run_id": 41090547508,
+  "source_commit": "f70615d",
+  "conclusion": "failure",
+  "tests": 110,
+  "passed": 106,
+  "failures": 4,
+  "artifact_id": 12993743244,
+  "artifact_bytes": 42531826,
+  "artifact_sha256": "492d4c73910ca669c9e6cf7e15059ed1dd2801ea5e9aa1662902de7018678932",
+  "independent_download_and_crc": "pass",
+  "findings": [
+    "Removing a focused inline expansion lets Android focus the first tab and triggers an unintended tab switch; three playback regressions expose the same cause.",
+    "At 150 percent text, supplementary vote count line requires 21 px but proportional height gives 20 px."
+  ],
+  "corrections": [
+    "Move focus to the current parent before removing its expansion subtree.",
+    "Measure vote-count height from its text rather than assigning a proportional height."
+  ],
+  "acceptance": "Not passing evidence; rerun required. No hardware testing."
+}
