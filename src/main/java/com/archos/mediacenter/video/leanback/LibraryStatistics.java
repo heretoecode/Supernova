@@ -43,6 +43,7 @@ public final class LibraryStatistics {
         }
         return result;
     }
+    public String signature(){return total+":"+unwatched+":"+inProgress+":"+addedThisMonth+":"+localTitles+":"+networkTitles+":"+unknownLocal+":"+unknownNetwork+":"+localBytes+":"+networkBytes;}
     public String share(int count){return String.format(Locale.getDefault(),"%.0f%% of library",total==0?0d:100d*count/total);}
     private LibraryStatistics(){}
 }

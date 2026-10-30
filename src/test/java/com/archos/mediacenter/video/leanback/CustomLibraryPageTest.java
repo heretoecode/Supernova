@@ -41,4 +41,12 @@ public class CustomLibraryPageTest {
   page.genres.clear();page.genres.add("No matches");pages.configureCustomLibrary(page,()->{});
   assertNull(org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages,"featured"));
  }
+ @Test public void customTvStatisticsRebindWhenOnlyEpisodeStorageChanges(){
+  Application c=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean("supernova_onboarding_complete",true).commit();
+  Snapshot snapshot=new Snapshot();Entry show=new Entry(new Tvshow(10,"Documentary series",null,1,1,0,"/tv"),1,10,"Documentary");snapshot.shows.add(show);Episode episode=mock(Episode.class);when(episode.getId()).thenReturn(101L);when(episode.getName()).thenReturn("Episode");Entry file=new Entry(episode,1,10,"Documentary");snapshot.episodes.add(file);
+  CustomLibraryPage page=new CustomLibraryPage();page.type="tv";page.name="Documentaries";PreviewPages pages=new PreviewPages(c,(holder,item)->{});pages.configureCustomLibrary(page,()->{});pages.setSnapshot(snapshot);
+  androidx.recyclerview.widget.RecyclerView list=(androidx.recyclerview.widget.RecyclerView)pages.getChildAt(0);int[] changes={0};list.getAdapter().registerAdapterDataObserver(new androidx.recyclerview.widget.RecyclerView.AdapterDataObserver(){@Override public void onItemRangeChanged(int start,int count,Object payload){if(start==0)changes[0]++;}@Override public void onItemRangeChanged(int start,int count){if(start==0)changes[0]++;}});
+  file.bytes=123456;file.knownSizes=1;pages.setSnapshot(snapshot);assertTrue("Statistics must refresh without recycling the header by scrolling",changes[0]>0);
+ }
+
 }
