@@ -1,6 +1,6 @@
 # Unsigned development APK
 
-**Latest continuation candidate:** exact source `11bf7400d49283b3db9cc2df1de318c19fbcaad0`, [full conformance/build 41137295700](https://github.com/heretoecode/Supernova/actions/runs/41137295700), pending. This includes the final focus lifecycle fix and release-lint indentation correction. No current-source APK has yet been accepted. The download below remains the **historical 7011e87** candidate and does not include continuation work.
+**Latest continuation candidate:** exact source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`, [full conformance/build 41137713737](https://github.com/heretoecode/Supernova/actions/runs/41137713737), pending. This includes the attached global-focus lifecycle fix and release-lint indentation correction. No current-source APK has yet been accepted. The download below remains the **historical 7011e87** candidate and does not include continuation work.
 
 ## Previous completed candidate — historical
 
