@@ -33,7 +33,7 @@ public final class CustomLibraryActivity extends LeanbackActivity {
   @Override public boolean focusFromNavigation(){if(editing){View rail=findViewWithTag("wizard.step."+step);return rail!=null&&rail.requestFocus();}return sharedLibrary!=null&&sharedLibrary.focusFromNavigation();}
   boolean atTop(){if(!editing&&sharedLibrary!=null)return sharedLibrary.atTop();return editing?wizardRail!=null&&findFocus()==findViewWithTag("wizard.step.0"):grid==null||!grid.canScrollVertically(-1);}
   TextView action(String label,Runnable run){return SharedThreePanel.accentAction(getContext(),label,run);}
-  void footerAction(String label,Runnable run){TextView button=action(label,run);button.setMinHeight(dp(40));button.setBackground(SharedThreePanel.control(getContext(),10));LayoutParams size=new LayoutParams(-2,dp(40));size.topMargin=dp(6);footer.addView(button,size);}
+  void footerAction(String label,Runnable run){TextView button=action(label,run);button.setTag("wizard.footer."+label);button.setMinHeight(dp(40));button.setBackground(SharedThreePanel.control(getContext(),10));LayoutParams size=new LayoutParams(-2,dp(40));size.topMargin=dp(6);footer.addView(button,size);}
   void row(String label,Runnable run){TextView row=action(label,run);row.setTag("wizard.option."+step+"."+label.replaceFirst("^[✓○]\\s*", "").split(":",2)[0].trim());options.addView(row,new LayoutParams(-1,dp(42)));}
   LinearLayout column(){LinearLayout view=new LinearLayout(getContext());view.setOrientation(LinearLayout.VERTICAL);return view;}
   void rememberFocus(){View focused=findFocus();if(focused!=null&&focused.getTag() instanceof String)restoreFocus=(String)focused.getTag();if(grid!=null&&grid.getLayoutManager()!=null)restoreScroll=grid.getLayoutManager().onSaveInstanceState();}
