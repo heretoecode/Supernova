@@ -44,4 +44,9 @@ public class NextQaWizardTest {
   android.os.Bundle state=new android.os.Bundle();CustomLibraryPage page=new CustomLibraryPage();page.name="Retained draft";state.putString("draft",page.encode());state.putString("original",page.encode());state.putBoolean("editing",true);state.putInt("step",4);state.putString("focus","wizard.step.4");var host=Robolectric.buildActivity(CustomLibraryActivity.class).create(state).start().resume().visible();try{View root=host.get().findViewById(android.R.id.content);PreviewPagesTest.layout(root);assertNotNull(root.findViewWithTag("wizard.step.3"));assertNull(root.findViewWithTag("wizard.step.4"));assertTrue(root.findViewWithTag("wizard.step.3").hasFocus());assertNotNull(PreviewPagesTest.findText(root,"Save Page"));assertNotNull(PreviewPagesTest.findText(root,"Name: Retained draft"));}finally{host.pause().stop().destroy();}
  }
 
+ @Test public void immediatePickerBackDoesNotReplayObsoleteChoiceFocus(){
+  var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{View root=host.get().findViewById(android.R.id.content);PreviewPagesTest.layout(root);root.findViewWithTag("wizard.step.1").requestFocus();PreviewPagesTest.layout(root);View watched=root.findViewWithTag("wizard.option.1.Watched state");assertNotNull(watched);watched.requestFocus();watched.performClick();Object workspace=ReflectionHelpers.getField(host.get(),"workspace");ReflectionHelpers.callInstanceMethod(workspace,"back");PreviewPagesTest.layout(root);assertSame(root.findViewWithTag("wizard.option.1.Watched state"),root.findFocus());}
+  finally{host.pause().stop().destroy();}
+ }
+
 }

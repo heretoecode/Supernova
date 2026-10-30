@@ -102,8 +102,6 @@ public class SharedThreePanel extends LinearLayout {
         };
         android.graphics.drawable.Drawable existing=row.getForeground();row.setForeground(existing==null?line:new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{existing,line}));
     }
-    /** Neutral row surface where a shared rail owns the only focus boundary. */
-    public static android.graphics.drawable.Drawable neutralControl(Context context,int radius){StateListDrawable states=control(context,radius);states.setState(new int[]{});return states.getCurrent().mutate();}
     public static StateListDrawable control(Context context, int radius) {
         StateListDrawable states = new StateListDrawable();
         int[][] conditions={new int[]{-android.R.attr.state_enabled},new int[]{android.R.attr.state_pressed},new int[]{android.R.attr.state_focused},new int[]{}};
