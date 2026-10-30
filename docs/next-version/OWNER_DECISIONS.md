@@ -36,7 +36,7 @@ A (recommended, follows existing vertical shortcuts): seek initial; **Up → Set
 
 B: seek initial; Down enters Play/Pause; while in controls, Left/Right traverse Play/Pause ↔ Settings; Up from either returns to seek. This uses a virtual second focus row despite the one-row visual. It changes existing endpoint movement more substantially.
 
-Exact choice A or B requires owner sign-off under the locked HUD blueprint. The measured geometry above also needs approval. Paused Ends at proposal: hide it while paused or duration unknown; resume recomputes at actual speed. Owner must confirm this presentation rather than silently adopting the old 'if resumed now' interpretation.
+Resolved by the owner’s PR #29 continuation instruction: derive engineering details from existing conventions. Implementation uses A, with Play/Pause Up and Settings Down returning to seek, and hides Ends at while paused/unknown. No additional owner sign-off is requested for this engineering graph or arithmetic. The current measured implementation is documented in CONTINUATION.md; this original table remains a proposal history.
 
 ## Edit Library decision packet
 
@@ -54,13 +54,13 @@ Recommended proposed layout for all four approved sections: 960 × 540 logical, 
 
 Recommended label: **Both**, preserving current naming. No footer Previous/Next/Cancel. Form Back → rail; rail Back → guarded exit; preview Left/Back → last valid semantic field; rail Right → first active field (Review → Save); terminal keys retained. Explicit global tab exit runs its requested continuation after Save/Discard; Continue retains draft.
 
-Owner approval needed for: proposed geometry/type/spacing and normal/large/narrow annotated designs; Pages 3/4; pinned Review Save; retaining Delete in section 1; label Both; exact statistics above. The complete redesign remains blocked until the blueprint's visual/metrics review is satisfied. Source-only fixes already implemented do not imply that approval.
+Owner approval needed for: proposed geometry/type/spacing and normal/large/narrow annotated designs; Pages 3/4; pinned Review Save; retaining Delete in section 1; label Both; exact statistics above. Only the proposed new visual metrics remain unapproved. The source-backed four-section structure, parity, Save, retained Delete location, Both naming and actual preview are implemented using existing shared tokens. That does not silently approve the new 22/35/43 geometry or poster-grid proposal.
 
 ## ChaptersDB prerequisite decision
 
 Official API page and its loaded script were inspected 2026-10-30. Published routes support movie and episode lookups, but the documented examples currently return empty/404 responses (retained JSON probes). Documentation lists free/no-auth access but no verified data reuse licence, caching/rate-limit policy or structured runtime, season/episode and edition fields. `note` free text and votes cannot establish exact cut alignment. `/terms` returns the SPA shell, and the application's route table has no terms/licence page. This is limited evidence, not proof the service has no terms elsewhere.
 
-Required before production wiring: an authoritative provider licence/usage policy and working movie/episode examples with reliable edition/runtime/episode identity information. No substitute provider, title-only guess, highest-voted auto-selection or new preference has been added. Owner may supply those provider agreements/examples or authorise contacting the provider separately. Integration remains approved but blocked on these prerequisites; embedded chapters/IntroDB remain unchanged.
+Continuation research resolved API-use permission: the official page explicitly permits free unauthenticated application integration, and existing movie/series IMDb/TVDB lookup routes work. The acquisition/cache/strict ID paths are now wired without a new preference or substitute provider. Current v1 data still lacks cut/runtime proof. The owner has answered the remaining matching policy: **keep unverified sets hidden**. No contact with the provider was authorised or sent, and no additional legal/design approval is requested. Embedded chapters/IntroDB remain preserved. See CHAPTERSDB_CONTINUATION_RESEARCH.json and CONTINUATION.md for current evidence.
 
 ## Annotated section diagrams
 

@@ -33,3 +33,19 @@ Current application checkpoint `5208ea5`: focused run 41128669132 and full confo
 The 5208ea5 focused run passes 178 of 179 cases: the strengthened actual-controller D-pad case fails while targets rely on default button touch-focus policy. The follow-up makes both real button targets explicitly focusable in both modes and disables platform focus paint where the group already owns it. All timestamp text, 720p enlarged-text/chapter collision and legacy-state cases passed. Further review replaces the selected Settings outline (a second boundary layer) with an explicit check, and keeps the preview heading fixed while statistics/posters scroll together, so enlarged statistics cannot remove the item viewport. Queued picker focus now has a generation guard. New validation must complete before acceptance.
 
 Latest checkpoint `d29e5e1`: focused run 41130047853, full run 41130047803, library run 41130047789. Prior full runs were cancelled after superseding code changes; no passing result is inferred from cancellation. Only actual completed evidence will replace this pending status.
+
+## Current measured implementation tokens
+
+All dimensions below are logical Android dp/sp, converted once by resource density. They are engineering measurements of retained shared/source controls, not pixels copied from a generated image.
+
+| Surface | Actual source tokens / resource IDs |
+|---|---|
+| HUD safe/control area | `player_controller_experimental`: sides 28dp, control strip 104dp (8 + 88 + 8), safe bottom max(24dp, 4% viewport height); no secondary action row |
+| HUD groups | `preview_pause_group` 44×44, `pause` target 44×44 with centred 22dp artwork; seek frame flexible / 88dp, slider target 24dp / track 4dp; labels 14sp; Settings 116×40, existing gear and 20dp pill radius |
+| HUD title/clock | Official title binding retained; fallback bounds 380×64, AppCompat autosizing 16–23sp; middle-left 28dp, episode metadata 13sp with 4dp gap; constrained layout moves the block only enough to clear the chapter bubble. Clock remains 32dp right / 24dp top, 14sp |
+| HUD bubble | 13sp, min 22dp, 7dp side padding and existing 3/7 top/bottom; 4dp pointer, 5dp radius, 2dp bar gap; max two lines, actual text layout measured within seek bounds before pointer placement |
+| Editor shell | Existing SharedThreePanel .24/.38/.38 weights, 16dp gaps, 20dp panel padding, 16dp radii; outer 24/14/24/16; source viewport keeps 900dp focus-revealed content below 780dp logical width |
+| Editor content | 21sp headings, 18sp actions, at least existing 50dp target with wrap-content rows; independent rail/form/preview scrolling; only Review has the retained in-panel Save; Delete remains Page Details |
+| Preview | Existing statistics model; real indexed items, 20-item cap; 50×75dp aspect-preserving poster thumbnail and 15sp label with existing neutral fallback; fixed heading, separately scrolling statistics/items, stationary outer focus frame |
+
+No final visual approval of the optional new editor proportions/font/card/grid proposal is asserted. Actual current-source captures must come from a passing run and retain source/artifact hashes; earlier proposal diagrams remain labelled historical proposals.

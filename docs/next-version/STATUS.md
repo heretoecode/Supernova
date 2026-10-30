@@ -13,11 +13,11 @@ Authority: complete consolidated handover in `docs/handovers/`, latest locked HU
 
 | Requirement | Source / regression coverage | Current status |
 |---|---|---|
-| HUD single row, title, persistent bubble | PlayerController, PlayerActivity, PreviewHudTiming, PreviewSeekPolicy, player_controller_inside variants | Composition approved; exact geometry/focus graph requires owner approval; not implemented |
+| HUD single row, title, persistent bubble | PlayerController, PlayerActivity, PreviewHudTiming, PreviewSeekPolicy, player_controller_inside variants | Implemented approved one-row composition, seek-first/source-convention graph, measured tooltip and constrained title fitting; no further engineering approval gate; current CI/device acceptance separate |
 | Compact settings Audio/Subtitles/Video/More | PreviewPlaybackMenus, PlayerActivity native menus, PreviewPlaybackMenusTest | Implemented inline expansion under parent, collapse/focus restore and direct toggle state; native capability owners preserved; visual/Shield acceptance pending |
-| Movie/episode ChaptersDB | Official site /api, published JS, retained live probes | Blocked: documented examples fail but real movie/TV sets respond; no verified data licence/usage policy; no structured runtime/edition matching. No provider requests added to application |
+| Movie/episode ChaptersDB | Official site /api, published JS, retained live probes | Movie/episode acquisition, normalisation, cache/backoff and strict ID paths wired. Official API explicitly permits integration. Owner chose unverified sets hidden; current v1 lacks cut/runtime proof and therefore supplies no visible external markers |
 | Embedded chapters / IntroDB | PlayerActivity/Controller, native avos chapters patch, existing chapter and intro tests | Already present; preserve, no chapter auto-skip added |
-| Edit Library four sections, posters, stationary frame | CustomLibraryActivity, CustomLibraryPage, SharedThreePanel | Stationary preview frame, semantic return and loading/error/empty distinctions implemented; four-section/poster redesign still gated on geometry, pages 3/4, stats and Save/Delete decisions |
+| Edit Library four sections, posters, stationary frame | CustomLibraryActivity, CustomLibraryPage, SharedThreePanel | Four sections and actual indexed poster/item preview implemented with stable shell and guarded semantic/scroll restoration. Existing shared metrics, Both, Delete location and in-panel Save retained; only a new visual geometry/type revision remains optional |
 | Edit Library dirty destination | CustomLibraryActivity.requestExit/save, NextQaWizardTest | Implemented: successful Save and Discard honour requested continuation; failure retains editor |
 | Edit Library stale preview return | CustomLibraryActivity dispatchKeyEvent/back | Implemented: store semantic tag and resolve current control with valid fallback |
 | Retain unavailable saved year | CustomLibraryActivity year choices | Implemented; no filtering/schema change |
@@ -25,16 +25,16 @@ Authority: complete consolidated handover in `docs/handovers/`, latest locked HU
 | Keyboard caret / Caps | KeyboardInput / PreviewKeyboard | Implemented: vertical offset follows centred text; explicit ON/OFF label |
 | Custom statistics first entry / tab highlight | PreviewPages.requestChildFocus / TopNavigation / custom activity | Implemented displayed-set statistics invalidation and nav-only focus transfer; physical reproduction/acceptance open |
 | Missing regional certification | PlaybackAgeOverlay, existing 0.147 tests | Added missing-cache classification lookup through existing TMDb gateway; output/identity/deadline guards preserved; physical failure still open |
-| Details hero wash / progressive load / Reception | details package, OmdbSupplement | Reception and local text scrim implemented; same-frame enrichment coalescing implemented; additional preloading/coordinated entry work remains open pending measured device-stage timing; physical loading acceptance remains open; production OMDb access is disabled, so no fake provider rows |
-| Settings focus ghost / toggles / integrations grouping | SettingsWorkspace / PreviewFocusRail / PreviewSettings / registry | Existing shared switches shipped; reported hardware defects still open |
+| Details hero wash / progressive load / Reception | details package, OmdbSupplement | Reception and local text scrim implemented; same-frame coalescing, settled-focus priority, core-cache-first delivery and stage/first-paint timing implemented; physical loading acceptance remains open; production OMDb access is disabled, so no fake provider rows |
+| Settings focus ghost / toggles / integrations grouping | SettingsWorkspace / PreviewFocusRail / PreviewSettings / registry | Single Settings rail boundary with explicit selected check implemented; existing switch styling retained; reported hardware defects require device acceptance |
 | Subtitle language icons | PreviewLanguageIcon, SettingsChoiceDialog | Explicit-region PNG flags and neutral generic languages already shipped; hardware exhaustive visibility remains open |
 | Network & Files | 0.147 TRACEABILITY and preserved tests | Already shipped six-tile redesign; do not repeat; physical regressions remain open |
 | Home clipping and row controls | PreviewPages, retained refinement register | Existing controls preserved; physical evidence still needed |
 | Preparation artwork flashes | PreviewPlaybackLoading, 0.144 release evidence | Neutral official fallback already shipped; physical reproduction outstanding |
 
-## Validation and delivery
+## Prior completed validation and delivery — before continuation
 
-Full unsigned conformance [run 41118855808](https://github.com/heretoecode/Supernova/actions/runs/41118855808) **PASS**, completed 30 October 2026 at 20:29 UTC, exact source `7011e877d026e745a079846827ababe03c2af798`. Application source last changed in `53eb9e0`; subsequent changes to current branch HEAD are documentation/evidence only. Tested Git tree IDs are retained in PRESERVATION.json.
+Full unsigned conformance [run 41118855808](https://github.com/heretoecode/Supernova/actions/runs/41118855808) **PASS**, completed 30 October 2026 at 20:29 UTC, exact source `7011e877d026e745a079846827ababe03c2af798`. At that checkpoint, application source last changed in `53eb9e0`. This historical receipt predates the current continuation source; do not apply its results or tree IDs to the new code.
 
 | Validation | Read-back result |
 |---|---|
@@ -55,14 +55,14 @@ Receipts: FINAL_VALIDATION.json, FOCUSED_VALIDATION.json, LIBRARY_FIXTURE_VALIDA
 
 An **unsigned development APK** is available from the successful run, retaining baseline identity **0.147 / 147**. It is not a signed new-version QA release. See [APK_DELIVERY.md](APK_DELIVERY.md) for filename, exact digest and expiry. No signed APK or Drive upload, main merge, tag or public release.
 
-## Remaining work / decisions
+## Current decisions and acceptance boundaries
 
-- HUD: composition approved; exact geometry, remote graph and paused Ends at presentation still require the locked blueprint's owner sign-off. [OWNER_DECISIONS.md](OWNER_DECISIONS.md) includes measured tokens and a diagram; application HUD remains unchanged.
-- Edit Library: independent behavioural fixes are implemented; full four-section geometry, poster preview, Pages 3/4, Save/Delete placement, naming and stats await the recorded exact design decisions. Eight annotated diagrams are proposals, not approved screenshots.
-- ChaptersDB: live movie and TV sets verified. Production integration remains unimplemented pending authoritative usage terms and reliable edition/runtime/episode matching; retained probes demonstrate the schema limitations. Existing embedded chapters/IntroDB remain preserved.
-- Details entry: same-frame enrichment coalescing is implemented. Additional preloading/coordinated-entry engineering remains open pending measured device-stage timings; no complete loading-performance fix is claimed.
-- Reported hardware defects and regression acceptance: Settings focus ghosting/toggle visibility, exhaustive picker rendering, Home clipping/controls, preparation flashes, first-entry statistics and all changed playback/focus behaviour still require the original/device scenarios.
+HUD visual approval is retained, and the owner delegated its measurements/D-pad engineering. Graph A and paused-finish hiding are resolved engineering choices. All-four-tab inline Settings remains approved. The owner explicitly confirmed strict ChaptersDB matching: unverified sets remain hidden. There is no renewed HUD or ChaptersDB approval request.
 
-**Physical Nvidia Shield and installed upgrade/retention tests: NOT RUN.** Exact device procedure, source evidence and limitations are recorded in [SHIELD_ACCEPTANCE.md](SHIELD_ACCEPTANCE.md).
+The editor implements the approved structure/parity using the existing shared geometry. Adopting the proposed new region proportions/type/card/grid treatment or moving Delete would be a new visual choice; retaining current conventions needs no decision. No generated settings, runtime values, posters or facet expansion were introduced.
 
-Draft PR: https://github.com/heretoecode/Supernova/pull/29, stacked on 0.147 and unmerged. Existing main, implementation and design/audit branches remain untouched. Full changes: [CHANGELOG.md](CHANGELOG.md).
+Current ChaptersDB API data lacks authoritative cut/runtime proof; this is an external data constraint, not an unanswered personal preference. Acquisition does not imply usable verified chapter coverage. Embedded chapters remain available and take precedence. API integration permission and actual ID/schema probes are documented in CHAPTERSDB_CONTINUATION_RESEARCH.json.
+
+Physical Nvidia Shield, original Concept A4 comparison and installed signed upgrade/retention: **NOT RUN**. Reported hardware symptoms and all changed playback/focus/layout behaviour need device acceptance. Procedures: SHIELD_ACCEPTANCE.md. The current first-paint/core/artwork timing events support measured device diagnosis; source tests do not establish latency or visual parity.
+
+Draft PR: https://github.com/heretoecode/Supernova/pull/29, unchanged branch and stacked base, unmerged. Existing main, development and design/audit branches remain untouched. Current scope: CONTINUATION.md; previous changes: CHANGELOG.md.
