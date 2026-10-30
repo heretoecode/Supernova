@@ -87,6 +87,7 @@ public final class PreviewPages extends FrameLayout {
         return cell.type==HERO&&tab==0?featured():null;
     }
     private void prepareDetails(View focused){Entry entry=detailsFocusEntry(focused);if(entry==null||entry.onlineId<=0){removeCallbacks(prepareFocusedDetails);preparingDetails=null;if(!preparingKey.isEmpty())PreviewEnrichmentQueue.focused(getContext(),null);preparingKey="";return;}String key=entry.key()+":"+entry.onlineId;if(key.equals(preparingKey))return;preparingKey=key;preparingDetails=entry;removeCallbacks(prepareFocusedDetails);postDelayed(prepareFocusedDetails,250);}
+    @Override public void clearChildFocus(View child){super.clearChildFocus(child);if(!hasFocus())prepareDetails(null);}
     @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);prepareDetails(focused);if(list!=null){rememberFocus();scheduleCentre();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){artworkKeys[tab]=((Entry)cells.get(p).value).key();lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(null);}}}}
 
     private void scheduleCentre(){if(list==null||tab!=1&&tab!=2)return;list.removeCallbacks(centreLibraryRow);list.postOnAnimation(centreLibraryRow);}
