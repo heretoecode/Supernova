@@ -1,5 +1,9 @@
 # Unsigned development APK
 
+**Continuation candidate:** source `83aede983501c0ad728576a144d2a0ef51998190` passes 182 focused tests and six isolated library cases. Full conformance/build [41133244918](https://github.com/heretoecode/Supernova/actions/runs/41133244918) is still running. No new APK has yet been accepted. The download below is the **previous** checkpoint and does not include the continuation changes.
+
+## Previous completed candidate — historical
+
 [Successful build and download](https://github.com/heretoecode/Supernova/actions/runs/41118855808): choose artifact **supernova-next-unsigned-candidate**, then extract `Supernova_next_development_unsigned.apk` alongside `unsigned-conformance.json`.
 
 - Tested source: `7011e877d026e745a079846827ababe03c2af798`.
