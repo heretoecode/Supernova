@@ -51,5 +51,7 @@ public class ChaptersDbClientTest {
   AtomicInteger calls=new AtomicInteger();OkHttpClient http=new OkHttpClient.Builder().addInterceptor(chain->{calls.incrementAndGet();return response(chain,429,"{}","application/json");}).build();ChaptersDbClient.HttpSource source=new ChaptersDbClient.HttpSource(RuntimeEnvironment.getApplication(),http);
   for(int i=0;i<2;i++)try{source.get("show/tt6628394");fail();}catch(IOException expected){}assertEquals(1,calls.get());
   try{source.get("https://other.example/private");fail();}catch(IOException expected){}assertEquals(1,calls.get());
+  for(int status:new int[]{302,200,503}){resetRate();OkHttpClient invalid=new OkHttpClient.Builder().addInterceptor(chain->response(chain,status,"<html>unavailable</html>","text/html")).build();try{new ChaptersDbClient.HttpSource(RuntimeEnvironment.getApplication(),invalid).get("show/tt1375666");fail("HTML/redirect/server failure is not chapter data");}catch(IOException expected){}}
+
  }
 }

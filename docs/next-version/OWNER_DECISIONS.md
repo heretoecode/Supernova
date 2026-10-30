@@ -1,4 +1,8 @@
-# Exact design decisions for review
+# Decision packet — reconciled after PR #29 continuation
+
+**Current direction:** the owner authorised HUD measurements/D-pad engineering within the approved design and chose strict ChaptersDB matching (unverified sets hidden). The HUD A/B and paused-display questions below are historical proposals, not remaining approval requests. Implementation uses A, hides paused finish prediction, and retains the approved composition. See CONTINUATION.md for current source-backed decisions.
+
+The editor now implements four sections with existing SharedThreePanel geometry, Both naming, Delete in Page Details and the existing pinned in-panel Review Save. Retaining those source conventions needs no new approval. Only adopting the proposed new proportions/type/card treatment, alternative poster-grid layout or moving Delete remains a genuine optional visual choice. Candidate drawings below are not approved exact designs.
 
 Status: proposals derived from measured source, NOT locked tokens or implemented layouts. Source measured at baseline `b4a6ee7a`; current screenshots required by the blueprint cannot be called approved mock-ups. No approved image bytes were supplied.
 
