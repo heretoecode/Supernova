@@ -8,3 +8,8 @@ Unmodified PNG bytes from successful focused run [41118855716](https://github.co
 - `category-5.png`: global Connections & Integrations with Service integrations first, OpenSubtitles and Trakt below.
 
 These are real app-view Robolectric captures, with fixture content. They are not Nvidia Shield photographs, approved Concept A4 references, HUD proposals, final redesign acceptance or video-performance evidence. Other dimensions and captures remain in the full GitHub evidence archive. Physical procedure: ../SHIELD_ACCEPTANCE.md. The separate ../design-proposals/ directory contains labelled diagrams only.
+
+Additional unmodified captures from passing full run **41118855808**, same tested source, are recorded separately in PROVENANCE.json:
+
+- `0141-playback-tab-0.png` through `-3.png`: actual compact in-player Audio/Subtitles/Video/More views over a labelled synthetic scene, from the existing Playback141RenderTest. Selected native tracks and capability availability are fixture inputs; screenshots are not a feature inventory or proof every real track/adjustment was exercised on hardware.
+- `0139-regional-language-flags.png`: existing regional/neutral icon colour test sheet. Full suite includes decoding every bundled ISO-region flag; this does not prove exhaustive real-device picker visibility.

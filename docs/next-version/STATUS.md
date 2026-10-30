@@ -28,20 +28,37 @@ Authority: complete consolidated handover in `docs/handovers/`, latest locked HU
 | Home clipping and row controls | PreviewPages, retained refinement register | Existing controls preserved; physical evidence still needed |
 | Preparation artwork flashes | PreviewPlaybackLoading, 0.144 release evidence | Neutral official fallback already shipped; physical reproduction outstanding |
 
-## Validation
+## Validation and delivery
 
-Before changes: 134 Python tooling tests PASS; JDK parser reads 1,097 Java files with zero syntax errors. No Android SDK or pinned sibling modules are installed in this workspace. A dedicated unsigned GitHub workflow reuses the existing pinned native/dependency preparation and runs application/library tests, lint, APK assembly and conformance guards. It does not sign or publish. Version metadata stays at the baseline during development; any unsigned build is a development artefact, not a new QA release.
+Full unsigned conformance [run 41118855808](https://github.com/heretoecode/Supernova/actions/runs/41118855808) **PASS**, completed 30 October 2026 at 20:29 UTC, exact source `7011e877d026e745a079846827ababe03c2af798`. Application source last changed in `53eb9e0`; subsequent changes to current branch HEAD are documentation/evidence only. Tested Git tree IDs are retained in PRESERVATION.json.
 
-Physical Nvidia Shield testing: NOT RUN for every changed item. No physical device or original clips attached. No signed APK, Drive upload, main merge, tag or public release. Signing remains a later protected owner-authorised step.
+| Validation | Read-back result |
+|---|---|
+| Application suite | 1,233 passed; zero failures/errors/skips |
+| MediaLib suite | 198 passed, two retained database-fixture skips |
+| FileCoreLibrary suite | 102 passed, two retained transfer/PROPFIND benchmark skips |
+| Focused UI/playback run 41118855716 | 131 passed; zero failures/skips (subset, not additive to full suite) |
+| Isolated scraper/FTPS run 41118855851 | Six passed (subset) |
+| Release lint | Zero errors; 1,495 warnings remain |
+| Tooling / Java parser | 134 tests passed; 1,099 Java files, zero syntax errors |
+| Runtime/native conformance | 139 reviewed runtime hashes; 84 packaged native hashes; 24 source-built FFmpeg inputs matched |
+| Independent downloads | Complete archive SHA-256/CRC, 310 JUnit XML files, lint XML, 139 runtime archives/POMs and reviewed SBOM, all 84 APK native hashes and APK/receipt/input digests verified |
+| Android 23 transport proof | Existing 28-case proof reused for unchanged production inputs; not rerun on physical hardware in this task |
 
-## Progress checkpoint
+Before changes: 134 tooling tests passed and 1,097 baseline Java files parsed. The workspace has no Android SDK or pinned sibling modules; all Android compilation/tests/lint/assembly above ran in the existing pinned GitHub build architecture. Test-only overlays fix expired public synthetic TLS certificates and disambiguate an exact adaptation expectation without altering production TLS/scraper behaviour or original native/build/signing inputs; see TEST_INPUT_REVIEW.md. Intermediate failed/cancelled runs are diagnostic, not accepted evidence.
 
-Draft PR: https://github.com/heretoecode/Supernova/pull/29 (stacked on 0.147, unmerged). Latest application checkpoint `53eb9e0` includes independent fixes; `7011e87` reconciles broad legacy test fixtures and is the candidate source under validation. Newer docs-only commits must not be mistaken for a different application. Full unsigned run https://github.com/heretoecode/Supernova/actions/runs/41118855808 is pending. Superseded intermediate runs were cancelled to avoid redundant build use; the first run is retained for diagnostic evidence. No successful Android/build/visual result is claimed until its actual outcome is read back.
+Receipts: FINAL_VALIDATION.json, FOCUSED_VALIDATION.json, LIBRARY_FIXTURE_VALIDATION.json, UNSIGNED_CONFORMANCE.json and INDEPENDENT_UNSIGNED_APK_VERIFICATION.json. Selected unmodified software captures and provenance: [software-captures/](software-captures/README.md). Original Concept A4 images were not found in the limited read-only Drive check (REFERENCE_ASSET_CHECK.md). Software captures do not establish visual parity or hardware acceptance.
 
-Local after changes: 134 tooling tests pass; JDK parses 1,099 Java files with zero syntax errors. Eight annotated Edit Library diagrams, a measured HUD diagram and source token/focus proposal are available in OWNER_DECISIONS.md; they are proposals, not approved screenshots. HUD focus approval was requested while independent work continues.
+An **unsigned development APK** is available from the successful run, retaining baseline identity **0.147 / 147**. It is not a signed new-version QA release. See [APK_DELIVERY.md](APK_DELIVERY.md) for filename, exact digest and expiry. No signed APK or Drive upload, main merge, tag or public release.
 
-Focused regression/render run: https://github.com/heretoecode/Supernova/actions/runs/41118855716 **PASS — 131 tests**, zero failures/skips, independently downloaded SHA-256/CRC/JUnit readback in FOCUSED_VALIDATION.json. Selected unmodified captures and fixture limitations are in software-captures/. The full conformance run remains pending. Full change log: CHANGELOG.md.
+## Remaining work / decisions
 
-The initial UI runs exposed active-tab/focus ordering and large-text rating layout regressions; corrections pass the 111-case run 41096175538. The later full run exposed two historical expectations (scroll-child focus and an empty Reception fixture); these are corrected in `7011e87`, with affected classes added to the passing 131-test focused rerun. All six isolated library-fixture cases pass again at `7011e87` (run 41118855851) with independent archive/JUnit readback (LIBRARY_FIXTURE_VALIDATION.json); TEST_INPUT_REVIEW.md records the expired test certificates, ambiguous live filename and corrected setup failure. Added test-only overlays do not alter original native/build/signing inputs.
+- HUD: composition approved; exact geometry, remote graph and paused Ends at presentation still require the locked blueprint's owner sign-off. [OWNER_DECISIONS.md](OWNER_DECISIONS.md) includes measured tokens and a diagram; application HUD remains unchanged.
+- Edit Library: independent behavioural fixes are implemented; full four-section geometry, poster preview, Pages 3/4, Save/Delete placement, naming and stats await the recorded exact design decisions. Eight annotated diagrams are proposals, not approved screenshots.
+- ChaptersDB: live movie and TV sets verified. Production integration remains unimplemented pending authoritative usage terms and reliable edition/runtime/episode matching; retained probes demonstrate the schema limitations. Existing embedded chapters/IntroDB remain preserved.
+- Details entry: same-frame enrichment coalescing is implemented. Additional preloading/coordinated-entry engineering remains open pending measured device-stage timings; no complete loading-performance fix is claimed.
+- Reported hardware defects and regression acceptance: Settings focus ghosting/toggle visibility, exhaustive picker rendering, Home clipping/controls, preparation flashes, first-entry statistics and all changed playback/focus behaviour still require the original/device scenarios.
 
-Device procedure and source limitations: [SHIELD_ACCEPTANCE.md](SHIELD_ACCEPTANCE.md).
+**Physical Nvidia Shield and installed upgrade/retention tests: NOT RUN.** Exact device procedure, source evidence and limitations are recorded in [SHIELD_ACCEPTANCE.md](SHIELD_ACCEPTANCE.md).
+
+Draft PR: https://github.com/heretoecode/Supernova/pull/29, stacked on 0.147 and unmerged. Existing main, implementation and design/audit branches remain untouched. Full changes: [CHANGELOG.md](CHANGELOG.md).

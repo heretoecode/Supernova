@@ -29,5 +29,43 @@
       "sha256": "c9b90fb7f20df13c9d69f4ab385bd3cb18cfa4c78c00836eeac85611bfb2380a",
       "bytes": 1556845
     }
-  ]
+  ],
+  "full_run_captures": {
+    "run": 41118855808,
+    "source": "7011e877d026e745a079846827ababe03c2af798",
+    "artifact_id": 13008404831,
+    "artifact_sha256": "e09f85c3244f1c2613546593224c32de61b51014fa2c49f3ff5a0521d46e9323",
+    "captures": [
+      {
+        "file": "0141-playback-tab-0.png",
+        "archive_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0141-playback-tab-0.png",
+        "sha256": "a472b676e846a761efaa304969faad3ddffa28a2ef930682e5ffb469d9c888e4",
+        "bytes": 79436
+      },
+      {
+        "file": "0141-playback-tab-1.png",
+        "archive_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0141-playback-tab-1.png",
+        "sha256": "fef4da3094707c3c7065a094f02e1e064ca37fdff7a592b9909d405a195b9851",
+        "bytes": 77615
+      },
+      {
+        "file": "0141-playback-tab-2.png",
+        "archive_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0141-playback-tab-2.png",
+        "sha256": "17b028a859f35cb28dc031d496893981b577aab5ecd390ec5d57ad971834709e",
+        "bytes": 73675
+      },
+      {
+        "file": "0141-playback-tab-3.png",
+        "archive_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0141-playback-tab-3.png",
+        "sha256": "77c30961289496c37030a4fb8d6f11458cfb133b6ccfe5143e6a390a0e1f8503",
+        "bytes": 70613
+      },
+      {
+        "file": "0139-regional-language-flags.png",
+        "archive_entry": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0139-regional-language-flags.png",
+        "sha256": "392dce386b82353de4e917cc9dccc496639541f04ccecefe7f56d9d23678c2f9",
+        "bytes": 10327
+      }
+    ]
+  }
 }
