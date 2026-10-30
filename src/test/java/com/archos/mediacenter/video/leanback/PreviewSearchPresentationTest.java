@@ -39,7 +39,7 @@ public class PreviewSearchPresentationTest {
         try{
             PreviewSearch search=new PreviewSearch(host.get(),0,null);TopNavigation nav=new TopNavigation(host.get(),search,n->{},search::atTop);host.get().setContentView(nav);PreviewPagesTest.layout(nav);search.focusQuery();
             assertTrue(search.findViewWithTag("semantic:keyboard:T").hasFocus());EditText query=findQuery(search);assertNotNull(query);assertTrue(query.getFocusables(android.view.View.FOCUS_DOWN).isEmpty());assertTrue(query.isCursorVisible());assertEquals("Search Movies and TV Shows",query.getHint().toString());
-            assertNotNull(search.findViewWithTag("semantic:keyboard:Caps Lock"));assertEquals("",((android.widget.TextView)search.findViewWithTag("semantic:keyboard:Caps Lock")).getText().toString());assertNull(PreviewPagesTest.findText(search,"Shift"));
+            assertNotNull(search.findViewWithTag("semantic:keyboard:Caps Lock"));assertEquals("ON",((android.widget.TextView)search.findViewWithTag("semantic:keyboard:Caps Lock")).getText().toString());assertNull(PreviewPagesTest.findText(search,"Shift"));
             PreviewPagesTest.capture(nav,"search-empty-next");
         }finally{host.pause().stop().destroy();}
     }
