@@ -36,8 +36,10 @@ Physical Nvidia Shield testing: NOT RUN for every changed item. No physical devi
 
 ## Progress checkpoint
 
-Draft PR: https://github.com/heretoecode/Supernova/pull/29 (stacked on 0.147, unmerged). Latest application checkpoint `11c7cdd` (subsequent workflow/documentation only) includes independent fixes; newer docs-only commits must not be mistaken for a different tested application. Full unsigned run https://github.com/heretoecode/Supernova/actions/runs/41090453193 is pending. Superseded intermediate runs were cancelled to avoid redundant build use; the first run is retained for diagnostic evidence. No successful Android/build/visual result is claimed until its actual outcome is read back.
+Draft PR: https://github.com/heretoecode/Supernova/pull/29 (stacked on 0.147, unmerged). Latest application checkpoint `7d8224c` includes independent fixes; newer docs-only commits must not be mistaken for a different tested application. Full unsigned run https://github.com/heretoecode/Supernova/actions/runs/41094056976 is pending. Superseded intermediate runs were cancelled to avoid redundant build use; the first run is retained for diagnostic evidence. No successful Android/build/visual result is claimed until its actual outcome is read back.
 
 Local after changes: 134 tooling tests pass; JDK parses 1,099 Java files with zero syntax errors. Eight annotated Edit Library diagrams and measured source token/focus proposal are available in OWNER_DECISIONS.md; they are proposals, not approved screenshots. HUD focus approval was requested while independent work continues.
 
-Focused regression/render run: https://github.com/heretoecode/Supernova/actions/runs/41090547508 . The comparable prior complete 0.147 workflow took approximately 35 minutes; current runs remain pending, not passing evidence. Full change log: CHANGELOG.md.
+Focused regression/render run: https://github.com/heretoecode/Supernova/actions/runs/41094057073 . The comparable prior complete 0.147 workflow took approximately 35 minutes; current runs remain pending, not passing evidence. Full change log: CHANGELOG.md.
+
+The initial UI runs exposed active-tab/focus ordering and large-text rating layout regressions; corrections are in the current source and reruns remain pending. All six isolated library-fixture cases pass with independent archive/JUnit readback (LIBRARY_FIXTURE_VALIDATION.json); TEST_INPUT_REVIEW.md records the expired test certificates, ambiguous live filename and corrected setup failure. Added test-only overlays do not alter original native/build/signing inputs.

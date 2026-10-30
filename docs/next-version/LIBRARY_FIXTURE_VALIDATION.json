@@ -1,0 +1,41 @@
+{
+  "run": 41093563462,
+  "source": "a928633",
+  "conclusion": "success",
+  "artifact_id": 12994903872,
+  "artifact_bytes": 3783506,
+  "artifact_sha256": "bad3eeeb96253ec0bffb6d21b11ad0e7aa77dd899f821229e2c631b76876c69b",
+  "independent_zip_crc": null,
+  "tests": [
+    {
+      "classname": "com.archos.mediascraper.preprocess.ScraperIntegrationTest",
+      "name": "testScrapingFromCsv",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "legacyDefaultsAcceptPrivateCaAndWrongHost",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "trustedControlAndDataTransfer",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "trustedCaWrongDataHostnameRejected",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "trustedCaWrongControlHostnameRejected",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "platformTrustRejectsPrivateCaBeforeLogin",
+      "passed": true
+    }
+  ]
+}
