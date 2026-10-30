@@ -49,4 +49,8 @@ public class NextQaWizardTest {
   finally{host.pause().stop().destroy();}
  }
 
+ @Test public void retainedYearHasAVisibleCurrentMarkerAndPickerReturnsToItsParent(){
+  var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{View root=host.get().findViewById(android.R.id.content);PreviewPagesTest.layout(root);Object workspace=ReflectionHelpers.getField(host.get(),"workspace");CustomLibraryPage draft=ReflectionHelpers.getField(workspace,"draft");draft.year=1999;root.findViewWithTag("wizard.step.1").requestFocus();PreviewPagesTest.layout(root);View parent=root.findViewWithTag("wizard.option.1.Year");assertNotNull(parent);parent.requestFocus();parent.performClick();PreviewPagesTest.layout(root);android.widget.TextView current=root.findViewWithTag("wizard.option.1.1999");assertNotNull(current);assertTrue(current.isSelected());assertTrue(current.getText().toString().startsWith("✓"));assertTrue(current.hasFocus());assertFalse(root.findViewWithTag("wizard.option.1.All").isSelected());current.performClick();PreviewPagesTest.layout(root);assertEquals(1999,draft.year);assertSame(root.findViewWithTag("wizard.option.1.Year"),root.findFocus());}finally{host.pause().stop().destroy();}
+ }
+
 }

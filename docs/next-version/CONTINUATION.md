@@ -49,3 +49,5 @@ All dimensions below are logical Android dp/sp, converted once by resource densi
 | Preview | Existing statistics model; real indexed items, 20-item cap; 50×75dp aspect-preserving poster thumbnail and 15sp label with existing neutral fallback; fixed heading, separately scrolling statistics/items, stationary outer focus frame |
 
 No final visual approval of the optional new editor proportions/font/card/grid proposal is asserted. Actual current-source captures must come from a passing run and retain source/artifact hashes; earlier proposal diagrams remain labelled historical proposals.
+
+The final editor-state audit also marks/focuses the actual current choice in existing Year/watched/rating/View/Sort/indexed-facet pickers. Labels/options and filter semantics are unchanged; unsupported saved values remain visible in the invoking field/context rather than being silently replaced or invented as new options. A retained-year regression covers selection, focus and parent restoration.
