@@ -82,11 +82,11 @@ final class DetailsBlueprintPanel extends LinearLayout {
     private View ratingValue(int row,OmdbSupplement.Ratings ratings){
         LinearLayout box=new LinearLayout(getContext());box.setOrientation(VERTICAL);String supplied=ratings.value(row);
         if(supplied.isEmpty()||row==3){TextView body=label(supplied.isEmpty()?(row==3?"Unavailable":"No rating available"):supplied,11,false);body.setGravity(Gravity.CENTER_VERTICAL);body.setMaxLines(row==3?3:2);body.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(body,6,11);box.addView(body,new LayoutParams(-1,-1));return box;}
-        TextView score=label(supplied,16,true);score.setGravity(Gravity.CENTER_VERTICAL);score.setSingleLine(true);score.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(score,8,16);
+        TextView score=label(supplied,16,true);score.setGravity(Gravity.CENTER_VERTICAL);score.setSingleLine(true);score.setHorizontallyScrolling(false);score.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(score,8,16);
         int unit=supplied.indexOf('/');if(unit<0&&supplied.endsWith("%"))unit=supplied.length()-1;
         if(unit>=0){android.text.SpannableString styled=new android.text.SpannableString(supplied);styled.setSpan(new android.text.style.RelativeSizeSpan(11f/16f),unit,supplied.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);styled.setSpan(new android.text.style.StyleSpan(Typeface.NORMAL),unit,supplied.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);score.setText(styled);}
-        boolean support=row==0&&!ratings.imdbVotes.isEmpty();if(support)box.setOrientation(HORIZONTAL);box.addView(score,support?new LayoutParams(0,-1,.58f):new LayoutParams(-1,0,1f));
-        if(support){TextView count=label(votes(ratings.imdbVotes),10,false);count.setTextColor(0xffb9c7d2);count.setGravity(Gravity.CENTER_VERTICAL);count.setSingleLine(true);count.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(count,6,10);count.setPadding(dp(4),0,0,0);box.addView(count,new LayoutParams(0,-1,.42f));}
+        boolean support=row==0&&!ratings.imdbVotes.isEmpty();if(support)box.setOrientation(HORIZONTAL);box.addView(score,support?new LayoutParams(0,-1,.5f):new LayoutParams(-1,0,1f));
+        if(support){TextView count=label(votes(ratings.imdbVotes),10,false);count.setTextColor(0xffb9c7d2);count.setGravity(Gravity.CENTER_VERTICAL);count.setSingleLine(true);count.setHorizontallyScrolling(false);count.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(count,6,10);count.setPadding(dp(4),0,0,0);box.addView(count,new LayoutParams(0,-1,.5f));}
         return box;
     }
     private void auto(TextView view,int min,int max){androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(view,DetailsDimensions.sp(getContext(),min),DetailsDimensions.sp(getContext(),max),1,android.util.TypedValue.COMPLEX_UNIT_SP);}
