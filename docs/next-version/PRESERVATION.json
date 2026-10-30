@@ -1,6 +1,7 @@
 {
   "base": "b4a6ee7a010c9b5b6af8731108f3973477bfc7f5",
-  "application_checkpoint": "7d8224c",
+  "application_checkpoint": "53eb9e0",
+  "validated_source": "7011e877d026e745a079846827ababe03c2af798",
   "unchanged": {
     "AndroidManifest.xml": true,
     "build.gradle": true,
@@ -12,7 +13,7 @@
   },
   "original_build_and_native_inputs_unchanged": true,
   "new_test_only_overlays": {
-    ".github/build/next-filecore-test-fixtures.patch": "1cd857d81162250c888ac3edcd65d3f8f23a1c52e70b90c2f8fe5695e8a2b948",
-    ".github/build/next-medialib-test-fixtures.patch": "8ca9f52e81a1c93f76b8f15f937800757505ad66004c7a67148c2aac691e50c4"
+    ".github/build/next-medialib-test-fixtures.patch": "8ca9f52e81a1c93f76b8f15f937800757505ad66004c7a67148c2aac691e50c4",
+    ".github/build/next-filecore-test-fixtures.patch": "1cd857d81162250c888ac3edcd65d3f8f23a1c52e70b90c2f8fe5695e8a2b948"
   }
 }
