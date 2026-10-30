@@ -24,6 +24,11 @@ public class PreviewDetailsCacheTest {
         PreviewDetailsData.Result result=PreviewDetailsData.cached(context,"tv",432,Collections.emptySet());
         assertNotNull(result.seasonAvailability.get(1));assertEquals(1,result.related.size());assertEquals(433,result.related.get(0).title.getLong("id"));assertEquals(8,result.related.get(0).provider.id);
     }
+    @Test public void coreCacheDeliveryExcludesOptionalSeasonsRecommendationsAndProviders()throws Exception{
+        Context context=RuntimeEnvironment.getApplication();PreviewMetadataCache.load(context,"tv",88,"",()->new JSONObject("{name:'Core',seasons:[{season_number:1}]}"));PreviewMetadataCache.load(context,"tv",88,"season/1",()->new JSONObject("{episodes:[{episode_number:1}]}"));PreviewMetadataCache.load(context,"tv",88,"videos",()->new JSONObject("{results:[]}"));
+        PreviewDetailsData.Result core=PreviewDetailsData.cachedCore(context,"tv",88);assertEquals("Core",core.details.getString("name"));assertTrue(core.episodes.isEmpty());assertTrue(core.seasonAvailability.isEmpty());assertFalse(core.extrasLoaded);assertFalse(core.relatedLoaded);
+        assertNotNull(PreviewDetailsData.cached(context,"tv",88,Collections.emptySet()).episodes.get(1));
+    }
     @Test public void diskPackageSuppliesDetailsWithoutInventingProviderAvailability()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
         PreviewMetadataCache.load(context,"tv",42,"",()->new JSONObject("{name:'Series',seasons:[{season_number:1}]}"));

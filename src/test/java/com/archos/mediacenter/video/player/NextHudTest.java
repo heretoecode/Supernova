@@ -1,0 +1,31 @@
+package com.archos.mediacenter.video.player;
+
+import android.app.*;
+import android.view.*;
+import android.widget.*;
+import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.R;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.robolectric.*;
+import org.robolectric.annotation.*;
+import org.robolectric.util.ReflectionHelpers;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+/** Actual HUD layout, timing and focus contracts. No physical playback claim. */
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-xhdpi") @GraphicsMode(GraphicsMode.Mode.NATIVE)
+public class NextHudTest {
+ private Player previous,player;private PlayerService previousService;private org.robolectric.android.controller.ActivityController<Activity> host;private View root;private PlayerController controller;
+ @Before public void setup(){previous=Player.sPlayer;previousService=PlayerService.sPlayerService;PlayerService.sPlayerService=null;player=mock(Player.class);Player.sPlayer=player;when(player.getDuration()).thenReturn(7200000);when(player.getCurrentPosition()).thenReturn(1800000);when(player.isPlaying()).thenReturn(true);host=Robolectric.buildActivity(Activity.class).setup().visible();Activity a=host.get();PreferenceManager.getDefaultSharedPreferences(a).edit().putBoolean("try_new_ui",true).putString("uimode","2").commit();root=LayoutInflater.from(a).inflate(R.layout.player_controller_experimental,null);a.setContentView(root);root.findViewById(R.id.control_bar).setVisibility(View.VISIBLE);controller=mock(PlayerController.class,CALLS_REAL_METHODS);ReflectionHelpers.setField(controller,"mContext",a);ReflectionHelpers.setField(controller,"mControllerViewLeft",root);ReflectionHelpers.setField(controller,"mControlBar",root.findViewById(R.id.control_bar));ReflectionHelpers.setField(controller,"mProgress",root.findViewById(R.id.seek_progress));ReflectionHelpers.setField(controller,"mPauseButton",root.findViewById(R.id.pause));ReflectionHelpers.setField(controller,"mCurrentTime",root.findViewById(R.id.time_current));ReflectionHelpers.setField(controller,"mEndTime",root.findViewById(R.id.time));ReflectionHelpers.setField(controller,"mClock",root.findViewById(R.id.clock));ReflectionHelpers.setField(controller,"mNextSeek",-1);ReflectionHelpers.callInstanceMethod(controller,"configurePreviewTransport");}
+ @After public void close(){Player.sPlayer=previous;PlayerService.sPlayerService=previousService;host.pause().stop().destroy();RuntimeEnvironment.setFontScale(1f);}
+ private void layout(){var c=root.getResources().getConfiguration();float d=root.getResources().getDisplayMetrics().density;for(int i=0;i<3;i++){int w=Math.round(c.screenWidthDp*d),h=Math.round(c.screenHeightDp*d);root.measure(View.MeasureSpec.makeMeasureSpec(w,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(h,View.MeasureSpec.EXACTLY));root.layout(0,0,w,h);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();}}
+ private int centre(View v){int[] p=new int[2];v.getLocationInWindow(p);return p[1]+v.getHeight()/2;}
+ private void render()throws Exception{controller.updateClock();((TextView)root.findViewById(R.id.preview_playback_title)).setText("Source title fallback");root.findViewById(R.id.preview_playback_title).setVisibility(View.VISIBLE);layout();View seek=root.findViewById(R.id.seek_progress);assertTrue("Flexible seek retains usable width",seek.getWidth()>40*root.getResources().getDisplayMetrics().density);for(int id:new int[]{R.id.preview_pause_group,R.id.time,R.id.preview_end_time,R.id.preview_more_group})assertEquals("Shared transport centre "+id,centre(seek),centre(root.findViewById(id)),2);TextView total=root.findViewById(R.id.time),finish=root.findViewById(R.id.preview_end_time);assertEquals("02:00:00",total.getText().toString());assertTrue(finish.getText().toString().startsWith("Ends at "));for(TextView label:new TextView[]{total,finish})assertTrue(label.getLayout().getLineWidth(0)<=label.getWidth()+1);root.findViewById(R.id.preview_more).requestFocus();ReflectionHelpers.callInstanceMethod(controller,"updatePreviewScrubber");assertEquals(View.VISIBLE,root.findViewById(R.id.preview_scrub_time).getVisibility());android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(root.getWidth(),root.getHeight(),android.graphics.Bitmap.Config.ARGB_8888);root.draw(new android.graphics.Canvas(image));java.io.File out=new java.io.File("build/reports/preview-ui/next-hud-"+root.getWidth()+"-"+root.getResources().getConfiguration().fontScale+".png");out.getParentFile().mkdirs();try(java.io.FileOutputStream f=new java.io.FileOutputStream(out)){image.compress(android.graphics.Bitmap.CompressFormat.PNG,100,f);}image.recycle();}
+ @Test @Config(qualifiers="w640dp-h360dp-land-xhdpi") public void rowAt720p()throws Exception{render();}
+ @Test public void rowAt1080p()throws Exception{render();}
+ @Test @Config(qualifiers="w960dp-h540dp-land-xxxhdpi") public void rowAt4k()throws Exception{render();}
+ @Test public void rowAtLargeText()throws Exception{RuntimeEnvironment.setFontScale(1.5f);render();}
+ @Test public void pausedUnknownDurationAndPreviewNeverShowFalseFinishClock(){controller.updateClock();when(player.isPlaying()).thenReturn(false);ReflectionHelpers.callInstanceMethod(controller,"updatePausePlay");assertEquals(View.GONE,root.findViewById(R.id.preview_end_time).getVisibility());assertEquals("02:00:00",((TextView)root.findViewById(R.id.time)).getText());when(player.isPlaying()).thenReturn(true);when(player.getDuration()).thenReturn(0);controller.updateClock();assertEquals("—",((TextView)root.findViewById(R.id.time)).getText());assertEquals(View.GONE,root.findViewById(R.id.preview_end_time).getVisibility());}
+ @Test public void graphKeepsSeekingSeparateFromButtonReachability(){assertEquals(R.id.preview_more,root.findViewById(R.id.seek_progress).getNextFocusUpId());assertEquals(R.id.pause,root.findViewById(R.id.seek_progress).getNextFocusDownId());assertEquals(R.id.seek_progress,root.findViewById(R.id.pause).getNextFocusUpId());assertEquals(R.id.seek_progress,root.findViewById(R.id.preview_more).getNextFocusDownId());assertEquals(R.id.preview_more,root.findViewById(R.id.preview_more).getNextFocusRightId());}
+}

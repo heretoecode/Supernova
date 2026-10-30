@@ -421,6 +421,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private boolean mAudioSubtitleNeedUpdate = false;
     private int mNewSubtitleTrack = -1;
     private int mNewAudioTrack = -1;
+    private ChaptersDbPlayback previewChapterSource;
+    java.util.List<PlaybackChapters.Chapter> previewChapters(java.util.List<PlaybackChapters.Chapter> embedded,long duration){
+        if(embedded!=null&&!embedded.isEmpty())return embedded;
+        if(mVideoInfo==null||!mVideoInfo.isScraped||isFinishing()||isDestroyed())return java.util.Collections.emptyList();
+        if(previewChapterSource==null)previewChapterSource=new ChaptersDbPlayback(this);
+        return previewChapterSource.chapters(mVideoInfo.uri,embedded,mVideoInfo.isShow?"tv":"movie",mVideoInfo.isShow?mVideoInfo.scraperShowId:mVideoInfo.scraperMovieId,mVideoInfo.isShow?mVideoInfo.scraperShowImdbId:null,mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr,duration);
+    }
     private VideoDbInfo mVideoInfo;
     private IndexHelper mIndexHelper = null;
 
@@ -1342,6 +1349,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     protected void onDestroy() {
+        if(previewChapterSource!=null){previewChapterSource.close();previewChapterSource=null;}
         if (log.isDebugEnabled()) log.debug("onDestroy");
 
         // System-driven destruction after Home/screensaver is not an external-player exit.

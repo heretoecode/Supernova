@@ -11,6 +11,14 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DetailsEnrichmentDeliveryTest {
+ @Test public void firstColdDeliveryDoesNotRequireAnExistingOptionalPackage()throws Exception{
+  var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
+   PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},u->{});host.get().setContentView(page);
+   PreviewDetailsData.Result incoming=new PreviewDetailsData.Result();incoming.details=new JSONObject("{title:'Current',overview:'Known synopsis'}");
+   ReflectionHelpers.callInstanceMethod(page,"applyEnrichment",ReflectionHelpers.ClassParameter.from(PreviewDetailsData.Result.class,incoming),ReflectionHelpers.ClassParameter.from(int.class,0));
+   PreviewDetailsData.Result actual=ReflectionHelpers.getField(page,"enrichment");assertEquals("Current",actual.details.getString("title"));assertTrue(actual.extras.isEmpty());assertTrue(actual.related.isEmpty());
+  }finally{host.pause().stop().destroy();}
+ }
  @Test public void sameFrameSectionsMergeAndObsoleteTitleCannotOverwriteThem()throws Exception{
   var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
    PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},u->{});host.get().setContentView(page);

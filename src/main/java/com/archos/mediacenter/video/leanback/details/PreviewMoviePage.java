@@ -577,6 +577,8 @@ public final class PreviewMoviePage extends ScrollView {
         restoreRowFocus(trailers,focusKey,y);
     }
     public void bindRemote(org.json.JSONObject details,String kind,long id){freshTitle(kind+":"+id);remoteDetails=details;remoteKind=kind;remoteId=id;title.setText(details.optString("title",details.optString("name")));OfficialTitleArtwork.bindRemote(title,kind,id);plot.setText(details.optString("overview"));String backdrop=details.optString("backdrop_path");if(backdrop.matches("/[A-Za-z0-9._-]+"))cardArtwork(Uri.parse("https://image.tmdb.org/t/p/w1280"+backdrop));play.setVisibility(GONE);renderDetails();requestEnrichment();}
+    private String firstPaintTitle="";
+    @Override protected void onDraw(android.graphics.Canvas canvas){super.onDraw(canvas);if(!boundTitle.isEmpty()&&!boundTitle.equals(firstPaintTitle)){firstPaintTitle=boundTitle;com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_first_paint","media_id",diagnosticMedia(),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-openedAt);}}
     private long diagnosticMedia(){return movie!=null?movie.getId():show!=null?show.getTvshowId():remoteId;}
     private long metadataIdentity(){
         if(remoteDetails!=null)return remoteId;if(movie instanceof Movie)return ((Movie)movie).getOnlineId();if(tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null)return ((EpisodeTags)tags).getShowTags().getOnlineId();if(show!=null&&show.getShowTags()!=null)return show.getShowTags().getOnlineId();
@@ -594,6 +596,7 @@ public final class PreviewMoviePage extends ScrollView {
             long start=android.os.SystemClock.elapsedRealtime();
             String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("details_enrichment");
             try(com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored=com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)){
+                if(requestedSeason<0){PreviewDetailsData.Result core=PreviewDetailsData.cachedCore(app,kind,id);if(core!=null)post(()->enqueueEnrichment(core,generation));com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_core_cache_ready","media_id",id,"elapsed_ms",android.os.SystemClock.elapsedRealtime()-start,"cached",core!=null);}
                 PreviewDetailsData.Result cached=requestedSeason>=0?PreviewDetailsData.cachedSeason(app,id,requestedSeason):PreviewDetailsData.cached(app,kind,id,local);
                 if(cached!=null)post(()->enqueueEnrichment(cached,generation));
                 Consumer<PreviewDetailsData.Result> progress=partial->post(()->enqueueEnrichment(partial,generation));
@@ -623,8 +626,8 @@ public final class PreviewMoviePage extends ScrollView {
         }
         if(!oldEpisodes.equals(enrichment.episodes.toString()+enrichment.seasonAvailability.toString()))renderSeasons();
     }
-    private static String extrasFingerprint(PreviewDetailsData.Result result){StringBuilder text=new StringBuilder().append(result.extrasLoaded);for(PreviewDetailsData.Extra e:result.extras)text.append(e.key).append(e.name).append(e.type);return text.toString();}
-    private static String relatedFingerprint(PreviewDetailsData.Result result){StringBuilder text=new StringBuilder().append(result.relatedLoaded);for(PreviewDetailsData.Remote e:result.related)text.append(e.title).append(e.provider==null?0:e.provider.id);return text.toString();}
+    private static String extrasFingerprint(PreviewDetailsData.Result result){if(result==null)return "";StringBuilder text=new StringBuilder().append(result.extrasLoaded);for(PreviewDetailsData.Extra e:result.extras)text.append(e.key).append(e.name).append(e.type);return text.toString();}
+    private static String relatedFingerprint(PreviewDetailsData.Result result){if(result==null)return "";StringBuilder text=new StringBuilder().append(result.relatedLoaded);for(PreviewDetailsData.Remote e:result.related)text.append(e.title).append(e.provider==null?0:e.provider.id);return text.toString();}
     private String informationFingerprint(PreviewDetailsData.Result result){
         if(result==null)return "";String text=String.valueOf(result.details)+result.classification+result.alternatives+result.supplementary.imdbVotes;
         for(int slot=0;slot<4;slot++)text+="|"+result.supplementary.value(slot);

@@ -1,5 +1,9 @@
 # Next-version implementation — 30 October 2026
 
+## Active continuation after PR #29 review
+
+The owner has authorised HUD engineering details within the approved visual design and confirmed strict ChaptersDB matching: **unverified sets stay hidden**. The new source checkpoint implements the one-row HUD, four-section editor using retained shared geometry, core-cache-first Details delivery and settled-focus prefetch, single-boundary Settings rail, and bounded ChaptersDB acquisition with strict suppression. The completed validation below describes the **previous** checkpoint `7011e87`, not these new changes. New focused/full runs are pending. See CONTINUATION.md.
+
 Dedicated branch: `codex/supernova-next-implementation-2026-10-30`.
 Base: verified PR #27 tip `b4a6ee7a010c9b5b6af8731108f3973477bfc7f5`; application frozen at `f4abf7cb880243ba00481f82beee19d20bc72e33`. GitHub branch/PR audit found no newer implementation. Main and all existing development/documentation branches are untouched. Documentation branch `83a600f` contains older application source and was therefore not used as the application base. Its new design/requirement documents and PR #28 audit are carried here without replacing newer baseline documents.
 

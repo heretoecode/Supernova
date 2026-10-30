@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 
 /** Persistent priority queue. One package section per turn lets foreground work pre-empt background work. */
 public final class PreviewEnrichmentQueue {
-    public static final int FOREGROUND=0, HOME=10, CURRENT_PAGE=20, NEXT=30, BACKGROUND=40;
+    public static final int FOREGROUND=0, FOCUSED=5, HOME=10, CURRENT_PAGE=20, NEXT=30, BACKGROUND=40;
     private static final ScheduledExecutorService WORK=Executors.newSingleThreadScheduledExecutor(r->new Thread(r,"SupernovaEnrichment"));
     private static Store store;
     private static boolean draining;
@@ -25,6 +25,11 @@ public final class PreviewEnrichmentQueue {
         if(id<=0||!(kind.equals("movie")||kind.equals("tv")))return;Context app=c.getApplicationContext();
         WORK.execute(()->{offer(store(app).getWritableDatabase(),kind,id,priority,scope(app));start(app);});
     }
+    /** One settled focus receives temporary priority; moving focus restores the page baseline.
+     * Active Details (priority 0) is never demoted by a browsing focus update. */
+    public static void focused(Context c,PreviewLibraryLoader.Entry entry){
+        Context app=c.getApplicationContext();WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();db.beginTransaction();try{restorePagePriorities(db,pagePriorities);if(entry!=null)offerEntry(db,entry,FOCUSED,scope(app));db.setTransactionSuccessful();}finally{db.endTransaction();}if(entry!=null)start(app);});
+    }
     public static void library(Context c,PreviewLibraryLoader.Snapshot snapshot,int tab) {
         Context app=c.getApplicationContext();
         WORK.execute(()->{SQLiteDatabase db=store(app).getWritableDatabase();db.beginTransaction();try{
@@ -32,7 +37,7 @@ public final class PreviewEnrichmentQueue {
             pagePriorities.clear();
             // A previous page must not retain page priority forever. Active foreground
             // packages keep their temporary override until their package completes.
-            db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,HOME});
+            db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,FOCUSED});
             for(PreviewLibraryLoader.Entry entry:snapshot.movies)offerPage(db,entry,tab==1?CURRENT_PAGE:BACKGROUND,scope);
             for(PreviewLibraryLoader.Entry entry:snapshot.shows)offerPage(db,entry,tab==2?CURRENT_PAGE:BACKGROUND,scope);
             for(PreviewLibraryLoader.Entry entry:snapshot.continuingMovies)offerPage(db,entry,HOME,scope);
@@ -62,9 +67,9 @@ public final class PreviewEnrichmentQueue {
         }finally{db.endTransaction();}start(app);});
     }
     static void restorePagePriorities(SQLiteDatabase db,Map<String,Integer> priorities){
-        db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,HOME});
+        db.execSQL("UPDATE jobs SET priority=? WHERE priority>=?",new Object[]{BACKGROUND,FOCUSED});
         for(Map.Entry<String,Integer> entry:priorities.entrySet())
-            db.execSQL("UPDATE jobs SET priority=? WHERE identity=? AND priority>=?",new Object[]{entry.getValue(),entry.getKey(),HOME});
+            db.execSQL("UPDATE jobs SET priority=? WHERE identity=? AND priority>=?",new Object[]{entry.getValue(),entry.getKey(),FOCUSED});
     }
     private static String scope(Context app){return Locale.getDefault().toLanguageTag()+":"+StreamingRepository.country(app)+":"+StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED,false);}
     private static void offer(SQLiteDatabase db,String kind,long id,int priority,String scope) {

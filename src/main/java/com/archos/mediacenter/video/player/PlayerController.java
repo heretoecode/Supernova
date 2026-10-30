@@ -1012,7 +1012,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             if (!show) sControlBarMaxHeight = 0;
             adjustView();
             setVisibility(mControlBar, show, true);
-            if(experimentalUi()&&mControllerViewLeft!=null){View title=mControllerViewLeft.findViewById(R.id.preview_playback_title);if(title!=null)title.setVisibility(show?View.VISIBLE:View.GONE);refreshPreviewContext();if(show){((ViewGroup)mControlBar).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);mPauseButton.setVisibility(View.VISIBLE);mPauseButton.requestFocus();}}
+            if(experimentalUi()&&mControllerViewLeft!=null){View title=mControllerViewLeft.findViewById(R.id.preview_playback_title);if(title!=null)title.setVisibility(show?View.VISIBLE:View.GONE);refreshPreviewContext();if(show){((ViewGroup)mControlBar).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);mPauseButton.setVisibility(View.VISIBLE);mProgress.requestFocus();}}
             if(mPlayPauseTouchZone!=null){
                 setVisibility(mPlayPauseTouchZone, show, false);
             }
@@ -1500,7 +1500,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 if (log.isDebugEnabled()) log.debug("updatePausePlay: central play icon is null or device is locked");
             }
         }
-        if(experimentalUi()&&mControllerViewLeft!=null){TextView label=mControllerViewLeft.findViewById(R.id.preview_pause_label);if(label!=null)label.setText(mSeekWasPlaying||Player.sPlayer.isPlaying()?"Pause":"Play");}
+        if(experimentalUi()&&mControllerViewLeft!=null){TextView label=mControllerViewLeft.findViewById(R.id.preview_pause_label);if(label!=null)label.setText(mSeekWasPlaying||Player.sPlayer.isPlaying()?"Pause":"Play");updateClock();}
     }
 
     private void updateFormat() {
@@ -1582,34 +1582,37 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private void refreshPreviewContext(){if(!experimentalUi()||mControllerViewLeft==null||!(mContext instanceof PlayerActivity))return;PlayerActivity a=(PlayerActivity)mContext;View audio=mControllerViewLeft.findViewById(R.id.preview_audio);if(audio!=null){audio.setVisibility(View.GONE);audio.setEnabled(true);audio.setAlpha(a.previewHasAudio()?1f:.5f);}mPauseButton.setNextFocusLeftId(R.id.pause);for(int id:new int[]{R.id.preview_previous,R.id.preview_next}){View step=mControllerViewLeft.findViewById(id);if(step!=null)step.setVisibility(View.GONE);}for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null)label.setText(id==R.id.preview_audio_label?"Audio":"Subtitles");}TextView title=mControllerViewLeft.findViewById(R.id.preview_playback_title),episode=mControllerViewLeft.findViewById(R.id.preview_playback_episode);if(title!=null){title.setText(a.previewTitle());a.bindPreviewTitleArtwork(title);}if(episode!=null){episode.setText(a.previewEpisode());episode.setVisibility(mControlBarShowing&&!a.previewEpisode().isEmpty()?View.VISIBLE:View.GONE);}}
     private void configurePreviewTransport(){
         for(int id:new int[]{R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward,R.id.preview_speed}){View v=mControllerViewLeft.findViewById(id);if(v!=null){v.setVisibility(View.GONE);v.setFocusable(false);}}
-        for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_info,R.id.preview_more}){View v=mControllerViewLeft.findViewById(id);if(v instanceof ImageButton){ImageButton button=(ImageButton)v;button.setBackgroundColor(android.graphics.Color.TRANSPARENT);if(button.getParent() instanceof android.widget.LinearLayout){android.widget.LinearLayout group=(android.widget.LinearLayout)button.getParent();group.setAddStatesFromChildren(true);group.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));}button.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));button.setOnFocusChangeListener((view,focused)->updatePreviewScrubber());button.setNextFocusUpId(R.id.seek_progress);}}
+        for(int id:new int[]{R.id.pause,R.id.preview_audio,R.id.preview_subtitles,R.id.preview_info,R.id.preview_more}){View v=mControllerViewLeft.findViewById(id);if(v instanceof ImageButton){ImageButton button=(ImageButton)v;button.setBackgroundColor(android.graphics.Color.TRANSPARENT);if(button.getParent() instanceof ViewGroup){ViewGroup group=(ViewGroup)button.getParent();group.setAddStatesFromChildren(true);group.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(mContext));}button.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));button.setOnFocusChangeListener((view,focused)->updatePreviewScrubber());button.setNextFocusUpId(R.id.seek_progress);}}
         View pauseGroup=mControllerViewLeft.findViewById(R.id.preview_pause_group);
         if(pauseGroup!=null){android.graphics.drawable.StateListDrawable states=new android.graphics.drawable.StateListDrawable();for(boolean focused:new boolean[]{true,false}){android.graphics.drawable.GradientDrawable circle=new android.graphics.drawable.GradientDrawable();circle.setShape(android.graphics.drawable.GradientDrawable.OVAL);circle.setColor(focused?0x663b6590:0x3315171b);circle.setStroke(Math.max(1,Math.round(mContext.getResources().getDisplayMetrics().density)),focused?com.archos.mediacenter.video.leanback.PreviewAccent.color(mContext):0x99ffffff);states.addState(focused?new int[]{android.R.attr.state_focused}:new int[]{},circle);}pauseGroup.setBackground(states);}
-        mProgress.setFocusable(true);mProgress.setFocusableInTouchMode(true);mProgress.setBackgroundColor(android.graphics.Color.TRANSPARENT);mProgress.setOnFocusChangeListener((v,focused)->updatePreviewScrubber());
+        mControllerViewLeft.findViewById(R.id.preview_more_group).setBackground(previewSettingsPill());
+        mProgress.setFocusable(true);mProgress.setFocusableInTouchMode(true);mProgress.setBackgroundColor(android.graphics.Color.TRANSPARENT);mProgress.setOnFocusChangeListener((v,focused)->updatePreviewScrubber());mProgress.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{if(l!=ol||t!=ot||r!=or||b!=ob)updatePreviewScrubber();});
         if(android.os.Build.VERSION.SDK_INT>=26){mProgress.setDefaultFocusHighlightEnabled(false);mControlBar.setDefaultFocusHighlightEnabled(false);}
         ((ViewGroup)mControlBar).setAddStatesFromChildren(false);mControlBar.setFocusable(false);mControlBar.setForeground(null);
-        for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label,R.id.preview_more_label,R.id.preview_pause_label,R.id.preview_scrub_time,R.id.time,R.id.clock}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null){label.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));label.setFontFeatureSettings("tnum");label.setIncludeFontPadding(false);}}
-        mProgress.setNextFocusUpId(R.id.preview_more);mProgress.setNextFocusDownId(R.id.pause);mPauseButton.setNextFocusUpId(R.id.preview_more);mPauseButton.setNextFocusLeftId(R.id.pause);mPauseButton.setNextFocusRightId(R.id.seek_progress);
+        for(int id:new int[]{R.id.preview_audio_label,R.id.preview_subtitle_label,R.id.preview_more_label,R.id.preview_pause_label,R.id.preview_scrub_time,R.id.time,R.id.preview_end_time,R.id.clock}){TextView label=mControllerViewLeft.findViewById(id);if(label!=null){label.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));label.setFontFeatureSettings("tnum");label.setIncludeFontPadding(false);}}
+        mProgress.setNextFocusUpId(R.id.preview_more);mProgress.setNextFocusDownId(R.id.pause);mPauseButton.setNextFocusUpId(R.id.seek_progress);mPauseButton.setNextFocusDownId(R.id.pause);mPauseButton.setNextFocusLeftId(R.id.pause);mPauseButton.setNextFocusRightId(R.id.seek_progress);
         mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusLeftId(R.id.preview_subtitles);mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusRightId(R.id.preview_audio);
         mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusLeftId(R.id.preview_subtitles);mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusRightId(R.id.preview_more);
         mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusLeftId(R.id.preview_more);mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusRightId(R.id.preview_more);mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusUpId(R.id.preview_more);
         for(int id:new int[]{R.id.preview_subtitles,R.id.preview_audio,R.id.preview_more})mControllerViewLeft.findViewById(id).setNextFocusDownId(R.id.seek_progress);
     }
+    private android.graphics.drawable.Drawable previewSettingsPill(){android.graphics.drawable.StateListDrawable states=new android.graphics.drawable.StateListDrawable();float density=mContext.getResources().getDisplayMetrics().density;for(boolean focused:new boolean[]{true,false}){android.graphics.drawable.GradientDrawable pill=new android.graphics.drawable.GradientDrawable();pill.setCornerRadius(20*density);pill.setColor(focused?0x663b6590:0x3315171b);pill.setStroke(Math.max(1,Math.round(density)),focused?com.archos.mediacenter.video.leanback.PreviewAccent.color(mContext):0x99ffffff);states.addState(focused?new int[]{android.R.attr.state_focused}:new int[]{},pill);}return states;}
     private void updatePreviewScrubber(){
         if(!experimentalUi()||mControllerViewLeft==null||mProgress==null)return;TextView bubble=mControllerViewLeft.findViewById(R.id.preview_scrub_time);if(bubble==null)return;
-        bubble.setVisibility(mProgress.hasFocus()||mPreviewKeySeeking||mDragging?View.VISIBLE:View.INVISIBLE);long position=Player.sPlayer==null?0:mNextSeek>=0?mNextSeek:Player.sPlayer.getCurrentPosition();
+        bubble.setVisibility(mProgress.getVisibility()==View.VISIBLE?View.VISIBLE:View.INVISIBLE);long position=Player.sPlayer==null?0:mNextSeek>=0?mNextSeek:Player.sPlayer.getCurrentPosition();
         com.archos.mediacenter.video.utils.VideoMetadata metadata=Player.sPlayer==null?null:Player.sPlayer.getVideoMetadata();
         java.util.List<PlaybackChapters.Chapter> chapters=metadata==null?java.util.Collections.emptyList():metadata.getChapters();
+        if(mContext instanceof PlayerActivity)chapters=((PlayerActivity)mContext).previewChapters(chapters,Player.sPlayer==null?0:Player.sPlayer.getDuration());
         String chapter=PlaybackChapters.titleAt(chapters,position);
         bubble.setText(Player.sPlayer!=null?PreviewHudTiming.timestamp(position)+(chapter.isEmpty()?"":"\n"+chapter):mCurrentTime==null?"":mCurrentTime.getText());
         if(mProgress.getWidth()>0)bubble.setMaxWidth(mProgress.getWidth());
         ChapterMarkers markers=mControllerViewLeft.findViewById(R.id.preview_chapter_markers);if(markers!=null)markers.bind(chapters,Player.sPlayer==null?0:Player.sPlayer.getDuration(),mProgress.getPaddingLeft(),mProgress.getPaddingRight());
 
-        bubble.measure(View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));float fraction=mProgress.getMax()>0?(float)mProgress.getProgress()/mProgress.getMax():0;float x=mProgress.getPaddingLeft()+fraction*(mProgress.getWidth()-mProgress.getPaddingLeft()-mProgress.getPaddingRight())-bubble.getMeasuredWidth()/2f;float left=PreviewHudTiming.pillLeft(x,mProgress.getWidth(),bubble.getMeasuredWidth());bubble.setTranslationX(left);
+        bubble.measure(View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));long duration=Player.sPlayer==null?0:Player.sPlayer.getDuration();float fraction=duration>0?Math.max(0f,Math.min(1f,(float)position/duration)):0;float x=mProgress.getPaddingLeft()+fraction*(mProgress.getWidth()-mProgress.getPaddingLeft()-mProgress.getPaddingRight())-bubble.getMeasuredWidth()/2f;float left=PreviewHudTiming.pillLeft(x,mProgress.getWidth(),bubble.getMeasuredWidth());bubble.setTranslationX(left);
         float density=mContext.getResources().getDisplayMetrics().density;
         bubble.setBackground(new SeekTooltipDrawable(density,x+bubble.getMeasuredWidth()/2f-left));
         bubble.setTranslationY(mProgress.getY()+mProgress.getHeight()/2f-bubble.getMeasuredHeight()-2*density);
-        if(mControlBar.getLayoutParams() instanceof ViewGroup.MarginLayoutParams){ViewGroup.MarginLayoutParams safe=(ViewGroup.MarginLayoutParams)mControlBar.getLayoutParams();int inset=Math.max(Math.round(16*density),Math.round(mControllerViewLeft.getHeight()*.04f));if(safe.bottomMargin!=inset){safe.bottomMargin=inset;mControlBar.setLayoutParams(safe);}}
+        if(mControlBar.getLayoutParams() instanceof ViewGroup.MarginLayoutParams){ViewGroup.MarginLayoutParams safe=(ViewGroup.MarginLayoutParams)mControlBar.getLayoutParams();int inset=Math.max(Math.round(24*density),Math.round(mControllerViewLeft.getHeight()*.04f));if(safe.bottomMargin!=inset){safe.bottomMargin=inset;mControlBar.setLayoutParams(safe);}}
     }
     public void setVideoTitle(String title) {
         if (mVideoTitle != null && title != null && !title.isEmpty()) {
@@ -2427,7 +2430,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         // Seeking may temporarily take focus away from the control bar. Recovery must not
         // depend on hasFocus(), which was precisely the state lost on the physical remote.
         if(experimentalUi()&&!isTVMenuDisplayed&&!mControlBarShowing&&(keyCode==KeyEvent.KEYCODE_DPAD_UP||keyCode==KeyEvent.KEYCODE_DPAD_DOWN||keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_DPAD_RIGHT)){if(event.getAction()==KeyEvent.ACTION_DOWN){showControlBar();mProgress.setFocusable(true);mProgress.requestFocus();}if(keyCode!=KeyEvent.KEYCODE_DPAD_LEFT&&keyCode!=KeyEvent.KEYCODE_DPAD_RIGHT)return true;}
-        if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&(keyCode==KeyEvent.KEYCODE_DPAD_UP||keyCode==KeyEvent.KEYCODE_DPAD_DOWN)){if(event.getAction()==KeyEvent.ACTION_DOWN){View focused=mControlBar.findFocus();if(keyCode==KeyEvent.KEYCODE_DPAD_UP){if(focused==mProgress||focused==mPauseButton)mControllerViewLeft.findViewById(R.id.preview_more).requestFocus();}else{if(focused==mProgress)mPauseButton.requestFocus();else mProgress.requestFocus();}}return true;}
+        if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&(keyCode==KeyEvent.KEYCODE_DPAD_UP||keyCode==KeyEvent.KEYCODE_DPAD_DOWN)){if(event.getAction()==KeyEvent.ACTION_DOWN){View focused=mControlBar.findFocus();if(keyCode==KeyEvent.KEYCODE_DPAD_UP){if(focused==mProgress)mControllerViewLeft.findViewById(R.id.preview_more).requestFocus();else if(focused==mPauseButton)mProgress.requestFocus();}else{if(focused==mProgress)mPauseButton.requestFocus();else mProgress.requestFocus();}}return true;}
         if(experimentalUi()&&!isTVMenuDisplayed&&mControlBarShowing&&mControlBar.hasFocus()&&!mPreviewKeySeeking&&(mProgress==null||!mProgress.hasFocus())&&(keyCode==KeyEvent.KEYCODE_DPAD_LEFT||keyCode==KeyEvent.KEYCODE_DPAD_RIGHT||keyCode==KeyEvent.KEYCODE_DPAD_CENTER||keyCode==KeyEvent.KEYCODE_ENTER)){return false;}
         
         if (isTVMenuDisplayed) {
@@ -3035,10 +3038,12 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     public void updateClock() {
-        if(mClock==null)return;long now=System.currentTimeMillis();String currentClockText=getDateFormat().format(new Date(now));mClock.setText(currentClockText);
+        if(mClock==null)return;long now=System.currentTimeMillis();getDateFormat().setTimeZone(java.util.TimeZone.getDefault());String currentClockText=getDateFormat().format(new Date(now));mClock.setText(currentClockText);
         if(Player.sPlayer==null)return;int duration=Player.sPlayer.getDuration(),position=mNextSeek>=0?mNextSeek:Player.sPlayer.getCurrentPosition();float speed=PlayerService.sPlayerService!=null?PlayerService.sPlayerService.getAudioSpeed():1f;
         if(experimentalUi()){
-            if(mEndTime!=null){long end=PreviewHudTiming.end(now,duration,position,speed);mEndTime.setText(duration>0?"−"+PreviewHudTiming.timestamp(Math.max(0,duration-position))+(end>=0?" · Ends at "+getDateFormat().format(new Date(end)):""):"—");}
+            if(mEndTime!=null)mEndTime.setText(duration>0?PreviewHudTiming.timestamp(duration):"—");
+            TextView finish=mControllerViewLeft==null?null:mControllerViewLeft.findViewById(R.id.preview_end_time);
+            if(finish!=null){long end=PreviewHudTiming.end(now,duration,position,speed);boolean predicting=duration>0&&Player.sPlayer.isPlaying();finish.setVisibility(predicting?View.VISIBLE:View.GONE);finish.setText(predicting?"Ends at "+getDateFormat().format(new Date(end)):"");}
         }else if(duration>0&&duration>position)mClock.setText(Clock.formatTimeWithArrow(currentClockText,getDateFormat().format(new Date(PreviewHudTiming.end(now,duration,position,speed)))));
     }
 

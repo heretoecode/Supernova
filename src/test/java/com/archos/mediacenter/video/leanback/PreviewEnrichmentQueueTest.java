@@ -59,6 +59,9 @@ public class PreviewEnrichmentQueueTest {
             }
         }finally{helper.close();}
     }
+    @Test public void settledFocusPriorityIsTemporaryAndNeverDemotesOpenDetails()throws Exception{
+        Context c=RuntimeEnvironment.getApplication();SQLiteOpenHelper helper=(SQLiteOpenHelper)ReflectionHelpers.callConstructor(Class.forName("com.archos.mediacenter.video.leanback.PreviewEnrichmentQueue$Store"),ReflectionHelpers.ClassParameter.from(Context.class,c));try{SQLiteDatabase db=helper.getWritableDatabase();db.execSQL("INSERT INTO jobs VALUES('movie:1:test','movie',1,5,1,0,0,0)");db.execSQL("INSERT INTO jobs VALUES('movie:2:test','movie',2,0,2,0,0,0)");PreviewEnrichmentQueue.restorePagePriorities(db,java.util.Map.of("movie:1:test",20));try(Cursor rows=db.rawQuery("SELECT priority,stage FROM jobs ORDER BY media",null)){assertTrue(rows.moveToNext());assertEquals(20,rows.getInt(0));assertEquals(1,rows.getInt(1));assertTrue(rows.moveToNext());assertEquals(0,rows.getInt(0));assertEquals(2,rows.getInt(1));}}finally{helper.close();}
+    }
     @Test public void episodePriorityTargetsParentSeriesAndKeepsPackageProgress()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
         SQLiteOpenHelper helper=(SQLiteOpenHelper)ReflectionHelpers.callConstructor(Class.forName("com.archos.mediacenter.video.leanback.PreviewEnrichmentQueue$Store"),ReflectionHelpers.ClassParameter.from(Context.class,context));
