@@ -1,0 +1,13 @@
+--- a/test/resources/scraper_test_cases.csv
++++ b/test/resources/scraper_test_cases.csv
+@@ -29,7 +29,9 @@
+ # Parenthesized content attached to title should be preserved (issue #1665)
+ OVNI(s).S01E06.FRENCH.1080p.BluRay.x264.DTS-HDMA.5.1.mkv|Show|OVNI(s)|108353|fr
+ Paris_Police_1900-S01E01-Épisode_1-720p-AVC-EAC3-5.1.mkv|Show|Paris Police 1900|93911|fr
+-1984.mkv|Movie|1984|1984|en
++# Explicit release year disambiguates the two identically titled adaptations.
++# Bare numeric-title preservation remains tested in MovieDefaultMatcherTest.
++1984 (1956).mkv|Movie|1984|1984|en
+ Nineteen Eighty-Four (1984).mkv|Movie|Nineteen Eighty-Four|9314|en
+ 1917.2019.2160p.HDR10Plus.BluRay.8CH.x265.HEVC-PSA.mkv|Movie|1917|530915|en
+ 2067.2020.1080p.10bit.BluRay.6CH.x265.HEVC-PSA.mkv|Movie|2067|528085|en

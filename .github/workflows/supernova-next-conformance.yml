@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [codex/supernova-next-implementation-2026-10-30]
-    paths: [.github/workflows/supernova-next-conformance.yml, 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0147*', .github/build/record-supernova-0147-conformance.py]
+    paths: [.github/workflows/supernova-next-conformance.yml, '.github/build/next-*test-fixtures.patch', 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0147*', .github/build/record-supernova-0147-conformance.py]
 permissions:
   contents: read
   actions: read
