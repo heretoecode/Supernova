@@ -50,6 +50,10 @@ public final class PreviewMoviePage extends ScrollView {
     private Snapshot snapshot;
     private PreviewDetailsData.Result enrichment;private java.util.concurrent.Future<?> enrichmentTask;private String enrichmentKey="";private int enrichmentGeneration;private org.json.JSONObject remoteDetails;private String remoteKind;private long remoteId;
     private final List<Presenter.ViewHolder> cards=new ArrayList<>();
+    private PreviewDetailsData.Result pendingEnrichment;private int pendingEnrichmentGeneration;private boolean enrichmentDeliveryScheduled;
+    private final Runnable deliverEnrichment=()->{enrichmentDeliveryScheduled=false;PreviewDetailsData.Result result=pendingEnrichment;pendingEnrichment=null;if(result!=null)applyEnrichment(result,pendingEnrichmentGeneration);};
+    /** Cached sections completed within one frame enter as one coherent update. Slow I/O never blocks Back. */
+    private void enqueueEnrichment(PreviewDetailsData.Result result,int generation){if(generation!=enrichmentGeneration)return;if(pendingEnrichmentGeneration!=generation)pendingEnrichment=null;pendingEnrichmentGeneration=generation;pendingEnrichment=PreviewDetailsData.merge(pendingEnrichment,result);if(!enrichmentDeliveryScheduled){enrichmentDeliveryScheduled=true;postOnAnimation(deliverEnrichment);}}
     private String informationSignature="",peopleSignature="",receptionSignature="";
     private DetailsBlueprintPanel informationPanel;
     private com.squareup.picasso.Picasso artworkLoader;
@@ -591,10 +595,10 @@ public final class PreviewMoviePage extends ScrollView {
             String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("details_enrichment");
             try(com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored=com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)){
                 PreviewDetailsData.Result cached=requestedSeason>=0?PreviewDetailsData.cachedSeason(app,id,requestedSeason):PreviewDetailsData.cached(app,kind,id,local);
-                if(cached!=null)post(()->applyEnrichment(cached,generation));
-                Consumer<PreviewDetailsData.Result> progress=partial->post(()->applyEnrichment(partial,generation));
+                if(cached!=null)post(()->enqueueEnrichment(cached,generation));
+                Consumer<PreviewDetailsData.Result> progress=partial->post(()->enqueueEnrichment(partial,generation));
                 PreviewDetailsData.Result result=requestedSeason>=0?PreviewDetailsData.loadSeason(app,id,requestedSeason,progress):PreviewDetailsData.load(app,kind,id,local,progress);
-                post(()->applyEnrichment(result,generation));
+                post(()->enqueueEnrichment(result,generation));
             }catch(Exception error){com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_enrichment_unavailable","operation_id",operation,"media_id",id,"failure_category",error.getClass().getSimpleName());post(()->{if(generation==enrichmentGeneration)enrichmentKey="";});}
             finally{com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_enrichment","operation_id",operation,"elapsed_ms",android.os.SystemClock.elapsedRealtime()-start);com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"details_enrichment",start);}
         });
@@ -693,5 +697,5 @@ public final class PreviewMoviePage extends ScrollView {
         ScraperTrailer best=null;int score=0;for(ScraperTrailer t:trailerList){if(!"YouTube".equals(t.mSite)||t.mVideoKey==null||!t.mVideoKey.matches("[A-Za-z0-9_-]{11}"))continue;String name=t.mName==null?"":t.mName.toLowerCase(Locale.ROOT);if(!name.contains("trailer")||name.contains("fan")||name.contains("reaction"))continue;int rank=(name.contains("official")?4:1)+(name.contains("main")?2:0)+(name.contains("teaser")?-1:0);if(rank>score){score=rank;best=t;}}return best;
     }
     private void chooseTrailer(){ScraperTrailer t=primaryTrailer();if(t!=null)PreviewTrailer.show((Activity)getContext(),t);}
-    @Override protected void onDetachedFromWindow(){android.view.ViewParent shell=getParent();while(shell!=null){if(shell instanceof TopNavigation){((TopNavigation)shell).setDetailsExpanded(false);break;}shell=shell.getParent();}enrichmentGeneration++;if(enrichmentTask!=null)enrichmentTask.cancel(true);if(artworkLoader!=null)artworkLoader.cancelRequest(cardArtwork);if(reviews!=null)reviews.close();if(observedActions!=null){observedActions.unregisterObserver(actionObserver);observedActions=null;}for(Presenter.ViewHolder h:providerHolders)providerPresenter.onUnbindViewHolder(h);providerHolders.clear();for(Presenter.ViewHolder h:cards)presenter.onUnbindViewHolder(h);cards.clear();for(PreviewLandscapeCard card:landscapeCards)card.release();landscapeCards.clear();for(PreviewLandscapeCard card:extraCards)card.release();extraCards.clear();super.onDetachedFromWindow();}
+    @Override protected void onDetachedFromWindow(){removeCallbacks(deliverEnrichment);pendingEnrichment=null;enrichmentDeliveryScheduled=false;android.view.ViewParent shell=getParent();while(shell!=null){if(shell instanceof TopNavigation){((TopNavigation)shell).setDetailsExpanded(false);break;}shell=shell.getParent();}enrichmentGeneration++;if(enrichmentTask!=null)enrichmentTask.cancel(true);if(artworkLoader!=null)artworkLoader.cancelRequest(cardArtwork);if(reviews!=null)reviews.close();if(observedActions!=null){observedActions.unregisterObserver(actionObserver);observedActions=null;}for(Presenter.ViewHolder h:providerHolders)providerPresenter.onUnbindViewHolder(h);providerHolders.clear();for(Presenter.ViewHolder h:cards)presenter.onUnbindViewHolder(h);cards.clear();for(PreviewLandscapeCard card:landscapeCards)card.release();landscapeCards.clear();for(PreviewLandscapeCard card:extraCards)card.release();extraCards.clear();super.onDetachedFromWindow();}
 }
