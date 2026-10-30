@@ -62,4 +62,4 @@ The final editor-state audit also marks/focuses the actual current choice in exi
 
 Settled preparation also resolves nested Home rail cards (not just the hero/library cells), observes global focus while attached, clears pending work when focus leaves media and rechecks the actual focused identity before offering priority. Existing queue/cache remains authoritative. A real nested Recently Added view regression covers identity and obsolete-focus cancellation.
 
-Unmodified current-source HUD/editor/global Settings captures and exact provenance: [continuation/software-captures/](continuation/software-captures/README.md). They are software fixtures, not physical acceptance or approved reference images.
+Unmodified current-source HUD/editor/global Settings/all-four-tab captures and exact provenance: [software-captures-f5e2924](continuation/software-captures-f5e2924/README.md). They are software fixtures, not physical acceptance or approved reference images.
