@@ -79,8 +79,14 @@ public final class PreviewPages extends FrameLayout {
         anchors[tab]=a;
     }
     private Entry preparingDetails;private String preparingKey="";
-    private final Runnable prepareFocusedDetails=()->{Entry entry=preparingDetails;if(isAttachedToWindow()&&entry!=null)PreviewEnrichmentQueue.focused(getContext(),entry);};
-    private void prepareDetails(View focused){if(list==null)return;View item=list.findContainingItemView(focused);int position=item==null?-1:list.getChildAdapterPosition(item);if(position<0||position>=cells.size())return;Cell cell=cells.get(position);Entry entry=cell.value instanceof Entry?(Entry)cell.value:cell.type==HERO&&tab==0?featured():null;if(entry==null||entry.onlineId<=0)return;String key=entry.key()+":"+entry.onlineId;if(key.equals(preparingKey))return;preparingKey=key;preparingDetails=entry;removeCallbacks(prepareFocusedDetails);postDelayed(prepareFocusedDetails,250);}
+    private final Runnable prepareFocusedDetails=()->{Entry entry=preparingDetails,current=detailsFocusEntry(findFocus());if(isAttachedToWindow()&&entry!=null&&current!=null&&entry.key().equals(current.key())&&entry.onlineId==current.onlineId)PreviewEnrichmentQueue.focused(getContext(),entry);};
+    private Entry detailsFocusEntry(View focused){
+        if(list==null||focused==null)return null;View item=list.findContainingItemView(focused);int position=item==null?-1:list.getChildAdapterPosition(item);if(position<0||position>=cells.size())return null;Cell cell=cells.get(position);
+        if(cell.value instanceof Entry)return (Entry)cell.value;
+        if(cell.type==RAIL&&cell.value instanceof List){for(View cursor=focused;cursor!=null&&cursor!=item;cursor=cursor.getParent() instanceof View?(View)cursor.getParent():null){Object key=cursor.getTag();for(Entry entry:(List<Entry>)cell.value)if(entry.key().equals(key))return entry;}}
+        return cell.type==HERO&&tab==0?featured():null;
+    }
+    private void prepareDetails(View focused){Entry entry=detailsFocusEntry(focused);if(entry==null||entry.onlineId<=0){removeCallbacks(prepareFocusedDetails);preparingDetails=null;if(!preparingKey.isEmpty())PreviewEnrichmentQueue.focused(getContext(),null);preparingKey="";return;}String key=entry.key()+":"+entry.onlineId;if(key.equals(preparingKey))return;preparingKey=key;preparingDetails=entry;removeCallbacks(prepareFocusedDetails);postDelayed(prepareFocusedDetails,250);}
     @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);prepareDetails(focused);if(list!=null){rememberFocus();scheduleCentre();if(tab==1||tab==2){View item=list.findContainingItemView(focused);int p=item==null?-1:list.getChildAdapterPosition(item);if(p>=0&&p<cells.size()&&cells.get(p).value instanceof Entry){artworkKeys[tab]=((Entry)cells.get(p).value).key();lastArtwork[tab]=((Entry)cells.get(p).value).backdrop;artwork.accept(null);}}}}
 
     private void scheduleCentre(){if(list==null||tab!=1&&tab!=2)return;list.removeCallbacks(centreLibraryRow);list.postOnAnimation(centreLibraryRow);}
