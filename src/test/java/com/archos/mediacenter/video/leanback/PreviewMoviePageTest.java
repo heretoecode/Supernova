@@ -99,9 +99,8 @@ public class PreviewMoviePageTest {
             page.bindRemote(new org.json.JSONObject().put("title","Remote fixture").put("tagline","A real supplied tagline").put("revenue",1234),"movie",0);
             assertNotNull(PreviewPagesTest.findText(page,"Technical Information"));
             assertNotNull(PreviewPagesTest.findText(page,"Unknown"));
-            View reception=PreviewPagesTest.findText(page,"Reception");assertNotNull(reception);
-            assertEquals(View.VISIBLE,((View)reception.getParent()).getVisibility());
-            assertNotNull(PreviewPagesTest.findText(page,"No rating available"));
+            assertNull(PreviewPagesTest.findText(page,"Reception"));
+            assertNull(PreviewPagesTest.findText(page,"No rating available"));
             assertNotNull(PreviewPagesTest.findText(page,"Description"));
         }finally{host.pause().stop().destroy();}
     }
