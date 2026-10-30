@@ -1,0 +1,73 @@
+{
+  "run_id": 41133244888,
+  "source_commit": "83aede983501c0ad728576a144d2a0ef51998190",
+  "artifact_id": 13014218459,
+  "artifact_sha256": "cda7123ce991ed3c9d0ff07b0053fb5b787a89d3c210053e110ae8d66c8100ae",
+  "capture_type": "Unmodified Robolectric native-graphics app-view fixture captures; not physical Shield",
+  "files": [
+    {
+      "file": "next-hud-1280-1.0.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-hud-1280-1.0.png",
+      "sha256": "fd40cc44043dff3423163981457ee470406b5432d55f3f987b378ab8fa695029",
+      "bytes": 46761,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "next-hud-1920-1.5.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-hud-1920-1.5.png",
+      "sha256": "a23588de0a68941177a105810876df7ca44da255a05f9c727f1a5b5c949fae60",
+      "bytes": 64278,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "next-hud-3840-1.0.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-hud-3840-1.0.png",
+      "sha256": "ecf4d0750ae07118e006b86812a563a1a0590089987e11bd5cc02efd80b3a6cd",
+      "bytes": 119577,
+      "width": 3840,
+      "height": 2160
+    },
+    {
+      "file": "next-editor-section-0.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-editor-section-0.png",
+      "sha256": "344c55d12efabf39fb7a903c9d19eadc0b0860ffe75e25cc6303d39a26c6eea5",
+      "bytes": 587943,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "next-editor-section-1.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-editor-section-1.png",
+      "sha256": "3052fcb59fc71551b946ff0eea9b9bd87da73fae3d3970746efbf663b7a92eb2",
+      "bytes": 585537,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "next-editor-section-2.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-editor-section-2.png",
+      "sha256": "b9755ed33035e2a3df65cffd2747f6e9dd91b0a17b0b948057fea71856dba12f",
+      "bytes": 579225,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "next-editor-section-3.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-editor-section-3.png",
+      "sha256": "68f2091fc71ea0729842202effba80979a4af5a7de564d7af75bcac1ccc8bf3a",
+      "bytes": 603882,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "1080p-playback.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/settings-0143/1080p-playback.png",
+      "sha256": "6b2b9abfcf5a811e91870041edb17c772f2a06ad56950e244382d3f87fea33ab",
+      "bytes": 1634896,
+      "width": 1920,
+      "height": 1080
+    }
+  ]
+}
