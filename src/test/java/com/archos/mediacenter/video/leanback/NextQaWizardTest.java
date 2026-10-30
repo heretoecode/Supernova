@@ -31,4 +31,8 @@ public class NextQaWizardTest {
   }finally{host.pause().stop().destroy();}
  }
 
+ @Test public void successfulEmptyTvPreviewDoesNotLabelItAsMovies(){
+  var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{Object workspace=ReflectionHelpers.getField(host.get(),"workspace");CustomLibraryPage draft=ReflectionHelpers.getField(workspace,"draft");draft.type="tv";ReflectionHelpers.setField(host.get(),"snapshotLoading",false);ReflectionHelpers.setField(host.get(),"snapshotFailed",false);ReflectionHelpers.setField(workspace,"snapshot",new PreviewLibraryLoader.Snapshot());ReflectionHelpers.callInstanceMethod(workspace,"preview");android.widget.TextView preview=ReflectionHelpers.getField(workspace,"preview");assertTrue(preview.getText().toString().contains("0 Shows"));assertFalse(preview.getText().toString().contains("0 Movies"));assertTrue(preview.getText().toString().contains("No matching indexed items"));}finally{host.pause().stop().destroy();}
+ }
+
 }
