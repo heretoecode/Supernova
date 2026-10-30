@@ -166,4 +166,11 @@ public class TopNavigationTest {
         } finally {host.pause().stop().destroy();}
     }
 
+    @Test public void selectingReturnedPageMovesExistingNavigationFocusButKeepsContentFocus(){
+        var host=Robolectric.buildActivity(Host.class).setup().visible();try{Button content=new Button(host.get());content.setFocusableInTouchMode(true);TopNavigation nav=new TopNavigation(host.get(),content,index->{},()->true);host.get().setContentView(nav);PreviewPagesTest.layout(nav);
+            nav.selectTab(6);View custom=nav.findViewWithTag("semantic:topnav.custom");custom.requestFocus();nav.selectTab(2);View tv=nav.findViewWithTag("semantic:topnav.tv");assertTrue(tv.hasFocus());assertTrue(tv.isSelected());assertFalse(custom.isSelected());
+            content.requestFocus();nav.selectTab(1);assertTrue(content.hasFocus());assertTrue(nav.findViewWithTag("semantic:topnav.movies").isSelected());
+        }finally{host.pause().stop().destroy();}
+    }
+
 }

@@ -22,7 +22,7 @@ public final class CustomLibraryActivity extends LeanbackActivity {
  private void navigate(int index){if(index==6)return;if(index==4)startActivity(new Intent(this,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));else if(index==5)startActivity(new Intent(this,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));else{startActivity(new Intent(this,MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));finish();}}
  @Override protected void onSaveInstanceState(Bundle state){workspace.rememberFocus();state.putString("focus",workspace.restoreFocus);state.putParcelable("scroll",workspace.restoreScroll);state.putString("draft",workspace.draft.encode());state.putString("original",workspace.original);state.putBoolean("editing",workspace.editing);state.putInt("step",workspace.step);super.onSaveInstanceState(state);}
  @Override protected void onDestroy(){closed=true;worker.shutdownNow();super.onDestroy();}
- private final class Workspace extends FrameLayout implements PageExitGuard {
+ private final class Workspace extends FrameLayout implements PageExitGuard,TopNavigation.ContentFocus {
   final String[] steps={"Page Details","Content Type","Filters","Display Options","Review"};CustomLibraryPage draft;String original;boolean editing;int step;Snapshot snapshot=new Snapshot();LinearLayout options,libraryBody;LinearLayout footer;boolean choice;TextView preview;RecyclerView grid;PreviewLibraryColumns columns;String restoreFocus="";android.os.Parcelable restoreScroll;String pendingFocus;PreviewPages sharedLibrary;String editorOpener="edit";LinearLayout wizardRail;ScrollView wizardPreview,wizardOptions;FrameLayout wizardPreviewFrame;String wizardCentreAnchor;
   Workspace(){super(CustomLibraryActivity.this);setPadding(dp(24),dp(14),dp(24),dp(16));CustomLibraryPage saved=CustomLibraryPage.load(getContext());editing=saved==null;draft=saved==null?new CustomLibraryPage():CustomLibraryPage.decode(saved.encode());original=draft.encode();getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus,newFocus)->{
    if(editing||navigation==null||newFocus==null)return;View target=newFocus;
@@ -30,6 +30,7 @@ public final class CustomLibraryActivity extends LeanbackActivity {
    if(!(target.getTag() instanceof String))return;
    for(Entry entry:draft.entries(snapshot))if(entry.key().equals(target.getTag())){navigation.setArtwork(entry.backdrop);navigation.setScrolled(grid!=null&&grid.canScrollVertically(-1));break;}
   });}
+  @Override public boolean focusFromNavigation(){if(editing){View rail=findViewWithTag("wizard.step."+step);return rail!=null&&rail.requestFocus();}return sharedLibrary!=null&&sharedLibrary.focusFromNavigation();}
   boolean atTop(){if(!editing&&sharedLibrary!=null)return sharedLibrary.atTop();return editing?wizardRail!=null&&findFocus()==findViewWithTag("wizard.step.0"):grid==null||!grid.canScrollVertically(-1);}
   TextView action(String label,Runnable run){return SharedThreePanel.accentAction(getContext(),label,run);}
   void footerAction(String label,Runnable run){TextView button=action(label,run);button.setMinHeight(dp(40));button.setBackground(SharedThreePanel.control(getContext(),10));LayoutParams size=new LayoutParams(-2,dp(40));size.topMargin=dp(6);footer.addView(button,size);}
