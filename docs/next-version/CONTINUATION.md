@@ -28,7 +28,7 @@ Physical Shield, Concept A4 image parity and installed signed upgrade: NOT RUN. 
 
 ## Validation progress
 
-Current source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: focused [41137713734](https://github.com/heretoecode/Supernova/actions/runs/41137713734), full conformance [41137713737](https://github.com/heretoecode/Supernova/actions/runs/41137713737), pending. Isolated library [41137713712](https://github.com/heretoecode/Supernova/actions/runs/41137713712) passes all six cases; downloaded SHA/CRC and JUnit results independently checked (continuation/LIBRARY_FIXTURE_VALIDATION.json). Local 134 tooling tests and parsing of 1,103 Java files pass. No current-source APK acceptance yet.
+Current source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: focused [41137713734](https://github.com/heretoecode/Supernova/actions/runs/41137713734) passes **183 tests**, zero failures/skips; archive SHA/CRC and JUnit independently checked (continuation/FOCUSED_VALIDATION.json). Full conformance [41137713737](https://github.com/heretoecode/Supernova/actions/runs/41137713737), **attempt 2**, is running. Attempt 1 stopped before application compilation because downloading a pinned Jetty input returned HTTP 429. The same exact source and dependency hashes are retried; no input/check bypass. Isolated library [41137713712](https://github.com/heretoecode/Supernova/actions/runs/41137713712) passes all six cases; downloaded SHA/CRC and JUnit results independently checked (continuation/LIBRARY_FIXTURE_VALIDATION.json). Local 134 tooling tests and parsing of 1,103 Java files pass. No current-source APK acceptance yet.
 
 | Preceding checkpoint | Actual outcome / correction |
 |---|---|
@@ -37,6 +37,8 @@ Current source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: focused [41137713734]
 | `11bf740` | Fixes HUD indentation only; its full run was superseded/cancelled after the focus event failure. Cancellation is not success. |
 
 Earlier diagnostic history: `acccec6` focused passed 174; screenshot review then found tooltip text needed explicit layout before positioning. Strengthened painted-text/enlarged-font tests followed. Run 41128669132 passed 178/179 and exposed default button focus policy; explicit focusable targets fixed it, with 41130047853 subsequently passing. Runs 41131538478 and 41131885502 exposed an initial-library fixture race and missing image-loader initialization; fixtures were corrected without weakening assertions. Prior completed 7011e87 receipts and APK remain historical only. No lint suppression or baseline was added.
+
+Current-source unmodified HUD/editor/global Settings/all-four-tab captures: [software-captures-f5e2924](continuation/software-captures-f5e2924/README.md). Five editor/global Settings images are byte-identical to the prior capture set; no visual change was introduced by the lifecycle correction. Physical/reference acceptance remains distinct.
 
 Preceding 83aede9 captures and exact provenance: [software fixtures](continuation/software-captures/README.md). They predate the focus-lifecycle correction and do not establish current-source APK or physical acceptance.
 

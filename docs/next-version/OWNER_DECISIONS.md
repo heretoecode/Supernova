@@ -13,7 +13,7 @@ No owner decision blocks the current source-backed implementation. Your latest i
 
 These remain unadopted and do not prevent use or testing of the existing implementation:
 
-1. **New editor proportions and styling:** whether to replace the existing .24/.38/.38 shared geometry with the proposed 22/35/43 split and a new type/spacing/card/statistics/poster-grid treatment. Exact candidate styling remains draft under [blueprint D](../design/EDIT_LIBRARY_STRICT_UI_BLUEPRINT_DRAFT_2026-10-30.md); no generated-image measurements are treated as approved. The current source-backed rendition can be reviewed in [passing four-section captures](continuation/software-captures/README.md). Original proposal diagrams remain in design-proposals/ and are labelled accordingly.
+1. **New editor proportions and styling:** whether to replace the existing .24/.38/.38 shared geometry with the proposed 22/35/43 split and a new type/spacing/card/statistics/poster-grid treatment. Exact candidate styling remains draft under [blueprint D](../design/EDIT_LIBRARY_STRICT_UI_BLUEPRINT_DRAFT_2026-10-30.md); no generated-image measurements are treated as approved. The current source-backed rendition can be reviewed in [passing four-section captures](continuation/software-captures-f5e2924/README.md). Original proposal diagrams remain in design-proposals/ and are labelled accordingly.
 2. **Delete location:** whether to move the existing confirmed Delete Page action from Page Details to Review. The current placement and confirmation are preserved; no action is needed to keep them.
 
 No extra decision is required for Both/Mixed naming, Save placement or statistics while preserving the existing source conventions. No filter expansion is proposed.
