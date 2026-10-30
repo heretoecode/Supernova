@@ -2,7 +2,7 @@
 
 ## Active continuation after PR #29 review
 
-Current source `f5e2924` uses the attached global focus observer for real media-page escape/return and includes the corrected HUD indentation. Focused/full/library runs **41137713734 / 41137713737 / 41137713712** are pending. Local 134 tooling tests and 1,103-file Java parse pass. Prior 83aede9 UI/library tests pass; its full tests pass but release lint failed. Preceding results are historical, not current-source acceptance. See CONTINUATION.md.
+Current source `f5e2924` uses the attached global focus observer for real media-page escape/return and includes the corrected HUD indentation. Focused/full runs **41137713734 / 41137713737** are pending. Isolated library **41137713712** passes all six cases with independently verified evidence. Local 134 tooling tests and 1,103-file Java parse pass. Prior 83aede9 UI/library tests pass; its full tests pass but release lint failed. Preceding results are historical, not current-source acceptance. See CONTINUATION.md.
 
 The owner has authorised HUD engineering details within the approved visual design and confirmed strict ChaptersDB matching: **unverified sets stay hidden**. The new source checkpoint implements the one-row HUD, four-section editor using retained shared geometry, core-cache-first Details delivery and settled-focus prefetch, single-boundary Settings rail, and bounded ChaptersDB acquisition with strict suppression, explicitly focusable HUD targets, and a single selected/check versus focus boundary in Settings. The completed validation below describes the **previous** checkpoint `7011e87`, not these new changes. See CONTINUATION.md.
 

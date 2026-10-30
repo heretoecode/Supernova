@@ -1,7 +1,7 @@
 {
   "base": "b4a6ee7a010c9b5b6af8731108f3973477bfc7f5",
-  "validated_source": "83aede983501c0ad728576a144d2a0ef51998190",
-  "last_application_change": "cfb65fac535ab1c64bf6773d58b25e11105c6bf9",
+  "validated_source": "f5e2924cc8f7302032933f8aec8793030b6e1b0f",
+  "last_application_change": "f5e2924cc8f7302032933f8aec8793030b6e1b0f",
   "unchanged": {
     "AndroidManifest.xml": true,
     "build.gradle": true,
@@ -14,8 +14,8 @@
   "original_build_and_native_inputs_unchanged": true,
   "original_input_files_compared": 88,
   "tested_git_objects": {
-    "src/main": "f70391c0653278c9e11c3ac36b39cec584254967",
-    "src/test": "06cae2e79b0afe7bce0dbbdc41f90e0ba8ac1c2f",
+    "src/main": "d09043e23d18148d0f1651ca76c23ea1872e9909",
+    "src/test": "d0a7771d368eb1813eae5bd738631cc8bcea4876",
     "res": "df320ea71beb115264cbca30a50e8587ce86cbdc",
     "assets": "53ff8376c97036f62334998977275425f8d863d5",
     ".github/workflows": "5ceef2dc727091d947a2330ef18081d502765f20",

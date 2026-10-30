@@ -28,7 +28,7 @@ Physical Shield, Concept A4 image parity and installed signed upgrade: NOT RUN. 
 
 ## Validation progress
 
-Current source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: focused [41137713734](https://github.com/heretoecode/Supernova/actions/runs/41137713734), full conformance [41137713737](https://github.com/heretoecode/Supernova/actions/runs/41137713737), isolated library [41137713712](https://github.com/heretoecode/Supernova/actions/runs/41137713712), pending. Local 134 tooling tests and parsing of 1,103 Java files pass. No current-source APK acceptance yet.
+Current source `f5e2924cc8f7302032933f8aec8793030b6e1b0f`: focused [41137713734](https://github.com/heretoecode/Supernova/actions/runs/41137713734), full conformance [41137713737](https://github.com/heretoecode/Supernova/actions/runs/41137713737), pending. Isolated library [41137713712](https://github.com/heretoecode/Supernova/actions/runs/41137713712) passes all six cases; downloaded SHA/CRC and JUnit results independently checked (continuation/LIBRARY_FIXTURE_VALIDATION.json). Local 134 tooling tests and parsing of 1,103 Java files pass. No current-source APK acceptance yet.
 
 | Preceding checkpoint | Actual outcome / correction |
 |---|---|
