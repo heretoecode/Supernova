@@ -31,3 +31,6 @@ Related next-release findings: NEXT_RELEASE_0_147_SHIELD_FINDINGS_AND_LIBRARY_BA
 
 ## Clarification — reuse maintenance mapping first (2026-10-30)
 Before any new inventory, Codex MUST search the repository's existing maintenance release mapping, feature registers, requirements and implementation notes for Edit Library/custom-page editing. Reuse and cite existing entries, then perform only a gap analysis for missing functionality and current Shield UI defects. The 0.147 FD-003 traceability is specifically Network & Files, not proof of a whole-app Edit Library map. Produce an audit/findings report and proposed information architecture; DO NOT implement a redesign before owner approval. Do not repeat completed mapping without identifying concrete gaps.
+
+## Owner clarification (2026-10-30)
+The custom Library Page feature is ALREADY IMPLEMENTED and works on the owner's Shield. This work is limited to auditing and redesigning Edit Library UI/options, background layers, Live Preview focus border and middle-panel button alignment, with full functional parity. Do not rebuild the custom library feature or describe it as pending implementation. Preserve its working data and behaviour.
