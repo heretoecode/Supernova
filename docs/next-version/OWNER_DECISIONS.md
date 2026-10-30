@@ -67,3 +67,7 @@ Each has a `-large.svg` counterpart for expanded text annotations. These are exp
 ### Live coverage follow-up
 
 The examples in the documentation are absent, but **the service is not generally unavailable**. `/api/shows/recent` led to approved public sets; `/api/v1/show/bad-times-at-the-el-royale` returned a movie with IMDb `tt6628394`, and `/api/v1/show/star-trek-voyager` plus its first episode's chapters endpoint returned TV data. Sanitised evidence is in `CHAPTERSDB_LIVE_SETS_2026-10-30.json`. Arrays arrive out of timestamp order; the movie's edition note is null, the TV pilot is a long combined DVD chapter set with no structured runtime, and its TVDB episode identifier is empty. These observations substantiate the edition/runtime/episode matching blocker even though both content types have some coverage. They do not establish global uptime or coverage. No application provider integration has been enabled.
+
+## HUD diagram
+
+[Measured HUD proposal](design-proposals/hud-measured-proposal.png) ([editable SVG](design-proposals/hud-measured-proposal.svg)) shows the single shared centre, source-derived icon shapes, target bounds and both remote graphs. Placeholder time strings illustrate measured allocations; no media, chapter or certification data is asserted. It is a review aid, not a production render. Exact font fitting, paused Ends at and geometry remain pending owner approval under the locked blueprint.
