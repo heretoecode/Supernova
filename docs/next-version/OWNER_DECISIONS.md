@@ -4,11 +4,11 @@
 
 The editor now implements four sections with existing SharedThreePanel geometry, Both naming, Delete in Page Details and the existing pinned in-panel Review Save. Retaining those source conventions needs no new approval. Only adopting the proposed new proportions/type/card treatment, alternative poster-grid layout or moving Delete remains a genuine optional visual choice. Candidate drawings below are not approved exact designs.
 
-Status: proposals derived from measured source, NOT locked tokens or implemented layouts. Source measured at baseline `b4a6ee7a`; current screenshots required by the blueprint cannot be called approved mock-ups. No approved image bytes were supplied.
+Historical proposal section below: derived from baseline source; its diagrams do not depict the current implemented layout. Current implementation tokens and validation are in CONTINUATION.md. Source measured at baseline `b4a6ee7a`; current screenshots required by the blueprint cannot be called approved mock-ups. No approved image bytes were supplied.
 
 ## HUD — source measurements and proposed single row
 
-Android logical reference is 960 × 540 dp, corresponding to 1920 × 1080 px at density 2. Physical resolution alone does not establish density. TvLayout.scale clamps min(width/960,height/540) to .85–1.25; PreviewDialog.dp uses that scaling, while existing XML dimensions use raw dp. A single implementation must remove that inconsistency rather than double scale.
+Android logical reference is 960 × 540 dp, corresponding to 1920 × 1080 px at density 2. Physical resolution alone does not establish density. TvLayout.scale clamps min(width/960,height/540) to .85–1.25; PreviewDialog.dp uses that scaling, while existing XML dimensions use raw dp. Current implementation retains each established conversion once; HUD XML and shared panel helpers do not apply a second scale.
 
 | Element and source | Measured existing value | Proposed baseline (dp/sp) | Reference px at density 2 |
 |---|---|---|---|
@@ -70,8 +70,8 @@ Each has a `-large.svg` counterpart for expanded text annotations. These are exp
 
 ### Live coverage follow-up
 
-The examples in the documentation are absent, but **the service is not generally unavailable**. `/api/shows/recent` led to approved public sets; `/api/v1/show/bad-times-at-the-el-royale` returned a movie with IMDb `tt6628394`, and `/api/v1/show/star-trek-voyager` plus its first episode's chapters endpoint returned TV data. Sanitised evidence is in `CHAPTERSDB_LIVE_SETS_2026-10-30.json`. Arrays arrive out of timestamp order; the movie's edition note is null, the TV pilot is a long combined DVD chapter set with no structured runtime, and its TVDB episode identifier is empty. These observations substantiate the edition/runtime/episode matching blocker even though both content types have some coverage. They do not establish global uptime or coverage. No application provider integration has been enabled.
+The examples in the documentation are absent, but **the service is not generally unavailable**. `/api/shows/recent` led to approved public sets; `/api/v1/show/bad-times-at-the-el-royale` returned a movie with IMDb `tt6628394`, and `/api/v1/show/star-trek-voyager` plus its first episode's chapters endpoint returned TV data. Sanitised evidence is in `CHAPTERSDB_LIVE_SETS_2026-10-30.json`. Arrays arrive out of timestamp order; the movie's edition note is null, the TV pilot is a long combined DVD chapter set with no structured runtime, and its TVDB episode identifier is empty. These observations substantiate the edition/runtime/episode matching blocker even though both content types have some coverage. They do not establish global uptime or coverage. Subsequent continuation wired bounded acquisition; these unverified sets still never become visible markers.
 
 ## HUD diagram
 
-[Measured HUD proposal](design-proposals/hud-measured-proposal.png) ([editable SVG](design-proposals/hud-measured-proposal.svg)) shows the single shared centre, source-derived icon shapes, target bounds and both remote graphs. Placeholder time strings illustrate measured allocations; no media, chapter or certification data is asserted. It is a review aid, not a production render. Exact font fitting, paused Ends at and geometry remain pending owner approval under the locked blueprint.
+[Measured HUD proposal](design-proposals/hud-measured-proposal.png) ([editable SVG](design-proposals/hud-measured-proposal.svg)) shows the single shared centre, source-derived icon shapes, target bounds and both remote graphs. Placeholder time strings illustrate measured allocations; no media, chapter or certification data is asserted. It is a review aid, not a production render. HUD engineering decisions have since been resolved under the owner’s continuation instruction; this historical diagram is not the current acceptance evidence.
