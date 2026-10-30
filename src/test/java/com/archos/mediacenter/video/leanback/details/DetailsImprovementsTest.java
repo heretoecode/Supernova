@@ -26,7 +26,7 @@ public class DetailsImprovementsTest {
     @Test public void languageHasNoDrawableAndTextUpdatesKeepPanelAndPeople()throws Exception{
         LinearLayout cast=new LinearLayout(context),crew=new LinearLayout(context);
         Map<String,String> facts=new HashMap<>();facts.put("Language","English");
-        DetailsBlueprintPanel panel=new DetailsBlueprintPanel(context,"Synopsis",facts,Collections.emptyMap(),Collections.emptyMap(),cast,crew,OmdbSupplement.Ratings.EMPTY,()->{});
+        DetailsBlueprintPanel panel=new DetailsBlueprintPanel(context,"Synopsis",facts,Collections.emptyMap(),Map.of("TMDB Rating","7.8 / 10"),cast,crew,OmdbSupplement.Ratings.EMPTY,()->{});
         TextView language=find(panel,"English");assertNotNull(language);for(var drawable:language.getCompoundDrawables())assertNull(drawable);
         facts.put("Language","English, French");panel.updateText("New synopsis",facts,Collections.emptyMap());
         assertSame(language,find(panel,"English, French"));assertEquals("Language: English, French",((View)language.getParent()).getContentDescription());assertNotNull(panel.findViewWithTag("details.reviews"));assertTrue(panel.findViewWithTag("details.reviews").isFocusable());
