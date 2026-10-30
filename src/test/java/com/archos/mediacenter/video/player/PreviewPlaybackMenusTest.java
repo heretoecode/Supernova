@@ -82,4 +82,15 @@ public class PreviewPlaybackMenusTest {
         option("English").requestFocus();option("English").dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertTrue(option(delay).hasFocus());
         option(delay).dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertTrue(root.findViewWithTag("playback.tab:0").hasFocus());
     }
+    @Test public void moreChoicesExpandBelowParentThenCollapseAndRestoreFocus(){
+        TVMenu menu=new TVMenu(host);TVMenuItem once=menu.createAndAddTVMenuItem("Once",true,true),repeat=menu.createAndAddTVMenuItem("Repeat",true,false);repeat.setOnClickListener(v->{once.setChecked(false);repeat.setChecked(true);});
+        String title=host.getString(R.string.pref_play_mode_title);PreviewPlaybackMenus.show(host,source(title,menu),null);View root=dialog().getWindow().getDecorView();root.findViewWithTag("playback.tab:3").performClick();View parent=option(title);parent.requestFocus();parent.performClick();
+        assertSame(parent,option(title));ViewGroup expansion=root.findViewWithTag("playback.inline");assertNotNull(expansion);assertSame(parent.getParent(),expansion.getParent());ViewGroup column=(ViewGroup)parent.getParent();assertEquals(column.indexOfChild(parent)+1,column.indexOfChild(expansion));
+        option("Repeat").performClick();assertTrue(repeat.isChecked());assertNull(root.findViewWithTag("playback.inline"));assertTrue(option(title).hasFocus());
+        option(title).performClick();PreviewPlaybackMenus.back();assertNull(root.findViewWithTag("playback.inline"));assertTrue(option(title).hasFocus());assertTrue(PreviewPlaybackMenus.isShowing());
+    }
+    @Test public void readingLanguagePreservesSiblingRowsAndReturnsToParent(){
+        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);View parent=option("Reading language"),sibling=option("Download languages");parent.performClick();assertSame(sibling,option("Download languages"));ViewGroup inline=dialog().getWindow().getDecorView().findViewWithTag("playback.inline");assertNotNull(inline);PreviewPlaybackMenus.back();assertTrue(parent.hasFocus());assertNull(dialog().getWindow().getDecorView().findViewWithTag("playback.inline"));
+    }
+
 }
