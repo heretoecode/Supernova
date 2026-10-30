@@ -1,0 +1,85 @@
+name: Supernova next-version unsigned development validation
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/supernova-next-implementation-2026-10-30]
+    paths: [.github/workflows/supernova-next-conformance.yml, 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0147*', .github/build/record-supernova-0147-conformance.py]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact candidate source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: nova/Video
+          persist-credentials: false
+      - name: Java21
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Download pinned source-built native artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: supernova-0146-native-*
+          path: native-artifacts
+          run-id: 40843685431
+          github-token: ${{ github.token }}
+      - name: Prepare exact dependency source and verify native inputs
+        run: |
+          set -euo pipefail
+          python3 nova/Video/.github/build/prepare-supernova146-workspace.py --root nova
+          python3 nova/Video/.github/build/package-supernova146-native.py --root nova --artifacts native-artifacts --workspace "$RUNNER_TEMP/native146-packaging" 2>&1 | tee native146-packaging.log
+          python3 nova/Video/.github/build/build-supernova146-jetty.py --workspace nova/Video/build/supernova146-jetty
+      - name: Validate preserved release history and source contracts before compiling
+        run: python3 nova/Video/.github/build/verify-next-qa.py --root nova
+      - name: Complete application and library tests, lint and unsigned APK build
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0'
+          cd nova/Video
+          chmod +x gradlew
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease --continue \
+            -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | tee build/supernova146-conformance.log
+          python3 -m unittest discover -s tools -p 'test_*.py'
+          mapfile -t apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
+          test "${#apks[@]}" = 1
+          mkdir -p "$GITHUB_WORKSPACE/delivery"
+          python3 .github/build/record-supernova-0147-conformance.py --root .. --apk "${apks[0]}" \
+            --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2" \
+            --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" --native-evidence "$RUNNER_TEMP/native146-packaging/packaging-inputs.json" \
+            --output "$GITHUB_WORKSPACE/delivery/unsigned-conformance.json"
+          cp "${apks[0]}" "$GITHUB_WORKSPACE/delivery/Supernova_next_development_unsigned.apk"
+      - name: Preserve exact runtime archives
+        if: always()
+        run: python3 nova/Video/.github/build/collect-supernova146-runtime.py --video nova/Video
+      - name: Preserve complete release validation evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-next-conformance-evidence
+          path: |
+            native146-packaging.log
+            ${{ runner.temp }}/native146-packaging/packaging-inputs.json
+            nova/Video/build/supernova146-conformance.log
+            nova/Video/build/test-results/**
+            nova/Video/build/reports/lint-results*.*
+            nova/Video/build/reports/preview-ui/**
+            nova/Video/build/reports/settings-014*/**
+            nova/Video/build/supernova146-runtime-review/**
+            nova/Video/build/supernova146-jetty/evidence.json
+            nova/MediaLib/build/test-results/**
+            nova/FileCoreLibrary/build/test-results/**
+            nova/supernova146-source-preparation.json
+          if-no-files-found: warn
+      - name: Preserve exact unsigned payload and conformance receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-next-unsigned-candidate
+          path: delivery/*
+          if-no-files-found: error
+          retention-days: 14

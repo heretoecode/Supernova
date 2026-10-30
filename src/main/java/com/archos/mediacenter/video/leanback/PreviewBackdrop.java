@@ -35,6 +35,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     public boolean readyForFirstFrame(){return !loading;}
     public PreviewBackdrop(Context c) { context=c;density=c.getResources().getDisplayMetrics().density; }
     public void load(Uri next) {
+        if(strictLibraryArtwork)return;
         if(java.util.Objects.equals(uri,next)){pendingDirection=0;return;}
         if(activeTarget!=null)Picasso.get().cancelRequest(activeTarget);activeTarget=null;Picasso.get().cancelRequest(this);if(pending!=null)handler.removeCallbacks(pending);uri=next;loading=next!=null;requestedAt=android.os.SystemClock.uptimeMillis();requestSequence++;
         if(trace!=null)trace.cancelled();trace=next==null?null:new com.archos.mediacenter.video.diagnostics.ArtworkTrace(indexedMedia(next),com.archos.mediacenter.video.diagnostics.Diagnostics.artworkSurface(),"backdrop",com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(next));
@@ -47,6 +48,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     public void release() { loading=false;requestSequence++;if(activeTarget!=null)Picasso.get().cancelRequest(activeTarget);activeTarget=null;if(trace!=null)trace.cancelled();handler.removeCallbacksAndMessages(null);if(uri!=null)Picasso.get().cancelRequest(this); bitmap=previous=null; uri=null; }
     @Override public void draw(Canvas canvas) {
         Rect b=getBounds(); float h=Math.min(b.height(),420*density);
+        if(strictLibraryArtwork){if(foundationBackground==null)foundationBackground=new PreviewUtilityBackground(context);foundationBackground.setBounds(b);foundationBackground.draw(canvas);return;}
         if(foundationHome){foundationBackground.setBounds(b);foundationBackground.draw(canvas);if(bitmap==null&&previous==null)return;}else canvas.drawColor(0xff0b1b2a);if(!foundationHome&&bitmap==null&&previous==null){android.graphics.drawable.GradientDrawable utility=PreviewAccent.utility(context);utility.setBounds(b);utility.draw(canvas);}
         paint.setShader(null);
         float fade=Math.min(1f,(android.os.SystemClock.uptimeMillis()-fadeStart)/180f);
@@ -60,6 +62,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     }
     private void drawImage(Canvas canvas,Bitmap image,float w,float h,float alpha){if(image==null||image.isRecycled()||image.getWidth()<image.getHeight())return;float scale=Math.max(w/image.getWidth(),h/image.getHeight());paint.setAlpha((int)(255*alpha));canvas.save();canvas.clipRect(0,0,w,h);canvas.drawBitmap(image,null,new RectF(w-image.getWidth()*scale,0,w,image.getHeight()*scale),paint);canvas.restore();}
     @Override public void onBitmapLoaded(Bitmap b,Picasso.LoadedFrom from){
+        if(strictLibraryArtwork)return;
         loading=false;if(b.getWidth()<b.getHeight()){onBitmapFailed(null,null);return;}
         motionDirection=pendingDirection;pendingDirection=0;
         if(b!=bitmap){previous=bitmap;bitmap=b;fadeStart=previous==null?0:android.os.SystemClock.uptimeMillis();}
