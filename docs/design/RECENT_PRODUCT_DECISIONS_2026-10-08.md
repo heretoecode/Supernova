@@ -79,3 +79,10 @@ For complete branding decisions and the 4K PNG handover, see `docs/project/CURRE
 - Home Featured animation: user video demonstrates **brief darkening/translucency/flashing during carousel transitions**. Record as an outstanding, distinct visual defect; cause and fix not verified. Do not confuse with playback HUD diagnostic flash.
 - Movies/TV boxed toolbar: user reaffirmed LEFT/RIGHT between controls, DOWN to library, UP towards top nav, with physical focus-graph validation still needed. See MOVIES_TV.md.
 - The conversation-supplied photograph/video were examined but **not committed as binary assets**; original evidence remains in conversation. No implementation or fixes-only scope change.
+
+## Owner current-status correction (2026-10-30; overrides older planning labels)
+- **Foundation Release identity:** owner confirms completed; do not list as pending implementation merely because historical roadmap says future. Verify exact build identity separately if needed.
+- **Custom Library Page:** implemented and working on Shield. Only Edit Library UI redesign/refinements remain pending; see NEXT_RELEASE_EDIT_LIBRARY_FULL_AUDIT_AND_REDESIGN_2026-10-30.md.
+- **Segment Skipping:** owner confirms Connections & Integrations already exposes IntroDB controls for Intro, Recap, Preview, Outro and Credits, with Play Normally, Show Skip (5 seconds), Auto Skip and Smart choices. Do not describe the entire feature as unimplemented. Verify actual runtime behaviour and supported provider integration separately; settings visibility alone does not prove skips work.
+- **Up Next:** investigate possible inherited NOVA 6.6.2 episode-advance feature and reconcile with Supernova's existing Binge Watching/Up Next behaviour; avoid duplicate countdowns, overlapping controls or competing auto-advance state. Source comparison and Shield QA required before changes.
+- **In-player Playback Settings and HUD:** owner explicitly reconfirms visual/interaction refinements remain pending. Preserve approved Concept A4 and four-control HUD authority.
