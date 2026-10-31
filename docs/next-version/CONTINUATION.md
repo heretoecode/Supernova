@@ -1,5 +1,7 @@
 # PR #29 continuation
 
+**31 October signed QA delivery completed:** the owner separately authorised version **0.148 / 148**, protected signing and Drive/HTML publication. Exact build source **30d4961e4e5b0e412ec35fe8d27cd6197cea8b26** passed full conformance and was signed without rebuilding; complete signed APK and HTML Drive downloads are verified. [Delivery results and receipts](../0.148/STATUS.md). PR29 remains draft; main and Shield unchanged. Physical installed upgrade remains **NOT RUN**. The no-signing/no-Drive/no-version-change statements below describe the earlier 30 October development scope, before this delivery authorisation.
+
 Owner instruction: continue the existing implementation. HUD visual design, all-four-tab inline Settings and full ChaptersDB integration are approved. Resolve engineering choices using existing conventions. Do not reopen those approvals. Keep draft PR #29 and existing branch.
 
 ## Implemented continuation

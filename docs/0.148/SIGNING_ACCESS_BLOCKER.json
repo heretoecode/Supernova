@@ -13,5 +13,10 @@
   "signed_0148_file_produced": false,
   "drive_apk_upload": false,
   "drive_html_updated": false,
-  "checked_at": "2026-10-31T09:05:36.707495+00:00"
+  "checked_at": "2026-10-31T09:05:36.707495+00:00",
+  "resolved": true,
+  "resolved_by": "Owner added the exact branch to existing environment policies; readback verified before dispatch.",
+  "signed_run": 41191359800,
+  "resolved_at": "2026-10-31T10:06:03Z",
+  "historical_flags": "Original fields describe the earlier HTTP403 attempt; current completion is recorded in SIGNING_READY/DRIVE_APK_DELIVERY."
 }

@@ -1,6 +1,18 @@
-**31 October: 0.148 software conformance passes; signed delivery is blocked by GitHub environment administration access (HTTP403).** See [0.148 status](../0.148/STATUS.md) for the exact allowlist action. No signed 0.148 APK or upload is claimed. The completed unsigned 0.147 inspection artifact below is historical.
+# Current signed QA delivery — 0.148
 
-# Current unsigned inspection APK
+**31 October 2026: signed APK delivered and full Drive download verified.** [Download Supernova_0.148.apk](https://drive.google.com/file/d/1Fz8PJYvYpbwKJv_W0wg3frpRLlhLYMuw/view?usp=drivesdk).
+
+- Exact build source: **30d4961e4e5b0e412ec35fe8d27cd6197cea8b26**; version **0.148 / 148**; package **app.supernova.player**.
+- APK: **95,585,975 bytes**; SHA-256 **44c156c55798799cca8de8b3388e9d2ba23c7e328238193b8b4a50a4bd0f2898**.
+- Existing certificate SHA-256: **79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e**.
+- Full conformance **41185088587 PASS**; signing **41191359800 PASS**, reusing the validated APK without rebuilding. Independent signature, package/version/source, complete payload and 84 native-library checks pass before and after Drive download.
+- HTML release notes updated in place with all 16 historical articles preserved; full HTML download verified. Prior 15 APK entries preserved.
+
+Complete [delivery status and receipts](../0.148/STATUS.md). PR29 remains draft; main and Shield unchanged. Physical Shield and installed upgrade/data retention: **NOT RUN**.
+
+The following entries describe earlier unsigned development checkpoints; their no-signing/no-upload statements apply only to those historical deliveries.
+
+# Historical unsigned 0.147 inspection APK
 
 [Download exact candidate artifact](https://github.com/heretoecode/Supernova/actions/runs/41137713737/artifacts/13019305914) from successful [full run 41137713737, attempt 2](https://github.com/heretoecode/Supernova/actions/runs/41137713737). Choose **supernova-next-unsigned-candidate**, then extract `Supernova_next_development_unsigned.apk` and `unsigned-conformance.json`.
 

@@ -1,6 +1,8 @@
 # Next-version development changes
 
-Not a release announcement. Version/code remain at baseline until the complete candidate is approved. Existing 0.147 signed APK and historical release notes are preserved.
+**31 October 2026: 0.148 / code148 signed QA delivered.** Exact validated source **30d4961e4e5b0e412ec35fe8d27cd6197cea8b26**; full conformance **41185088587** and signing **41191359800** pass. No rebuild. Signature, existing certificate/package, full payload, native libraries and complete Drive download verified. HTML updated in place with historical articles preserved. [Download, SHA-256 and receipts](../0.148/STATUS.md). PR29 remains draft; main and Shield unchanged. Physical Shield and installed upgrade/data retention **NOT RUN**.
+
+The development entries and historical validation below describe the earlier checkpoint; prior no-signing/no-delivery statements apply to that checkpoint. Existing 0.147 signed APK and historical release notes are preserved.
 
 - Playback HUD: approved single-row transport, seek-first source-convention remote graph, persistent measured timestamp/chapter bubble, constrained title fallback and total/finish timing. Embedded chapters take precedence; no synthetic chapters.
 - Playback Settings: choices and native adjustments expand immediately beneath their row; Back collapses before closing; selected choice restores parent focus; direct Boolean controls show track/thumb and On/Off text. Existing Audio/Subtitles/Video/More inventory, direct video formats, native callbacks and availability remain.

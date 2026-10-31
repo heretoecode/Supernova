@@ -1,6 +1,8 @@
 # Next-version implementation — 30 October 2026
 
-**31 October continuation:** owner-authorised **0.148 / 148** passes fresh full conformance, focused/library checks and independent unsigned-payload verification. Signing is blocked by HTTP403 adding the exact PR29 branch to the existing signing environment allowlist; no signed file/upload is claimed. Exact administrator action and resume data: [docs/0.148](../0.148/STATUS.md). Application/resources remain frozen at validated b0bce99.
+**31 October signed delivery:** owner-authorised **0.148 / 148** is signed and uploaded with full Drive download verification. Exact validated build source **30d4961e4e5b0e412ec35fe8d27cd6197cea8b26**, full conformance **41185088587 PASS**, signing **41191359800 PASS** without rebuilding. Existing certificate and package retained; all 84 native libraries and complete payload verified. HTML published with all prior entries preserved. [Verified download, checksum and receipts](../0.148/STATUS.md). No delivery blocker remains. PR29 stays draft; main and Shield unchanged. Physical Shield/installed upgrade: **NOT RUN**.
+
+The implementation and earlier validation sections below describe the 30 October checkpoint; its historical unsigned status is superseded by the 0.148 delivery above.
 
 ## Validated continuation after PR #29 review
 

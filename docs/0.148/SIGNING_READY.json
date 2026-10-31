@@ -13,7 +13,12 @@
   "environment": "supernova-foundation-signing",
   "certificate_pin": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
   "dispatch_after_policy_readback": "gh workflow run supernova-0148-qa.yml --ref codex/supernova-next-implementation-2026-10-30 -f conformance_run_id=41185088587",
-  "signed_file_verified": false,
-  "drive_upload_verified": false,
-  "blocker": "HTTP403 adding environment deployment branch policy; current GitHub integration lacks required administration access."
+  "signed_file_verified": true,
+  "drive_upload_verified": true,
+  "blocker": null,
+  "signing_run": 41191359800,
+  "signed_apk_sha256": "44c156c55798799cca8de8b3388e9d2ba23c7e328238193b8b4a50a4bd0f2898",
+  "signed_apk_bytes": 95585975,
+  "drive_url": "https://drive.google.com/file/d/1Fz8PJYvYpbwKJv_W0wg3frpRLlhLYMuw/view?usp=drivesdk",
+  "html_published_and_readback_verified": true
 }
