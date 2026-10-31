@@ -22,7 +22,13 @@ final class PlaybackAgeOverlay extends View {
         if(key.equals(identity))return;identity=key;int expected=++generation;animate().cancel();setVisibility(GONE);classification="";consumed=false;output=false;removeCallbacks(fade);
         if(info==null||id==null||!id.matches("[1-9][0-9]{0,17}"))return;
         series=info.isShow;territory=StreamingRepository.country(getContext());String country=territory,kind=series?"tv":"movie";long providerId;try{providerId=Long.parseLong(id);}catch(NumberFormatException invalid){return;}
-        StreamingRepository.IO.submit(()->{JSONObject cached=PreviewMetadataCache.read(getContext(),kind,providerId,kind.equals("tv")?"content_ratings":"release_dates");String value=certificate(cached==null?null:cached.optJSONObject("data"),country);post(()->{if(expected!=generation)return;classification=valid(value)?value:"";showIfReady();});});
+        StreamingRepository.IO.submit(()->{JSONObject cached=PreviewMetadataCache.read(getContext(),kind,providerId,kind.equals("tv")?"content_ratings":"release_dates");String value=loadCertificate(cached,country,()->StreamingRepository.metadata(getContext(),kind,providerId,kind.equals("tv")?"content_ratings":"release_dates"));post(()->{if(expected!=generation)return;classification=valid(value)?value:"";showIfReady();});});
+    }
+    /** Direct playback may precede the background queue's last (classification) stage. */
+    static String loadCertificate(JSONObject cached,String country,java.util.concurrent.Callable<JSONObject> fetch){
+        JSONObject data=cached==null?null:cached.optJSONObject("data");
+        if(data==null)try{data=fetch.call();}catch(Exception unavailable){return "";}
+        return certificate(data,country);
     }
     static String certificate(JSONObject data,String country){
         org.json.JSONArray regions=data==null?null:data.optJSONArray("results");

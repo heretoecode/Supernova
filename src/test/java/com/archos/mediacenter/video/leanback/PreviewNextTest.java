@@ -47,14 +47,14 @@ public class PreviewNextTest {
         try {
             View hud=LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental,null);
             ViewGroup transport=hud.findViewById(R.id.preview_transport);
-            assertEquals(3,transport.getChildCount());
+            assertEquals(7,transport.getChildCount());
             int[] ids={R.id.preview_subtitles,R.id.preview_audio,R.id.preview_more};
             for(int i=0;i<ids.length;i++) {
                 View button=hud.findViewById(ids[i]);
                 assertEquals(View.VISIBLE,button.getVisibility());
-                assertSame(transport.getChildAt(i),button.getParent());
+                assertSame(transport,button.getParent().getParent());
             }
-            View pause=hud.findViewById(R.id.pause);assertTrue(pause instanceof ImageButton);assertEquals(View.VISIBLE,pause.getVisibility());assertNotSame(transport,pause.getParent().getParent());assertNotNull(hud.findViewById(R.id.preview_pause_label));assertTrue(hud.findViewById(R.id.seek_progress) instanceof SeekBar);
+            View pause=hud.findViewById(R.id.pause);assertTrue(pause instanceof ImageButton);assertEquals(View.VISIBLE,pause.getVisibility());assertSame(transport,pause.getParent().getParent());assertNotNull(hud.findViewById(R.id.preview_pause_label));assertTrue(hud.findViewById(R.id.seek_progress) instanceof SeekBar);
             for(int id:new int[]{R.id.preview_info,R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward})
                 assertEquals(View.GONE,hud.findViewById(id).getVisibility());
         } finally {host.pause().stop().destroy();}

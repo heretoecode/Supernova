@@ -18,6 +18,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import com.archos.mediacenter.video.R;
 import android.widget.RelativeLayout;
 
 public class PlayerControlsRelativeLayout extends RelativeLayout{
@@ -50,6 +52,17 @@ public class PlayerControlsRelativeLayout extends RelativeLayout{
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		super.onLayout(changed,l,t,r,b);
+		// Keep the middle-left title block clear of a two-line chapter bubble on
+		// constrained / enlarged-text viewports. All coordinates are local; HUD
+		// hide/show translation must not change the safe composition.
+		View title=findViewById(R.id.preview_playback_title),episode=findViewById(R.id.preview_playback_episode),bubble=findViewById(R.id.preview_scrub_time),bar=findViewById(R.id.control_bar);
+		if(title!=null&&bubble!=null&&bar!=null&&title.getVisibility()==VISIBLE&&bar.getVisibility()==VISIBLE&&bubble.getHeight()>0){
+			int bubbleTop=Math.round(bubble.getTranslationY());View node=bubble;
+			while(node!=this){bubbleTop+=node.getTop();if(!(node.getParent() instanceof View)){node=null;break;}node=(View)node.getParent();}
+			if(node==this){float density=getResources().getDisplayMetrics().density;int gap=Math.round(4*density),metadata=episode!=null&&episode.getVisibility()==VISIBLE?episode.getHeight()+gap:0;int safeTop=Math.max(Math.round(24*density),Math.min(title.getTop(),bubbleTop-Math.round(12*density)-title.getHeight()-metadata));
+				title.layout(title.getLeft(),safeTop,title.getRight(),safeTop+title.getHeight());if(metadata>0)episode.layout(episode.getLeft(),title.getBottom()+gap,episode.getRight(),title.getBottom()+gap+episode.getHeight());
+			}
+		}
 		if(mState==1)
 			setSideBySide(true, mPos);
 		else if(mState==2)

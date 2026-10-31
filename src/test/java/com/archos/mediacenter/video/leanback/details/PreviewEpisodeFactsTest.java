@@ -32,7 +32,7 @@ public class PreviewEpisodeFactsTest {
             assertNotNull(key);assertNotNull(reception);String facts=text(key),ratings=text(reception);
             assertTrue(facts.contains("2022"));assertTrue(facts.contains("2022-02-03"));assertTrue(facts.contains("47m"));assertTrue(facts.contains("Series original"));
             assertFalse(facts.contains("1999"));assertFalse(facts.contains("2010"));assertFalse(facts.contains("1h 28m"));assertFalse(facts.contains("1h 17m"));
-            assertTrue(ratings.contains("No rating available"));assertTrue(ratings.contains("7.2"));assertTrue(ratings.contains("123"));
+            assertFalse(ratings.contains("No rating available"));assertTrue(ratings.contains("7.2"));assertTrue(ratings.contains("123"));
             com.archos.mediacenter.video.leanback.SharedMetadata.Facts summary=ReflectionHelpers.getField(page,"latestSummary");assertEquals(7.2f,summary.rating,0.01f);assertEquals(123,summary.votes);assertFalse(ratings.contains("9.8"));assertFalse(ratings.contains("999"));
             packageData.episodes.clear();ReflectionHelpers.callInstanceMethod(page,"applyEnrichment",ReflectionHelpers.ClassParameter.from(PreviewDetailsData.Result.class,packageData),ReflectionHelpers.ClassParameter.from(int.class,(Integer)ReflectionHelpers.getField(page,"enrichmentGeneration")));
             facts=text(page.findViewWithTag("semantic:details.panel.key.information"));assertFalse(facts.contains("1999"));assertFalse(facts.contains("1h 28m"));

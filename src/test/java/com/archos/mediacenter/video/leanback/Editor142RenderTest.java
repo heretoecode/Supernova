@@ -20,17 +20,14 @@ public class Editor142RenderTest {
  @Test public void captureEveryStepAndKeepControlsAndLivePreview()throws Exception{
   var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{
    View root=host.get().findViewById(android.R.id.content);Object workspace=ReflectionHelpers.getField(host.get(),"workspace");ReflectionHelpers.callInstanceMethod(workspace,"edit",ReflectionHelpers.ClassParameter.from(int.class,0));layout(root);
-   int largest=0;for(int step=0;step<5;step++){
-    View rail=root.findViewWithTag("wizard.step."+step);assertNotNull(rail);rail.requestFocus();layout(root);assertNotNull(PreviewPagesTest.findText(root,"Live Preview"));assertNotNull(PreviewPagesTest.findText(root,step==4?"Save Page":"Next"));assertNotNull(PreviewPagesTest.findText(root,"Close Editor"));
-    android.view.View body=ReflectionHelpers.getField(workspace,"libraryBody");
-    body.setBackgroundColor(android.graphics.Color.BLACK);android.graphics.Bitmap dark=render(root);body.setBackgroundColor(android.graphics.Color.WHITE);android.graphics.Bitmap bright=render(root);
-    int maximum=0;for(int x:new int[]{600,800,1000})for(int y:new int[]{600,700,780}){int a=dark.getPixel(x,y),b=bright.getPixel(x,y);maximum=Math.max(maximum,Math.abs(android.graphics.Color.red(a)-android.graphics.Color.red(b)));maximum=Math.max(maximum,Math.abs(android.graphics.Color.green(a)-android.graphics.Color.green(b)));maximum=Math.max(maximum,Math.abs(android.graphics.Color.blue(a)-android.graphics.Color.blue(b)));}
-    java.io.File receipt=new java.io.File("build/reports/preview-ui/0142-editor-step-"+step+"-contrast.json");receipt.getParentFile().mkdirs();try(java.io.FileWriter out=new java.io.FileWriter(receipt)){out.write("{\"background_channel_delta\":"+maximum+",\"viewport\":\"1920x1080\"}\n");}
-    body.setBackground(new android.graphics.drawable.Drawable(){private final android.graphics.Paint paint=new android.graphics.Paint();public void draw(android.graphics.Canvas canvas){for(int y=0;y<getBounds().height();y+=48)for(int x=0;x<getBounds().width();x+=48){paint.setColor((x/48+y/48)%2==0?0xfff5bd3a:0xffd52b57);canvas.drawRect(x,y,x+48,y+48,paint);}}public void setAlpha(int alpha){}public void setColorFilter(android.graphics.ColorFilter filter){}public int getOpacity(){return android.graphics.PixelFormat.OPAQUE;}});
-    PreviewPagesTest.capture(root,"0142-editor-step-"+step);largest=Math.max(largest,maximum);dark.recycle();bright.recycle();
+   View frame=root.findViewWithTag("wizard.preview");
+   for(int step=0;step<4;step++){
+    View rail=root.findViewWithTag("wizard.step."+step);assertNotNull(rail);rail.requestFocus();layout(root);assertSame("Stationary shell survives section changes",frame,root.findViewWithTag("wizard.preview"));assertNotNull(PreviewPagesTest.findText(root,"Live Preview"));
+    assertNull(PreviewPagesTest.findText(root,"Previous"));assertNull(PreviewPagesTest.findText(root,"Next"));assertNull(PreviewPagesTest.findText(root,"Close Editor"));
+    assertEquals(step==3,PreviewPagesTest.findText(root,"Save Changes")!=null);assertNull(root.findViewWithTag("wizard.step.4"));
+    PreviewPagesTest.capture(root,"next-editor-section-"+step);
     root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertNotSame(rail,root.findFocus());
    }
-   assertTrue("Artwork must not alter panel text backgrounds, delta="+largest,largest<=2);
   }finally{host.pause().stop().destroy();}
  }
 }

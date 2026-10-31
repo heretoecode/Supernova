@@ -43,11 +43,14 @@ final class PreviewDetailsData {
         return envelope==null?null:envelope.optJSONObject("data");
     }
     /** Disk-only first delivery; never wait for a refresh of another package section. */
-    static Result cached(Context c,String kind,long id,Set<Long> localIds){
+    static Result cachedCore(Context c,String kind,long id){
         Result result=new Result();result.details=cachedSection(c,kind,id,"");result.credits=cachedSection(c,kind,id,"credits");
         result.classification=cachedSection(c,kind,id,"tv".equals(kind)?"content_ratings":"release_dates");result.alternatives=cachedSection(c,kind,id,"alternative_titles");
         if(result.details==null&&result.credits==null)return null;
-        if(result.details==null)result.details=new JSONObject();
+        if(result.details==null)result.details=new JSONObject();return result;
+    }
+    static Result cached(Context c,String kind,long id,Set<Long> localIds){
+        Result result=cachedCore(c,kind,id);if(result==null)return null;
         JSONArray seasons=result.details.optJSONArray("seasons");
         if("tv".equals(kind)&&seasons!=null)for(int i=0;i<seasons.length();i++){
             JSONObject season=seasons.optJSONObject(i);int number=season==null?-1:season.optInt("season_number",-1);

@@ -39,6 +39,7 @@ final class SettingsRegistry {
     List<String> sections(int category){
         if(category==7)return Arrays.asList("App information","Release Notes","Open-source Licences","Credits & Acknowledgements","Technical Information");
         LinkedHashSet<String> values=new LinkedHashSet<>();
+        if(category==5)values.addAll(Arrays.asList("Service integrations","OpenSubtitles","Trakt"));
         if(category==0)values.addAll(Arrays.asList("Playback","Video & Display","Resume & Progress"));
         for(Entry e:entries)if(e.category.equals(CATEGORIES[category])&&!e.excluded())values.add(e.nested()||e.id.equals("S086")||e.id.equals("S087")?"Backup & restore":e.section);
         return new ArrayList<>(values);

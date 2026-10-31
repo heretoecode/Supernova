@@ -16,6 +16,8 @@ public final class PreviewFocusRail extends LinearLayout {
     private ValueAnimator movement;
     private boolean visible;
     private boolean underline;
+    private boolean animateMovement=true;
+    public void setAnimateFocus(boolean animate){animateMovement=animate;moveTo(findFocus());}
     public void useUnderline(){underline=true;moveTo(findFocus());invalidate();}
     private final ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, next) -> moveTo(next);
 
@@ -46,7 +48,7 @@ public final class PreviewFocusRail extends LinearLayout {
             destination.left+=next.getPaddingLeft();destination.right-=next.getPaddingRight();
             destination.top=destination.bottom-2*getResources().getDisplayMetrics().density;
         }
-        if (!visible || current.isEmpty()) {
+        if (!animateMovement || !visible || current.isEmpty()) {
             current.set(destination);
             visible = true;
             invalidate();

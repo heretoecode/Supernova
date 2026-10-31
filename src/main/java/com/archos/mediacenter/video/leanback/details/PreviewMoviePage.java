@@ -50,6 +50,10 @@ public final class PreviewMoviePage extends ScrollView {
     private Snapshot snapshot;
     private PreviewDetailsData.Result enrichment;private java.util.concurrent.Future<?> enrichmentTask;private String enrichmentKey="";private int enrichmentGeneration;private org.json.JSONObject remoteDetails;private String remoteKind;private long remoteId;
     private final List<Presenter.ViewHolder> cards=new ArrayList<>();
+    private PreviewDetailsData.Result pendingEnrichment;private int pendingEnrichmentGeneration;private boolean enrichmentDeliveryScheduled;
+    private final Runnable deliverEnrichment=()->{enrichmentDeliveryScheduled=false;PreviewDetailsData.Result result=pendingEnrichment;pendingEnrichment=null;if(result!=null)applyEnrichment(result,pendingEnrichmentGeneration);};
+    /** Cached sections completed within one frame enter as one coherent update. Slow I/O never blocks Back. */
+    private void enqueueEnrichment(PreviewDetailsData.Result result,int generation){if(generation!=enrichmentGeneration)return;if(pendingEnrichmentGeneration!=generation)pendingEnrichment=null;pendingEnrichmentGeneration=generation;pendingEnrichment=PreviewDetailsData.merge(pendingEnrichment,result);if(!enrichmentDeliveryScheduled){enrichmentDeliveryScheduled=true;postOnAnimation(deliverEnrichment);}}
     private String informationSignature="",peopleSignature="",receptionSignature="";
     private DetailsBlueprintPanel informationPanel;
     private com.squareup.picasso.Picasso artworkLoader;
@@ -61,7 +65,7 @@ public final class PreviewMoviePage extends ScrollView {
         setFillViewport(true);setVerticalScrollBarEnabled(false);setFocusable(false);setFocusableInTouchMode(false);setSmoothScrollingEnabled(false);setClipToPadding(false);setClipChildren(false);body=new LinearLayout(c);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(dp(42),0,dp(42),dp(24));body.setClipChildren(false);addView(body);
         heroPage=new LinearLayout(c);heroPage.setOrientation(LinearLayout.VERTICAL);heroPage.setPadding(0,dp(24),0,0);heroPage.setClipChildren(false);body.addView(heroPage,new LinearLayout.LayoutParams(-1,dp(488)));
         detailsCard=new CinematicCard(c);detailsCard.setTag("semantic:details.card");heroPage.addView(detailsCard,new LinearLayout.LayoutParams(-1,0,1));
-        cardArtwork=new ImageView(c);cardArtwork.setScaleType(ImageView.ScaleType.CENTER_CROP);detailsCard.addView(cardArtwork,new FrameLayout.LayoutParams(-1,-1));detailsCard.addScrim();
+        cardArtwork=new ImageView(c);cardArtwork.setScaleType(ImageView.ScaleType.CENTER_CROP);detailsCard.addView(cardArtwork,new FrameLayout.LayoutParams(-1,-1));detailsCard.addTextScrim();
         LinearLayout cardCopy=new LinearLayout(c);cardCopy.setTag("details.copy");cardCopy.setOrientation(LinearLayout.VERTICAL);cardCopy.setPadding(dp(24),dp(18),dp(24),dp(16));detailsCard.addView(cardCopy,new FrameLayout.LayoutParams(-1,-1));
         title=text("",34);title.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));title.setMaxLines(2);title.setGravity(Gravity.CENTER_VERTICAL);title.setEllipsize(android.text.TextUtils.TruncateAt.END);cardCopy.addView(title,new LinearLayout.LayoutParams(dp(430),dp(96)));
         meta=text("",18);meta.setSingleLine(true);meta.setEllipsize(android.text.TextUtils.TruncateAt.END);meta.setPadding(0,dp(10),0,dp(4));cardCopy.addView(meta);
@@ -573,6 +577,8 @@ public final class PreviewMoviePage extends ScrollView {
         restoreRowFocus(trailers,focusKey,y);
     }
     public void bindRemote(org.json.JSONObject details,String kind,long id){freshTitle(kind+":"+id);remoteDetails=details;remoteKind=kind;remoteId=id;title.setText(details.optString("title",details.optString("name")));OfficialTitleArtwork.bindRemote(title,kind,id);plot.setText(details.optString("overview"));String backdrop=details.optString("backdrop_path");if(backdrop.matches("/[A-Za-z0-9._-]+"))cardArtwork(Uri.parse("https://image.tmdb.org/t/p/w1280"+backdrop));play.setVisibility(GONE);renderDetails();requestEnrichment();}
+    private String firstPaintTitle="";
+    @Override protected void onDraw(android.graphics.Canvas canvas){super.onDraw(canvas);if(!boundTitle.isEmpty()&&!boundTitle.equals(firstPaintTitle)){firstPaintTitle=boundTitle;com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_first_paint","media_id",diagnosticMedia(),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-openedAt);}}
     private long diagnosticMedia(){return movie!=null?movie.getId():show!=null?show.getTvshowId():remoteId;}
     private long metadataIdentity(){
         if(remoteDetails!=null)return remoteId;if(movie instanceof Movie)return ((Movie)movie).getOnlineId();if(tags instanceof EpisodeTags&&((EpisodeTags)tags).getShowTags()!=null)return ((EpisodeTags)tags).getShowTags().getOnlineId();if(show!=null&&show.getShowTags()!=null)return show.getShowTags().getOnlineId();
@@ -590,11 +596,12 @@ public final class PreviewMoviePage extends ScrollView {
             long start=android.os.SystemClock.elapsedRealtime();
             String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("details_enrichment");
             try(com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored=com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)){
+                if(requestedSeason<0){PreviewDetailsData.Result core=PreviewDetailsData.cachedCore(app,kind,id);if(core!=null)post(()->enqueueEnrichment(core,generation));com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_core_cache_ready","media_id",id,"elapsed_ms",android.os.SystemClock.elapsedRealtime()-start,"cached",core!=null);}
                 PreviewDetailsData.Result cached=requestedSeason>=0?PreviewDetailsData.cachedSeason(app,id,requestedSeason):PreviewDetailsData.cached(app,kind,id,local);
-                if(cached!=null)post(()->applyEnrichment(cached,generation));
-                Consumer<PreviewDetailsData.Result> progress=partial->post(()->applyEnrichment(partial,generation));
+                if(cached!=null)post(()->enqueueEnrichment(cached,generation));
+                Consumer<PreviewDetailsData.Result> progress=partial->post(()->enqueueEnrichment(partial,generation));
                 PreviewDetailsData.Result result=requestedSeason>=0?PreviewDetailsData.loadSeason(app,id,requestedSeason,progress):PreviewDetailsData.load(app,kind,id,local,progress);
-                post(()->applyEnrichment(result,generation));
+                post(()->enqueueEnrichment(result,generation));
             }catch(Exception error){com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_enrichment_unavailable","operation_id",operation,"media_id",id,"failure_category",error.getClass().getSimpleName());post(()->{if(generation==enrichmentGeneration)enrichmentKey="";});}
             finally{com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_enrichment","operation_id",operation,"elapsed_ms",android.os.SystemClock.elapsedRealtime()-start);com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"details_enrichment",start);}
         });
@@ -619,8 +626,8 @@ public final class PreviewMoviePage extends ScrollView {
         }
         if(!oldEpisodes.equals(enrichment.episodes.toString()+enrichment.seasonAvailability.toString()))renderSeasons();
     }
-    private static String extrasFingerprint(PreviewDetailsData.Result result){StringBuilder text=new StringBuilder().append(result.extrasLoaded);for(PreviewDetailsData.Extra e:result.extras)text.append(e.key).append(e.name).append(e.type);return text.toString();}
-    private static String relatedFingerprint(PreviewDetailsData.Result result){StringBuilder text=new StringBuilder().append(result.relatedLoaded);for(PreviewDetailsData.Remote e:result.related)text.append(e.title).append(e.provider==null?0:e.provider.id);return text.toString();}
+    private static String extrasFingerprint(PreviewDetailsData.Result result){if(result==null)return "";StringBuilder text=new StringBuilder().append(result.extrasLoaded);for(PreviewDetailsData.Extra e:result.extras)text.append(e.key).append(e.name).append(e.type);return text.toString();}
+    private static String relatedFingerprint(PreviewDetailsData.Result result){if(result==null)return "";StringBuilder text=new StringBuilder().append(result.relatedLoaded);for(PreviewDetailsData.Remote e:result.related)text.append(e.title).append(e.provider==null?0:e.provider.id);return text.toString();}
     private String informationFingerprint(PreviewDetailsData.Result result){
         if(result==null)return "";String text=String.valueOf(result.details)+result.classification+result.alternatives+result.supplementary.imdbVotes;
         for(int slot=0;slot<4;slot++)text+="|"+result.supplementary.value(slot);
@@ -693,5 +700,5 @@ public final class PreviewMoviePage extends ScrollView {
         ScraperTrailer best=null;int score=0;for(ScraperTrailer t:trailerList){if(!"YouTube".equals(t.mSite)||t.mVideoKey==null||!t.mVideoKey.matches("[A-Za-z0-9_-]{11}"))continue;String name=t.mName==null?"":t.mName.toLowerCase(Locale.ROOT);if(!name.contains("trailer")||name.contains("fan")||name.contains("reaction"))continue;int rank=(name.contains("official")?4:1)+(name.contains("main")?2:0)+(name.contains("teaser")?-1:0);if(rank>score){score=rank;best=t;}}return best;
     }
     private void chooseTrailer(){ScraperTrailer t=primaryTrailer();if(t!=null)PreviewTrailer.show((Activity)getContext(),t);}
-    @Override protected void onDetachedFromWindow(){android.view.ViewParent shell=getParent();while(shell!=null){if(shell instanceof TopNavigation){((TopNavigation)shell).setDetailsExpanded(false);break;}shell=shell.getParent();}enrichmentGeneration++;if(enrichmentTask!=null)enrichmentTask.cancel(true);if(artworkLoader!=null)artworkLoader.cancelRequest(cardArtwork);if(reviews!=null)reviews.close();if(observedActions!=null){observedActions.unregisterObserver(actionObserver);observedActions=null;}for(Presenter.ViewHolder h:providerHolders)providerPresenter.onUnbindViewHolder(h);providerHolders.clear();for(Presenter.ViewHolder h:cards)presenter.onUnbindViewHolder(h);cards.clear();for(PreviewLandscapeCard card:landscapeCards)card.release();landscapeCards.clear();for(PreviewLandscapeCard card:extraCards)card.release();extraCards.clear();super.onDetachedFromWindow();}
+    @Override protected void onDetachedFromWindow(){removeCallbacks(deliverEnrichment);pendingEnrichment=null;enrichmentDeliveryScheduled=false;android.view.ViewParent shell=getParent();while(shell!=null){if(shell instanceof TopNavigation){((TopNavigation)shell).setDetailsExpanded(false);break;}shell=shell.getParent();}enrichmentGeneration++;if(enrichmentTask!=null)enrichmentTask.cancel(true);if(artworkLoader!=null)artworkLoader.cancelRequest(cardArtwork);if(reviews!=null)reviews.close();if(observedActions!=null){observedActions.unregisterObserver(actionObserver);observedActions=null;}for(Presenter.ViewHolder h:providerHolders)providerPresenter.onUnbindViewHolder(h);providerHolders.clear();for(Presenter.ViewHolder h:cards)presenter.onUnbindViewHolder(h);cards.clear();for(PreviewLandscapeCard card:landscapeCards)card.release();landscapeCards.clear();for(PreviewLandscapeCard card:extraCards)card.release();extraCards.clear();super.onDetachedFromWindow();}
 }

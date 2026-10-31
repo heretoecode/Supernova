@@ -1,0 +1,42 @@
+{
+  "run": 41118855851,
+  "source": "7011e877d026e745a079846827ababe03c2af798",
+  "conclusion": "success",
+  "artifact_id": 13008330989,
+  "artifact_bytes": 3772251,
+  "artifact_sha256": "366491cad3d6a0ba754e0aeb1083a293d0d1a4641439b98e77400212be42b79e",
+  "independent_zip_crc": "pass",
+  "tests": [
+    {
+      "classname": "com.archos.mediascraper.preprocess.ScraperIntegrationTest",
+      "name": "testScrapingFromCsv",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "legacyDefaultsAcceptPrivateCaAndWrongHost",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "trustedControlAndDataTransfer",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "trustedCaWrongDataHostnameRejected",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "trustedCaWrongControlHostnameRejected",
+      "passed": true
+    },
+    {
+      "classname": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "name": "platformTrustRejectsPrivateCaBeforeLogin",
+      "passed": true
+    }
+  ],
+  "prior_validation": "Run 41093563462 on a928633 also passed six cases; retained API artifact digest bad3eeeb96253ec0bffb6d21b11ad0e7aa77dd899f821229e2c631b76876c69b."
+}

@@ -1,0 +1,196 @@
+[
+  {
+    "url": "https://chaptersdb.com/api/v1/show/bad-times-at-the-el-royale",
+    "status": 200,
+    "keys": [
+      "id",
+      "slug",
+      "title",
+      "type",
+      "year",
+      "tvdbId",
+      "imdbId",
+      "chapters",
+      "chapterCount"
+    ],
+    "metadata": {
+      "id": "2c1475ea-9627-4a18-93fe-046f89b91596",
+      "type": "movie",
+      "imdbId": "tt6628394",
+      "tvdbId": "",
+      "year": "2018",
+      "chapterCount": 1
+    },
+    "chapter_sets": [
+      {
+        "id": "5e2438cd-3170-4078-afa4-a120ec5f5d0f",
+        "note": null,
+        "entries": [
+          {
+            "time": "02:14:09.041",
+            "name": "Chapter 10"
+          },
+          {
+            "time": "02:15:45.428",
+            "name": "Chapter 11"
+          },
+          {
+            "time": "00:00:00.000",
+            "name": "Chapter 1"
+          },
+          {
+            "time": "00:04:19.592",
+            "name": "Chapter 2"
+          },
+          {
+            "time": "00:19:21.994",
+            "name": "Chapter 3"
+          },
+          {
+            "time": "00:34:32.737",
+            "name": "Chapter 4"
+          },
+          {
+            "time": "00:49:24.711",
+            "name": "Chapter 5"
+          },
+          {
+            "time": "00:51:19.868",
+            "name": "Chapter 6"
+          },
+          {
+            "time": "01:16:01.473",
+            "name": "Chapter 7"
+          },
+          {
+            "time": "01:37:13.369",
+            "name": "Chapter 8"
+          },
+          {
+            "time": "02:03:56.720",
+            "name": "Chapter 9"
+          }
+        ]
+      }
+    ],
+    "episodes": []
+  },
+  {
+    "url": "https://chaptersdb.com/api/v1/show/star-trek-voyager",
+    "status": 200,
+    "keys": [
+      "id",
+      "slug",
+      "title",
+      "type",
+      "year",
+      "tvdbId",
+      "imdbId",
+      "episodes",
+      "episodeCount"
+    ],
+    "metadata": {
+      "id": "d40e78af-b1d0-4ab5-9f73-4d5e1e32f0f1",
+      "type": "tv",
+      "imdbId": "tt0112178",
+      "tvdbId": "74550",
+      "year": "1995",
+      "episodeCount": 15
+    },
+    "chapter_sets": [],
+    "episodes": [
+      {
+        "id": "c27ef7b4-786a-4c0b-8ff1-3dcc6d049dc6",
+        "slug": "star-trek-voyager-s01e01-caretaker",
+        "title": "S01E01 - Caretaker",
+        "tvdbId": ""
+      }
+    ]
+  },
+  {
+    "url": "https://chaptersdb.com/api/v1/chapters/c27ef7b4-786a-4c0b-8ff1-3dcc6d049dc6",
+    "status": 200,
+    "keys": [
+      "episodeId",
+      "episodeTitle",
+      "chapters",
+      "count"
+    ],
+    "chapter_sets": [
+      {
+        "id": "6f912d7f-e30e-4be8-8a89-5aabb0f64831",
+        "note": "DVD Chapters",
+        "entries": [
+          {
+            "time": "00:47:03.620",
+            "name": "10. Honored Guests"
+          },
+          {
+            "time": "00:51:41.198",
+            "name": "11. The Ocampa"
+          },
+          {
+            "time": "00:58:21.130",
+            "name": "12. Ancient Tunnels"
+          },
+          {
+            "time": "01:04:28.331",
+            "name": "13. An Unpaid Debt"
+          },
+          {
+            "time": "01:08:01.210",
+            "name": "14. To the Surface"
+          },
+          {
+            "time": "01:14:22.758",
+            "name": "15. The Challenge of Survival"
+          },
+          {
+            "time": "01:21:52.040",
+            "name": "16. Destroy the Array"
+          },
+          {
+            "time": "01:26:14.536",
+            "name": "17. Alone"
+          },
+          {
+            "time": "00:00:00.000",
+            "name": "01. The Maquis"
+          },
+          {
+            "time": "00:04:55.461",
+            "name": "02. The Son of an Admiral"
+          },
+          {
+            "time": "00:08:03.783",
+            "name": "03. U.S.S. Voyager NCC-74656"
+          },
+          {
+            "time": "00:15:41.307",
+            "name": "04. Into the Badlands"
+          },
+          {
+            "time": "00:20:03.769",
+            "name": "05. The Other Side of the Galaxy"
+          },
+          {
+            "time": "00:25:29.861",
+            "name": "06. Inside the Array"
+          },
+          {
+            "time": "00:31:19.410",
+            "name": "07. Not Enough Time"
+          },
+          {
+            "time": "00:37:58.409",
+            "name": "08. The Fifth Planet"
+          },
+          {
+            "time": "00:42:47.865",
+            "name": "09. The Caretaker"
+          }
+        ]
+      }
+    ]
+  }
+]

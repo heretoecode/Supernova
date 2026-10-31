@@ -25,7 +25,10 @@ class Settings143Mapping(unittest.TestCase):
             self.assertEqual(expected,hashlib.sha256((ROOT/path).read_bytes()).hexdigest())
     def test_release_history_preserves_previous_delivered_identity(self):
         history=json.loads((ROOT/'assets/foundation/release-history.json').read_text())
-        self.assertEqual(('0.147',147),(history['current']['version'],history['current']['version_code']))
+        self.assertEqual(('0.148',148),(history['current']['version'],history['current']['version_code']))
+        previous=next(item for item in history['history'] if item['version']=='0.147')
+        verified=json.loads((ROOT/'docs/0.147/INDEPENDENT_SIGNED_APK_VERIFICATION.json').read_text())
+        self.assertEqual(verified['apk_sha256'],previous['apks'][0]['sha256']);self.assertEqual(verified['source_commit'],previous['source_sha'])
         delivered=next(item for item in history['history'] if item['version']=='0.146')
         receipt=json.loads((ROOT/'docs/0.146/SIGNED_ARTIFACT_VERIFICATION.json').read_text())
         binary=json.loads((ROOT/'docs/0.146/INDEPENDENT_SIGNED_APK_VERIFICATION.json').read_text())

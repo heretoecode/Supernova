@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewEnrichmentQueueTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
+ @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException absent){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}}
  @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Test public void oldCountryOrLanguageJobsCannotRunUnderCurrentScope()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
@@ -59,6 +59,9 @@ public class PreviewEnrichmentQueueTest {
             }
         }finally{helper.close();}
     }
+    @Test public void settledFocusPriorityIsTemporaryAndNeverDemotesOpenDetails()throws Exception{
+        Context c=RuntimeEnvironment.getApplication();SQLiteOpenHelper helper=(SQLiteOpenHelper)ReflectionHelpers.callConstructor(Class.forName("com.archos.mediacenter.video.leanback.PreviewEnrichmentQueue$Store"),ReflectionHelpers.ClassParameter.from(Context.class,c));try{SQLiteDatabase db=helper.getWritableDatabase();db.execSQL("INSERT INTO jobs VALUES('movie:1:test','movie',1,5,1,0,0,0)");db.execSQL("INSERT INTO jobs VALUES('movie:2:test','movie',2,0,2,0,0,0)");PreviewEnrichmentQueue.restorePagePriorities(db,java.util.Map.of("movie:1:test",20));try(Cursor rows=db.rawQuery("SELECT priority,stage FROM jobs ORDER BY media",null)){assertTrue(rows.moveToNext());assertEquals(20,rows.getInt(0));assertEquals(1,rows.getInt(1));assertTrue(rows.moveToNext());assertEquals(0,rows.getInt(0));assertEquals(2,rows.getInt(1));}}finally{helper.close();}
+    }
     @Test public void episodePriorityTargetsParentSeriesAndKeepsPackageProgress()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
         SQLiteOpenHelper helper=(SQLiteOpenHelper)ReflectionHelpers.callConstructor(Class.forName("com.archos.mediacenter.video.leanback.PreviewEnrichmentQueue$Store"),ReflectionHelpers.ClassParameter.from(Context.class,context));
@@ -85,4 +88,20 @@ public class PreviewEnrichmentQueueTest {
             assertTrue(cursor.moveToFirst());assertEquals("tv:42",cursor.getString(0));assertEquals(3,cursor.getInt(1));assertEquals(1234,cursor.getLong(2));assertEquals(0,cursor.getInt(3));
         }finally{helper.close();}
     }
+    @Test @Config(qualifiers="w960dp-h540dp-land-mdpi") public void settledPreparationResolvesNestedHomeCardsAndClearsObsoleteFocus(){
+        Context c=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean("supernova_onboarding_complete",true).commit();var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{PreviewPages page=new PreviewPages(host.get(),(holder,item)->{});host.get().setContentView(page);page.setDiscovery(new PreviewDiscovery());var movie=new com.archos.mediacenter.video.browser.adapters.object.Movie(1,"/fixture/movie","Indexed fixture",42,"Indexed synopsis",2024,7,"",null,100000,0,0,0,false,false,false,false,1,0,1920,1080,null,null,null,null,0,1,1000,0);PreviewLibraryLoader.Entry entry=new PreviewLibraryLoader.Entry(movie,1,0,"Drama");entry.onlineId=42;PreviewLibraryLoader.Snapshot snapshot=new PreviewLibraryLoader.Snapshot();snapshot.movies.add(entry);snapshot.recent.add(entry);page.setSnapshot(snapshot);PreviewPagesTest.layout(page);android.view.View card=page.findViewWithTag(entry.key());assertNotNull("Actual nested Recently Added card",card);android.widget.Button outside=new android.widget.Button(host.get());ReflectionHelpers.callInstanceMethod(page,"prepareDetails",ReflectionHelpers.ClassParameter.from(android.view.View.class,outside));assertNull(ReflectionHelpers.getField(page,"preparingDetails"));ReflectionHelpers.callInstanceMethod(page,"prepareDetails",ReflectionHelpers.ClassParameter.from(android.view.View.class,card));assertSame(entry,ReflectionHelpers.getField(page,"preparingDetails"));ReflectionHelpers.callInstanceMethod(page,"prepareDetails",ReflectionHelpers.ClassParameter.from(android.view.View.class,outside));assertNull("Pending old item cannot survive focus leaving media",ReflectionHelpers.getField(page,"preparingDetails"));}finally{host.pause().stop().destroy();}
+    }
+
+    @Test @Config(qualifiers="w960dp-h540dp-land-mdpi") public void leavingMediaForGlobalNavigationClearsPreparationAndReturningReschedules(){
+        Context c=RuntimeEnvironment.getApplication();androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean("supernova_onboarding_complete",true).commit();
+        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
+            PreviewPages page=new PreviewPages(host.get(),(holder,item)->{});TopNavigation nav=new TopNavigation(host.get(),page,index->{},()->true);host.get().setContentView(nav);page.setDiscovery(new PreviewDiscovery());
+            var movie=new com.archos.mediacenter.video.browser.adapters.object.Movie(1,"/fixture/movie","Indexed fixture",42,"Indexed synopsis",2024,7,"",null,100000,0,0,0,false,false,false,false,1,0,1920,1080,null,null,null,null,0,1,1000,0);
+            PreviewLibraryLoader.Entry entry=new PreviewLibraryLoader.Entry(movie,1,0,"Drama");entry.onlineId=42;PreviewLibraryLoader.Snapshot snapshot=new PreviewLibraryLoader.Snapshot();snapshot.movies.add(entry);snapshot.recent.add(entry);page.setSnapshot(snapshot);PreviewPagesTest.layout(nav);
+            android.view.View card=page.findViewWithTag(entry.key());assertNotNull(card);assertTrue("Real nested card takes focus",card.requestFocus());assertSame(entry,ReflectionHelpers.getField(page,"preparingDetails"));
+            assertTrue("Global navigation takes focus",nav.findViewWithTag("semantic:topnav.home").requestFocus());assertFalse(page.hasFocus());assertNull("Leaving the page clears the pending identity",ReflectionHelpers.getField(page,"preparingDetails"));assertEquals("",ReflectionHelpers.getField(page,"preparingKey"));
+            assertTrue(card.requestFocus());assertSame("Returning to the same card schedules preparation again",entry,ReflectionHelpers.getField(page,"preparingDetails"));assertFalse(((String)ReflectionHelpers.getField(page,"preparingKey")).isEmpty());
+        }finally{host.pause().stop().destroy();}
+    }
+
 }

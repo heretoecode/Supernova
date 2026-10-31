@@ -1,0 +1,64 @@
+{
+  "id": "2c1475ea-9627-4a18-93fe-046f89b91596",
+  "slug": "bad-times-at-the-el-royale",
+  "title": "Bad Times at the El Royale",
+  "type": "movie",
+  "year": "2018",
+  "tvdbId": "",
+  "imdbId": "tt6628394",
+  "chapters": [
+    {
+      "id": "5e2438cd-3170-4078-afa4-a120ec5f5d0f",
+      "entries": [
+        {
+          "time": "02:14:09.041",
+          "name": "Chapter 10"
+        },
+        {
+          "time": "02:15:45.428",
+          "name": "Chapter 11"
+        },
+        {
+          "time": "00:00:00.000",
+          "name": "Chapter 1"
+        },
+        {
+          "time": "00:04:19.592",
+          "name": "Chapter 2"
+        },
+        {
+          "time": "00:19:21.994",
+          "name": "Chapter 3"
+        },
+        {
+          "time": "00:34:32.737",
+          "name": "Chapter 4"
+        },
+        {
+          "time": "00:49:24.711",
+          "name": "Chapter 5"
+        },
+        {
+          "time": "00:51:19.868",
+          "name": "Chapter 6"
+        },
+        {
+          "time": "01:16:01.473",
+          "name": "Chapter 7"
+        },
+        {
+          "time": "01:37:13.369",
+          "name": "Chapter 8"
+        },
+        {
+          "time": "02:03:56.720",
+          "name": "Chapter 9"
+        }
+      ],
+      "note": null,
+      "upvotes": 0,
+      "downvotes": 0
+    }
+  ],
+  "chapterCount": 1
+}

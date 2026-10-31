@@ -32,15 +32,22 @@ final class DetailsBlueprintPanel extends LinearLayout {
         super(c);setOrientation(VERTICAL);setTag("details.blueprint.v3");setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);setPadding(dp(10),dp(8),dp(10),dp(8));
         LinearLayout upper=row(.56f),lower;upperRow=upper;
         LinearLayout description=region(upper,"Description",.378f);TextView copy=label(synopsis==null||synopsis.trim().isEmpty()?"Unavailable":synopsis,13,false);copy.setTag("details.full.synopsis");copy.setGravity(Gravity.CENTER);copy.setLineSpacing(dp(3),1);copy.setEllipsize(android.text.TextUtils.TruncateAt.END);androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(copy,DetailsDimensions.sp(c,11),DetailsDimensions.sp(c,14),1,android.util.TypedValue.COMPLEX_UNIT_SP);description.addView(copy,new LayoutParams(-1,0,1));synopsisView=copy;copy.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{int lines=Math.max(1,(b-t-copy.getPaddingTop()-copy.getPaddingBottom())/Math.max(1,copy.getLineHeight()));if(copy.getMaxLines()!=lines)copy.setMaxLines(lines);});
-        LinearLayout key=region(upper,"Key Information",.328f);
+        boolean suppliedData=false;for(int slot=0;slot<4;slot++)suppliedData|=!supplementary.value(slot).isEmpty();
+        boolean hasReception=existingReception.containsKey("TMDB Rating")||existingReception.containsKey("Indexed Rating")||suppliedData;
+        LinearLayout key=region(upper,"Key Information",hasReception?.328f:.622f);
         bindFacts(key,KEY_FIELDS,facts,keyValues);
+        if(hasReception){
         LinearLayout reception=region(upper,"Reception",.294f);
         String existing=existingReception.containsKey("TMDB Rating")?"TMDb "+existingReception.get("TMDB Rating"):existingReception.containsKey("Indexed Rating")?"Indexed rating "+existingReception.get("Indexed Rating"):"";
-        if(!existing.isEmpty()){if(existingReception.containsKey("TMDb votes"))existing+=" · "+existingReception.get("TMDb votes")+" votes";TextView prior=label(existing,10,false);prior.setTextColor(0xffb9c7d2);prior.setSingleLine(true);prior.setEllipsize(android.text.TextUtils.TruncateAt.END);prior.setContentDescription(existing);auto(prior,6,10);reception.addView(prior,new LayoutParams(-1,dp(17)));}
-        boolean suppliedData=false;for(int slot=0;slot<4;slot++)suppliedData|=!supplementary.value(slot).isEmpty();if(suppliedData){TextView attribution=label("Supplementary data via OMDb",9,false);attribution.setSingleLine(true);auto(attribution,6,9);reception.addView(attribution,new LayoutParams(-1,dp(15)));}
+        if(!existing.isEmpty()){
+            TextView score=label(existing,16,true);score.setTag("details.reception.primary");score.setSingleLine(false);score.setMaxLines(2);score.setEllipsize(android.text.TextUtils.TruncateAt.END);reception.addView(score,new LayoutParams(-1,0,1));
+            if(existingReception.containsKey("TMDb votes")){TextView votes=label(existingReception.get("TMDb votes")+" votes",11,false);votes.setTextColor(0xffb9c7d2);reception.addView(votes,new LayoutParams(-1,-2));}
+        }
+        if(suppliedData){TextView attribution=label("Supplementary data via OMDb",9,false);attribution.setSingleLine(true);auto(attribution,6,9);reception.addView(attribution,new LayoutParams(-1,dp(15)));}
         String[] providers={"IMDb","Rotten Tomatoes","Metacritic","Awards"};
-        for(int n=0;n<providers.length;n++){
-            if(n>0){rule(reception,false);if(getResources().getConfiguration().fontScale>1.2f){LayoutParams divider=(LayoutParams)reception.getChildAt(reception.getChildCount()-1).getLayoutParams();divider.topMargin=dp(2);divider.bottomMargin=dp(2);}}
+        int shown=0;for(int n=0;n<providers.length;n++){
+            if(supplementary.value(n).isEmpty())continue;
+            if(shown++>0){rule(reception,false);if(getResources().getConfiguration().fontScale>1.2f){LayoutParams divider=(LayoutParams)reception.getChildAt(reception.getChildCount()-1).getLayoutParams();divider.topMargin=dp(2);divider.bottomMargin=dp(2);}}
             LinearLayout rating=new LinearLayout(c);rating.setGravity(Gravity.CENTER_VERTICAL);rating.setBaselineAligned(false);reception.addView(rating,new LayoutParams(-1,0,1));
             rating.setTag("details.reception.slot."+n);
             if(n==0||n==3)rating.addView(providerMark(n,providers[n]),new LayoutParams(0,-1,.34f));
@@ -51,6 +58,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
             TextView heading=(TextView)reception.getChildAt(0);reception.removeView(heading);
             LinearLayout header=new LinearLayout(c);header.setGravity(Gravity.CENTER_VERTICAL);header.addView(heading,new LayoutParams(0,-1,1));
             TextView read=TvButton.create(c,"Read reviews",reviews,false);read.setTag("details.reviews");read.setCompoundDrawables(null,null,null,null);read.setMinimumHeight(dp(27));read.setTextSize(DetailsDimensions.sp(c,11));read.setPadding(dp(6),dp(2),dp(6),dp(2));header.addView(read,new LayoutParams(-2,-1));reception.addView(header,0,new LayoutParams(-1,dp(27)));
+        }
         }
         rule(this,false);lower=row(.44f);lowerRow=lower;
         attach(region(lower,"Cast",.344f),cast);attach(region(lower,"Crew",.353f),crew);
@@ -74,11 +82,11 @@ final class DetailsBlueprintPanel extends LinearLayout {
     private View ratingValue(int row,OmdbSupplement.Ratings ratings){
         LinearLayout box=new LinearLayout(getContext());box.setOrientation(VERTICAL);String supplied=ratings.value(row);
         if(supplied.isEmpty()||row==3){TextView body=label(supplied.isEmpty()?(row==3?"Unavailable":"No rating available"):supplied,11,false);body.setGravity(Gravity.CENTER_VERTICAL);body.setMaxLines(row==3?3:2);body.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(body,6,11);box.addView(body,new LayoutParams(-1,-1));return box;}
-        TextView score=label(supplied,16,true);score.setGravity(Gravity.CENTER_VERTICAL);score.setSingleLine(true);score.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(score,8,16);
+        TextView score=label(supplied,16,true);score.setGravity(Gravity.CENTER_VERTICAL);score.setSingleLine(true);score.setHorizontallyScrolling(false);score.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(score,8,16);
         int unit=supplied.indexOf('/');if(unit<0&&supplied.endsWith("%"))unit=supplied.length()-1;
         if(unit>=0){android.text.SpannableString styled=new android.text.SpannableString(supplied);styled.setSpan(new android.text.style.RelativeSizeSpan(11f/16f),unit,supplied.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);styled.setSpan(new android.text.style.StyleSpan(Typeface.NORMAL),unit,supplied.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);score.setText(styled);}
-        boolean support=row==0&&!ratings.imdbVotes.isEmpty();box.addView(score,new LayoutParams(-1,0,support?.6f:1f));
-        if(support){TextView count=label(votes(ratings.imdbVotes),10,false);count.setTextColor(0xffb9c7d2);count.setGravity(Gravity.CENTER_VERTICAL);count.setSingleLine(true);count.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(count,6,10);box.addView(count,new LayoutParams(-1,0,.4f));}
+        boolean support=row==0&&!ratings.imdbVotes.isEmpty();if(support)box.setOrientation(HORIZONTAL);box.addView(score,support?new LayoutParams(0,-1,.5f):new LayoutParams(-1,0,1f));
+        if(support){TextView count=label(votes(ratings.imdbVotes),10,false);count.setTextColor(0xffb9c7d2);count.setGravity(Gravity.CENTER_VERTICAL);count.setSingleLine(true);count.setHorizontallyScrolling(false);count.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(count,6,10);count.setPadding(dp(4),0,0,0);box.addView(count,new LayoutParams(0,-1,.5f));}
         return box;
     }
     private void auto(TextView view,int min,int max){androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(view,DetailsDimensions.sp(getContext(),min),DetailsDimensions.sp(getContext(),max),1,android.util.TypedValue.COMPLEX_UNIT_SP);}

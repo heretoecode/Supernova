@@ -58,4 +58,11 @@ public class PlaybackAgeOverlayTest {
     @Test @Config(qualifiers="w640dp-h360dp-land-xhdpi") public void certificationRenderAt720p()throws Exception{renderRating("720p");}
     @Test @Config(qualifiers="w960dp-h540dp-land-xhdpi") public void certificationRenderAt1080p()throws Exception{renderRating("1080p");}
     @Test @Config(qualifiers="w960dp-h540dp-land-xxxhdpi") public void certificationRenderAt4k()throws Exception{renderRating("4k");}
+    @Test public void coldDirectPlaybackLoadsClassificationButCachedMissingRegionStaysHidden()throws Exception{
+        org.json.JSONObject data=new org.json.JSONObject("{results:[{iso_3166_1:'GB',rating:'15'}]}");int[] requests={0};
+        assertEquals("15",PlaybackAgeOverlay.loadCertificate(null,"GB",()->{requests[0]++;return data;}));assertEquals(1,requests[0]);
+        org.json.JSONObject cached=new org.json.JSONObject().put("data",data);assertEquals("",PlaybackAgeOverlay.loadCertificate(cached,"IE",()->{fail("A complete cached response must not trigger a regional guess or retry");return data;}));assertEquals(1,requests[0]);
+        assertEquals("",PlaybackAgeOverlay.loadCertificate(null,"GB",()->{throw new java.io.IOException("Offline");}));
+    }
+
 }

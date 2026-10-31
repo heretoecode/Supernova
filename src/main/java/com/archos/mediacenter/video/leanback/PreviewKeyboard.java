@@ -100,12 +100,10 @@ public final class PreviewKeyboard extends LinearLayout {
     }
 
     private void capsState(TextView key){
-        key.setSelected(caps);key.setContentDescription("Caps Lock "+(caps?"On":"Off"));
-        key.setForeground(caps?new android.graphics.drawable.Drawable(){
-            private final android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-            public void draw(android.graphics.Canvas canvas){paint.setColor(PreviewAccent.color(getContext()));android.graphics.Rect bounds=getBounds();float centre=bounds.exactCenterX(),half=Math.min(dp(10),bounds.width()*.25f);canvas.drawRoundRect(centre-half,bounds.bottom-dp(5),centre+half,bounds.bottom-dp(3),dp(1),dp(1),paint);}
-            public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(android.graphics.ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
-        }:null);
+        key.setSelected(caps);key.setText(caps?"ON":"OFF");
+        key.setTextColor(caps?PreviewAccent.color(getContext()):android.graphics.Color.WHITE);
+        key.setTypeface(null,caps?android.graphics.Typeface.BOLD:android.graphics.Typeface.NORMAL);
+        key.setContentDescription("Caps Lock "+(caps?"On":"Off"));key.setForeground(null);
     }
     public void useMenuFoundation(){
         for(List<TextView> row:keys)for(TextView key:row)key.setBackground(MenuFoundation.controlBackground(getContext()));

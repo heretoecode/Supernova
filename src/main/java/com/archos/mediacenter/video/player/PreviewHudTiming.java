@@ -1,6 +1,6 @@
 package com.archos.mediacenter.video.player;
 
-/** Paused prediction means 'ends if resumed now'; seeks use the preview position. */
+/** Duration arithmetic independent of presentation. Paused HUD hides the finish prediction. */
 public final class PreviewHudTiming {
     public static long end(long now,long duration,long position,float speed){
         if(duration<=0)return -1;if(!Float.isFinite(speed)||speed<=0)speed=1;

@@ -6,8 +6,9 @@ import android.graphics.drawable.Drawable;
 /** Seek tooltip whose pointer remains at the seek position after the body is clamped. */
 final class SeekTooltipDrawable extends Drawable {
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final float density,pointer;
+    private final float density;private float pointer;
     SeekTooltipDrawable(float density,float pointer){this.density=density;this.pointer=pointer;}
+    void setPointer(float pointer){this.pointer=pointer;invalidateSelf();}
     @Override public void draw(Canvas canvas){
         Rect b=getBounds();float notch=4*density,tip=Math.max(b.left+notch,Math.min(b.right-notch,b.left+pointer));
         paint.setColor(0xee152738);paint.setStyle(Paint.Style.FILL);

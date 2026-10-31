@@ -1,0 +1,28 @@
+{
+  "source_commit": "83aede983501c0ad728576a144d2a0ef51998190",
+  "run_id": 41133244918,
+  "conclusion": "failure",
+  "failure_stage": "Release lint",
+  "failure": "SuspiciousIndentation in PlayerControlsRelativeLayout: mixed tabs/spaces; corrected by 11bf740",
+  "lint_errors": 1,
+  "lint_warnings": 1496,
+  "modules": {
+    "Video": {
+      "passed": 1257
+    },
+    "MediaLib": {
+      "passed": 198,
+      "skipped": 2
+    },
+    "FileCoreLibrary": {
+      "passed": 102,
+      "skipped": 2
+    }
+  },
+  "artifact_id": 13017087692,
+  "artifact_sha256": "7a1ff3b8086a8ad07dce4a6d2fda1eb75a41a3ade86153cf02a81442ad83b887",
+  "artifact_bytes": 122821855,
+  "independent_archive_digest_and_crc": "pass",
+  "candidate_accepted": false,
+  "physical_shield": "NOT RUN"
+}
