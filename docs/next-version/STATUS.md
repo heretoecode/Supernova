@@ -1,5 +1,7 @@
 # Next-version implementation — 30 October 2026
 
+**31 October continuation:** owner authorised uniquely versioned **0.148 / 148** signed QA and verified Drive delivery from b0bce99. Application/resources remain frozen; new full conformance and the protected signing process are in progress. Current status: [docs/0.148](../0.148/STATUS.md). Earlier unsigned validation below is preserved as historical evidence.
+
 ## Validated continuation after PR #29 review
 
 Current application source `f5e2924` passes full conformance, focused regressions and isolated library checks with independently downloaded evidence. The approved HUD, four-tab inline Settings, source-backed four-section editor, core-first Details delivery and real global-focus preparation lifecycle are implemented. Settings has one immediate rail boundary with a separate selected check. ChaptersDB acquisition/cache/strict ID paths are wired; the owner chose **unverified sets stay hidden**, and current v1 data lacks cut/runtime proof, so no visible external coverage is claimed.

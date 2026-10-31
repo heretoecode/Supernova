@@ -1,0 +1,23 @@
+{
+  "artifact_sha256": "cac24484a25c6c7f2a06dfbc824191c20541dd25adacbd775ed59921bc6e5e82",
+  "artifact_bytes": 3781365,
+  "independent_archive_digest_and_crc": "pass",
+  "junit_xml_files": 2,
+  "modules": {
+    "FileCoreLibrary": {
+      "passed": 5,
+      "total": 5
+    },
+    "MediaLib": {
+      "passed": 1,
+      "total": 1
+    }
+  },
+  "retained_skipped_cases": [],
+  "lint_severities": {},
+  "physical_shield": "NOT RUN",
+  "source_commit": "30d4961e4e5b0e412ec35fe8d27cd6197cea8b26",
+  "run_id": 41185088530,
+  "artifact_id": 13036661883,
+  "conclusion": "success"
+}

@@ -1,0 +1,29 @@
+"""Prepend verified 0.148 delivery while preserving all existing release articles byte-for-byte."""
+import argparse,hashlib,html,json,re
+from pathlib import Path
+p=argparse.ArgumentParser(description=__doc__)
+for name in ['before','unsigned','signed','delivery','output']:p.add_argument('--'+name,type=Path,required=True)
+p.add_argument('--conformance-run',required=True);p.add_argument('--signing-run',required=True);a=p.parse_args()
+before=a.before.read_text();u=json.loads(a.unsigned.read_text());s=json.loads(a.signed.read_text());d=json.loads(a.delivery.read_text());esc=html.escape
+assert u['source_commit']==s['source_commit']==d['source_commit']
+assert u['version_name']==s['version_name']=='0.148' and u['version_code']==s['version_code']==148
+assert u['unit_failures']==u['unit_errors']==u['unit_skips']==u['lint']['errors']==0
+assert s['signature_cryptographically_verified'] and s['tested_unsigned_payload_parity_verified']
+assert d['complete_drive_readback_byte_equal'] and d['apk_sha256']==s['apk_sha256']
+old=re.findall(r'<article\b.*?</article>',before,re.S);assert old and 'id="release-0-148"' not in before
+source=u['source_commit'];link=d['url'];digest=s['apk_sha256'];size=d['apk_bytes'];certificate=s['certificate_sha256']
+article=f'''<article class="release" id="release-0-148"><div class="release-head"><h2>Supernova 0.148 — signed QA</h2><span class="pill">Signed QA APK delivered · Shield QA pending</span></div>
+<p class="sub">31 October 2026 · Version code 148 · <a href="{esc(link)}">Download signed QA APK</a> · <a href="https://github.com/heretoecode/Supernova/actions/runs/{esc(a.signing_run)}">Protected signing verification</a> · <a href="https://github.com/heretoecode/Supernova/pull/29">Draft PR #29</a></p>
+<div class="category"><h3>Playback</h3><ul><li>Approved single-row HUD with seek-first focus, separately focusable Play/Pause and Settings, persistent measured timestamp/chapter bubble, total duration and accurate finish timing.</li><li>Audio, Subtitles, Video and More retain existing native capabilities and ranges, with inline choices, adjustments and direct switches.</li><li>ChaptersDB movie/episode acquisition, strict IDs and bounded private cache/backoff are wired. Current provider data lacks cut/runtime proof, so unverified external sets remain hidden. Embedded chapters retain precedence; IntroDB stays separate.</li></ul></div>
+<div class="category"><h3>Library, Details and interface corrections</h3><ul><li>Four direct Edit Library sections preserve existing filters/display choices and saved data. Stable form/preview containers, actual indexed item preview, explicit current selections and guarded Save/Discard destinations.</li><li>Existing shared geometry, Both naming, Delete in Page Details and pinned in-panel Review Save remain. Optional new styling is not silently adopted.</li><li>Details delivers core cache first and prepares the settled Home/library item through the existing queue, with correct global-navigation escape/return and stale-request guards.</li><li>Static library background, statistics/tab focus, keyboard caret/Caps and cold classification lookup corrections; one immediate Settings rail boundary with a separate selected check.</li></ul></div>
+<div class="category"><h3>Verified build and delivery</h3><ul><li>Exact source: <a href="https://github.com/heretoecode/Supernova/commit/{source}"><code>{source}</code></a>. Application implementation/resources match approved PR29 checkpoint <code>b0bce99a41b8321606059f4bfe5b5c16da741c6b</code>; only authorised version/history and QA orchestration change.</li><li><a href="https://github.com/heretoecode/Supernova/actions/runs/{esc(a.conformance_run)}">Full unsigned conformance</a>: {u['unit_tests']:,} application tests pass; 300 library tests pass, four existing library skips; release lint zero errors / {u['lint']['warnings']:,} warnings. Native/runtime and exact signed-payload checks pass.</li><li>Package app.supernova.player · 0.148 / code148 · {size:,} bytes. SHA-256: <code>{digest}</code>.</li><li>Existing certificate SHA-256: <code>{certificate}</code>. Cryptographic signature, version, ZIP integrity, all 84 native libraries and complete Drive download verified.</li></ul></div>
+<p class="note">Private signed QA candidate; main remains unchanged and PR29 stays draft. Physical Nvidia Shield, real AV/provider/layout performance and installed upgrade/data-retention acceptance are NOT RUN. The existing Shield installation was not touched. No public release is declared.</p></article>
+'''
+notice=f'<div class="notice">Latest signed QA: <strong>Supernova 0.148</strong> · Version code148 · <a href="{esc(link)}">Verified APK download</a>. Existing application identity/certificate retained. Physical Shield and installed-upgrade acceptance remain pending.</div>'
+updated,count=re.subn(r'<div class="notice">.*?</div>',lambda _:notice,before,count=1,flags=re.S);assert count==1
+index=updated.index('<article');updated=updated[:index]+article+updated[index:]
+assert re.findall(r'<article\b.*?</article>',updated,re.S)[1:]==old
+assert len(re.findall(r'<article\b.*?</article>',updated,re.S))==len(old)+1
+a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(updated)
+proof={'source_commit':source,'before_sha256':hashlib.sha256(before.encode()).hexdigest(),'after_sha256':hashlib.sha256(updated.encode()).hexdigest(),'historical_articles_preserved':len(old),'historical_article_sha256':[hashlib.sha256(x.encode()).hexdigest() for x in old],'signed_apk_sha256':digest,'signed_apk_url':link,'conformance_run':int(a.conformance_run),'signing_run':int(a.signing_run),'physical_shield':'NOT RUN'}
+(a.output.parent/'HTML_HISTORY_0148.json').write_text(json.dumps(proof,indent=2)+'\n');print('Prepared verified HTML; historical articles preserved:',len(old))

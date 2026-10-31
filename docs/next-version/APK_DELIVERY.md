@@ -1,3 +1,5 @@
+**31 October: authorised 0.148 signed QA preparation is in progress.** See [0.148 status](../0.148/STATUS.md). The completed unsigned 0.147 inspection artifact below is historical; no signed 0.148 delivery is claimed until signature and complete Drive readback verification.
+
 # Current unsigned inspection APK
 
 [Download exact candidate artifact](https://github.com/heretoecode/Supernova/actions/runs/41137713737/artifacts/13019305914) from successful [full run 41137713737, attempt 2](https://github.com/heretoecode/Supernova/actions/runs/41137713737). Choose **supernova-next-unsigned-candidate**, then extract `Supernova_next_development_unsigned.apk` and `unsigned-conformance.json`.
