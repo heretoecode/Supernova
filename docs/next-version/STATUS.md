@@ -1,6 +1,6 @@
 # Next-version implementation — 30 October 2026
 
-**31 October continuation:** owner authorised uniquely versioned **0.148 / 148** signed QA and verified Drive delivery from b0bce99. Application/resources remain frozen; new full conformance and the protected signing process are in progress. Current status: [docs/0.148](../0.148/STATUS.md). Earlier unsigned validation below is preserved as historical evidence.
+**31 October continuation:** owner-authorised **0.148 / 148** passes fresh full conformance, focused/library checks and independent unsigned-payload verification. Signing is blocked by HTTP403 adding the exact PR29 branch to the existing signing environment allowlist; no signed file/upload is claimed. Exact administrator action and resume data: [docs/0.148](../0.148/STATUS.md). Application/resources remain frozen at validated b0bce99.
 
 ## Validated continuation after PR #29 review
 

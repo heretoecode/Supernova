@@ -1,4 +1,4 @@
-**31 October: authorised 0.148 signed QA preparation is in progress.** See [0.148 status](../0.148/STATUS.md). The completed unsigned 0.147 inspection artifact below is historical; no signed 0.148 delivery is claimed until signature and complete Drive readback verification.
+**31 October: 0.148 software conformance passes; signed delivery is blocked by GitHub environment administration access (HTTP403).** See [0.148 status](../0.148/STATUS.md) for the exact allowlist action. No signed 0.148 APK or upload is claimed. The completed unsigned 0.147 inspection artifact below is historical.
 
 # Current unsigned inspection APK
 

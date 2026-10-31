@@ -1,0 +1,17 @@
+{
+  "source_commit": "30d4961e4e5b0e412ec35fe8d27cd6197cea8b26",
+  "version_name": "0.148",
+  "version_code": 148,
+  "environment": "supernova-foundation-signing",
+  "required_branch": "codex/supernova-next-implementation-2026-10-30",
+  "operation": "POST /repos/heretoecode/Supernova/environments/supernova-foundation-signing/deployment-branch-policies",
+  "http_status": 403,
+  "github_message": "Resource not accessible by integration",
+  "required_owner_action": "Add only the exact branch as a Branch deployment policy in the existing environment; keep current rules and secrets.",
+  "policy_changed_by_agent": false,
+  "key_accessed": false,
+  "signed_0148_file_produced": false,
+  "drive_apk_upload": false,
+  "drive_html_updated": false,
+  "checked_at": "2026-10-31T09:05:36.707495+00:00"
+}
