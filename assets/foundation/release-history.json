@@ -8,18 +8,45 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.147",
-    "version_code": 147,
-    "date": "2026-10-29",
-    "kind": "Development \u2014 implementation and QA in progress",
+    "version": "0.148",
+    "version_code": 148,
+    "date": "2026-10-31",
+    "kind": "QA candidate \u2014 approved next-version implementation; physical acceptance pending",
     "notes": [
-      "Network & Files uses a six-card Settings-style landing and full-width detail pages. Put.io and Library Health retain explicit routes.",
-      "Global navigation restored above Settings landing and categories. Existing preferences and native actions are retained.",
-      "Playback age rating uses configured region, shows only available certification, and fades after ten seconds from established playback output.",
-      "Physical Shield, live network/provider and signed upgrade verification remain pending."
+      "Approved single-row playback HUD and four-tab inline Playback Settings retain native playback capabilities.",
+      "Four-section Edit Library retains existing filters and data; library, keyboard, classification and Details presentation/loading corrections.",
+      "ChaptersDB acquisition and private cache are wired; unverified sets remain hidden because current data lacks cut/runtime proof. Embedded chapters retain precedence.",
+      "Application identity, existing upgrade certificate, database/preferences and native inputs retained. Physical Shield and signed installed-upgrade testing not performed."
     ]
   },
   "history": [
+    {
+      "version": "0.147",
+      "version_code": 147,
+      "date": "2026-10-29",
+      "kind": "Signed QA candidate \u2014 delivered; physical acceptance pending",
+      "notes": [
+        "Network & Files uses a six-card Settings-style landing and full-width detail pages. Put.io and Library Health retain explicit routes.",
+        "Global navigation restored above Settings landing and categories. Existing preferences and native actions are retained.",
+        "Playback age rating uses configured region, shows only available certification, and fades after ten seconds from established playback output.",
+        "Physical Shield, live network/provider and signed upgrade verification remain pending."
+      ],
+      "source_sha": "f4abf7cb880243ba00481f82beee19d20bc72e33",
+      "evidence": "docs/0.147/SIGNED_QA_EVIDENCE.json",
+      "recorded_binary_verification": "docs/0.147/INDEPENDENT_SIGNED_APK_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "a2cdb8b809eb82b9d2a00bbff5e7e55cf326c0c75d82747a2ef7f44c74010f93",
+      "artifact_id": 12932868038,
+      "run_id": 40955806102,
+      "apks": [
+        {
+          "sha256": "50cfb990af2ecc5273e90e11195fb73c7e1c457fad39ef6ee1375d36287f0453",
+          "size": 95573687,
+          "url": "https://drive.google.com/file/d/1TetN852eP2_lMfUuIV6S9Xv6zASprOm8/view?usp=drivesdk",
+          "filename": "Supernova_0.147.apk"
+        }
+      ]
+    },
     {
       "version": "0.146",
       "version_code": 146,

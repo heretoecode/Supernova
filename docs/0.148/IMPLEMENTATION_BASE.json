@@ -1,0 +1,17 @@
+{
+  "base_commit": "b0bce99a41b8321606059f4bfe5b5c16da741c6b",
+  "version": "0.148",
+  "version_code": 148,
+  "application_id": "app.supernova.player",
+  "implementation_trees": {
+    "src/main": "d09043e23d18148d0f1651ca76c23ea1872e9909",
+    "src/test": "d0a7771d368eb1813eae5bd738631cc8bcea4876",
+    "res": "df320ea71beb115264cbca30a50e8587ce86cbdc",
+    "AndroidManifest.xml": "0054e3359347da4fada1ff9eae75c93486b4829c",
+    "build.gradle": "3a516bfe54c6f75dad901501c78d5be2c52fe7e1",
+    "settings.gradle": "7becd5859bacb0e0c4f9bf94f24069e81795a499",
+    "gradle.properties": "1c947b0dba9f10623846e845dbca1796213eb3b7"
+  },
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "physical_shield": "NOT RUN"
+}

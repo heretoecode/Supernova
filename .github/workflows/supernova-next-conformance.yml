@@ -1,9 +1,9 @@
-name: Supernova next-version unsigned development validation
+name: Supernova 0.148 exact-source unsigned QA validation
 on:
   workflow_dispatch:
   push:
     branches: [codex/supernova-next-implementation-2026-10-30]
-    paths: [.github/workflows/supernova-next-conformance.yml, '.github/build/next-*test-fixtures.patch', 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0147*', .github/build/record-supernova-0147-conformance.py]
+    paths: [.github/workflows/supernova-next-conformance.yml, '.github/build/next-*test-fixtures.patch', 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0148*', .github/build/record-supernova-0148-conformance.py, .github/build/verify-supernova-0148-scope.py]
 permissions:
   contents: read
   actions: read
@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           path: nova/Video
+          fetch-depth: 0
           persist-credentials: false
       - name: Java21
         uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
@@ -38,7 +39,9 @@ jobs:
           git -C nova/FileCoreLibrary apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-filecore-test-fixtures.patch"
           git -C nova/MediaLib apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-medialib-test-fixtures.patch"
       - name: Validate preserved release history and source contracts before compiling
-        run: python3 nova/Video/.github/build/verify-next-qa.py --root nova
+        run: |
+          python3 nova/Video/.github/build/verify-next-qa.py --root nova
+          python3 nova/Video/.github/build/verify-supernova-0148-scope.py --video nova/Video
       - name: Complete application and library tests, lint and unsigned APK build
         run: |
           set -euo pipefail
@@ -51,11 +54,11 @@ jobs:
           mapfile -t apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
           test "${#apks[@]}" = 1
           mkdir -p "$GITHUB_WORKSPACE/delivery"
-          python3 .github/build/record-supernova-0147-conformance.py --root .. --apk "${apks[0]}" \
+          python3 .github/build/record-supernova-0148-conformance.py --root .. --apk "${apks[0]}" \
             --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2" \
             --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" --native-evidence "$RUNNER_TEMP/native146-packaging/packaging-inputs.json" \
             --output "$GITHUB_WORKSPACE/delivery/unsigned-conformance.json"
-          cp "${apks[0]}" "$GITHUB_WORKSPACE/delivery/Supernova_next_development_unsigned.apk"
+          cp "${apks[0]}" "$GITHUB_WORKSPACE/delivery/Supernova_0.148_unsigned.apk"
       - name: Preserve exact runtime archives
         if: always()
         run: python3 nova/Video/.github/build/collect-supernova146-runtime.py --video nova/Video
@@ -63,7 +66,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: supernova-next-conformance-evidence
+          name: supernova-0148-conformance-evidence
           path: |
             native146-packaging.log
             ${{ runner.temp }}/native146-packaging/packaging-inputs.json
@@ -81,7 +84,7 @@ jobs:
       - name: Preserve exact unsigned payload and conformance receipt
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: supernova-next-unsigned-candidate
+          name: supernova-0148-unsigned-candidate
           path: delivery/*
           if-no-files-found: error
           retention-days: 14
