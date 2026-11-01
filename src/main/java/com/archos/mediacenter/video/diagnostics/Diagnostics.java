@@ -394,16 +394,15 @@ public final class Diagnostics {
         if(!manual&&state.elapsed<freezeUntil){
             long count=incidentCounts.containsKey(reason)?incidentCounts.get(reason)+1:1;
             incidentCounts.put(reason,count);
-            appendFlight(record("incident_repeated","reason",reason,"incident_id",incidentId,"occurrences",count,"failure_utc_ms",state.utc,"session",state.playbackSession,"app_session",state.foregroundSession,"last_operation",state.operation));
+            appendFlight(recordWithContext("incident_repeated",state.playbackSession,state.foregroundSession,state.operation,"reason",reason,"incident_id",incidentId,"occurrences",count,"failure_utc_ms",state.utc));
             // Cumulative power-of-two summaries bound noise without dropping the underlying events.
-            if((count&(count-1))==0)writeImportant(record("incident_burst_summary","reason",reason,"incident_id",incidentId,"occurrences",count,"count_kind","cumulative"));
+            if((count&(count-1))==0)writeImportant(recordWithContext("incident_burst_summary",state.playbackSession,state.foregroundSession,state.operation,"reason",reason,"incident_id",incidentId,"occurrences",count,"count_kind","cumulative"));
             return;
         }
         incidentId=PROCESS+":incident:"+SEQUENCE.incrementAndGet();incidentCounts.clear();incidentCounts.put(reason,1L);
         String incident=incidentContext(reason,state);writeImportant(incident);
         String retained=flight.text();
-        String snapshot=record("flight_snapshot","reason",reason,"completeness",retained.isEmpty()?"RECOVERY_DATA_MISSING":"PARTIAL",
-                "session",state.playbackSession,"app_session",state.foregroundSession,"last_operation",state.operation,
+        String snapshot=recordWithContext("flight_snapshot",state.playbackSession,state.foregroundSession,state.operation,"reason",reason,"completeness",retained.isEmpty()?"RECOVERY_DATA_MISSING":"PARTIAL",
                 "dropped",DROPPED.get(),"write_errors",WRITE_ERRORS.get(),"flight_evicted",flight.evicted,
                 "post_window_until_elapsed_ms",state.elapsed+60000,"captured_elapsed_ms",flight.elapsed,"writer_delay_ms",Math.max(0,android.os.SystemClock.elapsedRealtime()-flight.elapsed));
         synchronized(LOCK){try{
@@ -429,8 +428,7 @@ public final class Diagnostics {
             if(manager!=null){ActivityManager.MemoryInfo memory=new ActivityManager.MemoryInfo();manager.getMemoryInfo(memory);available=memory.availMem;lowMemory=memory.lowMemory;}
         }catch(RuntimeException ignored){/* Missing resource data must not prevent incident capture. */}
         Runtime runtime=Runtime.getRuntime();
-        return record("incident_capture","reason",reason,"incident_id",incidentId,"foreground",state.foregroundCount,"failure_utc_ms",state.utc,
-                "session",state.playbackSession,"app_session",state.foregroundSession,"last_operation",state.operation,
+        return recordWithContext("incident_capture",state.playbackSession,state.foregroundSession,state.operation,"reason",reason,"incident_id",incidentId,"foreground",state.foregroundCount,"failure_utc_ms",state.utc,
                 "resource_sample_utc_ms",sampledUtc,"resource_sample_delay_ms",Math.max(0,sampledElapsed-state.elapsed),
                 "screen",state.screen,"page",state.page,"category",state.category,"focused_control",state.focus,"view_mode",state.mode,"sort",state.sort,"active_filters",state.filters,"filter_state",state.filterDetails,"media_id",state.media,"modal_depth",state.modals,"modal_kinds",state.modalKinds,
                 "heap_used",runtime.totalMemory()-runtime.freeMemory(),"heap_max",runtime.maxMemory(),
@@ -498,10 +496,12 @@ public final class Diagnostics {
             .replaceAll("(?i)(bearer\\s+|(?:password|passwd|token|secret|api[_-]?key|authorization|cookie)\\s*[:=]\\s*)[^\\s,;]+","[redacted]");
         return clean.length()>4096?clean.substring(0,4096):clean;
     }
-    private static String record(String event,Object... fields){
+    private static String record(String event,Object... fields){return recordWithContext(event,playback,appSession,lastOperation,fields);}
+    /** Only captured internal snapshots may supply a deferred event's session context. */
+    private static String recordWithContext(String event,String capturedSession,String capturedAppSession,String capturedOperation,Object... fields){
         try{
             JSONObject json=new JSONObject();json.put("utc_ms",System.currentTimeMillis());json.put("elapsed_ms",android.os.SystemClock.elapsedRealtime());json.put("severity",severity(event));
-            json.put("sequence",SEQUENCE.incrementAndGet());json.put("pid",android.os.Process.myPid());json.put("last_operation",lastOperation);json.put("process",PROCESS);json.put("session",playback);json.put("app_session",appSession);json.put("event",safe(event));
+            json.put("sequence",SEQUENCE.incrementAndGet());json.put("pid",android.os.Process.myPid());json.put("last_operation",capturedOperation);json.put("process",PROCESS);json.put("session",capturedSession);json.put("app_session",capturedAppSession);json.put("event",safe(event));
             for(int i=0;i+1<fields.length;i+=2){String key=String.valueOf(fields[i]);
                 if(!key.matches("[a-z_]{1,48}")||key.matches(".*(password|credential|token|secret|header|cookie|path|url|uri|api_key).*"))continue;
                 if("elapsed_ms".equals(key))key="duration_ms";
