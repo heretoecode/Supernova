@@ -21,7 +21,8 @@ public class NextHudTest {
   try{for(boolean on:new boolean[]{false,true}){
    TextView row=new TextView(host.get());
    ReflectionHelpers.callStaticMethod(PreviewPlaybackMenus.class,"switchState",ReflectionHelpers.ClassParameter.from(TextView.class,row),ReflectionHelpers.ClassParameter.from(String.class,"Night mode"),ReflectionHelpers.ClassParameter.from(boolean.class,on));
-   assertEquals("Night mode",row.getText().toString());assertEquals("Night mode, "+(on?"On":"Off"),row.getContentDescription().toString());assertNotNull(row.getCompoundDrawables()[2]);
+   assertEquals("Night mode",row.getText().toString());assertEquals("Night mode, "+(on?"On":"Off"),row.getContentDescription().toString());assertNotNull(row.getCompoundDrawables()[2]);assertEquals(1f,row.getAlpha(),0f);
+   row.setEnabled(false);ReflectionHelpers.callStaticMethod(PreviewPlaybackMenus.class,"switchState",ReflectionHelpers.ClassParameter.from(TextView.class,row),ReflectionHelpers.ClassParameter.from(String.class,"Night mode"),ReflectionHelpers.ClassParameter.from(boolean.class,on));assertEquals(.4f,row.getAlpha(),0f);
   }}finally{ReflectionHelpers.setStaticField(PreviewPlaybackMenus.class,"owner",null);}
  }
  @Rule public org.junit.rules.TestName testName=new org.junit.rules.TestName();

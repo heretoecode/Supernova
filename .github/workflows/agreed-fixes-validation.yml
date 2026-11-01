@@ -2,6 +2,10 @@ name: Agreed fixes tests and compile (no APK)
 on:
   workflow_dispatch:
     inputs:
+      test_filter:
+        description: Optional single JUnit class pattern for a narrow correction check
+        type: string
+        default: ''
       full_suite:
         description: Run every application test instead of the affected regression classes
         type: boolean
@@ -41,13 +45,17 @@ jobs:
           git -C nova/FileCoreLibrary apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-filecore-test-fixtures.patch"
           git -C nova/MediaLib apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-medialib-test-fixtures.patch"
       - name: Complete application and library tests, lint and release compilation
+        env:
+          TARGET_TEST_FILTER: ${{ inputs.test_filter }}
         run: |
           set -euo pipefail
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0'
           cd nova/Video
           chmod +x gradlew
           filters=()
-          if [[ "${{ inputs.full_suite }}" != "true" ]]; then
+          if [[ -n "$TARGET_TEST_FILTER" ]]; then
+            filters+=(--tests "$TARGET_TEST_FILTER")
+          elif [[ "${{ inputs.full_suite }}" != "true" ]]; then
             for pattern in '*CustomLibraryPageTest' '*NextQaWizardTest' '*PreviewLanguageIconTest' '*LibraryStatistics*' '*PreviewPagesTest' '*Supernova138HomeTest' '*Supernova139LibraryNavigationTest' '*Supernova141UiTest' '*SettingsWorkspaceTest' '*SettingsShieldNavigationTest' '*NextHudTest' '*AudioTrackSelectionPolicyTest' '*ReceptionSupplementTest' '*Details139AcceptanceTest' '*DetailsImprovementsTest' '*PreviewMoviePageTest' '*Network142*Test' '*Supernova139LanguageFlagsTest' '*Supernova139ProviderMarksTest' '*PreviewProviderFilterTest' '*StreamingProviderFocusTest'; do
               filters+=(--tests "$pattern")
             done
