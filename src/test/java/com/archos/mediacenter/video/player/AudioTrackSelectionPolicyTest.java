@@ -42,7 +42,9 @@ import java.util.Locale;
  * defined in Video/doc/AUDIO_TRACK_SELECTION.md.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
+// Selection policy does not need production HDMI/bootstrap workers. Their
+// delayed receiver callbacks can outlive a Robolectric sandbox's instrumentation.
+@Config(application = android.app.Application.class, sdk = 33)
 public class AudioTrackSelectionPolicyTest {
 
     private Locale mOriginalLocale;
@@ -52,6 +54,7 @@ public class AudioTrackSelectionPolicyTest {
     @Before
     public void setUp() throws Exception {
         mOriginalLocale = Locale.getDefault();
+        com.archos.environment.ArchosUtils.setGlobalContext(org.robolectric.RuntimeEnvironment.getApplication());
         mService = Robolectric.buildService(PlayerService.class).get();
         mMockPlayer = Mockito.mock(Player.class);
         Mockito.when(mMockPlayer.setAudioTrack(Mockito.anyInt())).thenReturn(true);
