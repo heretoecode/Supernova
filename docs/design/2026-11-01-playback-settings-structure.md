@@ -29,3 +29,10 @@
 - Highlight the currently selected option. Do not open another menu or dialog to change text size.
 - Existing underlying fine-grained subtitle sizing functionality must be preserved or explicitly mapped during implementation; the three preset values are a design choice, not verified existing engine values.
 - Still design-only, excluded from the active Codex fix batch.
+
+## Subtitle text colour picker (approved)
+- Selecting **Text Colour** opens a compact pop-up with a **single horizontal row of preset colour swatches**, not a full settings page or complex colour wheel.
+- Selecting a swatch applies that colour directly; no extra confirmation screen. Shield remote Back dismisses the picker and returns to the same Playback Settings window.
+- Use existing dark visual styling and blue focus/selection treatment.
+- Exact preset palette is **not yet approved**; example colours shown during discussion are illustrative. Preserve existing subtitle colour capability in implementation.
+- Design-only; explicitly excluded from ongoing Codex fix batch.
