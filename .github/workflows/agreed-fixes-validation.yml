@@ -6,9 +6,6 @@ on:
         description: Run every application test instead of the affected regression classes
         type: boolean
         default: false
-  push:
-    branches: [codex/agreed-fixes-2026-11-01]
-    paths: [.github/workflows/agreed-fixes-validation.yml, '.github/build/next-*test-fixtures.patch', 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0148*', .github/build/record-supernova-0148-conformance.py, .github/build/verify-supernova-0148-scope.py]
 permissions:
   contents: read
   actions: read

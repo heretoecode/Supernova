@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   qa:
-    if: github.ref == 'refs/heads/codex/agreed-fixes-2026-11-01'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/agreed-fixes-2026-11-01'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: supernova-foundation-signing

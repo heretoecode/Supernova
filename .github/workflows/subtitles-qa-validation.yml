@@ -9,6 +9,9 @@ on:
   push:
     branches: [codex/agreed-fixes-2026-11-01]
     paths: [.github/workflows/subtitles-qa-validation.yml, '.github/build/next-*test-fixtures.patch', 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0148*', .github/build/record-supernova-0148-conformance.py, .github/build/verify-supernova-0148-scope.py]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
   actions: read

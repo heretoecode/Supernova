@@ -4,6 +4,9 @@ on:
   push:
     branches: [codex/agreed-fixes-2026-11-01]
     paths: [.github/workflows/supernova-pr30-conformance.yml, '.github/build/next-*test-fixtures.patch', 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0149*', .github/build/record-supernova-0149-conformance.py, .github/build/verify-pr30-scope.py]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
   actions: read
