@@ -15,13 +15,13 @@ Use the [verified signed Supernova_0.149.apk](https://drive.google.com/file/d/1E
 
 | Fix | Physical check |
 |---|---|
-| Library statistics | Enter Movies/TV; complete statistics visible with controls focused, including no-op refresh. |
+| Library statistics | Enter Movies/TV/Custom Library (first entry without scrolling); complete statistics visible with controls focused, including no-op refresh. |
 | Home/Filters focus | Hold/repeat remote navigation and let rows refresh; no transient focus flicker. |
 | Settings rail ticks | No navigation tick; genuine option ticks remain. |
 | Settings toggle states | Compare focused/unfocused On, Off and Unavailable; disabled actions cannot mutate. |
 | Language flags | Inspect Audio and Subtitle explicit en-GB/en-US assets and generic/unknown neutral fallbacks in the shrunk APK. |
 | Provider/Done icons | Known logos without cached metadata, unknown fallback and distinct Done action. |
-| Reception | Cached/live/absent ratings; supported reviews even without ratings; provider errors and unavailable contexts. |
+| Reception | Cached/live/absent ratings; ratings/awards only, no written reviews or reader controls; provider errors and unavailable contexts. |
 | Network & Files | Transparent landing workspace, six focusable cards, browser entry and Back restoration. |
 | HUD Ends at | Visible paused with known duration; hidden unknown duration; pause/resume/seek/speed changes. |
 | HUD timestamps | Separation, seek width and legibility across supported resolutions/text scales. |

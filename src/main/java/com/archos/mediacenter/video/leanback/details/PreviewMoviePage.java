@@ -370,13 +370,11 @@ public final class PreviewMoviePage extends ScrollView {
         for(int slot=0;slot<4;slot++)receptionKey+="|"+supplied.value(slot);
         String signature=synopsis+new TreeMap<>(keyFacts)+new TreeMap<>(technicalFacts)+new TreeMap<>(receptionFacts)+supplied.imdbVotes;
         for(int slot=0;slot<4;slot++)signature+="|"+supplied.value(slot);
-        boolean reviewable=selectedEpisode==null&&seasonNumber<0&&metadataIdentity()>0;
-        signature+="|"+reviewable;receptionKey+="|"+reviewable;
         if(!signature.equals(informationSignature)){
             informationSignature=signature;
             com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(details,"details.information",reason,previous,1,false);
             if(informationPanel!=null&&receptionKey.equals(receptionSignature)){informationPanel.updateText(synopsis,keyFacts,technicalFacts);}else{
-            DetailsBlueprintPanel blueprint=new DetailsBlueprintPanel(getContext(),synopsis,keyFacts,technicalFacts,receptionFacts,cast,crew,supplied,reviewable?this::showReviews:null);
+            DetailsBlueprintPanel blueprint=new DetailsBlueprintPanel(getContext(),synopsis,keyFacts,technicalFacts,receptionFacts,cast,crew,supplied);
             details.removeAllViews();details.addView(blueprint,new LinearLayout.LayoutParams(-1,-1));informationPanel=blueprint;receptionSignature=receptionKey;}
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_information_ready","media_id",diagnosticMedia(),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-openedAt);
         }

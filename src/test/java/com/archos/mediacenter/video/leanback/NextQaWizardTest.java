@@ -11,6 +11,19 @@ import static org.junit.Assert.*;
 public class NextQaWizardTest {
  @Before public void offline(){Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");PreviewAsyncFixtures.offlineTransport();PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).putBoolean("supernova_onboarding_complete",true).remove(CustomLibraryPage.KEY).commit();}
  @After public void drain() throws Exception {PreviewAsyncFixtures.drain();}
+ @Test public void savedCustomPageShowsEntireStatisticsOnFirstEntryWithoutScrolling() throws Exception {
+  CustomLibraryPage page=new CustomLibraryPage();page.name="QA library";assertTrue(page.save(RuntimeEnvironment.getApplication()));
+  var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{
+   View root=host.get().findViewById(android.R.id.content);PreviewPagesTest.layout(root);
+   View statistics=root.findViewWithTag("library.statistics");assertNotNull(statistics);
+   android.graphics.Rect visible=new android.graphics.Rect();assertTrue(statistics.getGlobalVisibleRect(visible));assertEquals(statistics.getHeight(),visible.height());assertTrue(visible.height()>0);
+   Object workspace=ReflectionHelpers.getField(host.get(),"workspace");PreviewPages pages=ReflectionHelpers.getField(workspace,"sharedLibrary");
+   View parent=(View)pages.getParent();final int[] detaches={0};pages.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){public void onViewAttachedToWindow(View v){}public void onViewDetachedFromWindow(View v){detaches[0]++;}});
+   host.get().applySnapshot(new PreviewLibraryLoader.Snapshot());PreviewPagesTest.layout(root);assertSame(parent,pages.getParent());assertEquals(0,detaches[0]);
+   statistics=root.findViewWithTag("library.statistics");assertTrue(statistics.getGlobalVisibleRect(visible));assertEquals(statistics.getHeight(),visible.height());
+   PreviewPagesTest.capture(root,"shield-custom-first-entry-software-only");
+  }finally{host.pause().stop().destroy();}
+ }
  @Test public void firstStepUpReachesNavigationAndReviewRightReachesSave() throws Exception {
   var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{View root=host.get().findViewById(android.R.id.content);PreviewPagesTest.layout(root);View first=root.findViewWithTag("wizard.step.0");assertNotNull(first);first.requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP));assertSame(root.findViewWithTag("semantic:topnav.custom"),root.findFocus());View review=root.findViewWithTag("wizard.step.3");review.requestFocus();PreviewPagesTest.layout(root);review=root.findViewWithTag("wizard.step.3");review.requestFocus();root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_RIGHT));assertSame(PreviewPagesTest.findText(root,"Save Page"),root.findFocus());PreviewPagesTest.capture(root,"next-qa-wizard-review-save");}finally{host.pause().stop().destroy();}
  }

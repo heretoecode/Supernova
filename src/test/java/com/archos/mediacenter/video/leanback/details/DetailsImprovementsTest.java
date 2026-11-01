@@ -29,7 +29,7 @@ public class DetailsImprovementsTest {
         DetailsBlueprintPanel panel=new DetailsBlueprintPanel(context,"Synopsis",facts,Collections.emptyMap(),Map.of("TMDB Rating","7.8 / 10"),cast,crew,OmdbSupplement.Ratings.EMPTY,()->{});
         TextView language=find(panel,"English");assertNotNull(language);for(var drawable:language.getCompoundDrawables())assertNull(drawable);
         facts.put("Language","English, French");panel.updateText("New synopsis",facts,Collections.emptyMap());
-        assertSame(language,find(panel,"English, French"));assertEquals("Language: English, French",((View)language.getParent()).getContentDescription());assertNotNull(panel.findViewWithTag("details.reviews"));assertTrue(panel.findViewWithTag("details.reviews").isFocusable());
+        assertSame(language,find(panel,"English, French"));assertEquals("Language: English, French",((View)language.getParent()).getContentDescription());assertNull(panel.findViewWithTag("details.reviews"));
         assertNotNull(cast.getParent());assertNotNull(crew.getParent());
     }
     @Test public void peopleGridHasSharedGapFourColumnsAndNoFocusStops(){
@@ -77,12 +77,12 @@ public class DetailsImprovementsTest {
         assertNotNull(find(page,"English"));assertNotNull(find(page,"2h"));
         ReflectionHelpers.callInstanceMethod(page,"freshTitle",ReflectionHelpers.ClassParameter.from(String.class,"other"));
     }
-    @Test public void expandedDetailsReachesReviewReaderWithoutRequiringRatings()throws Exception{
+    @Test public void expandedDetailsDoesNotOfferReviewReader()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},u->{});TopNavigation root=new TopNavigation(host.get(),page,i2->{},page::atTop);host.get().setContentView(root);
             page.bindRemote(new JSONObject("{title:'Movie',id:42}"),"movie",42);
             for(int i2=0;i2<3;i2++){root.measure(View.MeasureSpec.makeMeasureSpec(1920,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY));root.layout(0,0,1920,1080);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();}
-            View tab=page.findViewWithTag("section:Details");assertTrue(tab.requestFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(tab,root.findFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertNotNull(page.findViewWithTag("details.reviews"));assertSame(page.findViewWithTag("details.reviews"),root.findFocus());
+            View tab=page.findViewWithTag("section:Details");assertTrue(tab.requestFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertSame(tab,root.findFocus());root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_DOWN));assertNull(page.findViewWithTag("details.reviews"));
         }finally{host.pause().stop().destroy();}
     }
     @Test public void sameTitleArtRequestRetainsDrawableAndNewIdentityClearsIt(){

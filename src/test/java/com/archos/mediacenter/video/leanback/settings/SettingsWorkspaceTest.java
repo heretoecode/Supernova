@@ -40,13 +40,22 @@ public class SettingsWorkspaceTest {
     @Test public void railHasOneImmediateBoundaryDuringRapidFocusChanges(){
         workspace.open(0,"Playback");layout();View first=tagged("settings.section.Playback"),second=tagged("settings.section.Video & Display");first.requestFocus();second.requestFocus();first.requestFocus();second.requestFocus();ViewGroup rail=(ViewGroup)second.getParent();assertFalse("Child surface must not paint a second focus boundary",second.getBackground() instanceof android.graphics.drawable.StateListDrawable);assertNull("Selected state must not paint a second outline",second.getForeground());assertFalse(((TextView)second).getText().toString().contains("✓"));assertTrue(ReflectionHelpers.getField(rail,"visible"));android.graphics.RectF outline=ReflectionHelpers.getField(rail,"current");assertEquals(second.getTop(),outline.top,1);assertEquals(second.getBottom(),outline.bottom,1);assertNull(ReflectionHelpers.getField(rail,"movement"));workspace.enter();assertFalse(ReflectionHelpers.getField(rail,"visible"));
     }
+    @Test public void legacySwitchRetainsSeparateTrackAndThumbColours(){
+        CheckBox box=new CheckBox(host.get());box.setButtonTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));PreviewSettings.tintSwitches(box);assertNull(box.getButtonTintList());
+        for(boolean checked:new boolean[]{false,true}){
+            box.setChecked(checked);android.graphics.drawable.Drawable icon=box.getButtonDrawable();icon.setBounds(0,0,60,32);
+            android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(60,32,android.graphics.Bitmap.Config.ARGB_8888);icon.draw(new android.graphics.Canvas(image));
+            java.util.Set<Integer> colours=new java.util.HashSet<>();for(int y=0;y<32;y++)for(int x=0;x<60;x++)if(android.graphics.Color.alpha(image.getPixel(x,y))>240)colours.add(image.getPixel(x,y));
+            assertTrue(colours.contains(android.graphics.Color.WHITE));assertTrue(colours.contains(checked?0xff00a9db:0xff3c5565));
+        }
+    }
     @Test public void togglePersistsWithoutMovingFocusAndHiddenRowsRemainAbsent(){
         workspace.open(0,"Playback");layout();View row=tagged("settings.preference.playback_speed");row.requestFocus();boolean before=((TwoStatePreference)fragment.findPreference("playback_speed")).isChecked();row.performClick();layout();assertEquals(!before,PreferenceManager.getDefaultSharedPreferences(host.get()).getBoolean("playback_speed",true));assertTrue(row.hasFocus());assertNull(root.findViewWithTag("settings.preference.try_new_ui"));assertNull(root.findViewWithTag("settings.preference.app_theme"));workspace.back();workspace.open(0,"Playback");layout();assertEquals(!before,((TwoStatePreference)fragment.findPreference("playback_speed")).isChecked());
     }
     @Test public void toggleStatesAreExplicitAndUnavailableRowsKeepFocusOutline(){
         workspace.open(0,"Playback");layout();TwoStatePreference preference=fragment.findPreference("playback_speed");
-        for(boolean checked:new boolean[]{false,true}){preference.setChecked(checked);layout();ViewGroup row=(ViewGroup)tagged("settings.preference.playback_speed");assertEquals(checked?"On":"Off",((TextView)row.getChildAt(1)).getText().toString());}
-        preference.setEnabled(false);layout();ViewGroup row=(ViewGroup)tagged("settings.preference.playback_speed");assertEquals("Unavailable",((TextView)row.getChildAt(1)).getText().toString());assertEquals(1f,row.getAlpha(),0f);assertTrue(row.requestFocus());assertTrue(row.hasFocus());boolean before=preference.isChecked();row.performClick();assertEquals(before,preference.isChecked());
+        for(boolean checked:new boolean[]{false,true}){preference.setChecked(checked);layout();ViewGroup row=(ViewGroup)tagged("settings.preference.playback_speed");assertEquals(View.GONE,row.getChildAt(1).getVisibility());assertTrue(row.getContentDescription().toString().endsWith(checked?"On":"Off"));}
+        preference.setEnabled(false);layout();ViewGroup row=(ViewGroup)tagged("settings.preference.playback_speed");assertEquals(View.GONE,row.getChildAt(1).getVisibility());assertFalse(row.getChildAt(2).isEnabled());assertEquals(1f,row.getAlpha(),0f);assertTrue(row.requestFocus());assertTrue(row.hasFocus());boolean before=preference.isChecked();row.performClick();assertEquals(before,preference.isChecked());
     }
     @Test public void regionalLanguageChoicesBindBundledFlagsAndKeepNeutralFallback(){
         for(String key:new String[]{"favAudioLang","favSubLang"}){ListPreference p=new ListPreference(host.get());p.setPersistent(false);p.setKey(key);p.setTitle("Language");p.setEntries(new String[]{"English UK","English US","English","Unknown"});p.setEntryValues(new String[]{"en-GB","en-US","en","xx"});p.setValue("en");android.app.Dialog dialog=SettingsChoiceDialog.show(host.get(),p);

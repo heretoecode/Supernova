@@ -13,6 +13,17 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class Supernova139LanguageFlagsTest {
+    @Test public void imageViewRendersRegionalAndNeutralIconsWithoutManualDrawableBounds(){
+        Application c=RuntimeEnvironment.getApplication();
+        for(String code:new String[]{"en-GB","eng","pt_BR","zh-ca",null}){
+            android.widget.ImageView image=new android.widget.ImageView(c);
+            image.setImageDrawable(new PreviewLanguageIcon(c,code));
+            image.measure(android.view.View.MeasureSpec.makeMeasureSpec(80,1073741824),android.view.View.MeasureSpec.makeMeasureSpec(48,1073741824));image.layout(0,0,80,48);
+            Bitmap pixels=Bitmap.createBitmap(80,48,Bitmap.Config.ARGB_8888);image.draw(new Canvas(pixels));
+            int painted=0;for(int y=0;y<48;y++)for(int x=0;x<80;x++)if(Color.alpha(pixels.getPixel(x,y))>128)painted++;
+            assertTrue("Visible ImageView language icon: "+code,painted>20);
+        }
+    }
     @Test public void everyExplicitIsoRegionHasOriginalBundledArtworkWithoutDependingOnEmojiFonts(){
         Application context=RuntimeEnvironment.getApplication();
         for(String country:Locale.getISOCountries()){
