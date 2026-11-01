@@ -13,6 +13,14 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class Supernova139LanguageFlagsTest {
+    @Test public void unknownTrackMetadataStillGetsVisibleNeutralInlineIcon(){
+        Application c=RuntimeEnvironment.getApplication();
+        for(String code:new String[]{null,"","und","English","fre","unknown"}){
+            CharSequence value=PreviewLanguageIcon.inline(c,code,"Track label");assertTrue(value instanceof android.text.Spanned);
+            android.text.style.ImageSpan[] icons=((android.text.Spanned)value).getSpans(0,value.length(),android.text.style.ImageSpan.class);
+            assertEquals(1,icons.length);assertTrue(icons[0].getDrawable().getBounds().width()>0);assertNull(org.robolectric.util.ReflectionHelpers.getField(icons[0].getDrawable(),"flag"));
+        }
+    }
     @Test public void imageViewRendersRegionalAndNeutralIconsWithoutManualDrawableBounds(){
         Application c=RuntimeEnvironment.getApplication();
         for(String code:new String[]{"en-GB","eng","pt_BR","zh-ca",null}){

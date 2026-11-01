@@ -30,6 +30,7 @@ public final class PreviewLanguageIcon extends Drawable {
         flag=bitmap;
     }
     static String country(String code){
+        if(code!=null)code=code.trim();
         if(code==null||"zh-ca".equalsIgnoreCase(code)||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})+"))return "";
         Locale locale=Locale.forLanguageTag(code.replace('_','-'));
         String country=locale.getCountry().toUpperCase(Locale.ROOT);
@@ -51,8 +52,6 @@ public final class PreviewLanguageIcon extends Drawable {
     }
     /** Inline icon for legacy/mixed metadata text; keep each track's own reliable locale. */
     public static CharSequence inline(android.content.Context context,String code,CharSequence label){
-        String language=code==null?"":Locale.forLanguageTag(code.replace('_','-')).getLanguage();
-        if(!LANGUAGES.contains(language)&&!"yue".equals(language))return label;
         PreviewLanguageIcon icon=new PreviewLanguageIcon(context,providerCode(code));int size=PreviewDialog.dp(context,18);icon.setBounds(0,0,size,size);
         android.text.SpannableStringBuilder text=new android.text.SpannableStringBuilder("\uFFFC ");text.setSpan(new android.text.style.ImageSpan(icon,android.text.style.ImageSpan.ALIGN_BASELINE),0,1,android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);return text.append(label);
     }

@@ -16,6 +16,8 @@ Additional initial-focus defect traced: `focusFromNavigation` requests position 
 
 Traced metadata from player audio/subtitle track `.language` through `preview_track_language`, compound TextViews and subtitle popup ImageViews; settings use stored locale values; download results use provider language codes. Regional codes resolve bundled `region_*` resources. Generic `en`/`eng` deliberately resolve to the neutral globe, not an invented country. OpenSubtitles `zh-ca` denotes Cantonese and must remain neutral. Resource shrink keep rules already retain `region_*`; no new APK inspection is claimed.
 
+Confirmed fallback omission: `inline` returned plain text without any icon for null, empty, undetermined, bibliographic aliases and unrecognized language metadata. Removed that suppression so every inline track receives either its explicit regional flag or the neutral globe, and added regression cases for these inputs. This is a confirmed application defect; the raw Shield metadata is still unavailable to establish whether it caused the owner’s particular failure.
+
 Added intrinsic drawable dimensions for predictable ImageView scaling and centralized the provider-code guard in construction. Added native-graphics software tests that render actual ImageViews for regional, ISO3, generic, provider-special and null metadata without manually assigning drawable bounds. Existing tests only drew icons onto a Canvas with explicit bounds or checked packaged resources. **Root cause of missing Shield icons remains unconfirmed**: Android supports fallback bounds for dimensionless drawables, so intrinsic sizing alone cannot be called the fix. Actual Shield language values and affected UI captures remain needed.
 
 ## Standard switches
