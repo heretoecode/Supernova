@@ -20,7 +20,7 @@ def gate(evidence, apk, source):
     if not re.fullmatch(r'[0-9a-f]{40}', source or '') or evidence.get('source_commit') != source:
         raise key.SigningError('QA conformance source differs from the checked-out commit.')
     if evidence.get('implementation_base')!=IMPLEMENTATION_BASE or not evidence.get('implementation_trees') or evidence.get('preserved_ten_fixes') is not True or evidence.get('dynamic_flag_and_provider_resources_retained') is not True:
-        raise key.SigningError('Validated PR29 implementation provenance is missing or changed.')
+        raise key.SigningError('Preserved PR30 implementation provenance is missing or changed.')
     if evidence.get('application_id') != 'app.supernova.player' or evidence.get('version_name') != '0.149' or evidence.get('version_code') != 149:
         raise key.SigningError('QA application identity/version differs from the approved scope.')
     if evidence.get('signed') is not False or evidence.get('unsigned_signature_rejected') is not True:

@@ -50,7 +50,7 @@ jobs:
           changes=subprocess.check_output(['git','-C','source','diff','--name-only',sha,os.environ['GITHUB_SHA']],text=True).splitlines()
           if any(not name.startswith('docs/') for name in changes):raise ValueError('Code/assets/build inputs changed after conformance; rebuild and retest')
           subprocess.run(['git','-C','source','checkout','--detach',sha],check=True)
-          subprocess.run(['python3','source/.github/build/verify-supernova-0149-scope.py','--video','source'],check=True)
+          subprocess.run(['python3','source/.github/build/verify-pr30-scope.py','--video','source'],check=True)
           with open(os.environ['GITHUB_ENV'],'a') as env:env.write('SUPERNOVA_QA_SOURCE='+sha+'\n')
           PY
       - name: Java21 for existing PKCS12 identity validation

@@ -25,10 +25,10 @@ def main():
     args=parser.parse_args();video=args.root.resolve()/'Video';build=video/'build'
     conformance=load('foundation_conformance',video/'.github/build/verify-next-qa.py')
     conformance.sources(args.root.resolve(),False)
-    scope=load('qa148_scope',video/'.github/build/verify-pr30-scope.py')
+    scope=load('qa149_scope',video/'.github/build/verify-pr30-scope.py')
     implementation=scope.verify(video)
     evidence=conformance.binary(args.apk,args.apkanalyzer,video,args.aapt2)
-    if evidence['version_name']!='0.149' or evidence['version_code']!=149:raise ValueError('Exact148 version is required')
+    if evidence['version_name']!='0.149' or evidence['version_code']!=149:raise ValueError('Exact149 version is required')
     actual_manifest=ET.fromstring(subprocess.check_output([args.apkanalyzer,'manifest','print',str(args.apk)],text=True))
     android='{http://schemas.android.com/apk/res/android}'
     services={node.get(android+'name'):node for node in actual_manifest.findall('.//service')}
