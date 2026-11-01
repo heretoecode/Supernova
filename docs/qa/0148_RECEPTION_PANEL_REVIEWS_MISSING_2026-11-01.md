@@ -11,3 +11,6 @@ The movie Details Reception column displays `TMDb 7.7 / 10` near the top and `52
 - Check content measurement, focus/scroll clipping, error/empty/loading state and asynchronous update on Shield; verify for both movies and TV where applicable.
 - Add tests for review available, loading, empty, failed request and returning to Details; validate physically on a signed QA build and obtain owner acceptance before marking fixed.
 - Preserve PR29 draft, existing user data and main. Documentation only; no application changes here.
+
+## Owner-approved empty-state requirement (1 November 2026)
+Reception must not omit a rating or review field simply because its data is absent. Show the explicit text **Unavailable** for a missing rating, and **Unavailable** for missing reviews; apply the same rule independently to each supported rating/review source. Preserve meaningful available rating, vote-count and review content. Keep the panel neatly laid out and avoid a large blank region. Do not invent scores, votes, or review text. This is a binding acceptance criterion for the existing bug, not a separate issue.
